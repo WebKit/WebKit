@@ -386,12 +386,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let initialValues = new Map;
 
-        let canShowPreviewFeatures = WI.canShowPreviewFeatures();
-        if (canShowPreviewFeatures) {
-            experimentalSettingsView.addSetting(WI.UIString("Staging:"), WI.settings.experimentalEnablePreviewFeatures, WI.UIString("Enable Preview Features"));
-            experimentalSettingsView.addSeparator();
-        }
-
         let hasCSSDomain = InspectorBackend.hasDomain("CSS");
         if (hasCSSDomain) {
             let stylesGroup = experimentalSettingsView.addGroup(WI.UIString("Styles:"));
@@ -421,9 +415,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
                 this.classList.toggle("hidden", Array.from(initialValues).every(([setting, initialValue]) => setting.value === initialValue));
             }, reloadInspectorContainerElement);
         }
-
-        if (canShowPreviewFeatures)
-            listenForChange(WI.settings.experimentalEnablePreviewFeatures);
 
         if (hasCSSDomain) {
             listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);

@@ -1,3 +1,17 @@
+2022-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Remove EXPERIMENTAL_FEATURES flag on Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=238565
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Base/BrowserInspectorFrontendHost.js:
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.isExperimentalBuild): Deleted.
+        * UserInterface/Base/Main.js:
+        * UserInterface/Base/Setting.js:
+        (WI.canShowPreviewFeatures):
+        * UserInterface/Test/Test.js:
+
 2022-03-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: the mapped file URL of a Response Local Override should be clickable

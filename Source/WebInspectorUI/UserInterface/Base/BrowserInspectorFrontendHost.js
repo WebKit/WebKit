@@ -281,11 +281,6 @@ if (!window.InspectorFrontendHost) {
             return false;
         }
 
-        isExperimentalBuild()
-        {
-            return false;
-        }
-
         beep()
         {
             // FIXME: Implement using Audio/AudioContext.

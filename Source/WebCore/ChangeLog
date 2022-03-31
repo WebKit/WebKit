@@ -1,3 +1,15 @@
+2022-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Remove EXPERIMENTAL_FEATURES flag use on Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=238565
+
+        Reviewed by Darin Adler.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::isExperimentalBuild): Deleted.
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+
 2022-03-31  Rob Buis  <rbuis@igalia.com>
 
         Interop issue with position: sticky within contain: paint

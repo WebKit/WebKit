@@ -91,7 +91,6 @@
     undefined unbufferedLog(DOMString message);
 
     boolean isUnderTest();
-    boolean isExperimentalBuild();
 
     undefined beep();
     undefined inspectInspector();

@@ -308,7 +308,6 @@ CSSGradientPremultipliedAlphaInterpolationEnabled:
     WebCore:
       default: true
 
-# FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 CSSIndividualTransformPropertiesEnabled:
   type: bool
   humanReadableName: "CSS Individual Transform Properties"
@@ -367,7 +366,7 @@ CSSPaintingAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
 
 CSSRelativeColorSyntaxEnabled:
@@ -391,7 +390,7 @@ CSSTypedOMEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
     WebCore:
       default: false
@@ -649,7 +648,6 @@ HighlightAPIEnabled:
     WebKit:
       default: false
 
-# FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 ImageBitmapEnabled:
   type: bool
   humanReadableName: "ImageBitmap"
@@ -659,7 +657,6 @@ ImageBitmapEnabled:
     WebKitLegacy:
       default: true
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES)" : true
       default: true
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
@@ -1309,7 +1306,7 @@ ServerTimingEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
 
 ServiceWorkerNavigationPreloadEnabled:
@@ -1362,7 +1359,6 @@ SpeechRecognitionEnabled:
     WebCore:
       default: false
 
-# FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 SpringTimingFunctionEnabled:
   type: bool
   humanReadableName: "CSS Spring Animations"

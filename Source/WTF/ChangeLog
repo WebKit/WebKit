@@ -1,3 +1,17 @@
+2022-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Remove EXPERIMENTAL_FEATURES flag use on Cocoa platforms
+        https://bugs.webkit.org/show_bug.cgi?id=238565
+
+        Reviewed by Darin Adler.
+
+        It was used to enable some experimental features in places like Safari Technology Preview,
+        but we don't want Safari Technology Preview to be this fundamentally different than WebKit
+        everywhere else.  This removes the flag and treats code accordingly as if it were always false.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-03-31  Per Arne Vollan  <pvollan@apple.com>
 
         Add runtime flag for blocking IOKit resources in the WebContent process' sandbox

@@ -698,7 +698,7 @@ OffscreenCanvasEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
 
 OffscreenCanvasInWorkersEnabled:
@@ -711,7 +711,7 @@ OffscreenCanvasInWorkersEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
+      "ENABLE(EXPERIMENTAL_FEATURES)": true
       default: false
 
 PdfJSViewerEnabled:
@@ -848,8 +848,7 @@ ServiceWorkersEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES) || PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
-      default: false
+      default: true
     WebCore:
       default: false
 

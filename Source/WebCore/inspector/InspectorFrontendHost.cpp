@@ -583,15 +583,6 @@ bool InspectorFrontendHost::isUnderTest()
     return m_client && m_client->isUnderTest();
 }
 
-bool InspectorFrontendHost::isExperimentalBuild()
-{
-#if ENABLE(EXPERIMENTAL_FEATURES)
-    return true;
-#else
-    return false;
-#endif
-}
-
 void InspectorFrontendHost::unbufferedLog(const String& message)
 {
     // This is used only for debugging inspector tests.
