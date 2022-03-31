@@ -1693,6 +1693,13 @@ webkit.org/b/229519 media/media-session/actionHandlerInternalMappings.html [ Pas
 
 webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
 
+# webkit.org/b/238584 These 5 tests are constantly failing on wk1
+imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-001.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-002.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-003.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-004.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-005.html [ Failure ]
+
 webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
 
 webkit.org/b/230055 [ BigSur ] webrtc/datachannel/datachannel-page-cache-send.html [ Pass Timeout ]

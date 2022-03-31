@@ -116,6 +116,15 @@
 
 2022-03-30  Matteo Flores  <matteo_flores@apple.com>
 
+        REGRESSION(r291797): [ wk1 ] 5 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size* tests are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=238584
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2022-03-30  Matteo Flores  <matteo_flores@apple.com>
+
         [ Mac , iOS Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=228127
 
