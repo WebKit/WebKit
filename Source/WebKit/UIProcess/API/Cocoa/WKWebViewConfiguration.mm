@@ -381,8 +381,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration.processPool = self.processPool;
     configuration.preferences = self.preferences;
     configuration.userContentController = self.userContentController;
-    if (self._websiteDataStoreIfExists)
-        [configuration setWebsiteDataStore:self._websiteDataStoreIfExists];
     configuration.websiteDataStore = self.websiteDataStore;
     configuration.defaultWebpagePreferences = self.defaultWebpagePreferences;
     configuration._visitedLinkStore = self._visitedLinkStore;

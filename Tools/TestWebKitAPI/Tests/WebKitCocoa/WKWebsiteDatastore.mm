@@ -413,11 +413,4 @@ TEST(WebKit, ClearCustomDataStoreNoWebViews)
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
 }
 
-TEST(WKWebsiteDataStore, DoNotCreateDefaultDataStore)
-{
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
-    [configuration.get() copy];
-    EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
-}
-
 } // namespace TestWebKitAPI
