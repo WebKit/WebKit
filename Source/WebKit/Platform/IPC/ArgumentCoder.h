@@ -27,6 +27,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include <WebCore/NotificationData.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Span.h>
 

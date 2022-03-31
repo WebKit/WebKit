@@ -39,6 +39,7 @@
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
+#include "NotificationData.h"
 #include "PlatformStrategies.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientData.h"

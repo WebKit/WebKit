@@ -1,3 +1,11 @@
+2022-03-31  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed, fix non-unified build after r292139
+
+        * loader/ThreadableLoader.cpp:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+
 2022-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Implement units for CSS Typed OM

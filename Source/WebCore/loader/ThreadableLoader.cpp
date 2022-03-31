@@ -34,6 +34,7 @@
 
 #include "CachedResourceRequestInitiators.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"

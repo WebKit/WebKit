@@ -30,6 +30,7 @@
 #include "ContentSecurityPolicy.h"
 #include "ContentSecurityPolicyDirectiveNames.h"
 #include "ParsingUtilities.h"
+#include "PublicSuffix.h"
 #include <pal/text/TextEncoding.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/NeverDestroyed.h>
