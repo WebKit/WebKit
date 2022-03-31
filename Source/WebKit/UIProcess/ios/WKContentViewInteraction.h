@@ -112,6 +112,7 @@ class WebPageProxy;
 
 @class AVPlayerViewController;
 @class QLPreviewController;
+@class VKCImageAnalysisInteraction;
 @class WebEvent;
 @class WebTextIndicatorLayer;
 @class WKActionSheetAssistant;
@@ -540,6 +541,8 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 #endif // ENABLE(IMAGE_ANALYSIS)
     uint32_t _fullscreenVideoExtractionRequestIdentifier;
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    RetainPtr<VKCImageAnalysisInteraction> _imageAnalysisInteraction;
+    WebCore::FloatRect _imageAnalysisInteractionBounds;
     std::optional<WebKit::ImageAnalysisMarkupData> _imageAnalysisMarkupData;
 #endif
 }

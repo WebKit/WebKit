@@ -231,6 +231,13 @@ static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContex
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+@interface WKContentView (ImageAnalysisInteraction) <VKCImageAnalysisInteractionDelegate>
+@end
+
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #else
@@ -2980,6 +2987,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if ([_imageAnalysisInteraction interactableItemExistsAtPoint:point])
+        return NO;
+#endif
+
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return NO;
@@ -3008,6 +3020,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)pointIsNearMarkedText:(CGPoint)point
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if ([_imageAnalysisInteraction interactableItemExistsAtPoint:point])
+        return NO;
+#endif
+
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return NO;
@@ -3027,6 +3044,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point
 {
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if ([_imageAnalysisInteraction interactableItemExistsAtPoint:point])
+        return NO;
+#endif
+
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!self.webView.configuration._textInteractionGesturesEnabled)
         return NO;
@@ -3366,6 +3388,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     if (!_isExpectingFastSingleTapCommit)
         [self _finishInteraction];
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (![_imageAnalysisInteraction interactableItemExistsAtPoint:_lastInteractionLocation])
+        [_imageAnalysisInteraction resetSelection];
+#endif
 }
 
 - (void)_doubleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
@@ -5055,6 +5082,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     [_hoverPlatter dismissPlatterWithAnimation:NO];
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    [self uninstallImageAnalysisInteraction];
 #endif
 }
 
@@ -7877,6 +7908,11 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 {
     _touchEventsCanPreventNativeGestures = YES;
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if ([_imageAnalysisInteraction interactableItemExistsAtPoint:[gestureRecognizer locationInView:self]])
+        return YES;
+#endif
+
     return [self gestureRecognizer:gestureRecognizer isInterruptingMomentumScrollingWithEvent:event];
 }
 
@@ -8286,6 +8322,11 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 - (WebKit::ShouldDeferGestures)deferringGestureRecognizer:(WKDeferringGestureRecognizer *)deferringGestureRecognizer willBeginTouchesWithEvent:(UIEvent *)event
 {
     self.gestureRecognizerConsistencyEnforcer.beginTracking(deferringGestureRecognizer);
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if ([_imageAnalysisInteraction interactableItemExistsAtPoint:[deferringGestureRecognizer locationInView:self]])
+        return WebKit::ShouldDeferGestures::No;
+#endif
 
     return [self gestureRecognizer:deferringGestureRecognizer isInterruptingMomentumScrollingWithEvent:event] ? WebKit::ShouldDeferGestures::No : WebKit::ShouldDeferGestures::Yes;
 }
@@ -10628,6 +10669,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    [self uninstallImageAnalysisInteraction];
     _imageAnalysisMarkupData = std::nullopt;
 #endif
 }
@@ -10944,6 +10986,47 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 [pasteboard setData:data.get() forPasteboardType:(__bridge NSString *)type.get()];
         }];
     });
+}
+
+- (void)installImageAnalysisInteraction:(VKCImageAnalysis *)analysis
+{
+    if (!_imageAnalysisInteraction) {
+        _imageAnalysisInteraction = adoptNS([PAL::allocVKCImageAnalysisInteractionInstance() init]);
+        [_imageAnalysisInteraction setActiveInteractionTypes:VKImageAnalysisInteractionTypeTextSelection | VKImageAnalysisInteractionTypeDataDetectors];
+        [_imageAnalysisInteraction setDelegate:self];
+        [_imageAnalysisInteraction setWantsAutomaticContentsRectCalculation:NO];
+        [self addInteraction:_imageAnalysisInteraction.get()];
+    }
+    [_imageAnalysisInteraction setAnalysis:analysis];
+    [_imageAnalysisDeferringGestureRecognizer setEnabled:NO];
+    [_imageAnalysisGestureRecognizer setEnabled:NO];
+}
+
+- (void)uninstallImageAnalysisInteraction
+{
+    if (!_imageAnalysisInteraction)
+        return;
+
+    [self removeInteraction:_imageAnalysisInteraction.get()];
+    _imageAnalysisInteraction = nil;
+    [_imageAnalysisDeferringGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
+    [_imageAnalysisGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
+}
+
+#pragma mark - VKCImageAnalysisInteractionDelegate
+
+- (CGRect)contentsRectForImageAnalysisInteraction:(VKCImageAnalysisInteraction *)interaction
+{
+    auto unitInteractionRect = _imageAnalysisInteractionBounds;
+    WebCore::FloatRect unobscuredRect = self.bounds;
+    unitInteractionRect.moveBy(-unobscuredRect.location());
+    unitInteractionRect.scale(1 / unobscuredRect.size());
+    return unitInteractionRect;
+}
+
+- (BOOL)imageAnalysisInteraction:(VKCImageAnalysisInteraction *)interaction shouldBeginAtPoint:(CGPoint)point forAnalysisType:(VKImageAnalysisInteractionTypes)analysisType
+{
+    return [_imageAnalysisInteraction interactableItemExistsAtPoint:point];
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

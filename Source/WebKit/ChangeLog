@@ -1,3 +1,54 @@
+2022-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for temporarily installing VKCImageAnalysisInteraction on WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=238582
+
+        Reviewed by Tim Horton.
+
+        Add helper methods for temporarily creating and installing an image analysis interaction on the root view. See
+        below for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsNearMarkedText:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        If Live Text exists at the given location, suppress default WebKit text selection behaviors in favor of Live
+        Text instead.
+
+        (-[WKContentView _singleTapRecognized:]):
+
+        Since we only allow the image analysis interaction to begin when interacting directly with regions of the
+        content view that contain Live Text, we need to (manually) clear the native text selection here when handling a
+        tap over other parts of the web view that are not covered by Live Text.
+
+        (-[WKContentView _didCommitLoadForMainFrame]):
+
+        Uninstall the interaction when loading a new page.
+
+        (-[WKContentView gestureRecognizer:shouldIgnoreWebTouchWithEvent:]):
+        (-[WKContentView deferringGestureRecognizer:willBeginTouchesWithEvent:]):
+
+        Don't allow touch events to even begin, if the gesture starts over a region of Live Text.
+
+        (-[WKContentView _tearDownImageAnalysis]):
+
+        Uninstall the interaction when the web process terminates or swaps.
+
+        (-[WKContentView installImageAnalysisInteraction:]):
+        (-[WKContentView uninstallImageAnalysisInteraction]):
+
+        These are the two main helper methods for adding or removing the image analysis interaction.
+
+        (-[WKContentView contentsRectForImageAnalysisInteraction:]):
+        (-[WKContentView imageAnalysisInteraction:shouldBeginAtPoint:forAnalysisType:]):
+
+        Only allow Live Text interaction gestures to begin if there's interactable content at the given location. The
+        only reason why this isn't default behavior already is that the image analysis interaction handles taps that
+        happen outside of Live Text by clearing any active selection; to ensure that this continues to work, we handle
+        the tap ourselves, and clear the native selection directly (see `-_singleTapRecognized:` above).
+
 2022-03-31  Elliott Williams  <emw@apple.com>
 
         [XCBuild] WebKitLegacy's "Migrated headers" script does not emit task information
