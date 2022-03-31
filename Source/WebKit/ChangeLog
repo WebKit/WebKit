@@ -1,3 +1,18 @@
+2022-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WK2] fast/events/wheel/wheelevent-basic.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=238590
+
+        Reviewed by Don Olmstead.
+
+        This issue happened only if SPI_GETWHEELSCROLLLINES was less than
+        3. If I changed "Choose how many lines to scroll each time" to 1
+        or 2 in Windows Settings, this test passed.
+
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebWheelEvent): Changed local
+        variables to float not to truncate the wheel delta.
+
 2022-03-31  Brent Fulgham  <bfulgham@apple.com>
 
         Add a placeholder for some additional Captive Portal mode settings

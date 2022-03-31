@@ -413,10 +413,10 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPAR
 
     auto modifiers = modifiersForEvent(wParam);
 
-    int deltaX = 0;
-    int deltaY = 0;
-    int wheelTicksX = 0;
-    int wheelTicksY = 0;
+    float deltaX = 0;
+    float deltaY = 0;
+    float wheelTicksX = 0;
+    float wheelTicksY = 0;
 
     float delta = GET_WHEEL_DELTA_WPARAM(wParam) / static_cast<float>(WHEEL_DELTA);
     bool isMouseHWheel = (message == WM_MOUSEHWHEEL);
