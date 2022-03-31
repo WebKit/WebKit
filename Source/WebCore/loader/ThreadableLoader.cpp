@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -104,14 +105,17 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
 
 RefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext& context, ThreadableLoaderClient& client, ResourceRequest&& request, const ThreadableLoaderOptions& options, String&& referrer, String&& taskMode)
 {
-    if (is<WorkerGlobalScope>(context) || (is<WorkletGlobalScope>(context) && downcast<WorkletGlobalScope>(context).workerOrWorkletThread()))
-        return WorkerThreadableLoader::create(static_cast<WorkerOrWorkletGlobalScope&>(context), client, WTFMove(taskMode), WTFMove(request), options, WTFMove(referrer));
-
     Document* document = nullptr;
     if (is<WorkletGlobalScope>(context))
         document = downcast<WorkletGlobalScope>(context).responsibleDocument();
-    else
+    else if (is<Document>(context))
         document = &downcast<Document>(context);
+
+    if (auto* documentLoader = document ? document->loader() : nullptr)
+        request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
+    
+    if (is<WorkerGlobalScope>(context) || (is<WorkletGlobalScope>(context) && downcast<WorkletGlobalScope>(context).workerOrWorkletThread()))
+        return WorkerThreadableLoader::create(static_cast<WorkerOrWorkletGlobalScope&>(context), client, WTFMove(taskMode), WTFMove(request), options, WTFMove(referrer));
 
     return DocumentThreadableLoader::create(*document, client, WTFMove(request), options, WTFMove(referrer));
 }

@@ -1,3 +1,22 @@
+2022-03-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Ensure correct isAppInitiated state when creating URLRequests from URL 
+        https://bugs.webkit.org/show_bug.cgi?id=238159
+        <rdar://problem/88490742>
+
+        Reviewed by Kate Cheney.
+
+        Update various load operations to ensure AppInitiated state is properly handled.
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::scheduleLocationChange): The ScheduledPageBlock
+        load did not propagating the value of the driving document's AppInitiated state.
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::create): Reflect the AppInitiated state in the load.
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation): A page load triggered by the user
+        dragging content into the view is never AppInitiated.
+
 2022-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Link WebCore with WebGPU.framework 🎉
