@@ -401,12 +401,7 @@ TEST(WebKit, AlternativeServicesDefaultDirectoryCreation)
     // We always create the path, even if HTTP/3 is turned off.
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultDirectory.path]);
 
-#if PLATFORM(MAC)
-    NSString *key = @"ExperimentalHTTP3Enabled";
-#else
     NSString *key = @"WebKitExperimentalHTTP3Enabled";
-#endif
-    
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:key];
 
     auto configuration = adoptNS([WKWebViewConfiguration new]);

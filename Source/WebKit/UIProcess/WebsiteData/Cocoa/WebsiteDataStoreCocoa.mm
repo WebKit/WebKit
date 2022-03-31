@@ -79,20 +79,7 @@ static std::atomic<bool> hasInitializedAppBoundDomains = false;
 static std::atomic<bool> keyExists = false;
 #endif
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
-{
-    if (!m_thirdPartyCookieBlockingMode) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        if ([defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isThirdPartyCookieBlockingDisabledKey().createCFString().get()]])
-            m_thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction;
-        else
-            m_thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
-    }
-    return *m_thirdPartyCookieBlockingMode;
-}
-#endif
-
+// FIXME: we should not read the values from NSUserDefaults; we should let clients who set the values to pass them via configuration.
 static bool internalFeatureEnabled(const String& key, bool defaultValue = false)
 {
     auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", static_cast<NSString *>(key)]);
@@ -102,16 +89,27 @@ static bool internalFeatureEnabled(const String& key, bool defaultValue = false)
     return defaultValue;
 }
 
-static bool experimentalFeatureEnabled(const String& key)
+static bool experimentalFeatureEnabled(const String& key, bool defaultValue = false)
 {
-#if PLATFORM(MAC)
-    constexpr NSString *format = @"Experimental%@";
-#else
-    constexpr NSString *format = @"WebKitExperimental%@";
-#endif
-    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:format, static_cast<NSString *>(key)]);
-    return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
+    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", static_cast<NSString *>(key)]);
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
+        return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
+
+    return defaultValue;
 }
+
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
+{
+    if (!m_thirdPartyCookieBlockingMode) {
+        if (experimentalFeatureEnabled(WebPreferencesKey::isThirdPartyCookieBlockingDisabledKey()))
+            m_thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction;
+        else
+            m_thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
+    }
+    return *m_thirdPartyCookieBlockingMode;
+}
+#endif
 
 void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
@@ -126,10 +124,10 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     enableResourceLoadStatisticsDebugMode = [defaults boolForKey:@"ITPDebugMode"];
 
-    if ([defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isSameSiteStrictEnforcementEnabledKey().createCFString().get()]])
+    if (experimentalFeatureEnabled(WebPreferencesKey::isSameSiteStrictEnforcementEnabledKey()))
         sameSiteStrictEnforcementEnabled = WebCore::SameSiteStrictEnforcementEnabled::Yes;
 
-    if ([defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::isFirstPartyWebsiteDataRemovalDisabledKey().createCFString().get()]])
+    if (experimentalFeatureEnabled(WebPreferencesKey::isFirstPartyWebsiteDataRemovalDisabledKey()))
         firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::None;
     else {
         if ([defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isFirstPartyWebsiteDataRemovalReproTestingEnabledKey().createCFString().get()]])

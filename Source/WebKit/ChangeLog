@@ -1,3 +1,18 @@
+2022-03-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression: WebsiteDataStore fails to read experimental feature values from NSUserDefaults
+        https://bugs.webkit.org/show_bug.cgi?id=238486
+
+        Reviewed by Alex Christensen.
+
+        From rdar://46352542, Safari no longer uses "Experimental" as prefix for experimental features.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::internalFeatureEnabled):
+        (WebKit::experimentalFeatureEnabled):
+        (WebKit::WebsiteDataStore::thirdPartyCookieBlockingMode const):
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+
 2022-03-30  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate manifest version content security policy filtering for extensions into WebKit
