@@ -1,3 +1,24 @@
+2022-03-31  Don Olmstead  <don.olmstead@sony.com>
+
+        Add PlayStation WPEToolingBackend type
+        https://bugs.webkit.org/show_bug.cgi?id=238610
+
+        Reviewed by Adrian Perez de Castro.
+
+        Adds the implementation of HeadlessViewBackend for the WPE PlayStation backend.
+
+        * PlatformPlayStation.cmake:
+        * wpe/backends/CMakeLists.txt:
+        * wpe/backends/HeadlessViewBackend.h:
+        * wpe/backends/PlatformPlayStation.cmake: Added.
+        * wpe/backends/playstation/HeadlessViewBackendPlayStation.cpp: Copied from Tools/wpe/backends/HeadlessViewBackend.h.
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::~HeadlessViewBackend):
+        (WPEToolingBackends::HeadlessViewBackend::backend const):
+        (WPEToolingBackends::HeadlessViewBackend::snapshot):
+        (WPEToolingBackends::HeadlessViewBackend::updateSnapshot):
+        (WPEToolingBackends::HeadlessViewBackend::vsync):
+
 2022-03-31  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Skip RemoveFlagsOnPatch if no patch defined

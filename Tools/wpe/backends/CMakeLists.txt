@@ -20,11 +20,11 @@ set(WPEToolingBackends_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 set(WPEToolingBackends_LIBRARIES
-    Cairo::Cairo
     WPE::libwpe
 )
 
 if (USE_CAIRO)
+    list(APPEND WPEToolingBackends_LIBRARIES Cairo::Cairo)
     list(APPEND WPEToolingBackends_DEFINITIONS USE_CAIRO=1)
 endif ()
 
