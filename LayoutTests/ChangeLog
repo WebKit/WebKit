@@ -1,3 +1,14 @@
+2022-03-31  Tim Nguyen  <ntim@apple.com>
+
+        [iOS] imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/default-color.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=238599
+
+        Unreviewed test gardening.
+
+        iOS has no dark mode support.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/default-color-expected.txt: Added.
+
 2022-03-30  Alan Bujtas  <zalan@apple.com>
 
         Add explanation as to why contain-size-button-001.html/002.html WPT tests fail.
