@@ -136,6 +136,12 @@ class Bugzilla(Base, mocks.Requests):
                 issue['comments'].append(
                     Issue.Comment(user=user, timestamp=int(time.time()), content=data['comment']['body']),
                 )
+            if data.get('project'):
+                issue['product'] = data['project']
+            if data.get('component'):
+                issue['component'] = data['component']
+            if data.get('version'):
+                issue['version'] = data['version']
 
         return mocks.Response.fromJson(dict(
             bugs=[dict(
@@ -145,6 +151,9 @@ class Bugzilla(Base, mocks.Requests):
                 status='REOPENED' if issue['opened'] else 'RESOLVED',
                 resolution='' if issue['opened'] else 'FIXED',
                 creator=self.users[issue['creator'].name].username,
+                product=issue.get('project'),
+                component=issue.get('component'),
+                version=issue.get('version'),
                 creator_detail=dict(
                     email=issue['creator'].email,
                     name=self.users[issue['creator'].name].username,
@@ -296,6 +305,9 @@ class Bugzilla(Base, mocks.Requests):
             creator=user,
             assignee=assignee,
             description=data['description'],
+            project=data.get('product'),
+            component=data.get('component'),
+            version=data.get('version'),
             comments=[], watchers=[user, assignee] if assignee else [user],
         )
 

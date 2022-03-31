@@ -145,8 +145,9 @@ class Tracker(GenericTracker):
 
     def populate(self, issue, member=None):
         issue._link = '{}/show_bug.cgi?id={}'.format(self.url, issue.id)
+        issue._labels = []
 
-        if member in ['title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers']:
+        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version'):
             response = requests.get('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))
             response = response.json().get('bugs', []) if response.status_code == 200 else None
             if response:
@@ -173,6 +174,10 @@ class Tracker(GenericTracker):
                 issue._watchers = []
                 for name in response.get('cc', []):
                     issue._watchers.append(self.user(username=name))
+
+                issue._project = response.get('product', '')
+                issue._component = response.get('component', '')
+                issue._version = response.get('version', '')
 
             else:
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
@@ -225,7 +230,7 @@ class Tracker(GenericTracker):
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -249,6 +254,36 @@ class Tracker(GenericTracker):
         if why is not None:
             update_dict['comment'] = dict(body=why)
 
+        if project or component or version:
+            if not project and len(self.projects) == 1:
+                project = list(self.projects.keys())[0]
+            if not project:
+                raise ValueError('No project provided')
+            if not self.projects.get(project):
+                raise ValueError("'{}' is not a recognized project".format(project))
+
+            components = sorted(self.projects.get(project, {}).get('components', {}).keys())
+            if not component and len(components) == 1:
+                component = components[0]
+            if not component:
+                raise ValueError('No component provided')
+            if component and component not in components:
+                raise ValueError("'{}' is not a recognized component of '{}'".format(component, project))
+
+            versions = []
+            if component:
+                versions = self.projects.get(project, {}).get('components', {}).get(component, {}).get('versions', [])
+            if not versions:
+                versions = self.projects.get(project, {}).get('versions', [])
+            if not version:
+                version = versions[0]
+            if version not in versions:
+                raise ValueError("'{}' is not a recognized version in '{} {}'".format(version, project, component))
+
+            update_dict['product'] = project
+            update_dict['component'] = component
+            update_dict['version'] = version
+
         if update_dict:
             update_dict['ids'] = [issue.id]
             response = requests.put(
@@ -262,6 +297,10 @@ class Tracker(GenericTracker):
                     issue._opened = None
                 sys.stderr.write("Failed to modify '{}'\n".format(issue))
                 return None
+            elif project and component and version:
+                issue._project = project
+                issue._component = component
+                issue._version = version
 
         return issue
 

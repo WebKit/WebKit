@@ -170,11 +170,12 @@ class Tracker(GenericTracker):
 
     def populate(self, issue, member=None):
         issue._link = '<rdar://{}>'.format(issue.id)
+        issue._labels = []
         if (not self.client or not self.library) and member:
             sys.stderr.write('radarclient inaccessible on this machine\n')
             return issue
 
-        if not member:
+        if not member or member == 'labels':
             return issue
 
         radar = self.client.radar_for_id(issue.id)
@@ -238,9 +239,19 @@ class Tracker(GenericTracker):
                 issue._references.append(candidate)
                 refs.add(candidate.link)
 
+        if radar.component and member in ('project', 'component', 'version'):
+            issue._project = ''
+            issue._component = radar.component.get('name', '')
+            issue._version = radar.component.get('version', 'All')
+            for project in self._projects:
+                if issue._component.startswith(project):
+                    issue._project = project
+                    issue._component = issue._component[len(project):].lstrip()
+                    break
+
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, **properties):
         if not self.client or not self.library:
             sys.stderr.write('radarclient inaccessible on this machine\n')
             return None
@@ -274,6 +285,46 @@ class Tracker(GenericTracker):
                 radar.state = 'Verify'
                 radar.resolution = 'Software Changed'
             did_change = True
+
+        if project or component or version:
+            if not project and len(self.projects) == 1:
+                project = list(self.projects.keys())[0]
+            if not project:
+                raise ValueError('No project provided')
+            if not self.projects.get(project):
+                raise ValueError("'{}' is not a recognized project".format(project))
+
+            components = self.projects.get(project, {}).get('components', {}).keys()
+            if not component and len(components) == 1:
+                component = components[0]
+            if not component or component == '*':
+                component = ''
+            if component and component not in components:
+                raise ValueError("'{}' is not a recognized component of '{}'".format(component, project))
+
+            if component:
+                versions = self.projects.get(project, {}).get('components', {}).get(component, {}).get('versions', [])
+            else:
+                versions = self.projects.get(project, {}).get('versions', [])
+            if not version:
+                version = versions[0]
+            if version not in versions:
+                raise ValueError("'{}' is not a recognized version in '{} {}'".format(version, project, component))
+
+            components = self.client.find_components(dict(
+                name=dict(eq='{} {}'.format(project, component)),
+                version=dict(eq=version),
+            ))
+            if not components:
+                raise ValueError("No components match '{}' with version '{}'".format('{} {}'.format(project, component), version))
+            if len(components) > 1:
+                raise ValueError("{} components match '{}' with version '{}'".format(len(components), '{} {}'.format(project, component), version))
+            radar.component = components[0]
+            did_change = True
+
+            issue._project = project
+            issue._component = component
+            issue._version = version
 
         if did_change:
             radar.commit_changes()

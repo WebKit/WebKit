@@ -45,6 +45,9 @@ ISSUES = [
         creator=USERS['Felix Filer'],
         assignee=USERS['Tim Contributor'],
         description='An example issue for testing',
+        project='WebKit',
+        component='Text',
+        version='Other',
         comments=[
             Issue.Comment(
                 user=USERS['Felix Filer'],
@@ -63,6 +66,9 @@ ISSUES = [
         creator=USERS['Tim Contributor'],
         assignee=USERS['Tim Contributor'],
         description='We need to support a new feature',
+        project='WebKit',
+        component='Scrolling',
+        version='Safari 15',
         comments=[
             Issue.Comment(
                 user=USERS['Tim Contributor'],
@@ -78,6 +84,9 @@ ISSUES = [
         creator=USERS['Felix Filer'],
         assignee=USERS['Tim Contributor'],
         description='Another example issue for testing, example.com is broken',
+        project='WebKit',
+        component='SVG',
+        version='WebKit Local Build',
         comments=[
             Issue.Comment(
                 user=USERS['Tim Contributor'],
