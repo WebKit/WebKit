@@ -179,7 +179,7 @@
       "factory": "macOSWK2Factory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["macos-bigsur-release-build-ews"],
-      "workernames": ["ews104", "ews105", "ews106", "ews107"]
+      "workernames": ["ews104", "ews106", "ews107"]
     },
     {
       "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",

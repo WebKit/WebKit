@@ -24,6 +24,12 @@
         an (empty) WebKitLegacy.framework/Headers directory, which was being scanned here.
         WebKitLegacy is entirely private API, so change it to check PrivateHeaders/.
 
+2022-03-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed infrastructure fix.
+
+        * CISupport/ews-build/config.json: Temporarily remove ews105 due to hardware failure.
+
 2022-03-31  Jeff Miller  <jeffm@apple.com>
 
         Some API tests are missing header imports
