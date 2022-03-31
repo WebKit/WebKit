@@ -1,5 +1,22 @@
 2022-03-31  Alex Christensen  <achristensen@webkit.org>
 
+        null check page in API::DataTask constructor
+        https://bugs.webkit.org/show_bug.cgi?id=238632
+        <rdar://90936679>
+
+        Reviewed by Tim Horton.
+
+        If the page is deallocated between the request to make a data task and the completion providing
+        the data task to the API client, we don't want to crash.
+
+        * UIProcess/API/APIDataTask.cpp:
+        (API::DataTask::cancel):
+        (API::DataTask::DataTask):
+        (API::m_sessionID):
+        * UIProcess/API/APIDataTask.h:
+
+2022-03-31  Alex Christensen  <achristensen@webkit.org>
+
         Expand adattributiond sandbox slightly to avoid sandbox crashes
         https://bugs.webkit.org/show_bug.cgi?id=238609
         <rdar://91073280>

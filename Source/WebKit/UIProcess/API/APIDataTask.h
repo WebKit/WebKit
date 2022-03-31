@@ -63,7 +63,7 @@ private:
     WeakPtr<WebKit::WebPageProxy> m_page;
     WTF::URL m_originalURL;
     WeakPtr<WebKit::NetworkProcessProxy> m_networkProcess;
-    PAL::SessionID m_sessionID;
+    std::optional<PAL::SessionID> m_sessionID;
     Ref<DataTaskClient> m_client;
 };
 
