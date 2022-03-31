@@ -44,6 +44,7 @@ struct SecurityOriginData;
 #if HAVE(UNIFIED_ASC_AUTH_UI)
 OBJC_CLASS ASCAuthorizationRemotePresenter;
 OBJC_CLASS ASCCredentialRequestContext;
+OBJC_CLASS ASCAgentProxy;
 #endif
 
 namespace WebKit {
@@ -53,6 +54,8 @@ class WebPageProxy;
 struct FrameInfoData;
 struct WebAuthenticationRequestData;
 
+using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, WebCore::AuthenticatorAttachment, const WebCore::ExceptionData&)>;
+
 class WebAuthenticatorCoordinatorProxy : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WebAuthenticatorCoordinatorProxy);
@@ -61,7 +64,6 @@ public:
     ~WebAuthenticatorCoordinatorProxy();
 
 private:
-    using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, WebCore::AuthenticatorAttachment, const WebCore::ExceptionData&)>;
     using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
     // IPC::MessageReceiver.
@@ -77,9 +79,11 @@ private:
     WebPageProxy& m_webPageProxy;
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)
+    void cancel();
     RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
     void performRequest(RetainPtr<ASCCredentialRequestContext>, RequestCompletionHandler&&);
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;
+    RetainPtr<ASCAgentProxy> m_proxy;
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
 };
 
