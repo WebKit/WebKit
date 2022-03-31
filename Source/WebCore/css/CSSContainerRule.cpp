@@ -76,5 +76,16 @@ String CSSContainerRule::conditionText() const
     return builder.toString();
 }
 
+String CSSContainerRule::nameFilterText() const
+{
+    StringBuilder builder;
+    
+    auto name = styleRuleContainer().filteredQuery().nameFilter;
+    if (!name.isEmpty())
+        serializeIdentifier(name, builder);
+
+    return builder.toString();
+}
+
 } // namespace WebCore
 

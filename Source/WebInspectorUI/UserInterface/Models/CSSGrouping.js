@@ -61,6 +61,11 @@ WI.CSSGrouping = class CSSGrouping
             || this._type === WI.CSSGrouping.Type.LayerImportRule;
     }
 
+    get isContainer()
+    {
+        return this._type === WI.CSSGrouping.Type.ContainerRule;
+    }
+
     get prefix()
     {
         if (this.isSupports)
@@ -68,6 +73,9 @@ WI.CSSGrouping = class CSSGrouping
 
         if (this.isLayer)
             return "@layer";
+
+        if (this.isContainer)
+            return "@container";
 
         console.assert(this.isMedia);
         return "@media";
@@ -82,4 +90,5 @@ WI.CSSGrouping.Type = {
     SupportsRule: "supports-rule",
     LayerRule: "layer-rule",
     LayerImportRule: "layer-import-rule",
+    ContainerRule: "container-rule",
 };

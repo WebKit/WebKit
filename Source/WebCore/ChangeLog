@@ -1,3 +1,31 @@
+2022-03-31  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Support Container Queries in the Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=238346
+
+        Reviewed by Devin Rousso.
+
+        Test: inspector/css/getMatchedStylesForNodeContainerGrouping.html
+
+        Add basic support to Web Inspector for viewing styles in `@container` rules.
+
+        * css/CSSContainerRule.cpp:
+        (WebCore::CSSContainerRule::nameFilterText const):
+        * css/CSSContainerRule.h:
+        - Provide a way to get the name that is used to filter the rule to specific containers.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (flattenSourceData):
+        - In order to prevent future rule types from being added without some consideration for how they are inspected,
+        use an exhaustive switch-case statement here. This will at minimum allow us to make sure we have opened a bug
+        and put a FIXME here for new values in the future.
+
+        (WebCore::asCSSRuleList):
+        (WebCore::buildArrayForGroupings):
+        
+        * style/InspectorCSSOMWrappers.cpp:
+        (WebCore::Style::InspectorCSSOMWrappers::collect):
+
 2022-03-31  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed, fix non-unified build after r292150

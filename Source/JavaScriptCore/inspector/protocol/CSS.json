@@ -228,8 +228,8 @@
             "type": "object",
             "description": "CSS @media (as well as other users of media queries, like @import, <style>, <link>, etc.), @supports, and @layer descriptor.",
             "properties": [
-                { "name": "type", "type": "string", "enum": ["media-rule", "media-import-rule", "media-link-node", "media-style-node", "supports-rule", "layer-rule", "layer-import-rule"], "description": "Source of the media query: \"media-rule\" if specified by a @media rule, \"media-import-rule\" if specified by an @import rule, \"media-link-node\" if specified by a \"media\" attribute in a linked style sheet's LINK tag, \"media-style-node\" if specified by a \"media\" attribute in an inline style sheet's STYLE tag, \"supports-rule\" if specified by an @supports rule, \"layer-rule\" if specified by an @layer rule." },
-                { "name": "text", "type": "string", "optional": true, "description": "Query text if specified by a @media or @supports rule. Layer name (or not present for anonymous layers) for @layer rules." },
+                { "name": "type", "type": "string", "enum": ["media-rule", "media-import-rule", "media-link-node", "media-style-node", "supports-rule", "layer-rule", "layer-import-rule", "container-rule"], "description": "Source of the media query: \"media-rule\" if specified by a @media rule, \"media-import-rule\" if specified by an @import rule, \"media-link-node\" if specified by a \"media\" attribute in a linked style sheet's LINK tag, \"media-style-node\" if specified by a \"media\" attribute in an inline style sheet's STYLE tag, \"supports-rule\" if specified by an @supports rule, \"layer-rule\" if specified by an @layer rule, \"container-rule\" if specified by an @container rule." },
+                { "name": "text", "type": "string", "optional": true, "description": "Query text if specified by a @media, @supports, or @container rule. Layer name (or not present for anonymous layers) for @layer rules." },
                 { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the CSS grouping." }
             ]
         },

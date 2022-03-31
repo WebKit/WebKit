@@ -1,3 +1,13 @@
+2022-03-31  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Support Container Queries in the Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=238346
+
+        Reviewed by Devin Rousso.
+
+        * inspector/css/getMatchedStylesForNodeContainerGrouping-expected.txt: Added.
+        * inspector/css/getMatchedStylesForNodeContainerGrouping.html: Added.
+
 2022-03-31  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION(r292051-r292022): [ iOS ] media/video-object-fit.html is a constant image failure

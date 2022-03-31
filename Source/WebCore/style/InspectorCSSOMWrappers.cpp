@@ -29,6 +29,7 @@
 #include "config.h"
 #include "InspectorCSSOMWrappers.h"
 
+#include "CSSContainerRule.h"
 #include "CSSImportRule.h"
 #include "CSSLayerBlockRule.h"
 #include "CSSLayerStatementRule.h"
@@ -63,6 +64,9 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
             continue;
         
         switch (cssRule->styleRuleType()) {
+        case StyleRuleType::Container:
+            collect(downcast<CSSContainerRule>(cssRule));
+            break;
         case StyleRuleType::Import:
             collect(downcast<CSSImportRule>(*cssRule).styleSheet());
             break;
