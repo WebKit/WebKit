@@ -1,3 +1,23 @@
+2022-03-31  Ben Nham  <nham@apple.com>
+
+        Fix null string crashes in PushService
+        https://bugs.webkit.org/show_bug.cgi?id=238585
+
+        Reviewed by Darin Adler.
+
+        We've seen a few webpushd crashes due to some PushService routines being passed null string
+        arguments. Guard against this with isEmpty checks.
+
+        This also shouldn't be possible--we shouldn't be sending these requests to webpushd in the
+        first place. Add some logs to help us catch what's going on.
+
+        * webpushd/PushService.mm:
+        (WebPushD::PushService::getSubscription):
+        (WebPushD::PushService::subscribe):
+        (WebPushD::PushService::unsubscribe):
+        (WebPushD::PushService::incrementSilentPushCount):
+        (WebPushD::PushService::removeRecordsImpl):
+
 2022-03-31  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed, fix non-unified build after r290343

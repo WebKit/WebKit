@@ -438,6 +438,12 @@ void PushService::finishedPushServiceRequest(PushServiceRequestMap& map, PushSer
 
 void PushService::getSubscription(const String& bundleIdentifier, const String& scope, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& completionHandler)
 {
+    if (bundleIdentifier.isEmpty() || scope.isEmpty()) {
+        RELEASE_LOG_ERROR(Push, "Ignoring getSubscription request with bundleIdentifier (empty = %d) and scope (empty = %d)", bundleIdentifier.isEmpty(), scope.isEmpty());
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::AbortError, "Invalid sender"_s }));
+        return;
+    }
+
     enqueuePushServiceRequest(m_getSubscriptionRequests, makeUnique<GetSubscriptionRequest>(*this, bundleIdentifier, scope, WTFMove(completionHandler)));
 }
 
@@ -448,6 +454,12 @@ void PushService::didCompleteGetSubscriptionRequest(GetSubscriptionRequest& requ
 
 void PushService::subscribe(const String& bundleIdentifier, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&& completionHandler)
 {
+    if (bundleIdentifier.isEmpty() || scope.isEmpty()) {
+        RELEASE_LOG_ERROR(Push, "Ignoring subscribe request with bundleIdentifier (empty = %d) and scope (empty = %d)", bundleIdentifier.isEmpty(), scope.isEmpty());
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::AbortError, "Invalid sender"_s }));
+        return;
+    }
+
     enqueuePushServiceRequest(m_subscribeRequests, makeUnique<SubscribeRequest>(*this, bundleIdentifier, scope, vapidPublicKey, WTFMove(completionHandler)));
 }
 
@@ -458,6 +470,12 @@ void PushService::didCompleteSubscribeRequest(SubscribeRequest& request)
 
 void PushService::unsubscribe(const String& bundleIdentifier, const String& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& completionHandler)
 {
+    if (bundleIdentifier.isEmpty() || scope.isEmpty()) {
+        RELEASE_LOG_ERROR(Push, "Ignoring unsubscribe request with bundleIdentifier (empty = %d) and scope (empty = %d)", bundleIdentifier.isEmpty(), scope.isEmpty());
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::AbortError, "Invalid sender"_s }));
+        return;
+    }
+
     enqueuePushServiceRequest(m_unsubscribeRequests, makeUnique<UnsubscribeRequest>(*this, bundleIdentifier, scope, subscriptionIdentifier, WTFMove(completionHandler)));
 }
 
@@ -468,6 +486,12 @@ void PushService::didCompleteUnsubscribeRequest(UnsubscribeRequest& request)
 
 void PushService::incrementSilentPushCount(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
 {
+    if (bundleIdentifier.isEmpty() || securityOrigin.isEmpty()) {
+        RELEASE_LOG_ERROR(Push, "Ignoring removeRecordsImpl request with bundleIdentifier (empty = %d) and securityOrigin (empty = %d)", bundleIdentifier.isEmpty(), securityOrigin.isEmpty());
+        handler(0);
+        return;
+    }
+
     m_database->incrementSilentPushCount(bundleIdentifier, securityOrigin, [this, bundleIdentifier, securityOrigin, handler = WTFMove(handler)](unsigned silentPushCount) mutable {
         if (silentPushCount < WebKit::WebPushD::maxSilentPushCount) {
             handler(silentPushCount);
@@ -494,6 +518,12 @@ void PushService::removeRecordsForBundleIdentifierAndOrigin(const String& bundle
 
 void PushService::removeRecordsImpl(const String& bundleIdentifier, const std::optional<String>& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
 {
+    if (bundleIdentifier.isEmpty() || (securityOrigin && securityOrigin->isEmpty())) {
+        RELEASE_LOG_ERROR(Push, "Ignoring removeRecordsImpl request with bundleIdentifier (empty = %d) and securityOrigin (empty = %d)", bundleIdentifier.isEmpty(), securityOrigin && securityOrigin->isEmpty());
+        handler(0);
+        return;
+    }
+
     auto removedRecordsHandler = [this, bundleIdentifier, securityOrigin, handler = WTFMove(handler)](Vector<RemovedPushRecord>&& removedRecords) mutable {
         for (auto& record : removedRecords) {
             m_connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
