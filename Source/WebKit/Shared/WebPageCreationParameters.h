@@ -37,6 +37,7 @@
 #include "WebURLSchemeHandlerIdentifier.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/Color.h>
+#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/HighlightVisibility.h>
@@ -264,6 +265,8 @@ struct WebPageCreationParameters {
 #if HAVE(TOUCH_BAR)
     bool requiresUserActionForEditingControlsManager { false };
 #endif
+
+    WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 };
 
 } // namespace WebKit

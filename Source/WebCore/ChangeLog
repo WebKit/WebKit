@@ -1,3 +1,109 @@
+2022-03-30  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate manifest version content security policy filtering for extensions into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=238230
+        <rdar://problem/60081492>
+
+        Reviewed by Timothy Hatcher.
+
+        Currently Safari handles parsing CSP for extensions depending on the manifest version. This patch moves
+        parsing to WebKit to align with existing CSP implementation.
+
+        There are two current versions of the manifest, v2 and v3. The rules for V2 affect the script-src and default-src
+        directives and the rules are:
+            1. Standalone wildcards are prohibited.
+            2. Wildcards with only a tld (e.g. *.com) are prohibited.
+            3. Only full https:// urls are allowed as sources, with the exception of the blob: scheme.
+            4. The 'unsafe-inline' source expression is prohibited.
+
+         The rules for V3 affect the script-src, worker-src, object-src and default-src directives and the rules are:
+            1. Wildcards are prohibited.
+            2. External sources are prohibited.
+            3. The 'self' and 'none' keywords are allowed. All others are prohibited.
+
+        Tests: http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-blob-scheme-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-insecure-scheme.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-missing-scheme.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-scheme-only.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-unsafe-eval-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-unsafe-inline-blocked.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-wildcard-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-wildcard-prohibited.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-host-only-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-scheme-only-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-wildcard-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-blob-scheme-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-hash-source-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-insecure-scheme.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-missing-scheme.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-scheme-only.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-unsafe-eval-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-unsafe-inline-blocked.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-wildcard-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-wildcard-blocked.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-non-https-scheme.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-wildcard.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-can-load-insecure-loopback-ip.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-can-load-secure-loopback-ip.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-self.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-host-only-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-scheme-only-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-wildcard-allowed.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-non-https-scheme.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-partial-wildcard.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-wildcard.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-can-load-insecure-loopback-ip.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-can-load-secure-loopback-ip.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-self.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-non-https-scheme.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-partial-wildcard.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-wildcard.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-blockes-nonces.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-blocks-hashes.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-can-load-insecure-loopback-ip.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-can-load-secure-loopback-ip.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-self.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/style-src/manifest-v3-style-src-allows-keywords.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-block-partial-wildcard.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-block-wildcard.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-can-load-insecure-loopback-ip.html
+               http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-self.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::m_contentSecurityPolicyModeForExtension):
+        (WebCore::m_attachmentElementClient): Deleted.
+        * page/Page.h:
+        (WebCore::Page::contentSecurityPolicyModeForExtension const):
+        * page/PageConfiguration.h:
+        * page/csp/ContentSecurityPolicy.cpp:
+        Planning on fixing the non-document case in a followup, this patch was big enough.
+
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::contentSecurityPolicyModeForExtension const):
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::ContentSecurityPolicySourceList):
+        (WebCore::schemeIsInHttpFamily):
+        (WebCore::isRestrictedDirectiveForMode):
+        This function returns the specific directives that have rules applied to them
+        in each manifest version. It can be used for blocking wildcards and unsafe-inline
+        for both versions, and all other keywords for manifest v3.
+
+        (WebCore::ContentSecurityPolicySourceList::isValidSourceForExtensionMode):
+        This function checks a given source against the rules for a specific version.
+
+        (WebCore::extensionModeAllowsKeywordsForDirective):
+        Most keywords (aside from unsafe-inline) are allowed in manifest v2, but only
+        'self' and 'none' are allowed in v3.
+
+        (WebCore::ContentSecurityPolicySourceList::parse):
+        (WebCore::ContentSecurityPolicySourceList::parseSource):
+        (WebCore::ContentSecurityPolicySourceList::parseNonceSource):
+        (WebCore::ContentSecurityPolicySourceList::parseHashSource):
+        Nonces and hashes are not allowed for specified v3 directives.
+
+        * page/csp/ContentSecurityPolicySourceList.h:
+
 2022-03-30  Alan Bujtas  <zalan@apple.com>
 
         [CSS contain] Containment disables the special handling of the HTML body element for overflow viewport propagation.

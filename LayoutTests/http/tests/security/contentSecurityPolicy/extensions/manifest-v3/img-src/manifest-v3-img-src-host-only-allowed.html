@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="img-src 127.0.0.1:8443;">
+    <p><br>Test that CSP for extensions allows wildcards for other directives.</p>
+</head>
+<body>
+    <script nonce='test'>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function didLoadImage()
+        {
+            alert("PASS: Successfully loaded image.");
+            testRunner.notifyDone();
+        }
+
+        function failedToLoadImage()
+        {
+            alert("FAIL: Should have loaded image.");
+            testRunner.notifyDone();
+        }
+    </script>
+    <img src="https://127.0.0.1:8443/security/resources/abe.png" onload="didLoadImage()" onerror="failedToLoadImage()">
+</body>
+</html>
+

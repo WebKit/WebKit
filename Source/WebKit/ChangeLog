@@ -1,3 +1,37 @@
+2022-03-30  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate manifest version content security policy filtering for extensions into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=238230
+        <rdar://problem/60081492>
+
+        Reviewed by Timothy Hatcher.
+
+        Add an SPI for Safari to specify when we are loading a WebView for an extension,
+        and which manifest version the extension has.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::setContentSecurityPolicyModeForExtension):
+        (API::PageConfiguration::contentSecurityPolicyModeForExtension const):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _setContentSecurityPolicyModeForExtension:]):
+        (-[WKWebViewConfiguration _contentSecurityPolicyModeForExtension]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/Cocoa/CSPExtensionUtilities.h: Added.
+        * UIProcess/Cocoa/CSPExtensionUtilities.mm: Added.
+        (WebKit::toWKContentSecurityPolicyModeForExtension):
+        (WebKit::toContentSecurityPolicyModeForExtension):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2022-03-30  Chris Dumez  <cdumez@apple.com>
 
         Use dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM) in setOSTransaction()

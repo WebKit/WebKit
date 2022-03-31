@@ -189,6 +189,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(TOUCH_BAR)
     encoder << requiresUserActionForEditingControlsManager;
 #endif
+
+    encoder << contentSecurityPolicyModeForExtension;
 }
 
 std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -598,6 +600,9 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.requiresUserActionForEditingControlsManager))
         return std::nullopt;
 #endif
+
+    if (!decoder.decode(parameters.contentSecurityPolicyModeForExtension))
+        return std::nullopt;
 
     return parameters;
 }

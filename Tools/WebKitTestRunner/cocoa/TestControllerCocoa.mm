@@ -189,6 +189,13 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     [copiedConfiguration _setAllowTopNavigationToDataURLs:options.allowTopNavigationToDataURLs()];
     [copiedConfiguration _setAppHighlightsEnabled:options.appHighlightsEnabled()];
 
+    if (!options.contentSecurityPolicyExtensionMode().empty()) {
+        if (options.contentSecurityPolicyExtensionMode() == "v2")
+            [copiedConfiguration _setContentSecurityPolicyModeForExtension:_WKContentSecurityPolicyModeForExtensionManifestV2];
+        if (options.contentSecurityPolicyExtensionMode() == "v3")
+            [copiedConfiguration _setContentSecurityPolicyModeForExtension:_WKContentSecurityPolicyModeForExtensionManifestV3];
+    }
+
     configureContentMode(copiedConfiguration.get(), options);
 
     auto applicationManifest = options.applicationManifest();

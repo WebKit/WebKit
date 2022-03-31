@@ -95,6 +95,11 @@ ContentSecurityPolicy::ContentSecurityPolicy(URL&& protectedURL, ScriptExecution
 {
     ASSERT(scriptExecutionContext.securityOrigin());
     updateSourceSelf(*scriptExecutionContext.securityOrigin());
+    // FIXME: handle the non-document case.
+    if (is<Document>(m_scriptExecutionContext)) {
+        if (auto* page = downcast<Document>(*m_scriptExecutionContext).page())
+            m_contentSecurityPolicyModeForExtension = page->contentSecurityPolicyModeForExtension();
+    }
 }
 
 ContentSecurityPolicy::~ContentSecurityPolicy() = default;

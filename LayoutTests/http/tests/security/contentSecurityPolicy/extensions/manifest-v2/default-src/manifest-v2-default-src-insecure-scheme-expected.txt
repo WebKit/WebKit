@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8000/security/contentSecurityPolicy/resources/script.js because it appears in neither the script-src directive nor the default-src directive of the Content Security Policy.
+ALERT: PASS: Successfully blocked script.
+
+Test that CSP for extensions blocks sources with an insecure scheme.
+
+PASS

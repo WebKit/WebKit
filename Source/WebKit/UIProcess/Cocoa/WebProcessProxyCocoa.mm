@@ -28,6 +28,7 @@
 
 #import "AccessibilitySupportSPI.h"
 #import "CodeSigning.h"
+#import "DefaultWebBrowserChecks.h"
 #import "HighPerformanceGPUManager.h"
 #import "Logging.h"
 #import "ObjCObjectGraph.h"

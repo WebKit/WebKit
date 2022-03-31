@@ -1,0 +1,14 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://localhost:8443">
+    <script src="../../../resources/dump-as-text.js"></script>
+    <p>Test that CSP for manifest V3 extensions allows https loopback IP addresses for the script-src directive.</p>
+</head>
+<body>
+<div id="result" text="PASS">
+  FAIL
+</div>
+<script src="https://localhost:8443/security/contentSecurityPolicy/resources/script.js"></script>
+</body>
+</html>

@@ -23,6 +23,7 @@
 #include "ActivityState.h"
 #include "AnimationFrameRate.h"
 #include "Color.h"
+#include "ContentSecurityPolicy.h"
 #include "DisabledAdaptations.h"
 #include "Document.h"
 #include "FindOptions.h"
@@ -955,6 +956,8 @@ public:
 
     void timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&);
 
+    ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1313,6 +1316,8 @@ private:
 #if USE(ATSPI)
     AccessibilityRootAtspi* m_accessibilityRootObject { nullptr };
 #endif
+
+    ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
 };
 
 inline PageGroup& Page::group()

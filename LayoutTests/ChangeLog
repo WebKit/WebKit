@@ -1,3 +1,119 @@
+2022-03-30  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate manifest version content security policy filtering for extensions into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=238230
+        <rdar://problem/60081492>
+
+        Reviewed by Timothy Hatcher.
+
+        Layout test coverage. We don’t allow loading of hosts
+        other than localhost and 127.0.0.1 in our test infrastructure,
+        so that made it difficult to write a test for remote sources
+        being blocked in manifest V3, and for blocked TLDs with wildcards
+        for manifest v2. We have existing unit test coverage for our isPublicSuffix
+        function.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-blob-scheme-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-blob-scheme-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-insecure-scheme-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-insecure-scheme.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-missing-scheme-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-missing-scheme.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-scheme-only-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-scheme-only.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-unsafe-eval-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-unsafe-eval-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-unsafe-inline-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-unsafe-inline-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-wildcard-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-wildcard-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-wildcard-prohibited-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-wildcard-prohibited.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-host-only-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-host-only-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-scheme-only-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-scheme-only-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-wildcard-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/img-src/manifest-v2-img-src-wildcard-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-blob-scheme-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-blob-scheme-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-hash-source-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-hash-source-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-insecure-scheme-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-insecure-scheme.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-missing-scheme-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-missing-scheme.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-scheme-only-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-scheme-only.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-unsafe-eval-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-unsafe-eval-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-unsafe-inline-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-unsafe-inline-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-wildcard-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-wildcard-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-wildcard-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-wildcard-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-non-https-scheme-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-non-https-scheme.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-wildcard-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-wildcard.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-can-load-insecure-loopback-ip-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-can-load-insecure-loopback-ip.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-can-load-secure-loopback-ip-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-can-load-secure-loopback-ip.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-self-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-self.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-host-only-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-host-only-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-scheme-only-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-scheme-only-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-wildcard-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/img-src/manifest-v3-img-src-wildcard-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-non-https-scheme-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-non-https-scheme.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-partial-wildcard-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-partial-wildcard.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-wildcard-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-wildcard.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-can-load-insecure-loopback-ip-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-can-load-insecure-loopback-ip.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-can-load-secure-loopback-ip-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-can-load-secure-loopback-ip.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-self-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-self.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/resources/check-style.js: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/resources/load-blob.js: Added.
+        (script.onload):
+        (script.onerror):
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-non-https-scheme-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-non-https-scheme.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-partial-wildcard-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-partial-wildcard.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-wildcard-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-wildcard.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-blockes-nonces-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-blockes-nonces.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-blocks-hashes-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-blocks-hashes.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-can-load-insecure-loopback-ip-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-can-load-insecure-loopback-ip.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-can-load-secure-loopback-ip-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-can-load-secure-loopback-ip.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-self-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-self.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/style-src/manifest-v3-style-src-allows-keywords-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/style-src/manifest-v3-style-src-allows-keywords.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-block-partial-wildcard-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-block-partial-wildcard.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-block-wildcard-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-block-wildcard.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-can-load-insecure-loopback-ip-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-can-load-insecure-loopback-ip.html: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-self-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-self.html: Added.
+
 2022-03-30  Matteo Flores  <matteo_flores@apple.com>
 
         [ Mac , iOS Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html is a flaky failure.

@@ -1,0 +1,4 @@
+
+Test that CSP for manifest V3 extensions allows loopback IP addresses for the object-src directive.
+
+This test passes if there is no console message saying the plugin was blocked.

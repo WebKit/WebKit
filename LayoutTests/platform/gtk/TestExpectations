@@ -778,6 +778,9 @@ http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html [ Skip ]
 http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html [ Skip ]
 
+# CSP extensions are not available on GTK
+http/tests/security/contentSecurityPolicy/extensions/ [ Skip ]
+
 webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-02.xhtml
 webkit.org/b/206223 imported/mozilla/svg/svg-integration/clipPath-html-05.xhtml
 

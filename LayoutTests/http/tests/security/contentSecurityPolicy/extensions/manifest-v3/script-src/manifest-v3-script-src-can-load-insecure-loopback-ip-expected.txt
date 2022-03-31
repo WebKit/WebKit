@@ -1,0 +1,4 @@
+
+Test that CSP for manifest V3 extensions allows http loopback IP addresses for the script-src directive.
+
+PASS

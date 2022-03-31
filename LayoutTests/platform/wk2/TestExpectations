@@ -810,6 +810,16 @@ imported/w3c/web-platform-tests/service-workers/service-worker/svg-target-reftes
 # These tests rely on webkit-test-runner flags that aren't implemented for DumpRenderTree, so they will fail under legacy WebKit.
 editing/selection/expando.html [ Pass ]
 
+# CSP extension support is WK2 only
+http/tests/security/contentSecurityPolicy/extensions/ [ Pass ]
+
+# Dump console logging to stderr in the case of randomized blob URLs
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-non-https-scheme.html [ DumpJSConsoleLogInStdErr ] 
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-non-https-scheme.html [ DumpJSConsoleLogInStdErr ] 
+
+# Flaky CSP console logging
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-partial-wildcard.html [ DumpJSConsoleLogInStdErr ]
+
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
 

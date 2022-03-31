@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v2 ] -->
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
+<script src="../../../resources/dump-as-text.js"></script>
+<p>This test passes if it doesn't alert fail.</p>
+</head>
+<body>
+<script>
+alert('FAIL');
+</script>
+</body>
+</html>

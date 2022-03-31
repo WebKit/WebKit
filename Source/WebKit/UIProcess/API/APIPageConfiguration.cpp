@@ -103,6 +103,8 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_requiresUserActionForEditingControlsManager = this->m_requiresUserActionForEditingControlsManager;
 #endif
 
+    copy->m_contentSecurityPolicyModeForExtension = this->m_contentSecurityPolicyModeForExtension;
+
     return copy;
 }
 

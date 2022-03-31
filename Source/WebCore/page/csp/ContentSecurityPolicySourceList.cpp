@@ -98,6 +98,7 @@ template<typename CharacterType> static bool isSourceListNone(StringParsingBuffe
 ContentSecurityPolicySourceList::ContentSecurityPolicySourceList(const ContentSecurityPolicy& policy, const String& directiveName)
     : m_policy(policy)
     , m_directiveName(directiveName)
+    , m_contentSecurityPolicyModeForExtension(m_policy.contentSecurityPolicyModeForExtension())
 {
 }
 
@@ -176,6 +177,67 @@ bool ContentSecurityPolicySourceList::matches(const String& nonce) const
     return m_nonces.contains(nonce);
 }
 
+static bool schemeIsInHttpFamily(const String& scheme)
+{
+    return equalIgnoringASCIICase(scheme, "https") || equalIgnoringASCIICase(scheme, "http");
+}
+
+static bool isRestrictedDirectiveForMode(const String& directive, ContentSecurityPolicyModeForExtension mode)
+{
+    switch (mode) {
+    case ContentSecurityPolicyModeForExtension::None:
+        return false;
+    // FIXME: If the script-src directive is strict enough, we should allow default-src to have more values.
+    case ContentSecurityPolicyModeForExtension::ManifestV2:
+        return directive == ContentSecurityPolicyDirectiveNames::scriptSrc
+            || directive == ContentSecurityPolicyDirectiveNames::defaultSrc;
+    case ContentSecurityPolicyModeForExtension::ManifestV3:
+        return directive == ContentSecurityPolicyDirectiveNames::scriptSrc
+            || directive == ContentSecurityPolicyDirectiveNames::objectSrc
+            || directive == ContentSecurityPolicyDirectiveNames::workerSrc
+            || directive == ContentSecurityPolicyDirectiveNames::defaultSrc;
+    }
+    return false;
+}
+
+bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const ContentSecurityPolicySourceList::Source& parsedSource)
+{
+    bool hostIsPublicSuffix = false;
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    hostIsPublicSuffix = isPublicSuffix(parsedSource.host.value.toStringWithoutCopying());
+#endif
+
+    switch (m_contentSecurityPolicyModeForExtension) {
+    case ContentSecurityPolicyModeForExtension::None:
+        return true;
+    case ContentSecurityPolicyModeForExtension::ManifestV2:
+        if (!isRestrictedDirectiveForMode(m_directiveName, ContentSecurityPolicyModeForExtension::ManifestV2))
+            return true;
+
+        if (parsedSource.host.hasWildcard && hostIsPublicSuffix)
+            return false;
+
+        if (equalIgnoringASCIICase(parsedSource.scheme, "blob"))
+            return true;
+
+        if (!equalIgnoringASCIICase(parsedSource.scheme.toString(), "https") || parsedSource.host.value.isEmpty())
+            return false;
+        break;
+    case ContentSecurityPolicyModeForExtension::ManifestV3:
+        if (!isRestrictedDirectiveForMode(m_directiveName, ContentSecurityPolicyModeForExtension::ManifestV3))
+            return true;
+
+        if (!schemeIsInHttpFamily(parsedSource.scheme.toStringWithoutCopying()) || !SecurityOrigin::isLocalHostOrLoopbackIPAddress(parsedSource.host.value))
+            return false;
+    }
+    return true;
+}
+
+static bool extensionModeAllowsKeywordsForDirective(ContentSecurityPolicyModeForExtension mode, const String& directiveName)
+{
+    return mode != ContentSecurityPolicyModeForExtension::ManifestV3 || !isRestrictedDirectiveForMode(directiveName, mode);
+}
+
 // source-list       = *WSP [ source *( 1*WSP source ) *WSP ]
 //                   / *WSP "'none'" *WSP
 //
@@ -205,7 +267,8 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
                 continue;
             if (isCSPDirectiveName(source->host.value))
                 m_policy.reportDirectiveAsSourceExpression(m_directiveName, source->host.value);
-            m_list.append(ContentSecurityPolicySource(m_policy, source->scheme.toString(), source->host.value.toString(), source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard));
+            if (isValidSourceForExtensionMode(source.value()))
+                m_list.append(ContentSecurityPolicySource(m_policy, source->scheme.toString(), source->host.value.toString(), source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard));
         } else
             m_policy.reportInvalidSourceExpression(m_directiveName, String(beginSource, buffer.position() - beginSource));
 
@@ -229,12 +292,15 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
 
     Source source;
 
-    if (buffer.lengthRemaining() == 1 && *buffer == '*') {
+    if (buffer.lengthRemaining() == 1 && *buffer == '*' && !isRestrictedDirectiveForMode(m_directiveName, m_contentSecurityPolicyModeForExtension)) {
         m_allowStar = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'") && (m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrc || m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrcElem)) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'")
+        && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)
+        && (m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrc
+            || m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrcElem)) {
         m_allowNonParserInsertedScripts = true;
         m_allowSelf = false;
         m_allowInline = false;
@@ -246,28 +312,28 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-inline'")) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-inline'") && !isRestrictedDirectiveForMode(m_directiveName, m_contentSecurityPolicyModeForExtension)) {
         m_allowInline = !m_allowNonParserInsertedScripts;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-eval'")) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-eval'") && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowEval = true;
         m_allowWasmEval = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'wasm-unsafe-eval'")) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'wasm-unsafe-eval'") && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowWasmEval = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-hashes'")) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-hashes'") && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowUnsafeHashes = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'report-sample'")) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'report-sample'") && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_reportSample = true;
         return source;
     }
@@ -513,7 +579,8 @@ template<typename CharacterType> bool ContentSecurityPolicySourceList::parseNonc
     skipWhile<isNonceCharacter>(buffer);
     if (buffer.atEnd() || buffer.position() == beginNonceValue || *buffer != '\'')
         return false;
-    m_nonces.add(String(beginNonceValue, buffer.position() - beginNonceValue));
+    if (extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName))
+        m_nonces.add(String(beginNonceValue, buffer.position() - beginNonceValue));
     return true;
 }
 
@@ -538,8 +605,10 @@ template<typename CharacterType> bool ContentSecurityPolicySourceList::parseHash
     if (digest->value.size() > ContentSecurityPolicyHash::maximumDigestLength)
         return false;
 
-    m_hashAlgorithmsUsed.add(digest->algorithm);
-    m_hashes.add(WTFMove(*digest));
+    if (extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+        m_hashAlgorithmsUsed.add(digest->algorithm);
+        m_hashes.add(WTFMove(*digest));
+    }
     return true;
 }
 

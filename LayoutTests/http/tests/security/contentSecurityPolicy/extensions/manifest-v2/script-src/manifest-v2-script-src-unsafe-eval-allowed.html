@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v2 ] -->
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'nonce-test' 'unsafe-eval'">
+<script src="../../../resources/dump-as-text.js"></script>
+<p>Tests that CSP for extensions allows unsafe-eval. This test passes if it alerts.</p>
+</head>
+<body>
+<script nonce='test'>
+    eval("alert('PASS')");
+</script>
+</body>
+</html>

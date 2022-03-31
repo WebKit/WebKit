@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
@@ -192,6 +193,9 @@ public:
     bool isCaptivePortalModeExplicitlySet() const;
     bool captivePortalModeEnabled() const;
 
+    void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_contentSecurityPolicyModeForExtension = mode; }
+    WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -251,6 +255,8 @@ private:
 #if HAVE(TOUCH_BAR)
     bool m_requiresUserActionForEditingControlsManager { false };
 #endif
+
+    WebCore::ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 };
 
 } // namespace API

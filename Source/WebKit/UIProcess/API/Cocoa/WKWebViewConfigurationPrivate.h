@@ -42,6 +42,12 @@ typedef NS_ENUM(NSUInteger, _WKAttributionOverrideTesting) {
 @protocol _UIClickInteractionDriving;
 #endif
 
+typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
+    _WKContentSecurityPolicyModeForExtensionNone = 0,
+    _WKContentSecurityPolicyModeForExtensionManifestV2,
+    _WKContentSecurityPolicyModeForExtensionManifestV3
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @class WKWebView;
 @class _WKApplicationManifest;
 @class _WKVisitedLinkStore;
@@ -142,6 +148,7 @@ typedef NS_ENUM(NSUInteger, _WKAttributionOverrideTesting) {
 // Attributes network activity from this WKWebView to the app with this bundle.
 @property (nonatomic, setter=_setAttributedBundleIdentifier:) NSString *_attributedBundleIdentifier;
 
+@property (nonatomic, setter=_setContentSecurityPolicyModeForExtension:) _WKContentSecurityPolicyModeForExtension _contentSecurityPolicyModeForExtension WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @end
 
 #if TARGET_OS_IPHONE
