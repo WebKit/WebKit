@@ -58,7 +58,7 @@ public:
 private:
     CredentialsContainer(WeakPtr<Document>&&);
 
-    WebAuthn::Scope scope();
+    ScopeAndCrossOriginParent scopeAndCrossOriginParent() const;
 
     WeakPtr<Document> m_document;
 };

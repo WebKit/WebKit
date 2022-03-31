@@ -167,6 +167,8 @@ typedef NS_ENUM(NSUInteger, ASCPublicKeyCredentialKind) {
 
 @property (nonatomic, nullable, readonly, copy) NSArray<ASCPublicKeyCredentialDescriptor *> *allowedCredentials;
 
+@property (nonatomic, nullable, copy) NSString *destinationSiteForCrossSiteAssertion;
+
 @end
 
 
