@@ -1,3 +1,15 @@
+2022-03-30  Don Olmstead  <don.olmstead@sony.com>
+
+        Turn DEVELOPER_MODE ON for all non-Apple ports in build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=238556
+
+        Reviewed by Alex Christensen.
+
+        Use DEVELOPER_MODE to determine what the defaults of ENABLE_API_TESTS and
+        ENABLE_MINIBROWSER should be. Make ENABLE_WEBKIT the default of ENABLE_MINIBROWSER.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2022-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add descriptions on how to start WPT and http test servers to Introduction.md
