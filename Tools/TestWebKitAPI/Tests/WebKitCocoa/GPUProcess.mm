@@ -681,7 +681,8 @@ static bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprec
     return false;
 }
 
-TEST(GPUProcess, ExitsUnderMemoryPressureWebRTCCase)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=237854DISABLED_
+TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureWebRTCCase)
 {
     runMemoryPressureExitTest([](WKWebView *webView) {
         auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);

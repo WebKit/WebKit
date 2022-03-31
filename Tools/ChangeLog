@@ -1,3 +1,13 @@
+2022-03-31  Robert Jenner  <Jenner@apple.com>
+
+        REGRESSION(r288464?):[ iOS15 Release GPUP arm64 ]TestWebKitAPI.GPUProcess.E xitsUnderMemoryPressureWebR TCCase is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=237854
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST): Disabling test while bug is under review.
+
 2022-03-31  Don Olmstead  <don.olmstead@sony.com>
 
         Add PlayStation WPEToolingBackend type
