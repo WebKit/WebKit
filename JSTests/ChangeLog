@@ -1,3 +1,15 @@
+2022-03-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Remove useProbeOSRExit=1 flag from tests
+        https://bugs.webkit.org/show_bug.cgi?id=238571
+
+        Reviewed by Saam Barati.
+
+        This flag no longer exists.
+
+        * stress/out-of-frame-stack-accesses-due-to-probe-based-osr-exits.js:
+        * stress/sampling-profiler-should-not-sample-beyond-stack-bounds.js:
+
 2022-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add additional reported regression tests to ensure multiline token's column offset is reset
