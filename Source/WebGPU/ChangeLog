@@ -1,3 +1,35 @@
+2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Implement Texture::createView() according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=238311
+
+        This patch implements texture views, which are the objects that get bound to pipelines (rather
+        than textures themselves). It links to the spec where relevant, and quotes the spec in comments
+        where relevant.
+
+        Test: api/validation/createView.spec.ts
+
+        Reviewed by Kimmo Kinnunen.
+
+        * WebGPU/Texture.h:
+        (WebGPU::Texture::create):
+        * WebGPU/Texture.mm:
+        (WebGPU::depthOnlyAspectMetalFormat):
+        (WebGPU::stencilOnlyAspectMetalFormat):
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::Texture):
+        (WebGPU::Texture::resolveTextureViewDescriptorDefaults const):
+        (WebGPU::Texture::arrayLayerCount const):
+        (WebGPU::Texture::validateCreateView const):
+        (WebGPU::computeRenderExtent):
+        (WebGPU::Texture::createView):
+        * WebGPU/TextureView.h:
+        (WebGPU::TextureView::create):
+        (WebGPU::TextureView::descriptor const):
+        (WebGPU::TextureView::renderExtent const):
+        * WebGPU/TextureView.mm:
+        (WebGPU::TextureView::TextureView):
+
 2022-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Refactor isDepthOrStencilFormat() for upcoming data transfer patches

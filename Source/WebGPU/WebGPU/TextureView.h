@@ -34,12 +34,14 @@ struct WGPUTextureViewImpl {
 
 namespace WebGPU {
 
+class Texture;
+
 class TextureView : public WGPUTextureViewImpl, public RefCounted<TextureView> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<TextureView> create(id<MTLTexture> texture)
+    static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent)
     {
-        return adoptRef(*new TextureView(texture));
+        return adoptRef(*new TextureView(texture, descriptor, renderExtent));
     }
 
     ~TextureView();
@@ -47,11 +49,16 @@ public:
     void setLabel(String&&);
 
     id<MTLTexture> texture() const { return m_texture; }
+    const WGPUTextureViewDescriptor& descriptor() const { return m_descriptor; }
+    const std::optional<WGPUExtent3D>& renderExtent() const { return m_renderExtent; }
 
 private:
-    TextureView(id<MTLTexture>);
+    TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&);
 
     const id<MTLTexture> m_texture { nil };
+
+    const WGPUTextureViewDescriptor m_descriptor;
+    const std::optional<WGPUExtent3D> m_renderExtent;
 };
 
 } // namespace WebGPU

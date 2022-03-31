@@ -35,14 +35,15 @@ struct WGPUTextureImpl {
 
 namespace WebGPU {
 
+class Device;
 class TextureView;
 
 class Texture : public WGPUTextureImpl, public RefCounted<Texture> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor)
+    static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Device& device)
     {
-        return adoptRef(*new Texture(texture, descriptor));
+        return adoptRef(*new Texture(texture, descriptor, device));
     }
 
     ~Texture();
@@ -61,11 +62,17 @@ public:
     const WGPUTextureDescriptor& descriptor() const { return m_descriptor; }
 
 private:
-    Texture(id<MTLTexture>, const WGPUTextureDescriptor&);
+    Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Device&);
+
+    std::optional<WGPUTextureViewDescriptor> resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
+    uint32_t arrayLayerCount() const;
+    bool validateCreateView(const WGPUTextureViewDescriptor&) const;
 
     const id<MTLTexture> m_texture { nil };
 
     const WGPUTextureDescriptor m_descriptor { }; // "The GPUTextureDescriptor describing this texture."
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU
