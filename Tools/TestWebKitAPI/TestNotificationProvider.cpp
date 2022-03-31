@@ -27,6 +27,8 @@
 #include "TestNotificationProvider.h"
 
 #include "WTFStringUtilities.h"
+#include <WebKit/WKArray.h>
+#include <WebKit/WKMutableDictionary.h>
 #include <WebKit/WKNotificationManager.h>
 #include <WebKit/WKNumber.h>
 #include <WebKit/WKSecurityOriginRef.h>
@@ -42,7 +44,6 @@ static WKDictionaryRef notificationPermissions(const void* clientInfo)
 
 TestNotificationProvider::TestNotificationProvider(Vector<WKNotificationManagerRef>&& managers)
     : m_managers(WTFMove(managers))
-    , m_permissions(adoptWK(WKMutableDictionaryCreate()))
 {
     m_provider = {
         { 0, this },
@@ -67,19 +68,39 @@ TestNotificationProvider::~TestNotificationProvider()
 
 WKDictionaryRef TestNotificationProvider::notificationPermissions() const
 {
-    WKRetain(m_permissions.get());
-    return m_permissions.get();
+    auto permissions = WKMutableDictionaryCreate();
+
+    for (auto& [origin, allowed] : m_permissions) {
+        auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(origin.utf8().data()));
+        auto wkAllowed = adoptWK(WKBooleanCreate(allowed));
+        WKDictionarySetItem(permissions, wkOriginString.get(), wkAllowed.get());
+    }
+
+    return permissions;
 }
 
 void TestNotificationProvider::setPermission(const String& origin, bool allowed)
 {
-    auto wkAllowed = adoptWK(WKBooleanCreate(allowed));
-    auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(origin.utf8().data()));
-    WKDictionarySetItem(m_permissions.get(), wkOriginString.get(), wkAllowed.get());
+    m_permissions.set(origin, allowed);
 
+    auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(origin.utf8().data()));
     auto wkOrigin = adoptWK(WKSecurityOriginCreateFromString(wkOriginString.get()));
+
     for (auto& manager : m_managers)
         WKNotificationManagerProviderDidUpdateNotificationPolicy(manager, wkOrigin.get(), allowed);
+}
+
+void TestNotificationProvider::resetPermission(const String& origin)
+{
+    m_permissions.remove(origin);
+
+    auto wkOriginString = adoptWK(WKStringCreateWithUTF8CString(origin.utf8().data()));
+    auto wkOrigin = adoptWK(WKSecurityOriginCreateFromString(wkOriginString.get()));
+    auto wkOriginTypeRef = static_cast<WKTypeRef>(wkOrigin.get());
+    auto wkOriginArray = adoptWK(WKArrayCreate(&wkOriginTypeRef, 1));
+
+    for (auto& manager : m_managers)
+        WKNotificationManagerProviderDidRemoveNotificationPolicies(manager, wkOriginArray.get());
 }
 
 } // namespace TestWebKitAPI

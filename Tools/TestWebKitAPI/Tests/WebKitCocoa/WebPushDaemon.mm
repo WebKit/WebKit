@@ -869,6 +869,56 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
     ASSERT_FALSE(hasPushSubscription());
 }
 
+TEST_F(WebPushDTest, UnsubscribesOnPermissionReset)
+{
+    static const char* source = R"HTML(
+    <script src="/constants.js"></script>
+    <script>
+    navigator.serviceWorker.register('/sw.js').then(async () => {
+        const registration = await navigator.serviceWorker.ready;
+        let result = null;
+        try {
+            let subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: VALID_SERVER_KEY
+            });
+            result = "Subscribed";
+        } catch (e) {
+            result = "Error: " + e;
+        }
+        window.webkit.messageHandlers.note.postMessage(result);
+    });
+    </script>
+    )HTML";
+
+    __block RetainPtr<id> result = nil;
+    __block bool done = false;
+    [m_notificationMessageHandler setMessageHandler:^(id message) {
+        result = message;
+        done = true;
+    }];
+
+    loadRequest(source, "");
+    TestWebKitAPI::Util::run(&done);
+
+    ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
+    ASSERT_TRUE(hasPushSubscription());
+
+    m_notificationProvider->resetPermission(m_server->origin());
+
+    bool isSubscribed = true;
+    TestWebKitAPI::Util::waitForConditionWithLogging([this, &isSubscribed] {
+        isSubscribed = hasPushSubscription();
+        if (!isSubscribed)
+            return true;
+
+        sleep(1);
+        return false;
+    }, 5, @"Timed out waiting for push subscription to be removed.");
+
+    ASSERT_FALSE(isSubscribed);
+}
+
 #if ENABLE(INSTALL_COORDINATION_BUNDLES)
 #if USE(APPLE_INTERNAL_SDK)
 static void deleteAllRegistrationsForDataStore(WKWebsiteDataStore *dataStore)

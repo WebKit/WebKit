@@ -1,3 +1,40 @@
+2022-03-31  Ben Nham  <nham@apple.com>
+
+        Remove push subscriptions when permissions are reset
+        https://bugs.webkit.org/show_bug.cgi?id=238068
+
+        Reviewed by Youenn Fablet.
+
+        When the notification permission for an origin is reset (i.e. is in the prompt state), we
+        should delete any push subscriptions associated with that origin. We do this by having the
+        providerDidRemoveNotificationPolicies API call deletePushAndNotificationRegistration in
+        webpushd.
+
+        We also do this when processing a push message, since it's possible for the state to get out
+        of sync due to the number of processes involved. For instance, removing the policy from
+        System Preferences rather than the browser's notification preference pane can result in the
+        providerDidRemoveNotificationPolicies call in the browser to be delayed or dropped.
+
+        Note that we don't delete the subscription if the permission is simply toggled off (i.e. the
+        permission is in the Denied state). In that case, the user can easily toggle the permission
+        back on. We want the subscription object to stay the same after the preference is toggled
+        back on so that the server can still send pushes to that push endpoint. In a future patch
+        we'll add subscriptions in this state to the ignored topics list in webpushd, which will
+        prevent pushes for those subscriptions from being delivered to the device without actually
+        unsubscribing.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processPushMessage):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::processPushMessage):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::removePushSubscriptionsForOrigins):
+        (WebKit::WebNotificationManagerProxy::providerDidRemoveNotificationPolicies):
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::deletePushAndNotificationRegistration):
+
 2022-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Remove EXPERIMENTAL_FEATURES flag on Cocoa platforms

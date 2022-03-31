@@ -49,6 +49,7 @@
 #include <WebCore/NotificationEventType.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
+#include <WebCore/PushPermissionState.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -375,7 +376,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
-    void processPushMessage(PAL::SessionID, WebPushMessage&&, CompletionHandler<void(bool)>&&);
+    void processPushMessage(PAL::SessionID, WebPushMessage&&, WebCore::PushPermissionState, CompletionHandler<void(bool)>&&);
     void processNotificationEvent(WebCore::NotificationData&&, WebCore::NotificationEventType);
 #endif
 

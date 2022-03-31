@@ -34,7 +34,9 @@
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebsiteDataStore.h"
 #include <WebCore/NotificationData.h>
+#include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -280,25 +282,69 @@ void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const API:
     processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), allowed));
 }
 
-void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Array* origins)
+static void removePushSubscriptionsForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
 {
-    if (!processPool())
+    RefPtr<NetworkProcessProxy> networkProcess;
+    auto sessionID = PAL::SessionID::defaultSessionID();
+
+    WebsiteDataStore::forEachWebsiteDataStore([&networkProcess, &sessionID](WebsiteDataStore& dataStore) {
+        if (!networkProcess && dataStore.isPersistent()) {
+            networkProcess = &dataStore.networkProcess();
+            sessionID = dataStore.sessionID();
+        }
+    });
+
+    if (!networkProcess)
         return;
 
+    for (auto& origin : origins)
+        networkProcess->deletePushAndNotificationRegistration(sessionID, origin, [originString = origin.toString()](auto&&) { });
+}
+
+static Vector<WebCore::SecurityOriginData> apiArrayToSecurityOrigins(API::Array* origins)
+{
+    if (!origins)
+        return { };
+
+    Vector<WebCore::SecurityOriginData> securityOrigins;
     size_t size = origins->size();
-    if (!size)
-        return;
-    
+    securityOrigins.reserveInitialCapacity(size);
+
+    for (size_t i = 0; i < size; ++i)
+        securityOrigins.uncheckedAppend(origins->at<API::SecurityOrigin>(i)->securityOrigin());
+
+    return securityOrigins;
+}
+
+static Vector<String> apiArrayToSecurityOriginStrings(API::Array* origins)
+{
+    if (!origins)
+        return { };
+
     Vector<String> originStrings;
+    size_t size = origins->size();
     originStrings.reserveInitialCapacity(size);
+
     for (size_t i = 0; i < size; ++i)
         originStrings.uncheckedAppend(origins->at<API::SecurityOrigin>(i)->securityOrigin().toString());
 
-    WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(originStrings));
+    return originStrings;
+}
 
-    if (!processPool())
+void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Array* origins)
+{
+    size_t size = origins->size();
+    if (!size)
         return;
-    processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(originStrings));
+
+    if (this == &sharedServiceWorkerManager()) {
+        removePushSubscriptionsForOrigins(apiArrayToSecurityOrigins(origins));
+        WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(apiArrayToSecurityOriginStrings(origins)));
+        return;
+    }
+
+    if (processPool())
+        processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(apiArrayToSecurityOriginStrings(origins)));
 }
 
 } // namespace WebKit

@@ -7,6 +7,9 @@
 </head>
 <body>
 <script>
+if (window.testRunner)
+    testRunner.grantWebNotificationPermission(window.origin);
+
 promise_test(async (test) => {
     const registration = await navigator.serviceWorker.register("service-worker-spinning-worker.js", { scope : "spin-push" });
     const worker = registration.installing;

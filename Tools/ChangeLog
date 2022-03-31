@@ -1,3 +1,24 @@
+2022-03-31  Ben Nham  <nham@apple.com>
+
+        Remove push subscriptions when permissions are reset
+        https://bugs.webkit.org/show_bug.cgi?id=238068
+
+        Reviewed by Youenn Fablet.
+
+        Add a test to make sure push subscriptions are removed when the notification policy for a
+        website is reset.
+
+        Also fixed an issue with a PushAPI test that didn't properly register for notification permissions.
+
+        * TestWebKitAPI/TestNotificationProvider.cpp:
+        (TestWebKitAPI::TestNotificationProvider::TestNotificationProvider):
+        (TestWebKitAPI::TestNotificationProvider::notificationPermissions const):
+        (TestWebKitAPI::TestNotificationProvider::setPermission):
+        (TestWebKitAPI::TestNotificationProvider::resetPermission):
+        * TestWebKitAPI/TestNotificationProvider.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
         Drop bad adoptNS() in NetworkProcess.LaunchOnlyWhenNecessary

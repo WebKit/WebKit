@@ -499,7 +499,18 @@ void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection,
         return;
     }
 
-    connection->enqueueAppBundleRequest(makeUnique<AppBundleDeletionRequest>(*connection, originString, WTFMove(replySender)));
+    connection->enqueueAppBundleRequest(makeUnique<AppBundleDeletionRequest>(*connection, originString, [this, originString = String { originString }, replySender = WTFMove(replySender), bundleIdentifier = connection->hostAppCodeSigningIdentifier()](auto result) mutable {
+        runAfterStartingPushService([this, bundleIdentifier = WTFMove(bundleIdentifier), originString = WTFMove(originString), replySender = WTFMove(replySender), result]() mutable {
+            if (!m_pushService) {
+                replySender(result);
+                return;
+            }
+
+            m_pushService->removeRecordsForBundleIdentifierAndOrigin(bundleIdentifier, originString, [replySender = WTFMove(replySender), result](auto&&) mutable {
+                replySender(result);
+            });
+        });
+    }));
 }
 
 void Daemon::setDebugModeIsEnabled(ClientConnection* clientConnection, bool enabled)

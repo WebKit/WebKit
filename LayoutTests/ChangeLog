@@ -1,3 +1,14 @@
+2022-03-31  Ben Nham  <nham@apple.com>
+
+        Remove push subscriptions when permissions are reset
+        https://bugs.webkit.org/show_bug.cgi?id=238068
+
+        Reviewed by Youenn Fablet.
+
+        Fix an issue with a layout test that didn't register for notification permissions.
+
+        * http/wpt/service-workers/service-worker-spinning-push.https.html:
+
 2022-03-31  Alan Bujtas  <zalan@apple.com>
 
         [CSS contain] Containment disables the special handling of the HTML body element for overflow viewport propagation [part2]

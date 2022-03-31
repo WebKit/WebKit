@@ -50,6 +50,7 @@
 #include "StorageAccessStatus.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebCookieManagerProxy.h"
+#include "WebNotificationManagerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
@@ -62,6 +63,7 @@
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/PushPermissionState.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/CallbackAggregator.h>
@@ -1761,7 +1763,19 @@ void NetworkProcessProxy::getPendingPushMessages(PAL::SessionID sessionID, Compl
 
 void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const WebPushMessage& pushMessage, CompletionHandler<void(bool wasProcessed)>&& callback)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::ProcessPushMessage { sessionID, pushMessage }, WTFMove(callback));
+    auto permission = PushPermissionState::Prompt;
+    auto permissions = WebNotificationManagerProxy::sharedServiceWorkerManager().notificationPermissions();
+    auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL).toString();
+
+    if (auto it = permissions.find(origin); it != permissions.end())
+        permission = it->value ? PushPermissionState::Granted : PushPermissionState::Denied;
+
+    if (permission == PushPermissionState::Denied) {
+        callback(false);
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::ProcessPushMessage { sessionID, pushMessage, permission }, WTFMove(callback));
 }
 
 void NetworkProcessProxy::processNotificationEvent(const NotificationData& data, NotificationEventType eventType)

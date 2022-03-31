@@ -336,6 +336,9 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
     configuration.get().websiteDataStore = dataStore.get();
     clearWebsiteDataStore([configuration websiteDataStore]);
 
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
+
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 

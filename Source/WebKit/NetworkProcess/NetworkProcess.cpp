@@ -2309,11 +2309,29 @@ void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, Completion
         LOG(Notifications, "NetworkProcess could not find session for ID %llu to get pending push messages", sessionID.toUInt64());
 }
 
-void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& callback)
+void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage&& pushMessage, PushPermissionState permissionState, CompletionHandler<void(bool)>&& callback)
 {
     if (auto* session = networkSession(sessionID)) {
         LOG(Push, "Networking process handling a push message from UI process in session %llu", sessionID.toUInt64());
         auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL);
+
+        if (permissionState == PushPermissionState::Prompt) {
+            RELEASE_LOG(Push, "Push message from %" PRIVATE_LOG_STRING " won't be processed since permission is in the prompt state; removing push subscription", origin.toString().utf8().data());
+            session->notificationManager().removePushSubscriptionsForOrigin(SecurityOriginData { origin }, [callback = WTFMove(callback)](auto&&) mutable {
+                callback(false);
+                return;
+            });
+            return;
+        }
+
+        if (permissionState == PushPermissionState::Denied) {
+            RELEASE_LOG(Push, "Push message from %" PRIVATE_LOG_STRING " won't be processed since permission is in the denied state", origin.toString().utf8().data());
+            // FIXME: move topic to ignore list in webpushd if permission is denied.
+            callback(false);
+            return;
+        }
+
+        ASSERT(permissionState == PushPermissionState::Granted);
         session->ensureSWServer().processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.registrationURL), [this, protectedThis = Ref { *this }, sessionID, origin = WTFMove(origin), callback = WTFMove(callback)](bool result) mutable {
             NetworkSession* session;
             if (!result && (session = networkSession(sessionID))) {
@@ -2336,7 +2354,7 @@ void NetworkProcess::getPendingPushMessages(PAL::SessionID, CompletionHandler<vo
     callback({ });
 }
 
-void NetworkProcess::processPushMessage(PAL::SessionID, WebPushMessage&&, CompletionHandler<void(bool)>&& callback)
+void NetworkProcess::processPushMessage(PAL::SessionID, WebPushMessage&&, PushPermissionState, CompletionHandler<void(bool)>&& callback)
 {
     callback(false);
 }
