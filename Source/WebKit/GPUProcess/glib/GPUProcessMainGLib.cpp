@@ -26,21 +26,25 @@
 #include "config.h"
 #include "GPUProcessMain.h"
 
-#if ENABLE(GPU_PROCESS) && USE(GSTREAMER)
-
+#if ENABLE(GPU_PROCESS) && (PLATFORM(GTK) || PLATFORM(WPE))
 #include "AuxiliaryProcessMain.h"
 #include "GPUProcess.h"
+#endif
 
 namespace WebKit {
 
+#if ENABLE(GPU_PROCESS) && (PLATFORM(GTK) || PLATFORM(WPE))
 class GPUProcessMainGStreamer final: public AuxiliaryProcessMainBaseNoSingleton<GPUProcess> {
 };
+#endif
 
 int GPUProcessMain(int argc, char** argv)
 {
+#if ENABLE(GPU_PROCESS) && (PLATFORM(GTK) || PLATFORM(WPE))
     return AuxiliaryProcessMain<GPUProcessMainGStreamer>(argc, argv);
+#else
+    return 0;
+#endif
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(GPU_PROCESS)

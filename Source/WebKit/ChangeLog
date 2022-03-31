@@ -1,3 +1,32 @@
+2022-03-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE][GPUProcess] Switch GPUProcessGStreamer.cpp, GPUProcessMainGStreamer.cpp to the GLib flavor
+        https://bugs.webkit.org/show_bug.cgi?id=238597
+
+        Reviewed by Adrian Perez de Castro.
+
+        Move the GStreamer implementations for the platform-specific GPUProcess
+        methods and entrypoint into GLib-flavored files. This fits better the
+        purpose of the GPUProcess since it's been extended beyond just media
+        playback. Instead of USE(GSTREAMER), the code in these files is now
+        guarded by (PLATFORM(GTK) || PLATFORM(WPE)), the two ports depending
+        on the GLib library.
+
+        The GPUProcessMain entrypoint, since it's unconditionally exported in
+        the library, is now also unconditionally defined, but with the internal
+        implementation launching the GPUProcess logic if ENABLE(GPU_PROCESS) is
+        enabled and simply returning 0 otherwise.
+
+        * GPUProcess/glib/GPUProcessGLib.cpp: Renamed from Source/WebKit/GPUProcess/gstreamer/GPUProcessGStreamer.cpp.
+        (WebKit::GPUProcess::initializeProcess):
+        (WebKit::GPUProcess::initializeProcessName):
+        (WebKit::GPUProcess::initializeSandbox):
+        * GPUProcess/glib/GPUProcessMainGLib.cpp: Renamed from Source/WebKit/GPUProcess/gstreamer/GPUProcessMainGStreamer.cpp.
+        (WebKit::GPUProcessMain):
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * webkitglib-symbols.map:
+
 2022-03-31  Ben Nham  <nham@apple.com>
 
         Fix null string crashes in PushService

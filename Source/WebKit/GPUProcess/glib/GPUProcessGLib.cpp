@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUProcess.h"
 
-#if ENABLE(GPU_PROCESS) && USE(GSTREAMER)
+#if ENABLE(GPU_PROCESS) && (PLATFORM(GTK) || PLATFORM(WPE))
 
 #include "GPUProcessCreationParameters.h"
 
@@ -46,5 +46,4 @@ void GPUProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
-
+#endif // ENABLE(GPU_PROCESS) && (PLATFORM(GTK) || PLATFORM(WPE))
