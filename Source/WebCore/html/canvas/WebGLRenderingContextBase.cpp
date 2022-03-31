@@ -796,6 +796,14 @@ using WebGLRenderingContextBaseSet = HashSet<WebGLRenderingContextBase*>;
 
 static WebGLRenderingContextBaseSet& activeContexts()
 {
+    if (isMainThread()) {
+        // WebKitLegacy special case: check for main thread because TLS does not work when entering sometimes from
+        // WebThread and sometimes from real main thread.
+        // Leave this on for non-legacy cases, as this is the base case for current operation where offscreen canvas
+        // is not supported or is rarely used.
+        static NeverDestroyed<WebGLRenderingContextBaseSet> s_mainThreadActiveContexts;
+        return s_mainThreadActiveContexts.get();
+    }
     static LazyNeverDestroyed<ThreadSpecific<WebGLRenderingContextBaseSet>> s_activeContexts;
     static std::once_flag s_onceFlag;
     std::call_once(s_onceFlag, [] {

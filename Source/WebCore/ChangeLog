@@ -1,3 +1,21 @@
+2022-03-31  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION? (248052@main): ASSERTION FAILED: didContain in WebCore::removeActiveContext(WebCore::WebGLRenderingContextBase &)
+        https://bugs.webkit.org/show_bug.cgi?id=238280
+
+        Reviewed by Myles C. Maxfield.
+
+        WebGL would record active contexts to a TLS variable in order to cap amount of
+        contexts. In WebKitLegacy the main thread might be either web thread or real main
+        thread, and as such the TLS variable cannot be used for main thread.
+
+        Instead, special case main thread active contexts to a specific global variable.
+
+        Tested by TestWebKitAPI.WebKitLegacy.WebGLNoCrashOnOtherThreadAccess.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::activeContexts):
+
 2022-03-31  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed, fix non-unified build after r292139
