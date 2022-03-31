@@ -1,5 +1,17 @@
 2022-03-31  Don Olmstead  <don.olmstead@sony.com>
 
+        [PlayStation] Enable more features by default
+        https://bugs.webkit.org/show_bug.cgi?id=238628
+
+        Reviewed by Fujii Hironori.
+
+        Move ENABLE_WEB_CRYPTO and add ENABLE_NETWORK_CACHE_SPECULATIVE_REVALIDATION
+        and ENABLE_NETWORK_CACHE_STALE_WHILE_REVALIDATE to the list of features on by default.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
+2022-03-31  Don Olmstead  <don.olmstead@sony.com>
+
         [PlayStation] Enable WebDriver
         https://bugs.webkit.org/show_bug.cgi?id=238615
 
