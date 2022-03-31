@@ -1,3 +1,18 @@
+2022-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Link WebCore with WebGPU.framework 🎉
+        https://bugs.webkit.org/show_bug.cgi?id=236751
+
+        Reviewed by Dean Jackson.
+
+        Apple's build system has been configured, so it's now safe to
+        link WebCore.framework and WebGPU.framework.
+
+        We correctly handle the situation where the framework isn't present
+        at runtime.
+
+        * Configurations/WebCore.xcconfig:
+
 2022-03-30  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate manifest version content security policy filtering for extensions into WebKit

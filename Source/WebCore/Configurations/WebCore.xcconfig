@@ -102,7 +102,7 @@ OUTPUT_ALTERNATE_ROOT_PATH_YES_YES[sdk=macosx*] = $(DSTROOT)$(ALTERNATE_ROOT_PAT
 
 WK_ANGLE_LDFLAGS = -weak-lANGLE-shared;
 
-WK_WEBGPU_LDFLAGS = ; // To be filled-in after Apple update its internal build system.
+WK_WEBGPU_LDFLAGS = -weak_framework WebGPU;
 
 WK_APPKIT_LDFLAGS = $(WK_APPKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_APPKIT_LDFLAGS_macosx = -framework AppKit;
