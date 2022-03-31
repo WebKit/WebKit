@@ -1,3 +1,18 @@
+2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Bugzilla] Code reviews show non-ASCII characters in patches as garbage
+        https://bugs.webkit.org/show_bug.cgi?id=238630
+
+        Reviewed by Aakash Jain and Darin Adler.
+
+        We have a convention that our sources (and therefore our patches) in WebKit are UTF-8.
+        The output of prettify.rb is also UTF-8. So, we just need to tell Perl that, when it
+        reads the output of prettify.rb, it just needs to understand that the data it's reading
+        is UTF-8.
+
+        * attachment.cgi:
+        (prettyPatch):
+
 2021-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         [contributors.json] Relocation (Part 4)

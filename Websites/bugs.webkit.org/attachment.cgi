@@ -430,6 +430,7 @@ sub prettyPatch
     $ENV{'PATH'} = $orig_path;
     print $in $attachment->data;
     close($in);
+    binmode($out, ':utf8');
     while (<$out>) {
         print;
     }
