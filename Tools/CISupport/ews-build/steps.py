@@ -1719,23 +1719,26 @@ class CloseBug(buildstep.BuildStep, BugzillaMixin):
     name = 'close-bugzilla-bug'
     flunkOnFailure = False
     haltOnFailure = False
+    bug_id = ''
 
     def start(self):
         self.bug_id = self.getProperty('bug_id', '')
-        if not self.bug_id:
-            self._addToLog('stdio', 'bug_id build property not found.\n')
-            self.descriptionDone = 'No bug id found'
-            self.finished(FAILURE)
-            return None
-
         rc = self.close_bug(self.bug_id)
         self.finished(rc)
         return None
 
     def getResultSummary(self):
+        if self.results == SKIPPED:
+            return buildstep.BuildStep.getResultSummary(self)
         if self.results == SUCCESS:
             return {'step': 'Closed bug {}'.format(self.bug_id)}
         return {'step': 'Failed to close bug {}'.format(self.bug_id)}
+
+    def doStepIf(self, step):
+        return self.getProperty('bug_id')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
 
 
 class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
