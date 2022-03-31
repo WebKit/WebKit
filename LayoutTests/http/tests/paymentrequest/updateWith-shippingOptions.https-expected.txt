@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
 
 PASS Calling `updateWith` with a new `shippingOptions` without `requestShipping` should not update any values.
-FAIL Calling `updateWith` with a new `shippingOptions` should not update any other values. assert_equals: selected shipping option should change expected "shippingId4" but got "shippingId3"
+FAIL Calling `updateWith` with a new `shippingOptions` should not update any other values. assert_equals: shipping option 0 selected should change expected (boolean) false but got (undefined) undefined
 
