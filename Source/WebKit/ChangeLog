@@ -1,3 +1,16 @@
+2022-03-31  Brent Fulgham  <bfulgham@apple.com>
+
+        Add a placeholder for some additional Captive Portal mode settings
+        https://bugs.webkit.org/show_bug.cgi?id=238573
+        <rdar://problem/91064718>
+
+        Reviewed by Wenson Hsieh.
+
+        SSIA.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::adjustSettingsForCaptivePortal): Call new placeholder helper function.
+
 2022-03-31  Ben Nham  <nham@apple.com>
 
         Remove push subscriptions when permissions are reset

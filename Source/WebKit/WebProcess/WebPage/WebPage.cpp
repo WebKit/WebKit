@@ -392,6 +392,14 @@
 #include <WebCore/GraphicsContextCG.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPageAdditions.cpp>
+#else
+static void adjustCoreGraphicsForCaptivePortal()
+{
+}
+#endif
+
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -4100,6 +4108,8 @@ static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferen
 
     settings.setVideoPlaybackRequiresUserGesture(true);
     settings.setAudioPlaybackRequiresUserGesture(true);
+
+    adjustCoreGraphicsForCaptivePortal();
 }
 
 void WebPage::updatePreferences(const WebPreferencesStore& store)
