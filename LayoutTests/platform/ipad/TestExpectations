@@ -117,3 +117,15 @@ webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-tra
 webkit.org/b/231616 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Pass Failure Timeout ]
 
 webkit.org/b/231640 [ Debug ] webrtc/video-mute.html [ Pass Timeout ]
+
+# These fail due to color space issues in the specific iPad simulator used <rdar://84527732>
+webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
+webkit.org/b/292090 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
+webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
+webkit.org/b/292090 media/video-canvas-createPattern.html [ Failure ]
+
+# Failure only on iPad simulator
+webkit.org/b/178588 fast/css/button-height.html [ Failure ]
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]

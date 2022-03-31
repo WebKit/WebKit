@@ -1,3 +1,15 @@
+2022-03-31  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed test gardening.
+
+        We had some confusing test expectations as a result of iPad-unique failures. Move those failures into
+        ipad/TestExpectations and leave ios* TestExpectation clear.
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations: Additional test progressions.
+        * platform/ipad/TestExpectations:
+        * platform/mac-wk2/TestExpectations: Be more specific in related test failures on Mac.
+
 2022-03-31  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Support Container Queries in the Styles sidebar

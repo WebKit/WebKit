@@ -1262,7 +1262,6 @@ webkit.org/b/178588 fast/css/active-display-none.html [ Failure ]
 webkit.org/b/178588 fast/css/image-orientation/image-orientation.html [ Failure ]
 webkit.org/b/178588 fast/css/image-resolution/image-resolution.html [ Failure ]
 webkit.org/b/178588 fast/css/line-height-determined-by-primary-font.html [ Failure ]
-webkit.org/b/178588 fast/css/square-button-appearance.html [ Failure ]
 webkit.org/b/178588 fast/css/unknown-pseudo-element-matching.html [ Failure ]
 webkit.org/b/178588 css3/background/background-repeat-round-padding.html [ ImageOnlyFailure ]
 webkit.org/b/178588 css3/blending/blend-mode-body-child-isolate-html-background-color.html [ ImageOnlyFailure ]
@@ -3282,8 +3281,6 @@ webkit.org/b/221486 imported/w3c/web-platform-tests/shadow-dom/nested-slot-remov
 webkit.org/b/221466 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys.html [ Skip ]
 webkit.org/b/221465 imported/w3c/web-platform-tests/uievents/keyboard/modifier-keys-combinations.html [ Skip ]
 
-webkit.org/b/222840 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
-
 # iOS15 supports this emoji.
 fast/text/mending-heart.html [ Pass ]
 
@@ -3479,10 +3476,6 @@ webkit.org/b/236904 imported/mozilla/svg/path-02.svg [ ImageOnlyFailure ]
 # Incorrect upstream, but seem to pass on the bots, possibly with a broken baseline.
 css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
 
-# Failure only on iPad simulator
-webkit.org/b/178588 fast/css/button-height.html [ Failure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]
-
 # Passing only on iOS
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
@@ -3533,6 +3526,7 @@ imported/w3c/web-platform-tests/css/mediaqueries/viewport-script-dynamic.html [ 
 imported/w3c/web-platform-tests/html/rendering/bindings/the-select-element-0/option-label.html [ Pass ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/form-controls/select-sizing-001.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-modify-scrolling-attr-to-yes.html [ Pass ]
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ Pass ]
 
 webkit.org/b/237694 [ Debug ] webgl/1.0.3/conformance/uniforms/uniform-samplers-test.html [ Timeout Pass ]
 
