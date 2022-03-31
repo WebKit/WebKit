@@ -6,7 +6,7 @@
  redistribute this Apple software.
  
  In consideration of your agreement to abide by the following terms, and subject to these 
- terms, Apple grants you a personal, non-exclusive license, under AppleÕs copyrights in 
+ terms, Apple grants you a personal, non-exclusive license, under Appleï¿½s copyrights in 
  this original Apple software (the "Apple Software"), to use, reproduce, modify and 
  redistribute the Apple Software, with or without modifications, in source and/or binary 
  forms; provided that if you redistribute the Apple Software in its entirety and without 
@@ -102,8 +102,7 @@ void NP_Shutdown(void)
 // For compatibility with CFM browsers.
 int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown)
 {
-    browser = malloc(sizeof(NPNetscapeFuncs));
-    bzero(browser, sizeof(NPNetscapeFuncs));
+    browser = calloc(1, sizeof(NPNetscapeFuncs));
     
     browser->size = browserFuncs->size;
     browser->version = browserFuncs->version;

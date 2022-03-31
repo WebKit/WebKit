@@ -47,7 +47,7 @@ void benchmark_balloon(CommandLine&)
 
     for (size_t i = 0; i < balloon.size(); ++i) {
         balloon[i] = mbmalloc(chunkSize);
-        bzero(balloon[i], chunkSize);
+        memset(balloon[i], 0, chunkSize);
     }
 
     for (size_t i = 0; i < balloon.size(); ++i)
@@ -66,7 +66,7 @@ void benchmark_balloon(CommandLine&)
         && std::chrono::steady_clock::now() - start < 8 * benchmarkTime) {
         for (size_t i = 0; i < steady.size(); ++i) {
             steady[i] = mbmalloc(chunkSize);
-            bzero(steady[i], chunkSize);
+            memset(steady[i], 0, chunkSize);
         }
 
         for (size_t i = 0; i < steady.size(); ++i)

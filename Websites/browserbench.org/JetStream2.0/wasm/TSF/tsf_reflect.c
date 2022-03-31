@@ -96,7 +96,7 @@ tsf_reflect_t *tsf_reflect_create(tsf_type_t *type) {
                           "tsf_reflect_create()");
             return NULL;
         }
-        bzero(ret->u.c.array, sizeof(tsf_reflect_t*) * ret->u.c.size);
+        memset(ret->u.c.array, 0, sizeof(tsf_reflect_t*) * ret->u.c.size);
         break;
     case TSF_TK_CHOICE:
         ret->u.h.choice = UINT32_MAX;
@@ -308,7 +308,7 @@ tsf_reflect_t *tsf_reflect_clone(tsf_reflect_t *data) {
         
         /* set the elements of the array to NULL so that destroy
          * works. */
-        bzero(ret->u.c.array,
+        memset(ret->u.c.array, 0,
               sizeof(tsf_reflect_t*) * ret->u.c.size);
         
         for (i = 0; i < ret->u.c.size; ++i) {

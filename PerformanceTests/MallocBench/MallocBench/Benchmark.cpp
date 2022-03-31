@@ -112,7 +112,7 @@ static void*** allocateHeap(size_t heapSize, size_t chunkSize, size_t objectSize
         chunks[i] = (void**)mbmalloc(objectCount * sizeof(void*));
         for (size_t j = 0; j < objectCount; ++j) {
             chunks[i][j] = (void*)mbmalloc(objectSize);
-            bzero(chunks[i][j], objectSize);
+            memset(chunks[i][j], 0, objectSize);
         }
     }
     return chunks;

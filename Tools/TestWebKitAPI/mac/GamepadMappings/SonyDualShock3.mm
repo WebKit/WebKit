@@ -132,7 +132,7 @@ const char* Dualshock3Name = "Virtual Dualshock3";
 static void publishReportCallback(Vector<float>& buttonValues, Vector<float>& axisValues, HIDUserDevice *userDevice)
 {
     uint8_t reportData[Dualshock3ReportSize];
-    bzero(reportData, Dualshock3ReportSize);
+    memset(reportData, 0, Dualshock3ReportSize);
     size_t reportIndex = 0;
 
     // Report ID

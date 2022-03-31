@@ -3033,7 +3033,7 @@ static inline IMP getMethod(id o, SEL s)
     id delegate = _private->resourceProgressDelegate;
 
     if (!delegate) {
-        bzero(cache, sizeof(WebResourceDelegateImplementationCache));
+        memset(cache, 0, sizeof(WebResourceDelegateImplementationCache));
         return;
     }
 
@@ -3073,7 +3073,7 @@ static inline IMP getMethod(id o, SEL s)
     id delegate = _private->frameLoadDelegate;
 
     if (!delegate) {
-        bzero(cache, sizeof(WebFrameLoadDelegateImplementationCache));
+        memset(cache, 0, sizeof(WebFrameLoadDelegateImplementationCache));
         return;
     }
 
@@ -3136,7 +3136,7 @@ static inline IMP getMethod(id o, SEL s)
     id delegate = _private->scriptDebugDelegate;
 
     if (!delegate) {
-        bzero(cache, sizeof(WebScriptDebugDelegateImplementationCache));
+        memset(cache, 0, sizeof(WebScriptDebugDelegateImplementationCache));
         return;
     }
 
@@ -3165,7 +3165,7 @@ static inline IMP getMethod(id o, SEL s)
     id delegate = _private->historyDelegate;
 
     if (!delegate) {
-        bzero(cache, sizeof(WebHistoryDelegateImplementationCache));
+        memset(cache, 0, sizeof(WebHistoryDelegateImplementationCache));
         return;
     }
 

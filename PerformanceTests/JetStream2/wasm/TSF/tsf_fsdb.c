@@ -190,7 +190,7 @@ static tsf_fsdb_connection_t *create_first_connection(tsf_fsdb_t *fsdb,
     struct addrinfo *result,*cur;
     char buf[32];
     
-    bzero(&hints,sizeof(hints));
+    memset (&hints,0,sizeof(hints));
     hints.ai_family=AF_INET;
     hints.ai_socktype=SOCK_STREAM;
     
@@ -234,7 +234,7 @@ static tsf_fsdb_connection_t *create_first_connection(tsf_fsdb_t *fsdb,
             struct sockaddr_in addr;
             socklen_t slen=sizeof(addr);
             
-            bzero(&addr,slen);
+            memset(&addr,0,slen);
             addr.sin_family=AF_INET;
             addr.sin_port=htons(port);
             addr.sin_addr.s_addr=*(struct in_addr*)(hp->h_addr_list[i]);
@@ -277,7 +277,7 @@ static tsf_fsdb_connection_t *create_connection(tsf_fsdb_t *fsdb) {
     struct sockaddr_in addr;
     socklen_t slen=sizeof(addr);
     
-    bzero(&addr,slen);
+    memset(&addr,0,slen);
     addr.sin_family=AF_INET;
     addr.sin_port=htons(fsdb->u.remote.port);
     addr.sin_addr.s_addr=*(struct in_addr*)(&fsdb->u.remote.addr);
@@ -590,7 +590,7 @@ tsf_fsdb_t *tsf_fsdb_open_local(const char *dirname,
     
     free(marker_flnm);
     
-    bzero(buf,sizeof(buf));
+    memset(buf,0,sizeof(buf));
     fgets(buf,sizeof(buf),fin);
     
     fclose(fin);

@@ -150,7 +150,7 @@ const char* StadiaName = "Virtual Stadia";
 static void publishReportCallback(Vector<float>& buttonValues, Vector<float>& axisValues, HIDUserDevice *userDevice)
 {
     uint8_t reportData[StadiaReportSize];
-    bzero(reportData, StadiaReportSize);
+    memset(reportData, 0, StadiaReportSize);
     size_t reportIndex = 0;
 
     // Report ID (Normal input report is #3)

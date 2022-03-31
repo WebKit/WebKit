@@ -237,7 +237,7 @@ void Interpreter::doMallocOp(Op op, ThreadId)
         case op_malloc: {
             m_objects[op.slot] = { mbmalloc(op.size), op.size };
             assert(m_objects[op.slot].object);
-            bzero(m_objects[op.slot].object, op.size);
+            memset(m_objects[op.slot].object, 0, op.size);
             break;
         }
         case op_free: {
@@ -257,7 +257,7 @@ void Interpreter::doMallocOp(Op op, ThreadId)
             size_t alignment = compute2toPower(op.alignLog2);
             m_objects[op.slot] = { mbmemalign(alignment, op.size), op.size };
             assert(m_objects[op.slot].object);
-            bzero(m_objects[op.slot].object, op.size);
+            memset(m_objects[op.slot].object, 0, op.size);
             break;
         }
         default: {

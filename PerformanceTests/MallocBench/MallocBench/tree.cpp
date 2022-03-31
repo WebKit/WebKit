@@ -55,7 +55,7 @@ struct Node {
             m_left->ref();
         if (m_right)
             m_right->ref();
-        bzero(m_payload, payloadSize);
+        memset(m_payload, 0, payloadSize);
     }
 
     ~Node()
