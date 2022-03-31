@@ -1,3 +1,19 @@
+2022-03-31  Alan Bujtas  <zalan@apple.com>
+
+        [CSS contain] Containment disables the special handling of the HTML body element for overflow viewport propagation [part2]
+        https://bugs.webkit.org/show_bug.cgi?id=238572
+
+        Reviewed by Simon Fraser.
+
+        While neither the overflow(1) nor the css containment(2) specs are explicit about disabling the propagation of non-visible overflow to the viewport
+        when the <html> has containment, this behavior makes sense (and also see https://github.com/w3c/csswg-drafts/issues/7184).
+
+        (1) https://www.w3.org/TR/css-overflow-3/#overflow-propagation
+        (2) https://www.w3.org/TR/css-contain-1/#contain-property
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateFromStyle):
+
 2022-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Remove EXPERIMENTAL_FEATURES flag use on Cocoa platforms
