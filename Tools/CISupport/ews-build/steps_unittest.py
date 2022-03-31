@@ -49,14 +49,14 @@ from steps import (AddReviewerToCommitMessage, AddReviewerToChangeLog, AnalyzeAP
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitHub, GitResetHard,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
-                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunWebKitPerlTests,
+                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree, RunWebKitTestsRepeatFailuresWithoutChangeRedTree,
                    RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, ShowIdentifier,
-                   Trigger, TransferToS3, UnApplyPatch, UpdateWorkingDirectory, UploadBuiltProduct,
+                   Trigger, TransferToS3, UnApplyPatch, UpdatePullRequest, UpdateWorkingDirectory, UploadBuiltProduct,
                    UploadTestResults, ValidateCommitMessage, ValidateChangeLogAndReviewer, ValidateCommitterAndReviewer, ValidateChange,
                    VerifyGitHubIntegrity, ValidateSquashed)
 
@@ -6040,6 +6040,167 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to canonicalize commit')
         return self.runStep()
+
+
+class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_skipped_patch(self):
+        self.setupStep(PushPullRequestBranch())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='No pull request branch to push to')
+        return self.runStep()
+
+    def test_success(self):
+        GitHub.credentials = lambda: ('webkit-commit-queue', 'password')
+        self.setupStep(PushPullRequestBranch())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=300,
+                        env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
+                        command=['git', 'push', 'Contributor', 'eng/pull-request-branch', '-f'])
+            + 0
+            + ExpectShell.log('stdio', stdout='To https://github.com/Contributor/WebKit.git\n37b7da95723b...9e2cb83b07b6 eng/pull-request-branch -> eng/pull-request-branch (forced update)\n'),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Pushed to pull request branch')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
+
+    def test_failure(self):
+        GitHub.credentials = lambda: ('webkit-commit-queue', 'password')
+        self.setupStep(PushPullRequestBranch())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=300,
+                        env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
+                        command=['git', 'push', 'Contributor', 'eng/pull-request-branch', '-f'])
+            + 1
+            + ExpectShell.log('stdio', stdout="fatal: could not read Username for 'https://github.com': Device not configured\n"),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to push to pull request branch')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
+
+
+class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_skipped_patch(self):
+        self.setupStep(UpdatePullRequest())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='No pull request to update')
+        return self.runStep()
+
+    def test_success(self):
+        def update_pr(x, pr_number, title, description, repository_url=None):
+            self.assertEqual(pr_number, '1234')
+            self.assertEqual(title, '[Merge-Queue] Add http credential helper')
+
+            self.assertEqual(
+                description,
+                '''#### 44a3b7100bd5dba51c57d874d3e89f89081e7886
+<pre>
+[Merge-Queue] Add http credential helper
+<a href="https://bugs.webkit.org/show_bug.cgi?id=238553">https://bugs.webkit.org/show_bug.cgi?id=238553</a>
+&lt;rdar://problem/91044821 &gt;
+
+Reviewed by NOBODY (OOPS!).
+
+* Tools/CISupport/ews-build/steps.py:
+(CheckOutPullRequest.run): Add credential helper that pulls http credentials
+from environment variables.
+* Tools/CISupport/ews-build/steps_unittest.py:
+
+Canonical link: <a href="https://commits.webkit.org/249006@main">https://commits.webkit.org/249006@main</a>
+</pre>
+''',
+            )
+
+            return True
+
+        UpdatePullRequest.update_pr = update_pr
+        self.setupStep(UpdatePullRequest())
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=300,
+                        command=['git', 'log', '-1', '--no-decorate'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''commit 44a3b7100bd5dba51c57d874d3e89f89081e7886
+Author: Jonathan Bedard <jbedard@apple.com>
+Date:   Tue Mar 29 16:04:35 2022 -0700
+
+    [Merge-Queue] Add http credential helper
+    https://bugs.webkit.org/show_bug.cgi?id=238553
+    <rdar://problem/91044821>
+
+    Reviewed by NOBODY (OOPS!).
+
+    * Tools/CISupport/ews-build/steps.py:
+    (CheckOutPullRequest.run): Add credential helper that pulls http credentials
+    from environment variables.
+    * Tools/CISupport/ews-build/steps_unittest.py:
+    
+    Canonical link: https://commits.webkit.org/249006@main
+'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
+
+    def test_success(self):
+        def update_pr(x, pr_number, title, description, repository_url=None):
+            return False
+
+        UpdatePullRequest.update_pr = update_pr
+        self.setupStep(UpdatePullRequest())
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=300,
+                        command=['git', 'log', '-1', '--no-decorate'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''commit 44a3b7100bd5dba51c57d874d3e89f89081e7886
+Author: Jonathan Bedard <jbedard@apple.com>
+Date:   Tue Mar 29 16:04:35 2022 -0700
+
+    [Merge-Queue] Add http credential helper
+    https://bugs.webkit.org/show_bug.cgi?id=238553
+    <rdar://problem/91044821>
+
+    Reviewed by NOBODY (OOPS!).
+
+    * Tools/CISupport/ews-build/steps.py:
+    (CheckOutPullRequest.run): Add credential helper that pulls http credentials
+    from environment variables.
+    * Tools/CISupport/ews-build/steps_unittest.py:
+    
+    Canonical link: https://commits.webkit.org/249006@main
+'''),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to update pull request')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
 
 if __name__ == '__main__':

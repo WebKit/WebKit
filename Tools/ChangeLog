@@ -1,3 +1,22 @@
+2022-03-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Update pull-request with landed content
+        https://bugs.webkit.org/show_bug.cgi?id=238554
+        <rdar://problem/91047260>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Add PushPullRequestBranch and UpdatePullRequest steps.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Ditto.
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin.comment_on_pr): Correct error message.
+        (GitHubMixin.update_pr): Update a pull request's title and description.
+        (PushPullRequestBranch): Update the pull request branch with the commit we're landing.
+        (UpdatePullRequest):  Update pull request title and description.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-03-31  Ben Nham  <nham@apple.com>
 
         Remove push subscriptions when permissions are reset

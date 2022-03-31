@@ -327,8 +327,32 @@ class GitHubMixin(object):
                 self._addToLog('stdio', f"Failed to post comment to PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
                 return False
         except Exception as e:
-            for label in labels:
-                self._addToLog('stdio', f"Error in posting comment to PR {pr_number}\n")
+            self._addToLog('stdio', f"Error in posting comment to PR {pr_number}\n")
+            return False
+        return True
+
+    def update_pr(self, pr_number, title, description, repository_url=None):
+        api_url = GitHub.api_url(repository_url)
+        if not api_url:
+            return False
+
+        update_url = f'{api_url}/pulls/{pr_number}'
+        try:
+            username, access_token = GitHub.credentials()
+            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+            response = requests.request(
+                'POST', update_url, timeout=60, auth=auth,
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(
+                    title=title,
+                    body=description,
+                ),
+            )
+            if response.status_code // 100 != 2:
+                self._addToLog('stdio', f"Failed to update PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
+                return False
+        except Exception as e:
+            self._addToLog('stdio', f"Error in updating PR {pr_number}\n")
             return False
         return True
 
@@ -4821,6 +4845,106 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
 
     def doStepIf(self, step):
         return self.getProperty('github.number', False)
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
+class PushPullRequestBranch(shell.ShellCommand):
+    name = 'push-pull-request-branch'
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(PushPullRequestBranch, self).__init__(logEnviron=False, timeout=300, **kwargs)
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        remote = self.getProperty('github.head.repo.full_name').split('/')[0]
+        head_ref = self.getProperty('github.head.ref')
+        self.command = ['git', 'push', remote, head_ref, '-f']
+
+        username, access_token = GitHub.credentials()
+        self.workerEnvironment['GIT_USER'] = username
+        self.workerEnvironment['GIT_PASSWORD'] = access_token
+
+        return super(PushPullRequestBranch, self).start()
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'No pull request branch to push to'}
+        if self.results != SUCCESS:
+            return {'step': 'Failed to push to pull request branch'}
+        return {'step': 'Pushed to pull request branch'}
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.number') and self.getProperty('github.head.ref') and self.getProperty('github.head.repo.full_name')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
+    name = 'update-pull-request'
+    haltOnFailure = True
+    command = ['git', 'log', '-1', '--no-decorate']
+    ESCAPE_TABLE = {
+        '"': '&quot;',
+        "'": '&apos;',
+        '>': ' &gt;',
+        '<': '&lt;',
+        '&': '&amp;',
+    }
+
+    @classmethod
+    def escape_html(cls, message):
+        message = ''.join(cls.ESCAPE_TABLE.get(c, c) for c in message)
+        return re.sub(r'(https?://[^\s<>,:;]+)', r'<a href="\1">\1</a>', message)
+
+    def __init__(self, **kwargs):
+        super(UpdatePullRequest, self).__init__(logEnviron=False, timeout=300, **kwargs)
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        return super(UpdatePullRequest, self).start()
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'No pull request to update'}
+        if self.results != SUCCESS:
+            return {'step': 'Failed to update pull request'}
+        return {'step': 'Updated pull request'}
+
+    def evaluateCommand(self, cmd):
+        rc = super(UpdatePullRequest, self).evaluateCommand(cmd)
+
+        loglines = self.log_observer.getStdout().splitlines()
+
+        title = loglines[4][4:].rstrip()
+        description = f'#### {loglines[0].split()[1]}\n<pre>\n'
+        for line in loglines[4:]:
+            description += self.escape_html(line[4:] + '\n')
+        description += '</pre>\n'
+
+        if not self.update_pr(
+            self.getProperty('github.number'),
+            title=title,
+            description=description,
+            repository_url=self.getProperty('repository', ''),
+        ):
+            return FAILURE
+
+        return rc
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.number')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
