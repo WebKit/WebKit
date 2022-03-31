@@ -1,3 +1,32 @@
+2022-03-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Split streaming of AX trees from the class AXLogger.
+        https://bugs.webkit.org/show_bug.cgi?id=238550
+        <rdar://problem/91041921>
+
+        Reviewed by Chris Fleizach.
+
+        AXLogger functionality is debug only. We need to stream the content of
+        the AX trees both in debug and release builds. This patch splits
+        streaming of the AX trees from the AXLogger class, which remains a debug
+        only utility.
+        In addition, added a mechanism to control what is streamed via the
+        AXStreamOptions enumeration.
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::shouldLog):
+        (WebCore::operator<<):
+        (WebCore::streamIsolatedSubtreeOnMainThread):
+        Streams a snapshot of the hierarchy of AXIsolatedObjects on the main
+        thread, limiting the properties of the AXIsolatedObject that can be
+        accessed using AXStreamOptions.
+
+        (WebCore::streamAXCoreObject):
+        (WebCore::streamSubtree):
+        (WebCore::AXLogger::add): Replaced with streamSubtree.
+        * accessibility/AXLogger.h:
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+
 2022-03-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Ensure correct isAppInitiated state when creating URLRequests from URL 

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if !LOG_DISABLED
-
 #include "AXObjectCache.h"
 #include "AccessibilityObjectInterface.h"
 
@@ -36,6 +34,18 @@ enum class AXLoggingOptions : uint8_t {
     MainThread = 1 << 0, // Logs messages on the main thread.
     OffMainThread = 1 << 1, // Logs messages off the main thread.
 };
+
+enum class AXStreamOptions : uint8_t {
+    ObjectID = 1 << 0,
+    Role = 1 << 1,
+    ParentID = 1 << 2,
+    IdentifierAttribute = 1 << 3,
+    OuterHTML = 1 << 4,
+    DisplayContents = 1 << 5,
+    Address = 1 << 6,
+};
+
+#if !LOG_DISABLED
 
 class AXLogger {
 public:
@@ -61,11 +71,14 @@ private:
 #define AXTRACE(methodName) AXLogger axLogger(methodName)
 #define AXLOG(x) AXLogger::log(x)
 
-} // namespace WebCore
-
 #else
 
 #define AXTRACE(methodName) (void)0
 #define AXLOG(x) (void)0
 
 #endif // !LOG_DISABLED
+
+void streamAXCoreObject(TextStream&, const AXCoreObject&, const OptionSet<AXStreamOptions>&);
+void streamSubtree(TextStream&, const RefPtr<AXCoreObject>&, const OptionSet<AXStreamOptions>&);
+
+} // namespace WebCore

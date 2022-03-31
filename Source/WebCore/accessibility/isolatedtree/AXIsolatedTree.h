@@ -44,6 +44,7 @@ namespace WebCore {
 class AXIsolatedObject;
 class AXObjectCache;
 class Page;
+enum class AXStreamOptions : uint8_t;
 
 using AXIsolatedTreeID = unsigned;
 
@@ -323,6 +324,7 @@ struct AXPropertyChange {
 class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree); WTF_MAKE_FAST_ALLOCATED;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXIsolatedTree&);
+    friend void streamIsolatedSubtreeOnMainThread(TextStream&, const AXIsolatedTree&, AXID, const OptionSet<AXStreamOptions>&);
 public:
     static Ref<AXIsolatedTree> create(AXObjectCache*);
     virtual ~AXIsolatedTree();
