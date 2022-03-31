@@ -1,3 +1,16 @@
+2022-03-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash the WebContent process if the RemoteRenderingBackend::PrepareBuffersForDisplay IPC fails
+        https://bugs.webkit.org/show_bug.cgi?id=238569
+
+        Reviewed by Kimmo Kinnunen.
+
+        We can't sensibly recover from RemoteRenderingBackend::PrepareBuffersForDisplay IPC failing,
+        which can happen when the GPU process crashes, so just crash the WebContent process.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::prepareBuffersForDisplay):
+
 2022-03-30  Sihui Liu  <sihui_liu@apple.com>
 
         Regression: WebsiteDataStore fails to read experimental feature values from NSUserDefaults
