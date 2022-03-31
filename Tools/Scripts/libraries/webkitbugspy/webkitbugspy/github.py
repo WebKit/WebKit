@@ -138,7 +138,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         if authenticated is False:
             auth = None
         if authenticated and not auth:
-            raise self.Exception('Request requires authentication, none provided')
+            raise RuntimeError('Request requires authentication, none provided')
 
         params = {key: value for key, value in params.items()} if params else dict()
         params['per_page'] = params.get('per_page', 100)
@@ -167,8 +167,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             params['page'] += 1
             response = requests.get(url, params=params, headers=headers, auth=auth)
             if response.status_code != 200:
-                raise self.Exception(
-                    "Failed to assemble pagination requests for '{}', failed on page {}".format(url, params['page']))
+                raise OSError("Failed to assemble pagination requests for '{}', failed on page {}".format(url, params['page']))
             result += response.json()
         return result
 
@@ -206,8 +205,9 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
     def populate(self, issue, member=None):
         issue._link = '{}/issues/{}'.format(self.url, issue.id)
+        issue._project = self.name
 
-        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'description'):
+        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'description', 'project', 'component', 'version', 'labels'):
             response = self.request(path='issues/{}'.format(issue.id))
             if response:
                 issue._title = response['title']
@@ -216,6 +216,16 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                 issue._description = response['body']
                 issue._opened = response['state'] != 'closed'
                 issue._assignee = self.user(username=response['assignee']['login']) if response.get('assignee') else None
+
+                issue._labels = []
+                for label in response.get('labels', []):
+                    if not label.get('name'):
+                        continue
+                    issue._labels.append(label['name'])
+                    if self.component_color and label.get('color') == self.component_color:
+                        issue._component = label['name']
+                    if self.version_color and label.get('color') == self.version_color:
+                        issue._version = label['name']
             else:
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
 
@@ -295,7 +305,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, labels=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -310,6 +320,65 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         if opened is not None:
             issue._opened = bool(opened)
             update_dict['state'] = 'open' if issue._opened else 'closed'
+
+        if project or component or version:
+            if not self.projects:
+                raise ValueError("No components are defined for '{}'".format(self.url))
+            project = project or self.name
+            if project != self.name:
+                raise ValueError("Project should be '{}' not '{}'".format(self.name, project))
+
+            components = sorted(self.projects.get(project, {}).get('components', {}).keys())
+            if not component and len(components) == 1:
+                component = components[0]
+            if component and component not in components:
+                raise ValueError("'{}' is not a recognized component of '{}'".format(component, project))
+
+            versions = self.projects.get(project, {}).get('versions', [])
+            if not version and len(versions) == 1:
+                version = versions[0]
+            if version and version not in versions:
+                raise ValueError("'{}' is not a recognized version of '{}'".format(version, project))
+
+            labels = (labels or issue.labels)
+            index = 0
+            while index < len(labels):
+                label = labels[index]
+                color = self.labels.get(label, {}).get('color')
+                if color and component and color == self.component_color:
+                    labels.pop(index)
+                elif color and version and color == self.version_color:
+                    labels.pop(index)
+                else:
+                    index += 1
+            if component:
+                labels.append(component)
+            if version:
+                labels.append(version)
+
+        if labels:
+            for label in labels:
+                if not self.labels.get(label):
+                    raise ValueError("'{}' is not a label for '{}'".format(label, self.url))
+            response = requests.put(
+                '{api_url}/repos/{owner}/{name}/issues/{id}/labels'.format(
+                    api_url=self.api_url,
+                    owner=self.owner,
+                    name=self.name,
+                    id=issue.id,
+                ), auth=HTTPBasicAuth(*self.credentials(required=True)),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(labels=labels),
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write("Failed to modify '{}'\n".format(issue))
+                sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
+                if not update_dict:
+                    return None
+            elif project and component and version:
+                issue._project = project
+                issue._component = component
+                issue._version = version
 
         if update_dict:
             update_dict['number'] = [issue.id]

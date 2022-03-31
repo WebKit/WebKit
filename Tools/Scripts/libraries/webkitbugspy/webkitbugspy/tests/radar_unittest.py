@@ -270,6 +270,10 @@ class TestRadar(unittest.TestCase):
                 dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
             )
 
+            self.assertEqual(created.project, 'WebKit')
+            self.assertEqual(created.component, 'Tables')
+            self.assertEqual(created.version, 'Other')
+
     def test_create_prompt(self):
         with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS), \
             wkmocks.Terminal.input('2', '4', '4'), OutputCapture() as captured:
@@ -287,6 +291,10 @@ class TestRadar(unittest.TestCase):
                 User.Encoder().default(created.assignee),
                 dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
             )
+
+            self.assertEqual(created.project, 'WebKit')
+            self.assertEqual(created.component, 'Text')
+            self.assertEqual(created.version, 'WebKit Local Build')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -308,3 +316,24 @@ What version of 'WebKit Text' should the bug be associated with?:
 : 
 ''',
         )
+
+    def test_get_component(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            issue = radar.Tracker(project='WebKit').issue(1)
+            self.assertEqual(issue.project, 'WebKit')
+            self.assertEqual(issue.component, 'Text')
+            self.assertEqual(issue.version, 'Other')
+
+    def test_set_component(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            radar.Tracker(project='WebKit').issue(1).set_component(component='Tables', version='Safari 15')
+
+            issue = radar.Tracker(project='WebKit').issue(1)
+            self.assertEqual(issue.project, 'WebKit')
+            self.assertEqual(issue.component, 'Tables')
+            self.assertEqual(issue.version, 'Safari 15')
+
+    def test_labels(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES):
+            issue = radar.Tracker().issue(1)
+            self.assertEqual(issue.labels, [])

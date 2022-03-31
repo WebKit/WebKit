@@ -309,6 +309,10 @@ class TestBugzilla(unittest.TestCase):
                 dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
             )
 
+            self.assertEqual(created.project, 'WebKit')
+            self.assertEqual(created.component, 'Tables')
+            self.assertEqual(created.version, 'Other')
+
     def test_create_prompt(self):
         with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
                 BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
@@ -327,6 +331,10 @@ class TestBugzilla(unittest.TestCase):
                 User.Encoder().default(created.assignee),
                 dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
             )
+
+            self.assertEqual(created.project, 'WebKit')
+            self.assertEqual(created.component, 'SVG')
+            self.assertEqual(created.version, 'Safari 15')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -348,3 +356,27 @@ What version of 'WebKit' should the bug be associated with?:
 : 
 ''',
         )
+
+    def test_get_component(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertEqual(issue.project, 'WebKit')
+            self.assertEqual(issue.component, 'Text')
+            self.assertEqual(issue.version, 'Other')
+
+    def test_set_component(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
+            bugzilla.Tracker(self.URL).issue(1).set_component(project='WebKit', component='Tables', version='Safari 15')
+
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertEqual(issue.project, 'WebKit')
+            self.assertEqual(issue.component, 'Tables')
+            self.assertEqual(issue.version, 'Safari 15')
+
+    def test_labels(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            issue = bugzilla.Tracker(self.URL).issue(1)
+            self.assertEqual(issue.labels, [])

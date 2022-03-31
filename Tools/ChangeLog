@@ -1,3 +1,59 @@
+2022-03-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Get and set issue component data
+        https://bugs.webkit.org/show_bug.cgi?id=238514
+        <rdar://problem/90994542>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/bugzilla.py:
+        (Tracker.populate): Populate project, component and version.
+        (Tracker.set): Set project, component and version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker.request): github.Tracker has no Exception member. Use RuntimeError instead.
+        (Tracker.populate): Populate labels and then extract component and version.
+        (Tracker.set): Set labels associated with components and versions.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/issue.py:
+        (Issue.__init__): Set _labels, _project, _component and _version values.
+        (Issue.labels): Populate and return labels.
+        (Issue.set_labels): Set labels associated with issue.
+        (Issue.project): Populate and return project.
+        (Issue.component): Populate and return component.
+        (Issue.version): Populate and return version.
+        (Issue.set_component): Set the project, component and version of an issue.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/bugzilla.py:
+        (Bugzilla._issue): Mock setting and returning project, component and version.
+        (Bugzilla._create): Populate project, component and version on creation.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/data.py: Set values for
+        project, component and version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/github.py:
+        (GitHub._labels_for_issue): Given an issue, return a list of labels. Take into
+        consideration component and version.
+        (GitHub._issue): Mock label editing and returning.
+        (GitHub._create): Ditto.
+        (GitHub.request): Support request to update labels.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/radar.py:
+        (RadarModel.__init__): Set component.
+        (RadarModel.commit_changes): Commit component changes.
+        (RadarClient.find_components): Implement version filter.
+        (RadarClient.create_radar): Create radar with component details.
+        (Radar.Component.get): Implement dict-like API.
+        (Radar.Component.__getitem__): Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/radar.py:
+        (Tracker.populate): Get project, component and version.
+        (Tracker.set): Set component information.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/bugzilla_unittest.py:
+        (TestBugzilla.test_create):
+        (TestBugzilla.test_create_prompt):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/github_unittest.py:
+        (TestGitHub.test_projects):
+        (TestGitHub.test_create_projects):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/radar_unittest.py:
+        (TestRadar.test_create):
+        (TestRadar.test_create_prompt):
+
 2022-03-30  Sihui Liu  <sihui_liu@apple.com>
 
         Remove -[WKWebsiteDataStore _indexedDBDatabaseDirectory]

@@ -268,7 +268,6 @@ class TestGitHub(unittest.TestCase):
             self.assertDictEqual(github.Tracker(self.URL).labels, mocked.DEFAULT_LABELS)
 
     def test_projects(self):
-        self.maxDiff = None
         with mocks.GitHub(self.URL.split('://')[1], projects=mocks.PROJECTS):
             self.assertDictEqual(
                 dict(
@@ -337,6 +336,10 @@ class TestGitHub(unittest.TestCase):
                 dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
             )
 
+            self.assertEqual(created.project, 'WebKit')
+            self.assertEqual(created.component, 'SVG')
+            self.assertEqual(created.version, 'Other')
+
         self.assertEqual(
             captured.stdout.getvalue(),
             '''What component in 'WebKit' should the bug be associated with?:
@@ -356,3 +359,27 @@ What version of 'WebKit' should the bug be associated with?:
 : 
 ''',
         )
+
+    def test_get_component(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            issue = github.Tracker(self.URL).issue(1)
+            self.assertEqual(issue.project, 'WebKit')
+            self.assertEqual(issue.component, 'Text')
+            self.assertEqual(issue.version, 'Other')
+
+    def test_set_component(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS, environment=wkmocks.Environment(
+            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+            GITHUB_EXAMPLE_COM_TOKEN='token',
+        )):
+            github.Tracker(self.URL).issue(1).set_component(component='Tables', version='Safari 15')
+
+            issue = github.Tracker(self.URL).issue(1)
+            self.assertEqual(issue.project, 'WebKit')
+            self.assertEqual(issue.component, 'Tables')
+            self.assertEqual(issue.version, 'Safari 15')
+
+    def test_issue_label(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            issue = github.Tracker(self.URL).issue(1)
+            self.assertEqual(issue.labels, ['Other', 'Text'])
