@@ -1,3 +1,48 @@
+2022-03-31  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291983. rdar://problem/90706660
+
+    Accessing WebGL content crashes in macOS Recovery OS, workaround 2
+    https://bugs.webkit.org/show_bug.cgi?id=238448
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-03-28
+    Reviewed by Dean Jackson.
+    
+    Add a two new quick workarounds to try fix a recovery OS crash when
+    WebKit tries to use ANGLE that is not present in the OS image.
+    Compare explicitly against NULL as instructed in weak linking documentation.
+    Check for the EGL_GetPlatformDisplayEXT, this is nullptr in the
+    recovery OS.
+    
+    Remove the previous workaround. The environment variable is
+    not available in WP or GPUP. The Metal symbol is not the problem.
+    
+    * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+    (WebCore::platformSupportsMetal):
+    (WebCore::initializeEGLDisplay):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291983 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Accessing WebGL content crashes in macOS Recovery OS, workaround 2
+            https://bugs.webkit.org/show_bug.cgi?id=238448
+
+            Reviewed by Dean Jackson.
+
+            Add a two new quick workarounds to try fix a recovery OS crash when
+            WebKit tries to use ANGLE that is not present in the OS image.
+            Compare explicitly against NULL as instructed in weak linking documentation.
+            Check for the EGL_GetPlatformDisplayEXT, this is nullptr in the
+            recovery OS.
+
+            Remove the previous workaround. The environment variable is
+            not available in WP or GPUP. The Metal symbol is not the problem.
+
+            * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+            (WebCore::platformSupportsMetal):
+            (WebCore::initializeEGLDisplay):
+
 2022-03-29  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r292042. rdar://problem/90999175

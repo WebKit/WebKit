@@ -40,7 +40,7 @@ bool platformIsANGLEAvailable()
 {
     // The ANGLE is weak linked in full, and the EGL_Initialize is explicitly weak linked above
     // so that we can detect the case where ANGLE is not present.
-    return !!EGL_Initialize;
+    return EGL_Initialize != NULL; // NOLINT
 }
 
 void* createPbufferAndAttachIOSurface(GCGLDisplay display, GCGLConfig config, GCGLenum target, GCGLint usageHint, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
