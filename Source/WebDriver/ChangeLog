@@ -1,3 +1,18 @@
+2022-03-31  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=238615
+
+        Reviewed by Alex Christensen.
+
+        Fix compilation errors due to interface changes. Load up JSC when its built as a shared
+        library.
+
+        * playstation/WebDriverServicePlayStation.cpp:
+        (WebDriver::WebDriverService::platformInit):
+        (WebDriver::WebDriverService::platformValidateCapability const):
+        (WebDriver::WebDriverService::platformMatchCapability const):
+
 2022-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add a javascript atom to get the visible text
