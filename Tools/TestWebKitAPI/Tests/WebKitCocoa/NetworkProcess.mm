@@ -93,7 +93,7 @@ TEST(NetworkProcess, LaunchOnlyWhenNecessary)
 
     @autoreleasepool {
         auto webView = adoptNS([WKWebView new]);
-        websiteDataStore = adoptNS([webView configuration].websiteDataStore);
+        websiteDataStore = [webView configuration].websiteDataStore;
         [websiteDataStore _setResourceLoadStatisticsEnabled:YES];
         [[webView configuration].processPool _registerURLSchemeAsSecure:@"test"];
         [[webView configuration].processPool _registerURLSchemeAsBypassingContentSecurityPolicy:@"test"];

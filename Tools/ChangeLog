@@ -1,3 +1,16 @@
+2022-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Drop bad adoptNS() in NetworkProcess.LaunchOnlyWhenNecessary
+        https://bugs.webkit.org/show_bug.cgi?id=238583
+
+        Reviewed by Anders Carlsson.
+
+        Drop bad adoptNS() in NetworkProcess.LaunchOnlyWhenNecessary. It is incorrect as the
+        WKWebViewConfiguration.websiteDataStore getter is not ref'ing the store for us.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+
 2022-03-30  Sihui Liu  <sihui_liu@apple.com>
 
         Regression: WebsiteDataStore fails to read experimental feature values from NSUserDefaults
