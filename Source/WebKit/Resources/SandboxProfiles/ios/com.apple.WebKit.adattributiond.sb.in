@@ -91,6 +91,8 @@
 (allow sysctl-read
     (sysctl-name
         "hw.activecpu"
+        "hw.osenvironment"
+        "hw.target"
         "hw.machine"
         "hw.memsize"
         "hw.ncpu"
@@ -107,6 +109,14 @@
         "kern.version"
         "vm.footprint_suspend")
     (sysctl-name-prefix "kern.proc.pid.")
+)
+
+(with-filter (system-attribute apple-internal)
+    (allow sysctl-read sysctl-write
+        (sysctl-name
+            "vm.footprint_suspend"
+        )
+    )
 )
 
 (allow-read-write-directory-contents (param "DARWIN_USER_CACHE_DIR"))
@@ -134,6 +144,10 @@
 ;; <rdar://problem/10642881>
 (allow file-read*
        (literal "/private/var/preferences/com.apple.networkd.plist"))
+
+;; Note this does not allow subpaths of "/"
+(allow file-read* file-test-existence
+       (literal "/"))
 
 (allow file-read-data
     (literal "/System/Library/CoreServices/SystemVersion.plist")

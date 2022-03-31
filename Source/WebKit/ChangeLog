@@ -1,3 +1,13 @@
+2022-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Expand adattributiond sandbox slightly to avoid sandbox crashes
+        https://bugs.webkit.org/show_bug.cgi?id=238609
+        <rdar://91073280>
+
+        Reviewed by Per Arne Vollan.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb.in:
+
 2022-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WK2] fast/events/wheel/wheelevent-basic.html is timing out
