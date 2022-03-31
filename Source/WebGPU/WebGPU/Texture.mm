@@ -1439,6 +1439,164 @@ static std::optional<MTLPixelFormat> pixelFormat(WGPUTextureFormat textureFormat
     }
 }
 
+uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
+{
+    // For depth-stencil textures, the input value to this function
+    // needs to be the output of aspectSpecificFormat().
+    ASSERT(!containsDepthAspect(format) || !containsStencilAspect(format));
+    switch (format) {
+    case WGPUTextureFormat_R8Unorm:
+    case WGPUTextureFormat_R8Snorm:
+    case WGPUTextureFormat_R8Uint:
+    case WGPUTextureFormat_R8Sint:
+        return 1;
+    case WGPUTextureFormat_R16Uint:
+    case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R16Float:
+    case WGPUTextureFormat_RG8Unorm:
+    case WGPUTextureFormat_RG8Snorm:
+    case WGPUTextureFormat_RG8Uint:
+    case WGPUTextureFormat_RG8Sint:
+        return 2;
+    case WGPUTextureFormat_R32Float:
+    case WGPUTextureFormat_R32Uint:
+    case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Uint:
+    case WGPUTextureFormat_RG16Sint:
+    case WGPUTextureFormat_RG16Float:
+    case WGPUTextureFormat_RGBA8Unorm:
+    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WGPUTextureFormat_RGBA8Snorm:
+    case WGPUTextureFormat_RGBA8Uint:
+    case WGPUTextureFormat_RGBA8Sint:
+    case WGPUTextureFormat_BGRA8Unorm:
+    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WGPUTextureFormat_RGB10A2Unorm:
+    case WGPUTextureFormat_RG11B10Ufloat:
+    case WGPUTextureFormat_RGB9E5Ufloat:
+        return 4;
+    case WGPUTextureFormat_RG32Float:
+    case WGPUTextureFormat_RG32Uint:
+    case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA16Uint:
+    case WGPUTextureFormat_RGBA16Sint:
+    case WGPUTextureFormat_RGBA16Float:
+        return 8;
+    case WGPUTextureFormat_RGBA32Float:
+    case WGPUTextureFormat_RGBA32Uint:
+    case WGPUTextureFormat_RGBA32Sint:
+        return 16;
+    case WGPUTextureFormat_Stencil8:
+        return 1;
+    case WGPUTextureFormat_Depth16Unorm:
+        return 2;
+    case WGPUTextureFormat_Depth24Plus:
+        ASSERT(pixelFormat(format) == MTLPixelFormatDepth32Float);
+        return 4;
+    case WGPUTextureFormat_Depth24PlusStencil8:
+        ASSERT_NOT_REACHED();
+        return 0;
+    case WGPUTextureFormat_Depth24UnormStencil8:
+        ASSERT_NOT_REACHED();
+        return 0;
+    case WGPUTextureFormat_Depth32Float:
+        return 4;
+    case WGPUTextureFormat_Depth32FloatStencil8:
+        ASSERT_NOT_REACHED();
+        return 0;
+    case WGPUTextureFormat_BC1RGBAUnorm:
+    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+        return 8;
+    case WGPUTextureFormat_BC2RGBAUnorm:
+    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+        return 8;
+    case WGPUTextureFormat_BC3RGBAUnorm:
+    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+        return 16;
+    case WGPUTextureFormat_BC4RUnorm:
+    case WGPUTextureFormat_BC4RSnorm:
+        return 8;
+    case WGPUTextureFormat_BC5RGUnorm:
+    case WGPUTextureFormat_BC5RGSnorm:
+        return 16;
+    case WGPUTextureFormat_BC6HRGBUfloat:
+    case WGPUTextureFormat_BC6HRGBFloat:
+        return 16;
+    case WGPUTextureFormat_BC7RGBAUnorm:
+    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+        return 16;
+    case WGPUTextureFormat_ETC2RGB8Unorm:
+    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
+    case WGPUTextureFormat_ETC2RGB8A1Unorm:
+    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+    case WGPUTextureFormat_ETC2RGBA8Unorm:
+    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
+        return 8;
+    case WGPUTextureFormat_EACR11Unorm:
+    case WGPUTextureFormat_EACR11Snorm:
+        return 8;
+    case WGPUTextureFormat_EACRG11Unorm:
+    case WGPUTextureFormat_EACRG11Snorm:
+        return 16;
+    case WGPUTextureFormat_ASTC4x4Unorm:
+    case WGPUTextureFormat_ASTC4x4UnormSrgb:
+    case WGPUTextureFormat_ASTC5x4Unorm:
+    case WGPUTextureFormat_ASTC5x4UnormSrgb:
+    case WGPUTextureFormat_ASTC5x5Unorm:
+    case WGPUTextureFormat_ASTC5x5UnormSrgb:
+    case WGPUTextureFormat_ASTC6x5Unorm:
+    case WGPUTextureFormat_ASTC6x5UnormSrgb:
+    case WGPUTextureFormat_ASTC6x6Unorm:
+    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+    case WGPUTextureFormat_ASTC8x5Unorm:
+    case WGPUTextureFormat_ASTC8x5UnormSrgb:
+    case WGPUTextureFormat_ASTC8x6Unorm:
+    case WGPUTextureFormat_ASTC8x6UnormSrgb:
+    case WGPUTextureFormat_ASTC8x8Unorm:
+    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+    case WGPUTextureFormat_ASTC10x5Unorm:
+    case WGPUTextureFormat_ASTC10x5UnormSrgb:
+    case WGPUTextureFormat_ASTC10x6Unorm:
+    case WGPUTextureFormat_ASTC10x6UnormSrgb:
+    case WGPUTextureFormat_ASTC10x8Unorm:
+    case WGPUTextureFormat_ASTC10x8UnormSrgb:
+    case WGPUTextureFormat_ASTC10x10Unorm:
+    case WGPUTextureFormat_ASTC10x10UnormSrgb:
+    case WGPUTextureFormat_ASTC12x10Unorm:
+    case WGPUTextureFormat_ASTC12x10UnormSrgb:
+    case WGPUTextureFormat_ASTC12x12Unorm:
+    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+        return 16;
+    case WGPUTextureFormat_Undefined:
+    case WGPUTextureFormat_Force32:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+WGPUTextureFormat Texture::aspectSpecificFormat(WGPUTextureFormat format, WGPUTextureAspect aspect)
+{
+    // https://gpuweb.github.io/gpuweb/#aspect-specific-format
+
+    switch (aspect) {
+    case WGPUTextureAspect_All:
+        return format;
+    case WGPUTextureAspect_StencilOnly: {
+        auto result = stencilSpecificFormat(format);
+        ASSERT(result);
+        return *result;
+    }
+    case WGPUTextureAspect_DepthOnly: {
+        auto result = depthSpecificFormat(format);
+        ASSERT(result);
+        return *result;
+    }
+    case WGPUTextureAspect_Force32:
+        ASSERT_NOT_REACHED();
+        return WGPUTextureFormat_Undefined;
+    }
+}
+
 static std::optional<MTLPixelFormat> depthOnlyAspectMetalFormat(WGPUTextureFormat textureFormat)
 {
     switch (textureFormat) {
@@ -2121,6 +2279,395 @@ void Texture::destroy()
 void Texture::setLabel(String&& label)
 {
     m_texture.label = label;
+}
+
+WGPUExtent3D Texture::logicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-logical-miplevel-specific-texture-extent
+
+    switch (m_descriptor.dimension) {
+    case WGPUTextureDimension_1D:
+        return {
+            // "Set extent.width to max(1, descriptor.size.width ≫ mipLevel)."
+            std::max(static_cast<uint32_t>(1), m_descriptor.size.width >> mipLevel),
+            // "Set extent.height to 1."
+            1,
+            // "Set extent.depthOrArrayLayers to descriptor.size.depthOrArrayLayers."
+            m_descriptor.size.depthOrArrayLayers };
+    case WGPUTextureDimension_2D:
+        return {
+            // "Set extent.width to max(1, descriptor.size.width ≫ mipLevel)."
+            std::max(static_cast<uint32_t>(1), m_descriptor.size.width >> mipLevel),
+            // "Set extent.height to max(1, descriptor.size.height ≫ mipLevel)."
+            std::max(static_cast<uint32_t>(1), m_descriptor.size.height >> mipLevel),
+            // "Set extent.depthOrArrayLayers to descriptor.size.depthOrArrayLayers."
+            m_descriptor.size.depthOrArrayLayers };
+    case WGPUTextureDimension_3D:
+        return {
+            // "Set extent.width to max(1, descriptor.size.width ≫ mipLevel)."
+            std::max(static_cast<uint32_t>(1), m_descriptor.size.width >> mipLevel),
+            // "Set extent.height to max(1, descriptor.size.height ≫ mipLevel)."
+            std::max(static_cast<uint32_t>(1), m_descriptor.size.height >> mipLevel),
+            // "Set extent.depthOrArrayLayers to max(1, descriptor.size.depthOrArrayLayers ≫ mipLevel)."
+            std::max(static_cast<uint32_t>(1), m_descriptor.size.depthOrArrayLayers >> mipLevel) };
+    case WGPUTextureDimension_Force32:
+        ASSERT_NOT_REACHED();
+        return WGPUExtent3D { };
+    }
+}
+
+WGPUExtent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-physical-miplevel-specific-texture-extent
+
+    // "Let logicalExtent be logical miplevel-specific texture extent(descriptor, mipLevel)."
+    auto logicalExtent = logicalMiplevelSpecificTextureExtent(mipLevel);
+
+    switch (m_descriptor.dimension) {
+    case WGPUTextureDimension_1D:
+        return {
+            // "Set extent.width to logicalExtent.width rounded up to the nearest multiple of descriptor’s texel block width."
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_descriptor.format), logicalExtent.width)),
+            // "Set extent.height to 1."
+            1,
+            // "Set extent.depthOrArrayLayers to logicalExtent.depthOrArrayLayers."
+            logicalExtent.depthOrArrayLayers };
+    case WGPUTextureDimension_2D:
+        return {
+            // "Set extent.width to logicalExtent.width rounded up to the nearest multiple of descriptor’s texel block width."
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_descriptor.format), logicalExtent.width)),
+            // "Set extent.height to logicalExtent.height rounded up to the nearest multiple of descriptor’s texel block height."
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockHeight(m_descriptor.format), logicalExtent.height)),
+            // "Set extent.depthOrArrayLayers to logicalExtent.depthOrArrayLayers."
+            logicalExtent.depthOrArrayLayers };
+    case WGPUTextureDimension_3D:
+        return {
+            // "Set extent.width to logicalExtent.width rounded up to the nearest multiple of descriptor’s texel block width."
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_descriptor.format), logicalExtent.width)),
+            // "Set extent.height to logicalExtent.height rounded up to the nearest multiple of descriptor’s texel block height."
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockHeight(m_descriptor.format), logicalExtent.height)),
+            // "Set extent.depthOrArrayLayers to logicalExtent.depthOrArrayLayers."
+            logicalExtent.depthOrArrayLayers };
+    case WGPUTextureDimension_Force32:
+        ASSERT_NOT_REACHED();
+        return WGPUExtent3D { };
+    }
+}
+
+static WGPUExtent3D imageCopyTextureSubresourceSize(const WGPUImageCopyTexture& imageCopyTexture)
+{
+    // https://gpuweb.github.io/gpuweb/#imagecopytexture-subresource-size
+
+    // "Its width, height and depthOrArrayLayers are the width, height, and depth, respectively, of the physical size of imageCopyTexture.texture subresource at mipmap level imageCopyTexture.mipLevel."
+    return fromAPI(imageCopyTexture.texture).physicalMiplevelSpecificTextureExtent(imageCopyTexture.mipLevel);
+}
+
+bool Texture::validateImageCopyTexture(const WGPUImageCopyTexture& imageCopyTexture, const WGPUExtent3D& copySize)
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpuimagecopytexture
+
+    // "blockWidth be the texel block width of imageCopyTexture.texture.[[descriptor]].format."
+    uint32_t blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).descriptor().format);
+
+    // "blockHeight be the texel block height of imageCopyTexture.texture.[[descriptor]].format."
+    uint32_t blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).descriptor().format);
+
+    // FIXME: "imageCopyTexture.texture must be a valid GPUTexture."
+
+    // "imageCopyTexture.mipLevel must be less than the [[descriptor]].mipLevelCount of imageCopyTexture.texture."
+    if (imageCopyTexture.mipLevel >= fromAPI(imageCopyTexture.texture).descriptor().mipLevelCount)
+        return false;
+
+    // "imageCopyTexture.origin.x must be a multiple of blockWidth."
+    if (imageCopyTexture.origin.x % blockWidth)
+        return false;
+
+    // "imageCopyTexture.origin.y must be a multiple of blockHeight."
+    if (imageCopyTexture.origin.y % blockHeight)
+        return false;
+
+    // "imageCopyTexture.texture.[[descriptor]].format is a depth-stencil format."
+    // "imageCopyTexture.texture.[[descriptor]].sampleCount is greater than 1."
+    if (Texture::isDepthOrStencilFormat(fromAPI(imageCopyTexture.texture).descriptor().format)
+        || fromAPI(imageCopyTexture.texture).descriptor().sampleCount > 1) {
+        // "The imageCopyTexture subresource size of imageCopyTexture is equal to copySize"
+        auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
+        if (subresourceSize.width != copySize.width
+            || subresourceSize.height != copySize.height
+            || subresourceSize.depthOrArrayLayers != copySize.depthOrArrayLayers)
+            return false;
+    }
+
+    return true;
+}
+
+bool Texture::refersToSingleAspect(WGPUTextureFormat format, WGPUTextureAspect aspect)
+{
+    switch (aspect) {
+    case WGPUTextureAspect_All:
+        ASSERT(Texture::containsDepthAspect(format) || Texture::containsStencilAspect(format));
+        if (Texture::containsDepthAspect(format) && Texture::containsStencilAspect(format))
+            return false;
+        break;
+    case WGPUTextureAspect_StencilOnly:
+        if (!Texture::containsStencilAspect(format))
+            return false;
+        break;
+    case WGPUTextureAspect_DepthOnly:
+        if (!Texture::containsDepthAspect(format))
+            return false;
+        break;
+    case WGPUTextureAspect_Force32:
+        return false;
+    }
+
+    return true;
+}
+
+bool Texture::isValidImageCopyDestination(WGPUTextureFormat format, WGPUTextureAspect aspect)
+{
+    // https://gpuweb.github.io/gpuweb/#depth-formats
+
+    switch (format) {
+    case WGPUTextureFormat_Undefined:
+    case WGPUTextureFormat_R8Unorm:
+    case WGPUTextureFormat_R8Snorm:
+    case WGPUTextureFormat_R8Uint:
+    case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Uint:
+    case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R16Float:
+    case WGPUTextureFormat_RG8Unorm:
+    case WGPUTextureFormat_RG8Snorm:
+    case WGPUTextureFormat_RG8Uint:
+    case WGPUTextureFormat_RG8Sint:
+    case WGPUTextureFormat_R32Float:
+    case WGPUTextureFormat_R32Uint:
+    case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Uint:
+    case WGPUTextureFormat_RG16Sint:
+    case WGPUTextureFormat_RG16Float:
+    case WGPUTextureFormat_RGBA8Unorm:
+    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WGPUTextureFormat_RGBA8Snorm:
+    case WGPUTextureFormat_RGBA8Uint:
+    case WGPUTextureFormat_RGBA8Sint:
+    case WGPUTextureFormat_BGRA8Unorm:
+    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WGPUTextureFormat_RGB10A2Unorm:
+    case WGPUTextureFormat_RG11B10Ufloat:
+    case WGPUTextureFormat_RGB9E5Ufloat:
+    case WGPUTextureFormat_RG32Float:
+    case WGPUTextureFormat_RG32Uint:
+    case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA16Uint:
+    case WGPUTextureFormat_RGBA16Sint:
+    case WGPUTextureFormat_RGBA16Float:
+    case WGPUTextureFormat_RGBA32Float:
+    case WGPUTextureFormat_RGBA32Uint:
+    case WGPUTextureFormat_RGBA32Sint:
+        ASSERT_NOT_REACHED();
+        return false;
+    case WGPUTextureFormat_Stencil8:
+    case WGPUTextureFormat_Depth16Unorm:
+        return true;
+    case WGPUTextureFormat_Depth24Plus:
+        return false;
+    case WGPUTextureFormat_Depth24PlusStencil8:
+    case WGPUTextureFormat_Depth24UnormStencil8:
+        return aspect == WGPUTextureAspect_StencilOnly;
+    case WGPUTextureFormat_Depth32Float:
+        return false;
+    case WGPUTextureFormat_Depth32FloatStencil8:
+        return aspect == WGPUTextureAspect_StencilOnly;
+    case WGPUTextureFormat_BC1RGBAUnorm:
+    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+    case WGPUTextureFormat_BC2RGBAUnorm:
+    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+    case WGPUTextureFormat_BC3RGBAUnorm:
+    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+    case WGPUTextureFormat_BC4RUnorm:
+    case WGPUTextureFormat_BC4RSnorm:
+    case WGPUTextureFormat_BC5RGUnorm:
+    case WGPUTextureFormat_BC5RGSnorm:
+    case WGPUTextureFormat_BC6HRGBUfloat:
+    case WGPUTextureFormat_BC6HRGBFloat:
+    case WGPUTextureFormat_BC7RGBAUnorm:
+    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WGPUTextureFormat_ETC2RGB8Unorm:
+    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
+    case WGPUTextureFormat_ETC2RGB8A1Unorm:
+    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+    case WGPUTextureFormat_ETC2RGBA8Unorm:
+    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
+    case WGPUTextureFormat_EACR11Unorm:
+    case WGPUTextureFormat_EACR11Snorm:
+    case WGPUTextureFormat_EACRG11Unorm:
+    case WGPUTextureFormat_EACRG11Snorm:
+    case WGPUTextureFormat_ASTC4x4Unorm:
+    case WGPUTextureFormat_ASTC4x4UnormSrgb:
+    case WGPUTextureFormat_ASTC5x4Unorm:
+    case WGPUTextureFormat_ASTC5x4UnormSrgb:
+    case WGPUTextureFormat_ASTC5x5Unorm:
+    case WGPUTextureFormat_ASTC5x5UnormSrgb:
+    case WGPUTextureFormat_ASTC6x5Unorm:
+    case WGPUTextureFormat_ASTC6x5UnormSrgb:
+    case WGPUTextureFormat_ASTC6x6Unorm:
+    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+    case WGPUTextureFormat_ASTC8x5Unorm:
+    case WGPUTextureFormat_ASTC8x5UnormSrgb:
+    case WGPUTextureFormat_ASTC8x6Unorm:
+    case WGPUTextureFormat_ASTC8x6UnormSrgb:
+    case WGPUTextureFormat_ASTC8x8Unorm:
+    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+    case WGPUTextureFormat_ASTC10x5Unorm:
+    case WGPUTextureFormat_ASTC10x5UnormSrgb:
+    case WGPUTextureFormat_ASTC10x6Unorm:
+    case WGPUTextureFormat_ASTC10x6UnormSrgb:
+    case WGPUTextureFormat_ASTC10x8Unorm:
+    case WGPUTextureFormat_ASTC10x8UnormSrgb:
+    case WGPUTextureFormat_ASTC10x10Unorm:
+    case WGPUTextureFormat_ASTC10x10UnormSrgb:
+    case WGPUTextureFormat_ASTC12x10Unorm:
+    case WGPUTextureFormat_ASTC12x10UnormSrgb:
+    case WGPUTextureFormat_ASTC12x12Unorm:
+    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+    case WGPUTextureFormat_Force32:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+bool Texture::validateTextureCopyRange(const WGPUImageCopyTexture& imageCopyTexture, const WGPUExtent3D& copySize)
+{
+    // https://gpuweb.github.io/gpuweb/#validating-texture-copy-range
+
+    // "Let blockWidth be the texel block width of imageCopyTexture.texture.[[descriptor]].format."
+    auto blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).descriptor().format);
+
+    // "Let blockHeight be the texel block height of imageCopyTexture.texture.[[descriptor]].format."
+    auto blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).descriptor().format);
+
+    // "Let subresourceSize be the imageCopyTexture subresource size of imageCopyTexture."
+    auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
+
+    // "(imageCopyTexture.origin.x + copySize.width) ≤ subresourceSize.width"
+    // FIXME: Used checked arithmetic
+    if (imageCopyTexture.origin.x + copySize.width > subresourceSize.width)
+        return false;
+
+    // "(imageCopyTexture.origin.y + copySize.height) ≤ subresourceSize.height"
+    // FIXME: Used checked arithmetic
+    if ((imageCopyTexture.origin.y + copySize.height) > subresourceSize.height)
+        return false;
+
+    // "(imageCopyTexture.origin.z + copySize.depthOrArrayLayers) ≤ subresourceSize.depthOrArrayLayers"
+    // FIXME: Used checked arithmetic
+    if ((imageCopyTexture.origin.z + copySize.depthOrArrayLayers) > subresourceSize.depthOrArrayLayers)
+        return false;
+
+    // "copySize.width must be a multiple of blockWidth."
+    if (copySize.width % blockWidth)
+        return false;
+
+    // "copySize.height must be a multiple of blockHeight."
+    if (copySize.height % blockHeight)
+        return false;
+
+    return true;
+}
+
+bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uint64_t byteSize, WGPUTextureFormat format, WGPUExtent3D copyExtent)
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-linear-texture-data
+
+    // "Let blockWidth, blockHeight, and blockSize be the texel block width, height, and size of format."
+    uint32_t blockWidth = Texture::texelBlockWidth(format);
+    uint32_t blockHeight = Texture::texelBlockHeight(format);
+    uint32_t blockSize = Texture::texelBlockSize(format);
+
+    // "It is assumed that copyExtent.width is a multiple of blockWidth and copyExtent.height is a multiple of blockHeight."
+
+    // "widthInBlocks be copyExtent.width ÷ blockWidth."
+    auto widthInBlocks = copyExtent.width / blockWidth;
+
+    // "heightInBlocks be copyExtent.height ÷ blockHeight."
+    auto heightInBlocks = copyExtent.height / blockHeight;
+
+    // "bytesInLastRow be blockSize × widthInBlocks."
+    // FIXME: Use checked arithmetic.
+    auto bytesInLastRow = blockSize * widthInBlocks;
+
+    // "If heightInBlocks > 1"
+    if (heightInBlocks > 1) {
+        // "layout.bytesPerRow must be specified."
+        if (layout.bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
+            return false;
+    }
+
+    // "If copyExtent.depthOrArrayLayers > 1"
+    if (copyExtent.depthOrArrayLayers > 1) {
+        // "layout.bytesPerRow and layout.rowsPerImage must be specified."
+        if (layout.bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED || layout.rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED)
+            return false;
+    }
+
+    // "If specified"
+    if (layout.bytesPerRow != WGPU_COPY_STRIDE_UNDEFINED) {
+        // "layout.bytesPerRow must be greater than or equal to bytesInLastRow."
+        if (layout.bytesPerRow < bytesInLastRow)
+            return false;
+    }
+
+    // "If specified"
+    if (layout.rowsPerImage != WGPU_COPY_STRIDE_UNDEFINED) {
+        // "layout.rowsPerImage must be greater than or equal to heightInBlocks."
+        if (layout.rowsPerImage < heightInBlocks)
+            return false;
+    }
+
+    // "Let requiredBytesInCopy be 0."
+    uint64_t requiredBytesInCopy = 0;
+
+    // "If copyExtent.depthOrArrayLayers > 1:"
+    if (copyExtent.depthOrArrayLayers > 1) {
+        // "Let bytesPerImage be layout.bytesPerRow × layout.rowsPerImage."
+        // FIXME: Use checked arithmetic.
+        auto bytesPerImage = layout.bytesPerRow * layout.rowsPerImage;
+
+        // "Let bytesBeforeLastImage be bytesPerImage × (copyExtent.depthOrArrayLayers − 1)."
+        // FIXME: Use checked arithmetic.
+        auto bytesBeforeLastImage = bytesPerImage * (copyExtent.depthOrArrayLayers - 1);
+
+        // "Add bytesBeforeLastImage to requiredBytesInCopy."
+        // FIXME: Use checked arithmetic.
+        requiredBytesInCopy += bytesBeforeLastImage;
+    }
+
+    // "If copyExtent.depthOrArrayLayers > 0:"
+    if (copyExtent.depthOrArrayLayers > 0) {
+        // "If heightInBlocks > 1"
+        if (heightInBlocks > 1) {
+            // "add layout.bytesPerRow × (heightInBlocks − 1) to requiredBytesInCopy."
+            // FIXME: Use checked arithmetic.
+            requiredBytesInCopy += layout.bytesPerRow * (heightInBlocks - 1);
+        }
+
+        // "If heightInBlocks > 0"
+        if (heightInBlocks > 0) {
+            // "add bytesInLastRow to requiredBytesInCopy."
+            // FIXME: Use checked arithmetic.
+            requiredBytesInCopy += bytesInLastRow;
+        }
+    }
+
+    // "Fail if the following conditions are not satisfied:"
+    // "layout.offset + requiredBytesInCopy ≤ byteSize."
+    // FIXME: Use checked arithmetic.
+    if (layout.offset + requiredBytesInCopy > byteSize)
+        return false;
+
+    return true;
 }
 
 } // namespace WebGPU
