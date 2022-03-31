@@ -37,15 +37,15 @@ class CSSNumericArray;
 class CSSMathProduct final : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathProduct);
 public:
-    template<typename... Args> static Ref<CSSMathProduct> create(Args&&... args) { return adoptRef(*new CSSMathProduct(std::forward<Args>(args)...)); }
-    const CSSNumericArray& values() const;
+    static ExceptionOr<Ref<CSSMathProduct>> create(FixedVector<CSSNumberish>);
+    static ExceptionOr<Ref<CSSMathProduct>> create(Vector<Ref<CSSNumericValue>>);
+    const CSSNumericArray& values() const { return m_values.get(); }
 
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Product; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathProduct; }
 
-    CSSMathProduct(FixedVector<CSSNumberish>&&);
-    CSSMathProduct(Vector<Ref<CSSNumericValue>>&&);
+    CSSMathProduct(Vector<Ref<CSSNumericValue>>, CSSNumericType);
     Ref<CSSNumericArray> m_values;
 };
 

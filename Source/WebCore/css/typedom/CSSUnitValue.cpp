@@ -32,11 +32,104 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSParserToken.h"
+#include "CSSPrimitiveValue.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSUnitValue);
+
+static std::optional<CSSNumericType> numericType(CSSUnitType unit)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-create-a-type
+    CSSNumericType type;
+    switch (unitCategory(unit)) {
+    case CSSUnitCategory::Number:
+        return { WTFMove(type) };
+    case CSSUnitCategory::Percent:
+        type.percent = 1;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Length:
+        type.length = 1;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Angle:
+        type.angle = 1;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Time:
+        type.time = 1;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Frequency:
+        type.frequency = 1;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Resolution:
+        type.resolution = 1;
+        return { WTFMove(type) };
+    case CSSUnitCategory::Other:
+        if (unit == CSSUnitType::CSS_FR) {
+            type.flex = 1;
+            return { WTFMove(type) };
+        }
+        break;
+    }
+    
+    return std::nullopt;
+}
+
+static CSSUnitType parseUnit(const String& unit)
+{
+    if (unit == "number"_s)
+        return CSSUnitType::CSS_NUMBER;
+    if (unit == "percent"_s)
+        return CSSUnitType::CSS_PERCENTAGE;
+
+    // FIXME: Remove these when LineHeightUnitsEnabled is changed back to true or removed
+    // https://bugs.webkit.org/show_bug.cgi?id=211351
+    if (unit == "lh"_s)
+        return CSSUnitType::CSS_LHS;
+    if (unit == "rlh"_s)
+        return CSSUnitType::CSS_RLHS;
+
+    return CSSParserToken::stringToUnitType(unit);
+}
+
+String CSSUnitValue::unit() const
+{
+    switch (m_unit) {
+    case CSSUnitType::CSS_NUMBER:
+        return "number"_s;
+    case CSSUnitType::CSS_PERCENTAGE:
+        return "percent"_s;
+    default:
+        break;
+    }
+    return unitSerialization();
+}
+
+String CSSUnitValue::unitSerialization() const
+{
+    return CSSPrimitiveValue::unitTypeString(m_unit);
+}
+
+ExceptionOr<Ref<CSSUnitValue>> CSSUnitValue::create(double value, const String& unit)
+{
+    auto parsedUnit = parseUnit(unit);
+    if (parsedUnit == CSSUnitType::CSS_UNKNOWN)
+        return Exception { TypeError };
+    auto type = numericType(parsedUnit);
+    if (!type)
+        return Exception { TypeError };
+    auto unitValue = adoptRef(*new CSSUnitValue(value, parsedUnit));
+    unitValue->m_type = WTFMove(*type);
+    return unitValue;
+}
+
+CSSUnitValue::CSSUnitValue(double value, CSSUnitType unit)
+    : CSSNumericValue(numericType(unit).value_or(CSSNumericType()))
+    , m_value(value)
+    , m_unit(unit)
+{
+}
 
 } // namespace WebCore
 

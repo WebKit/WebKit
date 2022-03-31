@@ -1,3 +1,69 @@
+2022-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Implement units for CSS Typed OM
+        https://bugs.webkit.org/show_bug.cgi?id=238532
+
+        Reviewed by Simon Fraser.
+
+        This feature is off by default and this part is covered by WPT tests.
+
+        * css/typedom/CSSNumericFactory.h:
+        * css/typedom/CSSNumericValue.cpp:
+        (WebCore::negate):
+        (WebCore::invert):
+        (WebCore::operationOnValuesOfSameUnit):
+        (WebCore::CSSNumericValue::addInternal):
+        (WebCore::CSSNumericValue::add):
+        (WebCore::CSSNumericValue::sub):
+        (WebCore::CSSNumericValue::multiplyInternal):
+        (WebCore::CSSNumericValue::mul):
+        (WebCore::CSSNumericValue::to):
+        (WebCore::CSSNumericValue::toSum):
+        (WebCore::CSSNumericValue::type): Deleted.
+        * css/typedom/CSSNumericValue.h:
+        (WebCore::CSSNumericValue::type const):
+        (WebCore::CSSNumericValue::CSSNumericValue):
+        * css/typedom/CSSUnitValue.cpp:
+        (WebCore::numericType):
+        (WebCore::parseUnit):
+        (WebCore::CSSUnitValue::unit const):
+        (WebCore::CSSUnitValue::unitSerialization const):
+        (WebCore::CSSUnitValue::create):
+        (WebCore::CSSUnitValue::CSSUnitValue):
+        * css/typedom/CSSUnitValue.h:
+        * css/typedom/numeric/CSSMathInvert.cpp:
+        (WebCore::negatedType):
+        (WebCore::CSSMathInvert::CSSMathInvert):
+        * css/typedom/numeric/CSSMathNegate.cpp:
+        (WebCore::copyType):
+        (WebCore::CSSMathNegate::CSSMathNegate):
+        * css/typedom/numeric/CSSMathProduct.cpp:
+        (WebCore::multiplyTypes):
+        (WebCore::CSSMathProduct::create):
+        (WebCore::CSSMathProduct::CSSMathProduct):
+        (WebCore::CSSMathProduct::values const): Deleted.
+        * css/typedom/numeric/CSSMathProduct.h:
+        * css/typedom/numeric/CSSMathSum.cpp:
+        (WebCore::addTypes):
+        (WebCore::CSSMathSum::create):
+        (WebCore::CSSMathSum::CSSMathSum):
+        * css/typedom/numeric/CSSMathSum.h:
+        * css/typedom/numeric/CSSMathValue.h:
+        (WebCore::CSSMathValue::CSSMathValue):
+        * css/typedom/numeric/CSSNumericArray.cpp:
+        (WebCore::CSSNumericArray::create):
+        * css/typedom/numeric/CSSNumericBaseType.h:
+        (WebCore::eachBaseType):
+        (WebCore::debugString):
+        (): Deleted.
+        * css/typedom/numeric/CSSNumericType.h:
+        (WebCore::CSSNumericType::operator== const):
+        (WebCore::CSSNumericType::valueForType):
+        (WebCore::CSSNumericType::applyPercentHint):
+        (WebCore::CSSNumericType::debugString const):
+        (): Deleted.
+        * css/typedom/numeric/CSSNumericType.idl:
+
 2022-03-31  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Make ENABLE(GPU_PROCESS) code buildable

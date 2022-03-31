@@ -38,15 +38,15 @@ class CSSNumericArray;
 class CSSMathSum final : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathSum);
 public:
-    template<typename... Args> static Ref<CSSMathSum> create(Args&&... args) { return adoptRef(*new CSSMathSum(std::forward<Args>(args)...)); }
+    static ExceptionOr<Ref<CSSMathSum>> create(FixedVector<CSSNumberish>);
+    static ExceptionOr<Ref<CSSMathSum>> create(Vector<Ref<CSSNumericValue>>);
     const CSSNumericArray& values() const { return m_values.get(); }
 
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Sum; }
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSMathSum; }
 
-    CSSMathSum(FixedVector<CSSNumberish>&&);
-    CSSMathSum(Vector<Ref<CSSNumericValue>>&&);
+    CSSMathSum(Vector<Ref<CSSNumericValue>>, CSSNumericType);
     Ref<CSSNumericArray> m_values;
 };
 

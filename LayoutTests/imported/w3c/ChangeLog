@@ -1,3 +1,21 @@
+2022-03-31  Alex Christensen  <achristensen@webkit.org>
+
+        Implement units for CSS Typed OM
+        https://bugs.webkit.org/show_bug.cgi?id=238532
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssUnitValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/add-two-types.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/arithmetic.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/create-a-type.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssMathInvert-type-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssMathNegate-type-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssMathValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssUnitValue-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/cssnumericvalue-multiply-two-types.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/to.tentative-expected.txt:
+
 2022-03-30  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Keep colon syntax when serializing container condition

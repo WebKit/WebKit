@@ -23,6 +23,8 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
+
 [
     Conditional=CSS_TYPED_OM,
     JSGenerateToJSObject,

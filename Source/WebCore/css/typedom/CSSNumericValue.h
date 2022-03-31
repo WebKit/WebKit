@@ -27,6 +27,7 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSNumericType.h"
 #include "CSSStyleValue.h"
 #include <variant>
 #include <wtf/FixedVector.h>
@@ -36,7 +37,6 @@ namespace WebCore {
 class CSSNumericValue;
 class CSSUnitValue;
 class CSSMathSum;
-struct CSSNumericType;
 
 template<typename> class ExceptionOr;
 
@@ -46,9 +46,9 @@ class CSSNumericValue : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericValue);
 public:
 
-    Ref<CSSNumericValue> add(FixedVector<CSSNumberish>&&);
-    Ref<CSSNumericValue> sub(FixedVector<CSSNumberish>&&);
-    Ref<CSSNumericValue> mul(FixedVector<CSSNumberish>&&);
+    ExceptionOr<Ref<CSSNumericValue>> add(FixedVector<CSSNumberish>&&);
+    ExceptionOr<Ref<CSSNumericValue>> sub(FixedVector<CSSNumberish>&&);
+    ExceptionOr<Ref<CSSNumericValue>> mul(FixedVector<CSSNumberish>&&);
     ExceptionOr<Ref<CSSNumericValue>> div(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericValue> min(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericValue> max(FixedVector<CSSNumberish>&&);
@@ -56,8 +56,9 @@ public:
     bool equals(FixedVector<CSSNumberish>&&);
     
     Ref<CSSUnitValue> to(String&&);
-    Ref<CSSMathSum> toSum(FixedVector<String>&&);
-    CSSNumericType type();
+    ExceptionOr<Ref<CSSMathSum>> toSum(FixedVector<String>&&);
+
+    const CSSNumericType& type() const { return m_type; }
     
     static ExceptionOr<Ref<CSSNumericValue>> parse(String&&);
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
@@ -65,11 +66,14 @@ public:
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSNumericValue; }
 
 protected:
-    Ref<CSSNumericValue> addInternal(Vector<Ref<CSSNumericValue>>&&);
-    Ref<CSSNumericValue> multiplyInternal(Vector<Ref<CSSNumericValue>>&&);
+    ExceptionOr<Ref<CSSNumericValue>> addInternal(Vector<Ref<CSSNumericValue>>&&);
+    ExceptionOr<Ref<CSSNumericValue>> multiplyInternal(Vector<Ref<CSSNumericValue>>&&);
     template<typename T> Vector<Ref<CSSNumericValue>> prependItemsOfTypeOrThis(Vector<Ref<CSSNumericValue>>&&);
 
-    CSSNumericValue() = default;
+    CSSNumericValue(CSSNumericType type = { })
+        : m_type(WTFMove(type)) { }
+
+    CSSNumericType m_type;
 };
 
 } // namespace WebCore

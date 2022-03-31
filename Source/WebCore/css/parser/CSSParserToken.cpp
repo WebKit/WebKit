@@ -44,7 +44,6 @@ template<typename CharacterType>
 CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned length)
 {
     ASSERT(data);
-    ASSERT(length);
     switch (length) {
     case 1:
         switch (toASCIILower(data[0])) {
@@ -328,7 +327,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
     return CSSUnitType::CSS_UNKNOWN;
 }
 
-static CSSUnitType stringToUnitType(StringView stringView)
+CSSUnitType CSSParserToken::stringToUnitType(StringView stringView)
 {
     if (stringView.is8Bit())
         return cssPrimitiveValueUnitFromTrie(stringView.characters8(), stringView.length());

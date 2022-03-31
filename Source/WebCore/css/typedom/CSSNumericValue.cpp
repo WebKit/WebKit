@@ -56,7 +56,7 @@ static Ref<CSSNumericValue> negate(Ref<CSSNumericValue>&& value)
     if (auto* mathNegate = dynamicDowncast<CSSMathNegate>(value.get()))
         return mathNegate->value();
     if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get()))
-        return CSSUnitValue::create(-unitValue->value(), unitValue->unit());
+        return CSSUnitValue::create(-unitValue->value(), unitValue->unitEnum());
     return CSSMathNegate::create(WTFMove(value));
 }
 
@@ -67,11 +67,10 @@ static ExceptionOr<Ref<CSSNumericValue>> invert(Ref<CSSNumericValue>&& value)
         return Ref { mathInvert->value() };
 
     if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get())) {
-        // FIXME: units should be either AtomicStrings or CSSUnitType enumeration values.
-        if (unitValue->unit() == "number") {
+        if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
             if (unitValue->value() == 0.0 || unitValue->value() == -0.0)
                 return Exception { RangeError };
-            return Ref<CSSNumericValue> { CSSUnitValue::create(1.0 / unitValue->value(), unitValue->unit()) };
+            return Ref<CSSNumericValue> { CSSUnitValue::create(1.0 / unitValue->value(), unitValue->unitEnum()) };
         }
     }
 
@@ -83,11 +82,11 @@ static RefPtr<CSSNumericValue> operationOnValuesOfSameUnit(T&& operation, const 
 {
     bool allValuesHaveSameUnit = values.size() && WTF::allOf(values, [&] (const Ref<CSSNumericValue>& value) {
         auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get());
-        return unitValue ? unitValue->unit() == downcast<CSSUnitValue>(values[0].get()).unit() : false;
+        return unitValue ? unitValue->unitEnum() == downcast<CSSUnitValue>(values[0].get()).unitEnum() : false;
     });
     if (allValuesHaveSameUnit) {
         auto& firstUnitValue = downcast<CSSUnitValue>(values[0].get());
-        String unit = firstUnitValue.unit();
+        auto unit = firstUnitValue.unitEnum();
         double result = firstUnitValue.value();
         for (size_t i = 1; i < values.size(); i++)
             result = operation(result, downcast<CSSUnitValue>(values[i].get()).value());
@@ -107,32 +106,33 @@ template<typename T> Vector<Ref<CSSNumericValue>> CSSNumericValue::prependItemsO
     return values;
 }
 
-Ref<CSSNumericValue> CSSNumericValue::addInternal(Vector<Ref<CSSNumericValue>>&& numericValues)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::addInternal(Vector<Ref<CSSNumericValue>>&& numericValues)
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-add
     auto values = prependItemsOfTypeOrThis<CSSMathSum>(WTFMove(numericValues));
 
     if (auto result = operationOnValuesOfSameUnit(std::plus<double>(), values))
-        return *result;
+        return { *result };
 
-    // FIXME: Implement step 4 to check that the types can be added.
-
-    return CSSMathSum::create(WTFMove(values));
+    auto sum = CSSMathSum::create(WTFMove(values));
+    if (sum.hasException())
+        return sum.releaseException();
+    return Ref<CSSNumericValue> { sum.releaseReturnValue() };
 }
 
-Ref<CSSNumericValue> CSSNumericValue::add(FixedVector<CSSNumberish>&& values)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::add(FixedVector<CSSNumberish>&& values)
 {
     return addInternal(WTF::map(WTFMove(values), rectifyNumberish));
 }
 
-Ref<CSSNumericValue> CSSNumericValue::sub(FixedVector<CSSNumberish>&& values)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::sub(FixedVector<CSSNumberish>&& values)
 {
     return addInternal(WTF::map(WTFMove(values), [] (CSSNumberish&& numberish) {
         return negate(rectifyNumberish(WTFMove(numberish)));
     }));
 }
 
-Ref<CSSNumericValue> CSSNumericValue::multiplyInternal(Vector<Ref<CSSNumericValue>>&& numericValues)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::multiplyInternal(Vector<Ref<CSSNumericValue>>&& numericValues)
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-mul
     auto values = prependItemsOfTypeOrThis<CSSMathProduct>(WTFMove(numericValues));
@@ -144,8 +144,8 @@ Ref<CSSNumericValue> CSSNumericValue::multiplyInternal(Vector<Ref<CSSNumericValu
         bool multipleUnitsFound { false };
         std::optional<size_t> nonNumberUnitIndex;
         for (size_t i = 0; i < values.size(); i++) {
-            auto& unit = downcast<CSSUnitValue>(values[i].get()).unit();
-            if (unit == "number")
+            auto unit = downcast<CSSUnitValue>(values[i].get()).unitEnum();
+            if (unit == CSSUnitType::CSS_NUMBER)
                 continue;
             if (nonNumberUnitIndex) {
                 multipleUnitsFound = true;
@@ -157,17 +157,18 @@ Ref<CSSNumericValue> CSSNumericValue::multiplyInternal(Vector<Ref<CSSNumericValu
             double product = 1;
             for (const Ref<CSSNumericValue>& value : values)
                 product *= downcast<CSSUnitValue>(value.get()).value();
-            String unit = nonNumberUnitIndex ? downcast<CSSUnitValue>(values[*nonNumberUnitIndex].get()).unit() : "number"_s;
-            return CSSUnitValue::create(product, unit);
+            auto unit = nonNumberUnitIndex ? downcast<CSSUnitValue>(values[*nonNumberUnitIndex].get()).unitEnum() : CSSUnitType::CSS_NUMBER;
+            return { CSSUnitValue::create(product, unit) };
         }
     }
 
-    // FIXME: Implement step 5 to produce a unit of the correct type.
-
-    return CSSMathProduct::create(WTFMove(values));
+    auto product = CSSMathProduct::create(WTFMove(values));
+    if (product.hasException())
+        return product.releaseException();
+    return Ref<CSSNumericValue> { product.releaseReturnValue() };
 }
 
-Ref<CSSNumericValue> CSSNumericValue::mul(FixedVector<CSSNumberish>&& values)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::mul(FixedVector<CSSNumberish>&& values)
 {
     return multiplyInternal(WTF::map(WTFMove(values), rectifyNumberish));
 }
@@ -235,22 +236,15 @@ Ref<CSSUnitValue> CSSNumericValue::to(String&& unit)
     UNUSED_PARAM(unit);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-to
     // FIXME: add impl.
-    return CSSUnitValue::create(1.0, "number"_s);
+    return CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER);
 }
 
-Ref<CSSMathSum> CSSNumericValue::toSum(FixedVector<String>&& units)
+ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
 {
     UNUSED_PARAM(units);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-tosum
     // FIXME: add impl.
     return CSSMathSum::create(FixedVector<CSSNumberish> { 1.0 });
-}
-
-CSSNumericType CSSNumericValue::type()
-{
-    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
-    // FIXME: add impl.
-    return CSSNumericType { };
 }
 
 ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)

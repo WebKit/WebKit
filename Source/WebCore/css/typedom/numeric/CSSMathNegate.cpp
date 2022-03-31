@@ -36,13 +36,27 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathNegate);
 
+static CSSNumericType copyType(const CSSNumberish& numberish)
+{
+    return WTF::switchOn(numberish,
+        [] (double) { return CSSNumericType(); },
+        [] (const RefPtr<CSSNumericValue>& value) {
+            if (!value)
+                return CSSNumericType();
+            return value->type();
+        }
+    );
+}
+
 CSSMathNegate::CSSMathNegate(CSSNumberish&& numberish)
-    : m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
+    : CSSMathValue(copyType(numberish))
+    , m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
 {
 }
 
 CSSMathNegate::CSSMathNegate(Ref<CSSNumericValue>&& value)
-    : m_value(WTFMove(value))
+    : CSSMathValue(value->type())
+    , m_value(WTFMove(value))
 {
 }
 

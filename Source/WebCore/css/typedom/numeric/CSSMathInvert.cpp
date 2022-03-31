@@ -41,8 +41,34 @@ Ref<CSSMathInvert> CSSMathInvert::create(CSSNumberish&& numberish)
     return adoptRef(*new CSSMathInvert(WTFMove(numberish)));
 }
 
+static CSSNumericType negatedType(const CSSNumberish& numberish)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#type-of-a-cssmathvalue
+    return WTF::switchOn(numberish,
+        [] (double) { return CSSNumericType(); },
+        [] (const RefPtr<CSSNumericValue>& value) {
+            if (!value)
+                return CSSNumericType();
+            CSSNumericType type = value->type();
+            auto negate = [] (auto& optional) {
+                if (optional)
+                    optional = *optional * -1;
+            };
+            negate(type.length);
+            negate(type.angle);
+            negate(type.time);
+            negate(type.frequency);
+            negate(type.resolution);
+            negate(type.flex);
+            negate(type.percent);
+            return type;
+        }
+    );
+}
+
 CSSMathInvert::CSSMathInvert(CSSNumberish&& numberish)
-    : m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
+    : CSSMathValue(negatedType(numberish))
+    , m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
 {
 }
 

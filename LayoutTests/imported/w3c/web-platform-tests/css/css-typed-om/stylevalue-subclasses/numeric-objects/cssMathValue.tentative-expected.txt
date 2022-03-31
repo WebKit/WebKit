@@ -1,9 +1,9 @@
 
-FAIL Constructing a CSSMathSum with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
+PASS Constructing a CSSMathSum with no arguments throws a SyntaxError
 PASS CSSMathSum can be constructed from a single number CSSUnitValue
 PASS CSSMathSum can be constructed from more than one number CSSUnitValue
 PASS CSSMathSum.operator is readonly
-FAIL Constructing a CSSMathProduct with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
+PASS Constructing a CSSMathProduct with no arguments throws a SyntaxError
 PASS CSSMathProduct can be constructed from a single number CSSUnitValue
 PASS CSSMathProduct can be constructed from more than one number CSSUnitValue
 PASS CSSMathProduct.operator is readonly

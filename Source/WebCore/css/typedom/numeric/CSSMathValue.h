@@ -35,6 +35,8 @@ namespace WebCore {
 
 class CSSMathValue : public CSSNumericValue {
 public:
+    CSSMathValue(CSSNumericType type = { })
+        : CSSNumericValue(WTFMove(type)) { }
     virtual CSSMathOperator getOperator() const = 0;
 };
 

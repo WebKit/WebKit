@@ -105,6 +105,8 @@ public:
 
     CSSParserToken(HashTokenType, StringView);
 
+    static CSSUnitType stringToUnitType(StringView);
+
     bool operator==(const CSSParserToken& other) const;
     bool operator!=(const CSSParserToken& other) const { return !(*this == other); }
 

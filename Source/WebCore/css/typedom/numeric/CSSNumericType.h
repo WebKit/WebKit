@@ -29,18 +29,78 @@
 
 #include "CSSNumericBaseType.h"
 #include <optional>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
+// https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
 struct CSSNumericType {
-    long length { 0 };
-    long angle { 0 };
-    long time { 0 };
-    long frequency { 0 };
-    long resolution { 0 };
-    long flex { 0 };
-    long percent { 0 };
+    std::optional<long> length;
+    std::optional<long> angle;
+    std::optional<long> time;
+    std::optional<long> frequency;
+    std::optional<long> resolution;
+    std::optional<long> flex;
+    std::optional<long> percent;
     std::optional<CSSNumericBaseType> percentHint;
+
+    bool operator==(const CSSNumericType& other) const
+    {
+        return length == other.length
+            && angle == other.angle
+            && time == other.time
+            && frequency == other.frequency
+            && resolution == other.resolution
+            && flex == other.flex
+            && percent == other.percent
+            && percentHint == other.percentHint;
+    }
+
+    std::optional<long>& valueForType(CSSNumericBaseType type)
+    {
+        switch (type) {
+        case CSSNumericBaseType::Length:
+            return length;
+        case CSSNumericBaseType::Angle:
+            return angle;
+        case CSSNumericBaseType::Time:
+            return time;
+        case CSSNumericBaseType::Frequency:
+            return frequency;
+        case CSSNumericBaseType::Resolution:
+            return resolution;
+        case CSSNumericBaseType::Flex:
+            return flex;
+        case CSSNumericBaseType::Percent:
+            return percent;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    void applyPercentHint(CSSNumericBaseType hint)
+    {
+        // https://drafts.css-houdini.org/css-typed-om/#apply-the-percent-hint
+        auto& optional = valueForType(hint);
+        if (!optional)
+            optional = 0;
+        if (percent)
+            *optional += *std::exchange(percent, 0);
+        percentHint = hint;
+    }
+
+    String debugString() const
+    {
+        return makeString("{",
+            length ? makeString(" length:", *length) : String(),
+            angle ? makeString(" angle:", *angle) : String(),
+            time ? makeString(" time:", *time) : String(),
+            frequency ? makeString(" frequency:", *frequency) : String(),
+            resolution ? makeString(" resolution:", *resolution) : String(),
+            flex ? makeString(" flex:", *flex) : String(),
+            percent ? makeString(" percent:", *percent) : String(),
+            percentHint ? makeString(" percentHint:", WebCore::debugString(*percentHint)) : String(),
+        " }");
+    }
 };
 
 } // namespace WebCore

@@ -1,6 +1,6 @@
 
-FAIL Constructing CSSUnitValue with an unknown unit throws a TypeError assert_throws_js: function "() => new CSSUnitValue(0, 'lemon')" did not throw
-FAIL Constructing CSSUnitValue with a empty string unit throws a TypeError assert_throws_js: function "() => new CSSUnitValue(0, '')" did not throw
+PASS Constructing CSSUnitValue with an unknown unit throws a TypeError
+PASS Constructing CSSUnitValue with a empty string unit throws a TypeError
 PASS CSSUnitValue can be constructed with number
 PASS CSSUnitValue can be constructed with percent
 PASS CSSUnitValue can be constructed with em
@@ -18,7 +18,7 @@ PASS CSSUnitValue can be constructed with vmin
 PASS CSSUnitValue can be constructed with vmax
 PASS CSSUnitValue can be constructed with cm
 PASS CSSUnitValue can be constructed with mm
-FAIL CSSUnitValue can be constructed with Q assert_equals: unit is same as given by constructor expected "q" but got "Q"
+PASS CSSUnitValue can be constructed with Q
 PASS CSSUnitValue can be constructed with in
 PASS CSSUnitValue can be constructed with pt
 PASS CSSUnitValue can be constructed with pc
@@ -29,8 +29,8 @@ PASS CSSUnitValue can be constructed with rad
 PASS CSSUnitValue can be constructed with turn
 PASS CSSUnitValue can be constructed with s
 PASS CSSUnitValue can be constructed with ms
-FAIL CSSUnitValue can be constructed with Hz assert_equals: unit is same as given by constructor expected "hz" but got "Hz"
-FAIL CSSUnitValue can be constructed with kHz assert_equals: unit is same as given by constructor expected "khz" but got "kHz"
+PASS CSSUnitValue can be constructed with Hz
+PASS CSSUnitValue can be constructed with kHz
 PASS CSSUnitValue can be constructed with dpi
 PASS CSSUnitValue can be constructed with dpcm
 PASS CSSUnitValue can be constructed with dppx

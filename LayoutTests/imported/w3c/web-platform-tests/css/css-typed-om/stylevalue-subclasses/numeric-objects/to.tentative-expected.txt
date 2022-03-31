@@ -13,5 +13,5 @@ FAIL Converting a CSSMathMax to a single unit finds the max value assert_approx_
 FAIL Converting a CSSMathMax to a single unit with different units throws a TypeError assert_throws_js: function "() => new CSSMathMax(CSS.px(2), CSS.s(3)).to('px')" did not throw
 FAIL Converting a CSSMathNegate to a single unit negates its value assert_approx_equals: expected -1 +/- 0.000001 but got 1
 FAIL Converting a CSSMathInvert to a single unit inverts its value and units assert_approx_equals: expected 2 +/- 0.000001 but got 1
-FAIL Converting a complex expression to a single unit assert_approx_equals: expected 3500 +/- 0.000001 but got 1
+FAIL Converting a complex expression to a single unit Type error
 

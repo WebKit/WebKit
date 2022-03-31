@@ -26,29 +26,66 @@
 #include "config.h"
 #include "CSSMathProduct.h"
 
-#include "CSSNumericArray.h"
-
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSNumericArray.h"
+#include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathProduct);
 
-CSSMathProduct::CSSMathProduct(FixedVector<CSSNumberish>&& numberishes)
-    : m_values(CSSNumericArray::create(WTFMove(numberishes)))
+static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType& a, const CSSNumericType& b)
 {
+    // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-multiply-two-types
+    if (a.percentHint && b.percentHint && *a.percentHint != *b.percentHint)
+        return std::nullopt;
+
+    auto add = [] (auto left, auto right) -> std::optional<unsigned> {
+        if (!left)
+            return right;
+        if (!right)
+            return left;
+        return *left + *right;
+    };
+    
+    return { {
+        add(a.length, b.length),
+        add(a.angle, b.angle),
+        add(a.time, b.time),
+        add(a.frequency, b.frequency),
+        add(a.resolution, b.resolution),
+        add(a.flex, b.flex),
+        add(a.percent, b.percent),
+        a.percentHint ? a.percentHint : b.percentHint
+    } };
 }
 
-CSSMathProduct::CSSMathProduct(Vector<Ref<CSSNumericValue>>&& values)
-    : m_values(CSSNumericArray::create(WTFMove(values)))
+ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(FixedVector<CSSNumberish> numberishes)
 {
+    return create(WTF::map(WTFMove(numberishes), rectifyNumberish));
 }
 
-const CSSNumericArray& CSSMathProduct::values() const
+ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(Vector<Ref<CSSNumericValue>> values)
 {
-    return m_values.get();
+    if (values.isEmpty())
+        return Exception { SyntaxError };
+    
+    std::optional<CSSNumericType> type = values[0]->type();
+    for (size_t i = 1; i < values.size(); i++) {
+        type = multiplyTypes(*type, values[i]->type());
+        if (!type)
+            return Exception { TypeError };
+    }
+
+    return adoptRef(*new CSSMathProduct(WTFMove(values), WTFMove(*type)));
+}
+
+CSSMathProduct::CSSMathProduct(Vector<Ref<CSSNumericValue>> values, CSSNumericType type)
+    : CSSMathValue(WTFMove(type))
+    , m_values(CSSNumericArray::create(WTFMove(values)))
+{
 }
 
 } // namespace WebCore

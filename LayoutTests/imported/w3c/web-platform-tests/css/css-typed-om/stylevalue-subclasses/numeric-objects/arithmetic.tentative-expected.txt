@@ -60,6 +60,6 @@ PASS Calling CSSUnitValue.max with CSSUnitValues with same unit simplifies to a 
 PASS Calling CSSNumericValue.sub negates all argument values
 PASS Calling CSSNumericValue.div inverts all argument values
 PASS Can not divide with CSSUnitValue which has zero value and number type
-FAIL CSSNumericValue.add should throw TypeError when the types are different. assert_throws_js: function "() => CSS.number(3).add(CSS.px(10) ,CSS.number(0))" did not throw
-FAIL CSSNumericValue.sub should throw TypeError when the types are different. assert_throws_js: function "() => CSS.number(3).sub(CSS.px(10) ,CSS.number(0))" did not throw
+PASS CSSNumericValue.add should throw TypeError when the types are different.
+PASS CSSNumericValue.sub should throw TypeError when the types are different.
 
