@@ -29,6 +29,7 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSNumericArray.h"
+#include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
 #include <wtf/IsoMallocInlines.h>
 
