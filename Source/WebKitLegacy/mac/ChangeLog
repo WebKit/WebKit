@@ -1,3 +1,17 @@
+2022-03-31  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] WebKitLegacy's "Migrated headers" script does not emit task information
+        https://bugs.webkit.org/show_bug.cgi?id=238409
+        <rdar://problem/90869551>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/WebKitLegacy.xcconfig: Use EXCLUDED_SOURCE_FILE_NAMES and
+        INCLUDED_SOURCE_FILE_NAMES to control which headers are exported. Set
+        USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES, so that the "Generate Export Files" phase can
+        depend on the whole directory of reexport files and be invoked when any of them change.
+        * MigrateHeaders.make: Removed.
+
 2022-03-28  Ian Anderson  <iana@apple.com>
 
         Some Apple internal clients fail to build due to redeclared AppKit types in WebKitLegacy

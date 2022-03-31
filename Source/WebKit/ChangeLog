@@ -1,3 +1,16 @@
+2022-03-31  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] WebKitLegacy's "Migrated headers" script does not emit task information
+        https://bugs.webkit.org/show_bug.cgi?id=238409
+        <rdar://problem/90869551>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit.xcodeproj/project.pbxproj: Small build rule fix to prevent "no rule to process
+        file" warnings on every generated forwarding header. This happened because the build rule
+        that generates these temporary forwarding headers looked like it was supposed to _process_
+        those headers, too.
+
 2022-03-31  Alex Christensen  <achristensen@webkit.org>
 
         null check page in API::DataTask constructor

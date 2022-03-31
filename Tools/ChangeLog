@@ -1,3 +1,15 @@
+2022-03-31  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] WebKitLegacy's "Migrated headers" script does not emit task information
+        https://bugs.webkit.org/show_bug.cgi?id=238409
+        <rdar://problem/90869551>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/check-for-inappropriate-files-in-framework: We were relying on a script to create
+        an (empty) WebKitLegacy.framework/Headers directory, which was being scanned here.
+        WebKitLegacy is entirely private API, so change it to check PrivateHeaders/.
+
 2022-03-31  Jeff Miller  <jeffm@apple.com>
 
         Some API tests are missing header imports
