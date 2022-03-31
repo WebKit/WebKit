@@ -122,6 +122,16 @@ AsyncOverflowScrollingEnabled:
     WebCore:
       default: false
 
+BlockIOKitInWebContentSandbox:
+  type: bool
+  humanReadableName: "IOKit blocking in the WebContent sandbox"
+  humanReadableDescription: "Block IOKit access in the WebContent sandbox"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 CSSDisplayContentsAXSupportEnabled:
   type: bool
   humanReadableName: "Accessibility support for display: contents elements"

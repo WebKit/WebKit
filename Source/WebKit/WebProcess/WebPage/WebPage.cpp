@@ -907,6 +907,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         // This call should be replaced with proper API when available.
         CFPreferencesGetAppIntegerValue(CFSTR("key"), CFSTR("com.apple.WebKit.WebContent.AppCacheDisabled"), nullptr);
     }
+    if (parameters.store.getBoolValueForKey(WebPreferencesKey::blockIOKitInWebContentSandboxKey()))
+        CFPreferencesGetAppIntegerValue(CFSTR("key"), CFSTR("com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"), nullptr);
 #endif
 
     updateThrottleState();

@@ -1,3 +1,16 @@
+2022-03-31  Per Arne Vollan  <pvollan@apple.com>
+
+        Add runtime flag for blocking IOKit resources in the WebContent process' sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=238528
+
+        Reviewed by Simon Fraser.
+
+        This flag will trigger a set of sandbox rules in the WebContent process which will block graphics
+        related IOKit classes and the Metal compiler service.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/WebPage/WebPage.cpp:
+
 2022-03-30  Simon Fraser  <simon.fraser@apple.com>
 
         Crash the WebContent process if the RemoteRenderingBackend::PrepareBuffersForDisplay IPC fails
