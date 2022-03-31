@@ -28,6 +28,9 @@
 
 #import <WebKitLegacy/WebAllowDenyPolicyListener.h>
 #import <WebKitLegacy/WebUIDelegate.h>
+#if TARGET_OS_IPHONE
+#import <WebKitLegacy/WAKView.h>
+#endif
 
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
 #if !TARGET_OS_IPHONE
@@ -204,7 +207,11 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 */
 - (void)webView:(WebView *)webView addMessageToConsole:(NSDictionary *)message withSource:(NSString *)source;
 
+#if TARGET_OS_IPHONE
+- (WAKView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments;
+#else
 - (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments;
+#endif
 
 #if ENABLE_DASHBOARD_SUPPORT
 // FIXME: Remove this method once it is verified no one is dependent on it.

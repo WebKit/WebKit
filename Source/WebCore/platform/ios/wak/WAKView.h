@@ -37,6 +37,9 @@
 extern NSString *WAKViewFrameSizeDidChangeNotification;
 extern NSString *WAKViewDidScrollNotification;
 
+#if WAK_APPKIT_API_AVAILABLE_MACCATALYST
+#import <AppKit/NSView.h>
+#else
 enum {
     NSViewNotSizable = 0,
     NSViewMinXMargin = 1,
@@ -46,6 +49,7 @@ enum {
     NSViewHeightSizable = 16,
     NSViewMaxYMargin = 32
 };
+#endif
 
 @class WAKWindow;
 

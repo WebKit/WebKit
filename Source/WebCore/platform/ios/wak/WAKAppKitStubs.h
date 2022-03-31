@@ -32,6 +32,29 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 
+// WebKitLegacy was built around AppKit, which isn't present on iOS,
+// so WebKitLegacy redeclares many AppKit types on iOS. This is a problem
+// for Mac Catalyst where AppKit is present and usable, because the
+// redeclared types now conflict with the original types. Normally the AppKit
+// types are marked unavailable, so WebKitLegacy still needs to redeclare
+// them to make them available. As long as Mac Catalyst clients stick to UIKit
+// and WebKitLegacy, and don't directly import AppKit, things are fine.
+// However, there are a few special Apple internal Mac Catalyst clients that
+// are able to use all of the normally unavailable AppKit types, and so
+// those clients need WebKitLegacy to use the AppKit types directly rather
+// than redeclare them. Duplicate the Apple internal APPKIT_API_UNAVAILABLE_BEGIN_MACCATALYST
+// logic to identify when this is the case.
+#if TARGET_OS_MACCATALYST && ((defined(__UIKIT_BUILDING_UIKIT__) && __UIKIT_BUILDING_UIKIT__) || (defined(__SWIFTUI_BUILDING_SWIFTUI__) && __SWIFTUI_BUILDING_SWIFTUI__) || (defined(__UIKIT_AX_BUILDING_UIKIT_AX__) && __UIKIT_AX_BUILDING_UIKIT_AX__))
+#define WAK_APPKIT_API_AVAILABLE_MACCATALYST 1
+#else
+#define WAK_APPKIT_API_AVAILABLE_MACCATALYST 0
+#endif
+
+#if WAK_APPKIT_API_AVAILABLE_MACCATALYST
+#import <AppKit/NSClipView.h>
+#import <AppKit/NSScrollView.h>
+#import <AppKit/NSView.h>
+#else
 #ifndef NSClipView
 #define NSClipView WAKClipView
 #endif
@@ -41,15 +64,22 @@
 #ifndef NSScrollView
 #define NSScrollView WAKScrollView
 #endif
+#endif // WAK_APPKIT_API_AVAILABLE_MACCATALYST
+// There is no <WebKit/WebDynamicScrollBarsView.h> in Mac Catalyst.
 #ifndef WebDynamicScrollBarsView
 #define WebDynamicScrollBarsView WAKScrollView
 #endif
+#if WAK_APPKIT_API_AVAILABLE_MACCATALYST
+#import <AppKit/NSResponder.h>
+#import <AppKit/NSWindow.h>
+#else
 #ifndef NSWindow
 #define NSWindow WAKWindow
 #endif
 #ifndef NSResponder
 #define NSResponder WAKResponder
 #endif
+#endif // WAK_APPKIT_API_AVAILABLE_MACCATALYST
 
 // FIXME: <rdar://problem/6669434> Switch from using NSGeometry methods to CGGeometry methods
 //
@@ -163,6 +193,9 @@ typedef NS_OPTIONS(NSUInteger, WKNSEventModifierFlags) {
     WKNSEventModifierFlagDeviceIndependentFlagsMask = 0xffff0000U
 };
 
+#if WAK_APPKIT_API_AVAILABLE_MACCATALYST
+#import <AppKit/NSEvent.h>
+#else
 #ifndef NSEventModifierFlagCapsLock
 #define NSEventModifierFlagCapsLock WKNSEventModifierFlagCapsLock
 #define NSEventModifierFlagShift WKNSEventModifierFlagShift
@@ -174,6 +207,7 @@ typedef NS_OPTIONS(NSUInteger, WKNSEventModifierFlags) {
 #define NSEventModifierFlagFunction WKNSEventModifierFlagFunction
 #define NSEventModifierFlagDeviceIndependentFlagsMask WKNSEventModifierFlagDeviceIndependentFlagsMask
 #endif
+#endif // WAK_APPKIT_API_AVAILABLE_MACCATALYST
 
 typedef enum _WKWritingDirection {
     WKWritingDirectionNatural     = -1, /* Determines direction using the Unicode Bidi Algorithm rules P2 and P3 */
@@ -186,11 +220,15 @@ typedef NS_ENUM(NSUInteger, WKNSSelectionAffinity) {
     WKNSSelectionAffinityDownstream = 1
 };
 
+#if WAK_APPKIT_API_AVAILABLE_MACCATALYST
+#import <AppKit/NSTextView.h>
+#else
 #ifndef NSSelectionAffinityUpstream
 #define NSSelectionAffinity WKNSSelectionAffinity
 #define NSSelectionAffinityUpstream WKNSSelectionAffinityUpstream
 #define NSSelectionAffinityDownstream WKNSSelectionAffinityDownstream
 #endif
+#endif // WAK_APPKIT_API_AVAILABLE_MACCATALYST
 
 typedef NS_ENUM(NSInteger, WKNSControlStateValue) {
     WKNSControlStateValueMixed = -1,
@@ -198,12 +236,16 @@ typedef NS_ENUM(NSInteger, WKNSControlStateValue) {
     WKNSControlStateValueOn    =  1
 };
 
+#if WAK_APPKIT_API_AVAILABLE_MACCATALYST
+#import <AppKit/NSCell.h>
+#else
 #ifndef NSControlStateValueMixed
 #define NSControlStateValue WKNSControlStateValue
 #define NSControlStateValueMixed WKNSControlStateValueMixed
 #define NSControlStateValueOff WKNSControlStateValueOff
 #define NSControlStateValueOn WKNSControlStateValueOn
 #endif
+#endif // WAK_APPKIT_API_AVAILABLE_MACCATALYST
 
 typedef NS_ENUM(NSUInteger, WKNSCompositingOperation) {
     WKNSCompositeClear           = 0,
@@ -222,6 +264,9 @@ typedef NS_ENUM(NSUInteger, WKNSCompositingOperation) {
     WKNSCompositePlusLighter     = 13
 };
 
+#if WAK_APPKIT_API_AVAILABLE_MACCATALYST
+#import <AppKit/NSGraphics.h>
+#else
 #ifndef NSCompositeClear
 #define NSCompositingOperation WKNSCompositingOperation
 #define NSCompositeClear WKNSCompositeClear
@@ -239,6 +284,7 @@ typedef NS_ENUM(NSUInteger, WKNSCompositingOperation) {
 #define NSCompositeHighlight WKNSCompositeHighlight
 #define NSCompositePlusLighter WKNSCompositePlusLighter
 #endif
+#endif // WAK_APPKIT_API_AVAILABLE_MACCATALYST
 
 typedef NS_ENUM(NSUInteger, WKNSSelectionDirection) {
     WKNSDirectSelection = 0,
@@ -246,12 +292,18 @@ typedef NS_ENUM(NSUInteger, WKNSSelectionDirection) {
     WKNSSelectingPrevious
 };
 
+#if WAK_APPKIT_API_AVAILABLE_MACCATALYST
+// Included earlier, but the following constants are
+// in NSWindow.h.
+// #import <AppKit/NSWindow.h>
+#else
 #ifndef NSDirectSelection
 #define NSSelectionDirection WKNSSelectionDirection
 #define NSDirectSelection WKNSDirectSelection
 #define NSSelectingNext WKNSSelectingNext
 #define NSSelectingPrevious WKNSSelectingPrevious
 #endif
+#endif // WAK_APPKIT_API_AVAILABLE_MACCATALYST
 
 #endif // TARGET_OS_IPHONE
 

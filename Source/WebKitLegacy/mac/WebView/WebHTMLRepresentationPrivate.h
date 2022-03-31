@@ -27,10 +27,17 @@
  */
 
 #import <WebKitLegacy/WebHTMLRepresentation.h>
+#if TARGET_OS_IPHONE
+#import <WebKitLegacy/WAKView.h>
+#endif
 
 @protocol WebPluginManualLoader;
 
 @interface WebHTMLRepresentation (WebPrivate)
+#if TARGET_OS_IPHONE
+- (void)_redirectDataToManualLoader:(id<WebPluginManualLoader>)manualLoader forPluginView:(WAKView *)pluginView;
+#else
 - (void)_redirectDataToManualLoader:(id<WebPluginManualLoader>)manualLoader forPluginView:(NSView *)pluginView;
+#endif
 - (void)printDOMTree;
 @end

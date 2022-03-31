@@ -80,7 +80,11 @@ WEBKIT_DEPRECATED_MAC(10_3, 10_14)
     @param hostWindow The host window for the document view.
     @abstract Called before the host window is set on the parent web view.
 */
+#if TARGET_OS_IPHONE
+- (void)viewWillMoveToHostWindow:(WAKWindow *)hostWindow;
+#else
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
+#endif
 
 /*!
     @method viewDidMoveToHostWindow

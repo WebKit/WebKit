@@ -134,7 +134,11 @@ typedef enum {
 - (NSRect)caretRect;
 - (NSRect)rectForScrollToVisible; // return caretRect if selection is caret, selectionRect otherwise
 @property (nonatomic, readwrite) CGColorRef caretColor;
+#if TARGET_OS_IPHONE
+- (WAKView *)documentView;
+#else
 - (NSView *)documentView;
+#endif
 - (int)layoutCount;
 - (BOOL)isTelephoneNumberParsingAllowed;
 - (BOOL)isTelephoneNumberParsingEnabled;

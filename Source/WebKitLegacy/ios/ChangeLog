@@ -1,3 +1,76 @@
+2022-03-31  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291978. rdar://problem/90497026
+
+    Some Apple internal clients fail to build due to redeclared AppKit types in WebKitLegacy
+    https://bugs.webkit.org/show_bug.cgi?id=238368
+    
+    Patch by Ian Anderson <iana@apple.com> on 2022-03-28
+    Reviewed by Jonathan Bedard.
+    
+    Source/WebCore:
+    
+    Some Apple internal Mac Catalyst clients need to use both AppKit and
+    WebKitLegacy. WebKitLegacy's redeclaration of AppKit types causes errors
+    for those clients. Copy AppKit's Apple internal logic for identifying
+    the special Mac Catalyst clients that are allowed to use the AppKit
+    types, and when such clients use WebKitLegacy, don't redeclare the
+    AppKit types.
+    
+    * platform/ios/KeyEventCodesIOS.h:
+    * platform/ios/wak/WAKAppKitStubs.h:
+    * platform/ios/wak/WAKView.h:
+    * platform/ios/wak/WAKWindow.h:
+    
+    Source/WebKitLegacy/ios:
+    
+    WebKitLegacy can't always define NSView to WAKView in Mac Catalyst, but
+    views are always WAKView in Mac Catalyst. Switch on TARGET_OS_IPHONE to
+    declare WAKView explicitly.
+    
+    * WebView/WebUIKitDelegate.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    WebKitLegacy can't always define NSClipView/NSView/NSScrollView/
+    NSWindow/NSResponder to their WAK counterparts in Mac Catalyst, but
+    those types are always the WAK ones in Mac Catalyst. Switch on
+    TARGET_OS_IPHONE to declare the WAK types explicitly.
+    
+    * Misc/WebDownload.h:
+    * Misc/WebNSViewExtras.h:
+    * Plugins/WebPluginDatabase.h:
+    * WebView/WebDocument.h:
+    * WebView/WebDocumentPrivate.h:
+    * WebView/WebFramePrivate.h:
+    * WebView/WebFrameView.h:
+    (WEBKIT_CLASS_DEPRECATED_MAC):
+    * WebView/WebFrameViewPrivate.h:
+    * WebView/WebHTMLRepresentation.h:
+    * WebView/WebHTMLRepresentationPrivate.h:
+    * WebView/WebHTMLView.h:
+    * WebView/WebHTMLViewPrivate.h:
+    * WebView/WebUIDelegate.h:
+    * WebView/WebUIDelegatePrivate.h:
+    * WebView/WebView.h:
+    (WEBKIT_CLASS_DEPRECATED_MAC):
+    * WebView/WebViewPrivate.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291978 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-28  Ian Anderson  <iana@apple.com>
+
+            Some Apple internal clients fail to build due to redeclared AppKit types in WebKitLegacy
+            https://bugs.webkit.org/show_bug.cgi?id=238368
+
+            Reviewed by Jonathan Bedard.
+
+            WebKitLegacy can't always define NSView to WAKView in Mac Catalyst, but
+            views are always WAKView in Mac Catalyst. Switch on TARGET_OS_IPHONE to
+            declare WAKView explicitly.
+
+            * WebView/WebUIKitDelegate.h:
+
 2022-03-16  Youenn Fablet  <youenn@apple.com>
 
         Make MIMETypeRegistry::mimeTypeForPath take a StringView

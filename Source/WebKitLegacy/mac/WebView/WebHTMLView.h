@@ -45,7 +45,7 @@
 #if !TARGET_OS_IPHONE
 @interface WebHTMLView : NSControl <WebDocumentView, WebDocumentSearching>
 #else
-@interface WebHTMLView : NSView <WebDocumentView, WebDocumentSearching>
+@interface WebHTMLView : WAKView <WebDocumentView, WebDocumentSearching>
 #endif
 {
 @private

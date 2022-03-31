@@ -27,6 +27,9 @@
  */
 
 #import <WebKitLegacy/WebHTMLView.h>
+#if TARGET_OS_IPHONE
+#import <WebKitLegacy/WAKView.h>
+#endif
 
 @class DOMDocumentFragment;
 @class DOMNode;
@@ -108,7 +111,11 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 #endif
 
 - (BOOL)_isUsingAcceleratedCompositing;
+#if TARGET_OS_IPHONE
+- (WAKView *)_compositingLayersHostingView;
+#else
 - (NSView *)_compositingLayersHostingView;
+#endif
 
 #if !TARGET_OS_IPHONE
 // SPI for printing (should be converted to API someday). When the WebHTMLView isn't being printed

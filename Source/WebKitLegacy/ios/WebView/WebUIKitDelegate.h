@@ -85,7 +85,11 @@ typedef NS_ENUM(NSInteger, WebMediaCaptureType) {
 // BackForwardCache support
 - (void)webViewDidRestoreFromPageCache:(WebView *)webView;
 
+#if TARGET_OS_IPHONE
+- (WAKView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(WebPluginPackage *)package;
+#else
 - (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments fromPlugInPackage:(WebPluginPackage *)package;
+#endif
 - (void)webView:(WebView *)webView willShowFullScreenForPlugInView:(id)plugInView;
 - (void)webView:(WebView *)webView didHideFullScreenForPlugInView:(id)plugInView;
 - (void)webView:(WebView *)aWebView didReceiveMessage:(NSDictionary *)aMessage;
