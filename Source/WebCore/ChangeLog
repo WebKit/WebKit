@@ -1,3 +1,15 @@
+2022-03-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Make ENABLE(GPU_PROCESS) code buildable
+        https://bugs.webkit.org/show_bug.cgi?id=238595
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/TextureMapper.cmake:
+        List the relevant headers under platform/graphics/gbm/ and append them
+        to WebCore_PRIVATE_FRAMEWORK_HEADERS so that the necessary relay headers
+        usable from WebKit are generated.
+
 2022-03-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Split streaming of AX trees from the class AXLogger.

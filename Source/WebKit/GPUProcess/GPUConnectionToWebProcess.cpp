@@ -946,7 +946,7 @@ void GPUConnectionToWebProcess::processIsStartingToCaptureAudio(GPUConnectionToW
 #endif
 
 #if !PLATFORM(COCOA)
-bool GPUConnectionToWebProcess::setCaptureAttributionString() const
+bool GPUConnectionToWebProcess::setCaptureAttributionString()
 {
 }
 #endif

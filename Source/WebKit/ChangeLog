@@ -1,3 +1,23 @@
+2022-03-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Make ENABLE(GPU_PROCESS) code buildable
+        https://bugs.webkit.org/show_bug.cgi?id=238595
+
+        Reviewed by Adrian Perez de Castro.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::setCaptureAttributionString):
+        Adjust the setCaptureAttributionString() method definition for non-Cocoa
+        platforms.
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in:
+        Guard the RemoteAudioMediaStreamTrackRendererInternalUnitManager class
+        with PLATFORM(COCOA) since all its uses are guarded the same way, and
+        the implementation unconditionally uses Cocoa-specific classes from
+        WebCore. The class can be refactored later if it ends up required for
+        any other platform.
+
 2022-03-31  Per Arne Vollan  <pvollan@apple.com>
 
         Add runtime flag for blocking IOKit resources in the WebContent process' sandbox
