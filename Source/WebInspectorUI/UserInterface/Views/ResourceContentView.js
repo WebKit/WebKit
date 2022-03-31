@@ -388,7 +388,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
         let mappedFilePathLink = document.createElement("a");
         mappedFilePathLink.href = "file://" + mappedFilePath;
-        mappedFilePathLink.textContent = mappedFilePath;
+        mappedFilePathLink.textContent = mappedFilePath.insertWordBreakCharacters();
         mappedFilePathLink.addEventListener("click", (event) => {
             event.stop();
 

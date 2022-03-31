@@ -1,3 +1,14 @@
+2022-03-31  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: the mapped file URL of a Respone Local Override should wrap
+        https://bugs.webkit.org/show_bug.cgi?id=238625
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype._handleMappedFilePathChanged):
+        Long file paths should be wrappable so the text doesn't overflow the content area.
+
 2022-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Remove EXPERIMENTAL_FEATURES flag on Cocoa platforms
