@@ -1,3 +1,23 @@
+2022-03-31  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/90957317
+
+    2022-03-08  J Pascoe  <j_pascoe@apple.com>
+
+            [WebAuthn] Using WebAuthn within cross-origin iframe elements
+            https://bugs.webkit.org/show_bug.cgi?id=222240
+            rdar://problem/74830748
+
+            Reviewed by Brent Fulgham.
+
+            Update existing tests and create new test for cross-origin, non same-site i-frames.
+
+            * http/wpt/webauthn/public-key-credential-cross-origin.https-expected.txt: Added.
+            * http/wpt/webauthn/public-key-credential-cross-origin.https.html: Added.
+            * http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https-expected.txt:
+            * http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html:
+            * http/wpt/webauthn/resources/public-key-credential-cross-origin.https.html: Added.
+
 2022-03-29  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r290392. rdar://problem/90957261

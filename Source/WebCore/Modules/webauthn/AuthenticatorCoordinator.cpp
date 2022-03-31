@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "FeaturePolicy.h"
 #include "JSBasicCredential.h"
+#include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
@@ -182,18 +183,19 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
     m_client->makeCredential(*frame, callerOrigin, clientDataJsonHash, options, WTFMove(callback));
 }
 
-void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, const PublicKeyCredentialRequestOptions& options, WebAuthn::Scope scope, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise) const
+void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, CredentialPromise&& promise) const
 {
     using namespace AuthenticatorCoordinatorInternal;
 
     auto& callerOrigin = document.securityOrigin();
     auto* frame = document.frame();
+    const auto& options = requestOptions.publicKey.value();
     ASSERT(frame);
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
     // Step 1, 3, 13 are handled by the caller.
     // Step 2.
-    // This implements https://www.w3.org/TR/webauthn-2/#sctn-permissions-policy except only same-site, cross-origin is permitted.
-    if (scope != WebAuthn::Scope::SameOrigin && !(scope == WebAuthn::Scope::SameSite && isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::PublickeyCredentialsGetRule, document, LogFeaturePolicyFailure::No))) {
+    // This implements https://www.w3.org/TR/webauthn-2/#sctn-permissions-policy
+    if (scopeAndCrossOriginParent.first != WebAuthn::Scope::SameOrigin && !isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::PublickeyCredentialsGetRule, document, LogFeaturePolicyFailure::No)) {
         promise.reject(Exception { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }
@@ -227,7 +229,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
     }
 
     // Step 10-12.
-    auto clientDataJson = buildClientDataJson(ClientDataType::Get, options.challenge, callerOrigin, scope);
+    auto clientDataJson = buildClientDataJson(ClientDataType::Get, options.challenge, callerOrigin, scopeAndCrossOriginParent.first);
     auto clientDataJsonHash = buildClientDataJsonHash(clientDataJson);
 
     // Step 4, 14-19.
@@ -236,7 +238,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         return;
     }
 
-    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
+    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
@@ -251,7 +253,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         promise.reject(exception.toException());
     };
     // Async operations are dispatched and handled in the messenger.
-    m_client->getAssertion(*frame, callerOrigin, clientDataJsonHash, options, WTFMove(callback));
+    m_client->getAssertion(*frame, callerOrigin, clientDataJsonHash, options, scopeAndCrossOriginParent, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&& promise) const
