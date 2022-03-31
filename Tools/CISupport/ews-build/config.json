@@ -37,7 +37,7 @@
     { "name": "ews106", "platform": "mac-bigsur" },
     { "name": "ews107", "platform": "mac-bigsur" },
     { "name": "ews108", "platform": "*" },
-    { "name": "ews109", "platform": "*" },
+    { "name": "ews109", "platform": "ios-15" },
     { "name": "ews112", "platform": "mac-bigsur" },
     { "name": "ews113", "platform": "mac-bigsur" },
     { "name": "ews114", "platform": "mac-bigsur" },
@@ -137,7 +137,7 @@
       "factory": "iOSBuildFactory", "platform": "ios-simulator-15",
       "configuration": "release", "architectures": ["x86_64"],
       "triggers": ["api-tests-ios-sim-ews", "ios-15-sim-wk2-tests-ews"],
-      "workernames": ["ews152", "ews154", "ews156", "ews157", "ews108", "ews109"]
+      "workernames": ["ews152", "ews154", "ews156", "ews157", "ews108"]
     },
     {
       "name": "iOS-15-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
