@@ -1691,7 +1691,6 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin):
         return not self.doStepIf(step)
 
 
-
 class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
     name = 'remove-flags-from-patch'
     flunkOnFailure = False
@@ -1710,9 +1709,17 @@ class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
         return None
 
     def getResultSummary(self):
+        if self.results == SKIPPED:
+            return buildstep.BuildStep.getResultSummary(self)
         if self.results == SUCCESS:
             return {'step': 'Removed flags on bugzilla patch'}
         return {'step': 'Failed to remove flags on bugzilla patch'}
+
+    def doStepIf(self, step):
+        return self.getProperty('patch_id')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
 
 
 class CloseBug(buildstep.BuildStep, BugzillaMixin):
