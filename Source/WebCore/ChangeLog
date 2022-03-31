@@ -1,3 +1,20 @@
+2022-03-31  Rob Buis  <rbuis@igalia.com>
+
+        Interop issue with position: sticky within contain: paint
+        https://bugs.webkit.org/show_bug.cgi?id=238016
+
+        Reviewed by Simon Fraser.
+
+        Elements with overflow: clip (contain: paint enables it) are
+        not scroll containers, so they can't act as scrolling
+        ancestor for sticky elements.
+
+        Tests: imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-ref.html
+               imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::enclosingOverflowClipLayer const):
+
 2022-03-31  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION? (248052@main): ASSERTION FAILED: didContain in WebCore::removeActiveContext(WebCore::WebGLRenderingContextBase &)

@@ -1,3 +1,14 @@
+2022-03-31  Rob Buis  <rbuis@igalia.com>
+
+        Interop issue with position: sticky within contain: paint
+        https://bugs.webkit.org/show_bug.cgi?id=238016
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-expected.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-ref.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container.html: Added.
+
 2022-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Implement units for CSS Typed OM
