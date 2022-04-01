@@ -27,6 +27,7 @@
 
 #include <optional>
 #include <pal/SessionID.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
@@ -52,12 +53,13 @@ struct NotificationData {
     URL serviceWorkerRegistrationURL;
     UUID notificationID;
     PAL::SessionID sourceSession;
+    MonotonicTime creationTime;
 };
 
 template<class Encoder>
 void NotificationData::encode(Encoder& encoder) const
 {
-    encoder << title << body << iconURL << tag << language << direction << originString << serviceWorkerRegistrationURL << notificationID << sourceSession;
+    encoder << title << body << iconURL << tag << language << direction << originString << serviceWorkerRegistrationURL << notificationID << sourceSession << creationTime;
 }
 
 template<class Decoder>
@@ -113,6 +115,11 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
     if (!sourceSession)
         return std::nullopt;
 
+    std::optional<MonotonicTime> creationTime;
+    decoder >> creationTime;
+    if (!creationTime)
+        return std::nullopt;
+
     return { {
         WTFMove(*title),
         WTFMove(*body),
@@ -124,6 +131,7 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
         WTFMove(*serviceWorkerRegistrationURL),
         WTFMove(*notificationID),
         WTFMove(*sourceSession),
+        WTFMove(*creationTime)
     } };
 }
 

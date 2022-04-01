@@ -38,7 +38,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include "WebProcessPoolMessages.h"
+#include "WebProcessProxyMessages.h"
 #include "WebSWOriginTable.h"
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/Document.h>
@@ -267,6 +267,11 @@ void WebSWClientConnection::getPushPermissionState(WebCore::ServiceWorkerRegistr
             return callback(result.error().toException());
         callback(static_cast<PushPermissionState>(*result));
     });
+}
+
+void WebSWClientConnection::getNotifications(const URL& registrationURL, const String& tag, GetNotificationsCallback&& callback)
+{
+    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::GetNotifications { registrationURL, tag }, WTFMove(callback));
 }
 
 void WebSWClientConnection::enableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, ExceptionOrVoidCallback&& callback)

@@ -1,5 +1,30 @@
 2022-04-01  Youenn Fablet  <youenn@apple.com>
 
+        ServiceWorkerRegistration.getNotifications should list all persistent notifications
+        https://bugs.webkit.org/show_bug.cgi?id=238544
+
+        Reviewed by Darin Adler.
+
+        Remove context based notification list since the list is global.
+        Add creation time to notification data.
+        Instead of reading the list locally, use the SWClient connection to get it.
+
+        Covered by updated test.
+
+        * Modules/notifications/Notification.cpp:
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationData.h:
+        * workers/service/SWClientConnection.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        * workers/service/ServiceWorkerRegistration.h:
+        * workers/service/ServiceWorkerRegistration.idl:
+        * workers/service/WorkerSWClientConnection.cpp:
+        * workers/service/WorkerSWClientConnection.h:
+
+2022-04-01  Youenn Fablet  <youenn@apple.com>
+
         Notification should be exposed to ServiceWorker contexts
         https://bugs.webkit.org/show_bug.cgi?id=238548
 

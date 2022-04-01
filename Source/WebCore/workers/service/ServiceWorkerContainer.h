@@ -91,6 +91,9 @@ public:
     void unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier, PushSubscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&&);
     void getPushSubscription(ServiceWorkerRegistration&, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);
     void getPushPermissionState(ServiceWorkerRegistrationIdentifier, DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
+#if ENABLE(NOTIFICATIONS)
+    void getNotifications(const URL&, const String&, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>&&);
+#endif
 
     ServiceWorkerJob* job(ServiceWorkerJobIdentifier);
 

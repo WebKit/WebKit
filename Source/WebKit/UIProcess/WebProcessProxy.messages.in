@@ -91,4 +91,6 @@ messages -> WebProcessProxy LegacyReceiver {
     SetCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode mode)
     SetCaptionLanguage(String language)
 #endif
+
+    GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
 }

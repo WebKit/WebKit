@@ -610,6 +610,28 @@ void ServiceWorkerContainer::getPushPermissionState(ServiceWorkerRegistrationIde
     });
 }
 
+#if ENABLE(NOTIFICATIONS)
+void ServiceWorkerContainer::getNotifications(const URL& serviceWorkerRegistrationURL, const String& tag, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>&& promise)
+{
+    ensureSWClientConnection().getNotifications(serviceWorkerRegistrationURL, tag, [promise = WTFMove(promise), protectedThis = Ref { *this }](auto&& result) mutable {
+        auto* context = protectedThis->scriptExecutionContext();
+        if (!context)
+            return;
+
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+
+        auto data = result.releaseReturnValue();
+        auto notifications = map(data, [context](auto&& data) {
+            return Notification::create(*context, WTFMove(data));
+        });
+        promise.resolve(WTFMove(notifications));
+    });
+}
+#endif
+
 void ServiceWorkerContainer::queueTaskToDispatchControllerChangeEvent()
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());

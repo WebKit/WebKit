@@ -2104,6 +2104,11 @@ void WebProcessProxy::systemBeep()
     PAL::systemBeep();
 }
 
+void WebProcessProxy::getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
+{
+    WebNotificationManagerProxy::sharedServiceWorkerManager().getNotifications(registrationURL, tag, sessionID(), WTFMove(callback));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

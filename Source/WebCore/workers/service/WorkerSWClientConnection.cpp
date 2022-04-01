@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "NotificationData.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerJobData.h"
@@ -79,7 +80,11 @@ WorkerSWClientConnection::~WorkerSWClientConnection()
         callback(Exception { AbortError, "context stopped"_s });
 
     auto navigationPreloadStateCallbacks = WTFMove(m_navigationPreloadStateCallbacks);
-    for (auto& callback : m_navigationPreloadStateCallbacks.values())
+    for (auto& callback : navigationPreloadStateCallbacks.values())
+        callback(Exception { AbortError, "context stopped"_s });
+
+    auto getNotificationsCallbacks = WTFMove(m_getNotificationsCallbacks);
+    for (auto& callback : getNotificationsCallbacks.values())
         callback(Exception { AbortError, "context stopped"_s });
 }
 
@@ -287,6 +292,22 @@ void WorkerSWClientConnection::getPushPermissionState(ServiceWorkerRegistrationI
         connection.getPushPermissionState(registrationIdentifier, [thread = WTFMove(thread), requestIdentifier](auto&& result) {
             thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
                 auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_getPushPermissionStateCallbacks.take(requestIdentifier);
+                callback(WTFMove(result));
+            }, WorkerRunLoop::defaultMode());
+        });
+    });
+}
+
+void WorkerSWClientConnection::getNotifications(const URL& serviceWorkerRegistrationURL, const String& tag, GetNotificationsCallback&& callback)
+{
+    uint64_t requestIdentifier = ++m_lastRequestIdentifier;
+    m_getNotificationsCallbacks.add(requestIdentifier, WTFMove(callback));
+    
+    callOnMainThread([thread = m_thread, requestIdentifier, serviceWorkerRegistrationURL = serviceWorkerRegistrationURL.isolatedCopy(), tag = tag.isolatedCopy()]() mutable {
+        auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
+        connection.getNotifications(serviceWorkerRegistrationURL, tag, [thread = WTFMove(thread), requestIdentifier](auto&& result) {
+            thread->runLoop().postTaskForMode([requestIdentifier, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
+                auto callback = downcast<WorkerGlobalScope>(scope).swClientConnection().m_getNotificationsCallbacks.take(requestIdentifier);
                 callback(WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         });

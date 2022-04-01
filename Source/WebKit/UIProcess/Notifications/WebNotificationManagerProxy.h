@@ -68,6 +68,8 @@ public:
     void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs);
     void didDestroyNotification(WebPageProxy*, const UUID& pageNotificationID);
 
+    void getNotifications(const URL&, const String&, PAL::SessionID, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
+
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
     void providerDidClickNotification(const UUID& notificationID);

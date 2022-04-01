@@ -94,10 +94,9 @@ Notification::Notification(ScriptExecutionContext& context, String&& title, Opti
 {
     if (context.isDocument())
         m_notificationSource = NotificationSource::Document;
-    else if (context.isServiceWorkerGlobalScope()) {
+    else if (context.isServiceWorkerGlobalScope())
         m_notificationSource = NotificationSource::ServiceWorker;
-        downcast<ServiceWorkerGlobalScope>(context).registration().addNotificationToList(*this);
-    } else
+    else
         RELEASE_ASSERT_NOT_REACHED();
 
     if (!options.icon.isEmpty()) {
@@ -124,27 +123,12 @@ Notification::Notification(const Notification& other)
 
 Notification::~Notification()
 {
-    if (auto* context = scriptExecutionContext()) {
-        if (context->isServiceWorkerGlobalScope())
-            downcast<ServiceWorkerGlobalScope>(context)->registration().removeNotificationFromList(*this);
-    }
 }
 
 Ref<Notification> Notification::copyForGetNotifications() const
 {
     return adoptRef(*new Notification(*this));
 }
-
-void Notification::contextDestroyed()
-{
-    auto* context = scriptExecutionContext();
-    RELEASE_ASSERT(context);
-    if (context->isServiceWorkerGlobalScope())
-        downcast<ServiceWorkerGlobalScope>(context)->registration().removeNotificationFromList(*this);
-
-    ActiveDOMObject::contextDestroyed();
-}
-
 
 void Notification::showSoon()
 {
@@ -191,15 +175,10 @@ void Notification::close()
     switch (m_state) {
     case Idle:
         break;
-    case Showing: {
+    case Showing:
         if (auto* client = clientFromContext())
             client->cancel(*this);
-        if (auto* context = scriptExecutionContext()) {
-            if (context->isServiceWorkerGlobalScope())
-                downcast<ServiceWorkerGlobalScope>(context)->registration().removeNotificationFromList(*this);
-        }
         break;
-    }
     case Closed:
         break;
     }
@@ -346,6 +325,7 @@ NotificationData Notification::data() const
         m_serviceWorkerRegistrationURL.isolatedCopy(),
         identifier(),
         *sessionID,
+        MonotonicTime::now()
     };
 }
 

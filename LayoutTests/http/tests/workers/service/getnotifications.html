@@ -2,7 +2,6 @@
 <script src="/resources/js-test-pre.js"></script>
 <script src="/resources/notifications-test-pre.js"></script>
 <script>
-
 function failTheTest(msg)
 {
     testFailed(msg);
@@ -19,8 +18,9 @@ description("This tests that persistent notifications created by a service worke
 
 shouldBeEqualToString("Notification.permission", "granted");
 
+var registration;
 async function registerServiceWorker() {
-    var registration = await navigator.serviceWorker.register('resources/shownotification-worker.js');
+    registration = await navigator.serviceWorker.register('resources/shownotification-worker.js');
     
     if (!registration)
         return testFailed("No registration");
@@ -44,7 +44,7 @@ async function registerServiceWorker() {
 var numberShown = 0;
 var numberGot = 0;
 
-function gotNotes(event)
+async function gotNotes(event)
 {
     ++numberGot;
 
@@ -58,6 +58,13 @@ function gotNotes(event)
         event.source.postMessage("tryshow|There|Body2|tag-b");
         event.source.postMessage("tryshow|Buddy|Body3|tag-b");
     } else if (numberGot == 4) {
+        const notifications = await registration.getNotifications({ tag: "" });
+        debug("Retrieving notifications from page registration object - " + notifications.length);
+        notifications.forEach(notification => {
+            debug("Notification: " + notification.title + " / " + notification.body + " / " + notification.tag);
+        });    
+        debug("Retrieving notifications from page registration object - end");
+
         testCompleted();
     }
 }

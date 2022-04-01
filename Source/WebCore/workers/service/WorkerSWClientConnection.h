@@ -61,6 +61,7 @@ private:
     void unsubscribeFromPushService(ServiceWorkerRegistrationIdentifier, PushSubscriptionIdentifier, UnsubscribeFromPushServiceCallback&&) final;
     void getPushSubscription(ServiceWorkerRegistrationIdentifier, GetPushSubscriptionCallback&&) final;
     void getPushPermissionState(ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) final;
+    void getNotifications(const URL&, const String&, GetNotificationsCallback&&) final;
 
     void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
     void disableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) final;
@@ -80,6 +81,7 @@ private:
     HashMap<uint64_t, GetPushPermissionStateCallback> m_getPushPermissionStateCallbacks;
     HashMap<uint64_t, ExceptionOrVoidCallback> m_voidCallbacks;
     HashMap<uint64_t, ExceptionOrNavigationPreloadStateCallback> m_navigationPreloadStateCallbacks;
+    HashMap<uint64_t, GetNotificationsCallback> m_getNotificationsCallbacks;
 };
 
 } // namespace WebCore

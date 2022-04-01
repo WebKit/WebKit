@@ -29,6 +29,7 @@
 
 #include "ExceptionOr.h"
 #include "NavigationPreloadState.h"
+#include "NotificationData.h"
 #include "PushPermissionState.h"
 #include "PushSubscriptionData.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -42,6 +43,7 @@ namespace WebCore {
 
 class ResourceError;
 class SecurityOrigin;
+class ScriptExecutionContext;
 class SerializedScriptValue;
 class ServiceWorkerContainer;
 class ServiceWorkerRegistration;
@@ -50,6 +52,7 @@ enum class ServiceWorkerState : uint8_t;
 enum class ShouldNotifyWhenResolved : bool;
 struct ExceptionData;
 struct MessageWithMessagePorts;
+struct NotificationData;
 struct ServiceWorkerClientData;
 struct ServiceWorkerData;
 struct ServiceWorkerRegistrationData;
@@ -100,6 +103,9 @@ public:
 
     using GetPushPermissionStateCallback = CompletionHandler<void(ExceptionOr<PushPermissionState>&&)>;
     virtual void getPushPermissionState(ServiceWorkerRegistrationIdentifier, GetPushPermissionStateCallback&&) = 0;
+
+    using GetNotificationsCallback = CompletionHandler<void(ExceptionOr<Vector<NotificationData>>&&)>;
+    virtual void getNotifications(const URL&, const String&, GetNotificationsCallback&&) = 0;
 
     using ExceptionOrVoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     virtual void enableNavigationPreload(ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&) = 0;

@@ -112,8 +112,6 @@ private:
     Notification(ScriptExecutionContext&, String&& title, Options&&);
     Notification(const Notification&);
 
-    void contextDestroyed() final;
-
     NotificationClient* clientFromContext();
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
 

@@ -347,4 +347,24 @@ void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Arr
         processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidRemoveNotificationDecisions(apiArrayToSecurityOriginStrings(origins)));
 }
 
+void WebNotificationManagerProxy::getNotifications(const URL& url, const String& tag, PAL::SessionID sessionID, CompletionHandler<void(Vector<NotificationData>&&)>&& callback)
+{
+    Vector<WebNotification*> notifications;
+    for (auto& notification : m_notifications.values()) {
+        auto& data = notification->data();
+        if (data.serviceWorkerRegistrationURL != url || data.sourceSession != sessionID)
+            continue;
+        if (!tag.isEmpty() && data.tag != tag)
+            continue;
+        notifications.append(notification.ptr());
+    }
+    // Let's sort as per https://notifications.spec.whatwg.org/#dom-serviceworkerregistration-getnotifications.
+    std::sort(notifications.begin(), notifications.end(), [](auto& a, auto& b) {
+        if (a->data().creationTime < b->data().creationTime)
+            return true;
+        return a->data().creationTime == b->data().creationTime && a->identifier() < b->identifier();
+    });
+    callback(map(notifications, [](auto& notification) { return notification->data(); }));
+}
+
 } // namespace WebKit
