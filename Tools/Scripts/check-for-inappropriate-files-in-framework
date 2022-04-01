@@ -36,7 +36,7 @@ $INAPPROPRIATE_FILES = {
     "Resources" => ["*.txt", "*.in", "*.idl", "*.h"],
   },
   "WebKitLegacy" => {
-    "PrivateHeaders" => ["*.tmp"],
+    "Headers" => ["*.tmp"],
     "Resources" => ["*.txt", "*.in", "*.idl", "*.h"],
   },
   "WebKit" => {

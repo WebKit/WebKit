@@ -195,9 +195,9 @@ EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_NO = AbstractPasteboard.h DOMHTMLTextAreaE
 
 INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(WK_WHICH_BUILD_SYSTEM));
 INCLUDED_MIGRATED_HEADERS_not_legacy = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS));
-// WebEventRegion.h is migrated when building for an iOS family target with an internal SDK...
+// WebEventRegion.h is migrated when building for an iOS family target with an internal SDK…
 INCLUDED_MIGRATED_HEADERS_YES_cocoatouch = WebEventRegion.h;
-// ...or when --ios-touch-events was passed to build-webkit manually.
+// …or when --ios-touch-events was passed to build-webkit manually.
 INCLUDED_MIGRATED_HEADERS_ENABLE_IOS_TOUCH_EVENTS = WebEventRegion.h;
 
 WK_MIGRATED_HEADER_OUTPUT_DIR = $(WK_MIGRATED_HEADER_OUTPUT_DIR_$(WK_COCOA_TOUCH));
