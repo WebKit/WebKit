@@ -33,6 +33,12 @@
 typedef void *EGLDisplay;
 #endif
 
+#if PLATFORM(GTK)
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GdkDisplay GdkDisplay;
+#endif
+
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 #include "GRefPtrGStreamer.h"
 
@@ -74,6 +80,7 @@ public:
 
 #if USE(EGL) || USE(GLX)
     WEBCORE_EXPORT GLContext* sharingGLContext();
+    void clearSharingGLContext();
 #endif
 
 #if USE(EGL)
@@ -96,12 +103,18 @@ public:
 #endif
 
 protected:
-    enum class NativeDisplayOwned { No, Yes };
-    explicit PlatformDisplay(NativeDisplayOwned);
+    PlatformDisplay();
+#if PLATFORM(GTK)
+    explicit PlatformDisplay(GdkDisplay*);
+#endif
 
     static void setSharedDisplayForCompositing(PlatformDisplay&);
 
-    NativeDisplayOwned m_nativeDisplayOwned { NativeDisplayOwned::No };
+#if PLATFORM(GTK)
+    virtual void sharedDisplayDidClose();
+
+    GRefPtr<GdkDisplay> m_sharedDisplay;
+#endif
 
 #if USE(EGL)
     virtual void initializeEGLDisplay();

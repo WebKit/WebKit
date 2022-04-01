@@ -63,7 +63,7 @@ void WaylandCompositorDisplay::bindSurfaceToPage(struct wl_surface* surface, Web
 }
 
 WaylandCompositorDisplay::WaylandCompositorDisplay(struct wl_display* display)
-    : PlatformDisplayWayland(display, NativeDisplayOwned::Yes)
+    : PlatformDisplayWayland(display)
 {
     PlatformDisplay::setSharedDisplayForCompositing(*this);
 }
