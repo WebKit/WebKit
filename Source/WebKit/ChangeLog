@@ -1,3 +1,19 @@
+2022-04-01  Tusooa Zhu  <tusooa@kazv.moe>
+
+        Expose WebKitWebView from WPEQtView
+        https://bugs.webkit.org/show_bug.cgi?id=236746
+
+        Reviewed by Adrian Perez de Castro.
+
+        WPEQtView currently does not allow manipulating the underlying WebKitWebView.
+        This patch allows retrieving the WebKitWebView from the WPEQtView.
+
+        No tests needed, as this patch only adds a trivial getter.
+
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (WPEQtView::webView const):
+        * UIProcess/API/wpe/qt/WPEQtView.h:
+
 2022-04-01  Ben Nham  <nham@apple.com>
 
         Add more push-related logging
