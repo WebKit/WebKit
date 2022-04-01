@@ -29,6 +29,7 @@
 
 namespace WebCore {
 class FloatRect;
+struct InteractionRegion;
 }
 
 namespace WebKit {
@@ -44,7 +45,7 @@ struct InteractionInformationRequest;
 @required
 - (void)positionInformationForHoverPlatter:(WKHoverPlatter *)hoverPlatter withRequest:(WebKit::InteractionInformationRequest&)request completionHandler:(void (^)(WebKit::InteractionInformationAtPosition))completionHandler;
 
-- (void)interactableRegionsForHoverPlatter:(WKHoverPlatter *)hoverPlatter inRect:(WebCore::FloatRect)rect completionHandler:(void (^)(Vector<WebCore::FloatRect>))completionHandler;
+- (void)interactionRegionsForHoverPlatter:(WKHoverPlatter *)hoverPlatter inRect:(WebCore::FloatRect)rectInContentCoordinates completionHandler:(void (^)(Vector<WebCore::InteractionRegion>))completionHandler;
 
 @end
 

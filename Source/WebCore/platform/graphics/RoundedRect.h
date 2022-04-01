@@ -71,6 +71,8 @@ public:
 
         Radii transposedRadii() const { return Radii(m_topLeft.transposedSize(), m_topRight.transposedSize(), m_bottomLeft.transposedSize(), m_bottomRight.transposedSize()); }
 
+        LayoutUnit minimumRadius() const { return std::min({ m_topLeft.minDimension(), m_topRight.minDimension(), m_bottomLeft.minDimension(), m_bottomRight.minDimension() }); }
+
     private:
         LayoutSize m_topLeft;
         LayoutSize m_topRight;

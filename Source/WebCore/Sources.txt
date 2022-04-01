@@ -1753,6 +1753,7 @@ page/FrameViewLayoutContext.cpp
 page/History.cpp
 page/ImageAnalysisQueue.cpp
 page/ImageOverlayController.cpp
+page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
 page/Location.cpp

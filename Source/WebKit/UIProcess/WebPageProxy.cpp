@@ -11282,9 +11282,9 @@ bool WebPageProxy::shouldEnableCaptivePortalMode() const
     return m_configuration->captivePortalModeEnabled();
 }
 
-void WebPageProxy::interactableRegionsInRootViewCoordinates(FloatRect rect, CompletionHandler<void(Vector<FloatRect>)>&& completionHandler)
+void WebPageProxy::interactionRegions(FloatRect rectInContentCoordinates, CompletionHandler<void(Vector<InteractionRegion>)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPage::InteractableRegionsInRootViewCoordinates(rect), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::InteractionRegions(rectInContentCoordinates), WTFMove(completionHandler));
 }
 
 #if PLATFORM(COCOA)

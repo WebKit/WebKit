@@ -37,6 +37,7 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
     _WKWheelEventHandlerRegion = 1 << 1,
     _WKTouchActionRegion = 1 << 2,
     _WKEditableElementRegion = 1 << 3,
+    _WKInteractionRegion WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 1 << 4,
 } WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {

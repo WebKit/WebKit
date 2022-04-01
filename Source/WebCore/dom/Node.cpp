@@ -2510,6 +2510,13 @@ bool Node::willRespondToMouseMoveEvents()
     return hasEventListeners(eventNames().mousemoveEvent) || hasEventListeners(eventNames().mouseoverEvent) || hasEventListeners(eventNames().mouseoutEvent);
 }
 
+bool Node::willRespondToTouchEvents()
+{
+    return eventTypes().containsIf([&](const auto& type) {
+        return eventNames().isTouchRelatedEventType(type, *this);
+    });
+}
+
 bool Node::willRespondToMouseClickEvents()
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?

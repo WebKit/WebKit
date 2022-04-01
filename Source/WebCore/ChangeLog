@@ -1,3 +1,64 @@
+2022-04-01  Tim Horton  <timothy_horton@apple.com>
+
+        Add a debug overlay for interaction regions
+        https://bugs.webkit.org/show_bug.cgi?id=238187
+
+        Reviewed by Wenson Hsieh.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.cpp:
+        (WebCore::Node::willRespondToTouchEvents):
+        * dom/Node.h:
+        Expose `willRespondToTouchEvents`, similar to `willRespondToMouseMoveEvents`.
+
+        * page/DebugOverlayRegions.h:
+        * page/DebugPageOverlays.cpp:
+        (WebCore::InteractionRegionOverlay::updateRegion):
+        (WebCore::pathsForRegion):
+        (WebCore::InteractionRegionOverlay::activeRegion):
+        (WebCore::drawCheckbox):
+        (WebCore::InteractionRegionOverlay::rectForSettingAtIndex):
+        (WebCore::InteractionRegionOverlay::valueForSetting):
+        (WebCore::InteractionRegionOverlay::drawSettings):
+        (WebCore::InteractionRegionOverlay::drawRect):
+        (WebCore::InteractionRegionOverlay::mouseEvent):
+        (WebCore::RegionOverlay::create):
+        (WebCore::DebugPageOverlays::updateOverlayRegionVisibility):
+        * page/DebugPageOverlays.h:
+        (WebCore::DebugPageOverlays::didLayout):
+        (WebCore::DebugPageOverlays::didChangeEventHandlers):
+        (WebCore::DebugPageOverlays::doAfterUpdateRendering):
+        Add an overlay for indicating interaction regions.
+
+        * page/FrameSnapshotting.cpp:
+        (WebCore::styleContainsComplexBackground):
+        (WebCore::estimatedBackgroundColorForRange):
+        * page/FrameSnapshotting.h:
+        * page/TextIndicator.cpp:
+        (WebCore::styleContainsComplexBackground): Deleted.
+        (WebCore::estimatedBackgroundColorForRange): Deleted.
+        Move `estimatedBackgroundColorForRange` from TextIndicator to
+        FrameSnapshotting for ease of reuse.
+        
+        * page/InteractionRegion.cpp: Added.
+        (WebCore::absoluteBoundingRectForRange):
+        (WebCore::regionForElement):
+        (WebCore::cursorTypeForElement):
+        (WebCore::interactionRegions):
+        * page/InteractionRegion.h: Added.
+        (WebCore::InteractionRegion::encode const):
+        (WebCore::InteractionRegion::decode):
+        Add InteractionRegion, which keeps track of the location of and metadata
+        about interaction regions.
+
+        * platform/graphics/LayoutSize.h:
+        (WebCore::LayoutSize::minDimension const):
+        (WebCore::LayoutSize::maxDimension const):
+        * platform/graphics/RoundedRect.h:
+        (WebCore::RoundedRect::Radii::minimumRadius const):
+        Add minimumRadius() to Radii.
+
 2022-04-01  Youenn Fablet  <youenn@apple.com>
 
         Persistent notifications should work in document scopes as well as service worker global scopes

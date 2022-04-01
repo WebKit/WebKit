@@ -63,4 +63,6 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame&, const IntRect&, const Vect
 RefPtr<ImageBuffer> snapshotNode(Frame&, Node&, SnapshotOptions&&);
 WEBCORE_EXPORT RefPtr<ImageBuffer> snapshotSelection(Frame&, SnapshotOptions&&);
 
+Color estimatedBackgroundColorForRange(const SimpleRange&, const Frame&);
+
 } // namespace WebCore

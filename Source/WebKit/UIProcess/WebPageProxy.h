@@ -299,6 +299,7 @@ struct ElementContext;
 struct ExceptionDetails;
 struct FileChooserSettings;
 struct GlobalWindowIdentifier;
+struct InteractionRegion;
 struct LinkIcon;
 struct MediaStreamRequest;
 struct MediaUsageInfo;
@@ -2082,7 +2083,7 @@ public:
     void classifyModalContainerControls(Vector<String>&& texts, CompletionHandler<void(Vector<WebCore::ModalContainerControlType>&&)>&&);
     void decidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType>, CompletionHandler<void(WebCore::ModalContainerDecision)>&&);
 
-    void interactableRegionsInRootViewCoordinates(WebCore::FloatRect, CompletionHandler<void(Vector<WebCore::FloatRect>)>&&);
+    void interactionRegions(WebCore::FloatRect rectInContentCoordinates, CompletionHandler<void(Vector<WebCore::InteractionRegion>)>&&);
 
 #if ENABLE(SERVICE_WORKER)
     void setServiceWorkerOpenWindowCompletionCallback(CompletionHandler<void(bool)>&& completionCallback)

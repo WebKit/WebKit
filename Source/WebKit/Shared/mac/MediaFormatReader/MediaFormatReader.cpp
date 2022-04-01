@@ -36,9 +36,11 @@
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/MediaSampleAVFObjC.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/SourceBufferParserWebM.h>
 #include <WebCore/VideoTrackPrivate.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <pal/cf/CoreMediaSoftLink.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/WorkQueue.h>

@@ -58,6 +58,9 @@ public:
     LayoutUnit width() const { return m_width; }
     LayoutUnit height() const { return m_height; }
 
+    LayoutUnit minDimension() const { return std::min(m_width, m_height); }
+    LayoutUnit maxDimension() const { return std::max(m_width, m_height); }
+
     template<typename T> void setWidth(T width) { m_width = width; }
     template<typename T> void setHeight(T height) { m_height = height; }
 

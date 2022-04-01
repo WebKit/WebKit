@@ -31,14 +31,17 @@
 #include "config.h"
 #include "FrameSnapshotting.h"
 
+#include "ColorBlending.h"
 #include "Document.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
+#include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Page.h"
+#include "RenderAncestorIterator.h"
 #include "RenderObject.h"
 #include "Settings.h"
 
@@ -156,6 +159,52 @@ RefPtr<ImageBuffer> snapshotNode(Frame& frame, Node& node, SnapshotOptions&& opt
 
     LayoutRect topLevelRect;
     return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)), WTFMove(options));
+}
+
+static bool styleContainsComplexBackground(const RenderStyle& style)
+{
+    return style.hasBlendMode() || style.hasBackgroundImage() || style.hasBackdropFilter();
+}
+
+Color estimatedBackgroundColorForRange(const SimpleRange& range, const Frame& frame)
+{
+    auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
+
+    RenderElement* renderer = nullptr;
+    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
+    while (commonAncestor) {
+        if (is<RenderElement>(commonAncestor->renderer())) {
+            renderer = downcast<RenderElement>(commonAncestor->renderer());
+            break;
+        }
+        commonAncestor = commonAncestor->parentOrShadowHostElement();
+    }
+    
+    auto boundingRectForRange = enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(range, {
+        RenderObject::BoundingRectBehavior::RespectClipping,
+        RenderObject::BoundingRectBehavior::UseVisibleBounds,
+        RenderObject::BoundingRectBehavior::IgnoreTinyRects,
+    })));
+
+    Vector<Color> parentRendererBackgroundColors;
+    for (auto& ancestor : lineageOfType<RenderElement>(*renderer)) {
+        auto absoluteBoundingBox = ancestor.absoluteBoundingBoxRect();
+        auto& style = ancestor.style();
+        if (!absoluteBoundingBox.contains(boundingRectForRange) || !style.hasBackground())
+            continue;
+
+        if (styleContainsComplexBackground(style))
+            return estimatedBackgroundColor;
+
+        auto visitedDependentBackgroundColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
+        if (visitedDependentBackgroundColor != Color::transparentBlack)
+            parentRendererBackgroundColors.append(visitedDependentBackgroundColor);
+    }
+    parentRendererBackgroundColors.reverse();
+    for (const auto& backgroundColor : parentRendererBackgroundColors)
+        estimatedBackgroundColor = blendSourceOver(estimatedBackgroundColor, backgroundColor);
+
+    return estimatedBackgroundColor;
 }
 
 } // namespace WebCore

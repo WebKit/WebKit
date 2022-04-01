@@ -6408,41 +6408,9 @@ void WebPage::canceledComposition()
     sendEditorStateUpdate();
 }
 
-void WebPage::interactableRegionsInRootViewCoordinates(FloatRect rect, CompletionHandler<void(Vector<FloatRect>)>&& completionHandler)
+void WebPage::interactionRegions(FloatRect rectInContentCoordinates, CompletionHandler<void(Vector<InteractionRegion>)>&& completionHandler)
 {
-    Ref frame(m_page->mainFrame());
-
-    if (RefPtr frameView = frame->view())
-        frameView->updateLayoutAndStyleIfNeededRecursive();
-
-    auto result = HitTestResult { LayoutRect(rect) };
-    RefPtr document = frame->document();
-    if (!document) {
-        completionHandler({ });
-        return;
-    }
-
-    HitTestRequest request({
-        HitTestRequest::Type::ReadOnly,
-        HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
-        HitTestRequest::Type::CollectMultipleElements
-    });
-    document->hitTest(request, result);
-
-    Vector<FloatRect> rects;
-
-    for (const auto& node : result.listBasedTestResult()) {
-        if (!is<Element>(node.get()))
-            continue;
-        auto& element = downcast<Element>(node.get());
-
-        if (!node->willRespondToMouseClickEvents())
-            continue;
-
-        rects.append(element.boundingBoxInRootViewCoordinates());
-    }
-
-    completionHandler(rects);
+    completionHandler(WebCore::interactionRegions(*m_page, rectInContentCoordinates));
 }
 
 void WebPage::setAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)

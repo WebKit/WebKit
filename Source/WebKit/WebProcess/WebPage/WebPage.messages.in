@@ -681,5 +681,5 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     ScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
 
-    InteractableRegionsInRootViewCoordinates(WebCore::FloatRect rect) -> (Vector<WebCore::FloatRect> rects)
+    InteractionRegions(WebCore::FloatRect rectInContentCoordinates) -> (Vector<WebCore::InteractionRegion> regions)
 }

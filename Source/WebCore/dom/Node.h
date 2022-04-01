@@ -275,7 +275,7 @@ public:
     void setSelfOrAncestorHasDirAutoAttribute(bool flag) { setNodeFlag(NodeFlag::SelfOrAncestorHasDirAuto, flag); }
 
     // Returns the enclosing event parent Element (or self) that, when clicked, would trigger a navigation.
-    Element* enclosingLinkEventParentOrSelf();
+    WEBCORE_EXPORT Element* enclosingLinkEventParentOrSelf();
 
     // These low-level calls give the caller responsibility for maintaining the integrity of the tree.
     void setPreviousSibling(Node* previous) { m_previous = previous; }
@@ -457,6 +457,7 @@ public:
     virtual bool willRespondToMouseMoveEvents();
     virtual bool willRespondToMouseClickEvents();
     virtual bool willRespondToMouseWheelEvents();
+    virtual bool willRespondToTouchEvents();
 
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
 

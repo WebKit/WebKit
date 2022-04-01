@@ -1127,6 +1127,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/GlobalFrameIdentifier.h
     page/GlobalWindowIdentifier.h
     page/ImageAnalysisQueue.h
+    page/InteractionRegion.h
     page/LayoutMilestone.h
     page/MediaCanStartListener.h
     page/MediaControlsContextMenuItem.h

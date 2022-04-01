@@ -57,6 +57,7 @@ static NSString * const ResourceLoadStatisticsEnabledPreferenceKey = @"ResourceL
 
 static NSString * const NonFastScrollableRegionOverlayVisiblePreferenceKey = @"NonFastScrollableRegionOverlayVisible";
 static NSString * const WheelEventHandlerRegionOverlayVisiblePreferenceKey = @"WheelEventHandlerRegionOverlayVisible";
+static NSString * const InteractionRegionOverlayVisiblePreferenceKey = @"InteractionRegionOverlayVisible";
 
 static NSString * const UseTransparentWindowsPreferenceKey = @"UseTransparentWindows";
 static NSString * const UsePaginatedModePreferenceKey = @"UsePaginatedMode";
@@ -77,6 +78,7 @@ static NSString * const ProcessSwapOnWindowOpenWithOpenerKey = @"ProcessSwapOnWi
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
     WheelEventHandlerRegionOverlayTag,
+    InteractionRegionOverlayTag,
     ExperimentalFeatureTag,
     InternalDebugFeatureTag,
 };
@@ -195,6 +197,12 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [wheelEventHandlerRegionItem setTag:WheelEventHandlerRegionOverlayTag];
     [wheelEventHandlerRegionItem setTarget:self];
     [debugOverlaysMenu addItem:[wheelEventHandlerRegionItem autorelease]];
+
+    NSMenuItem *interactionRegionItem = [[NSMenuItem alloc] initWithTitle:@"Interaction Region" action:@selector(toggleDebugOverlay:) keyEquivalent:@""];
+    [interactionRegionItem setTag:InteractionRegionOverlayTag];
+    [interactionRegionItem setTarget:self];
+    [debugOverlaysMenu addItem:[interactionRegionItem autorelease]];
+
     [debugOverlaysMenu release];
     
     [_menu addItem:debugOverlaysSubmenuItem];
@@ -711,6 +719,11 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WheelEventHandlerRegionOverlayVisiblePreferenceKey];
 }
 
+- (BOOL)interactionRegionOverlayVisible
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:InteractionRegionOverlayVisiblePreferenceKey];
+}
+
 - (NSString *)preferenceKeyForRegionOverlayTag:(NSUInteger)tag
 {
     switch (tag) {
@@ -719,6 +732,9 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 
     case WheelEventHandlerRegionOverlayTag:
         return WheelEventHandlerRegionOverlayVisiblePreferenceKey;
+
+    case InteractionRegionOverlayTag:
+        return InteractionRegionOverlayVisiblePreferenceKey;
     }
     return nil;
 }

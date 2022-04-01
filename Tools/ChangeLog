@@ -1,3 +1,19 @@
+2022-04-01  Tim Horton  <timothy_horton@apple.com>
+
+        Add a debug overlay for interaction regions
+        https://bugs.webkit.org/show_bug.cgi?id=238187
+
+        Reviewed by Wenson Hsieh.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController interactionRegionOverlayVisible]):
+        (-[SettingsController preferenceKeyForRegionOverlayTag:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]):
+        Add a switch for the new debug overlay in MiniBrowser.
+
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
         Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit

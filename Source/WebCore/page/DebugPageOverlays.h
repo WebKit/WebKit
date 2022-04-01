@@ -43,8 +43,9 @@ public:
     enum class RegionType {
         WheelEventHandlers,
         NonFastScrollableRegion,
+        InteractionRegion,
     };
-    static constexpr unsigned NumberOfRegionTypes = static_cast<unsigned>(RegionType::NonFastScrollableRegion) + 1;
+    static constexpr unsigned NumberOfRegionTypes = static_cast<unsigned>(RegionType::InteractionRegion) + 1;
 
     static void didLayout(Frame&);
     static void didChangeEventHandlers(Frame&);
@@ -93,6 +94,7 @@ inline void DebugPageOverlays::didLayout(Frame& frame)
 
     sharedDebugOverlays->regionChanged(frame, RegionType::WheelEventHandlers);
     sharedDebugOverlays->regionChanged(frame, RegionType::NonFastScrollableRegion);
+    sharedDebugOverlays->regionChanged(frame, RegionType::InteractionRegion);
 }
 
 inline void DebugPageOverlays::didChangeEventHandlers(Frame& frame)
@@ -101,6 +103,7 @@ inline void DebugPageOverlays::didChangeEventHandlers(Frame& frame)
 
     sharedDebugOverlays->regionChanged(frame, RegionType::WheelEventHandlers);
     sharedDebugOverlays->regionChanged(frame, RegionType::NonFastScrollableRegion);
+    sharedDebugOverlays->regionChanged(frame, RegionType::InteractionRegion);
 }
 
 inline void DebugPageOverlays::doAfterUpdateRendering(Page& page)
@@ -110,6 +113,7 @@ inline void DebugPageOverlays::doAfterUpdateRendering(Page& page)
 
     sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::WheelEventHandlers);
     sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::NonFastScrollableRegion);
+    sharedDebugOverlays->updateRegionIfNecessary(page, RegionType::InteractionRegion);
 }
 
 } // namespace WebCore

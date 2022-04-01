@@ -521,6 +521,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         visibleOverlayRegions |= _WKNonFastScrollableRegion;
     if (settings.wheelEventHandlerRegionOverlayVisible)
         visibleOverlayRegions |= _WKWheelEventHandlerRegion;
+    if (settings.interactionRegionOverlayVisible)
+        visibleOverlayRegions |= _WKInteractionRegion;
     
     preferences._visibleDebugOverlayRegions = visibleOverlayRegions;
 

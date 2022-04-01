@@ -247,6 +247,7 @@ struct DictationAlternative;
 struct ElementContext;
 struct GlobalFrameIdentifier;
 struct GlobalWindowIdentifier;
+struct InteractionRegion;
 struct KeypressCommand;
 struct MediaUsageInfo;
 struct PromisedAttachmentInfo;
@@ -942,7 +943,7 @@ public:
     void didUpdateComposition();
     void didEndUserTriggeredSelectionChanges();
 
-    void interactableRegionsInRootViewCoordinates(WebCore::FloatRect, CompletionHandler<void(Vector<WebCore::FloatRect>)>&&);
+    void interactionRegions(WebCore::FloatRect rectInContentCoordinates, CompletionHandler<void(Vector<WebCore::InteractionRegion>)>&&);
 
 #if PLATFORM(COCOA)
     void platformInitializeAccessibility();

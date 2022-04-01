@@ -30,6 +30,7 @@
 
 #import "WKHoverPlatterParameters.h"
 #import <UIKit/UIKit.h>
+#import <WebCore/InteractionRegion.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -247,15 +248,17 @@ static void addAnimation(CALayer *layer, NSString *key, id fromValue, id toValue
     [linkHighlightLayer web_disableAllActions];
     [[_view layer] addSublayer:linkHighlightLayer.get()];
 
-    [_delegate interactableRegionsForHoverPlatter:self inRect:searchBoundingRect completionHandler:makeBlockPtr([self, strongSelf = retainPtr(self)] (Vector<WebCore::FloatRect> rects) {
+    [_delegate interactionRegionsForHoverPlatter:self inRect:searchBoundingRect completionHandler:makeBlockPtr([self, strongSelf = retainPtr(self)] (Vector<WebCore::InteractionRegion> regions) {
         if (!_linkCountLayer && !_linkHighlightLayer)
             return;
 
-        [_linkCountLayer setString:[NSString stringWithFormat:@"%zu", rects.size()]];
+        [_linkCountLayer setString:[NSString stringWithFormat:@"%zu", regions.size()]];
 
         WebCore::Path path;
-        for (const auto& rect : rects)
-            path.addRect(rect);
+        for (const auto& region : regions) {
+            for (const auto& rect : region.rectsInContentCoordinates)
+                path.addRect(rect);
+        }
         [_linkHighlightLayer setPath:path.platformPath()];
     }).get()];
 

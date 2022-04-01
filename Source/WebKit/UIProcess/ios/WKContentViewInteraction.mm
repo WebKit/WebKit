@@ -9994,10 +9994,10 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
     [self doAfterPositionInformationUpdate:completionHandler forRequest:request];
 }
 
-- (void)interactableRegionsForHoverPlatter:(WKHoverPlatter *)platter inRect:(WebCore::FloatRect)rect completionHandler:(void (^)(Vector<WebCore::FloatRect>))completionHandler
+- (void)interactionRegionsForHoverPlatter:(WKHoverPlatter *)platter inRect:(WebCore::FloatRect)rectInContentCoordinates completionHandler:(void (^)(Vector<WebCore::InteractionRegion>))completionHandler
 {
-    _page->interactableRegionsInRootViewCoordinates(rect, [completionHandler = makeBlockPtr(completionHandler)] (Vector<WebCore::FloatRect> rects) {
-        completionHandler(rects);
+    _page->interactionRegions(rectInContentCoordinates, [completionHandler = makeBlockPtr(completionHandler)] (Vector<WebCore::InteractionRegion> regions) {
+        completionHandler(regions);
     });
 }
 
