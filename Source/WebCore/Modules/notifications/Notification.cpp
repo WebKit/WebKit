@@ -53,12 +53,22 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Notification);
 
-Ref<Notification> Notification::create(ScriptExecutionContext& context, String&& title, Options&& options, const URL& serviceWorkerRegistrationURL)
+ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& context, String&& title, Options&& options)
+{
+    if (context.isServiceWorkerGlobalScope())
+        return Exception { TypeError, "Notification cannot be directly created in a ServiceWorkerGlobalScope"_s };
+
+    auto notification = adoptRef(*new Notification(context, WTFMove(title), WTFMove(options)));
+    notification->suspendIfNeeded();
+    notification->showSoon();
+    return notification;
+}
+
+Ref<Notification> Notification::createForServiceWorker(ScriptExecutionContext& context, String&& title, Options&& options, const URL& serviceWorkerRegistrationURL)
 {
     auto notification = adoptRef(*new Notification(context, WTFMove(title), WTFMove(options)));
     notification->m_serviceWorkerRegistrationURL = serviceWorkerRegistrationURL;
     notification->suspendIfNeeded();
-    notification->showSoon();
     return notification;
 }
 

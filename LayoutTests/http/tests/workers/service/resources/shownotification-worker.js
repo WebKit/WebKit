@@ -29,7 +29,25 @@ async function tryShow(message)
         body = components[2];
         tag = components[3];
     }
-    
+
+    if (!self.Notification) {
+        await messageClients("showFailed due to Notification not being exposed");
+        return;
+    }
+    try {
+         new Notification(title, {
+            body: body,
+            tag: tag
+        });
+        await messageClients("showFailed due to Notification created from constructor");
+        return;
+    } catch(error) {
+        if (!(error instanceof TypeError)) {
+            await messageClients("Notification constructor should throw a TypeError");
+            return;
+        }
+    }
+
     try {
         await registration.showNotification(title, {
             body: body,

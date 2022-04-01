@@ -64,7 +64,10 @@ public:
         String tag;
         String icon;
     };
-    static Ref<Notification> create(ScriptExecutionContext&, String&& title, Options&&, const URL& serviceWorkerRegistrationURL = { });
+    // For JS constructor only.
+    static ExceptionOr<Ref<Notification>> create(ScriptExecutionContext&, String&& title, Options&&);
+
+    static Ref<Notification> createForServiceWorker(ScriptExecutionContext&, String&& title, Options&&, const URL&);
     static Ref<Notification> create(ScriptExecutionContext&, NotificationData&&);
 
     WEBCORE_EXPORT virtual ~Notification();
