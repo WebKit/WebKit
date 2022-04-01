@@ -124,10 +124,8 @@ public:
 
     TextPosition eventHandlerPosition() const;
 
-    void enableEval(bool, const String& errorMessage = String());
-    void enableWebAssembly();
-    void disableEval(const String& errorMessage);
-    void disableWebAssembly(const String& errorMessage);
+    void setEvalEnabled(bool, const String& errorMessage = String());
+    void setWebAssemblyEnabled(bool, const String& errorMessage = String());
 
     static bool canAccessFromCurrentOrigin(Frame*, Document& accessingDocument);
     WEBCORE_EXPORT bool canExecuteScripts(ReasonForCallingCanExecuteScripts);
