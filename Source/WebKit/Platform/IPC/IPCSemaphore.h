@@ -64,6 +64,10 @@ public:
     explicit operator bool() const { return m_sendRight || m_semaphore != SEMAPHORE_NULL; }
 #elif OS(WINDOWS)
     explicit Semaphore(HANDLE);
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    explicit Semaphore(int fd);
+
+    explicit operator bool() const { return m_fd != -1; }
 #else
     explicit operator bool() const { return true; }
 #endif
@@ -75,6 +79,8 @@ private:
     semaphore_t m_semaphore { SEMAPHORE_NULL };
 #elif OS(WINDOWS)
     HANDLE m_semaphoreHandle { nullptr };
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    int m_fd { -1 };
 #endif
 };
 

@@ -1,3 +1,40 @@
+2022-04-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Linux] Implement IPC::Semaphore
+        https://bugs.webkit.org/show_bug.cgi?id=238596
+
+        Reviewed by Adrian Perez de Castro.
+
+        Provide a Linux implementation for IPC::Semaphore that's based on
+        eventfd mechanics.
+
+        The IPC::Semaphore class now has a UNIX-specific file descriptor member
+        variable. For Linux, this file descriptor is an eventfd with semaphore
+        semantics (eventfd being Linux-specific). Signalling and waiting on
+        such semaphore is done through the read() and write() functions.
+        Non-Linux platforms are expected to provide something equivalent, if
+        possible.
+
+        For encoding and decoding that's necessary to move these semaphores
+        across process boundaries, IPC::Attachment is used. For encoding the
+        eventfd is simply duplicated and pushed into the Attachment, and for
+        decoding the Attachment's file descriptor is taken and adopted by the
+        Semaphore object.
+
+        * Platform/IPC/IPCSemaphore.h:
+        (IPC::Semaphore::operator bool const):
+        * Platform/IPC/unix/IPCSemaphoreUnix.cpp:
+        (IPC::Semaphore::Semaphore):
+        (IPC::Semaphore::~Semaphore):
+        (IPC::Semaphore::operator=):
+        (IPC::Semaphore::signal):
+        (IPC::waitImpl):
+        (IPC::Semaphore::wait):
+        (IPC::Semaphore::waitFor):
+        (IPC::Semaphore::encode const):
+        (IPC::Semaphore::decode):
+        (IPC::Semaphore::destroy):
+
 2022-04-01  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerRegistration.getNotifications should list all persistent notifications
