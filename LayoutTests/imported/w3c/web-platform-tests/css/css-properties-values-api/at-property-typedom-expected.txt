@@ -1,4 +1,4 @@
 
-FAIL Properties declared with @property reify correctly div.computedStyleMap is not a function. (In 'div.computedStyleMap()', 'div.computedStyleMap' is undefined)
-FAIL Re-declaring a property with a different type affects reification div.computedStyleMap is not a function. (In 'div.computedStyleMap()', 'div.computedStyleMap' is undefined)
+FAIL Properties declared with @property reify correctly assert_equals: expected " 100px" but got "100px"
+FAIL Re-declaring a property with a different type affects reification assert_equals: expected "CSSUnitValue" but got "CSSUnparsedValue"
 

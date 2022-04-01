@@ -1,3 +1,50 @@
+2022-04-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add support for element.computedStyleMap()
+        https://bugs.webkit.org/show_bug.cgi?id=238375
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing w3c tests.
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Add PropertyValueType parameter to get either the computed or
+        resolved value.
+        * css/CSSComputedStyleDeclaration.h:
+        * css/typedom/CSSStyleValueFactory.cpp:
+        (WebCore::CSSStyleValueFactory::reifyValue): Handle more cases of custom property.
+        * css/typedom/ComputedStylePropertyMapReadOnly.cpp: Added.
+        (WebCore::ComputedStylePropertyMapReadOnly::create):
+        (WebCore::ComputedStylePropertyMapReadOnly::ComputedStylePropertyMapReadOnly):
+        (WebCore::ComputedStylePropertyMapReadOnly::get const):
+        (WebCore::ComputedStylePropertyMapReadOnly::getAll const):
+        (WebCore::ComputedStylePropertyMapReadOnly::has const):
+        (WebCore::ComputedStylePropertyMapReadOnly::size const):
+        (WebCore::ComputedStylePropertyMapReadOnly::entries const):
+        * css/typedom/ComputedStylePropertyMapReadOnly.h: Added.
+        * css/typedom/StylePropertyMapReadOnly.cpp:
+        (WebCore::StylePropertyMapReadOnly::reifyValueToVector): Returns a Vector so in case of CSSValueList, every
+        value is added to the vector.
+        (WebCore::StylePropertyMapReadOnly::Iterator::Iterator): Add iterator implementation, since this is now iterable.
+        (WebCore::StylePropertyMapReadOnly::Iterator::next): Ditto.
+        * css/typedom/StylePropertyMapReadOnly.h:
+        (WebCore::StylePropertyMapReadOnly::createIterator):
+        * css/typedom/StylePropertyMapReadOnly.idl:
+        * dom/Element+ComputedStyleMap.idl: Added.
+        * dom/Element.cpp:
+        (WebCore::Element::computedStyleMap): Get or create the computed style map.
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::computedStyleMap):
+        (WebCore::ElementRareData::setComputedStyleMap):
+        (WebCore::ElementRareData::useTypes const):
+        * dom/NodeRareData.h:
+        * dom/StyledElement.cpp:
+        * html/CustomPaintImage.cpp:
+
 2022-04-01  Tim Horton  <timothy_horton@apple.com>
 
         Add a debug overlay for interaction regions

@@ -1057,6 +1057,7 @@ $(PROJECT_DIR)/dom/DocumentOrShadowRoot.idl
 $(PROJECT_DIR)/dom/DocumentType.idl
 $(PROJECT_DIR)/dom/DragEvent.idl
 $(PROJECT_DIR)/dom/Element+CSSOMView.idl
+$(PROJECT_DIR)/dom/Element+ComputedStyleMap.idl
 $(PROJECT_DIR)/dom/Element+DOMParsing.idl
 $(PROJECT_DIR)/dom/Element+Fullscreen.idl
 $(PROJECT_DIR)/dom/Element+PointerEvents.idl

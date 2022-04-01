@@ -40,7 +40,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     void* pointers[11];
     void* intersectionObserverData;
 #if ENABLE(CSS_TYPED_OM)
-    void* typedOMData;
+    void* typedOMData[2];
 #endif
     void* resizeObserverData;
 };

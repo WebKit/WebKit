@@ -911,6 +911,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DocumentType.idl
     dom/DragEvent.idl
     dom/Element+CSSOMView.idl
+    dom/Element+ComputedStyleMap.idl
     dom/Element+DOMParsing.idl
     dom/Element+Fullscreen.idl
     dom/Element+PointerEvents.idl

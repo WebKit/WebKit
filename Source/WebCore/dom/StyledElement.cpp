@@ -89,12 +89,36 @@ public:
     }
 
 private:
-    RefPtr<CSSStyleValue> get(const String& property) const final
+    ExceptionOr<RefPtr<CSSStyleValue>> get(const String& property) const final
     {
         ASSERT(m_element); // Hitting this assertion would imply a GC bug. Element is collected while this property map is alive.
         if (!m_element)
             return nullptr;
         return extractInlineProperty(property, *m_element);
+    }
+
+    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const String&) const final
+    {
+        // FIXME: implement.
+        return Vector<RefPtr<CSSStyleValue>>();
+    }
+
+    unsigned size() const final
+    {
+        // FIXME: implement.
+        return 0;
+    }
+
+    Vector<StylePropertyMapEntry> entries() const final
+    {
+        // FIXME: implement.
+        return { };
+    }
+
+    ExceptionOr<bool> has(const String&) const final
+    {
+        // FIXME: implement.
+        return false;
     }
 
     explicit StyledElementInlineStylePropertyMap(StyledElement& element)

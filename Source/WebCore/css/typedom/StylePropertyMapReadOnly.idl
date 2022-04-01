@@ -31,6 +31,11 @@
     SkipVTableValidation,
     JSGenerateToJSObject,
 ] interface StylePropertyMapReadOnly {
+    iterable<USVString, sequence<CSSStyleValue>>;
     // FIXME: should be (undefined or CSSStyleValue), not null
     CSSStyleValue? get(USVString property);
+    sequence<CSSStyleValue> getAll(USVString property);
+    boolean has(USVString property);
+
+    readonly attribute unsigned long size;
 };

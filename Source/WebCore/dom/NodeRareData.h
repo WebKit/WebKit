@@ -264,6 +264,7 @@ public:
         PartList = 1 << 16,
         PartNames = 1 << 17,
         Nonce = 1 << 18,
+        ComputedStyleMap = 1 << 19,
     };
 #endif
 

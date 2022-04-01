@@ -67,6 +67,35 @@ RefPtr<CSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefault(con
     return StylePropertyMapReadOnly::reifyValue(inputValue, document, element);
 }
 
+Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(CSSValue* value, Document& document, Element* element)
+{
+    if (!value)
+        return { };
+
+    if (!is<CSSValueList>(*value))
+        return { StylePropertyMapReadOnly::reifyValue(value, document, element) };
+
+    auto valueList = downcast<CSSValueList>(value);
+    Vector<RefPtr<CSSStyleValue>> result;
+    result.reserveInitialCapacity(valueList->length());
+    for (const auto& cssValue : *valueList)
+        result.uncheckedAppend(StylePropertyMapReadOnly::reifyValue(cssValue.ptr(), document, element));
+    return result;
+}
+
+StylePropertyMapReadOnly::Iterator::Iterator(StylePropertyMapReadOnly& map)
+    : m_values(map.entries())
+{
+}
+
+std::optional<StylePropertyMapReadOnly::StylePropertyMapEntry> StylePropertyMapReadOnly::Iterator::next()
+{
+    if (m_index >= m_values.size())
+        return std::nullopt;
+
+    return m_values[m_index++];
+}
+
 } // namespace WebCore
 
 #endif

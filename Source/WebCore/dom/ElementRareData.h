@@ -35,6 +35,7 @@
 #include "ShadowRoot.h"
 #include "SpaceSplitString.h"
 #include "StylePropertyMap.h"
+#include "StylePropertyMapReadOnly.h"
 
 namespace WebCore {
 
@@ -109,6 +110,9 @@ public:
 #if ENABLE(CSS_TYPED_OM)
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
     void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTFMove(map); }
+
+    StylePropertyMapReadOnly* computedStyleMap() { return m_computedStyleMap.get(); }
+    void setComputedStyleMap(Ref<StylePropertyMapReadOnly>&& map) { m_computedStyleMap = WTFMove(map); }
 #endif
 
 #if DUMP_NODE_STATISTICS
@@ -144,6 +148,8 @@ public:
 #if ENABLE(CSS_TYPED_OM)
         if (m_attributeStyleMap)
             result.add(UseType::StyleMap);
+        if (m_computedStyleMap)
+            result.add(UseType::ComputedStyleMap);
 #endif
         if (m_partList)
             result.add(UseType::PartList);
@@ -177,6 +183,7 @@ private:
 
 #if ENABLE(CSS_TYPED_OM)
     RefPtr<StylePropertyMap> m_attributeStyleMap;
+    RefPtr<StylePropertyMapReadOnly> m_computedStyleMap;
 #endif
 
     std::unique_ptr<DOMTokenList> m_partList;

@@ -40,6 +40,7 @@
 #include "CSSPropertyParser.h"
 #include "CSSStyleImageValue.h"
 #include "CSSStyleValue.h"
+#include "CSSTokenizer.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
 #include "CSSValueList.h"
@@ -250,13 +251,17 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&&
         return Ref<CSSStyleValue> { CSSUnparsedValue::create(downcast<CSSPendingSubstitutionValue>(cssValue.get()).shorthandValue().data().tokenRange()) };
     } else if (is<CSSCustomPropertyValue>(cssValue)) {
         // FIXME: remove CSSStyleValue::create(WTFMove(cssValue)), add reification control flow
-        return WTF::switchOn(downcast<CSSCustomPropertyValue>(cssValue.get()).value(), [&](const Ref<CSSVariableReferenceValue>& value) {
+        return WTF::switchOn(downcast<CSSCustomPropertyValue>(cssValue.get()).value(), [&](const std::monostate&) {
+            return ExceptionOr<Ref<CSSStyleValue>> { CSSStyleValue::create(WTFMove(cssValue)) };
+        }, [&](const Ref<CSSVariableReferenceValue>& value) {
             return reifyValue(value.copyRef(), document);
         }, [&](Ref<CSSVariableData>& value) {
             return reifyValue(CSSVariableReferenceValue::create(WTFMove(value)));
-        }, [&](auto&) {
-            // FIXME: Property reify the other cases.
+        }, [&](const CSSValueID&) {
             return ExceptionOr<Ref<CSSStyleValue>> { CSSStyleValue::create(WTFMove(cssValue)) };
+        }, [&](auto&) {
+            CSSTokenizer tokenizer(downcast<CSSCustomPropertyValue>(cssValue.get()).customCSSText());
+            return ExceptionOr<Ref<CSSStyleValue>> { CSSUnparsedValue::create(tokenizer.tokenRange()) };
         });
     } else if (is<CSSValueList>(cssValue)) {
         // Reifying the first value in value list.

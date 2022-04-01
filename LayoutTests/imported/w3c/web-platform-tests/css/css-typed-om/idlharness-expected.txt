@@ -42,11 +42,11 @@ PASS StylePropertyMapReadOnly interface object name
 PASS StylePropertyMapReadOnly interface: existence and properties of interface prototype object
 PASS StylePropertyMapReadOnly interface: existence and properties of interface prototype object's "constructor" property
 PASS StylePropertyMapReadOnly interface: existence and properties of interface prototype object's @@unscopables property
-FAIL StylePropertyMapReadOnly interface: iterable<USVString, [object Object]> undefined is not an object (evaluating 'iteratorDesc.writable')
+PASS StylePropertyMapReadOnly interface: iterable<USVString, [object Object]>
 PASS StylePropertyMapReadOnly interface: operation get(USVString)
-FAIL StylePropertyMapReadOnly interface: operation getAll(USVString) assert_own_property: interface prototype object missing non-static operation expected property "getAll" missing
-FAIL StylePropertyMapReadOnly interface: operation has(USVString) assert_own_property: interface prototype object missing non-static operation expected property "has" missing
-FAIL StylePropertyMapReadOnly interface: attribute size assert_true: The prototype object must have a property "size" expected true got false
+PASS StylePropertyMapReadOnly interface: operation getAll(USVString)
+PASS StylePropertyMapReadOnly interface: operation has(USVString)
+PASS StylePropertyMapReadOnly interface: attribute size
 PASS StylePropertyMap interface: existence and properties of interface object
 PASS StylePropertyMap interface object length
 PASS StylePropertyMap interface object name
@@ -505,6 +505,6 @@ PASS CSS namespace: operation dppx(double)
 PASS CSS namespace: operation fr(double)
 PASS SVGElement interface: attribute attributeStyleMap
 PASS HTMLElement interface: attribute attributeStyleMap
-FAIL Element interface: operation computedStyleMap() assert_own_property: interface prototype object missing non-static operation expected property "computedStyleMap" missing
+PASS Element interface: operation computedStyleMap()
 PASS MathMLElement interface: attribute attributeStyleMap
 

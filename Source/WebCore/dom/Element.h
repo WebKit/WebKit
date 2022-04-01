@@ -73,6 +73,7 @@ class RenderStyle;
 class RenderTreePosition;
 class SpaceSplitString;
 class StylePropertyMap;
+class StylePropertyMapReadOnly;
 class Text;
 class UniqueElementData;
 class WebAnimation;
@@ -665,6 +666,10 @@ public:
     void setHasDuplicateAttribute(bool hasDuplicateAttribute) { m_hasDuplicateAttribute = hasDuplicateAttribute; };
 
     virtual void updateUserAgentShadowTree() { }
+
+#if ENABLE(CSS_TYPED_OM)
+    StylePropertyMapReadOnly* computedStyleMap();
+#endif
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
