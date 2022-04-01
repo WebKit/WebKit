@@ -36,6 +36,10 @@ namespace WebGPU {
 static std::optional<WGPUFeatureName> featureRequirementForFormat(WGPUTextureFormat format)
 {
     switch (format) {
+    case WGPUTextureFormat_Depth24UnormStencil8: // FIXME: This has to be guarded by MTLDevice.depth24Stencil8PixelFormatSupported
+        return WGPUFeatureName_Depth24UnormStencil8;
+    case WGPUTextureFormat_Depth32FloatStencil8:
+        return WGPUFeatureName_Depth32FloatStencil8;
     case WGPUTextureFormat_BC1RGBAUnorm:
     case WGPUTextureFormat_BC1RGBAUnormSrgb:
     case WGPUTextureFormat_BC2RGBAUnorm:
@@ -132,9 +136,7 @@ static std::optional<WGPUFeatureName> featureRequirementForFormat(WGPUTextureFor
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
     case WGPUTextureFormat_Force32:
         return std::nullopt;
     }
