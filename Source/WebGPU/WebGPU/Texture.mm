@@ -1222,11 +1222,9 @@ static MTLTextureUsage usage(WGPUTextureUsageFlags usage)
     return result;
 }
 
-static std::optional<MTLPixelFormat> pixelFormat(WGPUTextureFormat textureFormat)
+static MTLPixelFormat pixelFormat(WGPUTextureFormat textureFormat)
 {
     switch (textureFormat) {
-    case WGPUTextureFormat_Undefined:
-        return std::nullopt;
     case WGPUTextureFormat_R8Unorm:
         return MTLPixelFormatR8Unorm;
     case WGPUTextureFormat_R8Snorm:
@@ -1320,9 +1318,9 @@ static std::optional<MTLPixelFormat> pixelFormat(WGPUTextureFormat textureFormat
     case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
         return MTLPixelFormatETC2_RGB8A1_sRGB;
     case WGPUTextureFormat_ETC2RGBA8Unorm:
-        return std::nullopt; // https://github.com/gpuweb/gpuweb/issues/2683 etc2-rgba8unorm and etc2-rgba8unorm-srgb do not exist in Metal
+        return MTLPixelFormatEAC_RGBA8;
     case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-        return std::nullopt; // https://github.com/gpuweb/gpuweb/issues/2683 etc2-rgba8unorm and etc2-rgba8unorm-srgb do not exist in Metal
+        return MTLPixelFormatEAC_RGBA8_sRGB;
     case WGPUTextureFormat_EACR11Unorm:
         return MTLPixelFormatEAC_R11Unorm;
     case WGPUTextureFormat_EACR11Snorm:
@@ -1434,10 +1432,11 @@ static std::optional<MTLPixelFormat> pixelFormat(WGPUTextureFormat textureFormat
     case WGPUTextureFormat_BC6HRGBFloat:
     case WGPUTextureFormat_BC7RGBAUnorm:
     case WGPUTextureFormat_BC7RGBAUnormSrgb:
-        return std::nullopt;
+        return MTLPixelFormatInvalid;
 #endif
+    case WGPUTextureFormat_Undefined:
     case WGPUTextureFormat_Force32:
-        return std::nullopt;
+        return MTLPixelFormatInvalid;
     }
 }
 
@@ -1901,10 +1900,7 @@ RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
         return nullptr;
     }
 
-    if (auto pixelFormat = WebGPU::pixelFormat(descriptor.format))
-        textureDescriptor.pixelFormat = pixelFormat.value();
-    else
-        return nullptr;
+    textureDescriptor.pixelFormat = pixelFormat(descriptor.format);
 
     textureDescriptor.mipmapLevelCount = descriptor.mipLevelCount;
 

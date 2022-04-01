@@ -1,5 +1,18 @@
 2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] etc2-rgba8unorm and etc2-rgba8unorm-srgb are not handled
+        https://bugs.webkit.org/show_bug.cgi?id=238435
+
+        Reviewed by Dean Jackson.
+
+        They map to MTLPixelFormatEAC_RGBA8 and MTLPixelFormatEAC_RGBA8_sRGB.
+
+        * WebGPU/Texture.mm:
+        (WebGPU::pixelFormat):
+        (WebGPU::Device::createTexture):
+
+2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] 2 texture formats need to be guarded behind optional extensions
         https://bugs.webkit.org/show_bug.cgi?id=238433
 
