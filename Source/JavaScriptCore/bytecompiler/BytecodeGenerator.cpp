@@ -4029,12 +4029,12 @@ void BytecodeGenerator::emitThrowStaticError(ErrorTypeWithExtension errorType, c
     OpThrowStaticError::emit(this, addConstantValue(addStringConstant(message)), errorType);
 }
 
-void BytecodeGenerator::emitThrowReferenceError(const String& message)
+void BytecodeGenerator::emitThrowReferenceError(ASCIILiteral message)
 {
     emitThrowStaticError(ErrorTypeWithExtension::ReferenceError, Identifier::fromString(m_vm, message));
 }
 
-void BytecodeGenerator::emitThrowTypeError(const String& message)
+void BytecodeGenerator::emitThrowTypeError(ASCIILiteral message)
 {
     emitThrowStaticError(ErrorTypeWithExtension::TypeError, Identifier::fromString(m_vm, message));
 }
@@ -4735,7 +4735,7 @@ RegisterID* BytecodeGenerator::emitRestParameter(RegisterID* result, unsigned nu
     return result;
 }
 
-void BytecodeGenerator::emitRequireObjectCoercible(RegisterID* value, const String& error)
+void BytecodeGenerator::emitRequireObjectCoercible(RegisterID* value, ASCIILiteral error)
 {
     Ref<Label> target = newLabel();
     OpJnundefinedOrNull::emit(this, value, target->bind(this));

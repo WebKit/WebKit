@@ -1996,7 +1996,7 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
                 auto scope = DECLARE_CATCH_SCOPE(vm);
 
                 // If the handler is not actually a function, see if it implements the EventListener interface and use that.
-                auto handleEventValue = handlerObject->get(globalObject, JSC::Identifier::fromString(vm, "handleEvent"));
+                auto handleEventValue = handlerObject->get(globalObject, JSC::Identifier::fromString(vm, "handleEvent"_s));
 
                 if (UNLIKELY(scope.exception()))
                     scope.clearException();

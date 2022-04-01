@@ -1653,7 +1653,7 @@ static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject* globalObject
     jsResult->putDirect(vm, vm.propertyNames->arguments, *jsReplyArguments);
     RETURN_IF_EXCEPTION(catchScope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "buffer"), jsArrayBuffer);
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "buffer"_s), jsArrayBuffer);
     RETURN_IF_EXCEPTION(catchScope, nullptr);
 
     return jsResult;
@@ -1983,17 +1983,17 @@ static JSC::JSValue createJSArrayForArgumentDescriptions(JSC::JSGlobalObject* gl
         argumentsArray->putDirectIndex(globalObject, argumentIndex, jsDescriptions);
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
-        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "name"), JSC::jsString(vm, String(description.name)));
+        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::jsString(vm, String(description.name)));
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
-        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "type"), JSC::jsString(vm, String(description.type)));
+        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsString(vm, String(description.type)));
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
-        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "optional"), JSC::jsBoolean(description.isOptional));
+        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "optional"_s), JSC::jsBoolean(description.isOptional));
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
         if (description.enumName) {
-            jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "enum"), JSC::jsString(vm, String(description.enumName)));
+            jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "enum"_s), JSC::jsString(vm, String(description.enumName)));
             RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
         }
     }
@@ -2016,9 +2016,9 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
     JSC::JSObject* messagesObject = constructEmptyObject(globalObject, globalObject->objectPrototype());
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
-    auto nameIdent = JSC::Identifier::fromString(vm, "name");
-    auto replyArgumentsIdent = JSC::Identifier::fromString(vm, "replyArguments");
-    auto isSyncIdent = JSC::Identifier::fromString(vm, "isSync");
+    auto nameIdent = JSC::Identifier::fromString(vm, "name"_s);
+    auto replyArgumentsIdent = JSC::Identifier::fromString(vm, "replyArguments"_s);
+    auto isSyncIdent = JSC::Identifier::fromString(vm, "isSync"_s);
     for (unsigned i = 0; i < static_cast<unsigned>(IPC::MessageName::Last); ++i) {
         auto name = static_cast<IPC::MessageName>(i);
 
@@ -2043,7 +2043,7 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
         dictionary->putDirect(vm, isSyncIdent, JSC::jsBoolean(messageIsSync(name)));            
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
-        messagesObject->putDirect(vm, JSC::Identifier::fromString(vm, description(name)), dictionary);
+        messagesObject->putDirect(vm, JSC::Identifier::fromCString(vm, description(name)), dictionary);
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     }
 
@@ -2138,24 +2138,24 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     auto* jsResult = constructEmptyObject(globalObject, globalObject->objectPrototype());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "name"), JSC::JSValue(static_cast<unsigned>(decoder.messageName())));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::JSValue(static_cast<unsigned>(decoder.messageName())));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"), JSC::jsString(vm, IPC::description(decoder.messageName())));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, IPC::description(decoder.messageName())));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"), JSC::JSValue(decoder.destinationID()));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(decoder.destinationID()));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (decoder.isSyncMessage()) {
         IPC::Connection::SyncRequestID syncRequestID;
         if (decoder.decode(syncRequestID)) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"), JSC::JSValue(syncRequestID.toUInt64()));
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"_s), JSC::JSValue(syncRequestID.toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     } else if (messageReplyArgumentDescriptions(decoder.messageName())) {
         if (uint64_t listenerID = 0; decoder.decode(listenerID)) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"), JSC::JSValue(listenerID));
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "listenerID"_s), JSC::JSValue(listenerID));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
@@ -2163,7 +2163,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     auto arrayBuffer = JSC::ArrayBuffer::create(decoder.buffer(), decoder.length());
     if (auto* structure = globalObject->arrayBufferStructure(arrayBuffer->sharingMode())) {
         if (auto* jsArrayBuffer = JSC::JSArrayBuffer::create(vm, structure, WTFMove(arrayBuffer))) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "buffer"), jsArrayBuffer);
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "buffer"_s), jsArrayBuffer);
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     }
@@ -2186,7 +2186,7 @@ void inject(WebPage& webPage, WebFrame& webFrame, WebCore::DOMWrapperWorld& worl
     auto scope = DECLARE_CATCH_SCOPE(vm);
     auto wrapped = JSIPC::create(webPage, webFrame);
     JSObjectRef wrapperObject = JSObjectMake(toGlobalRef(globalObject), JSIPC::wrapperClass(), wrapped.ptr());
-    globalObject->putDirect(vm, JSC::Identifier::fromString(vm, "IPC"), toJS(globalObject, wrapperObject));
+    globalObject->putDirect(vm, JSC::Identifier::fromString(vm, "IPC"_s), toJS(globalObject, wrapperObject));
 
     scope.clearException();
 }

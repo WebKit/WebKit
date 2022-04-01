@@ -1,3 +1,91 @@
+2022-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Adopt Identifier::fromString(ASCIILiteral) more broadly
+        https://bugs.webkit.org/show_bug.cgi?id=238574
+
+        Reviewed by Darin Adler.
+
+        Adopt Identifier::fromString(ASCIILiteral) more broadly, now that it is very efficient.
+
+        * API/JSBase.cpp:
+        (JSGetMemoryUsageStatistics):
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.Promise-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-Builtin.prototype-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Combined.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-BuiltinConstructor-Separate.js-result:
+        * Scripts/tests/builtins/expected/JavaScriptCore-InternalClashingNames-Combined.js-result:
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * Scripts/wkbuiltins/builtins_model.py:
+        (BuiltinFunction.fromString):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitThrowTypeError):
+        (JSC::BytecodeGenerator::emitRequireObjectCoercible):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThrowableExpressionData::emitThrowReferenceError):
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        * jsc.cpp:
+        (JSC_DEFINE_CUSTOM_SETTER):
+        (JSCMemoryFootprint::finishCreation):
+        (JSCMemoryFootprint::addProperty):
+        (JSC_DEFINE_HOST_FUNCTION):
+        * parser/Nodes.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/ConsoleObject.cpp:
+        (JSC::ConsoleObject::finishCreation):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::add): Deleted.
+        * runtime/Identifier.h:
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::fromCString):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        * runtime/IntlNumberFormatPrototype.cpp:
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::reifyAllStaticProperties):
+        * runtime/JSObject.h:
+        (JSC::makeIdentifier):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getNonReifiedStaticPropertyNames):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::ProxyConstructor::finishCreation):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performInternalMethodGetOwnProperty):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::ProxyObject::performDelete):
+        (JSC::ProxyObject::performPreventExtensions):
+        (JSC::ProxyObject::performIsExtensible):
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        (JSC::ProxyObject::performSetPrototype):
+        (JSC::ProxyObject::performGetPrototype):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSDollarVM::finishCreation):
+        (JSC::JSDollarVM::addFunction):
+        (JSC::JSDollarVM::addConstructibleFunction):
+        * tools/JSDollarVM.h:
+        * wasm/js/JSWebAssembly.cpp:
+        (JSC::JSWebAssembly::finishCreation):
+
 2022-03-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove ExecutableToCodeBlockEdge

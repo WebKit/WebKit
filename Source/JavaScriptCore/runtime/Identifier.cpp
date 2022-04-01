@@ -27,17 +27,6 @@
 
 namespace JSC {
 
-Ref<AtomStringImpl> Identifier::add(VM& vm, const char* c)
-{
-    ASSERT(c);
-    ASSERT(c[0]);
-    if (!c[1])
-        return vm.smallStrings.singleCharacterStringRep(c[0]);
-
-    return *AtomStringImpl::add(c);
-}
-
-
 Ref<AtomStringImpl> Identifier::addLiteral(VM& vm, const char* literal, size_t length)
 {
     if (length == 1)

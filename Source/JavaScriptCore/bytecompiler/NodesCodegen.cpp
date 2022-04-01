@@ -86,7 +86,7 @@ void ExpressionNode::emitBytecodeInConditionContext(BytecodeGenerator& generator
 
 // ------------------------------ ThrowableExpressionData --------------------------------
 
-RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& generator, const String& message, RegisterID* dst)
+RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& generator, ASCIILiteral message, RegisterID* dst)
 {
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitThrowReferenceError(message);

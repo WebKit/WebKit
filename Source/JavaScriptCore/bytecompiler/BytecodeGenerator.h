@@ -901,7 +901,7 @@ namespace JSC {
         RegisterID* emitIsUndefinedOrNull(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsEmpty(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, DerivedArrayType); }
-        void emitRequireObjectCoercible(RegisterID* value, const String& error);
+        void emitRequireObjectCoercible(RegisterID* value, ASCIILiteral error);
 
         void emitIteratorOpen(RegisterID* iterator, RegisterID* nextOrIndex, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData*);
         void emitIteratorNext(RegisterID* done, RegisterID* value, RegisterID* iterable, RegisterID* nextOrIndex, CallArguments& iterator, const ThrowableExpressionData*);
@@ -955,8 +955,8 @@ namespace JSC {
 
         void emitThrowStaticError(ErrorTypeWithExtension, RegisterID*);
         void emitThrowStaticError(ErrorTypeWithExtension, const Identifier& message);
-        void emitThrowReferenceError(const String& message);
-        void emitThrowTypeError(const String& message);
+        void emitThrowReferenceError(ASCIILiteral message);
+        void emitThrowTypeError(ASCIILiteral message);
         void emitThrowTypeError(const Identifier& message);
         void emitThrowRangeError(const Identifier& message);
         void emitThrowOutOfMemoryError();

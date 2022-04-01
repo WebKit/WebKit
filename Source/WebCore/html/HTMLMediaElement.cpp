@@ -7643,7 +7643,7 @@ void HTMLMediaElement::updatePageScaleFactorJSProperty()
     if (!page)
         return;
 
-    setControllerJSProperty("pageScaleFactor", JSC::jsNumber(page->pageScaleFactor()));
+    setControllerJSProperty("pageScaleFactor"_s, JSC::jsNumber(page->pageScaleFactor()));
 }
 
 void HTMLMediaElement::updateUsesLTRUserInterfaceLayoutDirectionJSProperty()
@@ -7653,10 +7653,10 @@ void HTMLMediaElement::updateUsesLTRUserInterfaceLayoutDirectionJSProperty()
         return;
 
     bool usesLTRUserInterfaceLayoutDirectionProperty = page->userInterfaceLayoutDirection() == UserInterfaceLayoutDirection::LTR;
-    setControllerJSProperty("usesLTRUserInterfaceLayoutDirection", JSC::jsBoolean(usesLTRUserInterfaceLayoutDirectionProperty));
+    setControllerJSProperty("usesLTRUserInterfaceLayoutDirection"_s, JSC::jsBoolean(usesLTRUserInterfaceLayoutDirectionProperty));
 }
 
-void HTMLMediaElement::setControllerJSProperty(const char* propertyName, JSC::JSValue propertyValue)
+void HTMLMediaElement::setControllerJSProperty(ASCIILiteral propertyName, JSC::JSValue propertyValue)
 {
     setupAndCallJS([this, propertyName, propertyValue](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject& lexicalGlobalObject, ScriptController&, DOMWrapperWorld&) {
         auto& vm = globalObject.vm();
@@ -7864,12 +7864,12 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
 
 void HTMLMediaElement::setMediaControlsMaximumRightContainerButtonCountOverride(size_t count)
 {
-    setControllerJSProperty("maximumRightContainerButtonCountOverride", JSC::jsNumber(count));
+    setControllerJSProperty("maximumRightContainerButtonCountOverride"_s, JSC::jsNumber(count));
 }
 
 void HTMLMediaElement::setMediaControlsHidePlaybackRates(bool hidePlaybackRates)
 {
-    setControllerJSProperty("hidePlaybackRates", JSC::jsBoolean(hidePlaybackRates));
+    setControllerJSProperty("hidePlaybackRates"_s, JSC::jsBoolean(hidePlaybackRates));
 }
 
 unsigned long long HTMLMediaElement::fileSize() const

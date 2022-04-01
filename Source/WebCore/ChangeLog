@@ -1,3 +1,50 @@
+2022-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Adopt Identifier::fromString(ASCIILiteral) more broadly
+        https://bugs.webkit.org/show_bug.cgi?id=238574
+
+        Reviewed by Darin Adler.
+
+        Adopt Identifier::fromString(ASCIILiteral) more broadly, now that it is very efficient.
+
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::update):
+        * bridge/testbindings.cpp:
+        (main):
+        * bridge/testbindings.mm:
+        (main):
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePageScaleFactorJSProperty):
+        (WebCore::HTMLMediaElement::updateUsesLTRUserInterfaceLayoutDirectionJSProperty):
+        (WebCore::HTMLMediaElement::setControllerJSProperty):
+        (WebCore::HTMLMediaElement::setMediaControlsMaximumRightContainerButtonCountOverride):
+        (WebCore::HTMLMediaElement::setMediaControlsHidePlaybackRates):
+        * html/HTMLMediaElement.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::addSelfToGlobalObjectInWorld):
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        * inspector/WebInjectedScriptHost.cpp:
+        (WebCore::constructInternalProperty):
+        (WebCore::objectForPaymentOptions):
+        (WebCore::objectForPaymentCurrencyAmount):
+        (WebCore::objectForPaymentItem):
+        (WebCore::objectForPaymentShippingOption):
+        (WebCore::objectForPaymentDetailsModifier):
+        (WebCore::objectForPaymentDetails):
+        (WebCore::objectForEventTargetListeners):
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::consoleStartRecordingCanvas):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        * inspector/agents/page/PageAuditAgent.cpp:
+        (WebCore::PageAuditAgent::populateAuditObject):
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * worklets/PaintWorkletGlobalScope.cpp:
+        (WebCore::PaintWorkletGlobalScope::registerPaint):
+
 2022-03-31  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [iOS] Text decoration is always drawn with solid stroke style

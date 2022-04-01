@@ -150,10 +150,13 @@ class BuiltinFunction:
             parameters = []
 
         if is_getter and not overridden_name:
-            overridden_name = "\"get %s\"" % (function_name)
+            overridden_name = "\"get %s\"_s" % (function_name)
 
         if not overridden_name:
-            overridden_name = "static_cast<const char*>(nullptr)"
+            overridden_name = "ASCIILiteral::null()"
+
+        if overridden_name[-1] == "\"":
+            overridden_name += "_s"
 
         return BuiltinFunction(function_name, function_source, parameters, is_async, is_constructor, is_global_private, is_naked_constructor, intrinsic, overridden_name)
 

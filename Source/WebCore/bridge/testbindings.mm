@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 
             auto myInterface = adoptNS([[MyFirstInterface alloc] init]);
 
-            global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)myInterface.get()));
+            global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"_s), Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)myInterface.get()));
 
             for (int i = 1; i < argc; i++) {
                 const char *code = readJavaScriptFromFile(argv[i]);
@@ -252,7 +252,7 @@ int main(int argc, char **argv)
                         char *msg = exVal.toString(lexicalGlobalObject).ascii();
                         int lineno = -1;
                         if (exVal.type() == ObjectType) {
-                            Value lineVal = Object::dynamicCast(exVal).get(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "line"));
+                            Value lineVal = Object::dynamicCast(exVal).get(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "line"_s));
                             if (lineVal.type() == NumberType)
                                 lineno = int(lineVal.toNumber(lexicalGlobalObject));
                         }

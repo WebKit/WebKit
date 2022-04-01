@@ -56,8 +56,8 @@ extern const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind;
 #define JSC_BUILTIN_BUILTINCONSTRUCTOR_FROM 1
 
 #define JSC_FOREACH_BUILTINCONSTRUCTOR_BUILTIN_CODE(macro) \
-    macro(builtinConstructorOfCode, of, static_cast<const char*>(nullptr), s_builtinConstructorOfCodeLength) \
-    macro(builtinConstructorFromCode, from, static_cast<const char*>(nullptr), s_builtinConstructorFromCodeLength) \
+    macro(builtinConstructorOfCode, of, ASCIILiteral::null(), s_builtinConstructorOfCodeLength) \
+    macro(builtinConstructorFromCode, from, ASCIILiteral::null(), s_builtinConstructorFromCodeLength) \
 
 #define JSC_FOREACH_BUILTINCONSTRUCTOR_BUILTIN_FUNCTION_NAME(macro) \
     macro(from) \

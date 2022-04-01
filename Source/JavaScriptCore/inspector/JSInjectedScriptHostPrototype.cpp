@@ -59,24 +59,24 @@ void JSInjectedScriptHostPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("subtype", jsInjectedScriptHostPrototypeFunctionSubtype, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("functionDetails", jsInjectedScriptHostPrototypeFunctionFunctionDetails, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getInternalProperties", jsInjectedScriptHostPrototypeFunctionGetInternalProperties, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("internalConstructorName", jsInjectedScriptHostPrototypeFunctionInternalConstructorName, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("isHTMLAllCollection", jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("isPromiseRejectedWithNativeGetterTypeError", jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("proxyTargetValue", jsInjectedScriptHostPrototypeFunctionProxyTargetValue, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakMapSize", jsInjectedScriptHostPrototypeFunctionWeakMapSize, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakMapEntries", jsInjectedScriptHostPrototypeFunctionWeakMapEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakSetSize", jsInjectedScriptHostPrototypeFunctionWeakSetSize, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakSetEntries", jsInjectedScriptHostPrototypeFunctionWeakSetEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("iteratorEntries", jsInjectedScriptHostPrototypeFunctionIteratorEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("queryInstances", jsInjectedScriptHostPrototypeFunctionQueryInstances, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("queryHolders", jsInjectedScriptHostPrototypeFunctionQueryHolders, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension", jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("subtype"_s, jsInjectedScriptHostPrototypeFunctionSubtype, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("functionDetails"_s, jsInjectedScriptHostPrototypeFunctionFunctionDetails, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("getInternalProperties"_s, jsInjectedScriptHostPrototypeFunctionGetInternalProperties, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("internalConstructorName"_s, jsInjectedScriptHostPrototypeFunctionInternalConstructorName, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("isHTMLAllCollection"_s, jsInjectedScriptHostPrototypeFunctionIsHTMLAllCollection, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("isPromiseRejectedWithNativeGetterTypeError"_s, jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("proxyTargetValue"_s, jsInjectedScriptHostPrototypeFunctionProxyTargetValue, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakMapSize"_s, jsInjectedScriptHostPrototypeFunctionWeakMapSize, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakMapEntries"_s, jsInjectedScriptHostPrototypeFunctionWeakMapEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakSetSize"_s, jsInjectedScriptHostPrototypeFunctionWeakSetSize, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("weakSetEntries"_s, jsInjectedScriptHostPrototypeFunctionWeakSetEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("iteratorEntries"_s, jsInjectedScriptHostPrototypeFunctionIteratorEntries, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("queryInstances"_s, jsInjectedScriptHostPrototypeFunctionQueryInstances, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("queryHolders"_s, jsInjectedScriptHostPrototypeFunctionQueryHolders, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension"_s, jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
 
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("evaluate", jsInjectedScriptHostPrototypeAttributeEvaluate, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("savedResultAlias", jsInjectedScriptHostPrototypeAttributeSavedResultAlias, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("evaluate"_s, jsInjectedScriptHostPrototypeAttributeEvaluate, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("savedResultAlias"_s, jsInjectedScriptHostPrototypeAttributeSavedResultAlias, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeAttributeEvaluate, (JSGlobalObject* globalObject, CallFrame* callFrame))

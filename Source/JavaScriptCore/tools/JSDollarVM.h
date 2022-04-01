@@ -71,8 +71,8 @@ private:
     }
 
     void finishCreation(VM&);
-    void addFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
-    void addConstructibleFunction(VM&, JSGlobalObject*, const char* name, NativeFunction, unsigned arguments);
+    void addFunction(VM&, JSGlobalObject*, ASCIILiteral name, NativeFunction, unsigned arguments);
+    void addConstructibleFunction(VM&, JSGlobalObject*, ASCIILiteral name, NativeFunction, unsigned arguments);
 
     DECLARE_VISIT_CHILDREN;
 

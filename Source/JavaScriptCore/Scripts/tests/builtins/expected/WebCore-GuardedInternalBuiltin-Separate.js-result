@@ -56,7 +56,7 @@ extern const JSC::ConstructorKind s_guardedInternalBuiltinIsReadableStreamLocked
 #define WEBCORE_BUILTIN_GUARDEDINTERNALBUILTIN_ISREADABLESTREAMLOCKED 1
 
 #define WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_CODE(macro) \
-    macro(guardedInternalBuiltinIsReadableStreamLockedCode, isReadableStreamLocked, static_cast<const char*>(nullptr), s_guardedInternalBuiltinIsReadableStreamLockedCodeLength) \
+    macro(guardedInternalBuiltinIsReadableStreamLockedCode, isReadableStreamLocked, ASCIILiteral::null(), s_guardedInternalBuiltinIsReadableStreamLockedCodeLength) \
 
 #define WEBCORE_FOREACH_GUARDEDINTERNALBUILTIN_BUILTIN_FUNCTION_NAME(macro) \
     macro(isReadableStreamLocked) \

@@ -92,7 +92,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
 
         Vector<String> inputProperties;
 
-        JSValue inputPropertiesIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputProperties"));
+        JSValue inputPropertiesIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputProperties"_s));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (!inputPropertiesIterableValue.isUndefined())
@@ -103,7 +103,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
 
         Vector<String> inputArguments;
 
-        JSValue inputArgumentsIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputArguments"));
+        JSValue inputArgumentsIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputArguments"_s));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (!inputArgumentsIterableValue.isUndefined())
@@ -112,7 +112,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
 
         // FIXME: Parse syntax for inputArguments here (steps 11 and 12).
 
-        JSValue contextOptionsValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "contextOptions"));
+        JSValue contextOptionsValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "contextOptions"_s));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
         UNUSED_PARAM(contextOptionsValue);
 
@@ -127,7 +127,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
         if (!prototypeValue.isObject())
             return Exception { TypeError, "The second argument must have a prototype that is an object"_s };
 
-        JSValue paintValue = prototypeValue.get(&globalObject, Identifier::fromString(vm, "paint"));
+        JSValue paintValue = prototypeValue.get(&globalObject, Identifier::fromString(vm, "paint"_s));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (paintValue.isUndefined())

@@ -425,7 +425,7 @@ public:
 
     ExceptionOr<bool> isPageBoxVisible(int pageNumber);
 
-    static const char* internalsId;
+    static constexpr ASCIILiteral internalsId = "internals"_s;
 
     InternalSettings* settings() const;
     unsigned workerThreadCount() const;

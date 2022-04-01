@@ -68,8 +68,8 @@ JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, Call
     scope.assertNoException();
 
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, makeIdentifier(vm, "proxy"), proxy, static_cast<unsigned>(PropertyAttribute::None));
-    result->putDirect(vm, makeIdentifier(vm, "revoke"), revoke, static_cast<unsigned>(PropertyAttribute::None));
+    result->putDirect(vm, makeIdentifier(vm, "proxy"_s), proxy, static_cast<unsigned>(PropertyAttribute::None));
+    result->putDirect(vm, makeIdentifier(vm, "revoke"_s), revoke, static_cast<unsigned>(PropertyAttribute::None));
 
     return JSValue::encode(result);
 }
@@ -77,7 +77,7 @@ JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, Call
 void ProxyConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm, 2, "Proxy"_s, PropertyAdditionMode::WithoutStructureTransition);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("revocable", makeRevocableProxy, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("revocable"_s, makeRevocableProxy, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructProxyObject, (JSGlobalObject* globalObject, CallFrame* callFrame))

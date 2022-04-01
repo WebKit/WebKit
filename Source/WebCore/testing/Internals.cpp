@@ -497,8 +497,6 @@ static std::unique_ptr<PrintContext>& printContextForTesting()
     return context;
 }
 
-const char* Internals::internalsId = "internals";
-
 Ref<Internals> Internals::create(Document& document)
 {
     return adoptRef(*new Internals(document));

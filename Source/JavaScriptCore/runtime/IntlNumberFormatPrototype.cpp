@@ -87,10 +87,10 @@ void IntlNumberFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObj
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     UNUSED_PARAM(globalObject);
 #if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRange", intlNumberFormatPrototypeFuncFormatRange, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRange"_s, intlNumberFormatPrototypeFuncFormatRange, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 #endif
 #if HAVE(ICU_U_NUMBER_RANGE_FORMATTER_FORMAT_RANGE_TO_PARTS)
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRangeToParts", intlNumberFormatPrototypeFuncFormatRangeToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRangeToParts"_s, intlNumberFormatPrototypeFuncFormatRangeToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 #endif
 }
 

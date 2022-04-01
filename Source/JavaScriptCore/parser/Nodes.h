@@ -410,7 +410,7 @@ namespace JSC {
             ASSERT(m_divotEnd.offset >= m_divot.offset);
         }
     protected:
-        RegisterID* emitThrowReferenceError(BytecodeGenerator&, const String& message, RegisterID* dst = nullptr);
+        RegisterID* emitThrowReferenceError(BytecodeGenerator&, ASCIILiteral message, RegisterID* dst = nullptr);
 
     private:
         JSTextPosition m_divot;

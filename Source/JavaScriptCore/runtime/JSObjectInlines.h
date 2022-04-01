@@ -737,7 +737,7 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
             if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum))
-                propertyNames.add(Identifier::fromString(vm, iter.key()));
+                propertyNames.add(Identifier::fromCString(vm, iter.key()));
         }
     }
 }

@@ -88,13 +88,13 @@ void PageAuditAgent::populateAuditObject(JSC::JSGlobalObject* lexicalGlobalObjec
         JSC::JSLockHolder lock(vm);
 
         if (JSC::JSValue jsInspectorAuditAccessibilityObject = toJSNewlyCreated(lexicalGlobalObject, globalObject, InspectorAuditAccessibilityObject::create(*this)))
-            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Accessibility"), jsInspectorAuditAccessibilityObject);
+            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Accessibility"_s), jsInspectorAuditAccessibilityObject);
 
         if (JSC::JSValue jsInspectorAuditDOMObject = toJSNewlyCreated(lexicalGlobalObject, globalObject, InspectorAuditDOMObject::create(*this)))
-            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "DOM"), jsInspectorAuditDOMObject);
+            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "DOM"_s), jsInspectorAuditDOMObject);
 
         if (JSC::JSValue jsInspectorAuditResourcesObject = toJSNewlyCreated(lexicalGlobalObject, globalObject, InspectorAuditResourcesObject::create(*this)))
-            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Resources"), jsInspectorAuditResourcesObject);
+            auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Resources"_s), jsInspectorAuditResourcesObject);
     }
 }
 

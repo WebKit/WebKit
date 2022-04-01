@@ -57,8 +57,8 @@ extern const JSC::ConstructorKind s_builtinPromiseFulfillPromiseCodeConstructorK
 #define JSC_BUILTIN_BUILTIN_PROMISE_FULFILLPROMISE 1
 
 #define JSC_FOREACH_BUILTIN.PROMISE_BUILTIN_CODE(macro) \
-    macro(builtinPromiseRejectPromiseCode, rejectPromise, static_cast<const char*>(nullptr), s_builtinPromiseRejectPromiseCodeLength) \
-    macro(builtinPromiseFulfillPromiseCode, fulfillPromise, static_cast<const char*>(nullptr), s_builtinPromiseFulfillPromiseCodeLength) \
+    macro(builtinPromiseRejectPromiseCode, rejectPromise, ASCIILiteral::null(), s_builtinPromiseRejectPromiseCodeLength) \
+    macro(builtinPromiseFulfillPromiseCode, fulfillPromise, ASCIILiteral::null(), s_builtinPromiseFulfillPromiseCodeLength) \
 
 #define JSC_FOREACH_BUILTIN.PROMISE_BUILTIN_FUNCTION_NAME(macro) \
     macro(fulfillPromise) \

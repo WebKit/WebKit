@@ -117,12 +117,8 @@ public:
     static Identifier fromString(VM&, Ref<AtomStringImpl>&&);
     static Identifier fromString(VM&, const AtomString&);
     static Identifier fromString(VM& vm, SymbolImpl*);
-    static Identifier fromString(VM&, const char*);
     static Identifier fromString(VM& vm, const Vector<LChar>& characters) { return fromString(vm, characters.data(), characters.size()); }
-
-    // FIXME: Port call sites to fromString(ASCIILiteral) and remove this.
-    template<unsigned charactersCount>
-    static Identifier fromString(VM&, const char (&characters)[charactersCount]);
+    static Identifier fromCString(VM&, const char*);
 
     static Identifier fromUid(VM&, UniquedStringImpl* uid);
     static Identifier fromUid(const PrivateName&);
@@ -167,10 +163,6 @@ public:
 
 private:
     String m_string;
-
-    // Only to be used with string literals.
-    template<unsigned charactersCount>
-    Identifier(VM& vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isAtom()); }
 
     Identifier(VM& vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
     Identifier(VM& vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }

@@ -169,7 +169,7 @@ void InspectorFrontendHost::addSelfToGlobalObjectInWorld(DOMWrapperWorld& world)
     auto& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"), toJS<IDLInterface<InspectorFrontendHost>>(globalObject, globalObject, *this));
+    globalObject.putDirect(vm, JSC::Identifier::fromString(vm, "InspectorFrontendHost"_s), toJS<IDLInterface<InspectorFrontendHost>>(globalObject, globalObject, *this));
     if (UNLIKELY(scope.exception()))
         reportException(&globalObject, scope.exception());
 }
@@ -547,7 +547,7 @@ void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem
     ASSERT(m_frontendPage);
     auto& globalObject = *m_frontendPage->mainFrame().script().globalObject(debuggerWorld());
     auto& vm = globalObject.vm();
-    auto value = globalObject.get(&globalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"));
+    auto value = globalObject.get(&globalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"_s));
     ASSERT(value);
     ASSERT(value.isObject());
     auto* frontendAPIObject = asObject(value);

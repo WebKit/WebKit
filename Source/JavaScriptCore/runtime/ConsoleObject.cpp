@@ -89,33 +89,33 @@ void ConsoleObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     // For legacy reasons, console properties are enumerable, writable, deleteable,
     // and all have a length of 0. This may change if Console is standardized.
 
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("debug", consoleProtoFuncDebug, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("error", consoleProtoFuncError, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("log", consoleProtoFuncLog, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("info", consoleProtoFuncInfo, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("warn", consoleProtoFuncWarn, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("debug"_s, consoleProtoFuncDebug, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("error"_s, consoleProtoFuncError, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("log"_s, consoleProtoFuncLog, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("info"_s, consoleProtoFuncInfo, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("warn"_s, consoleProtoFuncWarn, static_cast<unsigned>(PropertyAttribute::None), 0);
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->clear, consoleProtoFuncClear, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("dir", consoleProtoFuncDir, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("dirxml", consoleProtoFuncDirXML, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("table", consoleProtoFuncTable, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trace", consoleProtoFuncTrace, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("assert", consoleProtoFuncAssert, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("dir"_s, consoleProtoFuncDir, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("dirxml"_s, consoleProtoFuncDirXML, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("table"_s, consoleProtoFuncTable, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trace"_s, consoleProtoFuncTrace, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("assert"_s, consoleProtoFuncAssert, static_cast<unsigned>(PropertyAttribute::None), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->count, consoleProtoFuncCount, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("countReset", consoleProtoFuncCountReset, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profile", consoleProtoFuncProfile, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profileEnd", consoleProtoFuncProfileEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("time", consoleProtoFuncTime, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeLog", consoleProtoFuncTimeLog, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeEnd", consoleProtoFuncTimeEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeStamp", consoleProtoFuncTimeStamp, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("takeHeapSnapshot", consoleProtoFuncTakeHeapSnapshot, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("group", consoleProtoFuncGroup, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupCollapsed", consoleProtoFuncGroupCollapsed, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupEnd", consoleProtoFuncGroupEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("record", consoleProtoFuncRecord, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("recordEnd", consoleProtoFuncRecordEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("screenshot", consoleProtoFuncScreenshot, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("countReset"_s, consoleProtoFuncCountReset, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profile"_s, consoleProtoFuncProfile, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("profileEnd"_s, consoleProtoFuncProfileEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("time"_s, consoleProtoFuncTime, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeLog"_s, consoleProtoFuncTimeLog, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeEnd"_s, consoleProtoFuncTimeEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("timeStamp"_s, consoleProtoFuncTimeStamp, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("takeHeapSnapshot"_s, consoleProtoFuncTakeHeapSnapshot, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("group"_s, consoleProtoFuncGroup, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupCollapsed"_s, consoleProtoFuncGroupCollapsed, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("groupEnd"_s, consoleProtoFuncGroupEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("record"_s, consoleProtoFuncRecord, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("recordEnd"_s, consoleProtoFuncRecordEnd, static_cast<unsigned>(PropertyAttribute::None), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("screenshot"_s, consoleProtoFuncScreenshot, static_cast<unsigned>(PropertyAttribute::None), 0);
 
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }

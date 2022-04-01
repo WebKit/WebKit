@@ -69,10 +69,10 @@ extern const JSC::ConstructorKind s_builtinPrototypeTestCodeConstructorKind;
 #define JSC_BUILTIN_BUILTIN_PROTOTYPE_TEST 1
 
 #define JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_CODE(macro) \
-    macro(builtinPrototypeEveryCode, every, static_cast<const char*>(nullptr), s_builtinPrototypeEveryCodeLength) \
-    macro(builtinPrototypeForEachCode, forEach, static_cast<const char*>(nullptr), s_builtinPrototypeForEachCodeLength) \
-    macro(builtinPrototypeMatchCode, match, "[Symbol.match]", s_builtinPrototypeMatchCodeLength) \
-    macro(builtinPrototypeTestCode, test, static_cast<const char*>(nullptr), s_builtinPrototypeTestCodeLength) \
+    macro(builtinPrototypeEveryCode, every, ASCIILiteral::null(), s_builtinPrototypeEveryCodeLength) \
+    macro(builtinPrototypeForEachCode, forEach, ASCIILiteral::null(), s_builtinPrototypeForEachCodeLength) \
+    macro(builtinPrototypeMatchCode, match, "[Symbol.match]"_s, s_builtinPrototypeMatchCodeLength) \
+    macro(builtinPrototypeTestCode, test, ASCIILiteral::null(), s_builtinPrototypeTestCodeLength) \
 
 #define JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_FUNCTION_NAME(macro) \
     macro(every) \

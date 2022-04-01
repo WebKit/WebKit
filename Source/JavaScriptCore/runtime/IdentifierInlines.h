@@ -80,12 +80,6 @@ inline Identifier Identifier::fromUid(SymbolImpl& symbol)
     return symbol;
 }
 
-template<unsigned charactersCount>
-inline Identifier Identifier::fromString(VM& vm, const char (&characters)[charactersCount])
-{
-    return Identifier(&vm, characters);
-}
-
 ALWAYS_INLINE Identifier Identifier::fromString(VM& vm, ASCIILiteral s)
 {
     return Identifier(vm, s);
@@ -126,7 +120,7 @@ inline Identifier Identifier::fromString(VM& vm, SymbolImpl* symbolImpl)
     return Identifier(vm, symbolImpl);
 }
 
-inline Identifier Identifier::fromString(VM& vm, const char* s)
+inline Identifier Identifier::fromCString(VM& vm, const char* s)
 {
     return Identifier(vm, AtomString(s));
 }

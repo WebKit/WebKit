@@ -111,9 +111,9 @@ void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     if (globalObject->globalObjectMethodTable()->compileStreaming)
-        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("compileStreaming", webAssemblyCompileStreamingCodeGenerator, static_cast<unsigned>(0));
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("compileStreaming"_s, webAssemblyCompileStreamingCodeGenerator, static_cast<unsigned>(0));
     if (globalObject->globalObjectMethodTable()->instantiateStreaming)
-        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("instantiateStreaming", webAssemblyInstantiateStreamingCodeGenerator, static_cast<unsigned>(0));
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("instantiateStreaming"_s, webAssemblyInstantiateStreamingCodeGenerator, static_cast<unsigned>(0));
 }
 
 JSWebAssembly::JSWebAssembly(VM& vm, Structure* structure)

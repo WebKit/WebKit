@@ -380,7 +380,7 @@ int main(int argc, char **argv)
         
         MyObject *myObject = (MyObject *)NPN_CreateObject (myFunctionPtrs);
         
-        global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"), Instance::createRuntimeObject(Instance::CLanguage, (void *)myObject));
+        global.put(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "myInterface"_s), Instance::createRuntimeObject(Instance::CLanguage, (void *)myObject));
         
         for (int i = 1; i < argc; i++) {
             const char *code = readJavaScriptFromFile(argv[i]);
@@ -396,7 +396,7 @@ int main(int argc, char **argv)
                     const char* msg = cstring.data();
                     int lineno = -1;
                     if (exVal.type() == ObjectType) {
-                        Value lineVal = Object::dynamicCast(exVal).get(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "line"));
+                        Value lineVal = Object::dynamicCast(exVal).get(lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject, "line"_s));
                         if (lineVal.type() == NumberType)
                             lineno = int(lineVal.toNumber(lexicalGlobalObject));
                     }

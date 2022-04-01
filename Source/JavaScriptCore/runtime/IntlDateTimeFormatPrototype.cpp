@@ -83,7 +83,7 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
 #if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRangeToParts", intlDateTimeFormatPrototypeFuncFormatRangeToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("formatRangeToParts"_s, intlDateTimeFormatPrototypeFuncFormatRangeToParts, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 #else
     UNUSED_PARAM(globalObject);
     UNUSED_PARAM(&intlDateTimeFormatPrototypeFuncFormatRangeToParts);

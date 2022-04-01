@@ -95,7 +95,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
 
     if (std::holds_alternative<String>(algorithmIdentifier)) {
         auto newParams = Strong<JSObject>(vm, constructEmptyObject(&state));
-        newParams->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, std::get<String>(algorithmIdentifier)));
+        newParams->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, std::get<String>(algorithmIdentifier)));
         
         return normalizeCryptoAlgorithmParameters(state, newParams, operation);
     }
@@ -241,11 +241,11 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::ECDH: {
             // Remove this hack once https://bugs.webkit.org/show_bug.cgi?id=169333 is fixed.
-            JSValue nameValue = value.get()->get(&state, Identifier::fromString(vm, "name"));
-            JSValue publicValue = value.get()->get(&state, Identifier::fromString(vm, "public"));
+            JSValue nameValue = value.get()->get(&state, Identifier::fromString(vm, "name"_s));
+            JSValue publicValue = value.get()->get(&state, Identifier::fromString(vm, "public"_s));
             JSObject* newValue = constructEmptyObject(&state);
-            newValue->putDirect(vm, Identifier::fromString(vm, "name"), nameValue);
-            newValue->putDirect(vm, Identifier::fromString(vm, "publicKey"), publicValue);
+            newValue->putDirect(vm, Identifier::fromString(vm, "name"_s), nameValue);
+            newValue->putDirect(vm, Identifier::fromString(vm, "publicKey"_s), publicValue);
 
             auto params = convertDictionary<CryptoAlgorithmEcdhKeyDeriveParams>(state, newValue);
             RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });

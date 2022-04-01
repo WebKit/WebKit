@@ -245,7 +245,7 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     UNUSED_PARAM(&createListFormatConstructor);
 #endif
     if (Options::useIntlEnumeration())
-        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("supportedValuesOf", intlObjectFuncSupportedValuesOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("supportedValuesOf"_s, intlObjectFuncSupportedValuesOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

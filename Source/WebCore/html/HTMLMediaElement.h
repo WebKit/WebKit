@@ -963,7 +963,7 @@ private:
 
     void updatePageScaleFactorJSProperty();
     void updateUsesLTRUserInterfaceLayoutDirectionJSProperty();
-    void setControllerJSProperty(const char*, JSC::JSValue);
+    void setControllerJSProperty(ASCIILiteral, JSC::JSValue);
 
     void addBehaviorRestrictionsOnEndIfNecessary();
     void handleSeekToPlaybackPosition(double);

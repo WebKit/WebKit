@@ -55,18 +55,18 @@ void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* glob
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension", jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeDescriptions", jsJavaScriptCallFramePrototypeFunctionScopeDescriptions, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("evaluateWithScopeExtension"_s, jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("scopeDescriptions"_s, jsJavaScriptCallFramePrototypeFunctionScopeDescriptions, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
 
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("caller", jsJavaScriptCallFrameAttributeCaller, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("sourceID", jsJavaScriptCallFrameAttributeSourceID, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("line", jsJavaScriptCallFrameAttributeLine, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("column", jsJavaScriptCallFrameAttributeColumn, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("functionName", jsJavaScriptCallFrameAttributeFunctionName, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("scopeChain", jsJavaScriptCallFrameAttributeScopeChain, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("thisObject", jsJavaScriptCallFrameAttributeThisObject, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("type", jsJavaScriptCallFrameAttributeType, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("isTailDeleted", jsJavaScriptCallFrameIsTailDeleted, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("caller"_s, jsJavaScriptCallFrameAttributeCaller, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("sourceID"_s, jsJavaScriptCallFrameAttributeSourceID, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("line"_s, jsJavaScriptCallFrameAttributeLine, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("column"_s, jsJavaScriptCallFrameAttributeColumn, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("functionName"_s, jsJavaScriptCallFrameAttributeFunctionName, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("scopeChain"_s, jsJavaScriptCallFrameAttributeScopeChain, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("thisObject"_s, jsJavaScriptCallFrameAttributeThisObject, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("type"_s, jsJavaScriptCallFrameAttributeType, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("isTailDeleted"_s, jsJavaScriptCallFrameIsTailDeleted, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsJavaScriptCallFramePrototypeFunctionEvaluateWithScopeExtension, (JSGlobalObject* globalObject, CallFrame* callFrame))
