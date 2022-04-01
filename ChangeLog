@@ -1,3 +1,15 @@
+2022-04-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable CSS Typed OM by default
+        https://bugs.webkit.org/show_bug.cgi?id=238659
+
+        Reviewed by Adrian Perez de Castro.
+
+        Always build with Typed OM enabled, it's handled by an off by default setting.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-03-31  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable more features by default
