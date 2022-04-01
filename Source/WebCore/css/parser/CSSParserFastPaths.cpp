@@ -671,7 +671,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueNone || (valueID >= CSSValueInset && valueID <= CSSValueDouble);
     // FIXME-NEWPARSER: Support?
     // case CSSPropertyOverflowAnchor:
-    //    return valueID == CSSValueVisible || valueID == CSSValueNone || valueID == CSSValueAuto;
+    //    return valueID == CSSValueNone || valueID == CSSValueAuto;
     case CSSPropertyOverflowWrap: // normal | break-word | anywhere
     case CSSPropertyWordWrap:
         return valueID == CSSValueNormal || valueID == CSSValueBreakWord || valueID == CSSValueAnywhere;
@@ -724,9 +724,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
 #endif
     case CSSPropertyTextAnchor:
         return valueID == CSSValueStart || valueID == CSSValueMiddle || valueID == CSSValueEnd;
-// FIXME-NEWPARSER: Support
-//    case CSSPropertyTextCombineUpright:
-//        return valueID == CSSValueNone || valueID == CSSValueAll;
     case CSSPropertyTextDecorationStyle:
         // solid | double | dotted | dashed | wavy
         return valueID == CSSValueSolid || valueID == CSSValueDouble || valueID == CSSValueDotted || valueID == CSSValueDashed || valueID == CSSValueWavy;

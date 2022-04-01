@@ -1,3 +1,13 @@
+2022-04-01  Tim Nguyen  <ntim@apple.com>
+
+        Unreviewed, fix obsolete FIXME comments in CSSParserFastPaths.cpp
+
+        - overflow-anchor is still not implemented, and the visible value has been removed from the spec.
+        - text-combine-upright was implemented in r287487
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+
 2022-04-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r290360): [GLX] Crash on process exit
