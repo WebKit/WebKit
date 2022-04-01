@@ -1,3 +1,11 @@
+2022-04-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop unnecessary WTF_EXPORT_PRIVATE on String(ASCIILiteral)
+
+        This constructor was recently inlined.
+
+        * wtf/text/WTFString.h:
+
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
         Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit

@@ -97,7 +97,7 @@ public:
     String(StaticStringImpl*);
 
     // Construct a string from a constant string literal.
-    WTF_EXPORT_PRIVATE String(ASCIILiteral);
+    String(ASCIILiteral);
 
     String(const String&) = default;
     String(String&&) = default;
