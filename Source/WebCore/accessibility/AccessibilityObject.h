@@ -877,7 +877,7 @@ inline VisiblePosition AccessibilityObject::previousLineStartPosition(const Visi
 #else
 inline bool AccessibilityObject::hasDisplayContents() const { return false; }
 inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>&, const BoundaryPoint&, const FloatRect&) const { return std::nullopt; }
-inline VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosition& position) const { return { }; }
+inline VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosition&) const { return { }; }
 #endif
 
 #if !ENABLE(ACCESSIBILITY)
