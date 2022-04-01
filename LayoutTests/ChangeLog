@@ -1,3 +1,14 @@
+2022-04-01  Matteo Flores  <matteo_flores@apple.com>
+
+        REGRESSION(r292072): [ wk1 ] fast/text/install-font-style-recalc.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238641
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-04-01  Ben Nham  <nham@apple.com>
 
         Add more push-related logging
@@ -10,15 +21,6 @@
         * http/tests/push-api/subscribe-default-permissions-expected.txt:
         * http/tests/push-api/subscribe-default-permissions-iframe-same-origin-expected.txt:
         * http/tests/push-api/subscribe-deny-permissions-on-prompt-expected.txt:
-
-2022-04-01  Matteo Flores  <matteo_flores@apple.com>
-
-        REGRESSION(r292072): [ wk1 ] fast/text/install-font-style-recalc.html is a constant text failure
-        https://bugs.webkit.org/show_bug.cgi?id=238641
-
-        Unreviewed test gardening.
-
-        * platform/mac-wk1/TestExpectations:
 
 2022-04-01  Kate Cheney  <katherine_cheney@apple.com>
 

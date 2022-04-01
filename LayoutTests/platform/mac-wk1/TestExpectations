@@ -1204,8 +1204,6 @@ webkit.org/b/206668 fast/loader/redirect-to-invalid-url-using-meta-refresh-calls
 
 webkit.org/b/180760 fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html [ Pass Failure ]
 
-webkit.org/b/238641 fast/text/install-font-style-recalc.html [ Failure ]
-
 webkit.org/b/190830 [ Debug ] media/track/video-track-addition-and-frame-removal.html [ Pass Crash ]
 
 webkit.org/b/206974 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-xslt-document-in-iframe-with-inherited-policy.html [ Pass Failure ]
