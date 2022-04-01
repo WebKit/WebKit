@@ -1,3 +1,20 @@
+2022-04-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r292197): 3 TestWebKitAPI.ContentRuleList API tests are constant failures/timeout
+        https://bugs.webkit.org/show_bug.cgi?id=238678
+        <rdar://91173297>
+
+        Unreviewed, in r292197, I made a last minute mistake when applying some of Darin's review comments.
+        I converted a few calls to `NSURL.absoluteURL.fileSystemRepresentation` to
+        `NSURL.absoluteString` instead of `NSURL.absoluteURL.path`. As a result, the file://
+        prefix was still present and some characters may still be URL-encoded.
+
+        No new tests, covered by existing API tests failing on the bots.
+
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (+[WKContentRuleListStore storeWithURL:]):
+        (+[WKContentRuleListStore storeWithURLAndLegacyFilename:]):
+
 2022-04-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [Linux] Implement IPC::Semaphore
