@@ -1,3 +1,10 @@
+2022-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2022-03-31  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION(r292127): [ BigSur+ wk1 ] imported/w3c/web-platform-tests/css/css-contain/contain-body-overflow-002.html is a constant image failure

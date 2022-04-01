@@ -457,3 +457,5 @@ accessibility/aria-roledescription.html [ Timeout ]
 accessibility/visible-elements.html [ Timeout ]
 
 editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ] # This test confuses DRT. See Bug 233463
+
+webkit.org/b/238636 storage/indexeddb/modern/opendatabase-request.html [ Skip ]

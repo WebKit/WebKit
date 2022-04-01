@@ -1470,6 +1470,8 @@ webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expec
 
 webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Crash ]
 
+webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
