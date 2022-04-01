@@ -789,6 +789,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEffectTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+CSSOMView.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+CSSOMView.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+ComputedStyleMap.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+ComputedStyleMap.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+DOMParsing.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+DOMParsing.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElement+Fullscreen.cpp

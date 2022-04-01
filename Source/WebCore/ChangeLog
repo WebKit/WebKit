@@ -1,3 +1,9 @@
+2022-04-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update DerivedSources-output.xcfilelist to fix build.
+
+        * DerivedSources-output.xcfilelist:
+
 2022-04-01  Rob Buis  <rbuis@igalia.com>
 
         Abort formatBlock command on null start or end selections
