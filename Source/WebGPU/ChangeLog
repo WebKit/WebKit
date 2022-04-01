@@ -1,5 +1,22 @@
 2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement Queue::writeTexture() according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=238432
+
+        Reviewed by Dean Jackson.
+
+        This implements Queue::writeTexture() according to the spec.
+        It re-uses many of the helper functions added in
+        https://bugs.webkit.org/show_bug.cgi?id=238428. There are links and quotes from
+        the spec where appropriate.
+
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::writeBuffer):
+        (WebGPU::validateWriteTexture):
+        (WebGPU::Queue::writeTexture):
+
+2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement CommandEncoder::copyTextureToTexture() according to the spec
         https://bugs.webkit.org/show_bug.cgi?id=238431
 
