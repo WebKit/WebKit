@@ -87,12 +87,12 @@ class UnaryArithProfile;
 class BinaryArithProfile;
 class BytecodeLivenessAnalysis;
 class CodeBlockSet;
-class ExecutableToCodeBlockEdge;
 class JSModuleEnvironment;
 class LLIntOffsetsExtractor;
 class LLIntPrototypeLoadAdaptiveStructureWatchpoint;
 class MetadataTable;
 class RegisterAtOffsetList;
+class ScriptExecutable;
 class StructureStubInfo;
 class BaselineJITCode;
 class BaselineJITData;
@@ -134,8 +134,6 @@ protected:
 
     void finishCreation(VM&, CopyParsedBlockTag, CodeBlock& other);
     bool finishCreation(VM&, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*);
-    
-    void finishCreationCommon(VM&);
 
     WriteBarrier<JSGlobalObject> m_globalObject;
 
@@ -369,8 +367,6 @@ public:
     
     ScriptExecutable* ownerExecutable() const { return m_ownerExecutable.get(); }
     
-    ExecutableToCodeBlockEdge* ownerEdge() const { return m_ownerEdge.get(); }
-
     VM& vm() const { return *m_vm; }
 
     VirtualRegister thisRegister() const { return m_unlinkedCode->thisRegister(); }
@@ -849,7 +845,8 @@ protected:
 
 private:
     friend class CodeBlockSet;
-    friend class ExecutableToCodeBlockEdge;
+    friend class FunctionExecutable;
+    friend class ScriptExecutable;
 
     template<typename Visitor> ALWAYS_INLINE void visitChildren(Visitor&);
 
@@ -923,7 +920,6 @@ private:
 
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     WriteBarrier<ScriptExecutable> m_ownerExecutable;
-    WriteBarrier<ExecutableToCodeBlockEdge> m_ownerEdge;
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference.
     VM* m_vm;
@@ -975,7 +971,7 @@ private:
 #endif
 };
 #if !ASSERT_ENABLED && COMPILER(GCC_COMPATIBLE)
-static_assert(sizeof(CodeBlock) <= 256, "Keep it small for memory saving");
+static_assert(sizeof(CodeBlock) <= 240, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>

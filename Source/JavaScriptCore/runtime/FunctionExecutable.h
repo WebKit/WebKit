@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ExecutableToCodeBlockEdge.h"
 #include "JSFunction.h"
 #include "ScriptExecutable.h"
 #include "SourceCode.h"
@@ -69,34 +68,31 @@ public:
     // Returns either call or construct bytecode. This can be appropriate
     // for answering questions that that don't vary between call and construct --
     // for example, argumentsRegister().
-    FunctionCodeBlock* eitherCodeBlock()
+    FunctionCodeBlock* eitherCodeBlock() const
     {
-        ExecutableToCodeBlockEdge* edge;
-        if (m_codeBlockForCall)
-            edge = m_codeBlockForCall.get();
-        else
-            edge = m_codeBlockForConstruct.get();
-        return bitwise_cast<FunctionCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(edge));
+        if (auto* result = codeBlockForCall())
+            return result;
+        return codeBlockForConstruct();
     }
         
     bool isGeneratedForCall() const
     {
-        return !!m_codeBlockForCall;
+        return !!codeBlockForCall();
     }
 
-    FunctionCodeBlock* codeBlockForCall()
+    FunctionCodeBlock* codeBlockForCall() const
     {
-        return bitwise_cast<FunctionCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_codeBlockForCall.get()));
+        return bitwise_cast<FunctionCodeBlock*>(m_codeBlockForCall.get());
     }
 
     bool isGeneratedForConstruct() const
     {
-        return !!m_codeBlockForConstruct;
+        return !!codeBlockForConstruct();
     }
 
-    FunctionCodeBlock* codeBlockForConstruct()
+    FunctionCodeBlock* codeBlockForConstruct() const
     {
-        return bitwise_cast<FunctionCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_codeBlockForConstruct.get()));
+        return bitwise_cast<FunctionCodeBlock*>(m_codeBlockForConstruct.get());
     }
         
     bool isGeneratedFor(CodeSpecializationKind kind)
@@ -121,6 +117,8 @@ public:
     {
         return baselineCodeBlockFor(kind);
     }
+
+    FunctionCodeBlock* replaceCodeBlockWith(VM&, CodeSpecializationKind, CodeBlock*);
 
     RefPtr<TypeSet> returnStatementTypeSet() 
     {
@@ -162,6 +160,7 @@ public:
     SourceCode classSource() const { return m_unlinkedExecutable->classSource(); }
 
     DECLARE_VISIT_CHILDREN;
+    DECLARE_VISIT_OUTPUT_CONSTRAINTS;
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
         return Structure::create(vm, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), info());
@@ -331,8 +330,8 @@ private:
     std::unique_ptr<RareData> m_rareData;
     WriteBarrier<ScriptExecutable> m_topLevelExecutable;
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
-    WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForCall;
-    WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForConstruct;
+    WriteBarrier<CodeBlock> m_codeBlockForCall;
+    WriteBarrier<CodeBlock> m_codeBlockForConstruct;
     InferredValue<JSFunction> m_singleton;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
 };

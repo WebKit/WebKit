@@ -1493,7 +1493,6 @@ macro functionForCallCodeBlockGetter(targetRegister)
     loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[targetRegister], targetRegister
 .isExecutable:
     loadp FunctionExecutable::m_codeBlockForCall[targetRegister], targetRegister
-    loadp ExecutableToCodeBlockEdge::m_codeBlock[targetRegister], targetRegister
 end
 
 macro functionForConstructCodeBlockGetter(targetRegister)
@@ -1507,7 +1506,6 @@ macro functionForConstructCodeBlockGetter(targetRegister)
     loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[targetRegister], targetRegister
 .isExecutable:
     loadp FunctionExecutable::m_codeBlockForConstruct[targetRegister], targetRegister
-    loadp ExecutableToCodeBlockEdge::m_codeBlock[targetRegister], targetRegister
 end
 
 macro notFunctionCodeBlockGetter(targetRegister)

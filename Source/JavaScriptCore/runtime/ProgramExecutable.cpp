@@ -150,8 +150,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
         }
     }
 
-
-    m_unlinkedProgramCodeBlock.set(vm, this, unlinkedCodeBlock);
+    m_unlinkedCodeBlock.set(vm, this, unlinkedCodeBlock);
 
     BatchedTransitionOptimizer optimizer(vm, globalObject);
 
@@ -216,8 +215,6 @@ void ProgramExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ProgramExecutable* thisObject = jsCast<ProgramExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_unlinkedProgramCodeBlock);
-    visitor.append(thisObject->m_programCodeBlock);
     if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {
         Locker locker { thisObject->cellLock() };
         for (auto& entry : *map)

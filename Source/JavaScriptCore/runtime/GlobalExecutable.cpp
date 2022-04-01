@@ -26,10 +26,62 @@
 #include "config.h"
 #include "GlobalExecutable.h"
 
+#include "IsoCellSetInlines.h"
 #include "JSCellInlines.h"
+#include "ScriptExecutableInlines.h"
 
 namespace JSC {
 
 const ClassInfo GlobalExecutable::s_info = { "GlobalExecutable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalExecutable) };
+
+template<typename Visitor>
+void GlobalExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    auto* executable = jsCast<GlobalExecutable*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(executable, info());
+    Base::visitChildren(executable, visitor);
+    visitor.append(executable->m_unlinkedCodeBlock);
+
+    if (auto* codeBlock = executable->codeBlock()) {
+        // If CodeBlocks is not marked yet, we will run output-constraints.
+        // We maintain the invariant that, whenever we see unmarked CodeBlock, then we must run finalizer.
+        // And whenever we set a bit on outputConstraintsSet, we must already set a bit in finalizerSet.
+        visitCodeBlockEdge(visitor, codeBlock);
+        if (!visitor.isMarked(codeBlock)) {
+            Heap::ScriptExecutableSpaceAndSets::finalizerSetFor(*executable->subspace()).add(executable);
+            Heap::ScriptExecutableSpaceAndSets::outputConstraintsSetFor(*executable->subspace()).add(executable);
+        }
+    }
+}
+
+DEFINE_VISIT_CHILDREN(GlobalExecutable);
+
+template<typename Visitor>
+void GlobalExecutable::visitOutputConstraintsImpl(JSCell* cell, Visitor& visitor)
+{
+    auto* executable = jsCast<GlobalExecutable*>(cell);
+    if (CodeBlock* codeBlock = executable->codeBlock()) {
+        if (!visitor.isMarked(codeBlock))
+            runConstraint(NoLockingNecessary, visitor, codeBlock);
+        if (visitor.isMarked(codeBlock))
+            Heap::ScriptExecutableSpaceAndSets::outputConstraintsSetFor(*executable->subspace()).remove(executable);
+    }
+}
+
+DEFINE_VISIT_OUTPUT_CONSTRAINTS(GlobalExecutable);
+
+CodeBlock* GlobalExecutable::replaceCodeBlockWith(VM& vm, CodeBlock* newCodeBlock)
+{
+    CodeBlock* oldCodeBlock = codeBlock();
+    m_codeBlock.setMayBeNull(vm, this, newCodeBlock);
+    return oldCodeBlock;
+}
+
+void GlobalExecutable::finalizeUnconditionally(VM& vm)
+{
+    finalizeCodeBlockEdge(vm, m_codeBlock);
+    Heap::ScriptExecutableSpaceAndSets::outputConstraintsSetFor(*subspace()).remove(this);
+    Heap::ScriptExecutableSpaceAndSets::finalizerSetFor(*subspace()).remove(this);
+}
 
 } // namespace JSC

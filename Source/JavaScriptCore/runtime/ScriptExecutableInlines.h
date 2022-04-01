@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,24 @@
 
 #pragma once
 
-#include "FunctionExecutable.h"
-#include "InferredValueInlines.h"
-#include "ScriptExecutableInlines.h"
+#include "ScriptExecutable.h"
 
 namespace JSC {
 
-inline void FunctionExecutable::finalizeUnconditionally(VM& vm)
+inline void ScriptExecutable::finalizeCodeBlockEdge(VM& vm, WriteBarrier<CodeBlock>& codeBlockEdge)
 {
-    m_singleton.finalizeUnconditionally(vm);
-    finalizeCodeBlockEdge(vm, m_codeBlockForCall);
-    finalizeCodeBlockEdge(vm, m_codeBlockForConstruct);
-    vm.heap.functionExecutableSpaceAndSet.outputConstraintsSet.remove(this);
-}
+    auto* codeBlock = codeBlockEdge.get();
+    if (!codeBlock)
+        return;
 
-inline FunctionCodeBlock* FunctionExecutable::replaceCodeBlockWith(VM& vm, CodeSpecializationKind kind, CodeBlock* newCodeBlock)
-{
-    if (kind == CodeForCall) {
-        FunctionCodeBlock* oldCodeBlock = codeBlockForCall();
-        m_codeBlockForCall.setMayBeNull(vm, this, newCodeBlock);
-        return oldCodeBlock;
+    if (!vm.heap.isMarked(codeBlock)) {
+        if (codeBlock->shouldJettisonDueToWeakReference(vm))
+            codeBlock->jettison(Profiler::JettisonDueToWeakReference);
+        else
+            codeBlock->jettison(Profiler::JettisonDueToOldAge);
+        if (codeBlock == codeBlockEdge.get())
+            codeBlockEdge.clear();
     }
-    ASSERT(kind == CodeForConstruct);
-    FunctionCodeBlock* oldCodeBlock = codeBlockForConstruct();
-    m_codeBlockForConstruct.setMayBeNull(vm, this, newCodeBlock);
-    return oldCodeBlock;
-}
-
-inline JSString* FunctionExecutable::toString(JSGlobalObject* globalObject)
-{
-    RareData& rareData = ensureRareData();
-    if (!rareData.m_asString)
-        return toStringSlow(globalObject);
-    return rareData.m_asString.get();
 }
 
 } // namespace JSC

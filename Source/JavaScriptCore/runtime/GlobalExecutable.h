@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ExecutableToCodeBlockEdge.h"
 #include "ScriptExecutable.h"
 
 namespace JSC {
@@ -48,12 +47,32 @@ public:
         ASSERT(endColumn != UINT_MAX);
     }
 
+    DECLARE_VISIT_CHILDREN;
+    DECLARE_VISIT_OUTPUT_CONSTRAINTS;
+
+    void finalizeUnconditionally(VM&);
+
 protected:
+    friend class ScriptExecutable;
     GlobalExecutable(Structure* structure, VM& vm, const SourceCode& sourceCode, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, Intrinsic intrinsic)
         : Base(structure, vm, sourceCode, isInStrictContext ? StrictModeLexicalFeature : NoLexicalFeatures, derivedContextType, isInArrowFunctionContext, isInsideOrdinaryFunction, evalContextType, intrinsic)
     {
     }
 
+    CodeBlock* codeBlock() const
+    {
+        return m_codeBlock.get();
+    }
+
+    UnlinkedCodeBlock* unlinkedCodeBlock() const
+    {
+        return m_unlinkedCodeBlock.get();
+    }
+
+    CodeBlock* replaceCodeBlockWith(VM&, CodeBlock*);
+
+    WriteBarrier<CodeBlock> m_codeBlock;
+    WriteBarrier<UnlinkedCodeBlock> m_unlinkedCodeBlock;
     int m_lastLine { -1 };
     unsigned m_endColumn { UINT_MAX };
 };

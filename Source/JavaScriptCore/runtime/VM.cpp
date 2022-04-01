@@ -47,7 +47,6 @@
 #include "ErrorInstance.h"
 #include "EvalCodeBlock.h"
 #include "Exception.h"
-#include "ExecutableToCodeBlockEdge.h"
 #include "FTLThunks.h"
 #include "FileBasedFuzzerAgent.h"
 #include "FunctionCodeBlock.h"
@@ -298,7 +297,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     hashMapBucketSetStructure.set(*this, HashMapBucket<HashMapBucketDataKey>::createStructure(*this, nullptr, jsNull()));
     hashMapBucketMapStructure.set(*this, HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, nullptr, jsNull()));
     bigIntStructure.set(*this, JSBigInt::createStructure(*this, nullptr, jsNull()));
-    executableToCodeBlockEdgeStructure.set(*this, ExecutableToCodeBlockEdge::createStructure(*this, nullptr, jsNull()));
 
     // Eagerly initialize constant cells since the concurrent compiler can access them.
     if (Options::useJIT()) {

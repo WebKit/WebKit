@@ -96,7 +96,7 @@ Synchronousness JSModuleRecord::link(JSGlobalObject* globalObject, JSValue scrip
     RETURN_IF_EXCEPTION(scope, Synchronousness::Sync);
     m_moduleProgramExecutable.set(vm, this, executable);
 
-    return executable->unlinkedModuleProgramCodeBlock()->isAsync() ? Synchronousness::Async : Synchronousness::Sync;
+    return executable->unlinkedCodeBlock()->isAsync() ? Synchronousness::Async : Synchronousness::Sync;
 }
 
 void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, ModuleProgramExecutable* moduleProgramExecutable, JSValue scriptFetcher)
@@ -209,7 +209,7 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
     // section 15.2.1.16.4 step 16-a-iv.
     // Initialize heap allocated function declarations.
     // They can be called before the body of the module is executed under circular dependencies.
-    UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = moduleProgramExecutable->unlinkedModuleProgramCodeBlock();
+    UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock = moduleProgramExecutable->unlinkedCodeBlock();
     for (size_t i = 0, numberOfFunctions = unlinkedCodeBlock->numberOfFunctionDecls(); i < numberOfFunctions; ++i) {
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = unlinkedCodeBlock->functionDecl(i);
         SymbolTableEntry entry = symbolTable->get(unlinkedFunctionExecutable->name().impl());

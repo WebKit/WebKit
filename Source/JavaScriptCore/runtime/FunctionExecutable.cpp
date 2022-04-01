@@ -24,10 +24,13 @@
  */
 
 #include "config.h"
+#include "FunctionExecutable.h"
 
 #include "CodeBlock.h"
 #include "FunctionCodeBlock.h"
+#include "FunctionExecutableInlines.h"
 #include "FunctionOverrides.h"
+#include "IsoCellSetInlines.h"
 #include "JSCJSValueInlines.h"
 
 namespace JSC {
@@ -55,27 +58,33 @@ void FunctionExecutable::destroy(JSCell* cell)
 
 FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
 {
-    ExecutableToCodeBlockEdge* edge;
+    CodeBlock* codeBlock = nullptr;
     if (kind == CodeForCall)
-        edge = m_codeBlockForCall.get();
+        codeBlock = codeBlockForCall();
     else {
         RELEASE_ASSERT(kind == CodeForConstruct);
-        edge = m_codeBlockForConstruct.get();
+        codeBlock = codeBlockForConstruct();
     }
-    if (!edge)
+    if (!codeBlock)
         return nullptr;
-    return static_cast<FunctionCodeBlock*>(edge->codeBlock()->baselineAlternative());
+    return static_cast<FunctionCodeBlock*>(codeBlock->baselineAlternative());
+}
+
+template<typename Visitor>
+static inline bool shouldKeepInConstraintSet(Visitor& visitor, CodeBlock* codeBlockForCall, CodeBlock* codeBlockForConstruct)
+{
+    // If either CodeBlock is not marked yet, we will run output-constraints.
+    return (codeBlockForCall && !visitor.isMarked(codeBlockForCall)) || (codeBlockForConstruct && !visitor.isMarked(codeBlockForConstruct));
 }
 
 template<typename Visitor>
 void FunctionExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
+    VM& vm = visitor.vm();
     FunctionExecutable* thisObject = jsCast<FunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_topLevelExecutable);
-    visitor.append(thisObject->m_codeBlockForCall);
-    visitor.append(thisObject->m_codeBlockForConstruct);
     visitor.append(thisObject->m_unlinkedExecutable);
     if (RareData* rareData = thisObject->m_rareData.get()) {
         visitor.append(rareData->m_cachedPolyProtoStructureID);
@@ -86,9 +95,42 @@ void FunctionExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
                 visitor.append(entry.value);
         }
     }
+
+    // Since FunctionExecutable's finalizer always needs to be run, we do not track FunctionExecutable via finalizerSet.
+    auto* codeBlockForCall = thisObject->m_codeBlockForCall.get();
+    if (codeBlockForCall)
+        visitCodeBlockEdge(visitor, codeBlockForCall);
+    auto* codeBlockForConstruct = thisObject->m_codeBlockForConstruct.get();
+    if (codeBlockForConstruct)
+        visitCodeBlockEdge(visitor, codeBlockForConstruct);
+
+    if (shouldKeepInConstraintSet(visitor, codeBlockForCall, codeBlockForConstruct))
+        vm.heap.functionExecutableSpaceAndSet.outputConstraintsSet.add(thisObject);
 }
 
 DEFINE_VISIT_CHILDREN(FunctionExecutable);
+
+template<typename Visitor>
+void FunctionExecutable::visitOutputConstraintsImpl(JSCell* cell, Visitor& visitor)
+{
+    VM& vm = visitor.vm();
+    auto* executable = jsCast<FunctionExecutable*>(cell);
+    auto* codeBlockForCall = executable->m_codeBlockForCall.get();
+    if (codeBlockForCall) {
+        if (!visitor.isMarked(codeBlockForCall))
+            runConstraint(NoLockingNecessary, visitor, codeBlockForCall);
+    }
+    auto* codeBlockForConstruct = executable->codeBlockForConstruct();
+    if (codeBlockForConstruct) {
+        if (!visitor.isMarked(codeBlockForConstruct))
+            runConstraint(NoLockingNecessary, visitor, codeBlockForConstruct);
+    }
+
+    if (!shouldKeepInConstraintSet(visitor, codeBlockForCall, codeBlockForConstruct))
+        vm.heap.functionExecutableSpaceAndSet.outputConstraintsSet.remove(executable);
+}
+
+DEFINE_VISIT_OUTPUT_CONSTRAINTS(FunctionExecutable);
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
     const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, 

@@ -373,9 +373,6 @@ public:
 
     FOR_EACH_JSC_DYNAMIC_ISO_SUBSPACE(DEFINE_DYNAMIC_ISO_SUBSPACE_ACCESSOR_IMPL)
 
-    ALWAYS_INLINE IsoCellSet& executableToCodeBlockEdgesWithConstraints() { return heap.executableToCodeBlockEdgesWithConstraints; }
-    ALWAYS_INLINE IsoCellSet& executableToCodeBlockEdgesWithFinalizers() { return heap.executableToCodeBlockEdgesWithFinalizers; }
-
     ALWAYS_INLINE GCClient::IsoSubspace& codeBlockSpace() { return clientHeap.codeBlockSpace; }
 
     DEFINE_DYNAMIC_ISO_SUBSPACE_ACCESSOR(evalExecutableSpace)
@@ -441,7 +438,6 @@ public:
     Strong<Structure> hashMapBucketSetStructure;
     Strong<Structure> hashMapBucketMapStructure;
     Strong<Structure> bigIntStructure;
-    Strong<Structure> executableToCodeBlockEdgeStructure;
 
     Strong<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
 

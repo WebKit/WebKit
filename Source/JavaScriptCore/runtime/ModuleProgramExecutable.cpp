@@ -62,7 +62,7 @@ ModuleProgramExecutable* ModuleProgramExecutable::create(JSGlobalObject* globalO
         return nullptr;
     }
 
-    executable->m_unlinkedModuleProgramCodeBlock.set(globalObject->vm(), executable, unlinkedModuleProgramCode);
+    executable->m_unlinkedCodeBlock.set(globalObject->vm(), executable, unlinkedModuleProgramCode);
 
     executable->m_moduleEnvironmentSymbolTable.set(globalObject->vm(), executable, jsCast<SymbolTable*>(unlinkedModuleProgramCode->constantRegister(VirtualRegister(unlinkedModuleProgramCode->moduleEnvironmentSymbolTableConstantRegisterOffset())).get())->cloneScopePart(globalObject->vm()));
 
@@ -85,9 +85,7 @@ void ModuleProgramExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ModuleProgramExecutable* thisObject = jsCast<ModuleProgramExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_unlinkedModuleProgramCodeBlock);
     visitor.append(thisObject->m_moduleEnvironmentSymbolTable);
-    visitor.append(thisObject->m_moduleProgramCodeBlock);
     if (TemplateObjectMap* map = thisObject->m_templateObjectMap.get()) {
         Locker locker { thisObject->cellLock() };
         for (auto& entry : *map)

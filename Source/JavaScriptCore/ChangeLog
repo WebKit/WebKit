@@ -1,3 +1,115 @@
+2022-03-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove ExecutableToCodeBlockEdge
+        https://bugs.webkit.org/show_bug.cgi?id=238485
+
+        Reviewed by Keith Miller.
+
+        It turned out that getting CodeBlock from JSFunction is critical. As we start using unlinked Baseline, we are loading
+        CodeBlock from JSFunction instead of embedding it, and it roughly contributes to 0.5% regression in Speedometer2.
+        It is also crucial to some other places: bound function thunk, remote function thunk, and virtual function calls.
+        While the subsequent patch will embed CodeBlock into CallLinkInfo to make it fast, we also would like to keep loading
+        CodeBlock from JSFunction faster since this is still used in bound function thunk etc.
+
+        In this patch, we remove ExecutableToCodeBlockEdge to remove one-level indirection between Executable to CodeBlock.
+        We can delegate ExecutableToCodeBlockEdge's job to existing Executables so that we can keep the current weak-edge
+        feature without introducing ExecutableToCodeBlockEdge. It also removes ExecutableToCodeBlockEdge allocations and
+        shrinks sizeof(CodeBlock) by 8 byte.
+
+        We move key functions from ExecutableToCodeBlockEdge to ScriptExecutable, and we maintain Executable-to-CodeBlock edge
+        in Executable side.
+
+        Local testing showed that 0.3% progression in Speedometer2.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::visitChildrenImpl):
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::finishCreationCommon): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::ownerEdge const): Deleted.
+        * bytecode/ExecutableToCodeBlockEdge.cpp: Removed.
+        * bytecode/ExecutableToCodeBlockEdge.h: Removed.
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        (JSC::Heap::ScriptExecutableSpaceAndSet::ScriptExecutableSpaceAndSet):
+        (JSC::Heap::ScriptExecutableSpaceAndSet::setAndSpaceFor):
+        (JSC::Heap::ScriptExecutableSpaceAndSet::clearableCodeSetFor):
+        (JSC::Heap::ScriptExecutableSpaceAndSet::outputConstraintsSetFor):
+        (JSC::Heap::ScriptExecutableSpaceAndSet::finalizerSetFor):
+        * heap/IsoCellSet.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::emitPutCodeBlockToFrameInPrologue):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/DirectEvalExecutable.cpp:
+        (JSC::DirectEvalExecutable::create):
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::visitChildrenImpl):
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::codeBlock const):
+        (JSC::EvalExecutable::unlinkedCodeBlock const):
+        (JSC::EvalExecutable::numVariables):
+        (JSC::EvalExecutable::numFunctionHoistingCandidates):
+        (JSC::EvalExecutable::numTopLevelFunctionDecls):
+        (JSC::EvalExecutable::allowDirectEvalCache const):
+        (JSC::EvalExecutable::codeBlock): Deleted.
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::baselineCodeBlockFor):
+        (JSC::shouldKeepInConstraintSet):
+        (JSC::FunctionExecutable::visitChildrenImpl):
+        (JSC::FunctionExecutable::visitOutputConstraintsImpl):
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionExecutableInlines.h:
+        (JSC::FunctionExecutable::finalizeUnconditionally):
+        (JSC::FunctionExecutable::replaceCodeBlockWith):
+        (JSC::FunctionExecutable::toString):
+        * runtime/GlobalExecutable.cpp:
+        (JSC::GlobalExecutable::visitChildrenImpl):
+        (JSC::GlobalExecutable::visitOutputConstraintsImpl):
+        (JSC::GlobalExecutable::replaceCodeBlockWith):
+        (JSC::GlobalExecutable::finalizeUnconditionally):
+        * runtime/GlobalExecutable.h:
+        (JSC::GlobalExecutable::codeBlock const):
+        (JSC::GlobalExecutable::unlinkedCodeBlock const):
+        * runtime/IndirectEvalExecutable.cpp:
+        (JSC::IndirectEvalExecutable::createImpl):
+        * runtime/JSFunction.cpp:
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::link):
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::create):
+        (JSC::ModuleProgramExecutable::visitChildrenImpl):
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        (JSC::ProgramExecutable::visitChildrenImpl):
+        * runtime/ProgramExecutable.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::clearCode):
+        (JSC::ScriptExecutable::installCode):
+        (JSC::ScriptExecutable::hasClearableCode const):
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::runConstraint):
+        (JSC::ScriptExecutable::visitCodeBlockEdge):
+        * runtime/ScriptExecutable.h:
+        * runtime/ScriptExecutableInlines.h: Copied from Source/JavaScriptCore/runtime/FunctionExecutableInlines.h.
+        (JSC::ScriptExecutable::finalizeCodeBlockEdge):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::executableToCodeBlockEdgesWithConstraints): Deleted.
+        (JSC::VM::executableToCodeBlockEdgesWithFinalizers): Deleted.
+
 2022-03-31  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Support Container Queries in the Styles sidebar

@@ -120,7 +120,6 @@ class Heap;
     v(dateInstanceSpace, dateInstanceHeapCellType, DateInstance) \
     v(domAttributeGetterSetterSpace, cellHeapCellType, DOMAttributeGetterSetter) \
     v(exceptionSpace, destructibleCellHeapCellType, Exception) \
-    v(executableToCodeBlockEdgeSpace, cellHeapCellType, ExecutableToCodeBlockEdge) \
     v(functionSpace, cellHeapCellType, JSFunction) \
     v(getterSetterSpace, cellHeapCellType, GetterSetter) \
     v(globalLexicalEnvironmentSpace, globalLexicalEnvironmentHeapCellType, JSGlobalLexicalEnvironment) \
@@ -1029,10 +1028,7 @@ public:
     FOR_EACH_JSC_DYNAMIC_ISO_SUBSPACE(DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER)
 #undef DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER
     
-    IsoCellSet executableToCodeBlockEdgesWithConstraints;
-    IsoCellSet executableToCodeBlockEdgesWithFinalizers;
-
-#define DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(name) \
+#define DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(name, type) \
     template<SubspaceAccess mode> \
     IsoSubspace* name() \
     { \
@@ -1043,7 +1039,7 @@ public:
         return name##Slow(); \
     } \
     IsoSubspace* name##Slow(); \
-    std::unique_ptr<SpaceAndSet> m_##name;
+    std::unique_ptr<type> m_##name;
     
     struct SpaceAndSet {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -1067,7 +1063,8 @@ public:
         }
     };
 
-    SpaceAndSet codeBlockSpaceAndSet;
+    using CodeBlockSpaceAndSet = SpaceAndSet;
+    CodeBlockSpaceAndSet codeBlockSpaceAndSet;
 
     template<typename Func>
     void forEachCodeBlockSpace(const Func& func)
@@ -1075,10 +1072,39 @@ public:
         func(codeBlockSpaceAndSet);
     }
 
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(evalExecutableSpace)
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(moduleProgramExecutableSpace)
-    SpaceAndSet functionExecutableSpaceAndSet;
-    SpaceAndSet programExecutableSpaceAndSet;
+    struct ScriptExecutableSpaceAndSets {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        IsoSubspace space;
+        IsoCellSet clearableCodeSet;
+        IsoCellSet outputConstraintsSet;
+        IsoCellSet finalizerSet;
+
+        template<typename... Arguments>
+        ScriptExecutableSpaceAndSets(Arguments&&... arguments)
+            : space(std::forward<Arguments>(arguments)...)
+            , clearableCodeSet(space)
+            , outputConstraintsSet(space)
+            , finalizerSet(space)
+        {
+        }
+
+        static ScriptExecutableSpaceAndSets& setAndSpaceFor(Subspace& space)
+        {
+            return *bitwise_cast<ScriptExecutableSpaceAndSets*>(
+                bitwise_cast<char*>(&space) -
+                OBJECT_OFFSETOF(ScriptExecutableSpaceAndSets, space));
+        }
+
+        static IsoCellSet& clearableCodeSetFor(Subspace& space) { return setAndSpaceFor(space).clearableCodeSet; }
+        static IsoCellSet& outputConstraintsSetFor(Subspace& space) { return setAndSpaceFor(space).outputConstraintsSet; }
+        static IsoCellSet& finalizerSetFor(Subspace& space) { return setAndSpaceFor(space).finalizerSet; }
+    };
+
+    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(evalExecutableSpace, ScriptExecutableSpaceAndSets)
+    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(moduleProgramExecutableSpace, ScriptExecutableSpaceAndSets)
+    ScriptExecutableSpaceAndSets functionExecutableSpaceAndSet;
+    ScriptExecutableSpaceAndSets programExecutableSpaceAndSet;
 
     template<typename Func>
     void forEachScriptExecutableSpace(const Func& func)
@@ -1091,7 +1117,8 @@ public:
         func(programExecutableSpaceAndSet);
     }
 
-    SpaceAndSet unlinkedFunctionExecutableSpaceAndSet;
+    using UnlinkedFunctionExecutableSpaceAndSet = SpaceAndSet;
+    UnlinkedFunctionExecutableSpaceAndSet unlinkedFunctionExecutableSpaceAndSet;
 
     Vector<IsoSubspacePerVM*> perVMIsoSubspaces;
 #undef DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER

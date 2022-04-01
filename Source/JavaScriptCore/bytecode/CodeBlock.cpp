@@ -311,7 +311,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
 void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
 {
     Base::finishCreation(vm);
-    finishCreationCommon(vm);
 
     optimizeAfterWarmUp();
 
@@ -367,7 +366,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     JSScope* scope)
 {
     Base::finishCreation(vm);
-    finishCreationCommon(vm);
 
     ASSERT(vm.heap.isDeferred());
 
@@ -766,11 +764,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     return true;
 }
 
-void CodeBlock::finishCreationCommon(VM& vm)
-{
-    m_ownerEdge.set(vm, this, ExecutableToCodeBlockEdge::create(vm, this));
-}
-
 #if ENABLE(JIT)
 void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
 {
@@ -1051,7 +1044,6 @@ void CodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     CodeBlock* thisObject = jsCast<CodeBlock*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
-    visitor.append(thisObject->m_ownerEdge);
     thisObject->visitChildren(visitor);
 }
 
@@ -1079,7 +1071,7 @@ void CodeBlock::visitChildren(Visitor& visitor)
     stronglyVisitStrongReferences(locker, visitor);
     stronglyVisitWeakReferences(locker, visitor);
     
-    Heap::SpaceAndSet::setFor(*subspace()).add(this);
+    Heap::CodeBlockSpaceAndSet::setFor(*subspace()).add(this);
 }
 
 template<typename Visitor>
@@ -1667,7 +1659,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
     };
     updateActivity();
 
-    Heap::SpaceAndSet::setFor(*subspace()).remove(this);
+    Heap::CodeBlockSpaceAndSet::setFor(*subspace()).remove(this);
 
     // In CodeBlock::shouldVisitStrongly() we may have decided to skip visiting this
     // codeBlock. By the time we get here, we're done with the verifier GC. So, let's
@@ -1834,7 +1826,7 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
     UNUSED_PARAM(locker);
     
     visitor.append(m_globalObject);
-    visitor.append(m_ownerExecutable); // This is extra important since it causes the ExecutableToCodeBlockEdge to be marked.
+    visitor.append(m_ownerExecutable); // This is extra important since it causes the Executable -> CodeBlock edge activated.
     visitor.append(m_unlinkedCode);
     if (m_rareData)
         m_rareData->m_directEvalCodeCache.visitAggregate(visitor);

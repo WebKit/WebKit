@@ -31,6 +31,7 @@
 #include "CatchScope.h"
 #include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "FunctionExecutableInlines.h"
 #include "GeneratorPrototype.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"

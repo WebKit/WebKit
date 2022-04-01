@@ -368,8 +368,6 @@ Heap::Heap(VM& vm, HeapType heapType)
     , destructibleObjectSpace("JSDestructibleObject", *this, destructibleObjectHeapCellType, fastMallocAllocator.get()) // Hash:0x4f5ed7a9
     FOR_EACH_JSC_COMMON_ISO_SUBSPACE(INIT_SERVER_ISO_SUBSPACE)
     FOR_EACH_JSC_STRUCTURE_ISO_SUBSPACE(INIT_SERVER_STRUCTURE_ISO_SUBSPACE)
-    , executableToCodeBlockEdgesWithConstraints(executableToCodeBlockEdgeSpace)
-    , executableToCodeBlockEdgesWithFinalizers(executableToCodeBlockEdgeSpace)
     , codeBlockSpaceAndSet ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, CodeBlock) // Hash:0x77e66ec9
     , functionExecutableSpaceAndSet ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, FunctionExecutable) // Hash:0x5d158f3
     , programExecutableSpaceAndSet ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, ProgramExecutable) // Hash:0x527c77e7
@@ -674,9 +672,22 @@ void Heap::finalizeUnconditionalFinalizers()
 {
     VM& vm = this->vm();
     vm.builtinExecutables()->finalizeUnconditionally();
-    finalizeMarkedUnconditionalFinalizers<FunctionExecutable>(functionExecutableSpaceAndSet.space);
+
+    {
+        // We run this before CodeBlock's unconditional finalizer since CodeBlock looks at the owner executable's installed CodeBlock in its finalizeUnconditionally.
+
+        // FunctionExecutable requires all live instances to run finalizers. Thus, we do not use finalizer set.
+        finalizeMarkedUnconditionalFinalizers<FunctionExecutable>(functionExecutableSpaceAndSet.space);
+
+        finalizeMarkedUnconditionalFinalizers<ProgramExecutable>(programExecutableSpaceAndSet.finalizerSet);
+        if (m_evalExecutableSpace)
+            finalizeMarkedUnconditionalFinalizers<EvalExecutable>(m_evalExecutableSpace->finalizerSet);
+        if (m_moduleProgramExecutableSpace)
+            finalizeMarkedUnconditionalFinalizers<ModuleProgramExecutable>(m_moduleProgramExecutableSpace->finalizerSet);
+    }
+
     finalizeMarkedUnconditionalFinalizers<SymbolTable>(symbolTableSpace);
-    finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(executableToCodeBlockEdgesWithFinalizers); // We run this before CodeBlock's unconditional finalizer since CodeBlock looks at the owner executable's installed CodeBlock in its finalizeUnconditionally.
+
     forEachCodeBlockSpace(
         [&] (auto& space) {
             this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set);
@@ -1003,7 +1014,7 @@ void Heap::deleteAllCodeBlocks(DeleteAllCodeEffort effort)
     forEachScriptExecutableSpace(
         [&] (auto& spaceAndSet) {
             HeapIterationScope heapIterationScope(*this);
-            auto& set = spaceAndSet.set;
+            auto& set = spaceAndSet.clearableCodeSet;
             set.forEachLiveCell(
                 [&] (HeapCell* cell, HeapCell::Kind) {
                     ScriptExecutable* executable = static_cast<ScriptExecutable*>(cell);
@@ -2917,7 +2928,12 @@ void Heap::addCoreConstraints()
 
             {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ExecutableToCodeBlockEdges);
-                add(heap->executableToCodeBlockEdgesWithConstraints);
+                add(heap->functionExecutableSpaceAndSet.outputConstraintsSet);
+                add(heap->programExecutableSpaceAndSet.outputConstraintsSet);
+                if (heap->m_evalExecutableSpace)
+                    add(heap->m_evalExecutableSpace->outputConstraintsSet);
+                if (heap->m_moduleProgramExecutableSpace)
+                    add(heap->m_moduleProgramExecutableSpace->outputConstraintsSet);
             }
             if (heap->m_weakMapSpace) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakMapSpace);
@@ -3169,18 +3185,18 @@ FOR_EACH_JSC_DYNAMIC_ISO_SUBSPACE(DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW)
 
 #undef DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW
 
-#define DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(name, heapCellType, type) \
+#define DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(name, heapCellType, type, spaceType) \
     IsoSubspace* Heap::name##Slow() \
     { \
         ASSERT(!m_##name); \
-        auto space = makeUnique<SpaceAndSet> ISO_SUBSPACE_INIT(*this, heapCellType, type); \
+        auto space = makeUnique<spaceType> ISO_SUBSPACE_INIT(*this, heapCellType, type); \
         WTF::storeStoreFence(); \
         m_##name = WTFMove(space); \
         return &m_##name->space; \
     }
 
-DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(evalExecutableSpace, destructibleCellHeapCellType, EvalExecutable) // Hash:0x958e3e9d
-DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(moduleProgramExecutableSpace, destructibleCellHeapCellType, ModuleProgramExecutable) // Hash:0x6506fa3c
+DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(evalExecutableSpace, destructibleCellHeapCellType, EvalExecutable, Heap::ScriptExecutableSpaceAndSets) // Hash:0x958e3e9d
+DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW(moduleProgramExecutableSpace, destructibleCellHeapCellType, ModuleProgramExecutable, Heap::ScriptExecutableSpaceAndSets) // Hash:0x6506fa3c
 
 #undef DEFINE_DYNAMIC_SPACE_AND_SET_MEMBER_SLOW
 

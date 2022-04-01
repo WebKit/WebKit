@@ -229,7 +229,6 @@ bytecode/DeleteByStatus.cpp
 bytecode/DeleteByVariant.cpp
 bytecode/DirectEvalCodeCache.cpp
 bytecode/EvalCodeBlock.cpp
-bytecode/ExecutableToCodeBlockEdge.cpp
 bytecode/ExecutionCounter.cpp
 bytecode/ExitFlag.cpp
 bytecode/ExitKind.cpp

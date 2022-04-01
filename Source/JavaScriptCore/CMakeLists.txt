@@ -627,7 +627,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/DataFormat.h
     bytecode/DirectEvalCodeCache.h
     bytecode/ExecutableInfo.h
-    bytecode/ExecutableToCodeBlockEdge.h
     bytecode/ExecutionCounter.h
     bytecode/ExitKind.h
     bytecode/ExitingInlineKind.h
@@ -1153,6 +1152,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ScopedArgumentsTable.h
     runtime/Scribble.h
     runtime/ScriptExecutable.h
+    runtime/ScriptExecutableInlines.h
     runtime/ScriptFetchParameters.h
     runtime/ScriptFetcher.h
     runtime/ShadowRealmObject.h

@@ -215,8 +215,6 @@ void JIT::emitPutCodeBlockToFrameInPrologue(GPRReg result)
         loadPtr(Address(result, FunctionExecutable::offsetOfCodeBlockForConstruct()), result);
     else
         loadPtr(Address(result, FunctionExecutable::offsetOfCodeBlockForCall()), result);
-
-    loadPtr(Address(result, ExecutableToCodeBlockEdge::offsetOfCodeBlock()), result);
     emitPutToCallFrameHeader(result, CallFrameSlot::codeBlock);
 
 #if ASSERT_ENABLED
