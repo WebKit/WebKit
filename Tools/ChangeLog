@@ -1,3 +1,19 @@
+2022-03-31  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Canonicalize commit without rebase
+        https://bugs.webkit.org/show_bug.cgi?id=238614
+        <rdar://problem/91113465>
+
+        Reviewed by Aakash Jain.
+
+        This is helpful immiediatly after landing a subversion commit
+        and allows us to bypass the 60 second sleep in PushCommitToWebKitRepo.
+
+        * CISupport/ews-build/steps.py:
+        (Canonicalize.__init__): Allow caller to opt out of rebasing.
+        (Canonicalize.run): Ditto.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-04-01  Tim Horton  <timothy_horton@apple.com>
 
         Add a debug overlay for interaction regions

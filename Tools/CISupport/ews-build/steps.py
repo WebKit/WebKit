@@ -4828,8 +4828,9 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
     descriptionDone = ['Canonicalize Commit']
     haltOnFailure = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, rebase_enabled=True, **kwargs):
         super(Canonicalize, self).__init__(logEnviron=False, timeout=300, **kwargs)
+        self.rebase_enabled = rebase_enabled
 
     def run(self):
         self.commands = []
@@ -4837,11 +4838,16 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
         base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
         head_ref = self.getProperty('github.head.ref', DEFAULT_BRANCH)
 
-        for command in [
-            ['git', 'pull', 'origin', base_ref],
-            ['git', 'branch', '-f', base_ref, head_ref],
-            ['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
-        ]:
+        commands = []
+        if self.rebase_enabled:
+            commands = [
+                ['git', 'pull', 'origin', base_ref],
+                ['git', 'branch', '-f', base_ref, head_ref],
+                ['git', 'checkout', base_ref],
+            ]
+        commands.append(['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'])
+
+        for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 
         return super(Canonicalize, self).run()
