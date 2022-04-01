@@ -2417,5 +2417,3 @@ fast/text/accessibility-bold.html [ Skip ]
 http/tests/webgpu [ Pass ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
-
-webkit.org/b/238580 http/tests/webAPIStatistics/canvas-read-and-write-data-collection.html [ Pass Failure ]
