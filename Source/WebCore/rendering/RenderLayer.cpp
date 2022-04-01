@@ -2787,7 +2787,9 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     bool isBoxSizingBorder = renderer->style().boxSizing() == BoxSizing::BorderBox;
 
     Resize resize = renderer->style().resize();
-    if (resize != Resize::Vertical && difference.width()) {
+    bool canResizeWidth = resize == Resize::Horizontal || resize == Resize::Both
+        || (renderer->isHorizontalWritingMode() ? resize == Resize::Inline : resize == Resize::Block);
+    if (canResizeWidth && difference.width()) {
         if (is<HTMLFormControlElement>(*element)) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
             styledElement->setInlineStyleProperty(CSSPropertyMarginLeft, renderer->marginLeft() / zoomFactor, CSSUnitType::CSS_PX);
@@ -2798,7 +2800,9 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
         styledElement->setInlineStyleProperty(CSSPropertyWidth, roundToInt(baseWidth + difference.width()), CSSUnitType::CSS_PX);
     }
 
-    if (resize != Resize::Horizontal && difference.height()) {
+    bool canResizeHeight = resize == Resize::Vertical || resize == Resize::Both
+        || (renderer->isHorizontalWritingMode() ? resize == Resize::Block : resize == Resize::Inline);
+    if (canResizeHeight && difference.height()) {
         if (is<HTMLFormControlElement>(*element)) {
             // Make implicit margins from the theme explicit (see <http://bugs.webkit.org/show_bug.cgi?id=9547>).
             styledElement->setInlineStyleProperty(CSSPropertyMarginTop, renderer->marginTop() / zoomFactor, CSSUnitType::CSS_PX);

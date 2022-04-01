@@ -19,12 +19,28 @@
     #vertical {
         resize: vertical;
     }
+
+    #block-horizontal,
+    #block-vertical {
+        resize: block;
+    }
+
+    #inline-horizontal,
+    #inline-vertical {
+        resize: inline;
+    }
 </style>
 
 <pre id="console"></pre>
 <div id="both"></div>
 <div id="horizontal"></div>
 <div id="vertical"></div>
+<div id="block-horizontal"></div>
+<div id="inline-horizontal"></div>
+<section style="writing-mode: vertical-lr;">
+    <div id="block-vertical"></div>
+    <div id="inline-vertical"></div>
+</section>
 
 <script type="text/javascript">
     function log(message)
@@ -60,13 +76,25 @@
         var both = document.getElementById("both");
         var horizontal = document.getElementById("horizontal");
         var vertical = document.getElementById("vertical");
+        var blockHorizontal = document.getElementById("block-horizontal");
+        var inlineHorizontal = document.getElementById("inline-horizontal");
+        var blockVertical = document.getElementById("block-vertical");
+        var inlineVertical = document.getElementById("inline-vertical");
 
         resize(both);
         resize(horizontal);
         resize(vertical);
+        resize(blockHorizontal);
+        resize(inlineHorizontal);
+        resize(blockVertical);
+        resize(inlineVertical);
 
         assertSize(both, "100px", "100px");
         assertSize(horizontal, "100px", "50px");
         assertSize(vertical, "50px", "100px");
+        assertSize(blockHorizontal, "50px", "100px");
+        assertSize(inlineHorizontal, "100px", "50px");
+        assertSize(blockVertical, "100px", "50px");
+        assertSize(inlineVertical, "50px", "100px");
     }
 </script>

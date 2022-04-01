@@ -4264,13 +4264,17 @@
             }
         },
         "resize": {
-            "inherited": true,
             "values": [
                 "none",
                 "both",
                 "horizontal",
                 "vertical",
-                "auto"
+                "block",
+                "inline",
+                {
+                    "value": "auto",
+                    "status": "non-standard"
+                }
             ],
             "codegen-properties": {
                 "converter": "Resize"

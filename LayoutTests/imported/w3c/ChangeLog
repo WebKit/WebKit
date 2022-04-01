@@ -1,3 +1,14 @@
+2022-04-01  Tim Nguyen  <ntim@apple.com>
+
+        [css-logical] Add support for block/inline CSS values for resize property
+        https://bugs.webkit.org/show_bug.cgi?id=218088
+
+        Reviewed by Antti Koivisto.
+
+        Marked relevant WPT as passing.
+
+        * web-platform-tests/css/css-logical/logical-values-resize-expected.txt:
+
 2022-04-01  Youenn Fablet  <youenn@apple.com>
 
         Notification should be exposed to ServiceWorker contexts

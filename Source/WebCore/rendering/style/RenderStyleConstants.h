@@ -575,7 +575,9 @@ enum class Resize : uint8_t {
     None,
     Both,
     Horizontal,
-    Vertical
+    Vertical,
+    Block,
+    Inline,
 };
 
 // The order of this enum must match the order of the list style types in CSSValueKeywords.in.

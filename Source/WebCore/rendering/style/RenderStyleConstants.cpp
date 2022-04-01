@@ -882,6 +882,8 @@ TextStream& operator<<(TextStream& ts, Resize resize)
     case Resize::Both: ts << "both"; break;
     case Resize::Horizontal: ts << "horizontal"; break;
     case Resize::Vertical: ts << "vertical"; break;
+    case Resize::Block: ts << "block"; break;
+    case Resize::Inline: ts << "inline"; break;
     }
     return ts;
 }

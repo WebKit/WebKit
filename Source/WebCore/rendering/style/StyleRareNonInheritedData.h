@@ -225,7 +225,7 @@ public:
     unsigned breakBefore : 4; // BreakBetween
     unsigned breakAfter : 4;
     unsigned breakInside : 3; // BreakInside
-    unsigned resize : 2; // Resize
+    unsigned resize : 3; // Resize
 
     unsigned inputSecurity : 1; // InputSecurity
 

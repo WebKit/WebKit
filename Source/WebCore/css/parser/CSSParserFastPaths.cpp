@@ -705,8 +705,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
             || valueID == CSSValueAbsolute
             || valueID == CSSValueFixed
             || valueID == CSSValueSticky || valueID == CSSValueWebkitSticky;
-    case CSSPropertyResize: // none | both | horizontal | vertical | auto
-        return valueID == CSSValueNone || valueID == CSSValueBoth || valueID == CSSValueHorizontal || valueID == CSSValueVertical || valueID == CSSValueAuto;
+    case CSSPropertyResize: // none | both | horizontal | vertical | block | inline | auto
+        return valueID == CSSValueNone || valueID == CSSValueBoth || valueID == CSSValueHorizontal || valueID == CSSValueVertical || valueID == CSSValueBlock || valueID == CSSValueInline || valueID == CSSValueAuto;
     case CSSPropertyShapeRendering:
         return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueCrispedges || valueID == CSSValueGeometricPrecision;
     case CSSPropertyStrokeLinejoin:

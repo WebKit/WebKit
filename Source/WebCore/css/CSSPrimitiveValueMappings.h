@@ -2202,6 +2202,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Resize e)
     case Resize::Vertical:
         m_value.valueID = CSSValueVertical;
         break;
+    case Resize::Block:
+        m_value.valueID = CSSValueBlock;
+        break;
+    case Resize::Inline:
+        m_value.valueID = CSSValueInline;
+        break;
     case Resize::None:
         m_value.valueID = CSSValueNone;
         break;
@@ -2219,6 +2225,10 @@ template<> inline CSSPrimitiveValue::operator Resize() const
         return Resize::Horizontal;
     case CSSValueVertical:
         return Resize::Vertical;
+    case CSSValueBlock:
+        return Resize::Block;
+    case CSSValueInline:
+        return Resize::Inline;
     case CSSValueAuto:
         ASSERT_NOT_REACHED(); // Depends on settings, thus should be handled by the caller.
         return Resize::None;
