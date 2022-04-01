@@ -1,3 +1,17 @@
+2022-04-01  Rob Buis  <rbuis@igalia.com>
+
+        Abort formatBlock command on null start or end selections
+        https://bugs.webkit.org/show_bug.cgi?id=238657
+
+        Reviewed by Wenson Hsieh.
+
+        Abort formatBlock command in case selectionForParagraphIteration
+        returns with a null start or end selection due to inline table specific
+        adjustments.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::doApply):
+
 2022-04-01  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerRegistration.getNotifications should list all persistent notifications
