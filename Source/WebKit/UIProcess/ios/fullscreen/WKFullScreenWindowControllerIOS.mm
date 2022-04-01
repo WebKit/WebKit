@@ -461,6 +461,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     CGRect _initialFrame;
     CGRect _finalFrame;
+    CGRect _originalWindowFrame;
 
     RetainPtr<NSString> _EVOrganizationName;
     BOOL _EVOrganizationNameIsValid;
@@ -634,6 +635,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
+    _originalWindowFrame = [[_fullscreenViewController view] frame];
     
     _initialFrame.size = WebKit::sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
     _finalFrame.size = WebKit::sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
@@ -671,8 +673,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             page->setSuppressVisibilityUpdates(false);
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-            auto* view = [_fullscreenViewController view];
-            configureViewForEnteringFullscreen(view, kAnimationDuration, [view frame].size);
+            configureViewForEnteringFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _finalFrame.size);
 #endif
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
@@ -788,7 +789,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         [self _dismissFullscreenViewController];
     };
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    configureViewForExitingFullscreen(_fullscreenViewController.get().view, kAnimationDuration, [[_fullscreenViewController view] frame].size, WTFMove(completionHandler));
+    configureViewForExitingFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _originalWindowFrame.size, WTFMove(completionHandler));
 #else
     completionHandler();
 #endif

@@ -1,3 +1,20 @@
+2022-03-31  Jean-Yves Avenard  <jya@apple.com>
+
+        Player window shouldn't have black bar when going into fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238592
+        rdar://91085981
+
+        Reviewed by Tim Horton.
+
+        Set the window size to the video element size when going fullscreen and
+        restore the original window size when coming out of it.
+
+        Manually tested.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
         Adopt Identifier::fromString(ASCIILiteral) more broadly
