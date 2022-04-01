@@ -123,6 +123,7 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
         return devices;
 #endif
     case WGPUPowerPreference_Force32:
+        ASSERT_NOT_REACHED();
         return nil;
     }
 }

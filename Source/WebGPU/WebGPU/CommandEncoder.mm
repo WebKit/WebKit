@@ -291,6 +291,7 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         options = MTLBlitOptionDepthFromDepthStencil;
         break;
     case WGPUTextureAspect_Force32:
+        ASSERT_NOT_REACHED();
         return;
     }
 
@@ -365,6 +366,7 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         break;
     }
     case WGPUTextureDimension_Force32:
+        ASSERT_NOT_REACHED();
         return;
     }
 }
@@ -474,6 +476,7 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         options = MTLBlitOptionDepthFromDepthStencil;
         break;
     case WGPUTextureAspect_Force32:
+        ASSERT_NOT_REACHED();
         return;
     }
 
@@ -548,6 +551,7 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         break;
     }
     case WGPUTextureDimension_Force32:
+        ASSERT_NOT_REACHED();
         return;
     }
 }

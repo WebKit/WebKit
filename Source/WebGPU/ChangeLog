@@ -1,5 +1,77 @@
 2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] There's no need to sprinkle std::optionals everywhere just for _Force32 enum values
+        https://bugs.webkit.org/show_bug.cgi?id=238434
+
+        For ABI compatibility, the shared header uses this pattern:
+
+        enum Foo {
+            Foo_AValue = 1,
+            Foo_AnotherValue = 2,
+            Foo_SomeOtherValue = 3,
+            Foo_Force32 = 0x7FFFFFFF
+        };
+
+        This is so that more values can be added to the enum without making it wider.
+
+        However, this means that if you want to switch over the values of Foo, you have to have
+        a dummy _Force32 case. These cases will never actually occur, and we have ASSERTs() for
+        them.
+
+        Originally, I made some functions return a std::optional<> so that there was some "empty"
+        value that could be returned in these case statements. That means that every caller of
+        any function that switches over any enum has to check the return value for nullopt. This
+        is pretty yucky.
+
+        And, indeed, it's all for nothing - the client calling into WebGPU can happily cast any
+        aribtrary integer to a Foo can call our functions, so the cases for the _Force32 values
+        should be no different. Therefore, we can just say "in order to call WebGPU functions,
+        it's illegal to pass in the _Force32 values (just as it would be illegal to pass in
+        unassigned values)." This means we can clean up the code a bit, and remove a bunch of
+        nullopt checks.
+
+        Reviewed by Dean Jackson.
+
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::createArgumentDescriptor):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::mapAsync):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::copyBufferToTexture):
+        (WebGPU::CommandEncoder::copyTextureToBuffer):
+        * WebGPU/Instance.mm:
+        (WebGPU::sortedDevices):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::writeTexture):
+        * WebGPU/Sampler.mm:
+        (WebGPU::addressMode):
+        (WebGPU::minMagFilter):
+        (WebGPU::mipFilter):
+        (WebGPU::compareFunction):
+        (WebGPU::Device::createSampler):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::featureRequirementForFormat):
+        (WebGPU::isCompressedFormat):
+        (WebGPU::stencilSpecificFormat):
+        (WebGPU::Texture::texelBlockWidth):
+        (WebGPU::Texture::texelBlockHeight):
+        (WebGPU::isRenderableFormat):
+        (WebGPU::supportsMultisampling):
+        (WebGPU::maximumMiplevelCount):
+        (WebGPU::hasStorageBindingCapability):
+        (WebGPU::Device::validateCreateTexture):
+        (WebGPU::pixelFormat):
+        (WebGPU::depthOnlyAspectMetalFormat):
+        (WebGPU::stencilOnlyAspectMetalFormat):
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::resolveTextureViewDescriptorDefaults const):
+        (WebGPU::Texture::validateCreateView const):
+        (WebGPU::Texture::createView):
+        (WebGPU::Texture::refersToSingleAspect):
+
+2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] etc2-rgba8unorm and etc2-rgba8unorm-srgb are not handled
         https://bugs.webkit.org/show_bug.cgi?id=238435
 

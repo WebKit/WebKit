@@ -55,6 +55,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
         break;
     case WGPUBufferBindingType_Undefined:
     case WGPUBufferBindingType_Force32:
+        ASSERT_NOT_REACHED();
         return nil;
     }
     return descriptor;

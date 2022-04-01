@@ -335,6 +335,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         options = MTLBlitOptionDepthFromDepthStencil;
         break;
     case WGPUTextureAspect_Force32:
+        ASSERT_NOT_REACHED();
         return;
     }
 
@@ -484,6 +485,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         break;
     }
     case WGPUTextureDimension_Force32:
+        ASSERT_NOT_REACHED();
         return;
     }
 }
