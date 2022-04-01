@@ -1,3 +1,13 @@
+2022-04-01  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        This is based on auditing the failing tests cited after turning DOM in GPUP on by default.
+        * TestExpectations: One test was flaky on the bots before we turned on the flag.
+        * platform/ios-simulator-wk2/TestExpectations: Some tests have fail/pass results only when the iOS sim is on an arm64 host.
+        * platform/ios-wk2/TestExpectations: Lots of tests no longer fail.
+        * platform/ios/TestExpectations:
+
 2022-04-01  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r292072): [ wk1 ] fast/text/install-font-style-recalc.html is a constant text failure
