@@ -6008,6 +6008,28 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=300,
                 logEnviron=False,
+                command=['git', 'checkout', 'main'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Canonicalized commit')
+        return self.runStep()
+
+    def test_success_no_rebase(self):
+        self.setupStep(Canonicalize(rebase_enabled=False))
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
                 command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
             ) + 0,
         )
@@ -6031,6 +6053,11 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=300,
                 logEnviron=False,
                 command=['git', 'branch', '-f', 'main', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'checkout', 'main'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=300,
