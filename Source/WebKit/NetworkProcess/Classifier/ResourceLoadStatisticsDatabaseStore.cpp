@@ -314,7 +314,7 @@ static HashSet<ResourceLoadStatisticsDatabaseStore*>& allStores()
 
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, SuspendableWorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
-    , DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"))
+    , DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"_s))
     , m_sessionID(sessionID)
 {
     ASSERT(!RunLoop::isMain());
@@ -424,8 +424,8 @@ bool ResourceLoadStatisticsDatabaseStore::needsUpdatedSchema()
 
 void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
 {
-    if (!tableExists("UnattributedPrivateClickMeasurement")
-        && !tableExists("AttributedPrivateClickMeasurement"))
+    if (!tableExists("UnattributedPrivateClickMeasurement"_s)
+        && !tableExists("AttributedPrivateClickMeasurement"_s))
         return;
 
     Vector<WebCore::PrivateClickMeasurement> unattributed;
@@ -2503,7 +2503,7 @@ bool ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount(const Regi
     return (subFrameUnderTopFrameCount->columnInt(0) == 1 && subresourceUnderTopFrameCount->columnInt(0) == 1 && subresourceUniqueRedirectsTo->columnInt(0) == 1);
 }
 
-static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
+static void appendBoolean(StringBuilder& builder, ASCIILiteral label, bool flag)
 {
     builder.append("    ", label, ": ", flag ? "Yes" : "No");
 }
@@ -2531,31 +2531,31 @@ String ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID(unsigned
     return result;
 }
 
-ASCIILiteral ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement(const String& tableName) const
+ASCIILiteral ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement(ASCIILiteral tableName) const
 {
-    if (tableName == "StorageAccessUnderTopFrameDomains")
+    if (tableName == "StorageAccessUnderTopFrameDomains"_s)
         return "SELECT topLevelDomainID from StorageAccessUnderTopFrameDomains WHERE domainID = ?"_s;
-    if (tableName == "TopFrameUniqueRedirectsTo")
+    if (tableName == "TopFrameUniqueRedirectsTo"_s)
         return "SELECT toDomainID from TopFrameUniqueRedirectsTo WHERE sourceDomainID = ?"_s;
-    if (tableName == "TopFrameUniqueRedirectsFrom")
+    if (tableName == "TopFrameUniqueRedirectsFrom"_s)
         return "SELECT fromDomainID from TopFrameUniqueRedirectsFrom WHERE targetDomainID = ?"_s;
-    if (tableName == "TopFrameLinkDecorationsFrom")
+    if (tableName == "TopFrameLinkDecorationsFrom"_s)
         return "SELECT fromDomainID from TopFrameLinkDecorationsFrom WHERE toDomainID = ?"_s;
-    if (tableName == "TopFrameLoadedThirdPartyScripts")
+    if (tableName == "TopFrameLoadedThirdPartyScripts"_s)
         return "SELECT subresourceDomainID from TopFrameLoadedThirdPartyScripts WHERE topFrameDomainID = ?"_s;
-    if (tableName == "SubframeUnderTopFrameDomains")
+    if (tableName == "SubframeUnderTopFrameDomains"_s)
         return "SELECT topFrameDomainID from SubframeUnderTopFrameDomains WHERE subFrameDomainID = ?"_s;
-    if (tableName == "SubresourceUnderTopFrameDomains")
+    if (tableName == "SubresourceUnderTopFrameDomains"_s)
         return "SELECT topFrameDomainID from SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?"_s;
-    if (tableName == "SubresourceUniqueRedirectsTo")
+    if (tableName == "SubresourceUniqueRedirectsTo"_s)
         return "SELECT toDomainID from SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?"_s;
-    if (tableName == "SubresourceUniqueRedirectsFrom")
+    if (tableName == "SubresourceUniqueRedirectsFrom"_s)
         return "SELECT fromDomainID from SubresourceUniqueRedirectsFrom WHERE subresourceDomainID = ?"_s;
     
     return ""_s;
 }
 
-void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& builder, const String& tableName, const String& domain) const
+void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& builder, ASCIILiteral tableName, const String& domain) const
 {
     auto query = getSubStatisticStatement(tableName);
     
@@ -2603,7 +2603,7 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     builder.append("Registrable domain: ", domain, '\n');
     
     // User interaction
-    appendBoolean(builder, "hadUserInteraction", m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
+    appendBoolean(builder, "hadUserInteraction"_s, m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
     builder.append('\n');
     builder.append("    mostRecentUserInteraction: ");
     if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->columnDouble(MostRecentUserInteractionTimeIndex))))
@@ -2611,34 +2611,34 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     else
         builder.append("-1");
     builder.append('\n');
-    appendBoolean(builder, "grandfathered", m_getResourceDataByDomainNameStatement->columnInt(GrandfatheredIndex));
+    appendBoolean(builder, "grandfathered"_s, m_getResourceDataByDomainNameStatement->columnInt(GrandfatheredIndex));
     builder.append('\n');
 
     // Storage access
-    appendSubStatisticList(builder, "StorageAccessUnderTopFrameDomains", domain);
+    appendSubStatisticList(builder, "StorageAccessUnderTopFrameDomains"_s, domain);
 
     // Top frame stats
-    appendSubStatisticList(builder, "TopFrameUniqueRedirectsTo", domain);
-    appendSubStatisticList(builder, "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement", domain);
-    appendSubStatisticList(builder, "TopFrameUniqueRedirectsFrom", domain);
-    appendSubStatisticList(builder, "TopFrameLinkDecorationsFrom", domain);
-    appendSubStatisticList(builder, "TopFrameLoadedThirdPartyScripts", domain);
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsTo"_s, domain);
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, domain);
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsFrom"_s, domain);
+    appendSubStatisticList(builder, "TopFrameLinkDecorationsFrom"_s, domain);
+    appendSubStatisticList(builder, "TopFrameLoadedThirdPartyScripts"_s, domain);
 
-    appendBoolean(builder, "IsScheduledForAllButCookieDataRemoval", m_getResourceDataByDomainNameStatement->columnInt(IsScheduledForAllButCookieDataRemovalIndex));
+    appendBoolean(builder, "IsScheduledForAllButCookieDataRemoval"_s, m_getResourceDataByDomainNameStatement->columnInt(IsScheduledForAllButCookieDataRemovalIndex));
     builder.append('\n');
 
     // Subframe stats
-    appendSubStatisticList(builder, "SubframeUnderTopFrameDomains", domain);
+    appendSubStatisticList(builder, "SubframeUnderTopFrameDomains"_s, domain);
 
     // Subresource stats
-    appendSubStatisticList(builder, "SubresourceUnderTopFrameDomains", domain);
-    appendSubStatisticList(builder, "SubresourceUniqueRedirectsTo", domain);
-    appendSubStatisticList(builder, "SubresourceUniqueRedirectsFrom", domain);
+    appendSubStatisticList(builder, "SubresourceUnderTopFrameDomains"_s, domain);
+    appendSubStatisticList(builder, "SubresourceUniqueRedirectsTo"_s, domain);
+    appendSubStatisticList(builder, "SubresourceUniqueRedirectsFrom"_s, domain);
 
     // Prevalent Resource
-    appendBoolean(builder, "isPrevalentResource", m_getResourceDataByDomainNameStatement->columnInt(IsPrevalentIndex));
+    appendBoolean(builder, "isPrevalentResource"_s, m_getResourceDataByDomainNameStatement->columnInt(IsPrevalentIndex));
     builder.append('\n');
-    appendBoolean(builder, "isVeryPrevalentResource", m_getResourceDataByDomainNameStatement->columnInt(IsVeryPrevalentIndex));
+    appendBoolean(builder, "isVeryPrevalentResource"_s, m_getResourceDataByDomainNameStatement->columnInt(IsVeryPrevalentIndex));
     builder.append('\n');
     builder.append("    dataRecordsRemoved: ", m_getResourceDataByDomainNameStatement->columnInt(DataRecordsRemovedIndex));
     builder.append('\n');

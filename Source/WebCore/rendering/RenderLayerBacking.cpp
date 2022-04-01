@@ -3338,7 +3338,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
         FontCascade font(WTFMove(fontDescription), 0, 0);
         font.update(nullptr);
 
-        TextRun textRun = TextRun(description.name);
+        TextRun textRun = TextRun(StringView { description.name });
         imageContext.setFillColor(description.fillColor);
 
         constexpr float textGap = 4;

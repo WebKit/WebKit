@@ -61,11 +61,11 @@ static const int httpPartialContent = 206;
 static const int httpNotAllowed = 403;
 static const int httpRequestedRangeNotSatisfiable = 416;
 static const int httpInternalError = 500;
-static const char* httpOKText = "OK";
-static const char* httpPartialContentText = "Partial Content";
-static const char* httpNotAllowedText = "Not Allowed";
-static const char* httpRequestedRangeNotSatisfiableText = "Requested Range Not Satisfiable";
-static const char* httpInternalErrorText = "Internal Server Error";
+static constexpr auto httpOKText = "OK"_s;
+static constexpr auto httpPartialContentText = "Partial Content"_s;
+static constexpr auto httpNotAllowedText = "Not Allowed"_s;
+static constexpr auto httpRequestedRangeNotSatisfiableText = "Requested Range Not Satisfiable"_s;
+static constexpr auto httpInternalErrorText = "Internal Server Error"_s;
 
 static constexpr auto webKitBlobResourceDomain = "WebKitBlobResource"_s;
 
@@ -258,7 +258,7 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
     LOG(NetworkSession, "%p - NetworkDataTaskBlob::dispatchDidReceiveResponse(%u)", this, static_cast<unsigned>(errorCode));
 
     Ref<NetworkDataTaskBlob> protectedThis(*this);
-    ResourceResponse response(m_firstRequest.url(), errorCode != Error::NoError ? "text/plain" : extractMIMETypeFromMediaType(m_blobData->contentType()), errorCode != Error::NoError ? 0 : m_totalRemainingSize, String());
+    ResourceResponse response(m_firstRequest.url(), errorCode != Error::NoError ? "text/plain"_s : extractMIMETypeFromMediaType(m_blobData->contentType()), errorCode != Error::NoError ? 0 : m_totalRemainingSize, String());
     switch (errorCode) {
     case Error::NoError: {
         bool isRangeRequest = m_rangeOffset != kPositionNotSpecified;

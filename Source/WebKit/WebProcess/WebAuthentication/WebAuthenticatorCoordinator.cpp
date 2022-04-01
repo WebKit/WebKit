@@ -88,7 +88,7 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
 
     if (!isWebBrowser()) {
         WEBAUTHN_RELEASE_LOG_ERROR("makeCredential: The 'navigator.credentials.create' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement.");
-        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { NotAllowedError, "The 'navigator.credentials.create' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement." });
+        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { NotAllowedError, "The 'navigator.credentials.create' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement."_s });
         return;
     }
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::MakeCredential(hash, options, isProcessingUserGesture), WTFMove(handler));
@@ -117,7 +117,7 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
 
     if (!isWebBrowser()) {
         WEBAUTHN_RELEASE_LOG_ERROR("getAssertion: The 'navigator.credentials.get' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement.");
-        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { NotAllowedError, "The 'navigator.credentials.get' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement." });
+        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { NotAllowedError, "The 'navigator.credentials.get' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement."_s });
         return;
     }
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::GetAssertion(hash, options, isProcessingUserGesture), WTFMove(handler));

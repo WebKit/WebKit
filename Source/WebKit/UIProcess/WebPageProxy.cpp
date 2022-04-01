@@ -11112,7 +11112,7 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 {
     auto captureDevice = SpeechRecognitionCaptureSource::findCaptureDevice();
     if (!captureDevice)
-        return CaptureSourceOrError { "No device is available for capture" };
+        return CaptureSourceOrError { "No device is available for capture"_s };
 
     if (preferences().captureAudioInGPUProcessEnabled())
         return CaptureSourceOrError { SpeechRecognitionRemoteRealtimeMediaSource::create(m_process->ensureSpeechRecognitionRemoteRealtimeMediaSourceManager(), *captureDevice, m_webPageID) };

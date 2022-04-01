@@ -104,7 +104,7 @@ String base64PrivateKey(RetainPtr<SecKeyRef> privateKey)
     auto retainError = adoptCF(errorRef);
     if (errorRef) {
         ASSERT_NOT_REACHED();
-        return "";
+        return emptyString();
     }
     NSData *nsPrivateKeyRep = (NSData *)privateKeyRep.get();
 

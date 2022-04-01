@@ -66,7 +66,7 @@ String SWScriptStorage::sha2Hash(const URL& input) const
 
 String SWScriptStorage::saltPath() const
 {
-    return FileSystem::pathByAppendingComponent(m_directory, "salt");
+    return FileSystem::pathByAppendingComponent(m_directory, "salt"_s);
 }
 
 String SWScriptStorage::registrationDirectory(const ServiceWorkerRegistrationKey& registrationKey) const

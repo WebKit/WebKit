@@ -786,7 +786,7 @@ void CurlRequest::writeDataToDownloadFileIfEnabled(const FragmentedSharedBuffer&
             return;
 
         if (m_downloadFilePath.isEmpty())
-            m_downloadFilePath = FileSystem::openTemporaryFile("download", m_downloadFileHandle);
+            m_downloadFilePath = FileSystem::openTemporaryFile("download"_s, m_downloadFileHandle);
     }
 
     if (m_downloadFileHandle != FileSystem::invalidPlatformFileHandle)

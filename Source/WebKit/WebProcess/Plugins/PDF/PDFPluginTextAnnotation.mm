@@ -54,15 +54,15 @@ static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignmen
 {
     switch (alignment) {
     case NSTextAlignmentLeft:
-        return "left";
+        return "left"_s;
     case NSTextAlignmentRight:
-        return "right";
+        return "right"_s;
     case NSTextAlignmentCenter:
-        return "center";
+        return "center"_s;
     case NSTextAlignmentJustified:
-        return "justify";
+        return "justify"_s;
     case NSTextAlignmentNatural:
-        return "-webkit-start";
+        return "-webkit-start"_s;
     }
     ASSERT_NOT_REACHED();
     return String();

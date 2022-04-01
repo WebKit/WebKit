@@ -69,7 +69,7 @@ static void changeWordCase(WebPage* page, NSString *(*changeCase)(NSString *))
     if (!frame->editor().canEdit())
         return;
 
-    frame->editor().command("selectWord").execute();
+    frame->editor().command("selectWord"_s).execute();
 
     NSString *selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
     page->replaceSelectionWithText(frame.ptr(), changeCase(selectedString));

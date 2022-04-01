@@ -2949,7 +2949,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (BOOL)_isDisplayingPDF
 {
     for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes()) {
-        Class providerClass = [[_configuration _contentProviderRegistry] providerForMIMEType:@(type)];
+        Class providerClass = [[_configuration _contentProviderRegistry] providerForMIMEType:@(type.characters())];
         if ([_customContentView isKindOfClass:providerClass])
             return YES;
     }

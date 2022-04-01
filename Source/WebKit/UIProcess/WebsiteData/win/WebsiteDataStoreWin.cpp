@@ -48,52 +48,52 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
 
 String WebsiteDataStore::defaultApplicationCacheDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ApplicationCache");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ApplicationCache"_s);
 }
 
 String WebsiteDataStore::defaultCacheStorageDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "CacheStorage");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "CacheStorage"_s);
 }
 
 String WebsiteDataStore::defaultGeneralStorageDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "Storage");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "Storage"_s);
 }
 
 String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "NetworkCache");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "NetworkCache"_s);
 }
 
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "IndexedDB");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "IndexedDB"_s);
 }
 
 String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ServiceWorkers");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ServiceWorkers"_s);
 }
 
 String WebsiteDataStore::defaultLocalStorageDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "LocalStorage");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "LocalStorage"_s);
 }
 
 String WebsiteDataStore::defaultMediaKeysStorageDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage"_s);
 }
 
 String WebsiteDataStore::defaultWebSQLDatabaseDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "WebSQL");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "WebSQL"_s);
 }
 
 String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ResourceLoadStatistics");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ResourceLoadStatistics"_s);
 }
 
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory)

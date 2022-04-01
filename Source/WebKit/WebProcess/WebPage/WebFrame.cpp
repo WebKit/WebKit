@@ -496,7 +496,7 @@ Ref<API::Array> WebFrame::childFrames()
 String WebFrame::layerTreeAsText() const
 {
     if (!m_coreFrame)
-        return "";
+        return emptyString();
 
     return m_coreFrame->contentRenderer()->compositor().layerTreeAsText();
 }

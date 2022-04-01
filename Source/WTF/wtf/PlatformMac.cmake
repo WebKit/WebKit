@@ -95,6 +95,7 @@ list(APPEND WTF_SOURCES
     text/cf/StringImplCF.cpp
     text/cf/StringViewCF.cpp
 
+    text/cocoa/ASCIILiteralCocoa.mm
     text/cocoa/StringCocoa.mm
     text/cocoa/StringImplCocoa.mm
     text/cocoa/StringViewCocoa.mm

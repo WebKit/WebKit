@@ -274,7 +274,7 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 
 void StorageAreaSync::migrateItemTableIfNeeded()
 {
-    if (!m_database.tableExists("ItemTable"))
+    if (!m_database.tableExists("ItemTable"_s))
         return;
 
     {

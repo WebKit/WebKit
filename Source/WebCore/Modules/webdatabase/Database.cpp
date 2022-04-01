@@ -366,11 +366,10 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
                 return Exception { InvalidStateError, WTFMove(message) };
             }
 
-            String tableName(unqualifiedInfoTableName);
-            if (!m_sqliteDatabase.tableExists(tableName)) {
+            if (!m_sqliteDatabase.tableExists(unqualifiedInfoTableName)) {
                 m_new = true;
 
-                if (!m_sqliteDatabase.executeCommandSlow("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
+                if (!m_sqliteDatabase.executeCommandSlow(makeString("CREATE TABLE ", unqualifiedInfoTableName, " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);"))) {
                     String message = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();

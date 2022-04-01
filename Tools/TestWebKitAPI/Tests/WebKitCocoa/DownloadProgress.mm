@@ -379,7 +379,7 @@ static void* progressObservingContext = &progressObservingContext;
     EXPECT_EQ(download, m_download.get());
 
     FileSystem::PlatformFileHandle fileHandle;
-    RetainPtr<NSString> path = (NSString *)FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    RetainPtr<NSString> path = (NSString *)FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
     EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
     FileSystem::closeFile(fileHandle);
 

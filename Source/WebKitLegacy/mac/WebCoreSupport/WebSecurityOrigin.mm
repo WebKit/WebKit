@@ -44,7 +44,7 @@ using namespace WebCore;
 {
     WTF::initializeMainThread();
 
-    auto origin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier);
+    auto origin = SecurityOriginData::fromDatabaseIdentifier(String { databaseIdentifier });
     if (!origin)
         return nil;
 

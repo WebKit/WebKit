@@ -975,9 +975,9 @@ static void setDefaultsToConsistentValuesForTesting()
     String libraryPath = libraryPathForDumpRenderTree();
 
     // Set up these values before creating the WebView so that the various initializations will see these preferred values.
-    CFPreferencesSetAppValue(WebDatabaseDirectoryDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "Databases").createCFString().get(), appId.get());
-    CFPreferencesSetAppValue(WebStorageDirectoryDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "LocalStorage").createCFString().get(), appId.get());
-    CFPreferencesSetAppValue(WebKitLocalCacheDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "LocalCache").createCFString().get(), appId.get());
+    CFPreferencesSetAppValue(WebDatabaseDirectoryDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "Databases"_s).createCFString().get(), appId.get());
+    CFPreferencesSetAppValue(WebStorageDirectoryDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "LocalStorage"_s).createCFString().get(), appId.get());
+    CFPreferencesSetAppValue(WebKitLocalCacheDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "LocalCache"_s).createCFString().get(), appId.get());
 #endif
 }
 
@@ -1123,7 +1123,7 @@ static String findFontFallback(const char* pathOrUrl)
         return emptyString();
 
     String pathToTest = pathToCheck.substring(location + layoutTests.length() + 1);
-    String possiblePathToLogue = FileSystem::pathByAppendingComponent(pathToCheck.substring(0, location + layoutTests.length() + 1), "platform\\win");
+    String possiblePathToLogue = FileSystem::pathByAppendingComponent(pathToCheck.substring(0, location + layoutTests.length() + 1), "platform\\win"_s);
 
     Vector<String> possiblePaths;
     possiblePaths.append(FileSystem::pathByAppendingComponent(possiblePathToLogue, pathToTest));
@@ -1136,7 +1136,7 @@ static String findFontFallback(const char* pathOrUrl)
     }
 
     for (Vector<String>::iterator pos = possiblePaths.begin(); pos != possiblePaths.end(); ++pos) {
-        pathToFontFallback = FileSystem::pathByAppendingComponent(*pos, "resources\\");
+        pathToFontFallback = FileSystem::pathByAppendingComponent(*pos, "resources\\"_s);
 
         if (::PathIsDirectoryW(pathToFontFallback.wideCharacters().data()))
             return pathToFontFallback;
@@ -1150,7 +1150,7 @@ static void addFontFallbackIfPresent(const String& fontFallbackPath)
     if (fontFallbackPath.isEmpty())
         return;
 
-    String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
+    String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css"_s);
 
     if (!::PathFileExistsW(fontFallback.wideCharacters().data()))
         return;
@@ -1163,7 +1163,7 @@ static void removeFontFallbackIfPresent(const String& fontFallbackPath)
     if (fontFallbackPath.isEmpty())
         return;
 
-    String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
+    String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css"_s);
 
     if (!::PathFileExistsW(fontFallback.wideCharacters().data()))
         return;

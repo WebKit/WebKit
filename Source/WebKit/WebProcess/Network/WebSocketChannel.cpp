@@ -130,7 +130,7 @@ bool WebSocketChannel::increaseBufferedAmount(size_t byteLength)
     CheckedSize checkedNewBufferedAmount = m_bufferedAmount;
     checkedNewBufferedAmount += byteLength;
     if (UNLIKELY(checkedNewBufferedAmount.hasOverflowed())) {
-        fail("Failed to send WebSocket frame: buffer has no more space");
+        fail("Failed to send WebSocket frame: buffer has no more space"_s);
         return false;
     }
 

@@ -89,11 +89,6 @@ SQLiteDatabase::~SQLiteDatabase()
     close();
 }
 
-const char* SQLiteDatabase::inMemoryPath()
-{
-    return ":memory:";
-}
-
 bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
 {
     initializeSQLiteIfNecessary();
@@ -426,12 +421,12 @@ bool SQLiteDatabase::executeCommand(ASCIILiteral query)
     return statement && statement->executeCommand();
 }
 
-bool SQLiteDatabase::tableExists(const String& tableName)
+bool SQLiteDatabase::tableExists(StringView tableName)
 {
     return !tableSQL(tableName).isEmpty();
 }
 
-String SQLiteDatabase::tableSQL(const String& tableName)
+String SQLiteDatabase::tableSQL(StringView tableName)
 {
     if (!isOpen())
         return { };
@@ -443,7 +438,7 @@ String SQLiteDatabase::tableSQL(const String& tableName)
     return statement->columnText(0);
 }
 
-String SQLiteDatabase::indexSQL(const String& indexName)
+String SQLiteDatabase::indexSQL(StringView indexName)
 {
     if (!isOpen())
         return { };

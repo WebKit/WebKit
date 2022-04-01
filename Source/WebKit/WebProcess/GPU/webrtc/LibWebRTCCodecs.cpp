@@ -129,7 +129,7 @@ static inline String formatNameFromWebRTCCodecType(webrtc::VideoCodecType type)
         return "VP9"_s;
     default:
         ASSERT_NOT_REACHED();
-        return "H264";
+        return "H264"_s;
     }
 }
 

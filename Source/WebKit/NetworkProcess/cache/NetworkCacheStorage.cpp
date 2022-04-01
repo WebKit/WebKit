@@ -176,7 +176,7 @@ static String makeCachePath(const String& baseCachePath)
 #if PLATFORM(MAC)
     // Put development cache to a different directory to avoid affecting the system cache.
     if (!AuxiliaryProcess::isSystemWebKit())
-        return FileSystem::pathByAppendingComponent(baseCachePath, "Development");
+        return FileSystem::pathByAppendingComponent(baseCachePath, "Development"_s);
 #endif
     return baseCachePath;
 }

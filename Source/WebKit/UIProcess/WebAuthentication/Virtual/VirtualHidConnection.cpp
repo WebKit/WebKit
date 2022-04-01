@@ -222,7 +222,7 @@ void VirtualHidConnection::parseRequest()
             CBORValue::MapValue response;
             response[CBORValue(1)] = CBORValue("none");
             response[CBORValue(2)] = CBORValue(authenticatorData);
-            auto attObj = buildAttestationMap(WTFMove(authenticatorData), "", { }, AttestationConveyancePreference::None);
+            auto attObj = buildAttestationMap(WTFMove(authenticatorData), String { emptyString() }, { }, AttestationConveyancePreference::None);
             response[CBORValue(3)] = CBORValue(attObj);
             auto payload = CBORWriter::write(CBORValue(response));
             Vector<uint8_t> buffer;
@@ -309,7 +309,7 @@ void VirtualHidConnection::parseRequest()
             response[CBORValue(2)] = CBORValue(authData);
             response[CBORValue(3)] = CBORValue(signatureForPrivateKey(key, authData, clientDataHash));
             if (credential.userHandle)
-                response[CBORValue(4)] = CBORValue(buildUserEntityMap(*credential.userHandle, "", ""));
+                response[CBORValue(4)] = CBORValue(buildUserEntityMap(*credential.userHandle, emptyString(), emptyString()));
             response[CBORValue(5)] = CBORValue((int64_t)matchingCredentials.size());
             auto payload = CBORWriter::write(CBORValue(response));
             Vector<uint8_t> buffer;

@@ -49,7 +49,7 @@ SQLiteFileSystem::SQLiteFileSystem()
 {
 }
 
-String SQLiteFileSystem::appendDatabaseFileNameToPath(const String& path, const String& fileName)
+String SQLiteFileSystem::appendDatabaseFileNameToPath(StringView path, StringView fileName)
 {
     return FileSystem::pathByAppendingComponent(path, fileName);
 }
@@ -128,7 +128,7 @@ std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String&
     return FileSystem::fileModificationTime(fileName);
 }
     
-String SQLiteFileSystem::computeHashForFileName(const String& fileName)
+String SQLiteFileSystem::computeHashForFileName(StringView fileName)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     auto utf8FileName = fileName.utf8();

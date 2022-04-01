@@ -79,7 +79,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 + (instancetype)storeWithURL:(NSURL *)url
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation));
+    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteString));
 #else
     return nil;
 #endif
@@ -194,7 +194,7 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.fileSystemRepresentation));
+    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteString));
 #else
     return nil;
 #endif

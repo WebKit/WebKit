@@ -123,8 +123,7 @@ BlobStorage::Blob BlobStorage::get(const String& path)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto linkPath = FileSystem::fileSystemRepresentation(path);
-    auto data = mapFile(linkPath.data());
+    auto data = mapFile(path);
 
     return { data, computeSHA1(data, m_salt) };
 }

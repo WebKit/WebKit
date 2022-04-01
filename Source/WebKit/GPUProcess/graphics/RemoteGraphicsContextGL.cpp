@@ -123,7 +123,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
         String requestableExtensions = m_context->getString(GraphicsContextGL::REQUESTABLE_EXTENSIONS_ANGLE);
         send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, remoteGraphicsContextGLStreamWorkQueue().wakeUpSemaphore(), extensions, requestableExtensions));
     } else
-        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(false, IPC::Semaphore { }, "", ""));
+        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(false, IPC::Semaphore { }, emptyString(), emptyString()));
 }
 
 void RemoteGraphicsContextGL::workQueueUninitialize()

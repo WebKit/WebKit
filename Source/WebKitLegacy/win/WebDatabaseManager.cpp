@@ -426,7 +426,7 @@ static WTF::String databasesDirectory()
         return static_cast<CFStringRef>(directoryPref.get());
 #endif
 
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "Databases");
+    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "Databases"_s);
 }
 
 void WebKitInitializeWebDatabasesIfNecessary()

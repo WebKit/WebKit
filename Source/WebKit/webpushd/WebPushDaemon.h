@@ -88,7 +88,7 @@ public:
     void removeAllPushSubscriptions(ClientConnection*, CompletionHandler<void(unsigned)>&&);
     void removePushSubscriptionsForOrigin(ClientConnection*, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
 
-    void broadcastDebugMessage(const String&);
+    void broadcastDebugMessage(StringView);
     void broadcastAllConnectionIdentities();
 
 private:

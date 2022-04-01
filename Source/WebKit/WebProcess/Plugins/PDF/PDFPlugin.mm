@@ -121,7 +121,7 @@
 // Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
 // scrollbars on the body. We can't add annotations directly to the body, because overflow: hidden on the body
 // will break rubber-banding.
-static const char* annotationStyle =
+static constexpr auto annotationStyle =
 "#annotationContainer {"
 "    overflow: hidden; "
 "    position: absolute; "
@@ -145,7 +145,7 @@ static const char* annotationStyle =
 "    position: static; "
 "    width: 200px; "
 "    margin-top: 100px; "
-"} ";
+"} "_s;
 
 // In non-continuous modes, a single scroll event with a magnitude of >= 20px
 // will jump to the next or previous page, to match PDFKit behavior.
@@ -769,7 +769,7 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
 
     if (!isMainRunLoop()) {
 #if !LOG_DISABLED
-        pdfLog("Disabling incremental PDF loading on background thread");
+        pdfLog("Disabling incremental PDF loading on background thread"_s);
 #endif
         callOnMainRunLoop([this, protectedThis = Ref { *this }] {
             receivedNonLinearizedPDFSentinel();
@@ -961,7 +961,7 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
     firstPageSemaphore.wait();
 
 #if !LOG_DISABLED
-    pdfLog("Finished preloading first page");
+    pdfLog("Finished preloading first page"_s);
 #endif
 }
 
@@ -1055,7 +1055,7 @@ void PDFPlugin::adoptBackgroundThreadDocument()
     ASSERT(isMainRunLoop());
 
 #if !LOG_DISABLED
-    pdfLog("Adopting PDFDocument from background thread");
+    pdfLog("Adopting PDFDocument from background thread"_s);
 #endif
 
     m_pdfDocument = WTFMove(m_backgroundThreadDocument);
@@ -1282,13 +1282,13 @@ PluginInfo PDFPlugin::pluginInfo()
     info.bundleIdentifier = "com.apple.webkit.builtinpdfplugin"_s;
 
     MimeClassInfo pdfMimeClassInfo;
-    pdfMimeClassInfo.type = "application/pdf";
+    pdfMimeClassInfo.type = "application/pdf"_s;
     pdfMimeClassInfo.desc = pdfDocumentTypeDescription();
     pdfMimeClassInfo.extensions.append("pdf");
     info.mimes.append(pdfMimeClassInfo);
 
     MimeClassInfo textPDFMimeClassInfo;
-    textPDFMimeClassInfo.type = "text/pdf";
+    textPDFMimeClassInfo.type = "text/pdf"_s;
     textPDFMimeClassInfo.desc = pdfDocumentTypeDescription();
     textPDFMimeClassInfo.extensions.append("pdf");
     info.mimes.append(textPDFMimeClassInfo);
@@ -1552,7 +1552,7 @@ void PDFPlugin::addArchiveResource()
     RetainPtr<NSURLResponse> response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_sourceURL statusCode:200 HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headers]);
     ResourceResponse synthesizedResponse(response.get());
 
-    auto resource = ArchiveResource::create(SharedBuffer::create(m_data.get()), m_sourceURL, "application/pdf", String(), String(), synthesizedResponse);
+    auto resource = ArchiveResource::create(SharedBuffer::create(m_data.get()), m_sourceURL, "application/pdf"_s, String(), String(), synthesizedResponse);
     pluginView()->frame()->document()->loader()->addArchiveResource(resource.releaseNonNull());
 }
 
@@ -1688,10 +1688,10 @@ void PDFPlugin::setSuggestedFilename(const String& suggestedFilename)
     m_suggestedFilename = suggestedFilename;
 
     if (m_suggestedFilename.isEmpty())
-        m_suggestedFilename = suggestedFilenameWithMIMEType(nil, "application/pdf");
+        m_suggestedFilename = suggestedFilenameWithMIMEType(nil, "application/pdf"_s);
 
     if (!m_suggestedFilename.endsWithIgnoringASCIICase(".pdf"))
-        m_suggestedFilename.append(".pdf");
+        m_suggestedFilename.append(".pdf"_s);
 }
     
 void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t, uint32_t, const String& mimeType, const String&, const String& suggestedFilename)
@@ -1893,7 +1893,7 @@ bool PDFPlugin::initialize(const Parameters& parameters)
 {
     m_sourceURL = parameters.url;
     if (!parameters.shouldUseManualLoader && !parameters.url.isEmpty())
-        controller()->loadURL(pdfDocumentRequestID, "GET", parameters.url.string(), String(), HTTPHeaderMap(), Vector<uint8_t>(), false);
+        controller()->loadURL(pdfDocumentRequestID, "GET"_s, parameters.url.string(), String(), HTTPHeaderMap(), Vector<uint8_t>(), false);
 
     controller()->didInitializePlugin();
     return true;

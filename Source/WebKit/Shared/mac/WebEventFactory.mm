@@ -469,20 +469,20 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
 
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
     if (windowsVirtualKeyCode == VK_RETURN) {
-        text = "\r";
-        unmodifiedText = "\r";
+        text = "\r"_s;
+        unmodifiedText = text;
     }
 
     // AppKit sets text to "\x7F" for backspace, but the correct KeyboardEvent character code is 8.
     if (windowsVirtualKeyCode == VK_BACK) {
-        text = "\x8";
-        unmodifiedText = "\x8";
+        text = "\x8"_s;
+        unmodifiedText = text;
     }
 
     // Always use 9 for Tab -- we don't want to use AppKit's different character for shift-tab.
     if (windowsVirtualKeyCode == VK_TAB) {
-        text = "\x9";
-        unmodifiedText = "\x9";
+        text = "\x9"_s;
+        unmodifiedText = text;
     }
 
     return WebKeyboardEvent(type, text, unmodifiedText, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, handledByInputMethod, commands, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);

@@ -185,27 +185,27 @@ RefPtr<SandboxExtension> SandboxExtension::create(Handle&& handle)
     return adoptRef(new SandboxExtension(handle));
 }
 
-String stringByResolvingSymlinksInPath(const String& path)
+String stringByResolvingSymlinksInPath(StringView path)
 {
     char resolvedPath[PATH_MAX] = { 0 };
     realpath(path.utf8().data(), resolvedPath);
     return String::fromUTF8(resolvedPath);
 }
 
-String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path)
+String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path)
 {
     NSError *error = nil;
-    NSString *nsPath = path;
+    auto nsPath = path.createNSStringWithoutCopying();
 
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create directory \"%@\" for future sandbox extension, error %@", nsPath, error);
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath.get() withIntermediateDirectories:YES attributes:nil error:&error]) {
+        NSLog(@"could not create directory \"%@\" for future sandbox extension, error %@", nsPath.get(), error);
         return { };
     }
 
     return resolvePathForSandboxExtension(path);
 }
 
-String resolvePathForSandboxExtension(const String& path)
+String resolvePathForSandboxExtension(StringView path)
 {
     String resolvedPath = stringByResolvingSymlinksInPath(path);
     if (resolvedPath.isNull()) {
@@ -216,7 +216,7 @@ String resolvePathForSandboxExtension(const String& path)
     return resolvedPath;
 }
 
-auto SandboxExtension::createHandleWithoutResolvingPath(const String& path, Type type) -> std::optional<Handle>
+auto SandboxExtension::createHandleWithoutResolvingPath(StringView path, Type type) -> std::optional<Handle>
 {
     Handle handle;
     ASSERT(!handle.m_sandboxExtension);
@@ -229,7 +229,7 @@ auto SandboxExtension::createHandleWithoutResolvingPath(const String& path, Type
     return WTFMove(handle);
 }
 
-auto SandboxExtension::createHandle(const String& path, Type type) -> std::optional<Handle>
+auto SandboxExtension::createHandle(StringView path, Type type) -> std::optional<Handle>
 {
     return createHandleWithoutResolvingPath(resolvePathForSandboxExtension(path), type);
 }
@@ -259,7 +259,7 @@ auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral logLabel, cons
     });
 }
 
-auto SandboxExtension::createHandleForReadWriteDirectory(const String& path) -> std::optional<Handle>
+auto SandboxExtension::createHandleForReadWriteDirectory(StringView path) -> std::optional<Handle>
 {
     String resolvedPath = resolveAndCreateReadWriteDirectoryForSandboxExtension(path);
     if (resolvedPath.isNull())
@@ -267,7 +267,7 @@ auto SandboxExtension::createHandleForReadWriteDirectory(const String& path) -> 
     return createHandleWithoutResolvingPath(resolvedPath, Type::ReadWrite);
 }
 
-auto SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type) -> std::optional<std::pair<Handle, String>>
+auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type) -> std::optional<std::pair<Handle, String>>
 {
     Handle handle;
     ASSERT(!handle.m_sandboxExtension);
@@ -284,11 +284,16 @@ auto SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type t
     if (path.last() != '/')
         path.append('/');
     
-    // Append the file name.    
-    path.append(prefix.utf8().data(), prefix.length());
+    // Append the file name.
+    auto prefixAsUTF8 = prefix.utf8();
+    path.append(prefixAsUTF8.data(), prefixAsUTF8.length());
     path.append('\0');
+
+    auto pathString = String::fromUTF8(path.data());
+    if (pathString.isNull())
+        return std::nullopt;
     
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(FileSystem::fileSystemRepresentation(path.data()).data(), type);
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(FileSystem::fileSystemRepresentation(pathString).data(), type);
 
     if (!handle.m_sandboxExtension) {
         WTFLogAlways("Could not create a sandbox extension for temporary file '%s'", path.data());
@@ -339,7 +344,7 @@ auto SandboxExtension::createHandlesForMachLookup(std::initializer_list<const AS
     return createHandlesForMachLookup(Span { services.begin(), services.size() }, auditToken, flags);
 }
 
-auto SandboxExtension::createHandleForReadByAuditToken(const String& path, audit_token_t auditToken) -> std::optional<Handle>
+auto SandboxExtension::createHandleForReadByAuditToken(StringView path, audit_token_t auditToken) -> std::optional<Handle>
 {
     Handle handle;
     ASSERT(!handle.m_sandboxExtension);

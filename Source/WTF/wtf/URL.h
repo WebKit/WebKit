@@ -137,7 +137,6 @@ public:
 
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
-    WTF_EXPORT_PRIVATE bool protocolIs(const char*) const;
     WTF_EXPORT_PRIVATE bool protocolIs(StringView) const;
     bool protocolIsBlob() const { return protocolIs("blob"); }
     bool protocolIsData() const { return protocolIs("data"); }

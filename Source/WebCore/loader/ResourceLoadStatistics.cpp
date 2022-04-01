@@ -349,7 +349,7 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
     return true;
 }
 
-static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
+static void appendBoolean(StringBuilder& builder, ASCIILiteral label, bool flag)
 {
     builder.append("    ", label, ": ", flag ? "Yes" : "No");
 }

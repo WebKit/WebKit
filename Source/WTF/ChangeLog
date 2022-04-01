@@ -1,3 +1,21 @@
+2022-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238525
+
+        Reviewed by Darin Adler.
+
+        * wtf/FileSystem.h:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::openTemporaryFile):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::openTemporaryFile):
+
 2022-03-31  Alex Christensen  <achristensen@webkit.org>
 
         Remove EXPERIMENTAL_FEATURES flag use on Cocoa platforms

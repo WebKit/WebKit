@@ -2370,7 +2370,7 @@ void NetworkProcess::deletePushAndNotificationRegistration(PAL::SessionID sessio
         return;
     }
 #endif
-    callback("Cannot find network session");
+    callback("Cannot find network session"_s);
 }
 
 void NetworkProcess::getOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebCore::SecurityOriginData>&)>&& callback)

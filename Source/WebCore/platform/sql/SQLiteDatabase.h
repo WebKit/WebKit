@@ -56,7 +56,7 @@ public:
     WEBCORE_EXPORT SQLiteDatabase();
     WEBCORE_EXPORT ~SQLiteDatabase();
 
-    WEBCORE_EXPORT static const char* inMemoryPath();
+    static constexpr ASCIILiteral inMemoryPath() { return ":memory:"_s; }
 
     enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
     WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
@@ -66,9 +66,9 @@ public:
     WEBCORE_EXPORT bool executeCommandSlow(const String&);
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
     
-    WEBCORE_EXPORT bool tableExists(const String&);
-    WEBCORE_EXPORT String tableSQL(const String&);
-    WEBCORE_EXPORT String indexSQL(const String&);
+    WEBCORE_EXPORT bool tableExists(StringView);
+    WEBCORE_EXPORT String tableSQL(StringView);
+    WEBCORE_EXPORT String indexSQL(StringView);
     WEBCORE_EXPORT void clearAllTables();
     WEBCORE_EXPORT int runVacuumCommand();
     WEBCORE_EXPORT int runIncrementalVacuumCommand();

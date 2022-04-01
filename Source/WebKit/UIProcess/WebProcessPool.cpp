@@ -635,7 +635,7 @@ void WebProcessPool::didReceiveInvalidMessage(IPC::MessageName messageName)
     if (!s_invalidMessageCallback)
         return;
 
-    s_invalidMessageCallback(toAPI(API::String::create(description(messageName)).ptr()));
+    s_invalidMessageCallback(toAPI(API::String::create(String { description(messageName) }).ptr()));
 }
 
 void WebProcessPool::resolvePathsForSandboxExtensions()

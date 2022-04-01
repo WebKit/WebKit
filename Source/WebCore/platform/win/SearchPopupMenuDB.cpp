@@ -62,7 +62,7 @@ SearchPopupMenuDB& SearchPopupMenuDB::singleton()
 }
 
 SearchPopupMenuDB::SearchPopupMenuDB()
-    : m_databaseFilename(FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "autosave-search.db"))
+    : m_databaseFilename(FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "autosave-search.db"_s))
 {
 }
 
@@ -127,7 +127,7 @@ bool SearchPopupMenuDB::checkDatabaseValidity()
 {
     ASSERT(m_database.isOpen());
 
-    if (!m_database.tableExists("Search"))
+    if (!m_database.tableExists("Search"_s))
         return false;
 
     auto integrity = m_database.prepareStatement("PRAGMA quick_check;"_s);
@@ -203,7 +203,7 @@ bool SearchPopupMenuDB::openDatabase()
     verifySchemaVersion();
 
     bool databaseValidity = true;
-    if (!existsDatabaseFile || !m_database.tableExists("Search"))
+    if (!existsDatabaseFile || !m_database.tableExists("Search"_s))
         databaseValidity = databaseValidity && (executeSQLStatement(m_database.prepareStatement(createSearchTableSQL)) == SQLITE_DONE);
 
     if (!databaseValidity) {

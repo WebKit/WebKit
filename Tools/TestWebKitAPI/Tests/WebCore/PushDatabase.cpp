@@ -38,7 +38,7 @@ namespace TestWebKitAPI {
 static String makeTemporaryDatabasePath()
 {
     FileSystem::PlatformFileHandle handle;
-    auto path = FileSystem::openTemporaryFile("PushDatabase", handle, ".db");
+    auto path = FileSystem::openTemporaryFile("PushDatabase"_s, handle, ".db"_s);
     FileSystem::closeFile(handle);
     return path;
 }

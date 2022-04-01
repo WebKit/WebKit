@@ -59,6 +59,7 @@
 		337B2D6A26546EB300DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 337B2D6826546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp */; };
 		339B7B1127C45EF50072BF9A /* FixedWidthDouble.h in Headers */ = {isa = PBXBuildFile; fileRef = 33479C1C27236F2000B2E1B7 /* FixedWidthDouble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4427C5AA21F6D6C300A612A4 /* ASCIICType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4427C5A921F6D6C300A612A4 /* ASCIICType.cpp */; };
+		4655743627F5FC4A002D5522 /* ASCIILiteralCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */; };
 		46BEB6EB22FFE24900269867 /* RefCounted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BEB6E922FFDDD500269867 /* RefCounted.cpp */; };
 		46E93049271F1205005BA6E5 /* SafeStrerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46E43647271F10AA00C88C90 /* SafeStrerror.cpp */; };
 		50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50DE35F3215BB01500B979C7 /* ExternalStringImpl.cpp */; };
@@ -1074,6 +1075,7 @@
 		4468567225094FE8008CCA05 /* ThreadSanitizerSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSanitizerSupport.h; sourceTree = "<group>"; };
 		44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastsCocoa.h; sourceTree = "<group>"; };
 		46209A27266D543A007F8F4A /* CancellableTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CancellableTask.h; sourceTree = "<group>"; };
+		4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ASCIILiteralCocoa.mm; sourceTree = "<group>"; };
 		46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandler.h; sourceTree = "<group>"; };
 		46BEB6E922FFDDD500269867 /* RefCounted.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefCounted.cpp; sourceTree = "<group>"; };
 		46E43646271F10AA00C88C90 /* SafeStrerror.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafeStrerror.h; sourceTree = "<group>"; };
@@ -1843,6 +1845,7 @@
 		A5BA15F11824339F00A82E69 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */,
 				A5BA15F2182433A900A82E69 /* StringCocoa.mm */,
 				A5BA15F41824348000A82E69 /* StringImplCocoa.mm */,
 				93934BD218A1E8C300D0D6A1 /* StringViewCocoa.mm */,
@@ -3536,6 +3539,7 @@
 				E37E96542702AD0B00E1C36A /* ApproximateTime.cpp in Sources */,
 				4427C5AA21F6D6C300A612A4 /* ASCIICType.cpp in Sources */,
 				C805EF39E5F14481A96D39FC /* ASCIILiteral.cpp in Sources */,
+				4655743627F5FC4A002D5522 /* ASCIILiteralCocoa.mm in Sources */,
 				A8A47386151A825B004123FF /* Assertions.cpp in Sources */,
 				A8A47435151A825B004123FF /* AtomString.cpp in Sources */,
 				70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */,
@@ -3552,7 +3556,6 @@
 				DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */,
 				A8A473AC151A825B004123FF /* cached-powers.cc in Sources */,
 				5C1F05932164356B0039302C /* CFURLExtras.cpp in Sources */,
-				FE35D09227DC5ECC009DFA5B /* StackCheck.cpp in Sources */,
 				0F66B28A1DC97BAB004A1D3F /* ClockType.cpp in Sources */,
 				A8A47460151A825B004123FF /* CollatorDefault.cpp in Sources */,
 				A8A47463151A825B004123FF /* CollatorICU.cpp in Sources */,
@@ -3657,6 +3660,7 @@
 				A8A47425151A825B004123FF /* SizeLimits.cpp in Sources */,
 				0FA6F39320CC73A300A03DCD /* SmallSet.cpp in Sources */,
 				A8A47427151A825B004123FF /* StackBounds.cpp in Sources */,
+				FE35D09227DC5ECC009DFA5B /* StackCheck.cpp in Sources */,
 				FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */,
 				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
 				3337DB9CE743410FAF076E17 /* StackTrace.cpp in Sources */,

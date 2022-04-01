@@ -232,7 +232,7 @@ static std::optional<MappedData> openAndMapContentRuleList(const WTF::String& pa
 {
     if (!FileSystem::makeSafeToUseMemoryMapForPath(path))
         return std::nullopt;
-    WebKit::NetworkCache::Data fileData = mapFile(fileSystemRepresentation(path).data());
+    auto fileData = mapFile(path);
     if (fileData.isNull())
         return std::nullopt;
     auto metaData = decodeContentRuleListMetaData(fileData);
@@ -366,7 +366,7 @@ static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, 
     };
 
     auto temporaryFileHandle = invalidPlatformFileHandle;
-    WTF::String temporaryFilePath = openTemporaryFile("ContentRuleList", temporaryFileHandle);
+    WTF::String temporaryFilePath = openTemporaryFile("ContentRuleList"_s, temporaryFileHandle);
     if (temporaryFileHandle == invalidPlatformFileHandle) {
         WTFLogAlways("Content Rule List compiling failed: Opening temporary file failed.");
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);

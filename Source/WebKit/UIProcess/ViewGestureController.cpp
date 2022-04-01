@@ -294,7 +294,7 @@ String ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events e
 }
 
 
-void ViewGestureController::SnapshotRemovalTracker::log(const String& log) const
+void ViewGestureController::SnapshotRemovalTracker::log(StringView log) const
 {
     RELEASE_LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", (MonotonicTime::now() - m_startTime).milliseconds(), log.utf8().data());
 }
@@ -324,13 +324,13 @@ void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, 
 void ViewGestureController::SnapshotRemovalTracker::reset()
 {
     if (m_outstandingEvents)
-        log("reset; had outstanding events: " + eventsDescription(m_outstandingEvents));
+        log(makeString("reset; had outstanding events: ", eventsDescription(m_outstandingEvents)));
     m_outstandingEvents = 0;
     m_watchdogTimer.stop();
     m_removalCallback = nullptr;
 }
 
-bool ViewGestureController::SnapshotRemovalTracker:: stopWaitingForEvent(Events event, const String& logReason, ShouldIgnoreEventIfPaused shouldIgnoreEventIfPaused)
+bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events event, ASCIILiteral logReason, ShouldIgnoreEventIfPaused shouldIgnoreEventIfPaused)
 {
     ASSERT(hasOneBitSet(event));
 
@@ -338,11 +338,11 @@ bool ViewGestureController::SnapshotRemovalTracker:: stopWaitingForEvent(Events 
         return false;
 
     if (shouldIgnoreEventIfPaused == ShouldIgnoreEventIfPaused::Yes && isPaused()) {
-        log("is paused; ignoring event: " + eventsDescription(event));
+        log(makeString("is paused; ignoring event: ", eventsDescription(event)));
         return false;
     }
 
-    log(logReason + eventsDescription(event));
+    log(makeString(logReason, eventsDescription(event)));
 
     m_outstandingEvents &= ~event;
 
@@ -352,12 +352,12 @@ bool ViewGestureController::SnapshotRemovalTracker:: stopWaitingForEvent(Events 
 
 bool ViewGestureController::SnapshotRemovalTracker::eventOccurred(Events event, ShouldIgnoreEventIfPaused shouldIgnoreEventIfPaused)
 {
-    return stopWaitingForEvent(event, "outstanding event occurred: ", shouldIgnoreEventIfPaused);
+    return stopWaitingForEvent(event, "outstanding event occurred: "_s, shouldIgnoreEventIfPaused);
 }
 
 bool ViewGestureController::SnapshotRemovalTracker::cancelOutstandingEvent(Events event)
 {
-    return stopWaitingForEvent(event, "wait for event cancelled: ");
+    return stopWaitingForEvent(event, "wait for event cancelled: "_s);
 }
 
 bool ViewGestureController::SnapshotRemovalTracker::hasOutstandingEvent(Event event)
@@ -368,7 +368,7 @@ bool ViewGestureController::SnapshotRemovalTracker::hasOutstandingEvent(Event ev
 void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackIfPossible()
 {
     if (m_outstandingEvents) {
-        log("deferring removal; had outstanding events: " + eventsDescription(m_outstandingEvents));
+        log(makeString("deferring removal; had outstanding events: ", eventsDescription(m_outstandingEvents)));
         return;
     }
 

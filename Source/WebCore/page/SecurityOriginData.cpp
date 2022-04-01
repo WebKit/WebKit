@@ -86,7 +86,7 @@ String SecurityOriginData::databaseIdentifier() const
     return makeString(protocol, separatorCharacter, FileSystem::encodeForFileName(host), separatorCharacter, port.value_or(0));
 }
 
-std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(const String& databaseIdentifier)
+std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(StringView databaseIdentifier)
 {
     // Make sure there's a first separator
     size_t separator1 = databaseIdentifier.find(separatorCharacter);
@@ -105,7 +105,7 @@ std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(con
     
     // Make sure the port section is a valid port number or doesn't exist.
     auto portLength = databaseIdentifier.length() - separator2 - 1;
-    auto port = parseIntegerAllowingTrailingJunk<uint16_t>(StringView { databaseIdentifier }.right(portLength));
+    auto port = parseIntegerAllowingTrailingJunk<uint16_t>(databaseIdentifier.right(portLength));
 
     // Nothing after the colon is fine. Failure to parse after the colon is not.
     if (!port && portLength)
@@ -117,7 +117,7 @@ std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(con
 
     auto protocol = databaseIdentifier.substring(0, separator1);
     auto host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
-    return SecurityOriginData { protocol, host, port };
+    return SecurityOriginData { protocol.toString(), host.toString(), port };
 }
 
 SecurityOriginData SecurityOriginData::isolatedCopy() const &

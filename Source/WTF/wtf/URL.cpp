@@ -340,25 +340,6 @@ bool URL::protocolIsInFTPFamily() const
     return WTF::protocolIsInFTPFamily(string());
 }
 
-bool URL::protocolIs(const char* protocol) const
-{
-    assertProtocolIsGood(protocol);
-
-    // JavaScript URLs are "valid" and should be executed even if URL decides they are invalid.
-    // The free function protocolIsJavaScript() should be used instead. 
-    ASSERT(!equalLettersIgnoringASCIICase(StringView(protocol), "javascript"));
-
-    if (!m_isValid)
-        return false;
-
-    // Do the comparison without making a new string object.
-    for (unsigned i = 0; i < m_schemeEnd; ++i) {
-        if (!protocol[i] || !isASCIIAlphaCaselessEqual(m_string[i], protocol[i]))
-            return false;
-    }
-    return !protocol[m_schemeEnd]; // We should have consumed all characters in the argument.
-}
-
 bool URL::protocolIs(StringView protocol) const
 {
     assertProtocolIsGood(protocol);

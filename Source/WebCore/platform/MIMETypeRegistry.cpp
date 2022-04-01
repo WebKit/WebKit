@@ -152,16 +152,16 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #endif
 };
 
-template<ASCIISubset subset, unsigned size> static FixedVector<const char*> makeFixedVector(const ComparableASCIISubsetLiteral<subset> (&array)[size])
+template<ASCIISubset subset, unsigned size> static FixedVector<ASCIILiteral> makeFixedVector(const ComparableASCIISubsetLiteral<subset> (&array)[size])
 {
-    FixedVector<const char*> result(std::size(array));
+    FixedVector<ASCIILiteral> result(std::size(array));
     std::transform(std::begin(array), std::end(array), result.begin(), [] (auto literal) {
         return literal.literal;
     });
     return result;
 }
 
-FixedVector<const char*> MIMETypeRegistry::supportedImageMIMETypes()
+FixedVector<ASCIILiteral> MIMETypeRegistry::supportedImageMIMETypes()
 {
     return makeFixedVector(supportedImageMIMETypeArray);
 }
@@ -244,7 +244,7 @@ constexpr ComparableLettersLiteral pdfMIMETypeArray[] = {
     "text/pdf",
 };
 
-FixedVector<const char*> MIMETypeRegistry::pdfMIMETypes()
+FixedVector<ASCIILiteral> MIMETypeRegistry::pdfMIMETypes()
 {
     return makeFixedVector(pdfMIMETypeArray);
 }
@@ -270,7 +270,7 @@ constexpr ComparableLettersLiteral unsupportedTextMIMETypeArray[] = {
     "text/x-vcf",
 };
 
-FixedVector<const char*> MIMETypeRegistry::unsupportedTextMIMETypes()
+FixedVector<ASCIILiteral> MIMETypeRegistry::unsupportedTextMIMETypes()
 {
     return makeFixedVector(unsupportedTextMIMETypeArray);
 }
@@ -690,7 +690,7 @@ constexpr ComparableLettersLiteral usdMIMETypeArray[] = {
     "model/vnd.usdz+zip", // The official type: https://www.iana.org/assignments/media-types/model/vnd.usdz+zip
 };
 
-FixedVector<const char*> MIMETypeRegistry::usdMIMETypes()
+FixedVector<ASCIILiteral> MIMETypeRegistry::usdMIMETypes()
 {
     return makeFixedVector(usdMIMETypeArray);
 }

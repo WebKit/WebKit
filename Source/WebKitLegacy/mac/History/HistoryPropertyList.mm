@@ -69,8 +69,8 @@ void HistoryPropertyListWriter::writeObjects(BinaryPropertyListObjectStream& str
 {
     size_t outerDictionaryStart = stream.writeDictionaryStart();
 
-    stream.writeString("WebHistoryFileVersion");
-    stream.writeString("WebHistoryDates");
+    stream.writeString("WebHistoryFileVersion"_s);
+    stream.writeString("WebHistoryDates"_s);
 
     stream.writeInteger(currentFileVersion);
     size_t outerDateArrayStart = stream.writeArrayStart();

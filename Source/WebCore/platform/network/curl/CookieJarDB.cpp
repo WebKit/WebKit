@@ -152,7 +152,7 @@ bool CookieJarDB::openDatabase()
 
     verifySchemaVersion();
 
-    if (!existsDatabaseFile || !m_database.tableExists("Cookie")) {
+    if (!existsDatabaseFile || !m_database.tableExists("Cookie"_s)) {
         bool ok = executeSQLStatement(m_database.prepareStatement(CREATE_COOKIE_TABLE_SQL))
             && executeSQLStatement(m_database.prepareStatement(CREATE_DOMAIN_INDEX_SQL))
             && executeSQLStatement(m_database.prepareStatement(CREATE_PATH_INDEX_SQL));
@@ -270,7 +270,7 @@ bool CookieJarDB::checkDatabaseValidity()
 {
     ASSERT(m_database.isOpen());
 
-    if (!m_database.tableExists("Cookie"))
+    if (!m_database.tableExists("Cookie"_s))
         return false;
 
     auto integrity = m_database.prepareStatement("PRAGMA quick_check;"_s);

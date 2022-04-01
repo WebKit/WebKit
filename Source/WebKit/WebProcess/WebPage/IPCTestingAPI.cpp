@@ -2141,7 +2141,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::JSValue(static_cast<unsigned>(decoder.messageName())));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, IPC::description(decoder.messageName())));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, String { IPC::description(decoder.messageName()) }));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(decoder.destinationID()));
@@ -2204,7 +2204,7 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, I
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "Semaphore"));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "Semaphore"_s));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
     auto jsValue = toJS(globalObject, WebKit::IPCTestingAPI::JSIPCSemaphore::create(WTFMove(value))->createJSWrapper(toRef(globalObject)));
     object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), jsValue);
@@ -2221,7 +2221,7 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* glob
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "SharedMemory"));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "SharedMemory"_s));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
     auto protection = Protection::ReadWrite;
@@ -2240,7 +2240,7 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* glob
     object->putDirect(vm, JSC::Identifier::fromString(vm, "dataSize"_s), JSC::JSValue(value.dataSize));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "protection"_s), JSC::jsNontrivialString(vm, protection == Protection::ReadWrite ? "ReadWrite" : "ReadOnly"));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "protection"_s), JSC::jsNontrivialString(vm, protection == Protection::ReadWrite ? "ReadWrite"_s : "ReadOnly"_s));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
 
     return object;

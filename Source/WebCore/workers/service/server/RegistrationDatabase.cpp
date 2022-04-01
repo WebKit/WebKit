@@ -241,7 +241,7 @@ bool RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
 
 String RegistrationDatabase::scriptStorageDirectory() const
 {
-    return FileSystem::pathByAppendingComponents(m_databaseDirectory, { "Scripts", "V1" });
+    return FileSystem::pathByAppendingComponents(m_databaseDirectory, { "Scripts"_s, "V1"_s });
 }
 
 SWScriptStorage& RegistrationDatabase::scriptStorage()

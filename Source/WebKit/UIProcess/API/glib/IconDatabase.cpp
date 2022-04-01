@@ -114,7 +114,7 @@ bool IconDatabase::createTablesIfNeeded()
 {
     ASSERT(!isMainRunLoop());
 
-    if (m_db.tableExists("IconInfo") && m_db.tableExists("IconData") && m_db.tableExists("PageURL") && m_db.tableExists("IconDatabaseInfo"))
+    if (m_db.tableExists("IconInfo"_s) && m_db.tableExists("IconData"_s) && m_db.tableExists("PageURL"_s) && m_db.tableExists("IconDatabaseInfo"_s))
         return false;
 
     if (m_allowDatabaseWrite == AllowDatabaseWrite::No) {

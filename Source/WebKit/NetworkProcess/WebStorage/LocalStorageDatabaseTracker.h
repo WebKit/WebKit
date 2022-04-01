@@ -65,7 +65,7 @@ public:
 private:
     LocalStorageDatabaseTracker(String&& localStorageDirectory);
 
-    String databasePath(const String& filename) const;
+    String databasePath(StringView filename) const;
     String localStorageDirectory() const;
 
     enum DatabaseOpeningStrategy {

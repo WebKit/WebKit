@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import <wtf/text/ASCIILiteral.h>
 
-#include <wtf/text/ASCIILiteral.h>
+#import <wtf/RetainPtr.h>
 
-namespace WebKit {
+namespace WTF {
 
-namespace LaunchServicesDatabaseXPCConstants {
+RetainPtr<NSString> ASCIILiteral::createNSString() const
+{
+    return adoptNS([[NSString alloc] initWithBytesNoCopy:const_cast<LChar*>(characters8()) length:length() encoding:NSISOLatin1StringEncoding freeWhenDone:NO]);
+}
 
-constexpr auto xpcUpdateLaunchServicesDatabaseMessageName = "update-launch-services-database-message"_s;
-constexpr auto xpcLaunchServicesDatabaseKey = "launch-services-database"_s;
-constexpr auto xpcRequestLaunchServicesDatabaseUpdateMessageName = "request-launch-services-database-update-message"_s;
-constexpr auto xpcLaunchServicesDatabaseXPCEndpointNameKey = "xpc-endpoint-launch-services-database"_s;
-constexpr auto xpcLaunchServicesDatabaseXPCEndpointMessageName = "xpc-endpoint-launch-services-database-message"_s;
-} // namespace LaunchServicesDatabaseXPCConstants
-
-} // namespace WebKit
+} // namespace WTF

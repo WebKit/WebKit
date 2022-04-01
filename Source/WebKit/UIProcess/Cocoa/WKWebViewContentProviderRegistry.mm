@@ -52,13 +52,13 @@
 
 #if ENABLE(WKPDFVIEW)
     for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes())
-        [self registerProvider:[WKPDFView class] forMIMEType:@(type)];
+        [self registerProvider:[WKPDFView class] forMIMEType:@(type.characters())];
 #endif
 
 #if USE(SYSTEM_PREVIEW) && !HAVE(UIKIT_WEBKIT_INTERNALS)
     if (configuration._systemPreviewEnabled && !configuration.preferences._modelDocumentEnabled) {
         for (auto& type : WebCore::MIMETypeRegistry::usdMIMETypes())
-            [self registerProvider:[WKUSDPreviewView class] forMIMEType:@(type)];
+            [self registerProvider:[WKUSDPreviewView class] forMIMEType:@(type.characters())];
     }
 #endif
 

@@ -935,7 +935,7 @@ String SQLiteIDBBackingStore::decodeDatabaseName(const String& encodedName)
 
 String SQLiteIDBBackingStore::fullDatabasePathForDirectory(const String& fullDatabaseDirectory)
 {
-    return FileSystem::pathByAppendingComponent(fullDatabaseDirectory, "IndexedDB.sqlite3");
+    return FileSystem::pathByAppendingComponent(fullDatabaseDirectory, "IndexedDB.sqlite3"_s);
 }
 
 String SQLiteIDBBackingStore::fullDatabasePath() const

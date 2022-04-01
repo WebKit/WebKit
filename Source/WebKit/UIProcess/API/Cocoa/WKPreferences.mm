@@ -44,7 +44,7 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebPreferences>(self, String(), "WebKit", "WebKitDebug");
+    API::Object::constructInWrapper<WebKit::WebPreferences>(self, String(), "WebKit"_s, "WebKitDebug"_s);
     return self;
 }
 

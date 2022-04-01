@@ -46,12 +46,12 @@ WTF::String WebsiteDataStore::defaultApplicationCacheDirectory()
 // Why is only this directory namespaced to a particular application?
 WTF::String WebsiteDataStore::defaultNetworkCacheDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "WebKitCache"));
+    return cacheDirectoryFileSystemRepresentation(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "WebKitCache"_s));
 }
 
 WTF::String WebsiteDataStore::defaultCacheStorageDirectory()
 {
-    return cacheDirectoryFileSystemRepresentation(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "CacheStorage"));
+    return cacheDirectoryFileSystemRepresentation(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_prgname()), "CacheStorage"_s));
 }
 
 WTF::String WebsiteDataStore::defaultGeneralStorageDirectory()

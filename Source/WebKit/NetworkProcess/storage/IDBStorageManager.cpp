@@ -122,8 +122,8 @@ HashSet<WebCore::ClientOrigin> IDBStorageManager::originsOfIDBStorageData(const 
     if (rootDirectory.isEmpty())
         return origins;
 
-    getOriginsForVersion(FileSystem::pathByAppendingComponent(rootDirectory, "v0"), origins);
-    getOriginsForVersion(FileSystem::pathByAppendingComponent(rootDirectory, "v1"), origins);
+    getOriginsForVersion(FileSystem::pathByAppendingComponent(rootDirectory, "v0"_s), origins);
+    getOriginsForVersion(FileSystem::pathByAppendingComponent(rootDirectory, "v1"_s), origins);
 
     return origins;
 }

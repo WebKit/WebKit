@@ -89,7 +89,7 @@ String createTemporaryZipArchive(const String& path)
     return temporaryFile;
 }
 
-String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileHandle, const String& suffix)
+String openTemporaryFile(StringView prefix, PlatformFileHandle& platformFileHandle, StringView suffix)
 {
     platformFileHandle = invalidPlatformFileHandle;
 

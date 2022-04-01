@@ -211,7 +211,7 @@ String Engine::storagePath(const String& rootDirectory, const WebCore::ClientOri
     if (rootDirectory.isEmpty())
         return emptyString();
 
-    String saltPath = FileSystem::pathByAppendingComponent(rootDirectory, "salt");
+    String saltPath = FileSystem::pathByAppendingComponent(rootDirectory, "salt"_s);
     auto salt = FileSystem::readOrMakeSalt(saltPath);
     if (!salt)
         return emptyString();
@@ -360,7 +360,7 @@ void Engine::initialize(CompletionCallback&& callback)
 
     m_ioQueue->dispatch([this, weakThis = WeakPtr { *this }, rootPath = m_rootPath.isolatedCopy()] () mutable {
         FileSystem::makeAllDirectories(rootPath);
-        String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt");
+        String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = FileSystem::readOrMakeSalt(saltPath)]() mutable {
             if (!weakThis)
                 return;

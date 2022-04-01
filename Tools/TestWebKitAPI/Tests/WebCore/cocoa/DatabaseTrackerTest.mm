@@ -41,7 +41,7 @@ namespace TestWebKitAPI {
 TEST(DatabaseTracker, DeleteDatabaseFileIfEmpty)
 {
     FileSystem::PlatformFileHandle handle;
-    String databaseFilePath = FileSystem::openTemporaryFile("tempEmptyDatabase", handle);
+    String databaseFilePath = FileSystem::openTemporaryFile("tempEmptyDatabase"_s, handle);
     FileSystem::closeFile(handle);
 
     auto fileSize = FileSystem::fileSize(databaseFilePath).value_or(0);
@@ -107,7 +107,7 @@ TEST(DatabaseTracker, DeleteOrigin)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
@@ -151,7 +151,7 @@ TEST(DatabaseTracker, DeleteOriginWhenDatabaseDoesNotExist)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
@@ -186,7 +186,7 @@ TEST(DatabaseTracker, DeleteOriginWhenDeletingADatabaseFails)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
@@ -242,7 +242,7 @@ TEST(DatabaseTracker, DeleteOriginWithMissingEntryInDatabasesTable)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     EXPECT_TRUE(databaseTracker->databaseNames(origin).isEmpty());
@@ -251,7 +251,7 @@ TEST(DatabaseTracker, DeleteOriginWithMissingEntryInDatabasesTable)
     EXPECT_TRUE(FileSystem::makeAllDirectories(originPath));
     EXPECT_TRUE(FileSystem::fileExists(originPath));
 
-    String webDatabasePath = FileSystem::pathByAppendingComponent(originPath, "database.db");
+    String webDatabasePath = FileSystem::pathByAppendingComponent(originPath, "database.db"_s);
     createFileAtPath(webDatabasePath);
 
     EXPECT_TRUE(databaseTracker->deleteOrigin(origin));
@@ -280,7 +280,7 @@ TEST(DatabaseTracker, DeleteDatabase)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";
@@ -322,7 +322,7 @@ TEST(DatabaseTracker, DeleteDatabaseWhenDatabaseDoesNotExist)
     databaseTracker->setQuota(origin, 5242880);
     EXPECT_EQ((unsigned)1, databaseTracker->origins().size());
 
-    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db");
+    String databasePath = FileSystem::pathByAppendingComponent(databaseDirectoryPath, "Databases.db"_s);
     EXPECT_TRUE(FileSystem::fileExists(databasePath));
 
     String webDatabaseName = "database_name";

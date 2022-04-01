@@ -111,7 +111,6 @@ private:
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
 Data adoptAndMapFile(FileSystem::PlatformFileHandle, size_t offset, size_t);
-Data mapFile(const char* path);
 Data mapFile(const String& path);
 
 using Salt = FileSystem::Salt;

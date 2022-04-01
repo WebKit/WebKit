@@ -56,7 +56,7 @@ public:
         
         // create temp file
         FileSystem::PlatformFileHandle handle;
-        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);
+        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
         ASSERT_NE(handle, FileSystem::invalidPlatformFileHandle);
         
         int rc = FileSystem::writeToFile(handle, FileMonitorTestData.utf8().data(), FileMonitorTestData.length());

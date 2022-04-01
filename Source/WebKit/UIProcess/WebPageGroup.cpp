@@ -91,7 +91,7 @@ static WebPageGroupData pageGroupData(const String& identifier)
 // If it turns out that it's wrong, we can change it to to "WebKit2." and get rid of the globalDebugKeyPrefix from WebPreferences.
 WebPageGroup::WebPageGroup(const String& identifier)
     : m_data(pageGroupData(identifier))
-    , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2", "WebKit2."))
+    , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2"_s, "WebKit2."_s))
     , m_userContentController(WebUserContentControllerProxy::create())
 {
     webPageGroupMap().set(m_data.pageGroupID, this);

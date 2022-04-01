@@ -109,7 +109,7 @@ IGNORE_WARNINGS_END
     EXPECT_EQ(_download, download);
 
     FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
     EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
     FileSystem::closeFile(fileHandle);
 
@@ -415,7 +415,7 @@ IGNORE_WARNINGS_END
     EXPECT_EQ(_download, download);
 
     FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
     EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
     FileSystem::closeFile(fileHandle);
 
@@ -475,7 +475,7 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 IGNORE_WARNINGS_END
 {
     FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    _destinationPath = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
     EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
     FileSystem::closeFile(fileHandle);
     *allowOverwrite = YES;
@@ -650,7 +650,7 @@ TEST(_WKDownload, DownloadCanceledWhileDecidingDestination)
     EXPECT_TRUE([filename hasSuffix:@".usdz"]);
 
     FileSystem::PlatformFileHandle fileHandle;
-    _destinationPath = FileSystem::openTemporaryFile(filename, fileHandle);
+    _destinationPath = FileSystem::openTemporaryFile(String { filename }, fileHandle);
     EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
     FileSystem::closeFile(fileHandle);
 
@@ -1074,7 +1074,7 @@ TEST(WebKit, DownloadNavigationResponseFromMemoryCache)
 - (void)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename completionHandler:(void (^)(BOOL allowOverwrite, NSString *destination))completionHandler
 {
     FileSystem::PlatformFileHandle fileHandle;
-    _path = FileSystem::openTemporaryFile("TestWebKitAPI", fileHandle);
+    _path = FileSystem::openTemporaryFile("TestWebKitAPI"_s, fileHandle);
     EXPECT_TRUE(fileHandle != FileSystem::invalidPlatformFileHandle);
     FileSystem::closeFile(fileHandle);
     completionHandler(YES, _path.get());

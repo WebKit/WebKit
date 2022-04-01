@@ -74,6 +74,12 @@ namespace WTF {
     template<typename P> struct VectorTraits<Ref<P>> : SimpleClassVectorTraits { };
     template<> struct VectorTraits<AtomString> : SimpleClassVectorTraits { };
 
+    template<> struct VectorTraits<ASCIILiteral> : VectorTraitsBase<false, void> {
+        static constexpr bool canInitializeWithMemset = true;
+        static constexpr bool canMoveWithMemcpy = true;
+        static constexpr bool canCompareWithMemcmp = false;
+    };
+
     template<typename First, typename Second>
     struct VectorTraits<std::pair<First, Second>>
     {

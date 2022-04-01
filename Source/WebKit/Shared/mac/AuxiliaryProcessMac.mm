@@ -282,7 +282,7 @@ static String sandboxDataVaultParentDirectory()
         WTFLogAlways("%s: Could not canonicalize user temporary directory path: %s\n", getprogname(), safeStrerror(errno).data());
         exit(EX_NOPERM);
     }
-    return resolvedPath;
+    return String::fromUTF8(resolvedPath);
 }
 
 static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const String& parentDirectory)
@@ -704,9 +704,9 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
 
     sandboxParameters.addPathParameter("HOME_DIR", pwd.pw_dir);
     String path = String::fromUTF8(pwd.pw_dir);
-    path.append("/Library");
+    path.append("/Library"_s);
     sandboxParameters.addPathParameter("HOME_LIBRARY_DIR", FileSystem::fileSystemRepresentation(path).data());
-    path.append("/Preferences");
+    path.append("/Preferences"_s);
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", FileSystem::fileSystemRepresentation(path).data());
 
 #if CPU(X86_64)

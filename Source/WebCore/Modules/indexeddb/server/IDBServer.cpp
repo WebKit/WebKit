@@ -566,8 +566,8 @@ HashSet<SecurityOriginData> IDBServer::getOrigins() const
         return { };
 
     HashSet<WebCore::SecurityOriginData> securityOrigins;
-    collectOriginsForVersion(FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v0"), securityOrigins);
-    collectOriginsForVersion(FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1"), securityOrigins);
+    collectOriginsForVersion(FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v0"_s), securityOrigins);
+    collectOriginsForVersion(FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1"_s), securityOrigins);
 
     return securityOrigins;
 }
@@ -636,7 +636,7 @@ static void removeAllDatabasesForFullOriginPath(const String& originPath, WallTi
 
     for (auto& databaseName : databaseNames) {
         auto databasePath = FileSystem::pathByAppendingComponent(originPath, databaseName);
-        String databaseFile = FileSystem::pathByAppendingComponent(databasePath, "IndexedDB.sqlite3");
+        String databaseFile = FileSystem::pathByAppendingComponent(databasePath, "IndexedDB.sqlite3"_s);
         if (modifiedSince > -WallTime::infinity() && FileSystem::fileExists(databaseFile)) {
             auto modificationTime = FileSystem::fileModificationTime(databaseFile);
             if (!modificationTime)
@@ -732,7 +732,7 @@ void IDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, const
         return databaseOrigin.topOrigin == targetOrigin;
     });
 
-    auto versionPath = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1");
+    auto versionPath = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1"_s);
     auto oldOriginPath = FileSystem::pathByAppendingComponent(versionPath, oldOrigin.databaseIdentifier());
     auto newOriginPath = FileSystem::pathByAppendingComponent(versionPath, newOrigin.databaseIdentifier());
     if (FileSystem::fileExists(oldOriginPath))
@@ -768,7 +768,7 @@ void IDBServer::upgradeFilesIfNecessary()
     if (m_databaseDirectoryPath.isEmpty() || !FileSystem::fileExists(m_databaseDirectoryPath))
         return;
 
-    String newVersionDirectory = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1");
+    String newVersionDirectory = FileSystem::pathByAppendingComponent(m_databaseDirectoryPath, "v1"_s);
     if (!FileSystem::fileExists(newVersionDirectory))
         FileSystem::makeAllDirectories(newVersionDirectory);
 }

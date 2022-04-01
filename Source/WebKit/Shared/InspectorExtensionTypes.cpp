@@ -48,7 +48,7 @@ WTF::String extensionErrorToString(ExtensionError error)
     }
 
     ASSERT_NOT_REACHED();
-    return "InternalError";
+    return "InternalError"_s;
 }
 
 } // namespace WebKit

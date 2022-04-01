@@ -37,11 +37,11 @@ void FragmentedSharedBufferTest::SetUp()
 
     // create temp file
     FileSystem::PlatformFileHandle handle;
-    m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);
+    m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
     FileSystem::writeToFile(handle, testData(), strlen(testData()));
     FileSystem::closeFile(handle);
 
-    m_tempEmptyFilePath = FileSystem::openTemporaryFile("tempEmptyTestFile", handle);
+    m_tempEmptyFilePath = FileSystem::openTemporaryFile("tempEmptyTestFile"_s, handle);
     FileSystem::closeFile(handle);
 }
 

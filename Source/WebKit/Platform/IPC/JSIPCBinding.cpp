@@ -89,7 +89,7 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, b
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* object = JSC::constructEmptyObject(globalObject, globalObject->objectPrototype());
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "bool"));
+    object->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsNontrivialString(vm, "bool"_s));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
     object->putDirect(vm, JSC::Identifier::fromString(vm, "value"_s), JSC::jsBoolean(value));
     RETURN_IF_EXCEPTION(scope, JSC::JSValue());
@@ -99,67 +99,67 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, b
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, double value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "double");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "double"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, float value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "float");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "float"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, int8_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int8_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int8_t"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, int16_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int16_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int16_t"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, int32_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int32_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int32_t"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, int64_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int64_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "int64_t"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, uint8_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint8_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint8_t"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, uint16_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint16_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint16_t"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, uint32_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint32_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint32_t"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, uint64_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint64_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint64_t"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, size_t value)
 {
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "size_t");
+    return jsValueForDecodedNumericArgumentValue(globalObject, value, "size_t"_s);
 }
 
 template<typename RectType>
@@ -185,13 +185,13 @@ JSC::JSValue jsValueForDecodedArgumentRect(JSC::JSGlobalObject* globalObject, co
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::IntRect&& value)
 {
-    return jsValueForDecodedArgumentRect(globalObject, value, "IntRect");
+    return jsValueForDecodedArgumentRect(globalObject, value, "IntRect"_s);
 }
 
 template<>
 JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, WebCore::FloatRect&& value)
 {
-    return jsValueForDecodedArgumentRect(globalObject, value, "FloatRect");
+    return jsValueForDecodedArgumentRect(globalObject, value, "FloatRect"_s);
 }
 
 bool putJSValueForDecodedArgumentAtIndexOrArrayBufferIfUndefined(JSC::JSGlobalObject* globalObject, JSC::JSArray* array, unsigned index, JSC::JSValue value, const uint8_t* buffer, size_t length)

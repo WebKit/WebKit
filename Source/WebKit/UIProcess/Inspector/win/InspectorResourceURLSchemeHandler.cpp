@@ -47,7 +47,7 @@ void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLS
     if (requestPath.startsWith("\\"))
         requestPath.remove(0);
     auto path = URL(adoptCF(CFBundleCopyBundleURL(WebCore::webKitBundle())).get()).fileSystemPath();
-    path = FileSystem::pathByAppendingComponent(path, "WebInspectorUI");
+    path = FileSystem::pathByAppendingComponent(path, "WebInspectorUI"_s);
     path = FileSystem::pathByAppendingComponent(path, requestPath);
     bool success;
     FileSystem::MappedFileData file(path, FileSystem::MappedFileMode::Private, success);

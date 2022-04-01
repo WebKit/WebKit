@@ -1640,7 +1640,7 @@ void NetworkProcessProxy::createSymLinkForFileUpgrade(const String& indexedDatab
     if (indexedDatabaseDirectory.isEmpty())
         return;
 
-    String oldVersionDirectory = FileSystem::pathByAppendingComponent(indexedDatabaseDirectory, "v0");
+    String oldVersionDirectory = FileSystem::pathByAppendingComponent(indexedDatabaseDirectory, "v0"_s);
     FileSystem::deleteEmptyDirectory(oldVersionDirectory);
     if (!FileSystem::fileExists(oldVersionDirectory))
         FileSystem::createSymbolicLink(indexedDatabaseDirectory, oldVersionDirectory);

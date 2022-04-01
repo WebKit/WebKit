@@ -617,11 +617,11 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
         auto* highlightDataArray = WebKit::toImpl(highlightData);
         highlights.reserveInitialCapacity(highlightDataArray->size());
         for (auto dictionary : highlightDataArray->elementsOfType<API::Dictionary>()) {
-            auto startOffset = static_cast<API::UInt64*>(dictionary->get("from"))->value();
+            auto startOffset = static_cast<API::UInt64*>(dictionary->get("from"_s))->value();
             highlights.uncheckedAppend({
                 static_cast<unsigned>(startOffset),
-                static_cast<unsigned>(startOffset + static_cast<API::UInt64*>(dictionary->get("length"))->value()),
-                WebCore::CSSParser::parseColorWithoutContext(static_cast<API::String*>(dictionary->get("color"))->string())
+                static_cast<unsigned>(startOffset + static_cast<API::UInt64*>(dictionary->get("length"_s))->value()),
+                WebCore::CSSParser::parseColorWithoutContext(static_cast<API::String*>(dictionary->get("color"_s))->string())
             });
         }
     }

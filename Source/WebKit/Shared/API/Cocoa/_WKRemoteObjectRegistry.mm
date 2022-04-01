@@ -162,7 +162,7 @@ static uint64_t generateReplyIdentifier()
         if (strcmp([NSMethodSignature signatureWithObjCTypes:replyBlockSignature].methodReturnType, "v"))
             [NSException raise:NSInvalidArgumentException format:@"Return value of block argument must be 'void'. (%s)", sel_getName(invocation.selector)];
 
-        replyInfo = makeUnique<WebKit::RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), replyBlockSignature);
+        replyInfo = makeUnique<WebKit::RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), String { replyBlockSignature });
 
         // Replace the block object so we won't try to encode it.
         id null = nullptr;
@@ -227,7 +227,7 @@ static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger b
     if (!targetMethodSignature)
         return { };
 
-    return [targetMethodSignature _signatureForBlockAtArgumentIndex:blockIndex]._typeString.UTF8String;
+    return [targetMethodSignature _signatureForBlockAtArgumentIndex:blockIndex]._typeString;
 }
 
 - (void)_invokeMethod:(const WebKit::RemoteObjectInvocation&)remoteObjectInvocation
@@ -270,7 +270,7 @@ static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger b
             return;
         }
 
-        String wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().data()]._typeString.UTF8String;
+        String wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().data()]._typeString;
         String expectedBlockSignature = replyBlockSignature([interface protocol], invocation.selector, i);
 
         if (expectedBlockSignature.isNull()) {

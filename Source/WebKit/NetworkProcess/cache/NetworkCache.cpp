@@ -130,7 +130,7 @@ Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
         // Triggers with "touch $cachePath/dump".
-        CString dumpFilePath = fileSystemRepresentation(pathByAppendingComponent(m_storage->basePathIsolatedCopy(), "dump"));
+        CString dumpFilePath = fileSystemRepresentation(pathByAppendingComponent(m_storage->basePathIsolatedCopy(), "dump"_s));
         GRefPtr<GFile> dumpFile = adoptGRef(g_file_new_for_path(dumpFilePath.data()));
         GFileMonitor* monitor = g_file_monitor_file(dumpFile.get(), G_FILE_MONITOR_NONE, nullptr, nullptr);
         g_signal_connect_swapped(monitor, "changed", G_CALLBACK(dumpFileChanged), this);
@@ -599,7 +599,7 @@ void Cache::traverse(Function<void(const TraversalEntry*)>&& traverseHandler)
 
 String Cache::dumpFilePath() const
 {
-    return pathByAppendingComponent(m_storage->versionPath(), "dump.json");
+    return pathByAppendingComponent(m_storage->versionPath(), "dump.json"_s);
 }
 
 void Cache::dumpContentsToFile()

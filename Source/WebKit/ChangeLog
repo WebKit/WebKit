@@ -1,3 +1,247 @@
+2022-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238525
+
+        Reviewed by Darin Adler.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::workQueueInitialize):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::appendBoolean):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::appendSubStatisticList const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::resourceToString const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deletePushAndNotificationRegistration):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::logCookieInformation const):
+        (WebKit::logBlockedCookieInformation):
+        (WebKit::logCookieInformationInternal):
+        (WebKit::NetworkResourceLoader::logCookieInformation):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::clearPrivateClickMeasurement):
+        (WebKit::PCM::Database::addDestinationTokenColumnsIfNecessary):
+        (WebKit::PCM::Database::columnsForTable):
+        (WebKit::PCM::Database::addMissingColumnToTable):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination):
+        (WebKit::PrivateClickMeasurementManager::handleAttribution):
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasePath const):
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::get):
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::mapFile):
+        * NetworkProcess/cache/NetworkCacheData.h:
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm:
+        (WebKit::LaunchServicesDatabaseObserver::handleEvent):
+        * NetworkProcess/storage/SQLiteStorageArea.cpp:
+        (WebKit::SQLiteStorageArea::createTableIfNecessary):
+        * Platform/IPC/JSIPCBinding.cpp:
+        (IPC::jsValueForDecodedArgumentValue):
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb:
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeObject):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _sendInvocation:interface:]):
+        (replyBlockSignature):
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::stringByResolvingSymlinksInPath):
+        (WebKit::resolveAndCreateReadWriteDirectoryForSandboxExtension):
+        (WebKit::resolvePathForSandboxExtension):
+        (WebKit::SandboxExtension::createHandleWithoutResolvingPath):
+        (WebKit::SandboxExtension::createHandle):
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        (WebKit::SandboxExtension::createHandleForTemporaryFile):
+        (WebKit::SandboxExtension::createHandleForReadByAuditToken):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getClientIdentifier):
+        (WebKit::XPCServiceInitializerDelegate::getClientBundleIdentifier):
+        (WebKit::XPCServiceInitializerDelegate::getClientProcessName):
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        * Shared/IPCTester.cpp:
+        (WebKit::messageTestDriver):
+        * Shared/InspectorExtensionTypes.cpp:
+        (Inspector::extensionErrorToString):
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandle):
+        (WebKit::SandboxExtension::createHandleWithoutResolvingPath):
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        (WebKit::SandboxExtension::createHandleForTemporaryFile):
+        (WebKit::stringByResolvingSymlinksInPath):
+        (WebKit::resolvePathForSandboxExtension):
+        (WebKit::resolveAndCreateReadWriteDirectoryForSandboxExtension):
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::sandboxDataVaultParentDirectory):
+        (WebKit::getUserDirectorySuffix):
+        (WebKit::populateSandboxInitializationParameters):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::openAndMapContentRuleList):
+        * UIProcess/API/C/WKDownloadRef.cpp:
+        (WKDownloadSetClient):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSessionHistoryURLValueType):
+        (WKPageGetSessionBackForwardListItemValueType):
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesCreate):
+        (WKPreferencesCreateWithIdentifier):
+        * UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm:
+        (API::ContentRuleListStore::defaultStorePath):
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (+[WKContentRuleListStore storeWithURL:]):
+        (+[WKContentRuleListStore storeWithURLAndLegacyFilename:]):
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]):
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::getLaunchOptions):
+        * UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm:
+        (WebKit::SubFrameSOAuthorizationSession::loadRequestToFrame):
+        * UIProcess/Cocoa/WebKitSwiftSoftLink.mm:
+        (WebKit::WebKitSwiftLibrary):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextTouchBarItemController _wkChangeTextStyle:]):
+        (-[WKTextTouchBarItemController _wkChangeTextAlignment:]):
+        (-[WKTextTouchBarItemController _wkChangeColor:]):
+        (WebKit::WebViewImpl::insertText):
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::getSecurityOriginData):
+        (WebKit::DeviceIdHashSaltStorage::getDataFromDecoder const):
+        (WebKit::DeviceIdHashSaltStorage::createEncoderFromData const):
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        (WebKit::NetworkProcessProxy::XPCEventHandler::handleXPCEvent const):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::log const):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::reset):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::eventOccurred):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::cancelOutstandingEvent):
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackIfPossible):
+        (WebKit::stopWaitingForEvent): Deleted.
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorUtils.mm:
+        (WebKit::base64PrivateKey):
+        * UIProcess/WebAuthentication/Virtual/VirtualHidConnection.cpp:
+        (WebKit::VirtualHidConnection::parseRequest):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::handleRequest):
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createRealtimeMediaSourceForSpeechRecognition):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReceiveInvalidMessage):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed):
+        (WebKit::WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished):
+        (WebKit::WebProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished):
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultCacheStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultGeneralStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultAlternativeServicesDirectory):
+        (WebKit::WebsiteDataStore::defaultMediaCacheDirectory):
+        (WebKit::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (WebKit::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory):
+        (WebKit::WebsiteDataStore::defaultLocalStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+        (WebKit::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (WebKit::WebsiteDataStore::defaultResourceLoadStatisticsDirectory):
+        (WebKit::WebsiteDataStore::defaultJavaScriptConfigurationDirectory):
+        (WebKit::WebsiteDataStore::defaultModelElementCacheDirectory):
+        (WebKit::WebsiteDataStore::tempDirectoryFileSystemRepresentation):
+        (WebKit::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (WebKit::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::formatNameFromWebRTCCodecType):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetComposition):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::increaseBufferedAmount):
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::networkProcessCrashed):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::receivedNonLinearizedPDFSentinel):
+        (WebKit::PDFPlugin::threadEntry):
+        (WebKit::PDFPlugin::adoptBackgroundThreadDocument):
+        (WebKit::PDFPlugin::pluginInfo):
+        (WebKit::PDFPlugin::addArchiveResource):
+        (WebKit::PDFPlugin::setSuggestedFilename):
+        (WebKit::PDFPlugin::initialize):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::cssAlignmentValueForNSTextAlignment):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp:
+        (WebKit::WebFileSystemStorageConnection::isSameEntry):
+        (WebKit::WebFileSystemStorageConnection::getFileHandle):
+        (WebKit::WebFileSystemStorageConnection::getDirectoryHandle):
+        (WebKit::WebFileSystemStorageConnection::removeEntry):
+        (WebKit::WebFileSystemStorageConnection::resolve):
+        (WebKit::WebFileSystemStorageConnection::getFile):
+        (WebKit::WebFileSystemStorageConnection::createSyncAccessHandle):
+        (WebKit::WebFileSystemStorageConnection::closeSyncAccessHandle):
+        (WebKit::WebFileSystemStorageConnection::getHandleNames):
+        (WebKit::WebFileSystemStorageConnection::getHandle):
+        (WebKit::WebFileSystemStorageConnection::move):
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp:
+        (WebKit::WebSpeechSynthesisClient::speak):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::changeWordCase):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSMessageListener::jsDescriptionFromDecoder):
+        (IPC::jsValueForDecodedArgumentValue):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::layerTreeAsText const):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::transientZoomSnapAnimationForKeyPath):
+        (WebKit::TiledCoreAnimationDrawingArea::commitTransientZoom):
+        * WebProcess/cocoa/LaunchServicesDatabaseManager.mm:
+        (WebKit::LaunchServicesDatabaseManager::handleEvent):
+        * webpushd/AppBundleRequest.mm:
+        (WebPushD::AppBundleDeletionRequest::didDeleteExistingBundleWithError):
+        * webpushd/PushClientConnection.h:
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::broadcastDebugMessage):
+        (WebPushD::ClientConnection::sendDebugMessage):
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::broadcastDebugMessage):
+        (WebPushD::Daemon::deletePushAndNotificationRegistration):
+        * webpushd/WebPushDaemonMain.mm:
+        (WebKit::WebPushDaemonMain):
+
 2022-03-31  Jean-Yves Avenard  <jya@apple.com>
 
         Player window shouldn't have black bar when going into fullscreen

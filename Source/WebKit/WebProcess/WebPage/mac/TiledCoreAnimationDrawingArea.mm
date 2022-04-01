@@ -810,11 +810,11 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     frameView->renderView()->layer()->backing()->tiledBacking()->prepopulateRect(tileCoverageRect);
 }
 
-static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(String keyPath)
+static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(ASCIILiteral keyPath)
 {
     const float transientZoomSnapBackDuration = 0.25;
 
-    RetainPtr<CABasicAnimation> animation = [CABasicAnimation animationWithKeyPath:keyPath];
+    RetainPtr<CABasicAnimation> animation = [CABasicAnimation animationWithKeyPath:keyPath.createNSString().get()];
     [animation setDuration:transientZoomSnapBackDuration];
     [animation setFillMode:kCAFillModeForwards];
     [animation setRemovedOnCompletion:false];
@@ -853,7 +853,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     transform.translate(constrainedOrigin.x(), constrainedOrigin.y());
     transform.scale(scale);
 
-    RetainPtr<CABasicAnimation> renderViewAnimationCA = transientZoomSnapAnimationForKeyPath("transform");
+    RetainPtr<CABasicAnimation> renderViewAnimationCA = transientZoomSnapAnimationForKeyPath("transform"_s);
     auto renderViewAnimation = PlatformCAAnimationCocoa::create(renderViewAnimationCA.get());
     renderViewAnimation->setToValue(transform);
 
@@ -866,7 +866,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
 
     [CATransaction begin];
     [CATransaction setCompletionBlock:[zoomLayer, shadowCALayer, page, scale, origin] () {
-        zoomLayer->removeAnimationForKey("transientZoomCommit");
+        zoomLayer->removeAnimationForKey("transientZoomCommit"_s);
         if (shadowCALayer)
             [shadowCALayer removeAllAnimations];
 
@@ -874,17 +874,17 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
             drawingArea->applyTransientZoomToPage(scale, origin);
     }];
 
-    zoomLayer->addAnimationForKey("transientZoomCommit", renderViewAnimation.get());
+    zoomLayer->addAnimationForKey("transientZoomCommit"_s, renderViewAnimation.get());
 
     if (shadowCALayer) {
         FloatRect shadowBounds = shadowLayerBoundsForFrame(frameView, scale);
         RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect(shadowBounds, NULL));
 
-        RetainPtr<CABasicAnimation> shadowBoundsAnimation = transientZoomSnapAnimationForKeyPath("bounds");
+        RetainPtr<CABasicAnimation> shadowBoundsAnimation = transientZoomSnapAnimationForKeyPath("bounds"_s);
         [shadowBoundsAnimation setToValue:[NSValue valueWithRect:shadowBounds]];
-        RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position");
+        RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position"_s);
         [shadowPositionAnimation setToValue:[NSValue valueWithPoint:shadowLayerPositionForFrame(frameView, constrainedOrigin)]];
-        RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath");
+        RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath"_s);
         [shadowPathAnimation setToValue:(__bridge id)shadowPath.get()];
 
         [shadowCALayer addAnimation:shadowBoundsAnimation.get() forKey:@"transientZoomCommitShadowBounds"];

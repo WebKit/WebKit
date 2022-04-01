@@ -136,7 +136,7 @@ void AppBundleDeletionRequest::didDeleteExistingBundleWithError(PushAppBundle& b
     if (error)
         m_connection->broadcastDebugMessage(makeString("Failed to delete app bundle: ", String([error description])));
 
-    callCompletionHandlerAndCleanup(error ? String([error description]) : "");
+    callCompletionHandlerAndCleanup(error ? String([error description]) : emptyString());
 }
 
 } // namespace WebPushD

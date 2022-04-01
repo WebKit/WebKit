@@ -145,7 +145,7 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
         m_customIDBStoragePath = customIDBStoragePath;
         m_customCacheStoragePath = customCacheStoragePath;
         if (!m_path.isEmpty()) {
-            auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt");
+            auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt"_s);
             m_salt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
         }
     });

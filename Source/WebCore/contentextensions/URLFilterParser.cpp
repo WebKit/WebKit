@@ -349,7 +349,7 @@ URLFilterParser::URLFilterParser(CombinedURLFilters& combinedURLFilters)
 
 URLFilterParser::~URLFilterParser() = default;
 
-URLFilterParser::ParseStatus URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId)
+URLFilterParser::ParseStatus URLFilterParser::addPattern(StringView pattern, bool patternIsCaseSensitive, uint64_t patternId)
 {
     if (!pattern.isAllASCII())
         return NonASCII;

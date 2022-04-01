@@ -586,7 +586,7 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     if (m_cacheDirectory.isNull())
         return;
 
-    m_cacheFile = FileSystem::pathByAppendingComponent(m_cacheDirectory, "ApplicationCache.db");
+    m_cacheFile = FileSystem::pathByAppendingComponent(m_cacheDirectory, "ApplicationCache.db"_s);
     if (!createIfDoesNotExist && !FileSystem::fileExists(m_cacheFile))
         return;
 

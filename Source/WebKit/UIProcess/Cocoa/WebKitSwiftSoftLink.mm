@@ -41,8 +41,11 @@ void* WebKitSwiftLibrary(bool isOptional)
         // Then search in the Frameworks/ directory of the currently loaded version of WebKit.framework:
         Dl_info info { };
         if (dladdr((const void*)&WebKitSwiftLibrary, &info) && strlen(info.dli_fname)) {
-            auto webkitFrameworkDirectory = WTF::FileSystemImpl::parentPath(info.dli_fname);
-            auto dylibPath = WTF::FileSystemImpl::pathByAppendingComponent(webkitFrameworkDirectory, "Frameworks/libWebKitSwift.dylib");
+            auto dliPath = String::fromUTF8(info.dli_fname);
+            if (dliPath.isNull())
+                return;
+            auto webkitFrameworkDirectory = WTF::FileSystemImpl::parentPath(dliPath);
+            auto dylibPath = WTF::FileSystemImpl::pathByAppendingComponent(webkitFrameworkDirectory, "Frameworks/libWebKitSwift.dylib"_s);
             if ((library = dlopen(dylibPath.utf8().data(), RTLD_NOW)))
                 return;
         }

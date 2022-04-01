@@ -1,5 +1,58 @@
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
+        Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238525
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::createOrMigrateRecordsTableIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidBlobTables):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseNameAndVersionFromFile):
+        * Modules/model-element/scenekit/SceneKitModelLoaderUSD.mm:
+        (WebCore::writeToTemporaryFile):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::performOpenAndVerify):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::trackerDatabasePath const):
+        (WebCore::DatabaseTracker::openTrackerDatabase):
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::dumpHeap):
+        * contentextensions/SerializedNFA.cpp:
+        (WebCore::ContentExtensions::SerializedNFA::serialize):
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::URLFilterParser::addPattern):
+        * contentextensions/URLFilterParser.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::appendBoolean):
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::fromDatabaseIdentifier):
+        * page/SecurityOriginData.h:
+        * platform/graphics/cg/ImageUtilitiesCG.cpp:
+        (WebCore::transcodeImage):
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::tableExists):
+        (WebCore::SQLiteDatabase::tableSQL):
+        (WebCore::SQLiteDatabase::indexSQL):
+        (WebCore::SQLiteDatabase::inMemoryPath): Deleted.
+        * platform/sql/SQLiteDatabase.h:
+        (WebCore::SQLiteDatabase::inMemoryPath):
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::appendDatabaseFileNameToPath):
+        (WebCore::SQLiteFileSystem::computeHashForFileName):
+        * platform/sql/SQLiteFileSystem.h:
+
+2022-03-31  Chris Dumez  <cdumez@apple.com>
+
         Adopt Identifier::fromString(ASCIILiteral) more broadly
         https://bugs.webkit.org/show_bug.cgi?id=238574
 

@@ -44,7 +44,7 @@ static String moduleDirectory()
 
 WKStringRef createInjectedBundlePath()
 {
-    auto path = FileSystem::pathByAppendingComponent(moduleDirectory(), "TestWebKitAPIInjectedBundle.dll");
+    auto path = FileSystem::pathByAppendingComponent(moduleDirectory(), "TestWebKitAPIInjectedBundle.dll"_s);
     return WKStringCreateWithUTF8CString(path.utf8().data());
 }
 

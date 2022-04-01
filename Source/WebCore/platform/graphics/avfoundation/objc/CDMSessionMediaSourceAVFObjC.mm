@@ -113,7 +113,7 @@ String CDMSessionMediaSourceAVFObjC::storagePath() const
     if (storageDirectory.isEmpty())
         return emptyString();
 
-    return FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
+    return FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist"_s);
 }
 
 #if !RELEASE_LOG_DISABLED

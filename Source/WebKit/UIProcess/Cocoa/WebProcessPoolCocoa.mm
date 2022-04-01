@@ -282,7 +282,7 @@ String WebProcessPool::cookieStorageDirectory()
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
 {
-    m_resolvedPaths.uiProcessBundleResourcePath = resolvePathForSandboxExtension([[NSBundle mainBundle] resourcePath]);
+    m_resolvedPaths.uiProcessBundleResourcePath = resolvePathForSandboxExtension(String { [[NSBundle mainBundle] resourcePath] });
 }
 
 #if PLATFORM(IOS_FAMILY)

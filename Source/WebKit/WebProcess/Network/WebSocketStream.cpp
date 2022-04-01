@@ -66,7 +66,7 @@ void WebSocketStream::networkProcessCrashed()
             callback(false);
         for (auto& callback : stream->m_sendHandshakeCallbacks.values())
             callback(false, false);
-        stream->m_client.didFailSocketStream(*stream, SocketStreamError(0, { }, "Network process crashed."));
+        stream->m_client.didFailSocketStream(*stream, SocketStreamError(0, { }, "Network process crashed."_s));
         stream = nullptr;
     }
 

@@ -122,7 +122,7 @@ void LocalStorageDatabase::startTransactionIfNecessary()
 bool LocalStorageDatabase::migrateItemTableIfNeeded()
 {
     ASSERT(!RunLoop::isMain());
-    if (!m_database.tableExists("ItemTable"))
+    if (!m_database.tableExists("ItemTable"_s))
         return true;
 
     auto query = m_database.prepareStatement("SELECT value FROM ItemTable LIMIT 1"_s);

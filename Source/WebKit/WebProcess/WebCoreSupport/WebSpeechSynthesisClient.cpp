@@ -77,9 +77,9 @@ void WebSpeechSynthesisClient::speak(RefPtr<WebCore::PlatformSpeechSynthesisUtte
     };
 
     auto voice = utterance->voice();
-    auto voiceURI = voice ? voice->voiceURI() : "";
-    auto name = voice ? voice->name() : "";
-    auto lang = voice ? voice->lang() : "";
+    auto voiceURI = voice ? voice->voiceURI() : emptyString();
+    auto name = voice ? voice->name() : emptyString();
+    auto lang = voice ? voice->lang() : emptyString();
     auto localService = voice ? voice->localService() : false;
     auto isDefault = voice ? voice->isDefault() : false;
     

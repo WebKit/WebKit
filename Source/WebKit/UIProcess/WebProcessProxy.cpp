@@ -559,19 +559,19 @@ WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
 void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
 {
     for (auto& page : globalPageMap())
-        page.value->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished", nullptr);
+        page.value->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished"_s, nullptr);
 }
 
 void WebProcessProxy::notifyWebsiteDataScanForRegistrableDomainsFinished()
 {
     for (auto& page : globalPageMap())
-        page.value->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished", nullptr);
+        page.value->postMessageToInjectedBundle("WebsiteDataScanForRegistrableDomainsFinished"_s, nullptr);
 }
 
 void WebProcessProxy::notifyWebsiteDataDeletionForRegistrableDomainsFinished()
 {
     for (auto& page : globalPageMap())
-        page.value->postMessageToInjectedBundle("WebsiteDataDeletionForRegistrableDomainsFinished", nullptr);
+        page.value->postMessageToInjectedBundle("WebsiteDataDeletionForRegistrableDomainsFinished"_s, nullptr);
 }
 
 void WebProcessProxy::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
@@ -1789,7 +1789,7 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
 
 #if ENABLE(MEDIA_STREAM)
     auto createRealtimeMediaSource = [weakPage = WeakPtr { targetPage }]() {
-        return weakPage ? weakPage->createRealtimeMediaSourceForSpeechRecognition() : CaptureSourceOrError { "Page is invalid" };
+        return weakPage ? weakPage->createRealtimeMediaSourceForSpeechRecognition() : CaptureSourceOrError { "Page is invalid"_s };
     };
     speechRecognitionServer = makeUnique<SpeechRecognitionServer>(*connection(), identifier, WTFMove(permissionChecker), WTFMove(checkIfMockCaptureDevicesEnabled), WTFMove(createRealtimeMediaSource));
 #else

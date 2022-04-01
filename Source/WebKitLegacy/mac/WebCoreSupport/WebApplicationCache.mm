@@ -135,7 +135,7 @@ static NSString *applicationCachePath()
 
 WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 {
-    static WebCore::ApplicationCacheStorage& storage = WebCore::ApplicationCacheStorage::create(applicationCachePath(), "ApplicationCache").leakRef();
+    static WebCore::ApplicationCacheStorage& storage = WebCore::ApplicationCacheStorage::create(applicationCachePath(), "ApplicationCache"_s).leakRef();
 
     return storage;
 }

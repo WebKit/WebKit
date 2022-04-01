@@ -58,7 +58,7 @@ WTF::String ContentRuleListStore::defaultStorePath()
     if (![[NSFileManager defaultManager] createDirectoryAtURL:contentRuleListStoreURL.get().get() withIntermediateDirectories:YES attributes:nil error:nullptr])
         LOG_ERROR("Failed to create directory %@", contentRuleListStoreURL.get().get());
 
-    return [contentRuleListStoreURL.get() absoluteURL].path.fileSystemRepresentation;
+    return [contentRuleListStoreURL.get() absoluteURL].path;
 }
 
 } // namespace API

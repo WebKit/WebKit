@@ -129,7 +129,7 @@ void WKDownloadSetClient(WKDownloadRef download, WKDownloadClientBase* client)
 
         void processDidCrash(WebKit::DownloadProxy& download) override
         {
-            didFail(download, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, download.request().url(), "Network process crashed during download" }, nullptr);
+            didFail(download, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, download.request().url(), "Network process crashed during download"_s }, nullptr);
         }
 
         void willSendRequest(WebKit::DownloadProxy& download, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) override

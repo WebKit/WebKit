@@ -86,7 +86,7 @@ String LocalStorageManager::localStorageFilePath(const String& directory)
     if (directory.isEmpty())
         return emptyString();
 
-    return FileSystem::pathByAppendingComponent(directory, StringView { s_fileName });
+    return FileSystem::pathByAppendingComponent(directory, s_fileName);
 }
 
 LocalStorageManager::LocalStorageManager(const String& path, StorageAreaRegistry& registry)

@@ -64,11 +64,13 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
 {
     launchOptions.processIdentifier = m_processIdentifier;
 
-    if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX"))
-        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("user-directory-suffix"_s, userDirectorySuffix);
+    if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX")) {
+        if (auto userDirectorySuffixString = String::fromUTF8(userDirectorySuffix); !userDirectorySuffixString.isNull())
+            launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("user-directory-suffix"_s, userDirectorySuffixString);
+    }
 
     if (m_alwaysRunsAtBackgroundPriority)
-        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("always-runs-at-background-priority"_s, "true");
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("always-runs-at-background-priority"_s, "true"_s);
 
 #if ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(WPE))
     const char* varname;

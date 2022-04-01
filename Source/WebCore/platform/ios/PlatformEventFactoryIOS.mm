@@ -511,21 +511,21 @@ public:
 
         // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
         if (m_windowsVirtualKeyCode == '\r') {
-            m_text = "\r";
-            m_unmodifiedText = "\r";
+            m_text = "\r"_s;
+            m_unmodifiedText = m_text;
         }
 
         // The adjustments below are only needed in backward compatibility mode, but we cannot tell what mode we are in from here.
 
         // Turn 0x7F into 8, because backspace needs to always be 8.
         if (m_text == "\x7F")
-            m_text = "\x8";
+            m_text = "\x8"_s;
         if (m_unmodifiedText == "\x7F")
-            m_unmodifiedText = "\x8";
+            m_unmodifiedText = "\x8"_s;
         // Always use 9 for tab -- we don't want to use AppKit's different character for shift-tab.
         if (m_windowsVirtualKeyCode == 9) {
-            m_text = "\x9";
-            m_unmodifiedText = "\x9";
+            m_text = "\x9"_s;
+            m_unmodifiedText = m_text;
         }
     }
 };

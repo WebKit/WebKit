@@ -42,16 +42,16 @@ public:
 
         // create temp file
         FileSystem::PlatformFileHandle handle;
-        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);
+        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
         FileSystem::closeFile(handle);
         
-        m_spaceContainingFilePath = FileSystem::openTemporaryFile("temp Empty Test File", handle);
+        m_spaceContainingFilePath = FileSystem::openTemporaryFile("temp Empty Test File"_s, handle);
         FileSystem::closeFile(handle);
         
-        m_bangContainingFilePath = FileSystem::openTemporaryFile("temp!Empty!Test!File", handle);
+        m_bangContainingFilePath = FileSystem::openTemporaryFile("temp!Empty!Test!File"_s, handle);
         FileSystem::closeFile(handle);
         
-        m_quoteContainingFilePath = FileSystem::openTemporaryFile("temp\"Empty\"TestFile", handle);
+        m_quoteContainingFilePath = FileSystem::openTemporaryFile("temp\"Empty\"TestFile"_s, handle);
         FileSystem::closeFile(handle);
     }
 

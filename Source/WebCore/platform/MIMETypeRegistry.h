@@ -132,13 +132,13 @@ public:
     // makes this test is after many other tests are done on the MIME type.
     WEBCORE_EXPORT static bool isTextMIMEType(const String& mimeType);
 
-    WEBCORE_EXPORT static FixedVector<const char*> supportedImageMIMETypes();
+    WEBCORE_EXPORT static FixedVector<ASCIILiteral> supportedImageMIMETypes();
     static HashSet<String, ASCIICaseInsensitiveHash>& additionalSupportedImageMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedMediaMIMETypes();
-    WEBCORE_EXPORT static FixedVector<const char*> pdfMIMETypes();
-    WEBCORE_EXPORT static FixedVector<const char*> unsupportedTextMIMETypes();
-    WEBCORE_EXPORT static FixedVector<const char*> usdMIMETypes();
+    WEBCORE_EXPORT static FixedVector<ASCIILiteral> pdfMIMETypes();
+    WEBCORE_EXPORT static FixedVector<ASCIILiteral> unsupportedTextMIMETypes();
+    WEBCORE_EXPORT static FixedVector<ASCIILiteral> usdMIMETypes();
 
     WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
 

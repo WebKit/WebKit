@@ -361,7 +361,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                     if (!allowsWebsiteDataRecordsForAllOrigins)
                         continue;
 
-                    String hostString = entry.origin.host.isEmpty() ? "" : makeString(" ", entry.origin.host);
+                    String hostString = entry.origin.host.isEmpty() ? emptyString() : makeString(" ", entry.origin.host);
                     displayName = makeString(entry.origin.protocol, hostString);
                 }
 
@@ -1461,7 +1461,7 @@ HashSet<RefPtr<WebProcessPool>> WebsiteDataStore::ensureProcessPools() const
 
 static String computeMediaKeyFile(const String& mediaKeyDirectory)
 {
-    return FileSystem::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist");
+    return FileSystem::pathByAppendingComponent(mediaKeyDirectory, "SecureStop.plist"_s);
 }
 
 void WebsiteDataStore::allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo& certificate, const String& host)

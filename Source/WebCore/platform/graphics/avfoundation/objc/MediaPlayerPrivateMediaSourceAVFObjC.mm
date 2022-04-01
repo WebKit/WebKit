@@ -1096,7 +1096,7 @@ AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
                 return nil;
         }
 
-        String storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
+        String storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist"_s);
         m_streamSession = adoptNS([PAL::allocAVStreamSessionInstance() initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
     }
     return m_streamSession.get();

@@ -53,37 +53,37 @@ public:
 
         // create temp file.
         FileSystem::PlatformFileHandle handle;
-        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);
+        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
         FileSystem::writeToFile(handle, FileSystemTestData, strlen(FileSystemTestData));
         FileSystem::closeFile(handle);
 
-        m_tempFileSymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink", handle);
+        m_tempFileSymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink"_s, handle);
         FileSystem::closeFile(handle);
         FileSystem::deleteFile(m_tempFileSymlinkPath);
         FileSystem::createSymbolicLink(m_tempFilePath, m_tempFileSymlinkPath);
 
         // Create temp directory.
         FileSystem::PlatformFileHandle temporaryFile;
-        m_tempEmptyFolderPath = FileSystem::openTemporaryFile("tempEmptyFolder", temporaryFile);
+        m_tempEmptyFolderPath = FileSystem::openTemporaryFile("tempEmptyFolder"_s, temporaryFile);
         FileSystem::closeFile(temporaryFile);
         FileSystem::deleteFile(m_tempEmptyFolderPath);
         FileSystem::makeAllDirectories(m_tempEmptyFolderPath);
 
-        m_tempEmptyFolderSymlinkPath = FileSystem::openTemporaryFile("tempEmptyFolder-symlink", temporaryFile);
+        m_tempEmptyFolderSymlinkPath = FileSystem::openTemporaryFile("tempEmptyFolder-symlink"_s, temporaryFile);
         FileSystem::closeFile(temporaryFile);
         FileSystem::deleteFile(m_tempEmptyFolderSymlinkPath);
         FileSystem::createSymbolicLink(m_tempEmptyFolderPath, m_tempEmptyFolderSymlinkPath);
 
-        m_tempEmptyFilePath = FileSystem::openTemporaryFile("tempEmptyTestFile", handle);
+        m_tempEmptyFilePath = FileSystem::openTemporaryFile("tempEmptyTestFile"_s, handle);
         FileSystem::closeFile(handle);
 
-        m_spaceContainingFilePath = FileSystem::openTemporaryFile("temp Empty Test File", handle);
+        m_spaceContainingFilePath = FileSystem::openTemporaryFile("temp Empty Test File"_s, handle);
         FileSystem::closeFile(handle);
 
-        m_bangContainingFilePath = FileSystem::openTemporaryFile("temp!Empty!Test!File", handle);
+        m_bangContainingFilePath = FileSystem::openTemporaryFile("temp!Empty!Test!File"_s, handle);
         FileSystem::closeFile(handle);
 
-        m_quoteContainingFilePath = FileSystem::openTemporaryFile("temp\"Empty\"TestFile", handle);
+        m_quoteContainingFilePath = FileSystem::openTemporaryFile("temp\"Empty\"TestFile"_s, handle);
         FileSystem::closeFile(handle);
     }
 
@@ -154,7 +154,7 @@ TEST_F(FileSystemTest, FilesHaveSameVolume)
 
 TEST_F(FileSystemTest, fileType)
 {
-    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_FALSE(FileSystem::fileType(doesNotExistPath));
 
     EXPECT_EQ(FileSystem::fileType(tempFilePath()), FileSystem::FileType::Regular);
@@ -163,13 +163,13 @@ TEST_F(FileSystemTest, fileType)
     EXPECT_EQ(FileSystem::fileType(tempEmptyFolderPath()), FileSystem::FileType::Directory);
 
     // Symlink to file symlink case.
-    auto symlinkToFileSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink");
+    auto symlinkToFileSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink"_s);
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkToFileSymlinkPath));
     EXPECT_EQ(FileSystem::fileType(symlinkToFileSymlinkPath), FileSystem::FileType::SymbolicLink);
 
     // Symlink to directory symlink case.
     FileSystem::PlatformFileHandle handle;
-    auto symlinkToDirectorySymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink", handle);
+    auto symlinkToDirectorySymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink"_s, handle);
     FileSystem::closeFile(handle);
     FileSystem::deleteFile(symlinkToDirectorySymlinkPath);
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempEmptyFolderSymlinkPath(), symlinkToDirectorySymlinkPath));
@@ -186,7 +186,7 @@ TEST_F(FileSystemTest, fileType)
 
 TEST_F(FileSystemTest, fileTypeFollowingSymlinks)
 {
-    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_FALSE(FileSystem::fileTypeFollowingSymlinks(doesNotExistPath));
 
     EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(tempFilePath()), FileSystem::FileType::Regular);
@@ -195,13 +195,13 @@ TEST_F(FileSystemTest, fileTypeFollowingSymlinks)
     EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(tempEmptyFolderPath()), FileSystem::FileType::Directory);
 
     // Symlink to file symlink case.
-    auto symlinkToFileSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink");
+    auto symlinkToFileSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink"_s);
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkToFileSymlinkPath));
     EXPECT_EQ(FileSystem::fileTypeFollowingSymlinks(symlinkToFileSymlinkPath), FileSystem::FileType::Regular);
 
     // Symlink to directory symlink case.
     FileSystem::PlatformFileHandle handle;
-    auto symlinkToDirectorySymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink", handle);
+    auto symlinkToDirectorySymlinkPath = FileSystem::openTemporaryFile("tempTestFile-symlink"_s, handle);
     FileSystem::closeFile(handle);
     FileSystem::deleteFile(symlinkToDirectorySymlinkPath);
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempEmptyFolderSymlinkPath(), symlinkToDirectorySymlinkPath));
@@ -219,7 +219,7 @@ TEST_F(FileSystemTest, fileTypeFollowingSymlinks)
 #if OS(UNIX)
 TEST_F(FileSystemTest, isHiddenFile)
 {
-    auto hiddenFilePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".hiddenFile");
+    auto hiddenFilePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".hiddenFile"_s);
     EXPECT_TRUE(FileSystem::isHiddenFile(hiddenFilePath));
 
     EXPECT_FALSE(FileSystem::isHiddenFile(tempFilePath()));
@@ -243,15 +243,15 @@ TEST_F(FileSystemTest, openExistingFileAndFailIfFileExists)
 TEST_F(FileSystemTest, deleteNonEmptyDirectory)
 {
     FileSystem::PlatformFileHandle temporaryFile;
-    auto temporaryTestFolder = FileSystem::openTemporaryFile("deleteNonEmptyDirectoryTest", temporaryFile);
+    auto temporaryTestFolder = FileSystem::openTemporaryFile("deleteNonEmptyDirectoryTest"_s, temporaryFile);
     FileSystem::closeFile(temporaryFile);
 
     EXPECT_TRUE(FileSystem::deleteFile(temporaryTestFolder));
-    EXPECT_TRUE(FileSystem::makeAllDirectories(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder" })));
-    createTestFile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file1.txt"));
-    createTestFile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file2.txt"));
-    createTestFile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder", "file3.txt" }));
-    createTestFile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder", "file4.txt" }));
+    EXPECT_TRUE(FileSystem::makeAllDirectories(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder"_s })));
+    createTestFile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file1.txt"_s));
+    createTestFile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file2.txt"_s));
+    createTestFile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder"_s, "file3.txt"_s }));
+    createTestFile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder"_s, "file4.txt"_s }));
     EXPECT_FALSE(FileSystem::deleteEmptyDirectory(temporaryTestFolder));
     EXPECT_TRUE(FileSystem::fileExists(temporaryTestFolder));
     EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(temporaryTestFolder));
@@ -264,13 +264,13 @@ TEST_F(FileSystemTest, fileExists)
     EXPECT_TRUE(FileSystem::fileExists(tempFileSymlinkPath()));
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFilePath()));
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
-    EXPECT_FALSE(FileSystem::fileExists(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist")));
+    EXPECT_FALSE(FileSystem::fileExists(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s)));
 }
 
 TEST_F(FileSystemTest, fileExistsBrokenSymlink)
 {
-    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
-    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink");
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink"_s);
     EXPECT_TRUE(FileSystem::createSymbolicLink(doesNotExistPath, symlinkPath));
     EXPECT_FALSE(FileSystem::fileExists(doesNotExistPath));
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath)); // fileExists() follows symlinks.
@@ -281,7 +281,7 @@ TEST_F(FileSystemTest, fileExistsBrokenSymlink)
 TEST_F(FileSystemTest, fileExistsSymlinkToSymlink)
 {
     // Create a valid symlink to a symlink to a regular file.
-    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlink");
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlink"_s);
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkPath));
     EXPECT_TRUE(FileSystem::fileExists(symlinkPath));
     EXPECT_EQ(FileSystem::fileType(symlinkPath), FileSystem::FileType::SymbolicLink);
@@ -344,7 +344,7 @@ TEST_F(FileSystemTest, deleteEmptyDirectoryContainingDSStoreFile)
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
 
     // Create .DSStore file.
-    auto dsStorePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".DS_Store");
+    auto dsStorePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".DS_Store"_s);
     auto dsStoreHandle = FileSystem::openFile(dsStorePath, FileSystem::FileOpenMode::Write);
     FileSystem::writeToFile(dsStoreHandle, FileSystemTestData, strlen(FileSystemTestData));
     FileSystem::closeFile(dsStoreHandle);
@@ -360,14 +360,14 @@ TEST_F(FileSystemTest, deleteEmptyDirectoryOnNonEmptyDirectory)
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
 
     // Create .DSStore file.
-    auto dsStorePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".DS_Store");
+    auto dsStorePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".DS_Store"_s);
     auto dsStoreHandle = FileSystem::openFile(dsStorePath, FileSystem::FileOpenMode::Write);
     FileSystem::writeToFile(dsStoreHandle, FileSystemTestData, strlen(FileSystemTestData));
     FileSystem::closeFile(dsStoreHandle);
     EXPECT_TRUE(FileSystem::fileExists(dsStorePath));
 
     // Create a dummy file.
-    auto dummyFilePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "dummyFile");
+    auto dummyFilePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "dummyFile"_s);
     auto dummyFileHandle = FileSystem::openFile(dummyFilePath, FileSystem::FileOpenMode::Write);
     FileSystem::writeToFile(dummyFileHandle, FileSystemTestData, strlen(FileSystemTestData));
     FileSystem::closeFile(dummyFileHandle);
@@ -391,14 +391,14 @@ TEST_F(FileSystemTest, deleteEmptyDirectoryOnARegularFile)
 
 TEST_F(FileSystemTest, deleteEmptyDirectoryDoesNotExist)
 {
-    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_FALSE(FileSystem::fileExists(doesNotExistPath));
     EXPECT_FALSE(FileSystem::deleteEmptyDirectory(doesNotExistPath));
 }
 
 TEST_F(FileSystemTest, moveFile)
 {
-    auto destination = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-moved");
+    auto destination = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-moved"_s);
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
     EXPECT_FALSE(FileSystem::fileExists(destination));
     EXPECT_TRUE(FileSystem::moveFile(tempFilePath(), destination));
@@ -432,24 +432,24 @@ TEST_F(FileSystemTest, moveFileOverwritesDestination)
 TEST_F(FileSystemTest, moveDirectory)
 {
     FileSystem::PlatformFileHandle temporaryFile;
-    auto temporaryTestFolder = FileSystem::openTemporaryFile("moveDirectoryTest", temporaryFile);
+    auto temporaryTestFolder = FileSystem::openTemporaryFile("moveDirectoryTest"_s, temporaryFile);
     FileSystem::closeFile(temporaryFile);
 
     EXPECT_TRUE(FileSystem::deleteFile(temporaryTestFolder));
     EXPECT_TRUE(FileSystem::makeAllDirectories(temporaryTestFolder));
-    auto testFilePath = FileSystem::pathByAppendingComponent(temporaryTestFolder, "testFile");
+    auto testFilePath = FileSystem::pathByAppendingComponent(temporaryTestFolder, "testFile"_s);
     auto fileHandle = FileSystem::openFile(testFilePath, FileSystem::FileOpenMode::Write);
     FileSystem::writeToFile(fileHandle, FileSystemTestData, strlen(FileSystemTestData));
     FileSystem::closeFile(fileHandle);
 
     EXPECT_TRUE(FileSystem::fileExists(testFilePath));
 
-    auto destinationPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "moveDirectoryTest");
+    auto destinationPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "moveDirectoryTest"_s);
     EXPECT_TRUE(FileSystem::moveFile(temporaryTestFolder, destinationPath));
     EXPECT_FALSE(FileSystem::fileExists(temporaryTestFolder));
     EXPECT_FALSE(FileSystem::fileExists(testFilePath));
     EXPECT_TRUE(FileSystem::fileExists(destinationPath));
-    EXPECT_TRUE(FileSystem::fileExists(FileSystem::pathByAppendingComponent(destinationPath, "testFile")));
+    EXPECT_TRUE(FileSystem::fileExists(FileSystem::pathByAppendingComponent(destinationPath, "testFile"_s)));
 
     EXPECT_FALSE(FileSystem::deleteEmptyDirectory(destinationPath));
     EXPECT_TRUE(FileSystem::fileExists(destinationPath));
@@ -468,7 +468,7 @@ TEST_F(FileSystemTest, fileSize)
     ASSERT_TRUE(fileSize);
     EXPECT_EQ(*fileSize, 0U);
 
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     fileSize = FileSystem::fileSize(fileThatDoesNotExist);
     EXPECT_TRUE(!fileSize);
 }
@@ -478,7 +478,7 @@ TEST_F(FileSystemTest, makeAllDirectories)
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
     EXPECT_EQ(FileSystem::fileType(tempEmptyFolderPath()), FileSystem::FileType::Directory);
     EXPECT_TRUE(FileSystem::makeAllDirectories(tempEmptyFolderPath()));
-    String subFolderPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subFolder1", "subFolder2", "subFolder3" });
+    String subFolderPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subFolder1"_s, "subFolder2"_s, "subFolder3"_s });
     EXPECT_FALSE(FileSystem::fileExists(subFolderPath));
     EXPECT_TRUE(FileSystem::makeAllDirectories(subFolderPath));
     EXPECT_TRUE(FileSystem::fileExists(subFolderPath));
@@ -533,10 +533,10 @@ TEST_F(FileSystemTest, createSymbolicLinkFolder)
 
 TEST_F(FileSystemTest, createSymbolicLinkFileDoesNotExist)
 {
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_FALSE(FileSystem::fileExists(fileThatDoesNotExist));
 
-    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink");
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink"_s);
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath));
     EXPECT_TRUE(FileSystem::createSymbolicLink(fileThatDoesNotExist, symlinkPath));
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath));
@@ -544,7 +544,7 @@ TEST_F(FileSystemTest, createSymbolicLinkFileDoesNotExist)
 
 TEST_F(FileSystemTest, createHardLink)
 {
-    auto hardlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink");
+    auto hardlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink"_s);
     EXPECT_FALSE(FileSystem::fileExists(hardlinkPath));
 
     auto fileSize = FileSystem::fileSize(tempFilePath());
@@ -572,7 +572,7 @@ TEST_F(FileSystemTest, createHardLink)
 
 TEST_F(FileSystemTest, createHardLinkOrCopyFile)
 {
-    auto hardlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink");
+    auto hardlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink"_s);
     EXPECT_FALSE(FileSystem::fileExists(hardlinkPath));
 
     auto fileSize = FileSystem::fileSize(tempFilePath());
@@ -604,13 +604,13 @@ TEST_F(FileSystemTest, hardLinkCount)
     ASSERT_TRUE(!!linkCount);
     EXPECT_EQ(*linkCount, 1U);
 
-    auto hardlink1Path = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink1");
+    auto hardlink1Path = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink1"_s);
     EXPECT_TRUE(FileSystem::hardLink(tempFilePath(), hardlink1Path));
     linkCount = FileSystem::hardLinkCount(tempFilePath());
     ASSERT_TRUE(!!linkCount);
     EXPECT_EQ(*linkCount, 2U);
 
-    auto hardlink2Path = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink2");
+    auto hardlink2Path = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "tempFile-hardlink2"_s);
     EXPECT_TRUE(FileSystem::hardLink(tempFilePath(), hardlink2Path));
     linkCount = FileSystem::hardLinkCount(tempFilePath());
     ASSERT_TRUE(!!linkCount);
@@ -686,13 +686,13 @@ TEST_F(FileSystemTest, updateFileModificationTime)
     ASSERT_TRUE(!!newModificationTime);
     EXPECT_GT(newModificationTime->secondsSinceEpoch().value(), modificationTime->secondsSinceEpoch().value());
 
-    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_FALSE(FileSystem::updateFileModificationTime(doesNotExistPath));
 }
 
 TEST_F(FileSystemTest, pathFileName)
 {
-    auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "filename.txt" });
+    auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder"_s, "filename.txt"_s });
     EXPECT_STREQ("filename.txt", FileSystem::pathFileName(testPath).utf8().data());
 
 #if OS(UNIX)
@@ -714,8 +714,8 @@ TEST_F(FileSystemTest, pathFileName)
 
 TEST_F(FileSystemTest, parentPath)
 {
-    auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "filename.txt" });
-    EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder").utf8().data(), FileSystem::parentPath(testPath).utf8().data());
+    auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder"_s, "filename.txt"_s });
+    EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"_s).utf8().data(), FileSystem::parentPath(testPath).utf8().data());
 #if OS(UNIX)
     EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/example.txt").utf8().data());
     EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/").utf8().data());
@@ -731,48 +731,48 @@ TEST_F(FileSystemTest, parentPath)
 TEST_F(FileSystemTest, pathByAppendingComponent)
 {
 #if OS(UNIX)
-    EXPECT_STREQ("/var", FileSystem::pathByAppendingComponent("/", "var").utf8().data());
-    EXPECT_STREQ("/var/tmp", FileSystem::pathByAppendingComponent("/var/", "tmp").utf8().data());
-    EXPECT_STREQ("/var/tmp", FileSystem::pathByAppendingComponent("/var", "tmp").utf8().data());
-    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponent("/var/tmp", "file.txt").utf8().data());
-    EXPECT_STREQ("/var/", FileSystem::pathByAppendingComponent("/var", "").utf8().data());
-    EXPECT_STREQ("/var/", FileSystem::pathByAppendingComponent("/var/", "").utf8().data());
+    EXPECT_STREQ("/var", FileSystem::pathByAppendingComponent("/"_s, "var"_s).utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::pathByAppendingComponent("/var/"_s, "tmp"_s).utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::pathByAppendingComponent("/var"_s, "tmp"_s).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponent("/var/tmp"_s, "file.txt"_s).utf8().data());
+    EXPECT_STREQ("/var/", FileSystem::pathByAppendingComponent("/var"_s, ""_s).utf8().data());
+    EXPECT_STREQ("/var/", FileSystem::pathByAppendingComponent("/var/"_s, ""_s).utf8().data());
 #endif
 #if OS(WINDOWS)
-    EXPECT_STREQ("C:\\Foo", FileSystem::pathByAppendingComponent("C:\\", "Foo").utf8().data());
-    EXPECT_STREQ("C:\\Foo\\Bar", FileSystem::pathByAppendingComponent("C:\\Foo", "Bar").utf8().data());
-    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponent("C:\\Foo\\Bar", "File.txt").utf8().data());
+    EXPECT_STREQ("C:\\Foo", FileSystem::pathByAppendingComponent("C:\\"_s, "Foo"_s).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar", FileSystem::pathByAppendingComponent("C:\\Foo"_s, "Bar"_s).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponent("C:\\Foo\\Bar"_s, "File.txt"_s).utf8().data());
 #endif
 }
 
 TEST_F(FileSystemTest, pathByAppendingComponents)
 {
     EXPECT_STREQ(tempEmptyFolderPath().utf8().data(), FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { }).utf8().data());
-    EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "file.txt").utf8().data(), FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "file.txt" }).utf8().data());
+    EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "file.txt"_s).utf8().data(), FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "file.txt"_s }).utf8().data());
 #if OS(UNIX)
-    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/", { "var", "tmp", "file.txt" }).utf8().data());
-    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var", { "tmp", "file.txt" }).utf8().data());
-    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var/", { "tmp", "file.txt" }).utf8().data());
-    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var/tmp", { "file.txt" }).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/"_s, { "var"_s, "tmp"_s, "file.txt"_s }).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var"_s, { "tmp"_s, "file.txt" }).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var/"_s, { "tmp"_s, "file.txt"_s }).utf8().data());
+    EXPECT_STREQ("/var/tmp/file.txt", FileSystem::pathByAppendingComponents("/var/tmp"_s, { "file.txt"_s }).utf8().data());
 #endif
 #if OS(WINDOWS)
-    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\", { "Foo", "Bar", "File.txt" }).utf8().data());
-    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo", { "Bar", "File.txt" }).utf8().data());
-    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\", { "Bar", "File.txt" }).utf8().data());
-    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\Bar", { "File.txt" }).utf8().data());
-    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\Bar\\", { "File.txt" }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\"_s, { "Foo"_s, "Bar"_s, "File.txt"_s }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo"_s, { "Bar"_s, "File.txt"_s }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\"_s, { "Bar"_s, "File.txt"_s }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\Bar"_s, { "File.txt"_s }).utf8().data());
+    EXPECT_STREQ("C:\\Foo\\Bar\\File.txt", FileSystem::pathByAppendingComponents("C:\\Foo\\Bar\\"_s, { "File.txt"_s }).utf8().data());
 #endif
 }
 
 TEST_F(FileSystemTest, listDirectory)
 {
-    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "a.txt"));
-    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "b.txt"));
-    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "bar.png"));
-    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "foo.png"));
-    FileSystem::makeAllDirectories(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"));
-    createTestFile(FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "c.txt" }));
-    createTestFile(FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder", "d.txt" }));
+    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "a.txt"_s));
+    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "b.txt"_s));
+    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "bar.png"_s));
+    createTestFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "foo.png"_s));
+    FileSystem::makeAllDirectories(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"_s));
+    createTestFile(FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder"_s, "c.txt"_s }));
+    createTestFile(FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder"_s, "d.txt"_s }));
 
     auto matches = FileSystem::listDirectory(tempEmptyFolderPath());
     ASSERT_EQ(matches.size(), 5U);
@@ -783,16 +783,16 @@ TEST_F(FileSystemTest, listDirectory)
     EXPECT_STREQ(matches[3].utf8().data(), "foo.png");
     EXPECT_STREQ(matches[4].utf8().data(), "subfolder");
 
-    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"));
+    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"_s));
     ASSERT_EQ(matches.size(), 2U);
     std::sort(matches.begin(), matches.end(), WTF::codePointCompareLessThan);
     EXPECT_STREQ(matches[0].utf8().data(), "c.txt");
     EXPECT_STREQ(matches[1].utf8().data(), "d.txt");
 
-    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"));
+    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s));
     ASSERT_EQ(matches.size(), 0U);
 
-    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "a.txt"));
+    matches = FileSystem::listDirectory(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "a.txt"_s));
     ASSERT_EQ(matches.size(), 0U);
 
     EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
@@ -800,7 +800,7 @@ TEST_F(FileSystemTest, listDirectory)
 
 TEST_F(FileSystemTest, realPath)
 {
-    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
     EXPECT_STREQ(FileSystem::realPath(doesNotExistPath).utf8().data(), doesNotExistPath.utf8().data());
 
     auto resolvedTempFilePath = FileSystem::realPath(tempFilePath());
@@ -812,23 +812,23 @@ TEST_F(FileSystemTest, realPath)
     EXPECT_STREQ(FileSystem::realPath(tempEmptyFolderSymlinkPath()).utf8().data(), resolvedTempEmptyFolderPath.utf8().data()); // Should resolve directory symlink.
 
     // Symlink to symlink case.
-    auto symlinkToSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink");
+    auto symlinkToSymlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlinkToSymlink"_s);
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkToSymlinkPath));
     EXPECT_STREQ(FileSystem::realPath(symlinkToSymlinkPath).utf8().data(), resolvedTempFilePath.utf8().data()); // Should resolve all symlinks.
 
-    auto subFolderPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder");
+    auto subFolderPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"_s);
     FileSystem::makeAllDirectories(subFolderPath);
     auto resolvedSubFolderPath = FileSystem::realPath(subFolderPath);
-    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponent(subFolderPath, "..")).utf8().data(), resolvedTempEmptyFolderPath.utf8().data()); // Should resolve "..".
-    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { "..", "subfolder" })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve "..".
-    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { "..", ".", ".", "subfolder" })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve ".." and "."
+    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponent(subFolderPath, ".."_s)).utf8().data(), resolvedTempEmptyFolderPath.utf8().data()); // Should resolve "..".
+    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { ".."_s, "subfolder"_s })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve "..".
+    EXPECT_STREQ(FileSystem::realPath(FileSystem::pathByAppendingComponents(subFolderPath, { ".."_s, "."_s, "."_s, "subfolder"_s })).utf8().data(), resolvedSubFolderPath.utf8().data()); // Should resolve ".." and "."
 }
 
 TEST_F(FileSystemTest, readEntireFile)
 {
     EXPECT_FALSE(FileSystem::readEntireFile(FileSystem::invalidPlatformFileHandle));
     EXPECT_FALSE(FileSystem::readEntireFile(emptyString()));
-    EXPECT_FALSE(FileSystem::readEntireFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist")));
+    EXPECT_FALSE(FileSystem::readEntireFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s)));
     EXPECT_FALSE(FileSystem::readEntireFile(tempEmptyFilePath()));
 
     auto buffer = FileSystem::readEntireFile(tempFilePath());

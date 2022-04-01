@@ -140,7 +140,7 @@ public:
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     static bool shouldLogCookieInformation(NetworkConnectionToWebProcess&, PAL::SessionID);
-    static void logCookieInformation(NetworkConnectionToWebProcess&, const String& label, const void* loggedObject, const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebCore::ResourceLoaderIdentifier>);
+    static void logCookieInformation(NetworkConnectionToWebProcess&, ASCIILiteral label, const void* loggedObject, const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebCore::ResourceLoaderIdentifier>);
 #endif
 
     void disableExtraNetworkLoadMetricsCapture() { m_shouldCaptureExtraNetworkLoadMetrics = false; }

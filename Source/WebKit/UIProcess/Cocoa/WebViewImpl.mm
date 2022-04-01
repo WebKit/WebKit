@@ -926,17 +926,17 @@ static const NSUInteger orderedListSegment = 2;
 
     if ([self.textStyle isSelectedForSegment:0] != _textIsBold) {
         _textIsBold = !_textIsBold;
-        _webViewImpl->page().executeEditCommand(@"ToggleBold", @"");
+        _webViewImpl->page().executeEditCommand("ToggleBold"_s, emptyString());
     }
 
     if ([self.textStyle isSelectedForSegment:1] != _textIsItalic) {
         _textIsItalic = !_textIsItalic;
-        _webViewImpl->page().executeEditCommand("ToggleItalic", @"");
+        _webViewImpl->page().executeEditCommand("ToggleItalic"_s, emptyString());
     }
 
     if ([self.textStyle isSelectedForSegment:2] != _textIsUnderlined) {
         _textIsUnderlined = !_textIsUnderlined;
-        _webViewImpl->page().executeEditCommand("ToggleUnderline", @"");
+        _webViewImpl->page().executeEditCommand("ToggleUnderline"_s, emptyString());
     }
 }
 
@@ -955,19 +955,19 @@ static const NSUInteger orderedListSegment = 2;
     switch (alignment) {
     case NSTextAlignmentLeft:
         _currentTextAlignment = NSTextAlignmentLeft;
-        _webViewImpl->page().executeEditCommand("AlignLeft", @"");
+        _webViewImpl->page().executeEditCommand("AlignLeft"_s, emptyString());
         break;
     case NSTextAlignmentRight:
         _currentTextAlignment = NSTextAlignmentRight;
-        _webViewImpl->page().executeEditCommand("AlignRight", @"");
+        _webViewImpl->page().executeEditCommand("AlignRight"_s, emptyString());
         break;
     case NSTextAlignmentCenter:
         _currentTextAlignment = NSTextAlignmentCenter;
-        _webViewImpl->page().executeEditCommand("AlignCenter", @"");
+        _webViewImpl->page().executeEditCommand("AlignCenter"_s, emptyString());
         break;
     case NSTextAlignmentJustified:
         _currentTextAlignment = NSTextAlignmentJustified;
-        _webViewImpl->page().executeEditCommand("AlignJustified", @"");
+        _webViewImpl->page().executeEditCommand("AlignJustified"_s, emptyString());
         break;
     default:
         break;
@@ -993,7 +993,7 @@ static const NSUInteger orderedListSegment = 2;
         return;
 
     _textColor = self.colorPickerItem.color;
-    _webViewImpl->page().executeEditCommand("ForeColor", WebCore::serializationForHTML(WebCore::colorFromCocoaColor(_textColor.get())));
+    _webViewImpl->page().executeEditCommand("ForeColor"_s, WebCore::serializationForHTML(WebCore::colorFromCocoaColor(_textColor.get())));
 }
 
 - (NSViewController *)textListViewController
@@ -5132,7 +5132,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
     Vector<WebCore::KeypressCommand>* keypressCommands = m_collectedKeypressCommands;
     if (keypressCommands && !m_isTextInsertionReplacingSoftSpace) {
         ASSERT(replacementRange.location == NSNotFound);
-        WebCore::KeypressCommand command("insertText:", text);
+        WebCore::KeypressCommand command("insertText:"_s, text);
         keypressCommands->append(command);
         LOG(TextInput, "...stored");
         m_page->registerKeypressCommandName(command.commandName);

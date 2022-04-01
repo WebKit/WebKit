@@ -138,8 +138,8 @@ private:
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     void openAndUpdateSchemaIfNecessary();
     String getDomainStringFromDomainID(unsigned) const final;
-    ASCIILiteral getSubStatisticStatement(const String&) const;
-    void appendSubStatisticList(StringBuilder&, const String& tableName, const String& domain) const;
+    ASCIILiteral getSubStatisticStatement(ASCIILiteral) const;
+    void appendSubStatisticList(StringBuilder&, ASCIILiteral tableName, const String& domain) const;
     void mergeStatistic(const ResourceLoadStatistics&);
     void merge(WebCore::SQLiteStatement*, const ResourceLoadStatistics&);
     void clearDatabaseContents();

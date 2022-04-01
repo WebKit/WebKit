@@ -60,7 +60,7 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 TEST_F(CookieStorageFile, CustomPath)
 {
     bool didFinishLoad;
-    auto cookieStorageFile = FileSystem::pathByAppendingComponent(m_cookieStorageDirectory, "cookie.jar.db");
+    auto cookieStorageFile = FileSystem::pathByAppendingComponent(m_cookieStorageDirectory, "cookie.jar.db"_s);
 
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 

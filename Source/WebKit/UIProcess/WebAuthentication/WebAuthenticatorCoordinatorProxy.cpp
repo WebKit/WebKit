@@ -104,7 +104,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
                 });
             });
         } else
-            handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "This request has been cancelled by the user." });
+            handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
     };
     
     if (!data.processingUserGesture)

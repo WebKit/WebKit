@@ -1534,7 +1534,7 @@ static Ref<WebCore::LocalWebLockRegistry> getOrCreateWebLockRegistry(bool isPriv
 #endif
 
 #if ENABLE(VIDEO)
-        WebCore::HTMLMediaElement::setMediaCacheDirectory(FileSystem::pathByAppendingComponent(String(NSTemporaryDirectory()), "MediaCache/"));
+        WebCore::HTMLMediaElement::setMediaCacheDirectory(FileSystem::pathByAppendingComponent(String(NSTemporaryDirectory()), "MediaCache/"_s));
 #endif
         didOneTimeInitialization = true;
     }
@@ -3304,7 +3304,7 @@ IGNORE_WARNINGS_END
 + (NSString *)_decodeData:(NSData *)data
 {
     WebCore::HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
-    return WebCore::TextResourceDecoder::create("text/html")->decodeAndFlush(static_cast<const char*>([data bytes]), [data length]); // bookmark files are HTML
+    return WebCore::TextResourceDecoder::create("text/html"_s)->decodeAndFlush(static_cast<const char*>([data bytes]), [data length]); // bookmark files are HTML
 }
 
 - (void)_pushPerformingProgrammaticFocus

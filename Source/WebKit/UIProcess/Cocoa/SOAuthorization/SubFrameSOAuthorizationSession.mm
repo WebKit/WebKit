@@ -134,7 +134,7 @@ void SubFrameSOAuthorizationSession::loadRequestToFrame()
         page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
         auto& url = m_requestsToLoad.first().first;
         WTF::switchOn(m_requestsToLoad.first().second, [&](const Vector<uint8_t>& data) {
-            frame->loadData(IPC::DataReference(data), "text/html", "UTF-8", url);
+            frame->loadData(IPC::DataReference(data), "text/html"_s, "UTF-8"_s, url);
         }, [&](const String& referrer) {
             frame->loadURL(url, referrer);
         });

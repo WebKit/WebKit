@@ -829,6 +829,11 @@ template<> struct ArgumentCoder<String> {
     static std::optional<String> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<StringView> {
+    template<typename Encoder>
+    static void encode(Encoder&, StringView);
+};
+
 template<> struct ArgumentCoder<SHA1::Digest> {
     static void encode(Encoder&, const SHA1::Digest&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, SHA1::Digest&);

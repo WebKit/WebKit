@@ -398,7 +398,7 @@ void CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory(const String& stor
         return;
     }
 
-    auto storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
+    auto storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist"_s);
 
     auto fileType = FileSystem::fileTypeFollowingSymlinks(storageDirectory);
     if (!fileType) {

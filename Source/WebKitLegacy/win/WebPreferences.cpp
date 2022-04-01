@@ -62,7 +62,7 @@ using std::numeric_limits;
 
 static const String& oldPreferencesPath()
 {
-    static String path = FileSystem::pathByAppendingComponent(FileSystem::roamingUserSpecificStorageDirectory(), "WebKitPreferences.plist");
+    static String path = FileSystem::pathByAppendingComponent(FileSystem::roamingUserSpecificStorageDirectory(), "WebKitPreferences.plist"_s);
     return path;
 }
 

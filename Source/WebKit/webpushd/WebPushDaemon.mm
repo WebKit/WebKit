@@ -320,7 +320,7 @@ void Daemon::runAfterStartingPushService(Function<void()>&& function)
     function();
 }
 
-void Daemon::broadcastDebugMessage(const String& message)
+void Daemon::broadcastDebugMessage(StringView message)
 {
     for (auto& iterator : m_connectionMap) {
         if (iterator.value->debugModeIsEnabled())
@@ -495,7 +495,7 @@ void Daemon::getOriginsWithPushAndNotificationPermissions(ClientConnection* conn
 void Daemon::deletePushAndNotificationRegistration(ClientConnection* connection, const String& originString, CompletionHandler<void(const String&)>&& replySender)
 {
     if (!canRegisterForNotifications(*connection)) {
-        replySender("Could not delete push and notification registrations for connection: Unknown host application code signing identifier");
+        replySender("Could not delete push and notification registrations for connection: Unknown host application code signing identifier"_s);
         return;
     }
 

@@ -105,6 +105,7 @@ String base64URLEncodeToString(const CString&);
 String base64URLEncodeToString(const void*, unsigned);
 
 std::optional<Vector<uint8_t>> base64URLDecode(StringView);
+inline std::optional<Vector<uint8_t>> base64URLDecode(ASCIILiteral literal) { return base64URLDecode(StringView { literal }); }
 std::optional<Vector<uint8_t>> base64URLDecode(const String&);
 std::optional<Vector<uint8_t>> base64URLDecode(Span<const std::byte>);
 std::optional<Vector<uint8_t>> base64URLDecode(Span<const uint8_t>);

@@ -68,7 +68,7 @@ public:
     StringView(const UChar*, unsigned length);
     StringView(const char*);
     StringView(const char*, unsigned length);
-    explicit StringView(ASCIILiteral);
+    StringView(ASCIILiteral);
 
     static StringView empty();
 
@@ -220,6 +220,7 @@ bool equal(StringView, const LChar* b);
 
 bool equalIgnoringASCIICase(StringView, StringView);
 bool equalIgnoringASCIICase(StringView, const char*);
+bool equalIgnoringASCIICase(StringView, ASCIILiteral);
 
 WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
 bool equalIgnoringNullity(StringView, StringView);
@@ -231,12 +232,16 @@ inline bool operator==(StringView a, StringView b) { return equal(a, b); }
 inline bool operator==(StringView a, const LChar *b);
 inline bool operator==(StringView a, const char *b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
 inline bool operator==(const char* a, StringView b) { return equal(b, a); }
+inline bool operator==(StringView a, ASCIILiteral b) { return equal(a, reinterpret_cast<const LChar*>(b.characters())); }
+inline bool operator==(ASCIILiteral a, StringView b) { return equal(b, a); }
 
 inline bool operator!=(StringView a, StringView b) { return !equal(a, b); }
 inline bool operator!=(StringView a, const LChar* b) { return !equal(a, b); }
 inline bool operator!=(StringView a, const char* b) { return !equal(a, b); }
-inline bool operator!=(const LChar*a, StringView b) { return !equal(b, a); }
-inline bool operator!=(const char*a, StringView b) { return !equal(b, a); }
+inline bool operator!=(StringView a, ASCIILiteral b) { return !equal(a, b.characters()); }
+inline bool operator!=(const LChar* a, StringView b) { return !equal(b, a); }
+inline bool operator!=(const char* a, StringView b) { return !equal(b, a); }
+inline bool operator!=(ASCIILiteral a, StringView b) { return !equal(b, a); }
 
 struct StringViewWithUnderlyingString;
 
@@ -699,6 +704,11 @@ inline bool equalIgnoringASCIICase(StringView a, StringView b)
 inline bool equalIgnoringASCIICase(StringView a, const char* b)
 {
     return equalIgnoringASCIICaseCommon(a, b);
+}
+
+inline bool equalIgnoringASCIICase(StringView a, ASCIILiteral b)
+{
+    return equalIgnoringASCIICaseCommon(a, b.characters());
 }
 
 class StringView::SplitResult {

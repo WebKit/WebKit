@@ -1,3 +1,18 @@
+2022-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238525
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[BlobWithUSDZExtensionDownloadDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBFileName.mm:
+        (runTest):
+        (createDirectories):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2022-03-31  Stephanie Lewis  <slewis@apple.com>
 
         Update Speedometer plan files.

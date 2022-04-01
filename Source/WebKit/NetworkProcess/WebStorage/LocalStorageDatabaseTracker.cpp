@@ -65,7 +65,7 @@ LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker()
 
 String LocalStorageDatabaseTracker::databasePath(const SecurityOriginData& securityOrigin) const
 {
-    return databasePath(securityOrigin.databaseIdentifier() + ".localstorage");
+    return databasePath(makeString(securityOrigin.databaseIdentifier(), ".localstorage"));
 }
 
 void LocalStorageDatabaseTracker::didOpenDatabaseWithOrigin(const SecurityOriginData& securityOrigin)
@@ -129,7 +129,7 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::
     });
 }
 
-String LocalStorageDatabaseTracker::databasePath(const String& filename) const
+String LocalStorageDatabaseTracker::databasePath(StringView filename) const
 {
     auto localStorageDirectory = this->localStorageDirectory();
     if (!SQLiteFileSystem::ensureDatabaseDirectoryExists(localStorageDirectory)) {

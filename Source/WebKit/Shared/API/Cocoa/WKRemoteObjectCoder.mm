@@ -42,9 +42,9 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/CString.h>
 
-static const char* const classNameKey = "$class";
-static const char* const objectStreamKey = "$objectStream";
-static const char* const stringKey = "$string";
+static constexpr auto classNameKey = "$class"_s;
+static constexpr auto objectStreamKey = "$objectStream"_s;
+static constexpr auto stringKey = "$string"_s;
 
 static NSString * const selectorKey = @"selector";
 static NSString * const typeStringKey = @"typeString";
@@ -440,7 +440,7 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
         encoder->_objectsBeingEncoded.remove(object);
     });
 
-    encoder->_currentDictionary->set(classNameKey, API::String::create(class_getName(objectClass)));
+    encoder->_currentDictionary->set(classNameKey, API::String::create(String { class_getName(objectClass) }));
 
     if ([object isKindOfClass:[NSInvocation class]]) {
         // We have to special case NSInvocation since we don't want to encode the target.
