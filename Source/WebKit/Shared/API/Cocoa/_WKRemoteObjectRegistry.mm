@@ -187,29 +187,6 @@ static uint64_t generateReplyIdentifier()
     return *_remoteObjectRegistry;
 }
 
-static bool blockSignaturesAreCompatible(const String& wire, const String& local)
-{
-    if (local == wire)
-        return true;
-
-    if (local.length() != wire.length())
-        return false;
-
-    unsigned length = local.length();
-    for (unsigned i = 0; i < length; i++) {
-        char localType = local[i];
-        char wireType = wire[i];
-
-        if (localType != wireType) {
-            // `bool` and `signed char` are interchangeable.
-            if (strchr("Bc", localType) && strchr("Bc", wireType))
-                continue;
-            return false;
-        }
-    }
-    return true;
-}
-
 static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger blockIndex)
 {
     // Required, non-inherited method:
@@ -279,7 +256,7 @@ static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger b
             return;
         }
 
-        if (!blockSignaturesAreCompatible(wireBlockSignature, expectedBlockSignature)) {
+        if (!WebKit::methodSignaturesAreCompatible(wireBlockSignature, expectedBlockSignature)) {
             NSLog(@"_invokeMethod: Failed to validate reply block signature: %s != %s", wireBlockSignature.utf8().data(), expectedBlockSignature.utf8().data());
             ASSERT_NOT_REACHED();
             return;

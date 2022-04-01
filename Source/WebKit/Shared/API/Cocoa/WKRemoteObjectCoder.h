@@ -42,3 +42,7 @@ class Dictionary;
 - (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const API::Dictionary*)rootObjectDictionary replyToSelector:(SEL)replyToSelector;
 
 @end
+
+namespace WebKit {
+bool methodSignaturesAreCompatible(const String&, const String&);
+}

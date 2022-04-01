@@ -1,5 +1,28 @@
 2022-04-01  Tim Horton  <timothy_horton@apple.com>
 
+        Translated applications cannot use remote methods with BOOL arguments
+        https://bugs.webkit.org/show_bug.cgi?id=238651
+        <rdar://90509457>
+
+        Reviewed by Geoffrey Garen.
+
+        Propagate the fix from r261155 to WKRemoteObjectCoder's method-signature-equality test as well,
+        so that BOOL arguments correctly compare as equal between a Rosetta application and its
+        native ARM Web Content process.
+
+        * Shared/API/Cocoa/WKRemoteObjectCoder.h:
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (WebKit::methodSignaturesAreCompatible):
+        (decodeInvocation):
+        Relax argument signature validation slightly, considering signed char and BOOL,
+        which are equivalent and sometimes substituted for each other, to be equal.
+
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+        (blockSignaturesAreCompatible): Deleted.
+
+2022-04-01  Tim Horton  <timothy_horton@apple.com>
+
         Add a debug overlay for interaction regions
         https://bugs.webkit.org/show_bug.cgi?id=238187
 
