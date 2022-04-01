@@ -31,6 +31,8 @@
 #include "config.h"
 
 #include "RenderRubyBase.h"
+
+#include "RenderChildIterator.h"
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"
 #include <wtf/IsoMallocInlines.h>
@@ -89,6 +91,22 @@ void RenderRubyBase::cachePriorCharactersIfNeeded(const LazyLineBreakIterator& l
     auto* run = rubyRun();
     if (run)
         run->setCachedPriorCharacters(lineBreakIterator.lastCharacter(), lineBreakIterator.secondToLastCharacter());
+}
+
+bool RenderRubyBase::isEmptyOrHasInFlowContent() const
+{
+    auto* firstChild = this->firstChild();
+    if (!firstChild || !is<RenderElement>(*firstChild))
+        return true;
+
+    if (firstChild->isOutOfFlowPositioned())
+        return false;
+
+    for (auto& child : childrenOfType<RenderObject>(*downcast<RenderElement>(firstChild))) {
+        if (!child.isOutOfFlowPositioned())
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

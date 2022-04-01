@@ -202,6 +202,16 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
     computeOverflow(clientLogicalBottom());
 }
 
+LayoutUnit RenderRubyRun::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode lineDirectionMode, LinePositionMode linePositionMode) const
+{
+    // The (inline-block type) ruby base wrapper box fails to produce the correct
+    // baseline when the base is, or has out-of-flow content only.
+    if (!rubyBase() || rubyBase()->isEmptyOrHasInFlowContent())
+        return RenderBlockFlow::baselinePosition(baselineType, firstLine, lineDirectionMode, linePositionMode);
+    auto& style = firstLine ? firstLineStyle() : this->style();
+    return LayoutUnit { style.metricsOfPrimaryFont().ascent(baselineType) };
+}
+
 static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const RenderRubyBase& rubyBase)
 {
     if (!renderer || !renderer->isText())

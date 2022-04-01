@@ -54,6 +54,7 @@ public:
     void layoutExcludedChildren(bool relayoutChildren) override;
     void layout() override;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0_lu) override;
+    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 

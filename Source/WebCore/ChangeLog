@@ -1,3 +1,39 @@
+2022-04-01  Alan Bujtas  <zalan@apple.com>
+
+        [Ruby] Statically positioned out-of-flow block boxes are mispositioned
+        https://bugs.webkit.org/show_bug.cgi?id=238653
+
+        Reviewed by Antti Koivisto.
+
+        A statically positioned out-of-flow ruby base e.g.
+          <div>A<ruby><rb style="position: absolute">B</rb></ruby></div>
+        and
+          <div>A<span style="position: absolute">B</span></div>
+        should match layout where <rb> box's top is aligned with current line box's top position
+        (as if <rb> was inflow, which then puts "A" and "B" (somewhat) next to each other vertically).
+
+        However since we wrap such content (<rb>) inside an inline-block type anonymous box (RenderRubyBase), in practice
+        we match instead this:
+          <div>A
+            <span style="display: inline-block">
+              <span style="position: absolute">B</span>
+            </span>
+          </div>
+        where <rb>'s top is now aligned with the top of the wrapper inline-block box's top.
+        But this inline-block box sits on the line box's baseline with the height of 0 (it's inflow empty)
+        which makes the <rb> aligned with the line box's baseline instead of its top (and now "B" in below "A" under the baseline).
+
+        This patch fixes this by making sure that the (inflow empty) inline-block box's baseline is computed as if it had inflow content.
+
+        Test: fast/ruby/ruby-with-out-of-flow-base-content.html
+
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::isEmptyOrHasInFlowContent const):
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::baselinePosition const):
+        * rendering/RenderRubyRun.h:
+
 2022-04-01  Andres Gonzalez  <andresg_22@apple.com>
 
         Add AXObjectCache::treeData() to retrieve serialized representation of the AX trees.

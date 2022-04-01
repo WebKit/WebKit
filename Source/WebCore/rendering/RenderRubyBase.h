@@ -59,6 +59,8 @@ public:
     
     void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) override;
 
+    bool isEmptyOrHasInFlowContent() const;
+
 private:
     bool isRubyBase() const override { return true; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
