@@ -1,3 +1,12 @@
+2022-04-01  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Skip flaky test on mips
+        https://bugs.webkit.org/show_bug.cgi?id=238656
+
+        Unreviewed gardening.
+
+        * stress/new-largeish-contiguous-array-with-size.js:
+
 2022-03-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Remove useProbeOSRExit=1 flag from tests
