@@ -1,3 +1,21 @@
+2022-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Change one-shot maxTimerNestingLevel from 5 to 10
+        https://bugs.webkit.org/show_bug.cgi?id=237168
+
+        Reviewed by Sam Weinig, Saam Barati, and Cameron McCormack .
+
+        Recently, we found from Chromium change[1] that changing this from 5 to 10 offers 10% Speedometer2 improvement
+        because Speedometer2's setTimeout nesting level is typically 7-8. We discussed with folks including Chris, Maciej,
+        Saam, and Cameron and for now, we increase this from 5 to 10 to align to Blink's change to keep these kind of web
+        content fast. This is not aligned to the spec, and currently, we only apply it to one-shot timer.
+
+        [1]: https://chromium-review.googlesource.com/c/chromium/src/+/3473463
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::intervalClampedToMinimum const):
+        (WebCore::DOMTimer::alignedFireTime const):
+
 2022-04-01  Ben Nham  <nham@apple.com>
 
         Add more push-related logging
