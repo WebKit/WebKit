@@ -354,11 +354,187 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     }
 }
 
+static bool validateCopyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
+{
+    // "Let srcTextureDesc be source.texture.[[descriptor]]."
+    const auto& srcTextureDesc = fromAPI(source.texture).descriptor();
+
+    // "validating GPUImageCopyTexture(source, copySize) returns true."
+    if (!Texture::validateImageCopyTexture(source, copySize))
+        return false;
+
+    // "srcTextureDesc.usage contains COPY_SRC."
+    if (!(srcTextureDesc.usage & WGPUBufferUsage_CopySrc))
+        return false;
+
+    // "srcTextureDesc.sampleCount is 1."
+    if (srcTextureDesc.sampleCount != 1)
+        return false;
+
+    // "Let aspectSpecificFormat = dstTextureDesc.format."
+    WGPUTextureFormat aspectSpecificFormat = srcTextureDesc.format;
+
+    // "If srcTextureDesc.format is a depth-stencil format:"
+    if (Texture::isDepthOrStencilFormat(srcTextureDesc.format)) {
+        // "source.aspect must refer to a single aspect of srcTextureDesc.format"
+        if (!Texture::refersToSingleAspect(srcTextureDesc.format, source.aspect))
+            return false;
+
+        // "and that aspect must be a valid image copy source according to § 25.1.2 Depth-stencil formats."
+        if (!Texture::isValidImageCopySource(srcTextureDesc.format, source.aspect))
+            return false;
+
+        // "Set aspectSpecificFormat to the aspect-specific format according to § 25.1.2 Depth-stencil formats."
+        aspectSpecificFormat = Texture::aspectSpecificFormat(srcTextureDesc.format, source.aspect);
+    }
+
+    // "validating GPUImageCopyBuffer(destination) returns true."
+    if (!validateImageCopyBuffer(destination))
+        return false;
+
+    // "destination.buffer.[[usage]] contains COPY_DST."
+    if (!(fromAPI(destination.buffer).usage() & WGPUBufferUsage_CopyDst))
+        return false;
+
+    // "validating texture copy range(source, copySize) returns true."
+    if (!Texture::validateTextureCopyRange(source, copySize))
+        return false;
+
+    // "If srcTextureDesc.format is not a depth-or-stencil format:"
+    if (!Texture::isDepthOrStencilFormat(srcTextureDesc.format)) {
+        // "destination.offset is a multiple of the texel block size of srcTextureDesc.format."
+        auto texelBlockSize = Texture::texelBlockSize(srcTextureDesc.format);
+        if (destination.layout.offset % texelBlockSize)
+            return false;
+    }
+
+    // "If srcTextureDesc.format is a depth-or-stencil format:"
+    if (Texture::isDepthOrStencilFormat(srcTextureDesc.format)) {
+        // "destination.offset is a multiple of 4."
+        if (destination.layout.offset % 4)
+            return false;
+    }
+
+    // "validating linear texture data(destination, destination.buffer.[[size]], aspectSpecificFormat, copySize) succeeds."
+    if (!Texture::validateLinearTextureData(destination.layout, fromAPI(destination.buffer).size(), aspectSpecificFormat, copySize))
+        return false;
+
+    return true;
+}
+
 void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
+    if (source.nextInChain || destination.nextInChain || destination.layout.nextInChain)
+        return;
+
+    // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-copytexturetobuffer
+
+    // "Prepare the encoder state of this. If it returns false, stop."
+    if (!prepareTheEncoderState())
+        return;
+
+    // "If any of the following conditions are unsatisfied"
+    if (!validateCopyTextureToBuffer(source, destination, copySize)) {
+        // "generate a validation error and stop."
+        m_device->generateAValidationError("Validation failure.");
+        return;
+    }
+
+    ensureBlitCommandEncoder();
+
+    NSUInteger destinationBytesPerRow = destination.layout.bytesPerRow;
+
+    // FIXME: Use checked arithmetic
+    NSUInteger destinationBytesPerImage = destination.layout.rowsPerImage * destination.layout.bytesPerRow;
+
+    MTLBlitOption options = MTLBlitOptionNone;
+    switch (source.aspect) {
+    case WGPUTextureAspect_All:
+        options = MTLBlitOptionNone;
+        break;
+    case WGPUTextureAspect_StencilOnly:
+        options = MTLBlitOptionStencilFromDepthStencil;
+        break;
+    case WGPUTextureAspect_DepthOnly:
+        options = MTLBlitOptionDepthFromDepthStencil;
+        break;
+    case WGPUTextureAspect_Force32:
+        return;
+    }
+
+    auto logicalSize = fromAPI(source.texture).logicalMiplevelSpecificTextureExtent(source.mipLevel);
+    auto widthForMetal = std::min(copySize.width, logicalSize.width);
+    auto heightForMetal = std::min(copySize.height, logicalSize.height);
+    auto depthForMetal = std::min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
+
+    auto& sourceDescriptor = fromAPI(source.texture).descriptor();
+    switch (sourceDescriptor.dimension) {
+    case WGPUTextureDimension_1D: {
+        // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
+        // "When you copy to a 1D texture, height and depth must be 1."
+        auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
+        auto sourceOrigin = MTLOriginMake(source.origin.x, 1, 1);
+        for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
+            // FIXME: Use checked arithmetic.
+            auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
+            NSUInteger sourceSlice = source.origin.z + layer;
+            [m_blitCommandEncoder
+                copyFromTexture:fromAPI(source.texture).texture()
+                sourceSlice:sourceSlice
+                sourceLevel:source.mipLevel
+                sourceOrigin:sourceOrigin
+                sourceSize:sourceSize
+                toBuffer:fromAPI(destination.buffer).buffer()
+                destinationOffset:destinationOffset
+                destinationBytesPerRow:destinationBytesPerRow
+                destinationBytesPerImage:destinationBytesPerImage
+                options:options];
+        }
+        break;
+    }
+    case WGPUTextureDimension_2D: {
+        // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
+        // "When you copy to a 2D texture, depth must be 1."
+        auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
+        auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, 1);
+        for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
+            // FIXME: Use checked arithmetic.
+            auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
+            NSUInteger sourceSlice = source.origin.z + layer;
+            [m_blitCommandEncoder
+                copyFromTexture:fromAPI(source.texture).texture()
+                sourceSlice:sourceSlice
+                sourceLevel:source.mipLevel
+                sourceOrigin:sourceOrigin
+                sourceSize:sourceSize
+                toBuffer:fromAPI(destination.buffer).buffer()
+                destinationOffset:destinationOffset
+                destinationBytesPerRow:destinationBytesPerRow
+                destinationBytesPerImage:destinationBytesPerImage
+                options:options];
+        }
+        break;
+    }
+    case WGPUTextureDimension_3D: {
+        auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
+        auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, source.origin.z);
+        auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset);
+            [m_blitCommandEncoder
+                copyFromTexture:fromAPI(source.texture).texture()
+                sourceSlice:0
+                sourceLevel:source.mipLevel
+                sourceOrigin:sourceOrigin
+                sourceSize:sourceSize
+                toBuffer:fromAPI(destination.buffer).buffer()
+                destinationOffset:destinationOffset
+                destinationBytesPerRow:destinationBytesPerRow
+                destinationBytesPerImage:destinationBytesPerImage
+                options:options];
+        break;
+    }
+    case WGPUTextureDimension_Force32:
+        return;
+    }
 }
 
 void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)

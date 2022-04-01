@@ -1,5 +1,24 @@
 2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement CommandEncoder::copyTextureToBuffer() according to the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=238430
+
+        Reviewed by Dean Jackson.
+
+        This implements CommandEncoder::copyTextureToBuffer() according to the spec.
+        It re-uses many of the helper functions added in
+        https://bugs.webkit.org/show_bug.cgi?id=238428. There are links and quotes from
+        the spec where appropriate.
+
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::validateCopyTextureToBuffer):
+        (WebGPU::CommandEncoder::copyTextureToBuffer):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::Texture::isValidImageCopySource):
+
+2022-03-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement CommandEncoder::copyBufferToTexture() according to the spec
         https://bugs.webkit.org/show_bug.cgi?id=238428
 
