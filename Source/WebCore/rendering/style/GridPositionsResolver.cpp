@@ -595,11 +595,8 @@ static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const G
     return 0;
 }
 
-GridSpan GridPositionsResolver::resolveGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSizingDirection direction)
+GridSpan GridPositionsResolver::resolveGridPositionsFromStyle(const RenderGrid& gridContainer, const RenderBox& gridItem, GridTrackSizingDirection direction)
 {
-    auto* gridContainer = downcast<RenderGrid>(gridItem.containingBlock());
-    ASSERT(gridContainer);
-
     GridPosition initialPosition, finalPosition;
     adjustGridPositionsFromStyle(gridItem, direction, initialPosition, finalPosition);
 
@@ -612,18 +609,18 @@ GridSpan GridPositionsResolver::resolveGridPositionsFromStyle(const RenderBox& g
 
     if (initialPosition.shouldBeResolvedAgainstOppositePosition()) {
         // Infer the position from the final position ('auto / 1' or 'span 2 / 3' case).
-        auto endLine = resolveGridPositionFromStyle(*gridContainer, finalPosition, finalSide);
-        return resolveGridPositionAgainstOppositePosition(*gridContainer, endLine, initialPosition, initialSide);
+        auto endLine = resolveGridPositionFromStyle(gridContainer, finalPosition, finalSide);
+        return resolveGridPositionAgainstOppositePosition(gridContainer, endLine, initialPosition, initialSide);
     }
 
     if (finalPosition.shouldBeResolvedAgainstOppositePosition()) {
         // Infer our position from the initial position ('1 / auto' or '3 / span 2' case).
-        auto startLine = resolveGridPositionFromStyle(*gridContainer, initialPosition, initialSide);
-        return resolveGridPositionAgainstOppositePosition(*gridContainer, startLine, finalPosition, finalSide);
+        auto startLine = resolveGridPositionFromStyle(gridContainer, initialPosition, initialSide);
+        return resolveGridPositionAgainstOppositePosition(gridContainer, startLine, finalPosition, finalSide);
     }
 
-    int startLine = resolveGridPositionFromStyle(*gridContainer, initialPosition, initialSide);
-    int endLine = resolveGridPositionFromStyle(*gridContainer, finalPosition, finalSide);
+    int startLine = resolveGridPositionFromStyle(gridContainer, initialPosition, initialSide);
+    int endLine = resolveGridPositionFromStyle(gridContainer, finalPosition, finalSide);
 
     if (startLine > endLine)
         std::swap(startLine, endLine);

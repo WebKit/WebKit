@@ -91,7 +91,7 @@ public:
     static GridPositionSide initialPositionSide(GridTrackSizingDirection);
     static GridPositionSide finalPositionSide(GridTrackSizingDirection);
     static unsigned spanSizeForAutoPlacedItem(const RenderBox&, GridTrackSizingDirection);
-    static GridSpan resolveGridPositionsFromStyle(const RenderBox&, GridTrackSizingDirection);
+    static GridSpan resolveGridPositionsFromStyle(const RenderGrid& gridContainer, const RenderBox&, GridTrackSizingDirection);
     static unsigned explicitGridColumnCount(const RenderGrid&);
     static unsigned explicitGridRowCount(const RenderGrid&);
 };

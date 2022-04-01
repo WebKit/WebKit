@@ -801,7 +801,7 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
         if (!populator.collectChild(*child))
             continue;
         
-        GridSpan rowPositions = GridPositionsResolver::resolveGridPositionsFromStyle(*child, ForRows);
+        GridSpan rowPositions = GridPositionsResolver::resolveGridPositionsFromStyle(*this, *child, ForRows);
         if (!isSubgridRows()) {
             if (!rowPositions.isIndefinite()) {
                 explicitRowStart = std::max<int>(explicitRowStart, -rowPositions.untranslatedStartLine());
@@ -813,7 +813,7 @@ void RenderGrid::populateExplicitGridAndOrderIterator(Grid& grid) const
             }
         }
 
-        GridSpan columnPositions = GridPositionsResolver::resolveGridPositionsFromStyle(*child, ForColumns);
+        GridSpan columnPositions = GridPositionsResolver::resolveGridPositionsFromStyle(*this, *child, ForColumns);
         if (!isSubgridColumns()) {
             if (!columnPositions.isIndefinite()) {
                 explicitColumnStart = std::max<int>(explicitColumnStart, -columnPositions.untranslatedStartLine());
@@ -2052,7 +2052,7 @@ bool RenderGrid::computeGridPositionsForOutOfFlowChild(const RenderBox& child, G
 {
     ASSERT(child.isOutOfFlowPositioned());
     int lastLine = numTracks(direction, m_grid);
-    GridSpan span = GridPositionsResolver::resolveGridPositionsFromStyle(child, direction);
+    GridSpan span = GridPositionsResolver::resolveGridPositionsFromStyle(*this, child, direction);
     if (span.isIndefinite())
         return false;
 
