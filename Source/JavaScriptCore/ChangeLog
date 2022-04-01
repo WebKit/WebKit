@@ -1,3 +1,9 @@
+2022-04-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r292191
+
+        * runtime/ScriptExecutableInlines.h:
+
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
         Adopt Identifier::fromString(ASCIILiteral) more broadly

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CodeBlock.h"
 #include "ScriptExecutable.h"
 
 namespace JSC {
