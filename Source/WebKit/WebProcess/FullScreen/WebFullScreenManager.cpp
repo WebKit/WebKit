@@ -33,7 +33,9 @@
 #include "WebFrame.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"
+#include <WebCore/AddEventListenerOptions.h>
 #include <WebCore/Color.h>
+#include <WebCore/EventNames.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
@@ -42,6 +44,7 @@
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
+#include <WebCore/TypedElementDescendantIterator.h>
 #include <WebCore/UserGestureIndicator.h>
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
@@ -71,7 +74,11 @@ Ref<WebFullScreenManager> WebFullScreenManager::create(WebPage* page)
 }
 
 WebFullScreenManager::WebFullScreenManager(WebPage* page)
-    : m_page(page)
+    : WebCore::EventListener(WebCore::EventListener::CPPEventListenerType)
+    , m_page(page)
+#if ENABLE(VIDEO)
+    , m_mainVideoElementExtractionTimer(RunLoop::main(), this, &WebFullScreenManager::mainVideoElementExtractionTimerFired)
+#endif
 {
 }
     
@@ -152,6 +159,9 @@ void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 {
     LOG(Fullscreen, "WebFullScreenManager %p exitFullScreenForElement(%p) - fullscreen element %p", this, element, m_element.get());
     m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.get(), element);
+#if ENABLE(VIDEO)
+    setMainVideoElement(nullptr);
+#endif
 }
 
 void WebFullScreenManager::willEnterFullScreen()
@@ -191,6 +201,35 @@ void WebFullScreenManager::didEnterFullScreen()
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
     setPIPStandbyElement(dynamicDowncast<HTMLVideoElement>(currentPlaybackControlsElement));
 #endif
+
+#if ENABLE(VIDEO)
+    setMainVideoElement([&]() -> RefPtr<WebCore::HTMLVideoElement> {
+        if (auto video = dynamicDowncast<WebCore::HTMLVideoElement>(*m_element))
+            return video;
+
+        RefPtr<WebCore::HTMLVideoElement> mainVideo;
+        WebCore::FloatRect mainVideoBounds;
+        for (auto& video : WebCore::descendantsOfType<WebCore::HTMLVideoElement>(*m_element)) {
+            auto rendererAndBounds = video.boundingAbsoluteRectWithoutLayout();
+            if (!rendererAndBounds)
+                continue;
+
+            auto [renderer, bounds] = *rendererAndBounds;
+            if (!renderer || bounds.isEmpty())
+                continue;
+
+            if (bounds.area() <= mainVideoBounds.area())
+                continue;
+
+            mainVideoBounds = bounds;
+            mainVideo = &video;
+        }
+        return mainVideo;
+    }());
+
+    if (m_mainVideoElement && m_mainVideoElement->paused())
+        scheduleMainVideoElementExtraction();
+#endif // ENABLE(VIDEO)
 }
 
 void WebFullScreenManager::willExitFullScreen()
@@ -268,6 +307,9 @@ void WebFullScreenManager::close()
     m_closing = true;
     LOG(Fullscreen, "WebFullScreenManager %p close()", this);
     m_page->injectedBundleFullScreenClient().closeFullScreen(m_page.get());
+#if ENABLE(VIDEO)
+    setMainVideoElement(nullptr);
+#endif
     m_closing = false;
 }
 
@@ -295,6 +337,78 @@ void WebFullScreenManager::setFullscreenControlsHidden(bool hidden)
 {
     m_page->corePage()->setFullscreenControlsHidden(hidden);
 }
+
+void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context, WebCore::Event& event)
+{
+#if ENABLE(VIDEO)
+    if (!m_mainVideoElement || event.target() != m_mainVideoElement || &context != &m_mainVideoElement->document())
+        return;
+
+    if (m_mainVideoElement->paused())
+        scheduleMainVideoElementExtraction();
+    else
+        endMainVideoElementExtractionIfNeeded();
+#else
+    UNUSED_PARAM(event);
+    UNUSED_PARAM(context);
+#endif
+}
+
+#if ENABLE(VIDEO)
+
+void WebFullScreenManager::mainVideoElementExtractionTimerFired()
+{
+    if (!m_mainVideoElement)
+        return;
+
+    m_isExtractingMainVideoElement = true;
+    // FIXME: Begin main video extraction in for element fullscreen.
+}
+
+void WebFullScreenManager::scheduleMainVideoElementExtraction()
+{
+    m_mainVideoElementExtractionTimer.startOneShot(250_ms);
+}
+
+void WebFullScreenManager::endMainVideoElementExtractionIfNeeded()
+{
+    m_mainVideoElementExtractionTimer.stop();
+
+    if (m_isExtractingMainVideoElement) {
+        // FIXME: Cancel the current video extraction session.
+        m_isExtractingMainVideoElement = false;
+    }
+}
+
+void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>&& element)
+{
+    if (element == m_mainVideoElement.get())
+        return;
+
+    // FIXME: We should listen for additional events (such as 'load' and 'unload') that bubble up
+    // to the fullscreen element, and recompute the main video element.
+    static NeverDestroyed eventsToObserve = std::array {
+        WebCore::eventNames().seekingEvent,
+        WebCore::eventNames().playingEvent,
+        WebCore::eventNames().pauseEvent,
+    };
+
+    if (m_mainVideoElement) {
+        for (auto& eventName : eventsToObserve.get())
+            m_mainVideoElement->removeEventListener(eventName, *this, { });
+
+        endMainVideoElementExtractionIfNeeded();
+    }
+
+    m_mainVideoElement = WTFMove(element);
+
+    if (m_mainVideoElement) {
+        for (auto& eventName : eventsToObserve.get())
+            m_mainVideoElement->addEventListener(eventName, *this, { });
+    }
+}
+
+#endif // ENABLE(VIDEO)
 
 } // namespace WebKit
 

@@ -28,10 +28,13 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/EventListener.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LengthBox.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -49,7 +52,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebFullScreenManager : public RefCounted<WebFullScreenManager> {
+class WebFullScreenManager final : public WebCore::EventListener {
 public:
     static Ref<WebFullScreenManager> create(WebPage*);
     virtual ~WebFullScreenManager();
@@ -68,6 +71,8 @@ public:
     WebCore::Element* element();
 
     void videoControlsManagerDidChange();
+
+    bool operator==(const WebCore::EventListener& listener) const final { return this == &listener; }
 
 protected:
     WebFullScreenManager(WebPage*);
@@ -97,6 +102,20 @@ protected:
 
 private:
     void close();
+
+    void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
+
+#if ENABLE(VIDEO)
+    void scheduleMainVideoElementExtraction();
+    void endMainVideoElementExtractionIfNeeded();
+    void mainVideoElementExtractionTimerFired();
+    void setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>&&);
+
+    WeakPtr<WebCore::HTMLVideoElement> m_mainVideoElement;
+    RunLoop::Timer<WebFullScreenManager> m_mainVideoElementExtractionTimer;
+    bool m_isExtractingMainVideoElement { false };
+#endif // ENABLE(VIDEO)
+
     bool m_closing { false };
 };
 

@@ -1,3 +1,19 @@
+2022-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a heuristic to identify and extract the prominent video element in element fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238579
+
+        Reviewed by Jer Noble.
+
+        Mark a couple of methods as WEBCORE_EXPORT so that they can be invoked from the WebKit layer.
+        No change in behavior (yet).
+
+        * dom/Element.h:
+        * html/HTMLMediaElement.h:
+
+        Drive-by-fix: also remove an (unused) function declaration with no implementation
+        (`updatePlaybackControlsManager()`).
+
 2022-03-31  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [iOS] Vertical text is incorrectly displaced

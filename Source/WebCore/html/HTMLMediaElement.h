@@ -423,8 +423,8 @@ public:
     void textTrackReadyStateChanged(TextTrack*);
     void updateTextTrackRepresentationImageIfNeeded();
 
-    bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-    bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
+    WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    WEBCORE_EXPORT bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void webkitShowPlaybackTargetPicker();
@@ -955,7 +955,6 @@ private:
     void updateShouldAutoplay();
 
     void pauseAfterDetachedTask();
-    void updatePlaybackControlsManager();
     void schedulePlaybackControlsManagerUpdate();
     void playbackControlsManagerBehaviorRestrictionsTimerFired();
 

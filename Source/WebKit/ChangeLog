@@ -1,3 +1,53 @@
+2022-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a heuristic to identify and extract the prominent video element in element fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238579
+
+        Reviewed by Jer Noble.
+
+        Add a heuristic to WebFullScreenManager that identifies and keeps track of the largest, rendered video element
+        in element fullscreen mode (that is, the video element with the largest area that's inside of the subtree of the
+        fullscreen container element). We couple this with a mechanism to detect when such a video has been paused for a
+        short (250 ms) delay.
+
+        These mechanisms will be used in a future patch to support "video extraction" in element fullscreen. See below
+        for more details.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+
+        Turn WebFullScreenManager into an EventListener subclass, so that we can observe the "playing", "pause", and
+        "seeking" events on the main video element (if it exists). See `handleEvent` below for more information.
+
+        (WebKit::WebFullScreenManager::WebFullScreenManager):
+        (WebKit::WebFullScreenManager::exitFullScreenForElement):
+
+        Clear out the main video element upon exiting fullscreen.
+
+        (WebKit::WebFullScreenManager::didEnterFullScreen):
+
+        After we've finished entering element fullsreen, traverse the DOM in search of the largest video element (area-
+        wise). If the container for element fullscreen is, itself, a video element, then automatically treat that
+        element as the main video.
+
+        (WebKit::WebFullScreenManager::mainVideoElementExtractionTimerFired):
+        (WebKit::WebFullScreenManager::scheduleMainVideoElementExtraction):
+        (WebKit::WebFullScreenManager::endMainVideoElementExtractionIfNeeded):
+
+        For now, these are essentially no-ops; add FIXME's to call into WebPage to begin or cancel video extraction.
+        These will be implemented in an upcoming patch, that connects this element fullscreen code to a more generic
+        fullscreen video extraction mechanism implemented entirely in the client layer.
+
+        (WebKit::WebFullScreenManager::setMainVideoElement):
+
+        Add a helper method to set the main video element, adding or removing event listeners as needed.
+
+        (WebKit::WebFullScreenManager::handleEvent):
+
+        When observing any of the "playing", "pause", and "seeking" events, update the main video extraction timer;
+        that is, if the main video element is paused, restart the timer; otherwise, stop it entirely.
+
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
         Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit
