@@ -1,3 +1,16 @@
+2022-04-01  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer][WebRTC] Improve RTP stats gathering
+        https://bugs.webkit.org/show_bug.cgi?id=238602
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Proxy a few more stats fields from GstWebRTC to the WebCore StatsCollector.
+
+        * Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp:
+        (WebCore::fillInboundRTPStreamStats):
+        (WebCore::fillOutboundRTPStreamStats):
+
 2022-04-01  Tim Nguyen  <ntim@apple.com>
 
         Unreviewed, fix obsolete FIXME comments in CSSParserFastPaths.cpp
