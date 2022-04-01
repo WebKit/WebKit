@@ -907,7 +907,7 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines);
+    WEBCORE_EXPORT DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle);
 
     void setBlockLocation(const FloatPoint& blockLocation) { m_blockLocation = blockLocation; }
     const FloatPoint& blockLocation() const { return m_blockLocation; }
@@ -917,6 +917,7 @@ public:
     const DashArray& widths() const { return m_widths; }
     bool isPrinting() const { return m_printing; }
     bool doubleLines() const { return m_doubleLines; }
+    StrokeStyle style() const { return m_style; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
@@ -933,6 +934,7 @@ private:
     float m_thickness;
     bool m_printing;
     bool m_doubleLines;
+    StrokeStyle m_style;
 };
 
 template<class Encoder>
@@ -944,6 +946,7 @@ void DrawLinesForText::encode(Encoder& encoder) const
     encoder << m_thickness;
     encoder << m_printing;
     encoder << m_doubleLines;
+    encoder << m_style;
 }
 
 template<class Decoder>
@@ -979,7 +982,12 @@ std::optional<DrawLinesForText> DrawLinesForText::decode(Decoder& decoder)
     if (!doubleLines)
         return std::nullopt;
 
-    return {{ *blockLocation, *localAnchor, *thickness, *widths, *printing, *doubleLines }};
+    std::optional<StrokeStyle> style;
+    decoder >> style;
+    if (!style)
+        return std::nullopt;
+
+    return { { *blockLocation, *localAnchor, *thickness, *widths, *printing, *doubleLines, *style } };
 }
 
 class DrawDotsForDocumentMarker {

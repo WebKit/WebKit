@@ -1,3 +1,15 @@
+2022-03-31  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [iOS] Text decoration is always drawn with solid stroke style
+        https://bugs.webkit.org/show_bug.cgi?id=236909
+        rdar://89196615
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::RemoteDisplayListRecorderProxy::recordDrawLinesForText):
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
 2022-03-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r292183.

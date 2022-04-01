@@ -90,7 +90,7 @@ protected:
     virtual void recordEndTransparencyLayer() = 0;
     virtual void recordDrawRect(const FloatRect&, float) = 0;
     virtual void recordDrawLine(const FloatPoint& point1, const FloatPoint& point2) = 0;
-    virtual void recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines) = 0;
+    virtual void recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle) = 0;
     virtual void recordDrawDotsForDocumentMarker(const FloatRect&, const DocumentMarkerLineStyle&) = 0;
     virtual void recordDrawEllipse(const FloatRect&) = 0;
     virtual void recordDrawPath(const Path&) = 0;

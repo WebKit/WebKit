@@ -1,3 +1,29 @@
+2022-03-31  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [iOS] Text decoration is always drawn with solid stroke style
+        https://bugs.webkit.org/show_bug.cgi?id=236909
+        rdar://89196615
+
+        Reviewed by Simon Fraser.
+
+        Pass the missing StrokeStyle parameter to the DrawLinesForText item and
+        to the recorder methods: drawLinesForText() and recordDrawLinesForText().
+
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawLinesForText::DrawLinesForText):
+        (WebCore::DisplayList::DrawLinesForText::apply const):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawLinesForText::style const):
+        (WebCore::DisplayList::DrawLinesForText::encode const):
+        (WebCore::DisplayList::DrawLinesForText::decode):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawLinesForText):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/displaylists/DisplayListRecorderImpl.cpp:
+        (WebCore::DisplayList::RecorderImpl::recordDrawLinesForText):
+        * platform/graphics/displaylists/DisplayListRecorderImpl.h:
+
 2022-03-31  Don Olmstead  <don.olmstead@sony.com>
 
         Fix unused parameter warning in AccessibilityObject::previousLineStartPosition when !ENABLE(ACCESSIBILITY)

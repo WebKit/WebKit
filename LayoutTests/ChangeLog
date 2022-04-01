@@ -1,3 +1,15 @@
+2022-03-31  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [iOS] Text decoration is always drawn with solid stroke style
+        https://bugs.webkit.org/show_bug.cgi?id=236909
+        rdar://89196615
+
+        Reviewed by Simon Fraser.
+
+        Unskip failed text decoration layout tests.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-31  Jon Lee  <jonlee@apple.com>
 
         Unreviewed test gardening.

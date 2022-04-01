@@ -225,9 +225,9 @@ void RemoteDisplayListRecorderProxy::recordDrawLine(const FloatPoint& point1, co
     send(Messages::RemoteDisplayListRecorder::DrawLine(point1, point2));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines)
+void RemoteDisplayListRecorderProxy::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawLinesForText(DisplayList::DrawLinesForText { blockLocation, localAnchor, thickness, widths, printing, doubleLines }));
+    send(Messages::RemoteDisplayListRecorder::DrawLinesForText(DisplayList::DrawLinesForText { blockLocation, localAnchor, thickness, widths, printing, doubleLines, style }));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)

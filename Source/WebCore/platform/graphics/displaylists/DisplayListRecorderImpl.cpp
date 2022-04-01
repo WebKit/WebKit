@@ -212,9 +212,9 @@ void RecorderImpl::recordDrawLine(const FloatPoint& point1, const FloatPoint& po
     append<DrawLine>(point1, point2);
 }
 
-void RecorderImpl::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines)
+void RecorderImpl::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
 {
-    append<DrawLinesForText>(blockLocation, localAnchor, thickness, widths, printing, doubleLines);
+    append<DrawLinesForText>(blockLocation, localAnchor, thickness, widths, printing, doubleLines, style);
 }
 
 void RecorderImpl::recordDrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)

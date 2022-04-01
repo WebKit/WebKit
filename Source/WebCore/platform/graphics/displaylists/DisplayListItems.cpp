@@ -478,19 +478,20 @@ static TextStream& operator<<(TextStream& ts, const DrawLine& item)
     return ts;
 }
 
-DrawLinesForText::DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines)
+DrawLinesForText::DrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
     : m_blockLocation(blockLocation)
     , m_localAnchor(localAnchor)
     , m_widths(widths)
     , m_thickness(thickness)
     , m_printing(printing)
     , m_doubleLines(doubleLines)
+    , m_style(style)
 {
 }
 
 void DrawLinesForText::apply(GraphicsContext& context) const
 {
-    context.drawLinesForText(point(), m_thickness, m_widths, m_printing, m_doubleLines);
+    context.drawLinesForText(point(), m_thickness, m_widths, m_printing, m_doubleLines, m_style);
 }
 
 std::optional<FloatRect> DrawLinesForText::localBounds(const GraphicsContext&) const

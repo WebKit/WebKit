@@ -252,7 +252,7 @@ enum HorizontalAlignment {
     AlignHCenter
 };
 
-enum StrokeStyle {
+enum StrokeStyle : uint8_t {
     NoStroke,
     SolidStroke,
     DottedStroke,

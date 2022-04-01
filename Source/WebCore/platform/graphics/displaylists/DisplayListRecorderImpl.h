@@ -76,7 +76,7 @@ private:
     void recordEndTransparencyLayer() final;
     void recordDrawRect(const FloatRect&, float) final;
     void recordDrawLine(const FloatPoint& point1, const FloatPoint& point2) final;
-    void recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines) final;
+    void recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle) final;
     void recordDrawDotsForDocumentMarker(const FloatRect&, const DocumentMarkerLineStyle&) final;
     void recordDrawEllipse(const FloatRect&) final;
     void recordDrawPath(const Path&) final;

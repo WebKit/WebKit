@@ -310,10 +310,10 @@ void Recorder::drawLine(const FloatPoint& point1, const FloatPoint& point2)
     recordDrawLine(point1, point2);
 }
 
-void Recorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle)
+void Recorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
 {
     appendStateChangeItemIfNecessary();
-    recordDrawLinesForText(FloatPoint(), toFloatSize(point), thickness, widths, printing, doubleLines);
+    recordDrawLinesForText(FloatPoint(), toFloatSize(point), thickness, widths, printing, doubleLines, style);
 }
 
 void Recorder::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)

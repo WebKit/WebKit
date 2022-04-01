@@ -95,7 +95,7 @@ private:
     void recordEndTransparencyLayer() final;
     void recordDrawRect(const WebCore::FloatRect&, float) final;
     void recordDrawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2) final;
-    void recordDrawLinesForText(const WebCore::FloatPoint& blockLocation, const WebCore::FloatSize& localAnchor, float thickness, const WebCore::DashArray& widths, bool printing, bool doubleLines) final;
+    void recordDrawLinesForText(const WebCore::FloatPoint& blockLocation, const WebCore::FloatSize& localAnchor, float thickness, const WebCore::DashArray& widths, bool printing, bool doubleLines, WebCore::StrokeStyle) final;
     void recordDrawDotsForDocumentMarker(const WebCore::FloatRect&, const WebCore::DocumentMarkerLineStyle&) final;
     void recordDrawEllipse(const WebCore::FloatRect&) final;
     void recordDrawPath(const WebCore::Path&) final;
