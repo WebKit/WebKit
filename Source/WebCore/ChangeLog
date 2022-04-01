@@ -1,3 +1,25 @@
+2022-03-31  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [iOS] Vertical text is incorrectly displaced
+        https://bugs.webkit.org/show_bug.cgi?id=232917
+        rdar://85483031
+
+        Reviewed by Myles C. Maxfield.
+
+        DrawGlyphsRecorder calls FontCascade::drawGlyphs() which calls CoreText
+        to draw the vertical text to its internal context. This internal context
+        is setup to be called back for every single run. When CoreText calls
+        DrawGlyphsRecorder::recordDrawGlyphs(), it records drawing the glyph runs
+        into the owner recorder. The problem is CoreText passes the transformed
+        positions to recordDrawGlyphs(). To call drawGlyphsAndCacheFont() in the
+        recorder we have to pass the un-transformed anchor point. To get this anchor
+        point, we have to apply the inverse of fillVectorWithVerticalGlyphPositions()
+        to the first transformed position.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DrawGlyphsRecorder::recordDrawGlyphs):
+
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
         Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit

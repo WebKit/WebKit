@@ -51,16 +51,11 @@ class FloatRoundedRect;
 class Gradient;
 class GraphicsContextPlatformPrivate;
 class ImageBuffer;
-class IntRect;
 class MediaPlayer;
-class RoundedRect;
 class GraphicsContextGL;
 class Path;
 class SystemImage;
 class TextRun;
-class TransformationMatrix;
-
-struct GraphicsContextStateChange;
 
 class GraphicsContext {
     WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;

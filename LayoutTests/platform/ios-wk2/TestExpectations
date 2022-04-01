@@ -2207,44 +2207,12 @@ http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.
 # Test failures from turning GPU Process on by default
 webkit.org/b/234536 webxr/high-performance.html [ Failure ]
 
-# There is text in/near the box
-webkit.org/b/236907 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-test1.html [ ImageOnlyFailure ]
-
-# Misplaced text
-webkit.org/b/236908 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
-webkit.org/b/236908 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
-webkit.org/b/236908 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
-
-# Red text pokes out
-webkit.org/b/236911 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
-
 # Not sure if the orange line diff is negligible or important
 webkit.org/b/236912 http/wpt/css/css-highlight-api/highlight-text-decorations.html [ ImageOnlyFailure ]
 
 # Wrong text color
 webkit.org/b/236913 fast/css/variables/test-suite/005.html [ ImageOnlyFailure Pass ]
 webkit.org/b/236913 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
-
-# There are small rectangles or characters below main character
-webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
-webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-002.html [ ImageOnlyFailure ]
-webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-003.html [ ImageOnlyFailure ]
-webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-009.html [ ImageOnlyFailure ]
-webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-010.html [ ImageOnlyFailure ]
-webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-011.html [ ImageOnlyFailure ]
-webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-012.html [ ImageOnlyFailure ]
-
-# Writing mode failures
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-004.xht [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vlr-005.xht [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vrl-004.xht [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-004.xht [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vlr-005.xht [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vrl-004.xht [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-023.xht [ ImageOnlyFailure ]
-webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht [ ImageOnlyFailure ]
 
 # No/bad colored boxes
 webkit.org/b/236923 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]

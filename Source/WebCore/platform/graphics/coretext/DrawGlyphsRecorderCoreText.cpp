@@ -256,12 +256,21 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     // `FontCascade::drawGlyphs` we need to recalculate the original advances from the resulting
     // positions by inverting the operations applied to the original advances.
     auto textMatrix = m_originalTextMatrix;
+    auto initialPenPosition = textMatrix.mapPoint(positions[0]);
+
     if (font->platformData().orientation() == FontOrientation::Vertical) {
         // Keep this in sync as the inverse of `fillVectorWithVerticalGlyphPositions`.
-        // FIXME: <https://webkit.org/b/232917> (`DrawGlyphsRecorder` should be able to record+replay vertical text)
+        // FIXME: Use rotateLeftTransform(), as fillVectorWithVerticalGlyphPositions() does, instead of using transposedSize().
+        CGSize translation;
+        CTFontGetVerticalTranslationsForGlyphs(font->platformData().ctFont(), glyphs, &translation, 1);
+
+        initialPenPosition += FloatSize(translation).transposedSize();
+
+        auto ascentDelta = font->fontMetrics().floatAscent(IdeographicBaseline) - font->fontMetrics().floatAscent();
+        initialPenPosition.move(0, -ascentDelta);
     }
 
-    m_owner.drawGlyphsAndCacheFont(font, glyphs, computeAdvancesFromPositions(positions, count, textMatrix).data(), count, textMatrix.mapPoint(positions[0]), m_smoothingMode);
+    m_owner.drawGlyphsAndCacheFont(font, glyphs, computeAdvancesFromPositions(positions, count, textMatrix).data(), count, initialPenPosition, m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }

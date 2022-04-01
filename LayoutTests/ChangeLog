@@ -1,3 +1,15 @@
+2022-03-31  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [iOS] Vertical text is incorrectly displaced
+        https://bugs.webkit.org/show_bug.cgi?id=232917
+        rdar://85483031
+
+        Reviewed by Myles C. Maxfield.
+
+        Unskip failed vertical text layout tests.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
