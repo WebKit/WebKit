@@ -53,9 +53,10 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Notification);
 
-Ref<Notification> Notification::create(ScriptExecutionContext& context, String&& title, Options&& options)
+Ref<Notification> Notification::create(ScriptExecutionContext& context, String&& title, Options&& options, const URL& serviceWorkerRegistrationURL)
 {
     auto notification = adoptRef(*new Notification(context, WTFMove(title), WTFMove(options)));
+    notification->m_serviceWorkerRegistrationURL = serviceWorkerRegistrationURL;
     notification->suspendIfNeeded();
     notification->showSoon();
     return notification;
@@ -67,6 +68,7 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, Notifica
     auto notification = adoptRef(*new Notification(context, WTFMove(data.title), WTFMove(options)));
     notification->suspendIfNeeded();
     notification->m_relatedNotificationIdentifier = data.notificationID;
+    notification->m_serviceWorkerRegistrationURL = WTFMove(data.serviceWorkerRegistrationURL);
     return notification;
 }
 
@@ -323,11 +325,6 @@ NotificationData Notification::data() const
     auto sessionID = context.sessionID();
     RELEASE_ASSERT(sessionID);
 
-    URL serviceWorkerRegistrationURL;
-#if ENABLE(SERVICE_WORKER)
-    if (is<ServiceWorkerGlobalScope>(context))
-        serviceWorkerRegistrationURL = downcast<ServiceWorkerGlobalScope>(context).registration().data().scopeURL;
-#endif
     return {
         m_title.isolatedCopy(),
         m_body.isolatedCopy(),
@@ -336,7 +333,7 @@ NotificationData Notification::data() const
         m_lang,
         m_direction,
         scriptExecutionContext()->securityOrigin()->toString().isolatedCopy(),
-        WTFMove(serviceWorkerRegistrationURL).isolatedCopy(),
+        m_serviceWorkerRegistrationURL.isolatedCopy(),
         identifier(),
         *sessionID,
     };

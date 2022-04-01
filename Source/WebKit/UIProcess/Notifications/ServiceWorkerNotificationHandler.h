@@ -38,14 +38,17 @@ class ServiceWorkerNotificationHandler final : public NotificationManagerMessage
 public:
     static ServiceWorkerNotificationHandler& singleton();
 
-private:
-    explicit ServiceWorkerNotificationHandler() = default;
-
-    void requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&&) final;
     void showNotification(IPC::Connection&, const WebCore::NotificationData&) final;
     void cancelNotification(const UUID& notificationID) final;
     void clearNotifications(const Vector<UUID>& notificationIDs) final;
     void didDestroyNotification(const UUID& notificationID) final;
+
+    bool handlesNotification(UUID value) const { return m_notificationToSessionMap.contains(value); }
+
+private:
+    explicit ServiceWorkerNotificationHandler() = default;
+
+    void requestSystemNotificationPermission(const String&, CompletionHandler<void(bool)>&&) final;
 
     WebsiteDataStore* dataStoreForNotificationID(const UUID&);
 

@@ -1,3 +1,13 @@
+2022-04-01  Youenn Fablet  <youenn@apple.com>
+
+        Persistent notifications should work in document scopes as well as service worker global scopes
+        https://bugs.webkit.org/show_bug.cgi?id=238601
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/workers/service/shownotification-allowed-document-expected.txt: Added.
+        * http/tests/workers/service/shownotification-allowed-document.html: Added.
+
 2022-03-31  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [iOS] Vertical text is incorrectly displaced

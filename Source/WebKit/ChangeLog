@@ -1,3 +1,20 @@
+2022-04-01  Youenn Fablet  <youenn@apple.com>
+
+        Persistent notifications should work in document scopes as well as service worker global scopes
+        https://bugs.webkit.org/show_bug.cgi?id=238601
+
+        Reviewed by Brady Eidson.
+
+        In case of notification message coming from a WebPage, check whether the notification is persistent or not.
+        If persistent, go to ServiceWorkerNotificationHandler, otherwise use the current code path through WebPageProxy.
+
+        * UIProcess/Notifications/ServiceWorkerNotificationHandler.h:
+        * UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp:
+        (WebKit::WebNotificationManagerMessageHandler::showNotification):
+        (WebKit::WebNotificationManagerMessageHandler::cancelNotification):
+        (WebKit::WebNotificationManagerMessageHandler::clearNotifications):
+        (WebKit::WebNotificationManagerMessageHandler::didDestroyNotification):
+
 2022-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a heuristic to identify and extract the prominent video element in element fullscreen

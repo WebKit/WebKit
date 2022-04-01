@@ -1,3 +1,22 @@
+2022-04-01  Youenn Fablet  <youenn@apple.com>
+
+        Persistent notifications should work in document scopes as well as service worker global scopes
+        https://bugs.webkit.org/show_bug.cgi?id=238601
+
+        Reviewed by Brady Eidson.
+
+        Add a m_serviceWorkerRegistrationURL in Notification to identify whether a notfication is persistent or not.
+        Set that field when creating a notification from NotificationData or from ServiceWorkerRegistration::showNotification.
+
+        Test: http/tests/workers/service/shownotification-allowed-document.html
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::create):
+        (WebCore::Notification::data const):
+        * Modules/notifications/Notification.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::showNotification):
+
 2022-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a heuristic to identify and extract the prominent video element in element fullscreen

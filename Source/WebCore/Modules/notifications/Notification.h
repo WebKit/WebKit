@@ -64,7 +64,7 @@ public:
         String tag;
         String icon;
     };
-    static Ref<Notification> create(ScriptExecutionContext&, String&& title, Options&&);
+    static Ref<Notification> create(ScriptExecutionContext&, String&& title, Options&&, const URL& serviceWorkerRegistrationURL = { });
     static Ref<Notification> create(ScriptExecutionContext&, NotificationData&&);
 
     WEBCORE_EXPORT virtual ~Notification();
@@ -143,6 +143,7 @@ private:
     NotificationSource m_notificationSource;
     ScriptExecutionContextIdentifier m_contextIdentifier;
     std::optional<UUID> m_relatedNotificationIdentifier;
+    URL m_serviceWorkerRegistrationURL;
 };
 
 } // namespace WebCore
