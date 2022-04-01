@@ -799,7 +799,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 -(void)_getPendingPushMessages:(void(^)(NSArray<NSDictionary *> *))completionHandler
 {
-    LOG(Push, "Getting pending push messages");
+    RELEASE_LOG(Push, "Getting pending push messages");
 
 #if ENABLE(SERVICE_WORKER)
     _websiteDataStore->networkProcess().getPendingPushMessages(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::WebPushMessage>& messages) {
@@ -807,7 +807,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         for (auto& message : messages)
             [result addObject:message.toDictionary()];
 
-        LOG(Push, "Giving application %u pending push messages", messages.size());
+        RELEASE_LOG(Push, "Giving application %zu pending push messages", messages.size());
         completionHandler(result.get());
     });
 #endif
@@ -818,14 +818,14 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #if ENABLE(SERVICE_WORKER)
     auto pushMessage = WebKit::WebPushMessage::fromDictionary(pushMessageDictionary);
     if (!pushMessage) {
-        LOG(Push, "Asked to handle an invalid push message");
+        RELEASE_LOG_ERROR(Push, "Asked to handle an invalid push message");
         completionHandler(false);
         return;
     }
 
-    LOG(Push, "Sending push message to network process to handle");
+    RELEASE_LOG(Push, "Sending push message for scope %" PRIVATE_LOG_STRING " to network process to handle", pushMessage->registrationURL.string().utf8().data());
     _websiteDataStore->networkProcess().processPushMessage(_websiteDataStore->sessionID(), *pushMessage, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
-        LOG(Push, "Push message processing complete. Callback result: %i", wasProcessed);
+        RELEASE_LOG(Push, "Push message processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });
 #endif

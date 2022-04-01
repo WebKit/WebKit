@@ -1,3 +1,39 @@
+2022-04-01  Ben Nham  <nham@apple.com>
+
+        Add more push-related logging
+        https://bugs.webkit.org/show_bug.cgi?id=238591
+
+        Reviewed by Youenn Fablet.
+
+        Add logging to help diagnose Push API errors. We currently log very little, which is making
+        it hard for us to diagnose bug reports.
+
+         - Log when we try to fetch or process push messages in NetworkProcess.
+         - Log when we enqueue, start, and finish a PushServiceRequest. This helps catch issues such
+           as a queued request never running because the OS push daemon never completing a request.
+         - Log if we failed trying to wake up the browser to process a push message.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processPushMessage):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _getPendingPushMessages:]):
+        (-[WKWebsiteDataStore _processPushMessage:completionHandler:]):
+        * webpushd/PushService.mm:
+        (WebPushD::PushService::create):
+        (WebPushD::PushServiceRequestImpl::fulfill):
+        (WebPushD::PushServiceRequestImpl::reject):
+        (WebPushD::SubscribeRequest::startImpl):
+        (WebPushD::UnsubscribeRequest::startInternal):
+        (WebPushD::PushService::enqueuePushServiceRequest):
+        (WebPushD::PushService::incrementSilentPushCount):
+        (WebPushD::PushService::removeRecordsImpl):
+        (WebPushD::makeRawPushMessage):
+        (WebPushD::PushService::didReceivePushMessage):
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::injectEncryptedPushMessageForTesting):
+        (WebPushD::Daemon::notifyClientPushMessageIsAvailable):
+        (WebPushD::Daemon::getPendingPushMessages):
+
 2022-04-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r292197): 3 TestWebKitAPI.ContentRuleList API tests are constant failures/timeout

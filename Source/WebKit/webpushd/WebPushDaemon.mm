@@ -572,7 +572,6 @@ void Daemon::injectEncryptedPushMessageForTesting(ClientConnection* connection, 
             replySender(false);
             return;
         }
-        NSLog(@"got obj: %@", obj);
 
         m_pushService->didReceivePushMessage(obj[@"topic"], obj[@"userInfo"], [replySender = WTFMove(replySender)]() mutable {
             replySender(true);
@@ -592,6 +591,8 @@ void Daemon::handleIncomingPush(const String& bundleIdentifier, WebKit::WebPushM
 
 void Daemon::notifyClientPushMessageIsAvailable(const String& clientCodeSigningIdentifier)
 {
+    RELEASE_LOG(Push, "Launching %{public}s in response to push", clientCodeSigningIdentifier.utf8().data());
+
 #if PLATFORM(MAC)
     CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"x-webkit-app-launch://1"] ];
     CFStringRef identifier = (__bridge CFStringRef)((NSString *)clientCodeSigningIdentifier);
@@ -604,7 +605,9 @@ void Daemon::notifyClientPushMessageIsAvailable(const String& clientCodeSigningI
         (id)_kLSOpenOptionHideKey: @YES,
     };
 
-    _LSOpenURLsUsingBundleIdentifierWithCompletionHandler(urls, identifier, options, ^(LSASNRef newProcessSerialNumber, Boolean processWasLaunched, CFErrorRef cfError) { });
+    _LSOpenURLsUsingBundleIdentifierWithCompletionHandler(urls, identifier, options, ^(LSASNRef, Boolean, CFErrorRef cfError) {
+        RELEASE_LOG_ERROR_IF(cfError, Push, "Failed to launch process in response to push: %{public}@", (__bridge NSError *)cfError);
+    });
 #else
     // FIXME: Figure out equivalent iOS code here
     UNUSED_PARAM(clientCodeSigningIdentifier);
@@ -633,6 +636,7 @@ void Daemon::getPendingPushMessages(ClientConnection* connection, CompletionHand
         m_testingPushMessages.remove(iterator);
     }
 
+    RELEASE_LOG(Push, "Fetched %zu pending push messages for %{public}s", resultMessages.size(), hostAppCodeSigningIdentifier.utf8().data());
     connection->broadcastDebugMessage(makeString("Fetching ", String::number(resultMessages.size()), " pending push messages"));
 
     replySender(WTFMove(resultMessages));

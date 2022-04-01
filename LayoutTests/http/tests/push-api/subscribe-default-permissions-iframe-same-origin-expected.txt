@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Push notification prompting can only be done from a user gesture.
 
 PASS: service worker permissionState was prompt
 PASS: document permissionState was prompt

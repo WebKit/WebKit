@@ -1,3 +1,23 @@
+2022-04-01  Ben Nham  <nham@apple.com>
+
+        Add more push-related logging
+        https://bugs.webkit.org/show_bug.cgi?id=238591
+
+        Reviewed by Youenn Fablet.
+
+        Add logging to help diagnose Push API errors. We currently log very little, which is making
+        it hard for us to diagnose bug reports.
+
+         - Log if PushManager.subscribe fails the user gesture check. We log this to both syslog and
+           the developer console. We do the latter to inform developers, and we already log an
+           identical message from Notification.requestPermission when that fails in this manner.
+         - Log if we can't fire a push event because the service worker registration went away.
+
+        * Modules/push-api/PushManager.cpp:
+        (WebCore::PushManager::subscribe):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::processPushMessage):
+
 2022-04-01  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP: WASM fails to execute after window.open

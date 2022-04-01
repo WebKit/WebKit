@@ -1,3 +1,16 @@
+2022-04-01  Ben Nham  <nham@apple.com>
+
+        Add more push-related logging
+        https://bugs.webkit.org/show_bug.cgi?id=238591
+
+        Reviewed by Youenn Fablet.
+
+        Modify test cases to check for user gesture error console message.
+
+        * http/tests/push-api/subscribe-default-permissions-expected.txt:
+        * http/tests/push-api/subscribe-default-permissions-iframe-same-origin-expected.txt:
+        * http/tests/push-api/subscribe-deny-permissions-on-prompt-expected.txt:
+
 2022-04-01  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r292072): [ wk1 ] fast/text/install-font-style-recalc.html is a constant text failure

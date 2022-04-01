@@ -34,6 +34,7 @@
 #include "Exception.h"
 #include "JSPushPermissionState.h"
 #include "JSPushSubscription.h"
+#include "Logging.h"
 #include "NotificationClient.h"
 #include "PushCrypto.h"
 #include "ScriptExecutionContext.h"
@@ -139,7 +140,12 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 
             auto* window = document.frame() ? document.frame()->window() : nullptr;
             if (!window || !window->consumeTransientActivation()) {
-                promise.reject(Exception { NotAllowedError, "Push notification prompting can only be done from a user gesture"_s });
+                Seconds lastActivationDuration = window ? MonotonicTime::now() - window->lastActivationTimestamp() : Seconds::infinity();
+                RELEASE_LOG_ERROR(Push, "Failing PushManager.subscribe call due to failed transient activation check; last activated %.2f sec ago", lastActivationDuration.value());
+
+                auto errorMessage = "Push notification prompting can only be done from a user gesture."_s;
+                document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
+                promise.reject(Exception { NotAllowedError, errorMessage });
                 return;
             }
 

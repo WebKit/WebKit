@@ -2319,7 +2319,6 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
             RELEASE_LOG(Push, "Push message from %" PRIVATE_LOG_STRING " won't be processed since permission is in the prompt state; removing push subscription", origin.toString().utf8().data());
             session->notificationManager().removePushSubscriptionsForOrigin(SecurityOriginData { origin }, [callback = WTFMove(callback)](auto&&) mutable {
                 callback(false);
-                return;
             });
             return;
         }
@@ -2332,10 +2331,12 @@ void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage
         }
 
         ASSERT(permissionState == PushPermissionState::Granted);
-        session->ensureSWServer().processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.registrationURL), [this, protectedThis = Ref { *this }, sessionID, origin = WTFMove(origin), callback = WTFMove(callback)](bool result) mutable {
+        auto scope = pushMessage.registrationURL.string();
+        session->ensureSWServer().processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.registrationURL), [this, protectedThis = Ref { *this }, sessionID, origin = WTFMove(origin), scope = WTFMove(scope), callback = WTFMove(callback)](bool result) mutable {
             NetworkSession* session;
             if (!result && (session = networkSession(sessionID))) {
-                session->notificationManager().incrementSilentPushCount(WTFMove(origin), [callback = WTFMove(callback), result](unsigned) mutable {
+                session->notificationManager().incrementSilentPushCount(WTFMove(origin), [scope = WTFMove(scope), callback = WTFMove(callback), result](unsigned newSilentPushCount) mutable {
+                    RELEASE_LOG_ERROR(Push, "Push message for scope %" PRIVATE_LOG_STRING " not handled properly; new silent push count: %u", scope.utf8().data(), newSilentPushCount);
                     callback(result);
                 });
                 return;
