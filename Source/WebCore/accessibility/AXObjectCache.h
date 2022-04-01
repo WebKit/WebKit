@@ -120,6 +120,11 @@ struct VisiblePositionIndexRange {
     bool isNull() const { return startIndex.value == -1 || endIndex.value == -1; }
 };
 
+struct AXTreeData {
+    String liveTree;
+    String isolatedTree;
+};
+
 class AccessibilityReplacedText {
 public:
     AccessibilityReplacedText() = default;
@@ -364,6 +369,8 @@ public:
     std::optional<SimpleRange> rangeMatchesTextNearRange(const SimpleRange&, const String&);
 
     static String notificationPlatformName(AXNotification);
+
+    AXTreeData treeData();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
@@ -644,11 +651,11 @@ inline void AXObjectCache::postTextReplacementPlatformNotification(Accessibility
 inline AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType) { return AXTextInserted; }
 inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
 #endif
+inline AXTreeData AXObjectCache::treeData() { return { }; }
 
 inline AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache*) { }
 inline AXAttributeCacheEnabler::~AXAttributeCacheEnabler() { }
-
-#endif
+#endif // !ENABLE(ACCESSIBILITY)
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache::AXNotification);
 

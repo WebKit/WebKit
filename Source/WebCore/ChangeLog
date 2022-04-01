@@ -1,3 +1,22 @@
+2022-04-01  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add AXObjectCache::treeData() to retrieve serialized representation of the AX trees.
+        https://bugs.webkit.org/show_bug.cgi?id=238561
+        <rdar://problem/91055027>
+
+        Reviewed by Chris Fleizach.
+
+        Added AXObjectCache::treeData() to retrieve a serialized representation
+        of both the live and isolated AX trees. The immediate application of
+        this will be log to file the trees from the browser. Other application
+        down the road may be to expose a text document-like representation of
+        the web page for AT clients.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::treeData):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::treeData):
+
 2022-04-01  Tim Nguyen  <ntim@apple.com>
 
         [css-logical] Add support for block/inline CSS values for resize property
