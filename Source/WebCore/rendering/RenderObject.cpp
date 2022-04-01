@@ -1231,7 +1231,7 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     // FIXME: Renderer's name should not include property value listing.
     int pos = nameView.find('(');
     if (pos > 0)
-        stream << nameView.left(pos - 1).characters8();
+        stream << nameView.left(pos - 1);
     else
         stream << nameView;
 
