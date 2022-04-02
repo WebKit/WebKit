@@ -746,6 +746,7 @@ bool RenderThemeWin::paintMenuList(const RenderObject& renderer, const PaintInfo
 
 void RenderThemeWin::adjustMenuListStyle(RenderStyle& style, const Element* e) const
 {
+    RenderTheme::adjustMenuListStyle(style, e);
     style.resetBorder();
     adjustMenuListButtonStyle(style, e);
 }

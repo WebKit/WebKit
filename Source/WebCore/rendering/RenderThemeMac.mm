@@ -1644,6 +1644,7 @@ static const IntSize* menuListButtonSizes()
 
 void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) const
 {
+    RenderTheme::adjustMenuListStyle(style, e);
     NSControlSize controlSize = controlSizeForFont(style);
 
     style.resetBorder();

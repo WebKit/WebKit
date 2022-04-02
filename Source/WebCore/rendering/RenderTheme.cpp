@@ -96,7 +96,7 @@ ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const El
     // Aliases of 'auto'.
     // https://drafts.csswg.org/css-ui-4/#typedef-appearance-compat-auto
     if (part == AutoPart || part == SearchFieldPart || part == TextAreaPart || part == CheckboxPart || part == RadioPart || part == ListboxPart || part == MeterPart || part == ProgressBarPart
-        || part == SquareButtonPart || part == PushButtonPart || part == SliderHorizontalPart) {
+        || part == SquareButtonPart || part == PushButtonPart || part == SliderHorizontalPart || part == MenulistPart) {
         style.setEffectiveAppearance(autoAppearance);
         return autoAppearance;
     }
@@ -1176,8 +1176,10 @@ void RenderTheme::adjustTextAreaStyle(RenderStyle&, const Element*) const
 {
 }
 
-void RenderTheme::adjustMenuListStyle(RenderStyle&, const Element*) const
+void RenderTheme::adjustMenuListStyle(RenderStyle& style, const Element*) const
 {
+    style.setOverflowX(Overflow::Visible);
+    style.setOverflowY(Overflow::Visible);
 }
 
 void RenderTheme::adjustMeterStyle(RenderStyle& style, const Element*) const

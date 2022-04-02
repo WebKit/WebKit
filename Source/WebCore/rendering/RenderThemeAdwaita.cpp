@@ -353,8 +353,9 @@ void RenderThemeAdwaita::adjustSearchFieldStyle(RenderStyle& style, const Elemen
     adjustTextFieldStyle(style, element);
 }
 
-void RenderThemeAdwaita::adjustMenuListStyle(RenderStyle& style, const Element*) const
+void RenderThemeAdwaita::adjustMenuListStyle(RenderStyle& style, const Element* element) const
 {
+    RenderTheme::adjustMenuListStyle(style, element);
     style.setLineHeight(RenderStyle::initialLineHeight());
 }
 
