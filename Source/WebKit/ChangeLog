@@ -1,3 +1,10 @@
+2022-04-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r292225
+
+        * Platform/IPC/unix/IPCSemaphoreUnix.cpp: Add poll.h and remove
+        duplicated Decoder.h and Encoder.h headers.
+
 2022-04-01  Sihui Liu  <sihui_liu@apple.com>
 
         Avoid initializing default WKWebsiteDataStore in -[WKWebViewConfiguration copyWithZone]

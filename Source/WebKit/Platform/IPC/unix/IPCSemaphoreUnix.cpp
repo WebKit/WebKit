@@ -27,12 +27,11 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "IPCSemaphore.h"
-#include "Decoder.h"
-#include "Encoder.h"
 
 #include <wtf/UniStdExtras.h>
 
 #if OS(LINUX)
+#include <poll.h>
 #include <sys/eventfd.h>
 #endif
 
