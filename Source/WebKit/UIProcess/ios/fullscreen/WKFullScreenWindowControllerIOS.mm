@@ -532,7 +532,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_window setWindowLevel:UIWindowLevelNormal - 1];
     [_window setHidden:NO];
 
-    _rootViewController = [[UIViewController alloc] init];
+    _rootViewController = adoptNS([[UIViewController alloc] init]);
     _rootViewController.get().view = adoptNS([[UIView alloc] initWithFrame:_window.get().bounds]).get();
     _rootViewController.get().view.backgroundColor = [UIColor clearColor];
     _rootViewController.get().view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
