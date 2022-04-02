@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <gbm.h>
 #include <mutex>
+#include <unistd.h>
 #include <wtf/StdLibExtras.h>
 #include <xf86drm.h>
 

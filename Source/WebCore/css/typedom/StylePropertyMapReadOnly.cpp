@@ -39,6 +39,7 @@
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
+#include "CSSValueList.h"
 #include "Document.h"
 
 namespace WebCore {

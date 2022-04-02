@@ -1,3 +1,13 @@
+2022-04-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r292208
+
+        * css/typedom/ComputedStylePropertyMapReadOnly.cpp:
+        * css/typedom/StylePropertyMapReadOnly.cpp:
+        * page/FrameSnapshotting.h:
+        * page/InteractionRegion.cpp:
+        * platform/graphics/gbm/GBMDevice.cpp:
+
 2022-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Change one-shot maxTimerNestingLevel from 5 to 10

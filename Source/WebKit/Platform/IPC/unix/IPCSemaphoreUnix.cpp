@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include "IPCSemaphore.h"
 
 #include <wtf/UniStdExtras.h>

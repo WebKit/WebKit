@@ -32,6 +32,7 @@
 #include "CSSPropertyParser.h"
 #include "Element.h"
 #include "RenderStyle.h"
+#include "StylePropertyShorthand.h"
 #include "StyleScope.h"
 #include <wtf/KeyValuePair.h>
 

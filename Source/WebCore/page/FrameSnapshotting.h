@@ -29,8 +29,10 @@
 
 #pragma once
 
+#include "Color.h"
 #include "DestinationColorSpace.h"
 #include "PixelFormat.h"
+#include "SimpleRange.h"
 #include <memory>
 #include <wtf/OptionSet.h>
 

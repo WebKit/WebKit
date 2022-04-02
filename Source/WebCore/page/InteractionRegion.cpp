@@ -37,6 +37,7 @@
 #include "Page.h"
 #include "PathUtilities.h"
 #include "PlatformMouseEvent.h"
+#include "RenderBox.h"
 #include "SimpleRange.h"
 #include <wtf/NeverDestroyed.h>
 

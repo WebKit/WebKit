@@ -1,3 +1,10 @@
+2022-04-01  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r292218
+
+        * Platform/IPC/unix/IPCSemaphoreUnix.cpp:
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+
 2022-04-01  Tusooa Zhu  <tusooa@kazv.moe>
 
         Expose WebKitWebView from WPEQtView

@@ -30,6 +30,7 @@
 #include "WebContextSupplement.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/NotificationClient.h>
+#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
