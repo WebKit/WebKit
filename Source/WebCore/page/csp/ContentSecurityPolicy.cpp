@@ -239,8 +239,8 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
 
 void ContentSecurityPolicy::updateSourceSelf(const SecurityOrigin& securityOrigin)
 {
-    m_selfSourceProtocol = securityOrigin.protocol();
-    m_selfSource = makeUnique<ContentSecurityPolicySource>(*this, m_selfSourceProtocol, securityOrigin.host(), securityOrigin.port(), emptyString(), false, false);
+    m_selfSourceProtocol = securityOrigin.protocol().convertToASCIILowercase();
+    m_selfSource = makeUnique<ContentSecurityPolicySource>(*this, m_selfSourceProtocol, securityOrigin.host(), securityOrigin.port(), emptyString(), false, false, IsSelfSource::Yes);
 }
 
 void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
@@ -293,13 +293,6 @@ bool ContentSecurityPolicy::allowContentSecurityPolicySourceStarToMatchAnyProtoc
     if (is<Document>(m_scriptExecutionContext))
         return downcast<Document>(*m_scriptExecutionContext).settings().allowContentSecurityPolicySourceStarToMatchAnyProtocol();
     return false;
-}
-
-bool ContentSecurityPolicy::protocolMatchesSelf(const URL& url) const
-{
-    if (equalLettersIgnoringASCIICase(m_selfSourceProtocol, "http"))
-        return url.protocolIsInHTTPFamily();
-    return equalIgnoringASCIICase(url.protocol(), m_selfSourceProtocol);
 }
 
 template<typename Predicate, typename... Args>

@@ -176,7 +176,7 @@ public:
     }
 
     // Used by ContentSecurityPolicySource
-    bool protocolMatchesSelf(const URL&) const;
+    const String& selfProtocol() const { return m_selfSourceProtocol; };
 
     void setUpgradeInsecureRequests(bool);
     bool upgradeInsecureRequests() const { return m_upgradeInsecureRequests; }

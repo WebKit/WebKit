@@ -120,9 +120,10 @@ bool ContentSecurityPolicySourceList::isProtocolAllowedByStar(const URL& url) co
     if (m_policy.allowContentSecurityPolicySourceStarToMatchAnyProtocol())
         return true;
 
-    // Although not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
+    // This is counter to the CSP3 spec which only allows HTTPS but Chromium also allows it.
+    bool isAllowed = url.protocolIsInHTTPFamily() || url.protocolIs("ws") || url.protocolIs("wss") || url.protocolIs(m_policy.selfProtocol());
+    // Also not allowed by the Content Security Policy Level 3 spec., we allow a data URL to match
     // "img-src *" and either a data URL or blob URL to match "media-src *" for web compatibility.
-    bool isAllowed = url.protocolIsInHTTPFamily() || url.protocolIs("ws") || url.protocolIs("wss") || m_policy.protocolMatchesSelf(url);
     if (equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::imgSrc))
         isAllowed |= url.protocolIsData();
     else if (equalIgnoringASCIICase(m_directiveName, ContentSecurityPolicyDirectiveNames::mediaSrc))
@@ -269,7 +270,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
             if (isCSPDirectiveName(source->host.value))
                 m_policy.reportDirectiveAsSourceExpression(m_directiveName, source->host.value);
             if (isValidSourceForExtensionMode(source.value()))
-                m_list.append(ContentSecurityPolicySource(m_policy, source->scheme.toString(), source->host.value.toString(), source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard));
+                m_list.append(ContentSecurityPolicySource(m_policy, source->scheme.convertToASCIILowercase(), source->host.value.toString(), source->port.value, source->path, source->host.hasWildcard, source->port.hasWildcard, IsSelfSource::No));
         } else
             m_policy.reportInvalidSourceExpression(m_directiveName, String(beginSource, buffer.position() - beginSource));
 

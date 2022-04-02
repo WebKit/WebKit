@@ -1,3 +1,33 @@
+2022-04-02  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Improve compatibility of source matching
+        https://bugs.webkit.org/show_bug.cgi?id=235873
+
+        Reviewed by Darin Adler.
+
+        - Improved handling of protocol changes:
+          - For host and self sources direct upgrades are allowed (ws->wss) (http->https already worked).
+          - For self sources side grades are now allowed (http->ws).
+          - For self sources upgrades are always allowed (*->https, *->wss).          
+        This is documented here: https://www.w3.org/TR/CSP3/#match-url-to-source-expression
+
+        I also included some minor cleanups and adding of comments.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::updateSourceSelf):
+        (WebCore::ContentSecurityPolicy::protocolMatchesSelf const): Deleted.
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::selfProtocol const):
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::ContentSecurityPolicySource):
+        (WebCore::ContentSecurityPolicySource::matches const):
+        (WebCore::ContentSecurityPolicySource::schemeMatches const):
+        (WebCore::ContentSecurityPolicySource::portMatches const):
+        * page/csp/ContentSecurityPolicySource.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::isProtocolAllowedByStar const):
+        (WebCore::ContentSecurityPolicySourceList::parse):
+
 2022-04-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose AXObjectCache::treeData to the UI process.

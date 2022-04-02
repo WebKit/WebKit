@@ -1,3 +1,14 @@
+2022-04-02  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Improve compatibility of source matching
+        https://bugs.webkit.org/show_bug.cgi?id=235873
+
+        Reviewed by Darin Adler.
+
+        Update expectation as passing.
+
+        * web-platform-tests/content-security-policy/connect-src/connect-src-websocket-self.sub-expected.txt:
+
 2022-04-01  Tim Nguyen  <ntim@apple.com>
 
         [css-logical] Add support for block/inline CSS values for resize property
