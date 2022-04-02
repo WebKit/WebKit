@@ -2221,16 +2221,16 @@ webkit.org/b/236924 svg/transforms/transformed-text-fill-pattern.html [ ImageOnl
 webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Timeout Crash Pass ]
 webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
 
-# Forms failures
-webkit.org/b/236927 fast/forms/autofocus-readonly-attribute.html [ Failure Pass ]
-
 # Flaky crash
 webkit.org/b/237674 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html [ Timeout Crash Pass ]
 webkit.org/b/237674 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Timeout Crash Pass ]
 
-webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout Pass ]
+# Timeout
+webkit.org/b/238691 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout Pass ]
 
 ############ end of test failures related to GPU Process on by default
+
+webkit.org/b/236927 fast/forms/autofocus-readonly-attribute.html [ Failure Pass ]
 
 # webkit.org/b/237346 REGRESSION(r290539): [ iOS ] 2X http/wpt/webauthn/public-key-credential-create-failure-local (layout-tests) are constant text failures
 http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Pass Failure ]
