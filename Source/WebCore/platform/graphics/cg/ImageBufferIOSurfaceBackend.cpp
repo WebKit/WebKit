@@ -29,7 +29,7 @@
 #if HAVE(IOSURFACE)
 
 #include "GraphicsContextCG.h"
-#include "IOSurface.h"
+#include "IOSurfacePool.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include <CoreGraphics/CoreGraphics.h>
@@ -87,7 +87,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(backendSize, backendSize, parameters.colorSpace, IOSurface::formatForPixelFormat(parameters.pixelFormat));
+    auto surface = IOSurface::create(&IOSurfacePool::sharedPool(), backendSize, backendSize, parameters.colorSpace, IOSurface::formatForPixelFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
 
@@ -262,7 +262,7 @@ void ImageBufferIOSurfaceBackend::setVolatilityState(VolatilityState volatilityS
 
 void ImageBufferIOSurfaceBackend::releaseBufferToPool()
 {
-    IOSurface::moveToPool(WTFMove(m_surface));
+    IOSurface::moveToPool(WTFMove(m_surface), &IOSurfacePool::sharedPool());
 }
 
 void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()

@@ -30,7 +30,6 @@
 #import "GraphicsContextCG.h"
 #import "HostWindow.h"
 #import "IOSurfacePool.h"
-#import "ImageBuffer.h"
 #import "Logging.h"
 #import "PlatformScreen.h"
 #import "ProcessIdentity.h"
@@ -44,27 +43,20 @@
 
 namespace WebCore {
 
-inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format pixelFormat)
+std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, const DestinationColorSpace& colorSpace, Format pixelFormat)
 {
-    auto cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace, pixelFormat);
-    if (!cachedSurface)
-        return nullptr;
-
-    cachedSurface->setContextSize(contextSize);
-    return cachedSurface;
+    return IOSurface::create(pool, size, size, colorSpace, pixelFormat);
 }
 
-std::unique_ptr<IOSurface> IOSurface::create(IntSize size, const DestinationColorSpace& colorSpace, Format pixelFormat)
+std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format pixelFormat)
 {
-    return IOSurface::create(size, size, colorSpace, pixelFormat);
-}
-
-std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format pixelFormat)
-{
-    if (auto cachedSurface = surfaceFromPool(size, contextSize, colorSpace, pixelFormat)) {
+    std::unique_ptr<IOSurface> cachedSurface;
+    if (pool && (cachedSurface = pool->takeSurface(size, colorSpace, pixelFormat))) {
+        cachedSurface->setContextSize(contextSize);
         LOG_WITH_STREAM(IOSurface, stream << "IOSurface::create took from pool: " << *cachedSurface);
         return cachedSurface;
     }
+
     bool success = false;
     auto surface = std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace, pixelFormat, success));
     if (!success) {
@@ -87,7 +79,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, co
     return std::unique_ptr<IOSurface>(new IOSurface(surface, colorSpace));
 }
 
-std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
+std::unique_ptr<IOSurface> IOSurface::createFromImage(IOSurfacePool* pool, CGImageRef image)
 {
     if (!image)
         return nullptr;
@@ -95,7 +87,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    auto surface = IOSurface::create(IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) });
+    auto surface = IOSurface::create(pool, IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) });
     if (!surface)
         return nullptr;
     auto surfaceContext = surface->ensurePlatformContext();
@@ -104,9 +96,10 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
     return surface;
 }
 
-void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface)
+void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface, IOSurfacePool* pool)
 {
-    IOSurfacePool::sharedPool().addSurface(WTFMove(surface));
+    if (pool)
+        pool->addSurface(WTFMove(surface));
 }
 
 static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelFormat, size_t firstPlaneBytesPerPixel, size_t secondPlaneBytesPerPixel)
@@ -481,7 +474,7 @@ bool IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, Format de
     return true;
 }
 
-void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format format, WTF::Function<void(std::unique_ptr<IOSurface>)>&& callback)
+void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&& inSurface, Format format, WTF::Function<void(std::unique_ptr<IOSurface>)>&& callback)
 {
     static IOSurfaceAcceleratorRef accelerator;
     if (!accelerator) {
@@ -496,7 +489,7 @@ void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format f
         return;
     }
 
-    auto destinationSurface = IOSurface::create(inSurface->size(), inSurface->colorSpace(), format);
+    auto destinationSurface = IOSurface::create(pool, inSurface->size(), inSurface->colorSpace(), format);
     if (!destinationSurface) {
         callback(nullptr);
         return;

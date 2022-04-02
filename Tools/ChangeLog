@@ -1,3 +1,20 @@
+2022-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Hoist the IOSurfacePool out of IOSurface
+        https://bugs.webkit.org/show_bug.cgi?id=238675
+
+        Reviewed by Tim Horton.
+        
+        A future patch will break the assumption that there is a singleton IOSurfacePool per
+        process, so we can't have IOSurface::create() consult the pool internally. Instead,
+        pass the pool to the create() functions, and to the moveToPool() function.
+
+        Callers in the web process pass IOSurfacePool::sharedPool(); those in the UI process
+        pass nullptr to avoid pool creation there.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView):
+
 2022-03-31  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Canonicalize commit without rebase

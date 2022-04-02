@@ -1,3 +1,36 @@
+2022-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Hoist the IOSurfacePool out of IOSurface
+        https://bugs.webkit.org/show_bug.cgi?id=238675
+
+        Reviewed by Tim Horton.
+
+        A future patch will break the assumption that there is a singleton IOSurfacePool per
+        process, so we can't have IOSurface::create() consult the pool internally. Instead,
+        pass the pool to the create() functions, and to the moveToPool() function.
+
+        Callers in the web process pass IOSurfacePool::sharedPool(); those in the UI process
+        pass nullptr to avoid pool creation there.
+
+        * Modules/system-preview/ARKitBadgeSystemImage.mm:
+        (WebCore::ARKitBadgeSystemImage::draw const):
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::addSurface):
+        * platform/graphics/cg/IOSurfacePool.h:
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::create):
+        (WebCore::ImageBufferIOSurfaceBackend::releaseBufferToPool):
+        * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+        (WebCore::GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking):
+        * platform/graphics/cocoa/IOSurface.h: createFromImageBuffer() was unused; remove it.
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::create):
+        (WebCore::IOSurface::createFromImage):
+        (WebCore::IOSurface::moveToPool):
+        (WebCore::IOSurface::surfaceFromPool): Deleted.
+        * testing/WebFakeXRDevice.cpp:
+        (WebCore::SimulatedXRDevice::frameTimerFired):
+
 2022-04-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r292072.

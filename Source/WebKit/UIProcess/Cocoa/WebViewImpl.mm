@@ -4726,7 +4726,7 @@ RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
 
     auto croppedSnapshotImage = adoptCF(CGImageCreateWithImageInRect(windowSnapshotImage.get(), NSRectToCGRect([window convertRectToBacking:croppedImageRect])));
 
-    auto surface = WebCore::IOSurface::createFromImage(croppedSnapshotImage.get());
+    auto surface = WebCore::IOSurface::createFromImage(nullptr, croppedSnapshotImage.get());
     if (!surface)
         return nullptr;
 

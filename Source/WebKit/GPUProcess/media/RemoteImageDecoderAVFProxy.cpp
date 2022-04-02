@@ -128,7 +128,7 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
         return;
     }
 
-    auto surface = IOSurface::createFromImage(frameImage.get());
+    auto surface = IOSurface::createFromImage(nullptr, frameImage.get());
     if (!surface) {
         completionHandler(std::nullopt, DestinationColorSpace::SRGB());
         return;

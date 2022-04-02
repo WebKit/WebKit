@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT static IOSurfacePool& sharedPool();
 
     std::unique_ptr<IOSurface> takeSurface(IntSize, const DestinationColorSpace&, IOSurface::Format);
-    WEBCORE_EXPORT void addSurface(std::unique_ptr<IOSurface>);
+    WEBCORE_EXPORT void addSurface(std::unique_ptr<IOSurface>&&);
 
     void discardAllSurfaces();
 

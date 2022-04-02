@@ -45,7 +45,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class HostWindow;
-class ImageBuffer;
+class IOSurfacePool;
 class ProcessIdentity;
 
 enum class PixelFormat : uint8_t;
@@ -100,19 +100,17 @@ public:
         uint32_t m_flags;
     };
 
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, const DestinationColorSpace&, Format = Format::BGRA);
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IntSize, IntSize contextSize, const DestinationColorSpace&, Format = Format::BGRA);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Format = Format::BGRA);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, IntSize contextSize, const DestinationColorSpace&, Format = Format::BGRA);
+
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
+
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&, const DestinationColorSpace&);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, const DestinationColorSpace&);
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(CGImageRef);
-    
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    static std::unique_ptr<IOSurface> createFromImageBuffer(RefPtr<ImageBuffer>);
-#endif
+
+    WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&, IOSurfacePool*);
 
     WEBCORE_EXPORT ~IOSurface();
-
-    WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&);
 
     WEBCORE_EXPORT static IntSize maximumSize();
     WEBCORE_EXPORT static void setMaximumSize(IntSize);
@@ -160,7 +158,7 @@ public:
 
 #if HAVE(IOSURFACE_ACCELERATOR)
     WEBCORE_EXPORT static bool allowConversionFromFormatToFormat(Format, Format);
-    WEBCORE_EXPORT static void convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, Function<void(std::unique_ptr<WebCore::IOSurface>)>&&);
+    WEBCORE_EXPORT static void convertToFormat(IOSurfacePool*, std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, Function<void(std::unique_ptr<WebCore::IOSurface>)>&&);
 #endif // HAVE(IOSURFACE_ACCELERATOR)
 
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&);
@@ -172,7 +170,6 @@ private:
     IOSurface(IntSize, IntSize contextSize, const DestinationColorSpace&, Format, bool& success);
     IOSurface(IOSurfaceRef, const DestinationColorSpace&);
 
-    static std::unique_ptr<IOSurface> surfaceFromPool(IntSize, IntSize contextSize, const DestinationColorSpace&, Format);
     IntSize contextSize() const { return m_contextSize; }
     void setContextSize(IntSize);
 

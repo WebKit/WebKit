@@ -27,7 +27,7 @@
 
 #include "ImageBufferBackendHandle.h"
 #include <WebCore/FloatRect.h>
-#include <WebCore/IOSurface.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/Region.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/MonotonicTime.h>

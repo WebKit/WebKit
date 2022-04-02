@@ -32,7 +32,7 @@
 #import "FloatRect.h"
 #import "GeometryUtilities.h"
 #import "GraphicsContext.h"
-#import "IOSurface.h"
+#import "IOSurfacePool.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreImage/CoreImage.h>
 #import <wtf/NeverDestroyed.h>
@@ -192,7 +192,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
     CIImage *translatedImage = [croppedImage imageByApplyingTransform:CGAffineTransformMakeTranslation(-flippedInsetBadgeRect.origin.x, -flippedInsetBadgeRect.origin.y)];
 
     auto surfaceDimension = useSmallBadge ? smallBadgeDimension : largeBadgeDimension;
-    std::unique_ptr<IOSurface> badgeSurface = IOSurface::create({ surfaceDimension, surfaceDimension }, DestinationColorSpace::SRGB());
+    std::unique_ptr<IOSurface> badgeSurface = IOSurface::create(&IOSurfacePool::sharedPool(), { surfaceDimension, surfaceDimension }, DestinationColorSpace::SRGB());
     IOSurfaceRef surface = badgeSurface->surface();
     [ciContext render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceRef()];
     cgImage = useSmallBadge ? badgeSurface->createImage() : badgeSurface->createImage();

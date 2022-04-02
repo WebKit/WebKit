@@ -112,7 +112,7 @@ void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(st
         return;
     }
 
-    auto surface = WebCore::IOSurface::createFromImage(platformImage.get());
+    auto surface = WebCore::IOSurface::createFromImage(nullptr, platformImage.get());
     if (!surface) {
         completionHandler(std::nullopt, DestinationColorSpace::SRGB());
         return;

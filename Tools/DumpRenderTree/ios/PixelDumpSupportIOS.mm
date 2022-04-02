@@ -72,7 +72,7 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
 #else
     WebCore::IOSurface::Format snapshotFormat = WebCore::IOSurface::Format::BGRA;
 #endif
-    auto surface = WebCore::IOSurface::create(WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), snapshotFormat);
+    auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), snapshotFormat);
     RetainPtr<CGImageRef> cgImage = surface->createImage();
 
     void* bitmapBuffer = nullptr;

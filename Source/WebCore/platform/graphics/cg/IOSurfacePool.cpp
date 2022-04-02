@@ -170,7 +170,7 @@ bool IOSurfacePool::shouldCacheSurface(const IOSurface& surface) const
     return true;
 }
 
-void IOSurfacePool::addSurface(std::unique_ptr<IOSurface> surface)
+void IOSurfacePool::addSurface(std::unique_ptr<IOSurface>&& surface)
 {
     Locker locker { m_lock };
     if (!shouldCacheSurface(*surface))
