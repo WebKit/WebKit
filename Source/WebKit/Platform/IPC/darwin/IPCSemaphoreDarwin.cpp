@@ -84,7 +84,7 @@ bool Semaphore::waitFor(Timeout timeout)
     Seconds waitTime = timeout.secondsUntilDeadline();
     auto seconds = waitTime.secondsAs<unsigned>();
     auto ret = semaphore_timedwait(m_semaphore, { seconds, static_cast<clock_res_t>(waitTime.nanosecondsAs<uint64_t>() - seconds * NSEC_PER_SEC) });
-    ASSERT(ret == KERN_SUCCESS || ret == KERN_OPERATION_TIMED_OUT || ret == KERN_TERMINATED);
+    ASSERT(ret == KERN_SUCCESS || ret == KERN_OPERATION_TIMED_OUT || ret == KERN_TERMINATED || ret == KERN_ABORTED);
     return ret == KERN_SUCCESS;
 }
 

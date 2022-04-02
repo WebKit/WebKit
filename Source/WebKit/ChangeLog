@@ -1,3 +1,15 @@
+2022-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] semaphore_timedwait() can return KERN_ABORTED
+        https://bugs.webkit.org/show_bug.cgi?id=238694
+
+        Reviewed by Geoffrey Garen.
+
+        I was hitting this assert while debugging WebKit today.
+
+        * Platform/IPC/darwin/IPCSemaphoreDarwin.cpp:
+        (IPC::Semaphore::waitFor):
+
 2022-04-02  Yury Semikhatsky  <yurys@chromium.org>
 
         GTK doesn't compile with ENABLE_ACCESSIBILITY=0
