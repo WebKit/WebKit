@@ -27,6 +27,8 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "IPCSemaphore.h"
+#include "Decoder.h"
+#include "Encoder.h"
 
 #include <wtf/UniStdExtras.h>
 

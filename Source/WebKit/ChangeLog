@@ -1,3 +1,14 @@
+2022-04-01  Jigen Zhou  <jigen.zhou@sony.com>
+
+        Fix build break after r292225 for Playstation.
+        https://bugs.webkit.org/show_bug.cgi?id=238683
+
+        Reviewed by Don Olmstead.
+
+        Unreviewed build fix after 292225 for Playstation build.
+
+        * Platform/IPC/unix/IPCSemaphoreUnix.cpp:
+
 2022-04-01  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix non-unified build after r292218
