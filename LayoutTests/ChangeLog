@@ -1,3 +1,11 @@
+2022-04-01  Alan Bujtas  <zalan@apple.com>
+
+        [CSS-contain] Update select element failures with bugzilla link.
+
+        Unreviewed.
+
+        * TestExpectations:
+
 2022-04-01  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
