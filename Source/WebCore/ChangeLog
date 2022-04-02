@@ -1,3 +1,17 @@
+2022-04-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r292072.
+        https://bugs.webkit.org/show_bug.cgi?id=238690
+
+        Caused webAPIStatistics test failures
+
+        Reverted changeset:
+
+        "[Cocoa] Automatically relayout the page when new fonts are
+        installed"
+        https://bugs.webkit.org/show_bug.cgi?id=238483
+        https://commits.webkit.org/r292072
+
 2022-04-01  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix non-unified build after r292208
