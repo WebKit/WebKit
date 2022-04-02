@@ -29,6 +29,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <UIKit/NSParagraphStyle_Private.h>
 #import <UIKit/NSTextAlternatives.h>
 #import <UIKit/UIAction_Private.h>
 #import <UIKit/UIApplication_Private.h>

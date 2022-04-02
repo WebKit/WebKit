@@ -1,3 +1,14 @@
+2022-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal iOS build
+        https://bugs.webkit.org/show_bug.cgi?id=238032
+
+        This is what we get when we add files to unified builds.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2022-04-01  Sihui Liu  <sihui_liu@apple.com>
 
         Avoid initializing default WKWebsiteDataStore in -[WKWebViewConfiguration copyWithZone]

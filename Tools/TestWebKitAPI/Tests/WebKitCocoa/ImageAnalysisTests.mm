@@ -30,6 +30,7 @@
 #import "ImageAnalysisTestingUtilities.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestInputDelegate.h"
 #import "TestUIMenuBuilder.h"
 #import "TestWKWebView.h"
