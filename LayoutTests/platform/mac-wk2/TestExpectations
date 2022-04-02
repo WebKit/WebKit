@@ -1664,8 +1664,6 @@ webkit.org/b/229569 [ Catalina Release ] imported/w3c/web-platform-tests/webrtc/
 
 webkit.org/b/235605 [ arm64 ] fast/scrolling/mac/j-shaped-scroll-rubberband.html [ Failure ]
 
-webkit.org/b/238580 http/tests/webAPIStatistics/canvas-read-and-write-data-collection.html [ Failure ]
-
 # Plugins
 # FIXME: Remove these tests.
 platform/mac-wk2/plugins/npruntime/remove-property-from-javascript.html [ Skip ]
