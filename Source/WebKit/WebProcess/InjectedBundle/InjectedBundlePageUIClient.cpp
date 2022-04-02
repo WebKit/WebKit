@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedBundlePageUIClient.h"
 
+#include "APIArray.h"
 #include "APISecurityOrigin.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
@@ -47,6 +48,12 @@ void InjectedBundlePageUIClient::willAddMessageToConsole(WebPage* page, MessageS
 {
     if (m_client.willAddMessageToConsole)
         m_client.willAddMessageToConsole(toAPI(page), toAPI(message.impl()), lineNumber, m_client.base.clientInfo);
+}
+
+void InjectedBundlePageUIClient::willAddMessageWithArgumentsToConsole(WebPage* page, MessageSource, MessageLevel, const String& message, Span<const String> messageArguments, unsigned lineNumber, unsigned columnNumber, const String& sourceID)
+{
+    if (m_client.willAddMessageWithDetailsToConsole)
+        m_client.willAddMessageWithDetailsToConsole(toAPI(page), toAPI(message.impl()), toAPI(&API::Array::createStringArray(messageArguments).leakRef()), lineNumber, columnNumber, toAPI(sourceID.impl()), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageUIClient::willSetStatusbarText(WebPage* page, const String& statusbarText)

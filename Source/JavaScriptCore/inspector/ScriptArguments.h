@@ -54,6 +54,7 @@ public:
     JSC::JSGlobalObject* globalObject() const;
 
     bool getFirstArgumentAsString(String& result) const;
+    Vector<String> getArgumentsAsStrings() const;
     bool isEqual(const ScriptArguments&) const;
 
     static String truncateStringForConsoleMessage(const String& message)
@@ -66,6 +67,7 @@ public:
 
 private:
     ScriptArguments(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    std::optional<String> getArgumentAtIndexAsString(size_t) const;
 
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
     Vector<JSC::Strong<JSC::Unknown>> m_arguments;

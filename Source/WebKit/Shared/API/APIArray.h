@@ -53,6 +53,7 @@ public:
     static Ref<Array> create();
     static Ref<Array> create(Vector<RefPtr<Object>>&&);
     static Ref<Array> createStringArray(const Vector<WTF::String>&);
+    static Ref<Array> createStringArray(const Span<const WTF::String>);
     Vector<WTF::String> toStringVector();
     Ref<Array> copy();
 

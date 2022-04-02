@@ -1,3 +1,24 @@
+2022-04-01  Jeff Miller  <jeffm@apple.com>
+
+        WKBundlePageUIClient console message support should include source URL, column number, and console messages with arguments
+        https://bugs.webkit.org/show_bug.cgi?id=238032
+
+        Reviewed by Alex Christensen.
+
+        Add a function to ScriptArguments to get a vector of argument strings. As we do in
+        ScriptArguments::getFirstArgumentAsString(), avoid triggering Proxy traps on a Proxy object when
+        generating the vector.
+
+        * inspector/ScriptArguments.cpp:
+        (Inspector::ScriptArguments::getArgumentAtIndexAsString const):
+        Refactored from getFirstArgumentAsString().
+        
+        (Inspector::ScriptArguments::getFirstArgumentAsString const):
+        Use getArgumentAtIndexAsString().
+        
+        (Inspector::ScriptArguments::getArgumentsAsStrings const):
+        * inspector/ScriptArguments.h:
+
 2022-04-01  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix non-unified build after r292191

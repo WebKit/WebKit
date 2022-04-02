@@ -83,6 +83,7 @@ class EmptyChromeClient : public ChromeClient {
     void setResizable(bool) final { }
 
     void addMessageToConsole(MessageSource, MessageLevel, const String&, unsigned, unsigned, const String&) final { }
+    void addMessageWithArgumentsToConsole(MessageSource, MessageLevel, const String&, Span<const String>, unsigned, unsigned, const String&) final { }
 
     bool canRunBeforeUnloadConfirmPanel() final { return false; }
     bool runBeforeUnloadConfirmPanel(const String&, Frame&) final { return true; }

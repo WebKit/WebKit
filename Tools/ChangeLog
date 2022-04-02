@@ -1,3 +1,26 @@
+2022-04-01  Jeff Miller  <jeffm@apple.com>
+
+        WKBundlePageUIClient console message support should include source URL, column number, and console messages with arguments
+        https://bugs.webkit.org/show_bug.cgi?id=238032
+
+        Reviewed by Alex Christensen.
+
+        Add a test for the new willAddMessageWithDetailsToConsole callback in WKBundlePageUIClient. This
+        includes a new WKWebProcessPlugIn subclass, BundlePageConsoleMessageWithDetails, that implements
+        this callback and formats the message and arguments into a single string which it sends to the UI
+        process.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/BundlePageConsoleMessageWithDetails.mm: Added.
+        (willAddMessageWithDetailsToConsoleCallback):
+        (-[BundlePageConsoleMessageWithDetails webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/ConsoleMessageWithDetails.mm: Added.
+        (TestWebKitAPI::didReceivePageMessageFromInjectedBundle):
+        (TestWebKitAPI::setInjectedBundleClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/console-message-with-details.html: Added.
+
 2022-04-01  Chris Dumez  <cdumez@apple.com>
 
         Prepare Tools/ for making the String(const char*) constructor explicit
