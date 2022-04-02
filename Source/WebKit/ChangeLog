@@ -1,3 +1,18 @@
+2022-04-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        GTK doesn't compile with ENABLE_ACCESSIBILITY=0
+        https://bugs.webkit.org/show_bug.cgi?id=238669
+
+        Reviewed by Michael Catanzaro.
+
+        Fix GTK compilation with ENABLE_ACCESSIBILITY=0
+
+        No new tests.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDispose):
+        (webkit_web_view_base_class_init):
+
 2022-04-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Expose AXObjectCache::treeData to the UI process.
