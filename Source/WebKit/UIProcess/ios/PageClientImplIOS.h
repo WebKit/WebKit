@@ -307,6 +307,9 @@ private:
     void cancelFullscreenVideoExtraction(AVPlayerViewController *) final;
     bool isFullscreenVideoExtractionEnabled() const final;
 
+    void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect) final;
+    void cancelElementFullscreenVideoExtraction() final;
+
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };

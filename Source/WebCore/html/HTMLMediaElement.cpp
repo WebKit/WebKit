@@ -621,6 +621,11 @@ HTMLMediaElement::~HTMLMediaElement()
         ThreadableBlobRegistry::unregisterBlobURL(m_blobURLForReading);
 }
 
+std::optional<MediaPlayerIdentifier> HTMLMediaElement::playerIdentifier() const
+{
+    return m_player ? std::optional { m_player->identifier() } : std::nullopt;
+}
+
 RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose purpose, const Document* document)
 {
     Vector<MediaElementSessionInfo> candidateSessions;

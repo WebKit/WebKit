@@ -804,6 +804,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)cancelFullscreenVideoExtraction:(AVPlayerViewController *)controller;
 @property (nonatomic, readonly) BOOL isFullscreenVideoExtractionEnabled;
 
+- (void)beginElementFullscreenVideoExtraction:(const WebKit::ShareableBitmap::Handle&)bitmapHandle bounds:(WebCore::FloatRect)bounds;
+- (void)cancelElementFullscreenVideoExtraction;
+
 @end
 
 @interface WKContentView (WKTesting)

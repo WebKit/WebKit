@@ -11048,6 +11048,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return NO;
 }
 
+- (void)beginElementFullscreenVideoExtraction:(const WebKit::ShareableBitmap::Handle&)bitmapHandle bounds:(WebCore::FloatRect)bounds
+{
+}
+
+- (void)cancelElementFullscreenVideoExtraction
+{
+}
+
 #endif
 
 @end

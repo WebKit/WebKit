@@ -200,6 +200,7 @@ class HTMLImageElement;
 class HTMLMenuElement;
 class HTMLMenuItemElement;
 class HTMLPlugInElement;
+class HTMLVideoElement;
 class IntPoint;
 class KeyboardEvent;
 class MediaPlaybackTargetContext;
@@ -1528,6 +1529,9 @@ public:
 #if HAVE(SCENEKIT)
     bool useSceneKitForModel() const { return m_useSceneKitForModel; };
 #endif
+
+    void extractVideoInElementFullScreen(const WebCore::HTMLVideoElement&);
+    void cancelVideoExtractionInElementFullScreen();
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);

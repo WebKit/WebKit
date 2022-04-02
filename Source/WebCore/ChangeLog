@@ -1,3 +1,18 @@
+2022-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK2] Add plumbing for extracting video frames in element fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238607
+        rdar://91102888
+
+        Reviewed by Eric Carlson.
+
+        Add a helper function on HTMLMediaElement to return the identifier of its MediaPlayer. See WebKit ChangeLog for
+        more information.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playerIdentifier const):
+        * html/HTMLMediaElement.h:
+
 2022-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Hoist the IOSurfacePool out of IOSurface

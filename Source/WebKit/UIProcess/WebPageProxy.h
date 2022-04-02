@@ -2093,6 +2093,9 @@ public:
     }
 #endif
 
+    void extractVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
+    void cancelVideoExtractionInElementFullScreen();
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -3240,6 +3243,7 @@ private:
     std::optional<PlaybackSessionContextIdentifier> m_currentFullscreenVideoSessionIdentifier;
     RunLoop::Timer<WebPageProxy> m_fullscreenVideoExtractionTimer;
 #endif
+    bool m_hasPendingElementFullScreenVideoExtraction { false };
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     enum class CroppedImageOverlayState : uint8_t {

@@ -509,6 +509,9 @@ public:
 #endif
     virtual bool isFullscreenVideoExtractionEnabled() const { return false; }
 
+    virtual void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect) { }
+    virtual void cancelElementFullscreenVideoExtraction() { }
+
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
     virtual WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() = 0;

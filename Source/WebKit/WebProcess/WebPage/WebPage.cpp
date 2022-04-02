@@ -236,6 +236,7 @@
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTheme.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/RenderVideo.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
@@ -8084,6 +8085,32 @@ void WebPage::handleContextMenuTranslation(const TranslationContextMenuInfo& inf
 void WebPage::scrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin)
 {
     mainFrameView()->setScrollPosition(IntPoint(targetRect.minXMinYCorner()));
+}
+
+void WebPage::extractVideoInElementFullScreen(const HTMLVideoElement& element)
+{
+    RefPtr view = element.document().view();
+    if (!view)
+        return;
+
+    auto mediaPlayerIdentifier = valueOrDefault(element.playerIdentifier());
+    if (!mediaPlayerIdentifier)
+        return;
+
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return;
+
+    auto rectInRootView = view->contentsToRootView(renderer->videoBox());
+    if (rectInRootView.isEmpty())
+        return;
+
+    send(Messages::WebPageProxy::ExtractVideoInElementFullScreen(mediaPlayerIdentifier, rectInRootView));
+}
+
+void WebPage::cancelVideoExtractionInElementFullScreen()
+{
+    send(Messages::WebPageProxy::CancelVideoExtractionInElementFullScreen());
 }
 
 } // namespace WebKit

@@ -1,3 +1,51 @@
+2022-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK2] Add plumbing for extracting video frames in element fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238607
+        rdar://91102888
+
+        Reviewed by Eric Carlson.
+
+        Add WebKit2 client layer plumbing for triggering video extraction for the prominent video in element fullscreen.
+        See below for more details.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::beginElementFullscreenVideoExtraction):
+        (WebKit::PageClient::cancelElementFullscreenVideoExtraction):
+
+        Add new PageClient hooks to start and cancel video element extraction in element fullscreen. We only implement
+        these on iOS, for now.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::extractVideoInElementFullScreen):
+        (WebKit::WebPageProxy::cancelVideoExtractionInElementFullScreen):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add IPC plumbing from WebPage to WebPageProxy for starting and canceling video element extraction.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::beginElementFullscreenVideoExtraction):
+        (WebKit::PageClientImpl::cancelElementFullscreenVideoExtraction):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView beginElementFullscreenVideoExtraction:bounds:]):
+        (-[WKContentView cancelElementFullscreenVideoExtraction]):
+
+        Add method stubs for non-internal builds.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::mainVideoElementExtractionTimerFired):
+        (WebKit::WebFullScreenManager::endMainVideoElementExtractionIfNeeded):
+
+        Remove the FIXMEs and call into the new helper methods on WebPage to start and cancel video element extraction.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::extractVideoInElementFullScreen):
+        (WebKit::WebPage::cancelVideoExtractionInElementFullScreen):
+        * WebProcess/WebPage/WebPage.h:
+
 2022-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Hoist the IOSurfacePool out of IOSurface

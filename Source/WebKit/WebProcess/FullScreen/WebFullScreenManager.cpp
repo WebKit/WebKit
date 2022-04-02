@@ -361,8 +361,11 @@ void WebFullScreenManager::mainVideoElementExtractionTimerFired()
     if (!m_mainVideoElement)
         return;
 
+    if (m_isExtractingMainVideoElement)
+        m_page->cancelVideoExtractionInElementFullScreen();
+
     m_isExtractingMainVideoElement = true;
-    // FIXME: Begin main video extraction in for element fullscreen.
+    m_page->extractVideoInElementFullScreen(*m_mainVideoElement);
 }
 
 void WebFullScreenManager::scheduleMainVideoElementExtraction()
@@ -375,7 +378,7 @@ void WebFullScreenManager::endMainVideoElementExtractionIfNeeded()
     m_mainVideoElementExtractionTimer.stop();
 
     if (m_isExtractingMainVideoElement) {
-        // FIXME: Cancel the current video extraction session.
+        m_page->cancelVideoExtractionInElementFullScreen();
         m_isExtractingMainVideoElement = false;
     }
 }

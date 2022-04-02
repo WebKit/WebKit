@@ -11309,6 +11309,40 @@ void WebPageProxy::decidePolicyForModalContainer(OptionSet<ModalContainerControl
     m_uiClient->decidePolicyForModalContainer(types, WTFMove(completion));
 }
 
+void WebPageProxy::extractVideoInElementFullScreen(MediaPlayerIdentifier identifier, FloatRect bounds)
+{
+    if (!pageClient().isFullscreenVideoExtractionEnabled())
+        return;
+
+#if ENABLE(GPU_PROCESS)
+    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
+    if (!gpuProcess)
+        return;
+
+    m_hasPendingElementFullScreenVideoExtraction = true;
+    gpuProcess->requestBitmapImageForCurrentTime(m_process->coreProcessIdentifier(), identifier, [weakThis = WeakPtr { *this }, bounds](auto& bitmapHandle) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !protectedThis->m_hasPendingElementFullScreenVideoExtraction)
+            return;
+
+        protectedThis->pageClient().beginElementFullscreenVideoExtraction(bitmapHandle, bounds);
+        protectedThis->m_hasPendingElementFullScreenVideoExtraction = false;
+    });
+#else
+    UNUSED_PARAM(identifier);
+    UNUSED_PARAM(bounds);
+#endif
+}
+
+void WebPageProxy::cancelVideoExtractionInElementFullScreen()
+{
+    if (!pageClient().isFullscreenVideoExtractionEnabled())
+        return;
+
+    m_hasPendingElementFullScreenVideoExtraction = false;
+    pageClient().cancelElementFullscreenVideoExtraction();
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

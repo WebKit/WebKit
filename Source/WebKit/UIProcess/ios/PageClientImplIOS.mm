@@ -1060,6 +1060,16 @@ bool PageClientImpl::isFullscreenVideoExtractionEnabled() const
     return [m_contentView isFullscreenVideoExtractionEnabled];
 }
 
+void PageClientImpl::beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle& bitmapHandle, FloatRect bounds)
+{
+    [m_contentView beginElementFullscreenVideoExtraction:bitmapHandle bounds:bounds];
+}
+
+void PageClientImpl::cancelElementFullscreenVideoExtraction()
+{
+    [m_contentView cancelElementFullscreenVideoExtraction];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -155,6 +155,8 @@ public:
     using HTMLElement::weakPtrFactory;
 
     RefPtr<MediaPlayer> player() const { return m_player; }
+    WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
+
     bool supportsAcceleratedRendering() const { return m_cachedSupportsAcceleratedRendering; }
 
     virtual bool isVideo() const { return false; }
