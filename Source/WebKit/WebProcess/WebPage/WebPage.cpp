@@ -4028,6 +4028,31 @@ void WebPage::getWebArchiveOfFrame(FrameIdentifier frameID, CompletionHandler<vo
     callback(dataBuffer);
 }
 
+void WebPage::getAccessibilityTreeData(CompletionHandler<void(const std::optional<IPC::SharedBufferCopy>&)>&& callback)
+{
+    IPC::SharedBufferCopy dataBuffer;
+
+#if PLATFORM(COCOA)
+    RetainPtr<CFDataRef> data;
+
+    if (auto treeData = m_page->accessibilityTreeData()) {
+        auto stream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(0, 0));
+        CFWriteStreamOpen(stream.get());
+
+        CFWriteStreamWrite(stream.get(), treeData->liveTree.utf8().dataAsUInt8Ptr(), treeData->liveTree.utf8().length());
+        CFWriteStreamWrite(stream.get(), treeData->isolatedTree.utf8().dataAsUInt8Ptr(), treeData->isolatedTree.utf8().length());
+
+        data = adoptCF(static_cast<CFDataRef>(CFWriteStreamCopyProperty(stream.get(), kCFStreamPropertyDataWritten)));
+        CFWriteStreamClose(stream.get());
+    }
+
+    if (data)
+        dataBuffer = IPC::SharedBufferCopy(SharedBuffer::create(data.get()));
+#endif
+
+    callback(dataBuffer);
+}
+
 void WebPage::forceRepaintWithoutCallback()
 {
     m_drawingArea->forceRepaint();

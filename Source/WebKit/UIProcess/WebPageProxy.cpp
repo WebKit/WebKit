@@ -4550,6 +4550,11 @@ void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, CompletionHandler<
     sendWithAsyncReply(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID()), toAPIDataCallback(WTFMove(callback)));
 }
 
+void WebPageProxy::getAccessibilityTreeData(CompletionHandler<void(API::Data*)>&& callback)
+{
+    sendWithAsyncReply(Messages::WebPage::GetAccessibilityTreeData(), toAPIDataCallback(WTFMove(callback)));
+}
+
 void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
 {
     if (!hasRunningProcess())

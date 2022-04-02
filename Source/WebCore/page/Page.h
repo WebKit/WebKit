@@ -174,6 +174,7 @@ class WebLockRegistry;
 class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 
+struct AXTreeData;
 struct ApplePayAMSUIRequest;
 struct SimpleRange;
 struct TextRecognitionResult;
@@ -944,6 +945,7 @@ public:
     AttachmentElementClient* attachmentElementClient() { return m_attachmentElementClient.get(); }
 #endif
 
+    WEBCORE_EXPORT std::optional<AXTreeData> accessibilityTreeData() const;
 #if USE(ATSPI)
     AccessibilityRootAtspi* accessibilityRootObject() const { return m_accessibilityRootObject; }
     void setAccessibilityRootObject(AccessibilityRootAtspi* rootObject) { m_accessibilityRootObject = rootObject; }

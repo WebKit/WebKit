@@ -590,6 +590,17 @@ void Page::settingsDidChange()
 #endif
 }
 
+std::optional<AXTreeData> Page::accessibilityTreeData() const
+{
+    auto* document = mainFrame().document();
+    if (!document)
+        return std::nullopt;
+
+    if (auto* cache = document->existingAXObjectCache())
+        return { cache->treeData() };
+    return std::nullopt;
+}
+
 void Page::progressEstimateChanged(Frame& frameWithProgressUpdate) const
 {
     if (auto* document = frameWithProgressUpdate.document()) {

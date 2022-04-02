@@ -445,6 +445,8 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 */
 - (void)createWebArchiveDataWithCompletionHandler:(void (^)(NSData *, NSError *))completionHandler NS_REFINED_FOR_SWIFT WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
+- (void)retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;
+
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
  will trigger back-forward list navigations.
  @discussion The default value is NO.

@@ -1704,6 +1704,14 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     });
 }
 
+- (void)retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler
+{
+    THROW_IF_SUSPENDED;
+    _page->getAccessibilityTreeData([completionHandler = makeBlockPtr(completionHandler)] (API::Data* data) {
+        completionHandler(wrapper(data), nil);
+    });
+}
+
 static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::EditorState& state)
 {
     if (state.isMissingPostLayoutData)
