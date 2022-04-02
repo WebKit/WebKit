@@ -1,3 +1,22 @@
+2022-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Several tests in media/modern-media-controls crash in -[WKActionSheetAssistant _uiMenuElementsForMediaControlContextMenuItems:]
+        https://bugs.webkit.org/show_bug.cgi?id=238687
+
+        Reviewed by Tim Horton.
+
+        Fixes several debug assertions that are hit when running layout tests in media/modern-media-controls, due to
+        exercising undefined behavior in the case where there is only one item. This is because we currently use
+        Vector's move assignment operator to set `items` to `items[0].children`; however, this move assignment operator
+        starts by calling the destructor on the contents of `item`, which puts the first item's vector of children in an
+        invalid state.
+
+        Instead, simply add a new temporary variable, and move into the temporary variable instead.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant _uiMenuElementsForMediaControlContextMenuItems:]):
+        (-[WKActionSheetAssistant showMediaControlsContextMenu:items:completionHandler:]):
+
 2022-04-01  Michael Saboff  <msaboff@apple.com>
 
         Stop copying StagedFrameworks to the secondary path by default

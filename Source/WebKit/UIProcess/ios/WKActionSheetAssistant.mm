@@ -808,7 +808,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
 
-- (NSArray<UIMenuElement *> *)_uiMenuElementsForMediaControlContextMenuItems:(Vector<WebCore::MediaControlsContextMenuItem>&&) items
+- (NSArray<UIMenuElement *> *)_uiMenuElementsForMediaControlContextMenuItems:(Vector<WebCore::MediaControlsContextMenuItem>&&)items
 {
     return createNSArray(items, [&] (WebCore::MediaControlsContextMenuItem& item) -> UIMenuElement * {
         UIImage *image = !item.icon.isEmpty() ? [UIImage systemImageNamed:WTFMove(item.icon)] : nil;
@@ -837,17 +837,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(!_mediaControlsContextMenuCallback);
 
     String menuTitle;
+    Vector<WebCore::MediaControlsContextMenuItem> itemsToPresent;
     if (items.size() == 1) {
         menuTitle = WTFMove(items[0].title);
-        items = WTFMove(items[0].children);
-    }
+        itemsToPresent = WTFMove(items[0].children);
+    } else
+        itemsToPresent = WTFMove(items);
 
-    if (![_view window] || items.isEmpty()) {
+    if (![_view window] || itemsToPresent.isEmpty()) {
         completionHandler(WebCore::MediaControlsContextMenuItem::invalidID);
         return;
     }
 
-    _mediaControlsContextMenu = [UIMenu menuWithTitle:WTFMove(menuTitle) children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(items)]];
+    _mediaControlsContextMenu = [UIMenu menuWithTitle:WTFMove(menuTitle) children:[self _uiMenuElementsForMediaControlContextMenuItems:WTFMove(itemsToPresent)]];
     _mediaControlsContextMenuTargetFrame = WTFMove(targetFrame);
     _mediaControlsContextMenuCallback = WTFMove(completionHandler);
 
