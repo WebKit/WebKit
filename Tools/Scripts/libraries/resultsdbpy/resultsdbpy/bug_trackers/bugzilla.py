@@ -142,7 +142,7 @@ class WebKitBugzilla(BugTrackerConfig):
             component = 'JavaScriptCore'
         if test and any([suite == 'layout-tests', suite == 'internal-security-tests']):
             test_name_parts = test.split('/')
-            for k, v in self.COMPONENTS_LAYOUT_TEST_MAPPING:
+            for k, v in self.COMPONENTS_LAYOUT_TEST_MAPPING.items():
                 if 'skip' in v and v['skip']:
                     continue
                 if 'lower' in v and v['lower']:
