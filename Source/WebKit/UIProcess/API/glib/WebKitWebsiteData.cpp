@@ -29,10 +29,10 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitWebsiteData
- * @Short_description: Website data
- * @Title: WebKitWebsiteData
+ * WebKitWebsiteData: (ref-func webkit_website_data_ref) (unref-func webkit_website_data_unref)
  * @See_also: #WebKitWebsiteDataManager
+ *
+ * Data stored locally by a web site.
  *
  * WebKitWebsiteData represents data stored in the client by a particular website.
  * A website is normally a set of URLs grouped by domain name. You can get the website name,

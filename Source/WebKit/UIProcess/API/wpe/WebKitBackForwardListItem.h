@@ -43,12 +43,14 @@ typedef struct _WebKitBackForwardListItemPrivate WebKitBackForwardListItemPrivat
 struct _WebKitBackForwardListItem {
     GInitiallyUnowned parent;
 
+    /*< private >*/
     WebKitBackForwardListItemPrivate *priv;
 };
 
 struct _WebKitBackForwardListItemClass {
     GInitiallyUnownedClass parent_class;
 
+    /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

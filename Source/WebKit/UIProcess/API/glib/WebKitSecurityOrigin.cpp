@@ -25,9 +25,9 @@
 #include <wtf/text/CString.h>
 
 /**
- * SECTION: WebKitSecurityOrigin
- * @Short_description: A security boundary for websites
- * @Title: WebKitSecurityOrigin
+ * WebKitSecurityOrigin:
+ *
+ * A security boundary for websites.
  *
  * #WebKitSecurityOrigin is a representation of a security domain
  * defined by websites. A security origin consists of a protocol, a

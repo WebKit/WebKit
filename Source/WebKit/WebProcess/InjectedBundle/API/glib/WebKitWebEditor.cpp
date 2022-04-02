@@ -28,10 +28,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitWebEditor
- * @Short_description: Access to editing capabilities of a #WebKitWebPage
- * @Title: WebKitWebEditor
+ * WebKitWebEditor:
  * @See_also: #WebKitWebPage
+ *
+ * Access to editing capabilities of a #WebKitWebPage.
  *
  * The WebKitWebEditor provides access to various editing capabilities of
  * a #WebKitWebPage such as a possibility to react to the current selection in

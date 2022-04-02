@@ -28,10 +28,10 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitUserMediaPermissionRequest
- * @Short_description: A permission request for accessing user's audio/video devices.
- * @Title: WebKitUserMediaPermissionRequest
+ * WebKitUserMediaPermissionRequest:
  * @See_also: #WebKitPermissionRequest, #WebKitWebView
+ *
+ * A permission request for accessing user's audio/video devices.
  *
  * WebKitUserMediaPermissionRequest represents a request for
  * permission to decide whether WebKit should be allowed to access the user's
@@ -112,6 +112,8 @@ static void webkitUserMediaPermissionRequestDispose(GObject* object)
  * webkit_user_media_permission_is_for_audio_device:
  * @request: a #WebKitUserMediaPermissionRequest
  *
+ * Check whether the permission request is for an audio device.
+ *
  * Returns: %TRUE if access to an audio device was requested.
  *
  * Since: 2.8
@@ -126,6 +128,8 @@ gboolean webkit_user_media_permission_is_for_audio_device(WebKitUserMediaPermiss
  * webkit_user_media_permission_is_for_video_device:
  * @request: a #WebKitUserMediaPermissionRequest
  *
+ * Check whether the permission request is for a video device.
+ *
  * Returns: %TRUE if access to a video device was requested.
  *
  * Since: 2.8
@@ -139,6 +143,8 @@ gboolean webkit_user_media_permission_is_for_video_device(WebKitUserMediaPermiss
 /**
  * webkit_user_media_permission_is_for_display_device:
  * @request: a #WebKitUserMediaPermissionRequest
+ *
+ * Check whether the permission request is for a display device.
  *
  * Returns: %TRUE if access to a display device was requested.
  *
@@ -173,7 +179,7 @@ static void webkit_user_media_permission_request_class_init(WebKitUserMediaPermi
     objectClass->get_property = webkitUserMediaPermissionRequestGetProperty;
 
     /**
-     * WebKitUserPermissionRequest:is-for-audio-device:
+     * WebKitUserMediaPermissionRequest:is-for-audio-device:
      *
      * Whether the media device to which the permission was requested has a microphone or not.
      *
@@ -186,7 +192,7 @@ static void webkit_user_media_permission_request_class_init(WebKitUserMediaPermi
             WEBKIT_PARAM_READABLE));
 
     /**
-     * WebKitUserPermissionRequest:is-for-video-device:
+     * WebKitUserMediaPermissionRequest:is-for-video-device:
      *
      * Whether the media device to which the permission was requested has a video capture capability or not.
      *

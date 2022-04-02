@@ -76,7 +76,8 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE ${ENABLE_EXPERIMENTAL_FEAT
 # Public options specific to the WPE port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to any other WebKit ports.
-WEBKIT_OPTION_DEFINE(ENABLE_GTKDOC "Whether or not to use generate gtkdoc." PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(ENABLE_DOCUMENTATION "Whether to generate documentation." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspection." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WPE_QT_API "Whether to enable support for the Qt5/QML plugin" PUBLIC ${ENABLE_DEVELOPER_MODE})
 WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PUBLIC OFF)
@@ -88,6 +89,7 @@ WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Sou
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 
 # Private options specific to the WPE port.
+WEBKIT_OPTION_DEPEND(ENABLE_DOCUMENTATION ENABLE_INTROSPECTION)
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_HOLEPUNCH "Whether to enable GStreamer holepunch" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_EXTERNAL_HOLEPUNCH "Whether to enable external holepunch" PRIVATE OFF)
 WEBKIT_OPTION_DEPEND(USE_ANGLE_WEBGL ENABLE_WEBGL)
@@ -123,6 +125,16 @@ WEBKIT_OPTION_DEPEND(USE_EXTERNAL_HOLEPUNCH ENABLE_VIDEO)
 include(GStreamerDependencies)
 
 WEBKIT_OPTION_END()
+
+find_package(GI)
+if (ENABLE_INTROSPECTION AND NOT GI_FOUND)
+    message(FATAL_ERROR "GObjectIntrospection is needed for ENABLE_INTROSPECTION.")
+endif ()
+
+find_package(GIDocgen)
+if (ENABLE_DOCUMENTATION AND NOT GIDocgen_FOUND)
+    message(FATAL_ERROR "gi-docgen is needed for ENABLE_INTROSPECTION.")
+endif ()
 
 if (USE_SOUP2)
     set(SOUP_MINIMUM_VERSION 2.54.0)
@@ -306,11 +318,6 @@ SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
 # GUri is available in GLib since version 2.66, but we only want to use it if version is >= 2.67.1.
 if (PC_GLIB_VERSION VERSION_GREATER "2.67.1" OR PC_GLIB_VERSION STREQUAL "2.67.1")
     SET_AND_EXPOSE_TO_BUILD(HAVE_GURI 1)
-endif ()
-
-# Override the cached variable, gtk-doc does not really work when cross-building or building on Mac.
-if (CMAKE_CROSSCOMPILING OR APPLE)
-    set(ENABLE_GTKDOC OFF)
 endif ()
 
 # Using DERIVED_SOURCES_DIR is deprecated

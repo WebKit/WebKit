@@ -31,9 +31,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitWebInspector
- * @Short_description: Access to the WebKit inspector
- * @Title: WebKitWebInspector
+ * WebKitWebInspector:
+ *
+ * Access to the WebKit inspector.
  *
  * The WebKit Inspector is a graphical tool to inspect and change the
  * content of a #WebKitWebView. It also includes an interactive
@@ -56,7 +56,6 @@ using namespace WebKit;
  * WebKitWebInspector *inspector = webkit_web_view_get_inspector (WEBKIT_WEB_VIEW(my_webview));
  * webkit_web_inspector_show (WEBKIT_WEB_INSPECTOR(inspector));
  * </programlisting></informalexample>
- *
  */
 
 enum {

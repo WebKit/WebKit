@@ -25,9 +25,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitOptionMenuItem
- * @Short_description: One item of the #WebKitOptionMenu
- * @Title: WebKitOptionMenuItem
+ * WebKitOptionMenuItem:
+ *
+ * One item of a #WebKitOptionMenu.
  *
  * The #WebKitOptionMenu is composed of WebKitOptionMenuItem<!-- -->s.
  * A WebKitOptionMenuItem always has a label and can contain a tooltip text.

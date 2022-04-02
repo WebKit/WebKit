@@ -113,6 +113,7 @@ struct _WebKitWebContext {
 struct _WebKitWebContextClass {
     GObjectClass parent;
 
+    /*< public >*/
     void     (* download_started)                    (WebKitWebContext        *context,
                                                       WebKitDownload          *download);
     void     (* initialize_web_extensions)           (WebKitWebContext        *context);
@@ -122,6 +123,7 @@ struct _WebKitWebContextClass {
     gboolean (* user_message_received)               (WebKitWebContext        *context,
                                                       WebKitUserMessage       *message);
 
+    /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

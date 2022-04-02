@@ -40,9 +40,9 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitURISchemeRequest
- * @Short_description: Represents a URI scheme request
- * @Title: WebKitURISchemeRequest
+ * WebKitURISchemeRequest:
+ *
+ * Represents a URI scheme request.
  *
  * If you register a particular URI scheme in a #WebKitWebContext,
  * using webkit_web_context_register_uri_scheme(), you have to provide
@@ -52,7 +52,6 @@ using namespace WebCore;
  * scheme, the URI and path, and the #WebKitWebView that initiated the
  * request, and also finish the request with
  * webkit_uri_scheme_request_finish().
- *
  */
 
 static const unsigned int gReadBufferSize = 8192;
@@ -183,7 +182,7 @@ const gchar* webkit_uri_scheme_request_get_http_method(WebKitURISchemeRequest* r
     return request->priv->httpMethod;
 }
 
-/*
+/**
  * webkit_uri_scheme_request_get_http_headers:
  * @request: a #WebKitURISchemeRequest
  *

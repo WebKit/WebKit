@@ -27,6 +27,14 @@
 
 using namespace WebKit;
 
+/**
+ * WebKitWebViewSessionState: (ref-func webkit_web_view_session_state_ref) (unref-func webkit_web_view_session_state_unref)
+ *
+ * Handles serialization of a web view's browsing state.
+ *
+ * Since: 2.12
+ */
+
 struct _WebKitWebViewSessionState {
     _WebKitWebViewSessionState(SessionState&& state)
         : sessionState(WTFMove(state))

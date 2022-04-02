@@ -34,10 +34,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitNavigationPolicyDecision
- * @Short_description: A policy decision for navigation actions
- * @Title: WebKitNavigationPolicyDecision
+ * WebKitNavigationPolicyDecision:
  * @See_also: #WebKitPolicyDecision, #WebKitWebView
+ *
+ * A policy decision for navigation actions.
  *
  * WebKitNavigationPolicyDecision represents a policy decision for events associated with
  * navigations. If the value of #WebKitNavigationPolicyDecision:mouse-button is not 0, then

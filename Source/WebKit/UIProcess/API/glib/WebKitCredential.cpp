@@ -26,6 +26,14 @@
 
 using namespace WebKit;
 
+/**
+ * WebKitCredential:
+ *
+ * Groups information used for user authentication.
+ *
+ * Since: 2.2
+ */
+
 struct _WebKitCredential {
     _WebKitCredential(const WebCore::Credential& coreCredential)
         : credential(coreCredential)

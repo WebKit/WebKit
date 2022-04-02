@@ -37,7 +37,7 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * SECTION: JSCContext
+ * JSCContext:
  * @short_description: JavaScript execution context
  * @title: JSCContext
  *

@@ -67,6 +67,7 @@ typedef enum {
 struct _WebKitWebPage {
     GObject parent;
 
+    /*< private >*/
     WebKitWebPagePrivate *priv;
 };
 

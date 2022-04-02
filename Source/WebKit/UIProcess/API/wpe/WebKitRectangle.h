@@ -29,17 +29,6 @@
 
 G_BEGIN_DECLS
 
-/**
- * WebKitRectangle:
- * @x: The X coordinate of the top-left corner of the rectangle.
- * @y: The Y coordinate of the top-left corner of the rectangle.
- * @width: The width of the rectangle.
- * @height: The height of the rectangle.
- *
- * A WebKitRectangle is a boxed type representing a rectangle with integer coordinates.
- *
- * Since: 2.28
- */
 struct _WebKitRectangle {
     gint x;
     gint y;

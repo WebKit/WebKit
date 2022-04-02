@@ -37,10 +37,10 @@ enum {
 };
 
 /**
- * SECTION: WebKitUserMessage
- * @Short_description: A user message
- * @Title: WebKitUserMessage
+ * WebKitUserMessage:
  * @See_also: #WebKitWebContext, #WebKitWebView, #WebKitWebExtension, #WebKitWebPage
+ *
+ * Message that can be sent between the UI process and web extensions.
  *
  * A WebKitUserMessage is a message that can be used for the communication between the UI process
  * and web extensions. A WebKitUserMessage always has a name, and it can also include parameters and
@@ -58,6 +58,13 @@ struct _WebKitUserMessagePrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitUserMessage, webkit_user_message, G_TYPE_INITIALLY_UNOWNED)
 
+/**
+ * webkit_user_message_error_quark:
+ *
+ * Gets the quark for the domain of user message errors.
+ *
+ * Returns: user message error domain.
+ */
 G_DEFINE_QUARK(WebKitUserMessageError, webkit_user_message_error)
 
 static void webkitUserMessageDispose(GObject* object)

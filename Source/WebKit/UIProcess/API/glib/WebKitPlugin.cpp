@@ -23,9 +23,9 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * SECTION: WebKitPlugin
- * @Short_description: Represents a plugin, enabling fine-grained control
- * @Title: WebKitPlugin
+ * WebKitPlugin:
+ *
+ * Represents a plugin, enabling fine-grained control.
  *
  * This object represents a single plugin, found while scanning the
  * various platform plugin directories. This object can be used to get
@@ -52,7 +52,9 @@ static void webkit_plugin_class_init(WebKitPluginClass*)
  * webkit_plugin_get_name:
  * @plugin: a #WebKitPlugin
  *
- * Returns: the name of the plugin.
+ * Obtain the plugin name.
+ *
+ * Returns: (nullable): name, as a string.
  *
  * Deprecated: 2.32
  */
@@ -65,7 +67,9 @@ const char* webkit_plugin_get_name(WebKitPlugin*)
  * webkit_plugin_get_description:
  * @plugin: a #WebKitPlugin
  *
- * Returns: the description of the plugin.
+ * Obtain the plugin description.
+ *
+ * Returns: (nullable): description, as a string.
  *
  * Deprecated: 2.32
  */
@@ -78,7 +82,9 @@ const char* webkit_plugin_get_description(WebKitPlugin*)
  * webkit_plugin_get_path:
  * @plugin: a #WebKitPlugin
  *
- * Returns: the absolute path where the plugin is installed.
+ * Obtain the absolute path where the plugin is installed.
+ *
+ * Returns: (nullable): path, as a string.
  *
  * Deprecated: 2.32
  */

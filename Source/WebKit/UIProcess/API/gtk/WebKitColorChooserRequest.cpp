@@ -35,10 +35,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitColorChooserRequest
- * @Short_description: A request to open a color chooser
- * @Title: WebKitColorChooserRequest
+ * WebKitColorChooserRequest:
  * @See_also: #WebKitWebView
+ *
+ * A request to open a color chooser.
  *
  * Whenever the user interacts with an &lt;input type='color' /&gt;
  * HTML element, WebKit will need to show a dialog to choose a color. For that
@@ -122,7 +122,7 @@ static void webkit_color_chooser_request_class_init(WebKitColorChooserRequestCla
     objectClass->set_property = webkitColorChooserRequestSetProperty;
 
     /**
-     * WebKitWebView:rgba:
+     * WebKitColorChooserRequest:rgba:
      *
      * The #GdkRGBA color of the request
      *

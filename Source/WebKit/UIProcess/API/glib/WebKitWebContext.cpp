@@ -84,9 +84,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitWebContext
- * @Short_description: Manages aspects common to all #WebKitWebView<!-- -->s
- * @Title: WebKitWebContext
+ * WebKitWebContext:
+ *
+ * Manages aspects common to all #WebKitWebView<!-- -->s
  *
  * The #WebKitWebContext manages all aspects common to all
  * #WebKitWebView<!-- -->s.
@@ -112,7 +112,6 @@ using namespace WebKit;
  * Alternatively, you can use webkit_web_context_set_tls_errors_policy()
  * to set the policy %WEBKIT_TLS_ERRORS_POLICY_IGNORE; however, this is
  * not appropriate for Internet applications.
- *
  */
 
 enum {

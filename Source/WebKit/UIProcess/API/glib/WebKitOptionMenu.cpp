@@ -27,11 +27,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitOptionMenu
- * @Short_description:
- * @Title: WebKitOptionMenu
+ * WebKitOptionMenu:
  *
- * WebKitOptionMenu represents the dropdown menu of a select element in a #WebKitWebView.
+ * Represents the dropdown menu of a `select` element in a #WebKitWebView.
  *
  * When a select element in a #WebKitWebView needs to display a dropdown menu, the signal
  * #WebKitWebView::show-option-menu is emitted, providing a WebKitOptionMenu with the

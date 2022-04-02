@@ -25,6 +25,12 @@
 #include <jsc/JSCContextPrivate.h>
 #include <jsc/JSCValuePrivate.h>
 
+/**
+ * WebKitJavascriptResult: (ref-func webkit_javascript_result_ref) (unref-func webkit_javascript_result_unref)
+ *
+ * Result of JavaScript evaluation in a web view.
+ */
+
 struct _WebKitJavascriptResult {
     explicit _WebKitJavascriptResult(WebCore::SerializedScriptValue& serializedScriptValue)
     {

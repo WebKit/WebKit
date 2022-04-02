@@ -26,10 +26,10 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * SECTION: WebKitPointerLockPermissionRequest
- * @Short_description: A permission request for locking the pointer
- * @Title: WebKitPointerLockPermissionRequest
+ * WebKitPointerLockPermissionRequest:
  * @See_also: #WebKitPermissionRequest, #WebKitWebView
+ *
+ * A permission request for locking the pointer.
  *
  * WebKitPointerLockPermissionRequest represents a request for
  * permission to decide whether WebKit can lock the pointer device when

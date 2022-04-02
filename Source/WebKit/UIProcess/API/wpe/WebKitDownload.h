@@ -47,15 +47,18 @@ typedef struct _WebKitWebView WebKitWebView;
 struct _WebKitDownload {
     GObject parent;
 
+    /*< private >*/
     WebKitDownloadPrivate *priv;
 };
 
 struct _WebKitDownloadClass {
     GObjectClass parent_class;
 
+    /*< public >*/
     gboolean (* decide_destination)  (WebKitDownload *download,
                                       const gchar    *suggested_filename);
 
+    /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

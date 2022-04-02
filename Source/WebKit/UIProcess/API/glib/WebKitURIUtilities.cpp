@@ -25,12 +25,6 @@
 #include <wtf/text/WTFString.h>
 
 /**
- * SECTION: WebKitURIUtilities
- * @Short_description: Utility functions to manipulate URIs
- * @Title: WebKitURIUtilities
- */
-
-/**
  * webkit_uri_for_display:
  * @uri: the URI to be converted
  *

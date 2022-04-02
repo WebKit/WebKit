@@ -31,7 +31,7 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * SECTION: JSCWeakValue
+ * JSCWeakValue:
  * @short_description: JavaScript weak value
  * @title: JSCWeakValue
  * @see_also: JSCValue

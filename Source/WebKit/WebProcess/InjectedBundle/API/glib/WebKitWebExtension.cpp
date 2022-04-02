@@ -37,9 +37,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitWebExtension
- * @Short_description: Represents a WebExtension of the WebProcess
- * @Title: WebKitWebExtension
+ * WebKitWebExtension:
+ *
+ * Represents an extension of the WebProcess.
  *
  * WebKitWebExtension is a loadable module for the WebProcess. It allows you to execute code in the
  * WebProcess and being able to use the DOM API, to change any request or to inject custom

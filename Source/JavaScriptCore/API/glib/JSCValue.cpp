@@ -39,7 +39,7 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * SECTION: JSCValue
+ * JSCValue:
  * @short_description: JavaScript value
  * @title: JSCValue
  * @see_also: JSCContext

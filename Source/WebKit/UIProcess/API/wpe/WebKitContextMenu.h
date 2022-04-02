@@ -45,12 +45,14 @@ typedef struct _WebKitContextMenuItem WebKitContextMenuItem;
 struct _WebKitContextMenu {
     GObject parent;
 
+    /*< private >*/
     WebKitContextMenuPrivate *priv;
 };
 
 struct _WebKitContextMenuClass {
     GObjectClass parent_class;
 
+    /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

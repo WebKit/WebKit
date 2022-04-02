@@ -36,6 +36,17 @@
 using namespace WebKit;
 using namespace WebCore;
 
+/**
+ * WebKitFrame:
+ *
+ * A web page frame.
+ *
+ * Each `WebKitWebPage` has at least one main frame, and can have any number
+ * of subframes.
+ *
+ * Since: 2.26
+ */
+
 struct _WebKitFramePrivate {
     RefPtr<WebFrame> webFrame;
 

@@ -27,49 +27,96 @@
 using namespace WebCore;
 
 /**
- * SECTION: WebKitError
- * @Short_description: Categorized WebKit errors
- * @Title: WebKitError
+ * webkit_network_error_quark:
  *
- * Categorized WebKit errors.
+ * Gets the quark for the domain of networking errors.
  *
+ * Returns: network error domain.
  */
-
 GQuark webkit_network_error_quark()
 {
     return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitNetworkErrorDomain().characters8()));
 }
 
+/**
+ * webkit_policy_error_quark:
+ *
+ * Gets the quark for the domain of policy errors.
+ *
+ * Returns: policy error domain.
+ */
 GQuark webkit_policy_error_quark()
 {
     return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitPolicyErrorDomain().characters8()));
 }
 
+/**
+ * webkit_plugin_error_quark:
+ *
+ * Gets the quark for the domain of plug-in errors.
+ *
+ * Returns: plug-in error domain.
+ */
 GQuark webkit_plugin_error_quark()
 {
     return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitPluginErrorDomain().characters8()));
 }
 
+/**
+ * webkit_download_error_quark:
+ *
+ * Gets the quark for the domain of download errors.
+ *
+ * Returns: download error domain.
+ */
 GQuark webkit_download_error_quark()
 {
     return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitDownloadErrorDomain().characters8()));
 }
 
 #if PLATFORM(GTK)
+/**
+ * webkit_print_error_quark:
+ *
+ * Gets the quark for the domain of printing errors.
+ *
+ * Returns: print error domain.
+ */
 GQuark webkit_print_error_quark()
 {
     return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitPrintErrorDomain().characters8()));
 }
 #endif
 
+/**
+ * webkit_javascript_error_quark:
+ *
+ * Gets the quark for the domain of JavaScript errors.
+ *
+ * Returns: JavaScript error domain.
+ */
 GQuark webkit_javascript_error_quark()
 {
     return g_quark_from_static_string("WebKitJavascriptError");
 }
 
+/**
+ * webkit_snapshot_error_quark:
+ *
+ * Gets the quark for the domain of page snapshot errors.
+ *
+ * Returns: snapshot error domain.
+ */
 GQuark webkit_snapshot_error_quark()
 {
     return g_quark_from_static_string("WebKitSnapshotError");
 }
 
+/**
+ * webkit_user_content_filter_error_quark:
+ *
+ * Gets the quark for the domain of user content filter errors.
+ *
+ * Returns: user content filter error domain.
+ */
 G_DEFINE_QUARK(WebKitUserContentFilterError, webkit_user_content_filter_error)

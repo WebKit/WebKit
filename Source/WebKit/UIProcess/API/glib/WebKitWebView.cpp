@@ -108,9 +108,9 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitWebView
- * @Short_description: The central class of the WPE WebKit and WebKitGTK APIs
- * @Title: WebKitWebView
+ * WebKitWebView:
+ *
+ * The central class of the WPE WebKit and WebKitGTK APIs.
  *
  * #WebKitWebView is the central class of the WPE WebKit and WebKitGTK
  * APIs. It is responsible for managing the drawing of the content and
@@ -4481,7 +4481,7 @@ void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessT
     webkitWebViewSetIsWebProcessResponsive(webView, true);
 }
 
-/*
+/**
  * webkit_web_view_is_editable:
  * @web_view: a #WebKitWebView
  *
@@ -4792,7 +4792,7 @@ void webkitWebViewSetIsWebProcessResponsive(WebKitWebView* webView, bool isRespo
 }
 
 /**
- * webkit_web_view_is_web_process_responsive:
+ * webkit_web_view_get_is_web_process_responsive:
  * @web_view: a #WebKitWebView
  *
  * Get whether the current web process of a #WebKitWebView is responsive.

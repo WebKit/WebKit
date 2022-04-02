@@ -1,3 +1,221 @@
+2022-04-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Replace gtk-doc with gi-docgen
+        https://bugs.webkit.org/show_bug.cgi?id=226662
+
+        Reviewed by Michael Catanzaro.
+
+        Import two new CMake modules which define commands to easy setup of GObject-Introspection
+        and gi-docgen. These in turn allow to remove a bunch of duplicated CMake code, reuse
+        the same for both the WPE and GTK ports, and remove the gnarly DocBook templates and
+        other auxiliary files previously used by gtk-doc (which amount to a sizeable amount of
+        code).
+
+        While at it, do a quick pass to fix the most egregious issues reported by gi-docgen's
+        linting mode and that all public symbols end up with at least some documentation in
+        the generated output. Follow-up patches will be needed to keep adapting to the style
+        encouraged by gi-docgen, fix linking between documented entities, make code examples
+        display properly, and a few other things.
+
+        * PlatformGTK.cmake: Adapt to use the new CMake modules.
+        * PlatformWPE.cmake: Ditto.
+        * Shared/API/glib/WebKitContextMenu.cpp: Fix documentation comments.
+        * Shared/API/glib/WebKitContextMenuItem.cpp: Ditto.
+        * Shared/API/glib/WebKitHitTestResult.cpp: Ditto.
+        * Shared/API/glib/WebKitURIRequest.cpp: Ditto.
+        * Shared/API/glib/WebKitURIResponse.cpp: Ditto.
+        * Shared/API/glib/WebKitUserMessage.cpp: Ditto.
+        * UIProcess/API/glib/WebKitApplicationInfo.cpp: Ditto.
+        * UIProcess/API/glib/WebKitAuthenticationRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitAutomationSession.cpp: Ditto.
+        * UIProcess/API/glib/WebKitBackForwardList.cpp: Ditto.
+        * UIProcess/API/glib/WebKitBackForwardListItem.cpp: Ditto.
+        * UIProcess/API/glib/WebKitCookieManager.cpp: Ditto.
+        * UIProcess/API/glib/WebKitCredential.cpp: Ditto.
+        * UIProcess/API/glib/WebKitDeviceInfoPermissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitDownload.cpp: Ditto.
+        * UIProcess/API/glib/WebKitEditorState.cpp: Ditto.
+        * UIProcess/API/glib/WebKitError.cpp: Ditto.
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp: Ditto.
+        * UIProcess/API/glib/WebKitFileChooserRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitFindController.cpp: Ditto.
+        * UIProcess/API/glib/WebKitFormSubmissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitGeolocationManager.cpp: Ditto.
+        * UIProcess/API/glib/WebKitGeolocationPermissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitInputMethodContext.cpp: Ditto.
+        (webkit_input_method_context_class_init): Ditto.
+        * UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitJavascriptResult.cpp: Ditto.
+        * UIProcess/API/glib/WebKitMediaKeySystemPermissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitMemoryPressureSettings.cpp: Ditto.
+        * UIProcess/API/glib/WebKitMimeInfo.cpp: Ditto.
+        * UIProcess/API/glib/WebKitNavigationAction.cpp: Ditto.
+        * UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp: Ditto.
+        * UIProcess/API/glib/WebKitNetworkProxySettings.cpp: Ditto.
+        * UIProcess/API/glib/WebKitNotification.cpp: Ditto.
+        * UIProcess/API/glib/WebKitNotificationPermissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitOptionMenu.cpp: Ditto.
+        * UIProcess/API/glib/WebKitOptionMenuItem.cpp: Ditto.
+        * UIProcess/API/glib/WebKitPermissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitPlugin.cpp: Ditto.
+        * UIProcess/API/glib/WebKitPointerLockPermissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitPolicyDecision.cpp: Ditto.
+        * UIProcess/API/glib/WebKitResponsePolicyDecision.cpp: Ditto.
+        * UIProcess/API/glib/WebKitScriptDialog.cpp: Ditto.
+        * UIProcess/API/glib/WebKitSecurityManager.cpp: Ditto.
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp: Ditto.
+        * UIProcess/API/glib/WebKitSettings.cpp: Ditto.
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitURISchemeResponse.cpp: Ditto.
+        (webkit_uri_scheme_response_class_init): Ditto.
+        * UIProcess/API/glib/WebKitURIUtilities.cpp: Ditto.
+        * UIProcess/API/glib/WebKitUserContent.cpp: Ditto.
+        * UIProcess/API/glib/WebKitUserContentFilterStore.cpp: Ditto.
+        * UIProcess/API/glib/WebKitUserContentManager.cpp: Ditto.
+        * UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp: Ditto.
+        (webkit_user_media_permission_request_class_init): Ditto.
+        * UIProcess/API/glib/WebKitVersion.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebContext.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebResource.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebView.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebViewSessionState.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebsiteData.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebsiteDataAccessPermissionRequest.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWebsitePolicies.cpp: Ditto.
+        * UIProcess/API/glib/WebKitWindowProperties.cpp: Ditto.
+        (webkit_window_properties_class_init): Ditto.
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.h: Ditto.
+        * UIProcess/API/gtk/WebKitAuthenticationRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitAutomationSession.h: Ditto.
+        * UIProcess/API/gtk/WebKitBackForwardList.h: Ditto.
+        * UIProcess/API/gtk/WebKitBackForwardListItem.h: Ditto.
+        * UIProcess/API/gtk/WebKitColorChooserRequest.cpp: Ditto.
+        (webkit_color_chooser_request_class_init): Ditto.
+        * UIProcess/API/gtk/WebKitContextMenu.h: Ditto.
+        * UIProcess/API/gtk/WebKitCookieManager.h: Ditto.
+        * UIProcess/API/gtk/WebKitDefines.h: Ditto.
+        * UIProcess/API/gtk/WebKitDeviceInfoPermissionRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitDownload.h: Ditto.
+        * UIProcess/API/gtk/WebKitEditorState.h: Ditto.
+        * UIProcess/API/gtk/WebKitError.h: Ditto.
+        * UIProcess/API/gtk/WebKitFaviconDatabase.h: Ditto.
+        * UIProcess/API/gtk/WebKitFileChooserRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitFindController.h: Ditto.
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitGeolocationManager.h: Ditto.
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitHitTestResult.h: Ditto.
+        * UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitMediaKeySystemPermissionRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.h: Ditto.
+        * UIProcess/API/gtk/WebKitNotification.h: Ditto.
+        * UIProcess/API/gtk/WebKitOptionMenu.h: Ditto.
+        * UIProcess/API/gtk/WebKitPlugin.h: Ditto.
+        * UIProcess/API/gtk/WebKitPointerLockPermissionRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitPolicyDecision.h: Ditto.
+        * UIProcess/API/gtk/WebKitPrintCustomWidget.cpp: Ditto.
+        * UIProcess/API/gtk/WebKitPrintCustomWidget.h: Ditto.
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp: Ditto.
+        * UIProcess/API/gtk/WebKitPrintOperation.h: Ditto.
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.h: Ditto.
+        * UIProcess/API/gtk/WebKitSecurityManager.h: Ditto.
+        * UIProcess/API/gtk/WebKitSettings.h: Ditto.
+        * UIProcess/API/gtk/WebKitURIRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitURIResponse.h: Ditto.
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitURISchemeResponse.h: Ditto.
+        * UIProcess/API/gtk/WebKitUserContentFilterStore.h: Ditto.
+        * UIProcess/API/gtk/WebKitUserContentManager.h: Ditto.
+        * UIProcess/API/gtk/WebKitUserMediaPermissionRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitUserMessage.h: Ditto.
+        * UIProcess/API/gtk/WebKitVersion.h.in: Ditto.
+        * UIProcess/API/gtk/WebKitWebContext.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebInspector.cpp: Ditto.
+        * UIProcess/API/gtk/WebKitWebInspector.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebResource.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebView.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp: Ditto.
+        * UIProcess/API/gtk/WebKitWebViewDialog.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebsiteDataAccessPermissionRequest.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h: Ditto.
+        * UIProcess/API/gtk/WebKitWebsitePolicies.h: Ditto.
+        * UIProcess/API/gtk/WebKitWindowProperties.h: Ditto.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Removed.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types: Removed.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Removed.
+        * UIProcess/API/wpe/WebKitAuthenticationRequest.h: Fix documentation comments.
+        * UIProcess/API/wpe/WebKitAutomationSession.h: Ditto.
+        * UIProcess/API/wpe/WebKitBackForwardList.h: Ditto.
+        * UIProcess/API/wpe/WebKitBackForwardListItem.h: Ditto.
+        * UIProcess/API/wpe/WebKitColor.cpp: Ditto.
+        * UIProcess/API/wpe/WebKitColor.h: Ditto.
+        * UIProcess/API/wpe/WebKitContextMenu.h: Ditto.
+        * UIProcess/API/wpe/WebKitContextMenuItem.h: Ditto.
+        * UIProcess/API/wpe/WebKitCookieManager.h: Ditto.
+        * UIProcess/API/wpe/WebKitDefines.h: Ditto.
+        * UIProcess/API/wpe/WebKitDeviceInfoPermissionRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitDownload.h: Ditto.
+        * UIProcess/API/wpe/WebKitEditorState.h: Ditto.
+        * UIProcess/API/wpe/WebKitError.h: Ditto.
+        * UIProcess/API/wpe/WebKitFaviconDatabase.h: Ditto.
+        * UIProcess/API/wpe/WebKitFileChooserRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitFindController.h: Ditto.
+        * UIProcess/API/wpe/WebKitFormSubmissionRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitGeolocationManager.h: Ditto.
+        * UIProcess/API/wpe/WebKitGeolocationPermissionRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitHitTestResult.h: Ditto.
+        * UIProcess/API/wpe/WebKitInputMethodContext.h: Ditto.
+        * UIProcess/API/wpe/WebKitInstallMissingMediaPluginsPermissionRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitMediaKeySystemPermissionRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitNavigationPolicyDecision.h: Ditto.
+        * UIProcess/API/wpe/WebKitNotification.h: Ditto.
+        * UIProcess/API/wpe/WebKitOptionMenu.h: Ditto.
+        * UIProcess/API/wpe/WebKitPlugin.h: Ditto.
+        * UIProcess/API/wpe/WebKitPolicyDecision.h: Ditto.
+        * UIProcess/API/wpe/WebKitRectangle.cpp: Ditto.
+        * UIProcess/API/wpe/WebKitRectangle.h: Ditto.
+        * UIProcess/API/wpe/WebKitResponsePolicyDecision.h: Ditto.
+        * UIProcess/API/wpe/WebKitSecurityManager.h: Ditto.
+        * UIProcess/API/wpe/WebKitSettings.h: Ditto.
+        * UIProcess/API/wpe/WebKitURIRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitURIResponse.h: Ditto.
+        * UIProcess/API/wpe/WebKitURISchemeRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitURISchemeResponse.h: Ditto.
+        * UIProcess/API/wpe/WebKitUserContentFilterStore.h: Ditto.
+        * UIProcess/API/wpe/WebKitUserContentManager.h: Ditto.
+        * UIProcess/API/wpe/WebKitUserMediaPermissionRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitUserMessage.h: Ditto.
+        * UIProcess/API/wpe/WebKitVersion.h.in: Ditto.
+        * UIProcess/API/wpe/WebKitWebContext.h: Ditto.
+        * UIProcess/API/wpe/WebKitWebResource.h: Ditto.
+        * UIProcess/API/wpe/WebKitWebView.h: Ditto.
+        * UIProcess/API/wpe/WebKitWebViewBackend.cpp: Ditto.
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp: Ditto.
+        * UIProcess/API/wpe/WebKitWebsiteDataAccessPermissionRequest.h: Ditto.
+        * UIProcess/API/wpe/WebKitWebsiteDataManager.h: Ditto.
+        * UIProcess/API/wpe/WebKitWebsitePolicies.h: Ditto.
+        * UIProcess/API/wpe/WebKitWindowProperties.h: Ditto.
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt: Removed.
+        * UIProcess/API/wpe/docs/wpe-docs.sgml: Removed.
+        * WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp: Fix documentation comments.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp: Ditto.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp: Ditto.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp: Ditto.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp: Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/docs/webkitdomgtk-4.0-sections.txt: Removed.
+        * WebProcess/InjectedBundle/API/gtk/DOM/docs/webkitdomgtk-docs.sgml: Removed.
+        * WebProcess/InjectedBundle/API/gtk/WebKitFrame.h: Fix documentation comments.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h: Ditto.
+        * WebProcess/InjectedBundle/API/wpe/WebKitFrame.h: Ditto.
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebPage.h: Ditto.
+        * WebProcess/InjectedBundle/API/wpe/docs/wpe-webextensions-1.0-sections.txt: Removed.
+        * WebProcess/InjectedBundle/API/wpe/docs/wpe-webextensions-docs.sgml: Removed.
+        * gtk/webkit2gtk-webextension.toml.in: Added.
+        * gtk/webkit2gtk.toml.in: Added.
+        * wpe/wpewebextension.toml.in: Added.
+        * wpe/wpewebkit.toml.in: Added.
+
 2022-04-02  Youenn Fablet  <youenn@apple.com>
 
         Remove notifications from notification list when notification gets closed

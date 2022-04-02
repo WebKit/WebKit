@@ -24,12 +24,13 @@
 #include <WebCore/CSSParser.h>
 
 /**
- * SECTION: WebKitColor
- * @Short_description: A boxed type representing a RGBA color
- * @Title: WebKitColor
- * @See_also: #WebKitWebView.
+ * WebKitColor:
+ * @red: Red channel, between 0.0 and 1.0 inclusive
+ * @green: Green channel, between 0.0 and 1.0 inclusive
+ * @blue: Blue channel, between 0.0 and 1.0 inclusive
+ * @alpha: Alpha channel, between 0.0 and 1.0 inclusive
  *
- * A WebKitColor is a boxed type representing a RGBA color.
+ * Boxed type representing a RGBA color.
  *
  * Since: 2.24
  */

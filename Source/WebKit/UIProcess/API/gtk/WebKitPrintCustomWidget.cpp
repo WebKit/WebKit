@@ -28,10 +28,10 @@
 #include <wtf/text/CString.h>
 
 /**
- * SECTION: WebKitPrintCustomWidget
- * @Short_description: Allows to embed a custom widget in print dialog
- * @Title: WebKitPrintCustomWidget
+ * WebKitPrintCustomWidget:
  * @See_also: #WebKitPrintOperation
+ *
+ * Allows to embed a custom widget in print dialog.
  *
  * A WebKitPrintCustomWidget allows to embed a custom widget in the print
  * dialog by connecting to the #WebKitPrintOperation::create-custom-widget

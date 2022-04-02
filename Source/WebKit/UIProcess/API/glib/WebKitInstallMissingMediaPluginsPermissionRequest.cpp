@@ -37,10 +37,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitInstallMissingMediaPluginsPermissionRequest
- * @Short_description: A permission request for installing missing media plugins
- * @Title: WebKitInstallMissingMediaPluginsPermissionRequest
+ * WebKitInstallMissingMediaPluginsPermissionRequest:
  * @See_also: #WebKitPermissionRequest, #WebKitWebView
+ *
+ * A permission request for installing missing media plugins.
  *
  * WebKitInstallMissingMediaPluginsPermissionRequest represents a request for
  * permission to decide whether WebKit should try to start a helper application to

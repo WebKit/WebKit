@@ -33,9 +33,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitWebResource
- * @Short_description: Represents a resource at the end of a URI
- * @Title: WebKitWebResource
+ * WebKitWebResource:
+ *
+ * Represents a resource at the end of a URI.
  *
  * A #WebKitWebResource encapsulates content for each resource at the
  * end of a particular URI. For example, one #WebKitWebResource will
@@ -46,7 +46,6 @@ using namespace WebKit;
  * #WebKitWebResource, using webkit_web_resource_get_uri() and
  * webkit_web_resource_get_response(), as well as the raw data, using
  * webkit_web_resource_get_data().
- *
  */
 
 enum {

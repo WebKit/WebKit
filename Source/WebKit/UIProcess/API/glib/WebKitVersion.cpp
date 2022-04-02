@@ -21,17 +21,39 @@
 #include "WebKitVersion.h"
 
 /**
- * SECTION: WebKitVersion
- * @Short_description: Provides the WebKit version
- * @Title: WebKitVersion
+ * WEBKIT_MAJOR_VERSION:
  *
- * Provides convenience functions returning WebKit's major, minor and
- * micro versions of the WebKit library your code is running
- * against. This is not necessarily the same as the
- * #WEBKIT_MAJOR_VERSION, #WEBKIT_MINOR_VERSION or
- * #WEBKIT_MICRO_VERSION, which represent the version of the WebKit
- * headers included when compiling the code.
+ * Like webkit_get_major_version(), but from the headers used at
+ * application compile time, rather than from the library linked
+ * against at application run time.
+ */
+
+/**
+ * WEBKIT_MINOR_VERSION:
  *
+ * Like webkit_get_minor_version(), but from the headers used at
+ * application compile time, rather than from the library linked
+ * against at application run time.
+ */
+
+/**
+ * WEBKIT_MICRO_VERSION:
+ *
+ * Like webkit_get_micro_version(), but from the headers used at
+ * application compile time, rather than from the library linked
+ * against at application run time.
+ */
+
+/**
+ * WEBKIT_CHECK_VERSION:
+ * @major: major version (e.g. 1 for version 1.2.5)
+ * @minor: minor version (e.g. 2 for version 1.2.5)
+ * @micro: micro version (e.g. 5 for version 1.2.5)
+ *
+ * Check the version of the WebKit headers at compilation time.
+ *
+ * Returns: %TRUE if the version of the WebKit header files
+ * is the same as or newer than the passed-in version.
  */
 
 /**

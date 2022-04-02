@@ -29,10 +29,10 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitHitTestResult
- * @Short_description: Result of a Hit Test
- * @Title: WebKitHitTestResult
+ * WebKitHitTestResult:
  * @See_also: #WebKitWebView
+ *
+ * Result of a Hit Test.
  *
  * A Hit Test is an operation to get context information about a given
  * point in a #WebKitWebView. #WebKitHitTestResult represents the
@@ -52,7 +52,6 @@ using namespace WebKit;
  * When the mouse is moved over a #WebKitWebView a Hit Test is performed
  * for the mouse coordinates and #WebKitWebView::mouse-target-changed
  * signal is emitted with a #WebKitHitTestResult.
- *
  */
 
 enum {

@@ -147,6 +147,8 @@ typedef enum {
  * @WEBKIT_USER_CONTENT_FILTER_ERROR_INVALID_SOURCE: The JSON source for a content filter is invalid.
  * @WEBKIT_USER_CONTENT_FILTER_ERROR_NOT_FOUND: The requested content filter could not be found.
  *
+ * Errors that can occur while compiling content filters.
+ *
  * Since: 2.24
  */
 typedef enum {

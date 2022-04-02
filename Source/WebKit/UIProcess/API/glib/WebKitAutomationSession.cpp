@@ -32,9 +32,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitAutomationSession
- * @Short_description: Automation Session
- * @Title: WebKitAutomationSession
+ * WebKitAutomationSession:
+ *
+ * Automation Session.
  *
  * WebKitAutomationSession represents an automation session of a WebKitWebContext.
  * When a new session is requested, a WebKitAutomationSession is created and the signal

@@ -338,6 +338,12 @@ struct _WebKitWebViewBasePrivate {
     std::unique_ptr<PointerLockManager> pointerLockManager;
 };
 
+/**
+ * WebKitWebViewBase:
+ *
+ * Internal base class.
+ */
+
 #if USE(GTK4)
 WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_WIDGET)
 #else

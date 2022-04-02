@@ -1,3 +1,48 @@
+2022-04-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Replace gtk-doc with gi-docgen
+        https://bugs.webkit.org/show_bug.cgi?id=226662
+
+        Reviewed by Michael Catanzaro.
+
+        Import two new CMake modules which define commands to easy setup of GObject-Introspection
+        and gi-docgen. These in turn allow to remove a bunch of duplicated CMake code, reuse
+        the same for both the WPE and GTK ports, and remove the gnarly DocBook templates and
+        other auxiliary files previously used by gtk-doc (which amount to a sizeable amount of
+        code).
+
+        While at it, do a quick pass to fix the most egregious issues reported by gi-docgen's
+        linting mode and that all public symbols end up with at least some documentation in
+        the generated output. Follow-up patches will be needed to keep adapting to the style
+        encouraged by gi-docgen, fix linking between documented entities, make code examples
+        display properly, and a few other things.
+
+        * gtkdoc/generate-gtkdoc: Removed.
+        * gtkdoc/gtkdoc.py: Removed.
+        (GTKDoc): Deleted.
+        (GTKDoc.__init__): Deleted.
+        (GTKDoc.generate): Deleted.
+        (GTKDoc._delete_file_if_exists): Deleted.
+        (GTKDoc._create_directory_if_nonexistent): Deleted.
+        (GTKDoc._raise_exception_if_file_inaccessible): Deleted.
+        (GTKDoc._output_has_warnings): Deleted.
+        (GTKDoc._ask_yes_or_no_question): Deleted.
+        (GTKDoc._run_command): Deleted.
+        (GTKDoc._copy_doc_files_to_output_dir): Deleted.
+        (GTKDoc._copy_doc_files_to_output_dir.copy_file_replacing_existing): Deleted.
+        (GTKDoc._copy_doc_files_to_output_dir.copy_all_files_in_directory): Deleted.
+        (GTKDoc._write_version_xml): Deleted.
+        (GTKDoc._ignored_files_basenames): Deleted.
+        (GTKDoc._run_gtkdoc_scan): Deleted.
+        (GTKDoc._run_gtkdoc_scangobj): Deleted.
+        (GTKDoc._run_gtkdoc_mkdb): Deleted.
+        (GTKDoc._run_gtkdoc_mkhtml): Deleted.
+        (GTKDoc._run_gtkdoc_fixxref): Deleted.
+        (GTKDoc.rebase_installed_docs): Deleted.
+        (GTKDoc.api_missing_documentation): Deleted.
+        (PkgConfigGTKDoc): Deleted.
+        (PkgConfigGTKDoc.__init__): Deleted.
+
 2022-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal iOS build

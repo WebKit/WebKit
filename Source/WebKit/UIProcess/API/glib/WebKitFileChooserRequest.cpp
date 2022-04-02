@@ -38,10 +38,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitFileChooserRequest
- * @Short_description: A request to open a file chooser
- * @Title: WebKitFileChooserRequest
+ * WebKitFileChooserRequest:
  * @See_also: #WebKitWebView
+ *
+ * A request to open a file chooser.
  *
  * Whenever the user interacts with an &lt;input type='file' /&gt;
  * HTML element, WebKit will need to show a dialog to choose one or

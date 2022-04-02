@@ -88,8 +88,9 @@ struct _WebKitSettingsPrivate {
 };
 
 /**
- * SECTION:WebKitSettings
- * @short_description: Control the behaviour of a #WebKitWebView
+ * WebKitSettings:
+ *
+ * Control the behaviour of a #WebKitWebView.
  *
  * #WebKitSettings can be applied to a #WebKitWebView to control text charset,
  * color, font sizes, printing mode, script support, loading of images and various
@@ -2021,7 +2022,7 @@ void webkit_settings_set_enable_hyperlink_auditing(WebKitSettings* settings, gbo
 }
 
 /**
- * webkit_web_settings_get_default_font_family:
+ * webkit_settings_get_default_font_family:
  * @settings: a #WebKitSettings
  *
  * Gets the #WebKitSettings:default-font-family property.

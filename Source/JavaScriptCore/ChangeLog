@@ -1,3 +1,37 @@
+2022-04-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Replace gtk-doc with gi-docgen
+        https://bugs.webkit.org/show_bug.cgi?id=226662
+
+        Reviewed by Michael Catanzaro.
+
+        Import two new CMake modules which define commands to easy setup of GObject-Introspection
+        and gi-docgen. These in turn allow to remove a bunch of duplicated CMake code, reuse
+        the same for both the WPE and GTK ports, and remove the gnarly DocBook templates and
+        other auxiliary files previously used by gtk-doc (which amount to a sizeable amount of
+        code).
+
+        While at it, do a quick pass to fix the most egregious issues reported by gi-docgen's
+        linting mode and that all public symbols end up with at least some documentation in
+        the generated output. Follow-up patches will be needed to keep adapting to the style
+        encouraged by gi-docgen, fix linking between documented entities, make code examples
+        display properly, and a few other things.
+
+        * API/glib/JSCClass.cpp: Fix documentation comments.
+        * API/glib/JSCContext.cpp: Ditto.
+        * API/glib/JSCDefines.h: Ditto.
+        * API/glib/JSCException.cpp: Ditto.
+        * API/glib/JSCValue.cpp: Ditto.
+        * API/glib/JSCVersion.cpp: Ditto.
+        * API/glib/JSCVersion.h.in: Ditto.
+        * API/glib/JSCVirtualMachine.cpp: Ditto.
+        * API/glib/JSCWeakValue.cpp: Ditto.
+        * API/glib/docs/jsc-glib-4.0-sections.txt: Removed.
+        * API/glib/docs/jsc-glib-4.0.types: Removed.
+        * API/glib/docs/jsc-glib-docs.sgml: Removed.
+        * API/glib/docs/jsc.toml.in: Added.
+        * PlatformGTK.cmake: Adapt to use the new CMake modules.
+
 2022-04-01  Michael Saboff  <msaboff@apple.com>
 
         Stop copying StagedFrameworks to the secondary path by default

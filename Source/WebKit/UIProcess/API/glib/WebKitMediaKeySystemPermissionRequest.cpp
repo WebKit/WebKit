@@ -28,10 +28,10 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitMediaKeySystemPermissionRequest
- * @Short_description: A permission request for using an EME Content Decryption Module
- * @Title: WebKitMediaKeySystemPermissionRequest
+ * WebKitMediaKeySystemPermissionRequest:
  * @See_also: #WebKitPermissionRequest, #WebKitWebView
+ *
+ * A permission request for using an EME Content Decryption Module.
  *
  * WebKitMediaKeySystemPermissionRequest represents a request for permission to decide whether
  * WebKit should use the given CDM to access protected media when requested through the

@@ -39,9 +39,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitCookieManager
- * @Short_description: Defines how to handle cookies in a #WebKitWebContext
- * @Title: WebKitCookieManager
+ * WebKitCookieManager:
+ *
+ * Defines how to handle cookies in a #WebKitWebContext.
  *
  * The WebKitCookieManager defines how to set up and handle cookies.
  * You can get it from a #WebKitWebsiteDataManager with

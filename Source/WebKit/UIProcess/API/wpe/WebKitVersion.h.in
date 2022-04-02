@@ -28,42 +28,10 @@
 
 G_BEGIN_DECLS
 
-/**
- * WEBKIT_MAJOR_VERSION:
- *
- * Like webkit_get_major_version(), but from the headers used at
- * application compile time, rather than from the library linked
- * against at application run time.
- */
 #define WEBKIT_MAJOR_VERSION (@PROJECT_VERSION_MAJOR@)
-
-/**
- * WEBKIT_MINOR_VERSION:
- *
- * Like webkit_get_minor_version(), but from the headers used at
- * application compile time, rather than from the library linked
- * against at application run time.
- */
 #define WEBKIT_MINOR_VERSION (@PROJECT_VERSION_MINOR@)
-
-/**
- * WEBKIT_MICRO_VERSION:
- *
- * Like webkit_get_micro_version(), but from the headers used at
- * application compile time, rather than from the library linked
- * against at application run time.
- */
 #define WEBKIT_MICRO_VERSION (@PROJECT_VERSION_MICRO@)
 
-/**
- * WEBKIT_CHECK_VERSION:
- * @major: major version (e.g. 1 for version 1.2.5)
- * @minor: minor version (e.g. 2 for version 1.2.5)
- * @micro: micro version (e.g. 5 for version 1.2.5)
- *
- * Returns: %TRUE if the version of the WebKit header files
- * is the same as or newer than the passed-in version.
- */
 #define WEBKIT_CHECK_VERSION(major, minor, micro) \
     (WEBKIT_MAJOR_VERSION > (major) || \
     (WEBKIT_MAJOR_VERSION == (major) && WEBKIT_MINOR_VERSION > (minor)) || \

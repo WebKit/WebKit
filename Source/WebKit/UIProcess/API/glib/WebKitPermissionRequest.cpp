@@ -21,10 +21,10 @@
 #include "WebKitPermissionRequest.h"
 
 /**
- * SECTION: WebKitPermissionRequest
- * @Short_description: A permission request
- * @Title: WebKitPermissionRequest
+ * WebKitPermissionRequest:
  * @See_also: #WebKitWebView
+ *
+ * A permission request.
  *
  * There are situations where an embedder would need to ask the user
  * for permission to do certain types of operations, such as switching

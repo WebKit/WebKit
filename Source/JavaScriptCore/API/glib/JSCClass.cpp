@@ -35,7 +35,7 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * SECTION: JSCClass
+ * JSCClass:
  * @short_description: JavaScript custom class
  * @title: JSCClass
  * @see_also: JSCContext

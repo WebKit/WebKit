@@ -42,7 +42,9 @@
 #    define JSC_API __attribute__((visibility("default")))
 #endif
 
+#ifndef __GI_SCANNER__
 #define JSC_DEPRECATED JSC_API G_DEPRECATED
 #define JSC_DEPRECATED_FOR(f) JSC_API G_DEPRECATED_FOR(f)
+#endif /* !__GI_SCANNER__ */
 
 #endif /* JSCDefines_h */

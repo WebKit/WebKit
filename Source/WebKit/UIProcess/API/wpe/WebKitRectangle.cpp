@@ -21,12 +21,13 @@
 #include "WebKitRectangle.h"
 
 /**
- * SECTION: WebKitRectangle
- * @Short_description: A boxed type representing a rectangle with integer coordinates
- * @Title: WebKitRectangle
- * @See_also: #WebKitWebView.
+ * WebKitRectangle:
+ * @x: The X coordinate of the top-left corner of the rectangle.
+ * @y: The Y coordinate of the top-left corner of the rectangle.
+ * @width: The width of the rectangle.
+ * @height: The height of the rectangle.
  *
- * A WebKitRectangle is a boxed type representing a rectangle with integer coordiantes.
+ * Boxed type representing a rectangle with integer coordiantes.
  *
  * Since: 2.28
  */

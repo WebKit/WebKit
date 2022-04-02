@@ -52,8 +52,8 @@ endif ()
 # Public options specific to the GTK port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to any other WebKit ports.
+WEBKIT_OPTION_DEFINE(ENABLE_DOCUMENTATION "Whether to generate documentation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_GLES2 "Whether to enable OpenGL ES 2.0." PUBLIC ${ENABLE_GLES2_DEFAULT})
-WEBKIT_OPTION_DEFINE(ENABLE_GTKDOC "Whether or not to use generate gtkdoc." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(ENABLE_INTROSPECTION "Whether to enable GObject introspection." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ON)
@@ -76,6 +76,7 @@ WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC O
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 
+WEBKIT_OPTION_DEPEND(ENABLE_DOCUMENTATION ENABLE_INTROSPECTION)
 WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_GLES2 USE_OPENGL_OR_ES)
@@ -311,11 +312,14 @@ if (USE_LIBSECRET)
     endif ()
 endif ()
 
-if (ENABLE_INTROSPECTION)
-    find_package(GObjectIntrospection)
-    if (NOT INTROSPECTION_FOUND)
-        message(FATAL_ERROR "GObjectIntrospection is needed for ENABLE_INTROSPECTION.")
-    endif ()
+find_package(GI)
+if (ENABLE_INTROSPECTION AND NOT GI_FOUND)
+    message(FATAL_ERROR "GObjectIntrospection is needed for ENABLE_INTROSPECTION.")
+endif ()
+
+find_package(GIDocgen)
+if (ENABLE_DOCUMENTATION AND NOT GIDocgen_FOUND)
+    message(FATAL_ERROR "gi-docgen is needed for ENABLE_INTROSPECTION.")
 endif ()
 
 if (ENABLE_WEB_CRYPTO)

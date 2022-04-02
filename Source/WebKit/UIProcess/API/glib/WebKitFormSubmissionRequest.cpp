@@ -32,9 +32,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitFormSubmissionRequest
- * @Short_description: Represents a form submission request
- * @Title: WebKitFormSubmissionRequest
+ * WebKitFormSubmissionRequest:
+ *
+ * Represents a form submission request.
  *
  * When a form is about to be submitted in a #WebKitWebView, the
  * #WebKitWebView::submit-form signal is emitted. Its request argument

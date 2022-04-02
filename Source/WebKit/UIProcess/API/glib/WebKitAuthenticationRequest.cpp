@@ -37,10 +37,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitAuthenticationRequest
- * @Short_description: Represents an authentication request
- * @Title: WebKitAuthenticationRequest
+ * WebKitAuthenticationRequest:
  * @See_also: #WebKitWebView
+ *
+ * Represents an authentication request
  *
  * Whenever a client attempts to load a page protected by HTTP
  * authentication, credentials will need to be provided to authorize access.

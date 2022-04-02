@@ -48,9 +48,9 @@ struct _WebKitUserContentManagerPrivate {
 };
 
 /**
- * SECTION:WebKitUserContentManager
- * @short_description: Manages user-defined content which affects web pages.
- * @title: WebKitUserContentManager
+ * WebKitUserContentManager:
+ *
+ * Manages user-defined content which affects web pages.
  *
  * Using a #WebKitUserContentManager user CSS style sheets can be set to
  * be injected in the web pages loaded by a #WebKitWebView, by

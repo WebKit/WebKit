@@ -25,10 +25,10 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * SECTION: WebKitWebsiteDataAccessPermissionRequest
- * @Short_description: A permission request for accessing website data from third-party domains
- * @Title: WebKitWebsiteDataAccessPermissionRequest
+ * WebKitWebsiteDataAccessPermissionRequest:
  * @See_also: #WebKitPermissionRequest, #WebKitWebView
+ *
+ * A permission request for accessing website data from third-party domains.
  *
  * WebKitWebsiteDataAccessPermissionRequest represents a request for
  * permission to allow a third-party domain access its cookies.

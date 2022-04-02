@@ -30,10 +30,10 @@
 using namespace WebCore;
 
 /**
- * SECTION: WebKitInputMethodContext
- * @Short_description: Base class for input method contexts
- * @Title: WebKitInputMethodContext
+ * WebKitInputMethodContext:
  * @See_also: #WebKitWebView
+ *
+ * Base class for input method contexts.
  *
  * WebKitInputMethodContext defines the interface to implement WebKit input methods.
  * The input methods are used by WebKit, when editable content is focused, to map from
@@ -67,6 +67,14 @@ enum {
 
     LAST_SIGNAL
 };
+
+/**
+ * WebKitInputMethodUnderline:
+ *
+ * Range of text in an preedit string to be shown underlined.
+ *
+ * Since: 2.28
+ */
 
 G_DEFINE_BOXED_TYPE(WebKitInputMethodUnderline, webkit_input_method_underline, webkit_input_method_underline_copy, webkit_input_method_underline_free)
 
@@ -213,7 +221,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
     gObjectClass->get_property = webkitInputMethodContextGetProperty;
 
     /**
-     * WebKitInputMethodContext::input-purpose:
+     * WebKitInputMethodContext:input-purpose:
      *
      * The #WebKitInputPurpose of the input associated with this context.
      *
@@ -229,7 +237,7 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
             WEBKIT_PARAM_READWRITE);
 
     /**
-     * WebKitInputMethodContext::input-hints:
+     * WebKitInputMethodContext:input-hints:
      *
      * The #WebKitInputHints of the input associated with this context.
      *
@@ -375,7 +383,7 @@ void webkit_input_method_context_set_enable_preedit(WebKitInputMethodContext* co
  * webkit_input_method_context_get_preedit:
  * @context: a #WebKitInputMethodContext
  * @text: (out) (transfer full) (nullable): location to store the preedit string
- * @underlines: (out) (transfer full) (nullable) (element-type WebKit2.InputMethodUnderline): location to store the underlines as a #GList of #WebKitInputMethodUnderline
+ * @underlines: (out) (transfer full) (nullable) (element-type WebKitInputMethodUnderline): location to store the underlines as a #GList of #WebKitInputMethodUnderline
  * @cursor_offset: (out) (nullable): location to store the position of cursor in preedit string
  *
  * Get the current preedit string for the @context, and a list of WebKitInputMethodUnderline to apply to the string.
@@ -556,7 +564,7 @@ WebKitInputHints webkit_input_method_context_get_input_hints(WebKitInputMethodCo
     return context->priv->hints;
 }
 
-/*
+/**
  * webkit_input_method_context_set_input_hints:
  * @context: a #WebKitInputMethodContext
  * @hints: a #WebKitInputHints

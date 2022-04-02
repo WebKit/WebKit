@@ -31,10 +31,10 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitPolicyDecision
- * @Short_description: A pending policy decision
- * @Title: WebKitPolicyDecision
+ * WebKitPolicyDecision:
  * @See_also: #WebKitWebView
+ *
+ * A pending policy decision.
  *
  * Often WebKit allows the client to decide the policy for certain
  * operations. For instance, a client may want to open a link in a new

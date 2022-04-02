@@ -410,45 +410,6 @@ target_link_libraries(WPEInjectedBundle WebKit)
 
 target_include_directories(WPEInjectedBundle PRIVATE $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
 
-file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-wpe.cfg
-    "[wpe-${WPE_API_DOC_VERSION}]\n"
-    "pkgconfig_file=${WPE_PKGCONFIG_FILE}\n"
-    "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
-    "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
-    "namespace=webkit\n"
-    "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
-    "       -I${WEBKIT_DIR}/Shared/API/glib\n"
-    "       -I${WEBKIT_DIR}/UIProcess/API/glib\n"
-    "       -I${WEBKIT_DIR}/UIProcess/API/wpe\n"
-    "       -I${FORWARDING_HEADERS_WPE_DIR}\n"
-    "doc_dir=${WEBKIT_DIR}/UIProcess/API/wpe/docs\n"
-    "source_dirs=${WEBKIT_DIR}/Shared/API/glib\n"
-    "            ${WEBKIT_DIR}/UIProcess/API/glib\n"
-    "            ${WEBKIT_DIR}/UIProcess/API/wpe\n"
-    "            ${DERIVED_SOURCES_WPE_API_DIR}\n"
-    "headers=${WPE_ENUM_GENERATION_HEADERS}\n"
-    "main_sgml_file=wpe-docs.sgml\n"
-)
-
-file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webextensions.cfg
-    "[wpe-webextensions-${WPE_API_DOC_VERSION}]\n"
-    "pkgconfig_file=${WPEWebExtension_PKGCONFIG_FILE}\n"
-    "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
-    "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
-    "namespace=webkit_webextensions\n"
-    "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
-    "       -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe\n"
-    "       -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM\n"
-    "       -I${FORWARDING_HEADERS_WPE_DIR}\n"
-    "doc_dir=${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/docs\n"
-    "source_dirs=${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib\n"
-    "            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM\n"
-    "            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe\n"
-    "            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM\n"
-    "headers=${WPE_WEB_EXTENSION_API_INSTALLED_HEADERS}\n"
-    "main_sgml_file=wpe-webextensions-docs.sgml\n"
-)
-
 if (ENABLE_WPE_QT_API)
     set(qtwpe_SOURCES
         ${WEBKIT_DIR}/UIProcess/API/wpe/qt/WPEQtViewBackend.cpp
@@ -479,7 +440,7 @@ if (ENABLE_WPE_QT_API)
         ${WPEBACKEND_FDO_INCLUDE_DIRS}
     )
 
-    list(APPEND WPE_API_INSTALLED_HEADERS
+    list(APPEND WPE_QT_API_INSTALLED_HEADERS
         ${WEBKIT_DIR}/UIProcess/API/wpe/qt/WPEQtView.h
         ${WEBKIT_DIR}/UIProcess/API/wpe/qt/WPEQtViewLoadRequest.h
     )
@@ -515,7 +476,87 @@ install(FILES "${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}.pc"
 )
 
 install(FILES ${WPE_API_INSTALLED_HEADERS}
+              ${WPE_QT_API_INSTALLED_HEADERS}
               ${WPE_WEB_EXTENSION_API_INSTALLED_HEADERS}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/wpe-webkit-${WPE_API_VERSION}/wpe"
         COMPONENT "Development"
 )
+
+# XXX: Using ${JavaScriptCore_INSTALLED_HEADERS} here expands to nothing.
+GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
+    TARGET WebKit
+    PACKAGE wpe-javascriptcore
+    SYMBOL_PREFIX jsc
+    DEPENDENCIES GObject-2.0
+    OPTIONS
+        -DJSC_COMPILATION
+        -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
+        -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
+    SOURCES
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCAutocleanups.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCClass.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCContext.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCDefines.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCException.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCOptions.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCValue.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCVirtualMachine.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/JSCWeakValue.h
+        ${JAVASCRIPTCORE_DIR}/API/glib/jsc.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVersion.h
+        ${JAVASCRIPTCORE_DIR}/API/glib
+    NO_IMPLICIT_SOURCES
+)
+GI_DOCGEN(WPEJavaScriptCore "${JAVASCRIPTCORE_DIR}/API/glib/docs/jsc.toml.in")
+
+GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
+    TARGET WebKit
+    PACKAGE wpe-webkit
+    IDENTIFIER_PREFIX WebKit
+    SYMBOL_PREFIX webkit
+    DEPENDENCIES
+        WPEJavaScriptCore
+        Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
+    OPTIONS
+        -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
+        -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
+    SOURCES
+        ${WPE_API_INSTALLED_HEADERS}
+        Shared/API/glib
+        UIProcess/API/glib
+        UIProcess/API/wpe
+    NO_IMPLICIT_SOURCES
+)
+GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in)
+
+GI_INTROSPECT(WPEWebExtension ${WPE_API_VERSION} wpe/webkit-web-extension.h
+    TARGET WebKit
+    PACKAGE wpe-web-extension
+    IDENTIFIER_PREFIX WebKit
+    SYMBOL_PREFIX webkit
+    DEPENDENCIES
+        WPEJavaScriptCore
+        Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
+    OPTIONS
+        -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
+        -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
+    SOURCES
+        ${WPE_WEB_EXTENSION_API_INSTALLED_HEADERS}
+        Shared/API/glib/WebKitContextMenu.cpp
+        Shared/API/glib/WebKitContextMenuItem.cpp
+        Shared/API/glib/WebKitHitTestResult.cpp
+        Shared/API/glib/WebKitUserMessage.cpp
+        Shared/API/glib/WebKitURIRequest.cpp
+        Shared/API/glib/WebKitURIResponse.cpp
+        UIProcess/API/wpe/WebKitContextMenuItem.h
+        UIProcess/API/wpe/WebKitContextMenu.h
+        UIProcess/API/wpe/WebKitContextMenuActions.h
+        UIProcess/API/wpe/WebKitHitTestResult.h
+        UIProcess/API/wpe/WebKitUserMessage.h
+        UIProcess/API/wpe/WebKitURIRequest.h
+        UIProcess/API/wpe/WebKitURIResponse.h
+        WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMNode.cpp
+        WebProcess/InjectedBundle/API/glib
+    NO_IMPLICIT_SOURCES
+)
+GI_DOCGEN(WPEWebExtension wpe/wpewebextension.toml.in)

@@ -29,10 +29,10 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitWebsitePolicies
- * @Short_description: View specific website policies
- * @Title: WebKitWebsitePolicies
+ * WebKitWebsitePolicies:
  * @See_also: #WebKitWebView
+ *
+ * View specific website policies.
  *
  * WebKitWebsitePolicies allows you to configure per-page policies,
  * currently only autoplay policies are supported.

@@ -43,12 +43,14 @@ typedef struct _WebKitSecurityManagerPrivate WebKitSecurityManagerPrivate;
 struct _WebKitSecurityManager {
     GObject parent;
 
+    /*< private >*/
     WebKitSecurityManagerPrivate *priv;
 };
 
 struct _WebKitSecurityManagerClass {
     GObjectClass parent_class;
 
+    /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

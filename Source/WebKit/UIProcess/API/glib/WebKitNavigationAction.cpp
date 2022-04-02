@@ -26,6 +26,12 @@
 
 using namespace WebKit;
 
+/**
+ * WebKitNavigationAction:
+ *
+ * Provides details about interaction resulting in a resource load.
+ */
+
 G_DEFINE_BOXED_TYPE(WebKitNavigationAction, webkit_navigation_action, webkit_navigation_action_copy, webkit_navigation_action_free)
 
 WebKitNavigationAction* webkitNavigationActionCreate(Ref<API::NavigationAction>&& action)

@@ -44,12 +44,14 @@ typedef struct _WebKitNotificationPrivate WebKitNotificationPrivate;
 struct _WebKitNotification {
     GObject parent;
 
+    /*< private >*/
     WebKitNotificationPrivate *priv;
 };
 
 struct _WebKitNotificationClass {
     GObjectClass parent_class;
 
+    /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

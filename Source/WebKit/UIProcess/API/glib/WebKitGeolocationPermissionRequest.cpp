@@ -28,10 +28,10 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitGeolocationPermissionRequest
- * @Short_description: A permission request for sharing user's location
- * @Title: WebKitGeolocationPermissionRequest
+ * WebKitGeolocationPermissionRequest:
  * @See_also: #WebKitPermissionRequest, #WebKitWebView
+ *
+ * A permission request for sharing the user's location.
  *
  * WebKitGeolocationPermissionRequest represents a request for
  * permission to decide whether WebKit should provide the user's

@@ -44,6 +44,7 @@ typedef struct _WebKitAuthenticationDialogPrivate WebKitAuthenticationDialogPriv
 struct _WebKitAuthenticationDialog {
     WebKitWebViewDialog parent;
 
+    /*< private >*/
     WebKitAuthenticationDialogPrivate* priv;
 };
 

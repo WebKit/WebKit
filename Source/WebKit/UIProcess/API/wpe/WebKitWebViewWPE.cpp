@@ -190,7 +190,7 @@ WebKitWebView* webkit_web_view_new_with_user_content_manager(WebKitWebViewBacken
 /**
  * webkit_web_view_set_background_color:
  * @web_view: a #WebKitWebView
- * @backgroundColor: a #WebKitColor
+ * @color: a #WebKitColor
  *
  * Sets the color that will be used to draw the @web_view background before
  * the actual contents are rendered. Note that if the web page loaded in @web_view
@@ -211,7 +211,7 @@ void webkit_web_view_set_background_color(WebKitWebView* webView, WebKitColor* b
 /**
  * webkit_web_view_get_background_color:
  * @web_view: a #WebKitWebView
- * @rgba: (out): a #WebKitColor to fill in with the background color
+ * @color: (out): a #WebKitColor to fill in with the background color
  *
  * Gets the color that is used to draw the @web_view background before the
  * actual contents are rendered. For more information see also

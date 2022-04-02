@@ -63,6 +63,12 @@
 using namespace WebKit;
 using namespace WebCore;
 
+/**
+ * WebKitWebPage:
+ *
+ * A loaded web page.
+ */
+
 enum {
     DOCUMENT_LOADED,
     SEND_REQUEST,

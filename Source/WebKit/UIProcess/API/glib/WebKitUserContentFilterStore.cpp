@@ -44,9 +44,9 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitUserContentFilterStore
- * @Short_description: Handles storage of user content filters on disk.
- * @Title: WebKitUserContentFilterStore
+ * WebKitUserContentFilterStore:
+ *
+ * Handles storage of user content filters on disk.
  *
  * The WebKitUserContentFilterStore provides the means to import and save
  * [JSON rule sets](https://webkit.org/blog/3476/content-blockers-first-look/),
@@ -167,7 +167,9 @@ WebKitUserContentFilterStore* webkit_user_content_filter_store_new(const gchar* 
  * webkit_user_content_filter_store_get_path:
  * @store: a #WebKitUserContentFilterStore
  *
- * Returns: (transfer none): The storage path for user content filters.
+ * Gets the storage path for user content filters.
+ *
+ * Returns: (transfer none): path, as a string.
  *
  * Since: 2.24
  */

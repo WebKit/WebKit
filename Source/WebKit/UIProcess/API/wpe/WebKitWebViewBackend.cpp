@@ -23,10 +23,10 @@
 #include "WebKitWebViewBackendPrivate.h"
 
 /**
- * SECTION: WebKitWebViewBackend
- * @Short_description: A web view backend
- * @Title: WebKitWebViewBackend
+ * WebKitWebViewBackend:
  * @See_also: #WebKitWebView.
+ *
+ * A web view backend.
  *
  * A WebKitWebViewBackend is a boxed type wrapping a WPE backend used to create a
  * #WebKitWebView. A WebKitWebViewBackend is created with webkit_web_view_backend_new()

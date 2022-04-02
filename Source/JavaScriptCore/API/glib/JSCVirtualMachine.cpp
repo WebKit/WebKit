@@ -29,7 +29,7 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * SECTION: JSCVirtualMachine
+ * JSCVirtualMachine:
  * @short_description: JavaScript Virtual Machine
  * @title: JSCVirtualMachine
  * @see_also: JSCContext

@@ -29,10 +29,10 @@
 using namespace WebKit;
 
 /**
- * SECTION: WebKitEditorState
- * @Short_description: Web editor state
- * @Title: WebKitEditorState
+ * WebKitEditorState:
  * @See_also: #WebKitWebView
+ *
+ * Web editor state.
  *
  * WebKitEditorState represents the state of a #WebKitWebView editor.
  * Use webkit_web_view_get_editor_state() to get the WebKitEditorState

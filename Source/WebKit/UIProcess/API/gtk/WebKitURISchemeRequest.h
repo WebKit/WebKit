@@ -46,12 +46,14 @@ typedef struct _WebKitURISchemeRequestPrivate WebKitURISchemeRequestPrivate;
 struct _WebKitURISchemeRequest {
     GObject parent;
 
+    /*< private >*/
     WebKitURISchemeRequestPrivate *priv;
 };
 
 struct _WebKitURISchemeRequestClass {
     GObjectClass parent_class;
 
+    /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

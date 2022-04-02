@@ -61,6 +61,8 @@ G_BEGIN_DECLS
  * @minor: minor version (e.g. 2 for version 1.2.5)
  * @micro: micro version (e.g. 5 for version 1.2.5)
  *
+ * Check the version of JSC header files at compile time.
+ *
  * Returns: %TRUE if the version of the JavaScriptCore header files
  * is the same as or newer than the passed-in version.
  */

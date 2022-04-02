@@ -27,10 +27,10 @@
 using namespace WebCore;
 
 /**
- * SECTION: WebKitNetworkProxySettings
- * @Short_description: Network Proxy Settings
- * @Title: WebKitNetworkProxySettings
+ * WebKitNetworkProxySettings:
  * @See_also: #WebKitWebContext
+ *
+ * Configures network proxies.
  *
  * WebKitNetworkProxySettings can be used to provide a custom proxy configuration
  * to a #WebKitWebContext. You need to call webkit_web_context_set_network_proxy_settings()

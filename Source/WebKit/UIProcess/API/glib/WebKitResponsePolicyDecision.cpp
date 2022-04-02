@@ -33,10 +33,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * SECTION: WebKitResponsePolicyDecision
- * @Short_description: A policy decision for resource responses
- * @Title: WebKitResponsePolicyDecision
+ * WebKitResponsePolicyDecision:
  * @See_also: #WebKitPolicyDecision, #WebKitWebView
+ *
+ * A policy decision for resource responses.
  *
  * WebKitResponsePolicyDecision represents a policy decision for a
  * resource response, whether from the network or the local system.

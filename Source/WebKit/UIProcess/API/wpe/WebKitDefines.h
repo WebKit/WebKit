@@ -45,4 +45,11 @@
 #define WEBKIT_DEPRECATED WEBKIT_API G_DEPRECATED
 #define WEBKIT_DEPRECATED_FOR(f) WEBKIT_API G_DEPRECATED_FOR(f)
 
+/**
+ * WEBKIT_DEPRECATED_FOR: (skip)
+ * @f: replacement symbol name
+ *
+ * Marks a symbol as deprecated, indicating a replacement.
+ */
+
 #endif /* WebKitDefines_h */
