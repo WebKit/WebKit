@@ -1,3 +1,16 @@
+2022-04-02  Youenn Fablet  <youenn@apple.com>
+
+        Remove notifications from notification list when notification gets closed
+        https://bugs.webkit.org/show_bug.cgi?id=238665
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/workers/service/getnotifications-stop.html
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::stop):
+        Do not destroy persistent permissions when the JS object gets stopped.
+
 2022-04-01  Michael Saboff  <msaboff@apple.com>
 
         Stop copying StagedFrameworks to the secondary path by default

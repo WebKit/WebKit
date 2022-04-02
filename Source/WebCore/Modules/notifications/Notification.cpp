@@ -200,6 +200,9 @@ void Notification::stop()
 {
     ActiveDOMObject::stop();
 
+    if (!m_serviceWorkerRegistrationURL.isNull())
+        return;
+
     if (auto* client = clientFromContext())
         client->notificationObjectDestroyed(*this);
 }

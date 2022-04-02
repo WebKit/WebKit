@@ -112,10 +112,12 @@ void WebNotificationManagerProxy::show(WebPageProxy* webPage, IPC::Connection& c
     m_provider->show(webPage, notification.get());
 }
 
-void WebNotificationManagerProxy::cancel(WebPageProxy*, const UUID& pageNotificationID)
+void WebNotificationManagerProxy::cancel(WebPageProxy* page, const UUID& pageNotificationID)
 {
-    if (auto webNotification = m_notifications.get(pageNotificationID))
+    if (auto webNotification = m_notifications.get(pageNotificationID)) {
         m_provider->cancel(*webNotification);
+        didDestroyNotification(page, pageNotificationID);
+    }
 }
     
 void WebNotificationManagerProxy::didDestroyNotification(WebPageProxy*, const UUID& pageNotificationID)

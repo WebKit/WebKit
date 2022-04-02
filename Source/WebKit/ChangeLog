@@ -1,3 +1,16 @@
+2022-04-02  Youenn Fablet  <youenn@apple.com>
+
+        Remove notifications from notification list when notification gets closed
+        https://bugs.webkit.org/show_bug.cgi?id=238665
+
+        Reviewed by Darin Adler.
+
+        Cancelling a notification should trigger the close steps, which means removing the notification from the notification list.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::cancel):
+        (WebKit::WebNotificationManagerProxy::didDestroyNotification):
+
 2022-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKFullScreenWindowController's UIViewController leaks after entering element fullscreen
