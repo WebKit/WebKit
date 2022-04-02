@@ -335,6 +335,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (!configuration)
         [NSException raise:NSInvalidArgumentException format:@"Configuration cannot be nil"];
 
+    if (!configuration.websiteDataStore)
+        [NSException raise:NSInvalidArgumentException format:@"Configuration websiteDataStore cannot be nil"];
     _configuration = adoptNS([configuration copy]);
 
     if (WKWebView *relatedWebView = [_configuration _relatedWebView]) {

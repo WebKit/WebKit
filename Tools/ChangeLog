@@ -1,3 +1,14 @@
+2022-04-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Avoid initializing default WKWebsiteDataStore in -[WKWebViewConfiguration copyWithZone]
+        https://bugs.webkit.org/show_bug.cgi?id=238531
+        rdar://90628101
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-01  Jeff Miller  <jeffm@apple.com>
 
         WKBundlePageUIClient console message support should include source URL, column number, and console messages with arguments
