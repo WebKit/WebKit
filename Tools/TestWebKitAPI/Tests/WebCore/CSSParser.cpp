@@ -54,25 +54,25 @@ TEST(CSSPropertyParserTest, GridTrackLimits)
 {
     struct {
         const CSSPropertyID propertyID;
-        const char* input;
+        ASCIILiteral input;
         const size_t output;
     } testCases[] = {
-        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(999999, 20px);", 999999},
-        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(999999, 20px);", 999999},
-        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(1000000, 10%);", 1000000},
-        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(1000000, 10%);", 1000000},
-        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(1000000, [first] -webkit-min-content [last]);", 1000000},
-        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(1000000, [first] -webkit-min-content [last]);", 1000000},
-        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(1000001, auto);", 1000000},
-        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(1000001, auto);", 1000000},
-        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(400000, 2em minmax(10px, -webkit-max-content) 0.5fr);", 999999},
-        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(400000, 2em minmax(10px, -webkit-max-content) 0.5fr);", 999999},
-        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(600000, [first] 3vh 10% 2fr [nav] 10px auto 1fr 6em [last]);", 999999},
-        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(600000, [first] 3vh 10% 2fr [nav] 10px auto 1fr 6em [last]);", 999999},
-        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(100000000000000000000, 10% 1fr);", 1000000},
-        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(100000000000000000000, 10% 1fr);", 1000000},
-        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(100000000000000000000, 10% 5em 1fr auto auto 15px -webkit-min-content);", 999999},
-        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(100000000000000000000, 10% 5em 1fr auto auto 15px -webkit-min-content);", 999999},
+        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(999999, 20px);"_s, 999999},
+        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(999999, 20px);"_s, 999999},
+        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(1000000, 10%);"_s, 1000000},
+        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(1000000, 10%);"_s, 1000000},
+        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(1000000, [first] -webkit-min-content [last]);"_s, 1000000},
+        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(1000000, [first] -webkit-min-content [last]);"_s, 1000000},
+        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(1000001, auto);"_s, 1000000},
+        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(1000001, auto);"_s, 1000000},
+        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(400000, 2em minmax(10px, -webkit-max-content) 0.5fr);"_s, 999999},
+        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(400000, 2em minmax(10px, -webkit-max-content) 0.5fr);"_s, 999999},
+        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(600000, [first] 3vh 10% 2fr [nav] 10px auto 1fr 6em [last]);"_s, 999999},
+        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(600000, [first] 3vh 10% 2fr [nav] 10px auto 1fr 6em [last]);"_s, 999999},
+        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(100000000000000000000, 10% 1fr);"_s, 1000000},
+        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(100000000000000000000, 10% 1fr);"_s, 1000000},
+        {CSSPropertyGridTemplateColumns, "grid-template-columns: repeat(100000000000000000000, 10% 5em 1fr auto auto 15px -webkit-min-content);"_s, 999999},
+        {CSSPropertyGridTemplateRows, "grid-template-rows: repeat(100000000000000000000, 10% 5em 1fr auto auto 15px -webkit-min-content);"_s, 999999},
     };
 
     CSSParser parser(strictCSSParserContext());

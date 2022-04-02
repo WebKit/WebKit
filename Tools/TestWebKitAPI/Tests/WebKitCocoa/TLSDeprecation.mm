@@ -270,7 +270,7 @@ static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webVie
 TEST(TLSVersion, NegotiatedLegacyTLS)
 {
     HTTPServer server({
-        { "/", { "hello" } }
+        { "/"_s, { "hello"_s } }
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     auto [webView, delegate] = webViewWithNavigationDelegate();
@@ -298,11 +298,11 @@ TEST(TLSVersion, NegotiatedLegacyTLS)
 TEST(TLSVersion, NavigateBack)
 {
     HTTPServer legacyTLSServer({
-        { "/", { "hello" } }
+        { "/"_s, { "hello"_s } }
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     HTTPServer modernTLSServer({
-        { "/", { "hello" } }
+        { "/"_s, { "hello"_s } }
     }, HTTPServer::Protocol::Https);
     
     auto [webView, delegate] = webViewWithNavigationDelegate();
@@ -328,13 +328,13 @@ TEST(TLSVersion, NavigateBack)
 TEST(TLSVersion, BackForwardNegotiatedLegacyTLS)
 {
     HTTPServer secureServer({
-        { "/", { "hello" }}
+        { "/"_s, { "hello"_s }}
     }, HTTPServer::Protocol::Https);
     HTTPServer insecureServer({
-        { "/", { "hello" } }
+        { "/"_s, { "hello"_s } }
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
     HTTPServer mixedContentServer({
-        { "/", { {{ "Content-Type", "text/html" }}, makeString("<img src='https://127.0.0.1:", insecureServer.port(), "/'></img>") } },
+        { "/"_s, { {{ "Content-Type"_s, "text/html"_s }}, makeString("<img src='https://127.0.0.1:", insecureServer.port(), "/'></img>") } },
     }, HTTPServer::Protocol::Https);
 
     auto [webView, delegate] = webViewWithNavigationDelegate();
@@ -364,12 +364,12 @@ TEST(TLSVersion, BackForwardNegotiatedLegacyTLS)
 TEST(TLSVersion, Subresource)
 {
     HTTPServer legacyTLSServer({
-        { "/", { "hello" } }
+        { "/"_s, { "hello"_s } }
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     HTTPServer modernTLSServer({
-        { "/", { makeString("<script>fetch('https://127.0.0.1:", legacyTLSServer.port(), "/',{mode:'no-cors'})</script>") } },
-        { "/pageWithoutSubresource", { "hello" }}
+        { "/"_s, { makeString("<script>fetch('https://127.0.0.1:", legacyTLSServer.port(), "/',{mode:'no-cors'})</script>") } },
+        { "/pageWithoutSubresource"_s, { "hello"_s }}
     }, HTTPServer::Protocol::Https);
     
     auto [webView, delegate] = webViewWithNavigationDelegate();
@@ -396,7 +396,7 @@ TEST(TLSVersion, Subresource)
 TEST(TLSVersion, DidNegotiateModernTLS)
 {
     HTTPServer server({
-        { "/", { "hello" }}
+        { "/"_s, { "hello"_s }}
     }, HTTPServer::Protocol::Https);
 
     auto delegate = adoptNS([TLSNavigationDelegate new]);
@@ -415,13 +415,13 @@ TEST(TLSVersion, DidNegotiateModernTLS)
 TEST(TLSVersion, BackForwardHasOnlySecureContent)
 {
     HTTPServer secureServer({
-        { "/", { "hello" }}
+        { "/"_s, { "hello"_s }}
     }, HTTPServer::Protocol::Https);
     HTTPServer insecureServer({
-        { "/", { "hello" } }
+        { "/"_s, { "hello"_s } }
     });
     HTTPServer mixedContentServer({
-        { "/", { {{ "Content-Type", "text/html" }}, makeString("<img src='http://127.0.0.1:", insecureServer.port(), "/'></img>") } },
+        { "/"_s, { {{ "Content-Type"_s, "text/html"_s }}, makeString("<img src='http://127.0.0.1:", insecureServer.port(), "/'></img>") } },
     }, HTTPServer::Protocol::Https);
 
     auto [webView, delegate] = webViewWithNavigationDelegate();
@@ -453,11 +453,11 @@ TEST(TLSVersion, BackForwardHasOnlySecureContent)
 TEST(TLSVersion, LegacySubresources)
 {
     HTTPServer legacyServer({
-        { "/frame", { "shouldn't load with fastServerTrustEvaluationEnabled" }}
+        { "/frame"_s, { "shouldn't load with fastServerTrustEvaluationEnabled"_s }}
     }, HTTPServer::Protocol::HttpsWithLegacyTLS);
 
     HTTPServer modernServer({
-        { "/", { makeString("<iframe src='https://127.0.0.1:", legacyServer.port(), "/frame'/>") }}
+        { "/"_s, { makeString("<iframe src='https://127.0.0.1:", legacyServer.port(), "/frame'/>") }}
     }, HTTPServer::Protocol::Https);
 
     auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);

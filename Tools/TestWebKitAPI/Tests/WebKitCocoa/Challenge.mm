@@ -239,7 +239,7 @@ TEST(Challenge, SecIdentity)
 TEST(Challenge, DeallocateDuringChallenge)
 {
     using namespace TestWebKitAPI;
-    HTTPServer server({{ "/", { "hi" }}}, HTTPServer::Protocol::Https);
+    HTTPServer server({{ "/"_s, { "hi"_s }}}, HTTPServer::Protocol::Https);
 
     auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
@@ -294,7 +294,7 @@ TEST(Challenge, DeallocateDuringChallenge)
 TEST(Challenge, ClientCertificate)
 {
     using namespace TestWebKitAPI;
-    HTTPServer server({ { "/", { "hello" } } }, HTTPServer::Protocol::Https, [](sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t complete) {
+    HTTPServer server({ { "/"_s, { "hello"_s } } }, HTTPServer::Protocol::Https, [](sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t complete) {
         complete(true);
     });
 
@@ -632,7 +632,7 @@ TEST(WebKit, FastServerTrust)
 
 TEST(WebKit, ErrorSecureCoding)
 {
-    HTTPServer server({{ "/", { HTTPResponse::TerminateConnection::Yes }}});
+    HTTPServer server({{ "/"_s, { HTTPResponse::TerminateConnection::Yes }}});
     auto webView = [[WKWebView new] autorelease];
     auto delegate = [[TestNavigationDelegate new] autorelease];
     webView.navigationDelegate = delegate;

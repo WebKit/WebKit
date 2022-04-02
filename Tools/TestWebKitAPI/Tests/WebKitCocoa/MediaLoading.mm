@@ -117,7 +117,7 @@ TEST(MediaLoading, UserAgentStringHLS)
     Util::run(&receivedMediaRequest);
 }
 
-const char* videoPlayTestHTML ="<script>"
+constexpr auto videoPlayTestHTML ="<script>"
     "function createVideoElement() {"
         "let video = document.createElement('video');"
         "video.addEventListener('error', ()=>{alert('error')});"
@@ -127,7 +127,7 @@ const char* videoPlayTestHTML ="<script>"
         "document.body.appendChild(video);"
     "}"
 "</script>"
-"<body onload='createVideoElement()'></body>";
+"<body onload='createVideoElement()'></body>"_s;
 
 static Vector<uint8_t> testVideoBytes()
 {
@@ -149,8 +149,8 @@ static void runVideoTest(NSURLRequest *request, const char* expectedMessage)
 TEST(MediaLoading, RangeRequestSynthesisWithContentLength)
 {
     HTTPServer server({
-        {"/", { videoPlayTestHTML }},
-        {"/video.mp4", { testVideoBytes() }}
+        {"/"_s, { videoPlayTestHTML }},
+        {"/video.mp4"_s, { testVideoBytes() }}
     });
     runVideoTest(server.request(), "playing");
     EXPECT_EQ(server.totalRequests(), 2u);

@@ -51,8 +51,8 @@ public:
     ~HTTPServer();
     uint16_t port() const;
     String origin() const;
-    NSURLRequest *request(const String& path = "/"_str) const;
-    NSURLRequest *requestWithLocalhost(const String& path = "/"_str) const;
+    NSURLRequest *request(StringView path = "/"_s) const;
+    NSURLRequest *requestWithLocalhost(StringView path = "/"_s) const;
     size_t totalRequests() const;
     void cancel();
 

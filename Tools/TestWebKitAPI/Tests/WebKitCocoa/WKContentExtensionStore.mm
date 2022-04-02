@@ -584,8 +584,8 @@ TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
     TestWebKitAPI::Util::run(&receivedAllRequests);
     TestWebKitAPI::Util::run(&receivedActionNotification);
     checkURLs(urls, {
-        "testscheme://testhost/main.html",
-        "testscheme://testhost/fetch.txt"
+        "testscheme://testhost/main.html"_s,
+        "testscheme://testhost/fetch.txt"_s
     });
     
     // FIXME: Appending to the User-Agent replaces the user agent because we haven't added the user agent yet when processing the request.
@@ -708,23 +708,23 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
     TestWebKitAPI::Util::run(&receivedActionNotification);
 
     Vector<String> expectedRequestedURLs {
-        "testscheme://testhost/main.html",
-        "othertestscheme://not-testhost/1-redirected.txt",
-        "testscheme://not-testhost-should-not-trigger-action/2.txt",
-        "testscheme://newusername@newhost:443/3.txt?query-should-not-be-removed",
-        "othertestscheme://testhost/4.txt?key=value#fragment-should-not-be-removed",
-        "testscheme://:testpassword@testhost/5.txt#fragment-to-be-added",
-        "testscheme://:testpassword@testhost/6.txt",
-        "testscheme://testhost/7.txt?#",
-        "testscheme://testhost/8.txt?key-to-replace-only=value-to-replace-only&key-to-add=value-to-add",
-        "testscheme://replaced-by-regex/9.txt",
+        "testscheme://testhost/main.html"_s,
+        "othertestscheme://not-testhost/1-redirected.txt"_s,
+        "testscheme://not-testhost-should-not-trigger-action/2.txt"_s,
+        "testscheme://newusername@newhost:443/3.txt?query-should-not-be-removed"_s,
+        "othertestscheme://testhost/4.txt?key=value#fragment-should-not-be-removed"_s,
+        "testscheme://:testpassword@testhost/5.txt#fragment-to-be-added"_s,
+        "testscheme://:testpassword@testhost/6.txt"_s,
+        "testscheme://testhost/7.txt?#"_s,
+        "testscheme://testhost/8.txt?key-to-replace-only=value-to-replace-only&key-to-add=value-to-add"_s,
+        "testscheme://replaced-by-regex/9.txt"_s,
     };
     EXPECT_EQ(expectedRequestedURLs.size(), [urls count]);
     for (size_t i = 0; i < expectedRequestedURLs.size(); i++)
         EXPECT_WK_STREQ(expectedRequestedURLs[i], [[urls objectAtIndex:i] absoluteString]);
 
     expectedRequestedURLs.remove(0);
-    expectedRequestedURLs[1] = "testscheme://testhost:123/2.txt";
+    expectedRequestedURLs[1] = "testscheme://testhost:123/2.txt"_s;
     checkURLs(urlsFromCallback, expectedRequestedURLs);
 }
 

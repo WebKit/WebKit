@@ -109,9 +109,9 @@ TEST(ResourceLoadDelegate, Basic)
 TEST(ResourceLoadDelegate, BeaconAndSyncXHR)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { "hello" } },
-        { "/xhrTarget", { {{ "Content-Type", "text/html" }},  "hi" } },
-        { "/beaconTarget", { "hi" } },
+        { "/"_s, { "hello"_s } },
+        { "/xhrTarget"_s, { {{ "Content-Type"_s, "text/html"_s }},  "hi"_s } },
+        { "/beaconTarget"_s, { "hi"_s } },
     });
 
     auto webView = adoptNS([TestWKWebView new]);
@@ -155,8 +155,8 @@ TEST(ResourceLoadDelegate, BeaconAndSyncXHR)
 TEST(ResourceLoadDelegate, Redirect)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { 301, {{ "Location", "/redirectTarget" }} } },
-        { "/redirectTarget", { "hi" } },
+        { "/"_s, { 301, {{ "Location"_s, "/redirectTarget"_s }} } },
+        { "/redirectTarget"_s, { "hi"_s } },
     });
 
     __block bool done = false;
@@ -181,7 +181,7 @@ TEST(ResourceLoadDelegate, Redirect)
 
 TEST(ResourceLoadDelegate, ResourceType)
 {
-    const char* testJS = R"TESTJS(
+    constexpr auto testJS = R"TESTJS(
     function loadMoreThingsAfterFetchAndXHR() {
         navigator.sendBeacon('beaconTarget');
 
@@ -204,16 +204,16 @@ TEST(ResourceLoadDelegate, ResourceType)
         xhr.open('GET', 'xhrTarget');
         xhr.send();
     })
-    )TESTJS";
+    )TESTJS"_s;
     TestWebKitAPI::HTTPServer server({
-        { "/", { "<script src='scriptSrc'></script><div>text needing a font</div>" } },
-        { "/scriptSrc", { {{ "Content-Type", "application/javascript" }}, testJS } },
-        { "/fetchTarget", { "hi" } },
-        { "/xhrTarget", { {{ "Content-Type", "application/octet-stream" }}, "hi" } },
-        { "/beaconTarget", { "hi" } },
-        { "/imageSource", { "not really an image" } },
-        { "/styleSource", { "@font-face { font-family: TestFontFamily; src: url(fontSource) } div { font-family: TestFontFamily }" } },
-        { "/fontSource", { "not really a font" } },
+        { "/"_s, { "<script src='scriptSrc'></script><div>text needing a font</div>"_s } },
+        { "/scriptSrc"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, testJS } },
+        { "/fetchTarget"_s, { "hi"_s } },
+        { "/xhrTarget"_s, { {{ "Content-Type"_s, "application/octet-stream"_s }}, "hi"_s } },
+        { "/beaconTarget"_s, { "hi"_s } },
+        { "/imageSource"_s, { "not really an image"_s } },
+        { "/styleSource"_s, { "@font-face { font-family: TestFontFamily; src: url(fontSource) } div { font-family: TestFontFamily }"_s } },
+        { "/fontSource"_s, { "not really a font"_s } },
     });
 
     __block Vector<RetainPtr<_WKResourceLoadInfo>> loadInfos;
@@ -255,9 +255,9 @@ TEST(ResourceLoadDelegate, LoadInfo)
     TestWebKitAPI::Util::run(&clearedStore);
 
     TestWebKitAPI::HTTPServer server({
-        { "/", { "<iframe src='iframeSrc'></iframe>" } },
-        { "/iframeSrc", { "<script>fetch('fetchTarget', { body: 'a=b&c=d', method: 'post'})</script>" } },
-        { "/fetchTarget", { "hi" } },
+        { "/"_s, { "<iframe src='iframeSrc'></iframe>"_s } },
+        { "/iframeSrc"_s, { "<script>fetch('fetchTarget', { body: 'a=b&c=d', method: 'post'})</script>"_s } },
+        { "/fetchTarget"_s, { "hi"_s } },
     });
 
     enum class Callback {

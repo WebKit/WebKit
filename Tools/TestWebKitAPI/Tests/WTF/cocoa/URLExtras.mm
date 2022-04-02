@@ -89,45 +89,45 @@ TEST(WTF_URLExtras, URLExtras)
     
 TEST(WTF_URLExtras, URLExtras_Spoof)
 {
-    Vector<String> punycodedSpoofHosts = {
-        "xn--cfa45g", // U+0131, U+0307
-        "xn--tma03b", // U+0237, U+0307
-        "xn--tma03bxga", // U+0237, U+034F, U+034F, U+0307
-        "xn--tma03bl01e", // U+0237, U+200B, U+0307
-        "xn--a-egb", // a, U+034F
-        "xn--a-qgn", // a, U+200B
-        "xn--a-mgn", // a, U+2009
-        "xn--u7f", // U+1D04
-        "xn--57f", // U+1D0F
-        "xn--i38a", // U+A731
-        "xn--j8f", // U+1D1C
-        "xn--n8f", // U+1D20
-        "xn--o8f", // U+1D21
-        "xn--p8f", // U+1D22
-        "xn--0na", // U+0261
-        "xn--cn-ded", // U+054D
-        "xn--ews-nfe.org", // U+054D
-        "xn--yotube-qkh", // U+0578
-        "xn--cla-7fe.edu", // U+0578
-        "xn--rsa94l", // U+05D5 U+0307
-        "xn--hdb9c", // U+05D5 U+05B9
-        "xn--idb7c", // U+05D5 U+05BA
-        "xn--pdb3b", // U+05D5 U+05C1
-        "xn--qdb1b", // U+05D5 U+05C2
-        "xn--sdb7a", // U+05D5 U+05C4
-        "xn--2-zic", // U+0032 U+05E1
-        "xn--uoa", // U+027E
-        "xn--fja", // U+01C0
-        "xn--koa", // U+0274
-        "xn--tma", // U+0237
-        "xn--o-pdc", // U+0585 'o'
-        "xn--o-qdc", // 'o' U+0585
-        "xn--g-hdc", // U+0581 'g'
-        "xn--g-idc", // 'g' U+0581
-        "xn--o-00e", // U+0BE6 'o'
-        "xn--o-10e", // 'o' U+0BE6
+    Vector<ASCIILiteral> punycodedSpoofHosts = {
+        "xn--cfa45g"_s, // U+0131, U+0307
+        "xn--tma03b"_s, // U+0237, U+0307
+        "xn--tma03bxga"_s, // U+0237, U+034F, U+034F, U+0307
+        "xn--tma03bl01e"_s, // U+0237, U+200B, U+0307
+        "xn--a-egb"_s, // a, U+034F
+        "xn--a-qgn"_s, // a, U+200B
+        "xn--a-mgn"_s, // a, U+2009
+        "xn--u7f"_s, // U+1D04
+        "xn--57f"_s, // U+1D0F
+        "xn--i38a"_s, // U+A731
+        "xn--j8f"_s, // U+1D1C
+        "xn--n8f"_s, // U+1D20
+        "xn--o8f"_s, // U+1D21
+        "xn--p8f"_s, // U+1D22
+        "xn--0na"_s, // U+0261
+        "xn--cn-ded"_s, // U+054D
+        "xn--ews-nfe.org"_s, // U+054D
+        "xn--yotube-qkh"_s, // U+0578
+        "xn--cla-7fe.edu"_s, // U+0578
+        "xn--rsa94l"_s, // U+05D5 U+0307
+        "xn--hdb9c"_s, // U+05D5 U+05B9
+        "xn--idb7c"_s, // U+05D5 U+05BA
+        "xn--pdb3b"_s, // U+05D5 U+05C1
+        "xn--qdb1b"_s, // U+05D5 U+05C2
+        "xn--sdb7a"_s, // U+05D5 U+05C4
+        "xn--2-zic"_s, // U+0032 U+05E1
+        "xn--uoa"_s, // U+027E
+        "xn--fja"_s, // U+01C0
+        "xn--koa"_s, // U+0274
+        "xn--tma"_s, // U+0237
+        "xn--o-pdc"_s, // U+0585 'o'
+        "xn--o-qdc"_s, // 'o' U+0585
+        "xn--g-hdc"_s, // U+0581 'g'
+        "xn--g-idc"_s, // 'g' U+0581
+        "xn--o-00e"_s, // U+0BE6 'o'
+        "xn--o-10e"_s, // 'o' U+0BE6
     };
-    for (const String& host : punycodedSpoofHosts) {
+    for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
         EXPECT_STREQ(url.data(), userVisibleString(literalURL(url.data())));
     }

@@ -741,9 +741,9 @@ TEST(WKNavigation, FrameBackLoading)
 {
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { "<iframe src='frame1.html'></iframe>" } },
-        { "/frame1.html", { "<a href='frame2.html'>link</a>" } },
-        { "/frame2.html", { "<script>alert('frame2 loaded')</script>" } },
+        { "/"_s, { "<iframe src='frame1.html'></iframe>"_s } },
+        { "/frame1.html"_s, { "<a href='frame2.html'>link</a>"_s } },
+        { "/frame2.html"_s, { "<script>alert('frame2 loaded')</script>"_s } },
     });
     auto webView = adoptNS([WKWebView new]);
     auto delegate = adoptNS([TestUIDelegate new]);
@@ -777,7 +777,7 @@ TEST(WKNavigation, FrameBackLoading)
 
 TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
 {
-    const char* mainHTML =
+    constexpr auto mainHTML =
     "<!DOCTYPE html>"
     "<html>"
     "<head>"
@@ -794,16 +794,16 @@ TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
     "<iframe src='iframesrc.html'></iframe>"
     "<script>window.location='refresh-nav:///'</script>"
     "</body>"
-    "</html>";
+    "</html>"_s;
 
     NSString *svg = [NSString stringWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"AllAhem" withExtension:@"svg" subdirectory:@"TestWebKitAPI.resources"] encoding:NSUTF8StringEncoding error:nil];
 
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { mainHTML } },
-        { "/Ahem.svg", { svg } },
-        { "/scriptsrc.js", { "/* js content */" } },
-        { "/iframesrc.html", { "frame content" } },
+        { "/"_s, { mainHTML } },
+        { "/Ahem.svg"_s, { svg } },
+        { "/scriptsrc.js"_s, { "/* js content */"_s } },
+        { "/iframesrc.html"_s, { "frame content"_s } },
     });
 
     auto webView = adoptNS([WKWebView new]);
@@ -828,13 +828,13 @@ TEST(WKNavigation, SimultaneousNavigationWithFontsFinishes)
 
 TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowPopups)
 {
-    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-popups'></iframe>";
-    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+    constexpr auto mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-popups'></iframe>"_s;
+    constexpr auto frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>"_s;
 
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { mainHTML } },
-        { "/frame.html", { frameHTML } },
+        { "/"_s, { mainHTML } },
+        { "/frame.html"_s, { frameHTML } },
     });
 
     auto webView = adoptNS([WKWebView new]);
@@ -863,13 +863,13 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowPopups)
 
 TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowTopNavigation)
 {
-    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation'></iframe>";
-    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+    constexpr auto mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation'></iframe>"_s;
+    constexpr auto frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>"_s;
 
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { mainHTML } },
-        { "/frame.html", { frameHTML } },
+        { "/"_s, { mainHTML } },
+        { "/frame.html"_s, { frameHTML } },
     });
 
     auto webView = adoptNS([WKWebView new]);
@@ -898,13 +898,13 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowTopNavigation)
 
 TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowCustomProtocolsNavigation)
 {
-    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-to-custom-protocols'></iframe>";
-    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+    constexpr auto mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-to-custom-protocols'></iframe>"_s;
+    constexpr auto frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>"_s;
 
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { mainHTML } },
-        { "/frame.html", { frameHTML } },
+        { "/"_s, { mainHTML } },
+        { "/frame.html"_s, { frameHTML } },
     });
 
     auto webView = adoptNS([WKWebView new]);
@@ -933,13 +933,13 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowCustomProtocolsNavigation)
 
 TEST(WKNavigation, LoadRadarURLFromSandboxedFrameWithUserGesture)
 {
-    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-by-user-activation'></iframe>";
-    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a></script>";
+    constexpr auto mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-by-user-activation'></iframe>"_s;
+    constexpr auto frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a></script>"_s;
 
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { mainHTML } },
-        { "/frame.html", { frameHTML } },
+        { "/"_s, { mainHTML } },
+        { "/frame.html"_s, { frameHTML } },
     });
 
     auto webView = adoptNS([WKWebView new]);
@@ -976,13 +976,13 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrameWithUserGesture)
 
 TEST(WKNavigation, LoadRadarURLFromSandboxedFrame)
 {
-    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts'></iframe>";
-    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+    constexpr auto mainHTML = "<iframe src='frame.html' sandbox='allow-scripts'></iframe>"_s;
+    constexpr auto frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>"_s;
 
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { mainHTML } },
-        { "/frame.html", { frameHTML } },
+        { "/"_s, { mainHTML } },
+        { "/frame.html"_s, { frameHTML } },
     });
 
     auto webView = adoptNS([WKWebView new]);
@@ -1013,13 +1013,13 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrame)
 
 TEST(WKNavigation, LoadRadarURLFromSandboxedFrameMissingUserGesture)
 {
-    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-by-user-activation'></iframe>";
-    const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
+    constexpr auto mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-by-user-activation'></iframe>"_s;
+    constexpr auto frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>"_s;
 
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { mainHTML } },
-        { "/frame.html", { frameHTML } },
+        { "/"_s, { mainHTML } },
+        { "/frame.html"_s, { frameHTML } },
     });
 
     auto webView = adoptNS([WKWebView new]);
@@ -1052,9 +1052,9 @@ TEST(WKNavigation, CrossOriginCOOPCancelResponseFailProvisionalNavigationCallbac
 {
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/path1", { "hi" } },
-        { "/path2", { "hi" } },
-        { "/path3", { { { "Cross-Origin-Opener-Policy", "same-origin" } }, "hi" } }
+        { "/path1"_s, { "hi"_s } },
+        { "/path2"_s, { "hi"_s } },
+        { "/path3"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "hi"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);

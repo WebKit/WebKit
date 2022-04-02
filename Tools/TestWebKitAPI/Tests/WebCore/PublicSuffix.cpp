@@ -47,26 +47,26 @@ const char16_t bidirectionalDomain[28] = u"bidirectional\u0786\u07AE\u0782\u07B0
 
 TEST_F(PublicSuffix, IsPublicSuffix)
 {
-    EXPECT_TRUE(isPublicSuffix("com"));
-    EXPECT_FALSE(isPublicSuffix("test.com"));
-    EXPECT_FALSE(isPublicSuffix("com.com"));
-    EXPECT_TRUE(isPublicSuffix("net"));
-    EXPECT_TRUE(isPublicSuffix("org"));
-    EXPECT_TRUE(isPublicSuffix("co.uk"));
-    EXPECT_FALSE(isPublicSuffix("bl.uk"));
-    EXPECT_FALSE(isPublicSuffix("test.co.uk"));
-    EXPECT_TRUE(isPublicSuffix("xn--zf0ao64a.tw"));
-    EXPECT_FALSE(isPublicSuffix("r4---asdf.test.com"));
+    EXPECT_TRUE(isPublicSuffix("com"_s));
+    EXPECT_FALSE(isPublicSuffix("test.com"_s));
+    EXPECT_FALSE(isPublicSuffix("com.com"_s));
+    EXPECT_TRUE(isPublicSuffix("net"_s));
+    EXPECT_TRUE(isPublicSuffix("org"_s));
+    EXPECT_TRUE(isPublicSuffix("co.uk"_s));
+    EXPECT_FALSE(isPublicSuffix("bl.uk"_s));
+    EXPECT_FALSE(isPublicSuffix("test.co.uk"_s));
+    EXPECT_TRUE(isPublicSuffix("xn--zf0ao64a.tw"_s));
+    EXPECT_FALSE(isPublicSuffix("r4---asdf.test.com"_s));
     EXPECT_FALSE(isPublicSuffix(utf16String(bidirectionalDomain)));
     EXPECT_TRUE(isPublicSuffix(utf16String(u"\u6803\u6728.jp")));
-    EXPECT_FALSE(isPublicSuffix(""));
-    EXPECT_FALSE(isPublicSuffix("åäö"));
+    EXPECT_FALSE(isPublicSuffix(""_s));
+    EXPECT_FALSE(isPublicSuffix("åäö"_s));
 
     // UK
-    EXPECT_TRUE(isPublicSuffix("uk"));
-    EXPECT_FALSE(isPublicSuffix("webkit.uk"));
-    EXPECT_TRUE(isPublicSuffix("co.uk"));
-    EXPECT_FALSE(isPublicSuffix("company.co.uk"));
+    EXPECT_TRUE(isPublicSuffix("uk"_s));
+    EXPECT_FALSE(isPublicSuffix("webkit.uk"_s));
+    EXPECT_TRUE(isPublicSuffix("co.uk"_s));
+    EXPECT_FALSE(isPublicSuffix("company.co.uk"_s));
 
     // Note: These tests are based on the Public Domain TLD test suite
     // https://raw.githubusercontent.com/publicsuffix/list/master/tests/test_psl.txt
@@ -76,112 +76,112 @@ TEST_F(PublicSuffix, IsPublicSuffix)
     //     https://creativecommons.org/publicdomain/zero/1.0/
 
     // null input.
-    EXPECT_FALSE(isPublicSuffix(""));
+    EXPECT_FALSE(isPublicSuffix(""_s));
     // Mixed case.
-    EXPECT_TRUE(isPublicSuffix("COM"));
-    EXPECT_FALSE(isPublicSuffix("example.COM"));
-    EXPECT_FALSE(isPublicSuffix("WwW.example.COM"));
+    EXPECT_TRUE(isPublicSuffix("COM"_s));
+    EXPECT_FALSE(isPublicSuffix("example.COM"_s));
+    EXPECT_FALSE(isPublicSuffix("WwW.example.COM"_s));
     // Unlisted TLD.
     // FIXME: Re-enable this subtest once webkit.org/b/234609 is resolved.
-    // EXPECT_FALSE(isPublicSuffix("example"));
-    EXPECT_FALSE(isPublicSuffix("example.example"));
-    EXPECT_FALSE(isPublicSuffix("b.example.example"));
-    EXPECT_FALSE(isPublicSuffix("a.b.example.example"));
+    // EXPECT_FALSE(isPublicSuffix("example"_s));
+    EXPECT_FALSE(isPublicSuffix("example.example"_s));
+    EXPECT_FALSE(isPublicSuffix("b.example.example"_s));
+    EXPECT_FALSE(isPublicSuffix("a.b.example.example"_s));
     // TLD with only 1 rule.
-    EXPECT_TRUE(isPublicSuffix("biz"));
-    EXPECT_FALSE(isPublicSuffix("domain.biz"));
-    EXPECT_FALSE(isPublicSuffix("b.domain.biz"));
-    EXPECT_FALSE(isPublicSuffix("a.b.domain.biz"));
+    EXPECT_TRUE(isPublicSuffix("biz"_s));
+    EXPECT_FALSE(isPublicSuffix("domain.biz"_s));
+    EXPECT_FALSE(isPublicSuffix("b.domain.biz"_s));
+    EXPECT_FALSE(isPublicSuffix("a.b.domain.biz"_s));
     // TLD with some 2-level rules.
-    EXPECT_FALSE(isPublicSuffix("example.com"));
-    EXPECT_FALSE(isPublicSuffix("b.example.com"));
-    EXPECT_FALSE(isPublicSuffix("a.b.example.com"));
-    EXPECT_TRUE(isPublicSuffix("uk.com"));
-    EXPECT_FALSE(isPublicSuffix("example.uk.com"));
-    EXPECT_FALSE(isPublicSuffix("b.example.uk.com"));
-    EXPECT_FALSE(isPublicSuffix("a.b.example.uk.com"));
-    EXPECT_FALSE(isPublicSuffix("test.ac"));
+    EXPECT_FALSE(isPublicSuffix("example.com"_s));
+    EXPECT_FALSE(isPublicSuffix("b.example.com"_s));
+    EXPECT_FALSE(isPublicSuffix("a.b.example.com"_s));
+    EXPECT_TRUE(isPublicSuffix("uk.com"_s));
+    EXPECT_FALSE(isPublicSuffix("example.uk.com"_s));
+    EXPECT_FALSE(isPublicSuffix("b.example.uk.com"_s));
+    EXPECT_FALSE(isPublicSuffix("a.b.example.uk.com"_s));
+    EXPECT_FALSE(isPublicSuffix("test.ac"_s));
     // TLD with only 1 (wildcard) rule.
-    EXPECT_TRUE(isPublicSuffix("mm"));
-    EXPECT_TRUE(isPublicSuffix("c.mm"));
-    EXPECT_FALSE(isPublicSuffix("b.c.mm"));
-    EXPECT_FALSE(isPublicSuffix("a.b.c.mm"));
+    EXPECT_TRUE(isPublicSuffix("mm"_s));
+    EXPECT_TRUE(isPublicSuffix("c.mm"_s));
+    EXPECT_FALSE(isPublicSuffix("b.c.mm"_s));
+    EXPECT_FALSE(isPublicSuffix("a.b.c.mm"_s));
     // More complex TLD.
-    EXPECT_TRUE(isPublicSuffix("jp"));
-    EXPECT_FALSE(isPublicSuffix("test.jp"));
-    EXPECT_FALSE(isPublicSuffix("www.test.jp"));
-    EXPECT_TRUE(isPublicSuffix("ac.jp"));
-    EXPECT_FALSE(isPublicSuffix("test.ac.jp"));
-    EXPECT_FALSE(isPublicSuffix("www.test.ac.jp"));
-    EXPECT_TRUE(isPublicSuffix("kyoto.jp"));
-    EXPECT_FALSE(isPublicSuffix("test.kyoto.jp"));
-    EXPECT_TRUE(isPublicSuffix("ide.kyoto.jp"));
-    EXPECT_FALSE(isPublicSuffix("b.ide.kyoto.jp"));
-    EXPECT_FALSE(isPublicSuffix("a.b.ide.kyoto.jp"));
-    EXPECT_TRUE(isPublicSuffix("c.kobe.jp"));
-    EXPECT_FALSE(isPublicSuffix("b.c.kobe.jp"));
-    EXPECT_FALSE(isPublicSuffix("a.b.c.kobe.jp"));
-    EXPECT_FALSE(isPublicSuffix("city.kobe.jp"));
-    EXPECT_FALSE(isPublicSuffix("www.city.kobe.jp"));
+    EXPECT_TRUE(isPublicSuffix("jp"_s));
+    EXPECT_FALSE(isPublicSuffix("test.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("www.test.jp"_s));
+    EXPECT_TRUE(isPublicSuffix("ac.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("test.ac.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("www.test.ac.jp"_s));
+    EXPECT_TRUE(isPublicSuffix("kyoto.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("test.kyoto.jp"_s));
+    EXPECT_TRUE(isPublicSuffix("ide.kyoto.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("b.ide.kyoto.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("a.b.ide.kyoto.jp"_s));
+    EXPECT_TRUE(isPublicSuffix("c.kobe.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("b.c.kobe.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("a.b.c.kobe.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("city.kobe.jp"_s));
+    EXPECT_FALSE(isPublicSuffix("www.city.kobe.jp"_s));
     // TLD with a wildcard rule and exceptions.
-    EXPECT_TRUE(isPublicSuffix("ck"));
-    EXPECT_TRUE(isPublicSuffix("test.ck"));
-    EXPECT_FALSE(isPublicSuffix("b.test.ck"));
-    EXPECT_FALSE(isPublicSuffix("a.b.test.ck"));
-    EXPECT_FALSE(isPublicSuffix("www.ck"));
-    EXPECT_FALSE(isPublicSuffix("www.www.ck"));
+    EXPECT_TRUE(isPublicSuffix("ck"_s));
+    EXPECT_TRUE(isPublicSuffix("test.ck"_s));
+    EXPECT_FALSE(isPublicSuffix("b.test.ck"_s));
+    EXPECT_FALSE(isPublicSuffix("a.b.test.ck"_s));
+    EXPECT_FALSE(isPublicSuffix("www.ck"_s));
+    EXPECT_FALSE(isPublicSuffix("www.www.ck"_s));
     // US K12.
-    EXPECT_TRUE(isPublicSuffix("us"));
-    EXPECT_FALSE(isPublicSuffix("test.us"));
-    EXPECT_FALSE(isPublicSuffix("www.test.us"));
-    EXPECT_TRUE(isPublicSuffix("ak.us"));
-    EXPECT_FALSE(isPublicSuffix("test.ak.us"));
-    EXPECT_FALSE(isPublicSuffix("www.test.ak.us"));
-    EXPECT_TRUE(isPublicSuffix("k12.ak.us"));
-    EXPECT_FALSE(isPublicSuffix("test.k12.ak.us"));
-    EXPECT_FALSE(isPublicSuffix("www.test.k12.ak.us"));
+    EXPECT_TRUE(isPublicSuffix("us"_s));
+    EXPECT_FALSE(isPublicSuffix("test.us"_s));
+    EXPECT_FALSE(isPublicSuffix("www.test.us"_s));
+    EXPECT_TRUE(isPublicSuffix("ak.us"_s));
+    EXPECT_FALSE(isPublicSuffix("test.ak.us"_s));
+    EXPECT_FALSE(isPublicSuffix("www.test.ak.us"_s));
+    EXPECT_TRUE(isPublicSuffix("k12.ak.us"_s));
+    EXPECT_FALSE(isPublicSuffix("test.k12.ak.us"_s));
+    EXPECT_FALSE(isPublicSuffix("www.test.k12.ak.us"_s));
     // IDN labels (punycoded)
-    EXPECT_FALSE(isPublicSuffix("xn--85x722f.com.cn"));
-    EXPECT_FALSE(isPublicSuffix("xn--85x722f.xn--55qx5d.cn"));
-    EXPECT_FALSE(isPublicSuffix("www.xn--85x722f.xn--55qx5d.cn"));
-    EXPECT_FALSE(isPublicSuffix("shishi.xn--55qx5d.cn"));
-    EXPECT_TRUE(isPublicSuffix("xn--55qx5d.cn"));
-    EXPECT_FALSE(isPublicSuffix("xn--85x722f.xn--fiqs8s"));
-    EXPECT_FALSE(isPublicSuffix("www.xn--85x722f.xn--fiqs8s"));
-    EXPECT_FALSE(isPublicSuffix("shishi.xn--fiqs8s"));
-    EXPECT_TRUE(isPublicSuffix("xn--fiqs8s"));
+    EXPECT_FALSE(isPublicSuffix("xn--85x722f.com.cn"_s));
+    EXPECT_FALSE(isPublicSuffix("xn--85x722f.xn--55qx5d.cn"_s));
+    EXPECT_FALSE(isPublicSuffix("www.xn--85x722f.xn--55qx5d.cn"_s));
+    EXPECT_FALSE(isPublicSuffix("shishi.xn--55qx5d.cn"_s));
+    EXPECT_TRUE(isPublicSuffix("xn--55qx5d.cn"_s));
+    EXPECT_FALSE(isPublicSuffix("xn--85x722f.xn--fiqs8s"_s));
+    EXPECT_FALSE(isPublicSuffix("www.xn--85x722f.xn--fiqs8s"_s));
+    EXPECT_FALSE(isPublicSuffix("shishi.xn--fiqs8s"_s));
+    EXPECT_TRUE(isPublicSuffix("xn--fiqs8s"_s));
 }
 
 TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
 {
     EXPECT_EQ(String(utf16String(u"example.\u6803\u6728.jp")), topPrivatelyControlledDomain(utf16String(u"example.\u6803\u6728.jp")));
     EXPECT_EQ(String(), topPrivatelyControlledDomain(String()));
-    EXPECT_EQ(String(), topPrivatelyControlledDomain(""));
-    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("test.com"));
-    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("com.test.com"));
-    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("subdomain.test.com"));
-    EXPECT_EQ(String("com.com"), topPrivatelyControlledDomain("www.com.com"));
-    EXPECT_EQ(String("test.co.uk"), topPrivatelyControlledDomain("test.co.uk"));
-    EXPECT_EQ(String("test.co.uk"), topPrivatelyControlledDomain("subdomain.test.co.uk"));
-    EXPECT_EQ(String("bl.uk"), topPrivatelyControlledDomain("bl.uk"));
-    EXPECT_EQ(String("bl.uk"), topPrivatelyControlledDomain("subdomain.bl.uk"));
-    EXPECT_EQ(String("test.xn--zf0ao64a.tw"), topPrivatelyControlledDomain("test.xn--zf0ao64a.tw"));
-    EXPECT_EQ(String("test.xn--zf0ao64a.tw"), topPrivatelyControlledDomain("www.test.xn--zf0ao64a.tw"));
-    EXPECT_EQ(String("127.0.0.1"), topPrivatelyControlledDomain("127.0.0.1"));
-    EXPECT_EQ(String(), topPrivatelyControlledDomain("1"));
-    EXPECT_EQ(String(), topPrivatelyControlledDomain("com"));
-    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("r4---asdf.test.com"));
-    EXPECT_EQ(String("r4---asdf.com"), topPrivatelyControlledDomain("r4---asdf.com"));
-    EXPECT_EQ(String(), topPrivatelyControlledDomain("r4---asdf"));
+    EXPECT_EQ(String(), topPrivatelyControlledDomain(""_s));
+    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("test.com"_s));
+    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("com.test.com"_s));
+    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("subdomain.test.com"_s));
+    EXPECT_EQ(String("com.com"), topPrivatelyControlledDomain("www.com.com"_s));
+    EXPECT_EQ(String("test.co.uk"), topPrivatelyControlledDomain("test.co.uk"_s));
+    EXPECT_EQ(String("test.co.uk"), topPrivatelyControlledDomain("subdomain.test.co.uk"_s));
+    EXPECT_EQ(String("bl.uk"), topPrivatelyControlledDomain("bl.uk"_s));
+    EXPECT_EQ(String("bl.uk"), topPrivatelyControlledDomain("subdomain.bl.uk"_s));
+    EXPECT_EQ(String("test.xn--zf0ao64a.tw"), topPrivatelyControlledDomain("test.xn--zf0ao64a.tw"_s));
+    EXPECT_EQ(String("test.xn--zf0ao64a.tw"), topPrivatelyControlledDomain("www.test.xn--zf0ao64a.tw"_s));
+    EXPECT_EQ(String("127.0.0.1"), topPrivatelyControlledDomain("127.0.0.1"_s));
+    EXPECT_EQ(String(), topPrivatelyControlledDomain("1"_s));
+    EXPECT_EQ(String(), topPrivatelyControlledDomain("com"_s));
+    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("r4---asdf.test.com"_s));
+    EXPECT_EQ(String("r4---asdf.com"), topPrivatelyControlledDomain("r4---asdf.com"_s));
+    EXPECT_EQ(String(), topPrivatelyControlledDomain("r4---asdf"_s));
     EXPECT_EQ(utf16String(bidirectionalDomain), utf16String(bidirectionalDomain));
-    EXPECT_EQ(String("example.com"), topPrivatelyControlledDomain("ExamPle.com"));
-    EXPECT_EQ(String("example.com"), topPrivatelyControlledDomain("SUB.dOmain.ExamPle.com"));
-    EXPECT_EQ(String("localhost"), topPrivatelyControlledDomain("localhost"));
-    EXPECT_EQ(String("localhost"), topPrivatelyControlledDomain("LocalHost"));
-    EXPECT_EQ(String("åäö"), topPrivatelyControlledDomain("åäö"));
-    EXPECT_EQ(String("ÅÄÖ"), topPrivatelyControlledDomain("ÅÄÖ"));
-    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain(".test.com"));
-    EXPECT_EQ(String(), topPrivatelyControlledDomain("...."));
+    EXPECT_EQ(String("example.com"), topPrivatelyControlledDomain("ExamPle.com"_s));
+    EXPECT_EQ(String("example.com"), topPrivatelyControlledDomain("SUB.dOmain.ExamPle.com"_s));
+    EXPECT_EQ(String("localhost"), topPrivatelyControlledDomain("localhost"_s));
+    EXPECT_EQ(String("localhost"), topPrivatelyControlledDomain("LocalHost"_s));
+    EXPECT_EQ(String("åäö"), topPrivatelyControlledDomain("åäö"_s));
+    EXPECT_EQ(String("ÅÄÖ"), topPrivatelyControlledDomain("ÅÄÖ"_s));
+    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain(".test.com"_s));
+    EXPECT_EQ(String(), topPrivatelyControlledDomain("...."_s));
 }
 
 }

@@ -33,51 +33,51 @@ namespace TestWebKitAPI {
 
 TEST(MIMETypeRegistry, JSONMIMETypes)
 {
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/json"));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("APPLICATION/JSON"));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/vnd.api+json"));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("anything/something+json"));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/json"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("APPLICATION/JSON"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("application/vnd.api+json"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJSONMIMEType("anything/something+json"_s));
 
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/plain"));
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/json"));
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/javascript"));
+    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/plain"_s));
+    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/json"_s));
+    ASSERT_FALSE(MIMETypeRegistry::isSupportedJSONMIMEType("text/javascript"_s));
 }
 
 TEST(MIMETypeRegistry, JavaScriptMIMETypes)
 {
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/javascript"));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("TEXT/JAVASCRIPT"));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/javascript"));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/ecmascript"));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/x-javascript"));
-    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/x-ecmascript"));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/javascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("TEXT/JAVASCRIPT"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/javascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/ecmascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/x-javascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/x-ecmascript"_s));
 
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/plain"));
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/json"));
-    ASSERT_FALSE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("foo/javascript"));
+    ASSERT_FALSE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/plain"_s));
+    ASSERT_FALSE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("application/json"_s));
+    ASSERT_FALSE(MIMETypeRegistry::isSupportedJavaScriptMIMEType("foo/javascript"_s));
 }
 
 TEST(MIMETypeRegistry, CanShowMIMEType)
 {
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/plain"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/html"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/xml"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/foo"));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/plain"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/html"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/xml"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/foo"_s));
 
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/json"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("APPLICATION/JSON"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/vnd.api+json"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("anything/something+json"));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/json"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("APPLICATION/JSON"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/vnd.api+json"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("anything/something+json"_s));
 
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/javascript"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("TEXT/JAVASCRIPT"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/javascript"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/ecmascript"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/x-javascript"));
-    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/x-ecmascript"));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("text/javascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("TEXT/JAVASCRIPT"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/javascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/ecmascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/x-javascript"_s));
+    ASSERT_TRUE(MIMETypeRegistry::canShowMIMEType("application/x-ecmascript"_s));
 
-    ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("foo/bar"));
-    ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("text/vcard"));
+    ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("foo/bar"_s));
+    ASSERT_FALSE(MIMETypeRegistry::canShowMIMEType("text/vcard"_s));
 }
 
 } // namespace TestWebKitAPI

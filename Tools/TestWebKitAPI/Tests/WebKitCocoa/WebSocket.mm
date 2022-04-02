@@ -166,11 +166,11 @@ TEST(WebSocket, CloseCode)
     };
 
     HTTPServer httpServer({
-        { "/navigateAway", { htmlWithOnOpen("window.location = '/navigationTarget'") }},
-        { "/navigationTarget", { "hi" } },
-        { "/closeCustomCode", { htmlWithOnOpen("ws.close(3000)") } },
-        { "/closeNoArguments", { htmlWithOnOpen("ws.close()") } },
-        { "/closeBothParameters", { htmlWithOnOpen("ws.close(3001, 'custom reason')") } },
+        { "/navigateAway"_s, { htmlWithOnOpen("window.location = '/navigationTarget'") }},
+        { "/navigationTarget"_s, { "hi"_s } },
+        { "/closeCustomCode"_s, { htmlWithOnOpen("ws.close(3000)") } },
+        { "/closeNoArguments"_s, { htmlWithOnOpen("ws.close()") } },
+        { "/closeBothParameters"_s, { htmlWithOnOpen("ws.close(3001, 'custom reason')") } },
     });
 
     auto appendString = [] (Vector<uint8_t>& vector, const char* string) {

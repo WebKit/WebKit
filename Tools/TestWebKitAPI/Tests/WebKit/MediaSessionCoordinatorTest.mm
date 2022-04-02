@@ -238,7 +238,7 @@ public:
         [webView() performAfterReceivingMessage:@"canplaythrough event" action:[&] {
             canplaythrough = true;
         }];
-        runScriptWithUserGesture("load()");
+        runScriptWithUserGesture("load()"_s);
         Util::run(&canplaythrough);
     }
 
@@ -251,7 +251,7 @@ public:
     {
         bool playing = false;
         [_webView performAfterReceivingMessage:@"play event" action:[&] { playing = true; }];
-        runScriptWithUserGesture("audio.play()");
+        runScriptWithUserGesture("audio.play()"_s);
         Util::run(&playing);
     }
 
@@ -259,7 +259,7 @@ public:
     {
         bool paused = false;
         [_webView performAfterReceivingMessage:@"pause event" action:[&] { paused = true; }];
-        runScriptWithUserGesture("audio.pause()");
+        runScriptWithUserGesture("audio.pause()"_s);
         Util::run(&paused);
     }
 

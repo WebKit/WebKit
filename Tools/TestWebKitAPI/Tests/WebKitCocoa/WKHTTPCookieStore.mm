@@ -471,7 +471,7 @@ static void deleteCookies(WKHTTPCookieStore *store, RetainPtr<NSMutableArray> co
 
 TEST(WKHTTPCookieStore, ObserveCookiesReceivedFromHTTP)
 {
-    TestWebKitAPI::HTTPServer server({{ "/", {{{ "Set-Cookie", "testkey=testvalue" }}, "hello" }}});
+    TestWebKitAPI::HTTPServer server({{ "/"_s, {{{ "Set-Cookie"_s, "testkey=testvalue"_s }}, "hello"_s }}});
 
     auto removeAllCookies = [] (WKHTTPCookieStore *store) {
         __block bool deletedAllCookies = false;

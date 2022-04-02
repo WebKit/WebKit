@@ -36,19 +36,19 @@ TEST(RegistrableDomain, StringVsURL)
 {
     URL webkitURL { "https://webkit.org"_str };
     RegistrableDomain webkitDomainFromURL { webkitURL };
-    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org");
+    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org"_s);
 
     ASSERT_EQ(webkitDomainFromURL, webkitDomainFromString);
 
     URL localhostURL { "https://localhost:8000"_str };
     RegistrableDomain localhostDomainFromURL { localhostURL };
-    auto localhostDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("localhost");
+    auto localhostDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("localhost"_s);
 
     ASSERT_EQ(localhostDomainFromURL, localhostDomainFromString);
 
     URL fileURL { "file:///some/file"_str };
     RegistrableDomain fileDomainFromURL { fileURL };
-    auto fileDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("");
+    auto fileDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(emptyString());
     
     ASSERT_EQ(fileDomainFromURL, fileDomainFromString);
 }
@@ -90,12 +90,12 @@ TEST(RegistrableDomain, MatchesURLs)
 
 TEST(RegistrableDomain, UncheckedCreateFromHost)
 {
-    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org");
+    auto webkitDomainFromString = RegistrableDomain::uncheckedCreateFromRegistrableDomainString("webkit.org"_s);
 
-    auto webkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost("webkit.org");
+    auto webkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost("webkit.org"_s);
     ASSERT_EQ(webkitDomainFromHost, webkitDomainFromString);
     // This test is important for matching cookies' domain attributes which often have a leading dot.
-    auto dotWebkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost(".webkit.org");
+    auto dotWebkitDomainFromHost = RegistrableDomain::uncheckedCreateFromHost(".webkit.org"_s);
     ASSERT_EQ(dotWebkitDomainFromHost, webkitDomainFromString);
 }
 

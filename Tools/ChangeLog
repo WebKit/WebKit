@@ -1,3 +1,256 @@
+2022-04-01  Chris Dumez  <cdumez@apple.com>
+
+        Prepare Tools/ for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238530
+
+        Reviewed by Geoffrey Garen.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::setAccummulateLogsForChannel):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentState):
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WTF/HashCountedSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/JSONValue.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::expectBuilderContent):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/StringView.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::createURL):
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp:
+        (TestWebKitAPI::insertTabAtLocation):
+        (TestWebKitAPI::invalidParts):
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::checkRelativeURLDifferences):
+        (TestWebKitAPI::shouldFail):
+        (TestWebKitAPI::testUserPassword):
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+        (ApplicationManifestParserTest::SetUp):
+        (ApplicationManifestParserTest::testStartURL):
+        (ApplicationManifestParserTest::testDisplay):
+        (ApplicationManifestParserTest::testName):
+        (ApplicationManifestParserTest::testDescription):
+        (ApplicationManifestParserTest::testShortName):
+        (ApplicationManifestParserTest::testThemeColor):
+        (ApplicationManifestParserTest::testIconsSrc):
+        (ApplicationManifestParserTest::testIconsType):
+        (ApplicationManifestParserTest::testIconsSizes):
+        (ApplicationManifestParserTest::testIconsPurposes):
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebCore/CBORReaderTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CBORValueTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CBORWriterTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CSSParser.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::mainDocumentRequest):
+        (TestWebKitAPI::subResourceRequest):
+        (TestWebKitAPI::requestInTopAndFrameURLs):
+        (TestWebKitAPI::makeBackend):
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::actionsEqual):
+        (TestWebKitAPI::sequenceInstances):
+        (TestWebKitAPI::checkCompilerError):
+        * TestWebKitAPI/Tests/WebCore/CtapPinTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FidoTestData.h:
+        * TestWebKitAPI/Tests/WebCore/GridPosition.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/HTMLParserIdioms.cpp:
+        (TestWebKitAPI::testParseHTMLInteger):
+        (TestWebKitAPI::parseHTMLIntegerFails):
+        (TestWebKitAPI::testParseHTMLNonNegativeInteger):
+        (TestWebKitAPI::parseHTMLNonNegativeIntegerFails):
+        * TestWebKitAPI/Tests/WebCore/HTTPHeaderField.cpp:
+        (TEST):
+        * TestWebKitAPI/Tests/WebCore/HTTPHeaderMap.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/KeyedCoding.cpp:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::testSimpleValue):
+        (TestWebKitAPI::KeyedCodingTestObject::encode):
+        (TestWebKitAPI::KeyedCodingTestObject::decode):
+        * TestWebKitAPI/Tests/WebCore/MIMETypeRegistry.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/NowPlayingInfoTests.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ParsedContentRange.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/ParsedContentType.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/PublicSuffix.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/PushDatabase.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/PushMessageCrypto.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/RegistrableDomain.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/StringUtilities.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/StringWithDirection.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/U2fCommandConstructorTest.cpp:
+        (TestWebKitAPI::constructMakeCredentialRequest):
+        (TestWebKitAPI::constructGetAssertionRequest):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/URLParserTextEncoding.cpp:
+        (TestWebKitAPI::invalidParts):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/YouTubePluginReplacement.cpp:
+        (TestWebKitAPI::test):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/cg/BifurcatedGraphicsContextTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cocoa/DatabaseTrackerTest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        * TestWebKitAPI/Tests/WebKit/MediaSessionCoordinatorTest.mm:
+        (TestWebKitAPI::MediaSessionCoordinatorTest::loadPageAndBecomeReady):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::play):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::pause):
+        * TestWebKitAPI/Tests/WebKit/WebRTC.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/XPCEndpoint.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplicationManifest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (TEST):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[BlobWithUSDZExtensionDownloadDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (TestWebKitAPI::downloadAtRate):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::runBasicPCMTest):
+        (TestWebKitAPI::triggerAttributionWithSubresourceRedirect):
+        (TestWebKitAPI::signUnlinkableTokenAndSendSecretToken):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/FTP.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/FileSystemAccess.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/HSTS.mm:
+        (TestWebKitAPI::hstsServer):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBFileName.mm:
+        (runTest):
+        (createDirectories):
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaSession.mm:
+        (TestWebKitAPI::MediaSessionTest::loadPageAndBecomeNowPlaying):
+        (TestWebKitAPI::MediaSessionTest::runScriptWithUserGesture):
+        (TestWebKitAPI::MediaSessionTest::play):
+        (TestWebKitAPI::MediaSessionTest::pause):
+        (TestWebKitAPI::MediaSessionTest::eventListenerWasCalled):
+        (TestWebKitAPI::MediaSessionTest::waitForEventListenerToBeCalled):
+        (TestWebKitAPI::MediaSessionTest::sessionHandlerWasCalled):
+        (TestWebKitAPI::MediaSessionTest::waitForSessionHandlerToBeCalled):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlaying.mm:
+        (NowPlayingTest::loadPage):
+        (NowPlayingTest::runScriptWithUserGesture):
+        (NowPlayingTest::runScriptWithoutUserGesture):
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/PDFLinkReferrer.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/StorageQuota.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TestSOAuthorization.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/UploadDirectory.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentExtensionStore.mm:
+        (TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKHTTPCookieStore.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebLocks.mm:
+        (TestWebKitAPI::runSnapshotAcrossPagesTest):
+        (TestWebKitAPI::runLockRequestWaitingOnAnotherPage):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::WebPushDTest::loadRequest):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebSocket.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/SSLKeyGenerator.mm:
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::respondWithChallengeThenOK):
+        (TestWebKitAPI::HTTPServer::respondWithOK):
+        (TestWebKitAPI::HTTPServer::request const):
+        (TestWebKitAPI::HTTPServer::requestWithLocalhost const):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::outputText):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpPath):
+        (WTR::string):
+        (WTR::pathSuitableForTestResult):
+        (WTR::dumpErrorDescriptionSuitableForTestResult):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::findAndDumpWorldLeaks):
+        (WTR::TestController::didReceiveLiveDocumentsList):
+        (WTR::TestController::canAuthenticateAgainstProtectionSpace):
+        (WTR::TestController::didReceiveAuthenticationChallenge):
+        (WTR::TestController::downloadDidStart):
+        (WTR::TestController::decideDestinationWithSuggestedFilename):
+        (WTR::TestController::downloadDidFinish):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::waitToDumpWatchdogTimerFired):
+        (WTR::TestInvocation::waitForPostDumpWatchdogTimerFired):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::cocoaResetStateToConsistentValues):
+
 2022-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Hoist the IOSurfacePool out of IOSurface

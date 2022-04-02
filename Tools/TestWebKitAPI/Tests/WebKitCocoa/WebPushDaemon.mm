@@ -287,7 +287,7 @@ TEST(WebPushD, BasicCommunication)
 
     // Echo and wait for a reply
     auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    auto encodedString = encodeString("hello");
+    auto encodedString = encodeString("hello"_s);
     xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
     xpc_dictionary_set_uint64(dictionary.get(), "message type", 1);
     xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedString.data(), encodedString.size());
@@ -414,16 +414,16 @@ protected:
         [[m_configuration userContentController] addScriptMessageHandler:m_notificationMessageHandler.get() name:@"note"];
     }
 
-    void loadRequest(const char* htmlSource, const char* serviceWorkerScriptSource)
+    void loadRequest(ASCIILiteral htmlSource, ASCIILiteral serviceWorkerScriptSource)
     {
-        static const char* constants = R"SRC(
+        static constexpr auto constants = R"SRC(
             const VALID_SERVER_KEY = "BA1Hxzyi1RUM1b5wjxsn7nGxAszw2u61m164i3MrAIxHF6YK5h4SDYic-dRuU_RCPCfA5aq9ojSwk5Y2EmClBPs";
             const VALID_SERVER_KEY_THAT_CAUSES_INJECTED_FAILURE = "BEAxaUMo1s8tjORxJfnSSvWhYb4u51kg1hWT2s_9gpV7Zxar1pF_2BQ8AncuAdS2BoLhN4qaxzBy2CwHE8BBzWg";
-        )SRC";
+        )SRC"_s;
         m_server.reset(new TestWebKitAPI::HTTPServer({
-            { "/", { htmlSource } },
-            { "/constants.js", { { { "Content-Type", "application/javascript" } }, constants } },
-            { "/sw.js", { { { "Content-Type", "application/javascript" } }, serviceWorkerScriptSource } }
+            { "/"_s, { htmlSource } },
+            { "/constants.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, constants } },
+            { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptSource } }
         }, TestWebKitAPI::HTTPServer::Protocol::Http));
 
         m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [[m_configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
@@ -502,7 +502,7 @@ protected:
 
 void WebPushDInjectedPushTest::runTest(NSString *expectedMessage, NSDictionary *pushUserInfo)
 {
-    static const char* htmlSource = R"SWRESOURCE(
+    static constexpr auto htmlSource = R"SWRESOURCE(
     <script src="/constants.js"></script>
     <script>
     function log(msg)
@@ -524,9 +524,9 @@ void WebPushDInjectedPushTest::runTest(NSString *expectedMessage, NSDictionary *
         log("Registration failed with: " + error);
     });
     </script>
-    )SWRESOURCE";
+    )SWRESOURCE"_s;
 
-    static const char* serviceWorkerSource = R"SWRESOURCE(
+    static constexpr auto serviceWorkerSource = R"SWRESOURCE(
     let port;
     self.addEventListener("message", (event) => {
         port = event.data.port;
@@ -545,7 +545,7 @@ void WebPushDInjectedPushTest::runTest(NSString *expectedMessage, NSDictionary *
             port.postMessage("Error: " + e);
         }
     });
-    )SWRESOURCE";
+    )SWRESOURCE"_s;
 
     __block bool ready = false;
     [m_testMessageHandler addMessage:@"Ready" withHandler:^{
@@ -603,7 +603,7 @@ TEST_F(WebPushDInjectedPushTest, HandleInjectedAES128GCMPush)
 
 TEST_F(WebPushDTest, SubscribeTest)
 {
-    static const char* source = R"HTML(
+    static constexpr auto source = R"HTML(
     <script src="/constants.js"></script>
     <script>
     navigator.serviceWorker.register('/sw.js').then(async () => {
@@ -621,7 +621,7 @@ TEST_F(WebPushDTest, SubscribeTest)
         window.webkit.messageHandlers.note.postMessage(result);
     });
     </script>
-    )HTML";
+    )HTML"_s;
 
     __block RetainPtr<id> obj = nil;
     __block bool done = false;
@@ -630,7 +630,7 @@ TEST_F(WebPushDTest, SubscribeTest)
         done = true;
     }];
 
-    loadRequest(source, "");
+    loadRequest(source, ""_s);
     TestWebKitAPI::Util::run(&done);
 
     ASSERT_TRUE([obj isKindOfClass:[NSDictionary class]]);
@@ -650,7 +650,7 @@ TEST_F(WebPushDTest, SubscribeTest)
 
 TEST_F(WebPushDTest, SubscribeFailureTest)
 {
-    static const char* source = R"HTML(
+    static constexpr auto source = R"HTML(
     <script src="/constants.js"></script>
     <script>
     navigator.serviceWorker.register('/sw.js').then(async () => {
@@ -668,7 +668,7 @@ TEST_F(WebPushDTest, SubscribeFailureTest)
         window.webkit.messageHandlers.note.postMessage(result);
     });
     </script>
-    )HTML";
+    )HTML"_s;
 
     __block RetainPtr<id> obj = nil;
     __block bool done = false;
@@ -677,7 +677,7 @@ TEST_F(WebPushDTest, SubscribeFailureTest)
         done = true;
     }];
 
-    loadRequest(source, "");
+    loadRequest(source, ""_s);
     TestWebKitAPI::Util::run(&done);
 
     // Spec says that an error in the push service should be an AbortError.
@@ -689,7 +689,7 @@ TEST_F(WebPushDTest, SubscribeFailureTest)
 
 TEST_F(WebPushDTest, UnsubscribeTest)
 {
-    static const char* source = R"HTML(
+    static constexpr auto source = R"HTML(
     <script src="/constants.js"></script>
     <script>
     navigator.serviceWorker.register('/sw.js').then(async () => {
@@ -709,7 +709,7 @@ TEST_F(WebPushDTest, UnsubscribeTest)
         window.webkit.messageHandlers.note.postMessage(result);
     });
     </script>
-    )HTML";
+    )HTML"_s;
 
     __block RetainPtr<id> obj = nil;
     __block bool done = false;
@@ -718,7 +718,7 @@ TEST_F(WebPushDTest, UnsubscribeTest)
         done = true;
     }];
 
-    loadRequest(source, "");
+    loadRequest(source, ""_s);
     TestWebKitAPI::Util::run(&done);
 
     // First unsubscribe should succeed. Second one should fail since the first one removed the record from the database.
@@ -730,7 +730,7 @@ TEST_F(WebPushDTest, UnsubscribeTest)
 
 TEST_F(WebPushDTest, UnsubscribesOnServiceWorkerUnregisterTest)
 {
-    static const char* source = R"HTML(
+    static constexpr auto source = R"HTML(
     <script src="/constants.js"></script>
     <script>
     navigator.serviceWorker.register('/sw.js').then(async () => {
@@ -748,7 +748,7 @@ TEST_F(WebPushDTest, UnsubscribesOnServiceWorkerUnregisterTest)
         window.webkit.messageHandlers.note.postMessage(result);
     });
     </script>
-    )HTML";
+    )HTML"_s;
 
     __block RetainPtr<id> unregisterSucceeded = nil;
     __block bool done = false;
@@ -757,7 +757,7 @@ TEST_F(WebPushDTest, UnsubscribesOnServiceWorkerUnregisterTest)
         done = true;
     }];
 
-    loadRequest(source, "");
+    loadRequest(source, ""_s);
     TestWebKitAPI::Util::run(&done);
 
     ASSERT_TRUE([unregisterSucceeded isEqual:@YES]);
@@ -766,7 +766,7 @@ TEST_F(WebPushDTest, UnsubscribesOnServiceWorkerUnregisterTest)
 
 TEST_F(WebPushDTest, UnsubscribesOnClearingAllWebsiteData)
 {
-    static const char* source = R"HTML(
+    static constexpr auto source = R"HTML(
     <script src="/constants.js"></script>
     <script>
     navigator.serviceWorker.register('/sw.js').then(async () => {
@@ -784,7 +784,7 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingAllWebsiteData)
         window.webkit.messageHandlers.note.postMessage(result);
     });
     </script>
-    )HTML";
+    )HTML"_s;
 
     __block RetainPtr<id> result = nil;
     __block bool done = false;
@@ -793,7 +793,7 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingAllWebsiteData)
         done = true;
     }];
 
-    loadRequest(source, "");
+    loadRequest(source, ""_s);
     TestWebKitAPI::Util::run(&done);
 
     ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
@@ -809,7 +809,7 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingAllWebsiteData)
 
 TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
 {
-    static const char* source = R"HTML(
+    static constexpr auto source = R"HTML(
     <script src="/constants.js"></script>
     <script>
     navigator.serviceWorker.register('/sw.js').then(async () => {
@@ -827,7 +827,7 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
         window.webkit.messageHandlers.note.postMessage(result);
     });
     </script>
-    )HTML";
+    )HTML"_s;
 
     __block RetainPtr<id> result = nil;
     __block bool done = false;
@@ -836,7 +836,7 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
         done = true;
     }];
 
-    loadRequest(source, "");
+    loadRequest(source, ""_s);
     TestWebKitAPI::Util::run(&done);
 
     ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
@@ -871,7 +871,7 @@ TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
 
 TEST_F(WebPushDTest, UnsubscribesOnPermissionReset)
 {
-    static const char* source = R"HTML(
+    static constexpr auto source = R"HTML(
     <script src="/constants.js"></script>
     <script>
     navigator.serviceWorker.register('/sw.js').then(async () => {
@@ -889,7 +889,7 @@ TEST_F(WebPushDTest, UnsubscribesOnPermissionReset)
         window.webkit.messageHandlers.note.postMessage(result);
     });
     </script>
-    )HTML";
+    )HTML"_s;
 
     __block RetainPtr<id> result = nil;
     __block bool done = false;
@@ -898,7 +898,7 @@ TEST_F(WebPushDTest, UnsubscribesOnPermissionReset)
         done = true;
     }];
 
-    loadRequest(source, "");
+    loadRequest(source, ""_s);
     TestWebKitAPI::Util::run(&done);
 
     ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
@@ -1021,7 +1021,7 @@ TEST(WebPushD, InstallCoordinationBundles)
 
 TEST_F(WebPushDTest, TooManySilentPushesCausesUnsubscribe)
 {
-    static const char* htmlSource = R"HTML(
+    static constexpr auto htmlSource = R"HTML(
     <script src="/constants.js"></script>
     <script>
     let pushManager = null;
@@ -1049,8 +1049,8 @@ TEST_F(WebPushDTest, TooManySilentPushesCausesUnsubscribe)
         });
     }
     </script>
-    )HTML";
-    static const char* serviceWorkerScriptSource = "self.addEventListener('push', (event) => { });";
+    )HTML"_s;
+    static constexpr auto serviceWorkerScriptSource = "self.addEventListener('push', (event) => { });"_s;
 
     __block RetainPtr<id> message = nil;
     __block bool gotMessage = false;

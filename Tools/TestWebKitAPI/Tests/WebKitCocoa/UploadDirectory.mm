@@ -82,20 +82,20 @@ TEST(WebKit, UploadDirectory)
         using namespace TestWebKitAPI;
         HTTPServer server([] (Connection connection) {
             connection.receiveHTTPRequest([=](Vector<char>&&) {
-                const char* response =
+                constexpr auto response =
                 "HTTP/1.1 200 OK\r\n"
                 "Content-Type: text/html\r\n"
                 "Content-Length: 123\r\n\r\n"
-                "<form id='form' action='/upload.php' method='post' enctype='multipart/form-data'><input type='file' name='testname'></form>";
+                "<form id='form' action='/upload.php' method='post' enctype='multipart/form-data'><input type='file' name='testname'></form>"_s;
                 connection.send(response, [=] {
                     connection.receiveHTTPRequest([=](Vector<char>&& request) {
                         EXPECT_TRUE(strnstr(request.data(), "Content-Length: 543\r\n", request.size()));
                         auto* headerEnd = strnstr(request.data(), "\r\n\r\n", request.size());
                         EXPECT_TRUE(headerEnd);
                         EXPECT_EQ(request.end() - (headerEnd + + strlen("\r\n\r\n")), 543);
-                        const char* secondResponse =
+                        constexpr auto secondResponse =
                         "HTTP/1.1 200 OK\r\n"
-                        "Content-Length: 0\r\n\r\n";
+                        "Content-Length: 0\r\n\r\n"_s;
                         connection.send(secondResponse);
                     });
                 });

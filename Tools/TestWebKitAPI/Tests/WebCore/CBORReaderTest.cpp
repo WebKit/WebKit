@@ -169,10 +169,10 @@ TEST(CBORReaderTest, TestReadString)
     };
 
     static const StringTestCase kStringTestCases[] = {
-        { "", { 0x60 } },
-        { "a", { 0x61, 0x61 } },
-        { "IETF", { 0x64, 0x49, 0x45, 0x54, 0x46 } },
-        { "\"\\", { 0x62, 0x22, 0x5c } },
+        { emptyString(), { 0x60 } },
+        { "a"_s, { 0x61, 0x61 } },
+        { "IETF"_s, { 0x64, 0x49, 0x45, 0x54, 0x46 } },
+        { "\"\\"_s, { 0x62, 0x22, 0x5c } },
         { String::fromUTF8("\xc3\xbc"), { 0x62, 0xc3, 0xbc } },
         { String::fromUTF8("\xe6\xb0\xb4"), { 0x63, 0xe6, 0xb0, 0xb4 } },
         { String::fromUTF8("\xf0\x90\x85\x91"), { 0x64, 0xf0, 0x90, 0x85, 0x91 } },

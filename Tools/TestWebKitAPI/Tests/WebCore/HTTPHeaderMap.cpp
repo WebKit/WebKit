@@ -70,8 +70,8 @@ TEST(HTTPHeaderMap, ComparisonOperator)
     EXPECT_TRUE(map1 == map2);
     EXPECT_FALSE(map1 != map2);
 
-    map1.add("NOT-COMMON4"_str, "foo");
-    map2.add("Not-Common4"_str, "foo");
+    map1.add("NOT-COMMON4"_str, "foo"_s);
+    map2.add("Not-Common4"_str, "foo"_s);
     EXPECT_TRUE(map1 == map2);
     EXPECT_FALSE(map1 != map2);
 }

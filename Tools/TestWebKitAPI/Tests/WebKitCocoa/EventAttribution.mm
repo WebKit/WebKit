@@ -147,14 +147,14 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
         case 1:
             connection.receiveHTTPRequest([connection] (Vector<char>&& request1) {
                 EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
-                const char* redirect = "HTTP/1.1 302 Found\r\n"
+                constexpr auto redirect = "HTTP/1.1 302 Found\r\n"
                     "Location: /.well-known/private-click-measurement/trigger-attribution/12\r\n"
-                    "Content-Length: 0\r\n\r\n";
+                    "Content-Length: 0\r\n\r\n"_s;
                 connection.send(redirect, [connection] {
                     connection.receiveHTTPRequest([connection] (Vector<char>&& request2) {
                         EXPECT_TRUE(strnstr(request2.data(), "GET /.well-known/private-click-measurement/trigger-attribution/12 HTTP/1.1\r\n", request2.size()));
-                        const char* response = "HTTP/1.1 200 OK\r\n"
-                            "Content-Length: 0\r\n\r\n";
+                        constexpr auto response = "HTTP/1.1 200 OK\r\n"
+                            "Content-Length: 0\r\n\r\n"_s;
                         connection.send(response);
                     });
                 });
@@ -202,13 +202,13 @@ static void triggerAttributionWithSubresourceRedirect(Connection& connection, co
     auto location = makeString("/.well-known/private-click-measurement/trigger-attribution/12", optionalQueryString);
     connection.receiveHTTPRequest([connection, location] (Vector<char>&& request1) {
         EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
-        auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: ", location, "\r\nContent-Length: 0\r\n\r\n").utf8().data();
-        connection.send(redirect, [connection, location] {
+        auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: ", location, "\r\nContent-Length: 0\r\n\r\n");
+        connection.send(WTFMove(redirect), [connection, location] {
             connection.receiveHTTPRequest([connection, location] (Vector<char>&& request2) {
                 auto expectedHttpGetString = makeString("GET ", location, " HTTP/1.1\r\n").utf8().data();
                 EXPECT_TRUE(strnstr(request2.data(), expectedHttpGetString, request2.size()));
-                const char* response = "HTTP/1.1 200 OK\r\n"
-                    "Content-Length: 0\r\n\r\n";
+                constexpr auto response = "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 0\r\n\r\n"_s;
                 connection.send(response);
             });
         });
@@ -266,7 +266,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
         switch (++connectionCount) {
         case 1:
             EXPECT_TRUE(signingParty == TokenSigningParty::Destination);
-            triggerAttributionWithSubresourceRedirect(connection, "ABCDEFabcdef0123456789");
+            triggerAttributionWithSubresourceRedirect(connection, "ABCDEFabcdef0123456789"_s);
             break;
         case 2:
             connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request1) {
@@ -562,7 +562,7 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
 
 TEST(PrivateClickMeasurement, SKAdNetwork)
 {
-    HTTPServer server({ { "/app/apple-store/id1234567890", { "hello" } } }, HTTPServer::Protocol::HttpsProxy);
+    HTTPServer server({ { "/app/apple-store/id1234567890"_s, { "hello"_s } } }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [storeConfiguration setProxyConfiguration:@{

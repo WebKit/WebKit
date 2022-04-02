@@ -1681,7 +1681,7 @@ void TestInvocation::waitToDumpWatchdogTimerFired()
 {
     invalidateWaitToDumpWatchdogTimer();
     
-    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
+    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n"_s);
 
     postPageMessage("ForceImmediateCompletion");
 
@@ -1708,7 +1708,7 @@ void TestInvocation::waitForPostDumpWatchdogTimerFired()
 #if PLATFORM(COCOA)
     char buffer[1024];
     snprintf(buffer, sizeof(buffer), "#PID UNRESPONSIVE - %s (pid %d)\n", getprogname(), getpid());
-    outputText(buffer);
+    outputText(String { buffer });
 #endif
     done();
 }

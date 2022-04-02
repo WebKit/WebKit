@@ -594,7 +594,7 @@ void InjectedBundle::dumpToStdErr(const String& output)
     postPageMessage("DumpToStdErr", string ? string->data() : "Out of memory\n");
 }
 
-void InjectedBundle::outputText(const String& output, IsFinalTestOutput isFinalTestOutput)
+void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTestOutput)
 {
     if (m_state != Testing)
         return;

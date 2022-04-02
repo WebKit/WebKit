@@ -37,7 +37,7 @@
 
 namespace TestWebKitAPI {
 
-static void expectBuilderContent(const String& expected, const StringBuilder& builder)
+static void expectBuilderContent(StringView expected, const StringBuilder& builder)
 {
     // Not using builder.toString() or builder.toStringPreserveCapacity() because they all
     // change internal state of builder.
@@ -158,9 +158,9 @@ TEST(StringBuilderTest, VariadicAppend)
     {
         StringBuilder builder;
         builder.append(String("0123456789"), "abcd", bullseye, "");
-        expectBuilderContent("0123456789abcd" + String(&bullseye, 1), builder);
+        expectBuilderContent(makeString("0123456789abcd", String(&bullseye, 1)), builder);
         builder.append(String("A"), "B", 'C', "");
-        expectBuilderContent("0123456789abcd" + String(&bullseye, 1) + "ABC", builder);
+        expectBuilderContent(makeString("0123456789abcd", String(&bullseye, 1), "ABC"), builder);
     }
 
     {
@@ -171,7 +171,7 @@ TEST(StringBuilderTest, VariadicAppend)
         EXPECT_TRUE(builder.is8Bit());
         EXPECT_LT(builder.capacity(), builder.length() + 3);
         builder.append(String("A"), "B", bullseye, "");
-        expectBuilderContent("0123456789abcdeAB" + String(&bullseye, 1), builder);
+        expectBuilderContent(makeString("0123456789abcdeAB", String(&bullseye, 1)), builder);
     }
 
     {
@@ -183,7 +183,7 @@ TEST(StringBuilderTest, VariadicAppend)
         EXPECT_TRUE(builder.is8Bit());
         EXPECT_GE(builder.capacity(), builder.length() + 3);
         builder.append(String("A"), "B", bullseye, "");
-        expectBuilderContent("0123456789abcdeAB" + String(&bullseye, 1), builder);
+        expectBuilderContent(makeString("0123456789abcdeAB", String(&bullseye, 1)), builder);
     }
 }
 
@@ -209,7 +209,7 @@ TEST(StringBuilderTest, ToString)
     // Changing the original result of toString() should not affect the content of the StringBuilder.
     String string1 = builder.toString();
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
-    string1.append("DEF");
+    string1.append("DEF"_s);
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), builder.toString());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"), string1);
 
@@ -251,7 +251,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     EXPECT_EQ(capacity, builder.capacity());
     EXPECT_EQ(string1.characters8(), builder.characters8());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
-    string1.append("DEF");
+    string1.append("DEF"_s);
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), builder.toStringPreserveCapacity());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"), string1);
 

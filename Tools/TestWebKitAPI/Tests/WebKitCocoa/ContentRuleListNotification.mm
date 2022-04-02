@@ -212,8 +212,8 @@ TEST(ContentRuleList, PerformedActionForURL)
         TestWebKitAPI::Util::spinRunLoop();
 
     Vector<Notification> expectedNotifications {
-        { "firstList", "apitest:///notify", false, false, false, { "testnotification" } },
-        { "secondList", "apitest:///block", true, false, false, { } }
+        { "firstList"_s, "apitest:///notify"_s, false, false, false, { "testnotification"_s } },
+        { "secondList"_s, "apitest:///block"_s, true, false, false, { } }
     };
     EXPECT_TRUE(expectedNotifications == notificationList);
 }
@@ -271,9 +271,9 @@ TEST(ContentRuleList, ResourceTypes)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "xhr finished");
     
     HTTPServer beaconServer({
-        { "/", { "<script>navigator.sendBeacon('/testBeaconTarget', 'hello');fetch('/testFetchTarget').then(()=>{alert('fetch done')})</script>" } },
-        { "/testBeaconTarget", { "hi" } },
-        { "/testFetchTarget", { "hi" } },
+        { "/"_s, { "<script>navigator.sendBeacon('/testBeaconTarget', 'hello');fetch('/testFetchTarget').then(()=>{alert('fetch done')})</script>"_s } },
+        { "/testBeaconTarget"_s, { "hi"_s } },
+        { "/testFetchTarget"_s, { "hi"_s } },
     });
     [webView loadRequest:beaconServer.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "fetch done");
@@ -418,9 +418,9 @@ TEST(ContentRuleList, TopFrameChildFrame)
 
 TEST(ContentRuleList, CSPReport)
 {
-    TestWebKitAPI::HTTPServer server({ { "/", { {
-        { "Content-Security-Policy", "frame-src 'none'; report-uri resources/save-report.py" }
-    }, "<iframe src=\"https://webkit.org/\"></iframe>" } } });
+    TestWebKitAPI::HTTPServer server({ { "/"_s, { {
+        { "Content-Security-Policy"_s, "frame-src 'none'; report-uri resources/save-report.py"_s }
+    }, "<iframe src=\"https://webkit.org/\"></iframe>"_s } } });
 
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     [[configuration userContentController] addContentRuleList:makeContentRuleList(@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"resource-type\":[\"csp-report\"]}}]").get()];
@@ -515,8 +515,8 @@ TEST(ContentRuleList, LegacyVersionAndName)
 TEST(WebKit, RedirectToPlaintextHTTPSUpgrade)
 {
     using namespace TestWebKitAPI;
-    HTTPServer plaintextServer({ { "http://download/redirectTarget", { "<script>alert('success!')</script>" } } });
-    HTTPServer secureServer({ { "/originalRequest", { 302, { { "Location", "http://download/redirectTarget" } }, "" } } }, HTTPServer::Protocol::HttpsProxy);
+    HTTPServer plaintextServer({ { "http://download/redirectTarget"_s, { "<script>alert('success!')</script>"_s } } });
+    HTTPServer secureServer({ { "/originalRequest"_s, { 302, { { "Location"_s, "http://download/redirectTarget"_s } }, emptyString() } } }, HTTPServer::Protocol::HttpsProxy);
 
     auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
     [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", plaintextServer.port()]]];

@@ -225,11 +225,11 @@ void HTTPServer::addResponse(String&& path, HTTPResponse&& response)
 void HTTPServer::respondWithChallengeThenOK(Connection connection)
 {
     connection.receiveHTTPRequest([connection] (Vector<char>&&) {
-        const char* challengeHeader =
+        constexpr auto challengeHeader =
         "HTTP/1.1 401 Unauthorized\r\n"
         "Date: Sat, 23 Mar 2019 06:29:01 GMT\r\n"
         "Content-Length: 0\r\n"
-        "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n";
+        "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n"_s;
         connection.send(challengeHeader, [connection] {
             respondWithOK(connection);
         });
@@ -242,7 +242,7 @@ void HTTPServer::respondWithOK(Connection connection)
         connection.send(
             "HTTP/1.1 200 OK\r\n"
             "Content-Length: 34\r\n\r\n"
-            "<script>alert('success!')</script>"
+            "<script>alert('success!')</script>"_s
         );
     });
 }
@@ -381,14 +381,14 @@ String HTTPServer::origin() const
     return [NSString stringWithFormat:@"%s://127.0.0.1:%d", scheme(), port()];
 }
 
-NSURLRequest *HTTPServer::request(const String& path) const
+NSURLRequest *HTTPServer::request(StringView path) const
 {
-    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://127.0.0.1:%d%@", scheme(), port(), path.createCFString().get()]]];
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://127.0.0.1:%d%@", scheme(), port(), path.createNSString().get()]]];
 }
 
-NSURLRequest *HTTPServer::requestWithLocalhost(const String& path) const
+NSURLRequest *HTTPServer::requestWithLocalhost(StringView path) const
 {
-    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://localhost:%d%@", scheme(), port(), path.createCFString().get()]]];
+    return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://localhost:%d%@", scheme(), port(), path.createNSString().get()]]];
 }
 
 void Connection::receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler, size_t minimumSize) const

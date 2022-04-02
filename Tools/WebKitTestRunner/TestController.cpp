@@ -1248,7 +1248,7 @@ void TestController::findAndDumpWorldLeaks()
         for (const auto& it : m_abandonedDocumentInfo) {
             auto documentURL = it.value.abandonedDocumentURL;
             if (documentURL.isEmpty())
-                documentURL = "(no url)";
+                documentURL = "(no url)"_s;
             builder.append("TEST: ");
             builder.append(it.value.testURL);
             builder.append('\n');
@@ -1720,7 +1720,7 @@ void TestController::didReceiveLiveDocumentsList(WKArrayRef liveDocumentList)
     });
     
     // Add newly abandoned documents.
-    String currentTestURL = m_currentInvocation ? toWTFString(adoptWK(WKURLCopyString(m_currentInvocation->url()))) : "no test";
+    String currentTestURL = m_currentInvocation ? toWTFString(adoptWK(WKURLCopyString(m_currentInvocation->url()))) : "no test"_s;
     for (const auto& it : documentInfo)
         m_abandonedDocumentInfo.add(it.key, AbandonedDocumentInfo(currentTestURL, it.value));
 }
@@ -2185,7 +2185,7 @@ static const char* toString(WKProtectionSpaceAuthenticationScheme scheme)
 bool TestController::canAuthenticateAgainstProtectionSpace(WKPageRef page, WKProtectionSpaceRef protectionSpace)
 {
     if (m_shouldLogCanAuthenticateAgainstProtectionSpace)
-        m_currentInvocation->outputText("canAuthenticateAgainstProtectionSpace\n");
+        m_currentInvocation->outputText("canAuthenticateAgainstProtectionSpace\n"_s);
     auto scheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
     if (scheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
         auto host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)));
@@ -2228,7 +2228,7 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
     }
 
     if (m_rejectsProtectionSpaceAndContinueForAuthenticationChallenges) {
-        m_currentInvocation->outputText("Simulating reject protection space and continue for authentication challenge\n");
+        m_currentInvocation->outputText("Simulating reject protection space and continue for authentication challenge\n"_s);
         WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue(decisionListener);
         return;
     }
@@ -2237,7 +2237,7 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
     int port = WKProtectionSpaceGetPort(protectionSpace);
     String message = makeString(host, ':', port, " - didReceiveAuthenticationChallenge - ", toString(authenticationScheme), " - ");
     if (!m_handlesAuthenticationChallenges)
-        message.append("Simulating cancelled authentication sheet\n");
+        message.append("Simulating cancelled authentication sheet\n"_s);
     else
         message.append("Responding with " + m_authenticationUsername + ":" + m_authenticationPassword + "\n");
     m_currentInvocation->outputText(message);
@@ -2276,7 +2276,7 @@ bool TestController::downloadDidReceiveServerRedirectToURL(WKDownloadRef downloa
 void TestController::downloadDidStart(WKDownloadRef download)
 {
     if (m_shouldLogDownloadCallbacks)
-        m_currentInvocation->outputText("Download started.\n");
+        m_currentInvocation->outputText("Download started.\n"_s);
 }
 
 WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef download, WKStringRef filename)
@@ -2297,7 +2297,7 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef
 
     String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
     if (suggestedFilename.isEmpty())
-        suggestedFilename = "Unknown";
+        suggestedFilename = "Unknown"_s;
     
     String destination = temporaryFolder + pathSeparator + suggestedFilename;
     if (FileSystem::fileExists(destination))
@@ -2311,7 +2311,7 @@ void TestController::downloadDidFinish(WKDownloadRef)
     if (m_shouldLogDownloadSize)
         m_currentInvocation->outputText(makeString("Download size: ", m_downloadTotalBytesWritten.value_or(0), ".\n"));
     if (m_shouldLogDownloadCallbacks)
-        m_currentInvocation->outputText("Download completed.\n");
+        m_currentInvocation->outputText("Download completed.\n"_s);
     m_currentInvocation->notifyDownloadDone();
 }
 

@@ -103,7 +103,7 @@ TEST(BifurcatedGraphicsContextTests, Text)
     FontCascade font(WTFMove(description));
     font.update();
 
-    String string = "Hello!";
+    String string = "Hello!"_s;
     TextRun run(string);
     ctx.drawText(font, run, { });
 

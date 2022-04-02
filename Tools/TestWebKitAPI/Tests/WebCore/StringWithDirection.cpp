@@ -52,7 +52,7 @@ namespace TestWebKitAPI {
 
 TEST(StringWithDirection, TruncateAtEndWithLeftToRightString)
 {
-    StringWithDirection string { "Cappuccino", TextDirection::LTR };
+    StringWithDirection string { "Cappuccino"_s, TextDirection::LTR };
     StringWithDirection result;
 
     result = truncateFromEnd(string, 0);

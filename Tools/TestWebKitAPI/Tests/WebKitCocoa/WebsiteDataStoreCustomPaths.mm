@@ -605,11 +605,11 @@ TEST(WebKit, NetworkCacheDirectory)
     using namespace TestWebKitAPI;
     HTTPServer server([] (Connection connection) {
         connection.receiveHTTPRequest([=] (Vector<char>&&) {
-            const char* response =
+            constexpr auto response =
             "HTTP/1.1 200 OK\r\n"
             "Cache-Control: max-age=1000000\r\n"
             "Content-Length: 6\r\n\r\n"
-            "Hello!";
+            "Hello!"_s;
             connection.send(response);
         });
     });
@@ -636,9 +636,9 @@ TEST(WebKit, NetworkCacheDirectory)
 TEST(WebKit, ApplicationCacheDirectories)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/index.html", { "<html manifest='test.appcache'>" } },
-        { "/test.appcache", { "CACHE MANIFEST\nindex.html\ntest.mp4\n" } },
-        { "/test.mp4", { {{ "Content-Type", "video/test" }}, "test!" }},
+        { "/index.html"_s, { "<html manifest='test.appcache'>"_s } },
+        { "/test.appcache"_s, { "CACHE MANIFEST\nindex.html\ntest.mp4\n"_s } },
+        { "/test.mp4"_s, { {{ "Content-Type"_s, "video/test"_s }}, "test!"_s }},
     });
     
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];
@@ -684,7 +684,7 @@ TEST(WebKit, DISABLED_AlternativeService)
 {
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { {{ "alt-svc", "h3-24=\":443\"; ma=3600; persist=1" }}, "<html>test content</html>" } }
+        { "/"_s, { {{ "alt-svc"_s, "h3-24=\":443\"; ma=3600; persist=1"_s }}, "<html>test content</html>"_s } }
     }, HTTPServer::Protocol::Https);
 
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"AlternativeServiceTest"] isDirectory:YES];
@@ -774,11 +774,11 @@ TEST(WebKit, MediaCache)
 
     HTTPServer server([&] (Connection connection) {
         connection.receiveHTTPRequest([=] (Vector<char>&&) {
-            const char* firstResponse =
+            constexpr auto firstResponse =
             "HTTP/1.1 200 OK\r\n"
             "Content-Type: text/html\r\n"
             "Content-Length: 55\r\n\r\n"
-            "<video><source src='test.mp4' type='video/mp4'></video>";
+            "<video><source src='test.mp4' type='video/mp4'></video>"_s;
             connection.send(firstResponse, [=] {
                 respondToRangeRequests(connection, data);
             });

@@ -60,7 +60,7 @@ static String expectedMessage;
 @end
 
 // FIXME: Update the test to do subscription before pushing message.
-static const char* mainBytes = R"SWRESOURCE(
+static constexpr auto mainBytes = R"SWRESOURCE(
 <script>
 function log(msg)
 {
@@ -84,9 +84,9 @@ navigator.serviceWorker.register('/sw.js').then((registration) => {
     log("Registration failed with: " + error);
 });
 </script>
-)SWRESOURCE";
+)SWRESOURCE"_s;
 
-static const char* scriptBytes = R"SWRESOURCE(
+static constexpr auto scriptBytes = R"SWRESOURCE(
 let port;
 self.addEventListener("message", (event) => {
     port = event.data.port;
@@ -107,7 +107,7 @@ self.addEventListener("push", (event) => {
         port.postMessage("Got exception " + e);
     }
 });
-)SWRESOURCE";
+)SWRESOURCE"_s;
 
 static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 {
@@ -135,8 +135,8 @@ static bool waitUntilEvaluatesToTrue(const Function<bool()>& f)
 TEST(PushAPI, firePushEvent)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { mainBytes } },
-        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, scriptBytes } }
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, scriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -151,7 +151,7 @@ TEST(PushAPI, firePushEvent)
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 
-    expectedMessage = "Ready";
+    expectedMessage = "Ready"_s;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -161,7 +161,7 @@ TEST(PushAPI, firePushEvent)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     NSString *message = @"Sweet Potatoes";
-    expectedMessage = "Received: Sweet Potatoes";
+    expectedMessage = "Received: Sweet Potatoes"_s;
 
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
@@ -176,7 +176,7 @@ TEST(PushAPI, firePushEvent)
     pushMessageProcessed = false;
     pushMessageSuccessful = false;
     message = @"Rotten Potatoes";
-    expectedMessage = "Received: Rotten Potatoes";
+    expectedMessage = "Received: Rotten Potatoes"_s;
     [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
         pushMessageSuccessful = result;
         pushMessageProcessed = true;
@@ -189,7 +189,7 @@ TEST(PushAPI, firePushEvent)
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
 
-static const char* waitOneSecondScriptBytes = R"SWRESOURCE(
+static constexpr auto waitOneSecondScriptBytes = R"SWRESOURCE(
 let port;
 self.addEventListener("message", (event) => {
     port = event.data.port;
@@ -207,7 +207,7 @@ self.addEventListener("push", (event) => {
     else if (value === 'Timeless Potatoes')
         event.waitUntil(new Promise(resolve => { }));
 });
-)SWRESOURCE";
+)SWRESOURCE"_s;
 
 static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfiguration *configuration)
 {
@@ -226,8 +226,8 @@ static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfigurat
 TEST(PushAPI, firePushEventWithNoPagesSuccessful)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { mainBytes } },
-        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, waitOneSecondScriptBytes } }
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -241,7 +241,7 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready";
+    expectedMessage = "Ready"_s;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -274,8 +274,8 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
 TEST(PushAPI, firePushEventWithNoPagesFail)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { mainBytes } },
-        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, waitOneSecondScriptBytes } }
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -289,7 +289,7 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready";
+    expectedMessage = "Ready"_s;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -321,8 +321,8 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
 TEST(PushAPI, firePushEventWithNoPagesTimeout)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { mainBytes } },
-        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, waitOneSecondScriptBytes } }
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, waitOneSecondScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -342,7 +342,7 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready";
+    expectedMessage = "Ready"_s;
 
     @autoreleasepool {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -372,7 +372,7 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
 
 #if WK_HAVE_C_SPI
 
-static const char* pushEventsAndInspectedServiceWorkerScriptBytes = R"SWRESOURCE(
+static constexpr auto pushEventsAndInspectedServiceWorkerScriptBytes = R"SWRESOURCE(
 let port;
 self.addEventListener("message", (event) => {
     port = event.data.port;
@@ -399,13 +399,13 @@ self.addEventListener("push", (event) => {
     self.previousMessageData = event.data.text();
     event.waitUntil(Promise.reject('expected a known message'));
 });
-)SWRESOURCE";
+)SWRESOURCE"_s;
 
 TEST(PushAPI, pushEventsAndInspectedServiceWorker)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { mainBytes } },
-        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, pushEventsAndInspectedServiceWorkerScriptBytes } }
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, pushEventsAndInspectedServiceWorkerScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -422,7 +422,7 @@ TEST(PushAPI, pushEventsAndInspectedServiceWorker)
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready";
+    expectedMessage = "Ready"_s;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 
@@ -465,7 +465,7 @@ TEST(PushAPI, pushEventsAndInspectedServiceWorker)
     EXPECT_TRUE(pushMessageSuccessful);
 }
 
-static const char* inspectedServiceWorkerWithoutPageScriptBytes = R"SWRESOURCE(
+static constexpr auto inspectedServiceWorkerWithoutPageScriptBytes = R"SWRESOURCE(
 let port;
 self.addEventListener("message", (event) => {
     port = event.data.port;
@@ -501,13 +501,13 @@ self.addEventListener("push", async (event) => {
             event.waitUntil(Promise.reject('unexpected state with last message'));
     }
 });
-)SWRESOURCE";
+)SWRESOURCE"_s;
 
 static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspection)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { mainBytes } },
-        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, inspectedServiceWorkerWithoutPageScriptBytes } }
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, inspectedServiceWorkerWithoutPageScriptBytes } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -529,7 +529,7 @@ static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspec
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    expectedMessage = "Ready";
+    expectedMessage = "Ready"_s;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView loadRequest:server.request()];
 

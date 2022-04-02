@@ -266,32 +266,32 @@ TEST(WTF, StringViewSplitBasic)
 
     // Simple
     Vector<String> actual = vectorFromSplitResult(a.split('T'));
-    Vector<String> expected({ "his is a sentence." });
+    Vector<String> expected({ "his is a sentence."_s });
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
 
     actual = vectorFromSplitResult(a.split('.'));
-    expected = { "This is a sentence" };
+    expected = { "This is a sentence"_s };
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
 
     actual = vectorFromSplitResult(a.split('a'));
-    expected = { "This is ", " sentence." };
+    expected = { "This is "_s, " sentence."_s };
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
 
     actual = vectorFromSplitResult(a.split(' '));
-    expected = { "This", "is", "a", "sentence." };
+    expected = { "This"_s, "is"_s, "a"_s, "sentence."_s };
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
 
     // Non-existent separator
     actual = vectorFromSplitResult(a.split('z'));
-    expected = { "This is a sentence." };
+    expected = { "This is a sentence."_s };
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
@@ -303,13 +303,13 @@ TEST(WTF, StringViewSplitWithConsecutiveSeparators)
     StringView a = stringViewFromUTF8(referenceHolder, " This     is  a       sentence. ");
 
     Vector<String> actual = vectorFromSplitResult(a.split(' '));
-    Vector<String> expected({ "This", "is", "a", "sentence." });
+    Vector<String> expected({ "This"_s, "is"_s, "a"_s, "sentence."_s });
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
 
     actual = vectorFromSplitResult(a.splitAllowingEmptyEntries(' '));
-    expected = { "", "This", "", "", "", "", "is", "", "a", "", "", "", "", "", "", "sentence.", "" };
+    expected = { ""_s, "This"_s, ""_s, ""_s, ""_s, ""_s, "is"_s, ""_s, "a"_s, ""_s, ""_s, ""_s, ""_s, ""_s, ""_s, "sentence."_s, ""_s };
     ASSERT_EQ(expected.size(), actual.size());
     for (size_t i = 0; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;

@@ -108,19 +108,19 @@ public:
 
     pid_t webViewPid() { return [_webView _webProcessIdentifier]; }
 
-    void loadPage(const String& name)
+    void loadPage(NSString *name)
     {
         [_webView synchronouslyLoadTestPageNamed:name];
     }
 
-    void runScriptWithUserGesture(const String& script)
+    void runScriptWithUserGesture(NSString *script)
     {
         bool complete = false;
         [_webView evaluateJavaScript:script completionHandler:[&] (id, NSError *) { complete = true; }];
         TestWebKitAPI::Util::run(&complete);
     }
 
-    void runScriptWithoutUserGesture(const String& script)
+    void runScriptWithoutUserGesture(NSString *script)
     {
         bool complete = false;
         [_webView _evaluateJavaScriptWithoutUserGesture:script completionHandler:[&] (id, NSError *) { complete = true; }];
@@ -207,9 +207,9 @@ TEST_F(NowPlayingTest, DISABLED_AudioElement)
 {
     executeAndWaitForWebViewToBecomeNowPlaying([&] {
         executeAndWaitForPlaying([&] {
-            loadPage("now-playing");
-            runScriptWithoutUserGesture("createMediaElement({type:'audio', hasAudio:true})");
-            runScriptWithUserGesture("play()");
+            loadPage(@"now-playing");
+            runScriptWithoutUserGesture(@"createMediaElement({type:'audio', hasAudio:true})");
+            runScriptWithUserGesture(@"play()");
         });
     });
 }
@@ -218,9 +218,9 @@ TEST_F(NowPlayingTest, DISABLED_VideoElementWithAudio)
 {
     executeAndWaitForWebViewToBecomeNowPlaying([&] {
         executeAndWaitForPlaying([&] {
-            loadPage("now-playing");
-            runScriptWithoutUserGesture("createMediaElement({type:'video', hasAudio:true})");
-            runScriptWithUserGesture("play()");
+            loadPage(@"now-playing");
+            runScriptWithoutUserGesture(@"createMediaElement({type:'video', hasAudio:true})");
+            runScriptWithUserGesture(@"play()");
         });
     });
 }
@@ -228,9 +228,9 @@ TEST_F(NowPlayingTest, DISABLED_VideoElementWithAudio)
 TEST_F(NowPlayingTest, VideoElementWithoutAudio)
 {
     executeAndWaitForPlaying([&] {
-        loadPage("now-playing");
-        runScriptWithoutUserGesture("createMediaElement({type:'video', hasAudio:false})");
-        runScriptWithoutUserGesture("play()");
+        loadPage(@"now-playing");
+        runScriptWithoutUserGesture(@"createMediaElement({type:'video', hasAudio:false})");
+        runScriptWithoutUserGesture(@"play()");
     });
 
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
@@ -239,9 +239,9 @@ TEST_F(NowPlayingTest, VideoElementWithoutAudio)
 TEST_F(NowPlayingTest, VideoElementWithMutedAudio)
 {
     executeAndWaitForPlaying([&] {
-        loadPage("now-playing");
-        runScriptWithoutUserGesture("createMediaElement({type:'video', hasAudio:true, muted:true})");
-        runScriptWithoutUserGesture("play()");
+        loadPage(@"now-playing");
+        runScriptWithoutUserGesture(@"createMediaElement({type:'video', hasAudio:true, muted:true})");
+        runScriptWithoutUserGesture(@"play()");
     });
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
 }
@@ -249,28 +249,28 @@ TEST_F(NowPlayingTest, VideoElementWithMutedAudio)
 TEST_F(NowPlayingTest, DISABLED_VideoElementWithMutedAudioUnmutedWithUserGesture)
 {
     executeAndWaitForPlaying([&] {
-        loadPage("now-playing");
-        runScriptWithoutUserGesture("createMediaElement({type:'video', hasAudio:true, muted:true})");
-        runScriptWithoutUserGesture("play()");
+        loadPage(@"now-playing");
+        runScriptWithoutUserGesture(@"createMediaElement({type:'video', hasAudio:true, muted:true})");
+        runScriptWithoutUserGesture(@"play()");
     });
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
 
     executeAndWaitForWebViewToBecomeNowPlaying([&] {
-        runScriptWithUserGesture("unmute()");
+        runScriptWithUserGesture(@"unmute()");
     });
 }
 
 TEST_F(NowPlayingTest, VideoElementWithoutAudioPlayWithUserGesture)
 {
     executeAndWaitForPlaying([&] {
-        loadPage("now-playing");
-        runScriptWithoutUserGesture("createMediaElement({type:'video', hasAudio:true, muted:true})");
-        runScriptWithoutUserGesture("play()");
+        loadPage(@"now-playing");
+        runScriptWithoutUserGesture(@"createMediaElement({type:'video', hasAudio:true, muted:true})");
+        runScriptWithoutUserGesture(@"play()");
     });
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());
 
     executeAndWaitForPlaying([&] {
-        runScriptWithUserGesture("play()");
+        runScriptWithUserGesture(@"play()");
     });
 
     ASSERT_NE(webViewPid(), getNowPlayingClientPid());

@@ -82,9 +82,9 @@ TEST(WebKit, PDFLinkReferrer)
                 const char* nextLine = strchr(currentLine, '\n');
                 currentLine = nextLine ? nextLine + 1 : 0;
             }
-            const char* responseHeader =
+            constexpr auto responseHeader =
             "HTTP/1.1 200 OK\r\n"
-            "Content-Length: 0\r\n\r\n";
+            "Content-Length: 0\r\n\r\n"_s;
             connection.send(responseHeader);
         });
     });

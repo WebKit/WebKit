@@ -33,14 +33,14 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-static int testParseHTMLInteger(const String& input)
+static int testParseHTMLInteger(StringView input)
 {
     auto optionalResult = parseHTMLInteger(input);
     EXPECT_TRUE(!!optionalResult);
     return optionalResult.value_or(0);
 }
 
-static bool parseHTMLIntegerFails(const String& input)
+static bool parseHTMLIntegerFails(StringView input)
 {
     return !parseHTMLInteger(input);
 }
@@ -97,14 +97,14 @@ TEST(WebCoreHTMLParserIdioms, parseHTMLInteger)
     EXPECT_TRUE(parseHTMLIntegerFails("infinity"));
 }
 
-static unsigned testParseHTMLNonNegativeInteger(const String& input)
+static unsigned testParseHTMLNonNegativeInteger(StringView input)
 {
     auto optionalResult = parseHTMLNonNegativeInteger(input);
     EXPECT_TRUE(!!optionalResult);
     return optionalResult.value_or(0);
 }
 
-static bool parseHTMLNonNegativeIntegerFails(const String& input)
+static bool parseHTMLNonNegativeIntegerFails(StringView input)
 {
     return !parseHTMLNonNegativeInteger(input);
 }

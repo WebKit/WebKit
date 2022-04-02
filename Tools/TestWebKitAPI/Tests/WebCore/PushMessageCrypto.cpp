@@ -68,7 +68,7 @@ TEST(PushMessageCrypto, AES128GCMPayloadWithMinimalPadding)
 TEST(PushMessageCrypto, AES128GCMPayloadWithPadding)
 {
     auto clientKeys = makeAES128GCMClientKeys();
-    auto payload = mustBase64URLDecode("DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A_DkNRXA6CYFiG805FVNqPbr9v9EW9lfwpny0c");
+    auto payload = mustBase64URLDecode("DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A_DkNRXA6CYFiG805FVNqPbr9v9EW9lfwpny0c"_s);
 
     auto result = decryptAES128GCMPayload(clientKeys, payload);
     ASSERT_TRUE(result.has_value());
@@ -80,7 +80,7 @@ TEST(PushMessageCrypto, AES128GCMPayloadWithPadding)
 TEST(PushMessageCrypto, AES128GCMPayloadWithIncorrectPadding)
 {
     auto clientKeys = makeAES128GCMClientKeys();
-    auto payload = mustBase64URLDecode("DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A_DkNRXA6CbFiG80zK6Bf1IRIL9ovjHp7iLjCw");
+    auto payload = mustBase64URLDecode("DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A_DkNRXA6CbFiG80zK6Bf1IRIL9ovjHp7iLjCw"_s);
 
     auto result = decryptAES128GCMPayload(clientKeys, payload);
     ASSERT_FALSE(result.has_value());
@@ -89,7 +89,7 @@ TEST(PushMessageCrypto, AES128GCMPayloadWithIncorrectPadding)
 TEST(PushMessageCrypto, AES128GCMPayloadWithEmptyPlaintext)
 {
     auto clientKeys = makeAES128GCMClientKeys();
-    auto payload = mustBase64URLDecode("DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A-nWA9JFLVeQ32ERULH8YEUcA");
+    auto payload = mustBase64URLDecode("DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A-nWA9JFLVeQ32ERULH8YEUcA"_s);
 
     auto result = decryptAES128GCMPayload(clientKeys, payload);
     ASSERT_TRUE(result.has_value());

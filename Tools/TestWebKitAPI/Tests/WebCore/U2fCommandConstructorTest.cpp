@@ -46,14 +46,14 @@ using namespace fido;
 PublicKeyCredentialCreationOptions constructMakeCredentialRequest()
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.id = "acme.com";
-    rp.name = "acme.com";
+    rp.id = "acme.com"_s;
+    rp.name = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.name = "johnpsmith@example.com";
-    user.displayName = "John P. Smith";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.displayName = "John P. Smith"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
 
     PublicKeyCredentialCreationOptions::Parameters params;
     params.type = PublicKeyCredentialType::PublicKey;
@@ -81,7 +81,7 @@ PublicKeyCredentialCreationOptions constructMakeCredentialRequestWithGoogleLegac
 PublicKeyCredentialRequestOptions constructGetAssertionRequest()
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com";
+    options.rpId = "acme.com"_s;
     return options;
 }
 
@@ -141,14 +141,14 @@ TEST(U2fCommandConstructorTest, TestConvertCtapMakeCredentialToU2fCheckOnlySignW
 TEST(U2fCommandConstructorTest, TestU2fRegisterCredentialAlgorithmRequirement)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.id = "acme.com";
-    rp.name = "acme.com";
+    rp.id = "acme.com"_s;
+    rp.name = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.name = "johnpsmith@example.com";
-    user.displayName = "John P. Smith";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.displayName = "John P. Smith"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
 
     PublicKeyCredentialCreationOptions::Parameters params;
     params.type = PublicKeyCredentialType::PublicKey;
@@ -211,7 +211,7 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionWithAppIDToU2fSignReq
 
     // AppID
     WebCore::AuthenticationExtensionsClientInputs extensions;
-    extensions.appid = "https://www.example.com/appid";
+    extensions.appid = "https://www.example.com/appid"_s;
     getAssertionReq.extensions = WTFMove(extensions);
 
     const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, WebCore::toBufferSource(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), true);

@@ -40,15 +40,15 @@ public:
 };
 
 struct ExpectedParts {
-    String protocol;
-    String user;
-    String password;
-    String host;
+    StringView protocol;
+    StringView user;
+    StringView password;
+    StringView host;
     unsigned short port;
-    String path;
-    String query;
-    String fragment;
-    String string;
+    StringView path;
+    StringView query;
+    StringView fragment;
+    StringView string;
 
     bool isInvalid() const
     {
@@ -70,13 +70,13 @@ bool eq(T&& s1, U&& s2)
     return s1.utf8() == s2.utf8();
 }
 
-static String insertTabAtLocation(const String& string, size_t location)
+static String insertTabAtLocation(StringView string, size_t location)
 {
     ASSERT(location <= string.length());
     return makeString(string.substring(0, location), "\t", string.substring(location));
 }
 
-static ExpectedParts invalidParts(const String& urlStringWithTab)
+static ExpectedParts invalidParts(StringView urlStringWithTab)
 {
     return {"", "", "", "", 0, "" , "", "", urlStringWithTab};
 }
@@ -86,9 +86,9 @@ enum class TestTabs { No, Yes };
 // Inserting tabs between surrogate pairs changes the encoded value instead of being skipped by the URLParser.
 const TestTabs testTabsValueForSurrogatePairs = TestTabs::No;
 
-static void checkURL(const String& urlString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+static void checkURL(StringView urlString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    URL url { urlString };
+    URL url { urlString.toString() };
     
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
@@ -113,9 +113,10 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, TestTa
     }
 }
 
-static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
+static void checkRelativeURL(StringView urlString, StringView baseURL, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    auto url = URL(URL(URL(), baseURLString), urlString);
+    auto baseURLString = baseURL.toString();
+    auto url = URL(URL(baseURLString), urlString.toString());
     
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
@@ -141,10 +142,10 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
     }
 }
 
-static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
+static void checkURLDifferences(StringView urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
 {
     UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
-    URL url { urlString };
+    URL url { urlString.toString() };
     
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
@@ -170,10 +171,10 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     }
 }
 
-static void checkRelativeURLDifferences(const String& urlString, const String& baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
+static void checkRelativeURLDifferences(StringView urlString, StringView baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
 {
     UNUSED_PARAM(partsOld); // FIXME: Remove all the old expected parts.
-    auto url = URL(URL(URL(), baseURLString), urlString);
+    auto url = URL(URL(baseURLString.toString()), urlString.toString());
     
     EXPECT_TRUE(eq(partsNew.protocol, url.protocol()));
     EXPECT_TRUE(eq(partsNew.user, url.user()));
@@ -199,12 +200,12 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     }
 }
 
-static void shouldFail(const String& urlString)
+static void shouldFail(StringView urlString)
 {
     checkURL(urlString, {"", "", "", "", 0, "", "", "", urlString});
 }
 
-static void shouldFail(const String& urlString, const String& baseString)
+static void shouldFail(StringView urlString, StringView baseString)
 {
     checkRelativeURL(urlString, baseString, {"", "", "", "", 0, "", "", "", urlString});
 }
@@ -495,7 +496,7 @@ TEST_F(WTF_URLParser, Basic)
     checkURL("http://:@host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
 }
 
-static void testUserPassword(const String& value, const String& decoded, const String& encoded)
+static void testUserPassword(StringView value, StringView decoded, StringView encoded)
 {
     URL userURL { makeString("http://", value, "@example.com/") };
     URL passURL { makeString("http://user:", value, "@example.com/") };
@@ -505,7 +506,7 @@ static void testUserPassword(const String& value, const String& decoded, const S
     EXPECT_EQ(decoded, passURL.password());
 }
 
-static void testUserPassword(const String& value, const String& encoded)
+static void testUserPassword(StringView value, StringView encoded)
 {
     testUserPassword(value, value, encoded);
 }

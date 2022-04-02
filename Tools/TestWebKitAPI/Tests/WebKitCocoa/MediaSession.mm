@@ -117,7 +117,7 @@ public:
         return MRNowPlayingClientGetProcessIdentifier(getNowPlayingClient().get());
     }
 
-    void loadPageAndBecomeNowPlaying(const String& pageName)
+    void loadPageAndBecomeNowPlaying(NSString *pageName)
     {
         [_webView synchronouslyLoadTestPageNamed:pageName];
 
@@ -125,7 +125,7 @@ public:
         [webView() performAfterReceivingMessage:@"canplaythrough event" action:[&] {
             canplaythrough = true;
         }];
-        runScriptWithUserGesture("load()");
+        runScriptWithUserGesture(@"load()");
         Util::run(&canplaythrough);
 
         play();
@@ -133,7 +133,7 @@ public:
         ASSERT_EQ(webViewPid(), getNowPlayingClientPid());
     }
 
-    void runScriptWithUserGesture(const String& script)
+    void runScriptWithUserGesture(NSString *script)
     {
         bool complete = false;
         [_webView evaluateJavaScript:script completionHandler:[&] (id, NSError *) { complete = true; }];
@@ -144,7 +144,7 @@ public:
     {
         bool playing = false;
         [_webView performAfterReceivingMessage:@"play event" action:[&] { playing = true; }];
-        runScriptWithUserGesture("audio.play()");
+        runScriptWithUserGesture(@"audio.play()");
         Util::run(&playing);
     }
 
@@ -152,7 +152,7 @@ public:
     {
         bool paused = false;
         [_webView performAfterReceivingMessage:@"pause event" action:[&] { paused = true; }];
-        runScriptWithUserGesture("audio.pause()");
+        runScriptWithUserGesture(@"audio.pause()");
         Util::run(&paused);
     }
 
@@ -188,7 +188,7 @@ public:
         }
     }
 
-    bool eventListenerWasCalled(const String& event)
+    bool eventListenerWasCalled(StringView event)
     {
         return _eventListenersCalled.contains(makeString(event, " event"));
     }
@@ -198,7 +198,7 @@ public:
         _eventListenersCalled.clear();
     }
 
-    void waitForEventListenerToBeCalled(const String& event)
+    void waitForEventListenerToBeCalled(StringView event)
     {
         int tries = 0;
         do {
@@ -221,12 +221,12 @@ public:
         }
     }
 
-    bool sessionHandlerWasCalled(const String& handler)
+    bool sessionHandlerWasCalled(StringView handler)
     {
         return _mediaSessionHandlersCalled.contains(makeString(handler, " handler"));
     }
 
-    void waitForSessionHandlerToBeCalled(const String& handler)
+    void waitForSessionHandlerToBeCalled(StringView handler)
     {
         int tries = 0;
         do {
@@ -264,7 +264,7 @@ private:
 
 TEST_F(MediaSessionTest, DISABLED_OnlyOneHandler)
 {
-    loadPageAndBecomeNowPlaying("media-remote");
+    loadPageAndBecomeNowPlaying(@"media-remote");
 
     [webView() objectByEvaluatingJavaScript:@"setEmptyActionHandlers([ 'play' ])"];
 
@@ -309,7 +309,7 @@ TEST_F(MediaSessionTest, DISABLED_OnlyOneHandler)
 
 TEST_F(MediaSessionTest, DISABLED_RemoteCommands)
 {
-    loadPageAndBecomeNowPlaying("media-remote");
+    loadPageAndBecomeNowPlaying(@"media-remote");
 
     [webView() objectByEvaluatingJavaScript:@"setEmptyActionHandlers([ 'play', 'pause', 'seekto', 'seekforward', 'seekbackward', 'previoustrack', 'nexttrack' ])"];
 

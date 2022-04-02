@@ -60,14 +60,14 @@ std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> hstsWebViewAn
 
 static HTTPServer hstsServer()
 {
-    return HTTPServer({{ "/", {{{"Strict-Transport-Security" , "max-age=31536000"}}, "" }}}, HTTPServer::Protocol::HttpsProxy);
+    return HTTPServer({{ "/"_s, {{{"Strict-Transport-Security"_s , "max-age=31536000"_s}}, emptyString() }}}, HTTPServer::Protocol::HttpsProxy);
 }
 
 TEST(HSTS, Basic)
 {
     auto httpsServer = hstsServer();
 
-    HTTPServer httpServer({{ "http://example.com/", { {{ "Strict-Transport-Security", "max-age=31536000"}}, "hi" }}});
+    HTTPServer httpServer({{ "http://example.com/"_s, { {{ "Strict-Transport-Security"_s, "max-age=31536000"_s}}, "hi"_s }}});
 
     auto [webView, delegate] = hstsWebViewAndDelegate(httpsServer, httpServer);
 
@@ -95,16 +95,16 @@ TEST(HSTS, ThirdParty)
 {
     auto httpsServer = hstsServer();
 
-    const char* html = "<script>"
+    constexpr auto html = "<script>"
         "var xhr = new XMLHttpRequest();"
         "xhr.open('GET', 'http://example.com/');"
         "xhr.onreadystatechange = function () { if(xhr.readyState == 4) { alert(xhr.responseURL + ' ' + xhr.responseText) } };"
         "xhr.send();"
-        "</script>";
+        "</script>"_s;
     
     HTTPServer httpServer({
-        { "http://example.com/", { {{ "Access-Control-Allow-Origin", "http://example.org" }}, "hi" }},
-        { "http://example.org/", { html }},
+        { "http://example.com/"_s, { {{ "Access-Control-Allow-Origin"_s, "http://example.org"_s }}, "hi"_s }},
+        { "http://example.org/"_s, { html }},
     });
     
     auto [webView, delegate] = hstsWebViewAndDelegate(httpsServer, httpServer);
@@ -123,8 +123,8 @@ TEST(HSTS, CrossOriginRedirect)
     auto httpsServer = hstsServer();
 
     HTTPServer httpServer({
-        { "http://example.com/", { "hi" }},
-        { "http://example.org/", { 301, {{ "Location", "http://example.com/" }} } },
+        { "http://example.com/"_s, { "hi"_s }},
+        { "http://example.org/"_s, { 301, {{ "Location"_s, "http://example.com/"_s }} } },
     });
 
     auto [webView, delegate] = hstsWebViewAndDelegate(httpsServer, httpServer);

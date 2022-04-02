@@ -201,38 +201,38 @@ TEST(WTF_HashCountedSet, MoveOnlyKeysInitialCount)
 TEST(WTF_HashCountedSet, InitializerList)
 {
     HashCountedSet<String> hashCountedSet = {
-        "one",
-        "two",
-        "three",
-        "four",
-        "four",
-        "four",
-        "four",
+        "one"_s,
+        "two"_s,
+        "three"_s,
+        "four"_s,
+        "four"_s,
+        "four"_s,
+        "four"_s,
     };
 
     EXPECT_EQ(4u, hashCountedSet.size());
 
-    EXPECT_EQ(hashCountedSet.count("one"), 1u);
-    EXPECT_EQ(hashCountedSet.count("two"), 1u);
-    EXPECT_EQ(hashCountedSet.count("three"), 1u);
-    EXPECT_EQ(hashCountedSet.count("four"), 4u);
+    EXPECT_EQ(hashCountedSet.count("one"_s), 1u);
+    EXPECT_EQ(hashCountedSet.count("two"_s), 1u);
+    EXPECT_EQ(hashCountedSet.count("three"_s), 1u);
+    EXPECT_EQ(hashCountedSet.count("four"_s), 4u);
 }
 
 TEST(WTF_HashCountedSet, InitializerListInitialCount)
 {
     HashCountedSet<String> hashCountedSet = {
-        { String("one"), 1u },
-        { String("two"), 2u },
-        { String("three"), 3u },
-        { String("four"), 4u },
+        { String("one"_s), 1u },
+        { String("two"_s), 2u },
+        { String("three"_s), 3u },
+        { String("four"_s), 4u },
     };
 
     EXPECT_EQ(4u, hashCountedSet.size());
 
-    EXPECT_EQ(hashCountedSet.count("one"), 1u);
-    EXPECT_EQ(hashCountedSet.count("two"), 2u);
-    EXPECT_EQ(hashCountedSet.count("three"), 3u);
-    EXPECT_EQ(hashCountedSet.count("four"), 4u);
+    EXPECT_EQ(hashCountedSet.count("one"_s), 1u);
+    EXPECT_EQ(hashCountedSet.count("two"_s), 2u);
+    EXPECT_EQ(hashCountedSet.count("three"_s), 3u);
+    EXPECT_EQ(hashCountedSet.count("four"_s), 4u);
 }
 
 TEST(WTF_HashCountedSet, UniquePtrKey)

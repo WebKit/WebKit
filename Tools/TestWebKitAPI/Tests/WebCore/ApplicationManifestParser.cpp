@@ -59,8 +59,8 @@ public:
         JSC::initialize();
         WTF::initializeMainThread();
 
-        m_manifestURL = { { }, "https://example.com/manifest.json" };
-        m_documentURL = { { }, "https://example.com/" };
+        m_manifestURL = URL { "https://example.com/manifest.json"_s };
+        m_documentURL = URL { "https://example.com/"_s };
     }
 
     ApplicationManifest parseString(const String& data)
@@ -93,35 +93,35 @@ public:
 
     void testStartURL(const String& rawJSON, const URL& expectedValue)
     {
-        auto manifest = parseTopLevelProperty("start_url", rawJSON);
+        auto manifest = parseTopLevelProperty("start_url"_s, rawJSON);
         auto value = manifest.startURL;
         EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
     }
 
     void testDisplay(const String& rawJSON, ApplicationManifest::Display expectedValue)
     {
-        auto manifest = parseTopLevelProperty("display", rawJSON);
+        auto manifest = parseTopLevelProperty("display"_s, rawJSON);
         auto value = manifest.display;
         EXPECT_EQ(expectedValue, value);
     }
 
     void testName(const String& rawJSON, const String& expectedValue)
     {
-        auto manifest = parseTopLevelProperty("name", rawJSON);
+        auto manifest = parseTopLevelProperty("name"_s, rawJSON);
         auto value = manifest.name;
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
 
     void testDescription(const String& rawJSON, const String& expectedValue)
     {
-        auto manifest = parseTopLevelProperty("description", rawJSON);
+        auto manifest = parseTopLevelProperty("description"_s, rawJSON);
         auto value = manifest.description;
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
 
     void testShortName(const String& rawJSON, const String& expectedValue)
     {
-        auto manifest = parseTopLevelProperty("short_name", rawJSON);
+        auto manifest = parseTopLevelProperty("short_name"_s, rawJSON);
         auto value = manifest.shortName;
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
@@ -141,28 +141,28 @@ public:
 
     void testThemeColor(const String& rawJSON, const Color& expectedValue)
     {
-        auto manifest = parseTopLevelProperty("theme_color", rawJSON);
+        auto manifest = parseTopLevelProperty("theme_color"_s, rawJSON);
         auto value = manifest.themeColor;
         EXPECT_EQ(expectedValue, value);
     }
 
     void testIconsSrc(const String& rawJSON, const URL& expectedValue)
     {
-        auto manifest = parseIconFirstTopLevelPropertyForSrc("src", rawJSON);
+        auto manifest = parseIconFirstTopLevelPropertyForSrc("src"_s, rawJSON);
         auto value = manifest.icons[0].src;
         EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
     }
 
     void testIconsType(const String &rawJSON, const String& expectedValue)
     {
-        auto manifest = parseIconFirstTopLevelProperty("type", rawJSON);
+        auto manifest = parseIconFirstTopLevelProperty("type"_s, rawJSON);
         auto value = manifest.icons[0].type;
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
 
     void testIconsSizes(const String &rawJSON, size_t expectedCount, size_t testIndex, const String& expectedValue)
     {
-        auto manifest = parseIconFirstTopLevelProperty("sizes", rawJSON);
+        auto manifest = parseIconFirstTopLevelProperty("sizes"_s, rawJSON);
         auto value = manifest.icons[0].sizes;
         EXPECT_EQ(expectedCount, value.size());
         EXPECT_TRUE(testIndex < value.size());
@@ -171,7 +171,7 @@ public:
 
     void testIconsPurposes(const String &rawJSON, OptionSet<ApplicationManifest::Icon::Purpose> expectedValues)
     {
-        auto manifest = parseIconFirstTopLevelProperty("purpose", rawJSON);
+        auto manifest = parseIconFirstTopLevelProperty("purpose"_s, rawJSON);
         auto value = manifest.icons[0].purposes;
         EXPECT_EQ(expectedValues, value);
     }
@@ -190,172 +190,172 @@ static void assertManifestHasDefaultValues(const URL& manifestURL, const URL& do
 TEST_F(ApplicationManifestParserTest, DefaultManifest)
 {
     assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString(String()));
-    assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString(""));
-    assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString("{ }"));
-    assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString("This is 100% not JSON."));
+    assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString(""_s));
+    assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString("{ }"_s));
+    assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString("This is 100% not JSON."_s));
 }
 
 TEST_F(ApplicationManifestParserTest, StartURL)
 {
-    m_documentURL = { { }, "https://example.com/home" };
-    m_manifestURL = { { }, "https://example.com/manifest.json" };
+    m_documentURL = URL { "https://example.com/home"_s };
+    m_manifestURL = URL { "https://example.com/manifest.json"_s };
 
-    testStartURL("123", m_documentURL);
-    testStartURL("null", m_documentURL);
-    testStartURL("true", m_documentURL);
-    testStartURL("{ }", m_documentURL);
-    testStartURL("[ ]", m_documentURL);
-    testStartURL("[ \"http://example.com/somepage\" ]", m_documentURL);
-    testStartURL("\"\"", m_documentURL);
-    testStartURL("\"http:?\"", m_documentURL);
+    testStartURL("123"_s, m_documentURL);
+    testStartURL("null"_s, m_documentURL);
+    testStartURL("true"_s, m_documentURL);
+    testStartURL("{ }"_s, m_documentURL);
+    testStartURL("[ ]"_s, m_documentURL);
+    testStartURL("[ \"http://example.com/somepage\" ]"_s, m_documentURL);
+    testStartURL("\"\""_s, m_documentURL);
+    testStartURL("\"http:?\""_s, m_documentURL);
 
-    testStartURL("\"appstartpage\"", "https://example.com/appstartpage");
-    testStartURL("\"a/b/cdefg\"", "https://example.com/a/b/cdefg");
+    testStartURL("\"appstartpage\""_s, "https://example.com/appstartpage"_s);
+    testStartURL("\"a/b/cdefg\""_s, "https://example.com/a/b/cdefg"_s);
 
-    m_documentURL = { { }, "https://example.com/subfolder/home" };
-    m_manifestURL = { { }, "https://example.com/resources/manifest.json" };
+    m_documentURL = URL { "https://example.com/subfolder/home"_s };
+    m_manifestURL = URL { "https://example.com/resources/manifest.json"_s };
 
-    testStartURL("\"resource-relative-to-manifest-url\"", "https://example.com/resources/resource-relative-to-manifest-url");
-    testStartURL("\"http://different-page.com/12/34\"", m_documentURL);
+    testStartURL("\"resource-relative-to-manifest-url\""_s, "https://example.com/resources/resource-relative-to-manifest-url"_s);
+    testStartURL("\"http://different-page.com/12/34\""_s, m_documentURL);
 
-    m_documentURL = { { }, "https://example.com/home" };
-    m_manifestURL = { { }, "https://other-domain.com/manifiest.json" };
+    m_documentURL = URL { "https://example.com/home"_s };
+    m_manifestURL = URL { "https://other-domain.com/manifiest.json"_s };
 
-    testStartURL("\"resource_on_other_domain\"", m_documentURL);
-    testStartURL("\"http://example.com/scheme-does-not-match-document\"", m_documentURL);
-    testStartURL("\"https://example.com:123/port-does-not-match-document", m_documentURL);
-    testStartURL("\"https://example.com/page2\"", "https://example.com/page2");
-    testStartURL("\"//example.com/page2\"", "https://example.com/page2");
+    testStartURL("\"resource_on_other_domain\""_s, m_documentURL);
+    testStartURL("\"http://example.com/scheme-does-not-match-document\""_s, m_documentURL);
+    testStartURL("\"https://example.com:123/port-does-not-match-document"_s, m_documentURL);
+    testStartURL("\"https://example.com/page2\""_s, "https://example.com/page2"_s);
+    testStartURL("\"//example.com/page2\""_s, "https://example.com/page2"_s);
 
-    m_documentURL = { { }, "https://example.com/a" };
-    m_manifestURL = { { }, "https://example.com/z/manifest.json" };
+    m_documentURL = URL { "https://example.com/a"_s };
+    m_manifestURL = URL { "https://example.com/z/manifest.json"_s };
 
-    testStartURL("\"b/c\"", "https://example.com/z/b/c");
-    testStartURL("\"/b/c\"", "https://example.com/b/c");
-    testStartURL("\"?query\"", "https://example.com/z/manifest.json?query");
+    testStartURL("\"b/c\""_s, "https://example.com/z/b/c"_s);
+    testStartURL("\"/b/c\""_s, "https://example.com/b/c"_s);
+    testStartURL("\"?query\""_s, "https://example.com/z/manifest.json?query"_s);
 
-    m_documentURL = { { }, "https://example.com/dir1/dir2/page1" };
-    m_manifestURL = { { }, "https://example.com/dir3/manifest.json" };
+    m_documentURL = URL { "https://example.com/dir1/dir2/page1"_s };
+    m_manifestURL = URL { "https://example.com/dir3/manifest.json"_s };
 
-    testStartURL("\"../page2\"", "https://example.com/page2");
+    testStartURL("\"../page2\""_s, "https://example.com/page2"_s);
 }
 
 TEST_F(ApplicationManifestParserTest, Display)
 {
-    testDisplay("123", ApplicationManifest::Display::Browser);
-    testDisplay("null", ApplicationManifest::Display::Browser);
-    testDisplay("true", ApplicationManifest::Display::Browser);
-    testDisplay("{ }", ApplicationManifest::Display::Browser);
-    testDisplay("[ ]", ApplicationManifest::Display::Browser);
-    testDisplay("\"\"", ApplicationManifest::Display::Browser);
-    testDisplay("\"garbage string\"", ApplicationManifest::Display::Browser);
+    testDisplay("123"_s, ApplicationManifest::Display::Browser);
+    testDisplay("null"_s, ApplicationManifest::Display::Browser);
+    testDisplay("true"_s, ApplicationManifest::Display::Browser);
+    testDisplay("{ }"_s, ApplicationManifest::Display::Browser);
+    testDisplay("[ ]"_s, ApplicationManifest::Display::Browser);
+    testDisplay("\"\""_s, ApplicationManifest::Display::Browser);
+    testDisplay("\"garbage string\""_s, ApplicationManifest::Display::Browser);
 
-    testDisplay("\"browser\"", ApplicationManifest::Display::Browser);
-    testDisplay("\"standalone\"", ApplicationManifest::Display::Standalone);
-    testDisplay("\"minimal-ui\"", ApplicationManifest::Display::MinimalUI);
-    testDisplay("\"fullscreen\"", ApplicationManifest::Display::Fullscreen);
-    testDisplay("\"\t\nMINIMAL-UI \"", ApplicationManifest::Display::MinimalUI);
+    testDisplay("\"browser\""_s, ApplicationManifest::Display::Browser);
+    testDisplay("\"standalone\""_s, ApplicationManifest::Display::Standalone);
+    testDisplay("\"minimal-ui\""_s, ApplicationManifest::Display::MinimalUI);
+    testDisplay("\"fullscreen\""_s, ApplicationManifest::Display::Fullscreen);
+    testDisplay("\"\t\nMINIMAL-UI \""_s, ApplicationManifest::Display::MinimalUI);
 }
 
 TEST_F(ApplicationManifestParserTest, Name)
 {
-    testName("123", String());
-    testName("null", String());
-    testName("true", String());
-    testName("{ }", String());
-    testName("[ ]", String());
-    testName("\"\"", "");
-    testName("\"example\"", "example");
-    testName("\"\\t Hello\\nWorld\\t \"", "Hello\nWorld");
+    testName("123"_s, String());
+    testName("null"_s, String());
+    testName("true"_s, String());
+    testName("{ }"_s, String());
+    testName("[ ]"_s, String());
+    testName("\"\""_s, emptyString());
+    testName("\"example\""_s, "example"_s);
+    testName("\"\\t Hello\\nWorld\\t \""_s, "Hello\nWorld"_s);
 }
 
 TEST_F(ApplicationManifestParserTest, Description)
 {
-    testDescription("123", String());
-    testDescription("null", String());
-    testDescription("true", String());
-    testDescription("{ }", String());
-    testDescription("[ ]", String());
-    testDescription("\"\"", "");
-    testDescription("\"example\"", "example");
-    testDescription("\"\\t Hello\\nWorld\\t \"", "Hello\nWorld");
+    testDescription("123"_s, String());
+    testDescription("null"_s, String());
+    testDescription("true"_s, String());
+    testDescription("{ }"_s, String());
+    testDescription("[ ]"_s, String());
+    testDescription("\"\""_s, emptyString());
+    testDescription("\"example\""_s, "example"_s);
+    testDescription("\"\\t Hello\\nWorld\\t \""_s, "Hello\nWorld"_s);
 }
 
 TEST_F(ApplicationManifestParserTest, ShortName)
 {
-    testShortName("123", String());
-    testShortName("null", String());
-    testShortName("true", String());
-    testShortName("{ }", String());
-    testShortName("[ ]", String());
-    testShortName("\"\"", "");
-    testShortName("\"example\"", "example");
-    testShortName("\"\\t Hello\\nWorld\\t \"", "Hello\nWorld");
+    testShortName("123"_s, String());
+    testShortName("null"_s, String());
+    testShortName("true"_s, String());
+    testShortName("{ }"_s, String());
+    testShortName("[ ]"_s, String());
+    testShortName("\"\""_s, ""_s);
+    testShortName("\"example\""_s, "example"_s);
+    testShortName("\"\\t Hello\\nWorld\\t \""_s, "Hello\nWorld"_s);
 }
 
 TEST_F(ApplicationManifestParserTest, Scope)
 {
     // If the scope is not a string or not a valid URL, return the default scope (the parent path of the start URL).
-    m_documentURL = { { }, "https://example.com/a/page?queryParam=value#fragment" };
-    m_manifestURL = { { }, "https://example.com/manifest.json" };
-    testScope("123", "https://example.com/a/");
-    testScope("null", "https://example.com/a/");
-    testScope("true", "https://example.com/a/");
-    testScope("{ }", "https://example.com/a/");
-    testScope("[ ]", "https://example.com/a/");
-    testScope("\"\"", "https://example.com/a/");
-    testScope("\"http:?\"", "https://example.com/a/");
+    m_documentURL = URL { "https://example.com/a/page?queryParam=value#fragment"_s };
+    m_manifestURL = URL { "https://example.com/manifest.json"_s };
+    testScope("123"_s, "https://example.com/a/"_s);
+    testScope("null"_s, "https://example.com/a/"_s);
+    testScope("true"_s, "https://example.com/a/"_s);
+    testScope("{ }"_s, "https://example.com/a/"_s);
+    testScope("[ ]"_s, "https://example.com/a/"_s);
+    testScope("\"\""_s, "https://example.com/a/"_s);
+    testScope("\"http:?\""_s, "https://example.com/a/"_s);
 
-    m_documentURL = { { }, "https://example.com/a/pageEndingWithSlash/" };
-    testScope("null", "https://example.com/a/pageEndingWithSlash/");
+    m_documentURL = URL { "https://example.com/a/pageEndingWithSlash/"_s };
+    testScope("null"_s, "https://example.com/a/pageEndingWithSlash/"_s);
 
     // If scope URL is not same origin as document URL, return the default scope.
-    m_documentURL = { { }, "https://example.com/home" };
-    m_manifestURL = { { }, "https://other-site.com/manifest.json" };
-    testScope("\"https://other-site.com/some-scope\"", "https://example.com/");
+    m_documentURL = URL { "https://example.com/home"_s };
+    m_manifestURL = URL { "https://other-site.com/manifest.json"_s };
+    testScope("\"https://other-site.com/some-scope\""_s, "https://example.com/"_s);
 
-    m_documentURL = { { }, "https://example.com/app/home" };
-    m_manifestURL = { { }, "https://example.com/app/manifest.json" };
+    m_documentURL = URL { "https://example.com/app/home"_s };
+    m_manifestURL = URL { "https://example.com/app/manifest.json"_s };
 
     // If start URL is not within scope of scope URL, return the default scope.
-    testScope("\"https://example.com/subdirectory\"", "https://example.com/app/");
-    testScope("\"https://example.com/app\"", "https://example.com/app");
-    testScope("\"https://example.com/APP\"", "https://example.com/app/");
-    testScope("\"https://example.com/a\"", "https://example.com/a");
+    testScope("\"https://example.com/subdirectory\""_s, "https://example.com/app/"_s);
+    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s);
+    testScope("\"https://example.com/APP\""_s, "https://example.com/app/"_s);
+    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s);
 
-    m_documentURL = { { }, "https://example.com/a/b/c/index" };
-    m_manifestURL = { { }, "https://example.com/a/manifest.json" };
+    m_documentURL = URL { "https://example.com/a/b/c/index"_s };
+    m_manifestURL = URL { "https://example.com/a/manifest.json"_s };
 
-    testScope("\"./b/c/index\"", "https://example.com/a/b/c/index");
-    testScope("\"b/somewhere-else/../c\"", "https://example.com/a/b/c");
-    testScope("\"b\"", "https://example.com/a/b");
-    testScope("\"b/\"", "https://example.com/a/b/");
+    testScope("\"./b/c/index\""_s, "https://example.com/a/b/c/index"_s);
+    testScope("\"b/somewhere-else/../c\""_s, "https://example.com/a/b/c"_s);
+    testScope("\"b\""_s, "https://example.com/a/b"_s);
+    testScope("\"b/\""_s, "https://example.com/a/b/"_s);
 
-    m_documentURL = { { }, "https://example.com/documents/home" };
-    m_manifestURL = { { }, "https://example.com/resources/manifest.json" };
+    m_documentURL = URL { "https://example.com/documents/home"_s };
+    m_manifestURL = URL { "https://example.com/resources/manifest.json"_s };
 
     // It's fine if the document URL or manifest URL aren't within the application scope - only the start URL needs to be.
-    testScope("\"https://example.com/other\"", String("https://example.com/other/start-url"), "https://example.com/other");
+    testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s);
 }
 
 TEST_F(ApplicationManifestParserTest, ThemeColor)
 {
-    testThemeColor("123", Color());
-    testThemeColor("null", Color());
-    testThemeColor("true", Color());
-    testThemeColor("{ }", Color());
-    testThemeColor("[ ]", Color());
-    testThemeColor("\"\"", Color());
-    testThemeColor("\"garbage string\"", Color());
+    testThemeColor("123"_s, Color());
+    testThemeColor("null"_s, Color());
+    testThemeColor("true"_s, Color());
+    testThemeColor("{ }"_s, Color());
+    testThemeColor("[ ]"_s, Color());
+    testThemeColor("\"\""_s, Color());
+    testThemeColor("\"garbage string\""_s, Color());
 
-    testThemeColor("\"red\"", Color::red);
-    testThemeColor("\"#f00\"", Color::red);
-    testThemeColor("\"#ff0000\"", Color::red);
-    testThemeColor("\"#ff0000ff\"", Color::red);
-    testThemeColor("\"rgb(255, 0, 0)\"", Color::red);
-    testThemeColor("\"rgba(255, 0, 0, 1)\"", Color::red);
-    testThemeColor("\"hsl(0, 100%, 50%)\"", Color::red);
-    testThemeColor("\"hsla(0, 100%, 50%, 1)\"", Color::red);
+    testThemeColor("\"red\""_s, Color::red);
+    testThemeColor("\"#f00\""_s, Color::red);
+    testThemeColor("\"#ff0000\""_s, Color::red);
+    testThemeColor("\"#ff0000ff\""_s, Color::red);
+    testThemeColor("\"rgb(255, 0, 0)\""_s, Color::red);
+    testThemeColor("\"rgba(255, 0, 0, 1)\""_s, Color::red);
+    testThemeColor("\"hsl(0, 100%, 50%)\""_s, Color::red);
+    testThemeColor("\"hsla(0, 100%, 50%, 1)\""_s, Color::red);
 }
 
 TEST_F(ApplicationManifestParserTest, Whitespace)
@@ -367,31 +367,31 @@ TEST_F(ApplicationManifestParserTest, Whitespace)
 
 TEST_F(ApplicationManifestParserTest, Icons)
 {
-    URL srcURL = { { }, "https://example.com/icon.jpg" };
-    testIconsSrc("\"icon.jpg\"", srcURL);
-    testIconsType("\"image/webp\"", "image/webp");
-    testIconsSizes("\"256x256\"", 1, 0, "256x256");
-    testIconsSizes("\"72x72 96x96\"", 2, 0, "72x72");
-    testIconsSizes("\"72x72 96x96\"", 2, 1, "96x96");
+    URL srcURL = URL { "https://example.com/icon.jpg"_s };
+    testIconsSrc("\"icon.jpg\""_s, srcURL);
+    testIconsType("\"image/webp\""_s, "image/webp"_s);
+    testIconsSizes("\"256x256\""_s, 1, 0, "256x256"_s);
+    testIconsSizes("\"72x72 96x96\""_s, 2, 0, "72x72"_s);
+    testIconsSizes("\"72x72 96x96\""_s, 2, 1, "96x96"_s);
 
     OptionSet<ApplicationManifest::Icon::Purpose> purposeAny { ApplicationManifest::Icon::Purpose::Any };
     OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochrome { ApplicationManifest::Icon::Purpose::Monochrome };
     OptionSet<ApplicationManifest::Icon::Purpose> purposeMaskable { ApplicationManifest::Icon::Purpose::Maskable };
 
-    testIconsPurposes("\"monochrome\"", purposeMonochrome);
-    testIconsPurposes("\"maskable\"", purposeMaskable);
-    testIconsPurposes("\"any\"", purposeAny);
-    testIconsPurposes("\"\tMONOCHROME\"", purposeMonochrome);
+    testIconsPurposes("\"monochrome\""_s, purposeMonochrome);
+    testIconsPurposes("\"maskable\""_s, purposeMaskable);
+    testIconsPurposes("\"any\""_s, purposeAny);
+    testIconsPurposes("\"\tMONOCHROME\""_s, purposeMonochrome);
 
-    testIconsPurposes("123", purposeAny);
-    testIconsPurposes("null", purposeAny);
-    testIconsPurposes("true", purposeAny);
-    testIconsPurposes("{ }", purposeAny);
-    testIconsPurposes("[ ]", purposeAny);
+    testIconsPurposes("123"_s, purposeAny);
+    testIconsPurposes("null"_s, purposeAny);
+    testIconsPurposes("true"_s, purposeAny);
+    testIconsPurposes("{ }"_s, purposeAny);
+    testIconsPurposes("[ ]"_s, purposeAny);
 
     OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochromeAny { ApplicationManifest::Icon::Purpose::Monochrome, ApplicationManifest::Icon::Purpose::Any };
 
-    testIconsPurposes("\"monochrome any\"", purposeMonochromeAny);
+    testIconsPurposes("\"monochrome any\""_s, purposeMonochromeAny);
 
 }
 

@@ -237,22 +237,22 @@ TEST(WTF, StringNumberIntMin)
 TEST(WTF, StringReplaceWithLiteral)
 {
     // Cases for 8Bit source.
-    String testString = "1224";
+    String testString = "1224"_s;
     EXPECT_TRUE(testString.is8Bit());
     testString.replaceWithLiteral('2', "");
     EXPECT_STREQ("14", testString.utf8().data());
 
-    testString = "1224";
+    testString = "1224"_s;
     EXPECT_TRUE(testString.is8Bit());
     testString.replaceWithLiteral('2', "3");
     EXPECT_STREQ("1334", testString.utf8().data());
 
-    testString = "1224";
+    testString = "1224"_s;
     EXPECT_TRUE(testString.is8Bit());
     testString.replaceWithLiteral('2', "555");
     EXPECT_STREQ("15555554", testString.utf8().data());
 
-    testString = "1224";
+    testString = "1224"_s;
     EXPECT_TRUE(testString.is8Bit());
     testString.replaceWithLiteral('3', "NotFound");
     EXPECT_STREQ("1224", testString.utf8().data());
@@ -276,7 +276,7 @@ TEST(WTF, StringReplaceWithLiteral)
 
 TEST(WTF, StringIsolatedCopy)
 {
-    String original = "1234";
+    String original = "1234"_s;
     auto copy = WTFMove(original).isolatedCopy();
     EXPECT_FALSE(original.impl() == copy.impl());
 }
@@ -432,16 +432,16 @@ TEST(WTF, StringReverseFindBasic)
 
 TEST(WTF, StringSplitWithConsecutiveSeparators)
 {
-    String string { " This     is  a       sentence. " };
+    String string { " This     is  a       sentence. "_s };
 
     Vector<String> actual = string.split(' ');
-    Vector<String> expected { "This", "is", "a", "sentence." };
+    Vector<String> expected { "This"_s, "is"_s, "a"_s, "sentence."_s };
     ASSERT_EQ(expected.size(), actual.size());
     for (auto i = 0u; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;
 
     actual = string.splitAllowingEmptyEntries(' ');
-    expected = { "", "This", "", "", "", "", "is", "", "a", "", "", "", "", "", "", "sentence.", "" };
+    expected = { ""_s, "This"_s, ""_s, ""_s, ""_s, ""_s, "is"_s, ""_s, "a"_s, ""_s, ""_s, ""_s, ""_s, ""_s, ""_s, "sentence."_s, ""_s };
     ASSERT_EQ(expected.size(), actual.size());
     for (auto i = 0u; i < actual.size(); ++i)
         EXPECT_STREQ(expected[i].utf8().data(), actual[i].utf8().data()) << "Vectors differ at index " << i;

@@ -50,14 +50,14 @@ using namespace fido;
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme";
-    rp.id = "acme.com";
+    rp.name = "Acme"_s;
+    rp.id = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith";
+    user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, true, UserVerificationRequirement::Preferred };
@@ -73,14 +73,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamNoUVNoRK)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme";
-    rp.id = "acme.com";
+    rp.name = "Acme"_s;
+    rp.id = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith";
+    user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Discouraged };
@@ -96,14 +96,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamNoUVNoRK)
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamUVRequiredButNotSupported)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme";
-    rp.id = "acme.com";
+    rp.name = "Acme"_s;
+    rp.id = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith";
+    user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Required };
@@ -119,14 +119,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamUVRequiredButNotSup
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamWithPin)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme";
-    rp.id = "acme.com";
+    rp.name = "Acme"_s;
+    rp.id = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith";
+    user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, true, UserVerificationRequirement::Preferred };
@@ -146,14 +146,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamWithPin)
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferred)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme";
-    rp.id = "acme.com";
+    rp.name = "Acme"_s;
+    rp.id = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith";
+    user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Preferred, true, UserVerificationRequirement::Preferred };
@@ -173,14 +173,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferred)
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferredNotSupported)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme";
-    rp.id = "acme.com";
+    rp.name = "Acme"_s;
+    rp.id = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith";
+    user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Preferred, true, UserVerificationRequirement::Required };
@@ -196,14 +196,14 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferredNotSupported)
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKDiscouraged)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme";
-    rp.id = "acme.com";
+    rp.name = "Acme"_s;
+    rp.id = "acme.com"_s;
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com";
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
+    user.name = "johnpsmith@example.com"_s;
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith";
+    user.displayName = "John P. Smith"_s;
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Discouraged, true, UserVerificationRequirement::Required };
@@ -219,7 +219,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKDiscouraged)
 TEST(CTAPRequestTest, TestConstructGetAssertionRequest)
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com";
+    options.rpId = "acme.com"_s;
 
     PublicKeyCredentialDescriptor descriptor1;
     descriptor1.type = PublicKeyCredentialType::PublicKey;
@@ -256,7 +256,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequest)
 TEST(CTAPRequestTest, TestConstructGetAssertionRequestNoUV)
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com";
+    options.rpId = "acme.com"_s;
 
     PublicKeyCredentialDescriptor descriptor1;
     descriptor1.type = PublicKeyCredentialType::PublicKey;
@@ -293,7 +293,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestNoUV)
 TEST(CTAPRequestTest, TestConstructGetAssertionRequestUVRequiredButNotSupported)
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com";
+    options.rpId = "acme.com"_s;
 
     PublicKeyCredentialDescriptor descriptor1;
     descriptor1.type = PublicKeyCredentialType::PublicKey;
@@ -330,7 +330,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUVRequiredButNotSupported)
 TEST(CTAPRequestTest, TestConstructGetAssertionRequestWithPin)
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com";
+    options.rpId = "acme.com"_s;
 
     PublicKeyCredentialDescriptor descriptor1;
     descriptor1.type = PublicKeyCredentialType::PublicKey;

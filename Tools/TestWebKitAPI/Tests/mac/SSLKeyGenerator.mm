@@ -95,7 +95,7 @@ public:
 
 TEST_F(SSLKeyGeneratorTest, DefaultTest)
 {
-    char challenge[] = "0123456789";
+    constexpr auto challenge = "0123456789"_s;
     auto rawResult = WebCore::signedPublicKeyAndChallengeString(0, challenge, url);
     ASSERT_FALSE(rawResult.isEmpty());
     auto derResult = base64Decode(rawResult);

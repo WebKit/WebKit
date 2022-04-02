@@ -1803,7 +1803,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
     [[NSPasteboard generalPasteboard] declareTypes:@[NSStringPboardType] owner:nil];
 #endif
 
-    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes().c_str());
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String { options.additionalSupportedImageTypes().c_str() });
 
     [mainFrame _clearOpener];
 

@@ -364,9 +364,9 @@ TEST(ApplicationManifest, Icons)
 
 TEST(ApplicationManifest, IconCoding)
 {
-    static const char* testURL = "https://example.com/images/touch/homescreen128.jpg";
+    static constexpr auto testURL = "https://example.com/images/touch/homescreen128.jpg"_s;
 
-    WebCore::ApplicationManifest::Icon icon = { URL { testURL }, makeVector<String>(@[@"96x96", @"128x128"]), "image/jpg", { WebCore::ApplicationManifest::Icon::Purpose::Monochrome, WebCore::ApplicationManifest::Icon::Purpose::Maskable } };
+    WebCore::ApplicationManifest::Icon icon = { URL { testURL }, makeVector<String>(@[@"96x96", @"128x128"]), "image/jpg"_s, { WebCore::ApplicationManifest::Icon::Purpose::Monochrome, WebCore::ApplicationManifest::Icon::Purpose::Maskable } };
 
     IGNORE_WARNINGS_BEGIN("objc-method-access")
     auto manifestIcon = adoptNS([[_WKApplicationManifestIcon alloc] initWithCoreIcon:&icon]);

@@ -696,19 +696,19 @@ TEST_F(FileSystemTest, pathFileName)
     EXPECT_STREQ("filename.txt", FileSystem::pathFileName(testPath).utf8().data());
 
 #if OS(UNIX)
-    EXPECT_STREQ(".", FileSystem::pathFileName(".").utf8().data());
-    EXPECT_STREQ("..", FileSystem::pathFileName("..").utf8().data());
-    EXPECT_STREQ("", FileSystem::pathFileName("/").utf8().data());
-    EXPECT_STREQ(".", FileSystem::pathFileName("/foo/.").utf8().data());
-    EXPECT_STREQ("..", FileSystem::pathFileName("/foo/..").utf8().data());
-    EXPECT_STREQ("", FileSystem::pathFileName("/foo/").utf8().data());
-    EXPECT_STREQ("host", FileSystem::pathFileName("//host").utf8().data());
+    EXPECT_STREQ(".", FileSystem::pathFileName("."_s).utf8().data());
+    EXPECT_STREQ("..", FileSystem::pathFileName(".."_s).utf8().data());
+    EXPECT_STREQ("", FileSystem::pathFileName("/"_s).utf8().data());
+    EXPECT_STREQ(".", FileSystem::pathFileName("/foo/."_s).utf8().data());
+    EXPECT_STREQ("..", FileSystem::pathFileName("/foo/.."_s).utf8().data());
+    EXPECT_STREQ("", FileSystem::pathFileName("/foo/"_s).utf8().data());
+    EXPECT_STREQ("host", FileSystem::pathFileName("//host"_s).utf8().data());
 #endif
 #if OS(WINDOWS)
-    EXPECT_STREQ("", FileSystem::pathFileName("C:\\").utf8().data());
-    EXPECT_STREQ("foo", FileSystem::pathFileName("C:\\foo").utf8().data());
-    EXPECT_STREQ("", FileSystem::pathFileName("C:\\foo\\").utf8().data());
-    EXPECT_STREQ("bar.txt", FileSystem::pathFileName("C:\\foo\\bar.txt").utf8().data());
+    EXPECT_STREQ("", FileSystem::pathFileName("C:\\"_s).utf8().data());
+    EXPECT_STREQ("foo", FileSystem::pathFileName("C:\\foo"_s).utf8().data());
+    EXPECT_STREQ("", FileSystem::pathFileName("C:\\foo\\"_s).utf8().data());
+    EXPECT_STREQ("bar.txt", FileSystem::pathFileName("C:\\foo\\bar.txt"_s).utf8().data());
 #endif
 }
 
@@ -717,14 +717,14 @@ TEST_F(FileSystemTest, parentPath)
     auto testPath = FileSystem::pathByAppendingComponents(tempEmptyFolderPath(), { "subfolder"_s, "filename.txt"_s });
     EXPECT_STREQ(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "subfolder"_s).utf8().data(), FileSystem::parentPath(testPath).utf8().data());
 #if OS(UNIX)
-    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/example.txt").utf8().data());
-    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/").utf8().data());
-    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/.").utf8().data());
-    EXPECT_STREQ("/", FileSystem::parentPath("/").utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/example.txt"_s).utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/"_s).utf8().data());
+    EXPECT_STREQ("/var/tmp", FileSystem::parentPath("/var/tmp/."_s).utf8().data());
+    EXPECT_STREQ("/", FileSystem::parentPath("/"_s).utf8().data());
 #endif
 #if OS(WINDOWS)
-    EXPECT_STREQ("C:\\foo", FileSystem::parentPath("C:\\foo\\example.txt").utf8().data());
-    EXPECT_STREQ("C:\\", FileSystem::parentPath("C:\\").utf8().data());
+    EXPECT_STREQ("C:\\foo", FileSystem::parentPath("C:\\foo\\example.txt"_s).utf8().data());
+    EXPECT_STREQ("C:\\", FileSystem::parentPath("C:\\"_s).utf8().data());
 #endif
 }
 

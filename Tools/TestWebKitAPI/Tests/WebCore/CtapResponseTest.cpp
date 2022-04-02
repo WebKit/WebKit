@@ -620,7 +620,7 @@ TEST(CTAPResponseTest, TestReadGetInfoResponseWithIncorrectFormat)
 TEST(CTAPResponseTest, TestSerializeGetInfoResponse)
 {
     AuthenticatorGetInfoResponse response({ ProtocolVersion::kCtap, ProtocolVersion::kU2f }, convertBytesToVector(kTestDeviceAaguid, sizeof(kTestDeviceAaguid)));
-    response.setExtensions({ "uvm", "hmac-secret" });
+    response.setExtensions({ "uvm"_s, "hmac-secret"_s });
     AuthenticatorSupportedOptions options;
     options.setResidentKeyAvailability(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
     options.setIsPlatformDevice(true);

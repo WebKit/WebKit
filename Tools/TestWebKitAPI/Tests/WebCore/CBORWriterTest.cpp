@@ -140,10 +140,10 @@ TEST(CBORWriterTest, TestWriteString)
     } StringTestCase;
 
     static const StringTestCase kStringTestCases[] = {
-        { "", CString("\x60") },
-        { "a", CString("\x61\x61") },
-        { "IETF", CString("\x64\x49\x45\x54\x46") },
-        { "\"\\", CString("\x62\x22\x5c") },
+        { emptyString(), CString("\x60") },
+        { "a"_s, CString("\x61\x61") },
+        { "IETF"_s, CString("\x64\x49\x45\x54\x46") },
+        { "\"\\"_s, CString("\x62\x22\x5c") },
         { String::fromUTF8("\xc3\xbc"), CString("\x62\xc3\xbc") },
         { String::fromUTF8("\xe6\xb0\xb4"), CString("\x63\xe6\xb0\xb4") },
         { String::fromUTF8("\xf0\x90\x85\x91"), CString("\x64\xf0\x90\x85\x91") }

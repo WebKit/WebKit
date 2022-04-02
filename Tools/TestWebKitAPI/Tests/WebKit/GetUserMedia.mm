@@ -494,25 +494,25 @@ TEST(WebKit, InterruptionBetweenSameProcessPages)
     TestWebKitAPI::Util::run(&done);
 }
 
-static const char* mainFrameText = R"DOCDOCDOC(
+static constexpr auto mainFrameText = R"DOCDOCDOC(
 <html><body>
 <iframe src='http://127.0.0.1:9091/frame' allow='camera:http://127.0.0.1:9091'></iframe>
 </body></html>
-)DOCDOCDOC";
-static const char* frameText = R"DOCDOCDOC(
+)DOCDOCDOC"_s;
+static constexpr auto frameText = R"DOCDOCDOC(
 <html><body><script>
 navigator.mediaDevices.getUserMedia({video:true});
 </script></body></html>
-)DOCDOCDOC";
+)DOCDOCDOC"_s;
 
 TEST(WebKit, PermissionDelegateParameters)
 {
     TestWebKitAPI::HTTPServer server1({
-        { "/", { mainFrameText } }
+        { "/"_s, { mainFrameText } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9090);
 
     TestWebKitAPI::HTTPServer server2({
-        { "/frame", { frameText } },
+        { "/frame"_s, { frameText } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9091);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -783,7 +783,7 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
 #endif // ENABLE(GPU_PROCESS)
 
 #if PLATFORM(MAC)
-static const char* visibilityTestText = R"DOCDOCDOC(
+static constexpr auto visibilityTestText = R"DOCDOCDOC(
 <html><body>
 <div id='log'></div>
 <video id='localVideo' autoplay muted playsInline width=160></video>
@@ -828,12 +828,12 @@ function doTest()
 
 </script>
 </body></html>
-)DOCDOCDOC";
+)DOCDOCDOC"_s;
 
 TEST(WebKit, AutoplayOnVisibilityChange)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { visibilityTestText } }
+        { "/"_s, { visibilityTestText } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9090);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -873,7 +873,7 @@ TEST(WebKit, AutoplayOnVisibilityChange)
     TestWebKitAPI::Util::run(&done);
 }
 
-static const char* getUserMediaFocusText = R"DOCDOCDOC(
+static constexpr auto getUserMediaFocusText = R"DOCDOCDOC(
 <html><body>
 <script>
 onload = () => {
@@ -889,12 +889,12 @@ function capture()
 }
 </script>
 </body></html>
-)DOCDOCDOC";
+)DOCDOCDOC"_s;
 
 TEST(WebKit, GetUserMediaFocus)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { getUserMediaFocusText } }
+        { "/"_s, { getUserMediaFocusText } }
     }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9090);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

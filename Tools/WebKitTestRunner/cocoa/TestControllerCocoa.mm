@@ -328,7 +328,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
 
     [globalWebsiteDataStoreDelegateClient() setAllowRaisingQuota:YES];
 
-    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(options.additionalSupportedImageTypes().c_str());
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String { options.additionalSupportedImageTypes().c_str() });
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)

@@ -245,25 +245,25 @@ TEST(WebKit, GeolocationPermission)
 }
 @end
 
-static const char* mainFrameText = R"DOCDOCDOC(
+static constexpr auto mainFrameText = R"DOCDOCDOC(
 <html><body>
 <iframe src='https://127.0.0.1:9091/frame' allow='geolocation:https://127.0.0.1:9091'></iframe>
 </body></html>
-)DOCDOCDOC";
-static const char* frameText = R"DOCDOCDOC(
+)DOCDOCDOC"_s;
+static constexpr auto frameText = R"DOCDOCDOC(
 <html><body><script>
 navigator.geolocation.getCurrentPosition(() => { webkit.messageHandlers.testHandler.postMessage("ok") }, () => { webkit.messageHandlers.testHandler.postMessage("ko") });
 </script></body></html>
-)DOCDOCDOC";
+)DOCDOCDOC"_s;
 
 TEST(WebKit, GeolocationPermissionInIFrame)
 {
     TestWebKitAPI::HTTPServer server1({
-        { "/", { mainFrameText } }
+        { "/"_s, { mainFrameText } }
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9090);
 
     TestWebKitAPI::HTTPServer server2({
-        { "/frame", { frameText } },
+        { "/frame"_s, { frameText } },
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
 
     auto pool = adoptNS([[WKProcessPool alloc] init]);
@@ -313,20 +313,20 @@ TEST(WebKit, GeolocationPermissionInIFrame)
     EXPECT_TRUE(done);
 }
 
-static const char* notAllowingMainFrameText = R"DOCDOCDOC(
+static constexpr auto notAllowingMainFrameText = R"DOCDOCDOC(
 <html><body>
 <iframe src='https://127.0.0.1:9091/frame' allow='geolocation:https://127.0.0.1:9092'></iframe>
 </body></html>
-)DOCDOCDOC";
+)DOCDOCDOC"_s;
 
 TEST(WebKit, GeolocationPermissionInDisallowedIFrame)
 {
     TestWebKitAPI::HTTPServer server1({
-        { "/", { notAllowingMainFrameText } }
+        { "/"_s, { notAllowingMainFrameText } }
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9090);
 
     TestWebKitAPI::HTTPServer server2({
-        { "/frame", { frameText } },
+        { "/frame"_s, { frameText } },
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
 
     auto pool = adoptNS([[WKProcessPool alloc] init]);

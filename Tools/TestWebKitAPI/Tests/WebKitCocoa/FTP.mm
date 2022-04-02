@@ -78,7 +78,7 @@ TEST(WKWebView, FTPMainResource)
 TEST(WKWebView, FTPMainResourceRedirect)
 {
     HTTPServer httpServer({
-        { "/ftp_redirect", { 301, {{ "Location", "ftp://example.com/" }} } },
+        { "/ftp_redirect"_s, { 301, {{ "Location"_s, "ftp://example.com/"_s }} } },
     });
     
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
@@ -119,7 +119,7 @@ TEST(WKWebView, FTPSubresource)
 TEST(WKWebView, FTPSubresourceRedirect)
 {
     HTTPServer httpServer({
-        { "/webkitten.png", { 301, {{ "Location", "ftp://example.com/webkitten.png" }} } },
+        { "/webkitten.png"_s, { 301, {{ "Location"_s, "ftp://example.com/webkitten.png"_s }} } },
     });
         
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];

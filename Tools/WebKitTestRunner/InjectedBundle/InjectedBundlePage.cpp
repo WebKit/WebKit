@@ -111,7 +111,7 @@ static WTF::String dumpPath(JSGlobalContextRef context, JSObjectRef nodeValue)
 static WTF::String dumpPath(WKBundlePageRef page, WKBundleScriptWorldRef world, WKBundleNodeHandleRef node)
 {
     if (!node)
-        return "(null)";
+        return "(null)"_s;
 
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
 
@@ -126,7 +126,7 @@ static WTF::String dumpPath(WKBundlePageRef page, WKBundleScriptWorldRef world, 
 static WTF::String string(WKBundlePageRef page, WKBundleScriptWorldRef world, WKBundleRangeHandleRef rangeRef)
 {
     if (!rangeRef)
-        return "(null)";
+        return "(null)"_s;
 
     auto frame = WKBundlePageGetMainFrame(page);
     auto context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
@@ -196,7 +196,7 @@ static const char divider = '/';
 static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl)
 {
     if (!fileUrl)
-        return "(null)";
+        return "(null)"_s;
 
     auto schemeString = adoptWK(WKURLCopyScheme(fileUrl));
     if (!isLocalFileScheme(schemeString.get()))
@@ -469,11 +469,11 @@ static inline void dumpErrorDescriptionSuitableForTestResult(WKErrorRef error, S
 
     // We need to do some error mapping here to match the test expectations (Mac error names are expected).
     if (errorDomain == "WebKitNetworkError") {
-        errorDomain = "NSURLErrorDomain";
+        errorDomain = "NSURLErrorDomain"_s;
         errorCode = -999;
     }
     if (errorDomain ==  "WebKitPolicyError")
-        errorDomain = "WebKitErrorDomain";
+        errorDomain = "WebKitErrorDomain"_s;
 
     stringBuilder.append("<NSError domain ", errorDomain, ", code ", errorCode);
     if (auto url = adoptWK(WKErrorCopyFailingURL(error)))

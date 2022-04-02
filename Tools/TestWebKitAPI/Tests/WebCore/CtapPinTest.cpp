@@ -52,20 +52,20 @@ using namespace fido::pin;
 TEST(CtapPinTest, TestValidateAndConvertToUTF8)
 {
     // Failure cases
-    auto result = validateAndConvertToUTF8("123");
+    auto result = validateAndConvertToUTF8("123"_s);
     EXPECT_FALSE(result);
-    result = validateAndConvertToUTF8("");
+    result = validateAndConvertToUTF8(emptyString());
     EXPECT_FALSE(result);
-    result = validateAndConvertToUTF8("1234567812345678123456781234567812345678123456781234567812345678");
+    result = validateAndConvertToUTF8("1234567812345678123456781234567812345678123456781234567812345678"_s);
     EXPECT_FALSE(result);
 
     // Success cases
-    result = validateAndConvertToUTF8("1234");
+    result = validateAndConvertToUTF8("1234"_s);
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 4u);
     EXPECT_STREQ(result->data(), "1234");
 
-    result = validateAndConvertToUTF8("123456781234567812345678123456781234567812345678123456781234567");
+    result = validateAndConvertToUTF8("123456781234567812345678123456781234567812345678123456781234567"_s);
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 63u);
     EXPECT_STREQ(result->data(), "123456781234567812345678123456781234567812345678123456781234567");
@@ -174,7 +174,7 @@ TEST(CtapPinTest, TestKeyAgreementResponse)
 TEST(CtapPinTest, TestTokenRequest)
 {
     // Generate an EC key pair as the peer key.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256", true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
@@ -225,7 +225,7 @@ TEST(CtapPinTest, TestTokenRequest)
     EXPECT_NE(xIt, coseKey.end());
     const auto& yIt = coseKey.find(CBORValue(COSE::y));
     EXPECT_NE(yIt, coseKey.end());
-    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256", encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
+    auto cosePublicKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(xIt->second.getByteString(), yIt->second.getByteString()), true, CryptoKeyUsageDeriveBits);
     EXPECT_TRUE(cosePublicKey);
 
     // Check the encrypted Pin.

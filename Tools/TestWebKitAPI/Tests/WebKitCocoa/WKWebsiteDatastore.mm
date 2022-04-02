@@ -367,7 +367,7 @@ TEST(WebKit, ClearCustomDataStoreNoWebViews)
                     "Set-Cookie: a=b\r\n"
                     "Connection: close\r\n"
                     "\r\n"
-                    "Hello");
+                    "Hello"_s);
                 break;
             case 2:
                 EXPECT_FALSE(strstr(request.data(), "Cookie: a=b\r\n"));
@@ -376,7 +376,7 @@ TEST(WebKit, ClearCustomDataStoreNoWebViews)
                     "Content-Length: 5\r\n"
                     "Connection: close\r\n"
                     "\r\n"
-                    "Hello");
+                    "Hello"_s);
                 break;
             default:
                 ASSERT_NOT_REACHED();

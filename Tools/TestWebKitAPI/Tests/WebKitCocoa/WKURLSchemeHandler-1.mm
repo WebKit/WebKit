@@ -516,7 +516,7 @@ static bool receivedMessage;
 }
 @end
 
-static const char* syncMainBytes = R"SYNCRESOURCE(
+static const char syncMainBytes[] = R"SYNCRESOURCE(
 <script>
 
 var req = new XMLHttpRequest();
@@ -534,7 +534,7 @@ catch (e)
 </script>
 )SYNCRESOURCE";
 
-static const char* syncXHRBytes = "My XHR text!";
+static const char syncXHRBytes[] = "My XHR text!";
 
 TEST(URLSchemeHandler, SyncXHR)
 {
@@ -543,8 +543,8 @@ TEST(URLSchemeHandler, SyncXHR)
         auto handler = adoptNS([[SyncScheme alloc] init]);
         [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"syncxhr"];
 
-        handler.get()->resources.set("syncxhr://host/main.html", SchemeResourceInfo { @"text/html", syncMainBytes, true });
-        handler.get()->resources.set("syncxhr://host/test.dat", SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
+        handler.get()->resources.set("syncxhr://host/main.html"_s, SchemeResourceInfo { @"text/html", syncMainBytes, true });
+        handler.get()->resources.set("syncxhr://host/test.dat"_s, SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
 
         auto messageHandler = adoptNS([[SyncMessageHandler alloc] init]);
         [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sync"];
@@ -562,7 +562,7 @@ TEST(URLSchemeHandler, SyncXHR)
 
         // Now try again, but hang the WebProcess in the reply to the XHR by telling the scheme handler to never
         // respond to it.
-        handler.get()->resources.find("syncxhr://host/test.dat")->value.shouldRespond = false;
+        handler.get()->resources.find("syncxhr://host/test.dat"_s)->value.shouldRespond = false;
         [webView loadRequest:request];
 
         TestWebKitAPI::Util::run(&startedXHR);
@@ -617,7 +617,7 @@ TEST(URLSchemeHandler, SyncXHRError)
     TestWebKitAPI::Util::run(&done);
 }
 
-static const char* xhrPostDocument = R"XHRPOSTRESOURCE(<html><head><script>
+static constexpr auto xhrPostDocument = R"XHRPOSTRESOURCE(<html><head><script>
 window.onload = function()
 {
     {
@@ -667,7 +667,7 @@ window.onload = function()
 </script></head>
 <body>
 Hello world!
-</body></html>)XHRPOSTRESOURCE";
+</body></html>)XHRPOSTRESOURCE"_s;
 
 
 TEST(URLSchemeHandler, XHRPost)
@@ -841,7 +841,7 @@ TEST(URLSchemeHandler, CORS)
 TEST(URLSchemeHandler, DisableCORS)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/subresource", { {{ "Content-Type", "application/json" }, { "headerName", "headerValue" }}, "{\"testKey\":\"testValue\"}" } }
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{\"testKey\":\"testValue\"}"_s } }
     });
 
     bool corssuccess = false;
@@ -924,7 +924,7 @@ TEST(URLSchemeHandler, DisableCORS)
 TEST(URLSchemeHandler, DisableCORSCredentials)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/subresource", { {{ "Access-Control-Allow-Origin", "*" }}, "subresourcecontent" } }
+        { "/subresource"_s, { {{ "Access-Control-Allow-Origin"_s, "*"_s }}, "subresourcecontent"_s } }
     });
 
     bool corssuccess = false;
@@ -977,7 +977,7 @@ TEST(URLSchemeHandler, DisableCORSCredentials)
 TEST(URLSchemeHandler, DisableCORSScript)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { "fetch('loadSuccess')" } }
+        { "/"_s, { "fetch('loadSuccess')"_s } }
     });
 
     bool loadSuccess = false;
@@ -1103,7 +1103,7 @@ TEST(URLSchemeHandler, LoadsFromNetwork)
 {
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/", { {{ "Access-Control-Allow-Origin", "*" }}, "test content" } }
+        { "/"_s, { {{ "Access-Control-Allow-Origin"_s, "*"_s }}, "test content"_s } }
     });
 
     HTTPServer webSocketServer([](Connection connection) {
@@ -1192,12 +1192,12 @@ TEST(URLSchemeHandler, LoadsFromNetwork)
 TEST(URLSchemeHandler, AllowedNetworkHostsRedirect)
 {
     TestWebKitAPI::HTTPServer serverLocalhost({
-        { "/redirectTarget", { {{ "Access-Control-Allow-Origin", "*" }}, "test content" } }
+        { "/redirectTarget"_s, { {{ "Access-Control-Allow-Origin"_s, "*"_s }}, "test content"_s } }
     });
     TestWebKitAPI::HTTPServer server127001({
-        { "/", { 301, {
-            { "Access-Control-Allow-Origin", "*" },
-            { "Location", makeString("http://localhost:", serverLocalhost.port(), "/redirectTarget") }
+        { "/"_s, { 301, {
+            { "Access-Control-Allow-Origin"_s, "*"_s },
+            { "Location"_s, makeString("http://localhost:", serverLocalhost.port(), "/redirectTarget") }
         }}},
     });
 
@@ -1266,13 +1266,13 @@ static void serverLoop(const TestWebKitAPI::Connection& connection, bool& loaded
             });
         };
         if (path == "/main.html")
-            sendReply({ { { "Content-Type", "text/html" } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>" });
+            sendReply({ { { "Content-Type"_s, "text/html"_s } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>"_s });
         else if (path == "/imgsrc") {
             loadedImage = true;
-            sendReply({ "image content" });
+            sendReply({ "image content"_s });
         } else if (path == "/iframesrc") {
             loadedIFrame = true;
-            sendReply({ "iframe content" });
+            sendReply({ "iframe content"_s });
         } else
             ASSERT_NOT_REACHED();
     });

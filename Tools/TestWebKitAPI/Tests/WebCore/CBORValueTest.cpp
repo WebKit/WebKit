@@ -63,7 +63,7 @@ TEST(CBORValueTest, ConstructStringFromConstCharPtr)
 
 TEST(CBORValueTest, ConstructStringFromWTFStringConstRef)
 {
-    String str = "foobar";
+    String str = "foobar"_s;
     CBORValue value(str);
     ASSERT_TRUE(CBORValue::Type::String == value.type());
     EXPECT_TRUE("foobar" == value.getString());
@@ -71,7 +71,7 @@ TEST(CBORValueTest, ConstructStringFromWTFStringConstRef)
 
 TEST(CBORValueTest, ConstructStringFromWTFStringRefRef)
 {
-    String str = "foobar";
+    String str = "foobar"_s;
     CBORValue value(WTFMove(str));
     ASSERT_TRUE(CBORValue::Type::String == value.type());
     EXPECT_TRUE("foobar" == value.getString());

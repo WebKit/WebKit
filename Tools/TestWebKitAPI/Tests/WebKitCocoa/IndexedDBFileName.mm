@@ -107,7 +107,7 @@ static void runTest()
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:newVersionCreatedDatabaseDirectoryURL.path]);
 }
 
-static void createDirectories(String testName)
+static void createDirectories(StringView testName)
 {
     auto defaultFileManager = [NSFileManager defaultManager];
     NSURL *idbRootURL = [[[WKWebsiteDataStore defaultDataStore] _configuration] _indexedDBDatabaseDirectory];
