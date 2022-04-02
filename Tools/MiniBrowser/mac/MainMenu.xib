@@ -585,21 +585,21 @@
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                     </menuItem>
                                                     <menuItem id="fYp-sh-nqB">
-                                                        <string key="title">	Default</string>
+                                                        <string key="title">    Default</string>
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeBaseWritingDirectionNatural:" target="-1" id="z9r-Q0-zcU"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem id="7Kh-vB-DZW">
-                                                        <string key="title">	Left to Right</string>
+                                                        <string key="title">    Left to Right</string>
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeBaseWritingDirectionLeftToRight:" target="-1" id="By6-Xc-sQg"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem id="Efq-zm-Iex">
-                                                        <string key="title">	Right to Left</string>
+                                                        <string key="title">    Right to Left</string>
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeBaseWritingDirectionRightToLeft:" target="-1" id="J4w-YN-dtS"/>
@@ -610,21 +610,21 @@
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                     </menuItem>
                                                     <menuItem id="m9Q-d8-VVx">
-                                                        <string key="title">	Default</string>
+                                                        <string key="title">    Default</string>
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeTextWritingDirectionNatural:" target="-1" id="Ilo-c7-jCj"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem id="5Ym-OR-TV9">
-                                                        <string key="title">	Left to Right</string>
+                                                        <string key="title">    Left to Right</string>
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeTextWritingDirectionLeftToRight:" target="-1" id="9ca-bt-cYl"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem id="blA-MU-vkf">
-                                                        <string key="title">	Right to Left</string>
+                                                        <string key="title">    Right to Left</string>
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeTextWritingDirectionRightToLeft:" target="-1" id="0FR-dP-o2G"/>
@@ -781,6 +781,12 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Debug" id="535">
                         <items>
+                            <menuItem title="Save Accessibility Trees..." keyEquivalent="a" id="540">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="logAccessibilityTrees:" target="-1" id="541"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Force Repaint" keyEquivalent="r" id="545">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>

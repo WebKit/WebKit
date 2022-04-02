@@ -1,3 +1,19 @@
+2022-04-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add to MiniBrowser the ability to log a textual representation of the AX trees for the current page.
+        https://bugs.webkit.org/show_bug.cgi?id=238566
+        <rdar://problem/91059308>
+
+        Reviewed by Chris Fleizach and Simon Fraser.
+
+        MiniBrowser can now log a textual representation of the AX trees via
+        Debug > Log Accessibility Trees menu item, or pressing the keystroke
+        Cmd Opt A.
+
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController logAccessibilityTrees:]):
+
 2022-04-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Replace gtk-doc with gi-docgen
