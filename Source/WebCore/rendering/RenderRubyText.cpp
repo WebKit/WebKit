@@ -75,7 +75,7 @@ void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     if (textAlign != RenderStyle::initialTextAlign())
         return RenderBlockFlow::adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, logicalWidth);
 
-    int maxPreferredLogicalWidth = this->maxPreferredLogicalWidth();
+    auto maxPreferredLogicalWidth = this->maxPreferredLogicalWidth();
     if (maxPreferredLogicalWidth >= logicalWidth)
         return;
 

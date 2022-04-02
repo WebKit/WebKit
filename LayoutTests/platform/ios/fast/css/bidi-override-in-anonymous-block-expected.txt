@@ -142,7 +142,7 @@ layer at (0,0) size 800x1300
         RenderRuby (inline) {RUBY} at (0,0) size 13x19
           RenderRubyRun (anonymous) at (89,29) size 13x0
             RenderRubyText {RT} at (0,-11) size 12x12
-              RenderText {#text} at (0,0) size 13x11
+              RenderText {#text} at (0,0) size 12x11
                 text run at (0,0) width 12: "def"
         RenderText {#text} at (84,12) size 5x19
           text run at (84,12) width 5 RTL: " "

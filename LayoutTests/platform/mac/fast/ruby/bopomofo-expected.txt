@@ -9,8 +9,8 @@ layer at (0,0) size 800x64
             RenderRuby (inline) {RUBY} at (0,0) size 9x8
               RenderRubyRun (anonymous) at (0,0) size 11x8
                 RenderRubyText {RT} at (10,0) size 10x8
-                  RenderText {#text} at (0,3) size 9x3
-                    text run at (0,3) width 3: "\x{2CB}"
+                  RenderText {#text} at (0,2) size 9x4
+                    text run at (0,2) width 3: "\x{2CB}"
                 RenderRubyBase (anonymous) at (0,0) size 11x8
                   RenderText {#text} at (1,0) size 9x8
                     text run at (1,0) width 8: "\x{3115}"
@@ -22,8 +22,8 @@ layer at (0,0) size 800x64
             RenderRuby (inline) {RUBY} at (0,0) size 9x16
               RenderRubyRun (anonymous) at (0,0) size 11x16
                 RenderRubyText {RT} at (10,0) size 10x16
-                  RenderText {#text} at (0,7) size 9x3
-                    text run at (0,7) width 3: "\x{2CB}"
+                  RenderText {#text} at (0,6) size 9x4
+                    text run at (0,6) width 3: "\x{2CB}"
                 RenderRubyBase (anonymous) at (0,0) size 11x16
                   RenderText {#text} at (1,0) size 9x16
                     text run at (1,0) width 16: "\x{3115}\x{3124}"
@@ -35,8 +35,8 @@ layer at (0,0) size 800x64
             RenderRuby (inline) {RUBY} at (0,0) size 9x8
               RenderRubyRun (anonymous) at (0,0) size 11x8
                 RenderRubyText {RT} at (10,0) size 10x8
-                  RenderText {#text} at (0,3) size 9x3
-                    text run at (0,3) width 3: "\x{2CA}"
+                  RenderText {#text} at (0,2) size 9x4
+                    text run at (0,2) width 3: "\x{2CA}"
                 RenderRubyBase (anonymous) at (0,0) size 11x8
                   RenderText {#text} at (1,0) size 9x8
                     text run at (1,0) width 8: "\x{3128}"
@@ -48,8 +48,8 @@ layer at (0,0) size 800x64
             RenderRuby (inline) {RUBY} at (0,0) size 9x16
               RenderRubyRun (anonymous) at (0,0) size 11x16
                 RenderRubyText {RT} at (10,0) size 10x16
-                  RenderText {#text} at (0,7) size 9x3
-                    text run at (0,7) width 3: "\x{2CA}"
+                  RenderText {#text} at (0,6) size 9x4
+                    text run at (0,6) width 3: "\x{2CA}"
                 RenderRubyBase (anonymous) at (0,0) size 11x16
                   RenderText {#text} at (1,0) size 9x16
                     text run at (1,0) width 16: "\x{310B}\x{3122}"
@@ -61,8 +61,8 @@ layer at (0,0) size 800x64
             RenderRuby (inline) {RUBY} at (0,0) size 9x8
               RenderRubyRun (anonymous) at (0,0) size 11x8
                 RenderRubyText {RT} at (10,0) size 10x8
-                  RenderText {#text} at (0,3) size 9x3
-                    text run at (0,3) width 3: "\x{2CB}"
+                  RenderText {#text} at (0,2) size 9x4
+                    text run at (0,2) width 3: "\x{2CB}"
                 RenderRubyBase (anonymous) at (0,0) size 11x8
                   RenderText {#text} at (1,0) size 9x8
                     text run at (1,0) width 8: "\x{3115}"
@@ -81,8 +81,8 @@ layer at (0,0) size 800x64
             RenderRuby (inline) {RUBY} at (0,0) size 9x16
               RenderRubyRun (anonymous) at (0,0) size 11x16
                 RenderRubyText {RT} at (10,0) size 10x16
-                  RenderText {#text} at (0,7) size 9x3
-                    text run at (0,7) width 3: "\x{2CB}"
+                  RenderText {#text} at (0,6) size 9x4
+                    text run at (0,6) width 3: "\x{2CB}"
                 RenderRubyBase (anonymous) at (0,0) size 11x16
                   RenderText {#text} at (1,0) size 9x16
                     text run at (1,0) width 16: "\x{3106}\x{311A}"
@@ -94,8 +94,8 @@ layer at (0,0) size 800x64
             RenderRuby (inline) {RUBY} at (0,0) size 9x16
               RenderRubyRun (anonymous) at (0,0) size 11x16
                 RenderRubyText {RT} at (10,0) size 9x16
-                  RenderText {#text} at (0,7) size 9x3
-                    text run at (0,7) width 3: "\x{2C7}"
+                  RenderText {#text} at (0,6) size 9x4
+                    text run at (0,6) width 3: "\x{2C7}"
                 RenderRubyBase (anonymous) at (0,0) size 11x16
                   RenderText {#text} at (1,0) size 9x16
                     text run at (1,0) width 16: "\x{3127}\x{3121}"
@@ -114,8 +114,8 @@ layer at (0,0) size 800x64
             RenderRuby (inline) {RUBY} at (0,0) size 9x16
               RenderRubyRun (anonymous) at (0,0) size 11x16
                 RenderRubyText {RT} at (10,0) size 10x16
-                  RenderText {#text} at (0,7) size 9x3
-                    text run at (0,7) width 3: "\x{2CA}"
+                  RenderText {#text} at (0,6) size 9x4
+                    text run at (0,6) width 3: "\x{2CA}"
                 RenderRubyBase (anonymous) at (0,0) size 11x16
                   RenderText {#text} at (1,0) size 9x16
                     text run at (1,0) width 16: "\x{3116}\x{3123}"

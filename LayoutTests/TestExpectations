@@ -4647,7 +4647,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-regular-cont
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-vertical-rl-.html [ ImageOnlyFailure ]
 # webkit-ruby-text
 imported/w3c/web-platform-tests/css/css-contain/contain-layout-017.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-paint-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-021.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-016.html [ ImageOnlyFailure ]
