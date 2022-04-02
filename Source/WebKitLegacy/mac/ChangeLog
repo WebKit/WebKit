@@ -1,3 +1,16 @@
+2022-04-01  Michael Saboff  <msaboff@apple.com>
+
+        Stop copying StagedFrameworks to the secondary path by default
+        https://bugs.webkit.org/show_bug.cgi?id=238688
+
+        Reviewed by Saam Barati.
+
+        Decoupled COPY_STAGED_FRAMEWORKS_TO_SECONDARY_PATH from USE_SYSTEM_CONTENT_PATH so we won't
+        always copy frameworks to the secondary path on macOS.  Instead, the build configuration can set
+        COPY_STAGED_FRAMEWORKS_TO_SECONDARY_PATH as appropriate.
+
+        * Configurations/Base.xcconfig:
+
 2022-03-31  Chris Dumez  <cdumez@apple.com>
 
         Prepare WebKit/ & WebKitLegacy/ for making the String(const char*) constructor explicit
