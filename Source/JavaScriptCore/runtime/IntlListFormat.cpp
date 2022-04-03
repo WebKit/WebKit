@@ -353,7 +353,7 @@ ASCIILiteral IntlListFormat::styleString(Style style)
         return "narrow"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlListFormat::typeString(Type type)
@@ -367,7 +367,7 @@ ASCIILiteral IntlListFormat::typeString(Type type)
         return "unit"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 } // namespace JSC

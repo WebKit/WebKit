@@ -109,13 +109,13 @@ static ASCIILiteral imageTypeToFakeFilename(ImageType type)
     switch (type) {
     case ImageType::Invalid:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     case ImageType::TIFF:
 #if PLATFORM(MAC)
         return "image.png"_s; // For Web compatibility, we pretend to have PNG instead.
 #else
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
 #endif
     case ImageType::PNG:
         return "image.png"_s;

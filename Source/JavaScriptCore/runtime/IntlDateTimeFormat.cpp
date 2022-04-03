@@ -604,7 +604,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!calendar.isNull()) {
         if (!isUnicodeLocaleIdentifierType(calendar)) {
@@ -614,7 +614,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Ca)] = calendar;
     }
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!numberingSystem.isNull()) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
@@ -1019,10 +1019,10 @@ ASCIILiteral IntlDateTimeFormat::hourCycleString(HourCycle hourCycle)
         return "h24"_s;
     case HourCycle::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::weekdayString(Weekday weekday)
@@ -1036,10 +1036,10 @@ ASCIILiteral IntlDateTimeFormat::weekdayString(Weekday weekday)
         return "long"_s;
     case Weekday::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::eraString(Era era)
@@ -1053,10 +1053,10 @@ ASCIILiteral IntlDateTimeFormat::eraString(Era era)
         return "long"_s;
     case Era::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::yearString(Year year)
@@ -1068,10 +1068,10 @@ ASCIILiteral IntlDateTimeFormat::yearString(Year year)
         return "numeric"_s;
     case Year::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::monthString(Month month)
@@ -1089,10 +1089,10 @@ ASCIILiteral IntlDateTimeFormat::monthString(Month month)
         return "long"_s;
     case Month::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::dayString(Day day)
@@ -1104,10 +1104,10 @@ ASCIILiteral IntlDateTimeFormat::dayString(Day day)
         return "numeric"_s;
     case Day::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::dayPeriodString(DayPeriod dayPeriod)
@@ -1121,10 +1121,10 @@ ASCIILiteral IntlDateTimeFormat::dayPeriodString(DayPeriod dayPeriod)
         return "long"_s;
     case DayPeriod::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::hourString(Hour hour)
@@ -1136,10 +1136,10 @@ ASCIILiteral IntlDateTimeFormat::hourString(Hour hour)
         return "numeric"_s;
     case Hour::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::minuteString(Minute minute)
@@ -1151,10 +1151,10 @@ ASCIILiteral IntlDateTimeFormat::minuteString(Minute minute)
         return "numeric"_s;
     case Minute::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::secondString(Second second)
@@ -1166,10 +1166,10 @@ ASCIILiteral IntlDateTimeFormat::secondString(Second second)
         return "numeric"_s;
     case Second::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::timeZoneNameString(TimeZoneName timeZoneName)
@@ -1189,10 +1189,10 @@ ASCIILiteral IntlDateTimeFormat::timeZoneNameString(TimeZoneName timeZoneName)
         return "longGeneric"_s;
     case TimeZoneName::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDateTimeFormat::formatStyleString(DateTimeStyle style)
@@ -1208,10 +1208,10 @@ ASCIILiteral IntlDateTimeFormat::formatStyleString(DateTimeStyle style)
         return "short"_s;
     case DateTimeStyle::None:
         ASSERT_NOT_REACHED();
-        return ASCIILiteral::null();
+        return { };
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 // https://tc39.es/ecma402/#sec-intl.datetimeformat.prototype.resolvedoptions

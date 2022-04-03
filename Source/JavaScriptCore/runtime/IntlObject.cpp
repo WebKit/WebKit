@@ -896,7 +896,7 @@ constexpr ASCIILiteral relevantExtensionKeyString(RelevantExtensionKey key)
     JSC_INTL_RELEVANT_EXTENSION_KEYS(JSC_RETURN_INTL_RELEVANT_EXTENSION_KEYS)
 #undef JSC_RETURN_INTL_RELEVANT_EXTENSION_KEYS
     }
-    return ASCIILiteral::null();
+    return { };
 }
 
 ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher localeMatcher, const ResolveLocaleOptions& options, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<String> (*localeData)(const String&, RelevantExtensionKey))

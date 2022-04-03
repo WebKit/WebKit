@@ -60,8 +60,8 @@ extern const JSC::ConstructorKind s_internalClashingNamesIsReadableStreamLockedC
     macro(isReadableStreamLocked, internalClashingNamesIsReadableStreamLocked, 1) \
 
 #define JSC_FOREACH_BUILTIN_CODE(macro) \
-    macro(internalClashingNamesIsReadableStreamLockedCode, isReadableStreamLocked, ASCIILiteral::null(), s_internalClashingNamesIsReadableStreamLockedCodeLength) \
-    macro(internalClashingNamesIsReadableStreamLockedCode, isReadableStreamLocked, ASCIILiteral::null(), s_internalClashingNamesIsReadableStreamLockedCodeLength) \
+    macro(internalClashingNamesIsReadableStreamLockedCode, isReadableStreamLocked, ASCIILiteral(), s_internalClashingNamesIsReadableStreamLockedCodeLength) \
+    macro(internalClashingNamesIsReadableStreamLockedCode, isReadableStreamLocked, ASCIILiteral(), s_internalClashingNamesIsReadableStreamLockedCodeLength) \
 
 #define JSC_FOREACH_BUILTIN_FUNCTION_NAME(macro) \
     macro(isReadableStreamLocked) \

@@ -515,7 +515,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, 0);
 
-    String unitString = intlStringOption(globalObject, options, vm.propertyNames->unit, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String unitString = intlStringOption(globalObject, options, vm.propertyNames->unit, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, 0);
 
     auto unitType = temporalUnitType(unitString);

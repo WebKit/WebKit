@@ -274,7 +274,7 @@ static ASCIILiteral propertyIdToString(AnimatedPropertyID property)
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)

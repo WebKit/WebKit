@@ -55,7 +55,7 @@ extern const JSC::ConstructorKind s_anotherGuardedInternalBuiltinLetsFetchCodeCo
 #define WEBCORE_BUILTIN_ANOTHERGUARDEDINTERNALBUILTIN_LETSFETCH 1
 
 #define WEBCORE_FOREACH_ANOTHERGUARDEDINTERNALBUILTIN_BUILTIN_CODE(macro) \
-    macro(anotherGuardedInternalBuiltinLetsFetchCode, letsFetch, ASCIILiteral::null(), s_anotherGuardedInternalBuiltinLetsFetchCodeLength) \
+    macro(anotherGuardedInternalBuiltinLetsFetchCode, letsFetch, ASCIILiteral(), s_anotherGuardedInternalBuiltinLetsFetchCodeLength) \
 
 #define WEBCORE_FOREACH_ANOTHERGUARDEDINTERNALBUILTIN_BUILTIN_FUNCTION_NAME(macro) \
     macro(letsFetch) \

@@ -1,3 +1,16 @@
+2022-04-02  Chris Dumez  <cdumez@apple.com>
+
+        Add default constructor to ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=238700
+
+        Reviewed by Geoffrey Garen.
+
+        Add default constructor to ASCIILiteral, to replace the more verbose ASCIILiteral::null().
+
+        * wtf/cocoa/ResourceUsageCocoa.cpp:
+        (WTF::displayNameForVMTag):
+        * wtf/text/ASCIILiteral.h:
+
 2022-04-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop unnecessary WTF_EXPORT_PRIVATE on String(ASCIILiteral)

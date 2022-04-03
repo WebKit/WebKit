@@ -120,7 +120,7 @@ foreach my $name (@names) {
 }
 
 print GPERF << "EOF";
-    ASCIILiteral::null()
+    ASCIILiteral()
 };
 
 const Value* findValue(const char* str, unsigned int len)
@@ -131,7 +131,7 @@ const Value* findValue(const char* str, unsigned int len)
 ASCIILiteral getValueName(unsigned short id)
 {
     if (id > lastCSSValueKeyword)
-        return ASCIILiteral::null();
+        return { };
     return valueList[id];
 }
 

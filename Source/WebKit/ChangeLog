@@ -1,3 +1,19 @@
+2022-04-02  Chris Dumez  <cdumez@apple.com>
+
+        Add default constructor to ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=238700
+
+        Reviewed by Geoffrey Garen.
+
+        Add default constructor to ASCIILiteral, to replace the more verbose ASCIILiteral::null().
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::migrateItemTableIfNeeded):
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::setDockSide):
+
 2022-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] semaphore_timedwait() can return KERN_ABORTED

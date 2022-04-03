@@ -35,7 +35,7 @@ ASCIILiteral errorMessage(ErrorCode error)
 #define REGEXP_ERROR_PREFIX "Invalid regular expression: "
     // The order of this array must match the ErrorCode enum.
     static const ASCIILiteral errorMessages[] = {
-        ASCIILiteral::null(),                                                         // NoError
+        { },                                                                          // NoError
         REGEXP_ERROR_PREFIX "regular expression too large"_s,                         // PatternTooLarge
         REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier"_s,                // QuantifierOutOfOrder
         REGEXP_ERROR_PREFIX "nothing to repeat"_s,                                    // QuantifierWithoutAtom

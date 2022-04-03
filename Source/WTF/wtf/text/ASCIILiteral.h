@@ -44,10 +44,7 @@ public:
 
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
-    static constexpr ASCIILiteral null()
-    {
-        return ASCIILiteral { nullptr };
-    }
+    ASCIILiteral() = default;
 
     constexpr bool isNull() const { return !m_characters; }
 
@@ -65,7 +62,7 @@ public:
 private:
     constexpr explicit ASCIILiteral(const char* characters) : m_characters(characters) { }
 
-    const char* m_characters;
+    const char* m_characters { nullptr };
 };
 
 inline bool operator==(ASCIILiteral a, const char* b)

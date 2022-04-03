@@ -304,7 +304,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!numberingSystem.isNull()) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
@@ -328,7 +328,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "decimal"_s, Style::Decimal }, { "percent"_s, Style::Percent }, { "currency"_s, Style::Currency }, { "unit"_s, Style::Unit } }, "style must be either \"decimal\", \"percent\", \"currency\", or \"unit\""_s, Style::Decimal);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String currency = intlStringOption(globalObject, options, Identifier::fromString(vm, "currency"_s), { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String currency = intlStringOption(globalObject, options, Identifier::fromString(vm, "currency"_s), { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!currency.isNull()) {
         if (!isWellFormedCurrencyCode(currency)) {
@@ -355,7 +355,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_currencySign = intlOption<CurrencySign>(globalObject, options, Identifier::fromString(vm, "currencySign"_s), { { "standard"_s, CurrencySign::Standard }, { "accounting"_s, CurrencySign::Accounting } }, "currencySign must be either \"standard\" or \"accounting\""_s, CurrencySign::Standard);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String unit = intlStringOption(globalObject, options, Identifier::fromString(vm, "unit"_s), { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String unit = intlStringOption(globalObject, options, Identifier::fromString(vm, "unit"_s), { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     std::optional<WellFormedUnit> wellFormedUnit;
     if (!unit.isNull()) {
@@ -1258,7 +1258,7 @@ ASCIILiteral IntlNumberFormat::styleString(Style style)
         return "unit"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::currencyDisplayString(CurrencyDisplay currencyDisplay)
@@ -1274,7 +1274,7 @@ ASCIILiteral IntlNumberFormat::currencyDisplayString(CurrencyDisplay currencyDis
         return "name"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::notationString(IntlNotation notation)
@@ -1290,7 +1290,7 @@ ASCIILiteral IntlNumberFormat::notationString(IntlNotation notation)
         return "compact"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::currencySignString(CurrencySign currencySign)
@@ -1302,7 +1302,7 @@ ASCIILiteral IntlNumberFormat::currencySignString(CurrencySign currencySign)
         return "accounting"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::unitDisplayString(UnitDisplay unitDisplay)
@@ -1316,7 +1316,7 @@ ASCIILiteral IntlNumberFormat::unitDisplayString(UnitDisplay unitDisplay)
         return "long"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::compactDisplayString(CompactDisplay compactDisplay)
@@ -1328,7 +1328,7 @@ ASCIILiteral IntlNumberFormat::compactDisplayString(CompactDisplay compactDispla
         return "long"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::signDisplayString(SignDisplay signDisplay)
@@ -1346,7 +1346,7 @@ ASCIILiteral IntlNumberFormat::signDisplayString(SignDisplay signDisplay)
         return "negative"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::roundingModeString(RoundingMode roundingMode)
@@ -1372,7 +1372,7 @@ ASCIILiteral IntlNumberFormat::roundingModeString(RoundingMode roundingMode)
         return "halfEven"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::trailingZeroDisplayString(TrailingZeroDisplay trailingZeroDisplay)
@@ -1384,7 +1384,7 @@ ASCIILiteral IntlNumberFormat::trailingZeroDisplayString(TrailingZeroDisplay tra
         return "stripIfInteger"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlNumberFormat::roundingPriorityString(IntlRoundingType roundingType)
@@ -1399,7 +1399,7 @@ ASCIILiteral IntlNumberFormat::roundingPriorityString(IntlRoundingType roundingT
         return "lessPrecision"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 JSValue IntlNumberFormat::useGroupingValue(VM& vm, UseGrouping useGrouping)

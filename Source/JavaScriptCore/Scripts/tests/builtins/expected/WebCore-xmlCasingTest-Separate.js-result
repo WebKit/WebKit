@@ -68,9 +68,9 @@ extern const JSC::ConstructorKind s_xmlCasingTestUrlCasingTestCodeConstructorKin
 #define WEBCORE_BUILTIN_XMLCASINGTEST_URLCASINGTEST 1
 
 #define WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(macro) \
-    macro(xmlCasingTestXMLCasingTestCode, xmlCasingTest, ASCIILiteral::null(), s_xmlCasingTestXMLCasingTestCodeLength) \
-    macro(xmlCasingTestCssCasingTestCode, cssCasingTest, ASCIILiteral::null(), s_xmlCasingTestCssCasingTestCodeLength) \
-    macro(xmlCasingTestUrlCasingTestCode, urlCasingTest, ASCIILiteral::null(), s_xmlCasingTestUrlCasingTestCodeLength) \
+    macro(xmlCasingTestXMLCasingTestCode, xmlCasingTest, ASCIILiteral(), s_xmlCasingTestXMLCasingTestCodeLength) \
+    macro(xmlCasingTestCssCasingTestCode, cssCasingTest, ASCIILiteral(), s_xmlCasingTestCssCasingTestCodeLength) \
+    macro(xmlCasingTestUrlCasingTestCode, urlCasingTest, ASCIILiteral(), s_xmlCasingTestUrlCasingTestCodeLength) \
 
 #define WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_FUNCTION_NAME(macro) \
     macro(cssCasingTest) \

@@ -230,7 +230,7 @@ std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject* globalObject, JS
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String largestUnit = intlStringOption(globalObject, options, vm.propertyNames->largestUnit, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String largestUnit = intlStringOption(globalObject, options, vm.propertyNames->largestUnit, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     if (!largestUnit)
@@ -260,7 +260,7 @@ std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject* globalObject, J
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String smallestUnit = intlStringOption(globalObject, options, vm.propertyNames->smallestUnit, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String smallestUnit = intlStringOption(globalObject, options, vm.propertyNames->smallestUnit, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     if (!smallestUnit)

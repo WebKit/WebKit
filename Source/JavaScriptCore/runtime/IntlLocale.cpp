@@ -251,21 +251,21 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         return;
     }
 
-    String language = intlStringOption(globalObject, options, vm.propertyNames->language, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String language = intlStringOption(globalObject, options, vm.propertyNames->language, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!language.isNull() && !isUnicodeLanguageSubtag(language)) {
         throwRangeError(globalObject, scope, "language is not a well-formed language value"_s);
         return;
     }
 
-    String script = intlStringOption(globalObject, options, vm.propertyNames->script, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String script = intlStringOption(globalObject, options, vm.propertyNames->script, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!script.isNull() && !isUnicodeScriptSubtag(script)) {
         throwRangeError(globalObject, scope, "script is not a well-formed script value"_s);
         return;
     }
 
-    String region = intlStringOption(globalObject, options, vm.propertyNames->region, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String region = intlStringOption(globalObject, options, vm.propertyNames->region, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!region.isNull() && !isUnicodeRegionSubtag(region)) {
         throwRangeError(globalObject, scope, "region is not a well-formed region value"_s);
@@ -275,7 +275,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     if (!language.isNull() || !script.isNull() || !region.isNull())
         localeID.overrideLanguageScriptRegion(language, script, region);
 
-    String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!calendar.isNull()) {
         if (!isUnicodeLocaleIdentifierType(calendar)) {
@@ -285,7 +285,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         localeID.setKeywordValue("calendar"_s, calendar);
     }
 
-    String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!collation.isNull()) {
         if (!isUnicodeLocaleIdentifierType(collation)) {
@@ -295,12 +295,12 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         localeID.setKeywordValue("collation"_s, collation);
     }
 
-    String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11", "h12", "h23", "h24" }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\""_s, ASCIILiteral::null());
+    String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11", "h12", "h23", "h24" }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\""_s, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!hourCycle.isNull())
         localeID.setKeywordValue("hours"_s, hourCycle);
 
-    String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, ASCIILiteral::null());
+    String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!caseFirst.isNull())
         localeID.setKeywordValue("colcasefirst"_s, caseFirst);
@@ -310,7 +310,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     if (numeric != TriState::Indeterminate)
         localeID.setKeywordValue("colnumeric"_s, numeric == TriState::True ? "yes" : "no");
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, ASCIILiteral::null(), ASCIILiteral::null());
+    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!numberingSystem.isNull()) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) {

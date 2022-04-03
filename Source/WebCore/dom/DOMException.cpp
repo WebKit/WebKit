@@ -77,7 +77,7 @@ auto DOMException::description(ExceptionCode ec) -> const Description&
     if (ec < WTF_ARRAY_LENGTH(descriptions))
         return descriptions[ec];
 
-    static const Description emptyDescription { ASCIILiteral::null(), ASCIILiteral::null(), 0 };
+    static const Description emptyDescription { { }, { }, 0 };
     return emptyDescription;
 }
 

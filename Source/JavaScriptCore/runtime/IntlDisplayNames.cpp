@@ -377,7 +377,7 @@ ASCIILiteral IntlDisplayNames::styleString(Style style)
         return "long"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDisplayNames::typeString(Type type)
@@ -397,7 +397,7 @@ ASCIILiteral IntlDisplayNames::typeString(Type type)
         return "dateTimeField"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDisplayNames::fallbackString(Fallback fallback)
@@ -409,7 +409,7 @@ ASCIILiteral IntlDisplayNames::fallbackString(Fallback fallback)
         return "none"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlDisplayNames::languageDisplayString(LanguageDisplay languageDisplay)
@@ -421,7 +421,7 @@ ASCIILiteral IntlDisplayNames::languageDisplayString(LanguageDisplay languageDis
         return "standard"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 } // namespace JSC

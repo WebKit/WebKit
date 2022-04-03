@@ -172,7 +172,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     RETURN_IF_EXCEPTION(scope, void());
 
     {
-        String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, ASCIILiteral::null(), ASCIILiteral::null());
+        String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, { }, { });
         RETURN_IF_EXCEPTION(scope, void());
         if (!collation.isNull()) {
             if (!isUnicodeLocaleIdentifierType(collation)) {
@@ -188,7 +188,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     if (numeric != TriState::Indeterminate)
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Kn)] = String(numeric == TriState::True ? "true"_s : "false"_s);
 
-    String caseFirstOption = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, ASCIILiteral::null());
+    String caseFirstOption = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!caseFirstOption.isNull())
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Kf)] = caseFirstOption;
@@ -330,7 +330,7 @@ ASCIILiteral IntlCollator::usageString(Usage usage)
         return "search"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlCollator::sensitivityString(Sensitivity sensitivity)
@@ -346,7 +346,7 @@ ASCIILiteral IntlCollator::sensitivityString(Sensitivity sensitivity)
         return "variant"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 ASCIILiteral IntlCollator::caseFirstString(CaseFirst caseFirst)
@@ -360,7 +360,7 @@ ASCIILiteral IntlCollator::caseFirstString(CaseFirst caseFirst)
         return "upper"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 // https://tc39.es/ecma402/#sec-intl.collator.prototype.resolvedoptions

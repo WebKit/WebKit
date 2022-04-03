@@ -161,7 +161,7 @@ ASCIILiteral IntlSegmenter::granularityString(Granularity granularity)
         return "sentence"_s;
     }
     ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 JSObject* IntlSegmenter::createSegmentDataObject(JSGlobalObject* globalObject, JSString* string, int32_t startIndex, int32_t endIndex, UBreakIterator& segmenter, Granularity granularity)

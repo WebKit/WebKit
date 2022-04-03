@@ -1,3 +1,20 @@
+2022-04-02  Chris Dumez  <cdumez@apple.com>
+
+        Add default constructor to ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=238700
+
+        Reviewed by Geoffrey Garen.
+
+        Add default constructor to ASCIILiteral, to replace the more verbose ASCIILiteral::null().
+
+        * css/makevalues.pl:
+        * dom/DOMException.cpp:
+        (WebCore::DOMException::description const):
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::imageTypeToFakeFilename):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::propertyIdToString):
+
 2022-04-02  Alan Bujtas  <zalan@apple.com>
 
         [Ruby] Remove incorrect implicit integral floor in RenderRubyText::adjustInlineDirectionLineBounds

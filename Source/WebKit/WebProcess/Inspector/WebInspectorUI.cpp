@@ -229,7 +229,7 @@ void WebInspectorUI::requestSetDockSide(DockSide dockSide)
 
 void WebInspectorUI::setDockSide(DockSide dockSide)
 {
-    ASCIILiteral dockSideString { ASCIILiteral::null() };
+    ASCIILiteral dockSideString;
 
     switch (dockSide) {
     case DockSide::Undocked:

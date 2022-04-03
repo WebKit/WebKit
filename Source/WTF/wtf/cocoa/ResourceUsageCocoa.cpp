@@ -98,7 +98,7 @@ ASCIILiteral displayNameForVMTag(unsigned tag)
     case VM_MEMORY_STACK: return "Stack"_s;
     case VM_MEMORY_TCMALLOC: return "bmalloc"_s;
     case VM_MEMORY_UNSHARED_PMAP: return "pmap (unshared)"_s;
-    default: return ASCIILiteral::null();
+    default: return { };
     }
 }
 

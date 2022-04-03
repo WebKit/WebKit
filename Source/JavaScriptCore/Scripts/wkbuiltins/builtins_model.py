@@ -153,7 +153,7 @@ class BuiltinFunction:
             overridden_name = "\"get %s\"_s" % (function_name)
 
         if not overridden_name:
-            overridden_name = "ASCIILiteral::null()"
+            overridden_name = "ASCIILiteral()"
 
         if overridden_name[-1] == "\"":
             overridden_name += "_s"

@@ -191,7 +191,7 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     if (asyncReplyInfo && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
         auto completionHandler = std::exchange(asyncReplyInfo->first, nullptr);
-        asyncReplyInfo->first = [activity = throttler().backgroundActivity(ASCIILiteral::null()), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
+        asyncReplyInfo->first = [activity = throttler().backgroundActivity({ }), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
             completionHandler(decoder);
         };
     }

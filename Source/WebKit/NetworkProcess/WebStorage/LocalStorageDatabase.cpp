@@ -138,7 +138,7 @@ bool LocalStorageDatabase::migrateItemTableIfNeeded()
         "INSERT INTO ItemTable2 SELECT * from ItemTable"_s,
         "DROP TABLE ItemTable"_s,
         "ALTER TABLE ItemTable2 RENAME TO ItemTable"_s,
-        ASCIILiteral::null(),
+        { },
     };
 
     SQLiteTransaction transaction(m_database);

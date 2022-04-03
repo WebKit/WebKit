@@ -44,7 +44,7 @@ inline ASCIILiteral arrayBufferSharingModeName(ArrayBufferSharingMode sharingMod
         return "SharedArrayBuffer"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return ASCIILiteral::null();
+    return { };
 }
 
 } // namespace JSC
