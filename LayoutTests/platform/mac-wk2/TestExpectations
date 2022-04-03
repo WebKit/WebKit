@@ -1702,4 +1702,4 @@ webkit.org/b/237165 [ BigSur+ Debug ] imported/w3c/web-platform-tests/html/webap
 
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
 
-webkit.org/b/238641 fast/text/install-font-style-recalc.html [ Pass ]
+fast/text/install-font-style-recalc.html [ Pass ]

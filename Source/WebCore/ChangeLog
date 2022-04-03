@@ -1,3 +1,30 @@
+2022-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Automatically relayout the page when new fonts are installed
+        https://bugs.webkit.org/show_bug.cgi?id=238483
+        <rdar://problem/80544133>
+
+        Reviewed by Chris Dumez.
+
+        This patch simply calls setNeedsRecalcStyleInAllFrames on every Page when we receive a
+        kCTFontManagerRegisteredFontsChangedNotification.
+
+        FontCache::invalidateAllFontCaches() can't do this directly because it's in platform/ and
+        therefore isn't allowed to know what Pages are. Instead, this patch takes a process-global
+        callback and calls that instead. This callback is set at initialization time.
+
+        Test: fast/text/install-font-style-recalc.html
+
+        * page/Page.cpp:
+        (WebCore::m_contentSecurityPolicyModeForExtension):
+        (WebCore::Page::firstTimeInitialization):
+        * page/Page.h:
+        * platform/graphics/FontCache.cpp:
+        (WebCore::Function<void):
+        (WebCore::FontCache::registerFontCacheInvalidationCallback):
+        (WebCore::FontCache::invalidateAllFontCaches):
+        * platform/graphics/FontCache.h:
+
 2022-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Plumb the IOSurfacePool through to ImageBufferBackend creation via ImageBuffer::CreationContext

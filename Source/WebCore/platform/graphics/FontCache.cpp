@@ -489,12 +489,26 @@ void FontCache::invalidate()
     purgeInactiveFontData();
 }
 
+static Function<void()>& fontCacheInvalidationCallback()
+{
+    static NeverDestroyed<Function<void()>> callback;
+    return callback.get();
+}
+
+void FontCache::registerFontCacheInvalidationCallback(Function<void()>&& callback)
+{
+    fontCacheInvalidationCallback() = WTFMove(callback);
+}
+
 void FontCache::invalidateAllFontCaches()
 {
     ASSERT(isMainThread());
 
     // FIXME: Invalidate FontCaches in workers too.
     FontCache::forCurrentThread().invalidate();
+
+    if (fontCacheInvalidationCallback())
+        fontCacheInvalidationCallback()();
 }
 
 #if !PLATFORM(COCOA)

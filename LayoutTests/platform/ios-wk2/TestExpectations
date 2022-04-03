@@ -2252,3 +2252,5 @@ webkit.org/b/233621 http/tests/webgpu [ Skip ]
 webkit.org/b/237849 imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/238634 media/video-object-fit.html [ ImageOnlyFailure ]
+
+fast/text/install-font-style-recalc.html [ Pass ]

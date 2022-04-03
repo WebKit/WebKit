@@ -150,6 +150,8 @@ public:
     void increaseUserScriptInjectedCount() { ++m_userScriptInjectedCount; }
     size_t userScriptInjectedCount() const { return m_userScriptInjectedCount; }
 
+    void clearResourceLoadStatistics();
+
 private:
     InjectedBundle() = default;
     ~InjectedBundle();

@@ -1,3 +1,17 @@
+2022-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Automatically relayout the page when new fonts are installed
+        https://bugs.webkit.org/show_bug.cgi?id=238483
+        <rdar://problem/80544133>
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * fast/text/install-font-style-recalc-expected.txt: Added.
+        * fast/text/install-font-style-recalc.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2022-04-02  Alan Bujtas  <zalan@apple.com>
 
         [Ruby] Remove incorrect implicit integral floor in RenderRubyText::adjustInlineDirectionLineBounds

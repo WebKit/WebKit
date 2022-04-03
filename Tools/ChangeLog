@@ -1,3 +1,22 @@
+2022-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Automatically relayout the page when new fonts are installed
+        https://bugs.webkit.org/show_bug.cgi?id=238483
+        <rdar://problem/80544133>
+
+        Reviewed by Chris Dumez.
+
+        Make TestRunner::dumpResourceLoadStatistics() clear any currently-recorded statistics.
+        This avoids the problem where spurious layouts during the time when the page has been created but
+        before the test has begun record irrelevant statistics.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        (WTR::InjectedBundle::clearResourceLoadStatistics):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::dumpResourceLoadStatistics):
+
 2022-04-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Add to MiniBrowser the ability to log a textual representation of the AX trees for the current page.

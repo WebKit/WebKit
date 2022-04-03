@@ -5204,3 +5204,6 @@ fast/text/accessibility-bold.html [ Pass ImageOnlyFailure ]
 
 # Only certain ports have WebGPU implementations.
 http/tests/webgpu [ Failure ImageOnlyFailure Pass Timeout ]
+
+# Only some ports automatically relayout if a font is installed while the page is open
+fast/text/install-font-style-recalc.html [ Failure ]
