@@ -1,3 +1,16 @@
+2022-04-03  Tim Horton  <timothy_horton@apple.com>
+
+        _WKDataTask doesn't work in macCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=238655
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/PlatformHave.h:
+        Enable HAVE(NSURLSESSION_TASK_DELEGATE) on macCatalyst.
+        Drive-by enable a few other things on macCatalyst.
+        Remove and simplify some always-true version checks.
+        Leave some comments about ones I'm not sure about.
+
 2022-04-02  Chris Dumez  <cdumez@apple.com>
 
         Add default constructor to ASCIILiteral

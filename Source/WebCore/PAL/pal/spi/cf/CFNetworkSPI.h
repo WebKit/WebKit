@@ -474,18 +474,6 @@ WTF_EXTERN_C_END
 - (void)_setCookiesRemovedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* __nullable removedCookies, NSString* __nullable domainForRemovedCookies, bool removeAllCookies))cookiesRemovedHandler onQueue:(dispatch_queue_t __nullable)queue;
 @end
 
-#if HAVE(BROKEN_DOWNLOAD_RESUME_UNLINK)
-@interface __NSCFLocalDownloadFile : NSObject
-@end
-@interface __NSCFLocalDownloadFile ()
-@property (readwrite, assign) BOOL skipUnlink;
-@end
-
-@interface NSURLSessionDownloadTask ()
-- (__NSCFLocalDownloadFile *)downloadFile;
-@end
-#endif
-
 @interface NSURLResponse ()
 - (void)_setMIMEType:(NSString *)type;
 @end

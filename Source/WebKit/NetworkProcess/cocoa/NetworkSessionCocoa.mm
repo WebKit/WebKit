@@ -1014,15 +1014,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     download->didReceiveData(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
-- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didResumeAtOffset:(int64_t)fileOffset expectedTotalBytes:(int64_t)expectedTotalBytes
-{
-#if HAVE(BROKEN_DOWNLOAD_RESUME_UNLINK)
-    // This is to work around rdar://problem/63249830
-    if ([downloadTask respondsToSelector:@selector(downloadFile)] && [downloadTask.downloadFile respondsToSelector:@selector(setSkipUnlink:)])
-        downloadTask.downloadFile.skipUnlink = YES;
-#endif
-}
-
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
 {
     auto* networkDataTask = [self existingTask:dataTask];

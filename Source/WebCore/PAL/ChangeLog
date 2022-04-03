@@ -1,3 +1,12 @@
+2022-04-03  Tim Horton  <timothy_horton@apple.com>
+
+        _WKDataTask doesn't work in macCatalyst
+        https://bugs.webkit.org/show_bug.cgi?id=238655
+
+        Reviewed by Alexey Proskuryakov.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2022-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add support for temporarily installing VKCImageAnalysisInteraction on WKContentView
