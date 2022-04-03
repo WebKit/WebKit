@@ -3500,8 +3500,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         textMarker = (AXTextMarkerRef)parameter;
     else if (AXObjectIsTextMarkerRange(parameter))
         textMarkerRange = (AXTextMarkerRangeRef)parameter;
-    else if ([parameter isKindOfClass:[WebAccessibilityObjectWrapper class]])
+    else if ([parameter isKindOfClass:[WebAccessibilityObjectWrapper class]]) {
         uiElement = [(WebAccessibilityObjectWrapper*)parameter axBackingObject];
+        // The parameter wrapper object has lost its AX object since being given to the client, so bail early.
+        if (!uiElement)
+            return nil;
+    }
     else if ([parameter isKindOfClass:[NSNumber class]])
         number = parameter;
     else if ([parameter isKindOfClass:[NSArray class]])

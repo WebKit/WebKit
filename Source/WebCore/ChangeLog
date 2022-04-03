@@ -1,3 +1,27 @@
+2022-04-03  Tyler Wilcock  <tyler_w@apple.com>
+
+        -[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:] should fail fast if the given parameter wrapper has no backing object
+        https://bugs.webkit.org/show_bug.cgi?id=238635
+
+        Reviewed by Chris Fleizach.
+
+        If this method is called with a parameter wrapper object that has lost
+        its backing object, we should return early to avoid dereferencing a
+        null pointer.
+
+        This could happen in rare split-second transition states where a wrapper
+        has lost its backing object but has not yet been cleaned up by a notification.
+        This could also happen if WebKit is vending detached objects (e.g. via AXChildren)
+        in a similar transition state.
+
+        No test added because I haven't been able to find any scenario reproducing
+        this issue either in our existing layout tests or on real webpages.
+
+        rdar://90925399
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2022-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Automatically relayout the page when new fonts are installed
