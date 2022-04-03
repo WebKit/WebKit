@@ -37,12 +37,24 @@
 namespace WebCore {
 
 class Filter;
+class HostWindow;
+class IOSurfacePool;
 
 class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {
 public:
+    struct CreationContext {
+        // clang 13.1.6 throws errors if we use default initializers here.
+        HostWindow* hostWindow;
+        IOSurfacePool* surfacePool;
+        CreationContext(HostWindow* window = nullptr, IOSurfacePool* pool = nullptr)
+            : hostWindow(window)
+            , surfacePool(pool)
+        { }
+    };
+
     // Will return a null pointer on allocation failure.
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, const HostWindow* = nullptr);
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale, const DestinationColorSpace&, PixelFormat, const HostWindow* = nullptr);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, const CreationContext& = { });
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale, const DestinationColorSpace&, PixelFormat, const CreationContext& = { });
 
     RefPtr<ImageBuffer> clone() const;
 

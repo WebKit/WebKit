@@ -1,3 +1,40 @@
+2022-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Plumb the IOSurfacePool through to ImageBufferBackend creation via ImageBuffer::CreationContext
+        https://bugs.webkit.org/show_bug.cgi?id=238695
+
+        Reviewed by Said Abou-Hallawa.
+
+        Wrap the existing HostWindow* and a new IOSurfacePool* pointers into a ImageBuffer::CreationContext
+        struct, and replace the HostWindow* argument with it in buffer creation functions.
+
+        RemoteLayerBackingStoreCollection::allocateBufferForBackingStore() passes the singleton IOSurfacePool
+        which is thus used in the non-GPU Process code path (DOM rendering disabled).
+
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image):
+        * platform/graphics/ConcreteImageBuffer.h:
+        (WebCore::ConcreteImageBuffer::create):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::create):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::CreationContext::CreationContext):
+        (WebCore::ImageBuffer::create):
+        * platform/graphics/ImageBufferBackend.h:
+        * platform/graphics/PlatformImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoImageSurfaceBackend::create):
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.h:
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::poolStatistics const):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::create):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.h:
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::create):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/displaylists/DisplayListImageBuffer.h:
+
 2022-04-02  Chris Dumez  <cdumez@apple.com>
 
         Add default constructor to ASCIILiteral

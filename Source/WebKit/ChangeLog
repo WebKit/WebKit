@@ -1,3 +1,30 @@
+2022-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Plumb the IOSurfacePool through to ImageBufferBackend creation via ImageBuffer::CreationContext
+        https://bugs.webkit.org/show_bug.cgi?id=238695
+
+        Reviewed by Said Abou-Hallawa.
+
+        Wrap the existing HostWindow* and a new IOSurfacePool* pointers into a ImageBuffer::CreationContext
+        struct, and replace the HostWindow* argument with it in buffer creation functions.
+
+        RemoteLayerBackingStoreCollection::allocateBufferForBackingStore() passes the singleton IOSurfacePool
+        which is thus used in the non-GPU Process code path (DOM rendering disabled).
+
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::create):
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureFrontBuffer):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::allocateBufferForBackingStore):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.h:
+
 2022-04-02  Chris Dumez  <cdumez@apple.com>
 
         Add default constructor to ASCIILiteral

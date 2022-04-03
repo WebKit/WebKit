@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ImageBufferBackendHandleSharing.h"
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/PlatformImageBufferBackend.h>
 #include <wtf/IsoMalloc.h>
 
@@ -48,7 +49,7 @@ public:
     static unsigned calculateBytesPerRow(const Parameters&, const WebCore::IntSize& backendSize);
     static size_t calculateMemoryCost(const Parameters&);
 
-    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, const WebCore::HostWindow*);
+    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, const WebCore::ImageBuffer::CreationContext&);
     static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, ImageBufferBackendHandle);
 
     ImageBufferShareableBitmapBackend(const Parameters&, RefPtr<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);

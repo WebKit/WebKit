@@ -116,7 +116,7 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement& renderer, const FloatSiz
 
     // Transform Image into ImageBuffer.
     auto renderingMode = renderer.page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
-    auto sourceImage = ImageBuffer::create(size, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, renderer.hostWindow());
+    auto sourceImage = ImageBuffer::create(size, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { renderer.hostWindow() });
     if (!sourceImage)
         return &Image::nullImage();
 

@@ -33,6 +33,7 @@
 #import "RemoteLayerTreeContext.h"
 #import "SwapBuffersDisplayRequirement.h"
 #import <WebCore/ConcreteImageBuffer.h>
+#import <WebCore/IOSurfacePool.h>
 #import <wtf/text/TextStream.h>
 
 const Seconds volatilityTimerInterval = 200_ms;
@@ -263,9 +264,9 @@ RefPtr<WebCore::ImageBuffer> RemoteLayerBackingStoreCollection::allocateBufferFo
 {
     switch (backingStore.type()) {
     case RemoteLayerBackingStore::Type::IOSurface:
-        return WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(backingStore.size(), backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat(), nullptr);
+        return WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(backingStore.size(), backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat(), { nullptr, &WebCore::IOSurfacePool::sharedPool() });
     case RemoteLayerBackingStore::Type::Bitmap:
-        return WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStore.size(), backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat(), nullptr);
+        return WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStore.size(), backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat(), { });
     }
     return nullptr;
 }

@@ -40,7 +40,7 @@ public:
     static size_t calculateMemoryCost(const Parameters&);
 
     static std::unique_ptr<CGDisplayListImageBufferBackend> create(const Parameters&);
-    static std::unique_ptr<CGDisplayListImageBufferBackend> create(const Parameters&, const WebCore::HostWindow*);
+    static std::unique_ptr<CGDisplayListImageBufferBackend> create(const Parameters&, const WebCore::ImageBuffer::CreationContext&);
 
     WebCore::GraphicsContext& context() const final;
     WebCore::IntSize backendSize() const final;

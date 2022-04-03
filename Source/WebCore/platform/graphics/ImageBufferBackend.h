@@ -40,7 +40,6 @@ namespace WebCore {
 
 class GraphicsContext;
 class GraphicsContextGL;
-class HostWindow;
 class Image;
 class NativeImage;
 class PixelBuffer;

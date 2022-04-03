@@ -40,9 +40,9 @@ class ImageBuffer final : public ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer::baseTransform;
 
 public:
-    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
+    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const WebCore::ImageBuffer::CreationContext& creationContext)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
+        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, creationContext);
     }
 
     static auto create(const FloatSize& size, const GraphicsContext& context)

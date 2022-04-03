@@ -37,10 +37,10 @@ template<typename BackendType>
 class ConcreteImageBuffer : public ImageBuffer {
 public:
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const CreationContext& creationContext, Arguments&&... arguments)
     {
         auto parameters = ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat };
-        auto backend = BackendType::create(parameters, hostWindow);
+        auto backend = BackendType::create(parameters, creationContext);
         if (!backend)
             return nullptr;
         return adoptRef(new ImageBufferType(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...));
