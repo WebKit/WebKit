@@ -3319,7 +3319,10 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitFontSmoothing:
         case CSSPropertyWebkitLocale:
         case CSSPropertyWebkitTextOrientation:
+#if ENABLE(TEXT_AUTOSIZING)
         case CSSPropertyWebkitTextSizeAdjust:
+        case CSSPropertyInternalTextAutosizingStatus:
+#endif
         case CSSPropertyWebkitTextZoom:
         case CSSPropertyAdditiveSymbols:
         case CSSPropertyAlignmentBaseline:
@@ -3443,9 +3446,10 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyUnicodeRange:
         case CSSPropertyWillChange:
         case CSSPropertyWordWrap:
+#if ENABLE(APPLE_PAY)
         case CSSPropertyApplePayButtonStyle:
         case CSSPropertyApplePayButtonType:
-        case CSSPropertyInternalTextAutosizingStatus:
+#endif
         case CSSPropertyWebkitBackgroundClip:
         case CSSPropertyWebkitBackgroundOrigin:
         case CSSPropertyWebkitBorderImage:
@@ -3463,7 +3467,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitColumnBreakBefore:
         case CSSPropertyWebkitColumnBreakInside:
         case CSSPropertyWebkitColumnProgression:
+#if ENABLE(CURSOR_VISIBILITY)
         case CSSPropertyWebkitCursorVisibility:
+#endif
         case CSSPropertyWebkitFontSizeDelta:
         case CSSPropertyWebkitHyphenateCharacter:
         case CSSPropertyWebkitHyphenateLimitAfter:
