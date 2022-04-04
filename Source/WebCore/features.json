@@ -55,7 +55,7 @@
     {
         "name": "Broadcast Channel API",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=230236",
@@ -173,6 +173,15 @@
         }
     },
     {
+        "name": "CSS Highlight",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://www.w3.org/TR/css-highlight-api-1/",
+        "specification": "CSS Custom Highlight API Module Level 1",
+        "description": "The Custom Highlight API extends the concept of highlight pseudo-elements (see CSS Pseudo-Elements 4 § 3 Highlight Pseudo-elements) by providing a way for web developers to style the text of arbitrary Range objects, rather than being limited to the user agent defined ::selection, ::inactive-selection, ::spelling-error, and ::grammar-error."
+    },
+    {
         "name": "CSS Image Values and Replaced Content Module Level 4",
         "url": "https://www.w3.org/TR/css4-images/",
         "keywords": ["css image values","css","image values"],
@@ -228,6 +237,24 @@
         "url": "http://dev.w3.org/csswg/mediaqueries-4/",
         "keywords": ["css media queries", "media queries"],
         "category": "css"
+    },
+    {
+        "name": "CSS Motion Path",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://www.w3.org/TR/motion-1/",
+        "specification": "Motion Path Module Level 1",
+        "description": "This specification defines a set of CSS properties that allow authors to specify position along a path. The object can be positioned, transitioned and animated along this path over a given period of time."
+    },
+    {
+        "name": "CSS Overscroll Behavior",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://www.w3.org/TR/css-overscroll-1/",
+        "specification": "CSS Overscroll Behavior Module Level 1",
+        "description": "Allow authors to control whether scrolling results in overscroll (\"rubber-banding\") and propagates to enclosing scroll containers."
     },
     {
         "name": "CSS Painting API Level 1",
@@ -416,7 +443,7 @@
     {
         "name": "Cross-Origin-Embedder-Policy HTTP header",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://html.spec.whatwg.org/multipage/origin.html#coep",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=228755",
@@ -581,7 +608,7 @@
     {
         "name": "Lazy image loading",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://html.spec.whatwg.org/#attr-img-loading",
         "keywords": ["lazy", "image", "loading"],
@@ -633,6 +660,16 @@
             "email": "joepeck@webkit.org",
             "twitter": "@JosephPecoraro"
         }
+    },
+    {
+        "name": "Permissions API",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://www.w3.org/TR/permissions/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=229504",
+        "keywords": ["web payments", "payment request", "apple pay"],
+        "description": "This specification defines common infrastructure that other specifications can use to interact with browser permissions. These permissions represent a user's choice to allow or deny access to 'powerful features' of the platform."
     },
     {
         "name": "Pointer Events Level 2",
@@ -838,6 +875,16 @@
         }
     },
     {
+        "name": "Web Speech",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://wicg.github.io/speech-api/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=237614",
+        "keywords": ["accessibility", "speech"],
+        "description": "An API to to enable web developers to incorporate speech recognition and synthesis into their web pages."
+    },
+    {
         "name": "WebGL 1",
         "status": {
             "status": "Supported"
@@ -902,6 +949,24 @@
         "url": "https://www.w3.org/TR/css-cascade-5/#layering",
         "specification": "CSS Cascading and Inheritance Level 5",
         "description": "In the same way that cascade origins provide a balance of power between user and author styles, cascade layers provide a structured way to organize and balance concerns within a single origin. Rules within a single cascade layer cascade together, without interleaving with style rules outside the layer."
+    },
+    {
+        "name": "CSS Container Queries",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://www.w3.org/TR/css-contain-3/#container-queries",
+        "specification": "CSS Containment Module Level 3",
+        "description": "While media queries provide a method to query aspects of the user agent or device environment that a document is being displayed in (such as viewport dimensions or user preferences), container queries allow testing aspects of elements within the document (such as box dimensions or computed styles)."
+    },
+    {
+        "name": "CSS Subgrid",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://www.w3.org/TR/css-grid-2/#subgrids",
+        "specification": "CSS Grid Layout Module Level 2",
+        "description": "Level 2 expands Grid by adding “subgrid” capabilities for nested grids to participate in the sizing of their parent grids."
     },
     {
         "name": "CSS viewport-relative units",
@@ -1346,6 +1411,16 @@
         "comment": "WebKit used to support MicroData. The feature never gained any traction and was eventually removed to clean up the codebase."
     },
     {
+        "name": "Offscreen Canvas",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/canvas.html#the-offscreencanvas-interface",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=183720",
+        "specification": "HTML5",
+        "comment": "OffscreenCanvas objects are used to create rendering contexts, much like an HTMLCanvasElement, but with no connection to the DOM. This makes it possible to use canvas rendering contexts in workers."
+    },
+    {
         "name": "Payment Request",
         "status": {
             "status": "Supported"
@@ -1436,12 +1511,12 @@
     {
         "name": "Shared Web Workers",
         "status": {
-            "status": "Removed"
+            "status": "In Development"
         },
-        "url": "https://html.spec.whatwg.org/multipage/workers.html#shared-workers-introduction",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=140344",
+        "url": "https://html.spec.whatwg.org/#shared-workers-introduction",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=230382",
         "specification": "HTML5",
-        "comment": "The implementation of Shared Web Workers was imposing undesirable constraints on the engine. The feature never gained any adoption and was eventually removed from the engine."
+        "description": "SharedWorker is a kind of worker that can be accessed from several browsing contexts, such as several windows, iframes or even workers."
     },
     {
         "name": "Srcset w descriptor and related sizes attribute",
@@ -1601,7 +1676,7 @@
     {
         "name": "Web Locks",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://w3c.github.io/web-locks/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=232436",
@@ -1646,7 +1721,6 @@
         "name": "inert attribute",
         "status": {
             "status": "In Development",
-            "enabled-by-default": false
         },
         "url": "https://whatpr.org/html/4288/interaction.html#the-inert-attribute",
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/inert",

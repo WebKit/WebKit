@@ -1,3 +1,15 @@
+2022-04-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Update 'features.json' for current state of WebKit 
+        https://bugs.webkit.org/show_bug.cgi?id=238746
+
+        Reviewed by Tim Nguyen.
+
+        I noticed that the current 'features.json' file is out of date. I think the attached changes more
+        accurately reflect the state of the engine.
+
+        * features.json:
+
 2022-04-04  Chris Dumez  <cdumez@apple.com>
 
         Simplify / Optimize the whitespace cache implementation
