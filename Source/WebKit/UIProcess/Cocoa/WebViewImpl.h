@@ -679,6 +679,9 @@ public:
     void didFinishPresentation(WKRevealItemPresenter *);
 #endif
 
+    void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect);
+    void cancelElementFullscreenVideoExtraction();
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);

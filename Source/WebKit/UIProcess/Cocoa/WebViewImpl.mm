@@ -5967,6 +5967,18 @@ bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInVie
 #endif
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditions.mm>
+#else
+void WebViewImpl::beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect)
+{
+}
+
+void WebViewImpl::cancelElementFullscreenVideoExtraction()
+{
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

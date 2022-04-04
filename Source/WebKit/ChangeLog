@@ -1,3 +1,22 @@
+2022-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] Add plumbing to extract video frames in element fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238715
+        rdar://91216152
+
+        Reviewed by Tim Horton.
+
+        Implement (begin|cancel)ElementFullscreenVideoExtraction on macOS, leaving empty stubs for non-internal builds.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::beginElementFullscreenVideoExtraction):
+        (WebKit::WebViewImpl::cancelElementFullscreenVideoExtraction):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::beginElementFullscreenVideoExtraction):
+        (WebKit::PageClientImpl::cancelElementFullscreenVideoExtraction):
+
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
         Remove the 'general_directory_for_storage' system feature flag

@@ -256,6 +256,10 @@ private:
     bool effectiveAppearanceIsDark() const override;
     bool effectiveUserInterfaceLevelIsElevated() const override;
 
+    bool isFullscreenVideoExtractionEnabled() const final { return true; }
+    void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect) final;
+    void cancelElementFullscreenVideoExtraction() final;
+
 #if ENABLE(DRAG_SUPPORT)
     void didPerformDragOperation(bool handled) final;
 #endif
