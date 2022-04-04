@@ -159,8 +159,7 @@ private:
 
     BuilderContext builderContext(const State&);
 
-    enum class UseMatchedDeclarationsCache { Yes, No };
-    void applyMatchedProperties(State&, const MatchResult&, UseMatchedDeclarationsCache = UseMatchedDeclarationsCache::Yes);
+    void applyMatchedProperties(State&, const MatchResult&);
 
     ScopeRuleSets m_ruleSets;
 
