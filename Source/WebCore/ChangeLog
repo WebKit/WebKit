@@ -1,3 +1,30 @@
+2022-04-04  Jer Noble  <jer.noble@apple.com>
+
+        [Perf] HTMLVideoElement is performing synchronous paints; causing main thread hangs
+        https://bugs.webkit.org/show_bug.cgi?id=238707
+        <rdar://91025299>
+
+        Reviewed by Eric Carlson.
+
+        Spin trace diagnostics show that the main thread of the WebContent process is often hung,
+        blocked on a synchronous Paint message to the GPU process; in turn, the GPU process is often
+        busy performing media-related work, but in each of the cases found, painting is unnecessary.
+        The media player in question is accelerated, and should only be painted during layer snapshotting
+        or during a print operation.
+
+        Only paint if the renderer is not accelerated, the media element is not accelerated, or if
+        the paint operation isn't flattening or snapshotting. HTMLMediaElement inappropriately caches
+        the value of MediaPlayer::supportsAcceleratedRendering(), under the (incorrect) assumption that
+        the value cannot change during the lifetime of the MediaPlayer, so remove this caching layer.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::supportsAcceleratedRendering const):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+
 2022-03-28  Antoine Quint  <graouts@webkit.org>
 
         Make it hard to add a new CSS property to WebKit wihtout adding animation support

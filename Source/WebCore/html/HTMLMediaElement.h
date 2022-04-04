@@ -157,7 +157,7 @@ public:
     RefPtr<MediaPlayer> player() const { return m_player; }
     WEBCORE_EXPORT std::optional<MediaPlayerIdentifier> playerIdentifier() const;
 
-    bool supportsAcceleratedRendering() const { return m_cachedSupportsAcceleratedRendering; }
+    bool supportsAcceleratedRendering() const { return m_player && m_player->supportsAcceleratedRendering(); }
 
     virtual bool isVideo() const { return false; }
     bool hasVideo() const override { return false; }
@@ -1068,7 +1068,6 @@ private:
 #endif
 
     RefPtr<MediaPlayer> m_player;
-    bool m_cachedSupportsAcceleratedRendering { false };
 
     MediaPlayer::Preload m_preload { Preload::Auto };
 
