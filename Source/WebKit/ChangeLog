@@ -1,5 +1,19 @@
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
+        Remove the 'general_directory_for_storage' system feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=238762
+
+        Reviewed by Sihui Liu.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::defaultShouldUseCustomStoragePaths):
+
+2022-04-04  Tim Horton  <timothy_horton@apple.com>
+
         Remove the 'sw_vp9_decoder_on_battery' system feature flag
         https://bugs.webkit.org/show_bug.cgi?id=238761
 

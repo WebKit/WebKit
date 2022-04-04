@@ -67,10 +67,5 @@
 		<key>Enabled</key>
 		<false/>
 	</dict>
-	<key>general_directory_for_storage</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
 </dict>
 </plist>
