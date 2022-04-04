@@ -234,8 +234,8 @@ TEST(WTF_URLExtras, URLExtras_ParsingError)
     EXPECT_FALSE(url3.isValid());
     EXPECT_STREQ([[url3 absoluteString] UTF8String], "%C3%82%C2%B6");
     
-    std::array<LChar, 3> latin1 { 0xC2, 0xB6, 0x00 };
-    WTF::URL url4 { String(latin1.data()) };
+    std::array<LChar, 2> latin1 { 0xC2, 0xB6 };
+    WTF::URL url4 { String(latin1.data(), 2) };
     EXPECT_FALSE(url4.isValid());
     EXPECT_TRUE(url4.string().is8Bit());
     EXPECT_STREQ([[url4 absoluteString] UTF8String], "%C3%82%C2%B6");

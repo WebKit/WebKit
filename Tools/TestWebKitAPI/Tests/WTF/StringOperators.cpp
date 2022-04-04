@@ -260,10 +260,10 @@ TEST(WTF, ConcatenateCharacterArrayAndEmptyString)
     ASSERT_EQ(static_cast<unsigned>(4), concatenation16.length());
     ASSERT_TRUE(concatenation16 == String(ucharArray));
 
-    LChar lcharArray[] = { 't', 'e', 's', 't', '\0' };
-    String concatenation8 = lcharArray + emptyString;
+    LChar lcharArray[] = { 't', 'e', 's', 't' };
+    String concatenation8 = String(lcharArray, 4) + emptyString;
     ASSERT_EQ(static_cast<unsigned>(4), concatenation8.length());
-    ASSERT_TRUE(concatenation8 == String(lcharArray));
+    ASSERT_TRUE(concatenation8 == String(lcharArray, 4));
 }
 
 } // namespace TestWebKitAPI

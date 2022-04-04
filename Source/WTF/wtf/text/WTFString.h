@@ -81,7 +81,6 @@ public:
     WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
 
     // Construct a string with latin1 data, from a null-terminated source.
-    WTF_EXPORT_PRIVATE String(const LChar* characters);
     WTF_EXPORT_PRIVATE String(const char* characters);
 
     // Construct a string referencing an existing StringImpl.

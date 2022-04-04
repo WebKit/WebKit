@@ -215,7 +215,7 @@ void ExtensionsGLOpenGLCommon::initializeAvailableExtensions()
         GLint numExtensions = 0;
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         for (GLint i = 0; i < numExtensions; ++i)
-            m_availableExtensions.add(glGetStringi(GL_EXTENSIONS, i));
+            m_availableExtensions.add(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
 
         if (!m_availableExtensions.contains("GL_ARB_texture_storage"_s)) {
             GLint majorVersion;

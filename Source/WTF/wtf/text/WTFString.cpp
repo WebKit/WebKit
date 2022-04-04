@@ -67,12 +67,6 @@ String::String(const char* characters, unsigned length)
 }
 
 // Construct a string with Latin-1 data, from a null-terminated source.
-String::String(const LChar* nullTerminatedString)
-{
-    if (nullTerminatedString)
-        m_impl = StringImpl::create(nullTerminatedString);
-}
-
 String::String(const char* nullTerminatedString)
 {
     if (nullTerminatedString)
