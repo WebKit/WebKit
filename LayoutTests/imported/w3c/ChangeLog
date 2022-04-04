@@ -1,3 +1,16 @@
+2022-04-04  Youenn Fablet  <youenn@apple.com>
+
+        CORS: Allow particular Range header values without a preflight
+        https://bugs.webkit.org/show_bug.cgi?id=231174
+        <rdar://problem/84101544>
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/range/general.any-expected.txt:
+        * web-platform-tests/fetch/range/general.any.js:
+        * web-platform-tests/fetch/range/general.any.worker-expected.txt:
+        * web-platform-tests/fetch/range/resources/long-wav.py:
+
 2022-04-02  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Improve compatibility of source matching

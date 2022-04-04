@@ -36,6 +36,7 @@
 #include "HTTPHeaderField.h"
 #include "HTTPHeaderNames.h"
 #include "ParsedContentType.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -168,6 +169,7 @@ static bool containsCORSUnsafeRequestHeaderBytes(const String& value)
 }
 
 // See RFC 7231, Section 5.3.5 and 3.1.3.2.
+// https://fetch.spec.whatwg.org/#cors-safelisted-request-header
 bool isValidLanguageHeaderValue(const String& value)
 {
     for (unsigned i = 0; i < value.length(); ++i) {
@@ -176,11 +178,6 @@ bool isValidLanguageHeaderValue(const String& value)
             continue;
         return false;
     }
-    
-    // FIXME: Validate further by splitting into language tags and optional quality
-    // values (q=) and then check each language tag.
-    // Language tags https://tools.ietf.org/html/rfc7231#section-3.1.3.1
-    // Language tag syntax https://tools.ietf.org/html/bcp47#section-2.1
     return true;
 }
 
@@ -954,9 +951,47 @@ bool isCrossOriginSafeHeader(const String& name, const HTTPHeaderSet& accessCont
     return accessControlExposeHeaderSet.contains(name);
 }
 
+static bool isSimpleRangeHeaderValue(const String& value)
+{
+    if (!value.startsWith("bytes="_s))
+        return false;
+
+    unsigned start = 0;
+    unsigned end = 0;
+    bool hasHyphen = false;
+
+    for (size_t cptr = 6; cptr < value.length(); ++cptr) {
+        auto character = value[cptr];
+        if (character >= '0' && character <= '9') {
+            if (productOverflows<unsigned>(hasHyphen ? end : start, 10))
+                return false;
+            auto newDecimal = (hasHyphen ? end : start) * 10;
+            auto sum = Checked<unsigned, RecordOverflow>(newDecimal) + Checked<unsigned, RecordOverflow>(character - '0');
+            if (sum.hasOverflowed())
+                return false;
+
+            if (hasHyphen)
+                end = sum.value();
+            else
+                start = sum.value();
+            continue;
+        }
+        if (character == '-' && !hasHyphen) {
+            hasHyphen = true;
+            continue;
+        }
+        return false;
+    }
+
+    return hasHyphen && (!end || start < end);
+}
+
 // Implements https://fetch.spec.whatwg.org/#cors-safelisted-request-header
 bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
 {
+    if (value.length() > 128)
+        return false;
+
     switch (name) {
     case HTTPHeaderName::Accept:
         if (!isValidAcceptHeaderValue(value))
@@ -979,11 +1014,15 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
             return false;
         break;
     }
+    case HTTPHeaderName::Range:
+        if (!isSimpleRangeHeaderValue(value))
+            return false;
+        break;
     default:
         // FIXME: Should we also make safe other headers (DPR, Downlink, Save-Data...)? That would require validating their values.
         return false;
     }
-    return value.length() <= 128;
+    return true;
 }
 
 // Implements <https://fetch.spec.whatwg.org/#concept-method-normalize>.

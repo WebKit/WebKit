@@ -1,3 +1,15 @@
+2022-04-04  Youenn Fablet  <youenn@apple.com>
+
+        CORS: Allow particular Range header values without a preflight
+        https://bugs.webkit.org/show_bug.cgi?id=231174
+        <rdar://problem/84101544>
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated tests.
+
+        * platform/network/HTTPParsers.cpp:
+
 2022-04-04  Jer Noble  <jer.noble@apple.com>
 
         [Perf] HTMLVideoElement is performing synchronous paints; causing main thread hangs
