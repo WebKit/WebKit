@@ -37,10 +37,19 @@ SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/JavaScriptCore.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,JavaScriptCore.order;
 
+PROFILE_DATA_FLAGS = $(PROFILE_DATA_FLAGS_$(CONFIGURATION)_$(WK_PLATFORM_NAME));
+PROFILE_DATA_FLAGS_Release_macosx = $(PROFILE_DATA_FLAGS_Release_macosx$(WK_MACOS_1200));
+PROFILE_DATA_FLAGS_Release_macosx_MACOS_SINCE_1200 = $(PROFILE_DATA_FLAGS_ENABLED);
+PROFILE_DATA_FLAGS_Release_iphoneos = $(PROFILE_DATA_FLAGS_ENABLED);
+PROFILE_DATA_FLAGS_Production_macosx = $(PROFILE_DATA_FLAGS_Production_macosx$(WK_MACOS_1200));
+PROFILE_DATA_FLAGS_Production_macosx_MACOS_SINCE_1200 = $(PROFILE_DATA_FLAGS_ENABLED);
+PROFILE_DATA_FLAGS_Production_iphoneos = $(PROFILE_DATA_FLAGS_ENABLED);
+PROFILE_DATA_FLAGS_ENABLED = -fprofile-instr-use=$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.profdata;
+
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-OTHER_CFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/;
-OTHER_CPLUSPLUSFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/;
+OTHER_CFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ $(PROFILE_DATA_FLAGS);
+OTHER_CPLUSPLUSFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ $(PROFILE_DATA_FLAGS);
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(JAVASCRIPTCORE_FRAMEWORKS_DIR);
