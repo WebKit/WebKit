@@ -91,8 +91,8 @@ public:
 
     void positionLineBox(LegacyInlineTextBox&);
 
-    virtual float width(unsigned from, unsigned length, const FontCascade&, float xPos, HashSet<const Font*>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
-    virtual float width(unsigned from, unsigned length, float xPos, bool firstLine = false, HashSet<const Font*>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float width(unsigned from, unsigned length, const FontCascade&, float xPos, HashSet<const Font*>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    float width(unsigned from, unsigned length, float xPos, bool firstLine = false, HashSet<const Font*>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
 
     float minLogicalWidth() const;
     float maxLogicalWidth() const;
