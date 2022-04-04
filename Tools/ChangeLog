@@ -1,3 +1,14 @@
+2022-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the TestWebKitAPI build with an iOS 15.4 internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=238750
+
+        Reviewed by Alex Christensen.
+
+        Add needed include.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2022-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add API tests for video extraction in element fullscreen

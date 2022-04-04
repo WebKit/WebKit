@@ -31,6 +31,7 @@
 
 #import <UIKit/NSParagraphStyle_Private.h>
 #import <UIKit/NSTextAlternatives.h>
+#import <UIKit/NSTextList.h>
 #import <UIKit/UIAction_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItemGroup_Private.h>
