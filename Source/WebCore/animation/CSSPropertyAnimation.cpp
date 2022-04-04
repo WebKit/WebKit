@@ -3265,15 +3265,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
     };
     const unsigned animatableShorthandPropertiesCount = WTF_ARRAY_LENGTH(animatableShorthandProperties);
 
-    // TODO:
-    //
-    //  CSSPropertyVerticalAlign
-    //
-    // Compound properties that have components that should be animatable:
-    //
-    //  CSSPropertyColumns
-    //  CSSPropertyWebkitBoxReflect
-
     // Make sure unused slots have a value
     for (int i = 0; i < numCSSProperties; ++i)
         m_propertyToIdMap[i] = cInvalidPropertyWrapperIndex;
@@ -3310,6 +3301,213 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         m_propertyWrappers.uncheckedAppend(makeUnique<ShorthandPropertyWrapper>(propertyID, WTFMove(longhandWrappers)));
         indexFromPropertyID(propertyID) = animatableLonghandPropertiesCount + i;
     }
+
+#ifndef NDEBUG
+    for (auto i = firstCSSProperty; i <= lastCSSProperty; ++i) {
+        auto property = convertToCSSPropertyID(i);
+        switch (property) {
+        // If a property is not animatable per spec, add it to this list of cases.
+        // When adding a new property, you should make sure it belongs in this list
+        // or provide a wrapper for it above. If you are adding to this list but the
+        // property should be animatable, make sure to file a bug.
+        case CSSPropertyColorScheme:
+        case CSSPropertyDirection:
+        case CSSPropertyDisplay:
+        case CSSPropertyFontOpticalSizing:
+        case CSSPropertyTextOrientation:
+        case CSSPropertyWritingMode:
+        case CSSPropertyWebkitFontSmoothing:
+        case CSSPropertyWebkitLocale:
+        case CSSPropertyWebkitTextOrientation:
+        case CSSPropertyWebkitTextSizeAdjust:
+        case CSSPropertyWebkitTextZoom:
+        case CSSPropertyAdditiveSymbols:
+        case CSSPropertyAlignmentBaseline:
+        case CSSPropertyAll:
+        case CSSPropertyAlt:
+        case CSSPropertyAnimation:
+        case CSSPropertyAnimationComposition:
+        case CSSPropertyAnimationDelay:
+        case CSSPropertyAnimationDirection:
+        case CSSPropertyAnimationDuration:
+        case CSSPropertyAnimationFillMode:
+        case CSSPropertyAnimationIterationCount:
+        case CSSPropertyAnimationName:
+        case CSSPropertyAnimationPlayState:
+        case CSSPropertyAnimationTimingFunction:
+        case CSSPropertyAppearance:
+        case CSSPropertyBasePalette:
+        case CSSPropertyBorderBlock: // logical shorthand
+        case CSSPropertyBorderBlockColor: // logical shorthand
+        case CSSPropertyBorderBlockStyle: // logical shorthand
+        case CSSPropertyBorderBlockWidth: // logical shorthand
+        case CSSPropertyBorderInline: // logical shorthand
+        case CSSPropertyBorderInlineColor: // logical shorthand
+        case CSSPropertyBorderInlineStyle: // logical shorthand
+        case CSSPropertyBorderInlineWidth: // logical shorthand
+        case CSSPropertyBorderStyle:
+        case CSSPropertyBufferedRendering:
+        case CSSPropertyColumnSpan:
+        case CSSPropertyColumns:
+        case CSSPropertyContain:
+        case CSSPropertyContainer:
+        case CSSPropertyContainerName:
+        case CSSPropertyContainerType:
+        case CSSPropertyFallback:
+        case CSSPropertyFlex:
+        case CSSPropertyFlexFlow:
+        case CSSPropertyFontDisplay:
+        case CSSPropertyGap:
+        case CSSPropertyGlyphOrientationHorizontal:
+        case CSSPropertyGlyphOrientationVertical:
+        case CSSPropertyGrid:
+        case CSSPropertyGridArea:
+        case CSSPropertyGridColumn:
+        case CSSPropertyGridRow:
+        case CSSPropertyGridTemplate:
+        case CSSPropertyHangingPunctuation:
+        case CSSPropertyImageRendering:
+        case CSSPropertyInlineSize:
+        case CSSPropertyInputSecurity:
+        case CSSPropertyInset:
+        case CSSPropertyInsetBlock:
+        case CSSPropertyInsetBlockEnd:
+        case CSSPropertyInsetBlockStart:
+        case CSSPropertyInsetInline:
+        case CSSPropertyInsetInlineEnd:
+        case CSSPropertyInsetInlineStart:
+        case CSSPropertyListStyle:
+        case CSSPropertyMarginBlock: // logical shorthand
+        case CSSPropertyMarginInline: // logical shorthand
+        case CSSPropertyMarker:
+        case CSSPropertyMathStyle:
+        case CSSPropertyNegative:
+        case CSSPropertyOverflow:
+        case CSSPropertyOverrideColors:
+        case CSSPropertyOverscrollBehavior:
+        case CSSPropertyOverscrollBehaviorBlock:
+        case CSSPropertyOverscrollBehaviorInline:
+        case CSSPropertyOverscrollBehaviorX:
+        case CSSPropertyOverscrollBehaviorY:
+        case CSSPropertyPad:
+        case CSSPropertyPaddingBlock: // logical shorthand
+        case CSSPropertyPaddingInline: // logical shorthand
+        case CSSPropertyPage:
+        case CSSPropertyPlaceContent:
+        case CSSPropertyPlaceItems:
+        case CSSPropertyPlaceSelf:
+        case CSSPropertyPrefix:
+        case CSSPropertyRange:
+        case CSSPropertyScrollMargin:
+        case CSSPropertyScrollMarginBlock:
+        case CSSPropertyScrollMarginBlockEnd:
+        case CSSPropertyScrollMarginBlockStart:
+        case CSSPropertyScrollMarginBottom:
+        case CSSPropertyScrollMarginInline:
+        case CSSPropertyScrollMarginInlineEnd:
+        case CSSPropertyScrollMarginInlineStart:
+        case CSSPropertyScrollMarginLeft:
+        case CSSPropertyScrollMarginRight:
+        case CSSPropertyScrollMarginTop:
+        case CSSPropertyScrollPadding:
+        case CSSPropertyScrollPaddingBlock:
+        case CSSPropertyScrollPaddingBlockEnd:
+        case CSSPropertyScrollPaddingBlockStart:
+        case CSSPropertyScrollPaddingBottom:
+        case CSSPropertyScrollPaddingInline:
+        case CSSPropertyScrollPaddingInlineEnd:
+        case CSSPropertyScrollPaddingInlineStart:
+        case CSSPropertyScrollPaddingLeft:
+        case CSSPropertyScrollPaddingRight:
+        case CSSPropertyScrollPaddingTop:
+        case CSSPropertyScrollSnapAlign:
+        case CSSPropertyScrollSnapStop:
+        case CSSPropertyScrollSnapType:
+        case CSSPropertySize:
+        case CSSPropertySpeakAs:
+        case CSSPropertySrc:
+        case CSSPropertyStrokeColor:
+        case CSSPropertySuffix:
+        case CSSPropertySymbols:
+        case CSSPropertySystem:
+        case CSSPropertyTextCombineUpright:
+        case CSSPropertyTextDecoration:
+        case CSSPropertyTextDecorationSkip:
+        case CSSPropertyTextUnderlinePosition:
+        case CSSPropertyTransition:
+        case CSSPropertyTransitionDelay:
+        case CSSPropertyTransitionDuration:
+        case CSSPropertyTransitionProperty:
+        case CSSPropertyTransitionTimingFunction:
+        case CSSPropertyUnicodeBidi:
+        case CSSPropertyUnicodeRange:
+        case CSSPropertyWillChange:
+        case CSSPropertyWordWrap:
+        case CSSPropertyApplePayButtonStyle:
+        case CSSPropertyApplePayButtonType:
+        case CSSPropertyInternalTextAutosizingStatus:
+        case CSSPropertyWebkitBackgroundClip:
+        case CSSPropertyWebkitBackgroundOrigin:
+        case CSSPropertyWebkitBorderImage:
+        case CSSPropertyWebkitBoxAlign:
+        case CSSPropertyWebkitBoxDirection:
+        case CSSPropertyWebkitBoxFlex:
+        case CSSPropertyWebkitBoxFlexGroup:
+        case CSSPropertyWebkitBoxLines:
+        case CSSPropertyWebkitBoxOrdinalGroup:
+        case CSSPropertyWebkitBoxOrient:
+        case CSSPropertyWebkitBoxPack:
+        case CSSPropertyWebkitBoxReflect:
+        case CSSPropertyWebkitColumnAxis:
+        case CSSPropertyWebkitColumnBreakAfter:
+        case CSSPropertyWebkitColumnBreakBefore:
+        case CSSPropertyWebkitColumnBreakInside:
+        case CSSPropertyWebkitColumnProgression:
+        case CSSPropertyWebkitCursorVisibility:
+        case CSSPropertyWebkitFontSizeDelta:
+        case CSSPropertyWebkitHyphenateCharacter:
+        case CSSPropertyWebkitHyphenateLimitAfter:
+        case CSSPropertyWebkitHyphenateLimitBefore:
+        case CSSPropertyWebkitHyphenateLimitLines:
+        case CSSPropertyWebkitLineAlign:
+        case CSSPropertyWebkitLineBoxContain:
+        case CSSPropertyWebkitLineClamp:
+        case CSSPropertyWebkitLineGrid:
+        case CSSPropertyWebkitLineSnap:
+        case CSSPropertyWebkitMarqueeDirection:
+        case CSSPropertyWebkitMarqueeIncrement:
+        case CSSPropertyWebkitMarqueeRepetition:
+        case CSSPropertyWebkitMarqueeSpeed:
+        case CSSPropertyWebkitMarqueeStyle:
+        case CSSPropertyWebkitMaskBoxImage:
+        case CSSPropertyWebkitMaskBoxImageOutset:
+        case CSSPropertyWebkitMaskBoxImageRepeat:
+        case CSSPropertyWebkitMaskBoxImageSlice:
+        case CSSPropertyWebkitMaskBoxImageSource:
+        case CSSPropertyWebkitMaskBoxImageWidth:
+        case CSSPropertyWebkitMaskClip:
+        case CSSPropertyWebkitMaskComposite:
+        case CSSPropertyWebkitMaskSourceType:
+        case CSSPropertyWebkitNbspMode:
+        case CSSPropertyWebkitRtlOrdering:
+        case CSSPropertyWebkitTextCombine:
+        case CSSPropertyWebkitTextDecoration:
+        case CSSPropertyWebkitTextDecorationsInEffect:
+        case CSSPropertyWebkitTextSecurity:
+        case CSSPropertyWebkitTextStroke:
+        case CSSPropertyWebkitTextStrokeWidth:
+        case CSSPropertyWebkitTransformStyle:
+        case CSSPropertyWebkitUserDrag:
+        case CSSPropertyWebkitUserModify:
+        case CSSPropertyWebkitUserSelect:
+            continue;
+        default:
+            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(property, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
+            ASSERT(wrapperForProperty(resolvedProperty));
+            break;
+        }
+    }
+#endif
 }
 
 void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation)

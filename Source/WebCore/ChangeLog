@@ -1,3 +1,19 @@
+2022-03-28  Antoine Quint  <graouts@webkit.org>
+
+        Make it hard to add a new CSS property to WebKit wihtout adding animation support
+        https://bugs.webkit.org/show_bug.cgi?id=238447
+
+        Reviewed by Dean Jackson.
+
+        It's easy to add a new CSS property to WebKit without thinking about animation support.
+        Down the line, it would be better to add support to the script dealing with CSSProperties.json
+        to automatically generate animation support where possible, but to get started we now
+        ASSERT() whether all properties have been found to have animated support, except those
+        known not to be animatable.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
 2022-04-03  Tim Horton  <timothy_horton@apple.com>
 
         Standardize naming of WK_NETWORK_EXTENSION_LDFLAGS (from LD_FLAGS)
