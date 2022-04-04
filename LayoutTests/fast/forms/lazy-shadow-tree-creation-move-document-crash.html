@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+PASS if no crash.
+<script>
+function run() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    let e = document.createElement("input");
+    frames[0].document.body.offsetTop;
+    document.body.append(e);
+    frames[0].document.body.append(e);
+}
+</script>
+<iframe onload="run()"></iframe>

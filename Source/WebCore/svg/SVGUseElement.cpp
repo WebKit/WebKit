@@ -100,7 +100,7 @@ Node::InsertedIntoAncestorResult SVGUseElement::insertedIntoAncestor(InsertionTy
     SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         if (m_shadowTreeNeedsUpdate)
-            document().accessSVGExtensions().addUseElementWithPendingShadowTreeUpdate(*this);
+            document().addElementWithPendingUserAgentShadowTreeUpdate(*this);
         invalidateShadowTree();
         // FIXME: Move back the call to updateExternalDocument() here once notifyFinished is made always async.
         return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
@@ -119,7 +119,7 @@ void SVGUseElement::removedFromAncestor(RemovalType removalType, ContainerNode& 
     // and SVGUseElement::updateExternalDocument which calls invalidateShadowTree().
     if (removalType.disconnectedFromDocument) {
         if (m_shadowTreeNeedsUpdate)
-            document().accessSVGExtensions().removeUseElementWithPendingShadowTreeUpdate(*this);
+            document().removeElementWithPendingUserAgentShadowTreeUpdate(*this);
     }
     SVGGraphicsElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument) {
@@ -217,7 +217,7 @@ void SVGUseElement::buildPendingResource()
     invalidateShadowTree();
 }
 
-void SVGUseElement::updateShadowTree()
+void SVGUseElement::updateUserAgentShadowTree()
 {
     m_shadowTreeNeedsUpdate = false;
 
@@ -226,7 +226,7 @@ void SVGUseElement::updateShadowTree()
 
     if (!isConnected())
         return;
-    document().accessSVGExtensions().removeUseElementWithPendingShadowTreeUpdate(*this);
+    document().removeElementWithPendingUserAgentShadowTreeUpdate(*this);
 
     String targetID;
     auto* target = findTarget(&targetID);
@@ -530,7 +530,7 @@ void SVGUseElement::invalidateShadowTree()
     invalidateStyleAndRenderersForSubtree();
     invalidateDependentShadowTrees();
     if (isConnected())
-        document().accessSVGExtensions().addUseElementWithPendingShadowTreeUpdate(*this);
+        document().addElementWithPendingUserAgentShadowTreeUpdate(*this);
 }
 
 void SVGUseElement::invalidateDependentShadowTrees()

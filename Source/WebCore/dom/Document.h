@@ -1673,6 +1673,10 @@ public:
     WEBCORE_EXPORT ModalContainerObserver* modalContainerObserver();
     ModalContainerObserver* modalContainerObserverIfExists() const;
 
+    WEBCORE_EXPORT bool hasElementWithPendingUserAgentShadowTreeUpdate(Element&) const;
+    void addElementWithPendingUserAgentShadowTreeUpdate(Element&);
+    WEBCORE_EXPORT void removeElementWithPendingUserAgentShadowTreeUpdate(Element&);
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0);
@@ -2260,6 +2264,8 @@ private:
 #endif
 
     std::unique_ptr<ModalContainerObserver> m_modalContainerObserver;
+
+    WeakHashSet<Element> m_elementsWithPendingUserAgentShadowTreeUpdates;
 };
 
 Element* eventTargetElementForDocument(Document*);

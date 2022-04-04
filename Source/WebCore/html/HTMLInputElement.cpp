@@ -134,9 +134,10 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     , m_hasTouchEventHandler(false)
 #endif
     , m_isSpellcheckDisabledExceptTextReplacement(false)
+    , m_hasPendingUserAgentShadowTreeUpdate(false)
 {
-    // m_inputType is lazily created when constructed by the parser to avoid constructing unnecessarily a text inputType and
-    // its shadow subtree, just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
+    // m_inputType is lazily created when constructed by the parser to avoid constructing unnecessarily a text inputType,
+    // just to destroy them when the |type| attribute gets set by the parser to something else than 'text'.
     if (!createdByParser)
         m_inputType = InputType::createText(*this);
 
@@ -146,14 +147,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
 
 Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
 {
-    bool shouldCreateShadowRootLazily = createdByParser;
-    Ref<HTMLInputElement> inputElement = adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser));
-    if (!shouldCreateShadowRootLazily) {
-        ASSERT(inputElement->m_inputType->needsShadowSubtree());
-        inputElement->createUserAgentShadowRoot();
-        inputElement->createShadowSubtreeAndUpdateInnerTextElementEditability();
-    }
-    return inputElement;
+    return adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser));
 }
 
 HTMLImageLoader& HTMLInputElement::ensureImageLoader()
@@ -161,12 +155,6 @@ HTMLImageLoader& HTMLInputElement::ensureImageLoader()
     if (!m_imageLoader)
         m_imageLoader = makeUnique<HTMLImageLoader>(*this);
     return *m_imageLoader;
-}
-
-void HTMLInputElement::createShadowSubtreeAndUpdateInnerTextElementEditability()
-{
-    Ref<InputType> protectedInputType(*m_inputType);
-    protectedInputType->createShadowSubtreeAndUpdateInnerTextElementEditability(isInnerTextElementEditable());
 }
 
 HTMLInputElement::~HTMLInputElement()
@@ -209,6 +197,11 @@ HTMLElement* HTMLInputElement::containerElement() const
 RefPtr<TextControlInnerTextElement> HTMLInputElement::innerTextElement() const
 {
     return m_inputType->innerTextElement();
+}
+
+RefPtr<TextControlInnerTextElement> HTMLInputElement::innerTextElementCreatingShadowSubtreeIfNeeded()
+{
+    return m_inputType->innerTextElementCreatingShadowSubtreeIfNeeded();
 }
 
 HTMLElement* HTMLInputElement::innerBlockElement() const
@@ -579,10 +572,7 @@ void HTMLInputElement::updateType()
     m_inputType->detachFromElement();
 
     m_inputType = WTFMove(newType);
-    if (m_inputType->needsShadowSubtree()) {
-        ensureUserAgentShadowRoot();
-        createShadowSubtreeAndUpdateInnerTextElementEditability();
-    }
+    m_inputType->createShadowSubtreeIfNeeded();
 
     updateWillValidateAndValidity();
 
@@ -735,19 +725,12 @@ inline void HTMLInputElement::initializeInputType()
     const AtomString& type = attributeWithoutSynchronization(typeAttr);
     if (type.isNull()) {
         m_inputType = InputType::createText(*this);
-        ASSERT(m_inputType->needsShadowSubtree());
-        createUserAgentShadowRoot();
-        createShadowSubtreeAndUpdateInnerTextElementEditability();
         updateWillValidateAndValidity();
         return;
     }
 
     m_hasType = true;
     m_inputType = InputType::create(*this, type);
-    if (m_inputType->needsShadowSubtree()) {
-        createUserAgentShadowRoot();
-        createShadowSubtreeAndUpdateInnerTextElementEditability();
-    }
     updateWillValidateAndValidity();
     registerForSuspensionCallbackIfNeeded();
     runPostTypeUpdateTasks();
@@ -1586,7 +1569,20 @@ Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(Insertio
 #if ENABLE(DATALIST_ELEMENT)
     resetListAttributeTargetObserver();
 #endif
+    if (insertionType.connectedToDocument && m_inputType->needsShadowSubtree() && !m_inputType->hasCreatedShadowSubtree() && !m_hasPendingUserAgentShadowTreeUpdate) {
+        document().addElementWithPendingUserAgentShadowTreeUpdate(*this);
+        m_hasPendingUserAgentShadowTreeUpdate = true;
+    }
+    
     return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+}
+
+void HTMLInputElement::updateUserAgentShadowTree()
+{
+    ASSERT(m_hasPendingUserAgentShadowTreeUpdate);
+    document().removeElementWithPendingUserAgentShadowTreeUpdate(*this);
+    m_hasPendingUserAgentShadowTreeUpdate = false;
+    m_inputType->createShadowSubtreeIfNeeded();
 }
 
 void HTMLInputElement::didFinishInsertingNode()
@@ -1594,10 +1590,6 @@ void HTMLInputElement::didFinishInsertingNode()
     HTMLTextFormControlElement::didFinishInsertingNode();
     if (isInTreeScope() && !form())
         addToRadioButtonGroup();
-#if ENABLE(DATALIST_ELEMENT)
-    if (isConnected() && m_hasNonEmptyList)
-        dataListMayHaveChanged();
-#endif
 }
 
 void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -1606,6 +1598,10 @@ void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNod
         oldParentOfRemovedTree.treeScope().radioButtonGroups().removeButton(*this);
     if (removalType.disconnectedFromDocument && !form())
         removeFromRadioButtonGroup();
+    if (removalType.disconnectedFromDocument && m_hasPendingUserAgentShadowTreeUpdate) {
+        document().removeElementWithPendingUserAgentShadowTreeUpdate(*this);
+        m_hasPendingUserAgentShadowTreeUpdate = false;
+    }
     HTMLTextFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ASSERT(!isConnected());
 #if ENABLE(DATALIST_ELEMENT)

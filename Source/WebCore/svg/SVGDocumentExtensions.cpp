@@ -48,10 +48,7 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document& document)
 {
 }
 
-SVGDocumentExtensions::~SVGDocumentExtensions()
-{
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_useElementsWithPendingShadowTreeUpdate.computesEmpty());
-}
+SVGDocumentExtensions::~SVGDocumentExtensions() = default;
 
 void SVGDocumentExtensions::addTimeContainer(SVGSVGElement& element)
 {
@@ -89,20 +86,6 @@ RenderSVGResourceContainer* SVGDocumentExtensions::resourceById(const AtomString
 
     return m_resources.get(id);
 }
-
-
-void SVGDocumentExtensions::addUseElementWithPendingShadowTreeUpdate(SVGUseElement& element)
-{
-    auto result = m_useElementsWithPendingShadowTreeUpdate.add(element);
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.isNewEntry);
-}
-
-void SVGDocumentExtensions::removeUseElementWithPendingShadowTreeUpdate(SVGUseElement& element)
-{
-    m_useElementsWithPendingShadowTreeUpdate.remove(element);
-    // FIXME: Assert that element was in m_svgUseElements once re-entrancy to update style and layout have been removed.
-}
-
 
 void SVGDocumentExtensions::startAnimations()
 {
