@@ -379,7 +379,16 @@ class Port(object):
     def _expected_baselines_for_suffixes(self, test_name, suffixes, all_baselines=False, device_type=None):
         baseline_search_path = self.baseline_search_path(device_type=device_type) + [self.layout_tests_dir()]
         fs = self._filesystem
-        baseline_name_root = fs.splitext(test_name)[0] + '-expected'
+
+        baseline_ext_parts = fs.splitext(test_name)
+
+        baseline_name_root = baseline_ext_parts[0]
+        if len(baseline_ext_parts) > 1:
+            if '?' in baseline_ext_parts[1]:
+                baseline_name_root += '_' + baseline_ext_parts[1].split('?')[1]
+            if '#' in baseline_ext_parts[1]:
+                baseline_name_root += '_' + baseline_ext_parts[1].split('#')[1]
+        baseline_name_root += '-expected'
 
         baselines = []
         for platform_dir in baseline_search_path:

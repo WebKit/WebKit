@@ -202,7 +202,16 @@ class SingleTestRunner(object):
             raise AssertionError('unrecognized baseline location: %s' % location)
 
         fs.maybe_make_directory(output_dir)
-        output_basename = fs.basename(fs.splitext(self._test_name)[0] + "-expected" + extension)
+
+        ext_parts = fs.splitext(self._test_name)
+
+        output_basename = fs.basename(ext_parts[0])
+        if len(ext_parts) > 1 and '?' in ext_parts[1]:
+            output_basename += '_' + ext_parts[1].split('?')[1]
+        if len(ext_parts) > 1 and '#' in ext_parts[1]:
+            output_basename += '_' + ext_parts[1].split('#')[1]
+        output_basename += '-expected' + extension
+
         output_path = fs.join(output_dir, output_basename)
         _log.info('Writing new expected result "%s"' % port.relative_test_filename(output_path))
         port.update_baseline(output_path, data)

@@ -1,3 +1,47 @@
+2022-04-04  J Pascoe  <j_pascoe@apple.com>
+
+        [ iOS 15 ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231544
+        rdar://problem/84122086
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds support for running js templated WPT tests with the variant
+        meta tag seperately, as the WPT test infrastructure does.
+
+        New unit tests were added to webkitpy scripts to test the new behavior.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_legacy.py:
+        (LayoutTestFinder._expand_variants):
+        (LayoutTestFinder._real_tests):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder_legacy_unittest.py:
+        (LayoutTestFinderTests.test_find_template_variants):
+        (LayoutTestFinderTests.test_preserves_order_directories): Deleted.
+        (LayoutTestFinderTests.test_preserves_order_mixed_file_type): Deleted.
+        (LayoutTestFinderTests.test_preserves_order_mixed_file_type_b): Deleted.
+        (LayoutTestFinderTests.test_find_directory_multiple_times): Deleted.
+        (LayoutTestFinderTests.test_no_reference): Deleted.
+        (LayoutTestFinderTests.test_glob_no_references): Deleted.
+        (LayoutTestFinderTests.test_find_with_skipped_directories): Deleted.
+        (LayoutTestFinderTests.test_find_with_skipped_directories_2): Deleted.
+        (LayoutTestFinderTests.test_is_test_file): Deleted.
+        (LayoutTestFinderTests.test_is_w3c_resource_file): Deleted.
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.output_filename):
+        * Scripts/webkitpy/port/base.py:
+        (Port._expected_baselines_for_suffixes):
+        * Scripts/webkitpy/w3c/common.py:
+        * Scripts/webkitpy/w3c/test_importer.py:
+        (TestImporter._variant_lines):
+        (TestImporter):
+        (TestImporter._write_html_template):
+        (TestImporter._read_environments_and_variants_for_template_test):
+        (TestImporter.write_html_files_for_templated_js_tests):
+        (TestImporter.readEnvironmentsForTemplateTest): Deleted.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+
 2022-04-04  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit canonicalize] Support multiple empty lines

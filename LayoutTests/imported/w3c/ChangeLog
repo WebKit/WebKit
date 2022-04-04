@@ -1,3 +1,48 @@
+2022-04-04  J Pascoe  <j_pascoe@apple.com>
+
+        [ iOS 15 ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231544
+        rdar://problem/84122086
+
+        Reviewed by Brent Fulgham.
+
+        Update expectations to account for variant metadata.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any.html:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any.worker.html:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any.worker_1-1000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any.worker_1001-2000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any.worker_2001-3000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any.worker_3001-last-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any_1-1000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any_1001-2000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any_2001-3000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any_3001-last-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.html:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker-expected.txt: Removed.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_1-1000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_1001-2000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_2001-3000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_3001-4000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_4001-5000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_5001-6000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_6001-7000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_7001-8000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker_8001-last-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_1-1000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_1001-2000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_2001-3000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_3001-4000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_4001-5000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_5001-6000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_6001-7000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_7001-8000-expected.txt: Added.
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any_8001-last-expected.txt: Added.
+
 2022-04-04  Tim Nguyen  <ntim@apple.com>
 
         Make focus-after-close.html WPT pass

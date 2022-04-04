@@ -34,6 +34,7 @@ import re
 from webkitpy.common import find_files
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.port.base import Port
+from webkitpy.w3c.common import TEMPLATED_TEST_HEADER
 
 
 _log = logging.getLogger(__name__)
@@ -132,10 +133,41 @@ class LayoutTestFinder(object):
 
         return expanded_paths
 
+    def _expand_variants(self, files):
+        expanded = []
+        fs = self._port._filesystem
+        for f in files:
+            if ".any." not in f:
+                expanded.append(f)
+                continue
+            opened_file = fs.open_text_file_for_reading(f)
+            try:
+                first_line = opened_file.readline()
+                if not first_line or first_line.strip() != TEMPLATED_TEST_HEADER:
+                    expanded.append(f)
+                    continue
+                variants = []
+                for line in iter(opened_file.readline, ''):
+                    results = re.match(r'<!--\s*META:\s*variant=([?|#]\S+)\s*-->', line)
+                    if not results:
+                        continue
+                    variant = results.group(1)
+                    if variant:
+                        variants.append(variant)
+                if variants:
+                    for variant in variants:
+                        expanded.append(f + variant)
+                else:
+                    expanded.append(f)
+            except UnicodeDecodeError:
+                return files
+        return expanded
+
     def _real_tests(self, paths):
         # When collecting test cases, skip these directories
         skipped_directories = set(['.svn', '_svn', 'resources', 'support', 'script-tests', 'tools', 'reference', 'reftest'])
         files = find_files.find(self._port._filesystem, self._port.layout_tests_dir(), paths, skipped_directories, self._is_test_file, self._port.test_key)
+        files = self._expand_variants(files)
         return [self._port.relative_test_filename(f) for f in files]
 
     def _is_test_file(self, filesystem, dirname, filename):

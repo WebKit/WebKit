@@ -45,6 +45,8 @@ PROVISIONAL_PR_LABEL = 'do not merge yet'
 # TODO(qyearsley): Avoid hard-coding third_party/WebKit/LayoutTests.
 CHROMIUM_WPT_DIR = 'third_party/WebKit/LayoutTests/external/wpt/'
 
+TEMPLATED_TEST_HEADER = '<!-- This file is required for WebKit test infrastructure to run the templated test -->'
+
 _log = logging.getLogger(__name__)
 
 
