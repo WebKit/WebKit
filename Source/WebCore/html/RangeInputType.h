@@ -52,7 +52,7 @@ private:
     void handleMouseDownEvent(MouseEvent&) final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
-    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(bool) final;
     Decimal parseToNumber(const String&, const Decimal&) const final;
     String serialize(const Decimal&) const final;
     bool accessKeyAction(bool sendMouseEvents) final;

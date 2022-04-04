@@ -77,7 +77,7 @@ private:
 #endif
 
     Icon* icon() const final;
-    void createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source, bool) final;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(bool) final;
     void disabledStateChanged() final;
     void attributeChanged(const QualifiedName&) final;
     String defaultToolTip() const final;

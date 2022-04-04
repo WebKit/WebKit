@@ -102,13 +102,13 @@ bool SearchInputType::needsContainer() const
     return true;
 }
 
-void SearchInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(ContainerNode::ChildChange::Source source, bool isInnerTextElementEditable)
+void SearchInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool isInnerTextElementEditable)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(!m_resultsButton);
     ASSERT(!m_cancelButton);
 
-    TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(source, isInnerTextElementEditable);
+    TextFieldInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(isInnerTextElementEditable);
     RefPtr<HTMLElement> container = containerElement();
     RefPtr<HTMLElement> textWrapper = innerBlockElement();
     ASSERT(container);
