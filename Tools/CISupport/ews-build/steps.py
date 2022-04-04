@@ -4637,11 +4637,11 @@ class ValidateSquashed(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
     def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': 'Patches are always squashed'}
-        elif self.results == SUCCESS:
+        if self.results == FAILURE:
+            return {'step': 'Can only land squashed branches'}
+        if self.results == SUCCESS:
             return {'step': 'Verified branch is squashed'}
-        return {'step': 'Can only land squashed branches'}
+        return super(ValidateSquashed, self).getResultSummary()
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
@@ -4714,11 +4714,11 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         return super(AddReviewerToCommitMessage, self).start()
 
     def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': 'No reviewer defined' if self.getProperty('github.number') else 'Patches have no commit message'}
-        elif self.results == SUCCESS:
+        if self.results == FAILURE:
+            return {'step': 'Failed to apply reviewers'}
+        if self.results == SUCCESS:
             return {'step': f'Reviewed by {self.reviewers()}'}
-        return {'step': 'Failed to apply reviewers'}
+        return super(AddReviewerToCommitMessage, self).getResultSummary()
 
     def doStepIf(self, step):
         return self.getProperty('github.number') and self.getProperty('reviewers_full_names')
@@ -4762,11 +4762,11 @@ class AddReviewerToChangeLog(steps.ShellSequence, ShellMixin, AddReviewerMixin):
         return super(AddReviewerToChangeLog, self).run()
 
     def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': 'No reviewer defined' if self.getProperty('github.number') else 'Patches are edited upon application'}
-        elif self.results == SUCCESS:
+        if self.results == FAILURE:
+            return {'step': 'Failed to add reviewers to ChangeLogs'}
+        if self.results == SUCCESS:
             return {'step': f'Reviewed by {self.reviewers()}'}
-        return {'step': 'Failed to add reviewers to ChangeLogs'}
+        return super(AddReviewerToChangeLog, self).getResultSummary()
 
     def doStepIf(self, step):
         return self.getProperty('github.number') and self.getProperty('reviewers_full_names')
@@ -4794,7 +4794,9 @@ class ValidateCommitMessage(shell.ShellCommand):
         return super(ValidateCommitMessage, self).start()
 
     def getResultSummary(self):
-        return {'step': self.summary}
+        if self.results in (SUCCESS, FAILURE):
+            return {'step': self.summary}
+        return super(ValidateCommitMessage, self).getResultSummary()
 
     def evaluateCommand(self, cmd):
         rc = super(ValidateCommitMessage, self).evaluateCommand(cmd)
@@ -4853,11 +4855,11 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
         return super(Canonicalize, self).run()
 
     def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': 'Cannot canonicalize patches'}
-        if self.results != SUCCESS:
+        if self.results == SUCCESS:
+            return {'step': 'Canonicalized commit'}
+        if self.results == FAILURE:
             return {'step': 'Failed to canonicalize commit'}
-        return {'step': 'Canonicalized commit'}
+        return super(Canonicalize, self).getResultSummary()
 
     def doStepIf(self, step):
         return self.getProperty('github.number', False)
@@ -4885,11 +4887,11 @@ class PushPullRequestBranch(shell.ShellCommand):
         return super(PushPullRequestBranch, self).start()
 
     def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': 'No pull request branch to push to'}
-        if self.results != SUCCESS:
+        if self.results == SUCCESS:
+            return {'step': 'Pushed to pull request branch'}
+        if self.results == FAILURE:
             return {'step': 'Failed to push to pull request branch'}
-        return {'step': 'Pushed to pull request branch'}
+        return super(PushPullRequestBranch, self).getResultSummary()
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.number') and self.getProperty('github.head.ref') and self.getProperty('github.head.repo.full_name')
@@ -4932,11 +4934,11 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
         return super(UpdatePullRequest, self).start()
 
     def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': 'No pull request to update'}
-        if self.results != SUCCESS:
+        if self.results == SUCCESS:
+            return {'step': 'Updated pull request'}
+        if self.results == FAILURE:
             return {'step': 'Failed to update pull request'}
-        return {'step': 'Updated pull request'}
+        return super(UpdatePullRequest, self).getResultSummary()
 
     def evaluateCommand(self, cmd):
         rc = super(UpdatePullRequest, self).evaluateCommand(cmd)

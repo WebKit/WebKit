@@ -5621,7 +5621,7 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
     def test_skipped_patch(self):
         self.setupStep(ValidateSquashed())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='Patches are always squashed')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
     def test_success(self):
@@ -5694,7 +5694,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
     def test_skipped_patch(self):
         self.setupStep(AddReviewerToCommitMessage())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='Patches have no commit message')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
     def test_success(self):
@@ -5761,7 +5761,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('reviewers_full_names', [])
-        self.expectOutcome(result=SKIPPED, state_string='No reviewer defined')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
 
@@ -5783,7 +5783,7 @@ class TestAddReviewerToChangeLog(BuildStepMixinAdditions, unittest.TestCase):
     def test_skipped_patch(self):
         self.setupStep(AddReviewerToChangeLog())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='Patches are edited upon application')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
     def test_success(self):
@@ -5876,7 +5876,7 @@ class TestAddReviewerToChangeLog(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('reviewers_full_names', [])
-        self.expectOutcome(result=SKIPPED, state_string='No reviewer defined')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
 
@@ -5891,7 +5891,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def test_skipped_patch(self):
         self.setupStep(ValidateCommitMessage())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='Patches have no commit message')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
     def test_success(self):
@@ -5984,7 +5984,7 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
     def test_skipped_patch(self):
         self.setupStep(Canonicalize())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='Cannot canonicalize patches')
+        self.expectOutcome(result=SKIPPED, state_string='Canonicalize Commit (skipped)')
         return self.runStep()
 
     def test_success(self):
@@ -6080,7 +6080,7 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
     def test_skipped_patch(self):
         self.setupStep(PushPullRequestBranch())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='No pull request branch to push to')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
     def test_success(self):
@@ -6133,7 +6133,7 @@ class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):
     def test_skipped_patch(self):
         self.setupStep(UpdatePullRequest())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='No pull request to update')
+        self.expectOutcome(result=SKIPPED, state_string="'git log ...' (skipped)")
         return self.runStep()
 
     def test_success(self):
