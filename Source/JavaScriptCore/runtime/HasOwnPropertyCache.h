@@ -43,7 +43,7 @@ public:
         static ptrdiff_t offsetOfResult() { return OBJECT_OFFSETOF(Entry, result); }
 
         RefPtr<UniquedStringImpl> impl;
-        StructureID structureID { 0 };
+        StructureID structureID;
         bool result { false };
     };
 

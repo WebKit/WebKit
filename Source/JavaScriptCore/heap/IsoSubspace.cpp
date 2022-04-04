@@ -33,11 +33,11 @@
 
 namespace JSC {
 
-IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells)
+IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
     : Subspace(name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
     , m_localAllocator(&m_directory)
-    , m_isoAlignedMemoryAllocator(makeUnique<IsoAlignedMemoryAllocator>(name))
+    , m_isoAlignedMemoryAllocator(allocator ? WTFMove(allocator) : makeUnique<IsoAlignedMemoryAllocator>(name))
 {
     m_remainingLowerTierCellCount = numberOfLowerTierCells;
     ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
@@ -99,8 +99,9 @@ void* IsoSubspace::tryAllocateFromLowerTier()
         return revive(allocation);
     }
     if (m_remainingLowerTierCellCount) {
-        PreciseAllocation* allocation = PreciseAllocation::createForLowerTier(m_space.heap(), cellSize(), this, --m_remainingLowerTierCellCount);
-        return revive(allocation);
+        PreciseAllocation* allocation = PreciseAllocation::tryCreateForLowerTier(m_space.heap(), cellSize(), this, --m_remainingLowerTierCellCount);
+        if (allocation)
+            return revive(allocation);
     }
     return nullptr;
 }

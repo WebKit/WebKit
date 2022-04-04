@@ -120,7 +120,7 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
 }
 
 
-PreciseAllocation* PreciseAllocation::createForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
+PreciseAllocation* PreciseAllocation::tryCreateForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
 {
     if constexpr (validateDFGDoesGC)
         heap.vm().verifyCanGC();

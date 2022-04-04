@@ -116,6 +116,16 @@ ALWAYS_INLINE void SlotVisitor::appendHidden(const WriteBarrierBase<T, Traits>& 
     appendHiddenUnbarriered(slot.get());
 }
 
+ALWAYS_INLINE void SlotVisitor::append(const WriteBarrierStructureID& slot)
+{
+    appendUnbarriered(reinterpret_cast<JSCell*>(slot.get()));
+}
+
+ALWAYS_INLINE void SlotVisitor::appendHidden(const WriteBarrierStructureID& slot)
+{
+    appendHiddenUnbarriered(reinterpret_cast<JSCell*>(slot.get()));
+}
+
 template<typename Iterator>
 ALWAYS_INLINE void SlotVisitor::append(Iterator begin, Iterator end)
 {

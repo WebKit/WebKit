@@ -78,7 +78,7 @@ void FunctionExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_codeBlockForConstruct);
     visitor.append(thisObject->m_unlinkedExecutable);
     if (RareData* rareData = thisObject->m_rareData.get()) {
-        visitor.append(rareData->m_cachedPolyProtoStructure);
+        visitor.append(rareData->m_cachedPolyProtoStructureID);
         visitor.append(rareData->m_asString);
         if (TemplateObjectMap* map = rareData->m_templateObjectMap.get()) {
             Locker locker { thisObject->cellLock() };

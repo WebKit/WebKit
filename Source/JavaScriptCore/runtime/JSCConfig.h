@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,12 @@ class VM;
 
 #if ENABLE(SEPARATED_WX_HEAP)
 using JITWriteSeparateHeapsFunction = void (*)(off_t, const void*, size_t);
+#endif
+
+#if PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
+constexpr uintptr_t structureHeapAddressSize = 512 * MB;
+#else
+constexpr uintptr_t structureHeapAddressSize = 1 * GB;
 #endif
 
 struct Config {
@@ -82,6 +88,7 @@ struct Config {
     void* startExecutableMemory;
     void* endExecutableMemory;
     uintptr_t startOfFixedWritableMemoryPool;
+    uintptr_t startOfStructureHeap;
 
 #if ENABLE(SEPARATED_WX_HEAP)
     JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;
@@ -123,6 +130,7 @@ extern "C" JS_EXPORT_PRIVATE Config g_jscConfig;
 
 constexpr size_t offsetOfJSCConfigInitializeHasBeenCalled = offsetof(JSC::Config, initializeHasBeenCalled);
 constexpr size_t offsetOfJSCConfigGateMap = offsetof(JSC::Config, llint.gateMap);
+constexpr size_t offsetOfJSCConfigStartOfStructureHeap = offsetof(JSC::Config, startOfStructureHeap);
 
 } // namespace JSC
 

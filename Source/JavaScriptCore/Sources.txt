@@ -531,6 +531,7 @@ heap/IncrementalSweeper.cpp
 heap/IsoAlignedMemoryAllocator.cpp
 heap/IsoCellSet.cpp
 heap/IsoHeapCellType.cpp
+heap/IsoMemoryAllocatorBase.cpp
 heap/IsoSubspace.cpp
 heap/IsoSubspacePerVM.cpp
 heap/JITStubRoutineSet.cpp
@@ -552,6 +553,7 @@ heap/SlotVisitor.cpp
 heap/SpaceTimeMutatorScheduler.cpp
 heap/StochasticSpaceTimeMutatorScheduler.cpp
 heap/StopIfNecessaryTimer.cpp
+heap/StructureAlignedMemoryAllocator.cpp
 heap/Subspace.cpp
 heap/SynchronousStopTheWorldMutatorScheduler.cpp
 heap/Synchronousness.cpp
@@ -999,7 +1001,6 @@ runtime/StringRecursionChecker.cpp
 runtime/Structure.cpp
 runtime/StructureCache.cpp
 runtime/StructureChain.cpp
-runtime/StructureIDTable.cpp
 runtime/StructureRareData.cpp
 runtime/Symbol.cpp
 runtime/SymbolConstructor.cpp

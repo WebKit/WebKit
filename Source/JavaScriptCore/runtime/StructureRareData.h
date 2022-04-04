@@ -140,7 +140,6 @@ private:
 
     bool tryCachePropertyNameEnumeratorViaWatchpoint(VM&, Structure*, StructureChain*);
 
-    WriteBarrier<Structure> m_previous;
     // FIXME: We should have some story for clearing these property names caches in GC.
     // https://bugs.webkit.org/show_bug.cgi?id=192659
     uintptr_t m_cachedPropertyNameEnumeratorAndFlag { 0 };
@@ -156,6 +155,7 @@ private:
     std::unique_ptr<SpecialPropertyCache> m_specialPropertyCache;
     Box<InlineWatchpointSet> m_polyProtoWatchpoint;
 
+    WriteBarrierStructureID m_previous;
     PropertyOffset m_maxOffset;
     PropertyOffset m_transitionOffset;
 };

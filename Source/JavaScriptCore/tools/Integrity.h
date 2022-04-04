@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #pragma once
 
 #include "JSCJSValue.h"
-#include "StructureIDTable.h"
+#include "StructureID.h"
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
 
@@ -100,8 +100,7 @@ ALWAYS_INLINE void auditCell(VM& vm, JSValue value)
         auditCell<auditLevel>(vm, value.asCell());
 }
 
-ALWAYS_INLINE void auditStructureID(StructureIDTable&, StructureID);
-ALWAYS_INLINE void auditStructureID(VM&, StructureID);
+ALWAYS_INLINE void auditStructureID(StructureID);
 
 } // namespace Integrity
 

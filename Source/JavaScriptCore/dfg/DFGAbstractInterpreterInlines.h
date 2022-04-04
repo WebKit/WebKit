@@ -2201,7 +2201,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 // And we check the indexing mode of the structure. If the indexing mode is CoW, the butterfly is
                 // definitely JSImmutableButterfly.
                 StructureID structureIDEarly = array->structureID();
-                if (isNuked(structureIDEarly))
+                if (structureIDEarly.isNuked())
                     return false;
 
                 if (node->arrayMode().arrayClass() == Array::OriginalCopyOnWriteArray) {
@@ -2215,7 +2215,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     if (structureIDEarly != structureIDLate)
                         return false;
 
-                    Structure* structure = m_vm.getStructure(structureIDLate);
+                    Structure* structure = structureIDLate.decode();
                     switch (node->arrayMode().type()) {
                     case Array::Int32:
                     case Array::Contiguous:
@@ -2273,7 +2273,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                         if (structureIDEarly != structureIDLate)
                             return false;
 
-                        Structure* structure = m_vm.getStructure(structureIDLate);
+                        Structure* structure = structureIDLate.decode();
                         if (!hasAnyArrayStorage(structure->indexingMode()))
                             return false;
 

@@ -127,7 +127,7 @@ GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     if (!structureID)
         return GetByStatus(NoInformation, false);
 
-    Structure* structure = vm.heap.structureIDTable().get(structureID);
+    Structure* structure = structureID.decode();
 
     if (structure->takesSlowPathInDFGForImpureProperty())
         return GetByStatus(NoInformation, false);

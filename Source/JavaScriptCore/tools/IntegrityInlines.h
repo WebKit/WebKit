@@ -73,14 +73,13 @@ ALWAYS_INLINE void auditCellRandomly(VM& vm, JSCell* cell)
         auditCellFully(vm, cell);
 }
 
-ALWAYS_INLINE void auditStructureID(StructureIDTable& table, StructureID id)
-{
-    table.validate(id);
-}
 
-ALWAYS_INLINE void auditStructureID(VM& vm, StructureID id)
+ALWAYS_INLINE void auditStructureID(StructureID structureID)
 {
-    auditStructureID(vm.heap.structureIDTable(), id);
+    UNUSED_PARAM(structureID);
+#if CPU(ADDRESS64)
+    ASSERT(structureID.bits() <= structureHeapAddressSize + StructureID::nukedStructureIDBit);
+#endif
 }
 
 } // namespace Integrity

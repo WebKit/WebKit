@@ -29,17 +29,12 @@
 
 #include "ExecutableAllocator.h"
 #include "MacroAssemblerCodeRef.h"
+#include "StructureID.h"
 
 namespace JSC {
 
 class JITStubRoutineSet;
 class VM;
-
-#if USE(JSVALUE64)
-using StructureID = uint32_t;
-#else
-using StructureID = Structure*;
-#endif
 
 class AccessCase;
 

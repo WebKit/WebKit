@@ -562,7 +562,7 @@ CompilationResult Plan::finalize()
             for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->m_weakReferences)
                 trackedReferences.add(reference.get());
             for (StructureID structureID : m_codeBlock->jitCode()->dfgCommon()->m_weakStructureReferences)
-                trackedReferences.add(m_vm->getStructure(structureID));
+                trackedReferences.add(structureID.decode());
             for (WriteBarrier<Unknown>& constant : m_codeBlock->constants())
                 trackedReferences.add(constant.get());
 

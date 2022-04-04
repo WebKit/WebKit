@@ -44,19 +44,47 @@ static inline DWORD protection(bool writable, bool executable)
         (writable ? PAGE_READWRITE : PAGE_READONLY);
 }
 
-void* OSAllocator::reserveUncommitted(size_t bytes, Usage, bool writable, bool executable, bool, bool)
+void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage, bool writable, bool executable, bool, bool)
 {
-    void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE, protection(writable, executable));
-    if (!result)
-        CRASH();
+    return VirtualAlloc(nullptr, bytes, MEM_RESERVE, protection(writable, executable));
+}
+
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+    void* result = tryReserveUncommitted(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    RELEASE_ASSERT(result);
     return result;
 }
 
-void* OSAllocator::reserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool, bool)
+void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, Usage usage, bool writable, bool executable, bool, bool)
 {
-    void* result = VirtualAlloc(nullptr, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
-    if (!result)
-        CRASH();
+    ASSERT(hasOneBitSet(alignment) && alignment >= pageSize());
+
+    if (VirtualAlloc2Ptr()) {
+        MEM_ADDRESS_REQUIREMENTS addressReqs = { };
+        MEM_EXTENDED_PARAMETER param = { };
+        addressReqs.Alignment = alignment;
+        param.Type = MemExtendedParameterAddressRequirements;
+        param.Pointer = &addressReqs;
+        void* result = VirtualAlloc2Ptr()(nullptr, nullptr, bytes, MEM_RESERVE, protection(writable, executable), &param, 1);
+        return result;
+    }
+
+    void* result = tryReserveUncommitted(bytes + alignment);
+    // There's no way to release the reserved memory on Windows, from what I can tell as the whole segment has to be released at once.
+    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(alignment, reinterpret_cast<uintptr_t>(result)));
+    return aligned;
+}
+
+void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage, bool writable, bool executable, bool, bool)
+{
+    return VirtualAlloc(nullptr, bytes, MEM_RESERVE | MEM_COMMIT, protection(writable, executable));
+}
+
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
+{
+    void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
+    RELEASE_ASSERT(result);
     return result;
 }
 

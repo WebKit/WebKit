@@ -96,7 +96,7 @@ JSC_DEFINE_CUSTOM_GETTER(symbolProtoGetterDescription, (JSGlobalObject* globalOb
     if (!symbol)
         return throwVMTypeError(globalObject, scope, SymbolDescriptionTypeError);
     scope.release();
-    Integrity::auditStructureID(vm, symbol->structureID());
+    Integrity::auditStructureID(symbol->structureID());
     const auto description = symbol->description();
     return JSValue::encode(description.isNull() ? jsUndefined() : jsString(vm, description));
 }
@@ -109,7 +109,7 @@ JSC_DEFINE_HOST_FUNCTION(symbolProtoFuncToString, (JSGlobalObject* globalObject,
     Symbol* symbol = tryExtractSymbol(vm, callFrame->thisValue());
     if (!symbol)
         return throwVMTypeError(globalObject, scope, SymbolToStringTypeError);
-    Integrity::auditStructureID(vm, symbol->structureID());
+    Integrity::auditStructureID(symbol->structureID());
     RELEASE_AND_RETURN(scope, JSValue::encode(jsNontrivialString(vm, symbol->descriptiveString())));
 }
 
@@ -122,7 +122,7 @@ JSC_DEFINE_HOST_FUNCTION(symbolProtoFuncValueOf, (JSGlobalObject* globalObject, 
     if (!symbol)
         return throwVMTypeError(globalObject, scope, SymbolValueOfTypeError);
 
-    Integrity::auditStructureID(vm, symbol->structureID());
+    Integrity::auditStructureID(symbol->structureID());
     RELEASE_AND_RETURN(scope, JSValue::encode(symbol));
 }
 

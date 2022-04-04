@@ -152,10 +152,9 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
                     out.print("GC type: ", heap()->collectionScope(), "\n");
                     out.print("Object at: ", RawPointer(jsCell), "\n");
 #if USE(JSVALUE64)
-                    out.print("Structure ID: ", structureID, " (0x", format("%x", structureID), ")\n");
-                    out.print("Structure ID table size: ", heap()->structureIDTable().size(), "\n");
+                    out.print("Structure ID: ", structureID.bits(), " (", RawPointer(structureID.decode()), ")\n");
 #else
-                    out.print("Structure: ", RawPointer(structureID), "\n");
+                    out.print("Structure: ", RawPointer(structureID.decode()), "\n");
 #endif
                     out.print("Object contents:");
                     for (unsigned i = 0; i < 2; ++i)
@@ -186,13 +185,13 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
             die("GC scan found corrupt object: structureID is zero!\n");
         
         // It's not OK for the structure to be nuked at any GC scan point.
-        if (isNuked(structureID))
+        if (structureID.isNuked())
             die("GC scan found object in bad state: structureID is nuked!\n");
-        
+
         // This detects the worst of the badness.
-        Integrity::auditStructureID(heap()->structureIDTable(), structureID);
+        Integrity::auditStructureID(structureID);
     };
-    
+
     // In debug mode, we validate before marking since this makes it clearer what the problem
     // was. It's also slower, so we don't do it normally.
     if (ASSERT_ENABLED && isJSCellKind(heapCell->cellKind()))

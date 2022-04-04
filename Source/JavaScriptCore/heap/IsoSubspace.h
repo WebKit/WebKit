@@ -26,18 +26,18 @@
 #pragma once
 
 #include "BlockDirectory.h"
+#include "IsoMemoryAllocatorBase.h"
 #include "Subspace.h"
 #include "SubspaceAccess.h"
 #include <wtf/SinglyLinkedListWithTail.h>
 
 namespace JSC {
 
-class IsoAlignedMemoryAllocator;
 class IsoCellSet;
 
 class IsoSubspace : public Subspace {
 public:
-    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t, uint8_t numberOfLowerTierCells);
+    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& = nullptr);
     JS_EXPORT_PRIVATE ~IsoSubspace() override;
 
     size_t cellSize() { return m_directory.cellSize(); }
@@ -65,7 +65,7 @@ private:
     
     BlockDirectory m_directory;
     LocalAllocator m_localAllocator;
-    std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
+    std::unique_ptr<IsoMemoryAllocatorBase> m_isoAlignedMemoryAllocator;
     SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
     SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
 };

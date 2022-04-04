@@ -94,7 +94,7 @@ static ALWAYS_INLINE bool toThisNumber(VM& vm, JSValue thisValue, double& x)
     }
 
     if (auto* numberObject = jsDynamicCast<NumberObject*>(vm, thisValue)) {
-        Integrity::auditStructureID(vm, numberObject->structureID());
+        Integrity::auditStructureID(numberObject->structureID());
         x = numberObject->internalValue().asNumber();
         return true;
     }

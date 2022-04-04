@@ -249,7 +249,7 @@ private:
     
     static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
     
-    StructureID m_lastSeenStructureID { 0 };
+    StructureID m_lastSeenStructureID;
     bool m_mayStoreToHole { false }; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_outOfBounds { false };
 #if USE(LARGE_TYPED_ARRAYS)

@@ -257,12 +257,12 @@ public:
     Structure* cachedPolyProtoStructure()
     {
         if (UNLIKELY(m_rareData))
-            return m_rareData->m_cachedPolyProtoStructure.get();
+            return m_rareData->m_cachedPolyProtoStructureID.get();
         return nullptr;
     }
     void setCachedPolyProtoStructure(VM& vm, Structure* structure)
     {
-        ensureRareData().m_cachedPolyProtoStructure.set(vm, this, structure);
+        ensureRareData().m_cachedPolyProtoStructureID.set(vm, this, structure);
     }
 
     InlineWatchpointSet& ensurePolyProtoWatchpoint()
@@ -310,8 +310,8 @@ private:
         unsigned m_parametersStartOffset { 0 };
         unsigned m_typeProfilingStartOffset { UINT_MAX };
         unsigned m_typeProfilingEndOffset { UINT_MAX };
+        WriteBarrierStructureID m_cachedPolyProtoStructureID;
         std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
-        WriteBarrier<Structure> m_cachedPolyProtoStructure;
         WriteBarrier<JSString> m_asString;
     };
 

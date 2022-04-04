@@ -99,7 +99,7 @@ static EncodedJSValue formateDateInstance(JSGlobalObject* globalObject, CallFram
     if (UNLIKELY(!thisDateObj))
         return throwVMTypeError(globalObject, scope);
 
-    Integrity::auditStructureID(vm, thisDateObj->structureID());
+    Integrity::auditStructureID(thisDateObj->structureID());
     const GregorianDateTime* gregorianDateTime = asUTCVariant
         ? thisDateObj->gregorianDateTimeUTC(cache)
         : thisDateObj->gregorianDateTime(cache);
@@ -315,7 +315,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToISOString, (JSGlobalObject* globalObject
     if (UNLIKELY(!thisDateObj))
         return throwVMTypeError(globalObject, scope);
 
-    Integrity::auditStructureID(vm, thisDateObj->structureID());
+    Integrity::auditStructureID(thisDateObj->structureID());
     if (!std::isfinite(thisDateObj->internalNumber()))
         return throwVMError(globalObject, scope, createRangeError(globalObject, "Invalid Date"_s));
 
@@ -363,7 +363,7 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToPrimitiveSymbol, (JSGlobalObject* global
     if (!thisValue.isObject())
         return throwVMTypeError(globalObject, scope, "Date.prototype[Symbol.toPrimitive] expected |this| to be an object.");
     JSObject* thisObject = jsCast<JSObject*>(thisValue);
-    Integrity::auditStructureID(vm, thisObject->structureID());
+    Integrity::auditStructureID(thisObject->structureID());
 
     if (!callFrame->argumentCount())
         return throwVMTypeError(globalObject, scope, "Date.prototype[Symbol.toPrimitive] expected a first argument.");

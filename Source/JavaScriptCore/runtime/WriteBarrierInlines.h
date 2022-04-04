@@ -61,4 +61,29 @@ inline void WriteBarrierBase<Unknown, RawValueTraits<Unknown>>::set(VM& vm, cons
     vm.writeBarrier(owner, value);
 }
 
+inline void WriteBarrierStructureID::set(VM& vm, const JSCell* owner, Structure* value)
+{
+    ASSERT(value);
+    ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
+    validateCell(reinterpret_cast<JSCell*>(value));
+    setEarlyValue(vm, owner, value);
+}
+
+inline void WriteBarrierStructureID::setMayBeNull(VM& vm, const JSCell* owner, Structure* value)
+{
+    if (value)
+        validateCell(reinterpret_cast<JSCell*>(value));
+    setEarlyValue(vm, owner, value);
+}
+
+inline void WriteBarrierStructureID::setEarlyValue(VM& vm, const JSCell* owner, Structure* value)
+{
+    if (!value) {
+        m_structureID = { };
+        return;
+    }
+    m_structureID = StructureID::encode(value);
+    vm.writeBarrier(owner, reinterpret_cast<JSCell*>(value));
+}
+
 } // namespace JSC 

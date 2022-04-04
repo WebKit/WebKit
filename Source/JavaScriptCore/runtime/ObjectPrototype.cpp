@@ -85,7 +85,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncValueOf, (JSGlobalObject* globalObject, 
     JSObject* valueObj = thisValue.toObject(globalObject);
     if (UNLIKELY(!valueObj))
         return encodedJSValue();
-    Integrity::auditStructureID(globalObject->vm(), valueObj->structureID());
+    Integrity::auditStructureID(valueObj->structureID());
     return JSValue::encode(valueObj);
 }
 
@@ -361,7 +361,7 @@ JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValu
     JSObject* thisObject = thisValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    Integrity::auditStructureID(vm, thisObject->structureID());
+    Integrity::auditStructureID(thisObject->structureID());
     auto result = thisObject->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag);
     if (result)
         return asString(result);

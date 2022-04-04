@@ -45,7 +45,7 @@ public:
 
     static PreciseAllocation* tryCreate(Heap&, size_t, Subspace*, unsigned indexInSpace);
 
-    static PreciseAllocation* createForLowerTier(Heap&, size_t, Subspace*, uint8_t lowerTierIndex);
+    static PreciseAllocation* tryCreateForLowerTier(Heap&, size_t, Subspace*, uint8_t lowerTierIndex);
     PreciseAllocation* reuseForLowerTier();
 
     PreciseAllocation* tryReallocate(size_t, Subspace*);

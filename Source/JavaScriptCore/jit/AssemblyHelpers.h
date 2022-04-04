@@ -1148,7 +1148,7 @@ public:
     Jump branchStructure(RelationalCondition condition, T leftHandSide, Structure* structure)
     {
 #if USE(JSVALUE64)
-        return branch32(condition, leftHandSide, TrustedImm32(structure->id()));
+        return branch32(condition, leftHandSide, TrustedImm32(structure->id().bits()));
 #else
         return branchPtr(condition, leftHandSide, TrustedImmPtr(structure));
 #endif
@@ -1602,8 +1602,9 @@ public:
         return argumentCount(codeOrigin.inlineCallFrame());
     }
     
-    void emitLoadStructure(VM&, RegisterID source, RegisterID dest, RegisterID scratch);
-    void emitLoadPrototype(VM&, GPRReg objectGPR, JSValueRegs resultRegs, GPRReg scratchGPR, JumpList& slowPath);
+    void emitNonNullDecodeStructureID(RegisterID source, RegisterID dest);
+    void emitLoadStructure(VM&, RegisterID source, RegisterID dest);
+    void emitLoadPrototype(VM&, GPRReg objectGPR, JSValueRegs resultRegs, JumpList& slowPath);
 
     void emitStoreStructureWithTypeInfo(TrustedImmPtr structure, RegisterID dest, RegisterID)
     {
@@ -1688,13 +1689,13 @@ public:
     void nukeStructureAndStoreButterfly(VM& vm, GPRReg butterfly, GPRReg object)
     {
         if (isX86()) {
-            or32(TrustedImm32(bitwise_cast<int32_t>(nukedStructureIDBit())), Address(object, JSCell::structureIDOffset()));
+            or32(TrustedImm32(bitwise_cast<int32_t>(StructureID::nukedStructureIDBit)), Address(object, JSCell::structureIDOffset()));
             storePtr(butterfly, Address(object, JSObject::butterflyOffset()));
             return;
         }
 
         Jump ok = jumpIfMutatorFenceNotNeeded(vm);
-        or32(TrustedImm32(bitwise_cast<int32_t>(nukedStructureIDBit())), Address(object, JSCell::structureIDOffset()));
+        or32(TrustedImm32(bitwise_cast<int32_t>(StructureID::nukedStructureIDBit)), Address(object, JSCell::structureIDOffset()));
         storeFence();
         storePtr(butterfly, Address(object, JSObject::butterflyOffset()));
         storeFence();
