@@ -602,6 +602,7 @@ private:
     JS_EXPORT_PRIVATE RefPtr<AtomStringImpl> resolveRopeToExistingAtomString(JSGlobalObject*) const;
     template<typename CharacterType> NEVER_INLINE void resolveRopeSlowCase(CharacterType*) const;
     template<typename CharacterType> void resolveRopeInternalNoSubstring(CharacterType*) const;
+    Identifier toIdentifier(JSGlobalObject*) const;
     void outOfMemory(JSGlobalObject* nullOrGlobalObjectForOOM) const;
     void resolveRopeInternal8(LChar*) const;
     void resolveRopeInternal16(UChar*) const;
@@ -759,13 +760,29 @@ inline JSString* jsNontrivialString(VM& vm, String&& s)
     return JSString::create(vm, s.releaseImpl().releaseNonNull());
 }
 
-ALWAYS_INLINE Identifier JSString::toIdentifier(JSGlobalObject* globalObject) const
+ALWAYS_INLINE Identifier JSRopeString::toIdentifier(JSGlobalObject* globalObject) const
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    AtomString atomString = toAtomString(globalObject);
+    auto atomString = static_cast<const JSRopeString*>(this)->resolveRopeToAtomString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     return Identifier::fromString(vm, atomString);
+}
+
+ALWAYS_INLINE Identifier JSString::toIdentifier(JSGlobalObject* globalObject) const
+{
+    if constexpr (validateDFGDoesGC)
+        vm().verifyCanGC();
+    if (isRope())
+        return static_cast<const JSRopeString*>(this)->toIdentifier(globalObject);
+    VM& vm = getVM(globalObject);
+    if (valueInternal().impl()->isAtom())
+        return Identifier::fromString(vm, Ref { *static_cast<AtomStringImpl*>(valueInternal().impl()) });
+    if (vm.lastAtomizedIdentifierStringImpl.ptr() != valueInternal().impl()) {
+        vm.lastAtomizedIdentifierStringImpl = *valueInternal().impl();
+        vm.lastAtomizedIdentifierAtomStringImpl = AtomStringImpl::add(valueInternal().impl()).releaseNonNull();
+    }
+    return Identifier::fromString(vm, Ref { vm.lastAtomizedIdentifierAtomStringImpl });
 }
 
 ALWAYS_INLINE AtomString JSString::toAtomString(JSGlobalObject* globalObject) const
