@@ -337,7 +337,6 @@ protected:
     {
         return m_streamConnection.sendSync(WTFMove(message), WTFMove(reply), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }
-    IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
 
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier { GraphicsContextGLIdentifier::generate() };
 private:

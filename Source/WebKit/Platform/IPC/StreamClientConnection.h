@@ -74,6 +74,10 @@ public:
     using SendSyncResult = Connection::SendSyncResult;
     template<typename T, typename U>
     SendSyncResult sendSync(T&& message, typename T::Reply&&, ObjectIdentifier<U> destinationID, Timeout);
+
+    template<typename T, typename U>
+    bool waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout, OptionSet<WaitForOption> = { });
+
     StreamConnectionBuffer& bufferForTesting();
 
 private:
@@ -177,6 +181,12 @@ StreamClientConnection::SendSyncResult StreamClientConnection::sendSync(T&& mess
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
     return m_connection.sendSync(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout);
+}
+
+template<typename T, typename U>
+bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
+{
+    return m_connection.waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
 }
 
 template<typename T>
