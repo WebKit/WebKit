@@ -32,15 +32,8 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
-#include "HTMLAudioElement.h"
-#include "HTMLCanvasElement.h"
 #include "HTMLElement.h"
-#include "HTMLFrameElementBase.h"
-#include "HTMLImageElement.h"
-#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
-#include "HTMLScriptElement.h"
-#include "HTMLStyleElement.h"
 #include "JSAttr.h"
 #include "JSCDATASection.h"
 #include "JSComment.h"
@@ -64,8 +57,6 @@
 #include "SVGElement.h"
 #include "ShadowRoot.h"
 #include "GCReachableRef.h"
-#include "StyleSheet.h"
-#include "StyledElement.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -76,32 +67,6 @@ using namespace HTMLNames;
 static inline bool isReachableFromDOM(Node* node, AbstractSlotVisitor& visitor, const char** reason)
 {
     if (!node->isConnected()) {
-        if (is<Element>(*node)) {
-            auto& element = downcast<Element>(*node);
-
-            // If a wrapper is the last reference to an image element
-            // that is loading but not in the document, the wrapper is observable
-            // because it is the only thing keeping the image element alive, and if
-            // the element is destroyed, its load event will not fire.
-            // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
-            if (is<HTMLImageElement>(element)) {
-                if (downcast<HTMLImageElement>(element).hasPendingActivity()) {
-                    if (UNLIKELY(reason))
-                        *reason = "Image element with pending activity";
-                    return true;
-                }
-            }
-#if ENABLE(VIDEO)
-            else if (is<HTMLAudioElement>(element)) {
-                if (!downcast<HTMLAudioElement>(element).paused()) {
-                    if (UNLIKELY(reason))
-                        *reason = "Audio element which is not paused";
-                    return true;
-                }
-            }
-#endif
-        }
-
         // If a node is firing event listeners, its wrapper is observable because
         // its wrapper is responsible for marking those event listeners.
         if (node->isFiringEventListeners()) {

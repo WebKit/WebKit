@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "DecodingOptions.h"
 #include "FormNamedItem.h"
 #include "GraphicsLayer.h"
@@ -45,7 +46,7 @@ struct ImageCandidate;
 enum class ReferrerPolicy : uint8_t;
 enum class RelevantMutation : bool;
 
-class HTMLImageElement : public HTMLElement, public FormNamedItem {
+class HTMLImageElement : public HTMLElement, public FormNamedItem, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLImageElement);
     friend class HTMLFormElement;
 public:
@@ -109,7 +110,6 @@ public:
     const String& attachmentIdentifier() const;
 #endif
 
-    bool hasPendingActivity() const;
     WEBCORE_EXPORT size_t pendingDecodePromisesCountForTesting() const;
 
     bool canContainRangeEndPoint() const override { return false; }
@@ -164,6 +164,10 @@ private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
     void invalidateAttributeMapping();
+
+    // ActiveDOMObject.
+    const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     void didAttachRenderers() override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
