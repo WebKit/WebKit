@@ -1,5 +1,28 @@
 2022-04-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        RemoteRenderingBackendProxy fails to maintain correct state when gpu process crashes and upon deletion
+        https://bugs.webkit.org/show_bug.cgi?id=238618
+
+        Reviewed by Simon Fraser.
+
+        RemoteRenderingBackendProxy::m_needsWakeUpSemaphoreForDisplayListStream
+        was not reset when proxy would connect to a new gpu process after a crash.
+        RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy() would not
+        remove the GPUConnection::Client registration.
+
+        * Platform/IPC/MessageReceiveQueueMap.cpp:
+        (IPC::MessageReceiveQueueMap::remove):
+        * Platform/IPC/StreamClientConnection.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRenderingBackendProxy::disconnectGPUProcess):
+        (WebKit::RemoteRenderingBackendProxy::streamConnection):
+        (WebKit::RemoteRenderingBackendProxy::didCreateWakeUpSemaphoreForDisplayListStream):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
+2022-04-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         StreamClientConnection should have waitForAndDispatchImmediately
         https://bugs.webkit.org/show_bug.cgi?id=238622
 
