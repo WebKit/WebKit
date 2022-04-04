@@ -1,3 +1,20 @@
+2022-04-04  Tyler Wilcock  <tyler_w@apple.com>
+
+        AccessibilityNodeObject::elementRect should use children rects for display:contents AX objects
+        https://bugs.webkit.org/show_bug.cgi?id=238680
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        Because display:contents AccessibilityNodeObjects can have rendered
+        content (unlike `hidden`, `aria-hidden="false"` node objects), we can compute
+        AccessibilityNodeObject::elementRect by adding up the rectangles of the object's children.
+        This provides a more accurate frame for these objects.
+
+        Test: accessibility/node-only-object-element-rect.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::boundingBoxRect const):
+
 2022-04-04  Devin Rousso  <drousso@apple.com>
 
         [Apple Pay] buttons should be localized based on the system if not specified by the HTML

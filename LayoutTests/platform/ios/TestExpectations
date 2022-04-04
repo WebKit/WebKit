@@ -2095,6 +2095,7 @@ fast/dom/linkify-phone-numbers.html [ Pass ]
 
 accessibility/aria-hidden-display-contents-element.html [ Pass ]
 accessibility/display-contents-element-roles.html [ Pass ]
+accessibility/node-only-object-element-rect.html [ Pass ]
 accessibility/video-element-url-attribute.html [ Pass ]
 accessibility/visible-character-range-basic.html [ Pass ]
 accessibility/visible-character-range-height-changes.html [ Pass ]

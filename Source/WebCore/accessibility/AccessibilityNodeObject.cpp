@@ -205,22 +205,32 @@ LayoutRect AccessibilityNodeObject::elementRect() const
 
 LayoutRect AccessibilityNodeObject::boundingBoxRect() const
 {
-    // AccessibilityNodeObjects have no mechanism yet to return a size or position.
-    // For now, let's return the position of the ancestor that does have a position,
-    // and make it the width of that parent, and about the height of a line of text, so that it's clear the object is a child of the parent.
-    
-    LayoutRect boundingBox;
-    
-    for (AccessibilityObject* positionProvider = parentObject(); positionProvider; positionProvider = positionProvider->parentObject()) {
-        if (positionProvider->isAccessibilityRenderObject()) {
-            LayoutRect parentRect = positionProvider->elementRect();
-            boundingBox.setSize(LayoutSize(parentRect.width(), LayoutUnit(std::min(10.0f, parentRect.height().toFloat()))));
-            boundingBox.setLocation(parentRect.location());
-            break;
-        }
+    if (hasDisplayContents()) {
+        LayoutRect contentsRect;
+        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->children(false))
+            contentsRect.unite(child->elementRect());
+
+        if (!contentsRect.isEmpty())
+            return contentsRect;
     }
-    
-    return boundingBox;
+
+    // Non-display:contents AccessibilityNodeObjects have no mechanism to return a size or position.
+    // Instead, let's return a box at the position of an ancestor that does have a position, make it
+    // the width of that ancestor, and about the height of a line of text, so it's clear this object is
+    // a descendant of that ancestor.
+    for (RefPtr<AccessibilityObject> ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
+        if (!is<AccessibilityRenderObject>(ancestor))
+            continue;
+        auto ancestorRect = ancestor->elementRect();
+        if (ancestorRect.isEmpty())
+            continue;
+
+        return {
+            ancestorRect.location(),
+            LayoutSize(ancestorRect.width(), LayoutUnit(std::min(10.0f, ancestorRect.height().toFloat())))
+        };
+    }
+    return { };
 }
 
 void AccessibilityNodeObject::setNode(Node* node)
