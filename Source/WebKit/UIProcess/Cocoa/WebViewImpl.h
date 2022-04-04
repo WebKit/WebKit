@@ -61,6 +61,7 @@ OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKDOMPasteMenuDelegate;
 OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
+OBJC_CLASS WKImageAnalysisOverlayViewDelegate;
 OBJC_CLASS WKImmediateActionController;
 OBJC_CLASS WKMouseTrackingObserver;
 OBJC_CLASS WKRevealItemPresenter;
@@ -85,6 +86,9 @@ OBJC_CLASS WebPlaybackControlsManager;
 #if ENABLE(UI_PROCESS_PDF_HUD)
 OBJC_CLASS WKPDFHUDView;
 #endif
+
+OBJC_CLASS VKCImageAnalysis;
+OBJC_CLASS VKCImageAnalysisOverlayView;
 
 namespace API {
 class HitTestResult;
@@ -595,6 +599,13 @@ public:
     void computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType, CompletionHandler<void(bool)>&&);
 #endif
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    WebCore::FloatRect imageAnalysisInteractionBounds() const { return m_imageAnalysisInteractionBounds; }
+    VKCImageAnalysisOverlayView *imageAnalysisOverlayView() const { return m_imageAnalysisOverlayView.get(); }
+#endif
+
+    bool imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInView) const;
+
     bool acceptsPreviewPanelControl(QLPreviewPanel *);
     void beginPreviewPanelControl(QLPreviewPanel *);
     void endPreviewPanelControl(QLPreviewPanel *);
@@ -677,6 +688,11 @@ private:
     bool useMediaPlaybackControlsView() const;
     bool isRichlyEditableForTouchBar() const;
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    void installImageAnalysisOverlayView(VKCImageAnalysis *);
+    void uninstallImageAnalysisOverlayView();
+#endif
+
     bool m_clientWantsMediaPlaybackControlsView { false };
     bool m_canCreateTouchBars { false };
     bool m_startedListeningToCustomizationEvents { false };
@@ -745,6 +761,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS)
     CocoaImageAnalyzer *ensureImageAnalyzer();
+    int32_t processImageAnalyzerRequest(CocoaImageAnalyzerRequest *, CompletionHandler<void(CocoaImageAnalysis *, NSError *)>&&);
 #endif
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
@@ -889,6 +906,13 @@ private:
 #if ENABLE(IMAGE_ANALYSIS)
     RefPtr<WorkQueue> m_imageAnalyzerQueue;
     RetainPtr<CocoaImageAnalyzer> m_imageAnalyzer;
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    RetainPtr<VKCImageAnalysisOverlayView> m_imageAnalysisOverlayView;
+    RetainPtr<WKImageAnalysisOverlayViewDelegate> m_imageAnalysisOverlayViewDelegate;
+    uint32_t m_currentImageAnalysisRequestID { 0 };
+    WebCore::FloatRect m_imageAnalysisInteractionBounds;
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

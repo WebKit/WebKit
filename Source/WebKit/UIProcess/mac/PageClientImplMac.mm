@@ -322,11 +322,15 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
     if (!window)
         return;
 
-    if ([window windowNumber] != [NSWindow windowNumberAtPoint:[NSEvent mouseLocation] belowWindowWithWindowNumber:0])
+    auto mouseLocationInScreen = NSEvent.mouseLocation;
+    if (window.windowNumber != [NSWindow windowNumberAtPoint:mouseLocationInScreen belowWindowWithWindowNumber:0])
         return;
 
     NSCursor *platformCursor = cursor.platformCursor();
     if ([NSCursor currentCursor] == platformCursor)
+        return;
+
+    if (m_impl->imageAnalysisOverlayViewHasCursorAtPoint([m_view convertPoint:mouseLocationInScreen fromView:nil]))
         return;
 
     [platformCursor set];

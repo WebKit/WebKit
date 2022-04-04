@@ -1,3 +1,15 @@
+2022-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add helper methods to install and uninstall VKCImageAnalysisOverlayView
+        https://bugs.webkit.org/show_bug.cgi?id=238714
+
+        Reviewed by Tim Horton.
+
+        Add soft-linking support for VKCImageAnalysisOverlayView. See WebKit/ChangeLog for more details.
+
+        * pal/cocoa/VisionKitCoreSoftLink.h:
+        * pal/cocoa/VisionKitCoreSoftLink.mm:
+
 2022-04-03  Tim Horton  <timothy_horton@apple.com>
 
         _WKDataTask doesn't work in macCatalyst

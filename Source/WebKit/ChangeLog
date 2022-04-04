@@ -1,3 +1,51 @@
+2022-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add helper methods to install and uninstall VKCImageAnalysisOverlayView
+        https://bugs.webkit.org/show_bug.cgi?id=238714
+
+        Reviewed by Tim Horton.
+
+        Add helper methods for adding and removing a temporary VKCImageAnalysisOverlayView as a subview of WKWebView.
+        See below for more details. No change in behavior (yet).
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::imageAnalysisInteractionBounds const):
+        (WebKit::WebViewImpl::imageAnalysisOverlayView const):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::processImageAnalyzerRequest):
+
+        Pull logic for processing an image analyzer request and invoking the completion handler on the main thread (via
+        `callOnMainRunLoop`) out into a separate helper method (to be used in a subsequent patch).
+
+        (WebKit::WebViewImpl::requestTextRecognition):
+        (-[WKImageAnalysisOverlayViewDelegate initWithWebViewImpl:]):
+
+        Add an Objective-C object that acts as a delegate for the image analysis overlay view. This is done to correctly
+        position the overlay, but also for a couple of additonal reasons below.
+
+        (-[WKImageAnalysisOverlayViewDelegate dealloc]):
+        (-[WKImageAnalysisOverlayViewDelegate observeValueForKeyPath:ofObject:change:context:]):
+
+        Add logic to steal first responder status away from VKCImageAnalysisOverlayView's internal text selection view
+        and restore it to the web view when there is no longer an active text selection in the overlay. This ensures
+        that key events are only routed to the image analysis overlay view in the case where the overlay actually
+        contains a text selection.
+
+        (-[WKImageAnalysisOverlayViewDelegate firstResponderIsInsideImageOverlay]):
+        (-[WKImageAnalysisOverlayViewDelegate imageAnalysisOverlay:shouldHandleKeyDownEvent:]):
+
+        Never allow the image overlay view to override Escape key handling.
+
+        (-[WKImageAnalysisOverlayViewDelegate contentsRectForImageAnalysisOverlayView:]):
+        (WebKit::WebViewImpl::installImageAnalysisOverlayView):
+        (WebKit::WebViewImpl::uninstallImageAnalysisOverlayView):
+        (WebKit::WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint const):
+
+        Allow the image analysis overlay view to set the mouse cursor when the mouse is over interactable content.
+
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::setCursor):
+
 2022-04-04  Youenn Fablet  <youenn@apple.com>
 
         Service-Worker-Navigation-Preload header not being sent when Navigation Preload is enabled.
