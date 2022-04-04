@@ -436,9 +436,6 @@ bool JSString::getStringPropertyDescriptor(JSGlobalObject* globalObject, Propert
 
 JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
 {
-    if (JSString* string = vm.stringCache.get(&stringImpl))
-        return string;
-
     JSString* string = jsString(vm, String(stringImpl));
     vm.lastCachedString.set(vm, string);
     return string;
