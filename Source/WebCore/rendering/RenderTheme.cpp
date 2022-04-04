@@ -316,11 +316,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case ApplePayButtonPart:
         return adjustApplePayButtonStyle(style, element);
 #endif
-#if ENABLE(ATTACHMENT_ELEMENT)
-    case AttachmentPart:
-    case BorderlessAttachmentPart:
-        return adjustAttachmentStyle(style, element);
-#endif
 #if ENABLE(DATALIST_ELEMENT)
     case ListButtonPart:
         return adjustListButtonStyle(style, element);
@@ -1220,8 +1215,10 @@ bool RenderTheme::paintCapsLockIndicator(const RenderObject&, const PaintInfo&, 
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void RenderTheme::adjustAttachmentStyle(RenderStyle&, const Element*) const
+String RenderTheme::attachmentStyleSheet() const
 {
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled());
+    return "attachment { appearance: auto; }"_s;
 }
 
 bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&)

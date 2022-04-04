@@ -1,3 +1,20 @@
+2022-04-04  Tim Nguyen  <ntim@apple.com>
+
+        Conditionally inject <attachment> styles based on runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=238739
+
+        Reviewed by Tim Horton.
+
+        Update test expectations, now that display is no longer forced to inline-block by appearance, and now that
+        color is no longer unconditionally set on iOS to -apple-system-blue.
+
+        * fast/attachment/attachment-disabled-rendering-expected.txt:
+        * fast/attachment/attachment-disabled-rendering.html:
+        * platform/ios/fast/attachment/attachment-disabled-rendering-expected.txt: Removed.
+        * platform/mac/fast/attachment/attachment-disabled-rendering-expected.png:
+        * platform/win/fast/attachment/attachment-disabled-rendering-expected.txt: Removed.
+        * platform/wpe/fast/attachment/attachment-disabled-rendering-expected.txt: Removed.
+
 2022-04-04  Youenn Fablet  <youenn@apple.com>
 
         Service-Worker-Navigation-Preload header not being sent when Navigation Preload is enabled.

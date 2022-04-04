@@ -95,6 +95,9 @@ public:
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet() { return String(); }
 #endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    virtual String attachmentStyleSheet() const;
+#endif
 #if ENABLE(DATALIST_ELEMENT)
     String dataListStyleSheet() const;
 #endif
@@ -351,7 +354,6 @@ protected:
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void adjustAttachmentStyle(RenderStyle&, const Element*) const;
     virtual bool paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 

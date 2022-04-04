@@ -1996,6 +1996,12 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
     return true;
 }
 
+String RenderThemeIOS::attachmentStyleSheet() const
+{
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled());
+    return "attachment { appearance: auto; color: -apple-system-blue; }"_s;
+}
+
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if PLATFORM(WATCHOS)

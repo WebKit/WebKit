@@ -1367,15 +1367,6 @@ applet, embed, object, img {
 }
 #endif
 
-#if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
-attachment {
-    -webkit-appearance: attachment;
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    color: -apple-system-blue;
-#endif
-}
-#endif
-
 /* page */
 
 @page {

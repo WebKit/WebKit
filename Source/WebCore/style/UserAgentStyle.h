@@ -49,6 +49,9 @@ public:
 #if ENABLE(SERVICE_CONTROLS)
     static StyleSheetContents* imageControlsStyleSheet;
 #endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    static StyleSheetContents* attachmentStyleSheet;
+#endif
 #if ENABLE(DATALIST_ELEMENT)
     static StyleSheetContents* dataListStyleSheet;
 #endif

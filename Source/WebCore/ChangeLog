@@ -1,3 +1,33 @@
+2022-04-04  Tim Nguyen  <ntim@apple.com>
+
+        Conditionally inject <attachment> styles based on runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=238739
+
+        Reviewed by Tim Horton.
+
+        Also use appearance: auto instead of -webkit-appearance: attachment, since it also works thanks to
+        RenderTheme::adjustAppearanceForElement().
+
+        Test: LayoutTests/fast/attachment/attachment-disabled-rendering.html
+
+        * css/html.css:
+        (#endif):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::attachmentStyleSheet const):
+        Move html.css styles in there.
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::adjustAttachmentStyle const): Deleted.
+        adjustAttachmentStyle was unused, not overriden and no-op.
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::attachmentStyleSheet const):
+        Put iOS specific styles there.
+        * style/UserAgentStyle.cpp:
+        (WebCore::Style::UserAgentStyle::ensureDefaultStyleSheetsForElement):
+        Append styles to UA styling.
+        * style/UserAgentStyle.h:
+
 2022-04-04  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK][WPE] Compilation error in debug mode after r292279
