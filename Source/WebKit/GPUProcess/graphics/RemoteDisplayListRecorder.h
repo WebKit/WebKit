@@ -56,6 +56,7 @@ public:
     }
 
     void stopListeningForIPC();
+    void clearImageBufferReference();
 
     void save();
     void restore();

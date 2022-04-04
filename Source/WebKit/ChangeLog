@@ -1,3 +1,16 @@
+2022-04-04  Cameron McCormack  <heycam@apple.com>
+
+        Remove display list map entry before remote resource
+        https://bugs.webkit.org/show_bug.cgi?id=238764
+
+        Reviewed by Simon Fraser.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::clearImageBufferReference):
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier):
+
 2022-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Add helper methods to install and uninstall VKCImageAnalysisOverlayView
