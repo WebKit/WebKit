@@ -1,3 +1,16 @@
+2022-04-04  Tim Nguyen  <ntim@apple.com>
+
+        Make focus-after-close.html WPT pass
+        https://bugs.webkit.org/show_bug.cgi?id=233525
+
+        Reviewed by Simon Fraser.
+
+        The last subtest doesn't pass, because WebKit intentionally differs from other browsers by scrolling
+        to the focused element asynchronously (see bug 181575). Wait for a scroll event + tick to make it pass.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html:
+
 2022-04-04  Youenn Fablet  <youenn@apple.com>
 
         CORS: Allow particular Range header values without a preflight
