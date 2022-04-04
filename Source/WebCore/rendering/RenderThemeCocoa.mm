@@ -35,6 +35,7 @@
 #import "UserAgentStyleSheets.h"
 #import <algorithm>
 #import <pal/spi/cf/CoreTextSPI.h>
+#import <wtf/Language.h>
 
 #if ENABLE(VIDEO)
 #import "LocalizedStrings.h"
@@ -114,7 +115,10 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
         floatValueForLength(style.borderBottomRightRadius().height, paintRect.height()),
         floatValueForLength(style.borderBottomRightRadius().width, paintRect.width())
     });
-    paintInfo.context().drawSystemImage(ApplePayButtonSystemImage::create(style.applePayButtonType(), style.applePayButtonStyle(), style.computedLocale(), largestCornerRadius), paintRect);
+    auto locale = style.computedLocale();
+    if (locale.isEmpty())
+        locale = defaultLanguage(ShouldMinimizeLanguages::No);
+    paintInfo.context().drawSystemImage(ApplePayButtonSystemImage::create(style.applePayButtonType(), style.applePayButtonStyle(), locale, largestCornerRadius), paintRect);
     return false;
 }
 
