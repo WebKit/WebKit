@@ -1,3 +1,16 @@
+2022-04-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Provide better messages when gi-docgen cannot be found
+        https://bugs.webkit.org/show_bug.cgi?id=238729
+
+        Reviewed by Carlos Garcia Campos.
+
+        When gi-docgen cannot be found, or cannot be executed, provide better error messages
+        than those provided by CMake. While at it, make the messages mention how gi-docgen
+        can be installed inside the WebKit source tree to be used for the build.
+
+        * Source/cmake/FindGIDocgen.cmake:
+
 2022-04-04  Miguel Gomez  <magomez@igalia.com>
 
         Change contributor status of Miguel Gomez from committer to reviewer

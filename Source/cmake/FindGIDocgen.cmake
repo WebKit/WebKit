@@ -69,21 +69,47 @@ find_program(GIDocgen_EXE
     HINTS "${CMAKE_SOURCE_DIR}/gi-docgen/bin"
           "${CMAKE_SOURCE_DIR}/gi-docgen"
     DOC "Path to the gi-docgen program"
-    REQUIRED
 )
 
-execute_process(
-    COMMAND ${GIDocgen_EXE} --version
-    OUTPUT_VARIABLE GIDocgen_VERSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    COMMAND_ERROR_IS_FATAL ANY
-    ERROR_QUIET
-)
+
+if (GIDocgen_FIND_REQUIRED)
+    set(_GIDocgen_MSGLEVEL FATAL_ERROR)
+else ()
+    set(_GIDocgen_MSGLEVEL WARNING)
+endif ()
+
+if (NOT GIDocgen_EXE)
+    message(${_GIDocgen_MSGLEVEL}
+        "Could not find gi-docgen. If your system does not provide a package "
+        "the following commands can be used to install it inside the WebKit "
+        "source tree, where it will be found automatically:\n"
+        "  virtualenv gi-docgen ${CMAKE_SOURCE_DIR}/gi-docgen\n"
+        "  ${CMAKE_SOURCE_DIR}/gi-docgen/bin/pip install gi-docgen\n"
+        "Another option is unpacking a gi-docgen release at the same location "
+        "but in this case dependencies will not be automatically installed.\n"
+    )
+elseif (GIDocgen_EXE)
+    execute_process(
+        COMMAND ${GIDocgen_EXE} --version
+        OUTPUT_VARIABLE GIDocgen_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE _GIDocgen_CMDSTATUS
+        ERROR_QUIET
+    )
+    set(GIDocgen_VERSION "${GIDocgen_VERSION}" CACHE INTERNAL "")
+    if (NOT ${_GIDocgen_CMDSTATUS} EQUAL 0)
+        message(${_GIDocgen_MSGLEVEL}
+            "Could not execute ${GIDocgen_EXE}. This typically signals an "
+            "incorrect installation. You may want to run it by hand for "
+            "troubleshooting, the re-run CMake again.\n"
+        )
+    endif ()
+endif ()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GIDocgen
     FOUND_VAR GIDocgen_FOUND
-    REQUIRED_VARS GIDocgen_EXE
+    REQUIRED_VARS GIDocgen_EXE GIDocgen_VERSION
     VERSION_VAR GIDocgen_VERSION
 )
 
