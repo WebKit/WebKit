@@ -61,6 +61,7 @@ public:
 
     StreamConnectionBuffer& streamBuffer() { return m_buffer; }
     void setWakeUpSemaphore(IPC::Semaphore&&);
+    bool hasWakeUpSemaphore() const { return m_wakeUpSemaphore.has_value(); }
 
     void setWakeUpMessageHysteresis(unsigned hysteresis)
     {

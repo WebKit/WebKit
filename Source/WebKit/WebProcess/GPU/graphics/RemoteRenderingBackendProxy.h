@@ -139,7 +139,7 @@ private:
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
-
+    void disconnectGPUProcess();
     GPUProcessConnection& ensureGPUProcessConnection();
 
     // Returns std::nullopt if no update is needed or allocation failed.
@@ -161,8 +161,6 @@ private:
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;
-
-    bool m_needsWakeUpSemaphoreForDisplayListStream { true };
 };
 
 } // namespace WebKit
