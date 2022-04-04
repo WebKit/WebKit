@@ -2407,11 +2407,10 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     if (hasPendingResources())
         document().accessSVGExtensions().removeElementFromPendingResources(*this);
 
-    RefPtr<Frame> frame = document().frame();
     Styleable::fromElement(*this).elementWasRemoved();
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
-    if (frame && frame->page()) {
+    if (RefPtr frame = document().frame(); frame && frame->page()) {
         if (auto* scrollLatchingController = frame->page()->scrollLatchingControllerIfExists())
             scrollLatchingController->removeLatchingStateForTarget(*this);
     }
@@ -3733,18 +3732,16 @@ static void disconnectPseudoElement(PseudoElement* pseudoElement)
     pseudoElement->clearHostElement();
 }
 
-void Element::clearBeforePseudoElement()
+void Element::clearBeforePseudoElementSlow()
 {
-    if (!hasRareData())
-        return;
+    ASSERT(hasRareData());
     disconnectPseudoElement(elementRareData()->beforePseudoElement());
     elementRareData()->setBeforePseudoElement(nullptr);
 }
 
-void Element::clearAfterPseudoElement()
+void Element::clearAfterPseudoElementSlow()
 {
-    if (!hasRareData())
-        return;
+    ASSERT(hasRareData());
     disconnectPseudoElement(elementRareData()->afterPseudoElement());
     elementRareData()->setAfterPseudoElement(nullptr);
 }
@@ -4319,10 +4316,9 @@ IntPoint Element::savedLayerScrollPosition() const
     return hasRareData() ? elementRareData()->savedLayerScrollPosition() : IntPoint();
 }
 
-void Element::setSavedLayerScrollPosition(const IntPoint& position)
+void Element::setSavedLayerScrollPositionSlow(const IntPoint& position)
 {
-    if (position.isZero() && !hasRareData())
-        return;
+    ASSERT(!position.isZero() || hasRareData());
     ensureElementRareData().setSavedLayerScrollPosition(position);
 }
 

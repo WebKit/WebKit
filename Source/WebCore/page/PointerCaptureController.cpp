@@ -142,10 +142,9 @@ void PointerCaptureController::pointerLockWasApplied()
     updateHaveAnyCapturingElement();
 }
 
-void PointerCaptureController::elementWasRemoved(Element& element)
+void PointerCaptureController::elementWasRemovedSlow(Element& element)
 {
-    if (!m_haveAnyCapturingElement)
-        return;
+    ASSERT(m_haveAnyCapturingElement);
 
     for (auto [pointerId, capturingData] : m_activePointerIdsToCapturingData) {
         if (capturingData->pendingTargetOverride == &element || capturingData->targetOverride == &element) {

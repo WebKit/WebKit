@@ -110,6 +110,7 @@ private:
     void pointerEventWasDispatched(const PointerEvent&);
 
     void updateHaveAnyCapturingElement();
+    void elementWasRemovedSlow(Element&);
 
     Page& m_page;
     // While PointerID is defined as int32_t, we use int64_t here so that we may use a value outside of the int32_t range to have safe
@@ -119,5 +120,11 @@ private:
     bool m_processingPendingPointerCapture { false };
     bool m_haveAnyCapturingElement { false };
 };
+
+inline void PointerCaptureController::elementWasRemoved(Element& element)
+{
+    if (m_haveAnyCapturingElement)
+        elementWasRemovedSlow(element);
+}
 
 } // namespace WebCore

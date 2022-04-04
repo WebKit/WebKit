@@ -64,6 +64,8 @@ private:
     void clearElement();
     void enqueueEvent(const AtomString& type, Element*);
     void enqueueEvent(const AtomString& type, Document*);
+    void elementWasRemovedInternal();
+
     Page& m_page;
     bool m_lockPending { false };
     bool m_unlockPending { false };
@@ -72,6 +74,12 @@ private:
     WeakPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;
     WeakPtr<Document> m_documentAllowedToRelockWithoutUserGesture;
 };
+
+inline void PointerLockController::elementWasRemoved(Element& element)
+{
+    if (m_element == &element)
+        elementWasRemovedInternal();
+}
 
 } // namespace WebCore
 

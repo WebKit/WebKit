@@ -103,15 +103,13 @@ void PointerLockController::requestPointerUnlockAndForceCursorVisible()
     m_forceCursorVisibleUponUnlock = true;
 }
 
-void PointerLockController::elementWasRemoved(Element& element)
+void PointerLockController::elementWasRemovedInternal()
 {
-    if (m_element == &element) {
-        m_documentOfRemovedElementWhileWaitingForUnlock = m_element->document();
-        // Set element null immediately to block any future interaction with it
-        // including mouse events received before the unlock completes.
-        requestPointerUnlock();
-        clearElement();
-    }
+    m_documentOfRemovedElementWhileWaitingForUnlock = m_element->document();
+    // Set element null immediately to block any future interaction with it
+    // including mouse events received before the unlock completes.
+    requestPointerUnlock();
+    clearElement();
 }
 
 void PointerLockController::documentDetached(Document& document)
