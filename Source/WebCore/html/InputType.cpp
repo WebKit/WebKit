@@ -90,7 +90,7 @@ using namespace HTMLNames;
 typedef bool (Settings::*InputTypeConditionalFunction)() const;
 typedef const AtomString& (*InputTypeNameFunction)();
 typedef Ref<InputType> (*InputTypeFactoryFunction)(HTMLInputElement&);
-typedef HashMap<AtomString, std::pair<InputTypeConditionalFunction, InputTypeFactoryFunction>, ASCIICaseInsensitiveHash> InputTypeFactoryMap;
+typedef HashMap<AtomString, std::pair<InputTypeConditionalFunction, InputTypeFactoryFunction>> InputTypeFactoryMap;
 
 template<class T> static Ref<InputType> createInputType(HTMLInputElement& element)
 {
@@ -150,7 +150,7 @@ Ref<InputType> InputType::create(HTMLInputElement& element, const AtomString& ty
 {
     if (!typeName.isEmpty()) {
         static NeverDestroyed factoryMap = createInputTypeFactoryMap();
-        auto&& [conditional, factory] = factoryMap.get().get(typeName);
+        auto&& [conditional, factory] = factoryMap.get().get(typeName.convertToASCIILowercase());
         if (factory && (!conditional || std::invoke(conditional, element.document().settings())))
             return factory(element);
     }
