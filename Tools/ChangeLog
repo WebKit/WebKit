@@ -1,3 +1,21 @@
+2022-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add API tests for video extraction in element fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238706
+        rdar://91205141
+
+        Reviewed by Eric Carlson.
+
+        Add a WebKitAdditions hook for the new API test, as well as a new test page that exercises element fullscreen
+        with a video element.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenVideoExtraction.mm: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/element-fullscreen.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm:
+
 2022-04-04  J Pascoe  <j_pascoe@apple.com>
 
         [ iOS 15 ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html is flaky timing out

@@ -37,6 +37,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/HexNumber.h>
 
 static NSDictionary *messageDictionary(NSData *data, NSURL *registration)
 {
