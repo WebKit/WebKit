@@ -1130,7 +1130,8 @@ RendererVk::RendererVk()
       mPipelineCacheInitialized(false),
       mValidationMessageCount(0),
       mCommandProcessor(this),
-      mSupportedVulkanPipelineStageMask(0)
+      mSupportedVulkanPipelineStageMask(0),
+      mLastPruneTime(angle::GetCurrentSystemTime())
 {
     VkFormatProperties invalid = {0, 0, kInvalidFormatFeatureFlags};
     mFormatProperties.fill(invalid);
@@ -1170,8 +1171,36 @@ void RendererVk::releaseSharedResources(vk::ResourceUseList *resourceList)
 
 void RendererVk::onDestroy(vk::Context *context)
 {
+    // Make sure device loss is handled, despite potential race conditions.  Device loss is only
+    // procesed under the mCommandQueueMutex lock, but it may be generated from any Vulkan command.
+    // For example:
+    //
+    // - Thread A may proceed without a device loss, but be at ~ScopedCommandQueueLock before
+    //   unlocking the mutex.
+    // - Thread B may generate a device loss, but cannot take the lock in handleDeviceLost.
+    //
+    // In the above scenario, neither thread handles device loss.  If the application destroys the
+    // display at this moment, device loss needs to be handled.
+    if (isDeviceLost())
     {
-        std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+        handleDeviceLost();
+    }
+
+    for (std::unique_ptr<vk::BufferPool> &pool : mDefaultBufferPools)
+    {
+        if (pool)
+        {
+            pool->destroy(this);
+        }
+    }
+
+    if (mSmallBufferPool)
+    {
+        mSmallBufferPool->destroy(this);
+    }
+
+    {
+        vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
         if (isAsyncCommandQueueEnabled())
         {
             mCommandProcessor.destroy(context);
@@ -1627,20 +1656,38 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
 
     ANGLE_VK_CHECK(displayVk, mMemoryProperties.getMemoryTypeCount() > 0,
                    VK_ERROR_INITIALIZATION_FAILED);
-    // Initialize staging buffer memory type index and alignment.
-    // These buffers will only be used as transfer sources or transfer targets.
-    constexpr VkImageUsageFlags kUsageFlags =
-        VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
+    // Figure out the alignment for default buffer allocations
     VkBufferCreateInfo createInfo    = {};
     createInfo.sType                 = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     createInfo.flags                 = 0;
     createInfo.size                  = 4096;
-    createInfo.usage                 = kUsageFlags;
+    createInfo.usage                 = GetDefaultBufferUsageFlags(this);
     createInfo.sharingMode           = VK_SHARING_MODE_EXCLUSIVE;
     createInfo.queueFamilyIndexCount = 0;
     createInfo.pQueueFamilyIndices   = nullptr;
+    vk::Buffer tempBuffer;
+    tempBuffer.init(mDevice, createInfo);
+    VkMemoryRequirements defaultBufferMemoryRequirements;
+    tempBuffer.getMemoryRequirements(mDevice, &defaultBufferMemoryRequirements);
+    ASSERT(gl::isPow2(defaultBufferMemoryRequirements.alignment));
 
+    const VkPhysicalDeviceLimits &limitsVk = getPhysicalDeviceProperties().limits;
+    ASSERT(gl::isPow2(limitsVk.minUniformBufferOffsetAlignment));
+    ASSERT(gl::isPow2(limitsVk.minStorageBufferOffsetAlignment));
+    ASSERT(gl::isPow2(limitsVk.minTexelBufferOffsetAlignment));
+    ASSERT(gl::isPow2(limitsVk.minMemoryMapAlignment));
+    mDefaultBufferAlignment =
+        std::max({static_cast<size_t>(limitsVk.minUniformBufferOffsetAlignment),
+                  static_cast<size_t>(limitsVk.minStorageBufferOffsetAlignment),
+                  static_cast<size_t>(limitsVk.minTexelBufferOffsetAlignment),
+                  static_cast<size_t>(limitsVk.minMemoryMapAlignment),
+                  static_cast<size_t>(defaultBufferMemoryRequirements.alignment)});
+    tempBuffer.destroy(mDevice);
+
+    // Initialize staging buffer memory type index and alignment.
+    // These buffers will only be used as transfer sources or transfer targets.
+    createInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
     VkMemoryPropertyFlags requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
     bool persistentlyMapped             = mFeatures.persistentlyMappedBuffers.enabled;
 
@@ -1687,7 +1734,8 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
     mVertexConversionBufferAlignment = std::max(
         {vk::kVertexBufferAlignment,
          static_cast<size_t>(mPhysicalDeviceProperties.limits.minStorageBufferOffsetAlignment),
-         static_cast<size_t>(mPhysicalDeviceProperties.limits.nonCoherentAtomSize)});
+         static_cast<size_t>(mPhysicalDeviceProperties.limits.nonCoherentAtomSize),
+         static_cast<size_t>(defaultBufferMemoryRequirements.alignment)});
     ASSERT(gl::isPow2(mVertexConversionBufferAlignment));
 
     {
@@ -2793,15 +2841,35 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     constexpr uint32_t kPixel2DriverWithRelaxedPrecision        = 0x801EA000;
     constexpr uint32_t kPixel4DriverWithWorkingSpecConstSupport = 0x80201000;
 
-    bool isAMD      = IsAMD(mPhysicalDeviceProperties.vendorID);
-    bool isARM      = IsARM(mPhysicalDeviceProperties.vendorID);
-    bool isIntel    = IsIntel(mPhysicalDeviceProperties.vendorID);
-    bool isNvidia   = IsNvidia(mPhysicalDeviceProperties.vendorID);
-    bool isPowerVR  = IsPowerVR(mPhysicalDeviceProperties.vendorID);
-    bool isQualcomm = IsQualcomm(mPhysicalDeviceProperties.vendorID);
-    bool isSamsung  = IsSamsung(mPhysicalDeviceProperties.vendorID);
-    bool isSwiftShader =
+    const bool isAMD      = IsAMD(mPhysicalDeviceProperties.vendorID);
+    const bool isARM      = IsARM(mPhysicalDeviceProperties.vendorID);
+    const bool isIntel    = IsIntel(mPhysicalDeviceProperties.vendorID);
+    const bool isNvidia   = IsNvidia(mPhysicalDeviceProperties.vendorID);
+    const bool isPowerVR  = IsPowerVR(mPhysicalDeviceProperties.vendorID);
+    const bool isQualcomm = IsQualcomm(mPhysicalDeviceProperties.vendorID);
+    const bool isBroadcom = IsBroadcom(mPhysicalDeviceProperties.vendorID);
+    const bool isSamsung  = IsSamsung(mPhysicalDeviceProperties.vendorID);
+    const bool isSwiftShader =
         IsSwiftshader(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
+
+    // Classify devices based on general architecture:
+    //
+    // - IMR (Immediate-Mode Rendering) devices generally progress through draw calls once and use
+    //   the main GPU memory (accessed through caches) to store intermediate rendering results.
+    // - TBR (Tile-Based Rendering) devices issue a pre-rendering geometry pass, then run through
+    //   draw calls once per tile and store intermediate rendering results on the tile cache.
+    //
+    // Due to these key architectural differences, some operations improve performance on one while
+    // deteriorating performance on the other.  ANGLE will accordingly make some decisions based on
+    // the device architecture for optimal performance on both.
+    const bool isImmediateModeRenderer = isNvidia || isAMD || isIntel || isSamsung || isSwiftShader;
+    const bool isTileBasedRenderer     = isARM || isPowerVR || isQualcomm || isBroadcom;
+
+    // Make sure all known architectures are accounted for.
+    if (!isImmediateModeRenderer && !isTileBasedRenderer && !isMockICDEnabled())
+    {
+        WARN() << "Unknown GPU architecture";
+    }
 
     bool supportsNegativeViewport =
         ExtensionFound(VK_KHR_MAINTENANCE1_EXTENSION_NAME, deviceExtensionNames) ||
@@ -3069,14 +3137,16 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
           (mPhysicalDeviceProperties.driverVersion < kPixel2DriverWithRelaxedPrecision)) &&
             !IsPixel4(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID));
 
-    // The following platforms are less sensitive to the src/dst stage masks in barriers, and behave
-    // more efficiently when all barriers are aggregated, rather than individually and precisely
-    // specified:
-    //
-    // - Desktop GPUs
-    // - SwiftShader
-    ANGLE_FEATURE_CONDITION(&mFeatures, preferAggregateBarrierCalls,
-                            isNvidia || isAMD || isIntel || isSwiftShader || isSamsung);
+    // IMR devices are less sensitive to the src/dst stage masks in barriers, and behave more
+    // efficiently when all barriers are aggregated, rather than individually and precisely
+    // specified.
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferAggregateBarrierCalls, isImmediateModeRenderer);
+
+    // For IMR devices, it's more efficient to ignore invalidate of framebuffer attachments with
+    // emulated formats that have extra channels.  For TBR devices, the invalidate will be followed
+    // by a clear to retain valid values in said extra channels.
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferSkippingInvalidateForEmulatedFormats,
+                            isImmediateModeRenderer);
 
     // Currently disabled by default: http://anglebug.com/4324
     ANGLE_FEATURE_CONDITION(&mFeatures, asyncCommandQueue, false);
@@ -3174,9 +3244,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     ANGLE_FEATURE_CONDITION(&mFeatures, compressVertexData, false);
 
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, preferDrawClearOverVkCmdClearAttachments,
-        IsPixel2(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID));
+    // vkCmdClearAttachments races with draw calls on Qualcomm hardware as observed on Pixel2 and
+    // Pixel4.  https://issuetracker.google.com/issues/166809097
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferDrawClearOverVkCmdClearAttachments, isQualcomm);
 
     // r32f image emulation is done unconditionally so VK_FORMAT_FEATURE_STORAGE_*_ATOMIC_BIT is not
     // required.
@@ -3212,14 +3282,15 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // http://anglebug.com/6872
     // On ARM hardware, framebuffer-fetch-like behavior on Vulkan is already coherent, so we can
     // expose the coherent version of the GL extension despite unofficial Vulkan support.
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFramebufferFetch, IsAndroid() && isARM);
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFramebufferFetch,
+                            (IsAndroid() && isARM) || isSwiftShader);
 
     // Important games are not checking supported extensions properly, and are confusing the
     // GL_EXT_shader_framebuffer_fetch_non_coherent as the GL_EXT_shader_framebuffer_fetch
     // extension.  Therefore, don't enable the extension on Arm and Qualcomm by default.
     // https://issuetracker.google.com/issues/186643966
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFramebufferFetchNonCoherent,
-                            IsAndroid() && !(isARM || isQualcomm));
+                            (IsAndroid() && !(isARM || isQualcomm)) || isSwiftShader);
 
     // Support EGL_KHR_lock_surface3 extension.
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsLockSurfaceExtension, IsAndroid());
@@ -3519,7 +3590,7 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::queueSubmitOneOff");
 
-    std::lock_guard<std::mutex> commandQueueLock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
 
     Serial submitQueueSerial;
     if (isAsyncCommandQueueEnabled())
@@ -3826,7 +3897,7 @@ angle::Result RendererVk::submitFrame(vk::Context *context,
                                       vk::SecondaryCommandPools *commandPools,
                                       Serial *submitSerialOut)
 {
-    std::lock_guard<std::mutex> commandQueueLock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
 
     vk::SecondaryCommandBufferList commandBuffersToReset = {
         std::move(mOutsideRenderPassCommandBufferRecycler.releaseCommandBuffersToReset()),
@@ -3860,7 +3931,20 @@ angle::Result RendererVk::submitFrame(vk::Context *context,
 
 void RendererVk::handleDeviceLost()
 {
-    std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+    // If the lock is already taken, it must be taken by ScopedCommandQueueLock, which would call
+    // handleDeviceLostNoLock when appropriate.
+    if (!mCommandQueueMutex.try_lock())
+    {
+        return;
+    }
+    handleDeviceLostNoLock();
+    mCommandQueueMutex.unlock();
+}
+
+void RendererVk::handleDeviceLostNoLock()
+{
+    // The lock must already be taken, either by handleDeviceLost() or ScopedCommandQueueLock
+    ASSERT(mCommandQueueMutex.try_lock() == false);
 
     if (isAsyncCommandQueueEnabled())
     {
@@ -3874,7 +3958,7 @@ void RendererVk::handleDeviceLost()
 
 angle::Result RendererVk::finishToSerial(vk::Context *context, Serial serial)
 {
-    std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
 
     if (isAsyncCommandQueueEnabled())
     {
@@ -3895,7 +3979,8 @@ angle::Result RendererVk::waitForSerialWithUserTimeout(vk::Context *context,
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::waitForSerialWithUserTimeout");
 
-    std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
+
     if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.waitForSerialWithUserTimeout(context, serial, timeout, result));
@@ -3910,7 +3995,7 @@ angle::Result RendererVk::waitForSerialWithUserTimeout(vk::Context *context,
 
 angle::Result RendererVk::finish(vk::Context *context, bool hasProtectedContent)
 {
-    std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
 
     if (isAsyncCommandQueueEnabled())
     {
@@ -3926,7 +4011,7 @@ angle::Result RendererVk::finish(vk::Context *context, bool hasProtectedContent)
 
 angle::Result RendererVk::checkCompletedCommands(vk::Context *context)
 {
-    std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
     // TODO: https://issuetracker.google.com/169788986 - would be better if we could just wait
     // for the work we need but that requires QueryHelper to use the actual serial for the
     // query.
@@ -3950,7 +4035,7 @@ angle::Result RendererVk::flushRenderPassCommands(
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushRenderPassCommands");
 
-    std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
     if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.flushRenderPassCommands(context, hasProtectedContent,
@@ -3972,7 +4057,7 @@ angle::Result RendererVk::flushOutsideRPCommands(
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushOutsideRPCommands");
 
-    std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
     if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.flushOutsideRPCommands(context, hasProtectedContent,
@@ -3991,7 +4076,7 @@ VkResult RendererVk::queuePresent(vk::Context *context,
                                   egl::ContextPriority priority,
                                   const VkPresentInfoKHR &presentInfo)
 {
-    std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+    vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
 
     VkResult result = VK_SUCCESS;
     if (isAsyncCommandQueueEnabled())
@@ -4147,6 +4232,24 @@ VkDeviceSize RendererVk::getPreferedBufferBlockSize(uint32_t memoryTypeIndex) co
     preferredBlockSize          = std::min(heapSize / 64, preferredBlockSize);
 
     return preferredBlockSize;
+}
+
+vk::BufferPool *RendererVk::getDefaultBufferPool(VkDeviceSize size, uint32_t memoryTypeIndex)
+{
+    return vk::GetDefaultBufferPool(mSmallBufferPool, mDefaultBufferPools, this, size,
+                                    memoryTypeIndex);
+}
+
+void RendererVk::pruneDefaultBufferPools()
+{
+    mLastPruneTime = angle::GetCurrentSystemTime();
+
+    vk::PruneDefaultBufferPools(this, mDefaultBufferPools, mSmallBufferPool);
+}
+
+bool RendererVk::isDueForBufferPoolPrune()
+{
+    return vk::IsDueForBufferPoolPrune(mLastPruneTime);
 }
 
 namespace vk

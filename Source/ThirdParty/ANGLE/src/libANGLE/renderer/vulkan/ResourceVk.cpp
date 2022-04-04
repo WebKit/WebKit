@@ -139,7 +139,8 @@ bool SharedBufferSuballocationGarbage::destroyIfComplete(RendererVk *renderer,
         return false;
     }
 
-    mGarbage.destroy(renderer);
+    mBuffer.destroy(renderer->getDevice());
+    mSuballocation.destroy(renderer);
     mLifetime.release();
     return true;
 }

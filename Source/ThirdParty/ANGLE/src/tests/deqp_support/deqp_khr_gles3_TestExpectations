@@ -60,7 +60,3 @@
 6678 UBSAN : KHR-GLES3.core.internalformat.texture2d.*half_float* = SKIP
 6678 UBSAN : KHR-GLES3.packed_pixels.* = SKIP
 6678 UBSAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP
-
-// Pixel 6 expectations.
-6919 PIXEL6 VULKAN : KHR-GLES3.packed_pixels.pbo_rectangle.rgb = FAIL
-6919 PIXEL6 VULKAN : KHR-GLES3.packed_pixels.pbo_rectangle.rgb8 = FAIL

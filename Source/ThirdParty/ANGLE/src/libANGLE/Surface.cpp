@@ -259,7 +259,7 @@ Error Surface::makeCurrent(const gl::Context *context)
     }
     ANGLE_TRY(mImplementation->makeCurrent(context));
     mIsCurrentOnAnyContext = true;
-    mRefCount++;
+    addRef();
     return NoError();
 }
 
@@ -547,7 +547,7 @@ Error Surface::bindTexImage(gl::Context *context, gl::Texture *texture, EGLint b
         return Error(EGL_BAD_SURFACE);
     }
     mTexture = texture;
-    mRefCount++;
+    addRef();
 
     return NoError();
 }

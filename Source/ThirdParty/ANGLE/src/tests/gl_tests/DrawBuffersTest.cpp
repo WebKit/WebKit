@@ -375,6 +375,186 @@ TEST_P(DrawBuffersTest, ClearWithGaps)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that mid-render pass clear works with gaps
+TEST_P(DrawBuffersTest, MidRenderPassClearWithGaps)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &mMaxDrawBuffers);
+    ASSERT_GE(mMaxDrawBuffers, 4);
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextures[0], 0);
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, mTextures[1], 0);
+
+    const GLenum bufs[] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_NONE, GL_COLOR_ATTACHMENT3};
+
+    bool flags[8] = {true, false, false, true};
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    setDrawBuffers(4, bufs);
+
+    drawQuad(program, positionAttrib(), 0.5);
+
+    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // A bogus draw to make sure clears are done with a render pass in the Vulkan backend.
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_ONE);
+    drawQuad(program, positionAttrib(), 0.5);
+    EXPECT_GL_NO_ERROR();
+
+    verifyAttachment2DColor(0, mTextures[0], GL_TEXTURE_2D, 0, GLColor::yellow);
+    verifyAttachment2DColor(3, mTextures[1], GL_TEXTURE_2D, 0, GLColor::yellow);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that mid-render pass clear works with gaps.  Uses RGB format.
+TEST_P(DrawBuffersTest, MidRenderPassClearWithGapsRGB)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &mMaxDrawBuffers);
+    ASSERT_GE(mMaxDrawBuffers, 4);
+
+    GLTexture textures[2];
+
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, getWindowWidth(), getWindowHeight(), 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textures[0], 0);
+
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, getWindowWidth(), getWindowHeight(), 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, textures[1], 0);
+
+    const GLenum bufs[] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_NONE, GL_COLOR_ATTACHMENT3};
+
+    bool flags[8] = {true, false, false, true};
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    setDrawBuffers(4, bufs);
+
+    drawQuad(program, positionAttrib(), 0.5);
+
+    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // A bogus draw to make sure clears are done with a render pass in the Vulkan backend.
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_ONE);
+    drawQuad(program, positionAttrib(), 0.5);
+    EXPECT_GL_NO_ERROR();
+
+    verifyAttachment2DColor(0, textures[0], GL_TEXTURE_2D, 0, GLColor::yellow);
+    verifyAttachment2DColor(3, textures[1], GL_TEXTURE_2D, 0, GLColor::yellow);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that a masked draw and a mid-render pass clear works with gaps.
+TEST_P(DrawBuffersTest, MaskedDrawMidRPClearWithGaps)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &mMaxDrawBuffers);
+    ASSERT_GE(mMaxDrawBuffers, 4);
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextures[0], 0);
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, mTextures[1], 0);
+
+    // Mask out attachment 3, so we only draw to attachment 1.
+    GLenum bufs[] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_NONE, GL_NONE};
+    bool flags[8] = {true, false, false, false};
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    setDrawBuffers(4, bufs);
+
+    drawQuad(program, positionAttrib(), 0.5);
+
+    // Re-enable attachment 3, so we clear both attachment 1 and 3.
+    bufs[3] = GL_COLOR_ATTACHMENT3;
+    setDrawBuffers(4, bufs);
+    flags[3] = true;
+    setupMRTProgram(flags, &program);
+
+    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // A bogus draw to make sure clears are done with a render pass in the Vulkan backend.
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_ONE);
+    drawQuad(program, positionAttrib(), 0.5);
+    EXPECT_GL_NO_ERROR();
+
+    verifyAttachment2DColor(0, mTextures[0], GL_TEXTURE_2D, 0, GLColor::yellow);
+    verifyAttachment2DColor(3, mTextures[1], GL_TEXTURE_2D, 0, GLColor::yellow);
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that a masked draw and a mid-render pass clear works with gaps.  Uses RGB format.
+TEST_P(DrawBuffersTest, MaskedDrawMidRPClearWithGapsRGB)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &mMaxDrawBuffers);
+    ASSERT_GE(mMaxDrawBuffers, 4);
+
+    GLTexture textures[2];
+
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, getWindowWidth(), getWindowHeight(), 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textures[0], 0);
+
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, getWindowWidth(), getWindowHeight(), 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, textures[1], 0);
+
+    // Mask out attachment 3, so we only draw to attachment 1.
+    GLenum bufs[] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_NONE, GL_NONE};
+    bool flags[8] = {true, false, false, false};
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    setDrawBuffers(4, bufs);
+
+    drawQuad(program, positionAttrib(), 0.5);
+
+    // Re-enable attachment 3, so we clear both attachment 1 and 3.
+    bufs[3] = GL_COLOR_ATTACHMENT3;
+    setDrawBuffers(4, bufs);
+    flags[3] = true;
+    setupMRTProgram(flags, &program);
+
+    glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // A bogus draw to make sure clears are done with a render pass in the Vulkan backend.
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ZERO, GL_ONE);
+    drawQuad(program, positionAttrib(), 0.5);
+    EXPECT_GL_NO_ERROR();
+
+    verifyAttachment2DColor(0, textures[0], GL_TEXTURE_2D, 0, GLColor::yellow);
+    verifyAttachment2DColor(3, textures[1], GL_TEXTURE_2D, 0, GLColor::yellow);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 TEST_P(DrawBuffersTest, FirstAndLast)
 {
     ANGLE_SKIP_TEST_IF(!setupTest());

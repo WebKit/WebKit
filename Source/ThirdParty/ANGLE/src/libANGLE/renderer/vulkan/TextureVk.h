@@ -285,6 +285,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     // Get the layer count for views.
     uint32_t getImageViewLayerCount() const;
+    // Get the level count for views.
+    uint32_t getImageViewLevelCount() const;
 
     void releaseAndDeleteImageAndViews(ContextVk *contextVk);
     angle::Result ensureImageAllocated(ContextVk *contextVk, const vk::Format &format);
@@ -490,15 +492,12 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     vk::ImageAccess mRequiredImageAccess;
     bool mImmutableSamplerDirty;
 
-    gl::TextureType mImageNativeType;
-
-    // The layer offset to apply when converting from a frontend texture layer to a texture layer in
-    // mImage. Used when this texture sources a cube map face or 3D texture layer from an EGL image.
-    uint32_t mImageLayerOffset;
-
-    // The level offset to apply when converting from a frontend texture level to texture level in
-    // mImage.
-    uint32_t mImageLevelOffset;
+    // Only valid if this texture is an "EGLImage target" and the associated EGL Image was
+    // originally sourced from an OpenGL texture. Such EGL Images can be a slice of the underlying
+    // resource. The layer and level offsets are used to track the location of the slice.
+    gl::TextureType mEGLImageNativeType;
+    uint32_t mEGLImageLayerOffset;
+    uint32_t mEGLImageLevelOffset;
 
     // If multisampled rendering to texture, an intermediate multisampled image is created for use
     // as renderpass color attachment.  An array of images and image views are used based on the

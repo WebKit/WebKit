@@ -62,7 +62,7 @@ angle::Result CheckLinkStatus(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-class ScopedGLState : angle::NonCopyable
+class ANGLE_NO_DISCARD ScopedGLState : angle::NonCopyable
 {
   public:
     enum

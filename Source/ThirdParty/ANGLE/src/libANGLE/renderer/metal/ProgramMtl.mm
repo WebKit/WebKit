@@ -41,7 +41,7 @@ namespace
 constexpr char kSpirvCrossSpecConstSuffix[] = "_tmp";
 #endif
 template <typename T>
-class ScopedAutoClearVector
+class ANGLE_NO_DISCARD ScopedAutoClearVector
 {
   public:
     ScopedAutoClearVector(std::vector<T> *array) : mArray(*array) {}

@@ -1831,14 +1831,10 @@ bool IsTextureUpdate(CallCapture &call)
         case EntryPoint::GLTextureSubImage1D:
         case EntryPoint::GLTextureSubImage2D:
         case EntryPoint::GLTextureSubImage3D:
-            return true;
-
-        // Note: CopyImageSubData is handled specially in copyCompressedTextureData
         case EntryPoint::GLCopyImageSubData:
         case EntryPoint::GLCopyImageSubDataEXT:
         case EntryPoint::GLCopyImageSubDataOES:
-            return false;
-
+            return true;
         default:
             return false;
     }
@@ -1856,14 +1852,22 @@ void CaptureFramebufferAttachment(std::vector<CallCapture> *setupCalls,
 {
     GLuint resourceID = attachment.getResource()->getId();
 
-    // TODO(jmadill): Layer attachments. http://anglebug.com/3662
     if (attachment.type() == GL_TEXTURE)
     {
         gl::ImageIndex index = attachment.getTextureImageIndex();
 
-        Capture(setupCalls, framebufferFuncs.framebufferTexture2D(
-                                replayState, true, GL_FRAMEBUFFER, attachment.getBinding(),
-                                index.getTarget(), {resourceID}, index.getLevelIndex()));
+        if (index.usesTex3D() || IsCubeMapFaceTarget(index.getTarget()))
+        {
+            Capture(setupCalls, CaptureFramebufferTextureLayer(
+                                    replayState, true, GL_FRAMEBUFFER, attachment.getBinding(),
+                                    {resourceID}, index.getLevelIndex(), index.getLayerIndex()));
+        }
+        else
+        {
+            Capture(setupCalls, framebufferFuncs.framebufferTexture2D(
+                                    replayState, true, GL_FRAMEBUFFER, attachment.getBinding(),
+                                    index.getTarget(), {resourceID}, index.getLevelIndex()));
+        }
     }
     else
     {
@@ -3090,63 +3094,61 @@ void CaptureShareGroupMidExecutionSetup(const gl::Context *context,
                 continue;
             }
 
-            if (format.compressed)
-            {
-                // For compressed images, we've tracked a copy of the incoming data, so we can
-                // use that rather than try to read data back that may have been converted.
-                const std::vector<uint8_t> &capturedTextureLevel =
-                    context->getShareGroup()->getFrameCaptureShared()->retrieveCachedTextureLevel(
-                        texture->id(), index.getTarget(), index.getLevelIndex());
-
-                // Use the shadow copy of the data to populate the call
-                for (std::vector<CallCapture> *calls : texSetupCalls)
-                {
-                    CaptureTextureContents(calls, &replayState, texture, index, desc,
-                                           static_cast<GLuint>(capturedTextureLevel.size()),
-                                           capturedTextureLevel.data());
-                }
-            }
-            else
+            if (context->getExtensions().getImageANGLE)
             {
                 // Use ANGLE_get_image to read back pixel data.
-                if (context->getExtensions().getImageANGLE)
+                angle::MemoryBuffer data;
+
+                const gl::Extents extents(desc.size.width, desc.size.height, desc.size.depth);
+
+                gl::PixelPackState packState;
+                packState.alignment = 1;
+
+                if (format.compressed)
+                {
+                    // Calculate the size needed to store the compressed level
+                    GLuint sizeInBytes;
+                    bool result = format.computeCompressedImageSize(extents, &sizeInBytes);
+                    ASSERT(result);
+
+                    result = data.resize(sizeInBytes);
+                    ASSERT(result);
+
+                    (void)texture->getCompressedTexImage(context, packState, nullptr,
+                                                         index.getTarget(), index.getLevelIndex(),
+                                                         data.data());
+                }
+                else
                 {
                     GLenum getFormat = format.format;
                     GLenum getType   = format.type;
 
-                    angle::MemoryBuffer data;
-
-                    const gl::Extents size(desc.size.width, desc.size.height, desc.size.depth);
                     const gl::PixelUnpackState &unpack = apiState.getUnpackState();
 
                     GLuint endByte = 0;
                     bool unpackSize =
-                        format.computePackUnpackEndByte(getType, size, unpack, true, &endByte);
+                        format.computePackUnpackEndByte(getType, extents, unpack, true, &endByte);
                     ASSERT(unpackSize);
 
                     bool result = data.resize(endByte);
                     ASSERT(result);
 
-                    gl::PixelPackState packState;
-                    packState.alignment = 1;
-
                     (void)texture->getTexImage(context, packState, nullptr, index.getTarget(),
                                                index.getLevelIndex(), getFormat, getType,
                                                data.data());
-
-                    for (std::vector<CallCapture> *calls : texSetupCalls)
-                    {
-                        CaptureTextureContents(calls, &replayState, texture, index, desc,
-                                               static_cast<GLuint>(data.size()), data.data());
-                    }
                 }
-                else
+
+                for (std::vector<CallCapture> *calls : texSetupCalls)
                 {
-                    for (std::vector<CallCapture> *calls : texSetupCalls)
-                    {
-                        CaptureTextureContents(calls, &replayState, texture, index, desc, 0,
-                                               nullptr);
-                    }
+                    CaptureTextureContents(calls, &replayState, texture, index, desc,
+                                           static_cast<GLuint>(data.size()), data.data());
+                }
+            }
+            else
+            {
+                for (std::vector<CallCapture> *calls : texSetupCalls)
+                {
+                    CaptureTextureContents(calls, &replayState, texture, index, desc, 0, nullptr);
                 }
             }
         }
@@ -4283,20 +4285,6 @@ bool SkipCall(EntryPoint entryPoint)
     return false;
 }
 
-GLint GetAdjustedTextureCacheLevel(gl::TextureTarget target, GLint level)
-{
-    GLint adjustedLevel = level;
-
-    // If target is a cube, we need to maintain 6 images per level
-    if (IsCubeMapFaceTarget(target))
-    {
-        adjustedLevel *= 6;
-        adjustedLevel += CubeMapTextureTargetToFaceIndex(target);
-    }
-
-    return adjustedLevel;
-}
-
 template <typename ParamValueType>
 struct ParamValueTrait
 {
@@ -4652,243 +4640,6 @@ FrameCaptureShared::FrameCaptureShared()
 }
 
 FrameCaptureShared::~FrameCaptureShared() = default;
-
-void FrameCaptureShared::copyCompressedTextureData(const gl::Context *context,
-                                                   const CallCapture &call)
-{
-    // For compressed textures, we need to copy the source data that was already captured into a new
-    // cached texture entry for use during mid-execution capture, rather than reading it back with
-    // ANGLE_get_image.
-
-    GLenum srcTarget = call.params.getParam("srcTarget", ParamType::TGLenum, 1).value.GLenumVal;
-    GLenum dstTarget = call.params.getParam("dstTarget", ParamType::TGLenum, 7).value.GLenumVal;
-
-    // TODO(anglebug.com/6104): Type of incoming ID varies based on target type, but we're only
-    // handling textures for now. If either of these asserts fire, then we need to add renderbuffer
-    // support.
-    ASSERT(srcTarget == GL_TEXTURE_2D || srcTarget == GL_TEXTURE_2D_ARRAY ||
-           srcTarget == GL_TEXTURE_3D || srcTarget == GL_TEXTURE_CUBE_MAP);
-    ASSERT(dstTarget == GL_TEXTURE_2D || dstTarget == GL_TEXTURE_2D_ARRAY ||
-           dstTarget == GL_TEXTURE_3D || dstTarget == GL_TEXTURE_CUBE_MAP);
-
-    gl::TextureID srcName =
-        call.params.getParam("srcName", ParamType::TTextureID, 0).value.TextureIDVal;
-    GLint srcLevel = call.params.getParam("srcLevel", ParamType::TGLint, 2).value.GLintVal;
-    gl::TextureID dstName =
-        call.params.getParam("dstName", ParamType::TTextureID, 6).value.TextureIDVal;
-    GLint dstLevel = call.params.getParam("dstLevel", ParamType::TGLint, 8).value.GLintVal;
-
-    // Inspect the dest texture to see if this is compressed in case we need to back it up
-    gl::Texture *dstTexture = context->getTexture(dstName);
-    ASSERT(dstTexture);
-
-    // Look up its target using dstZ as the slice in case of 3D/Cube/Array
-    GLint dstZ = call.params.getParam("dstZ", ParamType::TGLint, 11).value.GLintVal;
-    gl::TextureTarget dstTargetPacked = gl::TextureTypeToTarget(dstTexture->getType(), dstZ);
-
-    // Pull the info and check
-    const gl::InternalFormat &dstFormat = *dstTexture->getFormat(dstTargetPacked, dstLevel).info;
-    if (dstFormat.compressed)
-    {
-        context->getShareGroup()->getFrameCaptureShared()->copyCachedTextureLevel(
-            context, srcName, srcLevel, dstName, dstLevel, call);
-    }
-
-    // Also track that the destination texture has been updated
-    mResourceTracker.getTrackedResource(ResourceIDType::Texture).setModifiedResource(dstName.value);
-}
-
-void FrameCaptureShared::captureCompressedTextureData(const gl::Context *context,
-                                                      const CallCapture &call)
-{
-    // For compressed textures, track a shadow copy of the data
-    // for use during mid-execution capture, rather than reading it back
-    // with ANGLE_get_image
-
-    // Storing the compressed data is handled the same for all entry points,
-    // they just have slightly different parameter locations
-    int dataParamOffset    = -1;
-    int xoffsetParamOffset = -1;
-    int yoffsetParamOffset = -1;
-    int zoffsetParamOffset = -1;
-    int widthParamOffset   = -1;
-    int heightParamOffset  = -1;
-    int depthParamOffset   = -1;
-    switch (call.entryPoint)
-    {
-        case EntryPoint::GLCompressedTexSubImage3D:
-            xoffsetParamOffset = 2;
-            yoffsetParamOffset = 3;
-            zoffsetParamOffset = 4;
-            widthParamOffset   = 5;
-            heightParamOffset  = 6;
-            depthParamOffset   = 7;
-            dataParamOffset    = 10;
-            break;
-        case EntryPoint::GLCompressedTexImage3D:
-            widthParamOffset  = 3;
-            heightParamOffset = 4;
-            depthParamOffset  = 5;
-            dataParamOffset   = 8;
-            break;
-        case EntryPoint::GLCompressedTexSubImage2D:
-            xoffsetParamOffset = 2;
-            yoffsetParamOffset = 3;
-            widthParamOffset   = 4;
-            heightParamOffset  = 5;
-            dataParamOffset    = 8;
-            break;
-        case EntryPoint::GLCompressedTexImage2D:
-            widthParamOffset  = 3;
-            heightParamOffset = 4;
-            dataParamOffset   = 7;
-            break;
-        default:
-            // There should be no other callers of this function
-            ASSERT(0);
-            break;
-    }
-
-    gl::Buffer *pixelUnpackBuffer =
-        context->getState().getTargetBuffer(gl::BufferBinding::PixelUnpack);
-
-    const uint8_t *data = static_cast<const uint8_t *>(
-        call.params.getParam("data", ParamType::TvoidConstPointer, dataParamOffset)
-            .value.voidConstPointerVal);
-
-    GLsizei imageSize = call.params.getParam("imageSize", ParamType::TGLsizei, dataParamOffset - 1)
-                            .value.GLsizeiVal;
-
-    const uint8_t *pixelData = nullptr;
-
-    if (pixelUnpackBuffer)
-    {
-        // If using pixel unpack buffer, map the buffer and track its data
-        ASSERT(!pixelUnpackBuffer->isMapped());
-        (void)pixelUnpackBuffer->mapRange(context, reinterpret_cast<GLintptr>(data), imageSize,
-                                          GL_MAP_READ_BIT);
-
-        pixelData = reinterpret_cast<const uint8_t *>(pixelUnpackBuffer->getMapPointer());
-    }
-    else
-    {
-        pixelData = data;
-    }
-
-    if (!pixelData)
-    {
-        // If no pointer was provided and we weren't able to map the buffer, there is no data to
-        // capture
-        return;
-    }
-
-    // Look up the texture type
-    gl::TextureTarget targetPacked =
-        call.params.getParam("targetPacked", ParamType::TTextureTarget, 0).value.TextureTargetVal;
-    gl::TextureType textureType = gl::TextureTargetToType(targetPacked);
-
-    // Create a copy of the incoming data
-    std::vector<uint8_t> compressedData;
-    compressedData.assign(pixelData, pixelData + imageSize);
-
-    // Look up the currently bound texture
-    gl::Texture *texture = context->getState().getTargetTexture(textureType);
-    ASSERT(texture);
-
-    // Record the data, indexed by textureID and level
-    GLint level = call.params.getParam("level", ParamType::TGLint, 1).value.GLintVal;
-    std::vector<uint8_t> &levelData =
-        context->getShareGroup()->getFrameCaptureShared()->getCachedTextureLevelData(
-            texture, targetPacked, level, call.entryPoint);
-
-    // Unpack the various pixel rectangle parameters.
-    ASSERT(widthParamOffset != -1);
-    ASSERT(heightParamOffset != -1);
-    GLsizei pixelWidth =
-        call.params.getParam("width", ParamType::TGLsizei, widthParamOffset).value.GLsizeiVal;
-    GLsizei pixelHeight =
-        call.params.getParam("height", ParamType::TGLsizei, heightParamOffset).value.GLsizeiVal;
-    GLsizei pixelDepth = 1;
-    if (depthParamOffset != -1)
-    {
-        pixelDepth =
-            call.params.getParam("depth", ParamType::TGLsizei, depthParamOffset).value.GLsizeiVal;
-    }
-
-    GLint xoffset = 0;
-    GLint yoffset = 0;
-    GLint zoffset = 0;
-
-    if (xoffsetParamOffset != -1)
-    {
-        xoffset =
-            call.params.getParam("xoffset", ParamType::TGLint, xoffsetParamOffset).value.GLintVal;
-    }
-
-    if (yoffsetParamOffset != -1)
-    {
-        yoffset =
-            call.params.getParam("yoffset", ParamType::TGLint, yoffsetParamOffset).value.GLintVal;
-    }
-
-    if (zoffsetParamOffset != -1)
-    {
-        zoffset =
-            call.params.getParam("zoffset", ParamType::TGLint, zoffsetParamOffset).value.GLintVal;
-    }
-
-    // Get the format of the texture for use with the compressed block size math.
-    const gl::InternalFormat &format = *texture->getFormat(targetPacked, level).info;
-
-    // Divide dimensions according to block size.
-    const gl::Extents &levelExtents = texture->getExtents(targetPacked, level);
-
-    // Scale down the width/height pixel offsets to reflect block size
-    int blockWidth  = static_cast<int>(format.compressedBlockWidth);
-    int blockHeight = static_cast<int>(format.compressedBlockHeight);
-    ASSERT(format.compressedBlockDepth == 1);
-
-    // Round the incoming width and height up to align with block size
-    pixelWidth  = rx::roundUp(pixelWidth, blockWidth);
-    pixelHeight = rx::roundUp(pixelHeight, blockHeight);
-
-    // Scale the width, height, and offsets
-    pixelWidth /= blockWidth;
-    pixelHeight /= blockHeight;
-    xoffset /= blockWidth;
-    yoffset /= blockHeight;
-
-    GLint pixelBytes = static_cast<GLint>(format.pixelBytes);
-
-    // Also round the texture's width and height up to reflect block size
-    int levelWidth  = rx::roundUp(levelExtents.width, blockWidth);
-    int levelHeight = rx::roundUp(levelExtents.height, blockHeight);
-
-    GLint pixelRowPitch   = pixelWidth * pixelBytes;
-    GLint pixelDepthPitch = pixelRowPitch * pixelHeight;
-    GLint levelRowPitch   = (levelWidth / blockWidth) * pixelBytes;
-    GLint levelDepthPitch = (levelHeight / blockHeight) * levelRowPitch;
-
-    for (GLint zindex = 0; zindex < pixelDepth; ++zindex)
-    {
-        GLint z = zindex + zoffset;
-        for (GLint yindex = 0; yindex < pixelHeight; ++yindex)
-        {
-            GLint y           = yindex + yoffset;
-            GLint pixelOffset = zindex * pixelDepthPitch + yindex * pixelRowPitch;
-            GLint levelOffset = z * levelDepthPitch + y * levelRowPitch + xoffset * pixelBytes;
-            ASSERT(static_cast<size_t>(levelOffset + pixelRowPitch) <= levelData.size());
-            memcpy(&levelData[levelOffset], &pixelData[pixelOffset], pixelRowPitch);
-        }
-    }
-
-    if (pixelUnpackBuffer)
-    {
-        GLboolean success;
-        (void)pixelUnpackBuffer->unmap(context, &success);
-        ASSERT(success);
-    }
-}
 
 PageRange::PageRange(size_t start, size_t end) : start(start), end(end) {}
 PageRange::~PageRange() = default;
@@ -5323,41 +5074,70 @@ void FrameCaptureShared::trackTextureUpdate(const gl::Context *context, const Ca
 {
     int index             = 0;
     std::string paramName = "targetPacked";
+    ParamType paramType   = ParamType::TTextureTarget;
 
     // Some calls provide the textureID directly
+    // For the rest, look it up based on the currently bound texture
     switch (call.entryPoint)
     {
         case EntryPoint::GLCompressedCopyTextureCHROMIUM:
             index     = 1;
             paramName = "destIdPacked";
+            paramType = ParamType::TTextureID;
             break;
         case EntryPoint::GLCopyTextureCHROMIUM:
         case EntryPoint::GLCopySubTextureCHROMIUM:
         case EntryPoint::GLCopyTexture3DANGLE:
             index     = 3;
             paramName = "destIdPacked";
+            paramType = ParamType::TTextureID;
+            break;
+        case EntryPoint::GLCopyImageSubData:
+        case EntryPoint::GLCopyImageSubDataEXT:
+        case EntryPoint::GLCopyImageSubDataOES:
+            index     = 7;
+            paramName = "dstTarget";
+            paramType = ParamType::TGLenum;
             break;
         default:
             break;
     }
 
-    // For the rest, look it up based on the currently bound texture
     GLuint id = 0;
-    if (index == 0)
+    switch (paramType)
     {
-        gl::TextureTarget targetPacked =
-            call.params.getParam(paramName.c_str(), ParamType::TTextureTarget, index)
-                .value.TextureTargetVal;
-        gl::TextureType textureType = gl::TextureTargetToType(targetPacked);
-        gl::Texture *texture        = context->getState().getTargetTexture(textureType);
-        id                          = texture->id().value;
-    }
-    else
-    {
-        gl::TextureID destIDPacked =
-            call.params.getParam(paramName.c_str(), ParamType::TTextureID, index)
-                .value.TextureIDVal;
-        id = destIDPacked.value;
+        case ParamType::TTextureTarget:
+        {
+            gl::TextureTarget targetPacked =
+                call.params.getParam(paramName.c_str(), ParamType::TTextureTarget, index)
+                    .value.TextureTargetVal;
+            gl::TextureType textureType = gl::TextureTargetToType(targetPacked);
+            gl::Texture *texture        = context->getState().getTargetTexture(textureType);
+            id                          = texture->id().value;
+            break;
+        }
+        case ParamType::TTextureID:
+        {
+            gl::TextureID destIDPacked =
+                call.params.getParam(paramName.c_str(), ParamType::TTextureID, index)
+                    .value.TextureIDVal;
+            id = destIDPacked.value;
+            break;
+        }
+        case ParamType::TGLenum:
+        {
+            GLenum target =
+                call.params.getParam(paramName.c_str(), ParamType::TGLenum, index).value.GLenumVal;
+            gl::TextureTarget targetPacked = gl::PackParam<gl::TextureTarget>(target);
+            gl::TextureType textureType    = gl::TextureTargetToType(targetPacked);
+            gl::Texture *texture           = context->getState().getTargetTexture(textureType);
+            id                             = texture->id().value;
+            break;
+        }
+        default:
+            ERR() << "Unhandled paramType= " << static_cast<int>(paramType);
+            UNREACHABLE();
+            break;
     }
 
     // Mark it as modified
@@ -5926,24 +5706,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             break;
         }
 
-        case EntryPoint::GLCompressedTexImage2D:
-        case EntryPoint::GLCompressedTexImage3D:
-        case EntryPoint::GLCompressedTexSubImage2D:
-        case EntryPoint::GLCompressedTexSubImage3D:
-        {
-            captureCompressedTextureData(context, call);
-            break;
-        }
-
-        case EntryPoint::GLCopyImageSubData:
-        case EntryPoint::GLCopyImageSubDataEXT:
-        case EntryPoint::GLCopyImageSubDataOES:
-        {
-            // glCopyImageSubData supports copying compressed and uncompressed texture formats.
-            copyCompressedTextureData(context, call);
-            break;
-        }
-
         case EntryPoint::GLDeleteTextures:
         {
             // Free any TextureLevelDataMap entries being tracked for this texture
@@ -5961,9 +5723,6 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             // For each texture listed for deletion
             for (int32_t i = 0; i < n; ++i)
             {
-                // Look it up in the cache, and delete it if found
-                deleteCachedTextureLevelData(textureIDs[i]);
-
                 // If we're capturing, track what textures have been deleted
                 handleDeletedResource(textureIDs[i]);
             }
@@ -7382,159 +7141,6 @@ const ProgramSources &FrameCaptureShared::getProgramSources(gl::ShaderProgramID 
 void FrameCaptureShared::setProgramSources(gl::ShaderProgramID id, ProgramSources sources)
 {
     mCachedProgramSources[id] = sources;
-}
-
-const std::vector<uint8_t> &FrameCaptureShared::retrieveCachedTextureLevel(gl::TextureID id,
-                                                                           gl::TextureTarget target,
-                                                                           GLint level)
-{
-    // Look up the data for the requested texture
-    const auto &foundTextureLevels = mCachedTextureLevelData.find(id);
-    if (foundTextureLevels == mCachedTextureLevelData.end())
-    {
-        ERR() << "Cached texture level not found for id=" << id.value << " target=" << target
-              << " level=" << level;
-        UNREACHABLE();
-    }
-
-    GLint adjustedLevel = GetAdjustedTextureCacheLevel(target, level);
-
-    const auto &foundTextureLevel = foundTextureLevels->second.find(adjustedLevel);
-    if (foundTextureLevel == foundTextureLevels->second.end())
-    {
-        ERR() << "Cached texture level not found for id=" << id.value << " target=" << target
-              << " level=" << level << " adjustedLevel=" << adjustedLevel;
-        UNREACHABLE();
-    }
-    const std::vector<uint8_t> &capturedTextureLevel = foundTextureLevel->second;
-
-    return capturedTextureLevel;
-}
-
-void FrameCaptureShared::copyCachedTextureLevel(const gl::Context *context,
-                                                gl::TextureID srcID,
-                                                GLint srcLevel,
-                                                gl::TextureID dstID,
-                                                GLint dstLevel,
-                                                const CallCapture &call)
-{
-    // TODO(http://anglebug.com/5604): Add support for partial level copies.
-    ASSERT(call.params.getParam("srcX", ParamType::TGLint, 3).value.GLintVal == 0);
-    ASSERT(call.params.getParam("srcY", ParamType::TGLint, 4).value.GLintVal == 0);
-    ASSERT(call.params.getParam("srcZ", ParamType::TGLint, 5).value.GLintVal == 0);
-    ASSERT(call.params.getParam("dstX", ParamType::TGLint, 9).value.GLintVal == 0);
-    ASSERT(call.params.getParam("dstY", ParamType::TGLint, 10).value.GLintVal == 0);
-    ASSERT(call.params.getParam("dstZ", ParamType::TGLint, 11).value.GLintVal == 0);
-    GLenum srcTarget  = call.params.getParam("srcTarget", ParamType::TGLenum, 1).value.GLenumVal;
-    GLsizei srcWidth  = call.params.getParam("srcWidth", ParamType::TGLsizei, 12).value.GLsizeiVal;
-    GLsizei srcHeight = call.params.getParam("srcHeight", ParamType::TGLsizei, 13).value.GLsizeiVal;
-    GLsizei srcDepth  = call.params.getParam("srcDepth", ParamType::TGLsizei, 14).value.GLsizeiVal;
-    gl::Texture *srcTexture           = context->getTexture({srcID});
-    gl::TextureTarget srcTargetPacked = gl::PackParam<gl::TextureTarget>(srcTarget);
-    const gl::Extents &srcExtents     = srcTexture->getExtents(srcTargetPacked, srcLevel);
-    ASSERT(srcExtents.width == srcWidth && srcExtents.height == srcHeight &&
-           srcExtents.depth == srcDepth);
-
-    // Look up the data for the source texture
-    const auto &foundSrcTextureLevels = mCachedTextureLevelData.find(srcID);
-    ASSERT(foundSrcTextureLevels != mCachedTextureLevelData.end());
-
-    // For that texture, look up the data for the given level
-    const auto &foundSrcTextureLevel = foundSrcTextureLevels->second.find(srcLevel);
-    ASSERT(foundSrcTextureLevel != foundSrcTextureLevels->second.end());
-    const std::vector<uint8_t> &srcTextureLevel = foundSrcTextureLevel->second;
-
-    auto foundDstTextureLevels = mCachedTextureLevelData.find(dstID);
-    if (foundDstTextureLevels == mCachedTextureLevelData.end())
-    {
-        // Initialize the texture ID data.
-        auto emplaceResult = mCachedTextureLevelData.emplace(dstID, TextureLevels());
-        ASSERT(emplaceResult.second);
-        foundDstTextureLevels = emplaceResult.first;
-    }
-
-    TextureLevels &foundDstLevels         = foundDstTextureLevels->second;
-    TextureLevels::iterator foundDstLevel = foundDstLevels.find(dstLevel);
-    if (foundDstLevel != foundDstLevels.end())
-    {
-        // If we have a cache for this level, remove it since we're recreating it.
-        foundDstLevels.erase(dstLevel);
-    }
-
-    // Initialize destination texture data and copy the source into it.
-    std::vector<uint8_t> dstTextureLevel = srcTextureLevel;
-    auto emplaceResult = foundDstLevels.emplace(dstLevel, std::move(dstTextureLevel));
-    ASSERT(emplaceResult.second);
-}
-
-std::vector<uint8_t> &FrameCaptureShared::getCachedTextureLevelData(gl::Texture *texture,
-                                                                    gl::TextureTarget target,
-                                                                    GLint textureLevel,
-                                                                    EntryPoint entryPoint)
-{
-    auto foundTextureLevels = mCachedTextureLevelData.find(texture->id());
-    if (foundTextureLevels == mCachedTextureLevelData.end())
-    {
-        // Initialize the texture ID data.
-        auto emplaceResult = mCachedTextureLevelData.emplace(texture->id(), TextureLevels());
-        ASSERT(emplaceResult.second);
-        foundTextureLevels = emplaceResult.first;
-    }
-
-    // For this texture, look up the adjusted level, which may not match 1:1 due to cubes
-    GLint adjustedLevel = GetAdjustedTextureCacheLevel(target, textureLevel);
-
-    TextureLevels &foundLevels         = foundTextureLevels->second;
-    TextureLevels::iterator foundLevel = foundLevels.find(adjustedLevel);
-    if (foundLevel != foundLevels.end())
-    {
-        if (entryPoint == EntryPoint::GLCompressedTexImage2D ||
-            entryPoint == EntryPoint::GLCompressedTexImage3D)
-        {
-            // Delete the cached entry in case the caller is respecifying the level.
-            foundLevels.erase(adjustedLevel);
-        }
-        else
-        {
-            ASSERT(entryPoint == EntryPoint::GLCompressedTexSubImage2D ||
-                   entryPoint == EntryPoint::GLCompressedTexSubImage3D);
-
-            // If we have a cache for this level, return it now
-            return foundLevel->second;
-        }
-    }
-
-    // Otherwise, create an appropriately sized cache for this level
-
-    // Get the format of the texture for use with the compressed block size math.
-    const gl::InternalFormat &format = *texture->getFormat(target, textureLevel).info;
-
-    // Divide dimensions according to block size.
-    const gl::Extents &levelExtents = texture->getExtents(target, textureLevel);
-
-    // Calculate the size needed to store the compressed level
-    GLuint sizeInBytes;
-    bool result = format.computeCompressedImageSize(levelExtents, &sizeInBytes);
-    ASSERT(result);
-
-    // Initialize texture rectangle data. Default init to zero for stability.
-    std::vector<uint8_t> newPixelData(sizeInBytes, 0);
-    auto emplaceResult = foundLevels.emplace(adjustedLevel, std::move(newPixelData));
-    ASSERT(emplaceResult.second);
-
-    // Using the level entry we just created, return the location (a byte vector) where compressed
-    // texture level data should be stored
-    return emplaceResult.first->second;
-}
-
-void FrameCaptureShared::deleteCachedTextureLevelData(gl::TextureID id)
-{
-    const auto &foundTextureLevels = mCachedTextureLevelData.find(id);
-    if (foundTextureLevels != mCachedTextureLevelData.end())
-    {
-        // Delete all texture levels at once
-        mCachedTextureLevelData.erase(foundTextureLevels);
-    }
 }
 
 void FrameCaptureShared::markResourceSetupCallsInactive(std::vector<CallCapture> *setupCalls,

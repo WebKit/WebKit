@@ -125,7 +125,7 @@ angle::Result Buffer::bufferDataImpl(Context *context,
     // If we are using robust resource init, make sure the buffer starts cleared.
     // Note: the Context is checked for nullptr because of some testing code.
     // TODO(jmadill): Investigate lazier clearing.
-    if (context && context->getState().isRobustResourceInitEnabled() && !data && size > 0)
+    if (context && context->isRobustResourceInitEnabled() && !data && size > 0)
     {
         angle::MemoryBuffer *scratchBuffer = nullptr;
         ANGLE_CHECK_GL_ALLOC(

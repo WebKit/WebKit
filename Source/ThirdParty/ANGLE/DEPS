@@ -34,13 +34,13 @@ vars = {
   'checkout_android_native_support': 'checkout_android or checkout_chromeos',
 
   # Version of Chromium our Chromium-based DEPS are mirrored from.
-  'chromium_revision': '3e4963702e0228ccffdf19e38da7e840a88d59d5',
+  'chromium_revision': '384f873e097003b104ec8c22d505bc12fd8bb529',
   # We never want to checkout chromium,
   # but need a dummy DEPS entry for the autoroller
   'dummy_checkout_chromium': False,
 
   # Current revision of VK-GL-CTS (a.k.a dEQP).
-  'vk_gl_cts_revision': '823d49cf5f5e5622e1fade4424e92ec2f61b81a6',
+  'vk_gl_cts_revision': 'fbc38865227d59ac3ae3bdf9fe218d2bf3c62a60',
 
   # Current revision of googletest.
   # Note: this dep cannot be auto-rolled b/c of nesting.
@@ -496,7 +496,7 @@ deps = {
   },
 
   'third_party/SwiftShader': {
-    'url': '{swiftshader_git}/SwiftShader@57eca9df5dc56d290f662ace7481ed758618d559',
+    'url': '{swiftshader_git}/SwiftShader@bc5bec05c369fca4e336de513eb3630a5d326545',
     'condition': 'not build_with_chromium',
   },
 
@@ -516,7 +516,7 @@ deps = {
   },
 
   'third_party/vulkan-deps': {
-    'url': '{chromium_git}/vulkan-deps@c4109411d3f366353898aed63156ada2fa562817',
+    'url': '{chromium_git}/vulkan-deps@e37ba68c0fde1c26f6ea1fa5463b0919614f6c61',
     'condition': 'not build_with_chromium',
   },
 
@@ -1711,6 +1711,16 @@ deps = {
       'dep_type': 'cipd',
       'condition': 'checkout_angle_restricted_traces',
   },
+  'src/tests/restricted_traces/shadowgun_legends': {
+      'packages': [
+        {
+            'package': 'angle/traces/shadowgun_legends',
+            'version': 'version:1',
+        },
+      ],
+      'dep_type': 'cipd',
+      'condition': 'checkout_angle_restricted_traces',
+  },
   'src/tests/restricted_traces/slingshot_test1': {
       'packages': [
         {
@@ -1806,6 +1816,16 @@ deps = {
         {
             'package': 'angle/traces/summoners_war',
             'version': 'version:5',
+        },
+      ],
+      'dep_type': 'cipd',
+      'condition': 'checkout_angle_restricted_traces',
+  },
+  'src/tests/restricted_traces/super_mario_run': {
+      'packages': [
+        {
+            'package': 'angle/traces/super_mario_run',
+            'version': 'version:1',
         },
       ],
       'dep_type': 'cipd',

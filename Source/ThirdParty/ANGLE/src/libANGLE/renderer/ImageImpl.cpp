@@ -11,6 +11,16 @@
 namespace rx
 {
 
+bool ExternalImageSiblingImpl::isCubeMap() const
+{
+    return false;
+}
+
+uint32_t ExternalImageSiblingImpl::getLevelCount() const
+{
+    return 1;
+}
+
 egl::Error ImageImpl::exportVkImage(void *vkImage, void *vkImageCreateInfo)
 {
     UNIMPLEMENTED();

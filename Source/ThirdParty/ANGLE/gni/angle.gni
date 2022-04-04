@@ -187,6 +187,7 @@ declare_args() {
   angle_enable_glsl = angle_enable_gl || use_ozone
   angle_enable_trace = false
   angle_enable_trace_android_logcat = false
+  angle_enable_trace_events = false
 
   # Disable the layers in ubsan builds because of really slow builds.
   # Vulkan Validation Layers require Android NDK API level 26, i.e. Oreo, due to

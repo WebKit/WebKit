@@ -84,8 +84,6 @@ generators = {
         'src/libANGLE/renderer/gen_angle_format_table.py',
     'ANGLE load functions table':
         'src/libANGLE/renderer/gen_load_functions_table.py',
-    'ANGLE load texture border functions table':
-        'src/libANGLE/renderer/gen_load_texture_border_functions_table.py',
     'ANGLE shader preprocessor':
         'src/compiler/preprocessor/generate_parser.py',
     'ANGLE shader translator':

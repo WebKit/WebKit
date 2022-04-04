@@ -232,7 +232,7 @@ void Trace(LogSeverity severity, const char *message)
     }
 
     if (severity == LOG_FATAL || severity == LOG_ERR || severity == LOG_WARN ||
-#if defined(ANGLE_ENABLE_TRACE_ANDROID_LOGCAT)
+#if defined(ANGLE_ENABLE_TRACE_ANDROID_LOGCAT) || defined(ANGLE_ENABLE_TRACE_EVENTS)
         severity == LOG_EVENT ||
 #endif
         severity == LOG_INFO)

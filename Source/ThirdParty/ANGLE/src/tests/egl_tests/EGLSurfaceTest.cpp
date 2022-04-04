@@ -473,6 +473,47 @@ TEST_P(EGLSurfaceTest, MakeCurrentTwice)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
+// This is a regression test to verify that surfaces are not prematurely destroyed.
+TEST_P(EGLSurfaceTest, SurfaceUseAfterFreeBug)
+{
+    initializeDisplay();
+
+    // Initialize an RGBA8 window and pbuffer surface
+    constexpr EGLint kSurfaceAttributes[] = {EGL_RED_SIZE,     8,
+                                             EGL_GREEN_SIZE,   8,
+                                             EGL_BLUE_SIZE,    8,
+                                             EGL_ALPHA_SIZE,   8,
+                                             EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+                                             EGL_NONE};
+
+    EGLint configCount      = 0;
+    EGLConfig surfaceConfig = nullptr;
+    ASSERT_EGL_TRUE(eglChooseConfig(mDisplay, kSurfaceAttributes, &surfaceConfig, 1, &configCount));
+    ASSERT_NE(configCount, 0);
+    ASSERT_NE(surfaceConfig, nullptr);
+
+    initializeSurface(surfaceConfig);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+    ASSERT_NE(mPbufferSurface, EGL_NO_SURFACE);
+
+    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mSecondContext);
+    ASSERT_EGL_SUCCESS();
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    eglMakeCurrent(mDisplay, mPbufferSurface, mPbufferSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    eglDestroySurface(mDisplay, mPbufferSurface);
+    ASSERT_EGL_SUCCESS();
+    mPbufferSurface = EGL_NO_SURFACE;
+
+    eglDestroyContext(mDisplay, mSecondContext);
+    ASSERT_EGL_SUCCESS();
+    mSecondContext = EGL_NO_CONTEXT;
+}
+
 // Test that the window surface is correctly resized after calling swapBuffers
 TEST_P(EGLSurfaceTest, ResizeWindow)
 {

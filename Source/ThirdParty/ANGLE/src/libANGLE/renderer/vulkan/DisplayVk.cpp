@@ -25,8 +25,6 @@
 
 namespace rx
 {
-// Time interval in seconds that we should try to prune default buffer pools.
-constexpr double kTimeElapsedForPruneDefaultBufferPool = 0.25;
 
 DisplayVk::DisplayVk(const egl::DisplayState &state)
     : DisplayImpl(state),
@@ -453,62 +451,19 @@ vk::BufferPool *ShareGroupVk::getDefaultBufferPool(RendererVk *renderer,
                                                    VkDeviceSize size,
                                                    uint32_t memoryTypeIndex)
 {
-    if (size <= kMaxSizeToUseSmallBufferPool &&
-        memoryTypeIndex ==
-            renderer->getVertexConversionBufferMemoryTypeIndex(vk::MemoryHostVisibility::Visible))
-    {
-        if (!mSmallBufferPool)
-        {
-            const vk::Allocator &allocator = renderer->getAllocator();
-            VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
-
-            VkMemoryPropertyFlags memoryPropertyFlags;
-            allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
-
-            std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
-            pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::BUDDY, usageFlags, 0,
-                                memoryTypeIndex, memoryPropertyFlags);
-            mSmallBufferPool = std::move(pool);
-        }
-        return mSmallBufferPool.get();
-    }
-    else if (!mDefaultBufferPools[memoryTypeIndex])
-    {
-        const vk::Allocator &allocator = renderer->getAllocator();
-        VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
-
-        VkMemoryPropertyFlags memoryPropertyFlags;
-        allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
-
-        std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
-        pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::GENERAL, usageFlags, 0,
-                            memoryTypeIndex, memoryPropertyFlags);
-        mDefaultBufferPools[memoryTypeIndex] = std::move(pool);
-    }
-
-    return mDefaultBufferPools[memoryTypeIndex].get();
+    return vk::GetDefaultBufferPool(mSmallBufferPool, mDefaultBufferPools, renderer, size,
+                                    memoryTypeIndex);
 }
 
 void ShareGroupVk::pruneDefaultBufferPools(RendererVk *renderer)
 {
     mLastPruneTime = angle::GetCurrentSystemTime();
 
-    for (std::unique_ptr<vk::BufferPool> &pool : mDefaultBufferPools)
-    {
-        if (pool)
-        {
-            pool->pruneEmptyBuffers(renderer);
-        }
-    }
-    if (mSmallBufferPool)
-    {
-        mSmallBufferPool->pruneEmptyBuffers(renderer);
-    }
+    vk::PruneDefaultBufferPools(renderer, mDefaultBufferPools, mSmallBufferPool);
 }
 
 bool ShareGroupVk::isDueForBufferPoolPrune()
 {
-    double timeElapsed = angle::GetCurrentSystemTime() - mLastPruneTime;
-    return timeElapsed > kTimeElapsedForPruneDefaultBufferPool;
+    return vk::IsDueForBufferPoolPrune(mLastPruneTime);
 }
 }  // namespace rx

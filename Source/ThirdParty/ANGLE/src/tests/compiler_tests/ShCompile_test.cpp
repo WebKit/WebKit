@@ -47,7 +47,7 @@ class ShCompileTest : public testing::Test
 
     ShBuiltInResources mResources;
 
-    class ScopedRestoreDefaultLocale : angle::NonCopyable
+    class ANGLE_NO_DISCARD ScopedRestoreDefaultLocale : angle::NonCopyable
     {
       public:
         ScopedRestoreDefaultLocale();
@@ -188,8 +188,6 @@ TEST_F(ShCompileTest, DecimalSepLocale)
     })";
     const char *parts[]  = {kSource};
 
-    int testedLocales = 0;
-
     // Ensure the locale is reset after the test runs.
     ScopedRestoreDefaultLocale restoreLocale;
 
@@ -221,8 +219,6 @@ TEST_F(ShCompileTest, DecimalSepLocale)
 
             ASSERT_EQ(referenceOut, localizedOut)
                 << "different output with locale (" << localizedLoc.name() << ") set";
-
-            testedLocales++;
         }
     }
 }

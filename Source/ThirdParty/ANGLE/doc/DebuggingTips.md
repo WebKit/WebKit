@@ -46,6 +46,11 @@ additional levels of "trace" messages will be logged when the following GN arg i
 angle_enable_trace = true
 ```
 
+To log all GLES and EGL commands submitted by an application, including the following flag:
+```
+angle_enable_trace_events = true
+```
+
 ## Debug Angle on Android
 
 Android is built as an Android APK, which makes it more difficult to debug an APK that is using ANGLE.  The following information can allow you to debug ANGLE with LLDB.

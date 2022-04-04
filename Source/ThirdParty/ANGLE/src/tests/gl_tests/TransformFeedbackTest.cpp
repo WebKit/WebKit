@@ -4016,6 +4016,70 @@ TEST_P(TransformFeedbackTest, DeletePausedTransformFeedbackBuffer)
     glDrawArrays(GL_POINTS, 0, 1);
 }
 
+// Test that using a transform feedback program with a base instance draw call works.
+TEST_P(TransformFeedbackTest, BaseInstance)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance"));
+
+    constexpr char kVS[] =
+        "#version 300 es\n"
+        "in float in_value;\n"
+        "out float out_value;\n"
+        "void main() {\n"
+        "  out_value = in_value * 2.0;\n"
+        "}";
+
+    constexpr char kFS[] =
+        "#version 300 es\n"
+        "out mediump vec4 color;\n"
+        "void main() {\n"
+        "  color = vec4(0.0, 1.0, 0.0, 1.0);\n"
+        "}";
+
+    std::vector<std::string> tfVaryings;
+    tfVaryings.push_back("out_value");
+
+    mProgram = CompileProgramWithTransformFeedback(kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
+    ASSERT_NE(0u, mProgram);
+
+    glUseProgram(mProgram);
+
+    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mTransformFeedbackBuffer);
+
+    std::vector<float> attribData;
+    for (unsigned int cnt = 0; cnt < 10; ++cnt)
+    {
+        attribData.push_back(static_cast<float>(cnt));
+    }
+
+    GLint attribLocation = glGetAttribLocation(mProgram, "in_value");
+    ASSERT_NE(-1, attribLocation);
+
+    glVertexAttribPointer(attribLocation, 1, GL_FLOAT, GL_FALSE, 4, &attribData[0]);
+    glEnableVertexAttribArray(attribLocation);
+
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 0, 10, 1, 1);
+    glEndTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(0);
+
+    void *mappedBuffer =
+        glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 10, GL_MAP_READ_BIT);
+    ASSERT_NE(nullptr, mappedBuffer);
+
+    float *mappedFloats = static_cast<float *>(mappedBuffer);
+    for (unsigned int cnt = 0; cnt < 10; ++cnt)
+    {
+        EXPECT_EQ(attribData[cnt] * 2, mappedFloats[cnt]);
+    }
+    glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3(TransformFeedbackTest);
 

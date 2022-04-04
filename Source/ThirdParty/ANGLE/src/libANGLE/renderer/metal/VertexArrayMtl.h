@@ -153,7 +153,7 @@ class VertexArrayMtl : public VertexArrayImpl
     std::vector<uint32_t> mEmulatedInstanceAttribs;
 
     bool mVertexArrayDirty = true;
-    bool mVertexDataDirty = true;
+    bool mVertexDataDirty  = true;
 };
 }  // namespace rx
 

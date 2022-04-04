@@ -6,8 +6,8 @@
 // vk_utils:
 //    Helper functions for the Vulkan Renderer.
 //
-
 #include "libANGLE/renderer/vulkan/vk_utils.h"
+#include "common/system_utils.h"
 
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
@@ -40,6 +40,8 @@ namespace
 // Pick an arbitrary value to initialize non-zero memory for sanitization.  Note that 0x3F3F3F3F
 // as float is about 0.75.
 constexpr int kNonZeroInitValue = 0x3F;
+// Time interval in seconds that we should try to prune default buffer pools.
+constexpr double kTimeElapsedForPruneDefaultBufferPool = 0.25;
 
 VkImageUsageFlags GetStagingBufferUsageFlags(vk::StagingUsage usage)
 {
@@ -181,7 +183,7 @@ angle::Result AllocateAndBindBufferOrImageMemory(vk::Context *context,
     ANGLE_TRY(FindAndAllocateCompatibleMemory(
         context, memoryProperties, requestedMemoryPropertyFlags, memoryPropertyFlagsOut,
         memoryRequirements, extraAllocationInfo, deviceMemoryOut));
-    ANGLE_VK_TRY(context, buffer->bindMemory(context->getDevice(), *deviceMemoryOut));
+    ANGLE_VK_TRY(context, buffer->bindMemory(context->getDevice(), *deviceMemoryOut, 0));
     return angle::Result::Continue;
 }
 
@@ -639,6 +641,71 @@ angle::Result AllocateBufferMemoryWithRequirements(Context *context,
     return AllocateAndBindBufferOrImageMemory(context, memoryPropertyFlags, memoryPropertyFlagsOut,
                                               memoryRequirements, extraAllocationInfo, nullptr,
                                               buffer, deviceMemoryOut);
+}
+
+BufferPool *GetDefaultBufferPool(std::unique_ptr<vk::BufferPool> &smallBufferPool,
+                                 vk::BufferPoolPointerArray &defaultBufferPools,
+                                 RendererVk *renderer,
+                                 VkDeviceSize size,
+                                 uint32_t memoryTypeIndex)
+{
+    if (size <= kMaxSizeToUseSmallBufferPool &&
+        memoryTypeIndex ==
+            renderer->getVertexConversionBufferMemoryTypeIndex(vk::MemoryHostVisibility::Visible))
+    {
+        if (!smallBufferPool)
+        {
+            const vk::Allocator &allocator = renderer->getAllocator();
+            VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
+
+            VkMemoryPropertyFlags memoryPropertyFlags;
+            allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
+
+            std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
+            pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::BUDDY, usageFlags, 0,
+                                memoryTypeIndex, memoryPropertyFlags);
+            smallBufferPool = std::move(pool);
+        }
+        return smallBufferPool.get();
+    }
+    else if (!defaultBufferPools[memoryTypeIndex])
+    {
+        const vk::Allocator &allocator = renderer->getAllocator();
+        VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
+
+        VkMemoryPropertyFlags memoryPropertyFlags;
+        allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
+
+        std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
+        pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::GENERAL, usageFlags, 0,
+                            memoryTypeIndex, memoryPropertyFlags);
+        defaultBufferPools[memoryTypeIndex] = std::move(pool);
+    }
+
+    return defaultBufferPools[memoryTypeIndex].get();
+}
+
+void PruneDefaultBufferPools(RendererVk *renderer,
+                             BufferPoolPointerArray &defaultBufferPools,
+                             std::unique_ptr<vk::BufferPool> &smallBufferPool)
+{
+    for (std::unique_ptr<vk::BufferPool> &pool : defaultBufferPools)
+    {
+        if (pool)
+        {
+            pool->pruneEmptyBuffers(renderer);
+        }
+    }
+    if (smallBufferPool)
+    {
+        smallBufferPool->pruneEmptyBuffers(renderer);
+    }
+}
+
+bool IsDueForBufferPoolPrune(double lastPruneTime)
+{
+    double timeElapsed = angle::GetCurrentSystemTime() - lastPruneTime;
+    return timeElapsed > kTimeElapsedForPruneDefaultBufferPool;
 }
 
 angle::Result InitShaderAndSerial(Context *context,

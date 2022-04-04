@@ -1740,6 +1740,7 @@ void GenMetalTraverser::emitFunctionSignature(const TFunction &func)
         const TVariable &param = *func.getParam(i);
         emitFunctionParameter(func, param);
     }
+
     if (isTraversingVertexMain)
     {
         mOut << " @@XFB-Bindings@@ ";

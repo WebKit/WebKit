@@ -292,6 +292,60 @@ TEST_P(BufferSubDataTest, SmallIndexBufferUpdateAfterDraw)
     EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() - 1, GLColor::green);
 }
 
+// Test that updating a small index buffer after drawing with it works.
+// In the Vulkan backend, the CPU may be used to perform this copy.
+TEST_P(BufferSubDataTest, SmallVertexDataUpdateAfterDraw)
+{
+    constexpr std::array<GLfloat, 4> kGreen = {0.0f, 1.0f, 0.0f, 1.0f};
+    // Index buffer data
+    GLuint indexData[] = {0, 1, 2, 0};
+    // Vertex buffer data lower left triangle
+    // 2
+    //
+    // o    1
+    float vertexData1[] = {
+        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f,
+    };
+    // Vertex buffer data upper right triangle
+    // 2      1
+    //
+    //        0
+    float vertexData2[] = {
+        1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f,
+    };
+    GLBuffer indexBuffer;
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint vPos = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(vPos, -1);
+    glUseProgram(program);
+    GLint colorUniformLocation =
+        glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Bind vertex buffer
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData1), vertexData1, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(vPos, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(vPos);
+
+    // Bind index buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_DYNAMIC_DRAW);
+
+    glUniform4fv(colorUniformLocation, 1, kGreen.data());
+    // Draw left red triangle
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+    // Update the vertex buffer data.
+    // Partial copy to trigger the buffer pool allocation
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertexData2), vertexData2);
+    // Draw triangle with index (0,1,2).
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (const void *)sizeof(GLuint));
+    // Verify pixel corners are green
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(0, getWindowHeight() - 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, 0, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
+}
 class IndexedBufferCopyTest : public ANGLETest
 {
   protected:

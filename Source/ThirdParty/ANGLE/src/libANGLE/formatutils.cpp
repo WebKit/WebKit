@@ -1276,6 +1276,11 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     //                 | Internal format    |sized| R | G | B | A |S | Format | Type             | Component type        | SRGB | Texture supported                     | Filterable     | Texture attachment                    | Renderbuffer                          | Blend
     AddRGBAFormat(&map, GL_SRG8_EXT,         true,  8,  8,  0,  0, 0, GL_RG,   GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, true,  RequireExt<&Extensions::textureSRGBRG8EXT>,    AlwaysSupported, NeverSupported,                         NeverSupported,                         NeverSupported);
 
+    // From GL_EXT_texture_type_2_10_10_10_REV
+    // GL_RGB10_UNORM_ANGLEX is never used directly but needs to be in the list of all sized internal formats so that the backends can determine support.
+    //                  | Internal format      |sized|    R | G | B | A |S |X   | Format           | Type                          | Component type        | SRGB | Texture supported                                  | Filterable     | Texture attachment                               | Renderbuffer  | Blend
+    AddRGBAXFormat(&map, GL_RGB10_UNORM_ANGLEX, true, FB<10, 10, 10,  0, 0, 2>(), GL_RGB,            GL_UNSIGNED_INT_2_10_10_10_REV, GL_UNSIGNED_NORMALIZED, false, NeverSupported,                                     NeverSupported,  NeverSupported,                                    NeverSupported, NeverSupported);
+
     // Unsized formats
     //                  | Internal format  |sized |    R | G | B | A |S |X   | Format           | Type                          | Component type        | SRGB | Texture supported                                  | Filterable     | Texture attachment                               | Renderbuffer  | Blend
     AddRGBAXFormat(&map, GL_RED,            false, FB< 8,  0,  0,  0, 0, 0>(), GL_RED,            GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::textureRgEXT>,               AlwaysSupported, RequireExt<&Extensions::textureRgEXT>,             NeverSupported, NeverSupported);

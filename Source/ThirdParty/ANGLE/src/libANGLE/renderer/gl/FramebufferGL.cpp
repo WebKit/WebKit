@@ -255,7 +255,7 @@ bool IsEmulatedAlphaChannelTextureAttachment(const FramebufferAttachment *attach
     return textureGL->hasEmulatedAlphaChannel(attachment->getTextureImageIndex());
 }
 
-class ScopedEXTTextureNorm16ReadbackWorkaround
+class ANGLE_NO_DISCARD ScopedEXTTextureNorm16ReadbackWorkaround
 {
   public:
     ScopedEXTTextureNorm16ReadbackWorkaround()

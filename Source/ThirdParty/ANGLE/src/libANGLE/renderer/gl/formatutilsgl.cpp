@@ -255,6 +255,10 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     InsertFormatMapping(&map, GL_BGRA8_EXT,         VersionOrExts(1, 2, "GL_EXT_bgra"),               AlwaysSupported(), VersionOrExts(1, 2, "GL_EXT_bgra"),            ExtsOnly("GL_EXT_texture_format_BGRA8888"), AlwaysSupported(), ExtsOnly("GL_EXT_texture_format_BGRA8888"), ExtsOnly("GL_EXT_texture_format_BGRA8888")                          );
     InsertFormatMapping(&map, GL_BGRA_EXT,          VersionOrExts(1, 2, "GL_EXT_bgra"),               AlwaysSupported(), VersionOrExts(1, 2, "GL_EXT_bgra"),            ExtsOnly("GL_EXT_texture_format_BGRA8888"), AlwaysSupported(), ExtsOnly("GL_EXT_texture_format_BGRA8888"), ExtsOnly("GL_EXT_texture_format_BGRA8888")                          );
 
+    // From GL_EXT_texture_type_2_10_10_10_REV
+    // Emulated with GL_RGB10_A2 on desktop GL
+    InsertFormatMapping(&map, GL_RGB10_UNORM_ANGLEX,AlwaysSupported(),                                AlwaysSupported(), NeverSupported(),                              ExtsOnly("GL_EXT_texture_type_2_10_10_10_REV"), AlwaysSupported(), NeverSupported(),                     NeverSupported()                         );
+
     // Floating point formats
     // Note 1: GL_EXT_texture_shared_exponent and GL_ARB_color_buffer_float suggest that RGB9_E5
     // would be renderable, but once support for renderable float textures got rolled into core GL
@@ -535,6 +539,12 @@ static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
                 result = EmulateLUMA(internalFormat).sizedInternalFormat;
             }
         }
+
+        if (internalFormat.sizedInternalFormat == GL_RGB10_UNORM_ANGLEX)
+        {
+            ASSERT(features.emulateRGB10.enabled);
+            result = GL_RGB10_A2;
+        }
     }
     else if (functions->isAtLeastGLES(gl::Version(3, 0)))
     {
@@ -669,6 +679,12 @@ static GLenum GetNativeFormat(const FunctionsGL *functions,
                 result = EmulateLUMAFormat(format);
             }
         }
+    }
+
+    // Emulate RGB10 with RGB10_A2.
+    if (type == GL_UNSIGNED_INT_2_10_10_10_REV && format == GL_RGB && features.emulateRGB10.enabled)
+    {
+        result = GL_RGBA;
     }
 
     return result;

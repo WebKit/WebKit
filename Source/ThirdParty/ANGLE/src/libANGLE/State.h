@@ -911,6 +911,8 @@ class State : angle::NonCopyable
 
     const std::vector<ImageUnit> &getImageUnits() const { return mImageUnits; }
 
+    bool hasDisplayTextureShareGroup() const { return mDisplayTextureShareGroup; }
+
   private:
     friend class Context;
 
@@ -1155,6 +1157,7 @@ class State : angle::NonCopyable
     bool mSetBlendIndexedInvoked;
     bool mSetBlendFactorsIndexedInvoked;
     bool mSetBlendEquationsIndexedInvoked;
+    bool mDisplayTextureShareGroup;
 
     // GL_EXT_primitive_bounding_box
     GLfloat mBoundingBoxMinX;

@@ -70,8 +70,8 @@ function generate_Android_bp_file() {
             # Disable histogram/protobuf support
             "angle_has_histograms = false"
 
-            # Disable _LIBCPP_ABI_UNSTABLE, since it breaks std::string
-            "libcxx_abi_unstable = false"
+            # Use system lib(std)c++, since the Chromium library breaks std::string
+            "use_custom_libcxx = false"
 
             # rapidJSON is used for ANGLE's frame capture (among other things), which is unnecessary for AOSP builds.
             "angle_has_rapidjson = false"

@@ -591,12 +591,26 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
 
     ContextImpl *implFactory = context->getImplementation();
 
-    const gl::Extents colorSize(1, 1, 1);
+    gl::Extents colorSize(1, 1, 1);
     gl::PixelUnpackState unpack;
     unpack.alignment = 1;
-    const gl::Box area(0, 0, 0, 1, 1, 1);
+    gl::Box area(0, 0, 0, 1, 1, 1);
     const IncompleteTextureParameters &incompleteTextureParam =
         kIncompleteTextureParameters[format];
+
+    // Cube map arrays are expected to have layer counts that are multiples of 6
+    constexpr int kCubeMapArraySize = 6;
+    if (type == gl::TextureType::CubeMapArray)
+    {
+        // From the GLES 3.2 spec:
+        //   8.18. IMMUTABLE-FORMAT TEXTURE IMAGES
+        //   TexStorage3D Errors
+        //   An INVALID_OPERATION error is generated if any of the following conditions hold:
+        //     * target is TEXTURE_CUBE_MAP_ARRAY and depth is not a multiple of 6
+        // Since ANGLE treats incomplete textures as immutable, respect that here.
+        colorSize.depth = kCubeMapArraySize;
+        area.depth      = kCubeMapArraySize;
+    }
 
     // If a texture is external use a 2D texture for the incomplete texture
     gl::TextureType createType = (type == gl::TextureType::External) ? gl::TextureType::_2D : type;
@@ -637,6 +651,23 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
                                      incompleteTextureParam.format, incompleteTextureParam.type,
                                      incompleteTextureParam.clearColor));
         }
+    }
+    else if (type == gl::TextureType::CubeMapArray)
+    {
+        // We need to provide enough pixel data to fill the array of six faces
+        GLubyte incompleteCubeArrayPixels[kCubeMapArraySize][4];
+        for (int i = 0; i < kCubeMapArraySize; ++i)
+        {
+            incompleteCubeArrayPixels[i][0] = incompleteTextureParam.clearColor[0];
+            incompleteCubeArrayPixels[i][1] = incompleteTextureParam.clearColor[1];
+            incompleteCubeArrayPixels[i][2] = incompleteTextureParam.clearColor[2];
+            incompleteCubeArrayPixels[i][3] = incompleteTextureParam.clearColor[3];
+        }
+
+        ANGLE_TRY(t->setSubImage(mutableContext, unpack, nullptr,
+                                 gl::NonCubeTextureTypeToTarget(createType), 0, area,
+                                 incompleteTextureParam.format, incompleteTextureParam.type,
+                                 *incompleteCubeArrayPixels));
     }
     else if (type == gl::TextureType::_2DMultisample)
     {

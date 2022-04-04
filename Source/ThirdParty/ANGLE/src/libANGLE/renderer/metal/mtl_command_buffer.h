@@ -13,6 +13,7 @@
 
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>
+#include <cstdint>
 
 #include <deque>
 #include <memory>
@@ -90,7 +91,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     };
     std::deque<CmdBufferQueueEntry> mMetalCmdBuffers;
 
-    uint64_t mQueueSerialCounter = 1;
+    uint64_t mQueueSerialCounter  = 1;
+    uint64_t mLastCommittedSerial = 0;
     std::atomic<uint64_t> mCommittedBufferSerial{0};
     std::atomic<uint64_t> mCompletedBufferSerial{0};
 

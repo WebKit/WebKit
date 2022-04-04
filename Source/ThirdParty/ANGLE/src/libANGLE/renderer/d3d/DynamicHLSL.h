@@ -154,10 +154,11 @@ class DynamicHLSL : angle::NonCopyable
         const std::vector<PixelShaderOutputVariable> &outputVariables,
         bool usesFragDepth,
         const std::vector<GLenum> &outputLayout) const;
-    std::string generateComputeShaderForImage2DBindSignature(
+    std::string generateShaderForImage2DBindSignature(
         const d3d::Context *context,
         ProgramD3D &programD3D,
         const gl::ProgramState &programData,
+        gl::ShaderType shaderType,
         std::vector<sh::ShaderVariable> &image2DUniforms,
         const gl::ImageUnitTextureTypeMap &image2DBindLayout) const;
     void generateShaderLinkHLSL(const gl::Caps &caps,

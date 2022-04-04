@@ -324,17 +324,19 @@ class RendererVk : angle::NonCopyable
     }
 
     void collectSuballocationGarbage(vk::SharedResourceUse &&use,
-                                     vk::BufferSuballocation &&suballocation)
+                                     vk::BufferSuballocation &&suballocation,
+                                     vk::Buffer &&buffer)
     {
         std::lock_guard<std::mutex> lock(mGarbageMutex);
         if (use.usedInRecordedCommands())
         {
-            mPendingSubmissionSuballocationGarbage.emplace(std::move(use),
-                                                           std::move(suballocation));
+            mPendingSubmissionSuballocationGarbage.emplace(std::move(use), std::move(suballocation),
+                                                           std::move(buffer));
         }
         else
         {
-            mSuballocationGarbage.emplace(std::move(use), std::move(suballocation));
+            mSuballocationGarbage.emplace(std::move(use), std::move(suballocation),
+                                          std::move(buffer));
         }
     }
 
@@ -361,14 +363,14 @@ class RendererVk : angle::NonCopyable
         }
         else
         {
-            std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+            vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
             return mCommandQueue.getLastCompletedQueueSerial();
         }
     }
 
     ANGLE_INLINE bool isCommandQueueBusy()
     {
-        std::lock_guard<std::mutex> lock(mCommandQueueMutex);
+        vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
         if (isAsyncCommandQueueEnabled())
         {
             return mCommandProcessor.isBusy();
@@ -431,7 +433,15 @@ class RendererVk : angle::NonCopyable
                               vk::SecondaryCommandPools *commandPools,
                               Serial *submitSerialOut);
 
+    // When the device is lost, the commands queue is cleaned up.  This shouldn't be done
+    // immediately if the device loss is generated from the command queue itself (due to mutual
+    // exclusion requirements).
+    //
+    // - handleDeviceLost() defers device loss handling if the mutex is already taken
+    // - ScopedCommandQueueLock handles device loss at the end of the scope (i.e. when the command
+    //   queue operation is finished) by calling handleDeviceLostNoLock() before releasing the lock.
     void handleDeviceLost();
+    void handleDeviceLostNoLock();
     angle::Result finishToSerial(vk::Context *context, Serial serial);
     angle::Result waitForSerialWithUserTimeout(vk::Context *context,
                                                Serial serial,
@@ -514,6 +524,8 @@ class RendererVk : angle::NonCopyable
 
     VkDeviceSize getPreferedBufferBlockSize(uint32_t memoryTypeIndex) const;
 
+    size_t getDefaultBufferAlignment() const { return mDefaultBufferAlignment; }
+
     uint32_t getStagingBufferMemoryTypeIndex(vk::MemoryCoherency coherency) const
     {
         return coherency == vk::MemoryCoherency::Coherent
@@ -534,6 +546,11 @@ class RendererVk : angle::NonCopyable
     {
         return mDeviceLocalVertexConversionBufferMemoryTypeIndex;
     }
+
+    vk::BufferPool *getDefaultBufferPool(VkDeviceSize size, uint32_t memoryTypeIndex);
+
+    void pruneDefaultBufferPools();
+    bool isDueForBufferPoolPrune();
 
   private:
     angle::Result initializeDevice(DisplayVk *displayVk, uint32_t queueFamilyIndex);
@@ -635,6 +652,9 @@ class RendererVk : angle::NonCopyable
     vk::MemoryProperties mMemoryProperties;
     vk::FormatTable mFormatTable;
 
+    // The default alignment for BufferVk object
+    size_t mDefaultBufferAlignment;
+
     // The cached memory type index for staging buffer that is host visible.
     uint32_t mCoherentStagingBufferMemoryTypeIndex;
     uint32_t mNonCoherentStagingBufferMemoryTypeIndex;
@@ -729,6 +749,12 @@ class RendererVk : angle::NonCopyable
 
     vk::ExtensionNameList mEnabledInstanceExtensions;
     vk::ExtensionNameList mEnabledDeviceExtensions;
+
+    vk::BufferPoolPointerArray mDefaultBufferPools;
+
+    std::unique_ptr<vk::BufferPool> mSmallBufferPool;
+
+    double mLastPruneTime;
 };
 
 }  // namespace rx

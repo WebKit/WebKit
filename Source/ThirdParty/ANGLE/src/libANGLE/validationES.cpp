@@ -105,7 +105,6 @@ bool ValidReadPixelsTypeEnum(const Context *context, GLenum type)
         case GL_SHORT:
         case GL_UNSIGNED_INT:
         case GL_UNSIGNED_INT_10F_11F_11F_REV:
-        case GL_UNSIGNED_INT_24_8:
         case GL_UNSIGNED_INT_2_10_10_10_REV:
         case GL_UNSIGNED_INT_5_9_9_9_REV:
         case GL_UNSIGNED_SHORT:
@@ -4874,6 +4873,80 @@ bool ValidatePushGroupMarkerEXT(const Context *context,
     return true;
 }
 
+bool ValidateEGLImageObject(const Context *context,
+                            angle::EntryPoint entryPoint,
+                            TextureType type,
+                            GLeglImageOES image)
+{
+    egl::Image *imageObject = static_cast<egl::Image *>(image);
+
+    ASSERT(context->getDisplay());
+    if (!context->getDisplay()->isValidImage(imageObject))
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidEGLImage);
+        return false;
+    }
+
+    if (imageObject->getSamples() > 0)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                 kEGLImageCannotCreate2DMultisampled);
+        return false;
+    }
+
+    if (!imageObject->isTexturable(context))
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                 kEGLImageTextureFormatNotSupported);
+        return false;
+    }
+
+    // Validate source egl image and target texture are compatible
+    size_t depth = static_cast<size_t>(imageObject->getExtents().depth);
+    if (imageObject->isYUV() && type != TextureType::External)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                 "Image is YUV, target must be TEXTURE_EXTERNAL_OES");
+        return false;
+    }
+
+    if (depth > 1 && type != TextureType::_2DArray && type != TextureType::CubeMap &&
+        type != TextureType::CubeMapArray && type != TextureType::_3D)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kEGLImageTextureTargetMismatch);
+        return false;
+    }
+
+    if (imageObject->isCubeMap() && type != TextureType::CubeMapArray &&
+        (type != TextureType::CubeMap || depth > gl::kCubeFaceCount))
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kEGLImageTextureTargetMismatch);
+        return false;
+    }
+
+    if (imageObject->getLevelCount() > 1 && type == TextureType::External)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kEGLImageTextureTargetMismatch);
+        return false;
+    }
+
+    // 3d EGLImages are currently not supported
+    if (type == TextureType::_3D)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kEGLImageTextureTargetMismatch);
+        return false;
+    }
+
+    if (imageObject->hasProtectedContent() && !context->getState().hasProtectedContent())
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                 "Mismatch between Image and Context Protected Content state");
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateEGLImageTargetTexture2DOES(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         TextureType type,
@@ -4913,51 +4986,7 @@ bool ValidateEGLImageTargetTexture2DOES(const Context *context,
             return false;
     }
 
-    egl::Image *imageObject = static_cast<egl::Image *>(image);
-
-    ASSERT(context->getDisplay());
-    if (!context->getDisplay()->isValidImage(imageObject))
-    {
-        context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidEGLImage);
-        return false;
-    }
-
-    if (imageObject->getSamples() > 0)
-    {
-        context->validationError(entryPoint, GL_INVALID_OPERATION,
-                                 kEGLImageCannotCreate2DMultisampled);
-        return false;
-    }
-
-    if (!imageObject->isTexturable(context))
-    {
-        context->validationError(entryPoint, GL_INVALID_OPERATION,
-                                 kEGLImageTextureFormatNotSupported);
-        return false;
-    }
-
-    if (imageObject->isLayered() && type != TextureType::_2DArray)
-    {
-        context->validationError(entryPoint, GL_INVALID_OPERATION,
-                                 "Image has more than 1 layer, target must be TEXTURE_2D_ARRAY");
-        return false;
-    }
-
-    if (imageObject->isYUV() && type != TextureType::External)
-    {
-        context->validationError(entryPoint, GL_INVALID_OPERATION,
-                                 "Image is YUV, target must be TEXTURE_EXTERNAL_OES");
-        return false;
-    }
-
-    if (imageObject->hasProtectedContent() && !context->getState().hasProtectedContent())
-    {
-        context->validationError(entryPoint, GL_INVALID_OPERATION,
-                                 "Mismatch between Image and Context Protected Content state");
-        return false;
-    }
-
-    return true;
+    return ValidateEGLImageObject(context, entryPoint, type, image);
 }
 
 bool ValidateEGLImageTargetRenderbufferStorageOES(const Context *context,
@@ -7313,16 +7342,6 @@ bool ValidateReadPixelsBase(const Context *context,
             break;
     }
 
-    // WebGL 1.0 [Section 6.26] Reading From a Missing Attachment
-    // In OpenGL ES it is undefined what happens when an operation tries to read from a missing
-    // attachment and WebGL defines it to be an error. We do the check unconditionally as the
-    // situation is an application error that would lead to a crash in ANGLE.
-    if (readBuffer == nullptr)
-    {
-        context->validationError(entryPoint, GL_INVALID_OPERATION, kMissingReadAttachment);
-        return false;
-    }
-
     // OVR_multiview2, Revision 1:
     // ReadPixels generates an INVALID_FRAMEBUFFER_OPERATION error if
     // the number of views in the current read framebuffer is more than one.
@@ -7353,6 +7372,16 @@ bool ValidateReadPixelsBase(const Context *context,
             context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidType);
             return false;
         }
+    }
+
+    // WebGL 1.0 [Section 6.26] Reading From a Missing Attachment
+    // In OpenGL ES it is undefined what happens when an operation tries to read from a missing
+    // attachment and WebGL defines it to be an error. We do the check unconditionally as the
+    // situation is an application error that would lead to a crash in ANGLE.
+    if (readBuffer == nullptr)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kMissingReadAttachment);
+        return false;
     }
 
     GLenum currentFormat = GL_NONE;

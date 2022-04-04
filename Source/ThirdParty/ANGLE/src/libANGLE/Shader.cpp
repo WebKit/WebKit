@@ -104,7 +104,7 @@ const char *GetShaderTypeString(ShaderType type)
     }
 }
 
-class ScopedExit final : angle::NonCopyable
+class ANGLE_NO_DISCARD ScopedExit final : angle::NonCopyable
 {
   public:
     ScopedExit(std::function<void()> exit) : mExit(exit) {}

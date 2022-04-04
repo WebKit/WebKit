@@ -1651,4 +1651,5 @@ angle::Result FramebufferMtl::readPixelsToBuffer(const gl::Context *context,
 
     return angle::Result::Continue;
 }
+
 }

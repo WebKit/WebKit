@@ -114,7 +114,7 @@ class TIntermTraverser : angle::NonCopyable
     int getCurrentBlockDepth() const { return static_cast<int>(mParentBlockStack.size()) - 1; }
 
     // RAII helper for incrementDepth/decrementDepth
-    class ScopedNodeInTraversalPath
+    class ANGLE_NO_DISCARD ScopedNodeInTraversalPath
     {
       public:
         ScopedNodeInTraversalPath(TIntermTraverser *traverser, TIntermNode *current)

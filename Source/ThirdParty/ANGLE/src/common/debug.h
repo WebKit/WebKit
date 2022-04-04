@@ -38,7 +38,7 @@ namespace gl
 class Context;
 
 // Pairs a begin event with an end event.
-class ScopedPerfEventHelper : angle::NonCopyable
+class ANGLE_NO_DISCARD ScopedPerfEventHelper : angle::NonCopyable
 {
   public:
     ScopedPerfEventHelper(Context *context, angle::EntryPoint entryPoint);

@@ -80,7 +80,7 @@
     SCOPED_ANGLE_HISTOGRAM_TIMER_UNIQUE(name, is_long, key)
 
 #define SCOPED_ANGLE_HISTOGRAM_TIMER_UNIQUE(name, is_long, key)                         \
-    class ScopedHistogramTimer##key                                                     \
+    class ANGLE_NO_DISCARD ScopedHistogramTimer##key                                    \
     {                                                                                   \
       public:                                                                           \
         ScopedHistogramTimer##key()                                                     \

@@ -775,4 +775,5 @@ void PBufferSurfaceMtl::setFixedHeight(EGLint height)
 {
     mSize.height = height;
 }
+
 }

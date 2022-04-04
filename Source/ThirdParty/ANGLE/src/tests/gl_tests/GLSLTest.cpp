@@ -6630,6 +6630,85 @@ TEST_P(GLSLTest_ES31, VaryingIOBlockDeclaredAsInAndOut)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that texture buffers can be accessed in a tessellation stage
+// Triggers a bug in the Vulkan backend: http://anglebug.com/7135
+TEST_P(GLSLTest_ES31, TessellationTextureBufferAccess)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_buffer"));
+
+    constexpr char kVS[] = R"(#version 310 es
+    precision highp float;
+    in vec4 inputAttribute;
+
+    void main()
+    {
+        gl_Position = inputAttribute;
+    })";
+
+    constexpr char kTCS[] = R"(#version 310 es
+    #extension GL_EXT_tessellation_shader : require
+    precision mediump float;
+    layout(vertices = 2) out;
+
+    void main()
+    {
+        gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+        gl_TessLevelInner[0] = 1.0;
+        gl_TessLevelInner[1] = 1.0;
+        gl_TessLevelOuter[0] = 1.0;
+        gl_TessLevelOuter[1] = 1.0;
+        gl_TessLevelOuter[2] = 1.0;
+        gl_TessLevelOuter[3] = 1.0;
+    })";
+
+    constexpr char kTES[] = R"(#version 310 es
+    #extension GL_EXT_tessellation_shader : require
+    #extension GL_OES_texture_buffer : require
+    precision mediump float;
+    layout (isolines, point_mode) in;
+
+    uniform highp samplerBuffer tex;
+
+    out vec4 tex_color;
+
+    void main()
+    {
+        tex_color = texelFetch(tex, 0);
+        gl_Position = gl_in[0].gl_Position;
+    })";
+
+    constexpr char kFS[] = R"(#version 310 es
+    precision mediump float;
+    layout(location = 0) out mediump vec4 color;
+
+    in vec4 tex_color;
+
+    void main()
+    {
+        color = tex_color;
+    })";
+
+    constexpr GLint kBufferSize = 32;
+    GLubyte texData[]           = {0u, 255u, 0u, 255u};
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_BUFFER, texture);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_TEXTURE_BUFFER, buffer);
+    glBufferData(GL_TEXTURE_BUFFER, kBufferSize, texData, GL_STATIC_DRAW);
+    glTexBufferEXT(GL_TEXTURE_BUFFER, GL_RGBA8, buffer);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0, 0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ANGLE_GL_PROGRAM_WITH_TESS(program, kVS, kTCS, kTES, kFS);
+    drawPatches(program.get(), "inputAttribute", 0.5f, 1.0f, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that a varying struct that's not declared in the fragment shader links successfully.
 // GLSL ES 3.00.6 section 4.3.10.
 TEST_P(GLSLTest_ES3, VaryingStructNotDeclaredInFragmentShader)
@@ -15099,6 +15178,86 @@ TEST_P(GLSLTest, LoopBodyEndingInBranch6)
     GLint compileResult;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
     EXPECT_NE(compileResult, 0);
+}
+
+// Test that aliasing function out parameters work.  The GLSL spec says:
+//
+// > Because the function works with local copies of parameters, there are no issues regarding
+// > aliasing of variables within a function.
+//
+// In the test below, while the value of x is unknown after the function call, the result of the
+// function must deterministically be true.
+TEST_P(GLSLTest, AliasingFunctionOutParams)
+{
+    constexpr char kFS[] = R"(precision highp float;
+
+const vec4 colorGreen = vec4(0.,1.,0.,1.);
+const vec4 colorRed   = vec4(1.,0.,0.,1.);
+
+bool outParametersAreDistinct(out float x, out float y) {
+    x = 1.0;
+    y = 2.0;
+    return x == 1.0 && y == 2.0;
+}
+void main() {
+    float x = 0.0;
+    gl_FragColor = outParametersAreDistinct(x, x) ? colorGreen : colorRed;
+}
+)";
+
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(testProgram, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that aliasing function inout parameters work.
+TEST_P(GLSLTest, AliasingFunctionInOutParams)
+{
+    constexpr char kFS[] = R"(precision highp float;
+
+const vec4 colorGreen = vec4(0.,1.,0.,1.);
+const vec4 colorRed   = vec4(1.,0.,0.,1.);
+
+bool inoutParametersAreDistinct(inout float x, inout float y) {
+    x = 1.0;
+    y = 2.0;
+    return x == 1.0 && y == 2.0;
+}
+void main() {
+    float x = 0.0;
+    gl_FragColor = inoutParametersAreDistinct(x, x) ? colorGreen : colorRed;
+}
+)";
+
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(testProgram, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that aliasing function out parameter with a global works.
+TEST_P(GLSLTest, AliasingFunctionOutParamAndGlobal)
+{
+    constexpr char kFS[] = R"(precision highp float;
+
+const vec4 colorGreen = vec4(0.,1.,0.,1.);
+const vec4 colorRed   = vec4(1.,0.,0.,1.);
+
+float x = 1.0;
+bool outParametersAreDistinctFromGlobal(out float y) {
+    y = 2.0;
+    return x == 1.0 && y == 2.0;
+}
+void main() {
+    gl_FragColor = outParametersAreDistinctFromGlobal(x) ? colorGreen : colorRed;
+}
+)";
+
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(testProgram, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    ASSERT_GL_NO_ERROR();
 }
 
 }  // anonymous namespace

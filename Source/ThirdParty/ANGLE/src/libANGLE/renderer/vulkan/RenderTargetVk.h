@@ -121,11 +121,11 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     bool hasDefinedContent() const;
     bool hasDefinedStencilContent() const;
     // Mark content as undefined so that certain optimizations are possible such as using DONT_CARE
-    // as loadOp of the render target in the next renderpass.
-    void invalidateEntireContent(ContextVk *contextVk);
-    void invalidateEntireStencilContent(ContextVk *contextVk);
-    void restoreEntireContent();
-    void restoreEntireStencilContent();
+    // as loadOp of the render target in the next renderpass.  If |preferToKeepContentsDefinedOut|
+    // is set to true, it's preferred to ignore the invalidation due to image format and device
+    // architecture properties.
+    void invalidateEntireContent(ContextVk *contextVk, bool *preferToKeepContentsDefinedOut);
+    void invalidateEntireStencilContent(ContextVk *contextVk, bool *preferToKeepContentsDefinedOut);
 
     // See the description of mTransience for details of how the following two can interact.
     bool hasResolveAttachment() const { return mResolveImage != nullptr && !isEntirelyTransient(); }

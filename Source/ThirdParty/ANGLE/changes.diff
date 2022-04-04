@@ -19363,10 +19363,10 @@ index 000000000..2e00c1270
 +    done
 +fi
 diff --git a/scripts/run_code_generation.py b/scripts/run_code_generation.py
-index adc9bd9eb..a6ef39fd2 100755
+index fa1a029b5..bc79da2ad 100755
 --- a/scripts/run_code_generation.py
 +++ b/scripts/run_code_generation.py
-@@ -256,8 +256,11 @@ def main():
+@@ -254,8 +254,11 @@ def main():
                  f = open(os.path.basename(script), "r")
                  if subprocess.call([get_executable_name(f.readline()),
                                      os.path.basename(script)]) != 0:
@@ -19396,7 +19396,7 @@ index a175734c3..7fc9aa792 100644
  #include "GLES3/gl3.h"
  #include "common/mathutil.h"
 diff --git a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
-index 4711774cd..9eab1b361 100644
+index 50822f200..3ece2105b 100644
 --- a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 +++ b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -19423,10 +19423,10 @@ index 497ef881e..47213c904 100644
  #ifdef ANGLE_ENABLE_METAL_SPIRV
  #    include "compiler/translator/TranslatorMetal.h"
 diff --git a/src/compiler/translator/TranslatorMetalDirect.cpp b/src/compiler/translator/TranslatorMetalDirect.cpp
-index 7f665c130..595810150 100644
+index 4c85dc199..7197f8e13 100644
 --- a/src/compiler/translator/TranslatorMetalDirect.cpp
 +++ b/src/compiler/translator/TranslatorMetalDirect.cpp
-@@ -950,7 +950,6 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
+@@ -943,7 +943,6 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
                  getSymbolTable().findBuiltIn(ImmutableString("gl_PointSize"), getShaderVersion()));
              DeclareRightBeforeMain(*root, *pointSize);
          }
@@ -19524,7 +19524,7 @@ index bcc5d6589..60758fbe8 100644
      }
  
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index 82837bfaf..2c580b5c0 100644
+index daa1c614f..e3a3ddba0 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -19594,10 +19594,10 @@ index ad3cc080d..75069c572 100644
  {
  
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 426acd9a7..6e6c0d480 100755
+index bd9e3cd6a..d19220f9f 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -9260,7 +9260,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
+@@ -9270,7 +9270,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
      ASSERT(mCurrentDrawSurface == nullptr);
      ASSERT(mCurrentReadSurface == nullptr);
  
@@ -19606,7 +19606,7 @@ index 426acd9a7..6e6c0d480 100755
  
      mCurrentDrawSurface = drawSurface;
      mCurrentReadSurface = readSurface;
-@@ -9272,7 +9272,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
+@@ -9282,7 +9282,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
      }
      else
      {
@@ -19615,7 +19615,7 @@ index 426acd9a7..6e6c0d480 100755
      }
      ASSERT(newDefaultFramebuffer);
  
-@@ -9283,14 +9283,14 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
+@@ -9293,14 +9293,14 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
  
      // Update default framebuffer, the binding of the previous default
      // framebuffer (or lack of) will have a nullptr.
@@ -19634,7 +19634,7 @@ index 426acd9a7..6e6c0d480 100755
  
      return egl::NoError();
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index b97bbb4f1..3ff4730ed 100644
+index 383bf7ce4..fca82fb02 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -19648,7 +19648,7 @@ index b97bbb4f1..3ff4730ed 100644
  
  #include <string.h>
 diff --git a/src/libANGLE/Surface.cpp b/src/libANGLE/Surface.cpp
-index a820f1890..74517f24d 100644
+index 418565072..a396a347e 100644
 --- a/src/libANGLE/Surface.cpp
 +++ b/src/libANGLE/Surface.cpp
 @@ -640,10 +640,10 @@ Error Surface::getBufferAge(const gl::Context *context, EGLint *age)
@@ -19665,7 +19665,7 @@ index a820f1890..74517f24d 100644
  
  gl::InitState Surface::initState(const gl::ImageIndex & /*imageIndex*/) const
 diff --git a/src/libANGLE/Surface.h b/src/libANGLE/Surface.h
-index 17ddeaa91..ff16c4ab9 100644
+index e57580d21..19889c3de 100644
 --- a/src/libANGLE/Surface.h
 +++ b/src/libANGLE/Surface.h
 @@ -105,7 +105,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
@@ -19677,7 +19677,7 @@ index 17ddeaa91..ff16c4ab9 100644
                                                                egl::Surface *readSurface);
  
      const Config *getConfig() const;
-@@ -220,8 +220,6 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
+@@ -227,8 +227,6 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
      ~Surface() override;
      rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;
  
@@ -19869,7 +19869,7 @@ index ab7283ae1..100086759 100644
      return true;
  }
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index f14f15ce8..4ae9f8f39 100644
+index 6a16d78bc..c16ed3ae5 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
 @@ -589,7 +589,7 @@ angle::Result ProgramMtl::getSpecializedShader(ContextMtl *context,
@@ -19934,95 +19934,6 @@ index 6855e4516..daa0e59cf 100644
  }
 -
  }
-diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.h b/src/libANGLE/renderer/metal/VertexArrayMtl.h
-index 86e6a2836..7fb3a98e5 100644
---- a/src/libANGLE/renderer/metal/VertexArrayMtl.h
-+++ b/src/libANGLE/renderer/metal/VertexArrayMtl.h
-@@ -153,6 +153,7 @@ class VertexArrayMtl : public VertexArrayImpl
-     std::vector<uint32_t> mEmulatedInstanceAttribs;
- 
-     bool mVertexArrayDirty = true;
-+    bool mVertexDataDirty = true;
- };
- }  // namespace rx
- 
-diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index ba0c50561..ea34f511d 100644
---- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-+++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-@@ -273,6 +273,7 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
-             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
-             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER_DATA:
-             {
-+                mVertexDataDirty = true;
-                 break;
-             }
- 
-@@ -300,7 +301,7 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
-     case gl::VertexArray::DIRTY_BIT_BUFFER_DATA_0 + INDEX:                                        \
-         ANGLE_TRY(syncDirtyAttrib(context, attribs[INDEX], bindings[attribs[INDEX].bindingIndex], \
-                                   INDEX));                                                        \
--        mVertexArrayDirty = true;                                                                 \
-+        mVertexDataDirty = true;                                                                 \
-         break;
- 
-                 ANGLE_VERTEX_INDEX_CASES(ANGLE_VERTEX_DIRTY_BUFFER_DATA_FUNC)
-@@ -475,7 +476,21 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
-                 }
- 
-                 desc.layouts[bufferIdx].stride = mCurrentArrayBufferStrides[v];
-+            }
-+        }  // for (v)
-+    }
-+
-+    if(dirty || mVertexDataDirty)
-+    {
-+        mVertexDataDirty = false;
-+        const gl::ProgramExecutable *executable = glContext->getState().getProgramExecutable();
-+        const gl::AttributesMask &programActiveAttribsMask =
-+                executable->getActiveAttribLocationsMask();
- 
-+        for (uint32_t v = 0; v < mtl::kMaxVertexAttribs; ++v)
-+        {
-+            uint32_t bufferIdx    = mtl::kVboBindingIndexStart + v;
-+            uint32_t bufferOffset = static_cast<uint32_t>(mCurrentArrayBufferOffsets[v]);
-             if (mCurrentArrayBuffers[v])
-             {
-                 cmdEncoder->setVertexBuffer(mCurrentArrayBuffers[v]->getCurrentBuffer(),
-@@ -488,10 +503,11 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
-                 cmdEncoder->setVertexBytes(mCurrentArrayInlineDataPointers[v],
-                                            mCurrentArrayInlineDataSizes[v], bufferIdx);
-             }
-+
-         }
--        }  // for (v)
-     }
- 
-+
-     *vertexDescChanged = dirty;
- 
-     return angle::Result::Continue;
-@@ -636,6 +652,7 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
-         if (bufferGL)
-         {
-             BufferMtl *bufferMtl = mtl::GetImpl(bufferGL);
-+            mContentsObservers->enableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
-             bool needConversion =
-                 format.actualFormatId != format.intendedFormatId ||
-                 (binding.getOffset() % format.actualAngleFormat().pixelBytes) != 0 ||
-@@ -645,12 +662,10 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
- 
-             if (needConversion)
-             {
--                mContentsObservers->enableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
-                 ANGLE_TRY(convertVertexBuffer(glContext, bufferMtl, binding, attribIndex, format));
-             }
-             else
-             {
--                mContentsObservers->disableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
-                 mCurrentArrayBuffers[attribIndex]       = bufferMtl;
-                 mCurrentArrayBufferOffsets[attribIndex] = binding.getOffset();
-                 mCurrentArrayBufferStrides[attribIndex] = binding.getStride();
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 index c3be11f78..204ebb949 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h

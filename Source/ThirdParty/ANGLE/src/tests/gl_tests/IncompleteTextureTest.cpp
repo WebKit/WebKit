@@ -242,6 +242,56 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
 }
 
+// This mirrors a scenario seen in GFXBench Car Chase where a
+// default CUBE_MAP_ARRAY texture is used without being setup.
+// Its ends up sampling from an incomplete texture.
+TEST_P(IncompleteTextureTestES31, IncompleteTextureCubeMapArray)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"));
+
+    constexpr char kVS[] =
+        R"(#version 310 es
+        precision mediump float;
+        in vec3 pos;
+        void main() {
+            gl_Position = vec4(pos, 1.0);
+        })";
+
+    constexpr char kFS[] =
+        R"(#version 310 es
+        #extension GL_EXT_texture_cube_map_array : enable
+        precision mediump float;
+        out vec4 color;
+        uniform lowp samplerCubeArray uTex;
+        void main(){
+            vec4 outColor = vec4(0.0);
+
+            // Pull a color from each cube face to ensure they are all initialized
+            outColor += texture(uTex, vec4(1.0, 0.0, 0.0, 0.0));
+            outColor += texture(uTex, vec4(-1.0, 0.0, 0.0, 0.0));
+            outColor += texture(uTex, vec4(0.0, 1.0, 0.0, 0.0));
+            outColor += texture(uTex, vec4(0.0, -1.0, 0.0, 0.0));
+            outColor += texture(uTex, vec4(0.0, 0.0, 1.0, 0.0));
+            outColor += texture(uTex, vec4(0.0, 0.0, -1.0, 0.0));
+
+            color = outColor;
+        })";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    glUniform1i(glGetUniformLocation(program, "uTex"), 0);
+    glActiveTexture(GL_TEXTURE0);
+
+    // Bind the default texture and don't set it up. This ends up being incomplete.
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, 0);
+
+    drawQuad(program, "pos", 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, angle::GLColor::black);
+}
+
 // Verifies that an incomplete integer texture has a signed integer type default value.
 TEST_P(IncompleteTextureTestES3, IntegerType)
 {

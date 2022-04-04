@@ -301,7 +301,7 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
     case gl::VertexArray::DIRTY_BIT_BUFFER_DATA_0 + INDEX:                                        \
         ANGLE_TRY(syncDirtyAttrib(context, attribs[INDEX], bindings[attribs[INDEX].bindingIndex], \
                                   INDEX));                                                        \
-        mVertexDataDirty = true;                                                                 \
+        mVertexDataDirty = true;                                                                  \
         break;
 
                 ANGLE_VERTEX_INDEX_CASES(ANGLE_VERTEX_DIRTY_BUFFER_DATA_FUNC)
@@ -480,15 +480,19 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
         }  // for (v)
     }
 
-    if(dirty || mVertexDataDirty)
+    if (dirty || mVertexDataDirty)
     {
-        mVertexDataDirty = false;
+        mVertexDataDirty                        = false;
         const gl::ProgramExecutable *executable = glContext->getState().getProgramExecutable();
         const gl::AttributesMask &programActiveAttribsMask =
-                executable->getActiveAttribLocationsMask();
+            executable->getActiveAttribLocationsMask();
 
         for (uint32_t v = 0; v < mtl::kMaxVertexAttribs; ++v)
         {
+            if (!programActiveAttribsMask.test(v))
+            {
+                continue;
+            }
             uint32_t bufferIdx    = mtl::kVboBindingIndexStart + v;
             uint32_t bufferOffset = static_cast<uint32_t>(mCurrentArrayBufferOffsets[v]);
             if (mCurrentArrayBuffers[v])
@@ -503,10 +507,8 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
                 cmdEncoder->setVertexBytes(mCurrentArrayInlineDataPointers[v],
                                            mCurrentArrayInlineDataSizes[v], bufferIdx);
             }
-
         }
     }
-
 
     *vertexDescChanged = dirty;
 
@@ -652,6 +654,9 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
         if (bufferGL)
         {
             BufferMtl *bufferMtl = mtl::GetImpl(bufferGL);
+            // https://bugs.webkit.org/show_bug.cgi?id=236733
+            // even non-converted buffers need to be observed for potential
+            // data rebinds.
             mContentsObservers->enableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
             bool needConversion =
                 format.actualFormatId != format.intendedFormatId ||

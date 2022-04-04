@@ -160,6 +160,7 @@ class FramebufferVk : public FramebufferImpl
                                            vk::RenderPassCommandBufferHelper *renderPass);
 
     void onSwitchProgramFramebufferFetch(ContextVk *contextVk, bool programUsesFramebufferFetch);
+    bool hasFramebufferFetch() const { return mCurrentFramebufferDesc.hasFramebufferFetch(); }
 
   private:
     FramebufferVk(RendererVk *renderer,
@@ -210,9 +211,8 @@ class FramebufferVk : public FramebufferImpl
                                 const VkClearColorValue &clearColorValue,
                                 const VkClearDepthStencilValue &clearDepthStencilValue);
     void redeferClears(ContextVk *contextVk);
-    angle::Result clearWithCommand(ContextVk *contextVk,
-                                   vk::RenderPassCommandBufferHelper *renderpassCommands,
-                                   const gl::Rectangle &scissoredRenderArea);
+    void clearWithCommand(ContextVk *contextVk, const gl::Rectangle &scissoredRenderArea);
+    void clearWithLoadOp(ContextVk *contextVk);
     void updateActiveColorMasks(size_t colorIndex, bool r, bool g, bool b, bool a);
     void updateRenderPassDesc(ContextVk *contextVk);
     angle::Result updateColorAttachment(const gl::Context *context, uint32_t colorIndex);

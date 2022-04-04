@@ -59,6 +59,7 @@
 1229184 WIN NVIDIA VULKAN : SimpleStateChangeTest.RedefineFramebufferTexture/* = SKIP
 6173 WIN INTEL OPENGL : GLSLTest_ES31.BoolInInterfaceBlocks/* = SKIP
 6217 WIN INTEL OPENGL : GLSLTest_ES31.StorageBufferBoolVectorPassedToFunctions/* = SKIP
+7143 WIN INTEL OPENGL : GLSLTest.AliasingFunctionOutParamAndGlobal/* = SKIP
 6826 WIN NVIDIA OPENGL : GLSLTest.VectorAndMatrixScalarizationDoesNotAffectRendering/* = SKIP
 6826 WIN NVIDIA GLES : GLSLTest.VectorAndMatrixScalarizationDoesNotAffectRendering/* = SKIP
 4716 WIN NVIDIA GLES : CopyTextureTest.CopyOutsideMipmap/* = SKIP
@@ -261,7 +262,10 @@
 4841 WIN D3D9 : DXT1CompressedTextureTest.NonBlockSizesMipLevels/* = SKIP
 4841 WIN D3D11 : DXT1CompressedTextureTest.NonBlockSizesMipLevels/* = SKIP
 7109 WIN D3D11 : ClearTestRGB_ES3.*/* = SKIP
+7109 WIN D3D11 : SimpleStateChangeTestES3.InvalidateRGBThenDraw/* = SKIP
+7109 WIN D3D11 : SimpleStateChangeTestES3.DrawAndInvalidateRGBThenVerifyAlpha/* = SKIP
 7113 WIN D3D9 : GLSLTest.LoopBodyEndingInBranch*/* = SKIP
+1312167 WIN D3D9 : RobustResourceInitTest.OutOfBoundsArrayBuffers/* = SKIP
 
 // Android
 6095 ANDROID GLES : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP
@@ -351,6 +355,7 @@
 6793 PIXEL4ORXL GLES : UniformTest.UnusedStructInlineUniformWithSampler/* = SKIP
 5981 PIXEL4ORXL GLES : VulkanExternalImageTest.ShouldClearOpaqueFdRGBA8/* = SKIP
 5981 PIXEL4ORXL GLES : VulkanExternalImageTest.TextureFormatCompatChromiumFd/* = SKIP
+7142 PIXEL4ORXL GLES : GLSLTest.AliasingFunctionOutParamAndGlobal/* = SKIP
 
 5946 PIXEL4ORXL VULKAN : TransformFeedbackTestES32.PrimitivesWrittenAndGenerated/* = SKIP
 5947 PIXEL4ORXL VULKAN : FramebufferFetchES31.DrawFetchBlitDrawFetch_NonCoherent/* = SKIP
@@ -362,7 +367,6 @@
 5981 PIXEL4ORXL VULKAN : ClearTestES3.MaskedIndexedClearMultipleAttachments/* = SKIP
 5981 PIXEL4ORXL VULKAN : ClearTestES3.MaskedScissoredClearMultipleAttachments/* = SKIP
 5981 PIXEL4ORXL VULKAN : ClearTestES3.ScissoredClearHeterogeneousAttachments/* = SKIP
-5981 PIXEL4ORXL VULKAN : ColorMaskForDrawBuffersTest.ScissoredClear/* = SKIP
 5981 PIXEL4ORXL VULKAN : CubeMapTextureTest.SampleCoordinateTransform/* = SKIP
 5981 PIXEL4ORXL VULKAN : DepthStencilFormatsTest.DepthTextureRender/* = SKIP
 5981 PIXEL4ORXL VULKAN : EGLSyncTest.AndroidNativeFence_ClientWait/* = SKIP
@@ -386,6 +390,17 @@
 6744 PIXEL4ORXL VULKAN : SimpleStateChangeTestES3.OutOfBoundsByteAttribute/* = SKIP
 6843 PIXEL4ORXL VULKAN : ImageTest.SourceYUVAHBTargetExternalRGBSampleInitData/* = SKIP
 6843 PIXEL4ORXL VULKAN : ImageTestES3.SourceYUVAHBTargetExternalYUVSampleLinearFiltering/* = SKIP
+7108 PIXEL4ORXL VULKAN : ImageTestES3.SourceAHBMipTarget2DMip/* = SKIP
+
+7140 PIXEL4ORXL VULKAN : ColorMaskForDrawBuffersTest.Clear/* = SKIP
+7140 PIXEL4ORXL VULKAN : ColorMaskForDrawBuffersTest.ScissoredClear/* = SKIP
+7140 PIXEL4ORXL VULKAN : ClearTestES3.ClearMaxAttachmentsAfterDraw/* = SKIP
+7140 PIXEL4ORXL VULKAN : ClearTestES3.ClearStencilAfterDraw/* = SKIP
+7140 PIXEL4ORXL VULKAN : ClearTestES3.MixedRenderPassClearMixedUsedUnusedAttachments/* = SKIP
+7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MaskedDrawMidRPClearWithGaps/* = SKIP
+7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MaskedDrawMidRPClearWithGapsRGB/* = SKIP
+7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MidRenderPassClearWithGaps/* = SKIP
+7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MidRenderPassClearWithGapsRGB/* = SKIP
 
 6167 NEXUS5X GLES : DepthStencilTestES3.FramebufferClearThenStencilAttachedThenStencilTestState/* = SKIP
 6167 NEXUS5X GLES : DepthStencilTestES3.FramebufferClearThenStencilTestStateThenStencilAttached/* = SKIP
@@ -452,6 +467,7 @@
 1224996 WIN AMD VULKAN : GLSLTest_ES3.ValidIndexClampES300/* = SKIP
 1224996 WIN AMD VULKAN : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP
 1224996 WIN AMD VULKAN : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
+7144 WIN AMD VULKAN : GLSLTest.AliasingFunctionOutParamAndGlobal/* = SKIP
 
 // Test is disabled as it only pertains to desktop GLSL
 6197 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = SKIP
@@ -471,6 +487,7 @@
 
 // Direct MSL compilation bug.
 6540 METAL : GLSLTest_ES3.ComplexCrossExpression/* = SKIP
+7145 METAL : GLSLTest.AliasingFunctionOutParamAndGlobal/* = SKIP
 
 // Bots missing drivers with VK_EXT_provoking_vertex
 6526 WIN INTEL VULKAN : ProgramBinaryES3Test.SaveAndLoadDetachedShaders/* = SKIP
@@ -498,13 +515,13 @@
 6751 D3D11 : MultiDrawIndirectTest.MultiDrawElementsIndirect* = SKIP
 6751 D3D11 : DrawBaseVertexBaseInstanceTest.MultiDrawElementsInstancedBaseVertexBaseInstance/* = SKIP
 
-// Non-static draw bug
-6963 METAL : DrawBaseVertexVariantsTest.DrawElementsInstancedBaseVertexBaseInstance/ES3_Metal__DYNAMIC_DRAW = SKIP
-6963 METAL : DrawBaseVertexVariantsTest.DrawElementsInstancedBaseVertexBaseInstance/ES3_Metal__STREAM_DRAW = SKIP
-
 // ASAN flakes with Vulkan / SwiftShader / AsyncQueue
 6875 ASAN VULKAN SWIFTSHADER : ComputeShaderTest.*/ES3_1_Vulkan_SwiftShader_AsyncQueue = SKIP
 6875 SWIFTSHADER : TransformFeedbackTest.SpanMultipleRenderPasses/* = SKIP
+
+7112 SWIFTSHADER : TransformFeedbackTest.BaseInstance/* = SKIP
+7112 AMD VULKAN : TransformFeedbackTest.BaseInstance/* = SKIP
+7112 PIXEL4ORXL VULKAN : TransformFeedbackTest.BaseInstance/* = SKIP
 
 // ASAN flaky timeouts and crashes with Win / Vulkan / Swiftshader
 6965 ASAN WIN VULKAN SWIFTSHADER : MipmapTest* = SKIP
@@ -541,4 +558,4 @@
 7029 NVIDIA OPENGL : GLSLTest.SwizzledChainedAssignIncrement/* = SKIP
 7029 NVIDIA GLES : GLSLTest.SwizzledChainedAssignIncrement/* = SKIP
 
-7085 : VulkanPerformanceCounterTest.InvalidateDrawDisable/* = SKIP
+7085 : VulkanPerformanceCounterTest.DepthStencilInvalidateDrawDisable/* = SKIP

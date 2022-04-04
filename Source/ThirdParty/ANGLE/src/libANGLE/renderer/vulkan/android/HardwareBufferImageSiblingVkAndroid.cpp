@@ -74,7 +74,7 @@ VkImageTiling AhbDescUsageToVkImageTiling(const AHardwareBuffer_Desc &ahbDescrip
 }
 
 // Map AHB usage flags to VkImageUsageFlags using this table from the Vulkan spec
-// https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap10.html#memory-external-android-hardware-buffer-usage
+// https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap11.html#memory-external-android-hardware-buffer-usage
 VkImageUsageFlags AhbDescUsageToVkImageUsage(const AHardwareBuffer_Desc &ahbDescription,
                                              bool isDepthOrStencilFormat)
 {
@@ -97,12 +97,39 @@ VkImageUsageFlags AhbDescUsageToVkImageUsage(const AHardwareBuffer_Desc &ahbDesc
         }
     }
 
+    return usage;
+}
+
+// Map AHB usage flags to VkImageCreateFlags using this table from the Vulkan spec
+// https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/chap11.html#memory-external-android-hardware-buffer-usage
+VkImageCreateFlags AhbDescUsageToVkImageCreateFlags(const AHardwareBuffer_Desc &ahbDescription)
+{
+    VkImageCreateFlags imageCreateFlags = vk::kVkImageCreateFlagsNone;
+
     if ((ahbDescription.usage & AHARDWAREBUFFER_USAGE_GPU_CUBE_MAP) != 0)
     {
-        usage |= VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+        imageCreateFlags |= VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
     }
 
-    return usage;
+    if ((ahbDescription.usage & AHARDWAREBUFFER_USAGE_PROTECTED_CONTENT) != 0)
+    {
+        imageCreateFlags |= VK_IMAGE_CREATE_PROTECTED_BIT;
+    }
+
+    return imageCreateFlags;
+}
+
+// Deduce texture type based on AHB usage flags and layer count
+gl::TextureType AhbDescUsageToTextureType(const AHardwareBuffer_Desc &ahbDescription,
+                                          const uint32_t layerCount)
+{
+    gl::TextureType textureType = layerCount > 1 ? gl::TextureType::_2DArray : gl::TextureType::_2D;
+    if ((ahbDescription.usage & AHARDWAREBUFFER_USAGE_GPU_CUBE_MAP) != 0)
+    {
+        textureType = layerCount > gl::kCubeFaceCount ? gl::TextureType::CubeMapArray
+                                                      : gl::TextureType::CubeMap;
+    }
+    return textureType;
 }
 }  // namespace
 
@@ -112,6 +139,8 @@ HardwareBufferImageSiblingVkAndroid::HardwareBufferImageSiblingVkAndroid(EGLClie
       mRenderable(false),
       mTextureable(false),
       mYUV(false),
+      mLevelCount(0),
+      mUsage(0),
       mSamples(0),
       mImage(nullptr)
 {}
@@ -268,6 +297,12 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     VkExtent3D vkExtents;
     gl_vk::GetExtent(mSize, &vkExtents);
 
+    // Setup level count
+    mLevelCount = ((ahbDescription.usage & AHARDWAREBUFFER_USAGE_GPU_MIPMAP_COMPLETE) != 0)
+                      ? static_cast<uint32_t>(log2(std::max(mSize.width, mSize.height))) + 1
+                      : 1;
+
+    // Setup layer count
     const uint32_t layerCount = mSize.depth;
     vkExtents.depth           = 1;
 
@@ -277,16 +312,11 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     bool robustInitEnabled = false;
 
     mImage->setTilingMode(imageTilingMode);
-    VkImageCreateFlags imageCreateFlags = vk::kVkImageCreateFlagsNone;
-    if (hasProtectedContent())
-    {
-        imageCreateFlags |= VK_IMAGE_CREATE_PROTECTED_BIT;
-    }
+    VkImageCreateFlags imageCreateFlags = AhbDescUsageToVkImageCreateFlags(ahbDescription);
 
     const vk::Format &format =
         bufferFormatProperties.format == VK_FORMAT_UNDEFINED ? externalVkFormat : vkFormat;
-    const gl::TextureType textureType =
-        layerCount > 1 ? gl::TextureType::_2DArray : gl::TextureType::_2D;
+    const gl::TextureType textureType = AhbDescUsageToTextureType(ahbDescription, layerCount);
 
     VkImageFormatListCreateInfoKHR imageFormatListInfoStorage;
     vk::ImageHelper::ImageListFormats imageListFormatsStorage;
@@ -297,7 +327,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     ANGLE_TRY(mImage->initExternal(displayVk, textureType, vkExtents, format.getIntendedFormatID(),
                                    format.getActualRenderableImageFormatID(), 1, usage,
                                    imageCreateFlags, vk::ImageLayout::ExternalPreInitialized,
-                                   imageCreateInfoPNext, gl::LevelIndex(0), 1, layerCount,
+                                   imageCreateInfoPNext, gl::LevelIndex(0), mLevelCount, layerCount,
                                    robustInitEnabled, hasProtectedContent()));
 
     VkImportAndroidHardwareBufferInfoANDROID importHardwareBufferInfo = {};
@@ -389,6 +419,11 @@ bool HardwareBufferImageSiblingVkAndroid::isYUV() const
     return mYUV;
 }
 
+bool HardwareBufferImageSiblingVkAndroid::isCubeMap() const
+{
+    return (mUsage & AHARDWAREBUFFER_USAGE_GPU_CUBE_MAP) != 0;
+}
+
 bool HardwareBufferImageSiblingVkAndroid::hasProtectedContent() const
 {
     return ((mUsage & AHARDWAREBUFFER_USAGE_PROTECTED_CONTENT) != 0);
@@ -402,6 +437,11 @@ gl::Extents HardwareBufferImageSiblingVkAndroid::getSize() const
 size_t HardwareBufferImageSiblingVkAndroid::getSamples() const
 {
     return mSamples;
+}
+
+uint32_t HardwareBufferImageSiblingVkAndroid::getLevelCount() const
+{
+    return mLevelCount;
 }
 
 // ExternalImageSiblingVk interface

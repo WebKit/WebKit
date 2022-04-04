@@ -1888,13 +1888,12 @@ angle::Result Texture::releaseTexImageInternal(Context *context)
     return angle::Result::Continue;
 }
 
-angle::Result Texture::setEGLImageTarget(Context *context,
-                                         TextureType type,
-                                         egl::Image *imageTarget)
+angle::Result Texture::setEGLImageTargetImpl(Context *context,
+                                             TextureType type,
+                                             GLuint levels,
+                                             egl::Image *imageTarget)
 {
     ASSERT(type == mState.mType);
-    ASSERT(type == TextureType::_2D || type == TextureType::External ||
-           type == TextureType::_2DArray);
 
     // Release from previous calls to eglBindTexImage, to avoid calling the Impl after
     ANGLE_TRY(releaseTexImageInternal(context));
@@ -1906,16 +1905,47 @@ angle::Result Texture::setEGLImageTarget(Context *context,
 
     setTargetImage(context, imageTarget);
 
-    Extents size(static_cast<int>(imageTarget->getWidth()),
-                 static_cast<int>(imageTarget->getHeight()), 1);
-
     auto initState = imageTarget->sourceInitState();
 
     mState.clearImageDescs();
-    mState.setImageDesc(NonCubeTextureTypeToTarget(type), 0,
-                        ImageDesc(size, imageTarget->getFormat(), initState));
+    mState.setImageDescChain(0, levels - 1, imageTarget->getExtents(), imageTarget->getFormat(),
+                             initState);
     mState.mHasProtectedContent = imageTarget->hasProtectedContent();
     signalDirtyStorage(initState);
+
+    return angle::Result::Continue;
+}
+
+angle::Result Texture::setEGLImageTarget(Context *context,
+                                         TextureType type,
+                                         egl::Image *imageTarget)
+{
+    ASSERT(type == TextureType::_2D || type == TextureType::External ||
+           type == TextureType::_2DArray);
+
+    return setEGLImageTargetImpl(context, type, 1u, imageTarget);
+}
+
+angle::Result Texture::setStorageEGLImageTarget(Context *context,
+                                                TextureType type,
+                                                egl::Image *imageTarget,
+                                                const GLint *attrib_list)
+{
+    ASSERT(type == TextureType::External || type == TextureType::_3D || type == TextureType::_2D ||
+           type == TextureType::_2DArray || type == TextureType::CubeMap ||
+           type == TextureType::CubeMapArray);
+
+    ANGLE_TRY(setEGLImageTargetImpl(context, type, imageTarget->getLevelCount(), imageTarget));
+
+    mState.mImmutableLevels = imageTarget->getLevelCount();
+    mState.mImmutableFormat = true;
+
+    // Changing the texture to immutable can trigger a change in the base and max levels:
+    // GLES 3.0.4 section 3.8.10 pg 158:
+    // "For immutable-format textures, levelbase is clamped to the range[0;levels],levelmax is then
+    // clamped to the range[levelbase;levels].
+    mDirtyBits.set(DIRTY_BIT_BASE_LEVEL);
+    mDirtyBits.set(DIRTY_BIT_MAX_LEVEL);
 
     return angle::Result::Continue;
 }

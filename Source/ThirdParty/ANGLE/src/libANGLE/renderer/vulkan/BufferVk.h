@@ -45,7 +45,6 @@ enum class BufferUpdateType
 };
 
 VkBufferUsageFlags GetDefaultBufferUsageFlags(RendererVk *renderer);
-size_t GetDefaultBufferAlignment(RendererVk *renderer);
 
 class BufferVk : public BufferImpl
 {

@@ -175,12 +175,6 @@ bool IsAccessChainRValue(const AccessChain &accessChain)
     return accessChain.storageClass == spv::StorageClassMax;
 }
 
-bool IsAccessChainUnindexedLValue(const NodeData &data)
-{
-    return !IsAccessChainRValue(data.accessChain) && data.idList.empty() &&
-           data.accessChain.swizzles.empty() && !data.accessChain.dynamicComponent.valid();
-}
-
 // A traverser that generates SPIR-V as it walks the AST.
 class OutputSPIRVTraverser : public TIntermTraverser
 {
@@ -2016,24 +2010,29 @@ spirv::IdRef OutputSPIRVTraverser::createFunctionCall(TIntermAggregate *node,
     // Get the list of parameters passed to the function.  The function parameters can only be
     // memory variables, or if the function argument is |const|, an rvalue.
     //
+    // For opaque uniforms, pass it directly as lvalue.
+    //
     // For in variables:
     //
     // - If the parameter is const, pass it directly as rvalue, otherwise
-    // - If the parameter is an unindexed lvalue, pass it directly, otherwise
     // - Write it to a temp variable first and pass that.
     //
     // For out variables:
     //
-    // - If the parameter is an unindexed lvalue, pass it directly, otherwise
     // - Pass a temporary variable.  After the function call, copy that variable to the parameter.
     //
     // For inout variables:
     //
-    // - If the parameter is an unindexed lvalue, pass it directly, otherwise
     // - Write the parameter to a temp variable and pass that.  After the function call, copy that
     //   variable back to the parameter.
     //
-    // - For opaque uniforms, pass it directly as lvalue,
+    // Note that in GLSL, in parameters are considered "copied" to the function.  In SPIR-V, every
+    // parameter is implicitly inout.  If a function takes an in parameter and modifies it, the
+    // caller has to ensure that it calls the function with a copy.  Currently, the functions don't
+    // track whether an in parameter is modified, so we conservatively assume it is.  Even for out
+    // and inout parameters, GLSL expects each function to operate on their local copy until the end
+    // of the function; this has observable side effects if the out variable aliases another
+    // variable the function has access to (another out variable, a global variable etc).
     //
     const size_t parameterCount = node->getChildCount();
     spirv::IdRefList parameters;
@@ -2058,18 +2057,6 @@ spirv::IdRef OutputSPIRVTraverser::createFunctionCall(TIntermAggregate *node,
         {
             // Opaque uniforms are passed by pointer.
             paramValue = accessChainCollapse(&param);
-        }
-        else if (IsAccessChainUnindexedLValue(param) && paramQualifier == EvqParamOut &&
-                 param.accessChain.storageClass == spv::StorageClassFunction)
-        {
-            // Unindexed lvalues are passed directly, but only when they are an out/inout.  In GLSL,
-            // in parameters are considered "copied" to the function.  In SPIR-V, every parameter is
-            // implicitly inout.  If a function takes an in parameter and modifies it, the caller
-            // has to ensure that it calls the function with a copy.  Currently, the functions don't
-            // track whether an in parameter is modified, so we conservatively assume it is.
-            //
-            // This optimization is not applied on buggy drivers.  http://anglebug.com/6110.
-            paramValue = param.baseId;
         }
         else
         {

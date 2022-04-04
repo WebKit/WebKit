@@ -282,6 +282,9 @@ std::ostream &operator<<(std::ostream &os, PrimitiveMode value)
         case PrimitiveMode::LineStripAdjacency:
             os << "GL_LINE_STRIP_ADJANCENCY";
             break;
+        case PrimitiveMode::Patches:
+            os << "GL_PATCHES";
+            break;
         case PrimitiveMode::Points:
             os << "GL_POINTS";
             break;

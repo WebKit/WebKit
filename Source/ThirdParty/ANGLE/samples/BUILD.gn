@@ -210,33 +210,17 @@ angle_sample("multiple_contexts") {
 }
 
 if (angle_build_capture_replay_sample) {
-  # The capture_replay sample is set up to work with a single Context.
-  # To use the capture replay sample first move your capture sources into
-  # the capture_replay folder and enable the gn arg above.
   angle_sample("capture_replay_sample") {
-    _contextid = angle_capture_replay_sample_context_id
-    sources =
-        rebase_path(
-            read_file(
-                "capture_replay/angle_capture_context${_contextid}_files.txt",
-                "list lines"),
-            ".",
-            "capture_replay") +
-        [
-          "capture_replay/CaptureReplay.cpp",
-          "capture_replay/angle_capture_context${_contextid}.cpp",
-          "capture_replay/angle_capture_context${_contextid}.h",
-        ]
+    sources = [ "capture_replay/CaptureReplay.cpp" ]
 
-    deps = [ "$angle_root:angle_compression" ]
-    data = [ "capture_replay/angle_capture_context${_contextid}.angledata.gz" ]
+    deps = [
+      "$angle_root:angle_compression",
+      "$angle_root/util:angle_frame_capture_test_utils",
+      "capture_replay:capture_replay_sample_trace",
+    ]
 
     _data_path = rebase_path("capture_replay", root_out_dir)
-    defines = [
-      "ANGLE_CAPTURE_REPLAY_SAMPLE_DATA_DIR=\"${_data_path}\"",
-      "ANGLE_CAPTURE_REPLAY_SAMPLE_CONTEXT_ID=${_contextid}",
-      "ANGLE_CAPTURE_REPLAY_SAMPLE_HEADER=angle_capture_context${_contextid}.h",
-    ]
+    defines = [ "ANGLE_CAPTURE_REPLAY_SAMPLE_DATA_DIR=\"${_data_path}\"" ]
 
     suppressed_configs = [ "$angle_root:constructor_and_destructor_warnings" ]
     configs = []

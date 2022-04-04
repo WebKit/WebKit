@@ -343,7 +343,8 @@ class ProgramD3D : public ProgramImpl
         return mState.getExecutable().getLinkedShaderStages()[shaderType];
     }
 
-    void assignImage2DRegisters(unsigned int startImageIndex,
+    void assignImage2DRegisters(gl::ShaderType shaderType,
+                                unsigned int startImageIndex,
                                 int startLogicalImageUnit,
                                 bool readonly);
     bool hasNamedUniform(const std::string &name);
@@ -519,7 +520,7 @@ class ProgramD3D : public ProgramImpl
 
     void updateCachedInputLayoutFromShader();
     void updateCachedOutputLayoutFromShader();
-    void updateCachedImage2DBindLayoutFromComputeShader();
+    void updateCachedImage2DBindLayoutFromShader(gl::ShaderType shaderType);
     void updateCachedVertexExecutableIndex();
     void updateCachedPixelExecutableIndex();
     void updateCachedComputeExecutableIndex();
@@ -558,11 +559,11 @@ class ProgramD3D : public ProgramImpl
     gl::ShaderMap<gl::RangeUI> mUsedShaderSamplerRanges;
     bool mDirtySamplerMapping;
 
-    std::vector<Image> mImagesCS;
-    std::vector<Image> mReadonlyImagesCS;
-    gl::RangeUI mUsedComputeImageRange;
-    gl::RangeUI mUsedComputeReadonlyImageRange;
-    gl::RangeUI mUsedComputeAtomicCounterRange;
+    gl::ShaderMap<std::vector<Image>> mImages;
+    gl::ShaderMap<std::vector<Image>> mReadonlyImages;
+    gl::ShaderMap<gl::RangeUI> mUsedImageRange;
+    gl::ShaderMap<gl::RangeUI> mUsedReadonlyImageRange;
+    gl::ShaderMap<gl::RangeUI> mUsedAtomicCounterRange;
 
     // Cache for pixel shader output layout to save reallocations.
     std::vector<GLenum> mPixelShaderOutputLayoutCache;
@@ -587,8 +588,8 @@ class ProgramD3D : public ProgramImpl
     std::array<unsigned int, gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS>
         mComputeAtomicCounterBufferRegisterIndices;
 
-    std::vector<sh::ShaderVariable> mImage2DUniforms;
-    gl::ImageUnitTextureTypeMap mComputeShaderImage2DBindLayoutCache;
+    gl::ShaderMap<std::vector<sh::ShaderVariable>> mImage2DUniforms;
+    gl::ShaderMap<gl::ImageUnitTextureTypeMap> mImage2DBindLayoutCache;
     Optional<size_t> mCachedComputeExecutableIndex;
 
     gl::ShaderBitSet mShaderUniformsDirty;

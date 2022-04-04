@@ -335,7 +335,7 @@ void InitConstantBufferDesc(D3D11_BUFFER_DESC *constantBufferDescription, size_t
 
 // Helper class for RAII patterning.
 template <typename T>
-class ScopedUnmapper final : angle::NonCopyable
+class ANGLE_NO_DISCARD ScopedUnmapper final : angle::NonCopyable
 {
   public:
     ScopedUnmapper(T *object) : mObject(object) {}

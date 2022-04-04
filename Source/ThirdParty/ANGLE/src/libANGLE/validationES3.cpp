@@ -1305,21 +1305,14 @@ bool ValidateES3CopyTexImage3DParameters(const Context *context,
                                                  height, border);
 }
 
-bool ValidateES3TexStorageParametersBase(const Context *context,
-                                         angle::EntryPoint entryPoint,
-                                         TextureType target,
-                                         GLsizei levels,
-                                         GLenum internalformat,
-                                         GLsizei width,
-                                         GLsizei height,
-                                         GLsizei depth)
+bool ValidateES3TexStorageParametersLevel(const Context *context,
+                                          angle::EntryPoint entryPoint,
+                                          TextureType target,
+                                          GLsizei levels,
+                                          GLsizei width,
+                                          GLsizei height,
+                                          GLsizei depth)
 {
-    if (width < 1 || height < 1 || depth < 1 || levels < 1)
-    {
-        context->validationError(entryPoint, GL_INVALID_VALUE, kTextureSizeTooSmall);
-        return false;
-    }
-
     GLsizei maxDim = std::max(width, height);
     if (target != TextureType::_2DArray)
     {
@@ -1332,29 +1325,17 @@ bool ValidateES3TexStorageParametersBase(const Context *context,
         return false;
     }
 
-    // From ANGLE_texture_external_yuv_sampling:
-    // Texture target can only be TEXTURE_2D, there is no mipmap support
-    if (gl::IsYuvFormat(internalformat))
-    {
-        if (!context->getExtensions().yuvInternalFormatANGLE)
-        {
-            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidFormat);
-            return false;
-        }
+    return true;
+}
 
-        if (target != TextureType::_2D)
-        {
-            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidTextureTarget);
-            return false;
-        }
-
-        if (levels != 1)
-        {
-            context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidMipLevel);
-            return false;
-        }
-    }
-
+bool ValidateES3TexStorageParametersExtent(const Context *context,
+                                           angle::EntryPoint entryPoint,
+                                           TextureType target,
+                                           GLsizei levels,
+                                           GLsizei width,
+                                           GLsizei height,
+                                           GLsizei depth)
+{
     const Caps &caps = context->getCaps();
 
     switch (target)
@@ -1459,6 +1440,13 @@ bool ValidateES3TexStorageParametersBase(const Context *context,
             return false;
     }
 
+    return true;
+}
+
+bool ValidateES3TexStorageParametersTexObject(const Context *context,
+                                              angle::EntryPoint entryPoint,
+                                              TextureType target)
+{
     Texture *texture = context->getTextureByType(target);
     if (!texture || texture->id().value == 0)
     {
@@ -1470,6 +1458,41 @@ bool ValidateES3TexStorageParametersBase(const Context *context,
     {
         context->validationError(entryPoint, GL_INVALID_OPERATION, kTextureIsImmutable);
         return false;
+    }
+
+    return true;
+}
+
+bool ValidateES3TexStorageParametersFormat(const Context *context,
+                                           angle::EntryPoint entryPoint,
+                                           TextureType target,
+                                           GLsizei levels,
+                                           GLenum internalformat,
+                                           GLsizei width,
+                                           GLsizei height,
+                                           GLsizei depth)
+{
+    // From ANGLE_texture_external_yuv_sampling:
+    // Texture target can only be TEXTURE_2D, there is no mipmap support
+    if (gl::IsYuvFormat(internalformat))
+    {
+        if (!context->getExtensions().yuvInternalFormatANGLE)
+        {
+            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidFormat);
+            return false;
+        }
+
+        if (target != TextureType::_2D)
+        {
+            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidTextureTarget);
+            return false;
+        }
+
+        if (levels != 1)
+        {
+            context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidMipLevel);
+            return false;
+        }
     }
 
     const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalformat);
@@ -1518,6 +1541,51 @@ bool ValidateES3TexStorageParametersBase(const Context *context,
             context->validationError(entryPoint, GL_INVALID_OPERATION, kInvalidCompressedImageSize);
             return false;
         }
+    }
+
+    return true;
+}
+
+bool ValidateES3TexStorageParametersBase(const Context *context,
+                                         angle::EntryPoint entryPoint,
+                                         TextureType target,
+                                         GLsizei levels,
+                                         GLenum internalformat,
+                                         GLsizei width,
+                                         GLsizei height,
+                                         GLsizei depth)
+{
+    if (width < 1 || height < 1 || depth < 1 || levels < 1)
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kTextureSizeTooSmall);
+        return false;
+    }
+
+    if (!ValidateES3TexStorageParametersLevel(context, entryPoint, target, levels, width, height,
+                                              depth))
+    {
+        // Error already generated.
+        return false;
+    }
+
+    if (!ValidateES3TexStorageParametersExtent(context, entryPoint, target, levels, width, height,
+                                               depth))
+    {
+        // Error already generated.
+        return false;
+    }
+
+    if (!ValidateES3TexStorageParametersTexObject(context, entryPoint, target))
+    {
+        // Error already generated.
+        return false;
+    }
+
+    if (!ValidateES3TexStorageParametersFormat(context, entryPoint, target, levels, internalformat,
+                                               width, height, depth))
+    {
+        // Error already generated.
+        return false;
     }
 
     return true;

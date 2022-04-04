@@ -38,27 +38,6 @@ VkBufferUsageFlags GetDefaultBufferUsageFlags(RendererVk *renderer)
     return defaultBufferUsageFlags;
 }
 
-size_t GetDefaultBufferAlignment(RendererVk *renderer)
-{
-    // The buffer may be used for a number of different operations, so its allocations should
-    // have an alignment that satisifies all.
-    const VkPhysicalDeviceLimits &limitsVk = renderer->getPhysicalDeviceProperties().limits;
-
-    // All known vendors have power-of-2 alignment requirements, so std::max can work instead of
-    // lcm.
-    ASSERT(gl::isPow2(limitsVk.minUniformBufferOffsetAlignment));
-    ASSERT(gl::isPow2(limitsVk.minStorageBufferOffsetAlignment));
-    ASSERT(gl::isPow2(limitsVk.minTexelBufferOffsetAlignment));
-    ASSERT(gl::isPow2(limitsVk.minMemoryMapAlignment));
-
-    size_t alignment = std::max({static_cast<size_t>(limitsVk.minUniformBufferOffsetAlignment),
-                                 static_cast<size_t>(limitsVk.minStorageBufferOffsetAlignment),
-                                 static_cast<size_t>(limitsVk.minTexelBufferOffsetAlignment),
-                                 limitsVk.minMemoryMapAlignment});
-
-    return alignment;
-}
-
 namespace
 {
 // Vertex attribute buffers are used as storage buffers for conversion in compute, where access to
@@ -1034,7 +1013,7 @@ angle::Result BufferVk::acquireBufferHelper(ContextVk *contextVk,
 {
     RendererVk *renderer = contextVk->getRenderer();
     size_t size          = roundUpPow2(sizeInBytes, kBufferSizeGranularity);
-    size_t alignment     = GetDefaultBufferAlignment(renderer);
+    size_t alignment     = renderer->getDefaultBufferAlignment();
 
     if (mBuffer.valid())
     {

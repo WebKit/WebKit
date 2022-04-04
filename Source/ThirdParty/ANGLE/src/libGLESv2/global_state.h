@@ -108,7 +108,7 @@ Thread *GetCurrentThread();
 Debug *GetDebug();
 
 // Sync the current context from Thread to global state.
-class ScopedSyncCurrentContextFromThread
+class ANGLE_NO_DISCARD ScopedSyncCurrentContextFromThread
 {
   public:
     ScopedSyncCurrentContextFromThread(egl::Thread *thread);

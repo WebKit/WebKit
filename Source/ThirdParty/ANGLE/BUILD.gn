@@ -22,9 +22,8 @@ if (angle_has_build) {
 
 declare_args() {
   # Use the PCI lib to collect GPU information on Linux.
-  use_libpci =
-      (is_linux || is_chromeos) && (!is_chromecast || is_cast_desktop_build) &&
-      (angle_use_x11 || use_ozone) && angle_has_build
+  use_libpci = (is_linux || is_chromeos) && (angle_use_x11 || use_ozone) &&
+               angle_has_build
 
   # Enable using Vulkan to collect system info as a fallback.
   angle_enable_vulkan_system_info = false
@@ -129,6 +128,11 @@ config("internal_config") {
   # Enables debug markers for AGI regardless of run-time checks.
   if (angle_enable_trace_android_logcat) {
     defines += [ "ANGLE_ENABLE_TRACE_ANDROID_LOGCAT=1" ]
+  }
+
+  # When used with angle_enable_trace, enables logging every GLES/EGL API command to the terminal
+  if (angle_enable_trace_events) {
+    defines += [ "ANGLE_ENABLE_TRACE_EVENTS=1" ]
   }
 
   if (is_chromeos) {

@@ -96,6 +96,7 @@
 #endif
 #if defined(__clang__)
 #    pragma clang diagnostic ignored "-Wunreachable-code"
+#    pragma clang diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
 #include "ExpressionParser.h"
@@ -461,9 +462,9 @@ static const yytype_uint8 yytranslate[] = {
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] = {0,   113, 113, 120, 121, 132, 132, 153, 153, 174,
-                                        177, 180, 183, 186, 189, 192, 195, 198, 201, 226,
-                                        248, 251, 254, 280, 307, 310, 313, 316, 328, 331};
+static const yytype_uint16 yyrline[] = {0,   114, 114, 121, 122, 133, 133, 154, 154, 175,
+                                        178, 181, 184, 187, 190, 193, 196, 199, 202, 227,
+                                        249, 252, 255, 281, 308, 311, 314, 317, 329, 332};
 #endif
 
 #if YYDEBUG || YYERROR_VERBOSE || 0

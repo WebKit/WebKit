@@ -116,10 +116,6 @@ class Format final : private angle::NonCopyable
                                                  : mTextureLoadFunctions(type);
     }
 
-    LoadTextureBorderFunctionInfo getTextureBorderLoadFunctions() const
-    {
-        return mTextureBorderLoadFunctions();
-    }
     // The actual Buffer format is used to implement the front-end format for Buffers.  This format
     // is used by vertex buffers as well as texture buffers.  Note that all formats required for
     // GL_EXT_texture_buffer have mandatory support for vertex buffers in Vulkan, so they won't be
@@ -191,7 +187,6 @@ class Format final : private angle::NonCopyable
 
     InitializeTextureDataFunction mImageInitializerFunction;
     LoadFunctionMap mTextureLoadFunctions;
-    LoadTextureBorderFunctionMap mTextureBorderLoadFunctions;
     LoadFunctionMap mRenderableTextureLoadFunctions;
     VertexCopyFunction mVertexLoadFunction;
     VertexCopyFunction mCompressedVertexLoadFunction;

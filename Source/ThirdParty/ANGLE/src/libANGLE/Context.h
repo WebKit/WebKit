@@ -832,7 +832,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool mIsDestroyed;
 };
 
-class ScopedContextRef
+class ANGLE_NO_DISCARD ScopedContextRef
 {
   public:
     ScopedContextRef(Context *context) : mContext(context)

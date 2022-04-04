@@ -33,6 +33,35 @@ bool ValidateES3TexImageParametersBase(const Context *context,
                                        GLsizei imageSize,
                                        const void *pixels);
 
+bool ValidateES3TexStorageParametersLevel(const Context *context,
+                                          angle::EntryPoint entryPoint,
+                                          TextureType target,
+                                          GLsizei levels,
+                                          GLsizei width,
+                                          GLsizei height,
+                                          GLsizei depth);
+
+bool ValidateES3TexStorageParametersExtent(const Context *context,
+                                           angle::EntryPoint entryPoint,
+                                           TextureType target,
+                                           GLsizei levels,
+                                           GLsizei width,
+                                           GLsizei height,
+                                           GLsizei depth);
+
+bool ValidateES3TexStorageParametersTexObject(const Context *context,
+                                              angle::EntryPoint entryPoint,
+                                              TextureType target);
+
+bool ValidateES3TexStorageParametersFormat(const Context *context,
+                                           angle::EntryPoint entryPoint,
+                                           TextureType target,
+                                           GLsizei levels,
+                                           GLenum internalformat,
+                                           GLsizei width,
+                                           GLsizei height,
+                                           GLsizei depth);
+
 bool ValidateProgramParameteriBase(const Context *context,
                                    angle::EntryPoint entryPoint,
                                    ShaderProgramID program,

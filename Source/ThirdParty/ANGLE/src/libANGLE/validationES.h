@@ -578,7 +578,10 @@ bool ValidatePushGroupMarkerEXT(const Context *context,
                                 angle::EntryPoint entryPoint,
                                 GLsizei length,
                                 const char *marker);
-
+bool ValidateEGLImageObject(const Context *context,
+                            angle::EntryPoint entryPoint,
+                            TextureType type,
+                            GLeglImageOES image);
 bool ValidateEGLImageTargetTexture2DOES(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         TextureType type,
@@ -887,6 +890,14 @@ bool ValidateES3CopyTexImage2DParameters(const Context *context,
                                          GLsizei width,
                                          GLsizei height,
                                          GLint border);
+bool ValidateES3TexStorageParametersBase(const Context *context,
+                                         angle::EntryPoint entryPoint,
+                                         TextureType target,
+                                         GLsizei levels,
+                                         GLenum internalformat,
+                                         GLsizei width,
+                                         GLsizei height,
+                                         GLsizei depth);
 bool ValidateES3TexStorage2DParameters(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        TextureType target,

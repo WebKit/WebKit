@@ -211,6 +211,13 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     void setDamageRegion(const EGLint *rects, EGLint n_rects);
     bool isDamageRegionSet() const { return mIsDamageRegionSet; }
 
+    void addRef() { mRefCount++; }
+    void release()
+    {
+        ASSERT(mRefCount > 0);
+        mRefCount--;
+    }
+
   protected:
     Surface(EGLint surfaceType,
             const egl::Config *config,
@@ -329,6 +336,28 @@ class PixmapSurface final : public Surface
 
   protected:
     ~PixmapSurface() override;
+};
+
+class ANGLE_NO_DISCARD ScopedSurfaceRef
+{
+  public:
+    ScopedSurfaceRef(Surface *surface) : mSurface(surface)
+    {
+        if (mSurface)
+        {
+            mSurface->addRef();
+        }
+    }
+    ~ScopedSurfaceRef()
+    {
+        if (mSurface)
+        {
+            mSurface->release();
+        }
+    }
+
+  private:
+    Surface *const mSurface;
 };
 
 class SurfaceDeleter final

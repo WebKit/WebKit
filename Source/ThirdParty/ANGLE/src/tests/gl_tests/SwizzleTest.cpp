@@ -293,6 +293,16 @@ TEST_P(SwizzleTest, RGB10_A2_2D)
     runTest2D();
 }
 
+TEST_P(SwizzleTest, RGB10_2D)
+{
+    ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_texture_type_2_10_10_10_REV"));
+
+    GLuint data[] = {20u | (40u << 10) | (60u << 20) | (2u << 30)};
+    init2DTexture(GL_RGB, GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV, data);
+    runTest2D();
+}
+
 TEST_P(SwizzleTest, RGBA32F_2D)
 {
     ANGLE_SKIP_TEST_IF(!isTextureSwizzleAvailable());

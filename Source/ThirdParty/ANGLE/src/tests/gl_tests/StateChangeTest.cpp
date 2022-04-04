@@ -3285,6 +3285,83 @@ TEST_P(SimpleStateChangeTestES3, DepthInvalidateThenClear)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
 }
 
+// Invalidate an RGB framebuffer and verify that the alpha channel is not destroyed and remains
+// valid after a draw call.
+TEST_P(SimpleStateChangeTestES3, InvalidateRGBThenDraw)
+{
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, getWindowWidth(), getWindowHeight(), 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Verify that clearing alpha is ineffective on an RGB format.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+
+    // Invalidate the framebuffer contents.
+    const GLenum discards[] = {GL_COLOR_ATTACHMENT0};
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, discards);
+
+    // Without an explicit clear, draw blue and make sure alpha is unaffected.  If RGB is emulated
+    // with RGBA, the previous invalidate shouldn't affect the alpha value.
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Invalidate an RGB framebuffer and verify that the alpha channel is not destroyed, even if the
+// color channels may be garbage.
+TEST_P(SimpleStateChangeTestES3, DrawAndInvalidateRGBThenVerifyAlpha)
+{
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint uniformLocation = glGetUniformLocation(drawColor, essl1_shaders::ColorUniform());
+    ASSERT_NE(uniformLocation, -1);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUniform4f(uniformLocation, 0.1f, 0.2f, 0.3f, 0.4f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+
+    // Invalidate the framebuffer contents.
+    const GLenum discards[] = {GL_COLOR_ATTACHMENT0};
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, discards);
+
+    // Read back the contents of the framebuffer.  The color channels are invalid, but as an RGB
+    // format, readback should always return 1 in alpha.
+    std::vector<GLColor> readback(w * h);
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, readback.data());
+    for (int y = 0; y < h; ++y)
+    {
+        for (int x = 0; x < w; ++x)
+        {
+            EXPECT_EQ(readback[y * w + x].A, 255) << x << " " << y;
+        }
+    }
+}
+
 // Tests deleting a Framebuffer that is in use.
 TEST_P(SimpleStateChangeTest, DeleteFramebufferInUse)
 {
@@ -8018,7 +8095,7 @@ ANGLE_INSTANTIATE_TEST_ES3(StateChangeRenderTestES3);
 ANGLE_INSTANTIATE_TEST_ES2(SimpleStateChangeTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SimpleStateChangeTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(SimpleStateChangeTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(SimpleStateChangeTestES3, WithAllocateNonZeroMemory(ES3_VULKAN()));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ImageRespecificationTest);
 ANGLE_INSTANTIATE_TEST_ES3(ImageRespecificationTest);

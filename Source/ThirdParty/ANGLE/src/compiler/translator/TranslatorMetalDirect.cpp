@@ -667,16 +667,10 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
     }
 
     // Write out default uniforms into a uniform block assigned to a specific set/binding.
-    int defaultUniformCount           = 0;
     int aggregateTypesUsedForUniforms = 0;
     int atomicCounterCount            = 0;
     for (const auto &uniform : getUniforms())
     {
-        if (!uniform.isBuiltIn() && uniform.active && !gl::IsOpaqueType(uniform.type))
-        {
-            ++defaultUniformCount;
-        }
-
         if (uniform.isStruct() || uniform.isArrayOfArrays())
         {
             ++aggregateTypesUsedForUniforms;
@@ -721,7 +715,6 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
         {
             return false;
         }
-        defaultUniformCount -= removedUniformsCount;
     }
 
     // Replace array of array of opaque uniforms with a flattened array.  This is run after
@@ -950,6 +943,7 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
                 getSymbolTable().findBuiltIn(ImmutableString("gl_PointSize"), getShaderVersion()));
             DeclareRightBeforeMain(*root, *pointSize);
         }
+
         if (FindSymbolNode(root, BuiltInVariable::gl_VertexIndex()->name()))
         {
             if (!ReplaceVariable(this, root, BuiltInVariable::gl_VertexIndex(), &kgl_VertexIDMetal))

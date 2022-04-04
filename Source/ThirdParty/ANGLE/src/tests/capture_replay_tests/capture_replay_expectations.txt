@@ -96,6 +96,7 @@
 6286 : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3/* = FAIL
 6512 : RobustResourceInitTestES3.BindTexImage/* = FAIL
 6180 WIN : TransformFeedbackTest.DrawWithoutTransformFeedbackThenWith/* = FLAKY
+6180 : TransformFeedbackTest.TransformFeedbackQueryPausedDrawThenResume/* = FLAKY
 6513 : TransformFeedbackTest.MultiContext/* = FLAKY
 6180 WIN : TransformFeedbackTest.BufferOutOfMemory/* = FLAKY
 6180 : VertexAttributeTestES3.DrawWithUnalignedData/* = FLAKY
@@ -186,8 +187,12 @@
 
 6875 : TransformFeedbackTest.SpanMultipleRenderPasses/* = NOT_RUN
 
+7112 : TransformFeedbackTest.BaseInstance/* = NOT_RUN
+
 # GLES 3.2 tests that fail because of missing features
 5366 : GeometryShaderTestES32.MaxGeometryImageUniforms/* = CRASH
 5366 : ProgramPipelineTest32.MaxGeometryImageUniforms/* = CRASH
 
 7088 : VulkanPerformanceCounterTest* = SKIP_FOR_CAPTURE
+
+7111 : ImageTestES3.Source2DTarget2DStorageOrphan/* = FAIL

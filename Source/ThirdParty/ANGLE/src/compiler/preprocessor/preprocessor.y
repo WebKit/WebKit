@@ -34,6 +34,7 @@ WHICH GENERATES THE GLSL ES preprocessor expression parser.
 #endif
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wunreachable-code"
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
 #include "ExpressionParser.h"

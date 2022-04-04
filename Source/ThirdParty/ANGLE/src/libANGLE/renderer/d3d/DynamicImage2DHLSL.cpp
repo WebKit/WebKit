@@ -796,7 +796,7 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
                 case gl::TextureType::_2D:
                 {
                     out << texture2DRegisterIndex;
-                    programD3D.assignImage2DRegisters(texture2DRegisterIndex,
+                    programD3D.assignImage2DRegisters(shaderType, texture2DRegisterIndex,
                                                       uniform.binding + index, uniform.readonly);
                     texture2DRegisterIndex++;
                     break;
@@ -804,7 +804,7 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
                 case gl::TextureType::_3D:
                 {
                     out << texture3DRegisterIndex;
-                    programD3D.assignImage2DRegisters(texture3DRegisterIndex,
+                    programD3D.assignImage2DRegisters(shaderType, texture3DRegisterIndex,
                                                       uniform.binding + index, uniform.readonly);
                     texture3DRegisterIndex++;
                     break;
@@ -813,7 +813,7 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
                 case gl::TextureType::CubeMap:
                 {
                     out << texture2DArrayRegisterIndex;
-                    programD3D.assignImage2DRegisters(texture2DArrayRegisterIndex,
+                    programD3D.assignImage2DRegisters(shaderType, texture2DArrayRegisterIndex,
                                                       uniform.binding + index, uniform.readonly);
                     texture2DArrayRegisterIndex++;
                     break;
@@ -860,8 +860,7 @@ std::string generateShaderForImage2DBindSignature(
     const gl::ImageUnitTextureTypeMap &image2DBindLayout)
 {
     std::vector<std::vector<sh::ShaderVariable>> groupedImage2DUniforms(IMAGE2D_MAX + 1);
-    unsigned int image2DTexture2DCount = 0, image2DTexture3DCount = 0,
-                 image2DTexture2DArrayCount = 0;
+    unsigned int image2DTexture3DCount = 0, image2DTexture2DArrayCount = 0;
     for (sh::ShaderVariable &image2D : image2DUniforms)
     {
         for (unsigned int index = 0; index < image2D.getArraySizeProduct(); index++)
@@ -875,7 +874,6 @@ std::string generateShaderForImage2DBindSignature(
             switch (image2DBindLayout.at(image2D.binding + index))
             {
                 case gl::TextureType::_2D:
-                    image2DTexture2DCount++;
                     break;
                 case gl::TextureType::_3D:
                     image2DTexture3DCount++;

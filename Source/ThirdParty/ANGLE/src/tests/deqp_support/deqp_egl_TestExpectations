@@ -163,7 +163,7 @@
 6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.partial_update.odd_render_render_even_render_render = FAIL
 
 // Pixel 6 Vulkan
-6900 PIXEL6 VULKAN : dEQP-EGL.functional.get_proc_address.extension.egl_ext_image_dma_buf_import_modifiers = FAIL
+// These fail on the Android S bots, but pass on pre-release Android T drivers:
 6899 PIXEL6 VULKAN : dEQP-EGL.functional.query_context.*.rgb888_window = FAIL
 
 // ES 1 tests
