@@ -66,41 +66,22 @@ public:
     void removeFirstEventListenerCreatedFromMarkup(const AtomString& eventType);
     void copyEventListenersNotCreatedFromMarkupToTarget(EventTarget*);
     
+    template<typename Visitor> void visitJSEventListeners(Visitor&);
     Lock& lock() { return m_lock; }
 
 private:
-    friend class EventListenerIterator;
-
-    void assertNoActiveIterators() const;
-
     Vector<std::pair<AtomString, EventListenerVector>> m_entries;
-
-#ifndef NDEBUG
-    std::atomic<int> m_activeIteratorCount { 0 };
-#endif
-
     Lock m_lock;
 };
 
-class EventListenerIterator {
-    WTF_MAKE_NONCOPYABLE(EventListenerIterator);
-public:
-    explicit EventListenerIterator(EventTarget*);
-    explicit EventListenerIterator(EventListenerMap*);
-#ifndef NDEBUG
-    ~EventListenerIterator();
-#endif
-
-    EventListener* nextListener();
-
-private:
-    EventListenerMap* m_map { nullptr };
-    unsigned m_entryIndex { 0 };
-    unsigned m_index { 0 };
-};
-
-#ifdef NDEBUG
-inline void EventListenerMap::assertNoActiveIterators() const { }
-#endif
+template<typename Visitor>
+void EventListenerMap::visitJSEventListeners(Visitor& visitor)
+{
+    Locker locker { m_lock };
+    for (auto& entry : m_entries) {
+        for (auto& eventListener : entry.second)
+            eventListener->callback().visitJSFunction(visitor);
+    }
+}
 
 } // namespace WebCore
