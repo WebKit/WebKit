@@ -1219,18 +1219,17 @@ RequestVideoFrameCallbackEnabled:
       "USE(GSTREAMER)": true
       default: false
 
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 ResizeObserverEnabled:
   type: bool
   humanReadableName: "Resize Observer"
   humanReadableDescription: "Enable Resize Observer support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
       default: true
     WebCore:
-      default: false
+      default: true
 
 ResolutionMediaFeatureEnabled:
   type: bool

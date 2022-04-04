@@ -1,3 +1,14 @@
+2022-04-04  Cathie Chen  <cathiechen@igalia.com>
+
+        REGRESSION(r291797): [wk1] 5 contain-intrinsic-size* tests are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=238584
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-031-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/resize-observer/change-layout-in-error-expected.txt: Removed.
+
 2022-04-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Unskip the first few passing WebGPU tests

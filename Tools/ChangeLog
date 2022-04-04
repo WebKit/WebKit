@@ -1,3 +1,15 @@
+2022-04-04  Cathie Chen  <cathiechen@igalia.com>
+
+        REGRESSION(r291797): [wk1] 5 contain-intrinsic-size* tests are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=238584
+
+        Reviewed by Simon Fraser.
+
+        Enable ResizeObserver for wk1 test.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2022-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Automatically relayout the page when new fonts are installed

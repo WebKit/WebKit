@@ -1,3 +1,14 @@
+2022-04-04  Cathie Chen  <cathiechen@igalia.com>
+
+        REGRESSION(r291797): [wk1] 5 contain-intrinsic-size* tests are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=238584
+
+        Reviewed by Simon Fraser.
+
+        Enable ResizeObserver for legacy WebKit.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-04-03  Tim Horton  <timothy_horton@apple.com>
 
         _WKDataTask doesn't work in macCatalyst

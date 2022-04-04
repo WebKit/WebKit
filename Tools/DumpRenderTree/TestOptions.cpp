@@ -119,7 +119,6 @@ const TestFeatures& TestOptions::defaults()
             { "LazyIframeLoadingEnabled", false },
             { "LazyImageLoadingEnabled", false },
             { "RequestIdleCallbackEnabled", false },
-            { "ResizeObserverEnabled", false },
             { "WebAuthenticationEnabled", false },
             { "WebGPUEnabled", false },
 #elif PLATFORM(WIN)
@@ -168,7 +167,6 @@ const TestFeatures& TestOptions::defaults()
             { "PluginsEnabled", true },
             { "PrivateClickMeasurementEnabled", false },
             { "RequestIdleCallbackEnabled", false },
-            { "ResizeObserverEnabled", false },
             { "SelectionAcrossShadowBoundariesEnabled", true },
             { "ShrinksStandaloneImagesToFit", true },
             { "SpatialNavigationEnabled", false },
