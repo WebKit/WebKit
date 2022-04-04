@@ -84,14 +84,9 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 {
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(launchOptions);
-#if HAVE(RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT)
-    // On iOS, we don't need to leak a boost message when RunningBoard process assertions give us the
+    // On iOS, we don't need to leak a boost message because RunningBoard process assertions give us the
     // right priorities.
-    static const bool runningBoardHandlesPriorities = isFeatureFlagEnabled("RB_full_manage_WK_jetsam"_s);
-    return !runningBoardHandlesPriorities;
-#else
-    return true;
-#endif // HAVE(RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT)
+    return false;
 #else
     // On Mac, leak a boost onto the NetworkProcess, GPUProcess, and WebAuthnProcess.
 #if ENABLE(GPU_PROCESS)

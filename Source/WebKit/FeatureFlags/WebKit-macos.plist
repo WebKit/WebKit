@@ -82,11 +82,6 @@
 		<key>Enabled</key>
 		<false/>
 	</dict>
-	<key>RB_full_manage_WK_jetsam</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
 	<key>general_directory_for_storage</key>
 	<dict>
 		<key>Enabled</key>
