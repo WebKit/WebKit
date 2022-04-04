@@ -4181,7 +4181,8 @@ static void prepareJumpTableForStringSwitch(UnlinkedStringJumpTable& jumpTable, 
         ASSERT(!labels[i]->isForward());
         
         ASSERT(nodes[i]->isString());
-        StringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
+        UniquedStringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
+        ASSERT(clause->isAtom());
         auto result = jumpTable.m_offsetTable.add(clause, UnlinkedStringJumpTable::OffsetLocation { labels[i]->bind(switchAddress), 0 });
         if (result.isNewEntry)
             result.iterator->value.m_indexInTable = jumpTable.m_offsetTable.size() - 1;
