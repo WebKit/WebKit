@@ -210,6 +210,48 @@ class TestCanonicalize(testing.PathTestCase):
             '1 commit successfully canonicalized!\n',
         )
 
+    def test_git_svn_existing_merge_queue(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True) as mock, mocks.local.Svn(), MockTime:
+            contirbutors = Contributor.Mapping()
+            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+
+            mock.commits[mock.default_branch].append(Commit(
+                hash='766609276fe201e7ce2c69994e113d979d2148ac',
+                branch=mock.default_branch,
+                author=Contributor('jbedard@apple.com', emails=['jbedard@apple.com']),
+                identifier=mock.commits[mock.default_branch][-1].identifier + 1,
+                timestamp=1601668000,
+                revision=9,
+                message='New commit\nIdentifier: 6@main\n\n\ngit-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
+            ))
+
+            self.assertEqual(0, program.main(
+                args=('canonicalize', '-vv'),
+                path=self.path,
+                contributors=contirbutors,
+            ))
+
+            commit = local.Git(self.path).commit(branch=mock.default_branch)
+            self.assertEqual(commit.author, contirbutors['jbedard@apple.com'])
+
+            self.assertEqual(
+                commit.message,
+                'New commit\n\n'
+                'Identifier: 6@main\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Rewrite 766609276fe201e7ce2c69994e113d979d2148ac (1/1) (--- seconds passed, remaining --- predicted)\n'
+            'Overwriting 766609276fe201e7ce2c69994e113d979d2148ac\n'
+            '    GIT_AUTHOR_NAME=Jonathan Bedard\n'
+            '    GIT_AUTHOR_EMAIL=jbedard@apple.com\n'
+            '    GIT_COMMITTER_NAME=Jonathan Bedard\n'
+            '    GIT_COMMITTER_EMAIL=jbedard@apple.com\n'
+            '1 commit successfully canonicalized!\n',
+        )
+
     def test_branch_commits(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
             contirbutors = Contributor.Mapping()

@@ -1,3 +1,17 @@
+2022-04-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit canonicalize] Support multiple empty lines
+        https://bugs.webkit.org/show_bug.cgi?id=238744
+        <rdar://problem/91246947>
+
+        Reviewed by Stephanie Lewis and Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/canonicalize/message.py:
+        (main): When committing a change with 'Patch by' in it, SVN adds an
+        extra empty line in the commit message.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/canonicalize_unittest.py:
+        (TestCanonicalize.test_git_svn_existing_merge_queue): Added.
+
 2022-04-04  Chris Dumez  <cdumez@apple.com>
 
         Drop mostly unused String(const LChar*) constructor
