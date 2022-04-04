@@ -116,35 +116,6 @@ bool defaultAppleMailPaginationQuirkEnabled()
 
 #endif
 
-static bool defaultAsyncFrameAndOverflowScrollingEnabled()
-{
-#if PLATFORM(IOS_FAMILY)
-    return true;
-#endif
-
-#if PLATFORM(MAC)
-    bool defaultValue = true;
-#else
-    bool defaultValue = false;
-#endif
-
-    return isFeatureFlagEnabled("async_frame_and_overflow_scrolling", defaultValue);
-}
-
-bool defaultAsyncFrameScrollingEnabled()
-{
-#if USE(NICOSIA)
-    return true;
-#endif
-
-    return defaultAsyncFrameAndOverflowScrollingEnabled();
-}
-
-bool defaultAsyncOverflowScrollingEnabled()
-{
-    return defaultAsyncFrameAndOverflowScrollingEnabled();
-}
-
 bool defaultOfflineWebApplicationCacheEnabled()
 {
 #if PLATFORM(COCOA)

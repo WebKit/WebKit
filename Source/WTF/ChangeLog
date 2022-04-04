@@ -1,5 +1,14 @@
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
+        Remove the 'async frame and overflow scrolling' system feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=238758
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2022-04-04  Tim Horton  <timothy_horton@apple.com>
+
         Remove the incremental_pdf system feature flag
         https://bugs.webkit.org/show_bug.cgi?id=238754
 

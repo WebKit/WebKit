@@ -101,8 +101,8 @@ AsyncFrameScrollingEnabled:
       default: false
     WebKit:
       "USE(NICOSIA)": true
-      "PLATFORM(IOS_FAMILY)": true
-      default: WebKit::defaultAsyncFrameScrollingEnabled()
+      "PLATFORM(COCOA)": true
+      default: false
     WebCore:
       default: false
 
@@ -117,8 +117,8 @@ AsyncOverflowScrollingEnabled:
       default: false
     WebKit:
       "USE(NICOSIA)": true
-      "PLATFORM(IOS_FAMILY)": true
-      default: WebKit::defaultAsyncFrameScrollingEnabled()
+      "PLATFORM(COCOA)": true
+      default: false
     WebCore:
       default: false
 
