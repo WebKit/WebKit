@@ -86,7 +86,7 @@ private:
 
     PAL::WebGPU::Device& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void destroy();
 

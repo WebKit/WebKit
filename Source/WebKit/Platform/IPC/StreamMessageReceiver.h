@@ -29,14 +29,14 @@
 
 namespace IPC {
 
-class StreamServerConnectionBase;
+class StreamServerConnection;
 class Decoder;
 
 class StreamMessageReceiver : public ThreadSafeRefCounted<StreamMessageReceiver> {
 public:
     virtual ~StreamMessageReceiver() { }
 
-    virtual void didReceiveStreamMessage(StreamServerConnectionBase&, Decoder&) = 0;
+    virtual void didReceiveStreamMessage(StreamServerConnection&, Decoder&) = 0;
 };
 
 } // namespace IPC

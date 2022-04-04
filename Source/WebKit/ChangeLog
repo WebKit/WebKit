@@ -1,3 +1,71 @@
+2022-04-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC::StreamServerConnectionBase has only one subclass, it should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=238676
+
+        Reviewed by Wenson Hsieh.
+
+        Merge IPC::StreamServerConnectionBase and IPC::StreamServerConnection.
+        The base was useful when the concrete classes were templates per message receiver.
+        The concrete class was changed to use multiple message receivers, and the templating
+        was replaced with id lookup.
+
+        No new tests, refactor.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/WebGPU/RemoteAdapter.h:
+        * GPUProcess/graphics/WebGPU/RemoteBindGroup.h:
+        * GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.h:
+        * GPUProcess/graphics/WebGPU/RemoteBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandBuffer.h:
+        * GPUProcess/graphics/WebGPU/RemoteCommandEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteComputePipeline.h:
+        * GPUProcess/graphics/WebGPU/RemoteDevice.h:
+        * GPUProcess/graphics/WebGPU/RemoteExternalTexture.h:
+        * GPUProcess/graphics/WebGPU/RemoteGPU.h:
+        * GPUProcess/graphics/WebGPU/RemotePipelineLayout.h:
+        * GPUProcess/graphics/WebGPU/RemoteQuerySet.h:
+        * GPUProcess/graphics/WebGPU/RemoteQueue.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundle.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.h:
+        * GPUProcess/graphics/WebGPU/RemoteRenderPipeline.h:
+        * GPUProcess/graphics/WebGPU/RemoteSampler.h:
+        * GPUProcess/graphics/WebGPU/RemoteShaderModule.h:
+        * GPUProcess/graphics/WebGPU/RemoteTexture.h:
+        * GPUProcess/graphics/WebGPU/RemoteTextureView.h:
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageSynchronous):
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::addStreamConnection):
+        (IPC::StreamConnectionWorkQueue::removeStreamConnection):
+        (IPC::StreamConnectionWorkQueue::processStreams):
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+        * Platform/IPC/StreamMessageReceiver.h:
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnection::StreamServerConnection):
+        (IPC::StreamServerConnection::startReceivingMessages):
+        (IPC::StreamServerConnection::stopReceivingMessages):
+        (IPC::StreamServerConnection::enqueueMessage):
+        (IPC::StreamServerConnection::tryAcquire):
+        (IPC::StreamServerConnection::acquireAll):
+        (IPC::StreamServerConnection::release):
+        (IPC::StreamServerConnection::releaseAll):
+        (IPC::StreamServerConnection::alignedSpan):
+        (IPC::StreamServerConnection::size):
+        (IPC::StreamServerConnection::clampedLimit const):
+        (IPC::StreamServerConnection::dispatchStreamMessages):
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnection::sendSyncReply):
+        * Scripts/webkit/messages.py:
+        (generate_message_handler):
+        * Scripts/webkit/tests/TestWithStreamMessageReceiver.cpp:
+        (WebKit::TestWithStream::didReceiveStreamMessage):
+        * Shared/IPCStreamTester.h:
+
 2022-04-03  Tim Horton  <timothy_horton@apple.com>
 
         _WKDataTask doesn't work in macCatalyst

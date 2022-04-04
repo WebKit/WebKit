@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& connection, IPC::Decoder& decoder)
+void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::TestWithStream::SendString::name())
         return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.connection(), decoder, this, &TestWithStream::sendString);
