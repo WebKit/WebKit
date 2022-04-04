@@ -1,5 +1,14 @@
 2022-04-04  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [WPE][GTK] REGRESSION(r292263): Cannot make release tarballs
+        https://bugs.webkit.org/show_bug.cgi?id=238698
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/WebKitDist.cmake: Make "dist" and "distcheck" targets depend on "doc-all".
+
+2022-04-04  Adrian Perez de Castro  <aperez@igalia.com>
+
         [CMake] Provide better messages when gi-docgen cannot be found
         https://bugs.webkit.org/show_bug.cgi?id=238729
 

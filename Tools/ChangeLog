@@ -1,3 +1,13 @@
+2022-04-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] REGRESSION(r292263): Cannot make release tarballs
+        https://bugs.webkit.org/show_bug.cgi?id=238698
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/manifest.txt.in: Fix paths of generated documentation to be included in release tarballs.
+        * wpe/manifest.txt.in: Ditto.
+
 2022-04-04  Cathie Chen  <cathiechen@igalia.com>
 
         REGRESSION(r291797): [wk1] 5 contain-intrinsic-size* tests are constant text failures

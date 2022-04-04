@@ -10,7 +10,7 @@ macro(WEBKIT_DECLARE_DIST_TARGETS _port _tarball_prefix _manifest)
         COMMENT "Checking release tarball: ${_tarball_prefix}-${PROJECT_VERSION}.tar"
         DEPENDS ${CMAKE_BINARY_DIR}/manifest.txt
         DEPENDS WebKit
-        DEPENDS Documentation
+        DEPENDS doc-all
         COMMAND ${TOOLS_DIR}/Scripts/make-dist
                 --check --port=${_port}
                 --tarball-name=${_tarball_prefix}
@@ -43,6 +43,6 @@ macro(WEBKIT_DECLARE_DIST_TARGETS _port _tarball_prefix _manifest)
     add_custom_target(dist
         DEPENDS ${CMAKE_BINARY_DIR}/${_tarball_prefix}-${PROJECT_VERSION}.tar.xz
         DEPENDS WebKit
-        DEPENDS Documentation
+        DEPENDS doc-all
     )
 endmacro()
