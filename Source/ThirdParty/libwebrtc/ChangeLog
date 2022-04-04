@@ -1,3 +1,64 @@
+2022-04-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r292258. rdar://problem/91069927
+
+    Stop copying StagedFrameworks to the secondary path by default
+    https://bugs.webkit.org/show_bug.cgi?id=238688
+    
+    Reviewed by Saam Barati.
+    
+    Decoupled COPY_STAGED_FRAMEWORKS_TO_SECONDARY_PATH from USE_SYSTEM_CONTENT_PATH so we won't
+    always copy frameworks to the secondary path on macOS.  Instead, the build configuration can set
+    COPY_STAGED_FRAMEWORKS_TO_SECONDARY_PATH as appropriate.
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/Base.xcconfig:
+    
+    Source/ThirdParty/ANGLE:
+    
+    * Configurations/ANGLE-dynamic.xcconfig:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    * Configurations/libwebrtc.xcconfig:
+    
+    Source/WebCore:
+    
+    * Configurations/WebCore.xcconfig:
+    
+    Source/WebGPU:
+    
+    * Configurations/WebGPU.xcconfig:
+    
+    Source/WebInspectorUI:
+    
+    * Configurations/WebInspectorUIFramework.xcconfig:
+    
+    Source/WebKit:
+    
+    * Configurations/Base.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/Base.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292258 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-01  Michael Saboff  <msaboff@apple.com>
+
+            Stop copying StagedFrameworks to the secondary path by default
+            https://bugs.webkit.org/show_bug.cgi?id=238688
+
+            Reviewed by Saam Barati.
+
+            Decoupled COPY_STAGED_FRAMEWORKS_TO_SECONDARY_PATH from USE_SYSTEM_CONTENT_PATH so we won't
+            always copy frameworks to the secondary path on macOS.  Instead, the build configuration can set
+            COPY_STAGED_FRAMEWORKS_TO_SECONDARY_PATH as appropriate.
+
+            * Configurations/libwebrtc.xcconfig:
+
 2022-03-22  David Quesada  <david_quesada@apple.com>
 
         REGRESSION(r291455): libwebrtc has the wrong install name when using override frameworks directory
