@@ -19,9 +19,6 @@ webkit.org/b/196286 fast/events/touch/ios/content-observation/remove-subframe-wh
 http/tests/is-logged-in/ [ Skip ]
 
 # WebGPU is not fully implemented yet.
-http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
-http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
-http/tests/webgpu/webgpu/idl/exposed.http.html [ Skip ]
 http/tests/webgpu/webgpu/web_platform/copyToTexture/video.html [ Skip ]
 http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html [ Skip ]
 http/tests/webgpu/webgpu/web_platform/copyToTexture/canvas.html [ Skip ]

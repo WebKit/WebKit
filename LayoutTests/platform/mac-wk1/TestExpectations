@@ -1818,9 +1818,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture-in-cus
 webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
 
 # WebGPU is not fully implemented yet.
-http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
-http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
-http/tests/webgpu/webgpu/idl/exposed.http.html [ Skip ]
 http/tests/webgpu/webgpu/web_platform/copyToTexture/video.html [ Skip ]
 http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html [ Skip ]
 http/tests/webgpu/webgpu/web_platform/copyToTexture/canvas.html [ Skip ]
