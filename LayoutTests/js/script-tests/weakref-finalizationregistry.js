@@ -18,7 +18,7 @@ function turnEventLoop() {
         setTimeout(() => {
             gc();
             resolve();
-        }, 0);
+        }, 1);
     });
 }
 
