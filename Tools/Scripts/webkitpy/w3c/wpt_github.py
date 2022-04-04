@@ -85,7 +85,7 @@ class WPTGitHub(object):
         assert path.startswith('/')
 
         if body:
-            body = json.dumps(body)
+            body = json.dumps(body).encode('utf-8')
 
         headers = {'Accept': 'application/vnd.github.v3+json'}
 

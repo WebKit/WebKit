@@ -1,3 +1,13 @@
+2022-04-04  Sam Sneddon  <gsnedders@apple.com>
+
+        WPT export broken under Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=238735
+
+        Reviewed by Tim Nguyen.
+
+        * Scripts/webkitpy/w3c/wpt_github.py:
+        (WPTGitHub.request): Ensure we have bytes, not str.
+
 2022-04-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] REGRESSION(r292263): Cannot make release tarballs
