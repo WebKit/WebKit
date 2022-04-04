@@ -49,6 +49,7 @@ static HashMap<const Widget*, RenderWidget*>& widgetRendererMap()
 }
 
 unsigned WidgetHierarchyUpdatesSuspensionScope::s_widgetHierarchyUpdateSuspendCount = 0;
+bool WidgetHierarchyUpdatesSuspensionScope::s_haveScheduledWidgetToMove = false;
 
 WidgetHierarchyUpdatesSuspensionScope::WidgetToParentMap& WidgetHierarchyUpdatesSuspensionScope::widgetNewParentMap()
 {
@@ -58,6 +59,7 @@ WidgetHierarchyUpdatesSuspensionScope::WidgetToParentMap& WidgetHierarchyUpdates
 
 void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
 {
+    ASSERT(s_haveScheduledWidgetToMove);
     while (!widgetNewParentMap().isEmpty()) {
         auto map = std::exchange(widgetNewParentMap(), { });
         for (auto& entry : map) {
@@ -72,6 +74,7 @@ void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
             }
         }
     }
+    s_haveScheduledWidgetToMove = false;
 }
 
 static void moveWidgetToParentSoon(Widget& child, FrameView* parent)

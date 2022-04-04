@@ -37,13 +37,13 @@ public:
     ~WidgetHierarchyUpdatesSuspensionScope()
     {
         ASSERT(s_widgetHierarchyUpdateSuspendCount);
-        if (s_widgetHierarchyUpdateSuspendCount == 1)
+        if (s_widgetHierarchyUpdateSuspendCount == 1 && s_haveScheduledWidgetToMove)
             moveWidgets();
         s_widgetHierarchyUpdateSuspendCount--;
     }
 
     static bool isSuspended() { return s_widgetHierarchyUpdateSuspendCount; }
-    static void scheduleWidgetToMove(Widget& widget, FrameView* frame) { widgetNewParentMap().set(&widget, frame); }
+    static void scheduleWidgetToMove(Widget&, FrameView*);
 
 private:
     using WidgetToParentMap = HashMap<RefPtr<Widget>, FrameView*>;
@@ -51,8 +51,15 @@ private:
 
     WEBCORE_EXPORT void moveWidgets();
     WEBCORE_EXPORT static unsigned s_widgetHierarchyUpdateSuspendCount;
+    WEBCORE_EXPORT static bool s_haveScheduledWidgetToMove;
 };
-    
+
+inline void WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(Widget& widget, FrameView* frame)
+{
+    s_haveScheduledWidgetToMove = true;
+    widgetNewParentMap().set(&widget, frame);
+}
+
 class RenderWidget : public RenderReplaced, private OverlapTestRequestClient {
     WTF_MAKE_ISO_ALLOCATED(RenderWidget);
 public:
