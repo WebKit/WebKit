@@ -929,6 +929,18 @@ IncompleteImageBorderEnabled:
     WebCore:
       default: false
 
+IncrementalPDFLoadingEnabled:
+  type: bool
+  condition: HAVE(INCREMENTAL_PDF_APIS)
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(MAC)": true
+      default: false
+    WebKit:
+      "PLATFORM(MAC)": true
+      default: false
+
 IncrementalRenderingSuppressionTimeout:
   type: double
   webKitLegacyPreferenceKey: WebKitIncrementalRenderingSuppressionTimeoutInSeconds

@@ -47,11 +47,6 @@
 			<true/>
 		</dict>
 	</dict>
-	<key>incremental_pdf</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
 	<key>sw_vp9_decoder_on_battery</key>
 	<dict>
 		<key>Enabled</key>

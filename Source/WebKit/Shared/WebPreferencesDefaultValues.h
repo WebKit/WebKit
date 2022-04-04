@@ -85,10 +85,6 @@ bool defaultCaptureVideoInGPUProcessEnabled();
 bool defaultWebRTCCodecsInGPUProcess();
 #endif
 
-#if HAVE(INCREMENTAL_PDF_APIS)
-bool defaultIncrementalPDFEnabled();
-#endif
-
 #if ENABLE(WEBM_FORMAT_READER)
 bool defaultWebMFormatReaderEnabled();
 #endif

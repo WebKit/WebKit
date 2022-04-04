@@ -1,5 +1,21 @@
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
+        Remove the incremental_pdf system feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=238754
+
+        Reviewed by Wenson Hsieh.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        * Shared/WebPreferencesDefaultValues.h:
+        (WebKit::defaultIncrementalPDFEnabled): Deleted.
+        Remove the incremental_pdf system feature flag in favor of a traditional WebKit preference.
+
+2022-04-04  Tim Horton  <timothy_horton@apple.com>
+
         Remove the 'RB_full_manage_WK_jetsam' system feature flag and simplify adjacent logic
         https://bugs.webkit.org/show_bug.cgi?id=238760
 

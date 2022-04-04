@@ -672,18 +672,6 @@ InProcessCookieCacheEnabled:
     WebCore:
       default: false
 
-IncrementalPDFLoadingEnabled:
-  type: bool
-  humanReadableName: "Incremental PDF Loading"
-  humanReadableDescription: "Enable Incremental PDF Loading on supported platforms"
-  condition: HAVE(INCREMENTAL_PDF_APIS)
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: WebKit::defaultIncrementalPDFEnabled()
-    WebKit:
-      default: WebKit::defaultIncrementalPDFEnabled()
-
 InertAttributeEnabled:
   type: bool
   humanReadableName: "inert attribute"

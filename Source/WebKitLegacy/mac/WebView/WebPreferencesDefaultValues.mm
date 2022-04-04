@@ -70,15 +70,6 @@ bool isFeatureFlagEnabled(const char* featureName, bool defaultValue)
 
 #endif
 
-#if HAVE(INCREMENTAL_PDF_APIS)
-
-bool defaultIncrementalPDFEnabled()
-{
-    return isFeatureFlagEnabled("incremental_pdf", false);
-}
-
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 
 bool defaultAllowsInlineMediaPlayback()

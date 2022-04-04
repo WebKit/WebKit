@@ -39,10 +39,6 @@ namespace WebKit {
 bool isFeatureFlagEnabled(const char*, bool defaultValue = false);
 #endif
 
-#if HAVE(INCREMENTAL_PDF_APIS)
-bool defaultIncrementalPDFEnabled();
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 bool defaultAllowsInlineMediaPlayback();
 bool defaultAllowsInlineMediaPlaybackAfterFullscreen();
