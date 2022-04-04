@@ -8,6 +8,11 @@ PASS internals.isTimerThrottled(timerHandle) is false
 PASS internals.isTimerThrottled(timerHandle) is false
 PASS internals.isTimerThrottled(timerHandle) is false
 PASS internals.isTimerThrottled(timerHandle) is false
+PASS internals.isTimerThrottled(timerHandle) is false
+PASS internals.isTimerThrottled(timerHandle) is false
+PASS internals.isTimerThrottled(timerHandle) is false
+PASS internals.isTimerThrottled(timerHandle) is false
+PASS internals.isTimerThrottled(timerHandle) is false
 PASS internals.isTimerThrottled(timerHandle) is true
 PASS successfullyParsed is true
 

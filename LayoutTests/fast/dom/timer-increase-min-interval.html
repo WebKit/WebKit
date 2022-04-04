@@ -17,7 +17,8 @@ function fastTimeoutHandler() {
 function slowTimeoutHandler() {
     // Note: the count threshold is tied somewhat to the
     // maxTimerNestingLevel in DOMTimer.cpp.
-    if (count < 10)
+    // Up to 10, we use 1ms, and after that, it becomes 500ms. So, it should be 12.
+    if (count < 12)
         log("PASS");
     else
         log("FAIL -- timeout ran " + count + " times");

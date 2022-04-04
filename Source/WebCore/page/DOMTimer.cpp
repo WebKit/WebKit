@@ -48,10 +48,12 @@
 
 namespace WebCore {
 
-static const Seconds minIntervalForNonUserObservableChangeTimers { 1_s }; // Empirically determined to maximize battery life.
-static const Seconds minIntervalForOneShotTimers { 0_ms };
-static const Seconds minIntervalForRepeatingTimers { 1_ms };
-static const int maxTimerNestingLevel = 5;
+static constexpr Seconds minIntervalForNonUserObservableChangeTimers { 1_s }; // Empirically determined to maximize battery life.
+static constexpr Seconds minIntervalForOneShotTimers { 0_ms };
+static constexpr Seconds minIntervalForRepeatingTimers { 1_ms };
+static constexpr int maxTimerNestingLevel = 10;
+static constexpr int maxTimerNestingLevelForOneShotTimers = 10;
+static constexpr int maxTimerNestingLevelForRepeatingTimers = 5;
 
 class DOMTimerFireState {
 public:
@@ -385,7 +387,7 @@ Seconds DOMTimer::intervalClampedToMinimum() const
     Seconds interval = std::max(m_oneShot ? minIntervalForOneShotTimers : minIntervalForRepeatingTimers, m_originalInterval);
 
     // Only apply throttling to repeating timers.
-    if (m_nestingLevel < maxTimerNestingLevel)
+    if (m_nestingLevel < (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers))
         return interval;
 
     // Apply two throttles - the global (per Page) minimum, and also a per-timer throttle.
@@ -397,7 +399,7 @@ Seconds DOMTimer::intervalClampedToMinimum() const
 
 std::optional<MonotonicTime> DOMTimer::alignedFireTime(MonotonicTime fireTime) const
 {
-    Seconds alignmentInterval = scriptExecutionContext()->domTimerAlignmentInterval(m_nestingLevel >= maxTimerNestingLevel);
+    Seconds alignmentInterval = scriptExecutionContext()->domTimerAlignmentInterval(m_nestingLevel >= (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers));
     if (!alignmentInterval)
         return std::nullopt;
     
