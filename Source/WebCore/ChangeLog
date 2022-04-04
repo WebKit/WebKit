@@ -1,3 +1,25 @@
+2022-04-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Document::addListenerTypeIfNeeded should not call pthread_get_specific 14 times
+        https://bugs.webkit.org/show_bug.cgi?id=238702
+
+        Reviewed by Cameron McCormack.
+
+        Document::addListenerTypeIfNeeded => pthread_get_specific showed up in
+        a profile of Preact-TodoMVC, and I verified by disassembly that the
+        generated code really does call pthread_get_specific 14x, along with
+        related inefficiencies.
+
+        Only worth about 0.5%, so I didn't A/B test it.
+
+        You could imagine lots of other ways to speed up this function / 
+        functionality, but why don't we start with 14x and see where that takes
+        us.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded): Use a local variable
+        because, like, come on.
+
 2022-04-03  Tyler Wilcock  <tyler_w@apple.com>
 
         -[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:] should fail fast if the given parameter wrapper has no backing object
