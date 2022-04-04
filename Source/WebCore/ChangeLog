@@ -1,3 +1,18 @@
+2022-04-04  Matt Woodrow  <mattwoodrow@apple.com>
+
+        intersectsWithAncestor should take fragmented boxes into account.
+        https://bugs.webkit.org/show_bug.cgi?id=238648
+
+        Reviewed by Dean Jackson.
+
+        Test: compositing/backing/backing-store-columns-inside-position-fixed.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::intersectsWithAncestor):
+
+        Use boundingBox() for intersectsWithAncestor, so that we can explicitly request the box that contains
+        all fragment boxes.
+
 2022-04-04  Tyler Wilcock  <tyler_w@apple.com>
 
         AccessibilityNodeObject::elementRect should use children rects for display:contents AX objects

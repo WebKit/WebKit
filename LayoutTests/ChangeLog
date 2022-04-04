@@ -1,3 +1,16 @@
+2022-04-04  Matt Woodrow  <mattwoodrow@apple.com>
+
+        intersectsWithAncestor should take fragmented boxes into account.
+        https://bugs.webkit.org/show_bug.cgi?id=238648
+
+        Reviewed by Dean Jackson.
+
+        * compositing/backing/backing-store-columns-inside-position-fixed-expected.txt: Added.
+        * compositing/backing/backing-store-columns-inside-position-fixed.html: Added.
+
+        Adds new test that scrolls content split into columns until the first column is offscreen, to confirm
+        that we still have a backing store.
+
 2022-04-04  Alan Bujtas  <zalan@apple.com>
 
         [CSS-contain] Update select element based test failures.
