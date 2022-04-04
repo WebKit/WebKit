@@ -1,3 +1,23 @@
+2022-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Only check isPagedOut() under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=238742
+
+        Reviewed by Cameron McCormack.
+
+        Worth about 0.4% on Speedometer.
+
+        In theory, if we're not under memory pressure, we're either (a) not
+        paged out because we were not recently under memory pressure or (b)
+        paged out but OK to page in again because memory is available.
+
+        This could increase swap if a system frequently oscillated between
+        yes-memory-pressure and no-memory-pressure; but in practice the systems
+        we see under significant memory pressure tend to stay that way.
+
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+
 2022-04-02  Chris Dumez  <cdumez@apple.com>
 
         Add default constructor to ASCIILiteral

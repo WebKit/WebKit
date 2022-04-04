@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "FullGCActivityCallback.h"
+#include <wtf/MemoryPressureHandler.h>
 
 #include "VM.h"
 
@@ -42,7 +43,7 @@ void FullGCActivityCallback::doCollection(VM& vm)
 
 #if !PLATFORM(IOS_FAMILY) || PLATFORM(MACCATALYST)
     MonotonicTime startTime = MonotonicTime::now();
-    if (heap.isPagedOut()) {
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure() && heap.isPagedOut()) {
         cancel();
         heap.increaseLastFullGCLength(MonotonicTime::now() - startTime);
         return;
