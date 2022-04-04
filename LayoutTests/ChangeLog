@@ -1,3 +1,11 @@
+2022-04-04  Alan Bujtas  <zalan@apple.com>
+
+        [CSS-contain] Update select element based test failures.
+
+        Unreviewed.
+
+        * TestExpectations:
+
 2022-04-04  Tyler Wilcock  <tyler_w@apple.com>
 
         AccessibilityNodeObject::elementRect should use children rects for display:contents AX objects

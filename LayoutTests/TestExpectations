@@ -4720,7 +4720,8 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-button-002.html [ I
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]
 
-# Select with empty content always has root linebox, so the heights are different.
+# 1. The height driven by the imaginary box (strut) does not match the minimum height value set in the RenderTheme (e.g. see RenderThemeMac::adjustMenuListButtonStyle).
+# 2. We ignore the background-color property value (supposed to be white on white to renderer "blank" content).
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-002.html [ ImageOnlyFailure ]
 
