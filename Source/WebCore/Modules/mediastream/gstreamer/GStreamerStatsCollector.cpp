@@ -94,7 +94,7 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamSta
 #if GST_CHECK_VERSION(1, 21, 0)
     int64_t packetsLost;
     if (gst_structure_get_int64(structure, "packets-lost", &packetsLost))
-        stats.packetsLost = packetsLosts;
+        stats.packetsLost = packetsLost;
 #else
     unsigned packetsLost;
     if (gst_structure_get_uint(structure, "packets-lost", &packetsLost))

@@ -1,3 +1,10 @@
+2022-04-04  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GStreamer 1.21 build fix after r292215
+
+        * Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp:
+        (WebCore::fillInboundRTPStreamStats): Fix typo in packetsLost variable name.
+
 2022-04-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] [iOS] Sometimes the text drop shadow is not drawn
