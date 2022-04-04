@@ -293,8 +293,20 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
     auto scope = DECLARE_THROW_SCOPE(vm);
     scope.assertNoException();
 
-    JSValue toJSONFunction = baseValue.get(m_globalObject, vm.propertyNames->toJSON);
-    RETURN_IF_EXCEPTION(scope, { });
+    JSValue toJSONFunction;
+    if (baseValue.isObject())
+        toJSONFunction = asObject(baseValue)->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToJSON);
+
+    if (!toJSONFunction) {
+        PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
+        bool hasProperty = baseValue.getPropertySlot(m_globalObject, vm.propertyNames->toJSON, slot);
+        RETURN_IF_EXCEPTION(scope, { });
+        toJSONFunction = hasProperty ? slot.getValue(m_globalObject, vm.propertyNames->toJSON) : jsUndefined();
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (baseValue.isObject())
+            asObject(baseValue)->structure(vm)->cacheSpecialProperty(m_globalObject, vm, toJSONFunction, CachedSpecialPropertyKey::ToJSON, slot);
+    }
 
     auto callData = getCallData(vm, toJSONFunction);
     if (callData.type == CallData::Type::None)

@@ -135,6 +135,9 @@ void StructureRareData::cacheSpecialPropertySlow(JSGlobalObject* globalObject, V
     case CachedSpecialPropertyKey::ToPrimitive:
         uid = vm.propertyNames->toPrimitiveSymbol.impl();
         break;
+    case CachedSpecialPropertyKey::ToJSON:
+        uid = vm.propertyNames->toJSON.impl();
+        break;
     }
 
     if (!ownStructure->propertyAccessesAreCacheable() || ownStructure->isProxy()) {
@@ -267,6 +270,8 @@ void CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::handleFire(VM
         key = CachedSpecialPropertyKey::ToString;
     else if (this->key().uid() == vm.propertyNames->valueOf.impl())
         key = CachedSpecialPropertyKey::ValueOf;
+    else if (this->key().uid() == vm.propertyNames->toJSON.impl())
+        key = CachedSpecialPropertyKey::ToJSON;
     else {
         ASSERT(this->key().uid() == vm.propertyNames->toPrimitiveSymbol.impl());
         key = CachedSpecialPropertyKey::ToPrimitive;

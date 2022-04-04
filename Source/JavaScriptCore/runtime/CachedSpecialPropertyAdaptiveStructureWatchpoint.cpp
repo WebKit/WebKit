@@ -64,6 +64,8 @@ void CachedSpecialPropertyAdaptiveStructureWatchpoint::fireInternal(VM& vm, cons
         key = CachedSpecialPropertyKey::ToString;
     else if (m_key.uid() == vm.propertyNames->valueOf.impl())
         key = CachedSpecialPropertyKey::ValueOf;
+    else if (m_key.uid() == vm.propertyNames->toJSON.impl())
+        key = CachedSpecialPropertyKey::ToJSON;
     else {
         ASSERT(m_key.uid() == vm.propertyNames->toPrimitiveSymbol.impl());
         key = CachedSpecialPropertyKey::ToPrimitive;
