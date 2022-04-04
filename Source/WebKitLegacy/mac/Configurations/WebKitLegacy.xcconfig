@@ -25,11 +25,22 @@
 #include "Version.xcconfig"
 #include "WebKitTargetConditionals.xcconfig"
 
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_COCOA_TOUCH));
-EXCLUDED_SOURCE_FILE_NAMES_cocoatouch = *.defs *.xib *.pdf *.tiff OutlookQuirksUserScript.js PopupMenuMac.* SearchPopupMenuMac.* WebClipView.* WebDashboardRegion.* WebDynamicScrollBarsView.* WebIconDatabase.* WebInspectorClient.* WebJavaScriptTextInputPanel.* WebNSEventExtras.* WebNSPasteboardExtras.* WebNSWindowExtras.* WebPanelAuthenticationHandler.* WebPluginsPrivate.* WebStringTruncator.* WebTextCompletionController.*;
-EXCLUDED_SOURCE_FILE_NAMES_ = *IOS.mm WebCaretChangeListener.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebMIMETypeRegistry.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h DOMHTMLTextAreaElementPrivate.h DOMUIKitExtensions.h LaBanquePostaleQuirks.js;
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_COCOA_TOUCH)) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM));
+// The legacy build system does not install headers.
+EXCLUDED_SOURCE_FILE_NAMES_legacy = *.h;
+EXCLUDED_SOURCE_FILE_NAMES_cocoatouch = *.defs *.xib *.pdf *.tiff OutlookQuirksUserScript.js PopupMenuMac.* SearchPopupMenuMac.* WebClipView.* WebDashboardRegion.* WebDynamicScrollBarsView.* WebEventRegion.h WebIconDatabase.* WebInspectorClient.* WebJavaScriptTextInputPanel.* WebNSEventExtras.* WebNSPasteboardExtras.* WebNSWindowExtras.* WebPanelAuthenticationHandler.* WebPluginsPrivate.* WebStringTruncator.* WebTextCompletionController.*;
+EXCLUDED_SOURCE_FILE_NAMES_ = *IOS.mm AbstractPasteboard.h DOMHTMLTextAreaElementPrivate.h DOMUIKitExtensions.h KeyEventCodesIOS.h LaBanquePostaleQuirks.js WAKAppKitStubs.h WAKResponder.h WAKView.h WAKWindow.h WebCaretChangeListener.h WebCoreThread.h WebCoreThreadMessage.h WebCoreThreadRun.h WebEvent.h WebEventRegion.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebItemProviderPasteboard.h WebMIMETypeRegistry.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h WKContentObservation.h WKGraphics.h WKTypes.h;
+
+INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(WK_WHICH_BUILD_SYSTEM));
+INCLUDED_MIGRATED_HEADERS_not_legacy = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS));
+// WebEventRegion.h is migrated when building for an iOS family target with an internal SDK...
+INCLUDED_MIGRATED_HEADERS_YES_cocoatouch = WebEventRegion.h;
+// ...or when --ios-touch-events was passed to build-webkit manually.
+INCLUDED_MIGRATED_HEADERS_ENABLE_IOS_TOUCH_EVENTS = WebEventRegion.h;
 
 EXPORTED_SYMBOLS_FILE = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitLegacy/WebKitLegacy.generated.exp;
+// The "Generate Export Files" build phase needs this setting to rerun when any migrated header changes:
+USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES = YES;
 
 WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));
 WK_PRIVATE_FRAMEWORKS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);

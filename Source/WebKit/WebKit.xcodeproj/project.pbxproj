@@ -2378,7 +2378,7 @@
 		DDA0A38427E56213005E086E /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*/WebKitLegacy/*.h";
+			filePatterns = "*/Source/WebKitLegacy/*.h";
 			fileType = pattern.proxy;
 			inputFiles = (
 				"$(SRCROOT)/Scripts/postprocess-header-rule",
@@ -2395,7 +2395,7 @@
 		DDF74C7827EE20C90011F633 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*/WebCore/*.h";
+			filePatterns = "*/Source/WebCore/*.h";
 			fileType = pattern.proxy;
 			inputFiles = (
 				"$(SRCROOT)/Scripts/postprocess-header-rule",

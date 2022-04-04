@@ -1,3 +1,36 @@
+2022-04-04  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] WebKitLegacy's "Migrated headers" script does not emit task information
+        https://bugs.webkit.org/show_bug.cgi?id=238409
+        <rdar://problem/90869551>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Like r291809, replace MigrateHeaders.make with a "Migrated Headers" group in
+        WebKitLegacy.xcodeproj, and use a build rule to rewrite the headers at build-time. This
+        provides the build system with sufficient metadata to reason about the migrated headers and
+        when they need to be re-processed.
+
+        Since WebKitLegacy uses an export symbols list, run tapi-reexport on each migrated header as
+        it is processed. In the "Generate Export Files" phase, stitch these together to form the
+        EXPORTED_SYMBOLS_FILE given to the linker.
+
+        * scripts/migrate-header-rule: Added. Runs sed and tapi-reexport on headers as they are
+        migrated. For tapi, include <TargetConditionals.h> so that TARGET_OS_* declarations get
+        resolved according to the target triple. This was not needed in the Make-based approach
+        because it processed all the headers in one invocation, and one of them imports
+        TargetConditionals early enough that it affects the others.
+
+        Running one tapi instance per header is obviously more overhead, but on a sufficiently
+        multicore machine it should be faster than blocking WebKitLegacy's build process on the
+        Make-based script phase.
+        * WebKitLegacy.xcodeproj/project.pbxproj: Delete script phases, add "Migrated Headers" group
+        and build rule. Add a legacy-only "Install Headers" phase which launches a child xcodebuild
+        to install headers using the new build system. Unlike prior implementations in WebKit, WTF,
+        and PAL, the child xcodebuild needs access to existing build products so that clang (via
+        tapi) can import them. Do this by populating the child xcodebuild's SYMROOT with symlinks to
+        the real build products.
+
 2022-04-02  Chris Dumez  <cdumez@apple.com>
 
         Add default constructor to ASCIILiteral
