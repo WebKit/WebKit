@@ -161,7 +161,6 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     GPUProcessConnection& ensureGPUProcessConnection();
-    IPC::Connection& gpuProcessConnection();
 
     // Returns std::nullopt if no update is needed or allocation failed.
     // Returns handle if that should be sent to the receiver process.

@@ -1,5 +1,38 @@
 2022-04-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        StreamClientConnection should have waitForAndDispatchImmediately
+        https://bugs.webkit.org/show_bug.cgi?id=238622
+
+        Reviewed by Simon Fraser.
+
+        IPC::StreamClientConnection should have the same communication methods
+        as the IPC::Connection. The stream connection will forward
+        the calls to underlying IPC::Connection, if needed.
+        Add missing IPC::StreamClientConnection::waitForAndDispatchImmediately()
+        and use it.
+        Remove conveinence accessor methods for the IPC::Connection, as that should be
+        accessed by accessing the stream connection in the respective classes.
+
+        No new tests, refactor.
+
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::waitForAndDispatchImmediately):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::waitUntilInitialized):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        (WebKit::RemoteGraphicsContextGLProxy::sendSync):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidFlush):
+        (WebKit::RemoteRenderingBackendProxy::streamConnection):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp:
+        (WebKit::RemoteGPUProxy::RemoteGPUProxy):
+        (WebKit::RemoteGPUProxy::waitUntilInitialized):
+
+2022-04-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         IPC::StreamServerConnectionBase has only one subclass, it should be removed
         https://bugs.webkit.org/show_bug.cgi?id=238676
 
