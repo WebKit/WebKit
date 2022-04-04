@@ -47,11 +47,6 @@
 			<true/>
 		</dict>
 	</dict>
-	<key>InAppBrowserPrivacy</key>
-	<dict>
-		<key>Enabled</key>
-		<false/>
-	</dict>
 	<key>incremental_pdf</key>
 	<dict>
 		<key>Enabled</key>
@@ -71,11 +66,6 @@
 	<dict>
 		<key>Enabled</key>
 		<true/>
-	</dict>
-	<key>WebXR</key>
-	<dict>
-		<key>Enabled</key>
-		<false/>
 	</dict>
 	<key>webm_format_reader</key>
 	<dict>
