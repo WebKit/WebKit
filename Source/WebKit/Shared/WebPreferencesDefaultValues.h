@@ -90,7 +90,6 @@ bool defaultWebMFormatReaderEnabled();
 #if ENABLE(VP9)
 bool defaultVP8DecoderEnabled();
 bool defaultVP9DecoderEnabled();
-bool defaultVP9SWDecoderEnabledOnBattery();
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

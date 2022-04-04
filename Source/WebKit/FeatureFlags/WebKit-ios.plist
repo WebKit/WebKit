@@ -42,11 +42,6 @@
 			<true/>
 		</dict>
 	</dict>
-	<key>sw_vp9_decoder_on_battery</key>
-	<dict>
-		<key>Enabled</key>
-		<false/>
-	</dict>
 	<key>vp9_decoder</key>
 	<dict>
 		<key>Enabled</key>

@@ -272,10 +272,6 @@ bool defaultVP9DecoderEnabled()
     return isFeatureFlagEnabled("vp9_decoder", true);
 }
 
-bool defaultVP9SWDecoderEnabledOnBattery()
-{
-    return isFeatureFlagEnabled("sw_vp9_decoder_on_battery", false);
-}
 #endif // ENABLE(VP9)
 
 #if ENABLE(MEDIA_SOURCE)

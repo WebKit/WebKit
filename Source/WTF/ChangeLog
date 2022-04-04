@@ -1,5 +1,16 @@
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
+        Remove the 'sw_vp9_decoder_on_battery' system feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=238761
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Switch this to a standard experimental feature.
+        Also, remove the WebKitLegacy case, as it is not used there.
+
+2022-04-04  Tim Horton  <timothy_horton@apple.com>
+
         Remove the 'async frame and overflow scrolling' system feature flag
         https://bugs.webkit.org/show_bug.cgi?id=238758
 

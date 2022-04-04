@@ -1515,7 +1515,6 @@ VP9DecoderEnabled:
     WebKit:
       default: WebKit::defaultVP9DecoderEnabled()
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 VP9SWDecoderEnabledOnBattery:
   type: bool
   humanReadableName: "VP9 SW decoder on battery"
@@ -1523,10 +1522,8 @@ VP9SWDecoderEnabledOnBattery:
   webcoreBinding: none
   condition: ENABLE(VP9)
   defaultValue:
-    WebKitLegacy:
-      default: false
     WebKit:
-      default: WebKit::defaultVP9SWDecoderEnabledOnBattery()
+      default: false
 
 VisualViewportAPIEnabled:
   type: bool
