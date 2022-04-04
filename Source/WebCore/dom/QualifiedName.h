@@ -72,6 +72,7 @@ public:
     };
 
     WEBCORE_EXPORT QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI);
+    QualifiedName(QualifiedNameImpl& impl) : m_impl(&impl) { }
     explicit QualifiedName(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 #ifdef QNAME_DEFAULT_CONSTRUCTOR
