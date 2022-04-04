@@ -244,7 +244,7 @@ bool handleMessageSynchronousWantsConnection(Connection& connection, Decoder& de
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& decoder, C* object, MF function)
+void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decoder, C* object, MF function)
 {
     Connection::SyncRequestID syncRequestID;
     if (UNLIKELY(!decoder.decode(syncRequestID)))

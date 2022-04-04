@@ -40,10 +40,31 @@ namespace IPC {
 
 class StreamConnectionWorkQueue;
 
-class StreamServerConnectionBase : public ThreadSafeRefCounted<StreamServerConnectionBase>, protected MessageReceiveQueue {
-    WTF_MAKE_NONCOPYABLE(StreamServerConnectionBase);
+// StreamServerConnection represents the connection between stream client and server, as used by the server.
+//
+// StreamServerConnection:
+//  * Holds the messages towards the server.
+//  * Sends the replies back to the client via the stream or normal Connection fallback.
+//
+// Receiver template contract:
+//   void didReceiveStreamMessage(StreamServerConnection&, Decoder&);
+//
+// The StreamServerConnection does not trust the StreamClientConnection.
+class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue {
+    WTF_MAKE_NONCOPYABLE(StreamServerConnection);
 public:
-    ~StreamServerConnectionBase() override = default;
+    static Ref<StreamServerConnection> create(Connection& connection, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
+    {
+        return adoptRef(*new StreamServerConnection(connection, WTFMove(streamBuffer), workQueue));
+    }
+    ~StreamServerConnection() final = default;
+
+    void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
+    // Stops the message receipt. Note: already received messages might still be delivered.
+    void stopReceivingMessages(ReceiverName, uint64_t destinationID);
+
+    void startReceivingMessages(ReceiverName);
+    void stopReceivingMessages(ReceiverName);
 
     Connection& connection() { return m_connection; }
 
@@ -51,19 +72,13 @@ public:
         HasNoMessages,
         HasMoreMessages
     };
-    virtual DispatchResult dispatchStreamMessages(size_t messageLimit) = 0;
+    DispatchResult dispatchStreamMessages(size_t messageLimit);
 
     template<typename T, typename... Arguments>
     void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
 
-protected:
-    StreamServerConnectionBase(IPC::Connection&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
-
-    void startReceivingMessagesImpl(ReceiverName, uint64_t destinationID);
-    void stopReceivingMessagesImpl(ReceiverName, uint64_t destinationID);
-
-    void startReceivingMessagesImpl(ReceiverName);
-    void stopReceivingMessagesImpl(ReceiverName);
+private:
+    StreamServerConnection(IPC::Connection&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
 
     // MessageReceiveQueue
     void enqueueMessage(Connection&, std::unique_ptr<Decoder>&&) final;
@@ -90,6 +105,9 @@ protected:
     size_t clampedLimit(ServerLimit) const;
     uint8_t* data() const { return m_buffer.data(); }
     size_t dataSize() const { return m_buffer.dataSize(); }
+    bool processSetStreamDestinationID(Decoder&&, RefPtr<StreamMessageReceiver>& currentReceiver);
+    bool dispatchStreamMessage(Decoder&&, StreamMessageReceiver&);
+    bool dispatchOutOfStreamMessage(Decoder&&);
 
     Ref<IPC::Connection> m_connection;
     StreamConnectionWorkQueue& m_workQueue;
@@ -101,12 +119,16 @@ protected:
     Deque<std::unique_ptr<Decoder>> m_outOfStreamMessages WTF_GUARDED_BY_LOCK(m_outOfStreamMessagesLock);
 
     bool m_isDispatchingStreamMessage { false };
+    Lock m_receiversLock;
+    using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
+    ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
+    uint64_t m_currentDestinationID { 0 };
 
     friend class StreamConnectionWorkQueue;
 };
 
 template<typename T, typename... Arguments>
-void StreamServerConnectionBase::sendSyncReply(Connection::SyncRequestID syncRequestID, Arguments&&... arguments)
+void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequestID, Arguments&&... arguments)
 {
     if constexpr(T::isReplyStreamEncodable) {
         if (m_isDispatchingStreamMessage) {
@@ -123,58 +145,6 @@ void StreamServerConnectionBase::sendSyncReply(Connection::SyncRequestID syncReq
 
     (encoder.get() << ... << arguments);
     m_connection->sendSyncReply(WTFMove(encoder));
-}
-
-// StreamServerConnection represents the connection between stream client and server, as used by the server.
-//
-// StreamServerConnection:
-//  * Holds the messages towards the server.
-//  * Sends the replies back to the client via the stream or normal Connection fallback.
-//
-// Receiver template contract:
-//   void didReceiveStreamMessage(StreamServerConnectionBase&, Decoder&);
-//
-// The StreamServerConnection does not trust the StreamClientConnection.
-class StreamServerConnection final : public StreamServerConnectionBase {
-public:
-    static Ref<StreamServerConnection> create(Connection& connection, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
-    {
-        return adoptRef(*new StreamServerConnection(connection, WTFMove(streamBuffer), workQueue));
-    }
-    ~StreamServerConnection() final = default;
-
-    void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
-    // Stops the message receipt. Note: already received messages might still be delivered.
-    void stopReceivingMessages(ReceiverName, uint64_t destinationID);
-
-    inline void startReceivingMessages(ReceiverName);
-    inline void stopReceivingMessages(ReceiverName);
-
-    // StreamServerConnectionBase overrides.
-    DispatchResult dispatchStreamMessages(size_t messageLimit) final;
-
-private:
-    StreamServerConnection(Connection& connection, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
-        : StreamServerConnectionBase(connection, WTFMove(streamBuffer), workQueue)
-    {
-    }
-    bool processSetStreamDestinationID(Decoder&&, RefPtr<StreamMessageReceiver>& currentReceiver);
-    bool dispatchStreamMessage(Decoder&&, StreamMessageReceiver&);
-    bool dispatchOutOfStreamMessage(Decoder&&);
-    Lock m_receiversLock;
-    using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
-    ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
-    uint64_t m_currentDestinationID { 0 };
-};
-
-void StreamServerConnection::startReceivingMessages(ReceiverName receiverName)
-{
-    StreamServerConnectionBase::startReceivingMessagesImpl(receiverName);
-}
-
-void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName)
-{
-    StreamServerConnectionBase::stopReceivingMessagesImpl(receiverName);
 }
 
 }

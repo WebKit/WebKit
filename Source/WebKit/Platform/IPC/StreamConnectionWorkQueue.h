@@ -45,8 +45,8 @@ public:
 
     StreamConnectionWorkQueue(const char*);
     ~StreamConnectionWorkQueue();
-    void addStreamConnection(StreamServerConnectionBase&);
-    void removeStreamConnection(StreamServerConnectionBase&);
+    void addStreamConnection(StreamServerConnection&);
+    void removeStreamConnection(StreamServerConnection&);
 
     void dispatch(WTF::Function<void()>&&) final;
     void stopAndWaitForCompletion();
@@ -69,7 +69,7 @@ private:
     mutable Lock m_lock;
     RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
-    HashCountedSet<Ref<StreamServerConnectionBase>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
+    HashCountedSet<Ref<StreamServerConnection>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
     friend void assertIsCurrent(const StreamConnectionWorkQueue&);
 };
 

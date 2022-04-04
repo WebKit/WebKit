@@ -31,15 +31,22 @@
 
 namespace IPC {
 
-StreamServerConnectionBase::StreamServerConnectionBase(Connection& connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue)
+StreamServerConnection::StreamServerConnection(Connection& connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue)
     : m_connection(connection)
     , m_workQueue(workQueue)
     , m_buffer(WTFMove(stream))
 {
 }
 
-void StreamServerConnectionBase::startReceivingMessagesImpl(ReceiverName receiverName, uint64_t destinationID)
+void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
 {
+    {
+        auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
+        Locker locker { m_receiversLock };
+        ASSERT(!m_receivers.contains(key));
+        m_receivers.add(key, receiver);
+    }
+
     // FIXME: Can we avoid synchronous dispatch here by adjusting the assertion in `Connection::enqueueMatchingMessagesToMessageReceiveQueue`?
     callOnMainRunLoopAndWait([&] {
         m_connection->addMessageReceiveQueue(*this, receiverName, destinationID);
@@ -47,7 +54,7 @@ void StreamServerConnectionBase::startReceivingMessagesImpl(ReceiverName receive
     m_workQueue.addStreamConnection(*this);
 }
 
-void StreamServerConnectionBase::startReceivingMessagesImpl(ReceiverName receiverName)
+void StreamServerConnection::startReceivingMessages(ReceiverName receiverName)
 {
     callOnMainRunLoopAndWait([&] {
         m_connection->addMessageReceiveQueue(*this, receiverName);
@@ -55,19 +62,24 @@ void StreamServerConnectionBase::startReceivingMessagesImpl(ReceiverName receive
     m_workQueue.addStreamConnection(*this);
 }
 
-void StreamServerConnectionBase::stopReceivingMessagesImpl(ReceiverName receiverName)
+void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName)
 {
     m_connection->removeMessageReceiveQueue(receiverName);
     m_workQueue.removeStreamConnection(*this);
 }
 
-void StreamServerConnectionBase::stopReceivingMessagesImpl(ReceiverName receiverName, uint64_t destinationID)
+void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
 {
     m_connection->removeMessageReceiveQueue(receiverName, destinationID);
     m_workQueue.removeStreamConnection(*this);
+
+    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
+    Locker locker { m_receiversLock };
+    ASSERT(m_receivers.contains(key));
+    m_receivers.remove(key);
 }
 
-void StreamServerConnectionBase::enqueueMessage(Connection&, std::unique_ptr<Decoder>&& message)
+void StreamServerConnection::enqueueMessage(Connection&, std::unique_ptr<Decoder>&& message)
 {
     {
         Locker locker { m_outOfStreamMessagesLock };
@@ -76,7 +88,7 @@ void StreamServerConnectionBase::enqueueMessage(Connection&, std::unique_ptr<Dec
     m_workQueue.wakeUp();
 }
 
-std::optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAcquire()
+std::optional<StreamServerConnection::Span> StreamServerConnection::tryAcquire()
 {
     ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
     if (serverLimit == ServerLimit::serverIsSleepingTag)
@@ -94,12 +106,12 @@ std::optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryA
     return result;
 }
 
-StreamServerConnectionBase::Span StreamServerConnectionBase::acquireAll()
+StreamServerConnection::Span StreamServerConnection::acquireAll()
 {
     return alignedSpan(0, dataSize() - 1);
 }
 
-void StreamServerConnectionBase::release(size_t readSize)
+void StreamServerConnection::release(size_t readSize)
 {
     ASSERT(readSize);
     readSize = std::max(readSize, minimumMessageSize);
@@ -115,7 +127,7 @@ void StreamServerConnectionBase::release(size_t readSize)
     m_serverOffset = serverOffset;
 }
 
-void StreamServerConnectionBase::releaseAll()
+void StreamServerConnection::releaseAll()
 {
     sharedServerLimit().store(static_cast<ServerLimit>(0), std::memory_order_release);
     ServerOffset oldServerOffset = sharedServerOffset().exchange(static_cast<ServerOffset>(0), std::memory_order_acq_rel);
@@ -127,7 +139,7 @@ void StreamServerConnectionBase::releaseAll()
     m_serverOffset = 0;
 }
 
-StreamServerConnectionBase::Span StreamServerConnectionBase::alignedSpan(size_t offset, size_t limit)
+StreamServerConnection::Span StreamServerConnection::alignedSpan(size_t offset, size_t limit)
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());
@@ -143,14 +155,14 @@ StreamServerConnectionBase::Span StreamServerConnectionBase::alignedSpan(size_t 
     return { data() + aligned, resultSize };
 }
 
-size_t StreamServerConnectionBase::size(size_t offset, size_t limit)
+size_t StreamServerConnection::size(size_t offset, size_t limit)
 {
     if (offset <= limit)
         return limit - offset;
     return dataSize() - offset;
 }
 
-size_t StreamServerConnectionBase::clampedLimit(ServerLimit serverLimit) const
+size_t StreamServerConnection::clampedLimit(ServerLimit serverLimit) const
 {
     ASSERT(!(serverLimit & ServerLimit::serverIsSleepingTag));
     size_t limit = static_cast<size_t>(serverLimit);
@@ -158,27 +170,7 @@ size_t StreamServerConnectionBase::clampedLimit(ServerLimit serverLimit) const
     return std::min(limit, dataSize() - 1);
 }
 
-void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
-{
-    {
-        auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-        Locker locker { m_receiversLock };
-        ASSERT(!m_receivers.contains(key));
-        m_receivers.add(key, receiver);
-    }
-    StreamServerConnectionBase::startReceivingMessagesImpl(receiverName, destinationID);
-}
-
-void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
-{
-    StreamServerConnectionBase::stopReceivingMessagesImpl(receiverName, destinationID);
-    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-    Locker locker { m_receiversLock };
-    ASSERT(m_receivers.contains(key));
-    m_receivers.remove(key);
-}
-
-StreamServerConnectionBase::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit)
+StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit)
 {
     RefPtr<StreamMessageReceiver> currentReceiver;
     // FIXME: Implement WTF::isValid(ReceiverName).

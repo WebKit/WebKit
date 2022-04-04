@@ -49,7 +49,7 @@ public:
     void stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection);
 
     // IPC::StreamMessageReceiver overrides.
-    void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 private:
     IPCStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
     ~IPCStreamTester();
