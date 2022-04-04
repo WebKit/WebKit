@@ -30,6 +30,7 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
+#include <wtf/FixedVector.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SetForScope.h>
@@ -37,6 +38,17 @@
 
 namespace WebCore {
 
+struct AtomStringWithCode {
+    AtomString string;
+    uint64_t code { 0 };
+};
+}
+
+namespace WTF {
+template<> struct VectorTraits<WebCore::AtomStringWithCode> : SimpleClassVectorTraits { };
+}
+
+namespace WebCore {
 struct HTMLConstructionSiteTask {
     enum Operation {
         Insert,
@@ -228,7 +240,10 @@ private:
 class WhitespaceCache {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WhitespaceCache() = default;
+    WhitespaceCache()
+        : m_atoms(maximumCachedStringLength)
+    {
+    }
 
     AtomString lookup(const String&, WhitespaceMode);
 
@@ -238,14 +253,7 @@ private:
     constexpr static uint64_t overflowWhitespaceCode = static_cast<uint64_t>(-1);
     constexpr static size_t maximumCachedStringLength = 128;
 
-    // Parallel arrays storing a 64 bit code and an index into m_atoms for the
-    // most recently atomized whitespace-only string of a given length. The
-    // indices into these two arrays are the string length minus 1, so the code
-    // for a whitespace-only string of length 2 is stored at m_codes[1], etc.
-    uint64_t m_codes[maximumCachedStringLength] { 0 };
-    uint8_t m_indexes[maximumCachedStringLength] { 0 };
-
-    Vector<AtomString, maximumCachedStringLength> m_atoms;
+    FixedVector<AtomStringWithCode> m_atoms;
 };
 
 } // namespace WebCore

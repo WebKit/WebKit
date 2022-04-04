@@ -1,3 +1,30 @@
+2022-04-04  Chris Dumez  <cdumez@apple.com>
+
+        Simplify / Optimize the whitespace cache implementation
+        https://bugs.webkit.org/show_bug.cgi?id=238736
+
+        Reviewed by Sam Weinig.
+
+        Instead of using 2 C arrays of size maximumCachedStringLength + 1 Vector with an inline
+        buffer of size maximumCachedStringLength, we now used a single FixedVector of size
+        maximumCachedStringLength.
+
+        Because the Vector has an inline buffer whose size is the max size of the cache, using
+        a FixedVector is just more efficient. It also means we don't need to store indexes in
+        that Vector in a separate C array. Finally, I used a struct named AtomStringWithCode to
+        store { AtomString, uint64 code } so we don't need separate containers for the AtomString
+        and the code.
+
+        Note that I added VectorTraits for the new AtomStringWithCode struct to make sure it can
+        get initialized via a simple memset.
+
+        This is a 0.25-0.3% progression on Speedometer according to A/B bots.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::WhitespaceCache::lookup):
+        * html/parser/HTMLConstructionSite.h:
+        (WebCore::WhitespaceCache::WhitespaceCache):
+
 2022-04-04  Tim Nguyen  <ntim@apple.com>
 
         Conditionally inject <attachment> styles based on runtime flag
