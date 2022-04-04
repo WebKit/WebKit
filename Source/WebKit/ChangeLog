@@ -1,3 +1,18 @@
+2022-04-04  Youenn Fablet  <youenn@apple.com>
+
+        Service-Worker-Navigation-Preload header not being sent when Navigation Preload is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=238564
+
+        Reviewed by Alex Christensen.
+
+        We were cancelling the preload as soon as receiving a response through FetchEvent.respondWith.
+        But it is possible to answer with a synthetic response and then use the preload to fill the synthetic response body.
+        To allow this, we no longer cancel the preload when receiving a response in case of enabled navigation preload.
+
+        Test: http/wpt/service-workers/service-worker-iframe-preload-after-response.https.html
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+
 2022-04-04  Elliott Williams  <emw@apple.com>
 
         [XCBuild] WebKitLegacy's "Migrated headers" script does not emit task information

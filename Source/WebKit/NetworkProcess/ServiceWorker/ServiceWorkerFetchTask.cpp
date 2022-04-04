@@ -188,7 +188,8 @@ void ServiceWorkerFetchTask::processRedirectResponse(ResourceResponse&& response
 
 void ServiceWorkerFetchTask::didReceiveResponse(WebCore::ResourceResponse&& response, bool needsContinueDidReceiveResponseMessage)
 {
-    cancelPreloadIfNecessary();
+    if (m_preloader && !m_preloader->isServiceWorkerNavigationPreloadEnabled())
+        cancelPreloadIfNecessary();
 
     processResponse(WTFMove(response), needsContinueDidReceiveResponseMessage, ShouldSetSource::Yes);
 }
@@ -258,6 +259,8 @@ void ServiceWorkerFetchTask::didFinish(const NetworkLoadMetrics& networkLoadMetr
     if (m_timeoutTimer)
         m_timeoutTimer->stop();
     sendToClient(Messages::WebResourceLoader::DidFinishResourceLoad { networkLoadMetrics });
+
+    cancelPreloadIfNecessary();
 }
 
 void ServiceWorkerFetchTask::didFail(const ResourceError& error)
