@@ -1,3 +1,15 @@
+2022-04-04  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [iOS] Sometimes the text drop shadow is not drawn
+        https://bugs.webkit.org/show_bug.cgi?id=236923
+        rdar://89196794
+
+        Reviewed by Simon Fraser.
+
+        Unskip failed the text drop shadow layout test.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-04-04  Cathie Chen  <cathiechen@igalia.com>
 
         REGRESSION(r291797): [wk1] 5 contain-intrinsic-size* tests are constant text failures

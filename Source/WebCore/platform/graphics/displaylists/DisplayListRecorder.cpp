@@ -48,7 +48,7 @@ namespace DisplayList {
 
 Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
     : GraphicsContext(state)
-    , m_drawGlyphsRecorder(*this, deconstructDrawGlyphs)
+    , m_drawGlyphsRecorder(*this, initialCTM.xScale(), deconstructDrawGlyphs)
 {
     m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
 }

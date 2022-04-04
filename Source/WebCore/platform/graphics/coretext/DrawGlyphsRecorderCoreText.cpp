@@ -86,12 +86,13 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     return makeUniqueRef<GraphicsContextCG>(context.get());
 }
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, DeconstructDrawGlyphs deconstructDrawGlyphs, DeriveFontFromContext deriveFontFromContext)
+DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, float scaleFactor, DeconstructDrawGlyphs deconstructDrawGlyphs, DeriveFontFromContext deriveFontFromContext)
     : m_owner(owner)
     , m_deconstructDrawGlyphs(deconstructDrawGlyphs)
     , m_deriveFontFromContext(deriveFontFromContext)
     , m_internalContext(createInternalContext())
 {
+    m_internalContext->applyDeviceScaleFactor(scaleFactor);
 }
 
 void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& contextState)
@@ -99,7 +100,7 @@ void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& conte
     m_originalState.fillBrush = contextState.fillBrush();
     m_originalState.strokeBrush = contextState.strokeBrush();
 
-    m_originalState.ctm = m_owner.getCTM(); // FIXME: Deal with base CTM.
+    m_originalState.ctm = m_owner.getCTM();
 
     m_originalState.dropShadow = contextState.dropShadow();
     m_originalState.ignoreTransforms = contextState.shadowsIgnoreTransforms();

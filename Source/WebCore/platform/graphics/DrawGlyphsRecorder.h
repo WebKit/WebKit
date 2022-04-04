@@ -55,7 +55,7 @@ class DrawGlyphsRecorder {
 public:
     enum class DeconstructDrawGlyphs : bool { No, Yes };
     enum class DeriveFontFromContext : bool { No, Yes };
-    explicit DrawGlyphsRecorder(GraphicsContext&, DeconstructDrawGlyphs = DeconstructDrawGlyphs::No, DeriveFontFromContext = DeriveFontFromContext::No);
+    explicit DrawGlyphsRecorder(GraphicsContext&, float scaleFactor = 1, DeconstructDrawGlyphs = DeconstructDrawGlyphs::No, DeriveFontFromContext = DeriveFontFromContext::No);
 
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
 

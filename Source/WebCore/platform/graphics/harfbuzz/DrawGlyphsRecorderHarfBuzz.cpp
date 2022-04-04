@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, DeconstructDrawGlyphs, DeriveFontFromContext)
+DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, float, DeconstructDrawGlyphs, DeriveFontFromContext)
     : m_owner(owner)
 {
 }
