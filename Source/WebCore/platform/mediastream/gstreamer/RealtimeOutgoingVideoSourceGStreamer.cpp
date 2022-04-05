@@ -41,7 +41,7 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(Ref<M
     auto* padTemplate = gst_element_get_pad_template(m_encoder.get(), "src");
     auto caps = adoptGRef(gst_pad_template_get_caps(padTemplate));
     m_allowedCaps = adoptGRef(gst_caps_new_empty());
-    gst_caps_foreach(caps.get(), reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, gpointer userData) {
+    gst_caps_foreach(caps.get(), reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, gpointer userData) -> gboolean {
         auto* source = reinterpret_cast<RealtimeOutgoingVideoSourceGStreamer*>(userData);
         const char* name = gst_structure_get_name(structure);
         const char* encodingName = nullptr;
@@ -53,6 +53,7 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(Ref<M
             encodingName = "H264";
         if (encodingName)
             gst_caps_append_structure(source->m_allowedCaps.get(), gst_structure_new("application/x-rtp", "media", G_TYPE_STRING, "video", "encoding-name", G_TYPE_STRING, encodingName, "clock-rate", G_TYPE_INT, 90000, nullptr));
+        return TRUE;
     }), this);
 
     setSource(WTFMove(source));
