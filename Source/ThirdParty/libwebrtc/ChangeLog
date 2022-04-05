@@ -1,3 +1,23 @@
+2022-04-05  Elliott Williams  <emw@apple.com>
+
+        Reland "[XCBuild] libwebrtc's headers are copied via rsync and do not emit task outputs"
+        https://bugs.webkit.org/show_bug.cgi?id=237112
+
+        Reviewed by Alexey Proskuryakov.
+        
+        r291239 did not add all the headers needed for absl. In particular, some "internal" headers
+        which are included by public absl headers needed to be added. This omission was masked on
+        EWS by incremental build data, and on engineering builds by SDK content.
+        
+        Add the missing headers. Additionally, commit a sorted version of the project (via
+        `sort-Xcode-project-file`) to reduce the scope of the diff and clean up the project for
+        future changes.
+
+        * Configurations/Base.xcconfig: Same as before.
+        * Configurations/libabsl.xcconfig: Same as before.
+        * Configurations/libwebrtc.xcconfig: Same as before.
+        * libwebrtc.xcodeproj/project.pbxproj: Headers added, project sorted.
+
 2022-04-01  Michael Saboff  <msaboff@apple.com>
 
         Stop copying StagedFrameworks to the secondary path by default
