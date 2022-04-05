@@ -1,3 +1,16 @@
+2022-04-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Do not create network process in ~WebsiteDataStore destructor
+        https://bugs.webkit.org/show_bug.cgi?id=238570
+
+        Reviewed by Chris Dumez.
+
+        The test is written by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST): Test that creating and destroying ephemer WebsiteDataStore doesn't initialize
+        default network process.
+
 2022-04-04  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Add author to commit message

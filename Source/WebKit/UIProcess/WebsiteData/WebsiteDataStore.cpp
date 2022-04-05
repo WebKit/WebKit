@@ -150,7 +150,8 @@ WebsiteDataStore::~WebsiteDataStore()
 
     ASSERT(allDataStores().get(m_sessionID) == this);
     allDataStores().remove(m_sessionID);
-    networkProcess().removeSession(*this);
+    if (m_networkProcess)
+        m_networkProcess->removeSession(*this);
 #if ENABLE(GPU_PROCESS)
     if (auto* gpuProcessProxy = GPUProcessProxy::singletonIfCreated())
         gpuProcessProxy->removeSession(m_sessionID);

@@ -159,6 +159,21 @@ TEST(NetworkProcess, TerminateWhenUnused)
         TestWebKitAPI::Util::spinRunLoop();
 }
 
+TEST(NetworkProcess, DoNotLaunchOnDataStoreDestruction)
+{
+    auto storeConfiguration1 = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    auto websiteDataStore1 = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration: storeConfiguration1.get()]);
+
+    EXPECT_FALSE([WKWebsiteDataStore _defaultNetworkProcessExists]);
+    @autoreleasepool {
+        auto storeConfiguration2 = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        auto websiteDataStore2 = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration: storeConfiguration2.get()]);
+    }
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_FALSE([WKWebsiteDataStore _defaultNetworkProcessExists]);
+}
+
 TEST(NetworkProcess, CORSPreflightCachePartitioned)
 {
     using namespace TestWebKitAPI;
