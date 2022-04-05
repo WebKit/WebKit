@@ -1,3 +1,17 @@
+2022-04-05  Antti Koivisto  <antti@apple.com>
+
+        Avoid unnecessary traversal when updating list markers
+        https://bugs.webkit.org/show_bug.cgi?id=238795
+
+        Reviewed by Anders Carlsson.
+
+        This code could use a full rewrite but there are also some simple optimizations that can be done.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::nextListItemHelper):
+
+        Don't advance into non-rendered subtrees. We won't find any renderers there.
+
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
         Implement faster lookup of HTML tags in the HTML parser
