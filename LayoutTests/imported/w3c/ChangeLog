@@ -1,3 +1,15 @@
+2022-04-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Support rendering url(), CSS basic shapes other than path(), and coord-box for offset-path
+        https://bugs.webkit.org/show_bug.cgi?id=233382
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/motion/offset-path-shape-expected.html: Added.
+        * web-platform-tests/css/motion/offset-path-shape.html: Added.
+        * web-platform-tests/css/motion/offset-path-url-expected.html: Added.
+        * web-platform-tests/css/motion/offset-path-url.html: Added.
+
 2022-04-04  Ziran Sun  <zsun@igalia.com>
 
         [Forms] change the default appearance of button, checkbox etc. to 'auto'

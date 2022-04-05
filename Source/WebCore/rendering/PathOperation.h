@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+class SVGElement;
+
 class PathOperation : public RefCounted<PathOperation> {
 public:
     enum OperationType {
@@ -66,13 +68,10 @@ protected:
 
 class ReferencePathOperation final : public PathOperation {
 public:
-    static Ref<ReferencePathOperation> create(const String& url, const String& fragment)
-    {
-        return adoptRef(*new ReferencePathOperation(url, fragment));
-    }
-
+    static Ref<ReferencePathOperation> create(const String& url, const String& fragment, const RefPtr<SVGElement>);
     const String& url() const { return m_url; }
     const String& fragment() const { return m_fragment; }
+    const SVGElement* element() const;
 
 private:
     bool operator==(const PathOperation& other) const override
@@ -83,15 +82,11 @@ private:
         return m_url == referenceClip.m_url;
     }
 
-    ReferencePathOperation(const String& url, const String& fragment)
-        : PathOperation(Reference)
-        , m_url(url)
-        , m_fragment(fragment)
-    {
-    }
+    ReferencePathOperation(const String& url, const String& fragment, const RefPtr<SVGElement>);
 
     String m_url;
     String m_fragment;
+    RefPtr<SVGElement> m_element;
 };
 
 class ShapePathOperation final : public PathOperation {
@@ -142,6 +137,14 @@ public:
         path.addRoundedRect(boundingRect);
         return path;
     }
+    
+    void setPathForReferenceRect(const FloatRoundedRect& boundingRect)
+    {
+        m_path.clear();
+        m_path.addRoundedRect(boundingRect);
+    }
+    
+    const Path getPath() const { return m_path; }
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
@@ -158,7 +161,7 @@ private:
         , m_referenceBox(referenceBox)
     {
     }
-
+    Path m_path;
     CSSBoxType m_referenceBox;
 };
 

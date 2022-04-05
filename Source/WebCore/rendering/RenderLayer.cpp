@@ -1334,8 +1334,15 @@ void RenderLayer::updateTransform()
 
         // FIXME: [LBSE] Upstream reference box computation for RenderSVGModelObject derived renderers
         FloatRect referenceBox;
-        if (is<RenderBox>(renderer()))
+        if (is<RenderBox>(renderer())) {
             referenceBox = snapRectToDevicePixels(downcast<RenderBox>(renderer()).referenceBox(transformBoxToCSSBoxType(renderer().style().transformBox())), renderer().document().deviceScaleFactor());
+            if (auto pathOperation = renderer().style().offsetPath()) {
+                if (is<BoxPathOperation>(pathOperation)) {
+                    auto boxPathOperation = downcast<BoxPathOperation>(pathOperation);
+                    boxPathOperation->setPathForReferenceRect(FloatRoundedRect(snapRectToDevicePixels(downcast<RenderBox>(renderer()).referenceBox(boxPathOperation->referenceBox()), renderer().document().deviceScaleFactor())));
+                }
+            }
+        }
 
         renderer().applyTransform(*m_transform, referenceBox);
         makeMatrixRenderable(*m_transform, canRender3DTransforms());

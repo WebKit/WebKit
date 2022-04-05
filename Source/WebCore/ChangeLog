@@ -1,3 +1,33 @@
+2022-04-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Support rendering url(), CSS basic shapes other than path(), and coord-box for offset-path
+        https://bugs.webkit.org/show_bug.cgi?id=233382
+
+        Reviewed by Simon Fraser.
+
+        Introduce support for url(), CSS basic shapes, and coord-box. Url() allows references to SVG 
+        shapes, so we check for either an SVGPathElement or SVGGeometryElement (which includes 
+        circles, polygons, etc.). We can then get a Path object for that particular SVGElement 
+         using pathFromGraphicsElement(). For coord-box, we check the value for the BoxPathOperation
+        (if it exists) in updateTransform(), and choose the corresponding reference box to the 
+        referenceBox() value of the BoxPathOperation.
+
+        Tests: imported/w3c/web-platform-tests/css/motion/offset-path-shape.html
+               imported/w3c/web-platform-tests/css/motion/offset-path-url.html
+
+        * Sources.txt:
+        * rendering/PathOperation.cpp: Added.
+        (WebCore::ReferencePathOperation::create):
+        (WebCore::ReferencePathOperation::ReferencePathOperation):
+        (WebCore::ReferencePathOperation::element const):
+        * rendering/PathOperation.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransform):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::getPathFromPathOperation):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertPathOperation):
+
 2022-04-05  Megan Gardner  <megan_gardner@apple.com>
 
         Moving forwards and backwards by sentences across a table results in different breaks in each direction.

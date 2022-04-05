@@ -41,6 +41,7 @@
 #include "RenderBlock.h"
 #include "RenderObject.h"
 #include "RenderTheme.h"
+#include "SVGPathData.h"
 #include "ScaleTransformOperation.h"
 #include "ShadowData.h"
 #include "StyleBuilderConverter.h"
@@ -1523,12 +1524,19 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Float
 
 static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const PathOperation& operation)
 {
-    if (operation.type() == PathOperation::Shape)
+    switch (operation.type()) {
+    case PathOperation::Shape:
         return downcast<ShapePathOperation>(operation).pathForReferenceRect(box);
-
-    // FIXME: support Reference and Box type.
-    // https://bugs.webkit.org/show_bug.cgi?id=233382
-    return std::nullopt;
+    case PathOperation::Reference:
+        if (!is<SVGPathElement>(downcast<ReferencePathOperation>(operation).element()) && !is<SVGGeometryElement>(downcast<ReferencePathOperation>(operation).element()))
+            return std::nullopt;
+        return pathFromGraphicsElement(downcast<ReferencePathOperation>(operation).element());
+    case PathOperation::Box:
+        return downcast<BoxPathOperation>(operation).getPath();
+    case PathOperation::Ray:
+        // FIXME: implement ray- https://bugs.webkit.org/show_bug.cgi?id=233344
+        return std::nullopt;
+    }
 }
 
 static PathTraversalState getTraversalStateAtDistance(const Path& path, const Length& distance)
