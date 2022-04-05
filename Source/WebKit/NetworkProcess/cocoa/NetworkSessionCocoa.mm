@@ -1935,7 +1935,7 @@ void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modif
     }
 
     if (isActingOnBehalfOfAFullWebBrowser(bundleID))
-        bundleID = "com.apple.mobilesafari";
+        bundleID = "com.apple.mobilesafari"_s;
 
     NSDictionary *options = @{
         (id)getkSymptomAnalyticsServiceDomainTrackingClearHistoryKey(): @{
