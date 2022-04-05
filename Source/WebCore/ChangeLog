@@ -1,3 +1,33 @@
+2022-04-05  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Support transitions/animations on grid-template-columns|rows
+        https://bugs.webkit.org/show_bug.cgi?id=204580
+
+        Reviewed by Antoine Quint.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::canInterpolate):
+        (WebCore::blendFunc):
+
+        GridTrackLists can be interpolated if they are the same length, and if any repeat() functions
+        have the same length and count/type.
+        Adds function for determining if two GridTrackLists can be interpolated, and function for interpolating
+        per-entry if so.
+        Adds blending helpers for GridTrackSize and GridLength.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackList):
+
+        Remove empty line name sets from the serialized computed style in order to satisfy the shortest equivalent
+        serialization principle.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::createGridTrackList):
+
+        Ensures computed track lists are stored in the canonical format (alternating between line name sets
+        and track sizes, starting and ending with a line name set), in order to make the interpolation
+        code simpler.
+
 2022-04-05  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Video is sometimes not visible after r292049

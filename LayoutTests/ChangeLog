@@ -1,3 +1,12 @@
+2022-04-05  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Support transitions/animations on grid-template-columns|rows
+        https://bugs.webkit.org/show_bug.cgi?id=204580
+
+        Reviewed by Antoine Quint.
+
+        * TestExpectations:
+
 2022-04-05  Matteo Flores  <matteo_flores@apple.com>
 
         [ Mac ] accessibility/mac/expanded-notification.html is a flaky text failure

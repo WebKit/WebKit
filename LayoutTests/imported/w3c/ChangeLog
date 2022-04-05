@@ -1,3 +1,15 @@
+2022-04-05  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Support transitions/animations on grid-template-columns|rows
+        https://bugs.webkit.org/show_bug.cgi?id=204580
+        
+        Reviewed by Antoine Quint.
+
+        Update expectation files for newly passing tests.
+
+        * web-platform-tests/css/css-grid/animation/grid-template-columns-interpolation-expected.txt:
+        * web-platform-tests/css/css-grid/animation/grid-template-rows-interpolation-expected.txt:
+
 2022-04-05  Tim Nguyen  <ntim@apple.com>
 
         Re-import css/selectors WPT

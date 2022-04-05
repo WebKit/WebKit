@@ -1073,8 +1073,11 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
 
     auto repeatVisitor = [&](CSSValueList& dest, const RepeatEntry& entry) {
         if (std::holds_alternative<Vector<String>>(entry)) {
+            const auto& names = std::get<Vector<String>>(entry);
+            if (names.isEmpty() && !isSubgrid)
+                return;
             auto lineNamesValue = CSSGridLineNamesValue::create();
-            for (const auto& name : std::get<Vector<String>>(entry))
+            for (const auto& name : names)
                 lineNamesValue->append(CSSValuePool::singleton().createCustomIdent(name));
             dest.append(lineNamesValue);
         } else {
@@ -1085,6 +1088,11 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     auto trackEntryVisitor = WTF::makeVisitor([&](const GridTrackSize& size) {
         list->append(specifiedValueForGridTrackSize(size, style));
     }, [&](const Vector<String>& names) {
+        // Subgrids don't have track sizes specified, so empty line names sets
+        // need to be serialized, as they are meaningful placeholders.
+        if (names.isEmpty() && !isSubgrid)
+            return;
+
         auto lineNamesValue = CSSGridLineNamesValue::create();
         for (const auto& name : names)
             lineNamesValue->append(CSSValuePool::singleton().createCustomIdent(name));

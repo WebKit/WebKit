@@ -991,8 +991,21 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
     if (!is<CSSValueList>(value))
         return false;
 
-    if (is<CSSSubgridValue>(value))
+    bool isSubgrid = false;
+    if (is<CSSSubgridValue>(value)) {
+        isSubgrid = true;
         trackList.append(GridTrackEntrySubgrid());
+    }
+
+    // https://drafts.csswg.org/css-grid-2/#computed-tracks
+    // The computed track list of a non-subgrid axis is a list alternating between line name sets
+    // and track sections, with the first and last items being line name sets.
+    auto ensureLineNames = [&](auto& list) {
+        if (isSubgrid)
+            return;
+        if (list.isEmpty() || !std::holds_alternative<Vector<String>>(list.last()))
+            list.append(Vector<String>());
+    };
 
     auto buildRepeatList = [&](const CSSValue& repeatValue, RepeatTrackList& repeatList) {
         for (auto& currentValue : downcast<CSSValueList>(repeatValue)) {
@@ -1001,16 +1014,27 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
                 for (auto& namedGridLineValue : downcast<CSSGridLineNamesValue>(currentValue.get()))
                     names.append(downcast<CSSPrimitiveValue>(namedGridLineValue.get()).stringValue());
                 repeatList.append(WTFMove(names));
-            } else
+            } else {
+                ensureLineNames(repeatList);
                 repeatList.append(createGridTrackSize(currentValue, builderState));
+            }
         }
+
+        if (!repeatList.isEmpty())
+            ensureLineNames(repeatList);
     };
 
-    // FIXME: Ensure we always have a line name set at the start and end, unless we're
-    // subgrid, since this is the canonical represented of the computed value.
-    // Make sure code reading this handles empty line name sets.
-
     for (auto& currentValue : downcast<CSSValueList>(value)) {
+        if (is<CSSGridLineNamesValue>(currentValue)) {
+            Vector<String> names;
+            for (auto& namedGridLineValue : downcast<CSSGridLineNamesValue>(currentValue.get()))
+                names.append(downcast<CSSPrimitiveValue>(namedGridLineValue.get()).stringValue());
+            trackList.append(WTFMove(names));
+            continue;
+        }
+
+        ensureLineNames(trackList);
+
         if (is<CSSGridAutoRepeatValue>(currentValue)) {
             CSSValueID autoRepeatID = downcast<CSSGridAutoRepeatValue>(currentValue.get()).autoRepeatID();
             ASSERT(autoRepeatID == CSSValueAutoFill || autoRepeatID == CSSValueAutoFit);
@@ -1026,16 +1050,13 @@ inline bool BuilderConverter::createGridTrackList(const CSSValue& value, GridTra
 
             buildRepeatList(currentValue, repeat.list);
             trackList.append(WTFMove(repeat));
-        } else if (is<CSSGridLineNamesValue>(currentValue)) {
-            Vector<String> names;
-            for (auto& namedGridLineValue : downcast<CSSGridLineNamesValue>(currentValue.get())) {
-                names.append(downcast<CSSPrimitiveValue>(namedGridLineValue.get()).stringValue());
-            }
-            trackList.append(WTFMove(names));
         } else {
             trackList.append(createGridTrackSize(currentValue, builderState));
         }
     }
+
+    if (!trackList.isEmpty())
+        ensureLineNames(trackList);
 
     return true;
 }

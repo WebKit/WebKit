@@ -609,9 +609,128 @@ static inline OffsetRotation blendFunc(const OffsetRotation& from, const OffsetR
     return OffsetRotation(from.hasAuto(), clampTo<float>(blend(from.angle(), to.angle(), context)));
 }
 
+static inline bool canInterpolate(const GridTrackList& from, const GridTrackList& to)
+{
+    if (from.size() != to.size())
+        return false;
+
+    size_t i = 0;
+    auto visitor = WTF::makeVisitor([&](const GridTrackSize&) {
+        return std::holds_alternative<GridTrackSize>(to[i]);
+    }, [&](const Vector<String>&) {
+        return std::holds_alternative<Vector<String>>(to[i]);
+    }, [&](const GridTrackEntryRepeat& repeat) {
+        if (!std::holds_alternative<GridTrackEntryRepeat>(to[i]))
+            return false;
+        const auto& toEntry = std::get<GridTrackEntryRepeat>(to[i]);
+        return repeat.repeats == toEntry.repeats && repeat.list.size() == toEntry.list.size();
+    }, [&](const GridTrackEntryAutoRepeat& repeat) {
+        return false;
+        if (!std::holds_alternative<GridTrackEntryAutoRepeat>(to[i]))
+            return false;
+        const auto& toEntry = std::get<GridTrackEntryAutoRepeat>(to[i]);
+        return repeat.type == toEntry.type && repeat.list.size() == toEntry.list.size();
+    }, [&](const GridTrackEntrySubgrid&) {
+        return false;
+    });
+
+    for (i = 0; i < from.size(); i++) {
+        if (!std::visit(visitor, from[i]))
+            return false;
+    }
+
+    return true;
+}
+
+static inline GridLength blendFunc(const GridLength& from, const GridLength& to, const CSSPropertyBlendingContext& context)
+{
+    if (from.isFlex() != to.isFlex())
+        return context.progress < 0.5 ? from : to;
+
+    if (from.isFlex())
+        return GridLength(blend(from.flex(), to.flex(), context));
+
+    return GridLength(blendFunc(from.length(), to.length(), context));
+}
+
+static inline GridTrackSize blendFunc(const GridTrackSize& from, const GridTrackSize& to, const CSSPropertyBlendingContext& context)
+{
+    if (from.type() != to.type())
+        return context.progress < 0.5 ? from : to;
+
+    if (from.type() == LengthTrackSizing) {
+        auto length = blendFunc(from.minTrackBreadth(), to.minTrackBreadth(), context);
+        return GridTrackSize(length, LengthTrackSizing);
+    }
+    if (from.type() == MinMaxTrackSizing) {
+        auto minTrackBreadth = blendFunc(from.minTrackBreadth(), to.minTrackBreadth(), context);
+        auto maxTrackBreadth = blendFunc(from.maxTrackBreadth(), to.maxTrackBreadth(), context);
+        return GridTrackSize(minTrackBreadth, maxTrackBreadth);
+    }
+
+    auto fitContentBreadth = blendFunc(from.fitContentTrackBreadth(), to.fitContentTrackBreadth(), context);
+    return GridTrackSize(fitContentBreadth, FitContentTrackSizing);
+}
+
+static inline RepeatTrackList blendFunc(const RepeatTrackList& from, const RepeatTrackList& to, const CSSPropertyBlendingContext& context)
+{
+    RepeatTrackList result;
+    size_t i = 0;
+
+    auto visitor = WTF::makeVisitor([&](const GridTrackSize& size) {
+        result.append(blendFunc(size, std::get<GridTrackSize>(to[i]), context));
+    }, [&](const Vector<String>& names) {
+        if (context.progress < 0.5)
+            result.append(names);
+        else {
+            const Vector<String>& toNames = std::get<Vector<String>>(to[i]);
+            result.append(toNames);
+        }
+    });
+
+    for (i = 0; i < from.size(); i++)
+        std::visit(visitor, from[i]);
+
+    return result;
+}
+
 static inline GridTrackList blendFunc(const GridTrackList& from, const GridTrackList& to, const CSSPropertyBlendingContext& context)
 {
-    return context.progress < 0.5 ? from : to;
+    if (!canInterpolate(from, to))
+        return context.progress < 0.5 ? from : to;
+
+    GridTrackList result;
+    size_t i = 0;
+
+    auto visitor = WTF::makeVisitor([&](const GridTrackSize& size) {
+        result.append(blendFunc(size, std::get<GridTrackSize>(to[i]), context));
+    }, [&](const Vector<String>& names) {
+        if (context.progress < 0.5)
+            result.append(names);
+        else {
+            const Vector<String>& toNames = std::get<Vector<String>>(to[i]);
+            result.append(toNames);
+        }
+    }, [&](const GridTrackEntryRepeat& repeatFrom) {
+        const auto& repeatTo = std::get<GridTrackEntryRepeat>(to[i]);
+        GridTrackEntryRepeat repeatResult;
+        repeatResult.repeats = repeatFrom.repeats;
+        repeatResult.list = blendFunc(repeatFrom.list, repeatTo.list, context);
+        result.append(WTFMove(repeatResult));
+    }, [&](const GridTrackEntryAutoRepeat& repeatFrom) {
+        const auto& repeatTo = std::get<GridTrackEntryAutoRepeat>(to[i]);
+        GridTrackEntryAutoRepeat repeatResult;
+        repeatResult.type = repeatFrom.type;
+        repeatResult.list = blendFunc(repeatFrom.list, repeatTo.list, context);
+        result.append(WTFMove(repeatResult));
+    }, [&](const GridTrackEntrySubgrid&) {
+    });
+
+
+    for (i = 0; i < from.size(); i++)
+        std::visit(visitor, from[i]);
+
+    return result;
 }
 
 class AnimationPropertyWrapperBase {
@@ -770,9 +889,9 @@ private:
         (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
 
-    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
-        return false;
+        return WebCore::canInterpolate(this->value(from), this->value(to));
     }
 };
 
