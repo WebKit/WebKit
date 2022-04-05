@@ -1993,7 +1993,7 @@ bool DOMWindow::addEventListener(const AtomString& eventType, Ref<EventListener>
         incrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && eventNames(.isTouchRelatedEventType(eventType, *document))
+    else if (document && eventNames.isTouchRelatedEventType(eventType, *document))
         ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
