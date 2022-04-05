@@ -1,5 +1,5 @@
 diff --git a/.gitignore b/.gitignore
-index ba19389..afeca1d 100644
+index ba19389dc517f5d168b616b72554cce67fc42bd2..afeca1d5821d20c50bcefa33c37ae4c283823bf1 100644
 --- a/.gitignore
 +++ b/.gitignore
 @@ -63,6 +63,7 @@
@@ -12,7 +12,7 @@ index ba19389..afeca1d 100644
  /third_party/six
 diff --git a/ChangeLog-2022-02-22 b/ChangeLog-2022-02-22
 new file mode 100644
-index 0000000..ca67026
+index 0000000000000000000000000000000000000000..ca67026bc50fdeb3f00af8aa2fba94eb6b0cc277
 --- /dev/null
 +++ b/ChangeLog-2022-02-22
 @@ -0,0 +1,19278 @@
@@ -19296,7 +19296,7 @@ index 0000000..ca67026
 +
 diff --git a/scripts/copy-frameworks-to-secondary-path.sh b/scripts/copy-frameworks-to-secondary-path.sh
 new file mode 100755
-index 0000000..2e00c12
+index 0000000000000000000000000000000000000000..2e00c127043b1a3dd9fd8293346ba237efb4203f
 --- /dev/null
 +++ b/scripts/copy-frameworks-to-secondary-path.sh
 @@ -0,0 +1,62 @@
@@ -19363,7 +19363,7 @@ index 0000000..2e00c12
 +    done
 +fi
 diff --git a/scripts/run_code_generation.py b/scripts/run_code_generation.py
-index fa1a029..bc79da2 100755
+index fa1a029b5ee6034cc74f71438e5d21d148fb09e8..bc79da2adff1bab915293c7692942dbaf12a09c2 100755
 --- a/scripts/run_code_generation.py
 +++ b/scripts/run_code_generation.py
 @@ -254,8 +254,11 @@ def main():
@@ -19379,7 +19379,7 @@ index fa1a029..bc79da2 100755
          # Update the hash dictionary.
          all_new_hashes[fname] = new_hashes
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
-index a175734..7fc9aa7 100644
+index a175734c39c5bd25fcba8325da8585a17a0c9d0a..7fc9aa792ace24f146923e374542d7253bd16a48 100644
 --- a/src/common/utilities.cpp
 +++ b/src/common/utilities.cpp
 @@ -6,6 +6,12 @@
@@ -19396,7 +19396,7 @@ index a175734..7fc9aa7 100644
  #include "GLES3/gl3.h"
  #include "common/mathutil.h"
 diff --git a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
-index 50822f2..3ece210 100644
+index 50822f2007292801b41be16ad956ae0bf06e7e88..3ece2105bcdaea98917001b33d1c6834de022d5e 100644
 --- a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 +++ b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -19409,7 +19409,7 @@ index 50822f2..3ece210 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
 diff --git a/src/compiler/translator/CodeGen.cpp b/src/compiler/translator/CodeGen.cpp
-index 497ef88..47213c9 100644
+index 497ef881e2d9cf0efb669ca8c7c4f2669633baba..47213c90497c8c9d8f76baf0653fdbc3c7a2e19d 100644
 --- a/src/compiler/translator/CodeGen.cpp
 +++ b/src/compiler/translator/CodeGen.cpp
 @@ -23,6 +23,9 @@
@@ -19424,7 +19424,7 @@ index 497ef88..47213c9 100644
  #    include "compiler/translator/TranslatorMetal.h"
 diff --git a/src/compiler/translator/TranslatorMetalDirect/EnvironmentVariable.h b/src/compiler/translator/TranslatorMetalDirect/EnvironmentVariable.h
 new file mode 100644
-index 0000000..d823fc7
+index 0000000000000000000000000000000000000000..d823fc72820cffddf3240dc24659a5edcfdb9d27
 --- /dev/null
 +++ b/src/compiler/translator/TranslatorMetalDirect/EnvironmentVariable.h
 @@ -0,0 +1,45 @@
@@ -19474,7 +19474,7 @@ index 0000000..d823fc7
 +
 +#endif  // COMPILER_TRANSLATOR_TRANSLATORMETALDIRECT_ENVIRONMENTVARIABLE_H_
 diff --git a/src/compiler/translator/TranslatorMetalDirect/IdGen.cpp b/src/compiler/translator/TranslatorMetalDirect/IdGen.cpp
-index 81ff272..9d2b43b 100644
+index 81ff2722f4983df6bc508602ea4fe06d6da74dd2..9d2b43bc0f987e8b9cb37b2119778e8b5ceb886c 100644
 --- a/src/compiler/translator/TranslatorMetalDirect/IdGen.cpp
 +++ b/src/compiler/translator/TranslatorMetalDirect/IdGen.cpp
 @@ -25,7 +25,7 @@ Name IdGen::createNewName(size_t count,
@@ -19487,7 +19487,7 @@ index 81ff272..9d2b43b 100644
      mNewNameBuffer.clear();
      mNewNameBuffer += '_';
 diff --git a/src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp b/src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp
-index bcc5d65..60758fb 100644
+index bcc5d65897a4ab90b2b64c5a5108b7e0d25a3e04..60758fbe8f45b609799af915943e166d2e697e8c 100644
 --- a/src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp
 +++ b/src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp
 @@ -601,7 +601,7 @@ class ConvertStructState : angle::NonCopyable
@@ -19500,7 +19500,7 @@ index bcc5d65..60758fb 100644
      }
  
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index daa1c61..e3a3ddb 100644
+index daa1c614f71f0788bc8b1ea1d0e4d8709f6c7b0a..e3a3ddba082f4629478be45068cc7c560276e7e6 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -19513,7 +19513,7 @@ index daa1c61..e3a3ddb 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.h b/src/compiler/translator/glslang_tab_autogen.h
-index d2eab0b..2ec2d2c 100644
+index d2eab0b7bc55675eb9ad5e210fb4d0cb869f35d1..2ec2d2c4495c1ed97a55173e49ea329d82d3f155 100644
 --- a/src/compiler/translator/glslang_tab_autogen.h
 +++ b/src/compiler/translator/glslang_tab_autogen.h
 @@ -1,5 +1,8 @@
@@ -19526,7 +19526,7 @@ index d2eab0b..2ec2d2c 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_wrapper.cpp b/src/compiler/translator/glslang_wrapper.cpp
-index 187f350..3de7597 100644
+index 187f350014fd283b3f406f5c3144a753f02436cb..3de7597d17b8813b60a62ffb14dd29e71491f8af 100644
 --- a/src/compiler/translator/glslang_wrapper.cpp
 +++ b/src/compiler/translator/glslang_wrapper.cpp
 @@ -10,6 +10,7 @@
@@ -19538,7 +19538,7 @@ index 187f350..3de7597 100644
  
  // glslang has issues with some specific warnings.
 diff --git a/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp b/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp
-index 55e2f8b..4237558 100644
+index 55e2f8b9717ec73d2d52607d400352f5f4c0c191..4237558526274ea3e643d45ccf574b6b10eac785 100644
 --- a/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp
 +++ b/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp
 @@ -10,6 +10,7 @@
@@ -19557,7 +19557,7 @@ index 55e2f8b..4237558 100644
 +#endif
  }  // namespace sh
 diff --git a/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h b/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h
-index ad3cc08..75069c5 100644
+index ad3cc080de119748939e5aa893fe095b9dd4a2f3..75069c57284bb3b0cb796717191c7d55934c11af 100644
 --- a/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h
 +++ b/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.h
 @@ -11,7 +11,7 @@
@@ -19570,7 +19570,7 @@ index ad3cc08..75069c5 100644
  {
  
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index bd9e3cd..d19220f 100644
+index bd9e3cd6aac36e0c5dab2e7f13be2bed4ab7f4d5..d19220f9fb4d1bd40e4ad7f44743d53356f31059 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
 @@ -9270,7 +9270,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
@@ -19610,7 +19610,7 @@ index bd9e3cd..d19220f 100644
  
      return egl::NoError();
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 383bf7c..fca82fb 100644
+index 383bf7ce444640f8d1c08ad929f086b6ce616cbf..fca82fb028e07e3937ed916e2b1ddeb17507ecf0 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -19624,7 +19624,7 @@ index 383bf7c..fca82fb 100644
  
  #include <string.h>
 diff --git a/src/libANGLE/Surface.cpp b/src/libANGLE/Surface.cpp
-index 4185650..a396a34 100644
+index 418565072f37659a69051bba1b980b4cdc5f8a53..a396a347e6516302512fd12ff3feb91b1941ff56 100644
 --- a/src/libANGLE/Surface.cpp
 +++ b/src/libANGLE/Surface.cpp
 @@ -640,10 +640,10 @@ Error Surface::getBufferAge(const gl::Context *context, EGLint *age)
@@ -19641,7 +19641,7 @@ index 4185650..a396a34 100644
  
  gl::InitState Surface::initState(const gl::ImageIndex & /*imageIndex*/) const
 diff --git a/src/libANGLE/Surface.h b/src/libANGLE/Surface.h
-index e57580d..19889c3 100644
+index e57580d21802c42102567624ef12b7244e71666a..19889c3debdee7239fa54092735eac757eeb270d 100644
 --- a/src/libANGLE/Surface.h
 +++ b/src/libANGLE/Surface.h
 @@ -105,7 +105,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
@@ -19663,7 +19663,7 @@ index e57580d..19889c3 100644
      friend class gl::Texture;
      Error releaseTexImageFromTexture(const gl::Context *context);
 diff --git a/src/libANGLE/renderer/driver_utils.cpp b/src/libANGLE/renderer/driver_utils.cpp
-index bfdf0ff..6e50976 100644
+index bfdf0ff768941042dfb12023c73ecbd426dcb46d..6e5097653d36cfba64307132e43589f50c41f8d3 100644
 --- a/src/libANGLE/renderer/driver_utils.cpp
 +++ b/src/libANGLE/renderer/driver_utils.cpp
 @@ -164,6 +164,10 @@ const char *GetVendorString(uint32_t vendorId)
@@ -19678,7 +19678,7 @@ index bfdf0ff..6e50976 100644
              return "Test";
          case 0:
 diff --git a/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp b/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp
-index a2b44d2..20ec85a 100644
+index a2b44d2bf063b13f77e3083473e5031efd00993a..20ec85a507e3923a84cca23536373836d46c03b9 100644
 --- a/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp
 +++ b/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp
 @@ -250,12 +250,10 @@ bool IOSurfaceSurfaceCGL::validateAttributes(EGLClientBuffer buffer,
@@ -19699,7 +19699,7 @@ index a2b44d2..20ec85a 100644
      return true;
  }
 diff --git a/src/libANGLE/renderer/glslang_wrapper_utils.h b/src/libANGLE/renderer/glslang_wrapper_utils.h
-index d27715d..75d252f 100644
+index d27715d9492e3bfa7eefea5bfc2059642999afb9..75d252f7ae52c33611d7c59a5e62cf91c144fc9e 100644
 --- a/src/libANGLE/renderer/glslang_wrapper_utils.h
 +++ b/src/libANGLE/renderer/glslang_wrapper_utils.h
 @@ -10,7 +10,6 @@
@@ -19728,7 +19728,7 @@ index d27715d..75d252f 100644
  }  // namespace rx
  
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
-index 279923f..900aea8 100644
+index 279923ff2cc0a3fa2f3259d36de9375cc19be576..900aea8afb94ae32b37711ddb8136c43b0308b49 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
 @@ -365,7 +365,7 @@
@@ -19750,7 +19750,7 @@ index 279923f..900aea8 100644
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index da5b1c9..6498af8 100644
+index da5b1c99f5c0a4ce5985a2d1bb3e9d8246532b59..6498af891b2182686dc6f2964dfbdc6b06fdc46d 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -254,9 +254,10 @@ bool IsMetalDisplayAvailable()
@@ -19814,7 +19814,7 @@ index da5b1c9..6498af8 100644
      {
          return [mMetalDevice supports32BitFloatFiltering];
 diff --git a/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm b/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
-index ab7283a..1000867 100644
+index ab7283ae1c987aa80983f86914b6fc9fcf1d0fe3..10008675955563ff9187f7c5bea4025291993701 100644
 --- a/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
 +++ b/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
 @@ -219,12 +219,10 @@ int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
@@ -19835,7 +19835,7 @@ index ab7283a..1000867 100644
      return true;
  }
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index 6a16d78..c16ed3a 100644
+index 6a16d78bc6ef0846205a7f7027e95d31e8aa1790..c16ed3ae5ceb84af05bd376d557f3f78ab16262b 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
 @@ -589,7 +589,7 @@ void InitArgumentBufferEncoder(mtl::Context *context,
@@ -19891,7 +19891,7 @@ index 6a16d78..c16ed3a 100644
  
      // Store reference to the translated source for easily querying mapped bindings later.
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
-index c3be11f..204ebb9 100644
+index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860cd40c00a 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 +++ b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 @@ -126,7 +126,7 @@ class BufferPool
@@ -19904,7 +19904,7 @@ index c3be11f..204ebb9 100644
  };
  
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 1613ee9..e075295 100644
+index 1613ee9b7f2eb0fe231d869e7fdbd62d048b1a21..e075295f810c72bf03e2899dfb8313fe2768fda3 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -2540,45 +2540,13 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
@@ -19985,7 +19985,7 @@ index 1613ee9..e075295 100644
      MipmapNativeLevel batchSrcLevel = kZeroNativeMipLevel;
      options.srcLevel                = batchSrcLevel.get();
 diff --git a/src/libANGLE/renderer/metal/mtl_resource_spi.h b/src/libANGLE/renderer/metal/mtl_resource_spi.h
-index 3eaa9a6..2ecf7b4 100644
+index 3eaa9a64e79af26faa786102ece3f0bdea84d090..2ecf7b40bd5a2edc3fd9d69841e266b6c3cee685 100644
 --- a/src/libANGLE/renderer/metal/mtl_resource_spi.h
 +++ b/src/libANGLE/renderer/metal/mtl_resource_spi.h
 @@ -1,9 +1,63 @@
@@ -20059,7 +20059,7 @@ index 3eaa9a6..2ecf7b4 100644
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.h b/src/libANGLE/renderer/metal/mtl_resources.h
-index 8b8eb26..19a9740 100644
+index 8b8eb26b5959b7027de2a958fb6029553b2bf80d..19a97408796c78694e60daf86c018d3b434a4216 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.h
 +++ b/src/libANGLE/renderer/metal/mtl_resources.h
 @@ -345,7 +345,9 @@ class Texture final : public Resource,
@@ -20074,7 +20074,7 @@ index 8b8eb26..19a9740 100644
    public:
      static angle::Result MakeBuffer(ContextMtl *context,
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 1e8c8f2..7ebf316 100644
+index 1e8c8f2643bf2006cac57b69aa72f4f3c53ed6de..7ebf31690055fd38467feb99c4e12b801d7d1ce3 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -35,12 +35,14 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
@@ -20137,7 +20137,7 @@ index 1e8c8f2..7ebf316 100644
          if (this->isBeingUsedByGPU(context))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.h b/src/libANGLE/renderer/metal/mtl_utils.h
-index d218c13..b236d92 100644
+index d218c13ed14be57f514cbf3c9dbeedefcdd49621..b236d92655d0307bb0b61ce51bf6406e9e934e96 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.h
 +++ b/src/libANGLE/renderer/metal/mtl_utils.h
 @@ -105,11 +105,9 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
@@ -20154,7 +20154,7 @@ index d218c13..b236d92 100644
  
  bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily);
 diff --git a/src/tests/angle_unittests.gni b/src/tests/angle_unittests.gni
-index 613e079..252a207 100644
+index 613e0790b9347b454e2473ef40a8025cf052dfa8..252a207642689795c90465e1688303de96cfaa2a 100644
 --- a/src/tests/angle_unittests.gni
 +++ b/src/tests/angle_unittests.gni
 @@ -167,6 +167,8 @@ if (is_android) {
@@ -20208,5 +20208,5 @@ rename from src/tests/deqp_support/deqp_khr_gles3_test_expectations.txt
 rename to src/tests/deqp_support/deqp_khr_gles3_TestExpectations
 diff --git a/third_party/r8/custom_d8.jar b/third_party/r8/custom_d8.jar
 deleted file mode 100644
-index 99a9106..0000000
+index 99a9106378d5a1c10ecca3d0270a6cc506841d1a..0000000000000000000000000000000000000000
 Binary files a/third_party/r8/custom_d8.jar and /dev/null differ

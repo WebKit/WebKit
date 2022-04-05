@@ -6,7 +6,7 @@ ANGLE_DIR="$PWD"
 regenerate_changes_diff() {
     echo "Regenerating changes.diff."
     # Exclude WebKit-added build files from the diff.
-    git diff "$1" --cached -b --ignore-cr-at-eol -- . \
+    git diff "$1" --full-index --cached -b --ignore-cr-at-eol -- . \
         ':(exclude)ChangeLog' \
         ':(exclude)ANGLE.plist' \
         ':(exclude)ANGLE.xcodeproj' \

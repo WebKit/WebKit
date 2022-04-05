@@ -1,3 +1,14 @@
+2022-04-05  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        update-angle output varies unpredictably due to blob hash abbreviation
+        https://bugs.webkit.org/show_bug.cgi?id=238793
+
+        Reviewed by Antti Koivisto.
+
+        Add --full-index to diff to get the unabbreviated blob hash.
+
+        * Scripts/update-angle:
+
 2022-04-04  Saam Barati  <sbarati@apple.com>
 
         Turn off LLInt ICs in captive portal mode
