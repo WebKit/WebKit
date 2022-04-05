@@ -35,10 +35,6 @@
 
 namespace WebKit {
 
-#if PLATFORM(COCOA)
-bool isFeatureFlagEnabled(const char*, bool defaultValue = false);
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 bool defaultAllowsInlineMediaPlayback();
 bool defaultAllowsInlineMediaPlaybackAfterFullscreen();

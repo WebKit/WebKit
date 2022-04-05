@@ -30,7 +30,6 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
-#include <pal/spi/cocoa/FeatureFlagsSPI.h>
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -40,13 +39,6 @@
 #endif
 
 namespace WebKit {
-
-#if !PLATFORM(COCOA) && !PLATFORM(WIN)
-bool isFeatureFlagEnabled(const char*, bool defaultValue)
-{
-    return defaultValue;
-}
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 

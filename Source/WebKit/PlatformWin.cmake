@@ -44,7 +44,6 @@ list(APPEND WebKit_SOURCES
     Shared/win/NativeWebWheelEventWin.cpp
     Shared/win/WebCoreArgumentCodersWin.cpp
     Shared/win/WebEventFactory.cpp
-    Shared/win/WebPreferencesDefaultValuesWin.cpp
 
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp

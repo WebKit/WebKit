@@ -1,3 +1,14 @@
+2022-04-05  Tim Horton  <timothy_horton@apple.com>
+
+        Remove system feature flags implementation
+        https://bugs.webkit.org/show_bug.cgi?id=238791
+
+        Reviewed by Megan Gardner.
+
+        * WebView/WebPreferencesDefaultValues.h:
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::isFeatureFlagEnabled): Deleted.
+
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
         Remove VP8/9 and WebM-related system feature flags

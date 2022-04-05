@@ -30,40 +30,11 @@
 
 #import "ImageAnalysisUtilities.h"
 #import <Foundation/NSBundle.h>
-#import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
-
-// Because of <rdar://problem/60608008>, WebKit has to parse the feature flags plist file
-bool isFeatureFlagEnabled(const char* featureName, bool defaultValue)
-{
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-
-#if PLATFORM(MAC)
-    static bool isSystemWebKit = [] {
-        NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
-        return [bundle.bundlePath hasPrefix:@"/System/"];
-    }();
-
-    if (isSystemWebKit)
-        return _os_feature_enabled_impl("WebKit", featureName);
-
-    return defaultValue;
-#else
-    UNUSED_PARAM(defaultValue);
-    return _os_feature_enabled_impl("WebKit", featureName);
-#endif // PLATFORM(MAC)
-
-#else
-
-    UNUSED_PARAM(featureName);
-    return defaultValue;
-
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)
-}
 
 #if PLATFORM(MAC)
 bool defaultScrollAnimatorEnabled()

@@ -30,7 +30,6 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
-#import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/WTFString.h>
@@ -40,35 +39,6 @@
 #endif
 
 namespace WebKit {
-
-#if PLATFORM(COCOA)
-
-// Because of <rdar://problem/60608008>, WebKit has to parse the feature flags plist file
-bool isFeatureFlagEnabled(const char* featureName, bool defaultValue)
-{
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-
-#if PLATFORM(MAC)
-    static bool isSystemWebKit = [] {
-        auto *bundle = [NSBundle bundleForClass:NSClassFromString(@"WebResource")];
-        return [bundle.bundlePath hasPrefix:@"/System/"];
-    }();
-
-    return isSystemWebKit ? _os_feature_enabled_impl("WebKit", featureName) : defaultValue;
-#else
-    UNUSED_PARAM(defaultValue);
-    return _os_feature_enabled_impl("WebKit", featureName);
-#endif // PLATFORM(MAC)
-
-#else
-
-    UNUSED_PARAM(featureName);
-    return defaultValue;
-
-#endif // HAVE(SYSTEM_FEATURE_FLAGS)
-}
-
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 
