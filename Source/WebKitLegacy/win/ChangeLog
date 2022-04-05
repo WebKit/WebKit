@@ -1,3 +1,15 @@
+2022-04-04  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Use Ref and RefPtr pattern when handling document close calls
+        https://bugs.webkit.org/show_bug.cgi?id=238747
+
+        Reviewed by Sam Weinig.
+
+        Ensure document object remains for the scope of the call.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::close):
+
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
         String's find() / reverseFind() / replace() should take in a StringView instead of a String

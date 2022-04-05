@@ -1,3 +1,25 @@
+2022-04-04  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Use Ref and RefPtr pattern when handling document close calls
+        https://bugs.webkit.org/show_bug.cgi?id=238747
+
+        Reviewed by Sam Weinig.
+
+        Ensure document object remains for the scope of the call.
+
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::patchDocument):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::clear):
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::finishLoading):
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+        * xml/XMLHttpRequest.cpp:
+
 2022-04-04  Matt Woodrow  <mattwoodrow@apple.com>
 
         intersectsWithAncestor should take fragmented boxes into account.

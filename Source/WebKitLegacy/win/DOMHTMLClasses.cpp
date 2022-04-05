@@ -362,8 +362,8 @@ HRESULT DOMHTMLDocument::close()
 {
     if (!m_document)
         return E_FAIL;
-
-    m_document->close();
+    Ref document { *m_document };
+    document->close();
     return S_OK;
 }
     
