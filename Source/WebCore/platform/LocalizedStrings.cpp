@@ -82,7 +82,7 @@ String formatLocalizedString(const char* format, ...)
     return String::fromUTF8(result.get());
 #else
     notImplemented();
-    return format;
+    return String::fromUTF8(format);
 #endif
 }
 #endif

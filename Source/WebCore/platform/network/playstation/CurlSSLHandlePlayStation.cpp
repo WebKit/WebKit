@@ -40,8 +40,8 @@ void CurlSSLHandle::platformInitialize()
     if (certificateData->size())
         setCACertData(WTFMove(caCertData));
 
-    setCipherList(CertificateStore::cipherSuites());
-    setCurvesList(CertificateStore::supportedGroups());
+    setCipherList(String::fromUTF8(CertificateStore::cipherSuites()));
+    setCurvesList(String::fromUTF8(CertificateStore::supportedGroups()));
 
     setIgnoreSSLErrors(CertificateStore::shouldIgnoreTLSErrors());
 }

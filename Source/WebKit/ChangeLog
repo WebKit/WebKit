@@ -1,3 +1,12 @@
+2022-04-05  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation[ Fix build break after r292408
+        https://bugs.webkit.org/show_bug.cgi?id=238840
+
+        Unreviewed build fix.
+
+        * UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp:
+
 2022-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Revert r291598

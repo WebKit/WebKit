@@ -1,3 +1,14 @@
+2022-04-05  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation[ Fix build break after r292408
+        https://bugs.webkit.org/show_bug.cgi?id=238840
+
+        Unreviewed build fix.
+
+        * platform/LocalizedStrings.cpp:
+        * platform/network/playstation/CurlSSLHandlePlayStation.cpp:
+        * platform/playstation/UserAgentPlayStation.cpp:
+
 2022-04-05  Matt Woodrow  <mattwoodrow@apple.com>
 
         Support transitions/animations on grid-template-columns|rows
