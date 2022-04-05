@@ -263,20 +263,21 @@ MediaTime MediaPlayerPrivateAVFoundation::durationMediaTime() const
     return m_cachedDuration;
 }
 
-void MediaPlayerPrivateAVFoundation::seek(const MediaTime& time)
+void MediaPlayerPrivateAVFoundation::seek(const MediaTime& time, SeekCompletion&& completion)
 {
-    seekWithTolerance(time, MediaTime::zeroTime(), MediaTime::zeroTime());
+    seekWithTolerance(time, MediaTime::zeroTime(), MediaTime::zeroTime(), WTFMove(completion));
 }
 
-void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&& completion)
 {
     MediaTime time = mediaTime;
 
     if (m_seeking) {
         ALWAYS_LOG(LOGIDENTIFIER, "saving pending seek");
-        m_pendingSeek = [this, time, negativeTolerance, positiveTolerance]() {
-            seekWithTolerance(time, negativeTolerance, positiveTolerance);
-        };
+        if (m_pendingSeek)
+            m_pendingSeek->seekCompletion(MediaPlayerEnums::SeekResult::Cancelled);
+
+        m_pendingSeek = makeUnique<PendingSeek>(time, negativeTolerance, positiveTolerance, WTFMove(completion));
         return;
     }
     m_seeking = true;
@@ -292,7 +293,30 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTim
 
     ALWAYS_LOG(LOGIDENTIFIER, "seeking to  ", time);
 
-    seekToTime(time, negativeTolerance, positiveTolerance);
+    seekToTime(time, negativeTolerance, positiveTolerance, [this, weakThis = WeakPtr { *this }, completion = WTFMove(completion), identifier = LOGIDENTIFIER] (auto result) mutable {
+        ALWAYS_LOG(identifier, "::completion(), result = ", result);
+
+        m_seeking = false;
+
+        std::unique_ptr<PendingSeek> pendingSeek;
+        std::swap(pendingSeek, m_pendingSeek);
+
+        if (pendingSeek) {
+            ALWAYS_LOG(LOGIDENTIFIER, "issuing pending seek");
+            completion(MediaPlayerEnums::SeekResult::Cancelled);
+
+            seekWithTolerance(pendingSeek->targetTime, pendingSeek->negativeThreshold, pendingSeek->positiveThreshold, WTFMove(pendingSeek->seekCompletion));
+            return;
+        }
+
+        if (currentTextTrack())
+            currentTextTrack()->endSeeking();
+
+        updateStates();
+        m_player->timeChanged();
+
+        completion(result);
+    });
 }
 
 bool MediaPlayerPrivateAVFoundation::paused() const
@@ -657,29 +681,6 @@ void MediaPlayerPrivateAVFoundation::timeChanged(const MediaTime& time)
     INFO_LOG(LOGIDENTIFIER, "- ", time);
 }
 
-void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
-{
-    UNUSED_PARAM(finished);
-    ALWAYS_LOG(LOGIDENTIFIER, "finished = ", finished);
-
-    m_seeking = false;
-
-    Function<void()> pendingSeek;
-    std::swap(pendingSeek, m_pendingSeek);
-
-    if (pendingSeek) {
-        ALWAYS_LOG(LOGIDENTIFIER, "issuing pending seek");
-        pendingSeek();
-        return;
-    }
-
-    if (currentTextTrack())
-        currentTextTrack()->endSeeking();
-
-    updateStates();
-    m_player->timeChanged();
-}
-
 void MediaPlayerPrivateAVFoundation::didEnd()
 {
     // Hang onto the current time and use it as duration from now on since we are definitely at
@@ -872,9 +873,6 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         break;
     case Notification::PlayerTimeChanged:
         timeChanged(notification.time());
-        break;
-    case Notification::SeekCompleted:
-        seekCompleted(notification.finished());
         break;
     case Notification::AssetMetadataLoaded:
         metadataLoaded();

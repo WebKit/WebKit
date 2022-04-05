@@ -121,10 +121,22 @@ public:
 
     virtual MediaTime getStartDate() const { return MediaTime::createWithDouble(std::numeric_limits<double>::quiet_NaN()); }
 
+    using SeekCompletion = CompletionHandler<void(MediaPlayerEnums::SeekResult)>;
+
     virtual void seek(float) { }
     virtual void seekDouble(double time) { seek(time); }
     virtual void seek(const MediaTime& time) { seekDouble(time.toDouble()); }
+    virtual void seek(const MediaTime& time, SeekCompletion&& completion)
+    {
+        seek(time);
+        completion(MediaPlayerEnums::SeekResult::Unknown);
+    }
     virtual void seekWithTolerance(const MediaTime& time, const MediaTime&, const MediaTime&) { seek(time); }
+    virtual void seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&& completion)
+    {
+        seekWithTolerance(time, negativeTolerance, positiveTolerance);
+        completion(MediaPlayerEnums::SeekResult::Unknown);
+    }
 
     virtual bool seeking() const = 0;
 

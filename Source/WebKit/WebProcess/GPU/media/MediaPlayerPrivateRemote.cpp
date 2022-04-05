@@ -291,18 +291,18 @@ MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
     return std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), durationMediaTime());
 }
 
-void MediaPlayerPrivateRemote::seek(const MediaTime& time)
+void MediaPlayerPrivateRemote::seek(const MediaTime& time, SeekCompletion&& seekCompletion)
 {
     m_seeking = true;
     m_cachedMediaTime = time;
-    connection().send(Messages::RemoteMediaPlayerProxy::Seek(time), m_id);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Seek(time), WTFMove(seekCompletion), m_id);
 }
 
-void MediaPlayerPrivateRemote::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void MediaPlayerPrivateRemote::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&& seekCompletion)
 {
     m_seeking = true;
     m_cachedMediaTime = time;
-    connection().send(Messages::RemoteMediaPlayerProxy::SeekWithTolerance(time, negativeTolerance, positiveTolerance), m_id);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::SeekWithTolerance(time, negativeTolerance, positiveTolerance), WTFMove(seekCompletion), m_id);
 }
 
 bool MediaPlayerPrivateRemote::didLoadingProgress() const

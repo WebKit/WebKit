@@ -145,8 +145,9 @@ public:
     void play();
     void pause();
 
-    void seek(const MediaTime&);
-    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
+    using SeekCompletion = WebCore::MediaPlayer::SeekCompletion;
+    void seek(const MediaTime&, SeekCompletion&&);
+    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&&);
 
     void setVolume(double);
     void setMuted(bool);

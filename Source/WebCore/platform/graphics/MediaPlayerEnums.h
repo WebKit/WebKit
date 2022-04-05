@@ -111,6 +111,12 @@ public:
         BestForMusic,
         BestForSpeech,
     };
+
+    enum class SeekResult : uint8_t {
+        Unknown,
+        Cancelled,
+        Completed,
+    };
 };
 
 WEBCORE_EXPORT String convertEnumerationToString(MediaPlayerEnums::ReadyState);
@@ -251,6 +257,15 @@ using values = EnumValues<
     WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestAllAround,
     WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestForMusic,
     WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm::BestForSpeech
+    >;
+};
+
+template<> struct EnumTraits<WebCore::MediaPlayerEnums::SeekResult> {
+using values = EnumValues<
+    WebCore::MediaPlayerEnums::SeekResult,
+    WebCore::MediaPlayerEnums::SeekResult::Unknown,
+    WebCore::MediaPlayerEnums::SeekResult::Cancelled,
+    WebCore::MediaPlayerEnums::SeekResult::Completed
     >;
 };
 

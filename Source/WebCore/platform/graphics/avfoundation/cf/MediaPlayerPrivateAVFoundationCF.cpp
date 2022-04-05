@@ -128,7 +128,7 @@ public:
     void checkPlayability();
     void beginLoadingMetadata();
     
-    void seekToTime(const MediaTime&, const MediaTime&, const MediaTime&);
+    void seekToTime(const MediaTime&, const MediaTime&, const MediaTime&, MediaPlayerPrivateInterface::SeekCompletion&&);
     void updateVideoLayerGravity();
 
     void setCurrentTextTrack(InbandTextTrackPrivateAVF*);
@@ -210,6 +210,8 @@ private:
     MemoryCompactRobinHoodHashMap<String, Vector<RetainPtr<AVCFAssetResourceLoadingRequestRef>>> m_keyURIToRequestMap;
     AVCFAssetResourceLoaderCallbacks m_resourceLoaderCallbacks;
 #endif
+
+    std::unique_ptr<MediaPlayerPrivateInterface::SeekCompletion> m_seekCompletion;
 };
 
 uintptr_t AVFWrapper::s_nextAVFWrapperObjectID;
@@ -641,14 +643,14 @@ MediaTime MediaPlayerPrivateAVFoundationCF::currentMediaTime() const
     return MediaTime::zeroTime();
 }
 
-void MediaPlayerPrivateAVFoundationCF::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void MediaPlayerPrivateAVFoundationCF::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&& completion)
 {
     if (!m_avfWrapper)
         return;
     
     // seekToTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
-    m_avfWrapper->seekToTime(time, negativeTolerance, positiveTolerance);
+    m_avfWrapper->seekToTime(time, negativeTolerance, positiveTolerance, WTFMove(seekCompletion));
     setDelayCallbacks(false);
 }
 
@@ -1426,6 +1428,10 @@ AVFWrapper::~AVFWrapper()
     m_avPlayerItem = 0;
     m_timeObserver = 0;
     m_avPlayer = 0;
+
+    ASSERT(!m_seekCompletion);
+    if (m_seekCompletion)
+        (*m_seekCompletion)(MediaPlayerEnums::SeekResult::Cancelled);
 }
 
 Lock AVFWrapper::mapLock;
@@ -1797,15 +1803,21 @@ void AVFWrapper::seekCompletedCallback(AVCFPlayerItemRef, Boolean finished, void
     }
 
     LOG(Media, "AVFWrapper::seekCompletedCallback(%p)", self);
-    self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::SeekCompleted, static_cast<bool>(finished));
+    ASSERT(m_seekCompletion);
+    if (m_seekCompletion) {
+        (*m_seekCompletion)(finished ? MediaPlayerEnums::SeekResult::Completed : MediaPlayerEnums::SeekResult::Cancelled);
+        m_seekCompletion = nullptr;
+    }
 }
 
-void AVFWrapper::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void AVFWrapper::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, MediaPlayerPrivateInterface::SeekCompletion&& seekCompletion)
 {
     ASSERT(avPlayerItem());
     CMTime cmTime = PAL::toCMTime(time);
     CMTime cmBefore = PAL::toCMTime(negativeTolerance);
     CMTime cmAfter = PAL::toCMTime(positiveTolerance);
+    ASSERT(!m_seekCompletion);
+    m_seekCompletion = WTFMove(seekCompletion);
     AVCFPlayerItemSeekToTimeWithToleranceAndCompletionCallback(avPlayerItem(), cmTime, cmBefore, cmAfter, &seekCompletedCallback, callbackContext());
 }
 

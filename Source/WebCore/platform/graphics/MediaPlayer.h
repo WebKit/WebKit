@@ -408,9 +408,12 @@ public:
     static double invalidTime() { return -1.0;}
     MediaTime duration() const;
     MediaTime currentTime() const;
-    void seek(const MediaTime&);
+
+    using SeekCompletion = CompletionHandler<void(MediaPlayerEnums::SeekResult)>;
+    void seek(const MediaTime&, SeekCompletion&& = [] (SeekResult) { });
     void seekWhenPossible(const MediaTime&);
-    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
+
+    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&& = [] (SeekResult) { });
 
     using CurrentTimeDidChangeCallback = std::function<void(const MediaTime&)>;
     bool setCurrentTimeDidChangeCallback(CurrentTimeDidChangeCallback&&);

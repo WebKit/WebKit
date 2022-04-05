@@ -40,8 +40,8 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     SetVolume(double volume)
     SetMuted(bool muted)
 
-    Seek(MediaTime time)
-    SeekWithTolerance(MediaTime time, MediaTime negativeTolerance, MediaTime positiveTolerance)
+    Seek(MediaTime time) -> (WebCore::MediaPlayerEnums::SeekResult result)
+    SeekWithTolerance(MediaTime time, MediaTime negativeTolerance, MediaTime positiveTolerance) -> (WebCore::MediaPlayerEnums::SeekResult result)
 
     SetPreload(enum:uint8_t WebCore::MediaPlayerEnums::Preload preload)
     SetPrivateBrowsingMode(bool privateMode)

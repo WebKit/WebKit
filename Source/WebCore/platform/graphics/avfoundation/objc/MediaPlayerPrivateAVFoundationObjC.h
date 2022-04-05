@@ -211,7 +211,7 @@ private:
     double effectiveRate() const final;
     void setPreservesPitch(bool) final;
     void setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm) final;
-    void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) final;
+    void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&&) final;
     unsigned long long totalBytes() const final;
     std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const final;
     MediaTime platformMinTimeSeekable() const final;

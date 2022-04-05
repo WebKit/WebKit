@@ -55,7 +55,6 @@ public:
     virtual void loadedTimeRangesChanged();
     virtual void seekableTimeRangesChanged();
     virtual void timeChanged(const MediaTime&);
-    virtual void seekCompleted(bool);
     virtual void didEnd();
     virtual void contentsNeedsDisplay() { }
     virtual void configureInbandTracks();
@@ -84,7 +83,6 @@ public:
     macro(AssetPlayabilityKnown) \
     macro(PlayerRateChanged) \
     macro(PlayerTimeChanged) \
-    macro(SeekCompleted) \
     macro(DurationChanged) \
     macro(ContentsNeedsDisplay) \
     macro(InbandTracksNeedConfiguration) \
@@ -184,8 +182,8 @@ protected:
     void setPageIsVisible(bool) final;
     MediaTime durationMediaTime() const override;
     MediaTime currentMediaTime() const override = 0;
-    void seek(const MediaTime&) override;
-    void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
+    void seek(const MediaTime&, SeekCompletion&&) override;
+    void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&, SeekCompletion&&) override;
     bool seeking() const override;
     bool paused() const override;
     void setVolume(float) override = 0;
@@ -249,7 +247,7 @@ protected:
     virtual void platformPlay() = 0;
     virtual void platformPause() = 0;
     virtual bool platformPaused() const { return !rate(); }
-    virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) = 0;
+    virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&&) = 0;
     unsigned long long totalBytes() const override = 0;
     virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const = 0;
     virtual MediaTime platformMaxTimeSeekable() const = 0;
@@ -336,7 +334,21 @@ protected:
 private:
     MediaPlayer* m_player;
 
-    Function<void()> m_pendingSeek;
+    struct PendingSeek {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        PendingSeek(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold, SeekCompletion&& seekCompletion)
+            : targetTime(targetTime)
+            , negativeThreshold(negativeThreshold)
+            , positiveThreshold(positiveThreshold)
+            , seekCompletion(WTFMove(seekCompletion))
+        {
+        }
+        MediaTime targetTime;
+        MediaTime negativeThreshold;
+        MediaTime positiveThreshold;
+        SeekCompletion seekCompletion;
+    };
+    std::unique_ptr<PendingSeek> m_pendingSeek;
 
     mutable Lock m_queuedNotificationsLock;
     Deque<Notification> m_queuedNotifications WTF_GUARDED_BY_LOCK(m_queuedNotificationsLock);

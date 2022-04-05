@@ -102,6 +102,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/text/TextEncoding.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/NeverDestroyed.h>
@@ -1555,7 +1556,7 @@ void MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange(MediaTime&& t
         m_currentTimeDidChangeCallback(m_cachedCurrentMediaTime.isFinite() ? m_cachedCurrentMediaTime : MediaTime::zeroTime());
 }
 
-void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&& completion)
 {
     // setCurrentTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
@@ -1574,16 +1575,16 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const
     WeakPtr weakThis { *this };
 
     setShouldObserveTimeControlStatus(false);
-    [m_avPlayerItem seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:^(BOOL finished) {
-        callOnMainThread([weakThis, finished] {
+    [m_avPlayerItem seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:makeBlockPtr([weakThis = WTFMove(weakThis), completion = WTFMove(completion)] (BOOL finished) mutable {
+        callOnMainThread([weakThis, completion = WTFMove(completion), finished] () mutable {
             auto _this = weakThis.get();
             if (!_this)
                 return;
 
             _this->setShouldObserveTimeControlStatus(true);
-            _this->seekCompleted(finished);
+            completion(finished ? MediaPlayerEnums::SeekResult::Completed : MediaPlayerEnums::SeekResult::Cancelled);
         });
-    }];
+    }).get()];
 
     setDelayCallbacks(false);
 }

@@ -167,7 +167,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
             if (shouldBePlaying())
                 [m_synchronizer setRate:m_rate];
             if (!seeking() && m_seekCompleted == SeekCompleted)
-                m_player->timeChanged();
+                finishSeek();
         }
 
         if (m_pendingSeek)
@@ -501,12 +501,15 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
     return MediaTime::zeroTime();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold, SeekCompletion&& completion)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "time = ", time, ", negativeThreshold = ", negativeThreshold, ", positiveThreshold = ", positiveThreshold);
 
+    if (m_pendingSeek)
+        m_pendingSeek->seekCompletion(MediaPlayerEnums::SeekResult::Cancelled);
+
     m_seeking = true;
-    m_pendingSeek = makeUnique<PendingSeek>(time, negativeThreshold, positiveThreshold);
+    m_pendingSeek = makeUnique<PendingSeek>(time, negativeThreshold, positiveThreshold, WTFMove(completion));
 
     if (m_seekTimer.isActive())
         m_seekTimer.stop();
@@ -521,8 +524,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     if (!pendingSeek)
         return;
 
-    if (!m_mediaSourcePrivate)
+    if (!m_mediaSourcePrivate) {
+        pendingSeek->seekCompletion(MediaPlayerEnums::SeekResult::Cancelled);
         return;
+    }
+
+    m_seekCompletion = makeUnique<SeekCompletion>(WTFMove(pendingSeek->seekCompletion));
 
     if (!pendingSeek->negativeThreshold && !pendingSeek->positiveThreshold)
         m_lastSeekTime = pendingSeek->targetTime;
@@ -550,7 +557,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         if (shouldBePlaying())
             [m_synchronizer setRate:m_rate];
         if (!seeking() && m_seekCompleted)
-            m_player->timeChanged();
+            finishSeek();
     }
 }
 
@@ -576,7 +583,17 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
     if (!m_seeking)
-        m_player->timeChanged();
+        finishSeek();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::finishSeek()
+{
+    ASSERT(m_seekCompletion);
+    if (m_seekCompletion) {
+        (*m_seekCompletion)(MediaPlayerEnums::SeekResult::Completed);
+        m_seekCompletion = nullptr;
+    }
+    m_player->timeChanged();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const

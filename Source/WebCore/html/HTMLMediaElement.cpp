@@ -3292,11 +3292,17 @@ void HTMLMediaElement::seekTask()
 
     // 11 - Set the current playback position to the given new playback position
     m_seekRequested = true;
-    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance);
+    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance, [this, weakThis = WeakPtr { *this }] (auto seekResult) {
+        // FIXME: Once all ports have adopted the SeekCompletion callback, the below can be removed.
+        if (seekResult == MediaPlayerEnums::SeekResult::Unknown)
+            return;
 
-    // 12 - Wait until the user agent has established whether or not the media data for the new playback
-    // position is available, and, if it is, until it has decoded enough data to play back that position.
-    // 13 - Await a stable state. The synchronous section consists of all the remaining steps of this algorithm.
+        // 12 - Wait until the user agent has established whether or not the media data for the new playback
+        // position is available, and, if it is, until it has decoded enough data to play back that position.
+        // 13 - Await a stable state. The synchronous section consists of all the remaining steps of this algorithm.
+        if (m_seekRequested && m_readyState >= HAVE_CURRENT_DATA && !m_player->seeking())
+            finishSeek();
+    });
 }
 
 void HTMLMediaElement::clearSeeking()
@@ -5065,6 +5071,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
     bool wasSeeking = seeking();
 
     // 4.8.10.9 step 14 & 15.  Needed if no ReadyState change is associated with the seek.
+    // FIXME: Once all ports have adopted the SeekCompletion callback, the below can be removed.
     if (m_seekRequested && m_readyState >= HAVE_CURRENT_DATA && !m_player->seeking())
         finishSeek();
 

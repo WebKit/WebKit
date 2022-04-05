@@ -205,14 +205,14 @@ void RemoteMediaPlayerProxy::pause()
     sendCachedState();
 }
 
-void RemoteMediaPlayerProxy::seek(const MediaTime& time)
+void RemoteMediaPlayerProxy::seek(const MediaTime& time, SeekCompletion&& seekCompletion)
 {
-    m_player->seek(time);
+    m_player->seek(time, WTFMove(seekCompletion));
 }
 
-void RemoteMediaPlayerProxy::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void RemoteMediaPlayerProxy::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&& seekCompletion)
 {
-    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance);
+    m_player->seekWithTolerance(time, negativeTolerance, positiveTolerance, WTFMove(seekCompletion));
 }
 
 void RemoteMediaPlayerProxy::setVolume(double volume)

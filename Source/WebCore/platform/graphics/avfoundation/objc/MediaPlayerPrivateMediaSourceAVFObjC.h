@@ -87,6 +87,7 @@ public:
     void seekInternal();
     void waitForSeekCompleted();
     void seekCompleted();
+    void finishSeek();
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
     void setHasAvailableVideoFrame(bool);
     bool hasAvailableVideoFrame() const override;
@@ -202,7 +203,7 @@ private:
     MediaTime startTime() const override;
     MediaTime initialTime() const override;
 
-    void seekWithTolerance(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) override;
+    void seekWithTolerance(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold, SeekCompletion&&) override;
     bool seeking() const override;
     void setRateDouble(double) override;
     double rate() const override;
@@ -288,15 +289,17 @@ private:
 
     struct PendingSeek {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        PendingSeek(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
+        PendingSeek(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold, SeekCompletion&& seekCompletion)
             : targetTime(targetTime)
             , negativeThreshold(negativeThreshold)
             , positiveThreshold(positiveThreshold)
+            , seekCompletion(WTFMove(seekCompletion))
         {
         }
         MediaTime targetTime;
         MediaTime negativeThreshold;
         MediaTime positiveThreshold;
+        SeekCompletion seekCompletion;
     };
     std::unique_ptr<PendingSeek> m_pendingSeek;
 
@@ -340,6 +343,7 @@ private:
     bool m_playing;
     bool m_seeking;
     SeekState m_seekCompleted { SeekCompleted };
+    std::unique_ptr<SeekCompletion> m_seekCompletion;
     mutable bool m_loadingProgressed;
     bool m_hasBeenAskedToPaintGL { false };
     bool m_hasAvailableVideoFrame { false };

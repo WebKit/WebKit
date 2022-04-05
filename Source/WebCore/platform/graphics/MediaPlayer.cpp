@@ -764,14 +764,14 @@ MediaTime MediaPlayer::getStartDate() const
     return m_private->getStartDate();
 }
 
-void MediaPlayer::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
+void MediaPlayer::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&& completion)
 {
-    m_private->seekWithTolerance(time, negativeTolerance, positiveTolerance);
+    m_private->seekWithTolerance(time, negativeTolerance, positiveTolerance, WTFMove(completion));
 }
 
-void MediaPlayer::seek(const MediaTime& time)
+void MediaPlayer::seek(const MediaTime& time, SeekCompletion&& completion)
 {
-    m_private->seek(time);
+    m_private->seek(time, WTFMove(completion));
 }
 
 void MediaPlayer::seekWhenPossible(const MediaTime& time)

@@ -258,8 +258,8 @@ private:
 
     MediaTime getStartDate() const final;
 
-    void seek(const MediaTime&) final;
-    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) final;
+    void seek(const MediaTime&, SeekCompletion&&) final;
+    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, SeekCompletion&&) final;
 
     bool seeking() const final { return m_seeking; }
 
