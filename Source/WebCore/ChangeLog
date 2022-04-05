@@ -1,3 +1,31 @@
+2022-04-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [macOS][selectors] :focus-visible matching on button focused via script (after clicking on a different button)
+        https://bugs.webkit.org/show_bug.cgi?id=236782
+        <rdar://problem/89382543>
+
+        Reviewed by Antti Koivisto.
+
+        Document::m_latestFocusTrigger was not being updated after clicking on a button (or other form controls)
+        on platforms different than GTK and WPE.
+        This is because HTMLFormControlElement::isMouseFocusable() returns false on such platforms.
+
+        This issue is causing problems with :focus-visible, as the button is not actually focused via mouse click,
+        if you move the focus via script afterwards, the new focused element always match :focus-visible.
+
+        This patch is a workaround to solve that issue, by updating m_latestFocusTrigger on Document
+        even if the element is not actually focused.
+        That way :focus-visible doesn't match if there's a script focus afterwards.
+
+        Fix :focus-visible after clicking on a button on Mac
+
+        Test: imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-008-b.html
+
+        * dom/Document.h:
+        (WebCore::Document::setLatestFocusTrigger):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent):
+
 2022-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Pass an IOSurfacePool to ImageBuffer::releaseBufferToPool()
