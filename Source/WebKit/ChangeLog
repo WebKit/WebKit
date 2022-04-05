@@ -1,3 +1,18 @@
+2022-04-04  Tim Horton  <timothy_horton@apple.com>
+
+        Stop generating WebKit system feature flags plists
+        https://bugs.webkit.org/show_bug.cgi?id=238784
+
+        Reviewed by Wenson Hsieh.
+
+        * FeatureFlags/WebKit-appletvos.plist: Removed.
+        * FeatureFlags/WebKit-ios.plist: Removed.
+        * FeatureFlags/WebKit-macos.plist: Removed.
+        * FeatureFlags/WebKit-watchos.plist: Removed.
+        * Scripts/combine-feature-flags-plist.py: Removed.
+        * Scripts/generate-feature-flags-plist.sh: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-04-04  Saam Barati  <sbarati@apple.com>
 
         Turn off LLInt ICs in captive portal mode

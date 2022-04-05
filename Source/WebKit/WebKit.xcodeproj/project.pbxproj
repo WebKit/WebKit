@@ -3701,10 +3701,6 @@
 		1CEF45BC27BCA46A00C3A6BC /* WebGPUShaderModuleCompilationHint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModuleCompilationHint.h; sourceTree = "<group>"; };
 		1CF18F3E26BB5D90004B1722 /* LogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
 		1D0530C9258EAB4400E436F7 /* combine-feature-flags-plist.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "combine-feature-flags-plist.py"; sourceTree = "<group>"; };
-		1D0530D1259162C800E436F7 /* WebKit-ios.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-ios.plist"; sourceTree = "<group>"; };
-		1D0530D2259162C900E436F7 /* WebKit-appletvos.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-appletvos.plist"; sourceTree = "<group>"; };
-		1D0530D3259162C900E436F7 /* WebKit-macos.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-macos.plist"; sourceTree = "<group>"; };
-		1D0530D4259162C900E436F7 /* WebKit-watchos.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKit-watchos.plist"; sourceTree = "<group>"; };
 		1D0530D52591941500E436F7 /* generate-feature-flags-plist.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "generate-feature-flags-plist.sh"; sourceTree = "<group>"; };
 		1D0B66192624C11800F9712F /* WebMediaKeySystemClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaKeySystemClient.cpp; sourceTree = "<group>"; };
 		1D0B661A2624C19600F9712F /* MediaKeySystemPermissionRequestManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaKeySystemPermissionRequestManager.cpp; path = EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp; sourceTree = "<group>"; };
@@ -7592,7 +7588,6 @@
 				2D9FB1FF2375209D0049F936 /* GPUProcess */,
 				5742A2FF2535758000B7BA14 /* WebAuthnProcess */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
-				1DEC97AB246B6865007C83F4 /* FeatureFlags */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
@@ -8667,17 +8662,6 @@
 				1DFDD0DF23F60E1E00E9B490 /* VideoLayerRemoteCocoa.mm */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		1DEC97AB246B6865007C83F4 /* FeatureFlags */ = {
-			isa = PBXGroup;
-			children = (
-				1D0530D2259162C900E436F7 /* WebKit-appletvos.plist */,
-				1D0530D1259162C800E436F7 /* WebKit-ios.plist */,
-				1D0530D3259162C900E436F7 /* WebKit-macos.plist */,
-				1D0530D4259162C900E436F7 /* WebKit-watchos.plist */,
-			);
-			path = FeatureFlags;
 			sourceTree = "<group>";
 		};
 		1F0181681858DC1500F92884 /* Cocoa */ = {
@@ -15730,7 +15714,6 @@
 				5DF408D1131DDBEC00130071 /* Check For Inappropriate Files In Framework */,
 				A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */,
 				1A2180161B5454620046AEC4 /* Add Symlink in /System/Library/PrivateFrameworks */,
-				1D12CC4E2414265300FDA0A3 /* Copy Feature Flags Plist */,
 				5379C7AC21E5288500E4A8F6 /* Check .xcfilelists */,
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
@@ -16023,29 +16006,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\ntouch \"${PROJECT_DIR}/Info.plist\";\nfi;\n";
-		};
-		1D12CC4E2414265300FDA0A3 /* Copy Feature Flags Plist */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/FeatureFlags/WebKit-appletvos.plist",
-				"$(SRCROOT)/FeatureFlags/WebKit-ios.plist",
-				"$(SRCROOT)/FeatureFlags/WebKit-macos.plist",
-				"$(SRCROOT)/FeatureFlags/WebKit-watchos.plist",
-			);
-			name = "Copy Feature Flags Plist";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(INSTALL_ROOT)/$(WK_INSTALL_PATH_PREFIX)/$(SYSTEM_LIBRARY_DIR)/FeatureFlags/Domain/WebKit.plist",
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "${SRCROOT}/Scripts/generate-feature-flags-plist.sh\n";
 		};
 		2D7DEBDF21269C9F00B9F73C /* Generate Unified Sources */ = {
 			isa = PBXShellScriptBuildPhase;
