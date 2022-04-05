@@ -1,5 +1,13 @@
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed WinCairo build fix after r292408.
+
+        * WebView.cpp:
+        (imeNotificationName):
+        (imeRequestName):
+
+2022-04-05  Chris Dumez  <cdumez@apple.com>
+
         Mark String(const char*) constructor as explicit
         https://bugs.webkit.org/show_bug.cgi?id=238693
 

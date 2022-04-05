@@ -1,5 +1,13 @@
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed WinCairo build fix after r292408.
+
+        * platform/win/GDIObjectCounter.cpp:
+        (WebCore::GDIObjectCounter::GDIObjectCounter):
+        * platform/win/GDIObjectCounter.h:
+
+2022-04-05  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed Windows debug build fix after r292279.
 
         * animation/CSSPropertyAnimation.cpp:

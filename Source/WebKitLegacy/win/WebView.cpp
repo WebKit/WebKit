@@ -6079,31 +6079,31 @@ static String imeNotificationName(WPARAM wparam)
 {
     switch (wparam) {
     case IMN_CHANGECANDIDATE:
-        return "IMN_CHANGECANDIDATE";
+        return "IMN_CHANGECANDIDATE"_s;
     case IMN_CLOSECANDIDATE:
-        return "IMN_CLOSECANDIDATE";
+        return "IMN_CLOSECANDIDATE"_s;
     case IMN_CLOSESTATUSWINDOW:
-        return "IMN_CLOSESTATUSWINDOW";
+        return "IMN_CLOSESTATUSWINDOW"_s;
     case IMN_GUIDELINE:
-        return "IMN_GUIDELINE";
+        return "IMN_GUIDELINE"_s;
     case IMN_OPENCANDIDATE:
-        return "IMN_OPENCANDIDATE";
+        return "IMN_OPENCANDIDATE"_s;
     case IMN_OPENSTATUSWINDOW:
-        return "IMN_OPENSTATUSWINDOW";
+        return "IMN_OPENSTATUSWINDOW"_s;
     case IMN_SETCANDIDATEPOS:
-        return "IMN_SETCANDIDATEPOS";
+        return "IMN_SETCANDIDATEPOS"_s;
     case IMN_SETCOMPOSITIONFONT:
-        return "IMN_SETCOMPOSITIONFONT";
+        return "IMN_SETCOMPOSITIONFONT"_s;
     case IMN_SETCOMPOSITIONWINDOW:
-        return "IMN_SETCOMPOSITIONWINDOW";
+        return "IMN_SETCOMPOSITIONWINDOW"_s;
     case IMN_SETCONVERSIONMODE:
-        return "IMN_SETCONVERSIONMODE";
+        return "IMN_SETCONVERSIONMODE"_s;
     case IMN_SETOPENSTATUS:
-        return "IMN_SETOPENSTATUS";
+        return "IMN_SETOPENSTATUS"_s;
     case IMN_SETSENTENCEMODE:
-        return "IMN_SETSENTENCEMODE";
+        return "IMN_SETSENTENCEMODE"_s;
     case IMN_SETSTATUSWINDOWPOS:
-        return "IMN_SETSTATUSWINDOWPOS";
+        return "IMN_SETSTATUSWINDOWPOS"_s;
     default:
         return "Unknown (" + String::number(wparam) + ")";
     }
@@ -6113,19 +6113,19 @@ static String imeRequestName(WPARAM wparam)
 {
     switch (wparam) {
     case IMR_CANDIDATEWINDOW:
-        return "IMR_CANDIDATEWINDOW";
+        return "IMR_CANDIDATEWINDOW"_s;
     case IMR_COMPOSITIONFONT:
-        return "IMR_COMPOSITIONFONT";
+        return "IMR_COMPOSITIONFONT"_s;
     case IMR_COMPOSITIONWINDOW:
-        return "IMR_COMPOSITIONWINDOW";
+        return "IMR_COMPOSITIONWINDOW"_s;
     case IMR_CONFIRMRECONVERTSTRING:
-        return "IMR_CONFIRMRECONVERTSTRING";
+        return "IMR_CONFIRMRECONVERTSTRING"_s;
     case IMR_DOCUMENTFEED:
-        return "IMR_DOCUMENTFEED";
+        return "IMR_DOCUMENTFEED"_s;
     case IMR_QUERYCHARPOSITION:
-        return "IMR_QUERYCHARPOSITION";
+        return "IMR_QUERYCHARPOSITION"_s;
     case IMR_RECONVERTSTRING:
-        return "IMR_RECONVERTSTRING";
+        return "IMR_RECONVERTSTRING"_s;
     default:
         return "Unknown (" + String::number(wparam) + ")";
     }
