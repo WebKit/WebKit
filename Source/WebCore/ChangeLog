@@ -1,3 +1,14 @@
+2022-04-05  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GStreamer] gst_video_format_info_component not defined in GStreamer <1.18
+        https://bugs.webkit.org/show_bug.cgi?id=238685
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::webkitGstVideoFormatInfoComponent):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+
 2022-04-05  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Support rendering url(), CSS basic shapes other than path(), and coord-box for offset-path
