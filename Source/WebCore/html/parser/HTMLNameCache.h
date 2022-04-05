@@ -34,11 +34,6 @@ namespace WebCore {
 
 class HTMLNameCache {
 public:
-    ALWAYS_INLINE static AtomString makeTagName(Span<const UChar> string)
-    {
-        return makeAtomString<AtomStringType::TagName>(string);
-    }
-
     ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(Span<const UChar> string)
     {
         return makeQualifiedName(string);
@@ -46,21 +41,17 @@ public:
 
     ALWAYS_INLINE static AtomString makeAttributeValue(Span<const UChar> string)
     {
-        return makeAtomString<AtomStringType::AttributeValue>(string);
+        return makeAtomString(string);
     }
 
     ALWAYS_INLINE static void clear()
     {
         // FIXME (webkit.org/b/230019): We should try to find more opportunities to clear this cache without hindering this performance optimization.
-        atomStringCache(AtomStringType::TagName).fill({ });
-        atomStringCache(AtomStringType::AttributeValue).fill({ });
+        atomStringCache().fill({ });
         qualifiedNameCache().fill({ });
     }
 
 private:
-    enum class AtomStringType : bool { TagName, AttributeValue };
-
-    template<HTMLNameCache::AtomStringType type>
     ALWAYS_INLINE static AtomString makeAtomString(Span<const UChar> string)
     {
         if (string.empty())
@@ -72,7 +63,7 @@ private:
 
         auto firstCharacter = string[0];
         auto lastCharacter = string[length - 1];
-        auto& slot = atomStringCacheSlot(type, firstCharacter, lastCharacter, length);
+        auto& slot = atomStringCacheSlot(firstCharacter, lastCharacter, length);
         if (!equal(slot.impl(), string.data(), length)) {
             AtomString result(string.data(), length);
             slot = result;
@@ -111,10 +102,10 @@ private:
         return (hash + (hash >> 6)) % capacity;
     }
 
-    ALWAYS_INLINE static AtomString& atomStringCacheSlot(AtomStringType type, UChar firstCharacter, UChar lastCharacter, UChar length)
+    ALWAYS_INLINE static AtomString& atomStringCacheSlot(UChar firstCharacter, UChar lastCharacter, UChar length)
     {
         auto index = slotIndex(firstCharacter, lastCharacter, length);
-        return atomStringCache(type)[index];
+        return atomStringCache()[index];
     }
 
     ALWAYS_INLINE static RefPtr<QualifiedName::QualifiedNameImpl>& qualifiedNameCacheSlot(UChar firstCharacter, UChar lastCharacter, UChar length)
@@ -129,7 +120,7 @@ private:
     using AtomStringCache = std::array<AtomString, capacity>;
     using QualifiedNameCache = std::array<RefPtr<QualifiedName::QualifiedNameImpl>, capacity>;
 
-    static AtomStringCache& atomStringCache(AtomStringType);
+    static AtomStringCache& atomStringCache();
     static QualifiedNameCache& qualifiedNameCache();
 };
 
