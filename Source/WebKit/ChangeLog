@@ -1,3 +1,9 @@
+2022-04-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER build
+
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
+
 2022-04-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Do not create network process in ~WebsiteDataStore destructor
