@@ -1,3 +1,11 @@
+2022-04-05  Tim Nguyen  <ntim@apple.com>
+
+        [iOS] Add timeout expectations for focus-after-close.html WPT
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close-expected.txt: Added.
+
 2022-04-04  Ziran Sun  <zsun@igalia.com>
 
         [Forms] change the default appearance of button, checkbox etc. to 'auto'
