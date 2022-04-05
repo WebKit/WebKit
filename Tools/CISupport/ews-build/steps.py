@@ -4899,6 +4899,39 @@ class PushPullRequestBranch(shell.ShellCommand):
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
 
+
+class DeletePullRequestBranch(shell.ShellCommand):
+    name = 'delete-pull-request-branch'
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(DeletePullRequestBranch, self).__init__(logEnviron=False, timeout=300, **kwargs)
+
+    def start(self):
+        remote = self.getProperty('github.head.repo.full_name').split('/')[0]
+        head_ref = self.getProperty('github.head.ref')
+        self.command = ['git', 'push', remote, '--delete', head_ref]
+
+        username, access_token = GitHub.credentials()
+        self.workerEnvironment['GIT_USER'] = username
+        self.workerEnvironment['GIT_PASSWORD'] = access_token
+
+        return super(DeletePullRequestBranch, self).start()
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': 'Deleted pull request branch on remote'}
+        if self.results == FAILURE:
+            return {'step': 'Failed to delete pull request branch'}
+        return super(DeletePullRequestBranch, self).getResultSummary()
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.number') and self.getProperty('github.head.ref') and self.getProperty('github.head.repo.full_name')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
 class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
     name = 'update-pull-request'
     haltOnFailure = True

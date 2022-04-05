@@ -1,3 +1,21 @@
+2022-04-05  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Delete pull request branch
+        https://bugs.webkit.org/show_bug.cgi?id=238818
+        <rdar://problem/91301707>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * CISupport/ews-build/steps.py:
+        (DeletePullRequestBranch):
+        (DeletePullRequestBranch.__init__):
+        (DeletePullRequestBranch.start): Delete a pull request branch
+        on the user's remote to close the associated pull request.
+        (DeletePullRequestBranch.getResultSummary):
+        (DeletePullRequestBranch.doStepIf): Only do step if pull request details are available.
+        (DeletePullRequestBranch.hideStepIf):
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-04-05  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE changes.diff contains differences that are from stale files or unneeded
