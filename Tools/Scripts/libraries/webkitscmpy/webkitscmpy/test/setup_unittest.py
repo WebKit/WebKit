@@ -24,6 +24,8 @@ import logging
 import os
 import sys
 
+from mock import patch
+from webkitbugspy import bugzilla
 from webkitcorepy import Editor, OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Terminal as MockTerminal
 from webkitscmpy import local, program, mocks
@@ -78,7 +80,7 @@ Created a private fork of 'WebKit' belonging to 'username'!
     def test_git(self):
         self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, \
-            mocks.local.Svn(), wkmocks.Environment(EMAIL_ADDRESS=''):
+            mocks.local.Svn(), wkmocks.Environment(EMAIL_ADDRESS=''), patch('webkitbugspy.Tracker._trackers', []):
 
             self.assertEqual(0, program.main(
                 args=('setup', '--defaults', '-v'),
@@ -120,7 +122,9 @@ Using the default git editor for this repository
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
             MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'disabled', '1', 'y', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
-            wkmocks.Environment(EMAIL_ADDRESS=''):
+            wkmocks.Environment(
+                EMAIL_ADDRESS='', BUGS_EXAMPLE_COM_USERNAME='username', BUGS_EXAMPLE_COM_PASSWORD='password',
+            ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker('https://bugs.example.com')]):
 
             self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 
@@ -175,6 +179,7 @@ Set better Objective-C diffing behavior for this repository!
 Using a rebase merge strategy for this repository
 Setting git editor for {repository}...
 Using the default git editor for this repository
+Verifying https://bugs.example.com credentials...
 Saving GitHub credentials in system credential store...
 GitHub credentials saved via Keyring!
 Verifying user owned fork...

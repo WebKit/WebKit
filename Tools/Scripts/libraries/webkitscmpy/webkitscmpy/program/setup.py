@@ -26,6 +26,7 @@ import sys
 
 from .command import Command
 from requests.auth import HTTPBasicAuth
+from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, Editor, Terminal
 from webkitscmpy import log, local, remote
 
@@ -249,6 +250,15 @@ class Setup(Command):
             else:
                 # Force reset cache
                 repository.url(cached=False)
+
+        # Bug trackers often require credentials, prompt the user for those if applicable
+        default_tracker = Tracker.instance()
+        if default_tracker and hasattr(default_tracker, 'credentials') and hasattr(default_tracker, 'url'):
+            log.info("Verifying {} credentials...".format(default_tracker.url.split('\\')[-1]))
+            try:
+                default_tracker.credentials(required=True, validate=True)
+            except SystemExit:
+                sys.stderr.write('Failed to determine {} credentials, continuing\n'.format(default_tracker.url.split('\\')[-1]))
 
         # Any additional setup passed to main
         if additional_setup:

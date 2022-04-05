@@ -33,6 +33,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
     global _cache
 
     name = name or url.split('/')[2].replace('.', '_')
+    hostname = url.split('//')[-1]
     if _cache.get(name):
         return _cache.get(name)
 
@@ -58,7 +59,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
         if not username:
             try:
                 if keyring and not attempt:
-                    username = keyring.get_password(url, 'username')
+                    username = keyring.get_password(hostname, 'username')
             except (RuntimeError, AttributeError):
                 pass
 
@@ -75,7 +76,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
         if not key and username:
             try:
                 if keyring and not attempt:
-                    key = keyring.get_password(url, username)
+                    key = keyring.get_password(hostname, username)
             except (RuntimeError, AttributeError):
                 pass
 
@@ -103,12 +104,12 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
 
     if keyring and (username_prompted or key_prompted):
         if save_in_keyring or (save_in_keyring is None and Terminal.choose(
-            'Store username and {} in system keyring for {}?'.format(key_name, url),
+            'Store username and {} in system keyring for {}?'.format(key_name, hostname),
             default='Yes',
         ) == 'Yes'):
             sys.stderr.write('Storing credentials...\n')
-            keyring.set_password(url, 'username', username)
-            keyring.set_password(url, username, key)
+            keyring.set_password(hostname, 'username', username)
+            keyring.set_password(hostname, username, key)
         else:
             sys.stderr.write('Credentials cached in process.\n')
 
