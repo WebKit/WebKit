@@ -1,3 +1,13 @@
+2022-04-05  Alan Bujtas  <zalan@apple.com>
+
+        [CSS-Contain] Flex layout should take "contain: inline-size" into account when computing the flex item's logical width
+        https://bugs.webkit.org/show_bug.cgi?id=238805
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeIntrinsicLogicalWidths const):
+
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed WinCairo build fix after r292408.
