@@ -155,7 +155,7 @@ DMABufObject GBMBufferSwapchain::Buffer::createDMABufObject(uintptr_t handle) co
     object.releaseFlag = m_state.releaseFlag.dup();
 
     for (unsigned i = 0; i < m_description.format.numPlanes; ++i) {
-        object.fd[i] = WTF::UnixFileDescriptor { gbm_bo_get_fd(m_planes[i].bo), WTF::UnixFileDescriptor::Adopt };
+        object.fd[i] = gbm_bo_get_fd(m_planes[i].bo);
         object.offset[i] = 0;
         object.stride[i] = m_planes[i].stride;
         // TODO: these should be the plane-specific modifiers. We don't use them yet.

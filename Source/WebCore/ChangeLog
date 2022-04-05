@@ -1,3 +1,16 @@
+2022-04-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, reverting r292377.
+
+        The depended-on patch hasn't landed yet
+
+        Reverted changeset:
+
+        "[GTK][WPE] Use UnixFileDescriptor in DMABufObject,
+        DMABufReleaseFlag"
+        https://bugs.webkit.org/show_bug.cgi?id=238733
+        https://commits.webkit.org/r292377
+
 2022-04-04  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Use UnixFileDescriptor in DMABufObject, DMABufReleaseFlag

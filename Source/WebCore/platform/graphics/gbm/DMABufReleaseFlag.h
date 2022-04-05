@@ -27,7 +27,7 @@
 #pragma once
 
 #include <sys/eventfd.h>
-#include <wtf/unix/UnixFileDescriptor.h>
+#include <wtf/UniStdExtras.h>
 
 namespace WebCore {
 
@@ -37,45 +37,66 @@ struct DMABufReleaseFlag {
     enum InitializeTag { Initialize };
     DMABufReleaseFlag(InitializeTag)
     {
-        fd = { eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK), WTF::UnixFileDescriptor::Adopt };
+        fd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
     }
 
-    ~DMABufReleaseFlag() = default;
+    ~DMABufReleaseFlag()
+    {
+        if (fd != -1)
+            close(fd);
+        fd = -1;
+    }
 
     DMABufReleaseFlag(const DMABufReleaseFlag&) = delete;
     DMABufReleaseFlag& operator=(const DMABufReleaseFlag&) = delete;
 
-    DMABufReleaseFlag(DMABufReleaseFlag&&) = default;
-    DMABufReleaseFlag& operator=(DMABufReleaseFlag&&) = default;
+    DMABufReleaseFlag(DMABufReleaseFlag&& o)
+    {
+        fd = o.fd;
+        o.fd = -1;
+    }
+
+    DMABufReleaseFlag& operator=(DMABufReleaseFlag&& o)
+    {
+        if (this == &o)
+            return *this;
+
+        this->~DMABufReleaseFlag();
+        new (this) DMABufReleaseFlag(WTFMove(o));
+        return *this;
+    }
 
     DMABufReleaseFlag dup() const
     {
+        if (fd == -1)
+            return { };
+
         DMABufReleaseFlag flag;
-        flag.fd = fd.duplicate();
+        flag.fd = dupCloseOnExec(fd);
         return flag;
     }
 
     bool released() const
     {
-        if (fd.value == -1)
+        if (fd == -1)
             return true;
 
         uint64_t value { 0 };
-        if (read(fd.value, &value, sizeof(uint64_t)) == sizeof(uint64_t))
+        if (read(fd, &value, sizeof(uint64_t)) == sizeof(uint64_t))
             return !!value;
         return false;
     }
 
     void release()
     {
-        if (fd.value == -1)
+        if (fd == -1)
             return;
 
         uint64_t value { 1 };
-        write(fd.value, &value, sizeof(uint64_t));
+        write(fd, &value, sizeof(uint64_t));
     }
 
-    WTF::UnixFileDescriptor fd { };
+    int fd { -1 };
 };
 
 } // namespace WebCore

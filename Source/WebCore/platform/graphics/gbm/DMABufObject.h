@@ -32,7 +32,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <unistd.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebCore {
 
@@ -41,20 +40,50 @@ struct DMABufObject {
         : handle(handle)
     { }
 
-    ~DMABufObject() = default;
+    ~DMABufObject()
+    {
+        for (unsigned i = 0; i < format.numPlanes; ++i) {
+            if (fd[i] != -1)
+                close(fd[i]);
+        }
+    }
 
     DMABufObject(const DMABufObject&) = delete;
     DMABufObject& operator=(const DMABufObject&) = delete;
 
-    DMABufObject(DMABufObject&&) = default;
-    DMABufObject& operator=(DMABufObject&&) = default;
+    DMABufObject(DMABufObject&& o)
+        : handle(o.handle)
+        , format(o.format)
+        , width(o.width)
+        , height(o.height)
+        , releaseFlag(WTFMove(o.releaseFlag))
+    {
+        for (unsigned i = 0; i < format.numPlanes; ++i) {
+            fd[i] = o.fd[i];
+            o.fd[i] = -1;
+
+            offset[i] = o.offset[i];
+            stride[i] = o.stride[i];
+            modifier[i] = o.modifier[i];
+        }
+    }
+
+    DMABufObject& operator=(DMABufObject&& o)
+    {
+        if (this == &o)
+            return *this;
+
+        this->~DMABufObject();
+        new (this) DMABufObject(WTFMove(o));
+        return *this;
+    }
 
     uintptr_t handle { 0 };
     DMABufFormat format { };
     uint32_t width { 0 };
     uint32_t height { 0 };
     DMABufReleaseFlag releaseFlag { };
-    std::array<WTF::UnixFileDescriptor, DMABufFormat::c_maxPlanes> fd { };
+    std::array<int, DMABufFormat::c_maxPlanes> fd { -1, -1, -1, -1 };
     std::array<size_t, DMABufFormat::c_maxPlanes> offset { 0, 0, 0, 0 };
     std::array<uint32_t, DMABufFormat::c_maxPlanes> stride { 0, 0, 0, 0 };
     std::array<uint64_t, DMABufFormat::c_maxPlanes> modifier { 0, 0, 0, 0 };
