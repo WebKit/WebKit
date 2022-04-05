@@ -315,21 +315,14 @@ void CallLinkInfo::revertCallToStub()
     }
 }
 
-void BaselineCallLinkInfo::initialize(VM& vm, CallType callType, BytecodeIndex bytecodeIndex, CallFrameShuffleData* frameShuffleData)
+void BaselineCallLinkInfo::initialize(VM& vm, CallType callType, BytecodeIndex bytecodeIndex)
 {
-    UNUSED_PARAM(frameShuffleData);
     m_type = static_cast<unsigned>(Type::Baseline);
     ASSERT(Type::Baseline == type());
     m_useDataIC = static_cast<unsigned>(UseDataIC::Yes);
     ASSERT(UseDataIC::Yes == useDataIC());
     m_codeOrigin = CodeOrigin(bytecodeIndex);
     m_callType = callType;
-#if ENABLE(JIT)
-    if (frameShuffleData) {
-        // FIXME: It'd be nice if this were a refcounted data structure.
-        m_frameShuffleData = makeUnique<CallFrameShuffleData>(*frameShuffleData);
-    }
-#endif
     if (LIKELY(Options::useLLIntICs()))
         setSlowPathCallDestination(vm.getCTILinkCall().code());
     else
@@ -341,7 +334,7 @@ void BaselineCallLinkInfo::initialize(VM& vm, CallType callType, BytecodeIndex b
 
 #if ENABLE(JIT)
 
-void CallLinkInfo::setFrameShuffleData(const CallFrameShuffleData& shuffleData)
+void OptimizingCallLinkInfo::setFrameShuffleData(const CallFrameShuffleData& shuffleData)
 {
     m_frameShuffleData = makeUnique<CallFrameShuffleData>(shuffleData);
     m_frameShuffleData->shrinkToFit();

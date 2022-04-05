@@ -1729,10 +1729,28 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     bool isDataIC = callLinkInfo.isDataIC();
     CCallHelpers stubJit(callerCodeBlock);
 
-    std::unique_ptr<CallFrameShuffler> frameShuffler;
-    if (callLinkInfo.frameShuffleData()) {
-        ASSERT(callLinkInfo.isTailCall());
-        frameShuffler = makeUnique<CallFrameShuffler>(stubJit, *callLinkInfo.frameShuffleData());
+    std::optional<CallFrameShuffler> frameShuffler;
+    switch (callLinkInfo.type()) {
+    case CallLinkInfo::Type::Baseline: {
+        auto* instruction = callerCodeBlock->instructionAt(callLinkInfo.codeOrigin().bytecodeIndex());
+        if (instruction->opcodeID() == op_tail_call) {
+            auto bytecode = instruction->as<OpTailCall>();
+            CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, callerCodeBlock->numParameters());
+            frameShuffler.emplace(stubJit, shuffleData);
+        }
+        break;
+    }
+    case CallLinkInfo::Type::Optimizing: {
+        auto& optimizingCallLinkInfo = static_cast<OptimizingCallLinkInfo&>(callLinkInfo);
+        if (optimizingCallLinkInfo.frameShuffleData()) {
+            ASSERT(callLinkInfo.isTailCall());
+            frameShuffler.emplace(stubJit, *optimizingCallLinkInfo.frameShuffleData());
+        }
+        break;
+    }
+    }
+
+    if (frameShuffler) {
 #if USE(JSVALUE32_64)
         // We would have already checked that the callee is a cell, and we can
         // use the additional register this buys us.

@@ -442,14 +442,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     };
 
     auto link_callLinkInfo = [&](const auto& instruction, auto bytecode, auto& metadata) {
-#if ENABLE(JIT)
-        if constexpr (decltype(bytecode)::opcodeID == op_tail_call) {
-            CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, numParameters());
-            metadata.m_callLinkInfo.initialize(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index(), &shuffleData);
-            return;
-        }
-#endif
-        metadata.m_callLinkInfo.initialize(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index(), nullptr);
+        metadata.m_callLinkInfo.initialize(vm, CallLinkInfo::callTypeFor(decltype(bytecode)::opcodeID), instruction.index());
     };
 
 #define LINK_FIELD(__field) \

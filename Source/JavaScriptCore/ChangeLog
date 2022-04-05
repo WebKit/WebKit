@@ -1,5 +1,27 @@
 2022-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Reduce sizeof(BaselineCallLinkInfo) to make bug 238535 good
+        https://bugs.webkit.org/show_bug.cgi?id=238777
+
+        Reviewed by Mark Lam.
+
+        https://bugs.webkit.org/show_bug.cgi?id=238535 adds one pointer to CallLinkInfo.
+        To make BaselineCallLinkInfo small, this patch removes std::unique_ptr<CallFrameShuffleData>
+        in BaselineCallLinkInfo since it can be computed in repatching code.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::BaselineCallLinkInfo::initialize):
+        (JSC::OptimizingCallLinkInfo::setFrameShuffleData):
+        (JSC::CallLinkInfo::setFrameShuffleData): Deleted.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::frameShuffleData): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+
+2022-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Store CodeBlock in caller side
         https://bugs.webkit.org/show_bug.cgi?id=238535
 

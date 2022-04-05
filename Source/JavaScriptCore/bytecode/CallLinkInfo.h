@@ -369,15 +369,6 @@ public:
 
     void visitWeak(VM&);
 
-#if ENABLE(JIT)
-    void setFrameShuffleData(const CallFrameShuffleData&);
-
-    const CallFrameShuffleData* frameShuffleData()
-    {
-        return m_frameShuffleData.get();
-    }
-#endif
-
     Type type() const { return static_cast<Type>(m_type); }
 
 protected:
@@ -424,7 +415,6 @@ protected:
     WriteBarrier<JSCell> m_lastSeenCalleeOrExecutable;
 #if ENABLE(JIT)
     RefPtr<PolymorphicCallStubRoutine> m_stub;
-    std::unique_ptr<CallFrameShuffleData> m_frameShuffleData;
 #endif
     CodeOrigin m_codeOrigin;
     bool m_hasSeenShouldRepatch : 1;
@@ -450,7 +440,7 @@ public:
     {
     }
 
-    void initialize(VM&, CallType, BytecodeIndex, CallFrameShuffleData*);
+    void initialize(VM&, CallType, BytecodeIndex);
 
     void setCodeLocations(CodeLocationLabel<JSInternalPtrTag> doneLocation)
     {
@@ -516,10 +506,18 @@ public:
     MacroAssembler::JumpList emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
     MacroAssembler::JumpList emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
 
+    void setFrameShuffleData(const CallFrameShuffleData&);
+
+    const CallFrameShuffleData* frameShuffleData()
+    {
+        return m_frameShuffleData.get();
+    }
+
 private:
     CodeLocationNearCall<JSInternalPtrTag> m_callLocation;
     CodeLocationLabel<JSInternalPtrTag> m_slowPathStart;
     CodeLocationLabel<JSInternalPtrTag> m_fastPathStart;
+    std::unique_ptr<CallFrameShuffleData> m_frameShuffleData;
 };
 
 inline GPRReg CallLinkInfo::calleeGPR() const
