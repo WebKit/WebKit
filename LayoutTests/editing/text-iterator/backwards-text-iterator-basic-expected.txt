@@ -19,7 +19,7 @@ PASS plainTextWithTextIterator("<ul><li>hello<li>world</ul>WebKit") is "hello\nw
 PASS plainTextWithBackwardsTextIterator("<ul><li>hello<li>world</ul>WebKit") is "\n\nhello\nworld\nWebKit"
 
 PASS plainTextWithTextIterator("<table><tr><td>hello</td><td>world</td></table>") is "hello	world"
-PASS plainTextWithBackwardsTextIterator("<table><tr><td>hello</td><td>world</td></table>") is "\n\nhello\nworld"
+PASS plainTextWithBackwardsTextIterator("<table><tr><td>hello</td><td>world</td></table>") is "\n\nhello\tworld\t"
 
 PASS plainTextWithBackwardsTextIterator("img<img>iframe<iframe></iframe>meter<meter></meter>progress<progress></progress><legend>legend</legend>imgrole<span role='img'></span><button>button</button>") is "img,iframe,meter,progress,\nlegend,imgrole,button,"
 PASS plainTextWithBackwardsTextIterator("audio<audio controls><source src='test.mp3' type='audio/mpeg'></audio>file") is "audio,file"

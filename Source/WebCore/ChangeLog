@@ -1,3 +1,20 @@
+2022-04-05  Megan Gardner  <megan_gardner@apple.com>
+
+        Moving forwards and backwards by sentences across a table results in different breaks in each direction.
+        https://bugs.webkit.org/show_bug.cgi?id=238621
+
+        Reviewed by Darin Adler.
+
+        Tests: editing/selection/move-selection-backwards-at-end-of-table-by-sentence-granularity.html
+               editing/selection/move-selection-forwards-at-beginning-of-table-by-sentence-granularity.html
+
+        We need to emit tabs even in a simplified backwards text iterator because otherwise traversing a table by
+        sentence granularity results in not having the same behavior backwards and forwards.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode):
+        (WebCore::SimplifiedBackwardsTextIterator::exitNode):
+
 2022-04-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, reverting r292377.

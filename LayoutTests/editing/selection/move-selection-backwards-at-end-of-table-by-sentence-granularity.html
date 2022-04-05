@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<body>
+<div id="editor" contenteditable>
+<table>
+  <tr>
+    <th>First</th>
+    <th>Second</th> 
+    <th id="target">Third</th>
+  </tr>
+</table>
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.description('This tests moving the selection backwards at the end of a table by sentence granularity. The caret should move to the beginning of the table.');
+
+editor.focus();
+getSelection().setPosition(target, 5);
+getSelection().modify('move', 'left', 'sentence');
+
+Markup.dump(editor);
+
+</script>
+</body>
+</html>

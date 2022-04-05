@@ -48,7 +48,7 @@ shouldBe('plainTextWithBackwardsTextIterator("<ul><li>hello<li>world</ul>WebKit"
 debug('');
 
 shouldBe('plainTextWithTextIterator("<table><tr><td>hello</td><td>world</td></table>")', '"hello\tworld"');
-shouldBe('plainTextWithBackwardsTextIterator("<table><tr><td>hello</td><td>world</td></table>")', '"\\n\\nhello\\nworld"');
+shouldBe('plainTextWithBackwardsTextIterator("<table><tr><td>hello</td><td>world</td></table>")', '"\\n\\nhello\\tworld\\t"');
 
 debug('');
 

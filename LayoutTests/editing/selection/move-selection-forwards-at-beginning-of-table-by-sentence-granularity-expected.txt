@@ -1,0 +1,20 @@
+This tests moving the selection forwards to the end of a table by sentence granularity. The caret should move to the end of the table.
+| "\n"
+| <table>
+|   "\n  "
+|   <tbody>
+|     <tr>
+|       "\n    "
+|       <th>
+|         id="target"
+|         "First"
+|       "\n    "
+|       <th>
+|         "Second"
+|       " \n    "
+|       <th>
+|         "Third"
+|       "\n  "
+|     "\n"
+| <#selection-caret>
+| "\n"
