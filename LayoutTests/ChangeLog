@@ -1,3 +1,13 @@
+2022-04-05  Matteo Flores  <matteo_flores@apple.com>
+
+        [ iOS Mac ] http/tests/workers/service/openwindow-from-notification-click.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238824
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-04-05  Alan Bujtas  <zalan@apple.com>
 
         [CSS-Contain] Add support for contain: inline-size

@@ -3558,6 +3558,8 @@ webkit.org/b/237159 imported/w3c/web-platform-tests/css/css-contain/content-visi
 
 webkit.org/b/237108 http/tests/websocket/tests/hybi/extensions.html [ Pass ]
 
+webkit.org/b/238824 http/tests/workers/service/openwindow-from-notification-click.html [ Pass Failure ]
+
 webkit.org/b/237433 editing/pasteboard/4076267-3.html [ Timeout Pass Failure ]
 webkit.org/b/237433 editing/pasteboard/paste-and-sanitize.html [ Timeout Pass Failure ]
 
