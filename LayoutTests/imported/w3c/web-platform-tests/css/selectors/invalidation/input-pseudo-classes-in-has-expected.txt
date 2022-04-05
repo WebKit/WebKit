@@ -1,0 +1,4 @@
+ Check me!
+
+FAIL CSS Selectors Invalidation: input pseudo classes in :has() argument assert_equals: ancestor should be yellowgreen expected "rgb(154, 205, 50)" but got "rgb(0, 128, 0)"
+

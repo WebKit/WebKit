@@ -251,6 +251,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-181.xml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-182.xml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-183.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-184-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-184a-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-184a.xml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-184b-expected.xht
@@ -357,6 +358,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-82.xml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-82b.xml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-83-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-83-ref.xml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-83.xml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-86.xml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-87-expected.xht

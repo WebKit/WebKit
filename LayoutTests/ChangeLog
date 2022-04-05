@@ -1,3 +1,14 @@
+2022-04-05  Tim Nguyen  <ntim@apple.com>
+
+        Re-import css/selectors WPT
+        https://bugs.webkit.org/show_bug.cgi?id=238820
+
+        Reviewed by Simon Fraser.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/ef2b67e4a79e8f8d37556533e6dc715d2c692a78
+
+        * TestExpectations:
+
 2022-04-05  Alan Bujtas  <zalan@apple.com>
 
         [CSS-Contain] Flex layout should take "contain: inline-size" into account when computing the flex item's logical width

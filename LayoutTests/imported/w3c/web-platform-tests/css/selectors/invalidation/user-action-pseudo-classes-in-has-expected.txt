@@ -1,0 +1,9 @@
+Hover and click me
+Focus me
+Focus me
+subject
+subject
+
+PASS Invalidation with :focus, :focus-within, :focus-visible in :has()
+PASS ancestor should be black
+
