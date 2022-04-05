@@ -97,12 +97,11 @@ struct _WebKitSettingsPrivate {
  * other things on a #WebKitWebView. After creation, a #WebKitSettings object
  * contains default settings.
  *
- * <informalexample><programlisting>
- * /<!-- -->* Disable JavaScript. *<!-- -->/
+ * ```c
+ * // Disable JavaScript
  * WebKitSettings *settings = webkit_web_view_group_get_settings (my_view_group);
  * webkit_settings_set_enable_javascript (settings, FALSE);
- *
- * </programlisting></informalexample>
+ * ```
  */
 
 WEBKIT_DEFINE_TYPE(WebKitSettings, webkit_settings, G_TYPE_OBJECT)

@@ -1473,34 +1473,34 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * You can handle this signal and use a switch to track any ongoing
      * load operation.
      *
-     * <informalexample><programlisting>
+     * ```c
      * static void web_view_load_changed (WebKitWebView  *web_view,
      *                                    WebKitLoadEvent load_event,
      *                                    gpointer        user_data)
      * {
      *     switch (load_event) {
      *     case WEBKIT_LOAD_STARTED:
-     *         /<!-- -->* New load, we have now a provisional URI *<!-- -->/
+     *         // New load, we have now a provisional URI
      *         provisional_uri = webkit_web_view_get_uri (web_view);
-     *         /<!-- -->* Here we could start a spinner or update the
-     *          <!-- -->* location bar with the provisional URI *<!-- -->/
+     *         // Here we could start a spinner or update the
+     *         // location bar with the provisional URI
      *         break;
      *     case WEBKIT_LOAD_REDIRECTED:
      *         redirected_uri = webkit_web_view_get_uri (web_view);
      *         break;
      *     case WEBKIT_LOAD_COMMITTED:
-     *         /<!-- -->* The load is being performed. Current URI is
-     *          <!-- -->* the final one and it won't change unless a new
-     *          <!-- -->* load is requested or a navigation within the
-     *          <!-- -->* same page is performed *<!-- -->/
+     *         // The load is being performed. Current URI is
+     *         // the final one and it won't change unless a new
+     *         // load is requested or a navigation within the
+     *         // same page is performed
      *         uri = webkit_web_view_get_uri (web_view);
      *         break;
      *     case WEBKIT_LOAD_FINISHED:
-     *         /<!-- -->* Load finished, we can now stop the spinner *<!-- -->/
+     *         // Load finished, we can now stop the spinner
      *         break;
      *     }
      * }
-     * </programlisting></informalexample>
+     * ```
      */
     signals[LOAD_CHANGED] =
         g_signal_new("load-changed",
@@ -1734,7 +1734,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @decision argument is a generic type, but should be casted to a more
      * specific type when making the decision. For example:
      *
-     * <informalexample><programlisting>
+     * ```c
      * static gboolean
      * decide_policy_cb (WebKitWebView *web_view,
      *                   WebKitPolicyDecision *decision,
@@ -1743,25 +1743,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *     switch (type) {
      *     case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION: {
      *         WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
-     *         /<!-- -->* Make a policy decision here. *<!-- -->/
+     *         // Make a policy decision here
      *         break;
      *     }
      *     case WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION: {
      *         WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
-     *         /<!-- -->* Make a policy decision here. *<!-- -->/
+     *         // Make a policy decision here
      *         break;
      *     }
      *     case WEBKIT_POLICY_DECISION_TYPE_RESPONSE:
      *         WebKitResponsePolicyDecision *response = WEBKIT_RESPONSE_POLICY_DECISION (decision);
-     *         /<!-- -->* Make a policy decision here. *<!-- -->/
+     *         // Make a policy decision here
      *         break;
      *     default:
-     *         /<!-- -->* Making no decision results in webkit_policy_decision_use(). *<!-- -->/
+     *         // Making no decision results in webkit_policy_decision_use()
      *         return FALSE;
      *     }
      *     return TRUE;
      * }
-     * </programlisting></informalexample>
+     * ```
      *
      * It is possible to make policy decision asynchronously, by simply calling g_object_ref()
      * on the @decision argument and returning %TRUE to block the default signal handler.
@@ -1798,7 +1798,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * A possible way to use this signal could be through a dialog
      * allowing the user decide what to do with the request:
      *
-     * <informalexample><programlisting>
+     * ```c
      * static gboolean permission_request_cb (WebKitWebView *web_view,
      *                                        WebKitPermissionRequest *request,
      *                                        GtkWindow *parent_window)
@@ -1823,7 +1823,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      *     return TRUE;
      * }
-     * </programlisting></informalexample>
+     * ```
      *
      * It is possible to handle permission requests asynchronously, by
      * simply calling g_object_ref() on the @request argument and
@@ -3905,7 +3905,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  * This is an example of using webkit_web_view_run_javascript() with a script returning
  * a string:
  *
- * <informalexample><programlisting>
+ * ```c
  * static void
  * web_view_javascript_finished (GObject      *object,
  *                               GAsyncResult *result,
@@ -3924,11 +3924,8 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  *
  *     value = webkit_javascript_result_get_js_value (js_result);
  *     if (jsc_value_is_string (value)) {
- *         JSCException *exception;
- *         gchar        *str_value;
- *
- *         str_value = jsc_value_to_string (value);
- *         exception = jsc_context_get_exception (jsc_value_get_context (value));
+ *         gchar        *str_value = jsc_value_to_string (value);
+ *         JSCException *exception = jsc_context_get_exception (jsc_value_get_context (value));
  *         if (exception)
  *             g_warning ("Error running javascript: %s", jsc_exception_get_message (exception));
  *         else
@@ -3944,13 +3941,11 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  * web_view_get_link_url (WebKitWebView *web_view,
  *                        const gchar   *link_id)
  * {
- *     gchar *script;
- *
- *     script = g_strdup_printf ("window.document.getElementById('%s').href;", link_id);
+ *     gchar *script = g_strdup_printf ("window.document.getElementById('%s').href;", link_id);
  *     webkit_web_view_run_javascript (web_view, script, NULL, web_view_javascript_finished, NULL);
  *     g_free (script);
  * }
- * </programlisting></informalexample>
+ * ```
  *
  * Returns: (transfer full): a #WebKitJavascriptResult with the result of the last executed statement in @script
  *    or %NULL in case of error

@@ -432,7 +432,7 @@ GtkWidget* webkit_web_view_new_with_user_content_manager(WebKitUserContentManage
  * Note that the parent window must have a RGBA visual and
  * #GtkWidget:app-paintable property set to %TRUE for backgrounds colors to work.
  *
- * <informalexample><programlisting>
+ * ```c
  * static void browser_window_set_background_color (BrowserWindow *window,
  *                                                  const GdkRGBA *rgba)
  * {
@@ -449,7 +449,7 @@ GtkWidget* webkit_web_view_new_with_user_content_manager(WebKitUserContentManage
  *     web_view = browser_window_get_web_view (window);
  *     webkit_web_view_set_background_color (web_view, rgba);
  * }
- * </programlisting></informalexample>
+ * ```
  *
  * Since: 2.8
  */

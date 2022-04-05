@@ -268,13 +268,13 @@ private:
  * receive the signals, it is recommended to connect to the signal
  * *before* registering the handler name:
  *
- * <informalexample><programlisting>
+ * ```c
  * WebKitWebView *view = webkit_web_view_new ();
  * WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager ();
  * g_signal_connect (manager, "script-message-received::foobar",
  *                   G_CALLBACK (handle_script_message), NULL);
  * webkit_user_content_manager_register_script_message_handler (manager, "foobar");
- * </programlisting></informalexample>
+ * ```
  *
  * Registering a script message handler will fail if the requested
  * name has been already registered before.

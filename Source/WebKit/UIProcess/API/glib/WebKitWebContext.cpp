@@ -1215,30 +1215,25 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  * when the data of the request is available or
  * webkit_uri_scheme_request_finish_error() in case of error.
  *
- * <informalexample><programlisting>
+ * ```c
  * static void
  * about_uri_scheme_request_cb (WebKitURISchemeRequest *request,
  *                              gpointer                user_data)
  * {
  *     GInputStream *stream;
  *     gsize         stream_length;
- *     const gchar  *path;
+ *     const gchar  *path = webkit_uri_scheme_request_get_path (request);
  *
- *     path = webkit_uri_scheme_request_get_path (request);
  *     if (!g_strcmp0 (path, "memory")) {
- *         /<!-- -->* Create a GInputStream with the contents of memory about page, and set its length to stream_length *<!-- -->/
+ *         // Create a GInputStream with the contents of memory about page, and set its length to stream_length
  *     } else if (!g_strcmp0 (path, "applications")) {
- *         /<!-- -->* Create a GInputStream with the contents of applications about page, and set its length to stream_length *<!-- -->/
+ *         // Create a GInputStream with the contents of applications about page, and set its length to stream_length
  *     } else if (!g_strcmp0 (path, "example")) {
- *         gchar *contents;
- *
- *         contents = g_strdup_printf ("&lt;html&gt;&lt;body&gt;&lt;p&gt;Example about page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;");
+ *         gchar *contents = g_strdup_printf ("<html><body><p>Example about page</p></body></html>");
  *         stream_length = strlen (contents);
  *         stream = g_memory_input_stream_new_from_data (contents, stream_length, g_free);
  *     } else {
- *         GError *error;
- *
- *         error = g_error_new (ABOUT_HANDLER_ERROR, ABOUT_HANDLER_ERROR_INVALID, "Invalid about:%s page.", path);
+ *         GError *error = g_error_new (ABOUT_HANDLER_ERROR, ABOUT_HANDLER_ERROR_INVALID, "Invalid about:%s page.", path);
  *         webkit_uri_scheme_request_finish_error (request, error);
  *         g_error_free (error);
  *         return;
@@ -1246,7 +1241,7 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  *     webkit_uri_scheme_request_finish (request, stream, stream_length, "text/html");
  *     g_object_unref (stream);
  * }
- * </programlisting></informalexample>
+ * ```
  */
 void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const char* scheme, WebKitURISchemeRequestCallback callback, gpointer userData, GDestroyNotify destroyNotify)
 {
