@@ -34,7 +34,7 @@ namespace WebKit {
 String logLevelString()
 {
 #if !LOG_DISABLED
-    return getenv("WEBKIT_DEBUG");
+    return String { getenv("WEBKIT_DEBUG") };
 #else
     return String();
 #endif

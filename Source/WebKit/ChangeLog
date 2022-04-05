@@ -1,5 +1,12 @@
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed GTK build fix after r292408.
+
+        * Platform/unix/LoggingUnix.cpp:
+        (WebKit::logLevelString):
+
+2022-04-05  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix after r292408.
 
         * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
