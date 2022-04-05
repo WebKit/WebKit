@@ -1,3 +1,25 @@
+2022-04-05  Sihui Liu  <sihui_liu@apple.com>
+
+        Verify generalStorageDirectory is not in use when creating WebsiteDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=238686
+        rdar://90808910
+
+        Reviewed by Chris Dumez.
+
+        In r290739, we added assertion to verify that no two sessions share the same general storage directory. The
+        assertion is hit on macOS as shown in rdar://90808910. However, because we checked the directories when 
+        launching new network process, not when creating WebsiteDataStore, the backtraces do not give much information 
+        about when the problematic WebsiteDataStore (using the generalStorageDirectory that's already used by another
+        WebsiteDataStore) is created. To help debug the issue, let's move the assertion to the constructor of 
+        WebsiteDataStore.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::activeGeneralStorageDirectories):
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed GTK build fix after r292408.

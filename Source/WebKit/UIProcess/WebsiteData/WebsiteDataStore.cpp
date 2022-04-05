@@ -96,6 +96,12 @@ void WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins()
     allowsWebsiteDataRecordsForAllOrigins = true;
 }
 
+static HashMap<String, PAL::SessionID>& activeGeneralStorageDirectories()
+{
+    static MainThreadNeverDestroyed<HashMap<String, PAL::SessionID>> directoryToSessionMap;
+    return directoryToSessionMap;
+}
+
 static HashMap<PAL::SessionID, WebsiteDataStore*>& allDataStores()
 {
     RELEASE_ASSERT(isUIThread());
@@ -139,6 +145,11 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     platformInitialize();
 
     ASSERT(RunLoop::isMain());
+
+    if (auto directory = m_configuration->generalStorageDirectory(); isPersistent() && !directory.isEmpty()) {
+        if (!activeGeneralStorageDirectories().add(directory, m_sessionID).isNewEntry)
+            RELEASE_LOG_FAULT(Storage, "GeneralStorageDirectory for session %" PRIu64 " is already in use by session %" PRIu64, m_sessionID.toUInt64(), activeGeneralStorageDirectories().get(directory).toUInt64());
+    }
 }
 
 WebsiteDataStore::~WebsiteDataStore()
@@ -149,6 +160,8 @@ WebsiteDataStore::~WebsiteDataStore()
     platformDestroy();
 
     ASSERT(allDataStores().get(m_sessionID) == this);
+    if (auto generalStorageDirectory = m_configuration->generalStorageDirectory(); isPersistent() && !generalStorageDirectory.isEmpty())
+        activeGeneralStorageDirectories().remove(generalStorageDirectory);
     allDataStores().remove(m_sessionID);
     if (m_networkProcess)
         m_networkProcess->removeSession(*this);
