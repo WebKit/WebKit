@@ -1,3 +1,21 @@
+2022-04-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Video is sometimes not visible after r292049
+        https://bugs.webkit.org/show_bug.cgi?id=238826
+
+        Reviewed by Jer Noble.
+
+        RenderVideo::willBeDestroyed calls MediaPlayer::setPageIsVisible, which causes
+        MediaPlayerPrivateAVFoundationObjC::platformSetVisible to hide the AVPlayerLayer.
+        HTMLMediaElement::visibilityStateChanged is the only other thing that calls 
+        MediaPlayer::setPageIsVisible, and it only calls it when the page visibility changes,
+        so if that doesn't happen the AVPlayerLayer is not shown when the renderer is 
+        recreated.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::willBeDestroyed): Don't call MediaPlayer::setPageIsVisible(false),
+        the page visibility has not changed.
+
 2022-04-05  Andres Gonzalez  <andresg_22@apple.com>
 
         Make subtrees collapsible in the output of the AXLogger streamSubtree.
