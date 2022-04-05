@@ -1,5 +1,36 @@
 2022-04-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove lots of WebCore:: in RemoteLayerBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=238765
+
+        Reviewed by Wenson Hsieh.
+
+        Add a `using namespace WebCore` to RemoteLayerBackingStore. WebCore::IOSurface still needs qualification.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::setNeedsDisplay):
+        (WebKit::RemoteLayerBackingStore::pixelFormat const):
+        (WebKit::RemoteLayerBackingStore::bytesPerPixel const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::applySwappedBuffers):
+        (WebKit::RemoteLayerBackingStore::prepareToDisplay):
+        (WebKit::RemoteLayerBackingStore::dirtyRepaintCounterIfNecessary):
+        (WebKit::RemoteLayerBackingStore::ensureFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::prepareBuffers):
+        (WebKit::RemoteLayerBackingStore::paintContents):
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        (WebKit::RemoteLayerBackingStore::enumerateRectsBeingDrawn):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        (WebKit::RemoteLayerBackingStore::takePendingFlushers):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatile):
+        (WebKit::RemoteLayerBackingStore::setBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStore::setFrontBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStore::bufferForType const):
+
+2022-04-04  Simon Fraser  <simon.fraser@apple.com>
+
         Remove lots of WebCore:: in RemoteRenderingBackend
         https://bugs.webkit.org/show_bug.cgi?id=238763
 
