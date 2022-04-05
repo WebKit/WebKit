@@ -1,3 +1,36 @@
+2022-04-05  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Local dependencies override support
+        https://bugs.webkit.org/show_bug.cgi?id=238452
+
+        Reviewed by Adrian Perez de Castro.
+
+        When the environment variable WEBKIT_SDK_LOCAL_DEPS is set at compile-time and runtime, some
+        dependencies (currently only libsoup and GStreamer) will be picked up from local git
+        checkouts located in Tools/flatpak/. If no checkout is present, one will be made based on
+        the corresponding .wrap file.
+
+        Example: WEBKIT_SDK_LOCAL_DEPS=libsoup,gstreamer-full build-webkit --wpe ...
+
+        Additional Meson options can be supplied with WEBKIT_SDK_LOCAL_DEPS_OPTIONS. Nested
+        subprojects configuration is supported as well, for example:
+
+        export WEBKIT_SDK_LOCAL_DEPS_OPTIONS="-Dgstreamer-full:introspection=disabled -Dgst-plugins-good:soup=disabled"
+
+        This setup replaces the previous one that was specific to GStreamer.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.setup_local_deps):
+        (WebkitFlatpak._merge_env_variables):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.setup_dev_env):
+        (WebkitFlatpak.setup_gstbuild): Deleted.
+        * flatpak/local-projects/meson.build: Added.
+        * flatpak/local-projects/subprojects/gstreamer-full.wrap: Added.
+        * flatpak/local-projects/subprojects/libsoup.wrap: Added.
+
 2022-04-05  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         update-angle output varies unpredictably due to blob hash abbreviation

@@ -488,9 +488,8 @@ class WebkitFlatpak:
         general.add_argument("-u", "--update", dest="update",
                              action="store_true",
                              help="Update the SDK")
-        general.add_argument("-bgst", "--build-gst", dest="build_gst",
-                             action="store_true",
-                             help="Force rebuilding gst-build, repository path is defined by the `GST_BUILD_PATH` environment variable.")
+        general.add_argument("-bdeps", "--build-local-deps", dest="build_local_deps",
+                             action="store_true", help="Force rebuilding local dependencies")
         general.add_argument("-q", "--quiet", dest="quiet",
                              action="store_true",
                              help="Do not print anything")
@@ -558,7 +557,7 @@ class WebkitFlatpak:
         self.release = False
         self.debug = False
 
-        self.build_gst = False
+        self.build_local_deps = False
 
         self.platform = "gtk"
         self.check_available = False
@@ -669,49 +668,47 @@ class WebkitFlatpak:
 
         return True
 
-
-    def setup_gstbuild(self, building):
-        gst_dir = os.environ.get('GST_BUILD_PATH')
-        if not gst_dir:
+    def setup_local_deps(self, building):
+        if not os.environ.get('WEBKIT_SDK_LOCAL_DEPS'):
             if building:
-                _log.debug("$GST_BUILD_PATH environment variable not set. Skipping gst-build\n")
+                _log.debug("$WEBKIT_SDK_LOCAL_DEPS environment variable not set. Skipping local dependencies build")
             return {}
 
-        if not os.path.exists(os.path.join(gst_dir, 'gst-env.py')):
-            raise RuntimeError('GST_BUILD_PATH set to %s but it doesn\'t seem to be a valid `gst-build` checkout.' % gst_dir)
-
-        gst_builddir = os.path.join(DEFAULT_BUILD_ROOT, 'gst-build')
-        if not os.path.exists(os.path.join(DEFAULT_BUILD_ROOT, 'gst-build', 'build.ninja')):
+        src_dir = os.path.join(WEBKIT_SOURCE_DIR, 'Tools', 'flatpak', 'local-projects')
+        build_dir = os.path.join(DEFAULT_BUILD_ROOT, 'deps-build')
+        sandbox_build_dir = convert_webkit_source_path_to_sandbox_path(build_dir)
+        if not os.path.exists(os.path.join(build_dir, 'build.ninja')):
             if not building:
-                raise RuntimeError('Trying to enter gst-build env from %s but it is not built, make sure to rebuild webkit.' % gst_dir)
+                raise RuntimeError('Trying to enter deps-build env from %s but it is not built, make sure to rebuild webkit.', src_dir)
 
-            args = ['meson', ]
-            extra_args = os.environ.get('GST_BUILD_ARGS', '')
-            args.extend(shlex.split(extra_args) + [gst_dir, gst_builddir])
-            Console.message("Running %s ", ' '.join(args))
-            self.run_in_sandbox(*args, building_gst=True, start_sccache=False)
+            projects = '-Dsubprojects=%s' % os.environ['WEBKIT_SDK_LOCAL_DEPS']
+            options = shlex.split(os.environ.get('WEBKIT_SDK_LOCAL_DEPS_OPTIONS', ''))
+            args = ['meson', projects]
+            args.extend(options + [convert_webkit_source_path_to_sandbox_path(src_dir), sandbox_build_dir])
+            self.run_in_sandbox(*args, building_local_deps=True, start_sccache=False)
 
         if building:
-            Console.message("Building `gst-build` %s ", gst_dir)
-            if self.run_in_sandbox('ninja', '-C', gst_builddir, building_gst=True, start_sccache=False) != 0:
-                raise RuntimeError('Error while building gst-build.')
+            Console.message("Building local dependencies from %s ", src_dir)
+            if self.run_in_sandbox('meson', 'compile', '-C', sandbox_build_dir, building_local_deps=True, start_sccache=False) != 0:
+                raise RuntimeError('Error while building local dependencies.')
 
-        command = [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir, "--only-environment"]
-        gst_env = run_sanitized(command, gather_output=True)
-        allowlist = ("LD_LIBRARY_PATH", "PATH", "PKG_CONFIG_PATH")
-        nopathlist = ("GST_DEBUG", "GST_VERSION", "GST_ENV", "GST_TRACERS")
+        command = ['meson', 'devenv', '-C', sandbox_build_dir, '--dump']
+        local_env = self.run_in_sandbox(*command, building_local_deps=True, start_sccache=False, gather_output=True)
         env = {}
-        for line in [line for line in gst_env.splitlines() if not line.startswith("export")]:
+        for line in [line for line in local_env.splitlines() if not line.startswith("export")]:
             tokens = line.split("=")
             var_name, contents = tokens[0], "=".join(tokens[1:])
-            if not var_name.startswith("GST_") and var_name not in allowlist:
-                continue
-            if var_name not in nopathlist:
-                new_contents = ':'.join([convert_webkit_source_path_to_sandbox_path(p) for p in contents.split(":")])
-            else:
-                new_contents = contents.replace("'", "")
-            env[var_name] = new_contents
+            env[var_name] = contents
         return env
+
+    def _merge_env_variables(self, environment, additional_environment):
+        for var_name, value in additional_environment.items():
+            if var_name not in environment:
+                environment[var_name] = value
+            else:
+                if var_name.endswith('PATH'):
+                    environment[var_name] = "%s:%s" % (environment[var_name], value)
+        return environment
 
     def is_branch_build(self):
         try:
@@ -751,13 +748,12 @@ class WebkitFlatpak:
         extra_flatpak_args = kwargs.get("extra_flatpak_args", [])
         start_sccache = kwargs.get("start_sccache", True)
         skip_icc = kwargs.get("skip_icc", False)
-        building_gst = kwargs.get("building_gst", False)
+        building_local_deps = kwargs.get("building_local_deps", False)
         gather_output = kwargs.get("gather_output", False)
 
         if gather_output:
             start_sccache = False
             skip_icc = True
-            building_gst = False
 
         if not isinstance(args, list):
             args = list(args)
@@ -896,7 +892,7 @@ class WebkitFlatpak:
         remote_sccache_configs = set(["SCCACHE_REDIS", "SCCACHE_BUCKET", "SCCACHE_MEMCACHED",
                                       "SCCACHE_GCS_BUCKET", "SCCACHE_AZURE_CONNECTION_STRING",
                                       "WEBKIT_USE_SCCACHE"])
-        if remote_sccache_configs.intersection(set(os.environ.keys())) and start_sccache and not building_gst:
+        if remote_sccache_configs.intersection(set(os.environ.keys())) and start_sccache and not building_local_deps:
             _log.debug("Enabling network access for the remote sccache")
             flatpak_command.append(share_network_option)
 
@@ -913,7 +909,7 @@ class WebkitFlatpak:
             if building:
                 # Spawn the sccache server in background, and avoid recursing here, using a bool keyword.
                 _log.debug("Pre-starting the SCCache dist server")
-                self.run_in_sandbox("sccache", "--start-server", env=sccache_environment, building_gst=building_gst,
+                self.run_in_sandbox("sccache", "--start-server", env=sccache_environment, building_local_deps=building_local_deps,
                                     extra_flatpak_args=[share_network_option], start_sccache=False)
 
             # Forward sccache server env vars to sccache clients.
@@ -969,16 +965,11 @@ class WebkitFlatpak:
             pkg_config_path = self.build_path
         sandbox_environment["PKG_CONFIG_PATH"] = pkg_config_path
 
-        if not building_gst and args[0] != "sccache":
-            # Merge gst-build env vars in sandbox environment, without overriding previously set PATH values.
-            gst_env = self.setup_gstbuild(building)
-            for var_name in list(gst_env.keys()):
-                if var_name not in sandbox_environment:
-                    sandbox_environment[var_name] = gst_env[var_name]
-                else:
-                    contents = gst_env[var_name]
-                    if var_name.endswith('PATH'):
-                        sandbox_environment[var_name] = "%s:%s" % (sandbox_environment[var_name], contents)
+        if not building_local_deps and args[0] != "sccache":
+            # Merge local dependencies build env vars in sandbox environment, without overriding
+            # previously set PATH values.
+            local_env = self.setup_local_deps(building)
+            sandbox_environment = self._merge_env_variables(sandbox_environment, local_env)
 
         for envvar, value in sandbox_environment.items():
             flatpak_command.append("--env=%s=%s" % (envvar, value))
@@ -1218,7 +1209,7 @@ class WebkitFlatpak:
                 self.user_command.append("--cmakeargs=%s" % self.cmakeargs)
 
             return self.run_in_sandbox(*self.user_command + self.extra_command_args)
-        elif not self.update and not self.build_gst and not self.regenerate_toolchains:
+        elif not self.update and not self.build_local_deps and not self.regenerate_toolchains:
             return self.run_in_sandbox()
 
         return 0
