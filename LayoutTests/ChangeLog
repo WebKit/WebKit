@@ -1,3 +1,13 @@
+2022-04-04  Ziran Sun  <zsun@igalia.com>
+
+        [Forms] change the default appearance of button, checkbox etc. to 'auto'
+        https://bugs.webkit.org/show_bug.cgi?id=236012
+
+        Reviewed by Tim Nguyen.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles-expected.txt: Removed.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/rendering/widgets/appearance/default-styles-expected.txt: Removed.
+
 2022-04-04  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r291770-r291762): [ iOS ] css3/background/background-repeat-round-auto1.html is a flaky image failure

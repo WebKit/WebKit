@@ -2605,7 +2605,7 @@ String RenderThemeIOS::colorInputStyleSheet(const Settings& settings) const
     if (!settings.iOSFormControlRefreshEnabled())
         return RenderTheme::colorInputStyleSheet(settings);
 
-    return "input[type=\"color\"] { -webkit-appearance: color-well; width: 28px; height: 28px; outline: none; border: initial; border-radius: 50%; } "_s;
+    return "input[type=\"color\"] { appearance: auto; width: 28px; height: 28px; outline: none; border: initial; border-radius: 50%; } "_s;
 }
 
 void RenderThemeIOS::adjustColorWellStyle(RenderStyle& style, const Element* element) const

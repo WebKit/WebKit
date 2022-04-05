@@ -1232,7 +1232,7 @@ bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const I
 
 String RenderTheme::colorInputStyleSheet(const Settings&) const
 {
-    return "input[type=\"color\"] { -webkit-appearance: color-well; width: 44px; height: 23px; outline: none; } "_s;
+    return "input[type=\"color\"] { appearance: auto; width: 44px; height: 23px; outline: none; } "_s;
 }
 
 #endif // ENABLE(INPUT_TYPE_COLOR)

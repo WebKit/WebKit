@@ -373,7 +373,7 @@ fieldset {
 }
 
 button {
-    -webkit-appearance: button;
+    appearance: auto;
 }
 
 /* Form controls don't go vertical. */
@@ -405,7 +405,7 @@ input[type="hidden"] {
 textarea,
 #endif
 input {
-    -webkit-appearance: textfield;
+    appearance: auto;
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: text;
     background-color: -webkit-control-background;
@@ -435,7 +435,7 @@ input {
 #endif
 
 input[type="search"] {
-    -webkit-appearance: searchfield;
+    appearance: auto;
     box-sizing: border-box;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: 1px solid -webkit-control-background;
@@ -450,7 +450,7 @@ input::-webkit-textfield-decoration-container {
 }
 
 input[type="search"]::-webkit-search-cancel-button {
-    -webkit-appearance: searchfield-cancel-button;
+    appearance: auto;
     display: block;
     flex: none;
     align-self: flex-start;
@@ -458,7 +458,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 input[type="search"]::-webkit-search-decoration {
-    -webkit-appearance: searchfield-decoration;
+    appearance: auto;
     display: block;
     flex: none;
     align-self: flex-start;
@@ -466,7 +466,7 @@ input[type="search"]::-webkit-search-decoration {
 }
 
 input[type="search"]::-webkit-search-results-decoration {
-    -webkit-appearance: searchfield-results-decoration;
+    appearance: auto;
     display: block;
     flex: none;
     align-self: flex-start;
@@ -474,7 +474,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 input[type="search"]::-webkit-search-results-button {
-    -webkit-appearance: searchfield-results-button;
+    appearance: auto;
     display: block;
     flex: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
@@ -485,19 +485,17 @@ input[type="search"]::-webkit-search-results-button {
 
 #if defined(ENABLE_DATE_AND_TIME_INPUT_TYPES) && ENABLE_DATE_AND_TIME_INPUT_TYPES
 input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
-    -webkit-appearance: textfield;
+    appearance: auto;
     align-items: center;
     display: -webkit-inline-flex;
     overflow: hidden;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    -webkit-appearance: menulist-button;
     border: 1px solid -webkit-control-background;
     background-color: -apple-system-opaque-secondary-fill;
     font-family: system-ui;
     color: -apple-system-blue;
     padding: 0.2em 0.5em;
 #else
-    -webkit-appearance: textfield;
     outline: none;
     font-variant-numeric: tabular-nums;
     /* FIXME: Font features should be defined in a @font-feature-values rule, so that the feature setting is only applied to the system font. */
@@ -590,7 +588,7 @@ input::-webkit-datetime-edit-text {
 }
 
 input::-webkit-inner-spin-button {
-    -webkit-appearance: inner-spin-button;
+    appearance: auto;
     display: block;
     position: relative;
     cursor: default;
@@ -679,7 +677,7 @@ input::-webkit-credit-card-auto-fill-button:active {
 }
 
 input::-webkit-caps-lock-indicator {
-    -webkit-appearance: caps-lock-indicator;
+    appearance: auto;
     content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"><path fill="black" fill-opacity="0.4" d="M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12"/></svg>');
     max-width: 17px;
     align-self: stretch;
@@ -689,7 +687,7 @@ input::-webkit-caps-lock-indicator {
 
 #if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
 input::-webkit-list-button {
-    -webkit-appearance: list-button;
+    appearance: auto;
     display: block;
     position: relative;
     cursor: default;
@@ -713,7 +711,7 @@ select {
 }
 
 textarea {
-    -webkit-appearance: textarea;
+    appearance: auto;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: text;
@@ -756,7 +754,7 @@ input::placeholder {
 }
 
 input:is([type="hidden"], [type="image"], [type="file"]) {
-    -webkit-appearance: initial;
+    appearance: initial;
     padding: initial;
     background-color: initial;
     border: initial;
@@ -801,12 +799,12 @@ input:is([type="radio"], [type="checkbox"]) {
 }
 
 input:is([type="button"], [type="submit"], [type="reset"]) {
-    -webkit-appearance: push-button;
+    appearance: auto;
     white-space: pre;
 }
 
 input[type="file"]::file-selector-button {
-    -webkit-appearance: push-button;
+    appearance: auto;
     white-space: nowrap;
     margin: 0;
     font-size: inherit;
@@ -852,7 +850,7 @@ button[type="menu"], button[type="menu"]:active {
 #endif
 
 input[type="range"] {
-    -webkit-appearance: slider-horizontal;
+    appearance: auto;
     padding: initial;
     border: initial;
     margin: 2px;
@@ -876,7 +874,7 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb {
-    -webkit-appearance: sliderthumb-horizontal;
+    appearance: auto;
     box-sizing: border-box;
     display: block;
 }
@@ -944,7 +942,7 @@ area, param {
 }
 
 input[type="checkbox"] {
-    -webkit-appearance: checkbox;
+    appearance: auto;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     box-sizing: border-box;
 #else
@@ -959,7 +957,7 @@ input[type="checkbox"] {
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 input[type="radio"] {
-    -webkit-appearance: radio;
+    appearance: auto;
     border-radius: 50%;
     width: 16px;
     height: 16px;
@@ -993,7 +991,7 @@ input:is([type="checkbox"], [type="radio"]):checked:disabled {
 
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 input[type="radio"] {
-    -webkit-appearance: radio;
+    appearance: auto;
     box-sizing: border-box;
 }
 #endif
@@ -1033,8 +1031,8 @@ input[type="color"]::-webkit-color-swatch {
 
 select {
     box-sizing: border-box;
+    appearance: auto;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    -webkit-appearance: menulist-button;
     letter-spacing: normal;
     word-spacing: normal;
     line-height: normal;
@@ -1045,7 +1043,6 @@ select {
     border-radius: initial;
     background-color: -apple-system-opaque-secondary-fill;
 #else
-    -webkit-appearance: menulist;
     border: 1px solid;
 #if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: text;
@@ -1063,7 +1060,7 @@ select {
 
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 select:is([size], [multiple]), select[size][multiple] {
-    -webkit-appearance: listbox;
+    appearance: auto;
     align-items: flex-start;
     border: 1px inset gray;
     border-radius: initial;
@@ -1071,7 +1068,7 @@ select:is([size], [multiple]), select[size][multiple] {
 }
 
 select:is([size=""], [size="0"], [size="1"]) {
-    -webkit-appearance: menulist;
+    appearance: auto;
     align-items: center;
     border: 1px solid;
     border-radius: 5px;
@@ -1157,7 +1154,7 @@ output {
 /* meter */
 
 meter {
-    -webkit-appearance: meter;
+    appearance: auto;
     box-sizing: border-box;
     display: inline-block;
     height: 1em;
@@ -1168,7 +1165,7 @@ meter {
 /* progress */
 
 progress {
-    -webkit-appearance: progress-bar;
+    appearance: auto;
     box-sizing: border-box;
     display: inline-block;
     height: 1em;
