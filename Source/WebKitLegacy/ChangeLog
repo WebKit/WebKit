@@ -1,3 +1,15 @@
+2022-04-05  Elliott Williams  <emw@apple.com>
+
+        Fix STP build error "no such file or directory: 'Technology'"
+        https://bugs.webkit.org/show_bug.cgi?id=238834
+        <rdar://91271288>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * scripts/migrate-header-rule: Don't generate an export list when
+        building for Mac. We won't use it, and this script does not support
+        paths in FRAMEWORK_SEARCH_PATHS containing spaces.
+
 2022-04-04  Elliott Williams  <emw@apple.com>
 
         [XCBuild] WebKitLegacy's "Migrated headers" script does not emit task information
