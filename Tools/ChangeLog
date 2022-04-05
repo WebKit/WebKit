@@ -1,3 +1,30 @@
+2022-04-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Add author to commit message
+        https://bugs.webkit.org/show_bug.cgi?id=238752
+        <rdar://problem/91254339>
+
+        Reviewed by Aakash Jain.
+
+        svn.webkit.org will attribute a change to a specific author
+        if "Patch by" is in the commit message.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Add AddAuthorToCommitMessage step.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Ditto.
+        * CISupport/ews-build/master.cfg: Determine commit author from github.head.user.login.
+        * CISupport/ews-build/steps.py:
+        (AddAuthorToCommitMessage):
+        (AddAuthorToCommitMessage.__init__):
+        (AddAuthorToCommitMessage.author): Return commit author's name and email, falling back
+        to the committers name and email if those cannot be determined.
+        (AddAuthorToCommitMessage.start): Insert "Patch by" into commit message.
+        (AddAuthorToCommitMessage.getResultSummary):
+        (AddAuthorToCommitMessage.doStepIf): Only do step if the author can be determined.
+        (AddAuthorToCommitMessage.hideStepIf): Hide step if skipped.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-04-05  Eric Carlson  <eric.carlson@apple.com>
 
         5 Media API tests are flakily timing out on iOS14

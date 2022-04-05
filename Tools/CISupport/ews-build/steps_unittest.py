@@ -35,14 +35,15 @@ from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShel
 from buildbot.test.util.misc import TestReactorMixin
 from buildbot.test.util.steps import BuildStepMixin
 from buildbot.util import identifiers as buildbot_identifiers
+from datetime import date
 from mock import call, patch
 from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 import send_email
 
-from steps import (AddReviewerToCommitMessage, AddReviewerToChangeLog, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
-                   AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
+from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, AddReviewerToChangeLog, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
+                   AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
@@ -5761,6 +5762,122 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('reviewers_full_names', [])
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.runStep()
+
+
+class TestAddAuthorToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = dict(
+        GIT_COMMITTER_NAME='WebKit Committer',
+        GIT_COMMITTER_EMAIL='committer@webkit.org',
+        FILTER_BRANCH_SQUELCH_WARNING='1',
+    )
+
+    def setUp(self):
+        self.longMessage = True
+        Contributors.load = mock_load_contributors
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_skipped_patch(self):
+        self.setupStep(AddAuthorToCommitMessage())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        return self.runStep()
+
+    def test_success(self):
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        timestamp = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.setupStep(AddAuthorToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.head.user.login', 'webkit-reviewer')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        env=self.ENV,
+                        timeout=60,
+                        command=[
+                            'git', 'filter-branch', '-f',
+                            '--env-filter', f"GIT_AUTHOR_DATE='{timestamp}';GIT_COMMITTER_DATE='{timestamp}'",
+                            '--msg-filter', f'sed "1,/^$/ s/^$/\\nPatch by WebKit Reviewer <reviewer@apple.com> on {date.today().strftime("%Y-%m-%d")}/g"',
+                            'eng/pull-request-branch...main',
+                        ])
+            + 0
+            + ExpectShell.log('stdio', stdout="Ref 'refs/heads/eng/pull-request-branch' was rewritten\n"),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Added WebKit Reviewer as author')
+        return self.runStep()
+
+    def test_success_fallback(self):
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        timestamp = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.setupStep(AddAuthorToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.head.user.login', 'unregistered-author')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        env=self.ENV,
+                        timeout=60,
+                        command=[
+                            'git', 'filter-branch', '-f',
+                            '--env-filter', f"GIT_AUTHOR_DATE='{timestamp}';GIT_COMMITTER_DATE='{timestamp}'",
+                            '--msg-filter', f'sed "1,/^$/ s/^$/\\nPatch by WebKit Committer <committer@webkit.org> on {date.today().strftime("%Y-%m-%d")}/g"',
+                            'eng/pull-request-branch...main',
+                        ])
+            + 0
+            + ExpectShell.log('stdio', stdout="Ref 'refs/heads/eng/pull-request-branch' was rewritten\n"),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Added WebKit Committer as author')
+        return self.runStep()
+
+    def test_failure(self):
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        timestamp = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.setupStep(AddAuthorToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.head.user.login', 'webkit-commit-queue')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        env=self.ENV,
+                        timeout=60,
+                        command=[
+                            'git', 'filter-branch', '-f',
+                            '--env-filter', f"GIT_AUTHOR_DATE='{timestamp}';GIT_COMMITTER_DATE='{timestamp}'",
+                            '--msg-filter', f'sed "1,/^$/ s/^$/\\nPatch by WebKit Committer <committer@webkit.org> on {date.today().strftime("%Y-%m-%d")}/g"',
+                            'eng/pull-request-branch...main',
+                        ])
+            + 2
+            + ExpectShell.log('stdio', stdout="Failed to rewrite 'refs/heads/eng/pull-request-branch'\n"),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to add author to commit message')
+        return self.runStep()
+
+    def test_no_owner(self):
+        self.setupStep(AddAuthorToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
         self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 

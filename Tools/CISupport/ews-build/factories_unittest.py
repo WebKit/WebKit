@@ -640,6 +640,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'checkout-pull-request',
             'validate-squashed',
             'add-reviewer-to-commit-message',
+            'add-author-to-commit-message',
             'add-reviewer-to-changelog',
             'validate-commit-message',
             'validate-changelog-and-reviewer',
