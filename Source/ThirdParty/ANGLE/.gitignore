@@ -63,7 +63,6 @@
 /third_party/qemu-linux-x64
 /third_party/qemu-mac-x64
 /third_party/r8/lib
-third_party/r8/*.jar
 /third_party/rapidjson/src
 /third_party/requests/src
 /third_party/six

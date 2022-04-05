@@ -1,5 +1,37 @@
 2022-04-05  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        ANGLE changes.diff contains differences that are from stale files or unneeded
+        https://bugs.webkit.org/show_bug.cgi?id=238798
+
+        Unreviewed, verifiable by running the script.
+
+        Unneeded changes in changes.diff should be excluded:
+         - ChangeLog files
+         - WebKit specific build scripts
+         - Diff to removed .jar files
+
+        Stale changes should be updated from the upstream, should be synced from upstream:
+         - .gitignore entry from some old path
+         - Wrong file names in DEQP test expectations, renamed in upstream
+         - Unused EnvironmentVariable.h that is not present in upstream anymore
+
+        * .gitignore:
+        * ANGLE.xcodeproj/project.pbxproj:
+        * changes.diff:
+        * src/compiler/translator/TranslatorMetalDirect/EnvironmentVariable.h: Removed.
+        * src/tests/deqp_support/deqp_egl_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_egl_TestExpectations.
+        * src/tests/deqp_support/deqp_gles2_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles2_TestExpectations.
+        * src/tests/deqp_support/deqp_gles31_rotate_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles31_rotate_TestExpectations.
+        * src/tests/deqp_support/deqp_gles31_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles31_TestExpectations.
+        * src/tests/deqp_support/deqp_gles3_rotate_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles3_rotate_TestExpectations.
+        * src/tests/deqp_support/deqp_gles3_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles3_TestExpectations.
+        * src/tests/deqp_support/deqp_khr_gles2_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_khr_gles2_TestExpectations.
+        * src/tests/deqp_support/deqp_khr_gles31_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_khr_gles31_TestExpectations.
+        * src/tests/deqp_support/deqp_khr_gles32_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_khr_gles32_TestExpectations.
+        * src/tests/deqp_support/deqp_khr_gles3_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_khr_gles3_TestExpectations.
+
+2022-04-05  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         update-angle output varies unpredictably due to blob hash abbreviation
         https://bugs.webkit.org/show_bug.cgi?id=238793
 

@@ -1,3 +1,16 @@
+2022-04-05  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE changes.diff contains differences that are from stale files or unneeded
+        https://bugs.webkit.org/show_bug.cgi?id=238798
+
+        Unreviewed, verifiable by running the script.
+
+        Exclude WebKit ChangeLog entries from changes.diff
+        Exclude WebKit build script copy-frameworks-to-secondary-path.sh
+        Exclude a file that is not needed downstream custom_d8.jar
+
+        * Scripts/update-angle:
+
 2022-04-05  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Local dependencies override support

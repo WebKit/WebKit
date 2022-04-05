@@ -1672,7 +1672,6 @@
 		FF81FF252581919700894E24 /* SeparateCompoundStructDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateCompoundStructDeclarations.cpp; sourceTree = "<group>"; };
 		FF81FF262581919700894E24 /* ModifyStruct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifyStruct.cpp; sourceTree = "<group>"; };
 		FF81FF272581919700894E24 /* ReduceInterfaceBlocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReduceInterfaceBlocks.h; sourceTree = "<group>"; };
-		FF81FF282581919700894E24 /* EnvironmentVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnvironmentVariable.h; sourceTree = "<group>"; };
 		FF81FF292581919700894E24 /* DiscoverDependentFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiscoverDependentFunctions.cpp; sourceTree = "<group>"; };
 		FF81FF2A2581919700894E24 /* DiscoverEnclosingFunctionTraverser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiscoverEnclosingFunctionTraverser.h; sourceTree = "<group>"; };
 		FF81FF2B2581919700894E24 /* DebugSink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugSink.h; sourceTree = "<group>"; };
@@ -3009,7 +3008,6 @@
 				FF81FF2A2581919700894E24 /* DiscoverEnclosingFunctionTraverser.h */,
 				FF81FF2D2581919700894E24 /* EmitMetal.cpp */,
 				FF81FF522581919700894E24 /* EmitMetal.h */,
-				FF81FF282581919700894E24 /* EnvironmentVariable.h */,
 				FF2D2F5325C8B14A002FB699 /* FixTypeConstructors.cpp */,
 				FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */,
 				FF81FF482581919700894E24 /* HoistConstants.cpp */,

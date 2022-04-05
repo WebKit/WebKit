@@ -23,6 +23,9 @@ regenerate_changes_diff() {
         ':(exclude)**.DS_Store' \
         ':(exclude)update-angle.sh' \
         ':(exclude)WebKitBuild' \
+        ':(exclude)ChangeLog*' \
+        ':(exclude)scripts/copy-frameworks-to-secondary-path.sh' \
+        ':(exclude)third_party/r8/custom_d8.jar' \
         > changes.diff
 }
 
