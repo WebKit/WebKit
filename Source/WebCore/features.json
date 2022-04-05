@@ -173,13 +173,19 @@
         }
     },
     {
-        "name": "CSS Highlight",
+        "name": "CSS Custom Highlight API Module Level 1",
         "status": {
             "status": "In Development"
         },
         "url": "https://www.w3.org/TR/css-highlight-api-1/",
-        "specification": "CSS Custom Highlight API Module Level 1",
-        "description": "The Custom Highlight API extends the concept of highlight pseudo-elements (see CSS Pseudo-Elements 4 § 3 Highlight Pseudo-elements) by providing a way for web developers to style the text of arbitrary Range objects, rather than being limited to the user agent defined ::selection, ::inactive-selection, ::spelling-error, and ::grammar-error."
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=204903",
+        "keywords": ["highlight"],
+        "category": "css",
+        "description": "The Custom Highlight API extends the concept of highlight pseudo-elements (see CSS Pseudo-Elements 4 § 3 Highlight Pseudo-elements) by providing a way for web developers to style the text of arbitrary Range objects, rather than being limited to the user agent defined ::selection, ::inactive-selection, ::spelling-error, and ::grammar-error.",
+        "contact": {
+            "name": "Megan Gardner",
+            "email": "megan_gardner@apple.com"
+        }
     },
     {
         "name": "CSS Image Values and Replaced Content Module Level 4",
@@ -239,22 +245,24 @@
         "category": "css"
     },
     {
-        "name": "CSS Motion Path",
+        "name": "CSS Motion Path Module Level 1",
         "status": {
             "status": "In Development"
         },
         "url": "https://www.w3.org/TR/motion-1/",
-        "specification": "Motion Path Module Level 1",
-        "description": "This specification defines a set of CSS properties that allow authors to specify position along a path. The object can be positioned, transitioned and animated along this path over a given period of time."
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=203847",
+        "description": "This specification defines a set of CSS properties that allow authors to specify position along a path. The object can be positioned, transitioned and animated along this path over a given period of time.",
+        "category": "css"
     },
     {
-        "name": "CSS Overscroll Behavior",
+        "name": "CSS Overscroll Behavior Module Level 1",
         "status": {
             "status": "Supported"
         },
         "url": "https://www.w3.org/TR/css-overscroll-1/",
-        "specification": "CSS Overscroll Behavior Module Level 1",
-        "description": "Allow authors to control whether scrolling results in overscroll (\"rubber-banding\") and propagates to enclosing scroll containers."
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=176454",
+        "description": "Allow authors to control whether scrolling results in overscroll (\"rubber-banding\") and propagates to enclosing scroll containers.",
+        "category": "css"
     },
     {
         "name": "CSS Painting API Level 1",
