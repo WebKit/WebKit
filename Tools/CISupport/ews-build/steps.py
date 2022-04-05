@@ -1764,11 +1764,12 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.finished(WARNINGS)
             return None
 
-        if self.pr_number:
-            rc = SUCCESS if self.comment_on_pr(self.pr_number, self.comment_text) else FAILURE
-        elif self.bug_id:
-            rc = self.comment_on_bug(self.bug_id, self.comment_text)
-        else:
+        rc = SUCCESS
+        if self.pr_number and not self.comment_on_pr(self.pr_number, self.comment_text):
+            rc = FAILURE
+        if self.bug_id and self.comment_on_bug(self.bug_id, self.comment_text) != SUCCESS:
+            rc = FAILURE
+        if not self.pr_number and not self.bug_id:
             self._addToLog('stdio', 'No bug or pull request to comment to.\n')
             self.descriptionDone = 'No bug or PR found'
             self.finished(FAILURE)
@@ -1779,18 +1780,23 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
+            if self.pr_number and self.bug_id:
+                return {'step': f'Added comment on PR {self.pr_number} and added comment on bug {self.bug_id}'}
             if self.pr_number:
                 return {'step': f'Added comment on PR {self.pr_number}'}
-            elif self.bug_id:
+            if self.bug_id:
                 return {'step': f'Added comment on bug {self.bug_id}'}
-        elif self.results == SKIPPED:
-            return buildstep.BuildStep.getResultSummary(self)
 
-        if self.pr_number:
-            return {'step': f'Failed to add comment on PR {self.pr_number}'}
-        elif self.bug_id:
-            return {'step': f'Failed to add comment on bug {self.bug_id}'}
-        return {'step': 'Failed to add comment'}
+        if self.results == FAILURE:
+            if self.pr_number and self.bug_id:
+                return {'step': f'Failed to add comment on PR {self.pr_number} and failed to add comment on bug {self.bug_id}'}
+            if self.pr_number:
+                return {'step': f'Failed to add comment on PR {self.pr_number}'}
+            if self.bug_id:
+                return {'step': f'Failed to add comment on bug {self.bug_id}'}
+            return {'step': 'Failed to add comment'}
+
+        return buildstep.BuildStep.getResultSummary(self)
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
@@ -4973,6 +4979,13 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
         '<': '&lt;',
         '&': '&amp;',
     }
+    BUGS_RE = [
+        re.compile(r'\Awebkit.org/b/(?P<id>\d+)\Z'),
+        re.compile(r'\Ahttps?://webkit.org/b/(?P<id>\d+)\Z'),
+        re.compile(r'\Awebkit.org/b/(?P<id>\d+)\Z'),
+        re.compile(r'\Abugs.webkit.org/show_bug.cgi\?id=(?P<id>\d+)\Z'),
+        re.compile(r'\Ahttps?://bugs.webkit.org/show_bug.cgi\?id=(?P<id>\d+)\Z'),
+    ]
 
     @classmethod
     def escape_html(cls, message):
@@ -5003,6 +5016,16 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
             return {'step': 'Failed to update pull request'}
         return super(UpdatePullRequest, self).getResultSummary()
 
+    @classmethod
+    def bug_id_from_log(cls, lines):
+        for line in lines:
+            for word in line.split():
+                for candidate in cls.BUGS_RE:
+                    match = candidate.match(word)
+                    if match:
+                        return match.group('id')
+        return None
+
     def evaluateCommand(self, cmd):
         rc = super(UpdatePullRequest, self).evaluateCommand(cmd)
 
@@ -5013,6 +5036,10 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
         for line in loglines[4:]:
             description += self.escape_html(line[4:] + '\n')
         description += '</pre>\n'
+
+        bug_id = self.bug_id_from_log(loglines)
+        if bug_id:
+            self.setProperty('bug_id', bug_id)
 
         if not self.update_pr(
             self.getProperty('github.number'),

@@ -6344,7 +6344,9 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to update pull request')
         with current_hostname(EWS_BUILD_HOSTNAME):
-            return self.runStep()
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('bug_id'), '238553')
+            return rc
 
 
 if __name__ == '__main__':
