@@ -4727,6 +4727,69 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         return not self.doStepIf(step)
 
 
+class AddAuthorToCommitMessage(shell.ShellCommand, AddReviewerMixin):
+    name = 'add-author-to-commit-message'
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(AddAuthorToCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
+
+    def author(self):
+        contributors, _ = Contributors.load(use_network=False)
+        username = self.getProperty('github.head.user.login')
+        owners = self.getProperty('owners', [])
+        for candidate in [username, owners[0] if owners else None]:
+            if not candidate:
+                continue
+
+            name = contributors.get(candidate, {}).get('name', None)
+            email = contributors.get(candidate, {}).get('email', None)
+            if name and email:
+                return name, email
+
+        return None, None
+
+    def start(self):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        head_ref = self.getProperty('github.head.ref', DEFAULT_BRANCH)
+
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        timestamp = f'{int(time.time())} {gmtoffset}'
+
+        name, email = self.author()
+        patch_by = f"Patch by {name} <{email}> on {date.today().strftime('%Y-%m-%d')}"
+
+        self.command = [
+            'git', 'filter-branch', '-f',
+            '--env-filter', f"GIT_AUTHOR_DATE='{timestamp}';GIT_COMMITTER_DATE='{timestamp}'",
+            '--msg-filter', f'sed "1,/^$/ s/^$/\\n{patch_by}/g"',
+            f'{head_ref}...{base_ref}',
+        ]
+
+        for key, value in self.gitCommitEnvironment().items():
+            self.workerEnvironment[key] = value
+
+        return super(AddAuthorToCommitMessage, self).start()
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': 'Failed to add author to commit message'}
+        elif self.results == SUCCESS:
+            name, _ = self.author()
+            return {'step': f"Added {name} as author"}
+        return super(AddAuthorToCommitMessage, self).getResultSummary()
+
+    def doStepIf(self, step):
+        if not self.getProperty('github.number'):
+            return False
+
+        name, email = self.author()
+        return name and email
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
 class AddReviewerToChangeLog(steps.ShellSequence, ShellMixin, AddReviewerMixin):
     name = 'add-reviewer-to-changelog'
     haltOnFailure = True
