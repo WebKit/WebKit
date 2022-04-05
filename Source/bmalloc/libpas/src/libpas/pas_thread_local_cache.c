@@ -47,6 +47,9 @@
 #if PAS_OS(DARWIN)
 #include <mach/thread_act.h>
 #endif
+#if PAS_PLATFORM(PLAYSTATION)
+#include <pthread_np.h>
+#endif
 
 PAS_BEGIN_EXTERN_C;
 
@@ -194,6 +197,7 @@ static void dump_thread_diagnostics(pthread_t thread)
 {
     uint64_t thread_id;
     char thread_name[256];
+    int getname_result;
     PAS_UNUSED_PARAM(thread_id);
 #if PAS_OS(DARWIN)
     if (!pthread_threadid_np(thread, &thread_id))
@@ -201,7 +205,12 @@ static void dump_thread_diagnostics(pthread_t thread)
     else
         pas_log("[%d] thread %p does not have id\n", getpid(), thread);
 #endif
-    if (!pthread_getname_np(thread, thread_name, sizeof(thread_name)))
+#if PAS_PLATFORM(PLAYSTATION)
+    getname_result = pthread_get_name_np(thread, thread_name);
+#else
+    getname_result = pthread_getname_np(thread, thread_name, sizeof(thread_name));
+#endif
+    if (!getname_result)
         pas_log("[%d] thread %p has name %s\n", getpid(), (void*)thread, thread_name);
     else
         pas_log("[%d] thread %p does not have name\n", getpid(), (void*)thread);

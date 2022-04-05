@@ -66,6 +66,12 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ALIGNED(amount) __attribute__((aligned(amount)))
 
+#if PAS_PLATFORM(PLAYSTATION) && !defined(alignof)
+#define PAS_ALIGNOF(type) _Alignof(type)
+#else
+#define PAS_ALIGNOF(type) alignof(type)
+#endif
+
 #define PAS_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
 
 #define PAS_UNUSED __attribute__((unused))

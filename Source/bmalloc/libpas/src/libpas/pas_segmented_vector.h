@@ -107,7 +107,7 @@ PAS_BEGIN_EXTERN_C;
             PAS_ASSERT(!segment_index); \
             \
             segment = (type*)pas_immortal_heap_allocate_with_alignment_and_heap_lock_hold_mode( \
-                (segment_size) * sizeof(type), alignof(type), \
+                (segment_size) * sizeof(type), PAS_ALIGNOF(type), \
                 #name "/segment", pas_object_allocation, \
                 heap_lock_hold_mode); \
             pas_zero_memory(segment, (segment_size) * sizeof(type)); \

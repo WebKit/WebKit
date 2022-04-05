@@ -38,7 +38,7 @@
 #endif
 #endif
 
-#if PAS_OS(DARWIN) && __PAS_ARM64 && !__PAS_ARM64E && defined(NDEBUG)
+#if ((PAS_OS(DARWIN) && __PAS_ARM64 && !__PAS_ARM64E) || PAS_PLATFORM(PLAYSTATION)) && defined(NDEBUG)
 #define PAS_ENABLE_ASSERT 0
 #else
 #define PAS_ENABLE_ASSERT 1
@@ -54,7 +54,7 @@
 
 #define PAS_ADDRESS_BITS                 48
 
-#if PAS_ARM
+#if PAS_ARM || PAS_PLATFORM(PLAYSTATION)
 #define PAS_MAX_GRANULES                 256
 #else
 #define PAS_MAX_GRANULES                 1024

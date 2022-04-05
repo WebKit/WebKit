@@ -1,3 +1,21 @@
+2022-04-05  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Enable libpas.
+        https://bugs.webkit.org/show_bug.cgi?id=238753
+
+        Reviewed by Yusuke Suzuki.
+
+        PlayStation platform is ready to enable it finally.
+
+        * PlatformPlayStation.cmake:
+        * bmalloc/BPlatform.h:
+        * libpas/src/libpas/pas_config.h:
+        * libpas/src/libpas/pas_page_malloc.c:
+        (pas_page_malloc_try_allocate_without_deallocating_padding):
+        (commit_impl):
+        * libpas/src/libpas/pas_platform.h:
+        * libpas/src/libpas/pas_thread_local_cache.c:
+
 2022-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Do not need to call pthread_set_qos_class_self_np repeatedly

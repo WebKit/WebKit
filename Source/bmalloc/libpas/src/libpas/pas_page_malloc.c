@@ -120,8 +120,13 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
             return result;
     }
     
+#if PAS_PLATFORM(PLAYSTATION)
+    mmap_result = mmap_np(NULL, mapped_size, PROT_READ | PROT_WRITE,
+                          MAP_PRIVATE | MAP_ANON | PAS_NORESERVE, PAS_VM_TAG, 0, "SceNKLibpas");
+#else
     mmap_result = mmap(NULL, mapped_size, PROT_READ | PROT_WRITE,
                        MAP_PRIVATE | MAP_ANON | PAS_NORESERVE, PAS_VM_TAG, 0);
+#endif
     if (mmap_result == MAP_FAILED) {
         errno = 0; /* Clear the error so that we don't leak errno in those
                       cases where we handle the allocation failure
@@ -210,6 +215,10 @@ static void commit_impl(void* ptr, size_t size, bool do_mprotect, pas_mmap_capab
 
 #if PAS_OS(LINUX)
     PAS_SYSCALL(madvise(ptr, size, MADV_DODUMP));
+#elif PAS_PLATFORM(PLAYSTATION)
+    // We don't need to call madvise to map page.
+#elif PAS_OS(FREEBSD)
+    PAS_SYSCALL(madvise(ptr, size, MADV_NORMAL));
 #endif
 }
 

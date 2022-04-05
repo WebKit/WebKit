@@ -268,7 +268,7 @@ static inline pas_bitfit_size_class* pas_segregated_size_directory_get_bitfit_si
     uintptr_t result;
     PAS_TESTING_ASSERT(pas_segregated_size_directory_is_bitfit(directory));
     result = (uintptr_t)(directory + 1);
-    PAS_TESTING_ASSERT(pas_is_aligned(result, alignof(pas_bitfit_size_class)));
+    PAS_TESTING_ASSERT(pas_is_aligned(result, PAS_ALIGNOF(pas_bitfit_size_class)));
     return (pas_bitfit_size_class*)result;
 }
 

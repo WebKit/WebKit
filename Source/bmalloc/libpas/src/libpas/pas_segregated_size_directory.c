@@ -83,7 +83,7 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
     } else {
         result = pas_immortal_heap_allocate_with_alignment(
             sizeof(pas_segregated_size_directory) + sizeof(pas_bitfit_size_class),
-            PAS_MAX(alignof(pas_segregated_size_directory), alignof(pas_bitfit_size_class)),
+            PAS_MAX(PAS_ALIGNOF(pas_segregated_size_directory), PAS_ALIGNOF(pas_bitfit_size_class)),
             "pas_segregated_size_directory+pas_bitfit_size_class",
             pas_object_allocation);
     }
