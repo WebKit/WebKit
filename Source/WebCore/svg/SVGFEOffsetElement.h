@@ -48,6 +48,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
 
     Vector<AtomString> filterEffectInputsNames() const override { return { in1() }; }
+    IntOutsets outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const override;
     RefPtr<FilterEffect> filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const override;
 
     PropertyRegistry m_propertyRegistry { *this };

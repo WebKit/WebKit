@@ -95,7 +95,6 @@ public:
 
     virtual bool supportsAcceleratedRendering() const { return false; }
     virtual RefPtr<FilterImage> apply(const Filter&, FilterImage&, FilterResults&) { return nullptr; }
-    virtual IntOutsets outsets(const Filter&) const { return { }; }
 
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation = FilterRepresentation::TestOutput) const = 0;
 

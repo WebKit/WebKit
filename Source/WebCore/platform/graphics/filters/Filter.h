@@ -36,7 +36,6 @@ class FilterResults;
 
 class Filter : public FilterFunction {
     using FilterFunction::apply;
-    using FilterFunction::outsets;
 
 public:
     enum class ClipOperation { Intersect, Unite };
@@ -66,7 +65,6 @@ public:
 
     bool clampFilterRegionIfNeeded();
 
-    virtual IntOutsets outsets() const = 0;
     virtual RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) = 0;
     WEBCORE_EXPORT RefPtr<FilterImage> apply(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, FilterResults&);
 

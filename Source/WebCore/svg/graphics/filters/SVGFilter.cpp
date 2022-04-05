@@ -34,19 +34,12 @@ RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBu
 {
     auto filter = adoptRef(*new SVGFilter(renderingMode, filterScale, clipOperation, filterRegion, targetBoundingBox, filterElement.primitiveUnits()));
 
-    builder.setupBuiltinEffects(SourceGraphic::create());
-    builder.setTargetBoundingBox(targetBoundingBox);
-    builder.setPrimitiveUnits(filterElement.primitiveUnits());
-
-    if (!builder.buildFilterEffects(filterElement))
+    auto expression = builder.buildFilterExpression(filterElement);
+    if (!expression)
         return nullptr;
 
-    SVGFilterExpression expression;
-    if (!builder.buildExpression(expression))
-        return nullptr;
-
-    ASSERT(!expression.isEmpty());
-    filter->setExpression(WTFMove(expression));
+    ASSERT(!expression->isEmpty());
+    filter->setExpression(WTFMove(*expression));
 
     if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
         filter->setRenderingMode(RenderingMode::Unaccelerated);
@@ -74,9 +67,14 @@ SVGFilter::SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitTy
 {
 }
 
+FloatSize SVGFilter::calculateResolvedSize(const FloatSize& size, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
+{
+    return primitiveUnits == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX ? size * targetBoundingBox.size() : size;
+}
+
 FloatSize SVGFilter::resolvedSize(const FloatSize& size) const
 {
-    return m_primitiveUnits == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX ? size * m_targetBoundingBox.size() : size;
+    return calculateResolvedSize(size, m_targetBoundingBox, m_primitiveUnits);
 }
 
 bool SVGFilter::supportsAcceleratedRendering() const
@@ -146,14 +144,6 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
     
     ASSERT(stack.size() == 1);
     return stack.takeLast();
-}
-
-IntOutsets SVGFilter::outsets() const
-{
-    IntOutsets outsets;
-    for (auto& term : m_expression)
-        outsets += term.effect->outsets(*this);
-    return outsets;
 }
 
 TextStream& SVGFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

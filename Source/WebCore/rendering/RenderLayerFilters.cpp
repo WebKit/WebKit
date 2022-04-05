@@ -50,11 +50,6 @@ RenderLayerFilters::~RenderLayerFilters()
     removeReferenceFilterClients();
 }
 
-void RenderLayerFilters::setFilter(RefPtr<CSSFilter>&& filter)
-{
-    m_filter = WTFMove(filter);
-}
-
 bool RenderLayerFilters::hasFilterThatMovesPixels() const
 {
     return m_filter && m_filter->hasFilterThatMovesPixels();
@@ -116,12 +111,14 @@ void RenderLayerFilters::removeReferenceFilterClients()
     m_internalSVGReferences.clear();
 }
 
-void RenderLayerFilters::buildFilter(RenderElement& renderer, float scaleFactor, RenderingMode renderingMode)
+IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const FloatRect& targetBoundingBox)
 {
-    // If the filter fails to build, remove it from the layer. It will still attempt to
-    // go through regular processing (e.g. compositing), but never apply anything.
-    // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-    m_filter = CSSFilter::create(renderer, renderer.style().filter(), renderingMode, FloatSize { scaleFactor, scaleFactor }, Filter::ClipOperation::Unite, m_targetBoundingBox);
+    const auto& operations = renderer.style().filter();
+    
+    if (!operations.hasFilterThatMovesPixels())
+        return { };
+
+    return CSSFilter::calculateOutsets(renderer, operations, targetBoundingBox);
 }
 
 GraphicsContext* RenderLayerFilters::inputContext()
@@ -140,35 +137,35 @@ void RenderLayerFilters::allocateBackingStoreIfNeeded(GraphicsContext& context)
 
 GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)
 {
-    if (!m_filter)
-        return nullptr;
-
     auto expandedDirtyRect = dirtyRect;
-    if (m_filter->hasFilterThatMovesPixels()) {
-        auto outsets = m_filter->outsets();
+    auto targetBoundingBox = intersection(filterBoxRect, dirtyRect);
+
+    auto outsets = calculateOutsets(renderer, targetBoundingBox);
+    if (!outsets.isZero()) {
         LayoutBoxExtent flippedOutsets { outsets.bottom(), outsets.left(), outsets.top(), outsets.right() };
         expandedDirtyRect.expand(flippedOutsets);
     }
+
     // Calculate targetBoundingBox since it will be used if the filter is created.
-    auto targetBoundingBox = intersection(filterBoxRect, expandedDirtyRect);
+    targetBoundingBox = intersection(filterBoxRect, expandedDirtyRect);
     if (targetBoundingBox.isEmpty())
         return nullptr;
 
-    if (m_targetBoundingBox != targetBoundingBox) {
+    if (!m_filter || m_targetBoundingBox != targetBoundingBox) {
         m_targetBoundingBox = targetBoundingBox;
         // FIXME: This rebuilds the entire effects chain even if the filter style didn't change.
-        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_filter->renderingMode(), m_filter->filterScale(), Filter::ClipOperation::Unite, m_targetBoundingBox);
+        m_filter = CSSFilter::create(renderer, renderer.style().filter(), m_renderingMode, m_filterScale, Filter::ClipOperation::Unite, m_targetBoundingBox);
     }
 
     if (!m_filter)
         return nullptr;
 
     auto& filter = *m_filter;
-    
+
     // For CSSFilter, filterRegion = targetBoundingBox + filter->outsets()
     auto filterRegion = targetBoundingBox;
     if (filter.hasFilterThatMovesPixels())
-        filterRegion.expand(toLayoutBoxExtent(filter.outsets()));
+        filterRegion.expand(toLayoutBoxExtent(outsets));
 
     if (filterRegion.isEmpty())
         return nullptr;

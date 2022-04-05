@@ -1,3 +1,132 @@
+2022-04-04  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] CSSFilter should be created only at the painting time
+        https://bugs.webkit.org/show_bug.cgi?id=236574
+        rdar://89210004
+
+        Reviewed by Simon Fraser.
+
+        Instead of building the whole filter chain to get the filter outsets at 
+        the layout time, we can use the SVGFilterPrimitiveStandardAttributes and
+        the FilterOperation super classes to get their outsets without having to
+        build the FilterEffects.
+
+        CSSFilter::calculateOutsets() is a static method which will loop through
+        the FilterOperations and will add up the outsets of the blur, the drop-
+        shadow and the reference FilterOperation.
+
+        SVGFilterBuilder::calculateFilterOutsets() will loop through the primitives
+        of the filter element and will call the new virtual method outsets() which
+        will call a static method in the corresponding FilterEffect.
+
+        FEDropShadow, FEGaussianBlur and FEOffset will be provide static methods
+        for calculating the effect outsets. These static methods will be called 
+        from CSSFilter::calculateOutsets() and from the SVGFExxxElements.
+
+        To remove the duplication of the code from SVGFilterBuilder::
+        buildFilterEffects() and calculateFilterOutsets(), a new template class
+        named SVGFilterGraph will be introduced. It represents the graph of the
+        SVGFilter. The nodes of  this graph will be of type FilterEffecct when
+        it is used to build the SVGFilterExpression. The nodes will be of type
+        SVGFilterPrimitiveStandardAttributes when it is used to calculate the
+        filter outsets.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::calculateOutsets):
+        (WebCore::FEDropShadow::outsets const): Deleted.
+        * platform/graphics/filters/FEDropShadow.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateOutsets):
+        (WebCore::FEGaussianBlur::outsets const): Deleted.
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FEOffset.cpp:
+        (WebCore::FEOffset::calculateOutsets):
+        (WebCore::FEOffset::outsets const): Deleted.
+        * platform/graphics/filters/FEOffset.h:
+        * platform/graphics/filters/Filter.h:
+        * platform/graphics/filters/FilterFunction.h:
+        (WebCore::FilterFunction::apply):
+        (WebCore::FilterFunction::outsets const): Deleted.
+        * rendering/CSSFilter.cpp:
+        (WebCore::calculateBlurEffectOutsets):
+        (WebCore::calculateDropShadowEffectOutsets):
+        (WebCore::referenceFilterElement):
+        (WebCore::calculateReferenceFilterOutsets):
+        (WebCore::createReferenceFilter):
+        (WebCore::CSSFilter::buildFilterFunctions):
+        (WebCore::CSSFilter::calculateOutsets):
+        (WebCore::createSVGFilter): Deleted.
+        (WebCore::CSSFilter::outsets const): Deleted.
+        * rendering/CSSFilter.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::filtersForPainting const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerFilters.cpp:
+        (WebCore::RenderLayerFilters::calculateOutsets):
+        (WebCore::RenderLayerFilters::beginFilterEffect):
+        (WebCore::RenderLayerFilters::setFilter): Deleted.
+        (WebCore::RenderLayerFilters::buildFilter): Deleted.
+        * rendering/RenderLayerFilters.h:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::outsets const):
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::outsets const):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::outsets const):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::outsets const):
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::create):
+        (WebCore::SVGFilter::calculateResolvedSize):
+        (WebCore::SVGFilter::resolvedSize const):
+        (WebCore::SVGFilter::outsets const): Deleted.
+        * svg/graphics/filters/SVGFilter.h:
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder):
+        (WebCore::appendEffectToExpression):
+        (WebCore::appendGraphToExpression):
+        (WebCore::SVGFilterBuilder::buildFilterExpression):
+        (WebCore::calculatePrimitiveOutsets):
+        (WebCore::calculateGraphOutsets):
+        (WebCore::SVGFilterBuilder::calculateFilterOutsets):
+        (WebCore::SVGFilterBuilder::setupBuiltinEffects): Deleted.
+        (WebCore::SVGFilterBuilder::buildFilterEffects): Deleted.
+        (WebCore::SVGFilterBuilder::sourceGraphic const): Deleted.
+        (WebCore::SVGFilterBuilder::sourceAlpha const): Deleted.
+        (WebCore::SVGFilterBuilder::addNamedEffect): Deleted.
+        (WebCore::SVGFilterBuilder::namedEffect const): Deleted.
+        (WebCore::SVGFilterBuilder::namedEffects const): Deleted.
+        (WebCore::SVGFilterBuilder::setEffectInputs): Deleted.
+        (WebCore::SVGFilterBuilder::appendEffectToEffectRenderer): Deleted.
+        (WebCore::SVGFilterBuilder::effectGeometry const): Deleted.
+        (WebCore::SVGFilterBuilder::buildEffectExpression const): Deleted.
+        (WebCore::SVGFilterBuilder::buildExpression const): Deleted.
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        (WebCore::SVGFilterBuilder::targetBoundingBox const):
+        (WebCore::SVGFilterBuilder::primitiveUnits const):
+        (WebCore::SVGFilterBuilder::effectByRenderer):
+        (WebCore::SVGFilterBuilder::setTargetBoundingBox): Deleted.
+        (WebCore::SVGFilterBuilder::setPrimitiveUnits): Deleted.
+        * svg/graphics/filters/SVGFilterExpression.h:
+        * svg/graphics/filters/SVGFilterGraph.h: Added.
+        (WebCore::SVGFilterGraph::SVGFilterGraph):
+        (WebCore::SVGFilterGraph::sourceGraphic const):
+        (WebCore::SVGFilterGraph::sourceAlpha const):
+        (WebCore::SVGFilterGraph::addNamedNode):
+        (WebCore::SVGFilterGraph::getNamedNode const):
+        (WebCore::SVGFilterGraph::getNamedNodes const):
+        (WebCore::SVGFilterGraph::setNodeInputs):
+        (WebCore::SVGFilterGraph::getNodeInputs const):
+        (WebCore::SVGFilterGraph::lastNode const):
+
 2022-04-04  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Use Ref and RefPtr pattern when handling document close calls

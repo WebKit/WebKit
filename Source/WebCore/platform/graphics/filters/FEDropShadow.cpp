@@ -61,14 +61,14 @@ FloatRect FEDropShadow::calculateImageRect(const Filter& filter, const FilterIma
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
-IntOutsets FEDropShadow::outsets(const Filter&) const
+IntOutsets FEDropShadow::calculateOutsets(const FloatSize& offset, const FloatSize& stdDeviation)
 {
-    IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ m_stdX, m_stdY });
+    IntSize outsetSize = FEGaussianBlur::calculateOutsetSize(stdDeviation);
 
-    int top = std::max<int>(0, outsetSize.height() - m_dy);
-    int right = std::max<int>(0, outsetSize.width() + m_dx);
-    int bottom = std::max<int>(0, outsetSize.height() + m_dy);
-    int left = std::max<int>(0, outsetSize.width() - m_dx);
+    int top = std::max<int>(0, outsetSize.height() - offset.height());
+    int right = std::max<int>(0, outsetSize.width() + offset.width());
+    int bottom = std::max<int>(0, outsetSize.height() + offset.height());
+    int left = std::max<int>(0, outsetSize.width() - offset.width());
 
     return { top, right, bottom, left };
 }
@@ -77,7 +77,7 @@ std::unique_ptr<FilterEffectApplier> FEDropShadow::createSoftwareApplier() const
 {
     return FilterEffectApplier::create<FEDropShadowSoftwareApplier>(*this);
 }
-    
+
 TextStream& FEDropShadow::externalRepresentation(TextStream& ts, FilterRepresentation representation) const
 {
     ts << indent <<"[feDropShadow";

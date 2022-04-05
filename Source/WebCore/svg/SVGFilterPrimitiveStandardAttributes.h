@@ -53,6 +53,7 @@ public:
     // Returns true, if the new value is different from the old one.
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
     virtual Vector<AtomString> filterEffectInputsNames() const { return { }; }
+    virtual IntOutsets outsets(const FloatRect&, SVGUnitTypes::SVGUnitType) const { return { }; }
     virtual RefPtr<FilterEffect> filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const = 0;
 
     static void invalidateFilterPrimitiveParent(SVGElement*);

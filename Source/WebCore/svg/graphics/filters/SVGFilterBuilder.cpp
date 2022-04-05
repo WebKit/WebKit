@@ -23,9 +23,8 @@
 
 #include "ElementIterator.h"
 #include "SVGFilterElement.h"
+#include "SVGFilterGraph.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SourceAlpha.h"
-#include "SourceGraphic.h"
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
 #include "CSSComputedStyleDeclaration.h"
@@ -37,10 +36,10 @@ namespace WebCore {
 static constexpr unsigned maxTotalNumberFilterEffects = 100;
 static constexpr unsigned maxCountChildNodes = 200;
 
-void SVGFilterBuilder::setupBuiltinEffects(Ref<FilterEffect> sourceGraphic)
+SVGFilterBuilder::SVGFilterBuilder(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
+    : m_targetBoundingBox(targetBoundingBox)
+    , m_primitiveUnits(primitiveUnits)
 {
-    m_builtinEffects.add(SourceGraphic::effectName(), sourceGraphic);
-    m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create(sourceGraphic->operatingColorSpace()));
 }
 
 static OptionSet<FilterEffectGeometry::Flags> effectGeometryFlagsForElement(SVGElement& element)
@@ -78,128 +77,25 @@ static ColorInterpolation colorInterpolationForElement(SVGElement& element)
 }
 #endif
 
-RefPtr<FilterEffect> SVGFilterBuilder::buildFilterEffects(SVGFilterElement& filterElement)
-{
-    if (filterElement.countChildNodes() > maxCountChildNodes)
-        return nullptr;
-
-    setEffectInputs(sourceAlpha(), FilterEffectVector { sourceGraphic() });
-
-    for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
-        auto inputs = namedEffects(effectElement.filterEffectInputsNames());
-        if (!inputs)
-            return nullptr;
-
-        auto effect = effectElement.filterEffect(*this, *inputs);
-        if (!effect)
-            return nullptr;
-
-        if (auto flags = effectGeometryFlagsForElement(effectElement)) {
-            auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, m_primitiveUnits, m_targetBoundingBox);
-            m_effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
-        }
-
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-        if (colorInterpolationForElement(effectElement) == ColorInterpolation::LinearRGB)
-            effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
-#endif
-
-        if (auto renderer = effectElement.renderer())
-            appendEffectToEffectRenderer(*effect, *renderer);
-
-        addNamedEffect(effectElement.result(), { *effect });
-        setEffectInputs(*effect, WTFMove(*inputs));
-    }
-
-    return m_lastEffect;
-}
-
-FilterEffect& SVGFilterBuilder::sourceGraphic() const
-{
-    return *m_builtinEffects.get(FilterEffect::sourceGraphicName());
-}
-
-FilterEffect& SVGFilterBuilder::sourceAlpha() const
-{
-    return *m_builtinEffects.get(FilterEffect::sourceAlphaName());
-}
-
-void SVGFilterBuilder::addNamedEffect(const AtomString& id, Ref<FilterEffect>&& effect)
-{
-    if (id.isEmpty()) {
-        m_lastEffect = WTFMove(effect);
-        return;
-    }
-
-    if (m_builtinEffects.contains(id))
-        return;
-
-    m_lastEffect = WTFMove(effect);
-    m_namedEffects.set(id, Ref { *m_lastEffect });
-}
-
-RefPtr<FilterEffect> SVGFilterBuilder::namedEffect(const AtomString& id) const
-{
-    if (id.isEmpty()) {
-        if (m_lastEffect)
-            return m_lastEffect;
-
-        return &sourceGraphic();
-    }
-
-    if (m_builtinEffects.contains(id))
-        return m_builtinEffects.get(id);
-
-    return m_namedEffects.get(id);
-}
-
-std::optional<FilterEffectVector> SVGFilterBuilder::namedEffects(Span<const AtomString> names) const
-{
-    FilterEffectVector effects;
-
-    effects.reserveInitialCapacity(names.size());
-
-    for (auto& name : names) {
-        auto effect = namedEffect(name);
-        if (!effect)
-            return std::nullopt;
-
-        effects.uncheckedAppend(effect.releaseNonNull());
-    }
-
-    return effects;
-}
-
-void SVGFilterBuilder::setEffectInputs(FilterEffect& effect, FilterEffectVector&& inputs)
-{
-    m_inputsMap.set({ effect }, WTFMove(inputs));
-}
-
-void SVGFilterBuilder::appendEffectToEffectRenderer(FilterEffect& effect, RenderObject& object)
-{
-    m_effectRenderer.add(&object, &effect);
-}
-
-std::optional<FilterEffectGeometry> SVGFilterBuilder::effectGeometry(FilterEffect& effect) const
-{
-    auto it = m_effectGeometryMap.find(effect);
-    if (it != m_effectGeometryMap.end())
-        return it->value;
-    return std::nullopt;
-}
-
-bool SVGFilterBuilder::buildEffectExpression(FilterEffect& effect, FilterEffectVector& stack, unsigned level, SVGFilterExpression& expression) const
+static bool appendSubGraphToExpression(const SVGFilterEffectsGraph& graph, const FilterEffectGeometryMap& effectGeometryMap, FilterEffect& effect, FilterEffectVector& stack, unsigned level, SVGFilterExpression& expression)
 {
     // A cycle is detected.
     if (stack.containsIf([&](auto& item) { return item.ptr() == &effect; }))
         return false;
 
+    auto effectGeometry = [&](FilterEffect& effect) -> std::optional<FilterEffectGeometry> {
+        auto it = effectGeometryMap.find(effect);
+        if (it != effectGeometryMap.end())
+            return it->value;
+        return std::nullopt;
+    };
+
     stack.append(effect);
-    
+
     expression.append({ effect, effectGeometry(effect), level });
 
-    for (auto& input : m_inputsMap.get(effect)) {
-        if (!buildEffectExpression(input, stack, level + 1, expression))
+    for (auto& input : graph.getNodeInputs(effect)) {
+        if (!appendSubGraphToExpression(graph, effectGeometryMap, input, stack, level + 1, expression))
             return false;
     }
 
@@ -210,13 +106,13 @@ bool SVGFilterBuilder::buildEffectExpression(FilterEffect& effect, FilterEffectV
     return true;
 }
 
-bool SVGFilterBuilder::buildExpression(SVGFilterExpression& expression) const
+static bool appendGraphToExpression(const SVGFilterEffectsGraph& graph, const FilterEffectGeometryMap& effectGeometryMap, SVGFilterExpression& expression)
 {
-    if (!m_lastEffect)
+    if (!graph.lastNode())
         return false;
 
     FilterEffectVector stack;
-    if (!buildEffectExpression(*m_lastEffect, stack, 0, expression))
+    if (!appendSubGraphToExpression(graph, effectGeometryMap, *graph.lastNode(), stack, 0, expression))
         return false;
 
     if (expression.size() > maxTotalNumberFilterEffects)
@@ -225,6 +121,93 @@ bool SVGFilterBuilder::buildExpression(SVGFilterExpression& expression) const
     expression.reverse();
     expression.shrinkToFit();
     return true;
+}
+
+std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFilterElement& filterElement)
+{
+    if (filterElement.countChildNodes() > maxCountChildNodes)
+        return std::nullopt;
+
+    SVGFilterEffectsGraph graph(SourceGraphic::create(), SourceAlpha::create());
+    FilterEffectGeometryMap effectGeometryMap;
+
+    for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
+        auto inputs = graph.getNamedNodes(effectElement.filterEffectInputsNames());
+        if (!inputs)
+            return std::nullopt;
+
+        auto effect = effectElement.filterEffect(*this, *inputs);
+        if (!effect)
+            return std::nullopt;
+
+        if (auto flags = effectGeometryFlagsForElement(effectElement)) {
+            auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, m_primitiveUnits, m_targetBoundingBox);
+            effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
+        }
+
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+        if (colorInterpolationForElement(effectElement) == ColorInterpolation::LinearRGB)
+            effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
+#endif
+
+        if (auto renderer = effectElement.renderer())
+            m_effectRenderer.add(renderer, effect.get());
+
+        graph.addNamedNode(effectElement.result(), { *effect });
+        graph.setNodeInputs(*effect, WTFMove(*inputs));
+    }
+
+    SVGFilterExpression expression;
+    if (!appendGraphToExpression(graph, effectGeometryMap, expression))
+        return std::nullopt;
+
+    return expression;
+}
+
+static IntOutsets calculateSubGraphOutsets(const SVGFilterPrimitivesGraph& graph, SVGFilterPrimitiveStandardAttributes& primitive, Vector<Ref<SVGFilterPrimitiveStandardAttributes>>& stack, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
+{
+    // A cycle is detected.
+    if (stack.containsIf([&](auto& item) { return item.ptr() == &primitive; }))
+        return { };
+
+    stack.append(primitive);
+
+    IntOutsets outsets;
+    for (auto& input : graph.getNodeInputs(primitive))
+        outsets += calculateSubGraphOutsets(graph, input, stack, targetBoundingBox, primitiveUnits);
+    outsets += primitive.outsets(targetBoundingBox, primitiveUnits);
+
+    ASSERT(!stack.isEmpty());
+    ASSERT(stack.last().ptr() == &primitive);
+
+    stack.removeLast();
+    return outsets;
+}
+
+static IntOutsets calculateGraphOutsets(const SVGFilterPrimitivesGraph& graph, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
+{
+    if (!graph.lastNode())
+        return { };
+    
+    Vector<Ref<SVGFilterPrimitiveStandardAttributes>> stack;
+    return calculateSubGraphOutsets(graph, *graph.lastNode(), stack, targetBoundingBox, primitiveUnits);
+}
+
+IntOutsets SVGFilterBuilder::calculateFilterOutsets(SVGFilterElement& filterElement)
+{
+    if (filterElement.countChildNodes() > maxCountChildNodes)
+        return { };
+
+    SVGFilterPrimitivesGraph graph;
+
+    for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
+        // We should not be strict about not finding the input primitives here because SourceGraphic and SourceAlpha do not have primitives.
+        auto inputs = graph.getNamedNodes(effectElement.filterEffectInputsNames()).value_or(SVGFilterPrimitivesGraph::NodeVector());
+        graph.addNamedNode(effectElement.result(), { effectElement });
+        graph.setNodeInputs(effectElement, WTFMove(inputs));
+    }
+
+    return calculateGraphOutsets(graph, m_targetBoundingBox, m_primitiveUnits);
 }
 
 } // namespace WebCore

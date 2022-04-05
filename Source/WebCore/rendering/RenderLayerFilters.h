@@ -50,7 +50,7 @@ public:
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
 
     CSSFilter* filter() const { return m_filter.get(); }
-    void setFilter(RefPtr<CSSFilter>&&);
+    void clearFilter() { m_filter = nullptr; }
     
     bool hasFilterThatMovesPixels() const;
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
@@ -58,7 +58,10 @@ public:
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();
 
-    void buildFilter(RenderElement&, float scaleFactor, RenderingMode);
+    void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
+    void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
+
+    static IntOutsets calculateOutsets(RenderElement&, const FloatRect& targetBoundingBox);
 
     // Per render
     LayoutRect repaintRect() const { return m_repaintRect; }
@@ -73,6 +76,8 @@ private:
     void allocateBackingStoreIfNeeded(GraphicsContext&);
 
     RenderLayer& m_layer;
+    RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
+    FloatSize m_filterScale { 1, 1 };
 
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;

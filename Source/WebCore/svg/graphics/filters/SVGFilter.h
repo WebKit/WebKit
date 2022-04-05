@@ -48,6 +48,8 @@ public:
 
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
 
+    static FloatSize calculateResolvedSize(const FloatSize&, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
+
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
 
 private:
@@ -61,9 +63,6 @@ private:
     bool supportsAcceleratedRendering() const final;
 
     RefPtr<FilterImage> apply(const Filter&, FilterImage& sourceImage, FilterResults&) final;
-
-    IntOutsets outsets(const Filter&) const final { return outsets(); }
-    IntOutsets outsets() const final;
 
     FloatRect m_targetBoundingBox;
     SVGUnitTypes::SVGUnitType m_primitiveUnits;

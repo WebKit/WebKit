@@ -47,6 +47,8 @@ public:
     float shadowOpacity() const { return m_shadowOpacity; }
     void setShadowOpacity(float shadowOpacity) { m_shadowOpacity = shadowOpacity; }
 
+    static IntOutsets calculateOutsets(const FloatSize& offset, const FloatSize& stdDeviation);
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<Ref<FEDropShadow>> decode(Decoder&);
 
@@ -54,8 +56,6 @@ private:
     FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity);
 
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
-
-    IntOutsets outsets(const Filter&) const override;
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

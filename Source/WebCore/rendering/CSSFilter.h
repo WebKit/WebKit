@@ -49,9 +49,9 @@ public:
 
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
-    IntOutsets outsets() const final;
-
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
+
+    static IntOutsets calculateOutsets(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
 
 private:
     CSSFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
@@ -67,8 +67,6 @@ private:
     bool m_hasFilterThatShouldBeRestrictedBySecurityOrigin { false };
 
     Vector<Ref<FilterFunction>> m_functions;
-
-    mutable IntOutsets m_outsets;
 };
 
 } // namespace WebCore

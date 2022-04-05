@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FilterEffectGeometry.h"
 #include "FloatRect.h"
 #include <wtf/Vector.h>
 
