@@ -2,45 +2,5 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>gpu_process_canvas_rendering</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-		<key>Attributes</key>
-		<dict>
-			<key>CodeComplete</key>
-			<true/>
-		</dict>
-	</dict>
-	<key>gpu_process_dom_rendering</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
-	<key>gpu_process_media</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-		<key>Attributes</key>
-		<dict>
-			<key>CodeComplete</key>
-			<true/>
-		</dict>
-	</dict>
-	<key>gpu_process_webgl</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
-	<key>gpu_process_webrtc</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-		<key>Attributes</key>
-		<dict>
-			<key>CodeComplete</key>
-			<true/>
-		</dict>
-	</dict>
 </dict>
 </plist>

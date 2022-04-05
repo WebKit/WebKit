@@ -128,61 +128,6 @@ bool defaultOfflineWebApplicationCacheEnabled()
 #endif
 }
 
-#if ENABLE(GPU_PROCESS)
-
-bool defaultUseGPUProcessForCanvasRenderingEnabled()
-{
-#if ENABLE(GPU_PROCESS_BY_DEFAULT) || PLATFORM(WIN)
-    bool defaultValue = true;
-#else
-    bool defaultValue = false;
-#endif
-
-    return isFeatureFlagEnabled("gpu_process_canvas_rendering", defaultValue);
-}
-
-bool defaultUseGPUProcessForDOMRenderingEnabled()
-{
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    return false;
-#else
-#if ENABLE(GPU_PROCESS_BY_DEFAULT) && PLATFORM(IOS_FAMILY)
-    bool defaultValue = true;
-#else
-    bool defaultValue = false;
-#endif
-    
-    return isFeatureFlagEnabled("gpu_process_dom_rendering", defaultValue);
-#endif
-}
-
-bool defaultUseGPUProcessForMediaEnabled()
-{
-#if ENABLE(GPU_PROCESS_BY_DEFAULT)
-    bool defaultValue = true;
-#else
-    bool defaultValue = false;
-#endif
-
-    return isFeatureFlagEnabled("gpu_process_media", defaultValue);
-}
-
-bool defaultUseGPUProcessForWebGLEnabled()
-{
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    return false;
-#else
-#if (ENABLE(GPU_PROCESS_BY_DEFAULT) && PLATFORM(IOS_FAMILY)) || PLATFORM(WIN)
-    bool defaultValue = true;
-#else
-    bool defaultValue = false;
-#endif
-    return isFeatureFlagEnabled("gpu_process_webgl", defaultValue);
-#endif
-}
-
-#endif // ENABLE(GPU_PROCESS)
-
 #if ENABLE(MEDIA_STREAM)
 
 bool defaultCaptureAudioInGPUProcessEnabled()
@@ -194,17 +139,9 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 #endif
 
 #if ENABLE(GPU_PROCESS_BY_DEFAULT)
-    bool defaultValue = true;
+    return true;
 #else
-    bool defaultValue = false;
-#endif
-
-#if PLATFORM(MAC)
-    return isFeatureFlagEnabled("gpu_process_webrtc", defaultValue);
-#elif PLATFORM(IOS_FAMILY)
-    return isFeatureFlagEnabled("gpu_process_media", defaultValue);
-#else
-    return defaultValue;
+    return false;
 #endif
 }
 
@@ -217,33 +154,7 @@ bool defaultCaptureAudioInUIProcessEnabled()
     return false;
 }
 
-bool defaultCaptureVideoInGPUProcessEnabled()
-{
-#if ENABLE(GPU_PROCESS_BY_DEFAULT)
-    bool defaultValue = true;
-#else
-    bool defaultValue = false;
-#endif
-
-    return isFeatureFlagEnabled("gpu_process_webrtc", defaultValue);
-}
-
 #endif // ENABLE(MEDIA_STREAM)
-
-#if ENABLE(WEB_RTC)
-
-bool defaultWebRTCCodecsInGPUProcess()
-{
-#if ENABLE(GPU_PROCESS_BY_DEFAULT)
-    bool defaultValue = true;
-#else
-    bool defaultValue = false;
-#endif
-
-    return isFeatureFlagEnabled("gpu_process_webrtc", defaultValue);
-}
-
-#endif // ENABLE(WEB_RTC)
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 bool defaultMediaSessionCoordinatorEnabled()

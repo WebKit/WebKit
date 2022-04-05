@@ -198,7 +198,8 @@ CaptureVideoInGPUProcessEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: WebKit::defaultCaptureVideoInGPUProcessEnabled()
+      "ENABLE(GPU_PROCESS_BY_DEFAULT)": true
+      default: false
 
 CaptureVideoInUIProcessEnabled:
   type: bool
@@ -976,7 +977,9 @@ UseGPUProcessForCanvasRenderingEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: defaultUseGPUProcessForCanvasRenderingEnabled()
+      "ENABLE(GPU_PROCESS_BY_DEFAULT)": true
+      "PLATFORM(WIN)": true
+      default: false
 
 UseGPUProcessForMediaEnabled:
   type: bool
@@ -987,7 +990,8 @@ UseGPUProcessForMediaEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: WebKit::defaultUseGPUProcessForMediaEnabled()
+      "ENABLE(GPU_PROCESS_BY_DEFAULT)": true
+      default: false
 
 UseGeneralDirectoryForStorage:
   type: bool
@@ -1094,7 +1098,8 @@ WebRTCPlatformCodecsInGPUProcessEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebKit::defaultWebRTCCodecsInGPUProcess()
+      "ENABLE(GPU_PROCESS_BY_DEFAULT)": true
+      default: false
     WebCore:
       default: false
 

@@ -1442,7 +1442,8 @@ UseGPUProcessForDOMRenderingEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: defaultUseGPUProcessForDOMRenderingEnabled()
+      "ENABLE(GPU_PROCESS_BY_DEFAULT) && PLATFORM(IOS_FAMILY) && !HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      default: false
 
 UseGPUProcessForDisplayCapture:
   type: bool
@@ -1464,7 +1465,9 @@ UseGPUProcessForWebGLEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: defaultUseGPUProcessForWebGLEnabled()
+      "ENABLE(GPU_PROCESS_BY_DEFAULT) && PLATFORM(IOS_FAMILY) && !HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(WIN)": true
+      default: false
 
 UseScreenCaptureKit:
   type: bool

@@ -66,21 +66,9 @@ bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
 
 bool defaultOfflineWebApplicationCacheEnabled();
 
-#if ENABLE(GPU_PROCESS)
-bool defaultUseGPUProcessForCanvasRenderingEnabled();
-bool defaultUseGPUProcessForDOMRenderingEnabled();
-bool defaultUseGPUProcessForMediaEnabled();
-bool defaultUseGPUProcessForWebGLEnabled();
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 bool defaultCaptureAudioInGPUProcessEnabled();
 bool defaultCaptureAudioInUIProcessEnabled();
-bool defaultCaptureVideoInGPUProcessEnabled();
-#endif
-
-#if ENABLE(WEB_RTC)
-bool defaultWebRTCCodecsInGPUProcess();
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
