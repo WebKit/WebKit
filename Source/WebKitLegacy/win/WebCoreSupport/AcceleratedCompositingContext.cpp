@@ -90,8 +90,8 @@ void AcceleratedCompositingContext::initialize()
         m_nonCompositedContentLayer->setAcceleratesDrawing(true);
 
 #ifndef NDEBUG
-    m_rootLayer->setName("Root layer");
-    m_nonCompositedContentLayer->setName("Non-composited content");
+    m_rootLayer->setName("Root layer"_s);
+    m_nonCompositedContentLayer->setName("Non-composited content"_s);
 #endif
 
     m_rootLayer->addChild(*m_nonCompositedContentLayer);

@@ -2,6 +2,13 @@
 
         Unreviewed WinCairo build fix after r292408.
 
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::initialize):
+
+2022-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed WinCairo build fix after r292408.
+
         * WebView.cpp:
         (imeNotificationName):
         (imeRequestName):
