@@ -1,3 +1,25 @@
+2022-04-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Set svn:ignore on WebGPU.xcodeproj
+        https://bugs.webkit.org/show_bug.cgi?id=238828
+
+        Reviewed by Alexey Proskuryakov.
+
+        For people who use pure SVN, building causes some spurious files to be created.
+        Other WebKit projects solve this by setting svn:ignore on .xcodeproj directories.
+        This does the same.
+
+        % svn propget svn:ignore WebGPU.xcodeproj
+        *.mode*
+        *.pbxuser
+        *.perspective*
+        project.xcworkspace
+        xcuserdata
+        
+        % 
+
+        * WebGPU.xcodeproj: Set svn:ignore.
+
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
         Mark String(const char*) constructor as explicit
