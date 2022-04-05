@@ -3291,4 +3291,27 @@ std::optional<TextRecognitionDataDetector> ArgumentCoder<TextRecognitionDataDete
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+
+void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, const UnixFileDescriptor& fd)
+{
+    auto duplicate = fd.duplicate();
+    encoder.addAttachment(Attachment(duplicate.release()));
+}
+
+void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, UnixFileDescriptor&& fd)
+{
+    encoder.addAttachment(Attachment(fd.release()));
+}
+
+std::optional<UnixFileDescriptor> ArgumentCoder<UnixFileDescriptor>::decode(Decoder& decoder)
+{
+    auto attachment = decoder.takeLastAttachment();
+    if (!attachment)
+        return std::nullopt;
+    return std::optional<UnixFileDescriptor> { std::in_place, attachment->releaseFileDescriptor(), UnixFileDescriptor::Adopt };
+}
+
+#endif
+
 } // namespace IPC

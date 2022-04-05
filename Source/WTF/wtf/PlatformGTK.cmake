@@ -13,6 +13,8 @@ list(APPEND WTF_PUBLIC_HEADERS
     glib/WTFGType.h
 
     linux/RealTimeThreads.h
+
+    unix/UnixFileDescriptor.h
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")

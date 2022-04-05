@@ -34,6 +34,8 @@
 #include <wtf/MachSendRight.h>
 #elif OS(WINDOWS)
 #include <windows.h>
+#elif USE(UNIX_DOMAIN_SOCKETS)
+#include <wtf/unix/UnixFileDescriptor.h>
 #endif
 
 namespace IPC {
@@ -65,9 +67,8 @@ public:
 #elif OS(WINDOWS)
     explicit Semaphore(HANDLE);
 #elif USE(UNIX_DOMAIN_SOCKETS)
-    explicit Semaphore(int fd);
-
-    explicit operator bool() const { return m_fd != -1; }
+    explicit Semaphore(UnixFileDescriptor&&);
+    explicit operator bool() const { return !!m_fd; }
 #else
     explicit operator bool() const { return true; }
 #endif
@@ -80,7 +81,7 @@ private:
 #elif OS(WINDOWS)
     HANDLE m_semaphoreHandle { nullptr };
 #elif USE(UNIX_DOMAIN_SOCKETS)
-    int m_fd { -1 };
+    UnixFileDescriptor m_fd;
 #endif
 };
 

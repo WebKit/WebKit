@@ -24,10 +24,11 @@
  */
 
 #include "config.h"
-#include "Decoder.h"
-#include "Encoder.h"
 #include "IPCSemaphore.h"
 
+#include "Decoder.h"
+#include "Encoder.h"
+#include "WebCoreArgumentCoders.h"
 #include <wtf/UniStdExtras.h>
 
 #if OS(LINUX)
@@ -40,45 +41,31 @@ namespace IPC {
 Semaphore::Semaphore()
 {
 #if OS(LINUX)
-    m_fd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK | EFD_SEMAPHORE);
+    m_fd = { eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK | EFD_SEMAPHORE), UnixFileDescriptor::Adopt };
 #endif
 }
 
-Semaphore::Semaphore(int fd)
-    : m_fd(fd)
+Semaphore::Semaphore(UnixFileDescriptor&& fd)
+    : m_fd(WTFMove(fd))
 { }
 
-Semaphore::Semaphore(Semaphore&& o)
-{
-    m_fd = o.m_fd;
-    o.m_fd = -1;
-}
+Semaphore::Semaphore(Semaphore&&) = default;
+Semaphore& Semaphore::operator=(Semaphore&&) = default;
 
 Semaphore::~Semaphore()
 {
     destroy();
 }
 
-Semaphore& Semaphore::operator=(Semaphore&& o)
-{
-    if (&o == this)
-        return *this;
-
-    destroy();
-    m_fd = o.m_fd;
-    o.m_fd = -1;
-    return *this;
-}
-
 void Semaphore::signal()
 {
 #if OS(LINUX)
-    ASSERT_WITH_MESSAGE(m_fd >= 0, "Signalling on an invalid semaphore object");
+    ASSERT_WITH_MESSAGE(m_fd.value() >= 0, "Signalling on an invalid semaphore object");
 
     // Matching waitImpl() and EFD_SEMAPHORE semantics, increment the semaphore value by 1.
     uint64_t value = 1;
     while (true) {
-        int ret = write(m_fd, &value, sizeof(uint64_t));
+        int ret = write(m_fd.value(), &value, sizeof(uint64_t));
         if (LIKELY(ret != -1 || errno != EINTR))
             break;
     }
@@ -115,9 +102,9 @@ static bool waitImpl(int fd, int timeout)
 bool Semaphore::wait()
 {
 #if OS(LINUX)
-    ASSERT_WITH_MESSAGE(m_fd >= 0, "Waiting on an invalid semaphore object");
+    ASSERT_WITH_MESSAGE(m_fd.value() >= 0, "Waiting on an invalid semaphore object");
 
-    return waitImpl(m_fd, -1);
+    return waitImpl(m_fd.value(), -1);
 #else
     return false;
 #endif
@@ -126,12 +113,12 @@ bool Semaphore::wait()
 bool Semaphore::waitFor(Timeout timeout)
 {
 #if OS(LINUX)
-    ASSERT_WITH_MESSAGE(m_fd >= 0, "Waiting on an invalid semaphore object");
+    ASSERT_WITH_MESSAGE(m_fd.value() >= 0, "Waiting on an invalid semaphore object");
 
     int timeoutValue = -1;
     if (!timeout.isInfinity())
         timeoutValue = int(timeout.secondsUntilDeadline().milliseconds());
-    return waitImpl(m_fd, timeoutValue);
+    return waitImpl(m_fd.value(), timeoutValue);
 #else
     return false;
 #endif
@@ -139,25 +126,21 @@ bool Semaphore::waitFor(Timeout timeout)
 
 void Semaphore::encode(Encoder& encoder) const
 {
-    int duplicate = -1;
-    if (m_fd != -1)
-        duplicate = dupCloseOnExec(m_fd);
-
-    encoder.addAttachment(Attachment(duplicate));
+    encoder << m_fd.duplicate();
 }
 
 std::optional<Semaphore> Semaphore::decode(Decoder& decoder)
 {
-    auto attachment = decoder.takeLastAttachment();
-    if (!attachment)
+    std::optional<UnixFileDescriptor> fd;
+    decoder >> fd;
+    if (!fd)
         return std::nullopt;
-    return std::optional<Semaphore> { std::in_place, attachment->releaseFileDescriptor() };
+    return std::optional<Semaphore> { std::in_place, WTFMove(*fd) };
 }
 
 void Semaphore::destroy()
 {
-    if (m_fd >= 0)
-        closeWithRetry(m_fd);
+    m_fd = { };
 }
 
 } // namespace IPC

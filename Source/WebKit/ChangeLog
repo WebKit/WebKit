@@ -1,3 +1,35 @@
+2022-04-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Unix] Add UnixFileDescriptor, use it in IPC::Semaphore
+        https://bugs.webkit.org/show_bug.cgi?id=238726
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use WTF::UnixFileDescriptor in IPC::Semaphore in place of a raw integer
+        value. This also simplifies other things, e.g. the move constructor and
+        assignment operator can now both be defaulted.
+
+        The IPC encoding and decoding of the semaphore object is also simpler,
+        leaning into the custom ArgumentCoder specialization for objects of the
+        WTF::UnixFileDescriptor type. The encoding and decoding is done by
+        chaperoning the file descriptor through IPC::Attachment.
+
+        * Platform/IPC/IPCSemaphore.h:
+        (IPC::Semaphore::operator bool const):
+        * Platform/IPC/unix/IPCSemaphoreUnix.cpp:
+        (IPC::Semaphore::Semaphore):
+        (IPC::Semaphore::signal):
+        (IPC::Semaphore::wait):
+        (IPC::Semaphore::waitFor):
+        (IPC::Semaphore::encode const):
+        (IPC::Semaphore::decode):
+        (IPC::Semaphore::destroy):
+        (IPC::Semaphore::operator=): Deleted.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WTF::UnixFileDescriptor>::encode):
+        (IPC::ArgumentCoder<WTF::UnixFileDescriptor>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2022-04-05  Megan Gardner  <megan_gardner@apple.com>
 
         Expand autocorrect context for more accurate results.

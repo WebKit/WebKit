@@ -1,3 +1,30 @@
+2022-04-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Unix] Add UnixFileDescriptor, use it in IPC::Semaphore
+        https://bugs.webkit.org/show_bug.cgi?id=238726
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add the UnixFileDescriptor class, intended as a wrapper for a file
+        descriptor integer. Construction is a matter of adopting or duplicating
+        the passed-in file descriptor value. UnixFileDescriptor objects can be
+        moved around and explicitly duplicated, and the contained fd value can
+        be released.
+
+        The wrapper class makes it easier to handle file descriptor values when
+        embedded into other types as member variables. It also allows to specify
+        custom encoding and decoding in the WebKit IPC infrastructure.
+
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/unix/UnixFileDescriptor.h: Added.
+        (WTF::UnixFileDescriptor::UnixFileDescriptor):
+        (WTF::UnixFileDescriptor::operator=):
+        (WTF::UnixFileDescriptor::~UnixFileDescriptor):
+        (WTF::UnixFileDescriptor::operator bool const):
+        (WTF::UnixFileDescriptor::value const):
+        (WTF::UnixFileDescriptor::duplicate const):
+
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
         Remove GPU process system feature flags
