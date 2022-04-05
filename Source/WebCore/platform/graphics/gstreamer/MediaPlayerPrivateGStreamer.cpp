@@ -3106,10 +3106,10 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                     gsize skip = 0;
                     if (gst_buffer_find_memory(buffer, offset, 1, &memid, &length, &skip)) {
                         auto* mem = gst_buffer_peek_memory(buffer, memid);
-                        object.fd[i] = dupCloseOnExec(gst_dmabuf_memory_get_fd(mem));
+                        object.fd[i] = { gst_dmabuf_memory_get_fd(mem), UnixFileDescriptor::Duplicate };
                         offset = mem->offset + skip;
                     } else
-                        object.fd[i] = -1;
+                        object.fd[i] = { };
 
                     gint comp[GST_VIDEO_MAX_COMPONENTS];
                     gst_video_format_info_component(videoInfo.finfo, i, comp);

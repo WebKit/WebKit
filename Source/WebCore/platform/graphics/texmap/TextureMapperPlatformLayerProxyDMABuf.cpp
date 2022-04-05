@@ -255,7 +255,7 @@ std::unique_ptr<TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData
             EGL_WIDTH, EGLint(object.format.planeWidth(i, object.width)),
             EGL_HEIGHT, EGLint(object.format.planeHeight(i, object.height)),
             EGL_LINUX_DRM_FOURCC_EXT, EGLint(object.format.planes[i].fourcc),
-            EGL_DMA_BUF_PLANE0_FD_EXT, object.fd[i],
+            EGL_DMA_BUF_PLANE0_FD_EXT, object.fd[i].value(),
             EGL_DMA_BUF_PLANE0_OFFSET_EXT, EGLint(object.offset[i]),
             EGL_DMA_BUF_PLANE0_PITCH_EXT, EGLint(object.stride[i]),
             EGL_NONE,

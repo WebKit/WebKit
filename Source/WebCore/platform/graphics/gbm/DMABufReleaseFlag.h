@@ -27,76 +27,55 @@
 #pragma once
 
 #include <sys/eventfd.h>
-#include <wtf/UniStdExtras.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebCore {
 
 struct DMABufReleaseFlag {
+    WTF_MAKE_NONCOPYABLE(DMABufReleaseFlag);
+
     DMABufReleaseFlag() = default;
 
     enum InitializeTag { Initialize };
     DMABufReleaseFlag(InitializeTag)
     {
-        fd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
+        fd = { eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK), UnixFileDescriptor::Adopt };
     }
 
-    ~DMABufReleaseFlag()
-    {
-        if (fd != -1)
-            close(fd);
-        fd = -1;
-    }
+    ~DMABufReleaseFlag() = default;
 
-    DMABufReleaseFlag(const DMABufReleaseFlag&) = delete;
-    DMABufReleaseFlag& operator=(const DMABufReleaseFlag&) = delete;
-
-    DMABufReleaseFlag(DMABufReleaseFlag&& o)
-    {
-        fd = o.fd;
-        o.fd = -1;
-    }
-
-    DMABufReleaseFlag& operator=(DMABufReleaseFlag&& o)
-    {
-        if (this == &o)
-            return *this;
-
-        this->~DMABufReleaseFlag();
-        new (this) DMABufReleaseFlag(WTFMove(o));
-        return *this;
-    }
+    DMABufReleaseFlag(DMABufReleaseFlag&&) = default;
+    DMABufReleaseFlag& operator=(DMABufReleaseFlag&&) = default;
 
     DMABufReleaseFlag dup() const
     {
-        if (fd == -1)
-            return { };
-
         DMABufReleaseFlag flag;
-        flag.fd = dupCloseOnExec(fd);
+        flag.fd = fd.duplicate();
         return flag;
     }
 
     bool released() const
     {
-        if (fd == -1)
+        if (!fd)
             return true;
 
         uint64_t value { 0 };
-        if (read(fd, &value, sizeof(uint64_t)) == sizeof(uint64_t))
+        if (read(fd.value(), &value, sizeof(uint64_t)) == sizeof(uint64_t))
             return !!value;
         return false;
     }
 
     void release()
     {
-        if (fd == -1)
+        if (!fd)
             return;
 
         uint64_t value { 1 };
-        write(fd, &value, sizeof(uint64_t));
+        write(fd.value(), &value, sizeof(uint64_t));
     }
 
-    int fd { -1 };
+    UnixFileDescriptor fd;
 };
 
 } // namespace WebCore
