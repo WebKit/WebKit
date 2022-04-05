@@ -70,7 +70,12 @@ uint64_t pas_scavenger_max_epoch_delta = 300ll * 1000ll * 1000ll;
 #endif
 
 #if PAS_OS(DARWIN)
-qos_class_t pas_scavenger_requested_qos_class = QOS_CLASS_USER_INITIATED;
+static _Atomic qos_class_t pas_scavenger_requested_qos_class = QOS_CLASS_USER_INITIATED;
+
+void pas_scavenger_set_requested_qos_class(qos_class_t qos_class)
+{
+    pas_scavenger_requested_qos_class = qos_class;
+}
 #endif
 
 pas_scavenger_activity_callback pas_scavenger_did_start_callback = NULL;
@@ -151,6 +156,9 @@ static void* scavenger_thread_main(void* arg)
 {
     pas_scavenger_data* data;
     pas_scavenger_activity_callback did_start_callback;
+#if PAS_OS(DARWIN)
+    qos_class_t configured_qos_class;
+#endif
     
     PAS_UNUSED_PARAM(arg);
     
@@ -173,6 +181,11 @@ static void* scavenger_thread_main(void* arg)
     
     data = ensure_data_instance(pas_lock_is_not_held);
     
+#if PAS_OS(DARWIN)
+    configured_qos_class = pas_scavenger_requested_qos_class;
+    pthread_set_qos_class_self_np(configured_qos_class, 0);
+#endif
+
     for (;;) {
         pas_page_sharing_pool_scavenge_result scavenge_result;
         bool should_shut_down;
@@ -184,9 +197,16 @@ static void* scavenger_thread_main(void* arg)
         uint64_t delta;
         uint64_t max_epoch;
         bool did_overflow;
+#if PAS_OS(DARWIN)
+        qos_class_t current_qos_class;
+#endif
 
 #if PAS_OS(DARWIN)
-        pthread_set_qos_class_self_np(pas_scavenger_requested_qos_class, 0);
+        current_qos_class = pas_scavenger_requested_qos_class;
+        if (configured_qos_class != current_qos_class) {
+            configured_qos_class = current_qos_class;
+            pthread_set_qos_class_self_np(configured_qos_class, 0);
+        }
 #endif
 
         should_go_again = false;

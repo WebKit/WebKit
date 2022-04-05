@@ -160,7 +160,7 @@ bool isEnabled(HeapKind)
 void setScavengerThreadQOSClass(qos_class_t overrideClass)
 {
 #if BENABLE(LIBPAS)
-    pas_scavenger_requested_qos_class = overrideClass;
+    pas_scavenger_set_requested_qos_class(overrideClass);
 #endif
 #if !BUSE(LIBPAS)
     if (!DebugHeap::tryGet()) {

@@ -1,3 +1,19 @@
+2022-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Do not need to call pthread_set_qos_class_self_np repeatedly
+        https://bugs.webkit.org/show_bug.cgi?id=238785
+
+        Reviewed by Mark Lam.
+
+        Let's remember previously set QOS class and avoid resetting it if the value is not changed.
+
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::setScavengerThreadQOSClass):
+        * libpas/src/libpas/pas_scavenger.c:
+        (pas_scavenger_set_requested_qos_class):
+        (scavenger_thread_main):
+        * libpas/src/libpas/pas_scavenger.h:
+
 2022-03-29  Brandon Stewart  <brandonstewart@apple.com>
 
         Rename Libpas README to README.md
