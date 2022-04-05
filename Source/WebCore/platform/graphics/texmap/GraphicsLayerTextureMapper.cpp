@@ -518,7 +518,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         m_layer.setAnimations(m_animations);
 
     if (m_changeMask & AnimationStarted)
-        client().notifyAnimationStarted(this, "", m_animationStartTime);
+        client().notifyAnimationStarted(this, emptyString(), m_animationStartTime);
 
     m_changeMask = NoChanges;
 }

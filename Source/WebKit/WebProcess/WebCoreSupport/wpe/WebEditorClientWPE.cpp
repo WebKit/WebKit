@@ -168,7 +168,7 @@ static const char* interpretKeyEvent(const KeyboardEvent& event)
 
 static void handleKeyPress(Frame& frame, KeyboardEvent& event, const PlatformKeyboardEvent& platformEvent)
 {
-    String commandName = interpretKeyEvent(event);
+    String commandName { interpretKeyEvent(event) };
 
     if (!commandName.isEmpty()) {
         frame.editor().command(commandName).execute();
@@ -190,7 +190,7 @@ static void handleKeyPress(Frame& frame, KeyboardEvent& event, const PlatformKey
 
 static void handleKeyDown(Frame& frame, KeyboardEvent& event, const PlatformKeyboardEvent&)
 {
-    String commandName = interpretKeyEvent(event);
+    String commandName { interpretKeyEvent(event) };
     if (commandName.isEmpty())
         return;
 

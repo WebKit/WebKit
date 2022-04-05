@@ -208,7 +208,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 #if PLATFORM(IOS_FAMILY)
 - (void)_setOverrideTextEncodingName:(NSString *)encoding
 {
-    toPrivate(_private)->loader->setOverrideEncoding([encoding UTF8String]);
+    toPrivate(_private)->loader->setOverrideEncoding(encoding);
 }
 #endif
 

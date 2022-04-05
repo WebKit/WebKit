@@ -30,9 +30,9 @@
 #include <wtf/glib/GUniquePtr.h>
 
 #if PLATFORM(GTK)
-#define BASE_DIRECTORY "webkitgtk"
+#define BASE_DIRECTORY "webkitgtk"_s
 #elif PLATFORM(WPE)
-#define BASE_DIRECTORY "wpe"
+#define BASE_DIRECTORY "wpe"_s
 #endif
 
 namespace WebKit {

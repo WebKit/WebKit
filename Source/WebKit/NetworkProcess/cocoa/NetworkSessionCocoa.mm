@@ -250,9 +250,9 @@ static String stringForSSLProtocol(SSLProtocol protocol)
     case kTLSProtocol13:
         return "TLS 1.3"_s;
     case kSSLProtocolAll:
-        return "All";
+        return "All"_s;
     case kSSLProtocolUnknown:
-        return "Unknown";
+        return "Unknown"_s;
     case kTLSProtocolMaxSupported:
     default:
         ASSERT_NOT_REACHED();

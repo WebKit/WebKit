@@ -713,29 +713,29 @@ void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType comman
     
     switch (command) {
     case SyntheticEditingCommandType::Undo:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "z", "z",
-        "z", "KeyZ"_s,
-        @"U+005A", 90, false, false, false, modifiers, WallTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "z"_s, "z"_s,
+        "z"_s, "KeyZ"_s,
+        "U+005A"_s, 90, false, false, false, modifiers, WallTime::now());
         break;
     case SyntheticEditingCommandType::Redo:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "y", "y",
-        "y", "KeyY"_s,
-        @"U+0059", 89, false, false, false, modifiers, WallTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "y"_s, "y"_s,
+        "y"_s, "KeyY"_s,
+        "U+0059"_s, 89, false, false, false, modifiers, WallTime::now());
         break;
     case SyntheticEditingCommandType::ToggleBoldface:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "b", "b",
-        "b", "KeyB"_s,
-        @"U+0042", 66, false, false, false, modifiers, WallTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "b"_s, "b"_s,
+        "b"_s, "KeyB"_s,
+        "U+0042"_s, 66, false, false, false, modifiers, WallTime::now());
         break;
     case SyntheticEditingCommandType::ToggleItalic:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "i", "i",
-        "i", "KeyI"_s,
-        @"U+0049", 73, false, false, false, modifiers, WallTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "i"_s, "i"_s,
+        "i"_s, "KeyI"_s,
+        "U+0049"_s, 73, false, false, false, modifiers, WallTime::now());
         break;
     case SyntheticEditingCommandType::ToggleUnderline:
-        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "u", "u",
-        "u", "KeyU"_s,
-        @"U+0055", 85, false, false, false, modifiers, WallTime::now());
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::KeyDown, "u"_s, "u"_s,
+        "u"_s, "KeyU"_s,
+        "U+0055"_s, 85, false, false, false, modifiers, WallTime::now());
         break;
     default:
         break;
@@ -4328,7 +4328,7 @@ String WebPage::platformUserAgent(const URL&) const
         return String();
 
     if (document->quirks().shouldAvoidUsingIOS13ForGmail() && osNameForUserAgent() == "iPhone OS")
-        return standardUserAgentWithApplicationName({ }, "12_1_3");
+        return standardUserAgentWithApplicationName({ }, "12_1_3"_s);
 
     return String();
 }

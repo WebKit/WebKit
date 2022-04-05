@@ -130,7 +130,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, Cu
         if (CurlCacheManager::singleton().getCachedResponse(cacheUrl.string(), m_response)) {
             if (d()->m_addedCacheValidationHeaders) {
                 m_response.setHTTPStatusCode(200);
-                m_response.setHTTPStatusText("OK");
+                m_response.setHTTPStatusText("OK"_s);
             }
         }
     }

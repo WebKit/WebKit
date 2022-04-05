@@ -169,7 +169,7 @@
 namespace TestWebKitAPI {
 
 template <typename ViewClass>
-RetainPtr<ViewClass> setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate(std::optional<WKContentMode> defaultContentMode = { }, std::optional<String> applicationNameForUserAgent = { "TestWebKitAPI" }, CGSize size = CGSizeMake(1024, 768))
+RetainPtr<ViewClass> setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate(std::optional<WKContentMode> defaultContentMode = { }, std::optional<String> applicationNameForUserAgent = { "TestWebKitAPI"_s }, CGSize size = CGSizeMake(1024, 768))
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     if (defaultContentMode)
@@ -182,7 +182,7 @@ RetainPtr<ViewClass> setUpWebViewForPreferredContentModeTestingWithoutNavigation
 }
 
 template <typename ViewClass>
-std::pair<RetainPtr<ViewClass>, RetainPtr<ContentModeNavigationDelegate>> setUpWebViewForPreferredContentModeTesting(std::optional<WKContentMode> defaultContentMode = { }, std::optional<String> applicationNameForUserAgent = { "TestWebKitAPI" }, CGSize size = CGSizeMake(1024, 768))
+std::pair<RetainPtr<ViewClass>, RetainPtr<ContentModeNavigationDelegate>> setUpWebViewForPreferredContentModeTesting(std::optional<WKContentMode> defaultContentMode = { }, std::optional<String> applicationNameForUserAgent = { "TestWebKitAPI"_s }, CGSize size = CGSizeMake(1024, 768))
 {
     auto webView = setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate<ViewClass>(defaultContentMode, applicationNameForUserAgent, size);
     auto navigationDelegate = adoptNS([[ContentModeNavigationDelegate alloc] init]);
@@ -372,7 +372,7 @@ TEST(PreferredContentMode, RecommendedContentModeAtVariousViewWidths)
 {
     IPadUserInterfaceSwizzler iPadUserInterface;
 
-    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>({ }, { "TestWebKitAPI" }, CGSizeZero);
+    auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>({ }, { "TestWebKitAPI"_s }, CGSizeZero);
     [webView loadTestPageNamed:@"simple" andExpectEffectiveContentMode:WKContentModeDesktop withPolicyDecisionHandler:nil];
     [[webView navigatorUserAgent] shouldContainStrings:@"Mozilla/5.0 (Macintosh", @"TestWebKitAPI", nil];
 
@@ -419,7 +419,7 @@ TEST(PreferredContentMode, ApplicationNameForDesktopUserAgent)
     }
     {
         // Manually set the application name for user agent to the default value, Mobile/15E148.
-        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop, { "Mobile/15E148" });
+        auto [webView, delegate] = setUpWebViewForPreferredContentModeTesting<WKWebView>(WKContentModeDesktop, { "Mobile/15E148"_s });
         [webView loadTestPageNamed:@"simple" withPolicyDecisionHandler:nil];
         NSString *userAgent = [webView navigatorUserAgent];
         EXPECT_TRUE([userAgent containsString:@"Mobile"]);

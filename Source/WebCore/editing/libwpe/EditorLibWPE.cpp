@@ -46,7 +46,7 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
         return nullptr;
 
     if (types.contains("text/html;charset=utf-8") && frame.document()) {
-        String markup = pasteboard.readString("text/html;charset=utf-8");
+        String markup = pasteboard.readString("text/html;charset=utf-8"_s);
         return createFragmentFromMarkup(*frame.document(), markup, emptyString(), DisallowScriptingAndPluginContent);
     }
 
@@ -55,7 +55,7 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
 
     if (types.contains("text/plain;charset=utf-8")) {
         chosePlainText = true;
-        return createFragmentFromText(range, pasteboard.readString("text/plain;charset=utf-8"));
+        return createFragmentFromText(range, pasteboard.readString("text/plain;charset=utf-8"_s));
     }
 
     return nullptr;

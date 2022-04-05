@@ -36,13 +36,13 @@ COMPtr<WebGeolocationPosition> WebGeolocationPosition::createInstance()
 WebGeolocationPosition::WebGeolocationPosition()
 {
     gClassCount++;
-    gClassNameCount().add("WebGeolocationPosition");
+    gClassNameCount().add("WebGeolocationPosition"_s);
 }
 
 WebGeolocationPosition::~WebGeolocationPosition()
 {
     gClassCount--;
-    gClassNameCount().remove("WebGeolocationPosition");
+    gClassNameCount().remove("WebGeolocationPosition"_s);
 }
 
 HRESULT WebGeolocationPosition::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)

@@ -57,7 +57,7 @@ using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
     _WebKitSettingsPrivate()
-        : preferences(WebPreferences::create(String(), "WebKit2.", "WebKit2."))
+        : preferences(WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s))
     {
         defaultFontFamily = preferences->standardFontFamily().utf8();
         monospaceFontFamily = preferences->fixedFontFamily().utf8();
@@ -3089,7 +3089,7 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
         userAgentString = String::fromUTF8(userAgent);
         g_return_if_fail(WebCore::isValidUserAgentHeaderValue(userAgentString));
     } else
-        userAgentString = WebCore::standardUserAgent("");
+        userAgentString = WebCore::standardUserAgent(emptyString());
 
     CString newUserAgent = userAgentString.utf8();
     if (newUserAgent == priv->userAgent)

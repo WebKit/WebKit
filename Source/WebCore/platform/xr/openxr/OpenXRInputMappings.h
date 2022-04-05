@@ -47,17 +47,17 @@ constexpr std::array<OpenXRButtonType, 7> openXRButtonTypes {
 inline String buttonTypeToString(OpenXRButtonType type)
 {
     switch (type) {
-    case OpenXRButtonType::Trigger: return "trigger";
-    case OpenXRButtonType::Squeeze: return "squeeze";
-    case OpenXRButtonType::Touchpad: return "touchpad";
-    case OpenXRButtonType::Thumbstick: return "thumbstick";
-    case OpenXRButtonType::Thumbrest: return "thumbrest";
-    case OpenXRButtonType::ButtonA: return "buttona";
-    case OpenXRButtonType::ButtonB: return "buttonb";
+    case OpenXRButtonType::Trigger: return "trigger"_s;
+    case OpenXRButtonType::Squeeze: return "squeeze"_s;
+    case OpenXRButtonType::Touchpad: return "touchpad"_s;
+    case OpenXRButtonType::Thumbstick: return "thumbstick"_s;
+    case OpenXRButtonType::Thumbrest: return "thumbrest"_s;
+    case OpenXRButtonType::ButtonA: return "buttona"_s;
+    case OpenXRButtonType::ButtonB: return "buttonb"_s;
 
     default:
         ASSERT_NOT_REACHED();
-        return "";
+        return emptyString();
     }
 }
 
@@ -80,11 +80,11 @@ constexpr std::array<OpenXRAxisType, 2> openXRAxisTypes {
 inline String axisTypetoString(OpenXRAxisType type)
 {
     switch (type) {
-    case OpenXRAxisType::Touchpad: return "touchpad";
-    case OpenXRAxisType::Thumbstick: return "thumbstick";
+    case OpenXRAxisType::Touchpad: return "touchpad"_s;
+    case OpenXRAxisType::Thumbstick: return "thumbstick"_s;
     default:
         ASSERT_NOT_REACHED();
-        return "";
+        return emptyString();
     }
 }
 

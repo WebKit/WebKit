@@ -197,7 +197,7 @@ struct LogArgument<URL> {
         return url.string().substring(0, maximumURLLengthForLogging) + "...";
 #else
         UNUSED_PARAM(url);
-        return "[url]";
+        return "[url]"_s;
 #endif
     }
 };

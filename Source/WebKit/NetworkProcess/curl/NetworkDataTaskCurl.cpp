@@ -268,7 +268,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
         // Change request method to GET if change was made during a previous redirection or if current redirection says so.
         if (!request.url().protocolIsInHTTPFamily() || shouldRedirectAsGET(request, isCrossOrigin)) {
-            request.setHTTPMethod("GET");
+            request.setHTTPMethod("GET"_s);
             request.setHTTPBody(nullptr);
             request.clearHTTPContentType();
         }

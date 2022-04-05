@@ -49,7 +49,7 @@ DropTarget::DropTarget(GtkWidget* webView)
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "text/uri-list");
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "_NETSCAPE_URL");
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "application/vnd.webkitgtk.smartpaste");
-    gdk_content_formats_builder_add_mime_type(formatsBuilder, PasteboardCustomData::gtkType());
+    gdk_content_formats_builder_add_mime_type(formatsBuilder, PasteboardCustomData::gtkType().characters());
     auto* target = gtk_drop_target_async_new(gdk_content_formats_builder_free_to_formats(formatsBuilder),
         static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK));
     g_signal_connect(target, "accept", G_CALLBACK(+[](GtkDropTargetAsync*, GdkDrop* gdkDrop, gpointer userData) -> gboolean {

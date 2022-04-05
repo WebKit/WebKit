@@ -41,8 +41,8 @@ static String malwareDetailsBase(SSBServiceLookupResult *result)
     return result.malwareDetailsBaseURLString;
 #else
     if ([result.provider isEqualToString:SSBProviderTencent])
-        return "https://www.urlsec.qq.com/check.html?tpl=safari";
-    return "https://google.com/safebrowsing/diagnostic?tpl=safari";
+        return "https://www.urlsec.qq.com/check.html?tpl=safari"_s;
+    return "https://google.com/safebrowsing/diagnostic?tpl=safari"_s;
 #endif
 }
 
@@ -63,8 +63,8 @@ static String reportAnErrorBase(SSBServiceLookupResult *result)
     return result.reportAnErrorBaseURLString;
 #else
     if ([result.provider isEqualToString:SSBProviderTencent])
-        return "https://www.urlsec.qq.com/complain.html?tpl=safari";
-    return "https://www.google.com/safebrowsing/report_error/?tpl=safari";
+        return "https://www.urlsec.qq.com/complain.html?tpl=safari"_s;
+    return "https://www.google.com/safebrowsing/report_error/?tpl=safari"_s;
 #endif
 }
 

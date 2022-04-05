@@ -232,7 +232,7 @@ public:
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(certificate));
         m_certificate = certificate;
         m_tlsErrors = tlsErrors;
-        m_failingURL = URL({ }, failingURI);
+        m_failingURL = URL(String { failingURI });
         return true;
     }
 

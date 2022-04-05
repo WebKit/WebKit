@@ -131,14 +131,14 @@ static bool subFrameReceivedScriptSource = false;
 static void cleanUpInAppBrowserPrivacyTestSettings()
 {
     WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI");
+    WebCore::setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI"_s);
 }
 
 static void initializeInAppBrowserPrivacyTestSettings()
 {
     WTF::initializeMainThread();
     WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier");
+    WebCore::setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier"_s);
 }
 
 TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
@@ -825,7 +825,7 @@ static String expectedMessage;
 }
 @end
 
-static const char* mainBytes = R"SWRESOURCE(
+static constexpr auto mainBytes = R"SWRESOURCE(
 <script>
 
 function log(msg)
@@ -850,9 +850,9 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
 }
 
 </script>
-)SWRESOURCE";
+)SWRESOURCE"_s;
 
-static const char* mainUnregisterBytes = R"SWRESOURCE(
+static constexpr auto mainUnregisterBytes = R"SWRESOURCE(
 <script>
 
 function log(msg)
@@ -875,15 +875,15 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
 }
 
 </script>
-)SWRESOURCE";
+)SWRESOURCE"_s;
 
-static const char* scriptBytes = R"SWRESOURCE(
+static constexpr auto scriptBytes = R"SWRESOURCE(
 
 self.addEventListener("message", (event) => {
     event.source.postMessage("ServiceWorker received: " + event.data);
 });
 
-)SWRESOURCE";
+)SWRESOURCE"_s;
 
 TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
 {
@@ -899,8 +899,8 @@ TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/main.html", { mainBytes } },
-        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/main.html"_s, { mainBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
     });
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -913,7 +913,7 @@ TEST(InAppBrowserPrivacy, AppBoundDomainAllowsServiceWorkers)
     isDone = false;
     
     // Expect the service worker load to complete successfully.
-    expectedMessage = "Message from worker: ServiceWorker received: Hello from an app-bound domain";
+    expectedMessage = "Message from worker: ServiceWorker received: Hello from an app-bound domain"_s;
     [webView loadRequest:server.requestWithLocalhost("/main.html")];
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
@@ -956,8 +956,8 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/main.html", { mainUnregisterBytes } },
-        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/main.html"_s, { mainUnregisterBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
     });
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -967,7 +967,7 @@ TEST(InAppBrowserPrivacy, UnregisterServiceWorker)
     TestWebKitAPI::Util::run(&isDone);
     isDone = false;
 
-    expectedMessage = "Unregistration success";
+    expectedMessage = "Unregistration success"_s;
     [webView loadRequest:server.requestWithLocalhost("/main.html")];
     TestWebKitAPI::Util::run(&isDone);
 

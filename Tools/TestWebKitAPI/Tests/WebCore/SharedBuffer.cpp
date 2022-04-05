@@ -364,7 +364,7 @@ TEST_F(FragmentedSharedBufferTest, copyIsContiguous)
 template< typename T, size_t N >
 constexpr size_t arraysize( const T (&)[N] ) { return N; }
 
-static void readAllChunks(std::vector<String>* chunks, FragmentedSharedBuffer& buffer, const String& separator = "\r\n", bool includeSeparator = false)
+static void readAllChunks(std::vector<String>* chunks, FragmentedSharedBuffer& buffer, const String& separator = "\r\n"_s, bool includeSeparator = false)
 {
     SharedBufferChunkReader chunkReader(&buffer, separator.utf8().data());
     String chunk = chunkReader.nextChunkAsUTF8StringWithLatin1Fallback(includeSeparator);
@@ -477,32 +477,32 @@ TEST_F(SharedBufferChunkReaderTest, readAllChunksInMultiSegment)
     auto check = [](FragmentedSharedBuffer& sharedBuffer) {
         std::vector<String> chunks;
         const char* const expectedChunks1WithoutSeparator[] = { "Th", "s ", "s the most r", "d", "culous h", "story there ", "s." };
-        readAllChunks(&chunks, sharedBuffer, "i");
+        readAllChunks(&chunks, sharedBuffer, "i"_s);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks1WithoutSeparator, arraysize(expectedChunks1WithoutSeparator)));
 
         chunks.clear();
         const char* const expectedChunks1WithSeparator[] = { "Thi", "s i", "s the most ri", "di", "culous hi", "story there i", "s." };
-        readAllChunks(&chunks, sharedBuffer, "i", true);
+        readAllChunks(&chunks, sharedBuffer, "i"_s, true);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks1WithSeparator, arraysize(expectedChunks1WithSeparator)));
 
         chunks.clear();
         const char* const expectedChunks2WithoutSeparator[] = { "Th", " ", " the most ridiculous h", "tory there ", "." };
-        readAllChunks(&chunks, sharedBuffer, "is");
+        readAllChunks(&chunks, sharedBuffer, "is"_s);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks2WithoutSeparator, arraysize(expectedChunks2WithoutSeparator)));
 
         chunks.clear();
         const char* const expectedChunks2WithSeparator[] = { "This", " is", " the most ridiculous his", "tory there is", "." };
-        readAllChunks(&chunks, sharedBuffer, "is", true);
+        readAllChunks(&chunks, sharedBuffer, "is"_s, true);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks2WithSeparator, arraysize(expectedChunks2WithSeparator)));
 
         chunks.clear();
         const char* const expectedChunks3WithoutSeparator[] = { "This is the most ridiculous h", "ory there is." };
-        readAllChunks(&chunks, sharedBuffer, "ist");
+        readAllChunks(&chunks, sharedBuffer, "ist"_s);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks3WithoutSeparator, arraysize(expectedChunks3WithoutSeparator)));
 
         chunks.clear();
         const char* const expectedChunks3WithSeparator[] = { "This is the most ridiculous hist", "ory there is." };
-        readAllChunks(&chunks, sharedBuffer, "ist", true);
+        readAllChunks(&chunks, sharedBuffer, "ist"_s, true);
         EXPECT_TRUE(checkChunks(chunks, expectedChunks3WithSeparator, arraysize(expectedChunks3WithSeparator)));
     };
     auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
@@ -557,12 +557,12 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
         auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
         const char* const expectedChunksWithoutSeparator[] = { "" };
         std::vector<String> chunks;
-        readAllChunks(&chunks, sharedBuffer, "dog");
+        readAllChunks(&chunks, sharedBuffer, "dog"_s);
         EXPECT_TRUE(checkChunks(chunks, expectedChunksWithoutSeparator, arraysize(expectedChunksWithoutSeparator)));
 
         chunks.clear();
         const char* const expectedChunksWithSeparator[] = { "dog" };
-        readAllChunks(&chunks, sharedBuffer, "dog", true);
+        readAllChunks(&chunks, sharedBuffer, "dog"_s, true);
         EXPECT_TRUE(checkChunks(chunks, expectedChunksWithSeparator, arraysize(expectedChunksWithSeparator)));
     }
 
@@ -572,12 +572,12 @@ TEST_F(SharedBufferChunkReaderTest, changingIterator)
         auto sharedBuffer = SharedBuffer::create(simpleText, strlen(simpleText));
         const char* const expectedChunksWithoutSeparator[] = { "Beaucoup de chats ", "", "", "", "" };
         std::vector<String> chunks;
-        readAllChunks(&chunks, sharedBuffer, "cat");
+        readAllChunks(&chunks, sharedBuffer, "cat"_s);
         EXPECT_TRUE(checkChunks(chunks, expectedChunksWithoutSeparator, arraysize(expectedChunksWithoutSeparator)));
 
         chunks.clear();
         const char* const expectedChunksWithSeparator[] = { "Beaucoup de chats cat", "cat", "cat", "cat", "cat" };
-        readAllChunks(&chunks, sharedBuffer, "cat", true);
+        readAllChunks(&chunks, sharedBuffer, "cat"_s, true);
         EXPECT_TRUE(checkChunks(chunks, expectedChunksWithSeparator, arraysize(expectedChunksWithSeparator)));
     }
     {

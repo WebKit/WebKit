@@ -222,16 +222,16 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
 
     WebKitURISchemeResponse* resp = priv->response.get();
     if (!priv->bytesRead) {
-        CString contentType = webKitURISchemeResponseGetContentType(resp);
-        ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(contentType.data()), webKitURISchemeResponseGetStreamLength(resp), emptyString());
-        response.setTextEncodingName(extractCharsetFromMediaType(contentType.data()));
+        String contentType { webKitURISchemeResponseGetContentType(resp).data() };
+        ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(contentType), webKitURISchemeResponseGetStreamLength(resp), emptyString());
+        response.setTextEncodingName(extractCharsetFromMediaType(contentType));
         const CString& statusMessage = webKitURISchemeResponseGetStatusMessage(resp);
         if (statusMessage.isNull()) {
             response.setHTTPStatusCode(200);
             response.setHTTPStatusText("OK"_s);
         } else {
             response.setHTTPStatusCode(webKitURISchemeResponseGetStatusCode(resp));
-            response.setHTTPStatusText(statusMessage.data());
+            response.setHTTPStatusText(String { statusMessage.data() });
         }
         if (response.mimeType().isEmpty())
             response.setMimeType(MIMETypeRegistry::mimeTypeForPath(response.url().path().toString()));
@@ -311,6 +311,6 @@ void webkit_uri_scheme_request_finish_error(WebKitURISchemeRequest* request, GEr
 
     WebKitURISchemeRequestPrivate* priv = request->priv;
     priv->response = nullptr;
-    ResourceError resourceError(g_quark_to_string(error->domain), toWebCoreError(error->code), priv->task->request().url(), String::fromUTF8(error->message));
+    ResourceError resourceError(String { g_quark_to_string(error->domain) }, toWebCoreError(error->code), priv->task->request().url(), String::fromUTF8(error->message));
     priv->task->didComplete(resourceError);
 }

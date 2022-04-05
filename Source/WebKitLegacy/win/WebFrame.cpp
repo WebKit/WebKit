@@ -243,7 +243,7 @@ WebFrame::WebFrame()
 {
     WebFrameCount++;
     gClassCount++;
-    gClassNameCount().add("WebFrame");
+    gClassNameCount().add("WebFrame"_s);
 }
 
 WebFrame::~WebFrame()
@@ -251,7 +251,7 @@ WebFrame::~WebFrame()
     delete d;
     WebFrameCount--;
     gClassCount--;
-    gClassNameCount().remove("WebFrame");
+    gClassNameCount().remove("WebFrame"_s);
 }
 
 WebFrame* WebFrame::createInstance()
@@ -563,7 +563,7 @@ void WebFrame::loadData(Ref<WebCore::FragmentedSharedBuffer>&& data, BSTR mimeTy
 {
     String mimeTypeString(mimeType, SysStringLen(mimeType));
     if (!mimeType)
-        mimeTypeString = "text/html";
+        mimeTypeString = "text/html"_s;
 
     String encodingString(textEncodingName, SysStringLen(textEncodingName));
 
@@ -1056,7 +1056,7 @@ HRESULT WebFrame::selectAll()
     if (!coreFrame)
         return E_UNEXPECTED;
 
-    if (!coreFrame->editor().command("SelectAll").execute())
+    if (!coreFrame->editor().command("SelectAll"_s).execute())
         return E_FAIL;
 
     return S_OK;

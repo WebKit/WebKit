@@ -175,8 +175,8 @@ void AccessibilityRootAtspi::setPath(String&& path)
 
 void AccessibilityRootAtspi::embedded(const char* parentUniqueName, const char* parentPath)
 {
-    m_parentUniqueName = parentUniqueName;
-    m_parentPath = parentPath;
+    m_parentUniqueName = String::fromUTF8(parentUniqueName);
+    m_parentPath = String::fromUTF8(parentPath);
     AccessibilityAtspi::singleton().parentChanged(*this);
 }
 

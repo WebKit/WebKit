@@ -125,7 +125,7 @@ void MediaPlayerPrivateGStreamerMSE::load(const String&)
 
 void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, MediaSourcePrivateClient* mediaSource)
 {
-    auto mseBlobURI = makeString("mediasource", url.string().isEmpty() ? "blob://" : url.string());
+    auto mseBlobURI = makeString("mediasource", url.string().isEmpty() ? "blob://"_s : url.string());
     GST_DEBUG("Loading %s", mseBlobURI.ascii().data());
     m_mediaSource = mediaSource;
 

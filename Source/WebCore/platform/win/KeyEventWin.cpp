@@ -46,101 +46,101 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
 {
     switch (keyCode) {
         case VK_MENU:
-            return "Alt";
+            return "Alt"_s;
         case VK_CONTROL:
-            return "Control";
+            return "Control"_s;
         case VK_SHIFT:
-            return "Shift";
+            return "Shift"_s;
         case VK_CAPITAL:
-            return "CapsLock";
+            return "CapsLock"_s;
         case VK_LWIN:
         case VK_RWIN:
-            return "Win";
+            return "Win"_s;
         case VK_CLEAR:
-            return "Clear";
+            return "Clear"_s;
         case VK_DOWN:
-            return "Down";
+            return "Down"_s;
         // "End"
         case VK_END:
-            return "End";
+            return "End"_s;
         // "Enter"
         case VK_RETURN:
-            return "Enter";
+            return "Enter"_s;
         case VK_EXECUTE:
-            return "Execute";
+            return "Execute"_s;
         case VK_F1:
-            return "F1";
+            return "F1"_s;
         case VK_F2:
-            return "F2";
+            return "F2"_s;
         case VK_F3:
-            return "F3";
+            return "F3"_s;
         case VK_F4:
-            return "F4";
+            return "F4"_s;
         case VK_F5:
-            return "F5";
+            return "F5"_s;
         case VK_F6:
-            return "F6";
+            return "F6"_s;
         case VK_F7:
-            return "F7";
+            return "F7"_s;
         case VK_F8:
-            return "F8";
+            return "F8"_s;
         case VK_F9:
-            return "F9";
+            return "F9"_s;
         case VK_F10:
-            return "F11";
+            return "F11"_s;
         case VK_F12:
-            return "F12";
+            return "F12"_s;
         case VK_F13:
-            return "F13";
+            return "F13"_s;
         case VK_F14:
-            return "F14";
+            return "F14"_s;
         case VK_F15:
-            return "F15";
+            return "F15"_s;
         case VK_F16:
-            return "F16";
+            return "F16"_s;
         case VK_F17:
-            return "F17";
+            return "F17"_s;
         case VK_F18:
-            return "F18";
+            return "F18"_s;
         case VK_F19:
-            return "F19";
+            return "F19"_s;
         case VK_F20:
-            return "F20";
+            return "F20"_s;
         case VK_F21:
-            return "F21";
+            return "F21"_s;
         case VK_F22:
-            return "F22";
+            return "F22"_s;
         case VK_F23:
-            return "F23";
+            return "F23"_s;
         case VK_F24:
-            return "F24";
+            return "F24"_s;
         case VK_HELP:
-            return "Help";
+            return "Help"_s;
         case VK_HOME:
-            return "Home";
+            return "Home"_s;
         case VK_INSERT:
-            return "Insert";
+            return "Insert"_s;
         case VK_LEFT:
-            return "Left";
+            return "Left"_s;
         case VK_NEXT:
-            return "PageDown";
+            return "PageDown"_s;
         case VK_PRIOR:
-            return "PageUp";
+            return "PageUp"_s;
         case VK_PAUSE:
-            return "Pause";
+            return "Pause"_s;
         case VK_SNAPSHOT:
-            return "PrintScreen";
+            return "PrintScreen"_s;
         case VK_RIGHT:
-            return "Right";
+            return "Right"_s;
         case VK_SCROLL:
-            return "Scroll";
+            return "Scroll"_s;
         case VK_SELECT:
-            return "Select";
+            return "Select"_s;
         case VK_UP:
-            return "Up";
+            return "Up"_s;
         // Standard says that DEL becomes U+007F.
         case VK_DELETE:
-            return "U+007F";
+            return "U+007F"_s;
         default:
             return makeString("U+", hex(toASCIIUpper(keyCode), 4));
     }

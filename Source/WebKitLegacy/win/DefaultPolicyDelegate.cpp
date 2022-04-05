@@ -43,13 +43,13 @@ typedef enum WebExtraNavigationType {
 DefaultPolicyDelegate::DefaultPolicyDelegate()
 {
     gClassCount++;
-    gClassNameCount().add("DefaultPolicyDelegate");
+    gClassNameCount().add("DefaultPolicyDelegate"_s);
 }
 
 DefaultPolicyDelegate::~DefaultPolicyDelegate()
 {
     gClassCount--;
-    gClassNameCount().remove("DefaultPolicyDelegate");
+    gClassNameCount().remove("DefaultPolicyDelegate"_s);
 }
 
 DefaultPolicyDelegate* DefaultPolicyDelegate::sharedInstance()

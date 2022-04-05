@@ -434,8 +434,8 @@ void LocaleWin::initializeLocaleData()
     String negativeSuffix = emptyString();
     switch (negativeFormat) {
     case NegativeFormatParenthesis:
-        negativePrefix = "(";
-        negativeSuffix = ")";
+        negativePrefix = "("_s;
+        negativeSuffix = ")"_s;
         break;
     case NegativeFormatSignSpacePrefix:
         negativePrefix = negativeSign + " ";

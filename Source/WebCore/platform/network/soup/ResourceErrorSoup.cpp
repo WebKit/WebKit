@@ -44,7 +44,7 @@ namespace WebCore {
 
 ResourceError ResourceError::transportError(const URL& failingURL, int statusCode, const String& reasonPhrase)
 {
-    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN), statusCode, failingURL, reasonPhrase);
+    return ResourceError(String { g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN) }, statusCode, failingURL, reasonPhrase);
 }
 
 ResourceError ResourceError::httpError(SoupMessage* message, GError* error)
@@ -61,22 +61,22 @@ ResourceError ResourceError::authenticationError(SoupMessage* message)
 {
     ASSERT(message);
 #if USE(SOUP2)
-    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN), message->status_code,
+    return ResourceError(String { g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN) }, message->status_code,
         soupURIToURL(soup_message_get_uri(message)), String::fromUTF8(message->reason_phrase));
 #else
-    return ResourceError(g_quark_to_string(SOUP_SESSION_ERROR), soup_message_get_status(message),
+    return ResourceError(String { g_quark_to_string(SOUP_SESSION_ERROR) }, soup_message_get_status(message),
         soup_message_get_uri(message), String::fromUTF8(soup_message_get_reason_phrase(message)));
 #endif
 }
 
 ResourceError ResourceError::genericGError(const URL& failingURL, GError* error)
 {
-    return ResourceError(g_quark_to_string(error->domain), error->code, failingURL, String::fromUTF8(error->message));
+    return ResourceError(String { g_quark_to_string(error->domain) }, error->code, failingURL, String::fromUTF8(error->message));
 }
 
 ResourceError ResourceError::tlsError(const URL& failingURL, unsigned tlsErrors, GTlsCertificate* certificate)
 {
-    ResourceError resourceError(g_quark_to_string(G_TLS_ERROR), G_TLS_ERROR_BAD_CERTIFICATE, failingURL, unacceptableTLSCertificate());
+    ResourceError resourceError(String { g_quark_to_string(G_TLS_ERROR) }, G_TLS_ERROR_BAD_CERTIFICATE, failingURL, unacceptableTLSCertificate());
     resourceError.setTLSErrors(tlsErrors);
     resourceError.setCertificate(certificate);
     return resourceError;
@@ -88,9 +88,9 @@ ResourceError ResourceError::timeoutError(const URL& failingURL)
     // networking errors from that file should be moved here.
 
     // Use the same value as in NSURLError.h
-    static const int timeoutError = -1001;
-    static const char* const  errorDomain = "WebKitNetworkError";
-    return ResourceError(errorDomain, timeoutError, failingURL, "Request timed out", ResourceError::Type::Timeout);
+    static constexpr int timeoutError = -1001;
+    static constexpr auto errorDomain = "WebKitNetworkError"_s;
+    return ResourceError(errorDomain, timeoutError, failingURL, "Request timed out"_s, ResourceError::Type::Timeout);
 }
 
 void ResourceError::doPlatformIsolatedCopy(const ResourceError& other)

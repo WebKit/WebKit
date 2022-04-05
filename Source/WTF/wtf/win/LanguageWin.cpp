@@ -63,7 +63,7 @@ static String platformLanguage()
     if (!computedDefaultLanguage.isEmpty())
         return computedDefaultLanguage.isolatedCopy();
 
-    String languageName = localeInfo(LOCALE_SISO639LANGNAME, "en");
+    String languageName = localeInfo(LOCALE_SISO639LANGNAME, "en"_s);
     String countryName = localeInfo(LOCALE_SISO3166CTRYNAME, String());
 
     if (countryName.isEmpty())

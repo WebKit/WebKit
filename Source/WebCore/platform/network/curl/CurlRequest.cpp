@@ -559,7 +559,7 @@ void CurlRequest::setupPUT()
     m_curlHandle->enableHttpPutRequest();
 
     // Disable the Expect: 100 continue header
-    m_curlHandle->removeRequestHeader("Expect");
+    m_curlHandle->removeRequestHeader("Expect"_s);
 
     auto elementSize = m_formDataStream.elementSize();
     if (!elementSize)
@@ -593,7 +593,7 @@ void CurlRequest::setupSendData(bool forPutMethod)
 {
     // curl guesses that we want chunked encoding as long as we specify the header
     if (m_formDataStream.shouldUseChunkTransfer())
-        m_curlHandle->appendRequestHeader("Transfer-Encoding: chunked");
+        m_curlHandle->appendRequestHeader("Transfer-Encoding: chunked"_s);
     else {
         if (forPutMethod)
             m_curlHandle->setInFileSizeLarge(static_cast<curl_off_t>(m_formDataStream.totalSize()));

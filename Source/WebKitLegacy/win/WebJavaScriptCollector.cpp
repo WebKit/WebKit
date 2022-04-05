@@ -42,13 +42,13 @@ using namespace WebCore;
 WebJavaScriptCollector::WebJavaScriptCollector()
 {
     gClassCount++;
-    gClassNameCount().add("WebJavaScriptCollector");
+    gClassNameCount().add("WebJavaScriptCollector"_s);
 }
 
 WebJavaScriptCollector::~WebJavaScriptCollector()
 {
     gClassCount--;
-    gClassNameCount().remove("WebJavaScriptCollector");
+    gClassNameCount().remove("WebJavaScriptCollector"_s);
 }
 
 WebJavaScriptCollector* WebJavaScriptCollector::createInstance()

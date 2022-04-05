@@ -82,7 +82,7 @@ RemoteInspectorProtocolHandler::~RemoteInspectorProtocolHandler()
         g_object_weak_unref(G_OBJECT(webView), reinterpret_cast<GWeakNotify>(webViewDestroyed), this);
 
     for (auto* userContentManager : m_userContentManagers) {
-        webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->removeUserMessageHandlerForName("inspector", API::ContentWorld::pageContentWorld());
+        webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->removeUserMessageHandlerForName("inspector"_s, API::ContentWorld::pageContentWorld());
         g_object_weak_unref(G_OBJECT(userContentManager), reinterpret_cast<GWeakNotify>(userContentManagerDestroyed), this);
     }
 }
@@ -99,7 +99,7 @@ void RemoteInspectorProtocolHandler::userContentManagerDestroyed(RemoteInspector
 
 void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
 {
-    URL requestURL = URL({ }, webkit_uri_scheme_request_get_uri(request));
+    URL requestURL = URL(String { webkit_uri_scheme_request_get_uri(request) });
     if (!requestURL.port()) {
         GUniquePtr<GError> error(g_error_new_literal(WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI, "Cannot show inspector URL: no port provided"));
         webkit_uri_scheme_request_finish_error(request, error.get());
@@ -115,7 +115,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     auto* userContentManager = webkit_web_view_get_user_content_manager(webView);
     auto userContentManagerResult = m_userContentManagers.add(userContentManager);
     if (userContentManagerResult.isNewEntry) {
-        auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector", API::ContentWorld::pageContentWorld());
+        auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector"_s, API::ContentWorld::pageContentWorld());
         webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->addUserScriptMessageHandler(handler.get());
         g_object_weak_ref(G_OBJECT(userContentManager), reinterpret_cast<GWeakNotify>(userContentManagerDestroyed), this);
     }
@@ -143,7 +143,7 @@ void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& cl
         if (webkit_web_view_is_loading(webView))
             continue;
 
-        URL webViewURL = URL({ }, webkit_web_view_get_uri(webView));
+        URL webViewURL = URL(String { webkit_web_view_get_uri(webView) });
         auto clientForWebView = m_inspectorClients.get(webViewURL.hostAndPort());
         if (!clientForWebView) {
             // This view is not showing a inspector view anymore.

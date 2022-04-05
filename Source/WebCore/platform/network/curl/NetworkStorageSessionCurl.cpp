@@ -43,13 +43,13 @@ static String defaultCookieJarPath()
     static const char* defaultFileName = "cookie.jar.db";
     char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
     if (cookieJarPath)
-        return cookieJarPath;
+        return String::fromUTF8(cookieJarPath);
 
 #if PLATFORM(WIN)
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), defaultFileName);
 #else
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=192417
-    return defaultFileName;
+    return String { defaultFileName };
 #endif
 }
 

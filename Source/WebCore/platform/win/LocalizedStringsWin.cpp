@@ -34,13 +34,13 @@ namespace WebCore {
 String uploadFileText()
 {
     notImplemented();
-    return "upload";
+    return "upload"_s;
 }
 
 String allFilesText()
 {
     notImplemented();
-    return "all files";
+    return "all files"_s;
 }
 
 } // namespace WebCore

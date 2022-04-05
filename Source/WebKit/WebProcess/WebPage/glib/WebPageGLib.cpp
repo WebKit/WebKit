@@ -114,22 +114,22 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 #if PLATFORM(GTK)
     const Editor& editor = frame.editor();
     if (selection.isRange()) {
-        if (editor.selectionHasStyle(CSSPropertyFontWeight, "bold") == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyFontWeight, "bold"_s) == TriState::True)
             postLayoutData.typingAttributes |= AttributeBold;
-        if (editor.selectionHasStyle(CSSPropertyFontStyle, "italic") == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyFontStyle, "italic"_s) == TriState::True)
             postLayoutData.typingAttributes |= AttributeItalics;
-        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline") == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s) == TriState::True)
             postLayoutData.typingAttributes |= AttributeUnderline;
-        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through") == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"_s) == TriState::True)
             postLayoutData.typingAttributes |= AttributeStrikeThrough;
     } else if (selection.isCaret()) {
-        if (editor.selectionStartHasStyle(CSSPropertyFontWeight, "bold"))
+        if (editor.selectionStartHasStyle(CSSPropertyFontWeight, "bold"_s))
             postLayoutData.typingAttributes |= AttributeBold;
-        if (editor.selectionStartHasStyle(CSSPropertyFontStyle, "italic"))
+        if (editor.selectionStartHasStyle(CSSPropertyFontStyle, "italic"_s))
             postLayoutData.typingAttributes |= AttributeItalics;
-        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"))
+        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s))
             postLayoutData.typingAttributes |= AttributeUnderline;
-        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"))
+        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"_s))
             postLayoutData.typingAttributes |= AttributeStrikeThrough;
     }
 #endif

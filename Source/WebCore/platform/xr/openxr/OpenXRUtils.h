@@ -127,12 +127,12 @@ inline String handenessToString(XRHandedness handeness)
 {
     switch (handeness) {
     case XRHandedness::Left:
-        return "left";
+        return "left"_s;
     case XRHandedness::Right:
-        return "right";
+        return "right"_s;
     default:
         ASSERT_NOT_REACHED();
-        return "";
+        return emptyString();
     }
 }
 

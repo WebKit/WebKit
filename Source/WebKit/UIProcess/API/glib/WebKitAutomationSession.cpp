@@ -378,7 +378,7 @@ String webkitAutomationSessionGetBrowserName(WebKitAutomationSession* session)
     if (session->priv->applicationInfo)
         return String::fromUTF8(webkit_application_info_get_name(session->priv->applicationInfo));
 
-    return g_get_prgname();
+    return String::fromUTF8(g_get_prgname());
 }
 
 String webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession* session)

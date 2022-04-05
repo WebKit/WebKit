@@ -59,32 +59,32 @@ TEST(HTTPParsers, ParseCrossOriginResourcePolicyHeader)
 #if USE(GLIB)
 TEST(HTTPParsers, ValidateUserAgentValues)
 {
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari WebKit"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari WebKit/163"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit/163"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit/163 (Mozilla; like Gecko)"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari (comment (nested comment))"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari () (<- Empty comment)"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari (left paren \\( as quoted pair)"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("!#$%&'*+-.^_`|~ (non-alphanumeric token characters)"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("0123456789 (numeric token characters)"));
-    EXPECT_TRUE(isValidUserAgentHeaderValue("a (single character token)"));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari WebKit"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari WebKit/163"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit/163"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari/10.0 WebKit/163 (Mozilla; like Gecko)"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari (comment (nested comment))"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari () (<- Empty comment)"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("Safari (left paren \\( as quoted pair)"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("!#$%&'*+-.^_`|~ (non-alphanumeric token characters)"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("0123456789 (numeric token characters)"_s));
+    EXPECT_TRUE(isValidUserAgentHeaderValue("a (single character token)"_s));
 
-    EXPECT_FALSE(isValidUserAgentHeaderValue(" "));
-    EXPECT_FALSE(isValidUserAgentHeaderValue(" Safari (leading whitespace)"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (trailing whitespace) "));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("\nSafari (leading newline)"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (trailing newline)\n"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari/ (no version token after slash)"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (unterminated comment"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari unopened commanent)"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("\x1B (contains control character)"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari/\n10.0 (embeded newline)"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("WPE\\ WebKit (quoted pair in token)"));
-    EXPECT_FALSE(isValidUserAgentHeaderValue("/123 (missing product token)"));
+    EXPECT_FALSE(isValidUserAgentHeaderValue(" "_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue(" Safari (leading whitespace)"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (trailing whitespace) "_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("\nSafari (leading newline)"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (trailing newline)\n"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari/ (no version token after slash)"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari (unterminated comment"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari unopened commanent)"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("\x1B (contains control character)"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("Safari/\n10.0 (embeded newline)"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("WPE\\ WebKit (quoted pair in token)"_s));
+    EXPECT_FALSE(isValidUserAgentHeaderValue("/123 (missing product token)"_s));
 }
 #endif
 

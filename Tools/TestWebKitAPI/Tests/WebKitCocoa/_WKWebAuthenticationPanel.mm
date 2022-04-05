@@ -2416,7 +2416,7 @@ TEST(WebAuthenticationPanel, DeleteOneCredential)
 TEST(WebAuthenticationPanel, RecoverAfterAuthNProcessCrash)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/", { "FOO"_str } }
+        { "/"_s, { "FOO"_s } }
     });
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];

@@ -62,13 +62,13 @@ WebArchive::WebArchive(RefPtr<LegacyWebArchive>&& coreArchive)
 #endif
 {
     gClassCount++;
-    gClassNameCount().add("WebArchive");
+    gClassNameCount().add("WebArchive"_s);
 }
 
 WebArchive::~WebArchive()
 {
     gClassCount--;
-    gClassNameCount().remove("WebArchive");
+    gClassNameCount().remove("WebArchive"_s);
 }
 
 HRESULT WebArchive::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)

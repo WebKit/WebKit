@@ -46,13 +46,13 @@ int WebFrameViewCount;
 WebKitStatistics::WebKitStatistics()
 {
     gClassCount++;
-    gClassNameCount().add("WebKitStatistics");
+    gClassNameCount().add("WebKitStatistics"_s);
 }
 
 WebKitStatistics::~WebKitStatistics()
 {
     gClassCount--;
-    gClassNameCount().remove("WebKitStatistics");
+    gClassNameCount().remove("WebKitStatistics"_s);
 }
 
 WebKitStatistics* WebKitStatistics::createInstance()

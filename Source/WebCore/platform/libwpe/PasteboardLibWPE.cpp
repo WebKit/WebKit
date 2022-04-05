@@ -97,7 +97,7 @@ void Pasteboard::clear(const String&)
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std::optional<size_t>)
 {
-    text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8", name(), context());
+    text.text = platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, "text/plain;charset=utf-8"_s, name(), context());
 }
 
 void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy, std::optional<size_t>)
@@ -111,7 +111,7 @@ void Pasteboard::read(PasteboardFileReader&, std::optional<size_t>)
 
 void Pasteboard::write(const PasteboardURL& url)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard("text/plain;charset=utf-8", url.url.string());
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard("text/plain;charset=utf-8"_s, url.url.string());
 }
 
 void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
@@ -149,7 +149,7 @@ void Pasteboard::writeMarkup(const String&)
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
-    writeString("text/plain;charset=utf-8", text);
+    writeString("text/plain;charset=utf-8"_s, text);
 }
 
 void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>&)

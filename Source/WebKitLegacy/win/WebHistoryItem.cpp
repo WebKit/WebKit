@@ -53,7 +53,7 @@ WebHistoryItem::WebHistoryItem(RefPtr<HistoryItem>&& historyItem)
     historyItemWrappers().set(m_historyItem.get(), this);
 
     gClassCount++;
-    gClassNameCount().add("WebHistoryItem");
+    gClassNameCount().add("WebHistoryItem"_s);
 }
 
 WebHistoryItem::~WebHistoryItem()
@@ -62,7 +62,7 @@ WebHistoryItem::~WebHistoryItem()
     historyItemWrappers().remove(m_historyItem.get());
 
     gClassCount--;
-    gClassNameCount().remove("WebHistoryItem");
+    gClassNameCount().remove("WebHistoryItem"_s);
 }
 
 WebHistoryItem* WebHistoryItem::createInstance()

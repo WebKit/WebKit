@@ -40,7 +40,7 @@ public:
     virtual void didFinishLoading() { }
     virtual void didFail() { }
     virtual bool supportsPasswordEntry() const { return false; }
-    virtual void didRequestPassword(Function<void(const String&)>&& completionHandler) { completionHandler(""); }
+    virtual void didRequestPassword(Function<void(const String&)>&& completionHandler) { completionHandler(emptyString()); }
 };
 
 } // namespace WebCore

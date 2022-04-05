@@ -85,14 +85,14 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
 {
     auto mimeHeader = adoptRef(*new MIMEHeader);
     KeyValueMap keyValuePairs = retrieveKeyValuePairs(buffer);
-    KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type");
+    KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type"_s);
     if (mimeParametersIterator != keyValuePairs.end()) {
         String contentType, charset, multipartType, endOfPartBoundary;
         if (auto parsedContentType = ParsedContentType::create(mimeParametersIterator->value)) {
             contentType = parsedContentType->mimeType();
             charset = parsedContentType->charset().stripWhiteSpace();
-            multipartType = parsedContentType->parameterValueForName("type");
-            endOfPartBoundary = parsedContentType->parameterValueForName("boundary");
+            multipartType = parsedContentType->parameterValueForName("type"_s);
+            endOfPartBoundary = parsedContentType->parameterValueForName("boundary"_s);
         }
         mimeHeader->m_contentType = contentType;
         if (!mimeHeader->isMultipart())
@@ -109,11 +109,11 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
         }
     }
 
-    mimeParametersIterator = keyValuePairs.find("content-transfer-encoding");
+    mimeParametersIterator = keyValuePairs.find("content-transfer-encoding"_s);
     if (mimeParametersIterator != keyValuePairs.end())
         mimeHeader->m_contentTransferEncoding = parseContentTransferEncoding(mimeParametersIterator->value);
 
-    mimeParametersIterator = keyValuePairs.find("content-location");
+    mimeParametersIterator = keyValuePairs.find("content-location"_s);
     if (mimeParametersIterator != keyValuePairs.end())
         mimeHeader->m_contentLocation = mimeParametersIterator->value;
 

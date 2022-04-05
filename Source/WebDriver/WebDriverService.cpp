@@ -61,7 +61,7 @@ int WebDriverService::run(int argc, char** argv)
 #if USE(INSPECTOR_SOCKET_SERVER)
     String targetString;
     if (const char* targetEnvVar = getenv("WEBDRIVER_TARGET_ADDR"))
-        targetString = targetEnvVar;
+        targetString = String { targetEnvVar };
 #endif
     for (int i = 1 ; i < argc; ++i) {
         const char* arg = argv[i];
@@ -75,7 +75,7 @@ int WebDriverService::run(int argc, char** argv)
                 printUsageStatement(argv[0]);
                 return EXIT_FAILURE;
             }
-            portString = argv[i];
+            portString = String { argv[i] };
             continue;
         }
 
@@ -97,7 +97,7 @@ int WebDriverService::run(int argc, char** argv)
                 printUsageStatement(argv[0]);
                 return EXIT_FAILURE;
             }
-            targetString = argv[i];
+            targetString = String { argv[i] };
             continue;
         }
 
@@ -441,7 +441,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
             if (!proxy.httpsURL->isValid())
                 return std::nullopt;
         }
-        if (auto value = proxyObject.getValue("socksProxy")) {
+        if (auto value = proxyObject.getValue("socksProxy"_s)) {
             auto socksProxy = value->asString();
             if (!socksProxy)
                 return std::nullopt;
@@ -450,7 +450,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
             if (!proxy.socksURL->isValid())
                 return std::nullopt;
 
-            auto socksVersionValue = proxyObject.getValue("socksVersion");
+            auto socksVersionValue = proxyObject.getValue("socksVersion"_s);
             if (!socksVersionValue)
                 return std::nullopt;
 
@@ -872,30 +872,30 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, st
             capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.value_or(true));
             switch (capabilities.unhandledPromptBehavior.value_or(UnhandledPromptBehavior::DismissAndNotify)) {
             case UnhandledPromptBehavior::Dismiss:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss");
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss"_s);
                 break;
             case UnhandledPromptBehavior::Accept:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept");
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept"_s);
                 break;
             case UnhandledPromptBehavior::DismissAndNotify:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss and notify");
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss and notify"_s);
                 break;
             case UnhandledPromptBehavior::AcceptAndNotify:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept and notify");
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept and notify"_s);
                 break;
             case UnhandledPromptBehavior::Ignore:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "ignore");
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "ignore"_s);
                 break;
             }
             switch (capabilities.pageLoadStrategy.value_or(PageLoadStrategy::Normal)) {
             case PageLoadStrategy::None:
-                capabilitiesObject->setString("pageLoadStrategy"_s, "none");
+                capabilitiesObject->setString("pageLoadStrategy"_s, "none"_s);
                 break;
             case PageLoadStrategy::Normal:
-                capabilitiesObject->setString("pageLoadStrategy"_s, "normal");
+                capabilitiesObject->setString("pageLoadStrategy"_s, "normal"_s);
                 break;
             case PageLoadStrategy::Eager:
-                capabilitiesObject->setString("pageLoadStrategy"_s, "eager");
+                capabilitiesObject->setString("pageLoadStrategy"_s, "eager"_s);
                 break;
             }
             if (!capabilities.proxy)

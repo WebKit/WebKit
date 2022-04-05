@@ -45,13 +45,13 @@ WebActionPropertyBag::WebActionPropertyBag(const NavigationAction& action, RefPt
     , m_frame(WTFMove(frame))
 {
     gClassCount++;
-    gClassNameCount().add("WebActionPropertyBag");
+    gClassNameCount().add("WebActionPropertyBag"_s);
 }
 
 WebActionPropertyBag::~WebActionPropertyBag()
 {
     gClassCount--;
-    gClassNameCount().remove("WebActionPropertyBag");
+    gClassNameCount().remove("WebActionPropertyBag"_s);
 }
 
 WebActionPropertyBag* WebActionPropertyBag::createInstance(const NavigationAction& action, RefPtr<HTMLFormElement>&& form, RefPtr<Frame>&& frame)

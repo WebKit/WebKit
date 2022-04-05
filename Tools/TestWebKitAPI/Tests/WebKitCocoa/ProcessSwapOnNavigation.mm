@@ -8317,8 +8317,8 @@ TEST(ProcessSwap, ContentModeInCaseOfCoopProcessSwap)
     using namespace TestWebKitAPI;
 
     HTTPServer server({
-        { "/source.html", { "foo" } },
-        { "/destination.html", { { { "Content-Type", "text/html" }, { "Cross-Origin-Opener-Policy", "same-origin" } }, "bar" } },
+        { "/source.html"_s, { "foo"_s } },
+        { "/destination.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "bar"_s } },
     }, HTTPServer::Protocol::Https);
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -8389,11 +8389,11 @@ TEST(ProcessSwap, ContentModeInCaseOfPSONThenCoopProcessSwap)
     using namespace TestWebKitAPI;
 
     HTTPServer server1({
-        { "/source.html", { "foo" } },
+        { "/source.html"_s, { "foo"_s } },
     }, HTTPServer::Protocol::Https);
 
     HTTPServer server2({
-        { "/destination.html", { { { "Content-Type", "text/html" }, { "Cross-Origin-Opener-Policy", "same-origin" } }, "bar" } },
+        { "/destination.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "bar"_s } },
     }, HTTPServer::Protocol::Http);
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();

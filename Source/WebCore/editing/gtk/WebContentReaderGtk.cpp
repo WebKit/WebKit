@@ -46,7 +46,7 @@ bool WebContentReader::readFilePath(const String& path, PresentationSize, const 
         return false;
 
     auto markup = urlToMarkup(URL({ }, path), path);
-    addFragment(createFragmentFromMarkup(*frame.document(), markup, "file://", DisallowScriptingAndPluginContent));
+    addFragment(createFragmentFromMarkup(*frame.document(), markup, "file://"_s, DisallowScriptingAndPluginContent));
 
     return true;
 }

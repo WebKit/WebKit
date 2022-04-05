@@ -40,12 +40,12 @@ ResourceError printError(const URL& failingURL, const String& localizedDescripti
 
 ResourceError printerNotFoundError(const URL& failingURL)
 {
-    return ResourceError(API::Error::webKitPrintErrorDomain(), API::Error::Print::PrinterNotFound, failingURL, _("Printer not found"));
+    return ResourceError(API::Error::webKitPrintErrorDomain(), API::Error::Print::PrinterNotFound, failingURL, String::fromUTF8(_("Printer not found")));
 }
 
 ResourceError invalidPageRangeToPrint(const URL& failingURL)
 {
-    return ResourceError(API::Error::webKitPrintErrorDomain(), API::Error::Print::InvalidPageRange, failingURL, _("Invalid page range"));
+    return ResourceError(API::Error::webKitPrintErrorDomain(), API::Error::Print::InvalidPageRange, failingURL, String::fromUTF8(_("Invalid page range")));
 }
 
 } // namespace WebKit

@@ -1,3 +1,120 @@
+2022-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Mark String(const char*) constructor as explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238693
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (stringForSSLProtocol):
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::willPerformHTTPRedirection):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+        (WebKit::NetworkDataTaskSoup::readCallback):
+        (WebKit::NetworkDataTaskSoup::didRequestNextPart):
+        (WebKit::NetworkDataTaskSoup::download):
+        (WebKit::NetworkDataTaskSoup::writeDownloadCallback):
+        (WebKit::NetworkDataTaskSoup::didFinishDownload):
+        (WebKit::NetworkDataTaskSoup::didGetFileInfo):
+        (WebKit::NetworkDataTaskSoup::readFileCallback):
+        (WebKit::NetworkDataTaskSoup::enumerateFileChildrenCallback):
+        * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+        (WebKit::WebSocketTask::didConnect):
+        * Shared/API/Cocoa/WKRemoteObjectCoder.h:
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (WebKit::methodSignaturesAreCompatible):
+        (decodeInvocation):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (replyBlockSignature):
+        (-[_WKRemoteObjectRegistry _invokeMethod:]):
+        * Shared/API/glib/WebKitURIRequest.cpp:
+        (webkit_uri_request_set_uri):
+        * Shared/gtk/WebErrorsGtk.cpp:
+        (WebKit::printerNotFoundError):
+        (WebKit::invalidPageRangeToPrint):
+        * UIProcess/API/glib/WebKitAutomationSession.cpp:
+        (webkitAutomationSessionGetBrowserName):
+        * UIProcess/API/glib/WebKitCredential.cpp:
+        (webkit_credential_new_for_certificate_pin):
+        * UIProcess/API/glib/WebKitInjectedBundleClient.cpp:
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::handleRequest):
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate::_WebKitSettingsPrivate):
+        (webkit_settings_set_user_agent):
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkitURISchemeRequestReadCallback):
+        (webkit_uri_scheme_request_finish_error):
+        * UIProcess/API/gtk/DragSourceGtk4.cpp:
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::DropTarget):
+        * UIProcess/API/gtk/DropTargetGtk4.cpp:
+        (WebKit::DropTarget::DropTarget):
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::~RemoteInspectorProtocolHandler):
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest):
+        (WebKit::RemoteInspectorProtocolHandler::targetListChanged):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseEnterFullScreen):
+        * UIProcess/API/wpe/WebKitColor.cpp:
+        (webkit_color_parse):
+        * UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm:
+        (WebKit::malwareDetailsBase):
+        (WebKit::reportAnErrorBase):
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        * UIProcess/Inspector/gtk/RemoteWebInspectorUIProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow):
+        (WebKit::remoteFileReplaceContentsCallback):
+        * UIProcess/Inspector/gtk/WebInspectorUIProxyGtk.cpp:
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendPage):
+        (WebKit::fileReplaceContentsCallback):
+        * UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::platformStartTask):
+        * UIProcess/Inspector/win/RemoteWebInspectorUIProxyWin.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow):
+        * UIProcess/Inspector/win/WebInspectorUIProxyWin.cpp:
+        (WebKit::WebInspectorUIProxy::platformCreateFrontendPage):
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindSymlinksRealPath):
+        (WebKit::bubblewrapSpawn):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/glib/WebProcessProxyGLib.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        * UIProcess/glib/WebsiteDataStoreGLib.cpp:
+        * UIProcess/gtk/ClipboardGtk3.cpp:
+        (WebKit::Clipboard::write):
+        * UIProcess/gtk/ClipboardGtk4.cpp:
+        (WebKit::Clipboard::write):
+        * UIProcess/gtk/KeyBindingTranslator.cpp:
+        * UIProcess/win/WebProcessPoolWin.cpp:
+        (WebKit::backendCommandsPath):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkitWebPageDidReceiveMessage):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentGtk.cpp:
+        (webkit_dom_document_get_visibility_state):
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp:
+        (WebKit::handleKeyPress):
+        (WebKit::handleKeyDown):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::getPlatformEditorState const):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::generateSyntheticEditingCommand):
+        (WebKit::WebPage::platformUserAgent const):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::hostAppCodeSigningIdentifier):
+
 2022-04-05  Tim Horton  <timothy_horton@apple.com>
 
         Fix the CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER build

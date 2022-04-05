@@ -106,19 +106,19 @@ bool ExtensionsGLOpenGL::platformSupportsExtension(const String& name)
     // GL_ANGLE_framebuffer_blit and GL_ANGLE_framebuffer_multisample are "fake". They are implemented using other
     // extensions. In particular GL_EXT_framebuffer_blit and GL_EXT_framebuffer_multisample/GL_APPLE_framebuffer_multisample.
     if (name == "GL_ANGLE_framebuffer_blit")
-        return m_availableExtensions.contains("GL_EXT_framebuffer_blit");
+        return m_availableExtensions.contains("GL_EXT_framebuffer_blit"_s);
     if (name == "GL_ANGLE_framebuffer_multisample")
-        return m_availableExtensions.contains("GL_EXT_framebuffer_multisample");
+        return m_availableExtensions.contains("GL_EXT_framebuffer_multisample"_s);
     if (name == "GL_ANGLE_instanced_arrays") {
-        return (m_availableExtensions.contains("GL_ARB_instanced_arrays") || m_availableExtensions.contains("GL_EXT_instanced_arrays"))
-            && (m_availableExtensions.contains("GL_ARB_draw_instanced") || m_availableExtensions.contains("GL_EXT_draw_instanced"));
+        return (m_availableExtensions.contains("GL_ARB_instanced_arrays"_s) || m_availableExtensions.contains("GL_EXT_instanced_arrays"_s))
+            && (m_availableExtensions.contains("GL_ARB_draw_instanced"_s) || m_availableExtensions.contains("GL_EXT_draw_instanced"_s));
     }
 
     if (name == "GL_EXT_sRGB")
-        return m_availableExtensions.contains("GL_EXT_texture_sRGB") && (m_availableExtensions.contains("GL_EXT_framebuffer_sRGB") || m_availableExtensions.contains("GL_ARB_framebuffer_sRGB"));
+        return m_availableExtensions.contains("GL_EXT_texture_sRGB"_s) && (m_availableExtensions.contains("GL_EXT_framebuffer_sRGB"_s) || m_availableExtensions.contains("GL_ARB_framebuffer_sRGB"_s));
 
     if (name == "GL_EXT_frag_depth")
-        return m_availableExtensions.contains("GL_EXT_frag_depth");
+        return m_availableExtensions.contains("GL_EXT_frag_depth"_s);
 
     // Desktop GL always supports GL_OES_rgb8_rgba8.
     if (name == "GL_OES_rgb8_rgba8")
@@ -127,14 +127,14 @@ bool ExtensionsGLOpenGL::platformSupportsExtension(const String& name)
     // If GL_ARB_texture_float or GL_OES_texture_float is available then we report
     // GL_OES_texture_half_float, GL_OES_texture_float_linear and GL_OES_texture_half_float_linear as available.
     if (name == "GL_OES_texture_float" || name == "GL_OES_texture_half_float" || name == "GL_OES_texture_float_linear" || name == "GL_OES_texture_half_float_linear")
-        return m_availableExtensions.contains("GL_ARB_texture_float") || m_availableExtensions.contains("GL_OES_texture_float");
+        return m_availableExtensions.contains("GL_ARB_texture_float"_s) || m_availableExtensions.contains("GL_OES_texture_float"_s);
 
     // GL_OES_vertex_array_object
     if (name == "GL_OES_vertex_array_object") {
 #if (PLATFORM(GTK))
-        return m_availableExtensions.contains("GL_ARB_vertex_array_object");
+        return m_availableExtensions.contains("GL_ARB_vertex_array_object"_s);
 #else
-        return m_availableExtensions.contains("GL_APPLE_vertex_array_object");
+        return m_availableExtensions.contains("GL_APPLE_vertex_array_object"_s);
 #endif
     }
 
@@ -147,14 +147,14 @@ bool ExtensionsGLOpenGL::platformSupportsExtension(const String& name)
         return true;
     
     if (name == "GL_EXT_shader_texture_lod")
-        return m_availableExtensions.contains("GL_EXT_shader_texture_lod");
+        return m_availableExtensions.contains("GL_EXT_shader_texture_lod"_s);
     
     if (name == "GL_EXT_texture_filter_anisotropic")
-        return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic");
+        return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic"_s);
 
     if (name == "GL_EXT_draw_buffers") {
 #if PLATFORM(GTK)
-        return m_availableExtensions.contains("GL_ARB_draw_buffers");
+        return m_availableExtensions.contains("GL_ARB_draw_buffers"_s);
 #else
         // FIXME: implement support for other platforms.
         return false;
@@ -231,7 +231,7 @@ String ExtensionsGLOpenGL::getExtensions()
 #if PLATFORM(GTK) || PLATFORM(WIN)
 bool ExtensionsGLOpenGL::isVertexArrayObjectSupported()
 {
-    static const bool supportsVertexArrayObject = supports("GL_OES_vertex_array_object");
+    static const bool supportsVertexArrayObject = supports("GL_OES_vertex_array_object"_s);
     return supportsVertexArrayObject;
 }
 #endif

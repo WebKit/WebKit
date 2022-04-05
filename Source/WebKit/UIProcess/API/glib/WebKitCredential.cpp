@@ -131,7 +131,7 @@ WebKitCredential* webkit_credential_new_for_certificate_pin(const gchar* pin, We
         persistence = WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION;
     }
 
-    return webkitCredentialCreate(WebCore::Credential("", String::fromUTF8(pin), toWebCoreCredentialPersistence(persistence)));
+    return webkitCredentialCreate(WebCore::Credential(emptyString(), String::fromUTF8(pin), toWebCoreCredentialPersistence(persistence)));
 }
 
 /**

@@ -869,72 +869,72 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
 {
     HashMap<String, String> map;
 #if PLATFORM(GTK)
-    map.add("toolkit", "WebKitGTK");
+    map.add("toolkit"_s, "WebKitGTK"_s);
 #elif PLATFORM(WPE)
-    map.add("toolkit", "WPEWebKit");
+    map.add("toolkit"_s, "WPEWebKit"_s);
 #endif
     if (!m_coreObject)
         return map;
 
     String tagName = m_coreObject->tagName();
     if (!tagName.isEmpty())
-        map.add("tag", tagName);
+        map.add("tag"_s, tagName);
 
     if (auto* element = m_coreObject->element()) {
         String id = element->getIdAttribute().string();
         if (!id.isEmpty())
-            map.add("id", id);
+            map.add("id"_s, id);
     }
 
     int level = m_coreObject->isHeading() ? m_coreObject->headingLevel() : m_coreObject->hierarchicalLevel();
     if (level)
-        map.add("level", String::number(level));
+        map.add("level"_s, String::number(level));
 
     int rowCount = m_coreObject->axRowCount();
     if (rowCount)
-        map.add("rowcount", String::number(rowCount));
+        map.add("rowcount"_s, String::number(rowCount));
 
     int columnCount = m_coreObject->axColumnCount();
     if (columnCount)
-        map.add("colcount", String::number(columnCount));
+        map.add("colcount"_s, String::number(columnCount));
 
     int rowIndex = m_coreObject->axRowIndex();
     if (rowIndex != -1)
-        map.add("rowindex", String::number(rowIndex));
+        map.add("rowindex"_s, String::number(rowIndex));
 
     int columnIndex = m_coreObject->axColumnIndex();
     if (columnIndex != -1)
-        map.add("colindex", String::number(columnIndex));
+        map.add("colindex"_s, String::number(columnIndex));
 
     if (is<AccessibilityTableCell>(m_coreObject)) {
         auto& cell = downcast<AccessibilityTableCell>(*m_coreObject);
         int rowSpan = cell.axRowSpan();
         if (rowSpan != -1)
-            map.add("rowspan", String::number(rowSpan));
+            map.add("rowspan"_s, String::number(rowSpan));
 
         int columnSpan = cell.axColumnSpan();
         if (columnSpan != -1)
-            map.add("colspan", String::number(columnSpan));
+            map.add("colspan"_s, String::number(columnSpan));
     }
 
     String placeholder = m_coreObject->placeholderValue();
     if (!placeholder.isEmpty())
-        map.add("placeholder-text", placeholder);
+        map.add("placeholder-text"_s, placeholder);
 
     if (m_coreObject->supportsAutoComplete())
-        map.add("autocomplete", m_coreObject->autoCompleteValue());
+        map.add("autocomplete"_s, m_coreObject->autoCompleteValue());
 
     if (m_coreObject->supportsHasPopup())
-        map.add("haspopup", m_coreObject->popupValue());
+        map.add("haspopup"_s, m_coreObject->popupValue());
 
     if (m_coreObject->supportsCurrent())
-        map.add("current", m_coreObject->currentValue());
+        map.add("current"_s, m_coreObject->currentValue());
 
     if (m_coreObject->supportsPosInSet())
-        map.add("posinset", String::number(m_coreObject->posInSet()));
+        map.add("posinset"_s, String::number(m_coreObject->posInSet()));
 
     if (m_coreObject->supportsSetSize())
-        map.add("setsize", String::number(m_coreObject->setSize()));
+        map.add("setsize"_s, String::number(m_coreObject->setSize()));
 
     // The Core AAM states that an explicitly-set value should be exposed, including "none".
     if (static_cast<AccessibilityObject*>(m_coreObject)->hasAttribute(HTMLNames::aria_sortAttr)) {
@@ -942,27 +942,27 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
         case AccessibilitySortDirection::Invalid:
             break;
         case AccessibilitySortDirection::Ascending:
-            map.add("sort", "ascending");
+            map.add("sort"_s, "ascending"_s);
             break;
         case AccessibilitySortDirection::Descending:
-            map.add("sort", "descending");
+            map.add("sort"_s, "descending"_s);
             break;
         case AccessibilitySortDirection::Other:
-            map.add("sort", "other");
+            map.add("sort"_s, "other"_s);
             break;
         case AccessibilitySortDirection::None:
-            map.add("sort", "none");
+            map.add("sort"_s, "none"_s);
             break;
         }
     }
 
     String isReadOnly = m_coreObject->readOnlyValue();
     if (!isReadOnly.isEmpty())
-        map.add("readonly", isReadOnly);
+        map.add("readonly"_s, isReadOnly);
 
     String valueDescription = m_coreObject->valueDescription();
     if (!valueDescription.isEmpty())
-        map.add("valuetext", valueDescription);
+        map.add("valuetext"_s, valueDescription);
 
     // According to the W3C Core Accessibility API Mappings 1.1, section 5.4.1 General Rules:
     // "User agents must expose the WAI-ARIA role string if the API supports a mechanism to do so."
@@ -971,59 +971,59 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
     // with ARIA roles, and it might not contain the actual ARIA role value (e.g. DPub ARIA).
     String roleString = static_cast<AccessibilityObject*>(m_coreObject)->getAttribute(HTMLNames::roleAttr);
     if (!roleString.isEmpty())
-        map.add("xml-roles", roleString);
+        map.add("xml-roles"_s, roleString);
 
     String computedRoleString = m_coreObject->computedRoleString();
     if (!computedRoleString.isEmpty()) {
-        map.add("computed-role", computedRoleString);
+        map.add("computed-role"_s, computedRoleString);
 
         // The HTML AAM maps several elements to ARIA landmark roles. In order for the type of landmark
         // to be obtainable in the same fashion as an ARIA landmark, fall back on the computedRoleString.
         // We also want to do this for the style-format-group element types so that the type of format
         // group it is doesn't get lost to a generic platform role.
         if (m_coreObject->ariaRoleAttribute() == AccessibilityRole::Unknown && (m_coreObject->isLandmark() || m_coreObject->isStyleFormatGroup()))
-            map.set("xml-roles", computedRoleString);
+            map.set("xml-roles"_s, computedRoleString);
     }
 
     String roleDescription = m_coreObject->roleDescription();
     if (!roleDescription.isEmpty())
-        map.add("roledescription", roleDescription);
+        map.add("roledescription"_s, roleDescription);
 
     String dropEffect = static_cast<AccessibilityObject*>(m_coreObject)->getAttribute(HTMLNames::aria_dropeffectAttr);
     if (!dropEffect.isEmpty())
-        map.add("dropeffect", dropEffect);
+        map.add("dropeffect"_s, dropEffect);
 
     if (m_coreObject->supportsDragging())
-        map.add("grabbed", m_coreObject->isGrabbed() ? "true" : "false");
+        map.add("grabbed"_s, m_coreObject->isGrabbed() ? "true"_s : "false"_s);
 
     String keyShortcuts = m_coreObject->keyShortcutsValue();
     if (!keyShortcuts.isEmpty())
-        map.add("keyshortcuts", keyShortcuts);
+        map.add("keyshortcuts"_s, keyShortcuts);
 
     if (m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript) || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSubscript))
-        map.add("multiscript-type", "pre");
+        map.add("multiscript-type"_s, "pre"_s);
     else if (m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript) || m_coreObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSubscript))
-        map.add("multiscript-type", "post");
+        map.add("multiscript-type"_s, "post"_s);
 
     if (auto* liveContainer = m_coreObject->liveRegionAncestor(false)) {
         auto liveStatus = liveContainer->liveRegionStatus();
-        map.add("container-live", liveStatus);
+        map.add("container-live"_s, liveStatus);
         auto relevant = liveContainer->liveRegionRelevant();
-        map.add("container-relevant", relevant);
+        map.add("container-relevant"_s, relevant);
         bool isAtomic = liveContainer->liveRegionAtomic();
         if (isAtomic)
-            map.add("container-atomic", "true");
+            map.add("container-atomic"_s, "true"_s);
         const String& liveRole = roleString.isEmpty() ? computedRoleString : roleString;
         if (!liveRole.isEmpty())
-            map.add("container-live-role", liveRole);
+            map.add("container-live-role"_s, liveRole);
 
         if (liveContainer == m_coreObject) {
-            map.add("live", liveStatus);
-            map.add("relevant", relevant);
+            map.add("live"_s, liveStatus);
+            map.add("relevant"_s, relevant);
             if (isAtomic)
-                map.add("atomic", "true");
+                map.add("atomic"_s, "true"_s);
         } else if (!isAtomic && m_coreObject->liveRegionAtomic())
-            map.add("atomic", "true");
+            map.add("atomic"_s, "true"_s);
     }
 
     return map;
@@ -1291,34 +1291,34 @@ String AccessibilityObjectAtspi::effectiveRoleName() const
 
     switch (*effective) {
     case Atspi::Role::Image:
-        return "image";
+        return "image"_s;
     case Atspi::Role::Text:
     case Atspi::Role::Static:
-        return "text";
+        return "text"_s;
     case Atspi::Role::InvalidRole:
-        return "invalid";
+        return "invalid"_s;
     case Atspi::Role::Panel:
-        return "panel";
+        return "panel"_s;
     case Atspi::Role::PasswordText:
-        return "password text";
+        return "password text"_s;
     case Atspi::Role::Table:
-        return "table";
+        return "table"_s;
     case Atspi::Role::TableRow:
-        return "table row";
+        return "table row"_s;
     case Atspi::Role::TableCell:
-        return "table cell";
+        return "table cell"_s;
     case Atspi::Role::Section:
-        return "section";
+        return "section"_s;
     case Atspi::Role::MathFraction:
-        return "math fraction";
+        return "math fraction"_s;
     case Atspi::Role::MathRoot:
-        return "math root";
+        return "math root"_s;
     case Atspi::Role::Subscript:
-        return "subscript";
+        return "subscript"_s;
     case Atspi::Role::Superscript:
-        return "superscript";
+        return "superscript"_s;
     case Atspi::Role::Landmark:
-        return "landmark";
+        return "landmark"_s;
     default:
         break;
     }
@@ -1329,7 +1329,7 @@ String AccessibilityObjectAtspi::effectiveRoleName() const
 String AccessibilityObjectAtspi::roleName() const
 {
     if (!m_coreObject)
-        return "invalid";
+        return "invalid"_s;
 
     auto effective = effectiveRoleName();
     if (!effective.isEmpty())

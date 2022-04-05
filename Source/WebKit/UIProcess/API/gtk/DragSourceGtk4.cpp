@@ -89,7 +89,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
 
     if (m_selectionData->hasCustomData()) {
         GRefPtr<GBytes> bytes = m_selectionData->customData()->createGBytes();
-        providers.append(gdk_content_provider_new_for_bytes(PasteboardCustomData::gtkType(), bytes.get()));
+        providers.append(gdk_content_provider_new_for_bytes(PasteboardCustomData::gtkType().characters(), bytes.get()));
     }
 
     auto* surface = gtk_native_get_surface(gtk_widget_get_native(m_webView));

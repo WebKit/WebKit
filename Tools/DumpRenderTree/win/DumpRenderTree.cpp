@@ -1104,7 +1104,7 @@ static void sizeWebViewForCurrentTest()
 
 static String findFontFallback(const char* pathOrUrl)
 {
-    String pathToFontFallback = FileSystem::parentPath(pathOrUrl);
+    String pathToFontFallback = FileSystem::parentPath(String::fromUTF8(pathOrUrl));
 
     wchar_t fullPath[_MAX_PATH];
     if (!_wfullpath(fullPath, pathToFontFallback.wideCharacters().data(), _MAX_PATH))
@@ -1115,7 +1115,7 @@ static String findFontFallback(const char* pathOrUrl)
 
     String pathToCheck = fullPath;
 
-    static const String layoutTests = "LayoutTests";
+    static const String layoutTests = "LayoutTests"_s;
 
     // Find the layout test root on the current path:
     size_t location = pathToCheck.find(layoutTests);

@@ -63,15 +63,15 @@ bool SettingsBase::platformDefaultMediaSourceEnabled()
 
 void SettingsBase::initializeDefaultFontFamilies()
 {
-    setStandardFontFamily("PingFang TC", USCRIPT_TRADITIONAL_HAN);
-    setStandardFontFamily("PingFang SC", USCRIPT_SIMPLIFIED_HAN);
-    setStandardFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
-    setStandardFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
+    setStandardFontFamily("PingFang TC"_s, USCRIPT_TRADITIONAL_HAN);
+    setStandardFontFamily("PingFang SC"_s, USCRIPT_SIMPLIFIED_HAN);
+    setStandardFontFamily("Hiragino Mincho ProN"_s, USCRIPT_KATAKANA_OR_HIRAGANA);
+    setStandardFontFamily("Apple SD Gothic Neo"_s, USCRIPT_HANGUL);
 
-    setStandardFontFamily("Times", USCRIPT_COMMON);
-    setFixedFontFamily("Courier", USCRIPT_COMMON);
-    setSerifFontFamily("Times", USCRIPT_COMMON);
-    setSansSerifFontFamily("Helvetica", USCRIPT_COMMON);
+    setStandardFontFamily("Times"_s, USCRIPT_COMMON);
+    setFixedFontFamily("Courier"_s, USCRIPT_COMMON);
+    setSerifFontFamily("Times"_s, USCRIPT_COMMON);
+    setSansSerifFontFamily("Helvetica"_s, USCRIPT_COMMON);
 }
 
 #if ENABLE(MEDIA_SOURCE)

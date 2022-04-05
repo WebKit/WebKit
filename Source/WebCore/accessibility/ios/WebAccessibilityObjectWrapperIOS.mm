@@ -1671,12 +1671,12 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     BOOL result = self.axBackingObject->scrollByPage(scrollDirection);
 
     if (result) {
-        String notificationName = AXObjectCache::notificationPlatformName(AXObjectCache::AXNotification::AXPageScrolled);
-        [self postNotification:notificationName];
+        auto notificationName = AXObjectCache::notificationPlatformName(AXObjectCache::AXNotification::AXPageScrolled).createNSString();
+        [self postNotification:notificationName.get()];
 
         CGPoint scrollPos = [self _accessibilityScrollPosition];
         NSString *testString = [NSString stringWithFormat:@"AXScroll [position: %.2f %.2f]", scrollPos.x, scrollPos.y];
-        [self accessibilityPostedNotification:notificationName userInfo:@{ @"status" : testString }];
+        [self accessibilityPostedNotification:notificationName.get() userInfo:@{ @"status" : testString }];
     }
 
     // This means that this object handled the scroll and no other ancestor should attempt scrolling.

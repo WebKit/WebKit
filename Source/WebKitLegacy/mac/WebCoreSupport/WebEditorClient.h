@@ -275,7 +275,7 @@ inline void WebEditorClient::checkSpellingOfString(StringView, int* misspellingL
 
 inline String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String&)
 {
-    return "";
+    return emptyString();
 }
 
 inline void WebEditorClient::checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength)

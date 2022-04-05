@@ -74,34 +74,34 @@ String MIMETypeRegistry::mimeTypeForExtension(StringView string)
     static HashMap<String, String> mimetypeMap;
     if (mimetypeMap.isEmpty()) {
         //fill with initial values
-        mimetypeMap.add("txt", "text/plain");
-        mimetypeMap.add("pdf", "application/pdf");
-        mimetypeMap.add("ps", "application/postscript");
-        mimetypeMap.add("css", "text/css");
-        mimetypeMap.add("html", "text/html");
-        mimetypeMap.add("htm", "text/html");
-        mimetypeMap.add("xml", "text/xml");
-        mimetypeMap.add("xsl", "text/xsl");
-        mimetypeMap.add("js", "application/x-javascript");
-        mimetypeMap.add("xht", "application/xhtml+xml");
-        mimetypeMap.add("xhtml", "application/xhtml+xml");
-        mimetypeMap.add("rss", "application/rss+xml");
-        mimetypeMap.add("webarchive", "application/x-webarchive");
-        mimetypeMap.add("svg", "image/svg+xml");
-        mimetypeMap.add("svgz", "image/svg+xml");
-        mimetypeMap.add("jpg", "image/jpeg");
-        mimetypeMap.add("jpeg", "image/jpeg");
-        mimetypeMap.add("png", "image/png");
-        mimetypeMap.add("tif", "image/tiff");
-        mimetypeMap.add("tiff", "image/tiff");
-        mimetypeMap.add("ico", "image/ico");
-        mimetypeMap.add("cur", "image/ico");
-        mimetypeMap.add("bmp", "image/bmp");
-        mimetypeMap.add("wml", "text/vnd.wap.wml");
-        mimetypeMap.add("wmlc", "application/vnd.wap.wmlc");
-        mimetypeMap.add("m4a", "audio/x-m4a");
+        mimetypeMap.add("txt"_s, "text/plain"_s);
+        mimetypeMap.add("pdf"_s, "application/pdf"_s);
+        mimetypeMap.add("ps"_s, "application/postscript"_s);
+        mimetypeMap.add("css"_s, "text/css"_s);
+        mimetypeMap.add("html"_s, "text/html"_s);
+        mimetypeMap.add("htm"_s, "text/html"_s);
+        mimetypeMap.add("xml"_s, "text/xml"_s);
+        mimetypeMap.add("xsl"_s, "text/xsl"_s);
+        mimetypeMap.add("js"_s, "application/x-javascript"_s);
+        mimetypeMap.add("xht"_s, "application/xhtml+xml"_s);
+        mimetypeMap.add("xhtml"_s, "application/xhtml+xml"_s);
+        mimetypeMap.add("rss"_s, "application/rss+xml"_s);
+        mimetypeMap.add("webarchive"_s, "application/x-webarchive"_s);
+        mimetypeMap.add("svg"_s, "image/svg+xml"_s);
+        mimetypeMap.add("svgz"_s, "image/svg+xml"_s);
+        mimetypeMap.add("jpg"_s, "image/jpeg"_s);
+        mimetypeMap.add("jpeg"_s, "image/jpeg"_s);
+        mimetypeMap.add("png"_s, "image/png"_s);
+        mimetypeMap.add("tif"_s, "image/tiff"_s);
+        mimetypeMap.add("tiff"_s, "image/tiff"_s);
+        mimetypeMap.add("ico"_s, "image/ico"_s);
+        mimetypeMap.add("cur"_s, "image/ico"_s);
+        mimetypeMap.add("bmp"_s, "image/bmp"_s);
+        mimetypeMap.add("wml"_s, "text/vnd.wap.wml"_s);
+        mimetypeMap.add("wmlc"_s, "application/vnd.wap.wmlc"_s);
+        mimetypeMap.add("m4a"_s, "audio/x-m4a"_s);
 #if USE(JPEGXL)
-        mimetypeMap.add("jxl", "image/jxl");
+        mimetypeMap.add("jxl"_s, "image/jxl"_s);
 #endif
     }
     String result = mimetypeMap.get(ext);

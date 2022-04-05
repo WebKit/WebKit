@@ -275,12 +275,12 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     auto stencilFormat = GL::STENCIL_INDEX8;
 #elif USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
-    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil");
+    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil"_s);
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT16;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #else
     auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
-    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_EXT_packed_depth_stencil");
+    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_EXT_packed_depth_stencil"_s);
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_COMPONENT;
 #endif

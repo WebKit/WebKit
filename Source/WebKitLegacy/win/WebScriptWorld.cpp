@@ -47,7 +47,7 @@ inline WebScriptWorld::WebScriptWorld(RefPtr<DOMWrapperWorld>&& world)
     allWorlds().add(m_world.get(), this);
 
     ++gClassCount;
-    gClassNameCount().add("WebScriptWorld");
+    gClassNameCount().add("WebScriptWorld"_s);
 }
 
 WebScriptWorld::~WebScriptWorld()
@@ -56,7 +56,7 @@ WebScriptWorld::~WebScriptWorld()
     allWorlds().remove(m_world.get());
 
     --gClassCount;
-    gClassNameCount().remove("WebScriptWorld");
+    gClassNameCount().remove("WebScriptWorld"_s);
 }
 
 WebScriptWorld* WebScriptWorld::standardWorld()

@@ -68,7 +68,7 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 
 String Pasteboard::nameOfDragPasteboard()
 {
-    return "drag and drop pasteboard";
+    return "drag and drop pasteboard"_s;
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)

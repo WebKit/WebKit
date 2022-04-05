@@ -592,7 +592,7 @@ void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&
         case WGPUErrorType_Force32:
             break;
         case WGPUErrorType_Validation:
-            error = { { ValidationError::create(message) } };
+            error = { { ValidationError::create(String { message }) } };
             break;
         case WGPUErrorType_OutOfMemory:
             error = { { OutOfMemoryError::create() } };

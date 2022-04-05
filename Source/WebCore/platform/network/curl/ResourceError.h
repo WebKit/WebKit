@@ -58,7 +58,7 @@ public:
 private:
     void doPlatformIsolatedCopy(const ResourceError&);
 
-    static const char* const curlErrorDomain;
+    static ASCIILiteral curlErrorDomain;
 
     unsigned m_sslErrors { 0 };
 };

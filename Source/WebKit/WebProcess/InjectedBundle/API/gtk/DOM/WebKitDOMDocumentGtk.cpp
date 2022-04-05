@@ -1909,9 +1909,9 @@ gchar* webkit_dom_document_get_visibility_state(WebKitDOMDocument* self)
     WebCore::Document* item = WebKit::core(self);
     switch (item->visibilityState()) {
     case WebCore::VisibilityState::Hidden:
-        return convertToUTF8String("hidden");
+        return convertToUTF8String("hidden"_s);
     case WebCore::VisibilityState::Visible:
-        return convertToUTF8String("visible");
+        return convertToUTF8String("visible"_s);
     }
     ASSERT_NOT_REACHED();
     return nullptr;

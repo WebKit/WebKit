@@ -85,7 +85,7 @@ public:
         GUniqueOutPtr<GError> error;
         cairo_surface_t* surface = gtk_print_job_get_surface(m_printJob.get(), &error.outPtr());
         if (!surface) {
-            printDone(printError(frameURL(), error->message));
+            printDone(printError(frameURL(), String::fromUTF8(error->message)));
             return;
         }
 
@@ -153,7 +153,7 @@ public:
 
     static void printJobComplete(GtkPrintJob*, WebPrintOperationGtkUnix* printOperation, const GError* error)
     {
-        printOperation->printDone(error ? printError(printOperation->frameURL(), error->message) : WebCore::ResourceError());
+        printOperation->printDone(error ? printError(printOperation->frameURL(), String::fromUTF8(error->message)) : WebCore::ResourceError());
         printOperation->m_printJob = 0;
     }
 

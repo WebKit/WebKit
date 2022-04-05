@@ -34,13 +34,13 @@
 WebKitMessageLoop::WebKitMessageLoop()
 {
     gClassCount++;
-    gClassNameCount().add("WebKitMessageLoop");
+    gClassNameCount().add("WebKitMessageLoop"_s);
 }
 
 WebKitMessageLoop::~WebKitMessageLoop()
 {
     gClassCount--;
-    gClassNameCount().remove("WebKitMessageLoop");
+    gClassNameCount().remove("WebKitMessageLoop"_s);
 }
 
 WebKitMessageLoop* WebKitMessageLoop::createInstance()

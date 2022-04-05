@@ -471,7 +471,7 @@ private:
     void processTableOfContents(GstMessage*);
     void processTableOfContentsEntry(GstTocEntry*);
 
-    String engineDescription() const override { return "GStreamer"; }
+    String engineDescription() const override { return "GStreamer"_s; }
     bool didPassCORSAccessCheck() const override;
     bool canSaveMediaData() const override;
 

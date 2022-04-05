@@ -49,7 +49,7 @@ static String backendCommandsPath()
     if (!CFURLGetFileSystemRepresentation(urlRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH))
         return { };
 
-    return path;
+    return String::fromUTF8(path);
 }
 
 static void initializeRemoteInspectorServer(StringView address)

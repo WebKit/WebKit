@@ -34,7 +34,7 @@ namespace WebCore {
 enum class UserAgentType { Default, Desktop };
 WEBCORE_EXPORT String standardUserAgentWithApplicationName(const String& applicationName, const String& userAgentOSVersion = emptyString(), UserAgentType = UserAgentType::Default);
 
-WEBCORE_EXPORT String osNameForUserAgent();
+WEBCORE_EXPORT ASCIILiteral osNameForUserAgent();
 WEBCORE_EXPORT String systemMarketingVersionForUserAgentString();
 #else
 

@@ -54,25 +54,22 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
 
 namespace WebKit {
 
-bool methodSignaturesAreCompatible(const String& wire, const String& local)
+bool methodSignaturesAreCompatible(NSString *wire, NSString *local)
 {
-    if (local == wire)
+    if ([local isEqualToString:wire] ==  NSOrderedSame)
         return true;
 
-    if (local.length() != wire.length())
+    if (local.length != wire.length)
         return false;
 
-    unsigned length = local.length();
-    for (unsigned i = 0; i < length; i++) {
-        char localType = local[i];
-        char wireType = wire[i];
-
-        if (localType != wireType) {
-            // `bool` and `signed char` are interchangeable.
-            if (strchr("Bc", localType) && strchr("Bc", wireType))
-                continue;
+    auto mapCharacter = [](unichar c) -> unichar {
+        // `bool` and `signed char` are interchangeable.
+        return c == 'B' ? 'c' : c;
+    };
+    NSUInteger length = local.length;
+    for (NSUInteger i = 0; i < length; i++) {
+        if (mapCharacter([local characterAtIndex:i]) != mapCharacter([wire characterAtIndex:i]))
             return false;
-        }
     }
     return true;
 }
@@ -970,9 +967,8 @@ static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
     if (!typeSignature)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Invocation had no type signature"];
 
-    String remoteMethodSignature = typeSignature.UTF8String;
-    String localMethodSignature = [invocation methodSignature]._typeString.UTF8String;
-    if (!WebKit::methodSignaturesAreCompatible(remoteMethodSignature, localMethodSignature))
+    NSString *localMethodSignature = [invocation methodSignature]._typeString;
+    if (!WebKit::methodSignaturesAreCompatible(typeSignature, localMethodSignature))
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Local and remote method signatures are not compatible for method \"%s\"", selector ? sel_getName(selector) : "(no selector)"];
 
     if (isReplyBlock) {

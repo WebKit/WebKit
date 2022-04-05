@@ -44,12 +44,12 @@ enum ClipboardDataType {
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), "CLIPBOARD");
+    return makeUnique<Pasteboard>(WTFMove(context), "CLIPBOARD"_s);
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), "PRIMARY");
+    return makeUnique<Pasteboard>(WTFMove(context), "PRIMARY"_s);
 }
 
 #if ENABLE(DRAG_SUPPORT)

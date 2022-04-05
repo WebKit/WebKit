@@ -101,7 +101,7 @@ LRESULT RemoteWebInspectorUIProxy::onClose()
 
 WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
-    RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
+    RefPtr<WebPreferences> preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
     preferences->setAllowFileAccessFromFileURLs(true);
 
 #if ENABLE(DEVELOPER_MODE)

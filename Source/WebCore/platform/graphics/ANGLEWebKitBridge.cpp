@@ -186,13 +186,13 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
     if (!validateSuccess) {
         const std::string& log = sh::GetInfoLog(compiler);
         if (log.length())
-            shaderValidationLog = log.c_str();
+            shaderValidationLog = String { log.c_str() };
         return false;
     }
 
     const std::string& objectCode = sh::GetObjectCode(compiler);
     if (objectCode.length())
-        translatedShaderSource = objectCode.c_str();
+        translatedShaderSource = String { objectCode.c_str() };
     
     if (!getSymbolInfo(compiler, SHADER_SYMBOL_TYPE_ATTRIBUTE, symbols))
         return false;

@@ -175,7 +175,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData)
     if (selectionData.canSmartReplace())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("application/vnd.webkitgtk.smartpaste"), 0, ClipboardTargetType::SmartPaste);
     if (selectionData.hasCustomData())
-        gtk_target_list_add(list.get(), gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType()), 0, ClipboardTargetType::Custom);
+        gtk_target_list_add(list.get(), gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType().characters()), 0, ClipboardTargetType::Custom);
 
     int numberOfTargets;
     GtkTargetEntry* table = gtk_target_table_new_from_list(list.get(), &numberOfTargets);
@@ -215,7 +215,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData)
             case ClipboardTargetType::Custom:
                 if (data.selectionData.hasCustomData()) {
                     auto* buffer = data.selectionData.customData();
-                    gtk_selection_data_set(selection, gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType()), 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
+                    gtk_selection_data_set(selection, gdk_atom_intern_static_string(WebCore::PasteboardCustomData::gtkType().characters()), 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
                 }
                 break;
             }

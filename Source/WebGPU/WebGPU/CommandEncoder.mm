@@ -268,7 +268,7 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     // "If any of the following conditions are unsatisfied"
     if (!validateCopyBufferToTexture(source, destination, copySize)) {
         // "generate a validation error and stop."
-        m_device->generateAValidationError("Validation failure.");
+        m_device->generateAValidationError("Validation failure."_s);
         return;
     }
 
@@ -453,7 +453,7 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     // "If any of the following conditions are unsatisfied"
     if (!validateCopyTextureToBuffer(source, destination, copySize)) {
         // "generate a validation error and stop."
-        m_device->generateAValidationError("Validation failure.");
+        m_device->generateAValidationError("Validation failure."_s);
         return;
     }
 
@@ -801,7 +801,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
     // "If any of the following conditions are unsatisfied"
     if (!validateCopyTextureToTexture(source, destination, copySize)) {
         // "generate a validation error and stop."
-        m_device->generateAValidationError("Validation failure.");
+        m_device->generateAValidationError("Validation failure."_s);
         return;
     }
 

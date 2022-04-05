@@ -53,7 +53,7 @@ using namespace WebCore;
 WebDownload::WebDownload()
 {
     gClassCount++;
-    gClassNameCount().add("WebDownload");
+    gClassNameCount().add("WebDownload"_s);
 }
 
 WebDownload::~WebDownload()
@@ -61,7 +61,7 @@ WebDownload::~WebDownload()
     LOG(Download, "WebDownload - Destroying download (%p)", this);
     cancel();
     gClassCount--;
-    gClassNameCount().remove("WebDownload");
+    gClassNameCount().remove("WebDownload"_s);
 }
 
 WebDownload* WebDownload::createInstance()

@@ -264,7 +264,7 @@ bool ExtensionsGLOpenGLES::platformSupportsExtension(const String& name)
             m_glDrawArraysInstancedANGLE = reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDANGLEPROC >(eglGetProcAddress("glDrawArraysInstancedANGLE"));
             m_glDrawElementsInstancedANGLE = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDANGLEPROC >(eglGetProcAddress("glDrawElementsInstancedANGLE"));
             m_supportsANGLEinstancedArrays = true;
-        } else if (majorVersion() >= 3 || (m_availableExtensions.contains("GL_EXT_instanced_arrays") && m_availableExtensions.contains("GL_EXT_draw_instanced"))) {
+        } else if (majorVersion() >= 3 || (m_availableExtensions.contains("GL_EXT_instanced_arrays"_s) && m_availableExtensions.contains("GL_EXT_draw_instanced"_s))) {
             m_glVertexAttribDivisorANGLE = ::glVertexAttribDivisor;
             m_glDrawArraysInstancedANGLE = ::glDrawArraysInstanced;
             m_glDrawElementsInstancedANGLE = ::glDrawElementsInstanced;

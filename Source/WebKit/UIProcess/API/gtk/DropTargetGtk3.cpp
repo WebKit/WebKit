@@ -51,7 +51,7 @@ DropTarget::DropTarget(GtkWidget* webView)
     gtk_target_list_add_uri_targets(list.get(), DropTargetType::URIList);
     gtk_target_list_add(list.get(), gdk_atom_intern_static_string("_NETSCAPE_URL"), 0, DropTargetType::NetscapeURL);
     gtk_target_list_add(list.get(), gdk_atom_intern_static_string("application/vnd.webkitgtk.smartpaste"), 0, DropTargetType::SmartPaste);
-    gtk_target_list_add(list.get(), gdk_atom_intern_static_string(PasteboardCustomData::gtkType()), 0, DropTargetType::Custom);
+    gtk_target_list_add(list.get(), gdk_atom_intern_static_string(PasteboardCustomData::gtkType().characters()), 0, DropTargetType::Custom);
     gtk_drag_dest_set(m_webView, static_cast<GtkDestDefaults>(0), nullptr, 0,
         static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK));
     gtk_drag_dest_set_target_list(m_webView, list.get());

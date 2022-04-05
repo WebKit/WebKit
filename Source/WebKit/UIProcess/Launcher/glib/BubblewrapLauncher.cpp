@@ -166,7 +166,7 @@ enum class BindFlags {
 
 static void bindSymlinksRealPath(Vector<CString>& args, const char* path, const char* bindOption = "--ro-bind")
 {
-    WTF::String realPath = FileSystem::realPath(path);
+    WTF::String realPath = FileSystem::realPath(String::fromUTF8(path));
     if (path != realPath) {
         CString rpath = realPath.utf8();
         args.appendVector(Vector<CString>({ bindOption, rpath.data(), rpath.data() }));
@@ -746,7 +746,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 
         addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
 
-        Vector<String> extraPaths = { "applicationCacheDirectory", "mediaKeysDirectory", "waylandSocket", "webSQLDatabaseDirectory" };
+        Vector<String> extraPaths = { "applicationCacheDirectory"_s, "mediaKeysDirectory"_s, "waylandSocket"_s, "webSQLDatabaseDirectory"_s };
         for (const auto& path : extraPaths) {
             String extraPath = launchOptions.extraInitializationData.get(path);
             if (!extraPath.isEmpty())

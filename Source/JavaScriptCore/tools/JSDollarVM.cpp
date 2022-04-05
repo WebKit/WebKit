@@ -2874,7 +2874,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
 
 #else // not ENABLE(ASSEMBLER)
     UNUSED_PARAM(callFrame);
-    return throwVMError(globalObject, throwScope, "Not supported for this platform");
+    return throwVMError(globalObject, throwScope, "Not supported for this platform"_s);
 #endif // ENABLE(ASSEMBLER)
 }
 

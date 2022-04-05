@@ -55,7 +55,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
         setModelElementCacheDirectory(WebsiteDataStore::defaultModelElementCacheDirectory());
 #endif
 #if PLATFORM(IOS)
-        setPCMMachServiceName("com.apple.webkit.adattributiond.service");
+        setPCMMachServiceName("com.apple.webkit.adattributiond.service"_s);
 #endif
     }
 }

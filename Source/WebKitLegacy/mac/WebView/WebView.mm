@@ -1876,7 +1876,7 @@ static Ref<WebCore::LocalWebLockRegistry> getOrCreateWebLockRegistry(bool isPriv
     _private->page->settings().setDisplayListDrawingEnabled([preferences displayListDrawingEnabled]);
 
     _private->page->settings().setFontFallbackPrefersPictographs(true);
-    _private->page->settings().setPictographFontFamily("AppleColorEmoji");
+    _private->page->settings().setPictographFontFamily("AppleColorEmoji"_s);
 
     _private->page->settings().setScriptMarkupEnabled(false);
     _private->page->settings().setScriptEnabled(true);

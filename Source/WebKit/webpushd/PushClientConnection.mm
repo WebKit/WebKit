@@ -86,7 +86,7 @@ const String& ClientConnection::hostAppCodeSigningIdentifier()
     if (!m_hostAppCodeSigningIdentifier) {
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
         // This isn't great, but currently the only user of webpushd in open source builds is TestWebKitAPI and codeSigningIdentifier returns the null String on x86_64 Macs.
-        m_hostAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI";
+        m_hostAppCodeSigningIdentifier = "com.apple.WebKit.TestWebKitAPI"_s;
 #else
         if (!m_hostAppAuditToken)
             m_hostAppCodeSigningIdentifier = String();

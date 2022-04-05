@@ -186,7 +186,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData)
 
     if (selectionData.hasCustomData()) {
         GRefPtr<GBytes> bytes = selectionData.customData()->createGBytes();
-        providers.append(gdk_content_provider_new_for_bytes(WebCore::PasteboardCustomData::gtkType(), bytes.get()));
+        providers.append(gdk_content_provider_new_for_bytes(WebCore::PasteboardCustomData::gtkType().characters(), bytes.get()));
     }
 
     if (providers.isEmpty()) {

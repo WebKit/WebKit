@@ -147,13 +147,13 @@ WebPreferences* WebPreferences::sharedStandardPreferences()
 WebPreferences::WebPreferences()
 {
     gClassCount++;
-    gClassNameCount().add("WebPreferences");
+    gClassNameCount().add("WebPreferences"_s);
 }
 
 WebPreferences::~WebPreferences()
 {
     gClassCount--;
-    gClassNameCount().remove("WebPreferences");
+    gClassNameCount().remove("WebPreferences"_s);
 }
 
 WebPreferences* WebPreferences::createInstance()

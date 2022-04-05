@@ -429,26 +429,23 @@ void CurlHandle::appendRequestHeaders(const HTTPHeaderMap& headers)
 
 void CurlHandle::appendRequestHeader(const String& name, const String& value)
 {
-    String header(name);
+    String header;
 
     if (value.isEmpty()) {
         // Insert the ; to tell curl that this header has an empty value.
-        header.append(";");
+        header = makeString(name, ';');
     } else {
-        header.append(": ");
-        header.append(value);
+        header = makeString(name, ": ", value);
     }
 
-    appendRequestHeader(header);
+    appendRequestHeader(WTFMove(header));
 }
 
 void CurlHandle::removeRequestHeader(const String& name)
 {
     // Add a header with no content, the internally used header will get disabled. 
-    String header(name);
-    header.append(":");
-
-    appendRequestHeader(header);
+    auto header = makeString(name, ':');
+    appendRequestHeader(WTFMove(header));
 }
 
 void CurlHandle::appendRequestHeader(const String& header)

@@ -144,7 +144,7 @@ void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
     g_signal_connect_swapped(m_connection.get(), "error", reinterpret_cast<GCallback>(didReceiveErrorCallback), this);
     g_signal_connect_swapped(m_connection.get(), "closed", reinterpret_cast<GCallback>(didCloseCallback), this);
 
-    m_channel.didConnect(soup_websocket_connection_get_protocol(m_connection.get()), acceptedExtensions());
+    m_channel.didConnect(String { soup_websocket_connection_get_protocol(m_connection.get()) }, acceptedExtensions());
 
     m_channel.didReceiveHandshakeResponse(m_handshakeMessage.get());
     g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);

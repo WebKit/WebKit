@@ -163,7 +163,7 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateGStreamer::containerPro
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
     auto mimeType = this->mimeType();
     if (!mimeType)
-        mimeType = selectedTracks.videoTrack ? "video/mp4" : "audio/mp4";
+        mimeType = selectedTracks.videoTrack ? "video/mp4"_s : "audio/mp4"_s;
 
     GST_DEBUG("Creating video profile for mime-type %s", mimeType.ascii().data());
     auto contentType = ContentType(mimeType);
@@ -217,7 +217,7 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateGStreamer::containerPro
         if (codecs.contains("vorbis"_s))
             audioCapsName = "audio/x-vorbis"_s;
         else if (codecs.contains("opus"_s))
-            audioCapsName = "audio/x-opus";
+            audioCapsName = "audio/x-opus"_s;
         else if (codecs.findIf([](auto& codec) { return codec.startsWith("mp4a"); }) != notFound)
             audioCapsName = "audio/mpeg, mpegversion=4"_s;
         else if (containerType.endsWith("webm"))

@@ -368,7 +368,7 @@ public:
 
     std::optional<SimpleRange> rangeMatchesTextNearRange(const SimpleRange&, const String&);
 
-    static String notificationPlatformName(AXNotification);
+    static ASCIILiteral notificationPlatformName(AXNotification);
 
     AXTreeData treeData();
 

@@ -215,20 +215,20 @@ static String localizedShortDescriptionForStatusCode(int statusCode)
 WebURLResponse::WebURLResponse()
 {
     gClassCount++;
-    gClassNameCount().add("WebURLResponse");
+    gClassNameCount().add("WebURLResponse"_s);
 }
 
 WebURLResponse::~WebURLResponse()
 {
     gClassCount--;
-    gClassNameCount().remove("WebURLResponse");
+    gClassNameCount().remove("WebURLResponse"_s);
 }
 
 WebURLResponse* WebURLResponse::createInstance()
 {
     WebURLResponse* instance = new WebURLResponse();
     // fake an http response - so it has the IWebHTTPURLResponse interface
-    instance->m_response = ResourceResponse(WTF::URL({ }, "http://"), String(), 0, String());
+    instance->m_response = ResourceResponse(WTF::URL("http://"_s), String(), 0, String());
     instance->AddRef();
     return instance;
 }

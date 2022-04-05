@@ -345,9 +345,9 @@ String roamingUserSpecificStorageDirectory()
     return cachedStorageDirectory(CSIDL_APPDATA);
 }
 
-std::optional<int32_t> getFileDeviceId(const CString& fsFile)
+std::optional<int32_t> getFileDeviceId(const String& fsFile)
 {
-    auto handle = openFile(fsFile.data(), FileOpenMode::Read);
+    auto handle = openFile(fsFile, FileOpenMode::Read);
     if (!isHandleValid(handle))
         return std::nullopt;
 

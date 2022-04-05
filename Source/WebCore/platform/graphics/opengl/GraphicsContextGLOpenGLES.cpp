@@ -104,7 +104,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
 
     // We don't allow the logic where stencil is required and depth is not.
     // See GraphicsContextGLOpenGL::validateAttributes.
-    bool supportPackedDepthStencilBuffer = (attributes.stencil || attributes.depth) && supportsExtension("GL_OES_packed_depth_stencil");
+    bool supportPackedDepthStencilBuffer = (attributes.stencil || attributes.depth) && supportsExtension("GL_OES_packed_depth_stencil"_s);
 
     // Resize regular FBO.
     bool mustRestoreFBO = false;
@@ -240,11 +240,11 @@ void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenu
 
 void GraphicsContextGLOpenGL::validateAttributes()
 {
-    validateDepthStencil("GL_OES_packed_depth_stencil");
+    validateDepthStencil("GL_OES_packed_depth_stencil"_s);
 
     auto attributes = contextAttributes();
 
-    if (attributes.antialias && !supportsExtension("GL_IMG_multisampled_render_to_texture")) {
+    if (attributes.antialias && !supportsExtension("GL_IMG_multisampled_render_to_texture"_s)) {
         attributes.antialias = false;
         setContextAttributes(attributes);
     }

@@ -32,13 +32,13 @@ using namespace WebCore;
 WebSerializedJSValue::WebSerializedJSValue()
 {
     ++gClassCount;
-    gClassNameCount().add("WebSerializedJSValue");
+    gClassNameCount().add("WebSerializedJSValue"_s);
 }
 
 WebSerializedJSValue::~WebSerializedJSValue()
 {
     --gClassCount;
-    gClassNameCount().remove("WebSerializedJSValue");
+    gClassNameCount().remove("WebSerializedJSValue"_s);
 }
 
 COMPtr<WebSerializedJSValue> WebSerializedJSValue::createInstance()

@@ -1172,7 +1172,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
 
             if (offscreenCanvas->originClean() && offscreenCanvas->hasCreatedImageBuffer()) {
                 if (auto *buffer = offscreenCanvas->buffer())
-                    dataURL = buffer->toDataURL("image/png");
+                    dataURL = buffer->toDataURL("image/png"_s);
             }
 
             index = indexForData(dataURL);

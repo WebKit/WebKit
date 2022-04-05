@@ -85,7 +85,7 @@ void CurlCacheManager::setCacheDirectory(const String& directory)
         }
     }
 
-    m_cacheDir.append("/");
+    m_cacheDir.append("/"_s);
 
     m_disabled = false;
     loadIndex();
@@ -138,8 +138,7 @@ void CurlCacheManager::saveIndex()
     if (m_disabled)
         return;
 
-    String indexFilePath(m_cacheDir);
-    indexFilePath.append("index.dat");
+    auto indexFilePath = makeString(m_cacheDir, "index.dat"_s);
 
     FileSystem::deleteFile(indexFilePath);
     FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::FileOpenMode::Write);

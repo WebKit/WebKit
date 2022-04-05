@@ -102,15 +102,15 @@ void ResourceError::platformLazyInit()
 
     CFStringRef domain = CFErrorGetDomain(m_platformError.get());
     if (domain == kCFErrorDomainMach || domain == kCFErrorDomainCocoa)
-        m_domain ="NSCustomErrorDomain";
+        m_domain ="NSCustomErrorDomain"_s;
     else if (domain == kCFErrorDomainCFNetwork)
-        m_domain = "CFURLErrorDomain";
+        m_domain = "CFURLErrorDomain"_s;
     else if (domain == kCFErrorDomainPOSIX)
-        m_domain = "NSPOSIXErrorDomain";
+        m_domain = "NSPOSIXErrorDomain"_s;
     else if (domain == kCFErrorDomainOSStatus)
-        m_domain = "NSOSStatusErrorDomain";
+        m_domain = "NSOSStatusErrorDomain"_s;
     else if (domain == kCFErrorDomainWinSock)
-        m_domain = "kCFErrorDomainWinSock";
+        m_domain = "kCFErrorDomainWinSock"_s;
     else
         m_domain = domain;
 
@@ -190,13 +190,13 @@ ResourceError::ResourceError(CFStreamError error)
 
     switch(error.domain) {
     case kCFStreamErrorDomainCustom:
-        m_domain ="NSCustomErrorDomain";
+        m_domain ="NSCustomErrorDomain"_s;
         break;
     case kCFStreamErrorDomainPOSIX:
-        m_domain = "NSPOSIXErrorDomain";
+        m_domain = "NSPOSIXErrorDomain"_s;
         break;
     case kCFStreamErrorDomainMacOSStatus:
-        m_domain = "NSOSStatusErrorDomain";
+        m_domain = "NSOSStatusErrorDomain"_s;
         break;
     }
 }

@@ -54,7 +54,7 @@ WebBackForwardList::WebBackForwardList(RefPtr<BackForwardList>&& backForwardList
     backForwardListWrappers().set(m_backForwardList.get(), this);
 
     gClassCount++;
-    gClassNameCount().add("WebBackForwardList");
+    gClassNameCount().add("WebBackForwardList"_s);
 }
 
 WebBackForwardList::~WebBackForwardList()
@@ -65,7 +65,7 @@ WebBackForwardList::~WebBackForwardList()
     backForwardListWrappers().remove(m_backForwardList.get());
 
     gClassCount--;
-    gClassNameCount().remove("WebBackForwardList");
+    gClassNameCount().remove("WebBackForwardList"_s);
 }
 
 WebBackForwardList* WebBackForwardList::createInstance(RefPtr<BackForwardList>&& backForwardList)

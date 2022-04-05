@@ -131,7 +131,7 @@ public:
 
     static void windowPropertiesNotifyCallback(GObject*, GParamSpec* paramSpec, UIClientTest* test)
     {
-        test->m_windowPropertiesChanged.add(g_param_spec_get_name(paramSpec));
+        test->m_windowPropertiesChanged.add(String { g_param_spec_get_name(paramSpec) });
     }
 
     static WebKitWebView* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction* navigation, UIClientTest* test)
@@ -760,11 +760,11 @@ static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
     test->loadHtml(htmlString.get(), nullptr);
     test->waitUntilMainLoopFinishes();
 
-    static const char* propertiesChanged[] = {
+    static constexpr ASCIILiteral propertiesChanged[] = {
 #if PLATFORM(GTK)
-        "geometry",
+        "geometry"_s,
 #endif
-        "locationbar-visible", "menubar-visible", "statusbar-visible", "toolbar-visible", "scrollbars-visible"
+        "locationbar-visible"_s, "menubar-visible"_s, "statusbar-visible"_s, "toolbar-visible"_s, "scrollbars-visible"_s
     };
     for (size_t i = 0; i < G_N_ELEMENTS(propertiesChanged); ++i)
         g_assert_true(test->m_windowPropertiesChanged.contains(propertiesChanged[i]));

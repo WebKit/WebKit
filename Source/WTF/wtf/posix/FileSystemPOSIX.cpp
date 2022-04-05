@@ -241,8 +241,12 @@ end:
 }
 #endif // !PLATFORM(COCOA)
 
-std::optional<int32_t> getFileDeviceId(const CString& fsFile)
+std::optional<int32_t> getFileDeviceId(const String& path)
 {
+    auto fsFile = fileSystemRepresentation(path);
+    if (fsFile.isNull())
+        return std::nullopt;
+
     struct stat fileStat;
     if (stat(fsFile.data(), &fileStat) == -1)
         return std::nullopt;

@@ -240,9 +240,9 @@ bool Pasteboard::hasData()
 static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC& format)
 {
     if (format.cfFormat == urlFormat()->cfFormat || format.cfFormat == urlWFormat()->cfFormat)
-        results.add("text/uri-list");
+        results.add("text/uri-list"_s);
     if (format.cfFormat == plainTextWFormat()->cfFormat || format.cfFormat == plainTextFormat()->cfFormat)
-        results.add("text/plain");
+        results.add("text/plain"_s);
 }
 
 std::optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
@@ -275,9 +275,9 @@ Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
             domPasteboardTypes.add(type);
     }
 
-    domPasteboardTypes.add("text/plain");
-    domPasteboardTypes.add("text/uri-list");
-    domPasteboardTypes.add("text/html");
+    domPasteboardTypes.add("text/plain"_s);
+    domPasteboardTypes.add("text/uri-list"_s);
+    domPasteboardTypes.add("text/html"_s);
 
     return copyToVector(domPasteboardTypes);
 }
@@ -327,7 +327,7 @@ String Pasteboard::readOrigin()
 String Pasteboard::readString(const String& type)
 {
     if (!m_dataObject && m_dragDataMap.isEmpty())
-        return "";
+        return emptyString();
 
     ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
     if (dataType == ClipboardDataTypeText)
@@ -341,7 +341,7 @@ String Pasteboard::readString(const String& type)
         return m_dataObject ? getCFHTML(m_dataObject.get()) : getCFHTML(&m_dragDataMap);
     }
 
-    return "";
+    return emptyString();
 }
 
 String Pasteboard::readStringInCustomData(const String& type)
@@ -425,7 +425,7 @@ static bool writeURL(WCDataObject *data, const URL& url, String title, bool with
 
     if (withHTML) {
         Vector<char> cfhtmlData;
-        markupToCFHTML(urlToMarkup(url, title), "", cfhtmlData);
+        markupToCFHTML(urlToMarkup(url, title), emptyString(), cfhtmlData);
         medium.hGlobal = createGlobalData(cfhtmlData);
         if (medium.hGlobal && FAILED(data->SetData(htmlFormat(), &medium, TRUE)))
             ::GlobalFree(medium.hGlobal);
@@ -692,7 +692,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     String url = kurl.string();
     ASSERT(url.isAllASCII()); // URL::string() is URL encoded.
 
-    String fsPath = fileSystemPathFromURLOrTitle(url, titleStr, ".URL", true);
+    String fsPath = fileSystemPathFromURLOrTitle(url, titleStr, ".URL"_s, true);
     String contentString("[InternetShortcut]\r\nURL=" + url + "\r\n");
     CString content = contentString.latin1();
 
@@ -760,7 +760,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
     // write to clipboard in format CF_HTML to be able to paste into contenteditable areas as a link
     if (::OpenClipboard(m_owner)) {
         Vector<char> data;
-        markupToCFHTML(urlToMarkup(pasteboardURL.url, title), "", data);
+        markupToCFHTML(urlToMarkup(pasteboardURL.url, title), emptyString(), data);
         HGLOBAL cbData = createGlobalData(data);
         if (!::SetClipboardData(HTMLClipboardFormat, cbData))
             ::GlobalFree(cbData);
@@ -840,7 +840,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std:
     if (::IsClipboardFormatAvailable(CF_TEXT) && ::OpenClipboard(m_owner)) {
         if (HANDLE cbData = ::GetClipboardData(CF_TEXT)) {
             // FIXME: This treats the characters as Latin-1, not UTF-8 or even Windows Latin-1. Is that the right encoding?
-            text.text = static_cast<char*>(GlobalLock(cbData));
+            text.text = String { static_cast<char*>(GlobalLock(cbData)) };
             GlobalUnlock(cbData);
             ::CloseClipboard();
             return;
@@ -950,7 +950,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
         GlobalFree(memObj);
         return 0;
     }
-    extension.insert(".", 0);
+    extension.insert("."_s, 0);
     fsPath = fileSystemPathFromURLOrTitle(url, preferredTitle, extension, false);
 
     if (fsPath.length() <= 0) {
@@ -1096,7 +1096,7 @@ void Pasteboard::writeURLToWritableDataObject(const URL& url, const String& titl
 void Pasteboard::writeMarkup(const String& markup)
 {
     Vector<char> data;
-    markupToCFHTML(markup, "", data);
+    markupToCFHTML(markup, emptyString(), data);
 
     STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;

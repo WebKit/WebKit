@@ -252,14 +252,14 @@ private:
     bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) final;
 
     FloatRect rectForSettingAtIndex(unsigned);
-    bool valueForSetting(const String&);
+    bool valueForSetting(ASCIILiteral);
         
     std::optional<InteractionRegion> activeRegion();
 
     struct Setting {
-        String key;
-        String name;
-        bool value;
+        ASCIILiteral key;
+        ASCIILiteral name;
+        bool value { false };
     };    
 
     FixedVector<Setting> m_settings {
@@ -379,7 +379,7 @@ FloatRect InteractionRegionOverlay::rectForSettingAtIndex(unsigned index)
     };
 }
 
-bool InteractionRegionOverlay::valueForSetting(const String& name)
+bool InteractionRegionOverlay::valueForSetting(ASCIILiteral name)
 {
     for (const auto& setting : m_settings) {
         if (name == setting.key)
@@ -426,7 +426,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
     
     context.clearRect(dirtyRect);
 
-    if (valueForSetting("regions")) {
+    if (valueForSetting("regions"_s)) {
         context.setStrokeThickness(2);
         context.setStrokeColor(Color::green);
 
@@ -438,7 +438,7 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
 
     auto region = activeRegion();
 
-    if (region || !valueForSetting("constrain")) {
+    if (region || !valueForSetting("constrain"_s)) {
         auto gradientData = [&] (float radius) {
             Gradient::RadialData gradientData;
             gradientData.point0 = m_mouseLocationInContentCoordinates;
@@ -451,10 +451,10 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
 
         auto makeGradient = [&] (bool hasLightBackground, Gradient::RadialData gradientData) {
             auto gradient = Gradient::create(WTFMove(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-            if (region && valueForSetting("wash") && valueForSetting("clip")) {
+            if (region && valueForSetting("wash"_s) && valueForSetting("clip"_s)) {
                 gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
                 gradient->addColorStop({ 1, hasLightBackground ? Color(Color::black).colorWithAlpha(0.05) : Color(Color::white).colorWithAlpha(0.1) });
-            } else if (!valueForSetting("clip") || !valueForSetting("constrain")) {
+            } else if (!valueForSetting("clip"_s) || !valueForSetting("constrain"_s)) {
                 gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.2) });
                 gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0) });
             } else {
@@ -466,18 +466,18 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         };
         
         constexpr float defaultRadius = 50;
-        bool shouldClip = valueForSetting("clip");
+        bool shouldClip = valueForSetting("clip"_s);
         Vector<Path> clipPaths;
 
         if (shouldClip)
             clipPaths = pathsForRegion(*region);
 
-        bool shouldUseBackdropGradient = !shouldClip || !region || (!valueForSetting("wash") && valueForSetting("clip"));
+        bool shouldUseBackdropGradient = !shouldClip || !region || (!valueForSetting("wash"_s) && valueForSetting("clip"_s));
 
         if (shouldUseBackdropGradient) {
             if (shouldClip) {
                 for (const auto& path : clipPaths) {
-                    float radius = valueForSetting("contextualSize") ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
+                    float radius = valueForSetting("contextualSize"_s) ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
                     auto backdropGradient = Gradient::create(gradientData(radius * 1.5), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
                     backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
                     backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
@@ -496,12 +496,12 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         }
 
         bool hasLightBackground = false;
-        if (!shouldUseBackdropGradient && valueForSetting("contextualColor"))
+        if (!shouldUseBackdropGradient && valueForSetting("contextualColor"_s))
             hasLightBackground = region->hasLightBackground;
 
         if (shouldClip) {
             for (const auto& path : clipPaths) {
-                float radius = valueForSetting("contextualSize") ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
+                float radius = valueForSetting("contextualSize"_s) ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
                 context.setFillGradient(makeGradient(hasLightBackground, gradientData(radius)));
                 context.fillPath(path);
             }
@@ -522,9 +522,9 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
 
     std::optional<Cursor> cursorToSet;
 
-    if (!valueForSetting("cursor"))
+    if (!valueForSetting("cursor"_s))
         cursorToSet = noneCursor();
-    else if (!valueForSetting("hover"))
+    else if (!valueForSetting("hover"_s))
         cursorToSet = pointerCursor();
 
     auto eventInContentsCoordinates = mainFrameView->windowToContents(event.position());
@@ -544,7 +544,7 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
     m_mouseLocationInContentCoordinates = eventInContentsCoordinates;
     overlay.setNeedsDisplay();
 
-    if (event.type() == PlatformEvent::MouseMoved && !event.buttons() && !valueForSetting("hover"))
+    if (event.type() == PlatformEvent::MouseMoved && !event.buttons() && !valueForSetting("hover"_s))
         return true;
 
     return false;

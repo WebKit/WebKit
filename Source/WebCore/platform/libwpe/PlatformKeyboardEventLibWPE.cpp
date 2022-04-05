@@ -773,101 +773,101 @@ String PlatformKeyboardEvent::keyIdentifierForWPEKeyCode(unsigned keyCode)
     case WPE_KEY_Menu:
     case WPE_KEY_Alt_L:
     case WPE_KEY_Alt_R:
-        return "Alt";
+        return "Alt"_s;
     case WPE_KEY_Clear:
-        return "Clear";
+        return "Clear"_s;
     case WPE_KEY_Down:
-        return "Down";
+        return "Down"_s;
         // "End"
     case WPE_KEY_End:
-        return "End";
+        return "End"_s;
         // "Enter"
     case WPE_KEY_ISO_Enter:
     case WPE_KEY_KP_Enter:
     case WPE_KEY_Return:
-        return "Enter";
+        return "Enter"_s;
     case WPE_KEY_Execute:
-        return "Execute";
+        return "Execute"_s;
     case WPE_KEY_F1:
-        return "F1";
+        return "F1"_s;
     case WPE_KEY_F2:
-        return "F2";
+        return "F2"_s;
     case WPE_KEY_F3:
-        return "F3";
+        return "F3"_s;
     case WPE_KEY_F4:
-        return "F4";
+        return "F4"_s;
     case WPE_KEY_F5:
-        return "F5";
+        return "F5"_s;
     case WPE_KEY_F6:
-        return "F6";
+        return "F6"_s;
     case WPE_KEY_F7:
-        return "F7";
+        return "F7"_s;
     case WPE_KEY_F8:
-        return "F8";
+        return "F8"_s;
     case WPE_KEY_F9:
-        return "F9";
+        return "F9"_s;
     case WPE_KEY_F10:
-        return "F10";
+        return "F10"_s;
     case WPE_KEY_F11:
-        return "F11";
+        return "F11"_s;
     case WPE_KEY_F12:
-        return "F12";
+        return "F12"_s;
     case WPE_KEY_F13:
-        return "F13";
+        return "F13"_s;
     case WPE_KEY_F14:
-        return "F14";
+        return "F14"_s;
     case WPE_KEY_F15:
-        return "F15";
+        return "F15"_s;
     case WPE_KEY_F16:
-        return "F16";
+        return "F16"_s;
     case WPE_KEY_F17:
-        return "F17";
+        return "F17"_s;
     case WPE_KEY_F18:
-        return "F18";
+        return "F18"_s;
     case WPE_KEY_F19:
-        return "F19";
+        return "F19"_s;
     case WPE_KEY_F20:
-        return "F20";
+        return "F20"_s;
     case WPE_KEY_F21:
-        return "F21";
+        return "F21"_s;
     case WPE_KEY_F22:
-        return "F22";
+        return "F22"_s;
     case WPE_KEY_F23:
-        return "F23";
+        return "F23"_s;
     case WPE_KEY_F24:
-        return "F24";
+        return "F24"_s;
     case WPE_KEY_Help:
-        return "Help";
+        return "Help"_s;
     case WPE_KEY_Home:
-        return "Home";
+        return "Home"_s;
     case WPE_KEY_Insert:
-        return "Insert";
+        return "Insert"_s;
     case WPE_KEY_Left:
-        return "Left";
+        return "Left"_s;
     case WPE_KEY_Page_Down:
-        return "PageDown";
+        return "PageDown"_s;
     case WPE_KEY_Page_Up:
-        return "PageUp";
+        return "PageUp"_s;
     case WPE_KEY_Pause:
-        return "Pause";
+        return "Pause"_s;
     case WPE_KEY_3270_PrintScreen:
     case WPE_KEY_Print:
-        return "PrintScreen";
+        return "PrintScreen"_s;
     case WPE_KEY_Right:
-        return "Right";
+        return "Right"_s;
     case WPE_KEY_Select:
-        return "Select";
+        return "Select"_s;
     case WPE_KEY_Up:
-        return "Up";
+        return "Up"_s;
         // Standard says that DEL becomes U+007F.
     case WPE_KEY_Delete:
-        return "U+007F";
+        return "U+007F"_s;
     case WPE_KEY_BackSpace:
-        return "U+0008";
+        return "U+0008"_s;
     case WPE_KEY_ISO_Left_Tab:
     case WPE_KEY_3270_BackTab:
     case WPE_KEY_Tab:
-        return "U+0009";
+        return "U+0009"_s;
     default:
         break;
     }

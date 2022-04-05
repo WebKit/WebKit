@@ -382,7 +382,7 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, 
 
     String requestPath = requestUrl.path().toString();
     if (requestPath.isEmpty())
-        requestPath = "/";
+        requestPath = "/"_s;
 
     RegistrableDomain registrableDomain { requestUrl };
 

@@ -109,7 +109,7 @@ gboolean webkit_color_parse(WebKitColor* color, const gchar* colorString)
     g_return_val_if_fail(color, FALSE);
     g_return_val_if_fail(colorString, FALSE);
 
-    auto webCoreColor = WebCore::CSSParser::parseColorWithoutContext({ colorString });
+    auto webCoreColor = WebCore::CSSParser::parseColorWithoutContext(String { colorString });
     if (!webCoreColor.isValid())
         return FALSE;
 

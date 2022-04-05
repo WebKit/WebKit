@@ -446,7 +446,7 @@ WebView::WebView()
 
     WebViewCount++;
     gClassCount++;
-    gClassNameCount().add("WebView");
+    gClassNameCount().add("WebView"_s);
 }
 
 WebView::~WebView()
@@ -469,7 +469,7 @@ WebView::~WebView()
 
     WebViewCount--;
     gClassCount--;
-    gClassNameCount().remove("WebView");
+    gClassNameCount().remove("WebView"_s);
 }
 
 WebView* WebView::createInstance()
@@ -1995,11 +1995,11 @@ bool WebView::execCommand(WPARAM wParam, LPARAM /*lParam*/)
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     switch (LOWORD(wParam)) {
         case SelectAll:
-            return frame.editor().command("SelectAll").execute();
+            return frame.editor().command("SelectAll"_s).execute();
         case Undo:
-            return frame.editor().command("Undo").execute();
+            return frame.editor().command("Undo"_s).execute();
         case Redo:
-            return frame.editor().command("Redo").execute();
+            return frame.editor().command("Redo"_s).execute();
     }
     return false;
 }
@@ -2147,7 +2147,7 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent& event)
     if (event.type() != eventNames().keydownEvent && event.type() != eventNames().keypressEvent)
         return false;
 
-    auto command = frame->editor().command(interpretKeyEvent(&event));
+    auto command = frame->editor().command(String { interpretKeyEvent(&event) });
 
     if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
@@ -4725,7 +4725,7 @@ HRESULT WebView::copy(_In_opt_ IUnknown* /*sender*/)
     if (!m_page)
         return E_FAIL;
 
-    m_page->focusController().focusedOrMainFrame().editor().command("Copy").execute();
+    m_page->focusController().focusedOrMainFrame().editor().command("Copy"_s).execute();
     return S_OK;
 }
 
@@ -4734,7 +4734,7 @@ HRESULT WebView::cut(_In_opt_ IUnknown* /*sender*/)
     if (!m_page)
         return E_FAIL;
 
-    m_page->focusController().focusedOrMainFrame().editor().command("Cut").execute();
+    m_page->focusController().focusedOrMainFrame().editor().command("Cut"_s).execute();
     return S_OK;
 }
 
@@ -4743,7 +4743,7 @@ HRESULT WebView::paste(_In_opt_ IUnknown* /*sender*/)
     if (!m_page)
         return E_FAIL;
 
-    m_page->focusController().focusedOrMainFrame().editor().command("Paste").execute();
+    m_page->focusController().focusedOrMainFrame().editor().command("Paste"_s).execute();
     return S_OK;
 }
 
@@ -4752,7 +4752,7 @@ HRESULT WebView::copyURL(_In_ BSTR url)
     if (!m_page)
         return E_FAIL;
 
-    m_page->focusController().focusedOrMainFrame().editor().copyURL(MarshallingHelpers::BSTRToKURL(url), "");
+    m_page->focusController().focusedOrMainFrame().editor().copyURL(MarshallingHelpers::BSTRToKURL(url), emptyString());
     return S_OK;
 }
 
@@ -4773,7 +4773,7 @@ HRESULT WebView::delete_(_In_opt_ IUnknown* /*sender*/)
     if (!m_page)
         return E_FAIL;
 
-    m_page->focusController().focusedOrMainFrame().editor().command("Delete").execute();
+    m_page->focusController().focusedOrMainFrame().editor().command("Delete"_s).execute();
     return S_OK;
 }
     

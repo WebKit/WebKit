@@ -1,3 +1,252 @@
+2022-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Mark String(const char*) constructor as explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238693
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp:
+        (WebCore::fetchDescription):
+        (WebCore::GStreamerMediaEndpoint::storeRemoteMLineInfo):
+        (WebCore::GStreamerMediaEndpoint::addIceCandidate):
+        (WebCore::GStreamerMediaEndpoint::createSessionDescriptionSucceeded):
+        (WebCore::GStreamerMediaEndpoint::createSessionDescriptionFailed):
+        (WebCore::GStreamerMediaEndpoint::collectTransceivers):
+        * Modules/mediastream/gstreamer/GStreamerPeerConnectionBackend.cpp:
+        (WebCore::gstreamerRtpCapatiblities):
+        (WebCore::GStreamerPeerConnectionBackend::doCreateAnswer):
+        * Modules/mediastream/gstreamer/GStreamerRtpTransceiverBackend.cpp:
+        (WebCore::GStreamerRtpTransceiverBackend::mid):
+        * Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp:
+        (WebCore::fillRTCStats):
+        (WebCore::fillRTCRTPStreamStats):
+        (WebCore::fillOutboundRTPStreamStats):
+        * Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp:
+        (WebCore::toRTCError):
+        (WebCore::toRTCEncodingParameters):
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp:
+        (WebCore::WebXROpaqueFramebuffer::setupFramebuffer):
+        * accessibility/AXObjectCache.h:
+        * accessibility/atspi/AccessibilityObjectAtspi.cpp:
+        (WebCore::AccessibilityObjectAtspi::attributes const):
+        (WebCore::AccessibilityObjectAtspi::effectiveRoleName const):
+        (WebCore::AccessibilityObjectAtspi::roleName const):
+        * accessibility/atspi/AccessibilityObjectTextAtspi.cpp:
+        (WebCore::AccessibilityObjectAtspi::textAttributes const):
+        * accessibility/atspi/AccessibilityRootAtspi.cpp:
+        (WebCore::AccessibilityRootAtspi::embedded):
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::notificationPlatformName):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityScroll:]):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorld):
+        * editing/gtk/WebContentReaderGtk.cpp:
+        (WebCore::WebContentReader::readFilePath):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAlignmentForChangedBaseWritingDirection):
+        (WebCore::Editor::removeUnchangeableStyles):
+        * editing/libwpe/EditorLibWPE.cpp:
+        (WebCore::createFragmentFromPasteboardData):
+        * html/HTMLMediaElement.cpp:
+        (WTF::LogArgument<URL>::toString):
+        * html/OffscreenCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::indexForData):
+        * loader/soup/ResourceLoaderSoup.cpp:
+        (WebCore::ResourceLoader::loadGResource):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DebugPageOverlays.cpp:
+        (WebCore::InteractionRegionOverlay::valueForSetting):
+        (WebCore::InteractionRegionOverlay::drawRect):
+        (WebCore::InteractionRegionOverlay::mouseEvent):
+        * page/cocoa/SettingsBaseCocoa.mm:
+        (WebCore::SettingsBase::initializeDefaultFontFamilies):
+        * platform/PasteboardCustomData.h:
+        (WebCore::PasteboardCustomData::gtkType):
+        * platform/UserAgent.h:
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        * platform/glib/UserAgentGLib.cpp:
+        (WebCore::platformVersionForUAString):
+        (WebCore::standardUserAgent):
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::compileShaderSource):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::validateDepthStencil):
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (printColor):
+        (printLayer):
+        * platform/graphics/cairo/ImageBufferCairoBackend.cpp:
+        (WebCore::ImageBufferCairoBackend::toDataURL const):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::getFamilyNameStringFromFamily):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::updateConfigurationFromCaps):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::parseGstStructureValue):
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::ElementFactories::hasElementForMediaType const):
+        (WebCore::GStreamerRegistryScanner::initializeDecoders):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry):
+        (WebCore::MediaPlayerPrivateGStreamer::configureDownloadBuffer):
+        (WebCore::MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        (WebCore::MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::handleProtectionEvent):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::getLanguageCode):
+        (WebCore::TrackPrivateBaseGStreamer::getTag):
+        * platform/graphics/gstreamer/VideoFrameMetadataGStreamer.cpp:
+        (webkitGstTraceProcessingTimeForElement):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::updateConfigurationFromCaps):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcSetExtraHeader):
+        (webKitWebSrcMakeRequest):
+        (convertPlaybinURI):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        * platform/graphics/opengl/ExtensionsGLOpenGL.cpp:
+        (WebCore::ExtensionsGLOpenGL::platformSupportsExtension):
+        (WebCore::ExtensionsGLOpenGL::isVertexArrayObjectSupported):
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp:
+        (WebCore::ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE):
+        * platform/graphics/opengl/ExtensionsGLOpenGLES.cpp:
+        (WebCore::ExtensionsGLOpenGLES::platformSupportsExtension):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::validateDepthStencil):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp:
+        (WebCore::GraphicsContextGLOpenGL::validateAttributes):
+        (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+        * platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp:
+        (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+        (WebCore::GraphicsContextGLOpenGL::validateAttributes):
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLTextureMapperANGLE::platformInitialize):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        (WebCore::TextureMapperFPSCounter::TextureMapperFPSCounter):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::animationStartedTimerFired):
+        (WebCore::CoordinatedGraphicsLayer::dumpAdditionalProperties const):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::createForCopyAndPaste):
+        (WebCore::Pasteboard::createForGlobalSelection):
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::keyIdentifierForGdkKeyCode):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::nameOfDragPasteboard):
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::osNameForUserAgent):
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::~VideoFullscreenInterfaceAVKit):
+        * platform/libwpe/PasteboardLibWPE.cpp:
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::writePlainText):
+        * platform/libwpe/PlatformKeyboardEventLibWPE.cpp:
+        (WebCore::PlatformKeyboardEvent::keyIdentifierForWPEKeyCode):
+        * platform/mediarecorder/MediaRecorderPrivateGStreamer.cpp:
+        (WebCore::MediaRecorderPrivateGStreamer::containerProfile):
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::MIMEHeader::parseHeader):
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::platformLazyInit):
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/curl/CertificateInfoCurl.cpp:
+        (WebCore::CertificateInfo::verificationErrorDescription const):
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::searchCookies):
+        * platform/network/curl/CookieUtil.cpp:
+        (WebCore::CookieUtil::defaultPathForURL):
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::CurlCacheEntry):
+        (WebCore::CurlCacheEntry::saveResponseHeaders):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::setCacheDirectory):
+        (WebCore::CurlCacheManager::saveIndex):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::appendRequestHeader):
+        (WebCore::CurlHandle::removeRequestHeader):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::willSendRequest):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupPUT):
+        (WebCore::CurlRequest::setupSendData):
+        * platform/network/curl/CurlResourceHandleDelegate.cpp:
+        (WebCore::CurlResourceHandleDelegate::curlDidReceiveResponse):
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::defaultCookieJarPath):
+        * platform/network/curl/OpenSSLHelper.cpp:
+        (OpenSSL::tlsVersion):
+        (OpenSSL::tlsCipherName):
+        * platform/network/curl/PublicSuffixCurl.cpp:
+        (WebCore::topPrivatelyControlledDomainInternal):
+        * platform/network/curl/ResourceError.h:
+        * platform/network/curl/ResourceErrorCurl.cpp:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/ios/LegacyPreviewLoaderClient.h:
+        (WebCore::LegacyPreviewLoaderClient::didRequestPassword):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::hasCookies const):
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::ResourceError::transportError):
+        (WebCore::ResourceError::authenticationError):
+        (WebCore::ResourceError::genericGError):
+        (WebCore::ResourceError::tlsError):
+        (WebCore::ResourceError::timeoutError):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::scanDirectoryForDictionaries):
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LocaleWin::initializeLocaleData):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::keyIdentifierForWindowsKeyCode):
+        * platform/win/LocalizedStringsWin.cpp:
+        (WebCore::uploadFileText):
+        (WebCore::allFilesText):
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::addMimeTypesForFormat):
+        (WebCore::Pasteboard::typesSafeForBindings):
+        (WebCore::Pasteboard::readString):
+        (WebCore::writeURL):
+        (WebCore::Pasteboard::writeURLToDataObject):
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::read):
+        (WebCore::createGlobalImageFileDescriptor):
+        (WebCore::Pasteboard::writeMarkup):
+        * platform/win/SystemInfo.cpp:
+        (WebCore::osVersionForUAString):
+        (WebCore::architectureTokenForUAString):
+        * platform/xr/openxr/OpenXRInputMappings.h:
+        (PlatformXR::buttonTypeToString):
+        (PlatformXR::axisTypetoString):
+        * platform/xr/openxr/OpenXRUtils.h:
+        (PlatformXR::handenessToString):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2022-04-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [macOS][selectors] :focus-visible matching on button focused via script (after clicking on a different button)

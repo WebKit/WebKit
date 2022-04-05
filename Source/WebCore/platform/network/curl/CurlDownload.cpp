@@ -184,7 +184,7 @@ void CurlDownload::willSendRequest()
     newRequest.setURL(newURL);
 
     if (shouldRedirectAsGET(newRequest, crossOrigin)) {
-        newRequest.setHTTPMethod("GET");
+        newRequest.setHTTPMethod("GET"_s);
         newRequest.setHTTPBody(nullptr);
         newRequest.clearHTTPContentType();
     }

@@ -59,40 +59,40 @@ CreatePeerConnectionBackend PeerConnectionBackend::create = createGStreamerPeerC
 static RTCRtpCapabilities gstreamerRtpCapatiblities(const String& kind)
 {
     RTCRtpCapabilities capabilities;
-    capabilities.headerExtensions.append({ "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01" });
+    capabilities.headerExtensions.append({ "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"_s });
     if (kind == "audio"_s) {
         capabilities.codecs.reserveCapacity(4);
-        capabilities.codecs.uncheckedAppend({ .mimeType = "audio/OPUS",
+        capabilities.codecs.uncheckedAppend({ .mimeType = "audio/OPUS"_s,
             .clockRate = 48000,
             .channels = 2,
-            .sdpFmtpLine = "" });
-        capabilities.codecs.uncheckedAppend({ .mimeType = "audio/G722",
+            .sdpFmtpLine = emptyString() });
+        capabilities.codecs.uncheckedAppend({ .mimeType = "audio/G722"_s,
             .clockRate = 8000,
             .channels = 1,
-            .sdpFmtpLine = "" });
-        capabilities.codecs.uncheckedAppend({ .mimeType = "audio/PCMA",
+            .sdpFmtpLine = emptyString() });
+        capabilities.codecs.uncheckedAppend({ .mimeType = "audio/PCMA"_s,
             .clockRate = 8000,
             .channels = 1,
-            .sdpFmtpLine = "" });
-        capabilities.codecs.uncheckedAppend({ .mimeType = "audio/PCMU",
+            .sdpFmtpLine = emptyString() });
+        capabilities.codecs.uncheckedAppend({ .mimeType = "audio/PCMU"_s,
             .clockRate = 8000,
             .channels = 1,
-            .sdpFmtpLine = "" });
+            .sdpFmtpLine = emptyString() });
     } else {
-        capabilities.headerExtensions.append({ "urn:3gpp:video-orientation" });
+        capabilities.headerExtensions.append({ "urn:3gpp:video-orientation"_s });
         capabilities.codecs.reserveCapacity(4);
-        capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP8",
+        capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP8"_s,
             .clockRate = 90000,
-            .sdpFmtpLine = "" });
-        capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP9",
+            .sdpFmtpLine = emptyString() });
+        capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP9"_s,
             .clockRate = 90000,
-            .sdpFmtpLine = "profile-id=0" });
-        capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP9",
+            .sdpFmtpLine = "profile-id=0"_s });
+        capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP9"_s,
             .clockRate = 90000,
-            .sdpFmtpLine = "profile-id=1" });
-        capabilities.codecs.uncheckedAppend({ .mimeType = "video/H264",
+            .sdpFmtpLine = "profile-id=1"_s });
+        capabilities.codecs.uncheckedAppend({ .mimeType = "video/H264"_s,
             .clockRate = 90000,
-            .sdpFmtpLine = "packetization-mode=1;profile-level-id=42e01f" });
+            .sdpFmtpLine = "packetization-mode=1;profile-level-id=42e01f"_s });
     }
     return capabilities;
 }
@@ -204,7 +204,7 @@ void GStreamerPeerConnectionBackend::doCreateOffer(RTCOfferOptions&& options)
 void GStreamerPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
 {
     if (!m_isRemoteDescriptionSet) {
-        createAnswerFailed(Exception { InvalidStateError, "No remote description set" });
+        createAnswerFailed(Exception { InvalidStateError, "No remote description set"_s });
         return;
     }
     m_endpoint->doCreateAnswer();

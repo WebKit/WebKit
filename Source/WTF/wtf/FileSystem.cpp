@@ -286,16 +286,13 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
 
 bool filesHaveSameVolume(const String& fileA, const String& fileB)
 {
-    auto fsRepFileA = fileSystemRepresentation(fileA);
-    auto fsRepFileB = fileSystemRepresentation(fileB);
-
-    if (fsRepFileA.isNull() || fsRepFileB.isNull())
+    if (fileA.isNull() || fileB.isNull())
         return false;
 
     bool result = false;
 
-    auto fileADev = getFileDeviceId(fsRepFileA);
-    auto fileBDev = getFileDeviceId(fsRepFileB);
+    auto fileADev = getFileDeviceId(fileA);
+    auto fileBDev = getFileDeviceId(fileB);
 
     if (fileADev && fileBDev)
         result = (fileADev == fileBDev);

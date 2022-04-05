@@ -174,12 +174,12 @@ String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(PlatformGLObject
     else if (GLshaderType == GraphicsContextGL::FRAGMENT_SHADER)
         shaderType = SHADER_TYPE_FRAGMENT;
     else
-        return ""; // Invalid shader type.
+        return emptyString(); // Invalid shader type.
 
     HashMap<PlatformGLObject, GraphicsContextGLOpenGL::ShaderSourceEntry>::iterator result = m_context->m_shaderSourceMap.find(shader);
 
     if (result == m_context->m_shaderSourceMap.end())
-        return "";
+        return emptyString();
 
     GraphicsContextGLOpenGL::ShaderSourceEntry& entry = result->value;
 
@@ -203,7 +203,7 @@ String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(PlatformGLObject
     }
 
     if (!isValid)
-        return "";
+        return emptyString();
 
     return translatedShaderSource;
 }
@@ -215,7 +215,7 @@ void ExtensionsGLOpenGLCommon::initializeAvailableExtensions()
         GLint numExtensions = 0;
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         for (GLint i = 0; i < numExtensions; ++i)
-            m_availableExtensions.add(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+            m_availableExtensions.add(String { reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)) });
 
         if (!m_availableExtensions.contains("GL_ARB_texture_storage"_s)) {
             GLint majorVersion;

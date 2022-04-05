@@ -398,18 +398,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRe
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
     if (attributeName == "AXPlaceholderValue")
-        return OpaqueJSString::tryCreate(attributes.get("placeholder-text")).leakRef();
+        return OpaqueJSString::tryCreate(attributes.get("placeholder-text"_s)).leakRef();
     if (attributeName == "AXInvalid") {
         auto textAttributes = m_element->textAttributes();
-        auto value = textAttributes.attributes.get("invalid");
+        auto value = textAttributes.attributes.get("invalid"_s);
         if (value.isEmpty())
-            value = checkElementState(m_element.get(), WebCore::Atspi::State::InvalidEntry) ? "true" : "false";
+            value = checkElementState(m_element.get(), WebCore::Atspi::State::InvalidEntry) ? "true"_s : "false"_s;
         return OpaqueJSString::tryCreate(value).leakRef();
     }
     if (attributeName == "AXARIALive")
-        return OpaqueJSString::tryCreate(attributes.get("live")).leakRef();
+        return OpaqueJSString::tryCreate(attributes.get("live"_s)).leakRef();
     if (attributeName == "AXARIARelevant")
-        return OpaqueJSString::tryCreate(attributes.get("relevant")).leakRef();
+        return OpaqueJSString::tryCreate(attributes.get("relevant"_s)).leakRef();
 
     return JSStringCreateWithCharacters(nullptr, 0);
 }
@@ -420,21 +420,21 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
     if (attributeName == "AXARIASetSize")
-        return attributes.get("setsize").toDouble();
+        return attributes.get("setsize"_s).toDouble();
     if (attributeName == "AXARIAPosInSet")
-        return attributes.get("posinset").toDouble();
+        return attributes.get("posinset"_s).toDouble();
     if (attributeName == "AXARIAColumnCount")
-        return attributes.get("colcount").toDouble();
+        return attributes.get("colcount"_s).toDouble();
     if (attributeName == "AXARIARowCount")
-        return attributes.get("rowcount").toDouble();
+        return attributes.get("rowcount"_s).toDouble();
     if (attributeName == "AXARIAColumnIndex")
-        return attributes.get("colindex").toDouble();
+        return attributes.get("colindex"_s).toDouble();
     if (attributeName == "AXARIARowIndex")
-        return attributes.get("rowindex").toDouble();
+        return attributes.get("rowindex"_s).toDouble();
     if (attributeName == "AXARIAColumnSpan")
-        return attributes.get("colspan").toDouble();
+        return attributes.get("colspan"_s).toDouble();
     if (attributeName == "AXARIARowSpan")
-        return attributes.get("rowspan").toDouble();
+        return attributes.get("rowspan"_s).toDouble();
 
     return 0;
 }
@@ -442,8 +442,8 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
 {
     m_element->updateBackingStore();
-    auto value = m_element->attributes().get("current");
-    return OpaqueJSString::tryCreate(!value.isNull() ? value : "false").leakRef();
+    auto value = m_element->attributes().get("current"_s);
+    return OpaqueJSString::tryCreate(!value.isNull() ? value : "false"_s).leakRef();
 }
 
 JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute) const
@@ -514,7 +514,7 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
     if (attributeName == "AXInterfaceTableCell")
         return m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::TableCell);
     if (attributeName == "AXARIAAtomic")
-        return m_element->attributes().get("atomic") == "true";
+        return m_element->attributes().get("atomic"_s) == "true";
 
     return false;
 }
@@ -536,7 +536,7 @@ bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
         return true;
 
     auto attributes = m_element->attributes();
-    String isReadOnly = attributes.get("readonly");
+    String isReadOnly = attributes.get("readonly"_s);
     if (!isReadOnly.isEmpty())
         return isReadOnly == "true" ? false : true;
 
@@ -573,17 +573,17 @@ bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
     if (attributeName == "AXARIASetSize")
-        return attributes.contains("setsize");
+        return attributes.contains("setsize"_s);
     if (attributeName == "AXARIAPosInSet")
-        return attributes.contains("posinset");
+        return attributes.contains("posinset"_s);
     if (attributeName == "AXARIALive") {
-        auto value = attributes.get("live");
+        auto value = attributes.get("live"_s);
         return !value.isEmpty() && value != "off";
     }
     if (attributeName == "AXARIARelevant")
-        return attributes.contains("relevant");
+        return attributes.contains("relevant"_s);
     if (attributeName == "AXARIAAtomic")
-        return attributes.contains("atomic");
+        return attributes.contains("atomic"_s);
     if (attributeName == "AXElementBusy")
         return true;
 
@@ -598,27 +598,27 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 static String xmlRoleValueString(const String& xmlRoles)
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> regionRoles = HashSet<String, ASCIICaseInsensitiveHash>({
-        "doc-acknowledgments",
-        "doc-afterword",
-        "doc-appendix",
-        "doc-bibliography",
-        "doc-chapter",
-        "doc-conclusion",
-        "doc-credits",
-        "doc-endnotes",
-        "doc-epilogue",
-        "doc-errata",
-        "doc-foreword",
-        "doc-glossary",
-        "doc-glossref",
-        "doc-index",
-        "doc-introduction",
-        "doc-pagelist",
-        "doc-part",
-        "doc-preface",
-        "doc-prologue",
-        "doc-toc",
-        "region"
+        "doc-acknowledgments"_s,
+        "doc-afterword"_s,
+        "doc-appendix"_s,
+        "doc-bibliography"_s,
+        "doc-chapter"_s,
+        "doc-conclusion"_s,
+        "doc-credits"_s,
+        "doc-endnotes"_s,
+        "doc-epilogue"_s,
+        "doc-errata"_s,
+        "doc-foreword"_s,
+        "doc-glossary"_s,
+        "doc-glossref"_s,
+        "doc-index"_s,
+        "doc-introduction"_s,
+        "doc-pagelist"_s,
+        "doc-part"_s,
+        "doc-preface"_s,
+        "doc-prologue"_s,
+        "doc-toc"_s,
+        "region"_s
     });
 
     if (regionRoles->contains(xmlRoles))
@@ -762,7 +762,7 @@ static String roleValueToString(unsigned roleValue)
     case WebCore::Atspi::Role::ScrollBar:
         return "AXScrollBar"_s;
     case WebCore::Atspi::Role::ScrollPane:
-        return "AXScrollArea";
+        return "AXScrollArea"_s;
     case WebCore::Atspi::Role::Section:
         return "AXSection"_s;
     case WebCore::Atspi::Role::Separator:
@@ -817,7 +817,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
     m_element->updateBackingStore();
     auto roleValue = m_element->role();
-    auto roleValueString = roleValue == WebCore::Atspi::Role::Landmark ? xmlRoleValueString(m_element->attributes().get("xml-roles")) : roleValueToString(roleValue);
+    auto roleValueString = roleValue == WebCore::Atspi::Role::Landmark ? xmlRoleValueString(m_element->attributes().get("xml-roles"_s)) : roleValueToString(roleValue);
     if (roleValueString.isEmpty())
         return JSStringCreateWithCharacters(nullptr, 0);
 
@@ -832,14 +832,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::roleDescription()
 {
     m_element->updateBackingStore();
-    auto roleDescription = m_element->attributes().get("roledescription");
+    auto roleDescription = m_element->attributes().get("roledescription"_s);
     return OpaqueJSString::tryCreate(makeString("AXRoleDescription: ", roleDescription)).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::computedRoleString()
 {
     m_element->updateBackingStore();
-    auto computedRole = m_element->attributes().get("computed-role");
+    auto computedRole = m_element->attributes().get("computed-role"_s);
     if (computedRole.isEmpty())
         return JSStringCreateWithCharacters(nullptr, 0);
 
@@ -972,7 +972,7 @@ double AccessibilityUIElement::intValue() const
 
     // Consider headings as an special case when returning the int value.
     if (m_element->role() == WebCore::Atspi::Role::Heading)
-        return m_element->attributes().get("level").toDouble();
+        return m_element->attributes().get("level"_s).toDouble();
 
     return 0;
 }
@@ -999,7 +999,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
 {
     m_element->updateBackingStore();
     auto attributes = m_element->attributes();
-    auto value = makeString("AXValueDescription: ", attributes.get("valuetext"));
+    auto value = makeString("AXValueDescription: ", attributes.get("valuetext"_s));
     return OpaqueJSString::tryCreate(value).leakRef();
 }
 
@@ -1076,7 +1076,7 @@ bool AccessibilityUIElement::isIndeterminate() const
 int AccessibilityUIElement::hierarchicalLevel() const
 {
     m_element->updateBackingStore();
-    auto level = m_element->attributes().get("level");
+    auto level = m_element->attributes().get("level"_s);
     if (level.isEmpty())
         return 0;
 
@@ -1091,13 +1091,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
 bool AccessibilityUIElement::ariaIsGrabbed() const
 {
     m_element->updateBackingStore();
-    return m_element->attributes().get("grabbed") == "true";
+    return m_element->attributes().get("grabbed"_s) == "true";
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::ariaDropEffects() const
 {
     m_element->updateBackingStore();
-    auto dropEffects = m_element->attributes().get("dropeffect");
+    auto dropEffects = m_element->attributes().get("dropeffect"_s);
     if (dropEffects.isEmpty())
         return JSStringCreateWithCharacters(nullptr, 0);
     return OpaqueJSString::tryCreate(dropEffects).leakRef();
@@ -1429,7 +1429,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::documentEncoding()
         return JSStringCreateWithCharacters(nullptr, 0);
 
     m_element->updateBackingStore();
-    return OpaqueJSString::tryCreate(m_element->documentAttribute("Encoding")).leakRef();
+    return OpaqueJSString::tryCreate(m_element->documentAttribute("Encoding"_s)).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
@@ -1438,7 +1438,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
         return JSStringCreateWithCharacters(nullptr, 0);
 
     m_element->updateBackingStore();
-    return OpaqueJSString::tryCreate(m_element->documentAttribute("URI")).leakRef();
+    return OpaqueJSString::tryCreate(m_element->documentAttribute("URI"_s)).leakRef();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::url()

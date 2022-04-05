@@ -53,11 +53,11 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
     if (!errorObject)
         return;
 
-    auto error = errorObject->getInteger("code");
+    auto error = errorObject->getInteger("code"_s);
     if (!error)
         return;
 
-    auto errorMessage = errorObject->getString("message");
+    auto errorMessage = errorObject->getString("message"_s);
     if (!errorMessage)
         return;
 

@@ -80,8 +80,11 @@ public:
     WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
     WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
 
-    // Construct a string with latin1 data, from a null-terminated source.
-    WTF_EXPORT_PRIVATE String(const char* characters);
+    // This constructor is explicit to encourage developers to use ASCIILiteral and the ""_s suffix when possible,
+    // as the String(ASCIILiteral) is more efficient. Also note that this constructor treats input as Latin-1.
+    // Developers often want to call String::fromUTF8() instead.
+    // FIXME: We should probably rename this to fromLatin1().
+    WTF_EXPORT_PRIVATE explicit String(const char* characters);
 
     // Construct a string referencing an existing StringImpl.
     String(StringImpl&);

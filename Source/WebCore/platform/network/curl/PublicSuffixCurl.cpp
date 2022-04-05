@@ -48,7 +48,7 @@ static String topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, const c
 {
     // psl_registerable_domain returns a pointer to domain's data or null if there is no private domain
     if (const char* topPrivateDomain = psl_registrable_domain(psl, domain))
-        return topPrivateDomain;
+        return String { topPrivateDomain };
     return String();
 }
 

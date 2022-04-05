@@ -228,7 +228,7 @@ void Session::handleUserPrompts(Function<void (CommandResult&&)>&& completionHan
             return;
         }
 
-        auto isShowingJavaScriptDialog = response.responseObject->getBoolean("result");
+        auto isShowingJavaScriptDialog = response.responseObject->getBoolean("result"_s);
         if (!isShowingJavaScriptDialog) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
@@ -359,13 +359,13 @@ void Session::getCurrentURL(Function<void (CommandResult&&)>&& completionHandler
                 return;
             }
 
-            auto browsingContext = response.responseObject->getObject("context");
+            auto browsingContext = response.responseObject->getObject("context"_s);
             if (!browsingContext) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
 
-            auto url = browsingContext->getString("url");
+            auto url = browsingContext->getString("url"_s);
             if (!url) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
@@ -855,14 +855,14 @@ void Session::setWindowRect(std::optional<double> x, std::optional<double> y, st
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
         if (x && y) {
             auto windowOrigin = JSON::Object::create();
-            windowOrigin->setDouble("x", x.value());
-            windowOrigin->setDouble("y", y.value());
+            windowOrigin->setDouble("x"_s, x.value());
+            windowOrigin->setDouble("y"_s, y.value());
             parameters->setObject("origin"_s, WTFMove(windowOrigin));
         }
         if (width && height) {
             auto windowSize = JSON::Object::create();
-            windowSize->setDouble("width", width.value());
-            windowSize->setDouble("height", height.value());
+            windowSize->setDouble("width"_s, width.value());
+            windowSize->setDouble("height"_s, height.value());
             parameters->setObject("size"_s, WTFMove(windowSize));
         }
         m_host->sendCommandToBackend("setWindowFrameOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) mutable {
@@ -1717,12 +1717,12 @@ void Session::elementIsFileUpload(const String& elementID, Function<void (Comman
     auto arguments = JSON::Array::create();
     arguments->pushString(createElement(elementID)->toJSONString());
 
-    static const char isFileUploadScript[] =
+    static constexpr auto isFileUploadScript =
         "function(element) {"
         "    if (element.tagName.toLowerCase() === 'input' && element.type === 'file')"
         "        return { 'fileUpload': true, 'multiple': element.hasAttribute('multiple') };"
         "    return { 'fileUpload': false };"
-        "}";
+        "}"_s;
 
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
@@ -1855,7 +1855,7 @@ void Session::elementIsEditable(const String& elementID, Function<void (CommandR
     auto arguments = JSON::Array::create();
     arguments->pushString(createElement(elementID)->toJSONString());
 
-    static const char isEditableScript[] =
+    static constexpr auto isEditableScript =
         "function(element) {"
         "    if (element.disabled || element.readOnly)"
         "        return false;"
@@ -1870,7 +1870,7 @@ void Session::elementIsEditable(const String& elementID, Function<void (CommandR
         "        return true;"
         "    }"
         "    return false;"
-        "}";
+        "}"_s;
 
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
@@ -2170,7 +2170,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
             auto fileUploadType = parseElementIsFileUploadResult(result.result());
             if (!fileUploadType || capabilities().strictFileInteractability.value_or(false)) {
                 // FIXME: move this to an atom.
-                static const char focusScript[] =
+                static constexpr auto focusScript =
                     "function focus(element) {"
                     "    let doc = element.ownerDocument || element;"
                     "    let prevActiveElement = doc.activeElement;"
@@ -2186,7 +2186,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
                     "        element.setSelectionRange(element.value.length, element.value.length);"
                     "    if (elementRootNode.activeElement !== element)"
                     "        throw {name: 'ElementNotInteractable', message: 'Element is not focusable.'};"
-                    "}";
+                    "}"_s;
 
                 auto arguments = JSON::Array::create();
                 arguments->pushString(createElement(elementID)->toJSONString());
@@ -2506,13 +2506,13 @@ static Ref<JSON::Object> builtAutomationCookie(const Session::Cookie& cookie)
     auto cookieObject = JSON::Object::create();
     cookieObject->setString("name"_s, cookie.name);
     cookieObject->setString("value"_s, cookie.value);
-    cookieObject->setString("path"_s, cookie.path.value_or("/"));
+    cookieObject->setString("path"_s, cookie.path.value_or("/"_s));
     cookieObject->setString("domain"_s, cookie.domain.value_or(emptyString()));
     cookieObject->setBoolean("secure"_s, cookie.secure.value_or(false));
     cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.value_or(false));
     cookieObject->setBoolean("session"_s, !cookie.expiry);
     cookieObject->setDouble("expires"_s, cookie.expiry.value_or(0));
-    cookieObject->setString("sameSite"_s, cookie.sameSite.value_or("None"));
+    cookieObject->setString("sameSite"_s, cookie.sameSite.value_or("None"_s));
     return cookieObject;
 }
 
@@ -2691,38 +2691,38 @@ Session::InputSourceState& Session::inputSourceState(const String& id)
     return m_inputStateTable.ensure(id, [] { return InputSourceState(); }).iterator->value;
 }
 
-static const char* automationSourceType(const InputSource& inputSource)
+static ASCIILiteral automationSourceType(const InputSource& inputSource)
 {
     switch (inputSource.type) {
     case InputSource::Type::None:
-        return "Null";
+        return "Null"_s;
     case InputSource::Type::Pointer:
         switch (inputSource.pointerType.value_or(PointerType::Mouse)) {
         case PointerType::Mouse:
-            return "Mouse";
+            return "Mouse"_s;
         case PointerType::Touch:
-            return "Touch";
+            return "Touch"_s;
         case PointerType::Pen:
-            return "Pen";
+            return "Pen"_s;
         }
         break;
     case InputSource::Type::Key:
-        return "Keyboard";
+        return "Keyboard"_s;
     case InputSource::Type::Wheel:
-        return "Wheel";
+        return "Wheel"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static const char* automationOriginType(PointerOrigin::Type type)
+static ASCIILiteral automationOriginType(PointerOrigin::Type type)
 {
     switch (type) {
     case PointerOrigin::Type::Viewport:
-        return "Viewport";
+        return "Viewport"_s;
     case PointerOrigin::Type::Pointer:
-        return "Pointer";
+        return "Pointer"_s;
     case PointerOrigin::Type::Element:
-        return "Element";
+        return "Element"_s;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

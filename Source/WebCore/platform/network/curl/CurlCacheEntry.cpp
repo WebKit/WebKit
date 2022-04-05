@@ -61,10 +61,10 @@ CurlCacheEntry::CurlCacheEntry(const String& url, ResourceHandle* job, const Str
     generateBaseFilename(url.latin1());
 
     m_headerFilename.append(m_basename);
-    m_headerFilename.append(".header");
+    m_headerFilename.append(".header"_s);
 
     m_contentFilename.append(m_basename);
-    m_contentFilename.append(".content");
+    m_contentFilename.append(".content"_s);
 }
 
 CurlCacheEntry::~CurlCacheEntry()
@@ -139,9 +139,9 @@ bool CurlCacheEntry::saveResponseHeaders(const ResourceResponse& response)
     HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
     while (it != end) {
         String headerField = it->key;
-        headerField.append(": ");
+        headerField.append(": "_s);
         headerField.append(it->value);
-        headerField.append("\n");
+        headerField.append("\n"_s);
         CString headerFieldLatin1 = headerField.latin1();
         FileSystem::writeToFile(headerFile, headerFieldLatin1.data(), headerFieldLatin1.length());
         m_cachedResponse.setHTTPHeaderField(it->key, it->value);

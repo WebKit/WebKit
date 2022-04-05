@@ -34,7 +34,7 @@ TextureMapperFPSCounter::TextureMapperFPSCounter()
     , m_lastFPS(0)
     , m_frameCount(0)
 {
-    String showFPSEnvironment = getenv("WEBKIT_SHOW_FPS");
+    String showFPSEnvironment { getenv("WEBKIT_SHOW_FPS") };
     bool ok = false;
     m_fpsInterval = Seconds(showFPSEnvironment.toDouble(&ok));
     if (ok && m_fpsInterval) {

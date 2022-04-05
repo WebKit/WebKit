@@ -342,22 +342,22 @@ static String getFamilyNameStringFromFamily(const String& family)
         return family;
 
     if (family == familyNamesData->at(FamilyNamesIndex::StandardFamily) || family == familyNamesData->at(FamilyNamesIndex::SerifFamily))
-        return "serif";
+        return "serif"_s;
     if (family == familyNamesData->at(FamilyNamesIndex::SansSerifFamily))
-        return "sans-serif";
+        return "sans-serif"_s;
     if (family == familyNamesData->at(FamilyNamesIndex::MonospaceFamily))
-        return "monospace";
+        return "monospace"_s;
     if (family == familyNamesData->at(FamilyNamesIndex::CursiveFamily))
-        return "cursive";
+        return "cursive"_s;
     if (family == familyNamesData->at(FamilyNamesIndex::FantasyFamily))
-        return "fantasy";
+        return "fantasy"_s;
 
 #if PLATFORM(GTK)
     if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font")
         return defaultGtkSystemFont();
 #endif
 
-    return "";
+    return emptyString();
 }
 
 #if FC_VERSION < 21395

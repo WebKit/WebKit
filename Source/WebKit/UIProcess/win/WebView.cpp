@@ -240,7 +240,7 @@ WebView::WebView(RECT rect, const API::PageConfiguration& configuration, HWND pa
         m_page->drawingArea()->setSize(windowSize);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_page->setURLSchemeHandlerForScheme(RemoteInspectorProtocolHandler::create(*m_page), "inspector");
+    m_page->setURLSchemeHandlerForScheme(RemoteInspectorProtocolHandler::create(*m_page), "inspector"_s);
 #endif
 
     // FIXME: Initializing the tooltip window here matches WebKit win, but seems like something

@@ -93,7 +93,7 @@ static void testSummaryProviders()
     CompactPointerTuple<String*, uint8_t> exampleCompactPointerTupleMaxTypeValue { &an8BitString, 255 };
     CompactPointerTuple<String*, bool> exampleCompactPointerTupleSimpleBool { &an8BitString, true };
     
-    URL aURL({ }, "https://www.example.com");
+    URL aURL("https://www.example.com"_s);
 
     breakForTestingSummaryProviders();
 }

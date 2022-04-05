@@ -65,12 +65,13 @@ static String extractLocaleFromDictionaryFileName(const String& fileName)
 
 static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomString, Vector<String>>& availableLocales)
 {
-    for (auto& fileName : FileSystem::listDirectory(directoryPath)) {
+    auto directoryPathString = String::fromUTF8(directoryPath);
+    for (auto& fileName : FileSystem::listDirectory(directoryPathString)) {
         String locale = extractLocaleFromDictionaryFileName(fileName);
         if (locale.isEmpty())
             continue;
 
-        auto filePath = FileSystem::pathByAppendingComponent(directoryPath, fileName);
+        auto filePath = FileSystem::pathByAppendingComponent(directoryPathString, fileName);
         char normalizedPath[PATH_MAX];
         if (!realpath(FileSystem::fileSystemRepresentation(filePath).data(), normalizedPath))
             continue;

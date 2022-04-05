@@ -733,10 +733,10 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
 {
 #if PLATFORM(GTK)
     if (messageName == String("GetSnapshot")) {
-        SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(static_cast<API::UInt64*>(message.get("SnapshotOptions"))->value());
-        uint64_t callbackID = static_cast<API::UInt64*>(message.get("CallbackID"))->value();
-        SnapshotRegion region = static_cast<SnapshotRegion>(static_cast<API::UInt64*>(message.get("SnapshotRegion"))->value());
-        bool transparentBackground = static_cast<API::Boolean*>(message.get("TransparentBackground"))->value();
+        SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(static_cast<API::UInt64*>(message.get("SnapshotOptions"_s))->value());
+        uint64_t callbackID = static_cast<API::UInt64*>(message.get("CallbackID"_s))->value();
+        SnapshotRegion region = static_cast<SnapshotRegion>(static_cast<API::UInt64*>(message.get("SnapshotRegion"_s))->value());
+        bool transparentBackground = static_cast<API::Boolean*>(message.get("TransparentBackground"_s))->value();
 
         RefPtr<WebImage> snapshotImage;
         WebPage* webPage = page->priv->webPage;
@@ -765,10 +765,10 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
         }
 
         API::Dictionary::MapType messageReply;
-        messageReply.set("Page", webPage);
-        messageReply.set("CallbackID", API::UInt64::create(callbackID));
-        messageReply.set("Snapshot", snapshotImage);
-        WebProcess::singleton().injectedBundle()->postMessage("WebPage.DidGetSnapshot", API::Dictionary::create(WTFMove(messageReply)).ptr());
+        messageReply.set("Page"_s, webPage);
+        messageReply.set("CallbackID"_s, API::UInt64::create(callbackID));
+        messageReply.set("Snapshot"_s, snapshotImage);
+        WebProcess::singleton().injectedBundle()->postMessage("WebPage.DidGetSnapshot"_s, API::Dictionary::create(WTFMove(messageReply)).ptr());
     } else
 #endif
         ASSERT_NOT_REACHED();

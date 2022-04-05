@@ -596,7 +596,7 @@ static bool webKitWebSrcSetExtraHeader(GQuark fieldId, const GValue* value, gpoi
 
     GST_DEBUG("Appending extra header: \"%s: %s\"", fieldName, fieldContent.get());
     ResourceRequest* request = static_cast<ResourceRequest*>(userData);
-    request->setHTTPHeaderField(fieldName, fieldContent.get());
+    request->setHTTPHeaderField(String { fieldName }, String { fieldContent.get() });
     return true;
 }
 
@@ -644,7 +644,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     ASSERT(members->requestedPosition != members->stopPosition);
 
     GST_DEBUG_OBJECT(src, "Posting task to request R%u %s requestedPosition=%" G_GUINT64_FORMAT " stopPosition=%" G_GUINT64_FORMAT, members->requestNumber, priv->originalURI.data(), members->requestedPosition, members->stopPosition);
-    URL url { priv->originalURI.data() };
+    URL url { String { priv->originalURI.data() } };
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
@@ -653,7 +653,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     request.setHTTPReferrer(members->referrer);
 
     if (priv->httpMethod.get())
-        request.setHTTPMethod(priv->httpMethod.get());
+        request.setHTTPMethod(String { priv->httpMethod.get() });
 
 #if USE(SOUP)
     // By default, HTTP Accept-Encoding is disabled here as we don't
@@ -672,7 +672,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     // Let Apple web servers know we want to access their nice movie trailers.
     if (!g_ascii_strcasecmp("movies.apple.com", url.host().utf8().data())
         || !g_ascii_strcasecmp("trailers.apple.com", url.host().utf8().data()))
-        request.setHTTPUserAgent("Quicktime/7.6.6");
+        request.setHTTPUserAgent("Quicktime/7.6.6"_s);
 
     if (members->requestedPosition || members->stopPosition != UINT64_MAX) {
         GUniquePtr<char> formatedRange;
@@ -681,19 +681,19 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
         else
             formatedRange.reset(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", members->requestedPosition));
         GST_DEBUG_OBJECT(src, "Range request: %s", formatedRange.get());
-        request.setHTTPHeaderField(HTTPHeaderName::Range, formatedRange.get());
+        request.setHTTPHeaderField(HTTPHeaderName::Range, String { formatedRange.get() });
     }
     ASSERT(members->readPosition == members->requestedPosition);
 
     GST_DEBUG_OBJECT(src, "Persistent connection support %s", priv->keepAlive ? "enabled" : "disabled");
     if (!priv->keepAlive)
-        request.setHTTPHeaderField(HTTPHeaderName::Connection, "close");
+        request.setHTTPHeaderField(HTTPHeaderName::Connection, "close"_s);
 
     if (priv->extraHeaders)
         gst_structure_foreach(priv->extraHeaders.get(), webKitWebSrcProcessExtraHeaders, &request);
 
     // We always request Icecast/Shoutcast metadata, just in case ...
-    request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1");
+    request.setHTTPHeaderField(HTTPHeaderName::IcyMetadata, "1"_s);
 
     ASSERT(!isMainThread());
     RunLoop::main().dispatch([protector = WTF::ensureGRef(src), request = WTFMove(request), requestNumber = members->requestNumber] {
@@ -881,7 +881,7 @@ const gchar* const* webKitWebSrcGetProtocols(GType)
 
 static URL convertPlaybinURI(const char* uriString)
 {
-    return URL { uriString };
+    return URL { String { uriString } };
 }
 
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)

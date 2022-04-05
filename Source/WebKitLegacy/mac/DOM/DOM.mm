@@ -716,7 +716,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 
     Document& document = link.document();
     auto mediaQuerySet = MediaQuerySet::create(media, MediaQueryParserContext(document));
-    return MediaQueryEvaluator { "screen", document, document.renderView() ? &document.renderView()->style() : nullptr }.evaluate(mediaQuerySet.get());
+    return MediaQueryEvaluator { "screen"_s, document, document.renderView() ? &document.renderView()->style() : nullptr }.evaluate(mediaQuerySet.get());
 }
 
 @end

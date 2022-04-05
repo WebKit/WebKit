@@ -187,7 +187,7 @@ static uint64_t generateReplyIdentifier()
     return *_remoteObjectRegistry;
 }
 
-static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger blockIndex)
+static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger blockIndex)
 {
     // Required, non-inherited method:
     const char* methodTypeEncoding = _protocol_getMethodTypeEncoding(protocol, selector, true, true);
@@ -197,12 +197,12 @@ static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger b
 
     ASSERT(methodTypeEncoding);
     if (!methodTypeEncoding)
-        return { };
+        return nil;
 
     NSMethodSignature *targetMethodSignature = [NSMethodSignature signatureWithObjCTypes:methodTypeEncoding];
     ASSERT(targetMethodSignature);
     if (!targetMethodSignature)
-        return { };
+        return nil;
 
     return [targetMethodSignature _signatureForBlockAtArgumentIndex:blockIndex]._typeString;
 }
@@ -247,17 +247,17 @@ static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger b
             return;
         }
 
-        String wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().data()]._typeString;
-        String expectedBlockSignature = replyBlockSignature([interface protocol], invocation.selector, i);
+        NSString *wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().data()]._typeString;
+        NSString *expectedBlockSignature = replyBlockSignature([interface protocol], invocation.selector, i);
 
-        if (expectedBlockSignature.isNull()) {
+        if (!expectedBlockSignature) {
             NSLog(@"_invokeMethod: Failed to validate reply block signature: could not find local signature");
             ASSERT_NOT_REACHED();
             return;
         }
 
         if (!WebKit::methodSignaturesAreCompatible(wireBlockSignature, expectedBlockSignature)) {
-            NSLog(@"_invokeMethod: Failed to validate reply block signature: %s != %s", wireBlockSignature.utf8().data(), expectedBlockSignature.utf8().data());
+            NSLog(@"_invokeMethod: Failed to validate reply block signature: %@ != %@", wireBlockSignature, expectedBlockSignature);
             ASSERT_NOT_REACHED();
             return;
         }
@@ -298,7 +298,7 @@ static String replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger b
         };
 
         RefPtr<ReplyBlockCallChecker> checker = ReplyBlockCallChecker::create(self, replyID);
-        id replyBlock = __NSMakeSpecialForwardingCaptureBlock(wireBlockSignature.utf8().data(), [interface, remoteObjectRegistry, replyID, checker](NSInvocation *invocation) {
+        id replyBlock = __NSMakeSpecialForwardingCaptureBlock([wireBlockSignature UTF8String], [interface, remoteObjectRegistry, replyID, checker](NSInvocation *invocation) {
             auto encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
             [encoder encodeObject:invocation forKey:invocationKey];
 

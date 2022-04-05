@@ -185,11 +185,11 @@ static Ref<JSON::Object> toJSONObject(GVariant* variant)
     while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
         const GVariantType* type = g_variant_get_type(value);
         if (type && g_variant_type_equal(type, G_VARIANT_TYPE_VARDICT))
-            jsonObject->setObject(key, toJSONObject(value));
+            jsonObject->setObject(String { key }, toJSONObject(value));
         else if (type && g_variant_type_equal(type, G_VARIANT_TYPE_STRING))
-            jsonObject->setString(key, g_variant_get_string(value, nullptr));
+            jsonObject->setString(String { key }, String { g_variant_get_string(value, nullptr) });
         else if (type && g_variant_type_equal(type, G_VARIANT_TYPE_DOUBLE))
-            jsonObject->setDouble(key, g_variant_get_double(value));
+            jsonObject->setDouble(String { key }, g_variant_get_double(value));
     }
     return jsonObject;
 }

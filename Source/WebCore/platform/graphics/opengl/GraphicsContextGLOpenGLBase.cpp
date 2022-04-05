@@ -86,7 +86,7 @@ std::optional<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
 
 void GraphicsContextGLOpenGL::validateAttributes()
 {
-    validateDepthStencil("GL_EXT_packed_depth_stencil");
+    validateDepthStencil("GL_EXT_packed_depth_stencil"_s);
 }
 
 bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
@@ -108,7 +108,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
 
         ExtensionsGLOpenGLCommon& extensions = getExtensions();
         // Use a 24 bit depth buffer where we know we have it.
-        if (extensions.supports("GL_EXT_packed_depth_stencil"))
+        if (extensions.supports("GL_EXT_packed_depth_stencil"_s))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
         else
             internalDepthStencilFormat = GL_DEPTH_COMPONENT;

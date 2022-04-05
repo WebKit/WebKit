@@ -94,7 +94,7 @@ WebKitProtocolHandler::WebKitProtocolHandler(WebKitWebContext* context)
 
 void WebKitProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
 {
-    URL requestURL = URL({ }, webkit_uri_scheme_request_get_uri(request));
+    URL requestURL = URL(String { webkit_uri_scheme_request_get_uri(request) });
     if (requestURL.host() == "gpu") {
         handleGPU(request);
         return;

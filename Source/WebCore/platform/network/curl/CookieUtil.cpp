@@ -187,11 +187,11 @@ String defaultPathForURL(const URL& url)
 
     String path = url.path().toString();
     if (path.isEmpty() || !path.startsWith('/'))
-        return "/";
+        return "/"_s;
 
     auto lastSlashPosition = path.reverseFind('/');
     if (!lastSlashPosition)
-        return "/";
+        return "/"_s;
 
     return path.substring(0, lastSlashPosition);
 }

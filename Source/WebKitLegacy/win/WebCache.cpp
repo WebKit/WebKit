@@ -47,13 +47,13 @@ using namespace WebCore;
 WebCache::WebCache()
 {
     gClassCount++;
-    gClassNameCount().add("WebCache");
+    gClassNameCount().add("WebCache"_s);
 }
 
 WebCache::~WebCache()
 {
     gClassCount--;
-    gClassNameCount().remove("WebCache");
+    gClassNameCount().remove("WebCache"_s);
 }
 
 WebCache* WebCache::createInstance()

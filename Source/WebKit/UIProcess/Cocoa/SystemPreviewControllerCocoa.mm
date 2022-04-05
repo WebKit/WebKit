@@ -297,7 +297,7 @@ void SystemPreviewController::fail(const WebCore::ResourceError& error)
 
 void SystemPreviewController::triggerSystemPreviewAction()
 {
-    page().systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped");
+    page().systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_s);
 }
 
 void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID)

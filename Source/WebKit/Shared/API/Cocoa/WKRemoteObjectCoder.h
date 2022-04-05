@@ -44,5 +44,5 @@ class Dictionary;
 @end
 
 namespace WebKit {
-bool methodSignaturesAreCompatible(const String&, const String&);
+bool methodSignaturesAreCompatible(NSString *, NSString *);
 }

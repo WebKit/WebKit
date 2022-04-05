@@ -192,7 +192,7 @@ public:
         m_createWebViewWasCalled = false;
         m_message = CString();
         auto signalID = g_signal_connect(m_session, "create-web-view", G_CALLBACK(createWebViewCallback), this);
-        sendCommandToBackend("createBrowsingContext");
+        sendCommandToBackend("createBrowsingContext"_s);
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewWasCalled);
@@ -212,7 +212,7 @@ public:
         m_createWebViewInWindowWasCalled = false;
         m_message = { };
         auto signalID = g_signal_connect(m_session, "create-web-view::window", G_CALLBACK(createWebViewInWindowCallback), this);
-        sendCommandToBackend("createBrowsingContext", "{\"presentationHint\":\"Window\"}");
+        sendCommandToBackend("createBrowsingContext"_s, "{\"presentationHint\":\"Window\"}"_s);
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewInWindowWasCalled);
@@ -230,7 +230,7 @@ public:
         m_createWebViewInTabWasCalled = false;
         m_message = { };
         auto signalID = g_signal_connect(m_session, "create-web-view::tab", G_CALLBACK(createWebViewInTabCallback), this);
-        sendCommandToBackend("createBrowsingContext", "{\"presentationHint\":\"Tab\"}");
+        sendCommandToBackend("createBrowsingContext"_s, "{\"presentationHint\":\"Tab\"}"_s);
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewInTabWasCalled);

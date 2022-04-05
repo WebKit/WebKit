@@ -525,7 +525,7 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
     GUniquePtr<GSList> cookies(soup_cookie_jar_all_cookies(cookieStorage()));
     for (auto* item = cookies.get(); item; item = g_slist_next(item)) {
         GUniquePtr<SoupCookie> cookie(static_cast<SoupCookie*>(item->data));
-        if (RegistrableDomain::uncheckedCreateFromHost(soup_cookie_get_domain(cookie.get())) == domain) {
+        if (RegistrableDomain::uncheckedCreateFromHost(String { soup_cookie_get_domain(cookie.get()) }) == domain) {
             completionHandler(true);
             return;
         }

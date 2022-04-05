@@ -1,3 +1,175 @@
+2022-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Mark String(const char*) constructor as explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238693
+
+        Reviewed by Geoffrey Garen.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::AccessibleBase):
+        (AccessibleBase::~AccessibleBase):
+        * CFDictionaryPropertyBag.cpp:
+        (CFDictionaryPropertyBag::CFDictionaryPropertyBag):
+        (CFDictionaryPropertyBag::~CFDictionaryPropertyBag):
+        * DefaultDownloadDelegate.cpp:
+        (DefaultDownloadDelegate::DefaultDownloadDelegate):
+        (DefaultDownloadDelegate::~DefaultDownloadDelegate):
+        * DefaultPolicyDelegate.cpp:
+        (DefaultPolicyDelegate::DefaultPolicyDelegate):
+        (DefaultPolicyDelegate::~DefaultPolicyDelegate):
+        * MemoryStream.cpp:
+        (MemoryStream::MemoryStream):
+        (MemoryStream::~MemoryStream):
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::WebActionPropertyBag):
+        (WebActionPropertyBag::~WebActionPropertyBag):
+        * WebApplicationCache.cpp:
+        (WebApplicationCache::WebApplicationCache):
+        (WebApplicationCache::~WebApplicationCache):
+        (WebApplicationCache::storage):
+        * WebArchive.cpp:
+        (WebArchive::WebArchive):
+        (WebArchive::~WebArchive):
+        * WebBackForwardList.cpp:
+        (WebBackForwardList::WebBackForwardList):
+        (WebBackForwardList::~WebBackForwardList):
+        * WebCache.cpp:
+        (WebCache::WebCache):
+        (WebCache::~WebCache):
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::WebCoreStatistics):
+        (WebCoreStatistics::~WebCoreStatistics):
+        (WebCoreStatistics::javaScriptProtectedObjectTypeCounts):
+        (WebCoreStatistics::javaScriptObjectTypeCounts):
+        (WebCoreStatistics::memoryStatistics):
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::doTextFieldCommandFromEvent):
+        * WebDataSource.cpp:
+        (WebDataSource::~WebDataSource):
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::WebDatabaseManager):
+        (WebDatabaseManager::~WebDatabaseManager):
+        * WebDocumentLoader.cpp:
+        (WebDocumentLoader::WebDocumentLoader):
+        (WebDocumentLoader::~WebDocumentLoader):
+        * WebDownload.cpp:
+        (WebDownload::WebDownload):
+        (WebDownload::~WebDownload):
+        * WebDownloadCFNet.cpp:
+        (WebDownload::cancelAuthenticationChallenge):
+        * WebDropSource.cpp:
+        (WebDropSource::WebDropSource):
+        (WebDropSource::~WebDropSource):
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::WebElementPropertyBag):
+        (WebElementPropertyBag::~WebElementPropertyBag):
+        * WebError.cpp:
+        (WebError::WebError):
+        (WebError::~WebError):
+        * WebFrame.cpp:
+        (WebFrame::WebFrame):
+        (WebFrame::~WebFrame):
+        (WebFrame::loadData):
+        (WebFrame::selectAll):
+        * WebFramePolicyListener.cpp:
+        (WebFramePolicyListener::WebFramePolicyListener):
+        (WebFramePolicyListener::~WebFramePolicyListener):
+        * WebGeolocationPolicyListener.cpp:
+        (WebGeolocationPolicyListener::WebGeolocationPolicyListener):
+        (WebGeolocationPolicyListener::~WebGeolocationPolicyListener):
+        * WebGeolocationPosition.cpp:
+        (WebGeolocationPosition::WebGeolocationPosition):
+        (WebGeolocationPosition::~WebGeolocationPosition):
+        * WebHTMLRepresentation.cpp:
+        (WebHTMLRepresentation::WebHTMLRepresentation):
+        (WebHTMLRepresentation::~WebHTMLRepresentation):
+        * WebHistory.cpp:
+        (WebHistory::WebHistory):
+        (WebHistory::~WebHistory):
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::WebHistoryItem):
+        (WebHistoryItem::~WebHistoryItem):
+        * WebInspector.cpp:
+        (WebInspector::WebInspector):
+        (WebInspector::~WebInspector):
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::WebJavaScriptCollector):
+        (WebJavaScriptCollector::~WebJavaScriptCollector):
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory):
+        (WebKitClassFactory::~WebKitClassFactory):
+        * WebKitMessageLoop.cpp:
+        (WebKitMessageLoop::WebKitMessageLoop):
+        (WebKitMessageLoop::~WebKitMessageLoop):
+        * WebKitStatistics.cpp:
+        (WebKitStatistics::WebKitStatistics):
+        (WebKitStatistics::~WebKitStatistics):
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::WebMutableURLRequest):
+        (WebMutableURLRequest::~WebMutableURLRequest):
+        * WebNavigationData.cpp:
+        (WebNavigationData::WebNavigationData):
+        (WebNavigationData::~WebNavigationData):
+        * WebNotification.cpp:
+        (WebNotification::WebNotification):
+        (WebNotification::~WebNotification):
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::WebNotificationCenter):
+        (WebNotificationCenter::~WebNotificationCenter):
+        * WebPreferences.cpp:
+        (WebPreferences::WebPreferences):
+        (WebPreferences::~WebPreferences):
+        * WebResource.cpp:
+        (WebResource::WebResource):
+        (WebResource::~WebResource):
+        * WebScriptObject.cpp:
+        (WebScriptObject::WebScriptObject):
+        (WebScriptObject::~WebScriptObject):
+        * WebScriptWorld.cpp:
+        (WebScriptWorld::WebScriptWorld):
+        (WebScriptWorld::~WebScriptWorld):
+        * WebSecurityOrigin.cpp:
+        (WebSecurityOrigin::WebSecurityOrigin):
+        (WebSecurityOrigin::~WebSecurityOrigin):
+        * WebSerializedJSValue.cpp:
+        (WebSerializedJSValue::WebSerializedJSValue):
+        (WebSerializedJSValue::~WebSerializedJSValue):
+        * WebTextRenderer.cpp:
+        (WebTextRenderer::WebTextRenderer):
+        (WebTextRenderer::~WebTextRenderer):
+        * WebURLAuthenticationChallenge.cpp:
+        (WebURLAuthenticationChallenge::WebURLAuthenticationChallenge):
+        (WebURLAuthenticationChallenge::~WebURLAuthenticationChallenge):
+        * WebURLAuthenticationChallengeSender.cpp:
+        (WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender):
+        (WebURLAuthenticationChallengeSender::~WebURLAuthenticationChallengeSender):
+        * WebURLCredential.cpp:
+        (WebURLCredential::WebURLCredential):
+        (WebURLCredential::~WebURLCredential):
+        * WebURLProtectionSpace.cpp:
+        (WebURLProtectionSpace::WebURLProtectionSpace):
+        (WebURLProtectionSpace::~WebURLProtectionSpace):
+        * WebURLResponse.cpp:
+        (WebURLResponse::WebURLResponse):
+        (WebURLResponse::~WebURLResponse):
+        (WebURLResponse::createInstance):
+        * WebUserContentURLPattern.cpp:
+        (WebUserContentURLPattern::WebUserContentURLPattern):
+        (WebUserContentURLPattern::~WebUserContentURLPattern):
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::~WebView):
+        (WebView::execCommand):
+        (WebView::handleEditingKeyboardEvent):
+        (WebView::copy):
+        (WebView::cut):
+        (WebView::paste):
+        (WebView::copyURL):
+        (WebView::delete_):
+        * WebWorkersPrivate.cpp:
+        (WebWorkersPrivate::WebWorkersPrivate):
+        (WebWorkersPrivate::~WebWorkersPrivate):
+
 2022-04-04  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Use Ref and RefPtr pattern when handling document close calls

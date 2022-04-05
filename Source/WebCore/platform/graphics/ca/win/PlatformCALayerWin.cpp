@@ -701,7 +701,7 @@ static void printTransform(StringBuilder& builder, const CATransform3D& transfor
     builder.append('[', FormattedNumber::fixedPrecision(transform.m11), ' ', FormattedNumber::fixedPrecision(transform.m12), ' ', FormattedNumber::fixedPrecision(transform.m13), ' ', FormattedNumber::fixedPrecision(transform.m14), "; ", FormattedNumber::fixedPrecision(transform.m21), ' ', FormattedNumber::fixedPrecision(transform.m22), ' ', FormattedNumber::fixedPrecision(transform.m23), ' ', FormattedNumber::fixedPrecision(transform.m24), "; ", FormattedNumber::fixedPrecision(transform.m31), ' ', FormattedNumber::fixedPrecision(transform.m32), ' ', FormattedNumber::fixedPrecision(transform.m33), ' ', FormattedNumber::fixedPrecision(transform.m34), "; ", FormattedNumber::fixedPrecision(transform.m41), ' ', FormattedNumber::fixedPrecision(transform.m42), ' ', FormattedNumber::fixedPrecision(transform.m43), ' ', FormattedNumber::fixedPrecision(transform.m44), ']');
 }
 
-static void printColor(StringBuilder& builder, int indent, const String& label, CGColorRef color)
+static void printColor(StringBuilder& builder, int indent, ASCIILiteral label, CGColorRef color)
 {
     Color layerColor(roundAndClampToSRGBALossy(color));
     if (!layerColor.isValid())
@@ -762,10 +762,10 @@ static void printLayer(StringBuilder& builder, const PlatformCALayer* layer, int
     }
 
     // Print backgroundColor if needed
-    printColor(builder, indent + 1, "backgroundColor", CACFLayerGetBackgroundColor(layer->platformLayer()));
+    printColor(builder, indent + 1, "backgroundColor"_s, CACFLayerGetBackgroundColor(layer->platformLayer()));
 
     // Print borderColor if needed
-    printColor(builder, indent + 1, "borderColor", CACFLayerGetBorderColor(layer->platformLayer()));
+    printColor(builder, indent + 1, "borderColor"_s, CACFLayerGetBorderColor(layer->platformLayer()));
 
     // Print masksToBounds if needed
     if (bool layerMasksToBounds = layer->masksToBounds()) {

@@ -367,8 +367,8 @@ void RemoteInspector::startAutomationSession(const Event& event)
     auto capability = clientCapabilities();
 
     auto message = JSON::Object::create();
-    message->setString("browserName"_s, capability ? capability->browserName : "");
-    message->setString("browserVersion"_s, capability ? capability->browserVersion : "");
+    message->setString("browserName"_s, capability ? capability->browserName : emptyString());
+    message->setString("browserVersion"_s, capability ? capability->browserVersion : emptyString());
     sendEvent->setString("message"_s, message->toJSONString());
     sendWebInspectorEvent(sendEvent->toJSONString());
 

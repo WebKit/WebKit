@@ -176,7 +176,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     if (shouldCheckHardwareClassifier == CheckHardwareClassifier::Yes) {
         for (GList* factories = candidates; factories; factories = g_list_next(factories)) {
             auto* factory = reinterpret_cast<GstElementFactory*>(factories->data);
-            String metadata = gst_element_factory_get_metadata(factory, GST_ELEMENT_METADATA_KLASS);
+            String metadata { gst_element_factory_get_metadata(factory, GST_ELEMENT_METADATA_KLASS) };
             auto components = metadata.split('/');
             if (components.contains("Hardware")) {
                 isUsingHardware = true;
@@ -331,7 +331,7 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
     }
 
     auto av1DecoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-av1", ElementFactories::CheckHardwareClassifier::Yes);
-    if ((matroskaSupported || isContainerTypeSupported(Configuration::Decoding, "video/mp4")) && av1DecoderAvailable) {
+    if ((matroskaSupported || isContainerTypeSupported(Configuration::Decoding, "video/mp4"_s)) && av1DecoderAvailable) {
         m_decoderCodecMap.add(AtomString("av01*"), av1DecoderAvailable.isUsingHardware);
         m_decoderCodecMap.add(AtomString("av1"), av1DecoderAvailable.isUsingHardware);
         m_decoderCodecMap.add(AtomString("x-av1"), av1DecoderAvailable.isUsingHardware);
@@ -409,7 +409,7 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         m_decoderMimeTypeSet.add(AtomString("audio/mp2"));
     }
 
-    audioMpegSupported |= isContainerTypeSupported(Configuration::Decoding, "audio/mp4");
+    audioMpegSupported |= isContainerTypeSupported(Configuration::Decoding, "audio/mp4"_s);
     if (audioMpegSupported) {
         m_decoderMimeTypeSet.add(AtomString("audio/mpeg"));
         m_decoderMimeTypeSet.add(AtomString("audio/x-mpeg"));

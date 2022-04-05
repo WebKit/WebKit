@@ -1,3 +1,17 @@
+2022-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Mark String(const char*) constructor as explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238693
+
+        Reviewed by Geoffrey Garen.
+
+        * API/glib/JSCContext.cpp:
+        (jsc_context_check_syntax):
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::startAutomationSession):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES):
+
 2022-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Reduce sizeof(BaselineCallLinkInfo) to make bug 238535 good
