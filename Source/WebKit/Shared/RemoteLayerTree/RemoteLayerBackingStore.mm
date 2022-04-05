@@ -367,7 +367,7 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_includeDisplayList == IncludeDisplayList::Yes)
-        m_frontBuffer.displayListImageBuffer = ConcreteImageBuffer<CGDisplayListImageBufferBackend>::create(m_size, m_scale, DestinationColorSpace::SRGB(), pixelFormat());
+        m_frontBuffer.displayListImageBuffer = ConcreteImageBuffer<CGDisplayListImageBufferBackend>::create(m_size, m_scale, DestinationColorSpace::SRGB(), pixelFormat(), { });
 #endif
 }
 

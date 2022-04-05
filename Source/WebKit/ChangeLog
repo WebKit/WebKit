@@ -1,3 +1,15 @@
+2022-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER build
+        https://bugs.webkit.org/show_bug.cgi?id=238783
+
+        Unreviewed build fix.
+
+        ConcreteImageBuffer<>::create() needs a default CreationContext argument.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureFrontBuffer):
+
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
         Remove GPU process system feature flags
