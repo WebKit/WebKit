@@ -1,3 +1,34 @@
+2022-04-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291823. rdar://problem/91315158
+
+    REGRESSION(STP142): "A JavaScript exception occured: Can't find variable: utils" from SafariDriver
+    https://bugs.webkit.org/show_bug.cgi?id=238335
+    
+    Reviewed by Devin Rousso.
+    
+    Following r289467, we can't just copy the WebDriver atom scripts to the build products, since they now need to
+    have `utils.js` in any script that uses the `utils` namespace. The `WebKit.framework` copy of these scripts are
+    later used while building safaridriver, so they need to include the scripts as well.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291823 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-24  Patrick Angle  <pangle@apple.com>
+
+            REGRESSION(STP142): "A JavaScript exception occured: Can't find variable: utils" from SafariDriver
+            https://bugs.webkit.org/show_bug.cgi?id=238335
+
+            Reviewed by Devin Rousso.
+
+            Following r289467, we can't just copy the WebDriver atom scripts to the build products, since they now need to
+            have `utils.js` in any script that uses the `utils` namespace. The `WebKit.framework` copy of these scripts are
+            later used while building safaridriver, so they need to include the scripts as well.
+
+            * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-26  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r291943. rdar://problem/90878560
