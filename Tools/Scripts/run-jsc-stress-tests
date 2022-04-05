@@ -1318,6 +1318,7 @@ BASE_MODES = [
             "--validateGraphAtEachPhase=true",
             "--useSourceProviderCache=false",
             "--useRandomizingExecutableIslandAllocation=true",
+            "--useLLIntICs=false",
         ] +
         NO_CJIT_OPTIONS
     ],

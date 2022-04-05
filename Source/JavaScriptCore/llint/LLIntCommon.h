@@ -38,6 +38,3 @@
 #else
 #define LLINT_ALWAYS_ALLOCATE_SLOW 0
 #endif
-
-// Disable inline caching of get_by_id and put_by_id.
-#define LLINT_ALWAYS_ACCESS_SLOW 0

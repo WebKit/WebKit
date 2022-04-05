@@ -532,6 +532,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \
     v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
     v(Bool, useDataICSharing, false, Normal, nullptr) \
+    v(Bool, useLLIntICs, true, Normal, "Use property and call ICs in LLInt code.") \
     v(Bool, useBaselineJITCodeSharing, is64Bit(), Normal, nullptr) \
     \
     /* Feature Flags */\

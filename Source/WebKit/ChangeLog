@@ -1,3 +1,14 @@
+2022-04-04  Saam Barati  <sbarati@apple.com>
+
+        Turn off LLInt ICs in captive portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=238778
+        <rdar://84830873>
+
+        Reviewed by Yusuke Suzuki.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+
 2022-04-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Fix code examples in reference documentation

@@ -1,3 +1,13 @@
+2022-04-04  Saam Barati  <sbarati@apple.com>
+
+        Turn off LLInt ICs in captive portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=238778
+        <rdar://84830873>
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
 2022-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the TestWebKitAPI build with an iOS 15.4 internal SDK

@@ -647,7 +647,7 @@ LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
     baseValue.getPropertySlot(globalObject, ident, slot);
     JSValue result = slot.getPureResult();
 
-    if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable() && !slot.isUnset()) {
+    if (Options::useLLIntICs() && slot.isCacheable() && !slot.isUnset()) {
         ASSERT(!slot.isTaintedByOpaqueObject());
         ASSERT(baseValue.isCell());
 
@@ -699,7 +699,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
     JSValue result = found ? slot.getValue(globalObject, ident) : jsUndefined();
     LLINT_CHECK_EXCEPTION();
 
-    if (!LLINT_ALWAYS_ACCESS_SLOW && slot.isCacheable() && !slot.isUnset()) {
+    if (Options::useLLIntICs() && slot.isCacheable() && !slot.isUnset()) {
         auto& metadata = bytecode.metadata(codeBlock);
         {
             StructureID oldStructureID = metadata.m_structureID;
@@ -814,7 +814,7 @@ static JSValue performLLIntGetByID(const JSInstruction* pc, CodeBlock* codeBlock
     JSValue result = baseValue.get(globalObject, ident, slot);
     RETURN_IF_EXCEPTION(throwScope, { });
 
-    if (!LLINT_ALWAYS_ACCESS_SLOW
+    if (Options::useLLIntICs()
         && baseValue.isCell()
         && slot.isCacheable()
         && !slot.isUnset()) {
@@ -865,7 +865,7 @@ static JSValue performLLIntGetByID(const JSInstruction* pc, CodeBlock* codeBlock
             if (!(--metadata.hitCountForLLIntCaching))
                 setupGetByIdPrototypeCache(globalObject, vm, codeBlock, pc, metadata, baseCell, slot, ident);
         }
-    } else if (!LLINT_ALWAYS_ACCESS_SLOW && isJSArray(baseValue) && ident == vm.propertyNames->length) {
+    } else if (Options::useLLIntICs() && isJSArray(baseValue) && ident == vm.propertyNames->length) {
         {
             ConcurrentJSLocker locker(codeBlock->m_lock);
             metadata.setArrayLengthMode();
@@ -962,7 +962,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         baseValue.putInline(globalObject, ident, getOperand(callFrame, bytecode.m_value), slot);
     LLINT_CHECK_EXCEPTION();
     
-    if (!LLINT_ALWAYS_ACCESS_SLOW
+    if (Options::useLLIntICs()
         && baseValue.isCell()
         && slot.isCacheablePut()
         && oldStructure->propertyAccessesAreCacheable()) {
@@ -1153,7 +1153,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
     baseObject->getPrivateField(globalObject, property, slot);
     LLINT_CHECK_EXCEPTION();
 
-    if (!LLINT_ALWAYS_ACCESS_SLOW && baseValue.isCell() && slot.isCacheable() && !slot.isUnset()) {
+    if (Options::useLLIntICs() && baseValue.isCell() && slot.isCacheable() && !slot.isUnset()) {
         auto& metadata = bytecode.metadata(codeBlock);
         {
             StructureID oldStructureID = metadata.m_structureID;
@@ -1283,7 +1283,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
     }
     LLINT_CHECK_EXCEPTION();
 
-    if (!LLINT_ALWAYS_ACCESS_SLOW
+    if (Options::useLLIntICs()
         && baseValue.isCell()
         && slot.isCacheablePut()
         && subscript.isCell()
@@ -1372,7 +1372,7 @@ LLINT_SLOW_PATH_DECL(slow_path_set_private_brand)
     baseObject->setPrivateBrand(globalObject, brand);
     LLINT_CHECK_EXCEPTION();
 
-    if (!LLINT_ALWAYS_ACCESS_SLOW && !oldStructure->isDictionary()) {
+    if (Options::useLLIntICs() && !oldStructure->isDictionary()) {
         GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
         Structure* newStructure = baseObject->structure(vm);
 
@@ -1415,7 +1415,7 @@ LLINT_SLOW_PATH_DECL(slow_path_check_private_brand)
     // Since a brand can't ever be removed from an object, it's safe to
     // rely on StructureID even if it's an uncacheable dictionary.
     Structure* structure = baseObject->structure(vm);
-    if (!LLINT_ALWAYS_ACCESS_SLOW) {
+    if (Options::useLLIntICs()) {
         GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
 
         metadata.m_structureID = structure->id();

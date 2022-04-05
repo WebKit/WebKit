@@ -324,7 +324,10 @@ void BaselineCallLinkInfo::initialize(VM& vm, CallType callType, BytecodeIndex b
         m_frameShuffleData = makeUnique<CallFrameShuffleData>(*frameShuffleData);
     }
 #endif
-    setSlowPathCallDestination(vm.getCTILinkCall().code());
+    if (LIKELY(Options::useLLIntICs()))
+        setSlowPathCallDestination(vm.getCTILinkCall().code());
+    else
+        setSlowPathCallDestination(vm.getCTIVirtualCall(callMode()).retagged<JSEntryPtrTag>().code());
     // If JIT is disabled, we should not support dynamically generated call IC.
     if (!Options::useJIT())
         disallowStubs();
