@@ -1,3 +1,14 @@
+2022-04-05  Eric Carlson  <eric.carlson@apple.com>
+
+        5 Media API tests are flakily timing out on iOS14
+        https://bugs.webkit.org/show_bug.cgi?id=230321
+        <rdar://problem/83168970>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/ios/WKWebViewPausePlayingAudioTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-05  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE changes.diff contains differences that are from stale files or unneeded

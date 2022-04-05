@@ -672,7 +672,7 @@ void WebPageProxy::applicationDidEnterBackgroundForMedia()
 void WebPageProxy::applicationWillEnterForegroundForMedia()
 {
     bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
-    WEBPAGEPROXY_RELEASE_LOG(ViewState, "applicationDidEnterBackgroundForMedia: isSuspendedUnderLock? %d", isSuspendedUnderLock);
+    WEBPAGEPROXY_RELEASE_LOG(ViewState, "applicationWillEnterForegroundForMedia: isSuspendedUnderLock? %d", isSuspendedUnderLock);
 
     m_process->send(Messages::WebPage::ApplicationWillEnterForegroundForMedia(isSuspendedUnderLock), m_webPageID);
 }

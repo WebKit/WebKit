@@ -1,3 +1,20 @@
+2022-04-05  Eric Carlson  <eric.carlson@apple.com>
+
+        5 Media API tests are flakily timing out on iOS14
+        https://bugs.webkit.org/show_bug.cgi?id=230321
+        <rdar://problem/83168970>
+
+        Reviewed by Jer Noble.
+
+        Un-skipped API test WKWebViewPausePlayingAudioTests.OutOfWindow
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationWillEnterForegroundForMedia): Log the correct name.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackgroundForMedia): Call PlatformMediaSessionManager.
+        (WebKit::WebPage::applicationWillEnterForegroundForMedia): Ditto.
+
 2022-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Pass an IOSurfacePool to ImageBuffer::releaseBufferToPool()
