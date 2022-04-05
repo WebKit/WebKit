@@ -1,3 +1,15 @@
+2022-04-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Fix Apple's internal build
+        https://bugs.webkit.org/show_bug.cgi?id=238786
+        <rdar://problem/91271543>
+
+        Unreviewed build fix.
+
+        Copy FRAMEWORK_SEARCH_PATHS and SYSTEM_FRAMEWORK_SEARCH_PATHS from WebCore.xcconfig.
+
+        * Configurations/WebGPU.xcconfig:
+
 2022-04-01  Michael Saboff  <msaboff@apple.com>
 
         Stop copying StagedFrameworks to the secondary path by default
