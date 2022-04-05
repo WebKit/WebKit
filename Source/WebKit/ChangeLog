@@ -1,3 +1,16 @@
+2022-04-05  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Mark "backend" parameters of web view constructors not nullable
+        https://bugs.webkit.org/show_bug.cgi?id=238734
+
+        Reviewed by Martin Robinson.
+
+        No new tests needed.
+
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp: Annotate web view constructors with (not nullable)
+        and while at it, fix documentation links, and improve the wording to better follow gi-docgen
+        copywriting style. Remove the mentions to the single process model, which is deprecated anyway.
+
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
         Stop generating WebKit system feature flags plists
