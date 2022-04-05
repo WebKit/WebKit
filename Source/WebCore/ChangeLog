@@ -1,3 +1,19 @@
+2022-04-05  Andres Gonzalez  <andresg_22@apple.com>
+
+        Make subtrees collapsible in the output of the AXLogger streamSubtree.
+        https://bugs.webkit.org/show_bug.cgi?id=238829
+        <rdar://problem/91310566>
+
+        Reviewed by Chris Fleizach.
+
+        Moved the TextStream::GroupScope from the method logging an individual
+        object to the method logging the hierarchy. This allows to collapse the
+        entire subtree rooted at a given object.
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::streamAXCoreObject):
+        (WebCore::streamSubtree):
+
 2022-04-05  Antti Koivisto  <antti@apple.com>
 
         Avoid unnecessary traversal when updating list markers

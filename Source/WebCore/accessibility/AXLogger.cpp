@@ -564,8 +564,6 @@ TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
 
 void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const OptionSet<AXStreamOptions>& options)
 {
-    TextStream::GroupScope groupScope(stream);
-
     if (options & AXStreamOptions::ObjectID)
         stream << "objectID " << object.objectID();
 
@@ -611,6 +609,7 @@ void streamSubtree(TextStream& stream, const RefPtr<AXCoreObject>& object, const
 
     stream.increaseIndent();
 
+    TextStream::GroupScope groupScope(stream);
     streamAXCoreObject(stream, *object, options);
     for (auto& child : object->children(false))
         streamSubtree(stream, child, options);
