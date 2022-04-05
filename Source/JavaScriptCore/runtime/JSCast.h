@@ -89,6 +89,7 @@ struct JSTypeRange {
     macro(RegExpObject, JSType::RegExpObjectType, JSType::RegExpObjectType) \
     macro(JSWebAssemblyModule, JSType::WebAssemblyModuleType, JSType::WebAssemblyModuleType) \
     macro(DirectArguments, JSType::DirectArgumentsType, JSType::DirectArgumentsType) \
+    macro(FunctionExecutable, JSType::FunctionExecutableType, JSType::FunctionExecutableType) \
     macro(ScopedArguments, JSType::ScopedArgumentsType, JSType::ScopedArgumentsType) \
     macro(ClonedArguments, JSType::ClonedArgumentsType, JSType::ClonedArgumentsType) \
     macro(JSGlobalObject, JSType::GlobalObjectType, JSType::GlobalObjectType) \

@@ -288,25 +288,29 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     
     // Now we know we have a JSFunction.
 
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT4);
-    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT4, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT4, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT4);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT0);
+    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT0);
     hasExecutable.link(&jit);
     jit.loadPtr(
-        CCallHelpers::Address(GPRInfo::regT4, ExecutableBase::offsetOfJITCodeWithArityCheckFor(kind)),
+        CCallHelpers::Address(GPRInfo::regT0, ExecutableBase::offsetOfJITCodeWithArityCheckFor(kind)),
         GPRInfo::regT4);
     slowCase.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT4));
     
-    // Now we know that we have a CodeBlock, and we're committed to making a fast
-    // call.
+    // Now we know that we have a CodeBlock, and we're committed to making a fast call.
+
+    auto isNative = jit.branchIfNotType(GPRInfo::regT0, FunctionExecutableType);
+    jit.loadPtr(
+        CCallHelpers::Address(GPRInfo::regT0, FunctionExecutable::offsetOfCodeBlockFor(kind)),
+        GPRInfo::regT5);
 
     // Make a tail call. This will return back to JIT code.
-    JSInterfaceJIT::Label callCode(jit.label());
     emitPointerValidation(jit, GPRInfo::regT4, JSEntryPtrTag);
     if (isTailCall) {
         jit.preserveReturnAddressAfterCall(GPRInfo::regT0);
-        jit.prepareForTailCallSlow(GPRInfo::regT4);
+        jit.prepareForTailCallSlow(GPRInfo::regT4, GPRInfo::regT5);
     }
+    jit.storePtr(GPRInfo::regT5, CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
     jit.farJump(GPRInfo::regT4, JSEntryPtrTag);
 
     // NullSetterFunctionType does not get the fast path support. But it is OK since using NullSetterFunctionType is extremely rare.
@@ -314,7 +318,14 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
     slowCase.append(jit.branchIfNotType(GPRInfo::regT0, InternalFunctionType));
     void* executableAddress = vm.getCTIInternalFunctionTrampolineFor(kind).executableAddress();
     jit.move(CCallHelpers::TrustedImmPtr(executableAddress), GPRInfo::regT4);
-    jit.jump().linkTo(callCode, &jit);
+
+    isNative.link(&jit);
+    emitPointerValidation(jit, GPRInfo::regT4, JSEntryPtrTag);
+    if (isTailCall) {
+        jit.preserveReturnAddressAfterCall(GPRInfo::regT0);
+        jit.prepareForTailCallSlow(GPRInfo::regT4);
+    }
+    jit.farJump(GPRInfo::regT4, JSEntryPtrTag);
 
     slowCase.link(&jit);
     
@@ -1386,11 +1397,20 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     jit.loadPtr(
         CCallHelpers::Address(
             GPRInfo::regT0, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)),
-        GPRInfo::regT0);
-    CCallHelpers::Jump noCode = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT0);
+        GPRInfo::regT1);
+    CCallHelpers::Jump noCode = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT1);
+
+    auto isNative = jit.branchIfNotType(GPRInfo::regT0, FunctionExecutableType);
+    jit.loadPtr(
+        CCallHelpers::Address(
+            GPRInfo::regT0, FunctionExecutable::offsetOfCodeBlockForCall()),
+        GPRInfo::regT2);
+    jit.storeCell(GPRInfo::regT2, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+
+    isNative.link(&jit);
     
-    emitPointerValidation(jit, GPRInfo::regT0, JSEntryPtrTag);
-    jit.call(GPRInfo::regT0, JSEntryPtrTag);
+    emitPointerValidation(jit, GPRInfo::regT1, JSEntryPtrTag);
+    jit.call(GPRInfo::regT1, JSEntryPtrTag);
 
     jit.emitFunctionEpilogue();
     jit.ret();
@@ -1532,33 +1552,45 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     jit.loadPtr(
         CCallHelpers::Address(
             GPRInfo::regT1, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)),
-        GPRInfo::regT1);
-    auto codeExists = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT1);
+        GPRInfo::regT2);
+    auto codeExists = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT2);
 
     // The calls to operationGetWrappedValueForTarget above may GC, and any GC can potentially jettison the JIT code in the target JSFunction.
     // If we find that the JIT code is null (i.e. has been jettisoned), then we need to re-materialize it for the call below. Note that we know
     // that operationMaterializeRemoteFunctionTargetCode should be able to re-materialize the JIT code (except for any OOME) because we only
     // went down this code path after we found a non-null JIT code (in the noCode check) above i.e. it should be possible to materialize the JIT code.
+    // FIXME: Windows x64 is not supported since operationMaterializeRemoteFunctionTargetCode returns SlowPathReturnType.
     jit.setupArguments<decltype(operationMaterializeRemoteFunctionTargetCode)>(GPRInfo::regT0);
     jit.prepareCallOperation(vm);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeRemoteFunctionTargetCode)), GPRInfo::nonArgGPR0);
     emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     exceptionChecks.append(jit.emitJumpIfException(vm));
-    jit.move(GPRInfo::returnValueGPR, GPRInfo::regT1);
+    jit.storeCell(GPRInfo::returnValueGPR2, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+    jit.move(GPRInfo::returnValueGPR, GPRInfo::regT2);
+    auto materialized = jit.jump();
 
     codeExists.link(&jit);
+    auto isNative = jit.branchIfNotType(GPRInfo::regT1, FunctionExecutableType);
+    jit.loadPtr(
+        CCallHelpers::Address(
+            GPRInfo::regT1, FunctionExecutable::offsetOfCodeBlockForCall()),
+        GPRInfo::regT3);
+    jit.storeCell(GPRInfo::regT3, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+
+    isNative.link(&jit);
+    materialized.link(&jit);
     // Based on the check above, we should be good with this. On ARM64, emitPointerValidation will do this.
 #if ASSERT_ENABLED && !CPU(ARM64E)
     {
-        CCallHelpers::Jump checkNotNull = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT1);
+        CCallHelpers::Jump checkNotNull = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT2);
         jit.abortWithReason(TGInvalidPointer);
         checkNotNull.link(&jit);
     }
 #endif
 
-    emitPointerValidation(jit, GPRInfo::regT1, JSEntryPtrTag);
-    jit.call(GPRInfo::regT1, JSEntryPtrTag);
+    emitPointerValidation(jit, GPRInfo::regT2, JSEntryPtrTag);
+    jit.call(GPRInfo::regT2, JSEntryPtrTag);
 
     // Wrap return value
 #if USE(JSVALUE64)

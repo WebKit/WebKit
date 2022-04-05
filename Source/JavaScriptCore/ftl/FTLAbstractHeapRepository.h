@@ -78,7 +78,7 @@ namespace JSC { namespace FTL {
     macro(DirectArguments_mappedArguments, DirectArguments::offsetOfMappedArguments()) \
     macro(DirectArguments_modifiedArgumentsDescriptor, DirectArguments::offsetOfModifiedArgumentsDescriptor()) \
     macro(FunctionExecutable_rareData, FunctionExecutable::offsetOfRareData()) \
-    macro(FunctionExecutableRareData_asString, FunctionExecutable::offsetOfAsStringInRareData()) \
+    macro(FunctionExecutableRareData_asString, FunctionExecutable::RareData::offsetOfAsString()) \
     macro(FunctionRareData_allocator, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfAllocator()) \
     macro(FunctionRareData_structure, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfStructure()) \
     macro(FunctionRareData_prototype, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfPrototype()) \

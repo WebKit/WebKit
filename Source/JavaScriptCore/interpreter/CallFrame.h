@@ -23,6 +23,7 @@
 #pragma once
 
 #include "AbstractPC.h"
+#include "CPU.h"
 #include "CalleeBits.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
@@ -104,6 +105,41 @@ namespace JSC  {
         static constexpr int sizeInRegisters = 2 * sizeof(CPURegister) / sizeof(Register);
     };
     static_assert(CallerFrameAndPC::sizeInRegisters == sizeof(CallerFrameAndPC) / sizeof(Register), "CallerFrameAndPC::sizeInRegisters is incorrect.");
+    static_assert(sizeof(CallerFrameAndPC) >= prologueStackPointerDelta());
+#if !CPU(X86_64)
+    // Only x86_64 "call" pushes return address on the stack. Other architecture pushes in the function prologue after the call.
+    static_assert(sizeof(CallerFrameAndPC) == prologueStackPointerDelta());
+#endif
+
+    //      Layout of CallFrame
+    //
+    //   |          ......            |   |
+    //   +----------------------------+   |
+    //   |           argN             |   v  lower address
+    //   +----------------------------+
+    //   |           arg1             |
+    //   +----------------------------+
+    //   |           arg0             |
+    //   +----------------------------+
+    //   |           this             |
+    //   +----------------------------+
+    //   | argumentCountIncludingThis |
+    //   +----------------------------+
+    //   |          callee            |
+    //   +----------------------------+
+    //   |        codeBlock           |
+    //   +----------------------------+
+    //   |      return-address        |
+    //   +----------------------------+
+    //   |       callerFrame          |
+    //   +----------------------------+  <- callee's cfr is pointing this address
+    //   |          local0            |
+    //   +----------------------------+
+    //   |          local1            |
+    //   +----------------------------+
+    //   |          localN            |
+    //   +----------------------------+
+    //   |          ......            |
 
     enum class CallFrameSlot {
         codeBlock = CallerFrameAndPC::sizeInRegisters,

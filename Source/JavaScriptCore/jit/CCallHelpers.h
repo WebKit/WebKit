@@ -744,11 +744,19 @@ public:
         farJump(GPRInfo::regT1, ExceptionHandlerPtrTag);
     }
 
-    void prepareForTailCallSlow(GPRReg preservedGPR = InvalidGPRReg)
+    void prepareForTailCallSlow(GPRReg preservedGPR1 = InvalidGPRReg, GPRReg preservedGPR2 = InvalidGPRReg)
     {
-        GPRReg temp1 = preservedGPR == GPRInfo::regT0 ? GPRInfo::regT3 : GPRInfo::regT0;
-        GPRReg temp2 = preservedGPR == GPRInfo::regT1 ? GPRInfo::regT3 : GPRInfo::regT1;
-        GPRReg temp3 = preservedGPR == GPRInfo::regT2 ? GPRInfo::regT3 : GPRInfo::regT2;
+        RegisterSet preserved;
+        if (preservedGPR1 != InvalidGPRReg)
+            preserved.add(preservedGPR1);
+        if (preservedGPR2 != InvalidGPRReg)
+            preserved.add(preservedGPR2);
+
+        GPRReg temp1 = selectScratchGPR(preserved);
+        preserved.add(temp1);
+        GPRReg temp2 = selectScratchGPR(preserved);
+        preserved.add(temp2);
+        GPRReg temp3 = selectScratchGPR(preserved);
 
         GPRReg newFramePointer = temp1;
         GPRReg newFrameSizeGPR = temp2;

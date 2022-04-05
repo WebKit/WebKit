@@ -2217,7 +2217,7 @@ void SpeculativeJIT::compileCurrentBlock()
         m_jit.addPtr(CCallHelpers::TrustedImm32(-(m_jit.graph().frameRegisterCount() * sizeof(Register))), GPRInfo::callFrameRegister,  CCallHelpers::stackPointerRegister);
         m_jit.emitSaveCalleeSaves();
         m_jit.emitMaterializeTagCheckRegisters();
-        m_jit.emitPutToCallFrameHeader(m_jit.codeBlock(), CallFrameSlot::codeBlock);
+        // CodeBlock in the stack is already replaced in OSR entry.
     }
 
     m_stream->appendAndLog(VariableEvent::reset());
@@ -11298,7 +11298,7 @@ void SpeculativeJIT::compileFunctionToString(Node* node)
 
     m_jit.loadPtr(MacroAssembler::Address(executable.gpr(), FunctionExecutable::offsetOfRareData()), result.gpr());
     slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, result.gpr()));
-    m_jit.loadPtr(MacroAssembler::Address(result.gpr(), FunctionExecutable::offsetOfAsStringInRareData()), result.gpr());
+    m_jit.loadPtr(MacroAssembler::Address(result.gpr(), FunctionExecutable::RareData::offsetOfAsString()), result.gpr());
     JITCompiler::Jump continuation = m_jit.jump();
 
     isNativeExecutable.link(&m_jit);

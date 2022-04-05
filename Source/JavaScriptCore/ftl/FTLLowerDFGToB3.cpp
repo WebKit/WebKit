@@ -198,15 +198,14 @@ public:
 
         {
             m_proc.setNumEntrypoints(m_graph.m_numberOfEntrypoints);
-            CodeBlock* codeBlock = m_graph.m_codeBlock;
 
             Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>(
-                [codeBlock] (CCallHelpers& jit, B3::Air::Code& code) {
+                [](CCallHelpers& jit, B3::Air::Code& code) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 
                     jit.emitSave(code.calleeSaveRegisterAtOffsetList());
-                    jit.emitPutToCallFrameHeader(codeBlock, VirtualRegister(CallFrameSlot::codeBlock));
+                    // CodeBlock in the stack is already replaced in FTL::prepareOSREntry.
                 });
 
             for (unsigned catchEntrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeIndex.keys()) {
@@ -272,9 +271,7 @@ public:
         m_proc.addFastConstant(m_numberTag->key());
         m_proc.addFastConstant(m_notCellMask->key());
         
-        // We don't want the CodeBlock to have a weak pointer to itself because
-        // that would cause it to always get collected.
-        m_out.storePtr(m_out.constIntPtr(bitwise_cast<intptr_t>(codeBlock())), addressFor(VirtualRegister(CallFrameSlot::codeBlock)));
+        // When running FTL code, we already store CodeBlock to CallFrameSlot::codeBlock.
 
         // Stack Overflow Check.
         unsigned exitFrameSize = m_graph.requiredRegisterCountForExit() * sizeof(Register);
@@ -292,6 +289,13 @@ public:
 
                 unsigned ftlFrameSize = params.proc().frameSize();
                 unsigned maxFrameSize = std::max(exitFrameSize, ftlFrameSize);
+
+#if ASSERT_ENABLED
+                jit.probeDebug([=](Probe::Context& ctx) {
+                    CodeBlock* codeBlock = ctx.fp<CallFrame*>()->codeBlock();
+                    RELEASE_ASSERT(codeBlock->jitType() == JITType::FTLJIT);
+                });
+#endif
 
                 jit.addPtr(MacroAssembler::TrustedImm32(-maxFrameSize), fp, scratch);
                 MacroAssembler::JumpList stackOverflow;

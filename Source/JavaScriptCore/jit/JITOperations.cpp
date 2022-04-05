@@ -158,7 +158,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSR
     RELEASE_AND_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, globalObject, JSValue::decode(encodedValue))));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, void*, (JSRemoteFunction* callee))
+JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, SlowPathReturnType, (JSRemoteFunction* callee))
 {
     JSGlobalObject* globalObject = callee->globalObject();
     VM& vm = globalObject->vm();
@@ -175,14 +175,14 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, void*, (J
     // Force the executable to cache its arity entrypoint.
     {
         DeferTraps deferTraps(vm); // We can't jettison any code until after we link the call.
+        CodeBlock* codeBlockSlot = nullptr;
         if (!executable->isHostFunction()) {
             JSScope* scope = targetFunction->scopeUnchecked();
             FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-            CodeBlock* codeBlockSlot = nullptr;
             functionExecutable->prepareForExecution<FunctionExecutable>(vm, targetFunction, scope, CodeForCall, codeBlockSlot);
-            RETURN_IF_EXCEPTION(throwScope, nullptr);
+            RETURN_IF_EXCEPTION(throwScope, encodeResult(nullptr, nullptr));
         }
-        return executable->entrypointFor(CodeForCall, MustCheckArity).executableAddress();
+        return encodeResult(executable->entrypointFor(CodeForCall, MustCheckArity).executableAddress(), codeBlockSlot);
     }
 }
 

@@ -168,5 +168,23 @@ ALWAYS_INLINE int64_t hwL3CacheSize() { return 0; }
 ALWAYS_INLINE int32_t hwPhysicalCPUMax() { return kernTCSMAwareNumberOfProcessorCores(); }
 #endif
 
+constexpr size_t prologueStackPointerDelta()
+{
+#if ENABLE(C_LOOP)
+    // Prologue saves the framePointerRegister and linkRegister
+    return 2 * sizeof(CPURegister);
+#elif CPU(X86_64)
+    // Prologue only saves the framePointerRegister
+    return sizeof(CPURegister);
+#elif CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)
+    // Prologue saves the framePointerRegister and linkRegister
+    return 2 * sizeof(CPURegister);
+#else
+#error unsupported architectures
+#endif
+}
+
+
+
 } // namespace JSC
 

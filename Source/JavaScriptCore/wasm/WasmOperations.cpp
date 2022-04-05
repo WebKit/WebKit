@@ -192,14 +192,14 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     // pop(framePointerRegister);
     context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
     context.sp() = framePointer + 1;
-    static_assert(AssemblyHelpers::prologueStackPointerDelta() == sizeof(void*) * 1);
+    static_assert(prologueStackPointerDelta() == sizeof(void*) * 1);
 #elif CPU(ARM64E) || CPU(ARM64)
     // move(framePointerRegister, stackPointerRegister);
     // popPair(framePointerRegister, linkRegister);
     context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
     context.gpr(ARM64Registers::lr) = bitwise_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
-    static_assert(AssemblyHelpers::prologueStackPointerDelta() == sizeof(void*) * 2);
+    static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
 #if CPU(ARM64E)
     // LR needs to be untagged since OSR entry function prologue will tag it with SP. This is similar to tail-call.
     context.gpr(ARM64Registers::lr) = bitwise_cast<UCPURegister>(untagCodePtrWithStackPointerForJITCall(context.gpr<void*>(ARM64Registers::lr), context.sp()));
@@ -210,7 +210,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
     context.gpr(RISCV64Registers::ra) = bitwise_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
-    static_assert(AssemblyHelpers::prologueStackPointerDelta() == sizeof(void*) * 2);
+    static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
 #else
 #error Unsupported architecture.
 #endif

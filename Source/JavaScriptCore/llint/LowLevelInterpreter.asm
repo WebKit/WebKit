@@ -170,6 +170,7 @@ const StackAlignmentSlots = constexpr (stackAlignmentRegisters())
 const StackAlignmentMask = StackAlignment - 1
 
 const CallerFrameAndPCSize = constexpr (sizeof(CallerFrameAndPC))
+const PrologueStackPointerDelta = constexpr (prologueStackPointerDelta())
 
 const CallerFrame = 0
 const ReturnPC = CallerFrame + MachineRegisterSize
@@ -566,6 +567,7 @@ const ArrayType = constexpr ArrayType
 const DerivedArrayType = constexpr DerivedArrayType
 const ProxyObjectType = constexpr ProxyObjectType
 const HeapBigIntType = constexpr HeapBigIntType
+const FunctionExecutableType = constexpr FunctionExecutableType
 
 # The typed array types need to be numbered in a particular order because of the manually written
 # switch statement in get_by_val and put_by_val.
@@ -1192,7 +1194,8 @@ macro callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVi
     end
 end
 
-macro prepareForRegularCall(temp1, temp2, temp3, temp4)
+macro prepareForRegularCall(temp1, temp2, temp3, temp4, storeCodeBlock)
+    storeCodeBlock(CodeBlock + PayloadOffset - CallerFrameAndPCSize[sp])
 end
 
 macro invokeForRegularCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
@@ -1208,7 +1211,7 @@ end
 
 # sp points to the new frame + CallerFrameAndPCSize
 # We leave cfr temp4 to use it for untagging.
-macro prepareForTailCall(temp1, temp2, temp3, temp4)
+macro prepareForTailCall(temp1, temp2, temp3, temp4, storeCodeBlock)
     restoreCalleeSavesUsedByLLInt()
 
     loadi PayloadOffset + ArgumentCountIncludingThis[cfr], temp2
@@ -1263,6 +1266,8 @@ macro prepareForTailCall(temp1, temp2, temp3, temp4)
     end
 
     move temp1, sp
+
+    storeCodeBlock(CodeBlock + PayloadOffset - PrologueStackPointerDelta[sp])
 end
 
 macro invokeForTailCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
@@ -1303,7 +1308,7 @@ macro slowPathForCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtu
         macro (callee, calleeFramePtr)
             btpz calleeFramePtr, .dontUpdateSP
             move calleeFramePtr, sp
-            prepareCall(t2, t3, t4, t1)
+            prepareCall(t2, t3, t4, t1, macro(address) end)
         .dontUpdateSP:
             callTargetFunction(%opcodeName%_slow, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, JSEntrySlowPathPtrTag)
         end)
@@ -1482,44 +1487,6 @@ macro assertNotConstant(size, index)
     end)
 end
 
-macro functionForCallCodeBlockGetter(targetRegister)
-    if JSVALUE64
-        loadp Callee[cfr], targetRegister
-    else
-        loadp Callee + PayloadOffset[cfr], targetRegister
-    end
-    loadp JSFunction::m_executableOrRareData[targetRegister], targetRegister
-    btpz targetRegister, (constexpr JSFunction::rareDataTag), .isExecutable
-    loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[targetRegister], targetRegister
-.isExecutable:
-    loadp FunctionExecutable::m_codeBlockForCall[targetRegister], targetRegister
-end
-
-macro functionForConstructCodeBlockGetter(targetRegister)
-    if JSVALUE64
-        loadp Callee[cfr], targetRegister
-    else
-        loadp Callee + PayloadOffset[cfr], targetRegister
-    end
-    loadp JSFunction::m_executableOrRareData[targetRegister], targetRegister
-    btpz targetRegister, (constexpr JSFunction::rareDataTag), .isExecutable
-    loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[targetRegister], targetRegister
-.isExecutable:
-    loadp FunctionExecutable::m_codeBlockForConstruct[targetRegister], targetRegister
-end
-
-macro notFunctionCodeBlockGetter(targetRegister)
-    loadp CodeBlock[cfr], targetRegister
-end
-
-macro functionCodeBlockSetter(sourceRegister)
-    storep sourceRegister, CodeBlock[cfr]
-end
-
-macro notFunctionCodeBlockSetter(sourceRegister)
-    # Nothing to do!
-end
-
 macro convertCalleeToVM(callee)
     btpnz callee, (constexpr PreciseAllocation::halfAlignment), .preciseAllocation
     andp MarkedBlockMask, callee
@@ -1532,7 +1499,7 @@ end
 
 # Do the bare minimum required to execute code. Sets up the PC, leave the CodeBlock*
 # in t1. May also trigger prologue entry OSR.
-macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
+macro prologue(osrSlowPath, traceSlowPath)
     # Set up the call frame and check if we should OSR.
     preserveCallerPCAndCFR()
 
@@ -1541,8 +1508,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         callSlowPath(traceSlowPath)
         addp maxFrameExtentForSlowPathCall, sp
     end
-    codeBlockGetter(t1)
-    codeBlockSetter(t1)
+    loadp CodeBlock[cfr], t1
     if not (C_LOOP or C_LOOP_WIN)
         loadp CodeBlock::m_unlinkedCode[t1], t0
         baddis 5, (UnlinkedCodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter)[t0], .continue
@@ -1582,7 +1548,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
             jmp r0, JSEntryPtrTag
         end
     .recover:
-        notFunctionCodeBlockGetter(t1)
+        loadp CodeBlock[cfr], t1
     .continue:
     end
 
@@ -1621,7 +1587,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
 .stackHeightOKGetCodeBlock:
     # Stack check slow path returned that the stack was ok.
     # Since they were clobbered, need to get CodeBlock and new sp
-    notFunctionCodeBlockGetter(t1)
+    loadp CodeBlock[cfr], t1
     getFrameRegisterSizeForCodeBlock(t1, t0)
     subp cfr, t0, t0
 
@@ -2024,39 +1990,39 @@ noWide(llint_op_wide32)
 noWide(llint_op_enter)
 
 op(llint_program_prologue, macro ()
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
+    prologue(_llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
 end)
 
 
 op(llint_module_program_prologue, macro ()
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
+    prologue(_llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
 end)
 
 
 op(llint_eval_prologue, macro ()
-    prologue(notFunctionCodeBlockGetter, notFunctionCodeBlockSetter, _llint_entry_osr, _llint_trace_prologue)
+    prologue(_llint_entry_osr, _llint_trace_prologue)
     dispatch(0)
 end)
 
 
 op(llint_function_for_call_prologue, macro ()
-    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call, _llint_trace_prologue_function_for_call)
+    prologue(_llint_entry_osr_function_for_call, _llint_trace_prologue_function_for_call)
     functionInitialization(0)
     dispatch(0)
 end)
     
 
 op(llint_function_for_construct_prologue, macro ()
-    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct, _llint_trace_prologue_function_for_construct)
+    prologue(_llint_entry_osr_function_for_construct, _llint_trace_prologue_function_for_construct)
     functionInitialization(1)
     dispatch(0)
 end)
     
 
 op(llint_function_for_call_arity_check, macro ()
-    prologue(functionForCallCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call)
+    prologue(_llint_entry_osr_function_for_call_arityCheck, _llint_trace_arityCheck_for_call)
     functionArityCheck(llint_function_for_call_arity_check, .functionForCallBegin, _slow_path_call_arityCheck)
 .functionForCallBegin:
     functionInitialization(0)
@@ -2064,7 +2030,7 @@ op(llint_function_for_call_arity_check, macro ()
 end)
 
 op(llint_function_for_construct_arity_check, macro ()
-    prologue(functionForConstructCodeBlockGetter, functionCodeBlockSetter, _llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct)
+    prologue(_llint_entry_osr_function_for_construct_arityCheck, _llint_trace_arityCheck_for_construct)
     functionArityCheck(llint_function_for_construct_arity_check, .functionForConstructBegin, _slow_path_construct_arityCheck)
 .functionForConstructBegin:
     functionInitialization(1)
@@ -2525,7 +2491,7 @@ macro linkSlowPathFor(function)
     untagReturnAddress sp
     btpz r1, .doNotTrash
     preserveReturnAddressAfterCall(t1)
-    prepareForTailCall(t1, t2, t3, t4)
+    prepareForTailCall(t1, t2, t3, t4, macro(address) end)
     untagReturnAddress t4
 .doNotTrash:
     jmp t0, JSEntryPtrTag
@@ -2534,7 +2500,7 @@ end
 # 64bit:t0 32bit(t0,t1) is callee
 # t2 is CallLinkInfo*
 # t3 is caller's JSGlobalObject
-macro virtualThunkFor(offsetOfJITCodeWithArityCheck, internalFunctionTrampoline, prepareCall, slowCase)
+macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internalFunctionTrampoline, prepareCall, slowCase)
     addi 1, CallLinkInfo::m_slowPathCount[t2]
     if JSVALUE64
         btqnz t0, NotCellMask, slowCase
@@ -2542,14 +2508,19 @@ macro virtualThunkFor(offsetOfJITCodeWithArityCheck, internalFunctionTrampoline,
         bineq t1, CellTag, slowCase
     end
     bbneq JSCell::m_type[t0], JSFunctionType, .notJSFunction
-    loadp JSFunction::m_executableOrRareData[t0], t1
-    btpz t1, (constexpr JSFunction::rareDataTag), .isExecutable
-    loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[t1], t1
+    loadp JSFunction::m_executableOrRareData[t0], t5
+    btpz t5, (constexpr JSFunction::rareDataTag), .isExecutable
+    loadp (FunctionRareData::m_executable - (constexpr JSFunction::rareDataTag))[t5], t5
 .isExecutable:
-    loadp offsetOfJITCodeWithArityCheck[t1], t1
-    btpz t1, slowCase
+    loadp offsetOfJITCodeWithArityCheck[t5], t4
+    btpz t4, slowCase # When jumping to slowCase, t0, t1, t2, t3 needs to be unmodified.
+    move t4, t1
+    move 0, t0
+    bbneq JSCell::m_type[t5], FunctionExecutableType, .callCode
+    loadp offsetOfCodeBlock[t5], t0
 .callCode:
     prepareCall(t5, t2, t3, t4)
+    storep t0, CodeBlock + PayloadOffset - PrologueStackPointerDelta[sp]
     jmp t1, JSEntryPtrTag
 .notJSFunction:
     bbneq JSCell::m_type[t0], InternalFunctionType, slowCase
@@ -2568,7 +2539,7 @@ end)
 # t2 is CallLinkInfo*
 # t3 is caller's JSGlobalObject
 op(llint_virtual_call_trampoline, macro ()
-    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, _llint_internal_function_call_trampoline, macro (temp1, temp2, temp3, temp4) end, .slowCase)
+    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, macro (temp1, temp2, temp3, temp4) end, .slowCase)
 .slowCase:
     linkSlowPathFor(_llint_virtual_call)
 end)
@@ -2577,7 +2548,7 @@ end)
 # t2 is CallLinkInfo*
 # t3 is caller's JSGlobalObject
 op(llint_virtual_construct_trampoline, macro ()
-    virtualThunkFor(ExecutableBase::m_jitCodeForConstructWithArityCheck, _llint_internal_function_construct_trampoline, macro (temp1, temp2, temp3, temp4) end, .slowCase)
+    virtualThunkFor(ExecutableBase::m_jitCodeForConstructWithArityCheck, FunctionExecutable::m_codeBlockForConstruct, _llint_internal_function_construct_trampoline, macro (temp1, temp2, temp3, temp4) end, .slowCase)
 .slowCase:
     linkSlowPathFor(_llint_virtual_call)
 end)
@@ -2586,9 +2557,9 @@ end)
 # t2 is CallLinkInfo*
 # t3 is caller's JSGlobalObject
 op(llint_virtual_tail_call_trampoline, macro ()
-    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, _llint_internal_function_call_trampoline, macro (temp1, temp2, temp3, temp4)
+    virtualThunkFor(ExecutableBase::m_jitCodeForCallWithArityCheck, FunctionExecutable::m_codeBlockForCall, _llint_internal_function_call_trampoline, macro (temp1, temp2, temp3, temp4)
         preserveReturnAddressAfterCall(temp1)
-        prepareForTailCall(temp1, temp2, temp3, temp4)
+        prepareForTailCall(temp1, temp2, temp3, temp4, macro(address) end)
         untagReturnAddress temp4
     end, .slowCase)
 .slowCase:

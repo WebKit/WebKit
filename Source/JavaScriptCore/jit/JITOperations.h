@@ -161,7 +161,7 @@ JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowErrorFromThunk, void, (JSGl
 JSC_DECLARE_JIT_OPERATION(operationThrowIteratorResultIsNotObject, void, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSRemoteFunction*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSRemoteFunction*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, void*, (JSRemoteFunction*));
+JSC_DECLARE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, SlowPathReturnType, (JSRemoteFunction*));
 JSC_DECLARE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction*));
 
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock*));

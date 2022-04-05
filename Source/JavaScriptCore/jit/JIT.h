@@ -261,8 +261,6 @@ namespace JSC {
         void loadCodeBlockConstantTag(VirtualRegister, RegisterID);
 #endif
 
-        void emitPutCodeBlockToFrameInPrologue(GPRReg result = regT0);
-
         void exceptionCheck(Jump jumpToHandler)
         {
             m_exceptionChecks.append(jumpToHandler);

@@ -195,8 +195,8 @@ ALWAYS_INLINE SlowPathReturnType virtualForWithFunction(JSGlobalObject* globalOb
 
     DeferTraps deferTraps(vm); // We can't jettison if we're going to call this CodeBlock.
 
-    if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
-        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+    if (!executable->isHostFunction()) {
+        FunctionExecutable* functionExecutable = jsCast<FunctionExecutable*>(executable);
 
         auto handleThrowException = [&] () {
             void* throwTarget = vm.getCTIThrowExceptionFromCallSlowPath().code().executableAddress();
@@ -212,6 +212,7 @@ ALWAYS_INLINE SlowPathReturnType virtualForWithFunction(JSGlobalObject* globalOb
         functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, kind, *codeBlockSlot);
         RETURN_IF_EXCEPTION(throwScope, handleThrowException());
     }
+
     // FIXME: Support wasm IC.
     // https://bugs.webkit.org/show_bug.cgi?id=220339
     return encodeResult(executable->entrypointFor(

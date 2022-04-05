@@ -1,3 +1,82 @@
+2022-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Store CodeBlock in caller side
+        https://bugs.webkit.org/show_bug.cgi?id=238535
+
+        Reviewed by Saam Barati.
+
+        This patch changes the calling convention of JS functions. Now, we need to store CodeBlock to the stack in the caller side instead.
+        This helps LLInt, unlinked Baseline, and DFG since we no longer need to load CodeBlock from callee via costly dependent loads: unlinked
+        ones cannot embed CodeBlock raw pointer into the machine code itself. So we needed to load it from callee. But now, caller puts the
+        right CodeBlock pointer into the stack so we do not need that code. And in most cases, caller already knows CodeBlock since it is tied
+        to actually used machine code pointer.
+        OSR entry also materializes CodeBlock in the stack in the OSR entry side instead of doing it in the callee side.
+
+        This contributes to 0.3% progression in Speedometer2.
+
+        * assembler/CPU.h:
+        (JSC::prologueStackPointerDelta):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setMonomorphicCallee):
+        (JSC::CallLinkInfo::clearCallee):
+        (JSC::CallLinkInfo::revertCallToStub):
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::CallLinkInfo::setStub):
+        (JSC::OptimizingCallLinkInfo::emitDirectFastPath):
+        (JSC::OptimizingCallLinkInfo::emitDirectTailCallFastPath):
+        (JSC::OptimizingCallLinkInfo::initializeDirectCall):
+        (JSC::OptimizingCallLinkInfo::setDirectCallTarget):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::offsetOfCodeBlock):
+        * bytecode/Repatch.cpp:
+        (JSC::linkMonomorphicCall):
+        (JSC::linkDirectCall):
+        (JSC::linkPolymorphicCall):
+        * bytecode/RepatchInlines.h:
+        (JSC::virtualForWithFunction):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        (JSC::DFG::prepareCatchOSREntry):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * interpreter/CallFrame.h:
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::calleeFrameCodeBlockBeforeCall):
+        (JSC::AssemblyHelpers::calleeFrameCodeBlockBeforeTailCall):
+        (JSC::AssemblyHelpers::prologueStackPointerDelta): Deleted.
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::emitPutCodeBlockToFrameInPrologue): Deleted.
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::boundFunctionCallGenerator):
+        (JSC::remoteFunctionCallGenerator):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * llint/WebAssembly.asm:
+        * runtime/FunctionExecutable.h:
+        * runtime/JSCast.h:
+        * runtime/VM.cpp:
+        (JSC::VM::getRemoteFunction):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::doOSREntry):
+
 2022-04-04  Saam Barati  <sbarati@apple.com>
 
         Turn off LLInt ICs in captive portal mode

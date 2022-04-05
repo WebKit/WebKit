@@ -108,17 +108,19 @@ CodeLocationLabel<JSInternalPtrTag> CallLinkInfo::doneLocation()
     return m_doneLocation;
 }
 
-void CallLinkInfo::setMonomorphicCallee(VM& vm, JSCell* owner, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
+void CallLinkInfo::setMonomorphicCallee(VM& vm, JSCell* owner, JSObject* callee, CodeBlock* codeBlock, MacroAssemblerCodePtr<JSEntryPtrTag> codePtr)
 {
     RELEASE_ASSERT(!isDirect());
     RELEASE_ASSERT(!(bitwise_cast<uintptr_t>(callee) & polymorphicCalleeMask));
     m_calleeOrCodeBlock.set(vm, owner, callee);
 
-    if (isDataIC())
+    if (isDataIC()) {
+        u.dataIC.m_codeBlock = codeBlock;
         u.dataIC.m_monomorphicCallDestination = codePtr;
-    else {
+    } else {
 #if ENABLE(JIT)
         MacroAssembler::repatchNearCall(static_cast<OptimizingCallLinkInfo*>(this)->m_callLocation, CodeLocationLabel<JSEntryPtrTag>(codePtr));
+        MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, codeBlock);
         MacroAssembler::repatchPointer(u.codeIC.m_calleeLocation, callee);
 #else
         RELEASE_ASSERT_NOT_REACHED();
@@ -130,10 +132,12 @@ void CallLinkInfo::clearCallee()
 {
     RELEASE_ASSERT(!isDirect());
     m_calleeOrCodeBlock.clear();
-    if (isDataIC())
+    if (isDataIC()) {
+        u.dataIC.m_codeBlock = nullptr;
         u.dataIC.m_monomorphicCallDestination = nullptr;
-    else if (!clearedByJettison()) {
+    } else if (!clearedByJettison()) {
 #if ENABLE(JIT)
+        MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, nullptr);
         MacroAssembler::repatchPointer(u.codeIC.m_calleeLocation, nullptr);
 #else
         RELEASE_ASSERT_NOT_REACHED();
@@ -298,9 +302,11 @@ void CallLinkInfo::revertCallToStub()
 
     if (isDataIC()) {
         m_calleeOrCodeBlock.clear();
+        u.dataIC.m_codeBlock = nullptr;
         u.dataIC.m_monomorphicCallDestination = nullptr;
     } else {
 #if ENABLE(JIT)
+        MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, nullptr);
         CCallHelpers::revertJumpReplacementToBranchPtrWithPatch(
             CCallHelpers::startOfBranchPtrWithPatchOnRegister(u.codeIC.m_calleeLocation), calleeGPR(), nullptr);
 #else
@@ -366,9 +372,18 @@ MacroAssembler::JumpList CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkIn
 
         if (isTailCall) {
             prepareForTailCall();
+
+            GPRReg scratchGPR = CCallHelpers::selectScratchGPR(calleeGPR, callLinkInfoGPR);
+            jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCodeBlock()), scratchGPR);
+            jit.storePtr(scratchGPR, CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
+
             goPolymorphic.link(&jit); // Polymorphic stub handles tail call stack prep.
             jit.farJump(CCallHelpers::Address(callLinkInfoGPR, offsetOfMonomorphicCallDestination()), JSEntryPtrTag);
         } else {
+            GPRReg scratchGPR = CCallHelpers::selectScratchGPR(calleeGPR, callLinkInfoGPR);
+            jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCodeBlock()), scratchGPR);
+            jit.storePtr(scratchGPR, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+
             goPolymorphic.link(&jit);
             jit.call(CCallHelpers::Address(callLinkInfoGPR, offsetOfMonomorphicCallDestination()), JSEntryPtrTag);
         }
@@ -377,15 +392,20 @@ MacroAssembler::JumpList CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkIn
         slowPath.append(jit.branchPtrWithPatch(CCallHelpers::NotEqual, calleeGPR, calleeCheck, CCallHelpers::TrustedImmPtr(nullptr)));
 
         CCallHelpers::Call call;
+        CCallHelpers::DataLabelPtr codeBlockStore;
         if (isTailCall) {
             prepareForTailCall();
+            codeBlockStore = jit.storePtrWithPatch(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
             call = jit.nearTailCall();
-        } else
+        } else {
+            codeBlockStore = jit.storePtrWithPatch(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::calleeFrameCodeBlockBeforeCall());
             call = jit.nearCall();
+        }
 
         RELEASE_ASSERT(callLinkInfo);
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
             static_cast<OptimizingCallLinkInfo*>(callLinkInfo)->m_callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
+            callLinkInfo->u.codeIC.m_codeBlockLocation = linkBuffer.locationOf<JSInternalPtrTag>(codeBlockStore);
             callLinkInfo->u.codeIC.m_calleeLocation = linkBuffer.locationOf<JSInternalPtrTag>(calleeCheck);
         });
     }
@@ -414,8 +434,10 @@ void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
 
     if (isDataIC()) {
         *bitwise_cast<uintptr_t*>(m_calleeOrCodeBlock.slot()) = polymorphicCalleeMask;
+        u.dataIC.m_codeBlock = nullptr; // PolymorphicCallStubRoutine will set CodeBlock inside it.
         u.dataIC.m_monomorphicCallDestination = m_stub->code().code().retagged<JSEntryPtrTag>();
     } else {
+        MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, nullptr);
         MacroAssembler::replaceWithJump(
             MacroAssembler::startOfBranchPtrWithPatchOnRegister(u.codeIC.m_calleeLocation),
             CodeLocationLabel<JITStubRoutinePtrTag>(m_stub->code().code()));
@@ -479,9 +501,11 @@ void OptimizingCallLinkInfo::emitDirectFastPath(CCallHelpers& jit)
 
     ASSERT(UseDataIC::No == this->useDataIC());
 
+    auto codeBlockStore = jit.storePtrWithPatch(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::calleeFrameCodeBlockBeforeCall());
     auto call = jit.nearCall();
     jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         m_callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
+        u.codeIC.m_codeBlockLocation = linkBuffer.locationOf<JSInternalPtrTag>(codeBlockStore);
     });
     jit.addLateLinkTask([this] (LinkBuffer&) {
         initializeDirectCall();
@@ -504,9 +528,11 @@ void OptimizingCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, Scope
     jit.emitNops(CCallHelpers::patchableJumpSize());
 
     prepareForTailCall();
+    auto codeBlockStore = jit.storePtrWithPatch(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
     auto call = jit.nearTailCall();
     jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
         m_callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
+        u.codeIC.m_codeBlockLocation = linkBuffer.locationOf<JSInternalPtrTag>(codeBlockStore);
     });
     jit.addLateLinkTask([this] (LinkBuffer&) {
         initializeDirectCall();
@@ -517,6 +543,7 @@ void OptimizingCallLinkInfo::initializeDirectCall()
 {
     RELEASE_ASSERT(isDirect());
     ASSERT(m_callLocation);
+    ASSERT(u.codeIC.m_codeBlockLocation);
     if (isTailCall()) {
         RELEASE_ASSERT(fastPathStart());
         CCallHelpers::emitJITCodeOver(fastPathStart(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
@@ -529,7 +556,7 @@ void OptimizingCallLinkInfo::initializeDirectCall()
         MacroAssembler::repatchNearCall(m_callLocation, slowPathStart());
 }
 
-void OptimizingCallLinkInfo::setDirectCallTarget(CodeLocationLabel<JSEntryPtrTag> target)
+void OptimizingCallLinkInfo::setDirectCallTarget(CodeBlock* codeBlock, CodeLocationLabel<JSEntryPtrTag> target)
 {
     RELEASE_ASSERT(isDirect());
 
@@ -543,6 +570,7 @@ void OptimizingCallLinkInfo::setDirectCallTarget(CodeLocationLabel<JSEntryPtrTag
     }
 
     MacroAssembler::repatchNearCall(m_callLocation, target);
+    MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, codeBlock);
 }
 
 #endif

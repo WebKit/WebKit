@@ -288,20 +288,26 @@ public:
     }
 
     static inline ptrdiff_t offsetOfRareData() { return OBJECT_OFFSETOF(FunctionExecutable, m_rareData); }
-    static inline ptrdiff_t offsetOfAsStringInRareData() { return OBJECT_OFFSETOF(RareData, m_asString); }
     static inline ptrdiff_t offsetOfCodeBlockForCall() { return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForCall); }
     static inline ptrdiff_t offsetOfCodeBlockForConstruct() { return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForConstruct); }
 
-private:
-    friend class ExecutableBase;
-    FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, Intrinsic, bool isInsideOrdinaryFunction);
-    
-    void finishCreation(VM&, ScriptExecutable* topLevelExecutable);
-
-    friend class ScriptExecutable;
+    static ptrdiff_t offsetOfCodeBlockFor(CodeSpecializationKind kind)
+    {
+        switch (kind) {
+        case CodeForCall:
+            return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForCall);
+        case CodeForConstruct:
+            return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForConstruct);
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
 
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        static inline ptrdiff_t offsetOfAsString() { return OBJECT_OFFSETOF(RareData, m_asString); }
+
         RefPtr<TypeSet> m_returnStatementTypeSet;
         unsigned m_lineCount;
         unsigned m_endColumn;
@@ -313,6 +319,14 @@ private:
         std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
         WriteBarrier<JSString> m_asString;
     };
+
+private:
+    friend class ExecutableBase;
+    FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, Intrinsic, bool isInsideOrdinaryFunction);
+    
+    void finishCreation(VM&, ScriptExecutable* topLevelExecutable);
+
+    friend class ScriptExecutable;
 
     RareData& ensureRareData()
     {

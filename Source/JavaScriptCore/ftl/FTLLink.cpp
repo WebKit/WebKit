@@ -59,7 +59,7 @@ void link(State& state)
     std::unique_ptr<LinkBuffer> linkBuffer;
 
     CCallHelpers::Address frame = CCallHelpers::Address(
-        CCallHelpers::stackPointerRegister, -static_cast<int32_t>(AssemblyHelpers::prologueStackPointerDelta()));
+        CCallHelpers::stackPointerRegister, -static_cast<int32_t>(prologueStackPointerDelta()));
     
     switch (graph.m_plan.mode()) {
     case JITCompilationMode::FTL: {

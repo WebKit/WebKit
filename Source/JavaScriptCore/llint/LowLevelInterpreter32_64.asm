@@ -2259,7 +2259,10 @@ macro callHelper(opcodeName, slowPath, opcodeStruct, valueProfileName, dstVirtua
 
 .notPolymorphic:
     bpneq t0, t3, .opCallSlow
-    prepareCall(t2, t3, t4, t1)
+    prepareCall(t2, t3, t4, t1, macro(address)
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
+        storep t2, address
+    end)
 
 .goPolymorphic:
     loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
@@ -2338,7 +2341,10 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
 
         .notPolymorphic:
             bpneq t0, t3, .opCallSlow
-            prepareCall(t2, t3, t4, t1)
+            prepareCall(t2, t3, t4, t1, macro(address)
+                loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
+                storep t2, address
+            end)
 
         .goPolymorphic:
             loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5

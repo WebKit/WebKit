@@ -716,9 +716,17 @@ NativeExecutable* VM::getRemoteFunction(bool isJSFunction)
     auto getOrCreate = [&] (Weak<NativeExecutable>& slot) -> NativeExecutable* {
         if (auto* cached = slot.get())
             return cached;
+
+        Intrinsic intrinsic = NoIntrinsic;
+        if (!slowCase) {
+#if !(OS(WINDOWS) && CPU(X86_64))
+            intrinsic = RemoteFunctionCallIntrinsic;
+#endif
+        }
+
         NativeExecutable* result = getHostFunction(
             slowCase ? remoteFunctionCallGeneric : remoteFunctionCallForJSFunction,
-            slowCase ? NoIntrinsic : RemoteFunctionCallIntrinsic,
+            intrinsic,
             callHostFunctionAsConstructor, nullptr, String());
         slot = Weak<NativeExecutable>(result);
         return result;

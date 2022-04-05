@@ -117,7 +117,7 @@ void linkMonomorphicCall(
     ASSERT(owner);
 
     ASSERT(!callLinkInfo.isLinked());
-    callLinkInfo.setMonomorphicCallee(vm, owner, callee, codePtr);
+    callLinkInfo.setMonomorphicCallee(vm, owner, callee, calleeCodeBlock, codePtr);
     callLinkInfo.setLastSeenCallee(vm, owner, callee);
 
     if (shouldDumpDisassemblyFor(callerCodeBlock))
@@ -1567,7 +1567,7 @@ void linkDirectCall(
     if (shouldDumpDisassemblyFor(callerCodeBlock))
         dataLog("Linking call in ", FullCodeOrigin(callerCodeBlock, callLinkInfo.codeOrigin()), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
 
-    callLinkInfo.setDirectCallTarget(CodeLocationLabel<JSEntryPtrTag>(codePtr));
+    callLinkInfo.setDirectCallTarget(jsCast<FunctionCodeBlock*>(calleeCodeBlock), CodeLocationLabel<JSEntryPtrTag>(codePtr));
 
     if (calleeCodeBlock)
         calleeCodeBlock->linkIncomingCall(callFrame, &callLinkInfo);
@@ -1790,7 +1790,8 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     while (binarySwitch.advance(stubJit)) {
         size_t caseIndex = binarySwitch.caseIndex();
         
-        CallVariant variant = callCases[caseIndex].variant();
+        PolymorphicCallCase& callCase = callCases[caseIndex];
+        CallVariant variant = callCase.variant();
         
         MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
         if (variant.executable()) {
@@ -1813,14 +1814,23 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         bool needsDoneJump = false;
         if (frameShuffler) {
             CallFrameShuffler(stubJit, frameShuffler->snapshot()).prepareForTailCall();
+            if (callCase.codeBlock())
+                stubJit.storePtr(CCallHelpers::TrustedImmPtr(callCase.codeBlock()), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
             calls[caseIndex].call = stubJit.nearTailCall();
         } else if (callLinkInfo.isTailCall()) {
             stubJit.prepareForTailCallSlow();
+            if (callCase.codeBlock())
+                stubJit.storePtr(CCallHelpers::TrustedImmPtr(callCase.codeBlock()), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
             calls[caseIndex].call = stubJit.nearTailCall();
         } else {
-            if (isDataIC)
+            ASSERT(!callLinkInfo.isTailCall());
+            if (isDataIC) {
+                if (callCase.codeBlock())
+                    stubJit.storePtr(CCallHelpers::TrustedImmPtr(callCase.codeBlock()), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
                 calls[caseIndex].call = stubJit.nearTailCall();
-            else {
+            } else {
+                if (callCase.codeBlock())
+                    stubJit.storePtr(CCallHelpers::TrustedImmPtr(callCase.codeBlock()), CCallHelpers::calleeFrameCodeBlockBeforeCall());
                 calls[caseIndex].call = stubJit.nearCall();
                 needsDoneJump = true;
             }

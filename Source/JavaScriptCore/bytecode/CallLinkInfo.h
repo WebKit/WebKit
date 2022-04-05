@@ -199,7 +199,7 @@ public:
 
     CodeLocationLabel<JSInternalPtrTag> doneLocation();
 
-    void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, MacroAssemblerCodePtr<JSEntryPtrTag>);
+    void setMonomorphicCallee(VM&, JSCell*, JSObject* callee, CodeBlock*, MacroAssemblerCodePtr<JSEntryPtrTag>);
     void setSlowPathCallDestination(MacroAssemblerCodePtr<JSEntryPtrTag>);
     void clearCallee();
     JSObject* callee();
@@ -317,6 +317,11 @@ public:
         return OBJECT_OFFSETOF(CallLinkInfo, m_calleeOrCodeBlock);
     }
 
+    static ptrdiff_t offsetOfCodeBlock()
+    {
+        return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_codeBlock);
+    }
+
     static ptrdiff_t offsetOfMonomorphicCallDestination()
     {
         return OBJECT_OFFSETOF(CallLinkInfo, u) + OBJECT_OFFSETOF(UnionType, dataIC.m_monomorphicCallDestination);
@@ -401,14 +406,16 @@ protected:
     MacroAssemblerCodePtr<JSEntryPtrTag> m_slowPathCallDestination;
     union UnionType {
         UnionType()
-            : dataIC { nullptr }
+            : dataIC { nullptr, nullptr }
         { }
 
         struct DataIC {
+            CodeBlock* m_codeBlock; // This is weekly held. And cleared whenever m_monomorphicCallDestination is changed.
             MacroAssemblerCodePtr<JSEntryPtrTag> m_monomorphicCallDestination;
         } dataIC;
 
         struct {
+            CodeLocationDataLabelPtr<JSInternalPtrTag> m_codeBlockLocation;
             CodeLocationDataLabelPtr<JSInternalPtrTag> m_calleeLocation;
         } codeIC;
     } u;
@@ -503,7 +510,7 @@ public:
     void emitDirectFastPath(CCallHelpers&);
     void emitDirectTailCallFastPath(CCallHelpers&, ScopedLambda<void()>&& prepareForTailCall);
     void initializeDirectCall();
-    void setDirectCallTarget(CodeLocationLabel<JSEntryPtrTag>);
+    void setDirectCallTarget(CodeBlock*, CodeLocationLabel<JSEntryPtrTag>);
     void emitSlowPath(VM&, CCallHelpers&);
 
     MacroAssembler::JumpList emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;

@@ -334,9 +334,9 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
         }
     }
 #endif
-    
+
     // 7) Fix the call frame to have the right code block.
-    
+
     *bitwise_cast<CodeBlock**>(pivot - (CallFrameSlot::codeBlock + 1)) = codeBlock;
     
     dataLogLnIf(Options::verboseOSR(), "    OSR returning data buffer ", RawPointer(scratch));
@@ -408,6 +408,10 @@ MacroAssemblerCodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallF
 
     // The active length of catchOSREntryBuffer will be zeroed by ClearCatchLocals node.
     dfgCommon->catchOSREntryBuffer->setActiveLength(sizeof(JSValue) * index);
+
+    // At this point, we're committed to triggering an OSR entry immediately after we return. Hence, it is safe to modify stack here.
+    callFrame->setCodeBlock(optimizedCodeBlock);
+
     return catchEntrypoint->machineCode;
 }
 
