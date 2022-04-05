@@ -1,5 +1,14 @@
 2022-04-04  Matteo Flores  <matteo_flores@apple.com>
 
+        REGRESSION(r291770-r291762): [ iOS ] css3/background/background-repeat-round-auto1.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=238781
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2022-04-04  Matteo Flores  <matteo_flores@apple.com>
+
         REGRESSION(r290676?): [ iOS ] media/video-played-ranges-1.html is a flaky text failure
         https://bugs.webkit.org/show_bug.cgi?id=238771
 
