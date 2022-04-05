@@ -1,3 +1,40 @@
+2022-04-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Use UnixFileDescriptor in DMABufObject, DMABufReleaseFlag
+        https://bugs.webkit.org/show_bug.cgi?id=238733
+
+        Reviewed by Adrian Perez de Castro.
+
+        Replace integer values for file descriptors in the DMABufObject and
+        DMABufReleaseFlag structs with UnixFileDescriptors. This enables
+        simply defaulting the destructors and the move constructors and
+        assignment operatos for the two types since the fd wrapper takes care
+        of these operations.
+
+        Additionally, when constructing the UnixFileDescriptor objects from
+        file descriptors coming from different sources, we can more easily
+        adapt to the need for either adoption or duplication of the passed-in
+        file descriptor right there in the constructor invocation.
+
+        * platform/graphics/gbm/DMABufObject.h:
+        (WebCore::DMABufObject::~DMABufObject): Deleted.
+        (WebCore::DMABufObject::operator=): Deleted.
+        * platform/graphics/gbm/DMABufReleaseFlag.h:
+        (WebCore::DMABufReleaseFlag::DMABufReleaseFlag):
+        (WebCore::DMABufReleaseFlag::dup const):
+        (WebCore::DMABufReleaseFlag::released const):
+        (WebCore::DMABufReleaseFlag::release):
+        (WebCore::DMABufReleaseFlag::~DMABufReleaseFlag): Deleted.
+        (WebCore::DMABufReleaseFlag::operator=): Deleted.
+        * platform/graphics/gbm/GBMBufferSwapchain.cpp:
+        (WebCore::GBMBufferSwapchain::Buffer::createDMABufObject const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::pushDMABufToCompositor):
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp:
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::createEGLImageData):
+
 2022-04-04  Ziran Sun  <zsun@igalia.com>
 
         [Forms] change the default appearance of button, checkbox etc. to 'auto'

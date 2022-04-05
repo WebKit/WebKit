@@ -126,7 +126,7 @@ bool GraphicsContextGLANGLE::makeContextCurrent()
                     EGL_WIDTH, EGLint(dmabufObject.format.planeWidth(0, dmabufObject.width)),
                     EGL_HEIGHT, EGLint(dmabufObject.format.planeHeight(0, dmabufObject.height)),
                     EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLint>(dmabufObject.format.planes[0].fourcc),
-                    EGL_DMA_BUF_PLANE0_FD_EXT, dmabufObject.fd[0],
+                    EGL_DMA_BUF_PLANE0_FD_EXT, dmabufObject.fd[0].value,
                     EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLint>(dmabufObject.stride[0]),
                     EGL_DMA_BUF_PLANE0_OFFSET_EXT, 0,
                     EGL_NONE,
