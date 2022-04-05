@@ -158,7 +158,8 @@ void HTMLTextFormControlElement::didEditInnerTextValue()
 
 void HTMLTextFormControlElement::forwardEvent(Event& event)
 {
-    if (event.type() == eventNames().blurEvent || event.type() == eventNames().focusEvent)
+    auto& eventNames = WebCore::eventNames();
+    if (event.type() == eventNames.blurEvent || event.type() == eventNames.focusEvent)
         return;
 
     if (auto innerText = innerTextElement())

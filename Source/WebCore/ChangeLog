@@ -1,3 +1,90 @@
+2022-04-04  Chris Dumez  <cdumez@apple.com>
+
+        Avoid repeated calls to WebCore::eventNames()
+        https://bugs.webkit.org/show_bug.cgi?id=238773
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid repeated calls to WebCore::eventNames() by caching it where appropriate.
+        WebCore::eventNames() calls pthread_get_specific.
+
+        * dom/Element.cpp:
+        (WebCore::isCompatibilityMouseEvent):
+        * dom/EventContext.cpp:
+        (WebCore::EventContext::handleLocalEvents const):
+        * dom/EventTarget.cpp:
+        (WebCore::legacyType):
+        (WebCore::EventTarget::removeAllEventListeners):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::toElement const):
+        (WebCore::MouseEvent::fromElement const):
+        * dom/Node.cpp:
+        (WebCore::Node::moveNodeToNewDocument):
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+        (WebCore::Node::defaultEventHandler):
+        (WebCore::Node::willRespondToMouseMoveEvents):
+        (WebCore::Node::willRespondToTouchEvents):
+        (WebCore::Node::willRespondToMouseClickEvents):
+        * dom/PointerEvent.h:
+        (WebCore::PointerEvent::typeIsEnterOrLeave):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::willDispatchEvent):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::defaultEventHandler):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::forwardEvent):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::forwardEvent):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::handleTouchEvent):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchAllPendingUnloadEvents):
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::deviceOrientationController const): Deleted.
+        (WebCore::DOMWindow::deviceMotionController const): Deleted.
+        (WebCore::DOMWindow::isAllowedToUseDeviceMotionOrOrientation const): Deleted.
+        (WebCore::DOMWindow::isAllowedToUseDeviceMotion const): Deleted.
+        (WebCore::DOMWindow::isAllowedToUseDeviceOrientation const): Deleted.
+        (WebCore::DOMWindow::hasPermissionToReceiveDeviceMotionOrOrientationEvents const): Deleted.
+        (WebCore::DOMWindow::startListeningForDeviceOrientationIfNecessary): Deleted.
+        (WebCore::DOMWindow::stopListeningForDeviceOrientationIfNecessary): Deleted.
+        (WebCore::DOMWindow::startListeningForDeviceMotionIfNecessary): Deleted.
+        (WebCore::DOMWindow::stopListeningForDeviceMotionIfNecessary): Deleted.
+        (WebCore::DOMWindow::failedToRegisterDeviceMotionEventListener): Deleted.
+        (WebCore::DOMWindow::incrementScrollEventListenersCount): Deleted.
+        (WebCore::DOMWindow::decrementScrollEventListenersCount): Deleted.
+        (WebCore::DOMWindow::resetAllGeolocationPermission): Deleted.
+        (WebCore::DOMWindow::removeEventListener): Deleted.
+        (WebCore::DOMWindow::languagesChanged): Deleted.
+        (WebCore::DOMWindow::dispatchLoadEvent): Deleted.
+        (WebCore::DOMWindow::dispatchEvent): Deleted.
+        (WebCore::DOMWindow::removeAllEventListeners): Deleted.
+        (WebCore::DOMWindow::captureEvents): Deleted.
+        (WebCore::DOMWindow::releaseEvents): Deleted.
+        (WebCore::DOMWindow::finishedLoading): Deleted.
+        (WebCore::DOMWindow::setLocation): Deleted.
+        (WebCore::DOMWindow::printErrorMessage const): Deleted.
+        (WebCore::DOMWindow::crossDomainAccessErrorMessage): Deleted.
+        (WebCore::DOMWindow::isInsecureScriptAccess): Deleted.
+        (WebCore::DOMWindow::createWindow): Deleted.
+        (WebCore::DOMWindow::open): Deleted.
+        (WebCore::DOMWindow::showModalDialog): Deleted.
+        (WebCore::DOMWindow::enableSuddenTermination): Deleted.
+        (WebCore::DOMWindow::disableSuddenTermination): Deleted.
+        (WebCore::DOMWindow::frame const): Deleted.
+        (WebCore::DOMWindow::eventListenersDidChange): Deleted.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::isKeyboardOptionTab):
+
 2022-04-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] CSSFilter should be created only at the painting time

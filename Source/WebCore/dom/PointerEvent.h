@@ -112,7 +112,7 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    static bool typeIsEnterOrLeave(const AtomString& type) { return type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent; }
+    static bool typeIsEnterOrLeave(const AtomString& type);
     static CanBubble typeCanBubble(const AtomString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
     static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
     static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
@@ -136,6 +136,12 @@ private:
     String m_pointerType { mousePointerEventType() };
     bool m_isPrimary { false };
 };
+
+inline bool PointerEvent::typeIsEnterOrLeave(const AtomString& type)
+{
+    auto& eventNames = WebCore::eventNames();
+    return type == eventNames.pointerenterEvent || type == eventNames.pointerleaveEvent;
+}
 
 } // namespace WebCore
 

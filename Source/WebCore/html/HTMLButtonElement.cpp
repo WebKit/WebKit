@@ -136,7 +136,8 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
     if (ImageControlsMac::handleEvent(*this, event))
         return;
 #endif
-    if (event.type() == eventNames().DOMActivateEvent && !isDisabledFormControl()) {
+    auto& eventNames = WebCore::eventNames();
+    if (event.type() == eventNames.DOMActivateEvent && !isDisabledFormControl()) {
         RefPtr<HTMLFormElement> protectedForm(form());
 
         if (protectedForm) {
@@ -161,12 +162,12 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
     if (is<KeyboardEvent>(event)) {
         KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
-        if (keyboardEvent.type() == eventNames().keydownEvent && keyboardEvent.keyIdentifier() == "U+0020") {
+        if (keyboardEvent.type() == eventNames.keydownEvent && keyboardEvent.keyIdentifier() == "U+0020") {
             setActive(true, true);
             // No setDefaultHandled() - IE dispatches a keypress in this case.
             return;
         }
-        if (keyboardEvent.type() == eventNames().keypressEvent) {
+        if (keyboardEvent.type() == eventNames.keypressEvent) {
             switch (keyboardEvent.charCode()) {
                 case '\r':
                     dispatchSimulatedClick(&keyboardEvent);
@@ -178,7 +179,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
                     return;
             }
         }
-        if (keyboardEvent.type() == eventNames().keyupEvent && keyboardEvent.keyIdentifier() == "U+0020") {
+        if (keyboardEvent.type() == eventNames.keyupEvent && keyboardEvent.keyIdentifier() == "U+0020") {
             if (active())
                 dispatchSimulatedClick(&keyboardEvent);
             keyboardEvent.setDefaultHandled();

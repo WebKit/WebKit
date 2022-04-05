@@ -2083,12 +2083,13 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         textManipulationController->removeNode(*this);
 
     if (auto* eventTargetData = this->eventTargetData()) {
+        auto& eventNames = WebCore::eventNames();
         if (!eventTargetData->eventListenerMap.isEmpty()) {
             for (auto& type : eventTargetData->eventListenerMap.eventTypes())
                 newDocument.addListenerTypeIfNeeded(type);
         }
 
-        unsigned numWheelEventHandlers = eventListeners(eventNames().mousewheelEvent).size() + eventListeners(eventNames().wheelEvent).size();
+        unsigned numWheelEventHandlers = eventListeners(eventNames.mousewheelEvent).size() + eventListeners(eventNames.wheelEvent).size();
         for (unsigned i = 0; i < numWheelEventHandlers; ++i) {
             oldDocument.didRemoveWheelEventHandler(*this);
             newDocument.didAddWheelEventHandler(*this);
@@ -2097,11 +2098,11 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         unsigned numTouchEventListeners = 0;
 #if ENABLE(TOUCH_EVENTS)
         if (newDocument.quirks().shouldDispatchSimulatedMouseEvents(this)) {
-            for (auto& name : eventNames().extendedTouchRelatedEventNames())
+            for (auto& name : eventNames.extendedTouchRelatedEventNames())
                 numTouchEventListeners += eventListeners(name).size();
         } else {
 #endif
-            for (auto& name : eventNames().touchRelatedEventNames())
+            for (auto& name : eventNames.touchRelatedEventNames())
                 numTouchEventListeners += eventListeners(name).size();
 #if ENABLE(TOUCH_EVENTS)
         }
@@ -2118,7 +2119,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
 
 #if ENABLE(TOUCH_EVENTS) && ENABLE(IOS_GESTURE_EVENTS)
         unsigned numGestureEventListeners = 0;
-        for (auto& name : eventNames().gestureEventNames())
+        for (auto& name : eventNames.gestureEventNames())
             numGestureEventListeners += eventListeners(name).size();
 
         for (unsigned i = 0; i < numGestureEventListeners; ++i) {
@@ -2148,25 +2149,27 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
         return false;
 
     targetNode->document().addListenerTypeIfNeeded(eventType);
-    if (eventNames().isWheelEventType(eventType))
+
+    auto& eventNames = WebCore::eventNames();
+    if (eventNames.isWheelEventType(eventType))
         targetNode->document().didAddWheelEventHandler(*targetNode);
-    else if (eventNames().isTouchRelatedEventType(eventType, *targetNode))
+    else if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().didAddTouchEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
-    if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent) {
+    if (targetNode == &targetNode->document() && eventType == eventNames.scrollEvent) {
         if (auto* window = targetNode->document().domWindow())
             window->incrementScrollEventListenersCount();
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (eventNames().isTouchRelatedEventType(eventType, *targetNode))
+    if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().addTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
-    if (eventNames().isGestureEventType(eventType))
+    if (eventNames.isGestureEventType(eventType))
         targetNode->document().addTouchEventHandler(*targetNode);
 #endif
 
@@ -2185,25 +2188,26 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
 
     // FIXME: Notify Document that the listener has vanished. We need to keep track of a number of
     // listeners for each type, not just a bool - see https://bugs.webkit.org/show_bug.cgi?id=33861
-    if (eventNames().isWheelEventType(eventType))
+    auto& eventNames = WebCore::eventNames();
+    if (eventNames.isWheelEventType(eventType))
         targetNode->document().didRemoveWheelEventHandler(*targetNode);
-    else if (eventNames().isTouchRelatedEventType(eventType, *targetNode))
+    else if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().didRemoveTouchEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
-    if (targetNode == &targetNode->document() && eventType == eventNames().scrollEvent) {
+    if (targetNode == &targetNode->document() && eventType == eventNames.scrollEvent) {
         if (auto* window = targetNode->document().domWindow())
             window->decrementScrollEventListenersCount();
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (eventNames().isTouchRelatedEventType(eventType, *targetNode))
+    if (eventNames.isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().removeTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(IOS_GESTURE_EVENTS) && ENABLE(TOUCH_EVENTS)
-    if (eventNames().isGestureEventType(eventType))
+    if (eventNames.isGestureEventType(eventType))
         targetNode->document().removeTouchEventHandler(*targetNode);
 #endif
 
@@ -2427,27 +2431,28 @@ void Node::defaultEventHandler(Event& event)
 {
     if (event.target() != this)
         return;
-    const AtomString& eventType = event.type();
-    if (eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent || eventType == eventNames().keyupEvent) {
+    auto& eventType = event.type();
+    auto& eventNames = WebCore::eventNames();
+    if (eventType == eventNames.keydownEvent || eventType == eventNames.keypressEvent || eventType == eventNames.keyupEvent) {
         if (is<KeyboardEvent>(event)) {
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultKeyboardEventHandler(downcast<KeyboardEvent>(event));
         }
-    } else if (eventType == eventNames().clickEvent) {
+    } else if (eventType == eventNames.clickEvent) {
         dispatchDOMActivateEvent(event);
 #if ENABLE(CONTEXT_MENUS)
-    } else if (eventType == eventNames().contextmenuEvent) {
+    } else if (eventType == eventNames.contextmenuEvent) {
         if (Frame* frame = document().frame())
             if (Page* page = frame->page())
                 page->contextMenuController().handleContextMenuEvent(event);
 #endif
-    } else if (eventType == eventNames().textInputEvent) {
+    } else if (eventType == eventNames.textInputEvent) {
         if (is<TextEvent>(event)) {
             if (Frame* frame = document().frame())
                 frame->eventHandler().defaultTextInputEventHandler(downcast<TextEvent>(event));
         }
 #if ENABLE(PAN_SCROLLING)
-    } else if (eventType == eventNames().mousedownEvent && is<MouseEvent>(event)) {
+    } else if (eventType == eventNames.mousedownEvent && is<MouseEvent>(event)) {
         if (downcast<MouseEvent>(event).button() == MiddleButton) {
             if (enclosingLinkEventParentOrSelf())
                 return;
@@ -2462,7 +2467,7 @@ void Node::defaultEventHandler(Event& event)
             }
         }
 #endif
-    } else if (eventNames().isWheelEventType(eventType) && is<WheelEvent>(event)) {
+    } else if (eventNames.isWheelEventType(eventType) && is<WheelEvent>(event)) {
         // If we don't have a renderer, send the wheel event to the first node we find with a renderer.
         // This is needed for <option> and <optgroup> elements so that <select>s get a wheel scroll.
         Node* startNode = this;
@@ -2474,9 +2479,9 @@ void Node::defaultEventHandler(Event& event)
                 frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
         }
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    } else if (is<TouchEvent>(event) && eventNames().isTouchRelatedEventType(eventType, *this)) {
+    } else if (is<TouchEvent>(event) && eventNames.isTouchRelatedEventType(eventType, *this)) {
         // Capture the target node's visibility state before dispatching touchStart.
-        if (is<Element>(*this) && eventType == eventNames().touchstartEvent) {
+        if (is<Element>(*this) && eventType == eventNames.touchstartEvent) {
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
             auto& contentChangeObserver = document().contentChangeObserver();
             if (ContentChangeObserver::isVisuallyHidden(*this))
@@ -2507,13 +2512,15 @@ bool Node::willRespondToMouseMoveEvents()
     if (downcast<Element>(*this).isDisabledFormControl())
         return false;
 #endif
-    return hasEventListeners(eventNames().mousemoveEvent) || hasEventListeners(eventNames().mouseoverEvent) || hasEventListeners(eventNames().mouseoutEvent);
+    auto& eventNames = WebCore::eventNames();
+    return hasEventListeners(eventNames.mousemoveEvent) || hasEventListeners(eventNames.mouseoverEvent) || hasEventListeners(eventNames.mouseoutEvent);
 }
 
 bool Node::willRespondToTouchEvents()
 {
+    auto& eventNames = WebCore::eventNames();
     return eventTypes().containsIf([&](const auto& type) {
-        return eventNames().isTouchRelatedEventType(type, *this);
+        return eventNames.isTouchRelatedEventType(type, *this);
     });
 }
 
@@ -2521,14 +2528,19 @@ bool Node::willRespondToMouseClickEvents()
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?
 #if PLATFORM(IOS_FAMILY)
-    return isContentEditable() || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent);
+    if (isContentEditable())
+        return true;
+    auto& eventNames = WebCore::eventNames();
+    return hasEventListeners(eventNames.mouseupEvent) || hasEventListeners(eventNames.mousedownEvent) || hasEventListeners(eventNames.clickEvent);
 #else
     if (!is<Element>(*this))
         return false;
     if (downcast<Element>(*this).isDisabledFormControl())
         return false;
-    return computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly
-        || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
+    if (computeEditability(UserSelectAllIsAlwaysNonEditable, ShouldUpdateStyle::Update) != Editability::ReadOnly)
+        return true;
+    auto& eventNames = WebCore::eventNames();
+    return hasEventListeners(eventNames.mouseupEvent) || hasEventListeners(eventNames.mousedownEvent) || hasEventListeners(eventNames.clickEvent) || hasEventListeners(eventNames.DOMActivateEvent);
 #endif
 }
 

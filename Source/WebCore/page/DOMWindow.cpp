@@ -297,12 +297,13 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
         return Ref<DOMWindow>(*(keyValue.key));
     });
 
+    auto& eventNames = WebCore::eventNames();
     for (auto& window : windows) {
         if (!set.contains(window.ptr()))
             continue;
 
-        window->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, false), window->document());
-        window->dispatchEvent(Event::create(eventNames().unloadEvent, Event::CanBubble::No, Event::IsCancelable::No), window->document());
+        window->dispatchEvent(PageTransitionEvent::create(eventNames.pagehideEvent, false), window->document());
+        window->dispatchEvent(Event::create(eventNames.unloadEvent, Event::CanBubble::No, Event::IsCancelable::No), window->document());
 
         window->enableSuddenTermination();
     }
@@ -1972,40 +1973,41 @@ bool DOMWindow::addEventListener(const AtomString& eventType, Ref<EventListener>
         return false;
 
     RefPtr document = this->document();
+    auto& eventNames = WebCore::eventNames();
     if (document) {
         document->addListenerTypeIfNeeded(eventType);
-        if (eventNames().isWheelEventType(eventType))
+        if (eventNames.isWheelEventType(eventType))
             document->didAddWheelEventHandler(*document);
-        else if (eventNames().isTouchRelatedEventType(eventType, *document))
+        else if (eventNames.isTouchRelatedEventType(eventType, *document))
             document->didAddTouchEventHandler(*document);
-        else if (eventType == eventNames().storageEvent)
+        else if (eventType == eventNames.storageEvent)
             didAddStorageEventListener(*this);
     }
 
-    if (eventType == eventNames().unloadEvent)
+    if (eventType == eventNames.unloadEvent)
         addUnloadEventListener(this);
-    else if (eventType == eventNames().beforeunloadEvent && allowsBeforeUnloadListeners(this))
+    else if (eventType == eventNames.beforeunloadEvent && allowsBeforeUnloadListeners(this))
         addBeforeUnloadEventListener(this);
 #if PLATFORM(IOS_FAMILY)
-    else if (eventType == eventNames().scrollEvent)
+    else if (eventType == eventNames.scrollEvent)
         incrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && eventNames().isTouchRelatedEventType(eventType, *document))
+    else if (document && eventNames(.isTouchRelatedEventType(eventType, *document))
         ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
-    else if (eventNames().isGestureEventType(eventType))
+    else if (eventNames.isGestureEventType(eventType))
         ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(GAMEPAD)
-    else if (eventNames().isGamepadEventType(eventType))
+    else if (eventNames.isGamepadEventType(eventType))
         incrementGamepadEventListenerCount();
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    else if (eventType == eventNames().deviceorientationEvent)
+    else if (eventType == eventNames.deviceorientationEvent)
         startListeningForDeviceOrientationIfNecessary();
-    else if (eventType == eventNames().devicemotionEvent)
+    else if (eventType == eventNames.devicemotionEvent)
         startListeningForDeviceMotionIfNecessary();
 #endif
 
@@ -2215,41 +2217,42 @@ bool DOMWindow::removeEventListener(const AtomString& eventType, EventListener& 
         return false;
 
     RefPtr document = this->document();
+    auto& eventNames = WebCore::eventNames();
     if (document) {
-        if (eventNames().isWheelEventType(eventType))
+        if (eventNames.isWheelEventType(eventType))
             document->didRemoveWheelEventHandler(*document);
-        else if (eventNames().isTouchRelatedEventType(eventType, *document))
+        else if (eventNames.isTouchRelatedEventType(eventType, *document))
             document->didRemoveTouchEventHandler(*document);
     }
 
-    if (eventType == eventNames().unloadEvent)
+    if (eventType == eventNames.unloadEvent)
         removeUnloadEventListener(this);
-    else if (eventType == eventNames().beforeunloadEvent && allowsBeforeUnloadListeners(this))
+    else if (eventType == eventNames.beforeunloadEvent && allowsBeforeUnloadListeners(this))
         removeBeforeUnloadEventListener(this);
 #if PLATFORM(IOS_FAMILY)
-    else if (eventType == eventNames().scrollEvent)
+    else if (eventType == eventNames.scrollEvent)
         decrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && eventNames().isTouchRelatedEventType(eventType, *document)) {
+    else if (document && eventNames.isTouchRelatedEventType(eventType, *document)) {
         ASSERT(m_touchAndGestureEventListenerCount > 0);
         --m_touchAndGestureEventListenerCount;
     }
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
-    else if (eventNames().isGestureEventType(eventType)) {
+    else if (eventNames.isGestureEventType(eventType)) {
         ASSERT(m_touchAndGestureEventListenerCount > 0);
         --m_touchAndGestureEventListenerCount;
     }
 #endif
 #if ENABLE(GAMEPAD)
-    else if (eventNames().isGamepadEventType(eventType))
+    else if (eventNames.isGamepadEventType(eventType))
         decrementGamepadEventListenerCount();
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    else if (eventType == eventNames().deviceorientationEvent)
+    else if (eventType == eventNames.deviceorientationEvent)
         stopListeningForDeviceOrientationIfNecessary();
-    else if (eventType == eventNames().devicemotionEvent)
+    else if (eventType == eventNames.devicemotionEvent)
         stopListeningForDeviceMotionIfNecessary();
 #endif
 

@@ -520,15 +520,16 @@ void SliderThumbElement::handleTouchEvent(TouchEvent& touchEvent)
     }
 
     const AtomString& eventType = touchEvent.type();
-    if (eventType == eventNames().touchstartEvent) {
+    auto& eventNames = WebCore::eventNames();
+    if (eventType == eventNames.touchstartEvent) {
         handleTouchStart(touchEvent);
         return;
     }
-    if (eventType == eventNames().touchendEvent || eventType == eventNames().touchcancelEvent) {
+    if (eventType == eventNames.touchendEvent || eventType == eventNames.touchcancelEvent) {
         handleTouchEndAndCancel(touchEvent);
         return;
     }
-    if (eventType == eventNames().touchmoveEvent) {
+    if (eventType == eventNames.touchmoveEvent) {
         handleTouchMove(touchEvent);
         return;
     }
