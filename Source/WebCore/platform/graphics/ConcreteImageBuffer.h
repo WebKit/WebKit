@@ -325,11 +325,13 @@ protected:
         return nullptr;
     }
 
-    void releaseBufferToPool() override
+#if HAVE(IOSURFACE)
+    void releaseBufferToPool(IOSurfacePool* pool) override
     {
         if (auto* backend = ensureBackendCreated())
-            backend->releaseBufferToPool();
+            backend->releaseBufferToPool(pool);
     }
+#endif
 
     ImageBufferBackend::Parameters m_parameters;
     std::unique_ptr<BackendType> m_backend;

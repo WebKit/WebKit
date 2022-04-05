@@ -40,6 +40,9 @@ namespace WebCore {
 
 class GraphicsContext;
 class GraphicsContextGL;
+#if HAVE(IOSURFACE)
+class IOSurfacePool;
+#endif
 class Image;
 class NativeImage;
 class PixelBuffer;
@@ -126,7 +129,9 @@ public:
 
     virtual bool isInUse() const { return false; }
     virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
-    virtual void releaseBufferToPool() { }
+#if HAVE(IOSURFACE)
+    virtual void releaseBufferToPool(IOSurfacePool*) { }
+#endif
 
     // Returns true on success.
     virtual bool setVolatile() { return true; }

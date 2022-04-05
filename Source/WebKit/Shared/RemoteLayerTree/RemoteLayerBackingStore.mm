@@ -41,7 +41,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/BifurcatedGraphicsContext.h>
 #import <WebCore/GraphicsContextCG.h>
-#import <WebCore/IOSurface.h>
+#import <WebCore/IOSurfacePool.h>
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <WebCore/WebLayer.h>
@@ -687,7 +687,7 @@ RefPtr<ImageBuffer> RemoteLayerBackingStore::bufferForType(BufferType bufferType
 void RemoteLayerBackingStore::Buffer::discard()
 {
     if (imageBuffer)
-        imageBuffer->releaseBufferToPool();
+        imageBuffer->releaseBufferToPool(&WebCore::IOSurfacePool::sharedPool());
     imageBuffer = nullptr;
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     displayListImageBuffer = nullptr;

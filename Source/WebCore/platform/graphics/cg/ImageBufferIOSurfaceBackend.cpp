@@ -260,9 +260,9 @@ void ImageBufferIOSurfaceBackend::setVolatilityState(VolatilityState volatilityS
     m_volatilityState = volatilityState;
 }
 
-void ImageBufferIOSurfaceBackend::releaseBufferToPool()
+void ImageBufferIOSurfaceBackend::releaseBufferToPool(IOSurfacePool* pool)
 {
-    IOSurface::moveToPool(WTFMove(m_surface), &IOSurfacePool::sharedPool());
+    IOSurface::moveToPool(WTFMove(m_surface), pool);
 }
 
 void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()

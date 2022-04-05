@@ -1,3 +1,19 @@
+2022-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Pass an IOSurfacePool to ImageBuffer::releaseBufferToPool()
+        https://bugs.webkit.org/show_bug.cgi?id=238768
+
+        Reviewed by Said Abou-Hallawa.
+
+        In order to move away from a singleton IOSurfacePool, we need to pass the pool
+        which the IOSurface will be added to.
+
+        For RemoteLayerBackingStore, pass the singleton WebProcess pool
+        (this is the non-GPU Process code path).
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::Buffer::discard):
+
 2022-04-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [Unix] Add UnixFileDescriptor, use it in IPC::Semaphore

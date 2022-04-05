@@ -68,7 +68,7 @@ protected:
 
     bool isInUse() const override;
     void releaseGraphicsContext() override;
-    void releaseBufferToPool() override;
+    void releaseBufferToPool(IOSurfacePool*) override;
 
     bool setVolatile() final;
     SetNonVolatileResult setNonVolatile() final;

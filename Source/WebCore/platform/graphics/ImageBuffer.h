@@ -38,17 +38,27 @@ namespace WebCore {
 
 class Filter;
 class HostWindow;
+#if HAVE(IOSURFACE)
 class IOSurfacePool;
+#endif
 
 class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {
 public:
     struct CreationContext {
         // clang 13.1.6 throws errors if we use default initializers here.
         HostWindow* hostWindow;
+#if HAVE(IOSURFACE)
         IOSurfacePool* surfacePool;
-        CreationContext(HostWindow* window = nullptr, IOSurfacePool* pool = nullptr)
+#endif
+        CreationContext(HostWindow* window = nullptr
+#if HAVE(IOSURFACE)
+            , IOSurfacePool* pool = nullptr
+#endif
+        )
             : hostWindow(window)
+#if HAVE(IOSURFACE)
             , surfacePool(pool)
+#endif
         { }
     };
 
@@ -100,8 +110,9 @@ public:
 
     virtual bool isInUse() const = 0;
     virtual void releaseGraphicsContext() = 0;
-    virtual void releaseBufferToPool() = 0;
-
+#if HAVE(IOSURFACE)
+    virtual void releaseBufferToPool(IOSurfacePool*) = 0;
+#endif
     // Returns true on success.
     virtual bool setVolatile() = 0;
     virtual SetNonVolatileResult setNonVolatile() = 0;

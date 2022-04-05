@@ -1,3 +1,22 @@
+2022-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Pass an IOSurfacePool to ImageBuffer::releaseBufferToPool()
+        https://bugs.webkit.org/show_bug.cgi?id=238768
+
+        Reviewed by Said Abou-Hallawa.
+
+        In order to move away from a singleton IOSurfacePool, we need to pass the pool
+        which the IOSurface will be added to.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::CreationContext::CreationContext):
+        * platform/graphics/ImageBufferBackend.h:
+        (WebCore::ImageBufferBackend::releaseBufferToPool):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::releaseBufferToPool):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+
 2022-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS build after r292370
