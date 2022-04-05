@@ -1,3 +1,19 @@
+2022-04-05  Megan Gardner  <megan_gardner@apple.com>
+
+        Expand autocorrect context for more accurate results.
+        https://bugs.webkit.org/show_bug.cgi?id=237990
+
+        Reviewed by Wenson Hsieh.
+
+        Covered by existing tests.
+
+        Expand autocorrect context to at least 10 words instead of 3, and with a min/max length of 40/100 
+        instead of 12/30 and start context at the beginning of sentences to help with having more accurate 
+        autocorrect suggestions.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::autocorrectionContext):
+
 2022-04-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove system feature flags implementation

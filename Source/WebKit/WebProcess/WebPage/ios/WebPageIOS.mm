@@ -2565,9 +2565,9 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     VisiblePosition startPosition = frame->selection().selection().start();
     VisiblePosition endPosition = frame->selection().selection().end();
-    const unsigned minContextWordCount = 3;
-    const unsigned minContextLength = 12;
-    const unsigned maxContextLength = 30;
+    const unsigned minContextWordCount = 10;
+    const unsigned minContextLength = 40;
+    const unsigned maxContextLength = 100;
 
     if (frame->selection().isRange())
         selectedText = plainTextForContext(frame->selection().selection().toNormalizedRange());
@@ -2598,7 +2598,10 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
                     break;
                 contextStartPosition = previousPosition;
             }
-            if (contextStartPosition.isNotNull() && contextStartPosition != startPosition) {
+            VisiblePosition sentenceContextStartPosition = startOfSentence(startPosition);
+            if (sentenceContextStartPosition.isNotNull() && sentenceContextStartPosition < contextStartPosition)
+                contextStartPosition = sentenceContextStartPosition;
+            if (contextStartPosition.isNotNull() && contextStartPosition < startPosition) {
                 contextBefore = plainTextForContext(makeSimpleRange(contextStartPosition, startPosition));
                 if (atBoundaryOfGranularity(contextStartPosition, TextGranularity::ParagraphGranularity, SelectionDirection::Backward) && firstPositionInEditableContent != contextStartPosition)
                     contextBefore = makeString("\n "_s, contextBefore);
@@ -2606,10 +2609,9 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
         }
 
         if (endPosition != endOfEditableContent(endPosition)) {
-            VisiblePosition nextPosition;
-            if (!atBoundaryOfGranularity(endPosition, TextGranularity::WordGranularity, SelectionDirection::Forward) && withinTextUnitOfGranularity(endPosition, TextGranularity::WordGranularity, SelectionDirection::Forward))
-                nextPosition = positionOfNextBoundaryOfGranularity(endPosition, TextGranularity::WordGranularity, SelectionDirection::Forward);
-            contextAfter = plainTextForContext(makeSimpleRange(endPosition, nextPosition));
+            VisiblePosition nextPosition = endOfSentence(endPosition);
+            if (nextPosition.isNotNull() && nextPosition > endPosition)
+                contextAfter = plainTextForContext(makeSimpleRange(endPosition, nextPosition));
         }
     }
 
