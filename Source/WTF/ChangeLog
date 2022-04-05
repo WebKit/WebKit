@@ -1,3 +1,15 @@
+2022-04-05  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Build fix after r292389
+        https://bugs.webkit.org/show_bug.cgi?id=238816
+
+        Unreviewed build fix
+
+        Add UnixFileDescriptor.h to PlatformPlayStation.cmake
+        as per the changes to PlatformGTK and PlatformWPE.
+
+        * wtf/PlatformPlayStation.cmake:
+
 2022-04-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [Unix] Add UnixFileDescriptor, use it in IPC::Semaphore
