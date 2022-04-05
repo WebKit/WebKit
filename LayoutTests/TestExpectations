@@ -4636,15 +4636,8 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-fieldset.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-flex.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-flexitem.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-grid.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-legend.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-multicol.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-regular-container.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-vertical-rl-.html [ ImageOnlyFailure ]
 # webkit-ruby-text
 imported/w3c/web-platform-tests/css/css-contain/contain-layout-017.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-021.html [ ImageOnlyFailure ]

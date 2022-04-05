@@ -1,3 +1,27 @@
+2022-04-05  Alan Bujtas  <zalan@apple.com>
+
+        [CSS-Contain] Add support for contain: inline-size
+        https://bugs.webkit.org/show_bug.cgi?id=238787
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeContain):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::createsNewFormattingContext const):
+        (WebCore::RenderBox::establishesIndependentFormattingContext const):
+        * rendering/RenderBox.h:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueContain):
+
 2022-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] GstCapsForeachFunc returns a gboolean

@@ -345,7 +345,8 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
 
 void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (!shouldApplySizeContainment(*this)) {
+    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeContainment(*this) || shouldApplyInlineSizeContainment(*this);
+    if (!shouldIgnoreDescendantContentForLogicalWidth) {
         if (childrenInline())
             computeInlinePreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
         else
@@ -4118,10 +4119,7 @@ static inline LayoutUnit preferredWidth(LayoutUnit preferredWidth, float result)
 
 void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    // "The inline-axis intrinsic sizes of the principal box are determined as if the element had no content."
-    // https://drafts.csswg.org/css-contain-3/#containment-inline-size
-    if (shouldApplyInlineSizeContainment(*this))
-        return;
+    ASSERT(!shouldApplyInlineSizeContainment(*this));
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (const_cast<RenderBlockFlow&>(*this).tryComputePreferredWidthsUsingModernPath(minLogicalWidth, maxLogicalWidth))

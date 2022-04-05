@@ -12,6 +12,6 @@ PASS Property contain value 'style layout paint'
 PASS Property contain value 'size style layout paint'
 PASS Property contain value 'size layout paint'
 PASS Property contain value 'layout paint'
-FAIL Property contain value 'inline-size' assert_true: 'inline-size' is a supported value for contain. expected true got false
-FAIL Property contain value 'inline-size layout style paint' assert_true: 'inline-size layout style paint' is a supported value for contain. expected true got false
+PASS Property contain value 'inline-size'
+FAIL Property contain value 'inline-size layout style paint' assert_equals: expected "inline-size layout style paint" but got "layout style paint inline-size"
 

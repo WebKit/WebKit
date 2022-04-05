@@ -1299,6 +1299,9 @@ inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValu
         case CSSValueSize:
             containment.add(Containment::Size);
             break;
+        case CSSValueInlineSize:
+            containment.add(Containment::InlineSize);
+            break;
         case CSSValueLayout:
             containment.add(Containment::Layout);
             break;

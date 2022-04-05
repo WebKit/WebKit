@@ -2242,7 +2242,8 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
 void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     ASSERT(!childrenInline());
-    if (!shouldApplySizeContainment(*this))
+    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeContainment(*this) || shouldApplyInlineSizeContainment(*this);
+    if (!shouldIgnoreDescendantContentForLogicalWidth)
         computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
@@ -2276,6 +2277,8 @@ void RenderBlock::computePreferredLogicalWidths()
 
 void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    ASSERT(!shouldApplyInlineSizeContainment(*this));
+
     const RenderStyle& styleToUse = style();
     bool nowrap = styleToUse.whiteSpace() == WhiteSpace::NoWrap;
 

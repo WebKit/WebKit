@@ -4032,13 +4032,18 @@ static RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
     if (auto singleValue = consumeIdent<CSSValueNone, CSSValueStrict, CSSValueContent>(range))
         return singleValue;
     auto list = CSSValueList::createSpaceSeparated();
-    RefPtr<CSSPrimitiveValue> size, layout, paint, style;
+    RefPtr<CSSPrimitiveValue> size, inlineSize, layout, paint, style;
     while (!range.atEnd()) {
         switch (range.peek().id()) {
         case CSSValueSize:
             if (size)
                 return nullptr;
             size = consumeIdent(range);
+            break;
+        case CSSValueInlineSize:
+            if (inlineSize || size)
+                return nullptr;
+            inlineSize = consumeIdent(range);
             break;
         case CSSValueLayout:
             if (layout)
@@ -4061,6 +4066,8 @@ static RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
     }
     if (size)
         list->append(size.releaseNonNull());
+    if (inlineSize)
+        list->append(inlineSize.releaseNonNull());
     if (layout)
         list->append(layout.releaseNonNull());
     if (style)
