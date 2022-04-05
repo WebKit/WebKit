@@ -42,9 +42,8 @@
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
 #include <WebCore/ColorSpace.h>
-#include <WebCore/DisplayList.h>
-#include <WebCore/DisplayListItems.h>
-#include <WebCore/DisplayListReplayer.h>
+#include <WebCore/DisplayListItemBufferIdentifier.h>
+#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/WeakPtr.h>
@@ -53,6 +52,7 @@ namespace WebCore {
 
 class DestinationColorSpace;
 class FloatSize;
+class MediaPlayer;
 class NativeImage;
 
 enum class RenderingMode : bool;

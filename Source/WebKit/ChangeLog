@@ -1,3 +1,28 @@
+2022-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove lots of WebCore:: in RemoteRenderingBackend
+        https://bugs.webkit.org/show_bug.cgi?id=238763
+
+        Reviewed by Wenson Hsieh.
+
+        RemoteRenderingBackend already has a `using namespace WebCore` so remove the explicit namespacing.
+
+        Also clean up some includes in the header.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getPixelBufferForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getPixelBufferForImageBufferWithNewMemory):
+        (WebKit::RemoteRenderingBackend::putPixelBufferForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getDataURLForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getDataForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBuffer):
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::cacheFont):
+        (WebKit::handleFromBuffer):
+        (WebKit::RemoteRenderingBackend::markSurfacesVolatile):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
         Remove VP8/9 and WebM-related system feature flags

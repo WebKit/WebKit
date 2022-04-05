@@ -202,7 +202,7 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
     updateRenderingResourceRequest();
 }
 
-void RemoteRenderingBackend::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, WebCore::PixelBufferFormat&& destinationFormat, WebCore::IntRect&& srcRect, CompletionHandler<void()>&& completionHandler)
+void RemoteRenderingBackend::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, PixelBufferFormat&& destinationFormat, IntRect&& srcRect, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK(m_getPixelBufferSharedMemory, "No shared memory for getPixelBufferForImageBuffer");
     QualifiedRenderingResourceIdentifier qualifiedImageBuffer { imageBuffer, m_gpuConnectionToWebProcess->webProcessIdentifier() };
@@ -217,7 +217,7 @@ void RemoteRenderingBackend::getPixelBufferForImageBuffer(RenderingResourceIdent
     completionHandler();
 }
 
-void RemoteRenderingBackend::getPixelBufferForImageBufferWithNewMemory(RenderingResourceIdentifier imageBuffer, SharedMemory::IPCHandle&& handle, WebCore::PixelBufferFormat&& destinationFormat, WebCore::IntRect&& srcRect, CompletionHandler<void()>&& completionHandler)
+void RemoteRenderingBackend::getPixelBufferForImageBufferWithNewMemory(RenderingResourceIdentifier imageBuffer, SharedMemory::IPCHandle&& handle, PixelBufferFormat&& destinationFormat, IntRect&& srcRect, CompletionHandler<void()>&& completionHandler)
 {
     m_getPixelBufferSharedMemory = nullptr;
     auto sharedMemory = WebKit::SharedMemory::map(handle.handle, WebKit::SharedMemory::Protection::ReadWrite);
@@ -232,21 +232,21 @@ void RemoteRenderingBackend::destroyGetPixelBufferSharedMemory()
     m_getPixelBufferSharedMemory = nullptr;
 }
 
-void RemoteRenderingBackend::putPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, WebCore::PixelBuffer&& pixelBuffer, WebCore::IntRect&& srcRect, WebCore::IntPoint&& destPoint, WebCore::AlphaPremultiplication destFormat)
+void RemoteRenderingBackend::putPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, PixelBuffer&& pixelBuffer, IntRect&& srcRect, IntPoint&& destPoint, AlphaPremultiplication destFormat)
 {
     QualifiedRenderingResourceIdentifier qualifiedImageBuffer { imageBuffer, m_gpuConnectionToWebProcess->webProcessIdentifier() };
     if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(qualifiedImageBuffer))
         imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
-void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
+void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
     getDataURLForImageBufferWithQualifiedIdentifier(mimeType, quality, preserveResolution, { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, WTFMove(completionHandler));
 }
 
-void RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution preserveResolution, QualifiedRenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
+void RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution, QualifiedRenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -256,7 +256,7 @@ void RemoteRenderingBackend::getDataURLForImageBufferWithQualifiedIdentifier(con
     completionHandler(WTFMove(urlString));
 }
 
-void RemoteRenderingBackend::getDataForImageBuffer(const String& mimeType, std::optional<double> quality, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
+void RemoteRenderingBackend::getDataForImageBuffer(const String& mimeType, std::optional<double> quality, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
@@ -273,14 +273,14 @@ void RemoteRenderingBackend::getDataForImageBufferWithQualifiedIdentifier(const 
     completionHandler(WTFMove(data));
 }
 
-void RemoteRenderingBackend::getShareableBitmapForImageBuffer(WebCore::RenderingResourceIdentifier identifier, WebCore::PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void RemoteRenderingBackend::getShareableBitmapForImageBuffer(RenderingResourceIdentifier identifier, PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
     getShareableBitmapForImageBufferWithQualifiedIdentifier({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, preserveResolution, WTFMove(completionHandler));
 }
 
-void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier identifier, WebCore::PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier identifier, PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -290,14 +290,14 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
         if (!imageBuffer)
             return;
         auto backendSize = imageBuffer->backendSize();
-        auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : imageBuffer->truncatedLogicalSize();
+        auto resultSize = preserveResolution == PreserveResolution::Yes ? backendSize : imageBuffer->truncatedLogicalSize();
         auto bitmap = ShareableBitmap::createShareable(resultSize, { imageBuffer->colorSpace() });
         if (!bitmap)
             return;
         auto context = bitmap->createGraphicsContext();
         if (!context)
             return;
-        context->drawImageBuffer(*imageBuffer, FloatRect { { }, resultSize }, FloatRect { { }, backendSize }, { WebCore::CompositeOperator::Copy });
+        context->drawImageBuffer(*imageBuffer, FloatRect { { }, resultSize }, FloatRect { { }, backendSize }, { CompositeOperator::Copy });
         bitmap->createHandle(handle);
     }();
     completionHandler(WTFMove(handle));
@@ -352,7 +352,7 @@ void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const Share
     m_remoteResourceCache.cacheNativeImage(*image, nativeImageResourceIdentifier);
 }
 
-void RemoteRenderingBackend::cacheFont(Ref<WebCore::Font>&& font)
+void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
@@ -393,7 +393,7 @@ void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(Qualif
     updateRenderingResourceRequest();
 }
 
-static std::optional<ImageBufferBackendHandle> handleFromBuffer(WebCore::ImageBuffer& buffer)
+static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)
 {
     auto* backend = buffer.ensureBackendCreated();
     if (!backend)
@@ -487,7 +487,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
     outputData.displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
 }
 
-void RemoteRenderingBackend::markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>& identifiers, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers)>&& completionHandler)
+void RemoteRenderingBackend::markSurfacesVolatile(const Vector<RenderingResourceIdentifier>& identifiers, CompletionHandler<void(const Vector<RenderingResourceIdentifier>& markedVolatileBufferIdentifiers)>&& completionHandler)
 {
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::markSurfacesVolatile " << identifiers);
 
@@ -496,7 +496,7 @@ void RemoteRenderingBackend::markSurfacesVolatile(const Vector<WebCore::Renderin
         return imageBuffer.setVolatile();
     };
 
-    Vector<WebCore::RenderingResourceIdentifier> markedVolatileBufferIdentifiers;
+    Vector<RenderingResourceIdentifier> markedVolatileBufferIdentifiers;
     for (auto identifier : identifiers) {
         auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
         if (imageBuffer) {
