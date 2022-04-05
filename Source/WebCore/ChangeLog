@@ -1,3 +1,28 @@
+2022-04-04  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Simplify grammar
+        https://bugs.webkit.org/show_bug.cgi?id=238732
+
+        Reviewed by Sam Weinig.
+
+        Because size() function syntax is no longer supported, separate SizeQuery and SizeCondition productions
+        are no longer needed.
+
+        Some slightly unnecessary templatization is retained to help with future work.
+
+        * css/ContainerQuery.cpp:
+        * css/ContainerQuery.h:
+        * css/ContainerQueryParser.cpp:
+        (WebCore::ContainerQueryParser::consumeContainerQuery):
+        (WebCore::ContainerQueryParser::consumeCondition):
+        (WebCore::ContainerQueryParser::consumeSizeFeature):
+        (WebCore::ContainerQueryParser::consumePlainSizeFeature):
+        (WebCore::ContainerQueryParser::consumeSizeQuery): Deleted.
+        * css/ContainerQueryParser.h:
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::evaluateQuery const):
+        * style/ContainerQueryEvaluator.h:
+
 2022-04-04  Chris Dumez  <cdumez@apple.com>
 
         Avoid repeated calls to WebCore::eventNames()

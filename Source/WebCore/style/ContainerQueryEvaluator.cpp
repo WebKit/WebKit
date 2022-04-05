@@ -147,19 +147,10 @@ auto ContainerQueryEvaluator::evaluateQuery(const CQ::ContainerQuery& containerQ
 {
     return WTF::switchOn(containerQuery, [&](const CQ::ContainerCondition& containerCondition) {
         return evaluateCondition(containerCondition, container);
-    }, [&](const CQ::SizeQuery& sizeQuery) {
-        return evaluateQuery(sizeQuery, container);
-    }, [&](const CQ::UnknownQuery&) {
-        return EvaluationResult::Unknown;
-    });
-}
-
-auto ContainerQueryEvaluator::evaluateQuery(const CQ::SizeQuery& sizeQuery, const SelectedContainer& container) const -> EvaluationResult
-{
-    return WTF::switchOn(sizeQuery, [&](const CQ::SizeCondition& sizeCondition) {
-        return evaluateCondition(sizeCondition, container);
     }, [&](const CQ::SizeFeature& sizeFeature) {
         return evaluateSizeFeature(sizeFeature, container);
+    }, [&](const CQ::UnknownQuery&) {
+        return EvaluationResult::Unknown;
     });
 }
 

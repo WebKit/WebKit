@@ -49,7 +49,6 @@ private:
     std::optional<SelectedContainer> selectContainer(const FilteredContainerQuery&) const;
 
     EvaluationResult evaluateQuery(const CQ::ContainerQuery&, const SelectedContainer&) const;
-    EvaluationResult evaluateQuery(const CQ::SizeQuery&, const SelectedContainer&) const;
     template<typename ConditionType> EvaluationResult evaluateCondition(const ConditionType&, const SelectedContainer&) const;
     EvaluationResult evaluateSizeFeature(const CQ::SizeFeature&, const SelectedContainer&) const;
 

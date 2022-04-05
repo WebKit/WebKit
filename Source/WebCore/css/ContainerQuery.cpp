@@ -87,7 +87,6 @@ OptionSet<Axis> requiredAxesForFeature(const AtomString& featureName)
     return { };
 }
 
-void serialize(StringBuilder&, const SizeQuery&);
 void serialize(StringBuilder&, const SizeFeature&);
 template<typename ConditionType> void serialize(StringBuilder&, const ConditionType&);
 
@@ -102,13 +101,6 @@ static void serialize(StringBuilder& builder, const ContainerQuery& containerQue
         builder.append('(');
         builder.append(unknownQuery.text);
         builder.append(')');
-    });
-}
-
-void serialize(StringBuilder& builder, const SizeQuery& sizeQuery)
-{
-    WTF::switchOn(sizeQuery, [&](auto& node) {
-        serialize(builder, node);
     });
 }
 

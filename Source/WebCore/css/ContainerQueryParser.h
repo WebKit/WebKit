@@ -39,7 +39,6 @@ public:
 private:
     std::optional<FilteredContainerQuery> consumeFilteredContainerQuery(CSSParserTokenRange&);
     std::optional<CQ::ContainerQuery> consumeContainerQuery(CSSParserTokenRange&);
-    std::optional<CQ::SizeQuery> consumeSizeQuery(CSSParserTokenRange&);
     template<typename ConditionType> std::optional<ConditionType> consumeCondition(CSSParserTokenRange&);
     std::optional<CQ::SizeFeature> consumeSizeFeature(CSSParserTokenRange&);
     std::optional<CQ::SizeFeature> consumePlainSizeFeature(CSSParserTokenRange&);

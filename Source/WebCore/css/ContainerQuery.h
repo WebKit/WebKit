@@ -44,8 +44,7 @@ struct UnknownQuery {
     String text;
 };
 
-using SizeQuery = std::variant<SizeCondition, SizeFeature>;
-using ContainerQuery = std::variant<ContainerCondition, SizeQuery, UnknownQuery>;
+using ContainerQuery = std::variant<ContainerCondition, SizeFeature, UnknownQuery>;
 
 enum class LogicalOperator : uint8_t { And, Or, Not };
 enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
@@ -54,11 +53,6 @@ enum class Syntax : uint8_t { Boolean, Colon, Range };
 struct ContainerCondition {
     LogicalOperator logicalOperator { LogicalOperator::And };
     Vector<ContainerQuery> queries;
-};
-
-struct SizeCondition {
-    LogicalOperator logicalOperator { LogicalOperator::And };
-    Vector<SizeQuery> queries;
 };
 
 struct Comparison {

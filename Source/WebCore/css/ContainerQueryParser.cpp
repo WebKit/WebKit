@@ -74,9 +74,9 @@ std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CS
         blockRange.consumeWhitespace();
 
         // Try to parse as a size query first.
-        auto blockForSizeQuery = blockRange;
-        if (auto sizeQuery = consumeSizeQuery(blockForSizeQuery))
-            return { *sizeQuery };
+        auto blockForSizeFeature = blockRange;
+        if (auto sizeFeature = consumeSizeFeature(blockForSizeFeature))
+            return { *sizeFeature };
 
         if (auto condition = consumeCondition<CQ::ContainerCondition>(blockRange))
             return { condition };
@@ -91,12 +91,7 @@ std::optional<ConditionType> ContainerQueryParser::consumeCondition(CSSParserTok
     auto consumeQuery = [&](CSSParserTokenRange& range) {
         if constexpr (std::is_same_v<CQ::ContainerCondition, ConditionType>)
             return consumeContainerQuery(range);
-        if constexpr (std::is_same_v<CQ::SizeCondition, ConditionType>) {
-            if (range.peek().type() != LeftParenthesisToken)
-                return std::optional<CQ::SizeQuery>();
-            auto blockRange = range.consumeBlock();
-            return consumeSizeQuery(blockRange);
-        }
+        // Style query support would be here.
     };
 
     if (range.peek().type() == IdentToken) {
@@ -148,32 +143,22 @@ std::optional<ConditionType> ContainerQueryParser::consumeCondition(CSSParserTok
     return condition;
 }
 
-std::optional<CQ::SizeQuery> ContainerQueryParser::consumeSizeQuery(CSSParserTokenRange& range)
-{
-    if (range.peek().type() == LeftParenthesisToken || (range.peek().type() == IdentToken && range.peek().id() == CSSValueNot)) {
-        auto sizeCondition = consumeCondition<CQ::SizeCondition>(range);
-        if (!sizeCondition)
-            return { };
-        return { *sizeCondition };
-    }
-
-    auto sizeFeature = consumeSizeFeature(range);
-    if (!sizeFeature)
-        return { };
-
-    m_requiredAxes.add(CQ::requiredAxesForFeature(sizeFeature->name));
-
-    return { *sizeFeature };
-}
-
 std::optional<CQ::SizeFeature> ContainerQueryParser::consumeSizeFeature(CSSParserTokenRange& range)
 {
-    auto rangeCopy = range;
-    if (auto sizeFeature = consumePlainSizeFeature(range))
-        return sizeFeature;
+    auto consume = [&] {
+        auto rangeCopy = range;
+        if (auto sizeFeature = consumePlainSizeFeature(range))
+            return sizeFeature;
 
-    range = rangeCopy;
-    return consumeRangeSizeFeature(range);
+        range = rangeCopy;
+        return consumeRangeSizeFeature(range);
+    };
+
+    auto sizeFeature = consume();
+    if (sizeFeature)
+        m_requiredAxes.add(CQ::requiredAxesForFeature(sizeFeature->name));
+
+    return sizeFeature;
 }
 
 static String consumeFeatureName(CSSParserTokenRange& range)
@@ -206,6 +191,7 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSS
     if (range.atEnd()) {
         if (op != CQ::ComparisonOperator::Equal)
             return { };
+
         return CQ::SizeFeature { featureName, CQ::Syntax::Boolean, { }, { } };
     }
 
@@ -217,7 +203,7 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSS
         return { };
 
     auto value = consumeValue(range);
-    
+
     return CQ::SizeFeature { featureName, CQ::Syntax::Colon, { }, CQ::Comparison { op, WTFMove(value) } };
 }
 
