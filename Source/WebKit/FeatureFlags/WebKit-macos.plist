@@ -42,30 +42,5 @@
 			<true/>
 		</dict>
 	</dict>
-	<key>vp9_decoder</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
-	<key>vp8_decoder</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
-	<key>webm_format_reader</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
-	<key>webm_parser</key>
-	<dict>
-		<key>Enabled</key>
-		<true/>
-	</dict>
-	<key>webm_webaudio</key>
-	<dict>
-		<key>Enabled</key>
-		<false/>
-	</dict>
 </dict>
 </plist>

@@ -2459,6 +2459,27 @@ UsesEncodingDetector:
     WebCore:
       default: false
 
+VP8DecoderEnabled:
+  type: bool
+  webcoreBinding: none
+  condition: ENABLE(VP9)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+VP9DecoderEnabled:
+  type: bool
+  condition: ENABLE(VP9)
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
 VideoQualityIncludesDisplayCompositingEnabled:
   type: bool
   condition: ENABLE(VIDEO)
@@ -2555,6 +2576,25 @@ WebGPU:
       default: false
     WebCore:
       default: false
+
+WebMFormatReaderEnabled:
+  type: bool
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBM_FORMAT_READER)
+  defaultValue:
+    WebKit:
+      default: true
+
+# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
+WebMParserEnabled:
+  type: bool
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(MEDIA_SOURCE)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
 
 WebSecurityEnabled:
   type: bool

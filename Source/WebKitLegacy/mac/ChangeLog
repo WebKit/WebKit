@@ -1,5 +1,14 @@
 2022-04-04  Tim Horton  <timothy_horton@apple.com>
 
+        Remove VP8/9 and WebM-related system feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=238757
+
+        Reviewed by Eric Carlson.
+
+        * WebView/WebPreferencesDefaultValues.h:
+
+2022-04-04  Tim Horton  <timothy_horton@apple.com>
+
         Remove the incremental_pdf system feature flag
         https://bugs.webkit.org/show_bug.cgi?id=238754
 

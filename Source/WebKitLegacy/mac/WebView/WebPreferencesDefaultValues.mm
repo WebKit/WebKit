@@ -267,27 +267,4 @@ bool defaultMediaSourceEnabled()
 
 #endif
 
-#if ENABLE(MEDIA_SOURCE)
-
-bool defaultWebMParserEnabled()
-{
-    return isFeatureFlagEnabled("webm_parser", true);
-}
-
-#endif
-
-#if ENABLE(VP9)
-
-bool defaultVP8DecoderEnabled()
-{
-    return isFeatureFlagEnabled("vp8_decoder", true);
-}
-
-bool defaultVP9DecoderEnabled()
-{
-    return isFeatureFlagEnabled("vp9_decoder", true);
-}
-
-#endif // ENABLE(VP9)
-
 } // namespace WebKit

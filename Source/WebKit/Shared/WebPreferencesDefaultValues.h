@@ -83,19 +83,6 @@ bool defaultCaptureVideoInGPUProcessEnabled();
 bool defaultWebRTCCodecsInGPUProcess();
 #endif
 
-#if ENABLE(WEBM_FORMAT_READER)
-bool defaultWebMFormatReaderEnabled();
-#endif
-
-#if ENABLE(VP9)
-bool defaultVP8DecoderEnabled();
-bool defaultVP9DecoderEnabled();
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-bool defaultWebMParserEnabled();
-#endif
-
 #if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
 bool defaultMediaSourceEnabled();
 #endif

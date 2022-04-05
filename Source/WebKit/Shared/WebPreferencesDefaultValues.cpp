@@ -245,44 +245,6 @@ bool defaultWebRTCCodecsInGPUProcess()
 
 #endif // ENABLE(WEB_RTC)
 
-#if ENABLE(WEBM_FORMAT_READER)
-
-bool defaultWebMFormatReaderEnabled()
-{
-#if PLATFORM(MAC)
-    bool defaultValue = true;
-#else
-    bool defaultValue = false;
-#endif
-
-    return isFeatureFlagEnabled("webm_format_reader", defaultValue);
-}
-
-#endif // ENABLE(WEBM_FORMAT_READER)
-
-#if ENABLE(VP9)
-
-bool defaultVP8DecoderEnabled()
-{
-    return isFeatureFlagEnabled("vp8_decoder", true);
-}
-
-bool defaultVP9DecoderEnabled()
-{
-    return isFeatureFlagEnabled("vp9_decoder", true);
-}
-
-#endif // ENABLE(VP9)
-
-#if ENABLE(MEDIA_SOURCE)
-
-bool defaultWebMParserEnabled()
-{
-    return isFeatureFlagEnabled("webm_parser", true);
-}
-
-#endif // ENABLE(MEDIA_SOURCE)
-
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 bool defaultMediaSessionCoordinatorEnabled()
 {

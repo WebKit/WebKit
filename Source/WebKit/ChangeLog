@@ -1,3 +1,21 @@
+2022-04-04  Tim Horton  <timothy_horton@apple.com>
+
+        Remove VP8/9 and WebM-related system feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=238757
+
+        Reviewed by Eric Carlson.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebMFormatReaderEnabled): Deleted.
+        (WebKit::defaultVP8DecoderEnabled): Deleted.
+        (WebKit::defaultVP9DecoderEnabled): Deleted.
+        (WebKit::defaultWebMParserEnabled): Deleted.
+        * Shared/WebPreferencesDefaultValues.h:
+
 2022-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] [WK2] Add plumbing to extract video frames in element fullscreen
