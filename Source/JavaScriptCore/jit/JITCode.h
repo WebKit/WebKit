@@ -233,6 +233,8 @@ public:
 
     const RegisterAtOffsetList* calleeSaveRegisters() const;
 
+    static ptrdiff_t offsetOfJITType() { return OBJECT_OFFSETOF(JITCode, m_jitType); }
+
 private:
     const JITType m_jitType;
     const ShareAttribute m_shareAttribute;

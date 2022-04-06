@@ -219,6 +219,28 @@ void AssemblyHelpers::jitAssertArgumentCountSane()
     ok.link(this);
 }
 
+void AssemblyHelpers::jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType type)
+{
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, scratchGPR);
+    loadPtr(Address(scratchGPR, CodeBlock::jitCodeOffset()), scratchGPR);
+    load8(Address(scratchGPR, JITCode::offsetOfJITType()), scratchGPR);
+    Jump ok = branch32(Equal, scratchGPR, TrustedImm32(static_cast<unsigned>(type)));
+    abortWithReason(AHInvalidCodeBlock);
+    ok.link(this);
+}
+
+void AssemblyHelpers::jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg scratchGPR)
+{
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, scratchGPR);
+    loadPtr(Address(scratchGPR, CodeBlock::jitCodeOffset()), scratchGPR);
+    load8(Address(scratchGPR, JITCode::offsetOfJITType()), scratchGPR);
+    JumpList ok;
+    ok.append(branch32(Equal, scratchGPR, TrustedImm32(static_cast<unsigned>(JITType::DFGJIT))));
+    ok.append(branch32(Equal, scratchGPR, TrustedImm32(static_cast<unsigned>(JITType::FTLJIT))));
+    abortWithReason(AHInvalidCodeBlock);
+    ok.link(this);
+}
+
 #endif // ASSERT_ENABLED
 
 void AssemblyHelpers::jitReleaseAssertNoException(VM& vm)

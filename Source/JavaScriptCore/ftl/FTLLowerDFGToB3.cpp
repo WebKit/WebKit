@@ -290,12 +290,7 @@ public:
                 unsigned ftlFrameSize = params.proc().frameSize();
                 unsigned maxFrameSize = std::max(exitFrameSize, ftlFrameSize);
 
-#if ASSERT_ENABLED
-                jit.probeDebug([=](Probe::Context& ctx) {
-                    CodeBlock* codeBlock = ctx.fp<CallFrame*>()->codeBlock();
-                    RELEASE_ASSERT(codeBlock->jitType() == JITType::FTLJIT);
-                });
-#endif
+                jit.jitAssertCodeBlockOnCallFrameWithType(scratch, JITType::FTLJIT);
 
                 jit.addPtr(MacroAssembler::TrustedImm32(-maxFrameSize), fp, scratch);
                 MacroAssembler::JumpList stackOverflow;

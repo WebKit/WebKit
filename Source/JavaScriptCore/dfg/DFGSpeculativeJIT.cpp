@@ -2216,8 +2216,12 @@ void SpeculativeJIT::compileCurrentBlock()
     if (m_block->isCatchEntrypoint) {
         m_jit.addPtr(CCallHelpers::TrustedImm32(-(m_graph.frameRegisterCount() * sizeof(Register))), GPRInfo::callFrameRegister,  CCallHelpers::stackPointerRegister);
         m_jit.emitSaveCalleeSaves();
-        m_jit.emitMaterializeTagCheckRegisters();
         // CodeBlock in the stack is already replaced in OSR entry.
+#if USE(JSVALUE64)
+        // Use numberTagRegister as a scratch since it is recovered after this.
+        m_jit.jitAssertCodeBlockOnCallFrameWithType(GPRInfo::numberTagRegister, JITType::DFGJIT);
+#endif
+        m_jit.emitMaterializeTagCheckRegisters();
     }
 
     m_stream->appendAndLog(VariableEvent::reset());

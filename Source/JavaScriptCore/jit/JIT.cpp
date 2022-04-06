@@ -741,15 +741,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         nop();
 
     emitFunctionPrologue();
-#if ASSERT_ENABLED
-    probeDebug([=](Probe::Context& ctx) {
-        CodeBlock* codeBlock = ctx.fp<CallFrame*>()->codeBlock();
-        if (codeBlock->jitType() != JITType::BaselineJIT) {
-            dataLogLn("FP ", RawPointer(ctx.fp<CallFrame*>()));
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    });
-#endif
+    jitAssertCodeBlockOnCallFrameWithType(regT2, JITType::BaselineJIT);
 
     Label beginLabel(this);
 
@@ -813,15 +805,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 
         emitFunctionPrologue();
         RELEASE_ASSERT(m_unlinkedCodeBlock->codeType() == FunctionCode);
-#if ASSERT_ENABLED
-        probeDebug([=](Probe::Context& ctx) {
-            CodeBlock* codeBlock = ctx.fp<CallFrame*>()->codeBlock();
-            if (codeBlock->jitType() != JITType::BaselineJIT) {
-                dataLogLn("FP ", RawPointer(ctx.fp<CallFrame*>()));
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        });
-#endif
+        jitAssertCodeBlockOnCallFrameWithType(regT2, JITType::BaselineJIT);
         emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
         store8(TrustedImm32(0), Address(regT0, CodeBlock::offsetOfShouldAlwaysBeInlined()));
 

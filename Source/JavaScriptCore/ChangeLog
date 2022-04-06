@@ -1,5 +1,35 @@
 2022-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Use inlined assertion for CodeBlock type
+        https://bugs.webkit.org/show_bug.cgi?id=238849
+
+        Reviewed by Michael Saboff.
+
+        We introduced probeDebug-based CodeBlock assertion, but it is too slow and causing timeout on Debug JSC tests.
+        Instead, we use inlined assertion which is much faster to prevent these Debug build timeout.
+
+        * assembler/AbortReason.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileEntry):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitAssertCodeBlockOnCallFrameWithType):
+        (JSC::AssemblyHelpers::jitAssertCodeBlockOnCallFrameIsOptimizingJIT):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::jitAssertCodeBlockOnCallFrameWithType):
+        (JSC::AssemblyHelpers::jitAssertCodeBlockOnCallFrameIsOptimizingJIT):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        * jit/JITCode.h:
+        (JSC::JITCode::offsetOfJITType):
+
+2022-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Strictly annotate pointers with TrustedImmPtr in CCallHelpers
         https://bugs.webkit.org/show_bug.cgi?id=238827
 

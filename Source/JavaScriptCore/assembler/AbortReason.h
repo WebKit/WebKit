@@ -42,6 +42,7 @@ enum AbortReason {
     AHIsNotJSNumber                                   =  80,
     AHIsNotNull                                       =  90,
     AHStackPointerMisaligned                          = 100,
+    AHInvalidCodeBlock                                = 101,
     AHStructureIDIsValid                              = 110,
     AHNotCellMaskNotInPlace                           = 120,
     AHNumberTagNotInPlace                             = 130,

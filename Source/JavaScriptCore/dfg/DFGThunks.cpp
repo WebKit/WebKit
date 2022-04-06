@@ -163,12 +163,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM& vm)
 
     ok.link(&jit);
 
-#if ASSERT_ENABLED
-    jit.probeDebug([](Probe::Context& ctx) {
-        CodeBlock* codeBlock = ctx.fp<CallFrame*>()->codeBlock();
-        RELEASE_ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
-    });
-#endif
+    jit.jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRInfo::regT2);
 
     jit.restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
     jit.emitMaterializeTagCheckRegisters();

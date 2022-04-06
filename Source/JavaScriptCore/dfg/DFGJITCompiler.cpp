@@ -111,12 +111,7 @@ void JITCompiler::compileEntry()
     // check) which will be dependent on stack layout. (We'd need to account for this in
     // both normal return code and when jumping to an exception handler).
     emitFunctionPrologue();
-#if ASSERT_ENABLED
-    probeDebug([=](Probe::Context& ctx) {
-        CodeBlock* codeBlock = ctx.fp<CallFrame*>()->codeBlock();
-        RELEASE_ASSERT(codeBlock->jitType() == JITType::DFGJIT);
-    });
-#endif
+    jitAssertCodeBlockOnCallFrameWithType(GPRInfo::regT2, JITType::DFGJIT);
 }
 
 void JITCompiler::compileSetupRegistersForEntry()

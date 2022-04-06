@@ -1332,6 +1332,8 @@ public:
     void jitAssertTagsInPlace();
     void jitAssertArgumentCountSane();
     inline void jitAssertNoException(VM& vm) { jitReleaseAssertNoException(vm); }
+    void jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType);
+    void jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg scratchGPR);
 #else
     void jitAssertIsInt32(GPRReg) { }
     void jitAssertIsJSInt32(GPRReg) { }
@@ -1343,6 +1345,8 @@ public:
     void jitAssertTagsInPlace() { }
     void jitAssertArgumentCountSane() { }
     void jitAssertNoException(VM&) { }
+    void jitAssertCodeBlockOnCallFrameWithType(GPRReg, JITType) { }
+    void jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg) { }
 #endif
 
     void jitReleaseAssertNoException(VM&);
