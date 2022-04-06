@@ -1,3 +1,18 @@
+2022-04-05  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] PAL: Add headers-only dependency on WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=238646
+
+        Reviewed by Alexey Proskuryakov.
+
+        Lots of includes of WebGPU in pal/graphics/WebGPU/Impl, so the build system needs to know to
+        copy its headers before building PAL.
+
+        Clean up a file reference to a header that was removed in
+        https://commits.webkit.org/247364@main
+
+        * PAL.xcodeproj/project.pbxproj:
+
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
         Mark String(const char*) constructor as explicit

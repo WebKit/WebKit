@@ -89,6 +89,7 @@
 		CD6122D12559B8F200FC657A /* OutputDevice.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6122CF2559B8F200FC657A /* OutputDevice.mm */; };
 		CDACB3602387425B0018D7CE /* MediaToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */; };
 		DD05A36027BF0ACE0096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DD05A35F27BF0AC40096EFAB /* libWTF.a */; };
+		DD0B43C227F679A7009E31FC /* WebGPU.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DD0B43C127F67999009E31FC /* WebGPU.framework */; };
 		DD20DD1227BC90D60093D175 /* MediaTimeAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD1327BC90D60093D175 /* OutputContext.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6122CA2559B6AC00FC657A /* OutputContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD1427BC90D60093D175 /* OutputDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CD6122CE2559B8F200FC657A /* OutputDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -206,7 +207,6 @@
 		DD20DD8427BC90D70093D175 /* WebGPUPipelineDescriptorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC5E45E27374948006F6FF4 /* WebGPUPipelineDescriptorBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD8527BC90D70093D175 /* WebGPUPipelineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC5E44527374947006F6FF4 /* WebGPUPipelineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD8627BC90D70093D175 /* WebGPUPipelineLayoutDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC5E44D27374947006F6FF4 /* WebGPUPipelineLayoutDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD20DD8727BC90D70093D175 /* WebGPUPipelineStatisticName.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC5E43927374946006F6FF4 /* WebGPUPipelineStatisticName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD8827BC90D70093D175 /* WebGPUPowerPreference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC5E47A27374949006F6FF4 /* WebGPUPowerPreference.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD8927BC90D70093D175 /* WebGPUPredefinedColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC5E47D27374949006F6FF4 /* WebGPUPredefinedColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DD8A27BC90D70093D175 /* WebGPUPrimitiveState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC5E46D27374948006F6FF4 /* WebGPUPrimitiveState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -509,6 +509,7 @@
 			files = (
 				DDB04F32278E4F1B008D3678 /* libWebKitAdditions.a in Product Dependencies */,
 				DD05A36027BF0ACE0096EFAB /* libWTF.a in Product Dependencies */,
+				DD0B43C227F679A7009E31FC /* WebGPU.framework in Product Dependencies */,
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -928,6 +929,7 @@
 		CDF91112220E4EEC001EA39E /* CelestialSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CelestialSPI.h; sourceTree = "<group>"; };
 		CE5673862151A7B9002F92D7 /* IOKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOKitSPI.h; sourceTree = "<group>"; };
 		DD05A35F27BF0AC40096EFAB /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD0B43C127F67999009E31FC /* WebGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDE99300278D07B800F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF83E208263734F1000825EF /* CryptoKitPrivateSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKitPrivateSPI.h; sourceTree = "<group>"; };
 		E327C0DE260BDC90002281C5 /* NotifySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotifySPI.h; sourceTree = "<group>"; };
@@ -1613,6 +1615,7 @@
 			children = (
 				DDE99300278D07B800F60D26 /* libWebKitAdditions.a */,
 				DD05A35F27BF0AC40096EFAB /* libWTF.a */,
+				DD0B43C127F67999009E31FC /* WebGPU.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1741,7 +1744,6 @@
 				DD20DD8427BC90D70093D175 /* WebGPUPipelineDescriptorBase.h in Headers */,
 				DD20DD8527BC90D70093D175 /* WebGPUPipelineLayout.h in Headers */,
 				DD20DD8627BC90D70093D175 /* WebGPUPipelineLayoutDescriptor.h in Headers */,
-				DD20DD8727BC90D70093D175 /* WebGPUPipelineStatisticName.h in Headers */,
 				DD20DD8827BC90D70093D175 /* WebGPUPowerPreference.h in Headers */,
 				DD20DD8927BC90D70093D175 /* WebGPUPredefinedColorSpace.h in Headers */,
 				DD20DD8A27BC90D70093D175 /* WebGPUPrimitiveState.h in Headers */,
