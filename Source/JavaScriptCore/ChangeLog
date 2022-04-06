@@ -1,3 +1,72 @@
+2022-04-06  Saam Barati  <sbarati@apple.com>
+
+        Call Structure::get instead of Structure::getConcurrently on the mutator thread
+        https://bugs.webkit.org/show_bug.cgi?id=238823
+
+        Reviewed by Yusuke Suzuki.
+
+        We try to call Structure::get instead of Structure::getConcurrently when
+        we know for sure we're on the main thread. This is because getConcurrently
+        is slower than get.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::couldStillSucceed const):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::install):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::install):
+        * bytecode/ObjectPropertyCondition.cpp:
+        (JSC::ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint const):
+        (JSC::ObjectPropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::ObjectPropertyCondition::isStillValid const):
+        (JSC::ObjectPropertyCondition::structureEnsuresValidity const):
+        * bytecode/ObjectPropertyCondition.h:
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::structuresEnsureValidity const):
+        (JSC::generateConditionsForPropertyMiss):
+        (JSC::generateConditionsForPropertySetterMiss):
+        (JSC::generateConditionsForPrototypePropertyHit):
+        (JSC::generateConditionsForPrototypePropertyHitCustom):
+        (JSC::generateConditionsForPrototypeEquivalenceConcurrently):
+        (JSC::generateConditionsForPropertyMissConcurrently):
+        (JSC::generateConditionsForPropertySetterMissConcurrently):
+        (JSC::generateConditionForSelfEquivalence):
+        (JSC::ObjectPropertyConditionSet::structuresEnsureValidityAssumingImpurePropertyWatchpoint const): Deleted.
+        (JSC::ObjectPropertyConditionSet::isValidAndWatchable const): Deleted.
+        * bytecode/ObjectPropertyConditionSet.h:
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::watchabilityToConcurrency):
+        (JSC::PropertyCondition::isStillValid const):
+        (JSC::PropertyCondition::isWatchableWhenValid const):
+        (JSC::PropertyCondition::isWatchableAssumingImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::isWatchable const):
+        * bytecode/PropertyCondition.h:
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::install):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::check):
+        (JSC::DFG::ByteCodeParser::planLoad):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::hasBeenInvalidated):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::watchCondition):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp:
+        (JSC::CachedSpecialPropertyAdaptiveStructureWatchpoint::install):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::tryInstallSpeciesWatchpoint):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect const):
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::cacheSpecialPropertySlow):
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function

@@ -1435,7 +1435,7 @@ private:
                         continue;
 
                     Structure* structure = condition.object()->structure(m_graph.m_vm);
-                    if (!condition.structureEnsuresValidity(structure))
+                    if (!condition.structureEnsuresValidity(Concurrency::ConcurrentThread, structure))
                         return;
 
                     m_insertionSet.insertNode(

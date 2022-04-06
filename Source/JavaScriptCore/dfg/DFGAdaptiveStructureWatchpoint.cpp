@@ -58,7 +58,7 @@ void AdaptiveStructureWatchpoint::initialize(const ObjectPropertyCondition& key,
 
 void AdaptiveStructureWatchpoint::install(VM& vm)
 {
-    RELEASE_ASSERT(m_key.isWatchable());
+    RELEASE_ASSERT(m_key.isWatchable(PropertyCondition::MakeNoChanges));
     
     m_key.object()->structure(vm)->addTransitionWatchpoint(this);
 }

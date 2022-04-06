@@ -46,12 +46,12 @@ void ObjectPropertyCondition::dump(PrintStream& out) const
     dumpInContext(out, nullptr);
 }
 
-bool ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint() const
+bool ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint(Concurrency concurrency) const
 {
     if (!*this)
         return false;
     
-    return m_condition.isStillValidAssumingImpurePropertyWatchpoint(m_object->structure(), nullptr);
+    return m_condition.isStillValidAssumingImpurePropertyWatchpoint(concurrency, m_object->structure(), nullptr);
 }
 
 bool ObjectPropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* structure) const
@@ -67,44 +67,44 @@ bool ObjectPropertyCondition::validityRequiresImpurePropertyWatchpoint() const
     return validityRequiresImpurePropertyWatchpoint(m_object->structure());
 }
 
-bool ObjectPropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(Structure* structure) const
+bool ObjectPropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(Concurrency concurrency, Structure* structure) const
 {
-    return m_condition.isStillValidAssumingImpurePropertyWatchpoint(structure, m_object);
+    return m_condition.isStillValidAssumingImpurePropertyWatchpoint(concurrency, structure, m_object);
 }
 
-bool ObjectPropertyCondition::isStillValidAssumingImpurePropertyWatchpoint() const
-{
-    if (!*this)
-        return false;
-
-    return isStillValidAssumingImpurePropertyWatchpoint(m_object->structure());
-}
-
-
-bool ObjectPropertyCondition::isStillValid(Structure* structure) const
-{
-    return m_condition.isStillValid(structure, m_object);
-}
-
-bool ObjectPropertyCondition::isStillValid() const
+bool ObjectPropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(Concurrency concurrency) const
 {
     if (!*this)
         return false;
-    
-    return isStillValid(m_object->structure());
+
+    return isStillValidAssumingImpurePropertyWatchpoint(concurrency, m_object->structure());
 }
 
-bool ObjectPropertyCondition::structureEnsuresValidity(Structure* structure) const
+
+bool ObjectPropertyCondition::isStillValid(Concurrency concurrency, Structure* structure) const
 {
-    return m_condition.isStillValid(structure);
+    return m_condition.isStillValid(concurrency, structure, m_object);
 }
 
-bool ObjectPropertyCondition::structureEnsuresValidity() const
+bool ObjectPropertyCondition::isStillValid(Concurrency concurrency) const
 {
     if (!*this)
         return false;
     
-    return structureEnsuresValidity(m_object->structure());
+    return isStillValid(concurrency, m_object->structure());
+}
+
+bool ObjectPropertyCondition::structureEnsuresValidity(Concurrency concurrency, Structure* structure) const
+{
+    return m_condition.isStillValid(concurrency, structure);
+}
+
+bool ObjectPropertyCondition::structureEnsuresValidity(Concurrency concurrency) const
+{
+    if (!*this)
+        return false;
+    
+    return structureEnsuresValidity(concurrency, m_object->structure());
 }
 
 bool ObjectPropertyCondition::isWatchableAssumingImpurePropertyWatchpoint(

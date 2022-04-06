@@ -1064,7 +1064,7 @@ bool Graph::watchCondition(const ObjectPropertyCondition& key)
     if (m_plan.isUnlinked())
         return false;
 
-    if (!key.isWatchable())
+    if (!key.isWatchable(PropertyCondition::MakeNoChanges))
         return false;
 
     DesiredWeakReferences& weakReferences = m_plan.weakReferences();

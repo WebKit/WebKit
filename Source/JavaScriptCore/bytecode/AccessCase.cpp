@@ -717,7 +717,7 @@ bool AccessCase::couldStillSucceed() const
             if (!condition.isWatchableAssumingImpurePropertyWatchpoint(PropertyCondition::WatchabilityEffort::EnsureWatchability))
                 return false;
         } else {
-            if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint())
+            if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(Concurrency::MainThread))
                 return false;
         }
     }
@@ -1803,7 +1803,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         // For now, we only allow equivalence when it's watchable.
         RELEASE_ASSERT(condition.condition().kind() != PropertyCondition::Equivalence);
 
-        if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint()) {
+        if (!condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(Concurrency::MainThread)) {
             // The reason why this cannot happen is that we require that PolymorphicAccess calls
             // AccessCase::generate() only after it has verified that
             // AccessCase::couldStillSucceed() returned true.

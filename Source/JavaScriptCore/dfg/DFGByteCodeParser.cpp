@@ -4251,7 +4251,7 @@ bool ByteCodeParser::check(const ObjectPropertyCondition& condition)
         return true;
     
     Structure* structure = condition.object()->structure(*m_vm);
-    if (!condition.structureEnsuresValidity(structure))
+    if (!condition.structureEnsuresValidity(Concurrency::ConcurrentThread, structure))
         return false;
     
     addToGraph(
@@ -4380,7 +4380,7 @@ GetByOffsetMethod ByteCodeParser::planLoad(const ObjectPropertyCondition& condit
     
     // Check if the structure that we've registered makes the condition hold. If not, just give
     // up. This is case (5) above.
-    if (!condition.structureEnsuresValidity(structure))
+    if (!condition.structureEnsuresValidity(Concurrency::ConcurrentThread, structure))
         return GetByOffsetMethod();
     
     // If the structure is watched by the DFG already, then just use this fact to emit the load.
