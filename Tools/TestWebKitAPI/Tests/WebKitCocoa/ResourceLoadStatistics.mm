@@ -327,41 +327,6 @@ TEST(ResourceLoadStatistics, EnableDisableITP)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
-TEST(ResourceLoadStatistics, RemoveSessionID)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get();
-
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    // We load a resource so that the NetworkSession stays alive a little bit longer after the session is removed.
-
-    [webView loadHTMLString:@"<a id='link' href='http://webkit.org' download>Click me!</a>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    [webView _test_waitForDidFinishNavigation];
-
-    static bool doneFlag = false;
-    [webView evaluateJavaScript:@"document.getElementById('link').click();" completionHandler: ^(id, NSError*) {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    [configuration.get().websiteDataStore _setResourceLoadStatisticsEnabled:YES];
-    [configuration.get().websiteDataStore _setResourceLoadStatisticsDebugMode:YES];
-
-    // Trigger ITP tasks.
-    [configuration.get().websiteDataStore _scheduleCookieBlockingUpdate: ^(void) { }];
-    // Trigger removing of the sessionID.
-    TestWebKitAPI::Util::spinRunLoop(2);
-    [webView _close];
-    webView = nullptr;
-    configuration = nullptr;
-
-    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    [webView2 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    [webView2 _test_waitForDidFinishNavigation];
-}
-
 TEST(ResourceLoadStatistics, NetworkProcessRestart)
 {
     // Ensure the shared process pool exists so the data store operations we're about to do work with it.
