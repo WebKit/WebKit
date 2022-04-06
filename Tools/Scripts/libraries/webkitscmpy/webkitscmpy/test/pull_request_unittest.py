@@ -22,15 +22,14 @@
 
 import logging
 import os
-import sys
 import time
 import unittest
 
 from mock import patch
-from webkitbugspy import Tracker, User, bugzilla, radar, mocks as bmocks
-from webkitcorepy import OutputCapture, testing, log as wcplog
+from webkitbugspy import Tracker, bugzilla, github, radar, mocks as bmocks
+from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Terminal as MockTerminal, Environment
-from webkitscmpy import Contributor, Commit, PullRequest, local, program, mocks, remote, log as wsplog
+from webkitscmpy import Contributor, Commit, PullRequest, local, program, mocks, remote
 
 
 class TestPullRequest(unittest.TestCase):
@@ -511,9 +510,9 @@ Rebased 'eng/pr-branch' on 'main!'
         )
 
     def test_github_bugzilla(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, bmocks.Bugzilla(
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
             self.BUGZILLA.split('://')[-1],
-            issues=bmocks.ISSUES,
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
             environment=Environment(
                 BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
                 BUGS_EXAMPLE_COM_PASSWORD='password',
@@ -539,6 +538,10 @@ Rebased 'eng/pr-branch' on 'main!'
                 Tracker.instance().issue(1).comments[-1].content,
                 'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
             )
+            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
+            self.assertEqual(gh_issue.project, 'WebKit')
+            self.assertEqual(gh_issue.component, 'Text')
+            self.assertEqual(gh_issue.version, 'Other')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -560,6 +563,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
+                'Syncing PR labels with issue component...',
+                'Synced PR labels with issue component!',
             ],
         )
 
@@ -614,6 +619,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
+                'Syncing PR labels with issue component...',
+                'No label syncing required',
             ],
         )
 

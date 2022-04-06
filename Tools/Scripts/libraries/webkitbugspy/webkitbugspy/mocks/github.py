@@ -122,7 +122,7 @@ class GitHub(Base, mocks.Requests):
             )
         issue = self.issues[id]
         if data:
-            if self.users.get(data.get('assignees', [None])[0]):
+            if data.get('assignees') and self.users.get(data.get('assignees', [None])[0]):
                 issue['assignee'] = self.users[data['assignees'][0]]
             if data.get('state') == 'opened':
                 issue['opened'] = True
