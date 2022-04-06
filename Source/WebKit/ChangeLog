@@ -1,3 +1,17 @@
+2022-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Update the context menu item glyph for visual look up
+        https://bugs.webkit.org/show_bug.cgi?id=238853
+
+        Reviewed by Devin Rousso.
+
+        Switch from `info.circle` to the (private) symbol `info.circle.and.sparkles`, for the icon next to the Look Up
+        item when long pressing images that have visual look up results.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction imageForElementActionType:]):
+
 2022-04-05  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation[ Fix build break after r292408

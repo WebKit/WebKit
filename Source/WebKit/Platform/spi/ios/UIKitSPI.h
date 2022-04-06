@@ -378,6 +378,7 @@ typedef enum {
 @interface UIImage ()
 - (id)initWithCGImage:(CGImageRef)CGImage imageOrientation:(UIImageOrientation)imageOrientation;
 - (UIImage *)_flatImageWithColor:(UIColor *)color;
++ (UIImage *)_systemImageNamed:(NSString *)name;
 @end
 
 @interface UIKeyCommand ()

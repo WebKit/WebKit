@@ -263,7 +263,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 #endif
     case _WKElementActionTypeRevealImage:
 #if ENABLE(IMAGE_ANALYSIS)
-        return [UIImage systemImageNamed:@"info.circle"];
+        return [UIImage _systemImageNamed:@"info.circle.and.sparkles"];
 #else
         return nil;
 #endif
