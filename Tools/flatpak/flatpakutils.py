@@ -16,6 +16,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import argparse
+import atexit
 import logging
 try:
     import configparser
@@ -736,9 +737,38 @@ class WebkitFlatpak:
     def is_build_jsc(self, command):
         return command and "build-jsc" in os.path.basename(command)
 
-    @staticmethod
-    def get_user_runtime_dir():
-        return os.environ.get('XDG_RUNTIME_DIR', os.path.join('/run/user', str(os.getuid())))
+    def setup_a11y_proxy(self):
+        try:
+            output = subprocess.check_output(("gdbus", "call", "-e", "-d", "org.a11y.Bus", "-o", "/org/a11y/bus", "-m", "org.a11y.Bus.GetAddress"))
+            a11y_bus_address = re.findall(br"'([^']+)", output)[0]  # Extract string from output from: ('unix:abstract=0000f',)
+            Console.message("Found a11y address {}".format(a11y_bus_address))
+        except (subprocess.CalledProcessError, IndexError) as e:
+            Console.message("Failed to get a11y address {}".format(e))
+            return []
+
+        dbus_proxy_path = shutil.which("xdg-dbus-proxy")
+        if not dbus_proxy_path:
+            Console.message("Failed to find xdg-dbus-proxy")
+            return []
+
+        self.socket_dir = tempfile.TemporaryDirectory(prefix="webkit-flatpak-a11y-sockets-")
+        self.a11y_socket = tempfile.NamedTemporaryFile(dir=self.socket_dir.name, delete=False)
+
+        try:
+            proxy_proc = subprocess.Popen((dbus_proxy_path, a11y_bus_address, self.a11y_socket.name))
+
+            atexit.register(lambda: proxy_proc.terminate())
+        except (subprocess.CalledProcessError) as e:
+            Console.message("Failed to get run xdg-dbus-proxy {}".format(e))
+            return []
+
+        return [
+            # FIXME: --session-bus is only a workaround for https://github.com/flatpak/flatpak/pull/4630
+            "--session-bus",
+            "--no-a11y-bus",
+            "--filesystem=" + self.socket_dir.name,
+            "--env=AT_SPI_BUS_ADDRESS=unix:path=" + self.a11y_socket.name,
+        ]
 
     def run_in_sandbox(self, *args, **kwargs):
         if not self.setup_builddir():
@@ -790,12 +820,11 @@ class WebkitFlatpak:
                            "--die-with-parent",
                            "--filesystem=host",
                            "--allow=devel",
-                           # FIXME: --session-bus is only a workaround for https://github.com/flatpak/flatpak/pull/4630
-                           "--session-bus",
-                           "--no-a11y-bus",
-                           "--talk-name=org.a11y.Bus",
                            "--talk-name=org.gtk.vfs",
                            "--talk-name=org.gtk.vfs.*"]
+
+        flatpak_a11y_args = self.setup_a11y_proxy()
+        flatpak_command.extend(flatpak_a11y_args)
 
         if not gather_output and args and self.is_build_webkit(args[0]) and not self.is_branch_build():
             # Ensure self.build_path exists.
