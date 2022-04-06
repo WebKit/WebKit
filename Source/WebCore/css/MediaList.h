@@ -89,7 +89,7 @@ public:
     WEBCORE_EXPORT void appendMedium(const String& newMedium);
 
     String mediaText() const { return m_mediaQueries->mediaText(); }
-    WEBCORE_EXPORT ExceptionOr<void> setMediaText(const String&);
+    WEBCORE_EXPORT void setMediaText(const String&);
 
     CSSRule* parentRule() const { return m_parentRule; }
     CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }

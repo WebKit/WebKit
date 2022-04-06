@@ -1,5 +1,17 @@
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
+        Drop unnecessary ExceptionOr<> return types
+        https://bugs.webkit.org/show_bug.cgi?id=238876
+
+        Reviewed by Alex Christensen.
+
+        Drop unnecessary ExceptionOr<> return types as they may cause unnecessary branching at runtime.
+
+        * DOM/DOMMediaList.mm:
+        (-[DOMMediaList setMediaText:]):
+
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
         Reduce number of conversions from StringView to String
         https://bugs.webkit.org/show_bug.cgi?id=238841
 

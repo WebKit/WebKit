@@ -182,10 +182,9 @@ String CharacterData::nodeValue() const
     return m_data;
 }
 
-ExceptionOr<void> CharacterData::setNodeValue(const String& nodeValue)
+void CharacterData::setNodeValue(const String& nodeValue)
 {
     setData(nodeValue);
-    return { };
 }
 
 void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges shouldUpdateLiveRanges)

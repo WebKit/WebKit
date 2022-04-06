@@ -53,15 +53,15 @@ CustomPaintCanvas::~CustomPaintCanvas()
     setImageBuffer(nullptr);
 }
 
-ExceptionOr<RefPtr<PaintRenderingContext2D>> CustomPaintCanvas::getContext()
+RefPtr<PaintRenderingContext2D> CustomPaintCanvas::getContext()
 {
     if (m_context)
-        return { RefPtr<PaintRenderingContext2D> { &downcast<PaintRenderingContext2D>(*m_context) } };
+        return &downcast<PaintRenderingContext2D>(*m_context);
 
     m_context = PaintRenderingContext2D::create(*this);
     downcast<PaintRenderingContext2D>(*m_context).setUsesDisplayListDrawing(true);
 
-    return { RefPtr<PaintRenderingContext2D> { &downcast<PaintRenderingContext2D>(*m_context) } };
+    return &downcast<PaintRenderingContext2D>(*m_context);
 }
 
 void CustomPaintCanvas::replayDisplayList(GraphicsContext* ctx) const

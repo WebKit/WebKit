@@ -53,7 +53,7 @@ public:
     virtual ~CustomPaintCanvas();
     bool isCustomPaintCanvas() const final { return true; }
 
-    ExceptionOr<RefPtr<PaintRenderingContext2D>> getContext();
+    RefPtr<PaintRenderingContext2D> getContext();
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
     GraphicsContext* drawingContext() const final;

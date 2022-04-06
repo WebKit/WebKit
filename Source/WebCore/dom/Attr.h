@@ -66,7 +66,7 @@ private:
     NodeType nodeType() const final { return ATTRIBUTE_NODE; }
 
     String nodeValue() const final { return value(); }
-    ExceptionOr<void> setNodeValue(const String&) final;
+    void setNodeValue(const String&) final;
 
     ExceptionOr<void> setPrefix(const AtomString&) final;
 

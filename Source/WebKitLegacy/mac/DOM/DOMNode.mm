@@ -98,7 +98,7 @@ DOMNode *kit(Node* value)
 - (void)setNodeValue:(NSString *)newNodeValue
 {
     JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self).setNodeValue(newNodeValue));
+    unwrap(*self).setNodeValue(newNodeValue);
 }
 
 - (unsigned short)nodeType
@@ -194,7 +194,7 @@ DOMNode *kit(Node* value)
 - (void)setTextContent:(NSString *)newTextContent
 {
     JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self).setTextContent(newTextContent));
+    unwrap(*self).setTextContent(newTextContent);
 }
 
 - (BOOL)isConnected

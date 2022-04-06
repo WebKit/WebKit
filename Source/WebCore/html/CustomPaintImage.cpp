@@ -149,11 +149,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
 
     auto canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
-    ExceptionOr<RefPtr<PaintRenderingContext2D>> contextOrException = canvas->getContext();
-
-    if (contextOrException.hasException())
-        return ImageDrawResult::DidNothing;
-    auto context = contextOrException.releaseReturnValue();
+    RefPtr context = canvas->getContext();
 
     HashMap<String, RefPtr<CSSStyleValue>> propertyValues;
 

@@ -97,10 +97,9 @@ void Attr::setValue(const AtomString& value)
         m_standaloneValue = value;
 }
 
-ExceptionOr<void> Attr::setNodeValue(const String& value)
+void Attr::setNodeValue(const String& value)
 {
     setValue(value);
-    return { };
 }
 
 Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)

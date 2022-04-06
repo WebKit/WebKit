@@ -179,13 +179,12 @@ MediaList::MediaList(MediaQuerySet* mediaQueries, CSSRule* parentRule)
 
 MediaList::~MediaList() = default;
 
-ExceptionOr<void> MediaList::setMediaText(const String& value)
+void MediaList::setMediaText(const String& value)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
     m_mediaQueries->set(value);
     if (m_parentStyleSheet)
         m_parentStyleSheet->didMutate();
-    return { };
 }
 
 String MediaList::item(unsigned index) const

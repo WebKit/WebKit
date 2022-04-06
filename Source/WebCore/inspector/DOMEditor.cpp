@@ -363,12 +363,14 @@ private:
 
     ExceptionOr<void> undo() final
     {
-        return m_node->setNodeValue(m_oldValue);
+        m_node->setNodeValue(m_oldValue);
+        return { };
     }
 
     ExceptionOr<void> redo() final
     {
-        return m_node->setNodeValue(m_value);
+        m_node->setNodeValue(m_value);
+        return { };
     }
 
     Ref<Node> m_node;

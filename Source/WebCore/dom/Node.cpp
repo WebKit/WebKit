@@ -446,10 +446,9 @@ String Node::nodeValue() const
     return String();
 }
 
-ExceptionOr<void> Node::setNodeValue(const String&)
+void Node::setNodeValue(const String&)
 {
     // By default, setting nodeValue has no effect.
-    return { };
 }
 
 RefPtr<NodeList> Node::childNodes()
@@ -1591,7 +1590,7 @@ String Node::textContent(bool convertBRsToNewlines) const
     return isNullString ? String() : content.toString();
 }
 
-ExceptionOr<void> Node::setTextContent(const String& text)
+void Node::setTextContent(const String& text)
 {           
     switch (nodeType()) {
     case ATTRIBUTE_NODE:
@@ -1599,18 +1598,18 @@ ExceptionOr<void> Node::setTextContent(const String& text)
     case CDATA_SECTION_NODE:
     case COMMENT_NODE:
     case PROCESSING_INSTRUCTION_NODE:
-        return setNodeValue(text);
+        setNodeValue(text);
+        return;
     case ELEMENT_NODE:
     case DOCUMENT_FRAGMENT_NODE:
         downcast<ContainerNode>(*this).stringReplaceAll(text);
-        return { };
+        return;
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:
         // Do nothing.
-        return { };
+        return;
     }
     ASSERT_NOT_REACHED();
-    return { };
 }
 
 static SHA1::Digest hashPointer(const void* pointer)
