@@ -737,7 +737,7 @@ void JIT::emitMathICFast(JITUnaryMathIC<Generator>* mathIC, const JSInstruction*
         UnaryArithProfile* arithProfile = mathIC->arithProfile();
         loadGlobalObject(globalObjectGPR);
         if (arithProfile && shouldEmitProfiling())
-            callOperationWithResult(profiledFunction, resultRegs, globalObjectGPR, srcRegs, arithProfile);
+            callOperationWithResult(profiledFunction, resultRegs, globalObjectGPR, srcRegs, TrustedImmPtr(arithProfile));
         else
             callOperationWithResult(nonProfiledFunction, resultRegs, globalObjectGPR, srcRegs);
     } else
@@ -804,7 +804,7 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const JSInstruction
         BinaryArithProfile* arithProfile = mathIC->arithProfile();
         loadGlobalObject(globalObjectGPR);
         if (arithProfile && shouldEmitProfiling())
-            callOperationWithResult(profiledFunction, resultRegs, globalObjectGPR, leftRegs, rightRegs, arithProfile);
+            callOperationWithResult(profiledFunction, resultRegs, globalObjectGPR, leftRegs, rightRegs, TrustedImmPtr(arithProfile));
         else
             callOperationWithResult(nonProfiledFunction, resultRegs, globalObjectGPR, leftRegs, rightRegs);
     } else
@@ -844,7 +844,7 @@ void JIT::emitMathICSlow(JITUnaryMathIC<Generator>* mathIC, const JSInstruction*
         if (mathICGenerationState.shouldSlowPathRepatch)
             mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_GJMic>(profiledRepatchFunction), resultRegs, globalObjetGPR, srcRegs, TrustedImmPtr(mathIC));
         else
-            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, globalObjetGPR, srcRegs, arithProfile);
+            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, globalObjetGPR, srcRegs, TrustedImmPtr(arithProfile));
     } else
         mathICGenerationState.slowPathCall = callOperationWithResult(reinterpret_cast<J_JITOperation_GJMic>(repatchFunction), resultRegs, globalObjetGPR, srcRegs, TrustedImmPtr(mathIC));
 
@@ -905,7 +905,7 @@ void JIT::emitMathICSlow(JITBinaryMathIC<Generator>* mathIC, const JSInstruction
         if (mathICGenerationState.shouldSlowPathRepatch)
             mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_GJJMic>(profiledRepatchFunction), resultRegs, globalObjetGPR, leftRegs, rightRegs, TrustedImmPtr(mathIC));
         else
-            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, globalObjetGPR, leftRegs, rightRegs, arithProfile);
+            mathICGenerationState.slowPathCall = callOperationWithResult(profiledFunction, resultRegs, globalObjetGPR, leftRegs, rightRegs, TrustedImmPtr(arithProfile));
     } else
         mathICGenerationState.slowPathCall = callOperationWithResult(bitwise_cast<J_JITOperation_GJJMic>(repatchFunction), resultRegs, globalObjetGPR, leftRegs, rightRegs, TrustedImmPtr(mathIC));
 

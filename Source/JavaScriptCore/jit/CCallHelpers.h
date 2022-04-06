@@ -630,8 +630,7 @@ private:
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename Arg, typename... Args>
     ALWAYS_INLINE std::enable_if_t<
         std::is_pointer<CURRENT_ARGUMENT_TYPE>::value
-        && ((std::is_pointer<Arg>::value && std::is_convertible<std::remove_const_t<std::remove_pointer_t<Arg>>*, CURRENT_ARGUMENT_TYPE>::value)
-            || std::is_same<Arg, std::nullptr_t>::value)>
+        && std::is_same<Arg, std::nullptr_t>::value>
     setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, Arg arg, Args... args)
     {
         setupArgumentsImpl<OperationType>(argSourceRegs, TrustedImmPtr(arg), args...);
@@ -853,7 +852,6 @@ private:
     template <typename CodeBlockType>
     void logShadowChickenTailPacketImpl(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlockType codeBlock, CallSiteIndex callSiteIndex);
 public:
-    void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, TrustedImmPtr codeBlock, CallSiteIndex callSiteIndex);
     void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, GPRReg codeBlock, CallSiteIndex callSiteIndex);
 
     // Leaves behind a pointer to the Packet we should write to in shadowPacket.

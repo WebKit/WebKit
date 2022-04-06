@@ -94,17 +94,17 @@ private:
         VM& vm = jit->vm();
         switch (m_arrayMode.type()) {
         case Array::Int32:
-            jit->callOperation(operationEnsureInt32, m_tempGPR, &vm, m_baseGPR);
+            jit->callOperation(operationEnsureInt32, m_tempGPR, SpeculativeJIT::TrustedImmPtr(&vm), m_baseGPR);
             break;
         case Array::Double:
-            jit->callOperation(operationEnsureDouble, m_tempGPR, &vm, m_baseGPR);
+            jit->callOperation(operationEnsureDouble, m_tempGPR, SpeculativeJIT::TrustedImmPtr(&vm), m_baseGPR);
             break;
         case Array::Contiguous:
-            jit->callOperation(operationEnsureContiguous, m_tempGPR, &vm, m_baseGPR);
+            jit->callOperation(operationEnsureContiguous, m_tempGPR, SpeculativeJIT::TrustedImmPtr(&vm), m_baseGPR);
             break;
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
-            jit->callOperation(operationEnsureArrayStorage, m_tempGPR, &vm, m_baseGPR);
+            jit->callOperation(operationEnsureArrayStorage, m_tempGPR, SpeculativeJIT::TrustedImmPtr(&vm), m_baseGPR);
             break;
         default:
             CRASH();

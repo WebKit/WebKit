@@ -56,10 +56,10 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
 {
     bool canExit = jit->m_origin.exitOK;
     if (!canExit && jit->m_currentNode) {
-        ExitMode exitMode = mayExit(jit->m_jit.graph(), jit->m_currentNode);
+        ExitMode exitMode = mayExit(jit->m_graph, jit->m_currentNode);
         canExit = exitMode == ExitMode::Exits || exitMode == ExitMode::ExitsForExceptions;
     }
-    DFG_ASSERT(jit->m_jit.graph(), jit->m_currentNode, canExit);
+    DFG_ASSERT(jit->m_graph, jit->m_currentNode, canExit);
 }
 
 CodeLocationJump<JSInternalPtrTag> OSRExit::codeLocationForRepatch() const
@@ -747,7 +747,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
     if (inlineStackContainsActiveCheckpoint) {
         EncodedJSValue* tmpScratch = scratch + operands.tmpIndex(0);
-        jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(&vm, &exit, tmpScratch);
+        jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(CCallHelpers::TrustedImmPtr(&vm), CCallHelpers::TrustedImmPtr(&exit), CCallHelpers::TrustedImmPtr(tmpScratch));
         jit.prepareCallOperation(vm);
         jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeOSRExitSideState)), GPRInfo::nonArgGPR0);
         jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);

@@ -346,7 +346,8 @@ void JITCompiler::compile()
     if (maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
 
-    m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
+    m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, GPRInfo::argumentGPR0);
 
     // Generate slow path code.
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
@@ -419,7 +420,8 @@ void JITCompiler::compileFunction()
     if (maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
 
-    m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
+    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
+    m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, GPRInfo::argumentGPR0);
     
     // The fast entry point into a function does not check the correct number of arguments
     // have been passed to the call (we only use the fast entry point where we can statically

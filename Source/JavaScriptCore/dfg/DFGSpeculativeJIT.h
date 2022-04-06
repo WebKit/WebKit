@@ -170,9 +170,9 @@ public:
     BasicBlock* nextBlock()
     {
         for (BlockIndex resultIndex = m_block->index + 1; ; resultIndex++) {
-            if (resultIndex >= m_jit.graph().numBlocks())
+            if (resultIndex >= m_graph.numBlocks())
                 return nullptr;
-            if (BasicBlock* result = m_jit.graph().block(resultIndex))
+            if (BasicBlock* result = m_graph.block(resultIndex))
                 return result;
         }
     }
@@ -332,7 +332,7 @@ public:
     
     bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
     {
-        return m_jit.graph().masqueradesAsUndefinedWatchpointIsStillValid(codeOrigin);
+        return m_graph.masqueradesAsUndefinedWatchpointIsStillValid(codeOrigin);
     }
     bool masqueradesAsUndefinedWatchpointIsStillValid()
     {
@@ -588,7 +588,7 @@ public:
     
     UniquedStringImpl* identifierUID(unsigned index)
     {
-        return m_jit.graph().identifiers()[index];
+        return m_graph.identifiers()[index];
     }
 
     // Spill all VirtualRegisters back to the JSStack.
@@ -974,10 +974,9 @@ public:
         appendCall(CCallHelpers::Address(GPRInfo::nonArgGPR0, address.offset));
     }
 
-    JITCompiler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_Cb operation, CodeBlock* codeBlock)
+    JITCompiler::Call callOperationWithCallFrameRollbackOnException(V_JITOperation_Cb operation, GPRReg codeBlockGPR)
     {
-        // Do not register CodeBlock* as a weak-pointer.
-        m_jit.setupArguments<V_JITOperation_Cb>(TrustedImmPtr(static_cast<void*>(codeBlock)));
+        m_jit.setupArguments<V_JITOperation_Cb>(codeBlockGPR);
         return appendCallWithCallFrameRollbackOnException(operation);
     }
 

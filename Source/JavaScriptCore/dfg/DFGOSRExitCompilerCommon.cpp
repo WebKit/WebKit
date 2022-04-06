@@ -343,7 +343,7 @@ static void osrWriteBarrier(VM& vm, CCallHelpers& jit, GPRReg owner, GPRReg scra
 {
     AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.barrierBranchWithoutFence(owner);
 
-    jit.setupArguments<decltype(operationOSRWriteBarrier)>(&vm, owner);
+    jit.setupArguments<decltype(operationOSRWriteBarrier)>(CCallHelpers::TrustedImmPtr(&vm), owner);
     jit.prepareCallOperation(vm);
     jit.move(MacroAssembler::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationOSRWriteBarrier)), scratch);
     jit.call(scratch, OperationPtrTag);

@@ -587,7 +587,7 @@ void JIT::emit_op_put_getter_by_id(const JSInstruction* currentInstruction)
     int32_t options = bytecode.m_attributes;
     emitGetVirtualRegisterPayload(bytecode.m_accessor, regT1);
     loadGlobalObject(regT2);
-    callOperation(operationPutGetterById, regT2, regT0, m_unlinkedCodeBlock->identifier(bytecode.m_property).impl(), options, regT1);
+    callOperation(operationPutGetterById, regT2, regT0, TrustedImmPtr(m_unlinkedCodeBlock->identifier(bytecode.m_property).impl()), options, regT1);
 }
 
 void JIT::emit_op_put_setter_by_id(const JSInstruction* currentInstruction)
@@ -597,7 +597,7 @@ void JIT::emit_op_put_setter_by_id(const JSInstruction* currentInstruction)
     int32_t options = bytecode.m_attributes;
     emitGetVirtualRegisterPayload(bytecode.m_accessor, regT1);
     loadGlobalObject(regT2);
-    callOperation(operationPutSetterById, regT2, regT0, m_unlinkedCodeBlock->identifier(bytecode.m_property).impl(), options, regT1);
+    callOperation(operationPutSetterById, regT2, regT0, TrustedImmPtr(m_unlinkedCodeBlock->identifier(bytecode.m_property).impl()), options, regT1);
 }
 
 void JIT::emit_op_put_getter_setter_by_id(const JSInstruction* currentInstruction)
@@ -608,7 +608,7 @@ void JIT::emit_op_put_getter_setter_by_id(const JSInstruction* currentInstructio
     emitGetVirtualRegisterPayload(bytecode.m_getter, regT1);
     emitGetVirtualRegisterPayload(bytecode.m_setter, regT2);
     loadGlobalObject(regT3);
-    callOperation(operationPutGetterSetter, regT3, regT0, m_unlinkedCodeBlock->identifier(bytecode.m_property).impl(), attribute, regT1, regT2);
+    callOperation(operationPutGetterSetter, regT3, regT0, TrustedImmPtr(m_unlinkedCodeBlock->identifier(bytecode.m_property).impl()), attribute, regT1, regT2);
 }
 
 void JIT::emit_op_put_getter_by_val(const JSInstruction* currentInstruction)
@@ -2520,7 +2520,7 @@ void JIT::emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBa
         ownerNotCell = branchIfNotCell(tmpJSR);
 
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), tmpJSR.payloadGPR(), regT2);
-    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), tmpJSR.payloadGPR());
+    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, TrustedImmPtr(&vm()), tmpJSR.payloadGPR());
     ownerIsRememberedOrInEden.link(this);
 
     if (mode == ShouldFilterBase || mode == ShouldFilterBaseAndValue)
@@ -2538,14 +2538,14 @@ void JIT::emitWriteBarrier(VirtualRegister owner, WriteBarrierMode mode)
 void JIT::emitWriteBarrier(JSCell* owner)
 {
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), owner, regT0);
-    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), owner);
+    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, TrustedImmPtr(&vm()), TrustedImmPtr(owner));
     ownerIsRememberedOrInEden.link(this);
 }
 
 void JIT::emitWriteBarrier(GPRReg owner)
 {
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), owner, selectScratchGPR(owner));
-    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), owner);
+    callOperationNoExceptionCheck(operationWriteBarrierSlowPath, TrustedImmPtr(&vm()), owner);
     ownerIsRememberedOrInEden.link(this);
 }
 

@@ -393,7 +393,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             jit.loadWasmContextInstance(wasmContextInstanceGPR);
         }
 
-        jit.setupArguments<decltype(operationIterateResults)>(wasmContextInstanceGPR, &signature, GPRInfo::returnValueGPR, CCallHelpers::stackPointerRegister, CCallHelpers::framePointerRegister);
+        jit.setupArguments<decltype(operationIterateResults)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&signature), GPRInfo::returnValueGPR, CCallHelpers::stackPointerRegister, CCallHelpers::framePointerRegister);
         jit.callOperation(FunctionPtr<OperationPtrTag>(operationIterateResults));
         exceptionChecks.append(jit.emitJumpIfException(vm));
 
