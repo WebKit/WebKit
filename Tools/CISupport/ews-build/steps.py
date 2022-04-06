@@ -4912,7 +4912,7 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
         commands = []
         if self.rebase_enabled:
             commands = [
-                ['git', 'pull', 'origin', base_ref],
+                ['git', 'pull', 'origin', base_ref, '--rebase'],
                 ['git', 'branch', '-f', base_ref, head_ref],
                 ['git', 'checkout', base_ref],
             ]
