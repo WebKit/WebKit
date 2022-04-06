@@ -31,34 +31,32 @@
 
 namespace IPC {
 
-Attachment::Attachment(int fileDescriptor, size_t size)
+Attachment::Attachment(UnixFileDescriptor&& fd, size_t size)
     : m_type(MappedMemoryType)
-    , m_fileDescriptor(fileDescriptor)
+    , m_fd(WTFMove(fd))
     , m_size(size)
 {
 }
 
-Attachment::Attachment(int fileDescriptor)
+Attachment::Attachment(UnixFileDescriptor&& fd)
     : m_type(SocketType)
-    , m_fileDescriptor(fileDescriptor)
+    , m_fd(WTFMove(fd))
     , m_size(0)
 {
 }
 
 Attachment::Attachment(Attachment&& attachment)
     : m_type(attachment.m_type)
-    , m_fileDescriptor(attachment.m_fileDescriptor)
+    , m_fd(WTFMove(attachment.m_fd))
     , m_size(attachment.m_size)
     , m_customWriter(WTFMove(attachment.m_customWriter))
 {
     attachment.m_type = Uninitialized;
-    attachment.m_fileDescriptor = -1;
     attachment.m_size = 0;
 }
 
 Attachment::Attachment(CustomWriter&& writer)
     : m_type(CustomWriterType)
-    , m_fileDescriptor(-1)
     , m_size(0)
     , m_customWriter(WTFMove(writer))
 {
@@ -68,8 +66,7 @@ Attachment& Attachment::operator=(Attachment&& attachment)
 {
     m_type = attachment.m_type;
     attachment.m_type = Uninitialized;
-    m_fileDescriptor = attachment.m_fileDescriptor;
-    attachment.m_fileDescriptor = -1;
+    m_fd = WTFMove(attachment.m_fd);
     m_size = attachment.m_size;
     attachment.m_size = 0;
     m_customWriter = WTFMove(attachment.m_customWriter);
@@ -77,10 +74,6 @@ Attachment& Attachment::operator=(Attachment&& attachment)
     return *this;
 }
 
-Attachment::~Attachment()
-{
-    if (m_fileDescriptor != -1)
-        closeWithRetry(m_fileDescriptor);
-}
+Attachment::~Attachment() = default;
 
 } // namespace IPC

@@ -3295,13 +3295,12 @@ std::optional<TextRecognitionDataDetector> ArgumentCoder<TextRecognitionDataDete
 
 void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, const UnixFileDescriptor& fd)
 {
-    auto duplicate = fd.duplicate();
-    encoder.addAttachment(Attachment(duplicate.release()));
+    encoder.addAttachment(Attachment(fd.duplicate()));
 }
 
 void ArgumentCoder<UnixFileDescriptor>::encode(Encoder& encoder, UnixFileDescriptor&& fd)
 {
-    encoder.addAttachment(Attachment(fd.release()));
+    encoder.addAttachment(Attachment(WTFMove(fd)));
 }
 
 std::optional<UnixFileDescriptor> ArgumentCoder<UnixFileDescriptor>::decode(Decoder& decoder)
@@ -3309,7 +3308,7 @@ std::optional<UnixFileDescriptor> ArgumentCoder<UnixFileDescriptor>::decode(Deco
     auto attachment = decoder.takeLastAttachment();
     if (!attachment)
         return std::nullopt;
-    return std::optional<UnixFileDescriptor> { std::in_place, attachment->releaseFileDescriptor(), UnixFileDescriptor::Adopt };
+    return std::optional<UnixFileDescriptor> { std::in_place, attachment->release() };
 }
 
 #endif

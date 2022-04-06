@@ -51,7 +51,7 @@ void UserMessage::encode(IPC::Encoder& encoder) const
     if (fileDescriptors) {
         int length = g_unix_fd_list_get_length(fileDescriptors.get());
         for (int i = 0; i < length; ++i)
-            attachments.append(IPC::Attachment(g_unix_fd_list_get(fileDescriptors.get(), i, nullptr)));
+            attachments.append(IPC::Attachment(UnixFileDescriptor(g_unix_fd_list_get(fileDescriptors.get(), i, nullptr), UnixFileDescriptor::Adopt)));
     }
     encoder << attachments;
 }
@@ -91,7 +91,7 @@ std::optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
     if (!attachments->isEmpty()) {
         result.fileDescriptors = adoptGRef(g_unix_fd_list_new());
         for (auto& attachment : *attachments) {
-            if (g_unix_fd_list_append(result.fileDescriptors.get(), attachment.releaseFileDescriptor(), nullptr) == -1)
+            if (g_unix_fd_list_append(result.fileDescriptors.get(), attachment.release().release(), nullptr) == -1)
                 return std::nullopt;
         }
     }

@@ -40,7 +40,7 @@ struct NetworkProcessConnectionInfo {
     IPC::Connection::Identifier identifier() const
     {
 #if USE(UNIX_DOMAIN_SOCKETS)
-        return IPC::Connection::Identifier(connection.fileDescriptor());
+        return IPC::Connection::Identifier(connection.fd().value());
 #elif OS(DARWIN)
         return IPC::Connection::Identifier(connection.port());
 #elif OS(WINDOWS)
@@ -54,7 +54,7 @@ struct NetworkProcessConnectionInfo {
     IPC::Connection::Identifier releaseIdentifier()
     {
 #if USE(UNIX_DOMAIN_SOCKETS)
-        auto returnValue = IPC::Connection::Identifier(connection.releaseFileDescriptor());
+        auto returnValue = IPC::Connection::Identifier(connection.release().release());
 #else
         auto returnValue = identifier();
 #endif

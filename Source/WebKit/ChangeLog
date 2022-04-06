@@ -1,3 +1,66 @@
+2022-04-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Unix] Adopt UnixFileDescriptor in IPC::Attachment
+        https://bugs.webkit.org/show_bug.cgi?id=238801
+
+        Reviewed by Carlos Garcia Campos.
+
+        Adopt WTF::UnixFileDescriptor for usage in IPC::Attachment, in place of
+        a raw integer value. This simplifies move operations and destruction of
+        this value.
+
+        The two relevant constructors are changed to expect a UnixFileDescriptor
+        rvalue, and they're also made explicit. The file descriptor object is
+        accessible through both a const and a non-const getter, which allows the
+        user to read or release the file descriptor contained there. There's
+        also a release method that returns the contained UnixFileDescriptor.
+
+        The releaseFileDescriptor() and fileDescriptor() methods, previously
+        releasing or returning the contained integer value of the descriptor.
+        Call sites for these methods as well as the old-form constructors are
+        adjusted to the new variants.
+
+        * Platform/IPC/Attachment.h:
+        (IPC::Attachment::isNull const):
+        (IPC::Attachment::fd const):
+        (IPC::Attachment::release):
+        (IPC::Attachment::releaseFileDescriptor): Deleted.
+        (IPC::Attachment::fileDescriptor const): Deleted.
+        * Platform/IPC/unix/AttachmentUnix.cpp:
+        (IPC::Attachment::Attachment):
+        (IPC::Attachment::operator=):
+        (IPC::Attachment::~Attachment): Deleted.
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+        (IPC::Connection::sendOutputMessage):
+        (IPC::Connection::createConnectionIdentifierPair):
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::isNull const):
+        (WebKit::SharedMemory::map):
+        (WebKit::SharedMemory::createHandle):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<UnixFileDescriptor>::encode):
+        (IPC::ArgumentCoder<UnixFileDescriptor>::decode):
+        * Shared/glib/UserMessage.cpp:
+        (WebKit::UserMessage::encode const):
+        (WebKit::UserMessage::decode):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::hostFileDescriptor):
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/GPU/GPUProcessConnectionInfo.h:
+        (WebKit::GPUProcessConnectionInfo::identifier const):
+        (WebKit::GPUProcessConnectionInfo::releaseIdentifier):
+        * WebProcess/Inspector/WebInspector.cpp:
+        (WebKit::WebInspector::setFrontendConnection):
+        * WebProcess/Network/NetworkProcessConnectionInfo.h:
+        (WebKit::NetworkProcessConnectionInfo::identifier const):
+        (WebKit::NetworkProcessConnectionInfo::releaseIdentifier):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::hostFileDescriptor const):
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerClients.openWindow should not need to get all clients asynchronously to resolve its promise

@@ -1339,7 +1339,7 @@ public:
 #endif
 
 #if USE(WPE_RENDERER)
-    int hostFileDescriptor() const { return m_hostFileDescriptor.fileDescriptor(); }
+    int hostFileDescriptor() const { return m_hostFileDescriptor.fd().value(); }
 #endif
 
     void updateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers);
