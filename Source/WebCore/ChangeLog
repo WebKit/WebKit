@@ -1,3 +1,14 @@
+2022-04-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TextureMapper] Clean up the GraphicsContextGLTextureMapperANGLE header
+        https://bugs.webkit.org/show_bug.cgi?id=238864
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h:
+        Remove two unused libgbm declarations and mark the class destructor as
+        virtual, which it is due to its inheritance.
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.navigate

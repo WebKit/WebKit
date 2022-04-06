@@ -40,9 +40,6 @@ class GCGLANGLELayer;
 class GCGLLayer;
 }
 
-struct gbm_device;
-struct gbm_bo;
-
 typedef void *EGLImageKHR;
 #endif
 
@@ -53,7 +50,7 @@ class TextureMapperGCGLPlatformLayer;
 class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GraphicsContextGLANGLE {
 public:
     static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
-    ~GraphicsContextGLTextureMapperANGLE();
+    virtual ~GraphicsContextGLTextureMapperANGLE();
 
     // GraphicsContextGLANGLE overrides.
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
