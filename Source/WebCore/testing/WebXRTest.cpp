@@ -30,6 +30,7 @@
 
 #include "JSWebFakeXRDevice.h"
 #include "JSXRReferenceSpaceType.h"
+#include "PlatformXR.h"
 #include "UserGestureIndicator.h"
 #include "WebXRSystem.h"
 #include "XRSessionMode.h"
@@ -47,12 +48,13 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
 
         device->setViews(init.views);
 
-        Vector<XRReferenceSpaceType> features;
+        PlatformXR::Device::FeatureList features;
         if (init.supportedFeatures) {
             if (auto* globalObject = context.globalObject()) {
                 for (auto& feature : init.supportedFeatures.value()) {
-                    if (auto referenceSpaceType = parseEnumeration<XRReferenceSpaceType>(*globalObject, feature))
-                        features.append(referenceSpaceType.value());
+                    auto featureString = feature.toWTFString(globalObject);
+                    if (auto sessionFeature = PlatformXR::parseSessionFeatureDescriptor(featureString))
+                        features.append(*sessionFeature);
                 }
             }
         }

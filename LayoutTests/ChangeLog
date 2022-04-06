@@ -1,3 +1,19 @@
+2022-04-05  Ada Chan  <adachan@apple.com>
+
+        [WebXR] Add a new enum type to represent session features
+        https://bugs.webkit.org/show_bug.cgi?id=238837
+
+        Reviewed by Dean Jackson.
+
+        Test listing "hand-tracking" as an optional feature while the device does not
+        support it allows the session to be created.
+        Test listing "hand-tracking" as a required feature while the device does not
+        support it would not create the session.
+
+        * http/wpt/webxr/resources/webxr_test_constants_single_view.js:
+        * http/wpt/webxr/xrDevice_requestSession_hand_tracking_feature.https-expected.txt: Added.
+        * http/wpt/webxr/xrDevice_requestSession_hand_tracking_feature.https.html: Added.
+
 2022-04-05  Matt Woodrow  <mattwoodrow@apple.com>
 
         Support transitions/animations on grid-template-columns|rows

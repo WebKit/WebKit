@@ -84,6 +84,82 @@ enum class XRTargetRayMode {
     Screen,
 };
 
+// https://immersive-web.github.io/webxr/#feature-descriptor
+enum class SessionFeature {
+    ReferenceSpaceTypeViewer,
+    ReferenceSpaceTypeLocal,
+    ReferenceSpaceTypeLocalFloor,
+    ReferenceSpaceTypeBoundedFloor,
+    ReferenceSpaceTypeUnbounded,
+#if ENABLE(WEBXR_HANDS)
+    HandTracking,
+#endif
+};
+
+inline SessionFeature sessionFeatureFromReferenceSpaceType(ReferenceSpaceType referenceSpaceType)
+{
+    switch (referenceSpaceType) {
+    case ReferenceSpaceType::Viewer:
+        return SessionFeature::ReferenceSpaceTypeViewer;
+    case ReferenceSpaceType::Local:
+        return SessionFeature::ReferenceSpaceTypeLocal;
+    case ReferenceSpaceType::LocalFloor:
+        return SessionFeature::ReferenceSpaceTypeLocalFloor;
+    case ReferenceSpaceType::BoundedFloor:
+        return SessionFeature::ReferenceSpaceTypeBoundedFloor;
+    case ReferenceSpaceType::Unbounded:
+        return SessionFeature::ReferenceSpaceTypeUnbounded;
+    }
+
+    ASSERT_NOT_REACHED();
+    return SessionFeature::ReferenceSpaceTypeViewer;
+}
+
+inline std::optional<SessionFeature> parseSessionFeatureDescriptor(const String& string)
+{
+    String feature = string.stripWhiteSpace().convertToASCIILowercase();
+
+    if (feature == "viewer"_s)
+        return SessionFeature::ReferenceSpaceTypeViewer;
+    if (feature == "local"_s)
+        return SessionFeature::ReferenceSpaceTypeLocal;
+    if (feature == "local-floor"_s)
+        return SessionFeature::ReferenceSpaceTypeLocalFloor;
+    if (feature == "bounded-floor"_s)
+        return SessionFeature::ReferenceSpaceTypeBoundedFloor;
+    if (feature == "unbounded"_s)
+        return SessionFeature::ReferenceSpaceTypeUnbounded;
+#if ENABLE(WEBXR_HANDS)
+    if (feature == "hand-tracking"_s)
+        return SessionFeature::HandTracking;
+#endif
+
+    return std::nullopt;
+}
+
+inline String sessionFeatureDescriptor(SessionFeature sessionFeature)
+{
+    switch (sessionFeature) {
+    case SessionFeature::ReferenceSpaceTypeViewer:
+        return "viewer"_s;
+    case SessionFeature::ReferenceSpaceTypeLocal:
+        return "local"_s;
+    case SessionFeature::ReferenceSpaceTypeLocalFloor:
+        return "local-floor"_s;
+    case SessionFeature::ReferenceSpaceTypeBoundedFloor:
+        return "bounded-floor"_s;
+    case SessionFeature::ReferenceSpaceTypeUnbounded:
+        return "unbounded"_s;
+#if ENABLE(WEBXR_HANDS)
+    case SessionFeature::HandTracking:
+        return "hand-tracking"_s;
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return ""_s;
+    }
+}
+
 #if ENABLE(WEBXR_HANDS)
 
 enum class HandJoint : unsigned {
@@ -124,10 +200,10 @@ class Device : public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device
 public:
     virtual ~Device() = default;
 
-    using FeatureList = Vector<ReferenceSpaceType>;
-    bool supports(SessionMode mode) const { return m_enabledFeaturesMap.contains(mode); }
-    void setSupportedFeatures(SessionMode mode, const FeatureList& features) { m_enabledFeaturesMap.set(mode, features); }
-    FeatureList supportedFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
+    using FeatureList = Vector<SessionFeature>;
+    bool supports(SessionMode mode) const { return m_supportedFeaturesMap.contains(mode); }
+    void setSupportedFeatures(SessionMode mode, const FeatureList& features) { m_supportedFeaturesMap.set(mode, features); }
+    FeatureList supportedFeatures(SessionMode mode) const { return m_supportedFeaturesMap.get(mode); }
     void setEnabledFeatures(SessionMode mode, const FeatureList& features) { m_enabledFeaturesMap.set(mode, features); }
     FeatureList enabledFeatures(SessionMode mode) const { return m_enabledFeaturesMap.get(mode); }
 
@@ -700,6 +776,20 @@ template<> struct EnumTraits<PlatformXR::XRTargetRayMode> {
         PlatformXR::XRTargetRayMode::Gaze,
         PlatformXR::XRTargetRayMode::TrackedPointer,
         PlatformXR::XRTargetRayMode::Screen
+    >;
+};
+
+template<> struct EnumTraits<PlatformXR::SessionFeature> {
+    using values = EnumValues<
+        PlatformXR::SessionFeature,
+        PlatformXR::SessionFeature::ReferenceSpaceTypeViewer,
+        PlatformXR::SessionFeature::ReferenceSpaceTypeLocal,
+        PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor,
+        PlatformXR::SessionFeature::ReferenceSpaceTypeBoundedFloor,
+        PlatformXR::SessionFeature::ReferenceSpaceTypeUnbounded
+#if ENABLE(WEBXR_HANDS)
+        , PlatformXR::SessionFeature::HandTracking
+#endif
     >;
 };
 

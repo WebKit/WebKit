@@ -134,6 +134,20 @@ const ALL_FEATURES = [
   'light-estimation',
   'anchors',
   'depth-sensing',
+  'hand-tracking',
+];
+
+const ALL_FEATURES_NO_HAND_TRACKING = [
+  'viewer',
+  'local',
+  'local-floor',
+  'bounded-floor',
+  'unbounded',
+  'hit-test',
+  'dom-overlay',
+  'light-estimation',
+  'anchors',
+  'depth-sensing',
 ];
 
 const TRACKED_IMMERSIVE_DEVICE = {
@@ -142,6 +156,16 @@ const TRACKED_IMMERSIVE_DEVICE = {
     views: VALID_VIEWS,
     viewerOrigin: IDENTITY_TRANSFORM,
     supportedFeatures: ALL_FEATURES,
+    environmentBlendMode: "opaque",
+    interactionMode: "world-space"
+};
+
+const TRACKED_IMMERSIVE_DEVICE_NO_HAND_TRACKING = {
+    supportsImmersive: true,
+    supportedModes: [ "inline", "immersive-vr"],
+    views: VALID_VIEWS,
+    viewerOrigin: IDENTITY_TRANSFORM,
+    supportedFeatures: ALL_FEATURES_NO_HAND_TRACKING,
     environmentBlendMode: "opaque",
     interactionMode: "world-space"
 };

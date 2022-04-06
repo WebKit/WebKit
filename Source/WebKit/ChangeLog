@@ -1,3 +1,26 @@
+2022-04-05  Ada Chan  <adachan@apple.com>
+
+        [WebXR] Add a new enum type to represent session features
+        https://bugs.webkit.org/show_bug.cgi?id=238837
+
+        Reviewed by Dean Jackson.
+
+        Add a new _WKXRSessionFeatureFlags entry for hand-tracking.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/XR/XRDeviceProxy.cpp:
+        (WebKit::XRDeviceProxy::XRDeviceProxy):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::toWKXRSessionFeatureFlags):
+        (WebKit::toPlatformXRFeatures):
+        * UIProcess/XR/PlatformXRSystem.cpp:
+        (WebKit::PlatformXRSystem::requestPermissionOnSessionFeatures):
+        * UIProcess/XR/PlatformXRSystem.h:
+        * UIProcess/XR/PlatformXRSystem.messages.in:
+
 2022-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Update the context menu item glyph for visual look up

@@ -1854,19 +1854,23 @@ static _WKXRSessionMode toWKXRSessionMode(PlatformXR::SessionMode mode)
     }
 }
 
-static _WKXRSessionFeatureFlags toWKXRSessionFeatureFlags(PlatformXR::ReferenceSpaceType feature)
+static _WKXRSessionFeatureFlags toWKXRSessionFeatureFlags(PlatformXR::SessionFeature feature)
 {
     switch (feature) {
-    case PlatformXR::ReferenceSpaceType::Viewer:
+    case PlatformXR::SessionFeature::ReferenceSpaceTypeViewer:
         return _WKXRSessionFeatureFlagsReferenceSpaceTypeViewer;
-    case PlatformXR::ReferenceSpaceType::Local:
+    case PlatformXR::SessionFeature::ReferenceSpaceTypeLocal:
         return _WKXRSessionFeatureFlagsReferenceSpaceTypeLocal;
-    case PlatformXR::ReferenceSpaceType::LocalFloor:
+    case PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor:
         return _WKXRSessionFeatureFlagsReferenceSpaceTypeLocalFloor;
-    case PlatformXR::ReferenceSpaceType::BoundedFloor:
+    case PlatformXR::SessionFeature::ReferenceSpaceTypeBoundedFloor:
         return _WKXRSessionFeatureFlagsReferenceSpaceTypeBoundedFloor;
-    case PlatformXR::ReferenceSpaceType::Unbounded:
+    case PlatformXR::SessionFeature::ReferenceSpaceTypeUnbounded:
         return _WKXRSessionFeatureFlagsReferenceSpaceTypeUnbounded;
+#if ENABLE(WEBXR_HANDS)
+    case PlatformXR::SessionFeature::HandTracking:
+        return _WKXRSessionFeatureFlagsHandTracking;
+#endif
     }
 }
 
@@ -1885,15 +1889,19 @@ static std::optional<PlatformXR::Device::FeatureList> toPlatformXRFeatures(_WKXR
 
     PlatformXR::Device::FeatureList features;
     if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeViewer)
-        features.append(PlatformXR::ReferenceSpaceType::Viewer);
+        features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeViewer);
     if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeLocal)
-        features.append(PlatformXR::ReferenceSpaceType::Local);
+        features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeLocal);
     if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeLocalFloor)
-        features.append(PlatformXR::ReferenceSpaceType::LocalFloor);
+        features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor);
     if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeBoundedFloor)
-        features.append(PlatformXR::ReferenceSpaceType::BoundedFloor);
+        features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeBoundedFloor);
     if (featureFlags & _WKXRSessionFeatureFlagsReferenceSpaceTypeUnbounded)
-        features.append(PlatformXR::ReferenceSpaceType::Unbounded);
+        features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeUnbounded);
+#if ENABLE(WEBXR_HANDS)
+    if (featureFlags & _WKXRSessionFeatureFlagsHandTracking)
+        features.append(PlatformXR::SessionFeature::HandTracking);
+#endif
     return features;
 }
 

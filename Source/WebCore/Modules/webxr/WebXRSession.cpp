@@ -166,7 +166,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
 bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
 {
     // 1. If type is not contained in session’s XR device's list of enabled features for mode return false.
-    if (!m_requestedFeatures.contains(type))
+    if (!m_requestedFeatures.contains(sessionFeatureFromReferenceSpaceType(type)))
         return false;
 
     // 2. If type is viewer, return true.

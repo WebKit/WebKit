@@ -102,6 +102,7 @@ typedef NS_OPTIONS(NSUInteger, _WKXRSessionFeatureFlags) {
     _WKXRSessionFeatureFlagsReferenceSpaceTypeLocalFloor = 1 << 2,
     _WKXRSessionFeatureFlagsReferenceSpaceTypeBoundedFloor = 1 << 3,
     _WKXRSessionFeatureFlagsReferenceSpaceTypeUnbounded = 1 << 4,
+    _WKXRSessionFeatureFlagsHandTracking = 1 << 5,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 typedef NS_ENUM(NSInteger, _WKModalContainerDecision) {

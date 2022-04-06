@@ -1,3 +1,60 @@
+2022-04-05  Ada Chan  <adachan@apple.com>
+
+        [WebXR] Add a new enum type to represent session features
+        https://bugs.webkit.org/show_bug.cgi?id=238837
+
+        Reviewed by Dean Jackson.
+
+        Test: http/wpt/webxr/xrDevice_requestSession_hand_tracking_feature.https.html
+
+        Add a new enum type, PlatformXR::SessionFeature, to represent session features.
+        It includes the ReferenceSpaceTypes and the hand-tracking feature for now.
+
+        Fix the algorithm to resolve the requested features to recognize hand-tracking
+        as a feature that requires explicit consent.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::referenceSpaceIsSupported const):
+        Convert the XRReferenceSpaceType to PlatformXR::SessionFeature first before
+        checking against the feature list.
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::inlineSessionRequestIsAllowedForGlobalObject const):
+        Use PlatformXR::parseSessionFeatureDescriptor() to parse the feature string.
+        (WebCore::featureRequiresExplicitConsent):
+        Returns true for the hand tracking feature.
+        (WebCore::WebXRSystem::isFeatureSupported const):
+        Check whether the device supports the feature. For hand-tracking, make sure
+        the hand input module setting is enabled.
+        (WebCore::WebXRSystem::resolveRequestedFeatures const):
+        Update the string conversion between JS and WTF::String now that features cannot
+        be parsed as XRReferenceSpaceType enum. If the feature requires explicit consent
+        and it's not already in the granted list, add it to consentRequired or consentOptional
+        depending on whether it's specified as required.
+        (WebCore::WebXRSystem::resolveFeaturePermissions const):
+        If a feature is required but not given a clear signal of user intent, the session
+        should not be created.
+        (WebCore::WebXRSystem::DummyInlineDevice::DummyInlineDevice):
+        Updated to use PlatformXR::SessionFeature.
+        * Modules/webxr/WebXRSystem.h:
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::sessionFeatureFromReferenceSpaceType):
+        (PlatformXR::parseSessionFeatureDescriptor):
+        Parse feature string to return PlatformXR::SessionFeature.
+        (PlatformXR::sessionFeatureDescriptor):
+        Return feature string from PlatformXR::SessionFeature.
+        (PlatformXR::Device::supports const):
+        Read from the m_supportedFeaturesMap.
+        (PlatformXR::Device::setSupportedFeatures):
+        Write to the m_supportedFeaturesMap.
+        (PlatformXR::Device::supportedFeatures const):
+        Read from the m_supportedFeaturesMap.
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::OpenXRDevice::collectSupportedFeatures const):
+        Updated to use PlatformXR::SessionFeature.
+        * testing/WebXRTest.cpp:
+        (WebCore::WebXRTest::simulateDeviceConnection):
+        Updated to parse feature string to PlatformXR::SessionFeature.
+
 2022-04-05  Andres Gonzalez  <andresg_22@apple.com>
 
         Eliminate delays for processing live regions and modal notifications.
