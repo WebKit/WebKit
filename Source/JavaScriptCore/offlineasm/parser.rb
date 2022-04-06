@@ -852,7 +852,7 @@ class Parser
         Sequence.new(firstCodeOrigin, list)
     end
 
-    def parseIncludes(final, comment)
+    def parseIncludes(final, comment, options)
         firstCodeOrigin = @tokens[@idx].codeOrigin
         fileList = []
         fileList << @tokens[@idx].codeOrigin.fileName
@@ -880,7 +880,10 @@ class Parser
                 end
                 fileExists = File.exists?(fileName)
                 raise "File not found: #{fileName}" if not fileExists and not isOptional
-                fileList << fileName if fileExists
+                if fileExists
+                    parser = Parser.new(readTextFile(fileName), SourceFile.new(fileName), options)
+                    fileList << parser.parseIncludes(nil, "", options)
+                end
             else
                 @idx += 1
             end
@@ -913,7 +916,8 @@ end
 
 def parseHash(fileName, options)
     parser = Parser.new(readTextFile(fileName), SourceFile.new(fileName), options)
-    fileList = parser.parseIncludes(nil, "")
+    fileList = parser.parseIncludes(nil, "", options)
+    fileList.flatten!
     fileListHash(fileList)
 end
 

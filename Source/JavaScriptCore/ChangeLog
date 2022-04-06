@@ -1,3 +1,21 @@
+2022-04-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [JSC] Nested includes do not change offlineasm hash output
+        https://bugs.webkit.org/show_bug.cgi?id=237779
+
+        Reviewed by Mark Lam.
+
+        The Ruby tooling around offlineasm can produce on their output a line containing a
+        checksum which depends on the input files processed. This is used to avoid redoing
+        in case the source files have not been changed since the last run. While there is
+        code to scan the "include" directives in the main input file and take the included
+        files into account for checksum calculation, included files themselves were not being
+        further processed for the second or additional levels of "include:. This adds the
+        missing recursive processing of "include" directives in order to take nested includes
+        into account.
+
+        * offlineasm/parser.rb: Process nested includes recursively for checksum calculation.
+
 2022-04-06  Geza Lore  <glore@igalia.com>
 
         [JSC]Squash alignment warning
