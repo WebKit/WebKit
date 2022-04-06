@@ -116,9 +116,8 @@ Using the default git editor for this repository
         )
 
     def test_github_checkout(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
-            MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'disabled', '1', 'y', 'y'), \
+            MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'disabled', '1', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
             wkmocks.Environment(EMAIL_ADDRESS=''):
 
@@ -133,7 +132,8 @@ Using the default git editor for this repository
             self.assertNotIn('color.status', config)
             self.assertEqual('Committer', config.get('user.name', ''))
             self.assertEqual('committer@webkit.org', config.get('user.email', ''))
-            self.assertEqual('git@github.example.com:WebKit/WebKit.git', local.Git(self.path).url())
+            self.assertEqual('!f()', config.get('credential.https://github.example.com.helper', ''))
+            self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 
         programs = ['default'] + [p.name for p in Editor.programs()]
         self.assertEqual(
@@ -153,8 +153,6 @@ a pull request branch? ([when-user-owned]/disabled/always/never):
 Pick a commit message editor for this repository:
     {}
 : 
-http(s) based remotes will prompt for your password every time when pushing,
-it is recommended to convert to a ssh remote, would you like to convert to a ssh remote? ([Yes]/No): 
 Create a private fork of 'WebKit' belonging to 'username' ([Yes]/No): 
 Setup succeeded!
 '''.format('\n    '.join([
@@ -182,7 +180,7 @@ Created a private fork of 'WebKit' belonging to 'username'!
 Adding forked remote as 'username' and 'fork'...
 Added remote 'username'
 Added remote 'fork'
-Fetching 'git@github.example.com:username/WebKit.git'
+Fetching 'https://github.example.com/username/WebKit.git'
 '''.format(repository=self.path),
         )
 

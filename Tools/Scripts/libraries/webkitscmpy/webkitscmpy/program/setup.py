@@ -232,9 +232,21 @@ class Setup(Command):
             else:
                 log.info("Set git editor to '{}' for this repository".format(editor_name))
 
-        # Pushing to http repositories is difficult, offer to change http checkouts to ssh
+        # Check if we need to define a credential helper
         http_remote = local.Git.HTTP_REMOTE.match(repository.url())
-        if http_remote and not args.defaults and Terminal.choose(
+        can_push = not http_remote
+        rmt = repository.remote()
+        if not can_push and rmt and getattr(rmt, 'credentials', None):
+            username, password = rmt.credentials()
+            if username and password and not run([
+                repository.executable(), 'config',
+                'credential.{}.helper'.format('/'.join(rmt.url.split('/')[:3])),
+                '!f() {{ {} -C {} credentials; }}; f'.format(sys.argv[0], rmt.url),
+            ], capture_output=True, cwd=repository.root_path).returncode:
+                can_push = True
+
+        # Without a credential helper, pushing to http repositories is difficult, offer to change http checkouts to ssh
+        if not can_push and not args.defaults and Terminal.choose(
             "http(s) based remotes will prompt for your password every time when pushing,\nit is recommended to convert to a ssh remote, would you like to convert to a ssh remote?",
             default='Yes',
         ) == 'Yes':
