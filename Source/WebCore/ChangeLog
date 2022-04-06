@@ -1,3 +1,15 @@
+2022-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        FilterImage::imageBufferFromPixelBuffer() can trigger accelerated buffers in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=238848
+
+        Unreviewed.
+
+        Remove an icorrect FIXME comment now that I've verified that the issue does not occur.
+
+        * platform/graphics/filters/FilterImage.cpp:
+        (WebCore::FilterImage::imageBufferFromPixelBuffer):
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Drop unnecessary ExceptionOr<> return types

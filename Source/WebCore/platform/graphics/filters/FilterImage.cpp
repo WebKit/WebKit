@@ -99,8 +99,6 @@ ImageBuffer* FilterImage::imageBufferFromPixelBuffer()
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    // FIXME: This needs to use a specific RenderingPurpose to avoid accelerated buffers in the WebContent process (webkit.org/b/238848).
-    // FIXME: Test
     m_imageBuffer = ImageBuffer::create(m_absoluteImageRect.size(), RenderingPurpose::Unspecified, 1, m_colorSpace, PixelFormat::BGRA8, bufferOptionsForRendingMode(m_renderingMode));
     if (!m_imageBuffer)
         return nullptr;
