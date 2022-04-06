@@ -1,3 +1,25 @@
+2022-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Run TLC decommit rarely
+        https://bugs.webkit.org/show_bug.cgi?id=238855
+
+        Reviewed by Saam Barati.
+
+        We were running libpas TLC decommit every time. But it is too frequent. We should capture IsoHeap allocation pattern
+        with much more longer period, and perform TLC decommit in such a low-frequency rate.
+        This patch changes it so that we run it only once a 128 scavenger run. It is roughly once a 13 seconds.
+
+        * libpas/src/libpas/pas_scavenger.c:
+        (scavenger_thread_main):
+        (pas_scavenger_clear_all_caches):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (pas_thread_local_cache_for_all):
+        * libpas/src/libpas/pas_thread_local_cache.h:
+        * libpas/src/test/TLCDecommitTests.cpp:
+        (std::testTLCDecommit):
+        (std::testTLCDecommitThenDestroyImpl):
+        (std::testTLCDecommitThenDeallocate):
+
 2022-04-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r292450.

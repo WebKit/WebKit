@@ -157,7 +157,8 @@ void testTLCDecommit(unsigned numHeaps,
     pas_heap_lock_unlock();
 
     pas_thread_local_cache_for_all(pas_allocator_scavenge_request_stop_action,
-                                   pas_deallocator_scavenge_no_action);
+                                   pas_deallocator_scavenge_no_action,
+                                   pas_thread_local_cache_decommit_if_possible_action);
 
     CHECK_EQUAL(numCommittedPagesInTLC(), numCommittedPagesAfterDecommit);
 
@@ -296,7 +297,8 @@ void testTLCDecommitThenDestroyImpl(unsigned numHeaps)
     CHECK(pas_thread_local_cache_try_get()->deallocation_log_index);
 
     pas_thread_local_cache_for_all(pas_allocator_scavenge_force_stop_action,
-                                   pas_deallocator_scavenge_no_action);
+                                   pas_deallocator_scavenge_no_action,
+                                   pas_thread_local_cache_decommit_if_possible_action);
 
     CHECK_EQUAL(numCommittedPagesInTLC(), 1);
     CHECK(pas_thread_local_cache_try_get()->deallocation_log_index);
@@ -340,7 +342,8 @@ void testTLCDecommitThenDeallocate(unsigned numHeaps)
     CHECK(!pas_thread_local_cache_try_get()->deallocation_log_index);
 
     pas_thread_local_cache_for_all(pas_allocator_scavenge_force_stop_action,
-                                   pas_deallocator_scavenge_no_action);
+                                   pas_deallocator_scavenge_no_action,
+                                   pas_thread_local_cache_decommit_if_possible_action);
 
     for (void* object : objects)
         bmalloc_deallocate(object);
