@@ -55,6 +55,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "WebDateTimePickerGtk.h"
@@ -592,7 +593,7 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
 #if USE(WPE_RENDERER)
 IPC::Attachment PageClientImpl::hostFileDescriptor()
 {
-    return webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    return IPC::Attachment({ webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), UnixFileDescriptor::Adopt });
 }
 #endif
 
