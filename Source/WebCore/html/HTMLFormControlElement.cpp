@@ -167,15 +167,19 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
             }
         }
     } else if (name == readonlyAttr) {
-        bool wasReadOnly = m_isReadOnly;
-        m_isReadOnly = !value.isNull();
-        if (wasReadOnly != m_isReadOnly)
+        bool newReadOnly = !value.isNull();
+        if (m_isReadOnly != newReadOnly) {
+            Style::PseudoClassChangeInvalidation readOnlyInvalidation(*this, { { CSSSelector::PseudoClassReadOnly, newReadOnly }, { CSSSelector::PseudoClassReadWrite, !newReadOnly } });
+            m_isReadOnly = newReadOnly;
             readOnlyStateChanged();
+        }
     } else if (name == requiredAttr) {
-        bool wasRequired = m_isRequired;
-        m_isRequired = !value.isNull();
-        if (wasRequired != m_isRequired)
+        bool newRequired = !value.isNull();
+        if (m_isRequired != newRequired) {
+            Style::PseudoClassChangeInvalidation requiredInvalidation(*this, { { CSSSelector::PseudoClassRequired, newRequired }, { CSSSelector::PseudoClassOptional, !newRequired } });
+            m_isRequired = newRequired;
             requiredStateChanged();
+        }
     } else
         HTMLElement::parseAttribute(name, value);
 }
@@ -195,15 +199,15 @@ void HTMLFormControlElement::disabledStateChanged()
 void HTMLFormControlElement::readOnlyStateChanged()
 {
     updateWillValidateAndValidity();
+
+    // Some input pseudo classes like :in-range/out-of-range change based on the readonly state.
+    // FIXME: Use PseudoClassChangeInvalidation instead for :has() support and more efficiency.
     invalidateStyleForSubtree();
 }
 
 void HTMLFormControlElement::requiredStateChanged()
 {
     updateValidity();
-    // Style recalculation is needed because style selectors may include
-    // :required and :optional pseudo-classes.
-    invalidateStyleForSubtree();
 }
 
 void HTMLFormControlElement::didAttachRenderers()

@@ -1,3 +1,21 @@
+2022-04-06  Tim Nguyen  <ntim@apple.com>
+
+        [:has() pseudo-class] Support invalidation for more input pseudo classes
+        https://bugs.webkit.org/show_bug.cgi?id=238451
+
+        Reviewed by Antti Koivisto.
+
+        - :indeterminate
+        - :read-only
+        - :read-write
+        - :required
+        - :optional
+
+        Split the test in multiple subtests.
+
+        * web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has-expected.txt:
+        * web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has.html:
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.navigate
