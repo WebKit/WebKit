@@ -152,21 +152,17 @@ DEFINE_VISIT_CHILDREN(JSString);
 
 static constexpr unsigned maxLengthForOnStackResolve = 2048;
 
-void JSRopeString::resolveRopeInternal8(LChar* buffer) const
+template<typename CharacterType>
+void JSRopeString::resolveRopeInternal(CharacterType* buffer) const
 {
     if (isSubstring()) {
-        StringImpl::copyCharacters(buffer, substringBase()->valueInternal().characters8() + substringOffset(), length());
-        return;
-    }
-    
-    resolveRopeInternalNoSubstring(buffer);
-}
-
-void JSRopeString::resolveRopeInternal16(UChar* buffer) const
-{
-    if (isSubstring()) {
-        StringImpl::copyCharacters(
-            buffer, substringBase()->valueInternal().characters16() + substringOffset(), length());
+        // It is possible that underlying string becomes 8bit/16bit while wrapper substring is saying it is 16bit/8bit.
+        // But It is definitely true that substring part can be represented as its parent's status 8bit/16bit, which is described as CharacterType.
+        auto& string = substringBase()->valueInternal();
+        if (string.is8Bit())
+            StringImpl::copyCharacters(buffer, string.characters8() + substringOffset(), length());
+        else
+            StringImpl::copyCharacters(buffer, string.characters16() + substringOffset(), length());
         return;
     }
     
@@ -210,11 +206,11 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
 
     if (is8Bit()) {
         LChar buffer[maxLengthForOnStackResolve];
-        resolveRopeInternal8(buffer);
+        resolveRopeInternal(buffer);
         convertToNonRope(AtomStringImpl::add(buffer, length()));
     } else {
         UChar buffer[maxLengthForOnStackResolve];
-        resolveRopeInternal16(buffer);
+        resolveRopeInternal(buffer);
         convertToNonRope(AtomStringImpl::add(buffer, length()));
     }
 
@@ -255,14 +251,14 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
     
     if (is8Bit()) {
         LChar buffer[maxLengthForOnStackResolve];
-        resolveRopeInternal8(buffer);
+        resolveRopeInternal(buffer);
         if (RefPtr<AtomStringImpl> existingAtomString = AtomStringImpl::lookUp(buffer, length())) {
             convertToNonRope(*existingAtomString);
             return existingAtomString;
         }
     } else {
         UChar buffer[maxLengthForOnStackResolve];
-        resolveRopeInternal16(buffer);
+        resolveRopeInternal(buffer);
         if (RefPtr<AtomStringImpl> existingAtomString = AtomStringImpl::lookUp(buffer, length())) {
             convertToNonRope(*existingAtomString);
             return existingAtomString;
