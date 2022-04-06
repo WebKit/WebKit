@@ -1,3 +1,21 @@
+2022-04-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r292308): links to results is wrong for some tests
+        https://bugs.webkit.org/show_bug.cgi?id=238862
+
+        Reviewed by Youenn Fablet.
+
+        Since r292308 we generate the wrong links in the results for the tests that end with .https.html. This is because
+        the output_filename is expected to have the extension, that is removed before renturing the value. Since
+        r292308, the extension is removed first, so .https is considered the extension and removed too.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.output_filename):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_reftest_diff_image):
+        (TestResultWriterTest):
+        (TestResultWriterTest.test_output_filename):
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.navigate

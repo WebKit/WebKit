@@ -105,7 +105,7 @@ class TestResultWriter(object):
         if len(ext_parts) > 1 and '#' in ext_parts[1]:
             output_basename += '_' + ext_parts[1].split('#')[1]
 
-        output_filename = fs.join(self._root_output_dir, output_basename)
+        output_filename = fs.join(self._root_output_dir, output_basename + ext_parts[1])
 
         # Temporary fix, also in LayoutTests/fast/harness/results.html, line 275.
         # FIXME: Refactor to avoid confusing reference to both test and process names.
