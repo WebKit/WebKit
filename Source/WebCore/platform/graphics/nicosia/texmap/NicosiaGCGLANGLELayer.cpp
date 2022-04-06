@@ -73,7 +73,7 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
 #endif
 
     // Fallback path, read back texture to main memory
-    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(size, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return;
     m_context.paintRenderingResultsToCanvas(*imageBuffer.get());

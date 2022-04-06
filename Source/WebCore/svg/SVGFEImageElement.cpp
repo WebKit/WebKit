@@ -199,8 +199,7 @@ static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& rect, const FloatS
         return nullptr;
 
     auto clampingScale = clampingScaleForImageBufferSize(scaledRect.size());
-
-    auto imageBuffer = ImageBuffer::create(scaledRect.size() * clampingScale, RenderingMode::Unaccelerated, ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, hostWindow);
+    auto imageBuffer = ImageBuffer::create(scaledRect.size() * clampingScale, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { }, { hostWindow });
     if (!imageBuffer)
         return nullptr;
 

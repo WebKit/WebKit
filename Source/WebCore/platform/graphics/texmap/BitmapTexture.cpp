@@ -38,7 +38,7 @@ void BitmapTexture::updateContents(GraphicsLayer* sourceLayer, const IntRect& ta
 {
     // Making an unconditionally unaccelerated buffer here is OK because this code
     // isn't used by any platforms that respect the accelerated bit.
-    auto imageBuffer = ImageBuffer::create(targetRect.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(targetRect.size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return;
 

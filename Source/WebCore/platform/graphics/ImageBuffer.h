@@ -31,6 +31,7 @@
 #include "ImageBufferBackend.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -41,6 +42,11 @@ class HostWindow;
 #if HAVE(IOSURFACE)
 class IOSurfacePool;
 #endif
+
+enum class ImageBufferOptions : uint8_t {
+    Accelerated     = 1 << 0,
+    UseDisplayList  = 1 << 1
+};
 
 class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {
 public:
@@ -63,8 +69,7 @@ public:
     };
 
     // Will return a null pointer on allocation failure.
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, const CreationContext& = { });
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale, const DestinationColorSpace&, PixelFormat, const CreationContext& = { });
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, const CreationContext& = { });
 
     RefPtr<ImageBuffer> clone() const;
 
@@ -156,5 +161,12 @@ protected:
     virtual RefPtr<Image> sinkIntoImage(PreserveResolution = PreserveResolution::No) = 0;
     virtual void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
 };
+
+inline OptionSet<ImageBufferOptions> bufferOptionsForRendingMode(RenderingMode renderingMode)
+{
+    if (renderingMode == RenderingMode::Accelerated)
+        return { ImageBufferOptions::Accelerated };
+    return { };
+}
 
 } // namespace WebCore

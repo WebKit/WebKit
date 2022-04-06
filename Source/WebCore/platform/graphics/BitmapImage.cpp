@@ -160,7 +160,7 @@ RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(bool r
         return image;
 
     auto correctedSizeFloat = correctedSize ? FloatSize(correctedSize.value()) : size();
-    auto buffer = ImageBuffer::create(correctedSizeFloat, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(correctedSizeFloat, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return image;
 

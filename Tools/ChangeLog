@@ -1,3 +1,23 @@
+2022-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Unify the two ImageBuffer::create() functions, passing RenderingPurpose everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=238851
+
+        Reviewed by Said Abou-Hallawa.
+
+        I need to extend RenderingPurpose flags to distinguish layer backing store buffers from
+        other kinds of buffers. Before doing so, collapse the two ImageBuffer::create() functions
+        together by combining RenderingMode and ShouldUseDisplayList into OptionSet<ImageBufferOptions>,
+        and passing RenderingPurpose everywhere.
+        
+        Always passing RenderingPurpose is revealing, because it finds call sites in the
+        web process that can trigger accelerated buffers (e.g. webkit.org/b/238846).
+
+        * TestWebKitAPI/Tests/WebCore/ImageBufferTests.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         In case of COOP-based process swap, we need to make sure the document gets controlled by its matching service worker registration

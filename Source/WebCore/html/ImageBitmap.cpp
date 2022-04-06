@@ -89,16 +89,18 @@ RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scrip
 #endif
     }
 
+    auto bufferOptions = bufferOptionsForRendingMode(renderingMode);
+
     if (scriptExecutionContext.isDocument()) {
         auto& document = downcast<Document>(scriptExecutionContext);
         if (document.view() && document.view()->root()) {
             auto hostWindow = document.view()->root()->hostWindow();
-            return ImageBuffer::create(size, renderingMode, ShouldUseDisplayList::No, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, hostWindow);
+            return ImageBuffer::create(size, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions, { hostWindow });
         }
     }
 
     // FIXME <https://webkit.org/b/218482> Enable worker based ImageBitmap and OffscreenCanvas drawing to use GPU Process rendering
-    return ImageBuffer::create(size, renderingMode, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8);
+    return ImageBuffer::create(size, RenderingPurpose::Unspecified, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, bufferOptions);
 }
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)

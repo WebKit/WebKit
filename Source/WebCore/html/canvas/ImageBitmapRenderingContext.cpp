@@ -95,7 +95,9 @@ void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitma
         // only reason I can think of is toDataURL(), but that doesn't seem like
         // a good enough argument to waste memory.
 
-        canvas()->setImageBufferAndMarkDirty(ImageBuffer::create(FloatSize(canvas()->width(), canvas()->height()), bufferRenderingMode, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+        // FIXME: This needs to use RenderingPurpose::Canvas to avoid accelerated buffers in the WebContent process (webkit.org/b/238846).
+        auto buffer = ImageBuffer::create(FloatSize(canvas()->width(), canvas()->height()), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(bufferRenderingMode));
+        canvas()->setImageBufferAndMarkDirty(WTFMove(buffer));
 
         // 1.4. Set the output bitmap's origin-clean flag to true.
 

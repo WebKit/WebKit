@@ -886,9 +886,12 @@ void HTMLCanvasElement::createImageBuffer() const
 
     auto hostWindow = (document().view() && document().view()->root()) ? document().view()->root()->hostWindow() : nullptr;
 
-    auto renderingMode = shouldAccelerate(area) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    OptionSet<ImageBufferOptions> bufferOptions;
+    if (shouldAccelerate(area))
+        bufferOptions.add(ImageBufferOptions::Accelerated);
     // FIXME: Add a new setting for DisplayList drawing on canvas.
-    auto useDisplayList = m_usesDisplayListDrawing.value_or(document().settings().displayListDrawingEnabled()) ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
+    if (m_usesDisplayListDrawing.value_or(document().settings().displayListDrawingEnabled()))
+        bufferOptions.add(ImageBufferOptions::UseDisplayList);
 
     auto [colorSpace, pixelFormat] = [&] {
         if (m_context)
@@ -896,7 +899,7 @@ void HTMLCanvasElement::createImageBuffer() const
         return std::pair { DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
     }();
 
-    setImageBuffer(ImageBuffer::create(size(), renderingMode, useDisplayList, RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, hostWindow));
+    setImageBuffer(ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, { hostWindow }));
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (m_context && m_context->is2d()) {

@@ -203,14 +203,15 @@ RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpac
     if (!m_page)
         return nullptr;
 
-    bool acceleratedDrawingEnabled = m_page->settings().acceleratedDrawingEnabled();
-    auto renderingMode = acceleratedDrawingEnabled ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    OptionSet<ImageBufferOptions> bufferOptions;
+    if (m_page->settings().acceleratedDrawingEnabled())
+        bufferOptions.add(ImageBufferOptions::Accelerated);
 
     HostWindow* hostWindow = nullptr;
     if (auto contentRenderer = embeddedContentBox())
         hostWindow = contentRenderer->hostWindow();
 
-    auto imageBuffer = ImageBuffer::create(size(), renderingMode, ShouldUseDisplayList::No, RenderingPurpose::DOM, 1, colorSpace, PixelFormat::BGRA8, hostWindow);
+    auto imageBuffer = ImageBuffer::create(size(), RenderingPurpose::DOM, 1, colorSpace, PixelFormat::BGRA8, bufferOptions, { hostWindow });
     if (!imageBuffer)
         return nullptr;
 

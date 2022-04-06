@@ -34,7 +34,6 @@ enum class RenderingPurpose : uint8_t {
     MediaPainting
 };
 
-enum class ShouldUseDisplayList : bool { No, Yes };
 enum class RenderingMode : bool { Unaccelerated, Accelerated };
 enum class RenderingMethod : bool { Local, DisplayList };
 

@@ -289,7 +289,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
 
         auto bitmapImage = BitmapImage::create();
         bitmapImage->setData(WTFMove(bufferToSanitize), true);
-        auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        auto imageBuffer = ImageBuffer::create(bitmapImage->size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
         if (!imageBuffer) {
             m_data = { nullString() };
             return;

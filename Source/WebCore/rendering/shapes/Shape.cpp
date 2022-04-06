@@ -181,7 +181,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     IntRect marginRect = snappedIntRect(marginR);
     auto intervals = makeUnique<RasterShapeIntervals>(marginRect.height(), -marginRect.y());
     // FIXME (149420): This buffer should not be unconditionally unaccelerated.
-    auto imageBuffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(imageRect.size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
 
     auto createShape = [&]() {
         auto rasterShape = makeUnique<RasterShape>(WTFMove(intervals), marginRect.size());

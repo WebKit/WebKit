@@ -198,10 +198,13 @@ IntSize GraphicsContext::compatibleImageBufferSize(const FloatSize& size) const
 
 RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
 {
-    if (!renderingMethod || *renderingMethod == RenderingMethod::Local)
-        return ImageBuffer::create(size, renderingMode.value_or(this->renderingMode()), resolutionScale, colorSpace, PixelFormat::BGRA8);
+    auto bufferOptions = bufferOptionsForRendingMode(renderingMode.value_or(this->renderingMode()));
 
-    return ImageBuffer::create(size, renderingMode.value_or(this->renderingMode()), ShouldUseDisplayList::Yes, RenderingPurpose::Unspecified, resolutionScale, colorSpace, PixelFormat::BGRA8);
+    if (!renderingMethod || *renderingMethod == RenderingMethod::Local)
+        return ImageBuffer::create(size, RenderingPurpose::Unspecified, resolutionScale, colorSpace, PixelFormat::BGRA8, bufferOptions);
+
+    bufferOptions.add(ImageBufferOptions::UseDisplayList);
+    return ImageBuffer::create(size, RenderingPurpose::Unspecified, resolutionScale, colorSpace, PixelFormat::BGRA8, bufferOptions);
 }
 
 RefPtr<ImageBuffer> GraphicsContext::createScaledImageBuffer(const FloatSize& size, const FloatSize& scale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const

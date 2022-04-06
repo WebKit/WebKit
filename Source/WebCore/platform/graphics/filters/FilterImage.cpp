@@ -99,7 +99,9 @@ ImageBuffer* FilterImage::imageBufferFromPixelBuffer()
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = ImageBuffer::create(m_absoluteImageRect.size(), m_renderingMode, 1, m_colorSpace, PixelFormat::BGRA8);
+    // FIXME: This needs to use a specific RenderingPurpose to avoid accelerated buffers in the WebContent process (webkit.org/b/238848).
+    // FIXME: Test
+    m_imageBuffer = ImageBuffer::create(m_absoluteImageRect.size(), RenderingPurpose::Unspecified, 1, m_colorSpace, PixelFormat::BGRA8, bufferOptionsForRendingMode(m_renderingMode));
     if (!m_imageBuffer)
         return nullptr;
 
@@ -170,7 +172,7 @@ static void copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
 static std::optional<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace)
 {
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
-    auto convertedImageBuffer = ImageBuffer::create(clampedSize, RenderingMode::Unaccelerated, 1, colorSpace, PixelFormat::BGRA8);
+    auto convertedImageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
     
     if (!convertedImageBuffer)
         return std::nullopt;
@@ -187,7 +189,7 @@ static std::optional<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePix
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
 
     auto& sourceColorSpace = sourcePixelBuffer.format().colorSpace;
-    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingMode::Unaccelerated, 1, sourceColorSpace, PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, sourceColorSpace, PixelFormat::BGRA8);
     if (!imageBuffer)
         return std::nullopt;
 

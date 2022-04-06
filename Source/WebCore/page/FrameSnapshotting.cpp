@@ -114,7 +114,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     if (options.flags.contains(SnapshotFlags::PaintWithIntegralScaleFactor))
         scaleFactor = ceilf(scaleFactor);
 
-    auto buffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, scaleFactor, options.colorSpace, options.pixelFormat);
+    auto buffer = ImageBuffer::create(imageRect.size(), RenderingPurpose::Unspecified, scaleFactor, options.colorSpace, options.pixelFormat);
     if (!buffer)
         return nullptr;
     buffer->context().translate(-imageRect.x(), -imageRect.y());

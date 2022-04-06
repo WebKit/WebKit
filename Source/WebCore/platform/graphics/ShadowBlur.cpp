@@ -85,7 +85,7 @@ public:
         clearScratchBuffer();
 
         // ShadowBlur is not used with accelerated drawing, so it's OK to make an unconditionally unaccelerated buffer.
-        m_imageBuffer = ImageBuffer::create(roundedSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        m_imageBuffer = ImageBuffer::create(roundedSize, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
         return m_imageBuffer;
     }
 
@@ -606,7 +606,7 @@ void ShadowBlur::drawInsetShadow(const AffineTransform& transform, const IntRect
 
 void ShadowBlur::drawRectShadowWithoutTiling(const AffineTransform&, const FloatRoundedRect& shadowedRect, const LayerImageProperties& layerImageProperties, const DrawBufferCallback& drawBuffer)
 {
-    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!layerImage)
         return;
 
@@ -634,7 +634,7 @@ void ShadowBlur::drawRectShadowWithoutTiling(const AffineTransform&, const Float
 
 void ShadowBlur::drawInsetShadowWithoutTiling(const AffineTransform&, const FloatRect& fullRect, const FloatRoundedRect& holeRect, const LayerImageProperties& layerImageProperties, const DrawBufferCallback& drawBuffer)
 {
-    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties.layerSize), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!layerImage)
         return;
 
@@ -710,7 +710,7 @@ void ShadowBlur::drawRectShadowWithTiling(const AffineTransform& transform, cons
     UNUSED_PARAM(layerImageProperties);
 #endif
 
-    if (auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8))
+    if (auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8))
         drawRectShadowWithTilingWithLayerImageBuffer(*layerImageBuffer, transform, shadowedRect, templateSize, edgeSize, drawImage, fillRect, templateShadow);
 }
 
@@ -764,7 +764,7 @@ void ShadowBlur::drawInsetShadowWithTiling(const AffineTransform& transform, con
     }
 #endif
 
-    if (auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8))
+    if (auto layerImageBuffer = ImageBuffer::create(templateSize, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8))
         drawInsetShadowWithTilingWithLayerImageBuffer(*layerImageBuffer, transform, fullRect, holeRect, templateSize, edgeSize, drawImage, fillRectWithHole, templateBounds, templateHole);
 }
 
@@ -923,7 +923,7 @@ void ShadowBlur::drawShadowLayer(const AffineTransform& transform, const IntRect
 
     adjustBlurRadius(transform);
 
-    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties->layerSize), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto layerImage = ImageBuffer::create(expandedIntSize(layerImageProperties->layerSize), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!layerImage)
         return;
 
