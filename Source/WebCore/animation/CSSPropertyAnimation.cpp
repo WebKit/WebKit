@@ -3631,13 +3631,22 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyWebkitMaskComposite:
         case CSSPropertyWebkitMaskSourceType:
         case CSSPropertyWebkitNbspMode:
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+        case CSSPropertyWebkitOverflowScrolling:
+#endif
         case CSSPropertyWebkitRtlOrdering:
+#if ENABLE(TOUCH_EVENTS)
+        case CSSPropertyWebkitTapHighlightColor:
+#endif
         case CSSPropertyWebkitTextCombine:
         case CSSPropertyWebkitTextDecoration:
         case CSSPropertyWebkitTextDecorationsInEffect:
         case CSSPropertyWebkitTextSecurity:
         case CSSPropertyWebkitTextStroke:
         case CSSPropertyWebkitTextStrokeWidth:
+#if PLATFORM(IOS_FAMILY)
+        case CSSPropertyWebkitTouchCallout:
+#endif
         case CSSPropertyWebkitTransformStyle:
         case CSSPropertyWebkitUserDrag:
         case CSSPropertyWebkitUserModify:
