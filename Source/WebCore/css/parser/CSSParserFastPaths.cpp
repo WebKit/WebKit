@@ -732,9 +732,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         // auto | none | inter-word | distribute
         return valueID == CSSValueInterWord || valueID == CSSValueDistribute || valueID == CSSValueAuto || valueID == CSSValueNone;
 #endif
-    case CSSPropertyWebkitTextOrientation: // mixed | upright | sideways | sideways-right
-        return valueID == CSSValueMixed || valueID == CSSValueUpright || valueID == CSSValueSideways || valueID == CSSValueSidewaysRight;
     case CSSPropertyTextOrientation:
+        // mixed | upright | sideways
         return valueID == CSSValueMixed || valueID == CSSValueUpright || valueID == CSSValueSideways;
     case CSSPropertyTextOverflow: // clip | ellipsis
         return valueID == CSSValueClip || valueID == CSSValueEllipsis;
@@ -986,7 +985,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyTextCombineUpright:
     case CSSPropertyTextDecorationStyle:
-    case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:
     case CSSPropertyWebkitTextZoom:
     case CSSPropertyWebkitTransformStyle:

@@ -5649,6 +5649,23 @@ bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, bool 
     return true;
 }
 
+bool CSSPropertyParser::consumeLegacyTextOrientation(bool important)
+{
+    // -webkit-text-orientation is a legacy shorthand for text-orientation.
+    // The only difference is that it accepts 'sideways-right', which is mapped into 'sideways'.
+    RefPtr<CSSPrimitiveValue> keyword;
+    auto valueID = m_range.peek().id();
+    if (valueID == CSSValueSidewaysRight) {
+        keyword = CSSValuePool::singleton().createIdentifierValue(CSSValueSideways);
+        consumeIdentRaw(m_range);
+    } else if (CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyTextOrientation, valueID, m_context))
+        keyword = consumeIdent(m_range);
+    if (!keyword || !m_range.atEnd())
+        return false;
+    addProperty(CSSPropertyTextOrientation, CSSPropertyWebkitTextOrientation, keyword.releaseNonNull(), important);
+    return true;
+}
+
 static bool consumeBackgroundPosition(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, RefPtr<CSSValue>& resultX, RefPtr<CSSValue>& resultY)
 {
     do {
@@ -6457,6 +6474,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
         return consumeLegacyBreakProperty(property, important);
+    case CSSPropertyWebkitTextOrientation:
+        return consumeLegacyTextOrientation(important);
     case CSSPropertyMaskPosition:
     case CSSPropertyWebkitMaskPosition:
     case CSSPropertyBackgroundPosition: {

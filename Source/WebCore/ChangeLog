@@ -1,3 +1,68 @@
+2022-04-06  Oriol Brufau  <obrufau@igalia.com>
+
+        [css] Turn -webkit-text-orientation into a legacy shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=238356
+
+        Reviewed by Antti Koivisto.
+
+        `-webkit-text-orientation` and `text-orientation` were both implemented
+        as longhands, just with a `related-property` flag so that declaration
+        blocks with both of them would use the one appearing last.
+
+        However, the logic for `related-property` wasn't always working well.
+        In bug 238350 I plan to merge it with shouldApplyPropertyInParseOrder(),
+        which has the same purpose and works better. But it's not suitable for
+        high priority properties like `text-orientation`.
+
+        So this patch turns `-webkit-text-orientation` into a shorthand that
+        expands into `text-orientation`.
+
+        `-webkit-text-orientation` continues accepting the legacy value
+        `sideways-right`, which is now mapped into `sideways` at parse time.
+        Previously this happened at computed-value time, but it implied that
+        serializing `text-decoration` could yield an invalid value.
+
+        Tests: fast/text/text-orientation-parse-competition.html
+               fast/text/text-orientation-parse-stylesheet.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator TextOrientation const):
+        Remove mapping of `sideways-right` into `sideways`, this is now
+        done at parse time. Also remove mapping of `vertical-right` into `mixed`
+        since `vertical-right` is a remnant of the past which has not been
+        considered valid syntax for years.
+
+        * css/CSSProperties.json:
+        Turn `-webkit-text-orientation` into a shorthand of `text-orientation`.
+        Remove their `related-property` flags and a remnant of `vertical-right`.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        Add code for serializing the `-webkit-text-orientation` shorthand.
+
+        * css/makeprop.pl:
+        Avoid a compile warning in getRelatedPropertyId() when no property has
+        the `related-property` flag.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        Remove `-webkit-text-orientation` from code which is only relevant for
+        longhands.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeLegacyTextOrientation):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        Add parsing logic for `-webkit-text-orientation` as a shorthand.
+
+        * css/parser/CSSPropertyParser.h:
+        Add parsing logic for `-webkit-text-orientation` as a shorthand.
+
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueWebkitTextOrientation): Deleted.
+        Remove `-webkit-text-orientation` from code which is only relevant for
+        longhands.
+
 2022-04-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [TextureMapper] Clean up the GraphicsContextGLTextureMapperANGLE header

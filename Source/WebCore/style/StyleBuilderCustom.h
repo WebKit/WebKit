@@ -148,7 +148,6 @@ public:
     static void applyInitialTextAlign(BuilderState&);
     static void applyValueTextAlign(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
-    static void applyValueWebkitTextOrientation(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
 #if ENABLE(TEXT_AUTOSIZING)
     static void applyValueWebkitTextSizeAdjust(BuilderState&, CSSValue&);
@@ -888,11 +887,6 @@ inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSS
 {
     builderState.setWritingMode(downcast<CSSPrimitiveValue>(value));
     builderState.style().setHasExplicitlySetWritingMode(true);
-}
-
-inline void BuilderCustom::applyValueWebkitTextOrientation(BuilderState& builderState, CSSValue& value)
-{
-    builderState.setTextOrientation(downcast<CSSPrimitiveValue>(value));
 }
 
 inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState, CSSValue& value)

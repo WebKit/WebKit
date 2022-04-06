@@ -351,6 +351,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return get2Values(scrollPaddingBlockShorthand());
     case CSSPropertyScrollPaddingInline:
         return get2Values(scrollPaddingInlineShorthand());
+    case CSSPropertyWebkitTextOrientation:
+        return getPropertyValue(CSSPropertyTextOrientation);
     default:
         return String();
     }

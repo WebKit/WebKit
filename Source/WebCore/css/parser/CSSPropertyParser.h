@@ -117,6 +117,7 @@ private:
     bool consumeFlex(bool important);
 
     bool consumeLegacyBreakProperty(CSSPropertyID, bool important);
+    bool consumeLegacyTextOrientation(bool important);
 
     bool consumeTransformOrigin(bool important);
     bool consumePerspectiveOrigin(bool important);

@@ -587,23 +587,36 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID id)
     ASSERT(id != CSSPropertyInvalid);
     return isInheritedPropertyTable[id];
 }
-    
-CSSPropertyID getRelatedPropertyId(CSSPropertyID id)
+
+EOF
+
+if (%relatedProperty) {
+    print GPERF << "EOF";
+CSSPropertyID getRelatedPropertyId(const CSSPropertyID id)
 {
     switch (id) {
 EOF
-for my $name (@names) {
-    if (!$relatedProperty{$name}) {
-        next;
+    for my $name (@names) {
+        if (!$relatedProperty{$name}) {
+            next;
+        }
+        print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+        print GPERF "        return CSSPropertyID::CSSProperty" . $nameToId{$relatedProperty{$name}} . ";\n";
     }
-    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
-    print GPERF "        return CSSPropertyID::CSSProperty" . $nameToId{$relatedProperty{$name}} . ";\n";
-}
-        
-print GPERF << "EOF";
+    print GPERF << "EOF";
     default:
         return CSSPropertyID::CSSPropertyInvalid;
     }
+EOF
+} else {
+    print GPERF << "EOF";
+CSSPropertyID getRelatedPropertyId(const CSSPropertyID)
+{
+    return CSSPropertyID::CSSPropertyInvalid;
+EOF
+}
+
+print GPERF << "EOF";
 }
 
 Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)

@@ -1,3 +1,20 @@
+2022-04-06  Oriol Brufau  <obrufau@igalia.com>
+
+        [css] Turn -webkit-text-orientation into a legacy shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=238356
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/text-orientation-parse-competition-expected.txt:
+        * fast/text/text-orientation-parse-competition.html:
+        Check that if a stylesheet specifies both -webkit-text-orientation and
+        text-orientation for the same element, the last specified one wins.
+
+        * fast/text/text-orientation-parse-stylesheet-expected.txt:
+        * fast/text/text-orientation-parse-stylesheet.html:
+        Check that only -webkit-text-orientation accepts `sideways-right`, and
+        that it's mapped to `sideways` at parse time.
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.navigate

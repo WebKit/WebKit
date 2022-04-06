@@ -142,8 +142,7 @@
         "in CSS cascading order.",
         "",
         "* related-property:",
-        "Indicates the prefixed or unprefixed version of the same property,",
-        "e.g. -webkit-text-orientation has a related property text-orientation",
+        "Indicates the prefixed or unprefixed version of the same property.",
         "When parsing high priority CSS properties with both prefixed and unprefixed",
         "versions, this flig will help the parser to mark all related properties ",
         "as seen when one is seen. This could enforce the 'last-one-wins' rule.",
@@ -690,7 +689,6 @@
             ],
             "codegen-properties": {
                 "custom": "Value",
-                "related-property": "-webkit-text-orientation",
                 "high-priority": true
             },
             "specification": {
@@ -706,10 +704,6 @@
                     "value": "sideways-right",
                     "status": "deprecated"
                 },
-                {
-                    "value": "vertical-right",
-                    "status": "non-standard"
-                },
                 "mixed",
                 "upright"
             ],
@@ -717,9 +711,9 @@
                 "aliases": [
                     "-epub-text-orientation"
                 ],
-                "related-property": "text-orientation",
-                "custom": "Value",
-                "high-priority": true
+                "longhands": [
+                    "text-orientation"
+                ]
             },
             "specification": {
                 "category": "css-writing-modes",
