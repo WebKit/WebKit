@@ -27,7 +27,7 @@ from buildbot.steps import trigger
 from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, AddReviewerToChangeLog, ApplyPatch, ApplyWatchList, Canonicalize,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
-                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests,
+                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitSvnFetch,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
@@ -326,6 +326,7 @@ class MergeQueueFactory(factory.BuildFactory):
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
+        self.addStep(GitSvnFetch())  # FIXME: Remove when migrating to pure git
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
         self.addStep(VerifyGitHubIntegrity())

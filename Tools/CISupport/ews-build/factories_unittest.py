@@ -633,6 +633,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'configuration',
             'clean-up-git-repo',
             'clean-and-update-working-directory',
+            'git-svn-fetch',
             'fetch-branch-references',
             'show-identifier',
             'verify-github-integrity',
