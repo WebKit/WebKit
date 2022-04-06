@@ -127,8 +127,6 @@ using namespace HTMLNames;
 
 // Post value change notifications for password fields or elements contained in password fields at a 40hz interval to thwart analysis of typing cadence
 static const Seconds accessibilityPasswordValueChangeNotificationInterval { 25_ms };
-static const Seconds accessibilityLiveRegionChangedNotificationInterval { 20_ms };
-static const Seconds accessibilityFocusModalNodeNotificationInterval { 50_ms };
 
 static bool rendererNeedsDeferredUpdate(const RenderObject& renderer)
 {
@@ -1058,7 +1056,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
             parent->setNeedsToUpdateChildren();
 
         // If this object supports ARIA live regions, then notify AT of changes.
-        // This notification need to be sent even when the screen reader has not accessed this live region since the last update.
+        // This notification needs to be sent even when the screen reader has not accessed this live region since the last update.
         // Sometimes this function can be called many times within a short period of time, leading to posting too many AXLiveRegionChanged notifications.
         // To fix this, we use a timer to make sure we only post one notification for the children changes within a pre-defined time interval.
         if (parent->supportsLiveRegion())
@@ -1695,7 +1693,7 @@ void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject* object
     if (!m_liveRegionObjectsSet.contains(object))
         m_liveRegionObjectsSet.add(object);
 
-    m_liveRegionChangedPostTimer.startOneShot(accessibilityLiveRegionChangedNotificationInterval);
+    m_liveRegionChangedPostTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::liveRegionChangedNotificationPostTimerFired()
@@ -1729,7 +1727,7 @@ void AXObjectCache::focusModalNode()
     if (m_focusModalNodeTimer.isActive())
         m_focusModalNodeTimer.stop();
     
-    m_focusModalNodeTimer.startOneShot(accessibilityFocusModalNodeNotificationInterval);
+    m_focusModalNodeTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::focusModalNodeTimerFired()

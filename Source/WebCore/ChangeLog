@@ -1,3 +1,21 @@
+2022-04-05  Andres Gonzalez  <andresg_22@apple.com>
+
+        Eliminate delays for processing live regions and modal notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=238833
+        <rdar://problem/91314023>
+
+        Reviewed by Chris Fleizach.
+
+        We had arbitrary delays to process notifications for live regions and
+        modal elements. This is no longer necessary and may cause problems
+        updating the isolated tree that depends on these notifications being
+        processed in a timely manner.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleChildrenChanged):
+        (WebCore::AXObjectCache::postLiveRegionChangeNotification):
+        (WebCore::AXObjectCache::focusModalNode):
+
 2022-04-05  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation[ Fix build break after r292408
