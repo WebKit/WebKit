@@ -4,6 +4,12 @@
 
         * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
 
+2022-04-05  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER build
+
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
+
 2022-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER build
