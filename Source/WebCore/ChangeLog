@@ -1,5 +1,30 @@
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
+        Implement ServiceWorkerWindowClient.navigate
+        https://bugs.webkit.org/show_bug.cgi?id=238738
+
+        Reviewed by Chris Dumez.
+
+        Introduce a routine to navigate a Document.
+        Send FrameIdentifier as part of ServiceWorkerClientData.
+        Implement ServiceWorkerWindowClient::navigate by sending IPC to network process.
+
+        Test: http/wpt/service-workers/navigate-iframes-window-client.https.html
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * loader/FrameLoader.cpp:
+        * workers/service/ServiceWorkerClientData.cpp:
+        * workers/service/ServiceWorkerClientData.h:
+        * workers/service/ServiceWorkerWindowClient.cpp:
+        * workers/service/context/SWContextManager.h:
+        * workers/service/server/SWServer.cpp:
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerWorker.cpp:
+        * workers/service/server/SWServerWorker.h:
+
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
         ServiceWorkerClients.openWindow should not need to get all clients asynchronously to resolve its promise
         https://bugs.webkit.org/show_bug.cgi?id=238503
 

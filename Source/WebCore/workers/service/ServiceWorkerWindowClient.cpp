@@ -71,10 +71,48 @@ void ServiceWorkerWindowClient::focus(ScriptExecutionContext& context, Ref<Defer
     });
 }
 
-void ServiceWorkerWindowClient::navigate(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&& promise)
+void ServiceWorkerWindowClient::navigate(ScriptExecutionContext& context, const String& urlString, Ref<DeferredPromise>&& promise)
 {
-    UNUSED_PARAM(url);
-    promise->reject(Exception { NotSupportedError, "windowClient.navigate() is not yet supported"_s });
+    auto url = context.completeURL(urlString);
+
+    if (!url.isValid()) {
+        promise->reject(Exception { TypeError, makeString("URL string ", urlString, " cannot successfully be parsed") });
+        return;
+    }
+
+    if (url.protocolIsAbout()) {
+        promise->reject(Exception { TypeError, makeString("ServiceWorkerClients.navigate() cannot be called with URL ", url.string()) });
+        return;
+    }
+
+    // We implement step 4 (checking of client's active service worker) in network process as we cannot do it synchronously.
+    auto& serviceWorkerContext = downcast<ServiceWorkerGlobalScope>(context);
+    auto promiseIdentifier = serviceWorkerContext.clients().addPendingPromise(WTFMove(promise));
+    callOnMainThread([clientIdentifier = identifier(), promiseIdentifier, serviceWorkerIdentifier = serviceWorkerContext.thread().identifier(), url = WTFMove(url).isolatedCopy()]() mutable {
+        SWContextManager::singleton().connection()->navigate(clientIdentifier, serviceWorkerIdentifier, url, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(WTFMove(result))](auto& serviceWorkerContext) mutable {
+                auto promise = serviceWorkerContext.clients().takePendingPromise(promiseIdentifier);
+                if (!promise)
+                    return;
+
+                if (result.hasException()) {
+                    promise->reject(result.releaseException());
+                    return;
+                }
+                auto clientData = result.releaseReturnValue();
+                if (!clientData) {
+                    promise->resolveWithJSValue(JSC::jsNull());
+                    return;
+                }
+#if ASSERT_ENABLED
+                auto originData = SecurityOriginData::fromURL(clientData->url);
+                ClientOrigin clientOrigin { originData, originData };
+#endif
+                ASSERT(serviceWorkerContext.clientOrigin() == clientOrigin);
+                promise->template resolve<IDLInterface<ServiceWorkerWindowClient>>(ServiceWorkerWindowClient::create(serviceWorkerContext, WTFMove(*clientData)));
+            });
+        });
+    });
 }
 
 } // namespace WebCore

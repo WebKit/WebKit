@@ -1091,6 +1091,14 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     m_clientToControllingRegistration.remove(registrationIterator);
 }
 
+std::optional<ServiceWorkerRegistrationIdentifier> SWServer::clientIdentifierToControllingRegistration(ScriptExecutionContextIdentifier clientIdentifier) const
+{
+    auto registrationIterator = m_clientToControllingRegistration.find(clientIdentifier);
+    if (registrationIterator == m_clientToControllingRegistration.end())
+        return { };
+    return registrationIterator->value;
+}
+
 SWServer::ShouldDelayRemoval SWServer::removeContextConnectionIfPossible(const RegistrableDomain& domain)
 {
     if (m_clientsByRegistrableDomain.contains(domain))

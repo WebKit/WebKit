@@ -355,6 +355,17 @@ void WebSWContextManagerConnection::claim(ServiceWorkerIdentifier serviceWorkerI
     });
 }
 
+void WebSWContextManagerConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, NavigateCallback&& callback)
+{
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::WebSWServerToContextConnection::Navigate { clientIdentifier, serviceWorkerIdentifier, url }, [callback = WTFMove(callback)](auto&& result) mutable {
+        if (!result.has_value()) {
+            callback(WTFMove(result).error().toException());
+            return;
+        }
+        callback(WTFMove(result).value());
+    });
+}
+
 void WebSWContextManagerConnection::focus(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
 {
     m_connectionToNetworkProcess->sendWithAsyncReply(Messages::WebSWServerToContextConnection::Focus { clientIdentifier }, WTFMove(callback));

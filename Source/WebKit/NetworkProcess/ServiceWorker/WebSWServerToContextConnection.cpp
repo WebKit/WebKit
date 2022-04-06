@@ -273,6 +273,46 @@ void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clie
     connection->focusServiceWorkerClient(clientIdentifier, WTFMove(callback));
 }
 
+void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
+{
+    auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
+    if (!worker) {
+        callback(makeUnexpected(ExceptionData { TypeError, "no service worker"_s }));
+        return;
+    }
+
+    if (!worker->isClientActiveServiceWorker(clientIdentifier)) {
+        callback(makeUnexpected(ExceptionData { TypeError, "service worker is not the client active service worker"_s }));
+        return;
+    }
+
+    auto data = worker->findClientByIdentifier(clientIdentifier);
+    if (!data || !data->pageIdentifier || !data->frameIdentifier) {
+        callback(makeUnexpected(ExceptionData { TypeError, "cannot navigate service worker client"_s }));
+        return;
+    }
+
+    auto frameIdentifier = *data->frameIdentifier;
+    m_connection.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::NavigateServiceWorkerClient { frameIdentifier, clientIdentifier, url }, [weakThis = WeakPtr { *this }, frameIdentifier, url, clientOrigin = worker->origin(), callback = WTFMove(callback)](auto pageIdentifier) mutable {
+        if (!weakThis || !weakThis->server()) {
+            callback(makeUnexpected(ExceptionData { TypeError, "service worker is gone"_s }));
+            return;
+        }
+
+        if (!pageIdentifier) {
+            callback(makeUnexpected(ExceptionData { TypeError, "navigate failed"_s }));
+            return;
+        }
+
+        std::optional<ServiceWorkerClientData> clientData;
+        weakThis->server()->forEachClientForOrigin(clientOrigin, [pageIdentifier, frameIdentifier, url, &clientData](auto& data) {
+            if (!clientData && data.pageIdentifier && *data.pageIdentifier == *pageIdentifier && data.frameIdentifier && *data.frameIdentifier == frameIdentifier && equalIgnoringFragmentIdentifier(data.url, url))
+                clientData = data;
+        });
+        callback(WTFMove(clientData));
+    }, 0);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)

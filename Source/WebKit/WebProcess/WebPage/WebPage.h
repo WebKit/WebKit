@@ -945,6 +945,7 @@ public:
     void didEndUserTriggeredSelectionChanges();
 
     void interactionRegions(WebCore::FloatRect rectInContentCoordinates, CompletionHandler<void(Vector<WebCore::InteractionRegion>)>&&);
+    void navigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, const URL&, CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(COCOA)
     void platformInitializeAccessibility();

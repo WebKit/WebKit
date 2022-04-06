@@ -8414,7 +8414,7 @@ std::optional<PageIdentifier> Document::pageID() const
 
 std::optional<FrameIdentifier> Document::frameID() const
 {
-    return m_frame->loader().frameID();
+    return m_frame ? m_frame->loader().frameID() : std::nullopt;
 }
 
 void Document::registerArticleElement(Element& article)
@@ -8779,6 +8779,24 @@ void Document::updateServiceWorkerClientData()
 
     auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
     m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, userAgent(url()));
+}
+
+void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(bool)>&& callback)
+{
+    if (activeDOMObjectsAreSuspended() || activeDOMObjectsAreStopped()) {
+        callback(false);
+        return;
+    }
+    eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, url, callback = WTFMove(callback)]() mutable {
+        auto* frame = weakThis ? weakThis->frame() : nullptr;
+        if (!frame) {
+            callback(false);
+            return;
+        }
+        frame->navigationScheduler().scheduleLocationChange(*weakThis, weakThis->securityOrigin(), url, frame->loader().outgoingReferrer(), LockHistory::Yes, LockBackForwardList::No, [callback = WTFMove(callback)]() mutable {
+            callback(true);
+        });
+    });
 }
 #endif
 

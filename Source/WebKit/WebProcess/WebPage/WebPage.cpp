@@ -6439,6 +6439,22 @@ void WebPage::interactionRegions(FloatRect rectInContentCoordinates, CompletionH
     completionHandler(WebCore::interactionRegions(*m_page, rectInContentCoordinates));
 }
 
+void WebPage::navigateServiceWorkerClient(ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(bool)>&& callback)
+{
+#if ENABLE(SERVICE_WORKER)
+    RefPtr document = Document::allDocumentsMap().get(documentIdentifier);
+    if (!document) {
+        callback(false);
+        return;
+    }
+    document->navigateFromServiceWorker(url, WTFMove(callback));
+#else
+    UNUSED_PARAM(documentIdentifier);
+    UNUSED_PARAM(url);
+    callback(false);
+#endif
+}
+
 void WebPage::setAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)
 {
     if (alwaysShowsHorizontalScroller == m_alwaysShowsHorizontalScroller)

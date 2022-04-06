@@ -93,6 +93,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DataTaskDidCompleteWithError(WebKit::DataTaskIdentifier identifier, WebCore::ResourceError error)
 
     OpenWindowFromServiceWorker(PAL::SessionID sessionID, String urlString, struct WebCore::SecurityOriginData serviceWorkerOrigin) -> (std::optional<WebCore::PageIdentifier> newPage)
+    NavigateServiceWorkerClient(WebCore::FrameIdentifier frameIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (std::optional<WebCore::PageIdentifier> page)
 }
 
 }

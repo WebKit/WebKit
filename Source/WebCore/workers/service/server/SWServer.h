@@ -242,6 +242,9 @@ public:
     enum class ShouldDelayRemoval : bool { No, Yes };
     ShouldDelayRemoval removeContextConnectionIfPossible(const RegistrableDomain&);
 
+    std::optional<ServiceWorkerRegistrationIdentifier> clientIdentifierToControllingRegistration(ScriptExecutionContextIdentifier) const;
+    WEBCORE_EXPORT void forEachClientForOrigin(const ClientOrigin&, const Function<void(ServiceWorkerClientData&)>&);
+
 private:
     void validateRegistrationDomain(WebCore::RegistrableDomain, ServiceWorkerJobType, CompletionHandler<void(bool)>&&);
 
@@ -261,7 +264,6 @@ private:
     void installContextData(const ServiceWorkerContextData&);
 
     SWServerRegistration* registrationFromServiceWorkerIdentifier(ServiceWorkerIdentifier);
-    void forEachClientForOrigin(const ClientOrigin&, const Function<void(ServiceWorkerClientData&)>&);
 
     void performGetOriginsWithRegistrationsCallbacks();
 

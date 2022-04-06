@@ -1,3 +1,17 @@
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorkerWindowClient.navigate
+        https://bugs.webkit.org/show_bug.cgi?id=238738
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/navigate-iframes-window-client.https-expected.txt: Added.
+        * http/wpt/service-workers/navigate-iframes-window-client.https.html: Added.
+        * http/wpt/service-workers/navigate-window-client-worker.js: Added.
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https-expected.txt: Removed.
+        * platform/mac-wk2/TestExpectations:
+
 2022-04-05  Ada Chan  <adachan@apple.com>
 
         [WebXR] Add a new enum type to represent session features

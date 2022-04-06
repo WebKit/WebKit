@@ -419,6 +419,14 @@ void SWServerWorker::terminateIfPossible()
     m_server->removeContextConnectionIfPossible(registrableDomain());
 }
 
+bool SWServerWorker::isClientActiveServiceWorker(ScriptExecutionContextIdentifier clientIdentifier) const
+{
+    if (!m_server)
+        return false;
+    auto registrationIdentifier = m_server->clientIdentifierToControllingRegistration(clientIdentifier);
+    return registrationIdentifier == m_data.registrationIdentifier;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

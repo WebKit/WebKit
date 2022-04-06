@@ -1194,6 +1194,9 @@ webkit.org/b/177940 workers/wasm-hashset.html [ Skip ]
 webkit.org/b/201981 http/wpt/service-workers/server-trust-evaluation.https.html [ Failure ]
 webkit.org/b/201981 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Failure Pass ]
 
+webkit.org/b/238738 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
+webkit.org/b/238738238738 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Failure ]
+
 webkit.org/b/208369 http/tests/workers/service/basic-timeout.https.html [ Failure Timeout Pass ]
 
 webkit.org/b/215638 http/tests/websocket/tests/hybi/invalid-continuation.html [ Failure ]

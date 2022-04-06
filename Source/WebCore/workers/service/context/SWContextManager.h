@@ -72,6 +72,9 @@ public:
         using OpenWindowCallback = CompletionHandler<void(ExceptionOr<std::optional<ServiceWorkerClientData>>&&)>;
         virtual void openWindow(ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) = 0;
 
+        using NavigateCallback = CompletionHandler<void(ExceptionOr<std::optional<WebCore::ServiceWorkerClientData>>&&)>;
+        virtual void navigate(ScriptExecutionContextIdentifier, ServiceWorkerIdentifier, const URL&, NavigateCallback&&) = 0;
+
         virtual void didFailHeartBeatCheck(ServiceWorkerIdentifier) = 0;
         virtual void setAsInspected(ServiceWorkerIdentifier, bool) = 0;
 

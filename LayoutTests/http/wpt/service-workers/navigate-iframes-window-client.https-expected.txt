@@ -1,0 +1,8 @@
+
+
+PASS Setup activating worker
+PASS Navigate to same origin
+PASS Navigate to same URL
+PASS Navigate to same document fragment
+PASS Navigate to cross origin
+

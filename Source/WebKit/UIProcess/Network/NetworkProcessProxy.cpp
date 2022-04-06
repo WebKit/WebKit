@@ -1805,6 +1805,17 @@ void NetworkProcessProxy::openWindowFromServiceWorker(PAL::SessionID sessionID, 
     callback(std::nullopt);
 }
 
+void NetworkProcessProxy::navigateServiceWorkerClient(WebCore::FrameIdentifier frameIdentifier, WebCore::ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&& callback)
+{
+    auto* process = WebProcessProxy::processForIdentifier(documentIdentifier.processIdentifier());
+    auto* frame = process ? process->webFrame(frameIdentifier) : nullptr;
+    if (!frame) {
+        callback({ });
+        return;
+    }
+    frame->navigateServiceWorkerClient(documentIdentifier, url, WTFMove(callback));
+}
+
 void NetworkProcessProxy::applicationDidEnterBackground()
 {
     send(Messages::NetworkProcess::ApplicationDidEnterBackground(), 0);

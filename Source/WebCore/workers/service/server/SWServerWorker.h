@@ -141,6 +141,8 @@ public:
 
     bool shouldContinue() const { return !!m_functionalEventCounter || m_isInspected; }
 
+    WEBCORE_EXPORT bool isClientActiveServiceWorker(ScriptExecutionContextIdentifier) const;
+
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 

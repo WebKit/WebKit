@@ -10,29 +10,15 @@ PASS invalid url (view-source://example.com)
 PASS invalid url (file:///)
 PASS invalid url (about:blank)
 PASS navigate on a top-level window client
-FAIL normal worker side promise_test: Unhandled rejection with value: object "NotSupportedError: windowClient.navigate() is not yet supported"
-FAIL blank url worker side promise_test: Unhandled rejection with value: object "NotSupportedError: windowClient.navigate() is not yet supported"
-FAIL in scope but not controlled test on installing worker worker side promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: windowClient.navigate() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL in scope but not controlled test on active worker worker side promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: windowClient.navigate() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL out of scope worker side promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: windowClient.navigate() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL cross orgin url worker side promise_test: Unhandled rejection with value: object "NotSupportedError: windowClient.navigate() is not yet supported"
-FAIL invalid url (http://[example.com]) worker side promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: windowClient.navigate() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL invalid url (view-source://example.com) worker side promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: windowClient.navigate() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL invalid url (file:///) worker side promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: windowClient.navigate() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL invalid url (about:blank) worker side promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: windowClient.navigate() is not yet supported" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS normal worker side
+PASS blank url worker side
+PASS in scope but not controlled test on installing worker worker side
+PASS in scope but not controlled test on active worker worker side
+PASS out of scope worker side
+PASS cross orgin url worker side
+PASS invalid url (http://[example.com]) worker side
+PASS invalid url (view-source://example.com) worker side
+FAIL invalid url (file:///) worker side assert_equals: expected (string) "TypeError" but got (object) null
+PASS invalid url (about:blank) worker side
 FAIL navigate on a top-level window client worker side assert_equals: expected "top-level" but got "auxiliary"
 

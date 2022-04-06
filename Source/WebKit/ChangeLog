@@ -1,3 +1,36 @@
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorkerWindowClient.navigate
+        https://bugs.webkit.org/show_bug.cgi?id=238738
+
+        Reviewed by Chris Dumez.
+
+        When receiving a request to navigate a client, send message to UIProcess.
+        UIProcess locates the WebFrameProxy which will send an IPC message to the WebProcess to do navigation.
+        We keep track of the navigation within WebFrameProxy.
+        In case of process swapping, we make sure to transfer the WebFrameProxy callback.
+        In case of policy decision to stop loads, we resolve the promise with an empty client.
+        A follow-up patch may reject the promise once the expected behavior will be clarified.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        * UIProcess/WebFrameProxy.cpp:
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-04-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [Unix] Adopt UnixFileDescriptor in IPC::Attachment

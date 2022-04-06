@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<script src="resources/routines.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+var url = new URL("/WebKit/service-workers/resources/", location);
+url = url.toString();
+var activeWorker;
+
+promise_test(async (test) => {
+    let registration = await navigator.serviceWorker.register("/WebKit/service-workers/navigate-window-client-worker.js", { scope : url });
+    if (!registration.installing) {
+        registration.unregister();
+        registration = await navigator.serviceWorker.register("/WebKit/service-workers/navigate-window-client-worker.js", { scope : url });
+    }
+    activeWorker = registration.installing;
+    await waitForState(activeWorker, "activating");
+    activeWorker = registration.active;
+}, "Setup activating worker");
+
+promise_test(async (test) => {
+    const iframe = await withIframe(url);
+
+    activeWorker.postMessage({navigate: url + "?test"});
+    const result = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+    assert_true(result.url.includes("?test"));
+
+    iframe.remove();
+}, "Navigate to same origin");
+
+promise_test(async (test) => {
+    const iframe = await withIframe(url);
+
+    activeWorker.postMessage("get-client");
+    const client1 = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+
+    activeWorker.postMessage({navigate: url});
+    const result = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+    assert_equals(result.url, url);
+
+    activeWorker.postMessage("get-client");
+    const client2 = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+
+    assert_not_equals(client1.id, client2.id);
+
+    iframe.remove();
+}, "Navigate to same URL");
+
+promise_test(async (test) => {
+    const iframe = await withIframe(url);
+
+    activeWorker.postMessage("get-client");
+    const client1 = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+
+    activeWorker.postMessage({navigate: url + "#test"});
+    const result = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+    assert_equals(result.url, url);
+
+    activeWorker.postMessage("get-client");
+    const client2 = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+
+    assert_equals(client1.id, client2.id);
+
+    iframe.remove();
+}, "Navigate to same document fragment");
+
+promise_test(async (test) => {
+    const iframe = await withIframe(url);
+
+    activeWorker.postMessage({navigate: "https://127.0.0.1:9443" });
+    const result = await new Promise(resolve => navigator.serviceWorker.onmessage = (event) => resolve(event.data));
+    assert_equals(result, "none");
+}, "Navigate to cross origin");
+</script>
+</body>
+</html>

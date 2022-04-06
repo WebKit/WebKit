@@ -59,12 +59,12 @@ static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecuti
 
 ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() const &
 {
-    return { identifier, type, frameType, url.isolatedCopy(), pageIdentifier, lastNavigationWasAppInitiated, isVisible, isFocused, focusOrder, crossThreadCopy(ancestorOrigins) };
+    return { identifier, type, frameType, url.isolatedCopy(), pageIdentifier, frameIdentifier, lastNavigationWasAppInitiated, isVisible, isFocused, focusOrder, crossThreadCopy(ancestorOrigins) };
 }
 
 ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() &&
 {
-    return { identifier, type, frameType, WTFMove(url).isolatedCopy(), pageIdentifier, lastNavigationWasAppInitiated, isVisible, isFocused, focusOrder, crossThreadCopy(WTFMove(ancestorOrigins)) };
+    return { identifier, type, frameType, WTFMove(url).isolatedCopy(), pageIdentifier, frameIdentifier, lastNavigationWasAppInitiated, isVisible, isFocused, focusOrder, crossThreadCopy(WTFMove(ancestorOrigins)) };
 }
 
 ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context)
@@ -87,6 +87,7 @@ ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& co
         toServiceWorkerClientFrameType(context),
         document.creationURL(),
         document.pageID(),
+        document.frameID(),
         lastNavigationWasAppInitiated,
         !document.hidden(),
         document.hasFocus(),

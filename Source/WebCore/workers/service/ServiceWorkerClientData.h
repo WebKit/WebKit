@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include "ProcessQualified.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -49,6 +50,7 @@ struct ServiceWorkerClientData {
     ServiceWorkerClientFrameType frameType;
     URL url;
     std::optional<PageIdentifier> pageIdentifier;
+    std::optional<FrameIdentifier> frameIdentifier;
     LastNavigationWasAppInitiated lastNavigationWasAppInitiated;
     bool isVisible { false };
     bool isFocused { false };
@@ -67,7 +69,7 @@ struct ServiceWorkerClientData {
 template<class Encoder>
 void ServiceWorkerClientData::encode(Encoder& encoder) const
 {
-    encoder << identifier << type << frameType << url << pageIdentifier << lastNavigationWasAppInitiated << isVisible << isFocused << focusOrder << ancestorOrigins;
+    encoder << identifier << type << frameType << url << pageIdentifier << frameIdentifier << lastNavigationWasAppInitiated << isVisible << isFocused << focusOrder << ancestorOrigins;
 }
 
 template<class Decoder>
@@ -98,6 +100,11 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     if (!pageIdentifier)
         return std::nullopt;
 
+    std::optional<std::optional<FrameIdentifier>> frameIdentifier;
+    decoder >> frameIdentifier;
+    if (!frameIdentifier)
+        return std::nullopt;
+
     std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
     decoder >> lastNavigationWasAppInitiated;
     if (!lastNavigationWasAppInitiated)
@@ -123,7 +130,7 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     if (!ancestorOrigins)
         return std::nullopt;
 
-    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*pageIdentifier), WTFMove(*lastNavigationWasAppInitiated), WTFMove(*isVisible), WTFMove(*isFocused), WTFMove(*focusOrder), WTFMove(*ancestorOrigins) } };
+    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*pageIdentifier), WTFMove(*frameIdentifier), WTFMove(*lastNavigationWasAppInitiated), WTFMove(*isVisible), WTFMove(*isFocused), WTFMove(*focusOrder), WTFMove(*ancestorOrigins) } };
 }
 
 using ServiceWorkerClientsMatchAllCallback = CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;
