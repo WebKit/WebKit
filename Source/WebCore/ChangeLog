@@ -1,3 +1,18 @@
+2022-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Stop using the shared IOSurfacePool for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=238835
+
+        Reviewed by Kimmo Kinnunen.
+
+        Opt WebGL out of using the IOSurfacePool for its buffers; this would have almost never
+        used a surface from the pool, because only RemoteLayerBackingStore put surfaces in the
+        pool so it would be rare for the size to match. In addition, the pool has insufficient
+        guarantees about surface state.
+
+        * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+        (WebCore::GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking):
+
 2022-04-06  Ada Chan  <adachan@apple.com>
 
         Fix assertion in CSSPropertyAnimationWrapperMap constructor

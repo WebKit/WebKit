@@ -574,7 +574,7 @@ bool GraphicsContextGLCocoa::reshapeDisplayBufferBacking()
 bool GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
-    auto backing = IOSurface::create(&IOSurfacePool::sharedPool(), getInternalFramebufferSize(), DestinationColorSpace::SRGB());
+    auto backing = IOSurface::create(nullptr, getInternalFramebufferSize(), DestinationColorSpace::SRGB());
     if (!backing)
         return false;
     if (m_resourceOwner)
