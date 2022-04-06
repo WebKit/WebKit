@@ -1,3 +1,22 @@
+2022-04-06  J Pascoe  <j_pascoe@apple.com>
+
+        Fix expected, actual links for variant-based imported wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=238832
+        rdar://problem/91313891
+
+        Reviewed by Brent Fulgham.
+
+        Ensure that the workaround involving "len(fs.splitext(output_basename)[1]) - 1 > 5"
+        does not affect imported templated wpt tests that may match that condition, such as
+        ".../pbkdf2.https.any.worker.html."
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (TestResultWriter.output_filename):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_output_filename):
+        (TestResultWriterTest):
+        (TestResultWriterTest.test_output_filename_variant):
+
 2022-04-06  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Use rebase over merge when canonicalizing commit

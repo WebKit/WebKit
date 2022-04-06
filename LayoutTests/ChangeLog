@@ -1,3 +1,17 @@
+2022-04-06  J Pascoe  <j_pascoe@apple.com>
+
+        Fix expected, actual links for variant-based imported wpt tests
+        https://bugs.webkit.org/show_bug.cgi?id=238832
+        rdar://problem/91313891
+
+        Reviewed by Brent Fulgham.
+
+        The changes to LayoutTests/fast/harness/results.html were wiped when
+        preparing https://bugs.webkit.org/show_bug.cgi?id=231544, causing the
+        links not to match. This patch fixes it.
+
+        * fast/harness/results.html:
+
 2022-04-06  Matteo Flores  <matteo_flores@apple.com>
 
         [ Mac , iOS Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html is a flaky failure.
