@@ -1,3 +1,15 @@
+2022-04-06  Jonathan Bedard  <jbedard@apple.com>
+
+        Remove Catalina references in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=238886
+        <rdar://problem/91373532>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Remove Catalina references.
+        * platform/mac-wk2/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+
 2022-04-06  J Pascoe  <j_pascoe@apple.com>
 
         pbkdf2.https.any.worker.html fails on WPE, GTK2 ports

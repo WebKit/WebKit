@@ -454,7 +454,7 @@ webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-b
 storage/websql/sql-error-codes.html [ Failure ]
 
 # <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
-[ Catalina+ ] storage/websql/test-authorizer.html [ Failure ]
+storage/websql/test-authorizer.html [ Failure ]
 
 # <rdar://problem/11187491> storage/websql/quota-tracking.html is failing on Mountain Lion
 storage/websql/quota-tracking.html
@@ -947,8 +947,6 @@ media/track/track-cues-enter-exit.html [ Pass Crash ]
 # <rdar://problem/61744994> media/track/track-cues-cuechange.html is flaky timing out.
 media/track/track-cues-cuechange.html [ Pass Crash Timeout ]
 
-webkit.org/b/229765 [ Catalina Debug ] media/track/track-disabled-addcue.html [ Pass Crash ]
-
 webkit.org/b/229478 [ Release ] media/track/track-in-band.html [ Pass Timeout ]
 
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
@@ -1360,23 +1358,6 @@ fast/dom/Window/window-open-self-disallow-close.html [ Pass Crash Timeout ]
 # rdar://66866579 ([ Layout Tests ] REGRESSION: [ MacOS wk1 release ] compositing/animation/matrix-animation.html is a flaky failure)
 compositing/animation/matrix-animation.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/206945 [ Catalina ] compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
-
-# rdar://65287528 (CrashTracer: DumpRenderTree at com.apple.QuartzCore: CA::OGL::MetalContext::create_pipeline_state (SC crash on SC_SCCVN::MakeBufferIntrinsicProp))
-[ Catalina ] fast/canvas/canvas-currentColor.html [ Skip ]
-[ Catalina ] fast/canvas/canvas-radial-gradient-spreadMethod.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.behind.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.beside.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.bottom.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.cylinder.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.front.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.shape1.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.shape2.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.top.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.touch1.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.touch2.html [ Skip ]
-[ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.touch3.html [ Skip ]
-
 webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes [ Pass Failure ]
 webkit.org/b/206178 [ Mojave ] editing/spelling/spellcheck-attribute.html [ Pass Crash ]
 webkit.org/b/190350 [ Mojave ] storage/indexeddb/database-odd-names.html [ Failure ]
@@ -1471,7 +1452,7 @@ webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 [ BigSur+ ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
 
 # <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
-[ Mojave Catalina ] imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
+[ Mojave ] imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
 
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-45.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-15.html [ Slow ]
@@ -1522,7 +1503,6 @@ webkit.org/b/222693 [ BigSur Release ] media/video-aspect-ratio.html [ Failure T
 
 webkit.org/b/223104 compositing/visibility/iframe-visibility-hidden.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/223193 [ Catalina ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
 webkit.org/b/223193 [ BigSur ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]
 
 webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/send-response-event-order.htm [ Pass Failure ]
@@ -1597,8 +1577,6 @@ webkit.org/b/223770 media/video-playback-quality.html [ Pass Failure ]
 
 webkit.org/b/224144 storage/websql/alter-to-info-table.html [ Skip ]
 
-webkit.org/b/226229 [ Catalina ] imported/w3c/web-platform-tests/css/css-backgrounds/hidpi/simple-bg-color.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/226360 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html [ Pass Failure ]
 
 webkit.org/b/226377 [ BigSur ] imported/w3c/web-platform-tests/css/css-contain/contain-paint-ignored-cases-ruby-stacking-and-clipping-001.html [ Pass Failure ]
@@ -1640,7 +1618,6 @@ webkit.org/b/228091 [ Release ] media/modern-media-controls/scrubber-support/scr
 webkit.org/b/227845 [ Debug ] webaudio/audioworket-out-of-memory.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/228796 [ BigSur+ ] webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
-webkit.org/b/228796 [ Catalina Debug ] webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
 
 webkit.org/b/227136 media/video-pause-immediately.html [ Pass Failure ]
 
@@ -1708,66 +1685,15 @@ webkit.org/b/231102 [ BigSur ] printing/css2.1/page-break-after-000.html [ Pass 
 # webkit.org/b/214448 Web Share API is not implemented for mac-wk1
 http/tests/webshare/ [ Skip ]
 
-#WebGL Tests Timing Out on Catalina Debug WK1 EWS webkit.org/b/230774
-[ Catalina Debug ] webgl/1.0.3/conformance/canvas/drawingbuffer-static-canvas-test.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance/ogles/GL/inversesqrt/inversesqrt_001_to_006.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/ogles/GL/notEqual/notEqual_009_to_012.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance/ogles/GL/step/step_001_to_006.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/ogles/GL/exp/exp_001_to_008.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/ogles/GL/struct/struct_049_to_056.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance2/textures/webgl_canvas/tex-2d-r8ui-red_integer-unsigned_byte.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/canvas/viewport-unchanged-upon-resize.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance2/textures/image_bitmap_from_blob/tex-2d-rgba4-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance2/textures/canvas/tex-2d-rg8-rg-unsigned_byte.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-canvas-rgba5551.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance2/textures/image_bitmap_from_image_data/tex-2d-rgb5_a1-rgba-unsigned_byte.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/max-active-contexts-gc.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/extensions/ext-sRGB.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance/glsl/misc/shader-with-undefined-preprocessor-symbol.frag.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance2/misc/expando-loss-2.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance/ogles/GL/gl_FragCoord/gl_FragCoord_001_to_003.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance2/textures/image_data/tex-2d-r11f_g11f_b10f-rgb-half_float.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance/extensions/get-extension.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance2/textures/canvas/tex-2d-r11f_g11f_b10f-rgb-half_float.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/attribs/gl-vertex-attrib-zero-issues.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/webgl2-primitive-restart.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/1.0.3/conformance/programs/program-test.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Pass Timeout ]
-[ Catalina Debug ] webgl/2.0.0/conformance/rendering/draw-elements-out-of-bounds.html [ Pass Timeout ]
+webkit.org/b/230835 [ BigSur Debug ] webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Crash ]
+webkit.org/b/230835 [ BigSur Debug ] webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Pass Crash ]
+webkit.org/b/230835 [ BigSur Debug ] webgl/2.0.0/conformance/extensions/ext-blend-minmax.html [ Pass Crash ]
 
-webkit.org/b/230777 [ Catalina Debug ] transitions/transition-end-event-destroy-renderer.html [ Pass Crash ]
+webkit.org/b/230842 [ BigSur Debug ] media/track/audio-track.html [ Pass Crash ]
 
-webkit.org/b/230808 [ Catalina Debug ] media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics.html [ Pass Crash ]
+webkit.org/b/230848 [ BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
 
-webkit.org/b/230831 [ Catalina Debug ] storage/websql/multiple-transactions-on-different-handles.html [ Pass Crash ]
-
-webkit.org/b/230833 [ Catalina Debug ] performance-api/performance-observer-order.html [ Pass Crash ]
-
-webkit.org/b/230835 [ Catalina BigSur Debug ] webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Crash ]
-webkit.org/b/230835 [ Catalina BigSur Debug ] webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Pass Crash ]
-webkit.org/b/230835 [ Catalina BigSur Debug ] webgl/2.0.0/conformance/extensions/ext-blend-minmax.html [ Pass Crash ]
-
-webkit.org/b/230842 [ Catalina BigSur Debug ] media/track/audio-track.html [ Pass Crash ]
-
-webkit.org/b/230844 [ Catalina Debug ] storage/indexeddb/mozilla/cursor-mutation.html [ Pass Crash ]
-
-webkit.org/b/230846 [ Catalina Debug ] svg/filters/big-height-filter.svg [ Pass Crash ]
-
-webkit.org/b/230848 [ Catalina BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
-
-webkit.org/b/230905 [ Catalina BigSur ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]
-
-webkit.org/b/231684 [ Catalina Debug ] requestidlecallback/requestidlecallback-document-gc.html [ Pass Crash ]
-
-webkit.org/b/232277 [ Catalina ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document.html [ Pass Failure ]
-webkit.org/b/232277 [ Catalina ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/playing-the-media-resource/pause-remove-from-document-different-load.html [ Pass Failure ]
-
-webkit.org/b/232315 [ Catalina Debug ] media/track/track-disabled.html [ Pass Crash ]
-
-webkit.org/b/232446 [ Catalina Debug ] media/track/track-element-dom-change-crash.html [ Pass Crash ]
-
-webkit.org/b/232585 [ Catalina Debug ] media/track/track-element-load-event.html [ Pass Crash ]
+webkit.org/b/230905 [ BigSur ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]
 
 # DumpRenderTree doesn't invoke inspector instrumentation when repainting.
 webkit.org/b/232852 inspector/page/setShowPaintRects.html [ Skip ]
@@ -1778,8 +1704,8 @@ webanimations/frame-rate/document-timeline-maximum-frame-rate.html [ Skip ]
 webkit.org/b/231918 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-autofocus-multiple-times.html [ Pass Failure ]
 
 # webkit.org/b/234105 Skip 2 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis in mac wk1. 
-[ Catalina+ ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
-[ Catalina+ ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ] 
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ] 
 
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 
