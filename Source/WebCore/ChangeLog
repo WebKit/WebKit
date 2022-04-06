@@ -1,3 +1,23 @@
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerClients.openWindow should not need to get all clients asynchronously to resolve its promise
+        https://bugs.webkit.org/show_bug.cgi?id=238503
+
+        Reviewed by Chris Dumez.
+
+        Move matching client in openWindow in network process as an optimization.
+        This also prevents some race conditions where the opened page could quickly navigate to another page.
+        Also have a code path that rejects the openWindow promise, and trigger that code path in case of internal error.
+
+        Covered by existing and API test.
+
+        * workers/WorkerGlobalScope.h:
+        * workers/service/ServiceWorkerClients.cpp:
+        * workers/service/context/SWContextManager.h:
+        * workers/service/server/SWServer.cpp:
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.h:
+
 2022-04-06  Antti Koivisto  <antti@apple.com>
 
         Remove some @apply leftover code

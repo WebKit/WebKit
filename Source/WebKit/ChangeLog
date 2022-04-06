@@ -1,5 +1,21 @@
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
+        ServiceWorkerClients.openWindow should not need to get all clients asynchronously to resolve its promise
+        https://bugs.webkit.org/show_bug.cgi?id=238503
+
+        Reviewed by Chris Dumez.
+
+        Add logic to get the client from its page ID.
+        In case of internal error case, trigger promise rejection instead of promise resolution with null.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
         Remove Notification::m_relatedNotificationIdentifier
         https://bugs.webkit.org/show_bug.cgi?id=238603
 

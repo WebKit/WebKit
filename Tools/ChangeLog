@@ -1,3 +1,12 @@
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerClients.openWindow should not need to get all clients asynchronously to resolve its promise
+        https://bugs.webkit.org/show_bug.cgi?id=238503
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2022-04-06  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK][AT-SPI] Use xdg-dbus-proxy to expose the a11y bus

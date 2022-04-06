@@ -2966,3 +2966,84 @@ TEST(ServiceWorker, ServiceWorkerWindowClientFocusRequiresUserGesture)
     [webView evaluateJavaScript:@"focusClient()" completionHandler: nil];
     TestWebKitAPI::Util::run(&done);
 }
+
+static constexpr auto ServiceWorkerWindowClientOpenWindowMain =
+"<div id='log'>test page</div>"
+"<script>"
+"let worker;"
+"async function test() {"
+"    log.innerHTML = 'test';"
+"    try {"
+"        const registration = await navigator.serviceWorker.register('/sw.js');"
+"        log.innerHTML = 'registered';"
+"        if (registration.active) {"
+"            worker = registration.active;"
+"            alert('already active');"
+"            return;"
+"        }"
+"        worker = registration.installing;"
+"        worker.addEventListener('statechange', () => {"
+"           log.innerHTML = 'worker.state=' + worker.state;"
+"            if (worker.state == 'activated')"
+"                alert('successfully registered');"
+"        });"
+"    } catch(e) {"
+"        alert('Exception: ' + e);"
+"    }"
+"}"
+"window.onload = test;"
+""
+"function openWindowClient() {"
+"    log.innerHTML = 'openWindowClient';"
+"    worker.postMessage('start');"
+"    navigator.serviceWorker.onmessage = (event) => {"
+"        window.webkit.messageHandlers.sw.postMessage(event.data);"
+"    }"
+"}"
+"</script>"_s;
+static constexpr auto ServiceWorkerWindowClientOpenWindowJS =
+"self.addEventListener('message', (event) => {"
+"   self.clients.openWindow('/sw.js').then((client) => {"
+"       event.source.postMessage(client ? 'opened with client' : 'opened without client');"
+"   }, (error) => {"
+"       event.source.postMessage('not opened');"
+"   });"
+"});"_s;
+
+TEST(ServiceWorker, openWindowWithoutDelegate)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
+            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+    }
+
+    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { ServiceWorkerWindowClientOpenWindowMain } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerWindowClientOpenWindowJS } }
+    });
+
+    [webView loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
+
+    done = false;
+    expectedMessage = "opened without client"_s;
+    [webView evaluateJavaScript:@"openWindowClient()" completionHandler: nil];
+    TestWebKitAPI::Util::run(&done);
+}

@@ -28,6 +28,7 @@
 
 #include "Base64Utilities.h"
 #include "CacheStorageConnection.h"
+#include "ClientOrigin.h"
 #include "ImageBitmap.h"
 #include "ScriptExecutionContext.h"
 #include "Supplementable.h"
@@ -155,6 +156,8 @@ public:
 
     void setMainScriptSourceProvider(ScriptBufferSourceProvider&);
     void addImportedScriptSourceProvider(const URL&, ScriptBufferSourceProvider&);
+
+    ClientOrigin clientOrigin() const { return { topOrigin().data(), securityOrigin()->data() }; }
 
 protected:
     WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);

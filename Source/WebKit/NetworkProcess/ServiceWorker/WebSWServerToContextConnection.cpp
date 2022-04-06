@@ -170,25 +170,36 @@ void WebSWServerToContextConnection::terminateDueToUnresponsiveness()
     m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateUnresponsiveServiceWorkerProcesses { webProcessIdentifier() }, 0);
 }
 
-void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier identifier, const String& urlString, CompletionHandler<void(std::optional<WebCore::PageIdentifier>&&)>&& callback)
+void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier identifier, const URL& url, OpenWindowCallback&& callback)
 {
     auto* server = this->server();
     if (!server) {
-        callback(std::nullopt);
+        callback(makeUnexpected(ExceptionData { TypeError, "No SWServer"_s }));
         return;
     }
 
     auto* worker = server->workerByID(identifier);
     if (!worker) {
-        callback(std::nullopt);
+        callback(makeUnexpected(ExceptionData { TypeError, "No remaining service worker"_s }));
         return;
     }
 
-    auto innerCallback = [callback = WTFMove(callback)](std::optional<WebCore::PageIdentifier>&& pageIdentifier) mutable {
-        callback(WTFMove(pageIdentifier));
+    auto innerCallback = [callback = WTFMove(callback), server = WeakPtr { *server }, origin = worker->origin()](std::optional<WebCore::PageIdentifier>&& pageIdentifier) mutable {
+        if (!pageIdentifier) {
+            // FIXME: validate whether we should reject or resolve with null, https://github.com/w3c/ServiceWorker/issues/1639
+            callback({ });
+            return;
+        }
+
+        if (!server) {
+            callback(makeUnexpected(ExceptionData { TypeError, "No SWServer"_s }));
+            return;
+        }
+
+        callback(server->topLevelServiceWorkerClientFromPageIdentifier(origin, *pageIdentifier));
     };
 
-    m_connection.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { server->sessionID(), urlString, worker->origin().clientOrigin }, WTFMove(innerCallback));
+    m_connection.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { m_connection.sessionID(), url.string(), worker->origin().clientOrigin }, WTFMove(innerCallback));
 }
 
 void WebSWServerToContextConnection::matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>& clientsData)

@@ -112,6 +112,20 @@ std::optional<ServiceWorkerClientData> SWServer::serviceWorkerClientWithOriginBy
     return clientIterator->value;
 }
 
+std::optional<ServiceWorkerClientData> SWServer::topLevelServiceWorkerClientFromPageIdentifier(const ClientOrigin& clientOrigin, PageIdentifier pageIdentifier) const
+{
+    auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
+    if (iterator == m_clientIdentifiersPerOrigin.end())
+        return { };
+
+    for (auto clientIdentifier : iterator->value.identifiers) {
+        auto clientIterator = m_clientsById.find(clientIdentifier);
+        if (clientIterator->value->frameType == ServiceWorkerClientFrameType::TopLevel && clientIterator->value->pageIdentifier == pageIdentifier)
+            return clientIterator->value;
+    }
+    return { };
+}
+
 String SWServer::serviceWorkerClientUserAgent(const ClientOrigin& clientOrigin) const
 {
     auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);

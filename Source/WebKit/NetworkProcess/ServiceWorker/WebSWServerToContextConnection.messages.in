@@ -41,7 +41,7 @@ messages -> WebSWServerToContextConnection NotRefCounted {
     DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier)
     SetAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
 
-    OpenWindow(WebCore::ServiceWorkerIdentifier identifier, String urlString) -> (std::optional<WebCore::PageIdentifier> newClientData)
+    OpenWindow(WebCore::ServiceWorkerIdentifier identifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> newClientData)
 }
 
 #endif // ENABLE(SERVICE_WORKER)
