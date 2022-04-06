@@ -1,3 +1,24 @@
+2022-04-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Run `git svn fetch`
+        https://bugs.webkit.org/show_bug.cgi?id=238759
+        <rdar://problem/91258277>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Add GitSvnFetch step.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Ditto.
+        * CISupport/ews-build/steps.py:
+        (UpdatePullRequest.hideStepIf):
+        (GitSvnFetch):
+        (GitSvnFetch.__init__): `git svn fetch` will have a non-zero exit code if the Subversion
+        record of changes does not match the git one, which will happen imiediately after committing.
+        (GitSvnFetch.getResultSummary):
+        (GitSvnFetch.evaluateCommand): Support expected failure.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-04-06  J Pascoe  <j_pascoe@apple.com>
 
         Fix expected, actual links for variant-based imported wpt tests

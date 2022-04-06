@@ -5056,3 +5056,20 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+
+class GitSvnFetch(shell.ShellCommand):
+    name = 'git-svn-fetch'
+    haltOnFailure = False
+    flunkOnFailure = False
+    command = ['git', 'svn', 'fetch']
+
+    def __init__(self, **kwargs):
+        super(GitSvnFetch, self).__init__(logEnviron=False, timeout=600, **kwargs)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': 'Paired recent SVN commits with GitHub record'}
+        if self.results == FAILURE:
+            return {'step': 'Recent SVN commits did not match GitHub record'}
+        return super(GitSvnFetch, self).getResultSummary()
