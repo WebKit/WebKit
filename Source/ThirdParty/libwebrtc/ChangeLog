@@ -1,3 +1,17 @@
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Use GCD webrtc task queue
+        https://bugs.webkit.org/show_bug.cgi?id=238861
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/api/create_peerconnection_factory.cc:
+        * Source/webrtc/api/create_peerconnection_factory.h:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2022-04-05  Elliott Williams  <emw@apple.com>
 
         Reland "[XCBuild] libwebrtc's headers are copied via rsync and do not emit task outputs"

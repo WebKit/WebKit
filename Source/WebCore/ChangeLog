@@ -1,3 +1,15 @@
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Use GCD webrtc task queue
+        https://bugs.webkit.org/show_bug.cgi?id=238861
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::createPeerConnectionFactory):
+
 2022-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         Unify the two ImageBuffer::create() functions, passing RenderingPurpose everywhere

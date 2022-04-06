@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1641,6 +1641,8 @@
 		417953F8216984BE0028266B /* RTCCodecSpecificInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 417953F4216984BD0028266B /* RTCCodecSpecificInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		417953F9216984BE0028266B /* RTCI420Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 417953F5216984BD0028266B /* RTCI420Buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		417953FA216984BE0028266B /* RTCEncodedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 417953F6216984BD0028266B /* RTCEncodedImage.m */; };
+		417B013A27FDA4CF00C74DE3 /* task_queue_gcd.cc in Sources */ = {isa = PBXBuildFile; fileRef = 417B013927FDA4CB00C74DE3 /* task_queue_gcd.cc */; };
+		417B013C27FDA7E000C74DE3 /* gcd_helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 417B013B27FDA7DF00C74DE3 /* gcd_helpers.m */; };
 		417C037323B210C400DE5D8B /* main_noop.c in Sources */ = {isa = PBXBuildFile; fileRef = 417C037223B210C400DE5D8B /* main_noop.c */; };
 		41889D75216BB7B9004614DD /* RTCRtpEncodingParameters+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 41889D74216BB7B6004614DD /* RTCRtpEncodingParameters+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41889D76216BC4EC004614DD /* RTCRtpEncodingParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 414FB869216BB767001F5492 /* RTCRtpEncodingParameters.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -6672,6 +6674,8 @@
 		41795402216985200028266B /* RTCVideoDecoderVP8.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCVideoDecoderVP8.mm; sourceTree = "<group>"; };
 		41795403216985200028266B /* RTCWrappedNativeVideoDecoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RTCWrappedNativeVideoDecoder.mm; sourceTree = "<group>"; };
 		41795404216985200028266B /* RTCWrappedNativeVideoEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCWrappedNativeVideoEncoder.h; sourceTree = "<group>"; };
+		417B013927FDA4CB00C74DE3 /* task_queue_gcd.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = task_queue_gcd.cc; path = rtc_base/task_queue_gcd.cc; sourceTree = "<group>"; };
+		417B013B27FDA7DF00C74DE3 /* gcd_helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gcd_helpers.m; sourceTree = "<group>"; };
 		417C037223B210C400DE5D8B /* main_noop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main_noop.c; sourceTree = "<group>"; };
 		41889D74216BB7B6004614DD /* RTCRtpEncodingParameters+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RTCRtpEncodingParameters+Private.h"; sourceTree = "<group>"; };
 		418938BA242A3D37007FDC41 /* VQ_WMat_EC_sse4_1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = VQ_WMat_EC_sse4_1.c; path = silk/x86/VQ_WMat_EC_sse4_1.c; sourceTree = "<group>"; };
@@ -10695,6 +10699,7 @@
 				4131C0CA234B89D80028A615 /* task_queue.cc */,
 				4131C0D7234B89DB0028A615 /* task_queue.h */,
 				DDF30AD327C5A3A3006A526F /* task_queue_for_test.h */,
+				417B013927FDA4CB00C74DE3 /* task_queue_gcd.cc */,
 				DDF30AD127C5A3A3006A526F /* task_queue_gcd.h */,
 				4131C568234CBB480028A615 /* task_queue_libevent.cc */,
 				4131C567234CBB480028A615 /* task_queue_libevent.h */,
@@ -13191,6 +13196,7 @@
 				41F263A3212680A600274F59 /* file_wrapper.cc */,
 				41F263AA212680A800274F59 /* file_wrapper.h */,
 				DDF30AC727C5A364006A526F /* gcd_helpers.h */,
+				417B013B27FDA7DF00C74DE3 /* gcd_helpers.m */,
 				41F263A4212680A600274F59 /* ignore_warnings.h */,
 				41F263A6212680A700274F59 /* inline.h */,
 				415F88CC273AA9540047AD64 /* no_unique_address.h */,
@@ -21704,6 +21710,7 @@
 				5CDD8A9A1E43C00F00621E92 /* input_audio_file.cc in Sources */,
 				5CDD8FD51E43CD6600621E92 /* inter_arrival.cc in Sources */,
 				41323A6626652AD600B38623 /* inter_arrival_delta.cc in Sources */,
+				417B013A27FDA4CF00C74DE3 /* task_queue_gcd.cc in Sources */,
 				5CDD83DD1E439A6F00621E92 /* inter_frame_delay.cc in Sources */,
 				413111CE2552A3BB001B9D95 /* internal_decoder_factory.cc in Sources */,
 				4131C285234B8CC40028A615 /* internal_encoder_factory.cc in Sources */,
@@ -22219,6 +22226,7 @@
 				4131C38D234B957D0028A615 /* stationarity_estimator.cc in Sources */,
 				5CDD8A511E43BFB300621E92 /* statistics_calculator.cc in Sources */,
 				4131BF0D234B88200028A615 /* stats_collector.cc in Sources */,
+				417B013C27FDA7E000C74DE3 /* gcd_helpers.m in Sources */,
 				5CDD85BC1E43B5C000621E92 /* stats_counter.cc in Sources */,
 				4131C342234B8DDF0028A615 /* stats_types.cc in Sources */,
 				4131C156234B89E20028A615 /* stream.cc in Sources */,
