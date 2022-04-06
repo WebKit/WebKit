@@ -2164,7 +2164,7 @@ webkit.org/b/231636 [ Debug ] media/media-fragments/TC0001.html [ Pass Timeout ]
 
 webkit.org/b/231638 [ Debug ] webgl/pending/conformance/glsl/misc/shader-with-reserved-words-2.html [ Pass Timeout ]
 
-webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ Pass Crash Failure]
+webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ Pass Crash Failure ]
 
 webkit.org/b/231684 [ Debug ] requestidlecallback/requestidlecallback-document-gc.html [ Pass Crash ]
 
