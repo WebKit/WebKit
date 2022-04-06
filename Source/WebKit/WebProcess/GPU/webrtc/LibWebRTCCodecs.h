@@ -60,7 +60,7 @@ namespace WebKit {
 
 class RemoteVideoFrameObjectHeapProxy;
 
-class LibWebRTCCodecs : public IPC::Connection::ThreadMessageReceiverRefCounted, public GPUProcessConnection::Client {
+class LibWebRTCCodecs : public IPC::Connection::WorkQueueMessageReceiver, public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<LibWebRTCCodecs> create();
@@ -134,9 +134,6 @@ private:
     void completedDecodingCV(RTCDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
-
-    // IPC::Connection::ThreadMessageReceiver
-    void dispatchToThread(Function<void()>&&) final;
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&);

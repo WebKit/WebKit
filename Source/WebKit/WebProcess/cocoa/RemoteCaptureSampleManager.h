@@ -49,7 +49,7 @@ class ImageTransferSessionVT;
 namespace WebKit {
 class RemoteVideoFrameObjectHeapProxy;
 
-class RemoteCaptureSampleManager : public IPC::Connection::ThreadMessageReceiverRefCounted {
+class RemoteCaptureSampleManager : public IPC::Connection::WorkQueueMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteCaptureSampleManager();
@@ -63,12 +63,10 @@ public:
     void didUpdateSourceConnection(IPC::Connection*);
     void setVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy*);
 
+    // IPC::Connection::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    // IPC::Connection::ThreadMessageReceiver
-    void dispatchToThread(Function<void()>&&) final;
-
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);

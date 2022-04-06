@@ -56,7 +56,7 @@ class RemoteVideoFrameObjectHeap;
 struct SharedVideoFrame;
 class SharedVideoFrameReader;
 
-class LibWebRTCCodecsProxy final : public IPC::Connection::ThreadMessageReceiverRefCounted {
+class LibWebRTCCodecsProxy final : public IPC::Connection::WorkQueueMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess&);
@@ -70,11 +70,9 @@ private:
     auto createDecoderCallback(RTCDecoderIdentifier, bool useRemoteFrames);
     WorkQueue& workQueue() const { return m_queue; }
 
-    // IPC::Connection::ThreadMessageReceiver
-    void dispatchToThread(Function<void()>&&) final;
-
-    // IPC::MessageReceiver
+    // IPC::Connection::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+
     void createH264Decoder(RTCDecoderIdentifier, bool useRemoteFrames);
     void createH265Decoder(RTCDecoderIdentifier, bool useRemoteFrames);
     void createVP9Decoder(RTCDecoderIdentifier, bool useRemoteFrames);

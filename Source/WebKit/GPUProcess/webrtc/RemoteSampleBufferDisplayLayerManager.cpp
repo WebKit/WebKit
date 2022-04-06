@@ -47,24 +47,19 @@ RemoteSampleBufferDisplayLayerManager::RemoteSampleBufferDisplayLayerManager(GPU
 
 void RemoteSampleBufferDisplayLayerManager::startListeningForIPC()
 {
-    m_connectionToWebProcess.connection().addThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), this);
-    m_connectionToWebProcess.connection().addThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), this);
+    m_connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName(), m_queue, *this);
+    m_connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName(), m_queue, *this);
 }
 
 RemoteSampleBufferDisplayLayerManager::~RemoteSampleBufferDisplayLayerManager() = default;
 
 void RemoteSampleBufferDisplayLayerManager::close()
 {
-    m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
-    m_connectionToWebProcess.connection().removeThreadMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
-    dispatchToThread([this, protectedThis = Ref { *this }] {
+    m_connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayer::messageReceiverName());
+    m_connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RemoteSampleBufferDisplayLayerManager::messageReceiverName());
+    m_queue->dispatch([this, protectedThis = Ref { *this }] {
         callOnMainRunLoop([layers = WTFMove(m_layers)] { });
     });
-}
-
-void RemoteSampleBufferDisplayLayerManager::dispatchToThread(Function<void()>&& callback)
-{
-    m_queue->dispatch(WTFMove(callback));
 }
 
 bool RemoteSampleBufferDisplayLayerManager::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -84,7 +79,7 @@ void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer
         auto layer = RemoteSampleBufferDisplayLayer::create(m_connectionToWebProcess, identifier, m_connection.copyRef());
         auto& layerReference = *layer;
         layerReference.initialize(hideRootLayer, size, [this, protectedThis = Ref { *this }, callback = WTFMove(callback), identifier, layer = WTFMove(layer)](auto layerId) mutable {
-            dispatchToThread([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {
+            m_queue->dispatch([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), identifier, layer = WTFMove(layer), layerId = WTFMove(layerId)]() mutable {
                 ASSERT(!m_layers.contains(identifier));
                 m_layers.add(identifier, WTFMove(layer));
                 callback(WTFMove(layerId));
@@ -96,7 +91,7 @@ void RemoteSampleBufferDisplayLayerManager::createLayer(SampleBufferDisplayLayer
 void RemoteSampleBufferDisplayLayerManager::releaseLayer(SampleBufferDisplayLayerIdentifier identifier)
 {
     callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier]() mutable {
-        dispatchToThread([this, protectedThis = WTFMove(protectedThis), identifier] {
+        m_queue->dispatch([this, protectedThis = WTFMove(protectedThis), identifier] {
             ASSERT(m_layers.contains(identifier));
             callOnMainRunLoop([layer = m_layers.take(identifier)] { });
         });

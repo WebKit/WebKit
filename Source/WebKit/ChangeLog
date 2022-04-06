@@ -1,3 +1,39 @@
+2022-04-06  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Media and WebRTC code uses ThreadMessageReceiverRefCounted with WorkQueues
+        https://bugs.webkit.org/show_bug.cgi?id=238858
+
+        Reviewed by Youenn Fablet.
+
+        Media and WebRTC code uses IPC::Connection::ThreadMessageReceiverRefCounted
+        to submit work to a WorkQueue. For this use-case, IPC::Connection has
+        IPC::Connection::WorkQueueMessageReceiver, which does the same.
+
+        This is work towards simplifying IPC::Connection by removing
+        ThreadMessageReceiverRefCounted.
+
+        No new tests, refactor.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::stopListeningForIPC):
+        (WebKit::LibWebRTCCodecsProxy::initialize):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::startListeningForIPC):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::close):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::releaseLayer):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock):
+        (WebKit::LibWebRTCCodecs::ensureGPUProcessConnectionAndDispatchToThread):
+        (WebKit::LibWebRTCCodecs::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::stopListeningForIPC):
+        (WebKit::RemoteCaptureSampleManager::setConnection):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+
 2022-04-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK build after r292458

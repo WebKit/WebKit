@@ -186,7 +186,7 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
     gpuConnection.addClient(*this);
     m_connection = &gpuConnection.connection();
     m_videoFrameObjectHeapProxy = &gpuConnection.videoFrameObjectHeapProxy();
-    m_connection->addThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), this);
+    m_connection->addWorkQueueMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), m_queue, *this);
 
     if (m_loggingLevel)
         m_connection->send(Messages::LibWebRTCCodecsProxy::SetRTCLoggingLevel { *m_loggingLevel }, 0);
@@ -201,7 +201,7 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionAndDispatchToThread(Function<voi
 
     // Fast path when we already have a connection.
     if (m_connection) {
-        dispatchToThread(WTFMove(task));
+        m_queue->dispatch(WTFMove(task));
         return;
     }
 
@@ -214,7 +214,7 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionAndDispatchToThread(Function<voi
         Locker locker { m_connectionLock };
         ensureGPUProcessConnectionOnMainThreadWithLock();
         for (auto& task : std::exchange(m_tasksToDispatchAfterEstablishingConnection, { }))
-            dispatchToThread(WTFMove(task));
+            m_queue->dispatch(WTFMove(task));
     });
 }
 
@@ -568,22 +568,17 @@ CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t heigh
     return m_pixelBufferPool.get();
 }
 
-void LibWebRTCCodecs::dispatchToThread(Function<void()>&& callback)
-{
-    m_queue->dispatch(WTFMove(callback));
-}
-
 void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
     ASSERT(isMainRunLoop());
 
     Locker locker { m_connectionLock };
-    std::exchange(m_connection, nullptr)->removeThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName());
+    std::exchange(m_connection, nullptr)->removeWorkQueueMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName());
     if (!m_needsGPUProcessConnection)
         return;
 
     ensureGPUProcessConnectionOnMainThreadWithLock();
-    dispatchToThread([this, connection = m_connection]() {
+    m_queue->dispatch([this, connection = m_connection]() {
         assertIsCurrent(workQueue());
         {
             Locker locker { m_connectionLock };
