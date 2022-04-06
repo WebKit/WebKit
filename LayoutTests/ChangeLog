@@ -1,5 +1,17 @@
 2022-04-06  Jonathan Bedard  <jbedard@apple.com>
 
+        Remove Mojave references in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=238890
+        <rdar://problem/91375011>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Remove Mojave references.
+        * platform/mac-wk2/TestExpectations: Ditto.
+        * platform/mac/TestExpectations: Ditto.
+
+2022-04-06  Jonathan Bedard  <jbedard@apple.com>
+
         Remove Catalina references in TestExpectations
         https://bugs.webkit.org/show_bug.cgi?id=238886
         <rdar://problem/91373532>
