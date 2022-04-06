@@ -1,5 +1,21 @@
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
+        Improve API::SerializedScriptValue::deserialize to not allocate a new JSContext every second
+        https://bugs.webkit.org/show_bug.cgi?id=210920
+
+        Reviewed by Geoffrey Garen.
+
+        Instead of forcing the lifetime of the shared JSContext to 1 second, we now use a hysteresis
+        logic so that it can stay alive as long as it is used at least every 10 seconds.
+
+        * UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm:
+        (API::SharedJSContext::SharedJSContext):
+        (API::SharedJSContext::ensureContext):
+        (API::SharedJSContext::releaseContextIfNecessary):
+        (API::SharedJSContext::releaseContext): Deleted.
+
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
         Reduce number of conversions from StringView to String
         https://bugs.webkit.org/show_bug.cgi?id=238841
 
