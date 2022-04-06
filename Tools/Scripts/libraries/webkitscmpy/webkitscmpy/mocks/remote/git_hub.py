@@ -35,7 +35,7 @@ class GitHub(bmocks.GitHub):
     def __init__(
         self, remote='github.example.com/WebKit/WebKit', datafile=None,
         default_branch='main', git_svn=False, environment=None,
-        releases=None,
+        releases=None, issues=None, projects=None, labels=None,
     ):
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid GitHub remote'.format(remote))
@@ -44,7 +44,7 @@ class GitHub(bmocks.GitHub):
         self.remote = remote
         self.forks = []
 
-        super(GitHub, self).__init__(remote, environment=environment)
+        super(GitHub, self).__init__(remote, environment=environment, issues=issues, projects=projects, labels=labels)
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
             self.commits = jsonlib.load(file)
