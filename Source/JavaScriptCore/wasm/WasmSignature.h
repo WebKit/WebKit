@@ -55,7 +55,7 @@ class Signature : public ThreadSafeRefCounted<Signature> {
 
     Type* storage(SignatureArgCount i)
     {
-        return i + reinterpret_cast<Type*>(reinterpret_cast<char*>(this) + sizeof(Signature));
+        return i + reinterpret_cast<Type*>(this + 1); // Storage starts past end of this object
     }
     Type* storage(SignatureArgCount i) const { return const_cast<Signature*>(this)->storage(i); }
     static size_t allocatedSize(Checked<SignatureArgCount> retCount, Checked<SignatureArgCount> argCount)

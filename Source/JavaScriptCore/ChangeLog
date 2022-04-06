@@ -1,3 +1,16 @@
+2022-04-06  Geza Lore  <glore@igalia.com>
+
+        [JSC]Squash alignment warning
+        https://bugs.webkit.org/show_bug.cgi?id=238670
+
+        Unreviewed gardening.
+
+        Squash a "cast increases required alignment of target type" due to
+        poiner arithmetic via char*
+
+        * wasm/WasmSignature.h:
+        (JSC::Wasm::Signature::storage):
+
 2022-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use inlined assertion for CodeBlock type
