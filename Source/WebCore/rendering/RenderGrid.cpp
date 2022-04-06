@@ -280,14 +280,15 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic 
         // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require 
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
-        if (shouldApplySizeContainment(*this))
+        auto shouldIgnoreGridItemContentForLogicalWidth = shouldApplySizeContainment(*this) || shouldApplyInlineSizeContainment(*this);
+        if (shouldIgnoreGridItemContentForLogicalWidth)
             computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForColumns);
         else
             computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
 
         m_minContentSize = m_trackSizingAlgorithm.minContentSize();
         m_maxContentSize = m_trackSizingAlgorithm.maxContentSize();
-        if (shouldApplySizeContainment(*this))
+        if (shouldIgnoreGridItemContentForLogicalWidth)
             computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
 
         // 1.5- Compute Content Distribution offsets for column tracks
@@ -627,7 +628,7 @@ std::unique_ptr<OrderedTrackIndexSet> RenderGrid::computeEmptyTracksForAutoRepea
     unsigned firstAutoRepeatTrack = insertionPoint + grid.explicitGridStart(direction);
     unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + grid.autoRepeatTracks(direction);
 
-    if (!grid.hasGridItems() || shouldApplySizeContainment(*this)) {
+    if (!grid.hasGridItems() || shouldApplySizeContainment(*this) || shouldApplyInlineSizeContainment(*this)) {
         emptyTrackIndexes = makeUnique<OrderedTrackIndexSet>();
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex)
             emptyTrackIndexes->add(trackIndex);

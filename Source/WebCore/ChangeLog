@@ -1,3 +1,24 @@
+2022-04-06  Alan Bujtas  <zalan@apple.com>
+
+        [CSS-Contain] Grid layout should take "contain: inline-size" into account when computing the grid item's logical width
+        https://bugs.webkit.org/show_bug.cgi?id=238850
+
+        Reviewed by Antti Koivisto.
+
+        Ignore grid item's logical width when "contain: inline-size" is present (i.e. ignore descendant content in inline direction when sizing).
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::computeGridContainerIntrinsicSizes):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minContentForChild const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::maxContentForChild const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minLogicalSizeForChild const):
+        (WebCore::GridTrackSizingAlgorithm::advanceNextState):
+        * rendering/GridTrackSizingAlgorithm.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat const):
+
 2022-04-06  Oriol Brufau  <obrufau@igalia.com>
 
         [css] Turn -webkit-text-orientation into a legacy shorthand
