@@ -1358,49 +1358,7 @@ fast/dom/Window/window-open-self-disallow-close.html [ Pass Crash Timeout ]
 # rdar://66866579 ([ Layout Tests ] REGRESSION: [ MacOS wk1 release ] compositing/animation/matrix-animation.html is a flaky failure)
 compositing/animation/matrix-animation.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes [ Pass Failure ]
-webkit.org/b/206178 [ Mojave ] editing/spelling/spellcheck-attribute.html [ Pass Crash ]
-webkit.org/b/190350 [ Mojave ] storage/indexeddb/database-odd-names.html [ Failure ]
-[ Mojave ] editing/mac/input/firstrectforcharacterrange-styled.html [ Failure ]
-
-webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Timeout ]
-
-webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-console-no-report.html [ Pass Failure ]
-
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
-
-# <rdar://problem/60376665> [ macOS ] svg/custom/glyph-selection-arabic-forms.svg is failing since around r252706
-[ Mojave ] svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
-
-# <rdar://problem/60387784> [ macOS ] fast/scrolling/programmatic-scroll-to-zero-zero.html is flaky failing
-[ Mojave ] fast/scrolling/programmatic-scroll-to-zero-zero.html [ Pass Failure ]
-
-# <rdar://problem/60791726> [ wk2 Debug ] scrollbars/scroll tests are flaky failing.
-[ Mojave Debug ] scrollbars/scrollbar-miss-mousemove-disabled.html [ Pass Failure ]
-
-# <rdar://problem/61114827> [ Stress GC] http/tests/navigation/page-cache-fontfaceset.html is flaky crashing.
-[ Mojave ] http/tests/navigation/page-cache-fontfaceset.html [ Pass Crash ]
-
-# <rdar://problem/61117613> [ Stress GC ] ASSERTION FAILED: m_wrapper on fast/events/scoped/editing-commands.html
-[ Mojave ] fast/events/scoped/editing-commands.html [ Pass Crash ]
-
-# <rdar://problem/61120274> [ Stress GC ] ASSERTION FAILED: m_wrapper on webgl/max-active-contexts-webglcontextlost-prevent-default.html
-[ Mojave ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Crash ]
-
-# <rdar://problem/61461935> [ macOS wk2 ] fast/scrolling/rtl-point-in-iframe.html is flaky failing
-[ Mojave ] fast/scrolling/rtl-point-in-iframe.html [ Pass Failure ]
-
-# <rdar://problem/61464604> [ macOS ] fast/forms/form-control-element-crash.html is a flaky timeout
-[ Mojave ] fast/forms/form-control-element-crash.html [ Pass Timeout ]
-
-# <rdar://problem/61733642> [ wk2 ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html is flaky failing.
-[ Mojave ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Pass Failure ]
-
-# <rdar://problem/61851850> REGRESSION: [ Stress GC ] (JavaScriptCore): ASSERTION FAILED: callback - WebCore::JSMutationCallback::handleEvent(WebCore::MutationObserve
-[ Mojave ] fast/dom/MutationObserver/disconnect-observer-while-mutation-records-are-enqueued-crash.html [ Pass Crash ]
-
-# <rdar://problem/62317723> imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html is flaky crashing with 'WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()' alert.
-[ Mojave ] imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Pass Crash ]
 
 # rdar://problem/59892959 REGRESSION: (r255143?) http/tests/misc/acid3.html is failing.
 [ BigSur+ ] http/tests/misc/acid3.html [ Pass Failure ]
@@ -1438,8 +1396,6 @@ webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeo
 #<rdar://61278051> [ macOS wk2 Debug ] http/tests/websocket/construct-in-detached-frame.html is a flaky crash
 [ Debug ] http/tests/websocket/construct-in-detached-frame.html [ Skip ]
 
-webkit.org/b/215819 [ Mojave ] fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Pass Failure ]
-
 webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
 # rdar://problem/66487888 [ BigSur+ ] media/media-source/media-source-webm.html is a constant failure
@@ -1450,9 +1406,6 @@ webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
 # rdar://65188503
 [ BigSur+ ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
-
-# <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
-[ Mojave ] imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
 
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-45.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-15.html [ Slow ]

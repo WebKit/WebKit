@@ -817,8 +817,6 @@ webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-err
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Skip ]
-webkit.org/b/161725 [ Mojave ] imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Skip ]
-webkit.org/b/161725 [ Mojave ] imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Skip ]
 webkit.org/b/161725 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Skip ]
@@ -829,9 +827,6 @@ imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-a-bi
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html [ Skip ]
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Skip ]
 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate.html [ Skip ]
-[ Mojave ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
-[ Mojave ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
-[ Mojave ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
 
 # Skipped in W3C Web Platform Test manifest
 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Skip ]
@@ -1377,12 +1372,7 @@ fast/dom/HTMLMeterElement/meter-optimums.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-styles.html [ Failure ]
 
 # <rdar://problem/41103260> REGRESSION (Mojave): Three text tests failing with small antialiasing(?) diffs
-[ Mojave ] fast/inline/break-between-nobr.html [ ImageOnlyFailure ]
-[ Mojave ] imported/blink/fast/text/international/text-shaping-arabic.html [ ImageOnlyFailure ]
 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
-
-# < Mojave doesn't support the CG needed for Conic Gradients
-[ Mojave ] imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ Pass ]
 
 # Dark Mode is Mojave and later.
 css-dark-mode [ Pass ]
@@ -1416,9 +1406,6 @@ webgl/2.0.0/conformance/glsl/bugs/conditional-discard-in-loop.html [ Skip ]
 
 webkit.org/b/153588 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Skip ]
 webkit.org/b/153588 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Skip ]
-
-# <rdar://problem/28233746>
-webkit.org/b/196274 [ Mojave ] imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]
 
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html [ Pass ImageOnlyFailure ]
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ Pass ImageOnlyFailure ]
@@ -1498,10 +1485,6 @@ fast/text/design-system-ui-14.html [ Pass ]
 fast/text/design-system-ui-15.html [ Pass ]
 fast/text/design-system-ui-16.html [ Pass ]
 
-[ Mojave ] http/wpt/mediarecorder [ Skip ]
-[ Mojave ] imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
-[ Mojave ] fast/history/page-cache-media-recorder.html [ Skip ]
-
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Pass Failure ]
 
 webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Pass ]
@@ -1546,10 +1529,6 @@ webkit.org/b/205756 webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.ht
 
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]
 
-# Locale-specific shaping is only enabled on certain OSes.
-webkit.org/b/77568 [ Mojave ] fast/text/locale-shaping.html [ ImageOnlyFailure ]
-webkit.org/b/77568 [ Mojave ] fast/text/locale-shaping-complex.html [ ImageOnlyFailure ]
-
 webkit.org/b/203222 svg/wicd/rightsizing-grid.xhtml [ Pass Failure ]
 
 webkit.org/b/206711 http/wpt/resource-timing/rt-resource-errors.html [ Pass Failure ]
@@ -1559,10 +1538,6 @@ webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-percent-height-viewbox.html [ Skip ]
 webkit.org/b/206897 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--auto-32px--nonpercent-width-omitted-height.html [ Skip ]
 
-webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/font-default-01.html [ ImageOnlyFailure ]
-webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/font-default-02.html [ ImageOnlyFailure ]
-webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/font-default-03.html [ ImageOnlyFailure ]
-webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-matching.html [ Failure ]
 webkit.org/b/206881 [ BigSur ] imported/w3c/web-platform-tests/css/css-fonts/first-available-font-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
@@ -1605,8 +1580,6 @@ webkit.org/b/207726 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/207978 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Pass Failure ]
 
-webkit.org/b/207858 [ Mojave ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-webgl-canvas-rgba5551.html [ Pass Failure ]
-
 webkit.org/b/208219 compositing/video/video-clip-change-src.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/208220 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html [ Pass Failure ]
@@ -1631,9 +1604,7 @@ webkit.org/b/207150 platform/mac/webrtc/captureCanvas-webrtc-software-encoder.ht
 
 # The line breaking rules changed in ICU 66. We've updated the tests to match, but old platforms won't get updated line breaking rules.
 webkit.org/b/216315 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015a.xht [ ImageOnlyFailure ]
-webkit.org/b/209250 [ Mojave ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-015b.xht [ ImageOnlyFailure ]
 webkit.org/b/216315 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015a.xht [ ImageOnlyFailure ]
-webkit.org/b/209250 [ Mojave ] imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-015b.xht [ ImageOnlyFailure ]
 
 webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 
@@ -1644,9 +1615,6 @@ webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout
 webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
 
 webkit.org/b/207160 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
-
-# Certain versions of macOS use different text security characters.
-webkit.org/b/209692 [ Mojave ] platform/mac/fast/text/text-security-disc-bullet-pua-mac.html [ ImageOnlyFailure ]
 
 webkit.org/b/210517 storage/indexeddb/result-request-cycle.html [ Pass Failure ]
 
@@ -1670,22 +1638,15 @@ fast/text/text-styles/-apple-system [ Pass ]
 
 webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Pass Failure ]
 
-# These test requires system platform support.
-[ Mojave ] media/media-source/media-source-webm.html [ Skip ]
-[ Mojave ] media/media-source/media-source-webm-append-buffer-after-abort.html [ Skip ]
-[ Mojave ] media/media-source/media-source-webm-init-inside-segment.html [ Skip ]
-[ Mojave ] platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
-[ Mojave ] platform/mac/media/media-source/is-type-supported-vp9-codec-check.html [ Skip ]
-
 # These tests require macOS Monterey.
-[ Mojave BigSur ] media/media-source/media-webm-vorbis-partial.html [ Skip ]
-[ Mojave BigSur ] media/media-source/media-source-webm-vorbis-partial.html [ Skip ]
-[ Mojave BigSur ] media/media-source/media-webm-opus-partial.html [ Skip ]
-[ Mojave BigSur ] media/media-source/media-webm-opus-partial-abort.html [ Skip ]
-[ Mojave BigSur ] webaudio/decode-audio-data-webm-opus.html [ Skip ]
-[ Mojave BigSur ] webaudio/decode-audio-data-webm-opus-resample.html [ Skip ]
-[ Mojave BigSur ] webaudio/decode-audio-data-webm-vorbis.html [ Skip ]
-[ Mojave BigSur ] http/tests/model/model-document.html [ Skip ]
+[ BigSur ] media/media-source/media-webm-vorbis-partial.html [ Skip ]
+[ BigSur ] media/media-source/media-source-webm-vorbis-partial.html [ Skip ]
+[ BigSur ] media/media-source/media-webm-opus-partial.html [ Skip ]
+[ BigSur ] media/media-source/media-webm-opus-partial-abort.html [ Skip ]
+[ BigSur ] webaudio/decode-audio-data-webm-opus.html [ Skip ]
+[ BigSur ] webaudio/decode-audio-data-webm-opus-resample.html [ Skip ]
+[ BigSur ] webaudio/decode-audio-data-webm-vorbis.html [ Skip ]
+[ BigSur ] http/tests/model/model-document.html [ Skip ]
 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 
@@ -1750,50 +1711,6 @@ imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-com
 # rdar://66910555 ([ Layout Tests ] REGRESSION (r264345): [ macOS ] 2 media-source/mediasource-changetype-play are a flaky failure)
 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
-
-# <rdar://problem/60376665> [ macOS ] svg/custom/glyph-selection-arabic-forms.svg is failing since around r252706
-[ Mojave ] svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
-
-# <rdar://problem/60387784> [ macOS ] fast/scrolling/programmatic-scroll-to-zero-zero.html is flaky failing
-[ Mojave ] fast/scrolling/programmatic-scroll-to-zero-zero.html [ Pass Failure ]
-
-# <rdar://problem/60791726> [ wk2 Debug ] scrollbars/scroll tests are flaky failing.
-[ Mojave Debug ] scrollbars/scrollbar-miss-mousemove-disabled.html [ Pass Failure ]
-[ Mojave Debug ] scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
-[ Mojave Debug ] scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Pass Failure ]
-[ Mojave Debug ] scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
-[ Mojave Debug ] scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
-[ Mojave Debug ] scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html [ Pass Failure ]
-[ Mojave Debug ] scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
-[ Mojave Debug ] scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
-[ Mojave Debug ] scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Pass Failure ]
-
-# <rdar://problem/61114827> [ Stress GC ] http/tests/navigation/page-cache-fontfaceset.html is flaky crashing.
-[ Mojave ] http/tests/navigation/page-cache-fontfaceset.html [ Pass Crash ]
-
-# <rdar://problem/61117613> [ Stress GC ] ASSERTION FAILED: m_wrapper on fast/events/scoped/editing-commands.html
-[ Mojave ] fast/events/scoped/editing-commands.html [ Pass Crash ]
-
-# <rdar://problem/61120274> [ Stress GC ] ASSERTION FAILED: m_wrapper on webgl/max-active-contexts-webglcontextlost-prevent-default.html
-[ Mojave ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Crash ]
-
-# <rdar://problem/61461935> [ macOS wk2 ] fast/scrolling/rtl-point-in-iframe.html is flaky failing
-[ Mojave ] fast/scrolling/rtl-point-in-iframe.html [ Pass Failure ]
-
-# <rdar://problem/61464604> [ macOS ] fast/forms/form-control-element-crash.html is a flaky timeout
-[ Mojave ] fast/forms/form-control-element-crash.html [ Pass Timeout ]
-
-# <rdar://problem/61733642> [ wk2 ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html is flaky failing.
-[ Mojave ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Pass Failure ]
-
-# <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
-[ Mojave ] imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
-
-# <rdar://problem/61851850> REGRESSION: [ Stress GC ] (JavaScriptCore): ASSERTION FAILED: callback - WebCore::JSMutationCallback::handleEvent(WebCore::MutationObserve
-[ Mojave ] fast/dom/MutationObserver/disconnect-observer-while-mutation-records-are-enqueued-crash.html [ Pass Crash ]
-
-# <rdar://problem/62317723> [ Guard-Malloc ] imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html is flaky crashing with 'WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()' alert.
-[ Mojave ] imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Pass Crash ]
 
 # WebP images
 [ BigSur+ ] fast/images/webp-as-image.html [ Pass ImageOnlyFailure ]
@@ -1959,9 +1876,6 @@ webkit.org/b/219448 [ Debug ] webgl/2.0.0/conformance/rendering/multisample-corr
 # <rdar://problem/66351394> [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
 
-# This test requires the OS to have a font that supports the Ahom language.
-webkit.org/b/216024 [ Mojave ] fast/text/ahom.html [ ImageOnlyFailure ]
-
 # rdar://68364365 [ Big Sur ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html is a flaky failure/timeout)
 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure Timeout ]
 
@@ -1992,7 +1906,7 @@ webkit.org/b/222425 [ BigSur+ ] http/tests/media/hls/hls-hdr-switch.html [ Timeo
 # These tests fail in Mac due to subpixel differences for the marker position
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ ImageOnlyFailure ]
 
-webkit.org/b/217461 [ Mojave+ ] imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
+webkit.org/b/217461 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
 
 webkit.org/b/209073 [ Debug ] inspector/injected-script/avoid-getter-invocation.html [ Pass Timeout ]
 
@@ -2004,9 +1918,6 @@ webkit.org/b/217669 http/wpt/service-workers/service-worker-spinning-message.htt
 
 webkit.org/b/217994 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Pass Failure ]
 
-# Mojave doesn't support COLR fonts.
-webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
-
 webkit.org/b/219555 inspector/animation/effectChanged.html [ Pass Timeout ]
 
 webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Failure ]
@@ -2017,8 +1928,6 @@ webkit.org/b/219965 [ BigSur+ ] imported/w3c/web-platform-tests/fetch/content-ty
 
 webkit.org/b/217621 media/video-buffering-allowed.html [ Pass Timeout ]
 
-webkit.org/b/220484 [ Mojave ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]
-
 webkit.org/b/220332 [ BigSur+ ] imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Pass Failure ]
 
 # The system font does not handle all the various width values on older OSes.
@@ -2027,17 +1936,9 @@ webkit.org/b/220332 [ BigSur+ ] imported/w3c/web-platform-tests/mimesniff/mime-t
 [ BigSur ] fast/text/system-font-width-7.html [ ImageOnlyFailure ]
 [ BigSur ] fast/text/system-font-width-8.html [ ImageOnlyFailure ]
 [ BigSur ] fast/text/system-font-width-9.html [ ImageOnlyFailure ]
-[ Mojave ] fast/text/system-font-width.html [ ImageOnlyFailure ]
-[ Mojave ] fast/text/system-font-width-2.html [ ImageOnlyFailure ]
-[ Mojave ] fast/text/system-font-width-3.html [ ImageOnlyFailure ]
-[ Mojave ] fast/text/system-font-width-4.html [ ImageOnlyFailure ]
-[ Mojave ] fast/text/system-font-width-6.html [ ImageOnlyFailure ]
-[ Mojave ] fast/text/system-font-width-7.html [ ImageOnlyFailure ]
-[ Mojave ] fast/text/system-font-width-8.html [ ImageOnlyFailure ]
-[ Mojave ] fast/text/system-font-width-9.html [ ImageOnlyFailure ]
 
 # WebM support is on Monterey and later
-[ Mojave BigSur ] http/tests/media/video-webm-stall.html [ Skip ]
+[ BigSur ] http/tests/media/video-webm-stall.html [ Skip ]
 
 webkit.org/b/221152 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-automatic-pull.https.html [ Pass Failure ]
 
@@ -2051,15 +1952,12 @@ webkit.org/b/221218 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/med
 
 webkit.org/b/221100 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https.html [ Pass Failure ]
 
-# @counter-style WPT failures specific to Mac platforms
-[ Mojave ] imported/w3c/web-platform-tests/css/css-counter-styles/lower-armenian/css3-counter-styles-112.html [ ImageOnlyFailure ]
-
 webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure Slow ]
 
 # Not all OSes support the same set of emoji.
-[ Mojave BigSur ] fast/text/mending-heart.html [ Failure ]
+[ BigSur ] fast/text/mending-heart.html [ Failure ]
 
 webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
 
@@ -2113,9 +2011,6 @@ webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-backgr
 
 # ASTC may be supported on M1 macs, but we should skip it for now
 fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
-
-# This fails on Catalina, but not Big Sur.
-[ Mojave ] inspector/canvas/updateShader-webgl.html [ Skip ]
 
 webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeout ]
 
@@ -2237,7 +2132,7 @@ webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 
 #rdar://82146367 ([Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure) imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Failure ] 
 
-webkit.org/b/228176 [ Mojave BigSur ] fast/text/variable-system-font.html [ ImageOnlyFailure ]
+webkit.org/b/228176 [ BigSur ] fast/text/variable-system-font.html [ ImageOnlyFailure ]
 webkit.org/b/228176 [ Monterey ] fast/text/variable-system-font.html [ Pass ]
 
 #rdar://80333935 (REGRESSION (Star21A236a-21A254): [ Monterey wk2 arm64 ] fast/animation/request-animation-frame-throttling-detached-iframe.html and request-animation-frame-throttling-lowPowerMode.html failing) [ Monterey ] fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
@@ -2299,11 +2194,7 @@ webkit.org/b/229521 pointer-lock/lock-already-locked.html [ Pass Failure ]
 
 webkit.org/b/229588 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Pass Crash Failure Timeout ]
 
-webkit.org/b/228176 [ Mojave BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
-
-# These tests open apparently unskippable prompts on Catalina.
-webkit.org/b/229391 [ Mojave ] fast/text/mobileasset-font.html [ Skip ]
-webkit.org/b/189448 [ Mojave ] fast/text/osaka-synthetic-bold.html [ Skip ]
+webkit.org/b/228176 [ BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
 
 webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]
 
