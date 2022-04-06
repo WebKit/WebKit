@@ -28,10 +28,10 @@
 
 namespace WebCore {
 
-HTMLNameCache::AtomStringCache& HTMLNameCache::atomStringCache(AtomStringType type)
+HTMLNameCache::AtomStringCache& HTMLNameCache::atomStringCache()
 {
-    static MainThreadNeverDestroyed<AtomStringCache> caches[2];
-    return caches[static_cast<size_t>(type)].get();
+    static MainThreadNeverDestroyed<AtomStringCache> cache;
+    return cache.get();
 }
 
 HTMLNameCache::QualifiedNameCache& HTMLNameCache::qualifiedNameCache()
