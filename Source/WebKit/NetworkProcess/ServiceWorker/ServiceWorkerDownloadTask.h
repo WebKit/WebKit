@@ -50,7 +50,12 @@ class WebSWServerToContextConnection;
 class ServiceWorkerDownloadTask : public NetworkDataTask, public IPC::Connection::ThreadMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ServiceWorkerDownloadTask> create(NetworkSession& session, NetworkDataTaskClient& client, WebSWServerToContextConnection& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, const WebCore::ResourceRequest& request, DownloadID downloadID) { return adoptRef(* new ServiceWorkerDownloadTask(session, client, connection, serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, request, downloadID)); }
+    static Ref<ServiceWorkerDownloadTask> create(NetworkSession& session, NetworkDataTaskClient& client, WebSWServerToContextConnection& connection, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::FetchIdentifier fetchIdentifier, const WebCore::ResourceRequest& request, DownloadID downloadID)
+    {
+        auto task = adoptRef(*new ServiceWorkerDownloadTask(session, client, connection, serviceWorkerIdentifier, serverConnectionIdentifier, fetchIdentifier, request, downloadID));
+        task->startListeningForIPC();
+        return task;
+    }
     ~ServiceWorkerDownloadTask();
 
     WebCore::FetchIdentifier fetchIdentifier() const { return m_fetchIdentifier; }
@@ -65,6 +70,7 @@ public:
 
 private:
     ServiceWorkerDownloadTask(NetworkSession&, NetworkDataTaskClient&, WebSWServerToContextConnection&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceRequest&, DownloadID);
+    void startListeningForIPC();
 
     // IPC Message
     void didReceiveData(const IPC::SharedBufferCopy&, int64_t encodedDataLength);

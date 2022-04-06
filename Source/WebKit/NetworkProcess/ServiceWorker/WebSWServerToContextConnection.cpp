@@ -33,7 +33,6 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
-#include "ServiceWorkerDownloadTaskMessages.h"
 #include "ServiceWorkerFetchTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -248,13 +247,11 @@ void WebSWServerToContextConnection::registerDownload(ServiceWorkerDownloadTask&
 {
     ASSERT(!m_ongoingDownloads.contains(task.fetchIdentifier()));
     m_ongoingDownloads.add(task.fetchIdentifier(), task);
-    m_connection.connection().addThreadMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), &task, task.fetchIdentifier().toUInt64());
 }
 
 void WebSWServerToContextConnection::unregisterDownload(ServiceWorkerDownloadTask& task)
 {
     m_ongoingDownloads.remove(task.fetchIdentifier());
-    m_connection.connection().removeThreadMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), task.fetchIdentifier().toUInt64());
 }
 
 WebCore::ProcessIdentifier WebSWServerToContextConnection::webProcessIdentifier() const

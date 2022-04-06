@@ -1,3 +1,28 @@
+2022-04-06  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ServiceWorkerDownloadTask starts listening for IPC in constructor
+        https://bugs.webkit.org/show_bug.cgi?id=238860
+
+        Reviewed by Youenn Fablet.
+
+        IPC messages will start to be delivered after connection->addThreadMessageReceiver(..., this, ..) from
+        the message receive queue. This function cannot be called in the constructor, since the
+        virtual function table of the `this` object has not been constructed fully yet. This means
+        that if a message arrives during the constructor, it is dispatched via incorrect virtual function pointer.
+
+        Initiate the listening from a separate function that is called from ServiceWorkerDownloadTask::create().
+
+        No new tests, not testable.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp:
+        (WebKit::ServiceWorkerDownloadTask::startListeningForIPC):
+        (WebKit::ServiceWorkerDownloadTask::close):
+        * NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.h:
+        (WebKit::ServiceWorkerDownloadTask::create):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::registerDownload):
+        (WebKit::WebSWServerToContextConnection::unregisterDownload):
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         In case of COOP-based process swap, we need to make sure the document gets controlled by its matching service worker registration
