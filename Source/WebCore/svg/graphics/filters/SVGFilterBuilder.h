@@ -28,27 +28,24 @@
 namespace WebCore {
 
 class FilterEffect;
+class GraphicsContext;
 class RenderObject;
+class SVGFilter;
 class SVGFilterElement;
 
 class SVGFilterBuilder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SVGFilterBuilder(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits = SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
+    SVGFilterBuilder() = default;
 
-    FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
-    SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
-
-    std::optional<SVGFilterExpression> buildFilterExpression(SVGFilterElement&);
-    IntOutsets calculateFilterOutsets(SVGFilterElement&);
+    std::optional<SVGFilterExpression> buildFilterExpression(SVGFilterElement&, const SVGFilter&, const GraphicsContext& destinationContext);
+    static IntOutsets calculateFilterOutsets(SVGFilterElement&, const FloatRect& targetBoundingBox);
 
     // Required to change the attributes of a filter during an svgAttributeChanged.
     FilterEffect* effectByRenderer(RenderObject* object) { return m_effectRenderer.get(object); }
 
 private:
     HashMap<RenderObject*, FilterEffect*> m_effectRenderer;
-    FloatRect m_targetBoundingBox;
-    SVGUnitTypes::SVGUnitType m_primitiveUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
 };
     
 } // namespace WebCore

@@ -103,7 +103,7 @@ IntOutsets SVGFEDropShadowElement::outsets(const FloatRect& targetBoundingBox, S
     return FEDropShadow::calculateOutsets(offset, stdDeviation);
 }
 
-RefPtr<FilterEffect> SVGFEDropShadowElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEDropShadowElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     RenderObject* renderer = this->renderer();
     if (!renderer)

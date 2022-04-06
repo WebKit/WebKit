@@ -85,7 +85,7 @@ IntOutsets SVGFEOffsetElement::outsets(const FloatRect& targetBoundingBox, SVGUn
     return FEOffset::calculateOutsets(offset);
 }
 
-RefPtr<FilterEffect> SVGFEOffsetElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEOffsetElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     return FEOffset::create(dx(), dy());
 }

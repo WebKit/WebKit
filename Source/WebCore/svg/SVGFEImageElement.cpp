@@ -178,38 +178,7 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
 
-static inline IntRect scaledImageBufferRect(const FloatRect& rect, const FloatSize& scale)
-{
-    auto scaledRect = rect;
-    scaledRect.scale(scale);
-    return enclosingIntRect(scaledRect);
-}
-
-static inline FloatSize clampingScaleForImageBufferSize(const FloatSize& size)
-{
-    FloatSize clampingScale(1, 1);
-    ImageBuffer::sizeNeedsClamping(size, clampingScale);
-    return clampingScale;
-}
-
-static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& rect, const FloatSize& scale, HostWindow* hostWindow)
-{
-    auto scaledRect = scaledImageBufferRect(rect, scale);
-    if (scaledRect.isEmpty())
-        return nullptr;
-
-    auto clampingScale = clampingScaleForImageBufferSize(scaledRect.size());
-    auto imageBuffer = ImageBuffer::create(scaledRect.size() * clampingScale, RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, { }, { hostWindow });
-    if (!imageBuffer)
-        return nullptr;
-
-    imageBuffer->context().scale(clampingScale);
-    imageBuffer->context().translate(-scaledRect.location());
-    imageBuffer->context().scale(scale);
-    return imageBuffer;
-}
-
-std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect() const
+std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect(const GraphicsContext& destinationContext) const
 {
     auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
     if (!is<SVGElement>(target.element))
@@ -231,8 +200,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
     auto imageRect = renderer->repaintRectInLocalCoordinates();
 
-    // FIXME: Replace this call with GraphicsContext::createImageBuffer() once the destination GraphicsContext is passed to this function.
-    auto imageBuffer = createImageBuffer(imageRect, scale, renderer->hostWindow());
+    auto imageBuffer = destinationContext.createScaledImageBuffer(imageRect, scale);
     if (!imageBuffer)
         return { };
 
@@ -242,7 +210,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     return { imageBuffer, imageRect };
 }
 
-RefPtr<FilterEffect> SVGFEImageElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEImageElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const
 {
     if (m_cachedImage) {
         auto image = m_cachedImage->imageForRenderer(renderer());
@@ -257,7 +225,7 @@ RefPtr<FilterEffect> SVGFEImageElement::filterEffect(const SVGFilterBuilder&, co
         return FEImage::create({ nativeImage.releaseNonNull() }, imageRect, preserveAspectRatio());
     }
 
-    auto [imageBuffer, imageRect] = imageBufferForEffect();
+    auto [imageBuffer, imageRect] = imageBufferForEffect(destinationContext);
     if (!imageBuffer)
         return nullptr;
 

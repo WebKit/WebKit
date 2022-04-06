@@ -31,12 +31,13 @@
 namespace WebCore {
 
 class FilterImage;
+class GraphicsContext;
 class SVGFilterBuilder;
 class SVGFilterElement;
 
 class SVGFilter final : public Filter {
 public:
-    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox);
+    static RefPtr<SVGFilter> create(SVGFilterElement&, SVGFilterBuilder&, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
     WEBCORE_EXPORT static RefPtr<SVGFilter> create(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&);
 
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }

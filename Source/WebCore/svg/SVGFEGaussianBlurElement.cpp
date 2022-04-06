@@ -100,7 +100,7 @@ IntOutsets SVGFEGaussianBlurElement::outsets(const FloatRect& targetBoundingBox,
     return FEGaussianBlur::calculateOutsets(stdDeviation);
 }
 
-RefPtr<FilterEffect> SVGFEGaussianBlurElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEGaussianBlurElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     if (stdDeviationX() < 0 || stdDeviationY() < 0)
         return nullptr;

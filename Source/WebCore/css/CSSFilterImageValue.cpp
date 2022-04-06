@@ -31,8 +31,8 @@
 #include "CSSFilter.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
-#include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "NullGraphicsContext.h"
 #include "RenderElement.h"
 #include "StyleBuilderState.h"
 #include "StyleCachedImage.h"
@@ -122,7 +122,7 @@ RefPtr<Image> CSSFilterImageValue::image(RenderElement& renderer, const FloatSiz
     auto sourceImageRect = FloatRect { { }, size };
     sourceImage->context().drawImage(*image, sourceImageRect);
 
-    auto cssFilter = CSSFilter::create(renderer, m_filterOperations, renderingMode, FloatSize { 1, 1 }, Filter::ClipOperation::Intersect, sourceImageRect);
+    auto cssFilter = CSSFilter::create(renderer, m_filterOperations, renderingMode, FloatSize { 1, 1 }, Filter::ClipOperation::Intersect, sourceImageRect, NullGraphicsContext());
     if (!cssFilter)
         return &Image::nullImage();
 

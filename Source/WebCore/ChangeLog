@@ -1,3 +1,128 @@
+2022-04-06  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make SVGFEImageElement::filterEffect() create an ImageBuffer compatible with the destination GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=236573
+        rdar://89209695
+
+        Reviewed by Simon Fraser.
+
+        Pass a GraphicsContext to CSSFilter::create() and SVGFilter::create().
+        If there is no GraphicsContext available, like the call we make in
+        CSSFilterImageValue::image(), pass a NullGraphicsContext(). This will 
+        create a local ImageBuffer. And this is exactly what we want.
+
+        The GraphicsContext will be passed from SVGFilter::buildFilterExpression()
+        to all the overridden filterEffect(). SVGFEImageElement::filterEffect()
+        is the only one that is going to use it. It calls GraphicsContext::
+        createImageBuffer() to create an ImageBuffer for drawing the SVGElement.
+
+        In preparation to remove SVGFilterBuilder:
+
+        -- Pass an SVGFilter instead of SVGFilterBuilder to all the overridden
+           filterEffect() and all the overridden lightSource().
+        -- Make SVGFilterBuilder::calculateFilterOutsets() a static method.
+        -- Remove the members: SVGFilterBuilder::m_tragetBoundingBox and
+           SVGFilterBuilder::m_primitiveUnits since they exist in SVGFilter.
+
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustPageHeightDeprecated):
+        * platform/graphics/NullGraphicsContext.h:
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::create):
+        (WebCore::calculateReferenceFilterOutsets):
+        (WebCore::createReferenceFilter):
+        (WebCore::CSSFilter::buildFilterFunctions):
+        * rendering/CSSFilter.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+        * rendering/RenderLayerFilters.cpp:
+        (WebCore::RenderLayerFilters::beginFilterEffect):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::filterEffect const):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::filterEffect const):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::filterEffect const):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::filterEffect const):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::filterEffect const):
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect const):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::filterEffect const):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::lightSource const):
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::filterEffect const):
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect const):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::filterEffect const):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::imageBufferForEffect const):
+        (WebCore::SVGFEImageElement::filterEffect const):
+        (WebCore::scaledImageBufferRect): Deleted.
+        (WebCore::clampingScaleForImageBufferSize): Deleted.
+        (WebCore::createImageBuffer): Deleted.
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::filterEffect const):
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::filterEffect const):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::filterEffect const):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::lightSource const):
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::filterEffect const):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource const):
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::filterEffect const):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::filterEffect const):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::create):
+        * svg/graphics/filters/SVGFilter.h:
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::buildFilterExpression):
+        (WebCore::SVGFilterBuilder::calculateFilterOutsets):
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder): Deleted.
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        (WebCore::SVGFilterBuilder::targetBoundingBox const): Deleted.
+        (WebCore::SVGFilterBuilder::primitiveUnits const): Deleted.
+        (): Deleted.
+
 2022-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         FilterImage::imageBufferFromPixelBuffer() can trigger accelerated buffers in the web process

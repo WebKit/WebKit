@@ -112,7 +112,7 @@ void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEMorphologyElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEMorphologyElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     if (radiusX() < 0 || radiusY() < 0)
         return nullptr;

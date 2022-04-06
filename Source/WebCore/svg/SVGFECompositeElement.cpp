@@ -129,7 +129,7 @@ void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFECompositeElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFECompositeElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     return FEComposite::create(svgOperator(), k1(), k2(), k3(), k4());
 }

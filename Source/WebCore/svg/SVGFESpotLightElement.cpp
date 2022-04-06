@@ -23,7 +23,7 @@
 #include "FilterEffectVector.h"
 #include "GeometryUtilities.h"
 #include "ImageBuffer.h"
-#include "SVGFilterBuilder.h"
+#include "SVGFilter.h"
 #include "SVGNames.h"
 #include "SpotLightSource.h"
 #include <wtf/MathExtras.h>
@@ -41,13 +41,13 @@ Ref<SVGFESpotLightElement> SVGFESpotLightElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFESpotLightElement(tagName, document));
 }
 
-Ref<LightSource> SVGFESpotLightElement::lightSource(const SVGFilterBuilder& builder) const
+Ref<LightSource> SVGFESpotLightElement::lightSource(const SVGFilter& filter) const
 {
     FloatPoint3D position;
     FloatPoint3D pointsAt;
 
-    if (builder.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        FloatRect referenceBox = builder.targetBoundingBox();
+    if (filter.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        FloatRect referenceBox = filter.targetBoundingBox();
         
         position.setX(referenceBox.x() + x() * referenceBox.width());
         position.setY(referenceBox.y() + y() * referenceBox.height());

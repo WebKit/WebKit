@@ -37,7 +37,7 @@ private:
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
-    RefPtr<FilterEffect> filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const override;
+    RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
 };

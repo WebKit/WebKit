@@ -52,7 +52,7 @@ Vector<AtomString> SVGFEMergeElement::filterEffectInputsNames() const
     return inputsNames;
 }
 
-RefPtr<FilterEffect> SVGFEMergeElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector& inputs) const
+RefPtr<FilterEffect> SVGFEMergeElement::filterEffect(const SVGFilter&, const FilterEffectVector& inputs, const GraphicsContext&) const
 {
     return FEMerge::create(inputs.size());
 }

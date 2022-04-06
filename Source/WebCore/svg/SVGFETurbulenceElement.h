@@ -119,7 +119,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
-    RefPtr<FilterEffect> filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const override;
+    RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedNumber> m_baseFrequencyX { SVGAnimatedNumber::create(this) };

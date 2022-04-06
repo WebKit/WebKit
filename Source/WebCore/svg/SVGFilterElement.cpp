@@ -28,7 +28,6 @@
 
 #include "RenderSVGResourceFilter.h"
 #include "SVGElementInlines.h"
-#include "SVGFilterBuilder.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"

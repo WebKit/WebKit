@@ -1830,7 +1830,7 @@ void RenderLayerBacking::updateEventRegion()
     };
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
-        NullGraphicsContext nullContext(NullGraphicsContext::PaintInvalidationReasons::None);
+        NullGraphicsContext nullContext;
         EventRegion eventRegion;
 #if ENABLE(EDITABLE_REGION)
         if (renderer().page().shouldBuildEditableRegion())

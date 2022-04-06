@@ -187,7 +187,7 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEConvolveMatrixElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEConvolveMatrixElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     int orderXValue = orderX();
     int orderYValue = orderY();

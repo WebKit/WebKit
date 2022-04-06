@@ -477,8 +477,8 @@ void writeSVGResourceContainer(TextStream& ts, const RenderSVGResourceContainer&
         // Creating a placeholder filter which is passed to the builder.
         FloatRect dummyRect;
         FloatSize dummyScale(1, 1);
-        SVGFilterBuilder builder(dummyRect);
-        auto dummyFilter = SVGFilter::create(filter.filterElement(), builder, RenderingMode::Unaccelerated, dummyScale, Filter::ClipOperation::Intersect, dummyRect, dummyRect);
+        SVGFilterBuilder builder;
+        auto dummyFilter = SVGFilter::create(filter.filterElement(), builder, RenderingMode::Unaccelerated, dummyScale, Filter::ClipOperation::Intersect, dummyRect, dummyRect, NullGraphicsContext());
         if (dummyFilter) {
             TextStream::IndentScope indentScope(ts);
             dummyFilter->externalRepresentation(ts, FilterRepresentation::TestOutput);

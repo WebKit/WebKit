@@ -36,12 +36,6 @@ namespace WebCore {
 static constexpr unsigned maxTotalNumberFilterEffects = 100;
 static constexpr unsigned maxCountChildNodes = 200;
 
-SVGFilterBuilder::SVGFilterBuilder(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
-    : m_targetBoundingBox(targetBoundingBox)
-    , m_primitiveUnits(primitiveUnits)
-{
-}
-
 static OptionSet<FilterEffectGeometry::Flags> effectGeometryFlagsForElement(SVGElement& element)
 {
     OptionSet<FilterEffectGeometry::Flags> flags;
@@ -123,7 +117,7 @@ static bool appendGraphToExpression(const SVGFilterEffectsGraph& graph, const Fi
     return true;
 }
 
-std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFilterElement& filterElement)
+std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFilterElement& filterElement, const SVGFilter& filter, const GraphicsContext& destinationContext)
 {
     if (filterElement.countChildNodes() > maxCountChildNodes)
         return std::nullopt;
@@ -136,12 +130,12 @@ std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFi
         if (!inputs)
             return std::nullopt;
 
-        auto effect = effectElement.filterEffect(*this, *inputs);
+        auto effect = effectElement.filterEffect(filter, *inputs, destinationContext);
         if (!effect)
             return std::nullopt;
 
         if (auto flags = effectGeometryFlagsForElement(effectElement)) {
-            auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, m_primitiveUnits, m_targetBoundingBox);
+            auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, filter.primitiveUnits(), filter.targetBoundingBox());
             effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
         }
 
@@ -193,7 +187,7 @@ static IntOutsets calculateGraphOutsets(const SVGFilterPrimitivesGraph& graph, c
     return calculateSubGraphOutsets(graph, *graph.lastNode(), stack, targetBoundingBox, primitiveUnits);
 }
 
-IntOutsets SVGFilterBuilder::calculateFilterOutsets(SVGFilterElement& filterElement)
+IntOutsets SVGFilterBuilder::calculateFilterOutsets(SVGFilterElement& filterElement, const FloatRect& targetBoundingBox)
 {
     if (filterElement.countChildNodes() > maxCountChildNodes)
         return { };
@@ -207,7 +201,7 @@ IntOutsets SVGFilterBuilder::calculateFilterOutsets(SVGFilterElement& filterElem
         graph.setNodeInputs(effectElement, WTFMove(inputs));
     }
 
-    return calculateGraphOutsets(graph, m_targetBoundingBox, m_primitiveUnits);
+    return calculateGraphOutsets(graph, targetBoundingBox, filterElement.primitiveUnits());
 }
 
 } // namespace WebCore

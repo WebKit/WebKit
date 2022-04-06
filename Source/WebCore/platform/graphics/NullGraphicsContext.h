@@ -38,6 +38,8 @@ public:
         DetectingContentfulPaint
     };
 
+    NullGraphicsContext() = default;
+
     NullGraphicsContext(PaintInvalidationReasons reasons)
         : m_paintInvalidationReasons(reasons)
     {

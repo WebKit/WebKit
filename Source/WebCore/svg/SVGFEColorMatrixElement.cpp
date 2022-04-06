@@ -98,7 +98,7 @@ void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEColorMatrixElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEColorMatrixElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     Vector<float> filterValues;
     ColorMatrixType filterType = type();

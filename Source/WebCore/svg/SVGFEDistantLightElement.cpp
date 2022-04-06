@@ -36,7 +36,7 @@ Ref<SVGFEDistantLightElement> SVGFEDistantLightElement::create(const QualifiedNa
     return adoptRef(*new SVGFEDistantLightElement(tagName, document));
 }
 
-Ref<LightSource> SVGFEDistantLightElement::lightSource(const SVGFilterBuilder&) const
+Ref<LightSource> SVGFEDistantLightElement::lightSource(const SVGFilter&) const
 {
     return DistantLightSource::create(azimuth(), elevation());
 }

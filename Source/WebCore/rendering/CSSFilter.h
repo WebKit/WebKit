@@ -31,13 +31,14 @@
 namespace WebCore {
 
 class FilterOperations;
+class GraphicsContext;
 class RenderElement;
 class SourceGraphic;
 
 class CSSFilter final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& targetBoundingBox);
+    static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, RenderingMode, const FloatSize& filterScale, ClipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
     WEBCORE_EXPORT static RefPtr<CSSFilter> create(Vector<Ref<FilterFunction>>&&);
 
     const Vector<Ref<FilterFunction>>& functions() const { return m_functions; }
@@ -56,8 +57,8 @@ public:
 private:
     CSSFilter(RenderingMode, const FloatSize& filterScale, ClipOperation, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
     CSSFilter(Vector<Ref<FilterFunction>>&&);
-    
-    bool buildFilterFunctions(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
+
+    bool buildFilterFunctions(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
 
     bool supportsAcceleratedRendering() const final;
 

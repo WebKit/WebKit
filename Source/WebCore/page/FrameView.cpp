@@ -4858,7 +4858,7 @@ void FrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, float
 
     }
     // Use a context with painting disabled.
-    NullGraphicsContext context(NullGraphicsContext::PaintInvalidationReasons::None);
+    NullGraphicsContext context;
     renderView->setTruncatedAt(static_cast<int>(floorf(oldBottom)));
     IntRect dirtyRect(0, static_cast<int>(floorf(oldTop)), renderView->layoutOverflowRect().maxX(), static_cast<int>(ceilf(oldBottom - oldTop)));
     renderView->setPrintRect(dirtyRect);

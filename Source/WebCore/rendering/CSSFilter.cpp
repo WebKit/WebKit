@@ -42,14 +42,14 @@
 
 namespace WebCore {
 
-RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox)
+RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
     auto filter = adoptRef(*new CSSFilter(renderingMode, filterScale, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 
-    if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox))
+    if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox, destinationContext))
         return nullptr;
 
     if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
@@ -253,11 +253,10 @@ static IntOutsets calculateReferenceFilterOutsets(const ReferenceFilterOperation
     if (!filterElement)
         return { };
 
-    SVGFilterBuilder builder(targetBoundingBox, filterElement->primitiveUnits());
-    return builder.calculateFilterOutsets(*filterElement);
+    return SVGFilterBuilder::calculateFilterOutsets(*filterElement, targetBoundingBox);
 }
 
-static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox)
+static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     auto filterElement = referenceFilterElement(filterOperation, renderer);
     if (!filterElement)
@@ -265,11 +264,11 @@ static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const Referenc
 
     auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
 
-    SVGFilterBuilder builder(targetBoundingBox, filterElement->primitiveUnits());
-    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox);
+    SVGFilterBuilder builder;
+    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
 }
 
-bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox)
+bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     RefPtr<FilterFunction> function;
 
@@ -320,7 +319,7 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
             break;
 
         case FilterOperation::REFERENCE:
-            function = createReferenceFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox);
+            function = createReferenceFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox, destinationContext);
             break;
 
         default:

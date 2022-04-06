@@ -97,7 +97,7 @@ void SVGFEBlendElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEBlendElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEBlendElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     return FEBlend::create(mode());
 }

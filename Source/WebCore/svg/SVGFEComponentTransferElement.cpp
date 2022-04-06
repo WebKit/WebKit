@@ -62,7 +62,7 @@ void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, co
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
-RefPtr<FilterEffect> SVGFEComponentTransferElement::filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const
+RefPtr<FilterEffect> SVGFEComponentTransferElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
 {
     ComponentTransferFunction red;
     ComponentTransferFunction green;

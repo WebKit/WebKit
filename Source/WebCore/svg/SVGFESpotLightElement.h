@@ -30,7 +30,7 @@ public:
 private:
     SVGFESpotLightElement(const QualifiedName&, Document&);
 
-    Ref<LightSource> lightSource(const SVGFilterBuilder&) const override;
+    Ref<LightSource> lightSource(const SVGFilter&) const override;
 };
 static_assert(sizeof(SVGFESpotLightElement) == sizeof(SVGFELightElement));
 

@@ -129,8 +129,8 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto renderingMode = renderer.page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 
     // Create the SVGFilter object.
-    filterData->builder = makeUnique<SVGFilterBuilder>(targetBoundingBox, filterElement().primitiveUnits());
-    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, Filter::ClipOperation::Intersect, filterData->boundaries, targetBoundingBox);
+    filterData->builder = makeUnique<SVGFilterBuilder>();
+    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, Filter::ClipOperation::Intersect, filterData->boundaries, targetBoundingBox, *context);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;

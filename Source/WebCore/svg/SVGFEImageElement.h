@@ -54,9 +54,9 @@ private:
 
     void didFinishInsertingNode() override;
 
-    std::tuple<RefPtr<ImageBuffer>, FloatRect> imageBufferForEffect() const;
+    std::tuple<RefPtr<ImageBuffer>, FloatRect> imageBufferForEffect(const GraphicsContext& destinationContext) const;
 
-    RefPtr<FilterEffect> filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const override;
+    RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     void clearResourceReferences();
     void requestImageResource();
