@@ -1,3 +1,21 @@
+2022-04-06  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Add DoNotHaveTagRegisters mode to unboxDouble
+        https://bugs.webkit.org/show_bug.cgi?id=238018
+
+        Reviewed by Yusuke Suzuki.
+
+        Wasm cannot use unboxDouble as-is because
+        GPRInfo::numberTagRegister is not available. Add a
+        DoNotHaveTagRegister mode so we can get rid of some duplicated
+        code.
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::unboxDoubleWithoutAssertions):
+        (JSC::AssemblyHelpers::unboxDouble):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2022-04-06  Adrian Perez de Castro  <aperez@igalia.com>
 
         [JSC] Nested includes do not change offlineasm hash output
