@@ -493,6 +493,10 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.move_branch(args[3], args[4]),
             ), mocks.Subprocess.Route(
+                self.executable, 'branch', '-D', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.delete_branch(args[3]),
+            ), mocks.Subprocess.Route(
                 self.executable, 'push', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.push(args[2], args[3].split(':')[0]),
@@ -511,9 +515,9 @@ nothing to commit, working tree clean
                     ])
                 )
             ), mocks.Subprocess.Route(
-                self.executable, 'reset', re.compile(r'HEAD~\d+'),
+                self.executable, 'reset', 'HEAD',
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1])),
+                generator=lambda *args, **kwargs: self.reset(int(args[2].split('~')[-1]) if '~' in args[2] else None),
             ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
@@ -930,6 +934,15 @@ nothing to commit, working tree clean
         self.head = self.commits[to_be_moved][-1]
         return mocks.ProcessCompletion(returncode=0)
 
+    def delete_branch(self, branch):
+        if branch in self.commits:
+            del self.commits[branch]
+            return mocks.ProcessCompletion(returncode=0)
+        return mocks.ProcessCompletion(
+            returncode=1,
+            stdout="error: branch '{}' not found.\n".format(branch),
+        )
+
     def push(self, remote, branch):
         self.remotes['{}/{}'.format(remote, branch)] = self.commits[branch][-1]
         return mocks.ProcessCompletion(returncode=0)
@@ -943,6 +956,11 @@ nothing to commit, working tree clean
         )
 
     def reset(self, index):
+        if index is None:
+            self.modified = {}
+            self.staged = {}
+            return mocks.ProcessCompletion(returncode=0)
+
         self.head = self.commits[self.head.branch][-(index + 1)]
         return mocks.ProcessCompletion(returncode=0)
 

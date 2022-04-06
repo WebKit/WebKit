@@ -1,5 +1,32 @@
 2022-04-06  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Add automation to assist in branch cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=238637
+        <rdar://problem/91127828>
+
+        Reviewed by Stephanie Lewis and Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Add branch deletion and reset mocks.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/svn.py:
+        (Svn.__init__): Add `svn revert` mock.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/clean.py:
+        (Clean):
+        (Clean.parser): Allow caller to specify branch or pull request.
+        (Clean.cleanup): Delete a branch or branches associated with a pull request.
+        (Clean.main): Differentiate calls with branches and pull requests specified from those without.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/clean_unittest.py: Added.
+        (TestClean):
+        (TestClean.setUp):
+        (TestClean.test_checkout_none):
+        (TestClean.test_clean_git):
+        (TestClean.test_clean_svn):
+        (TestClean.test_clean_branch):
+        (TestClean.test_clean_pr):
+
+2022-04-06  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Apply labels based on tracker
         https://bugs.webkit.org/show_bug.cgi?id=238640
         <rdar://problem/91135356>

@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,21 +20,88 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import sys
 
 from .command import Command
-from webkitcorepy import arguments
-from webkitscmpy import local
+from webkitcorepy import arguments, run, Terminal
+from webkitscmpy import local, remote
 
 
 class Clean(Command):
     name = 'clean'
-    help = 'Remove all local changes from current checkout'
+    help = 'Remove all local changes from current checkout or delete local and remote branches associated with a pull-request'
+
+    PR_RE = re.compile(r'^\[?[Pp][Rr][ -](?P<number>\d+)]?$')
+
+    @classmethod
+    def parser(cls, parser, loggers=None):
+        parser.add_argument(
+            'arguments', nargs='*',
+            type=str, default=None,
+            help='String representation(s) of a commit or branch to be cleaned',
+        )
+
+    @classmethod
+    def cleanup(cls, repository, argument):
+        if not repository.is_git:
+            sys.stderr('Can only cleanup branches on git repositories\n')
+            return 1
+
+        rmt = repository.remote()
+        target = 'fork' if isinstance(rmt, remote.GitHub) else 'origin'
+
+        match = cls.PR_RE.match(argument)
+        if match:
+            if not rmt:
+                sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))
+                return 1
+            if not rmt.pull_requests:
+                sys.stderr.write("'{}' cannot generate pull-requests\n".format(rmt.url))
+                return 1
+
+            pr = rmt.pull_requests.get(int(match.group('number')))
+            if not pr:
+                sys.stderr.write("No pull request found for '{}'\n".format(argument))
+                return 1
+
+            if pr.opened and Terminal.choose("'{arg}' is open, cleaning it up will close the pull request.\nAre you sure you want to close {arg}?".format(arg=argument), default='No') != 'Yes':
+                sys.stderr.write("Keeping '{}' because it is still open\n".format(argument))
+                return 0
+
+            argument = pr.head
+
+        did_delete = False
+        code = 0
+        regex = re.compile(r'^{}-(?P<count>\d+)$'.format(argument))
+        for to_delete in repository.branches_for(remote=False):
+            if to_delete == argument or regex.match(to_delete):
+                code += run([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path).returncode
+                did_delete = True
+        for to_delete in repository.branches_for(remote=target):
+            if to_delete == argument or regex.match(to_delete) and target == 'fork':
+                code += run([repository.executable(), 'push', target, '--delete', to_delete], cwd=repository.root_path).returncode
+                did_delete = True
+
+        if not did_delete:
+            sys.stderr.write("No branches matching '{}' were found\n".format(argument))
+            return 1
+
+        return code
 
     @classmethod
     def main(cls, args, repository, **kwargs):
+        if not repository:
+            sys.stderr.write('No repository provided\n')
+            return 1
         if not repository.path:
             sys.stderr.write('Cannot clean on remote repository\n')
             return 1
 
-        return repository.clean()
+        if not args.arguments:
+            return repository.clean()
+
+        result = 0
+        for argument in args.arguments:
+            result += cls.cleanup(repository, argument)
+        return result
