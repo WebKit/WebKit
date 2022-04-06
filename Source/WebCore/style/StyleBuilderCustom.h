@@ -551,6 +551,7 @@ public:
             LengthBox lengthBox(Length(1, LengthType::Relative), Length(1, LengthType::Relative), Length(1, LengthType::Relative), Length(1, LengthType::Relative));
             // Masks have a different initial value for widths. They use an 'auto' value rather than trying to fit to the border.
             image.setBorderSlices(type == BorderImage ? lengthBox : LengthBox());
+            image.setOverridesBorderWidths(false);
             break;
         }
         setValue(builderState.style(), image);
@@ -570,7 +571,7 @@ public:
             builderState.styleMap().mapNinePieceImageSlice(value, image);
             break;
         case Width:
-            image.setBorderSlices(builderState.styleMap().mapNinePieceImageQuad(value));
+            builderState.styleMap().mapNinePieceImageWidth(value, image);
             break;
         }
         setValue(builderState.style(), image);

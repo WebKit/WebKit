@@ -70,8 +70,9 @@ public:
     void mapAnimationTimingFunction(Animation&, const CSSValue&);
     void mapAnimationCompositeOperation(Animation&, const CSSValue&);
 
-    void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
+    void mapNinePieceImage(CSSValue*, NinePieceImage&);
     void mapNinePieceImageSlice(CSSValue&, NinePieceImage&);
+    void mapNinePieceImageWidth(CSSValue&, NinePieceImage&);
     LengthBox mapNinePieceImageQuad(CSSValue&);
     void mapNinePieceImageRepeat(CSSValue&, NinePieceImage&);
 
@@ -79,6 +80,7 @@ private:
     RenderStyle* style() const;
     bool useSVGZoomRules() const;
     RefPtr<StyleImage> styleImage(CSSValue&);
+    LengthBox mapNinePieceImageQuad(Quad*);
 
     // FIXME: This type can merge into BuilderState.
     Style::BuilderState& m_builderState;

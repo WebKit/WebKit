@@ -23,6 +23,7 @@
 #include "config.h"
 #include "StyleProperties.h"
 
+#include "CSSBorderImageWidthValue.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSDeferredParser.h"
@@ -221,7 +222,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyBorderBlockEnd:
         return getShorthandValue(borderBlockEndShorthand());
     case CSSPropertyBorderImage:
-        return borderImagePropertyValue();
+    case CSSPropertyWebkitBorderImage:
+        return borderImagePropertyValue(propertyID);
     case CSSPropertyBorderInline:
         return borderPropertyValue(borderInlineWidthShorthand(), borderInlineStyleShorthand(), borderInlineColorShorthand());
     case CSSPropertyBorderInlineColor:
@@ -1003,7 +1005,7 @@ String StyleProperties::getAlignmentShorthandValue(const StylePropertyShorthand&
     return value;
 }
 
-String StyleProperties::borderImagePropertyValue() const
+String StyleProperties::borderImagePropertyValue(CSSPropertyID propertyID) const
 {
     const StylePropertyShorthand& shorthand = borderImageShorthand();
     StringBuilder result;
@@ -1035,6 +1037,16 @@ String StyleProperties::borderImagePropertyValue() const
         }
         if (omittedSlice && (longhand == CSSPropertyBorderImageWidth || longhand == CSSPropertyBorderImageOutset))
             return String();
+
+        // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
+        if (is<CSSBorderImageWidthValue>(value.get())) {
+            auto* borderImageWidth = downcast<CSSBorderImageWidthValue>(value.get());
+            Quad* widths = borderImageWidth->widths();
+            bool overridesBorderWidths = propertyID == CSSPropertyWebkitBorderImage && widths && (widths->top()->isLength() || widths->right()->isLength() || widths->bottom()->isLength() || widths->left()->isLength());
+            if (overridesBorderWidths != borderImageWidth->m_overridesBorderWidths)
+                return String();
+            value = borderImageWidth->m_widths;
+        }
 
         // If a longhand is set to a css-wide keyword, the others should be the same.
         String valueText = value->cssText();
@@ -1509,7 +1521,7 @@ String StyleProperties::asText() const
             case CSSPropertyBorderImageWidth:
             case CSSPropertyBorderImageOutset:
             case CSSPropertyBorderImageRepeat:
-                shorthandPropertyID = CSSPropertyBorderImage;
+                serializeBorderShorthand(CSSPropertyBorderImage, CSSPropertyWebkitBorderImage);
                 break;
             case CSSPropertyFontFamily:
             case CSSPropertyLineHeight:

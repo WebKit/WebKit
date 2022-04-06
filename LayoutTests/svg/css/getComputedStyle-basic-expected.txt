@@ -418,8 +418,6 @@ rect: style.getPropertyValue(-webkit-background-size) : auto
 rect: style.getPropertyCSSValue(-webkit-background-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 rect: style.getPropertyCSSValue(-webkit-border-horizontal-spacing) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-border-image) : none
-rect: style.getPropertyCSSValue(-webkit-border-image) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 rect: style.getPropertyCSSValue(-webkit-border-vertical-spacing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-box-align) : stretch
@@ -934,8 +932,6 @@ g: style.getPropertyValue(-webkit-background-size) : auto
 g: style.getPropertyCSSValue(-webkit-background-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 g: style.getPropertyCSSValue(-webkit-border-horizontal-spacing) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-border-image) : none
-g: style.getPropertyCSSValue(-webkit-border-image) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 g: style.getPropertyCSSValue(-webkit-border-vertical-spacing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-box-align) : stretch

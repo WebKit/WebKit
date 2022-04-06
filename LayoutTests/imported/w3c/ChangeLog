@@ -1,3 +1,15 @@
+2022-04-06  Oriol Brufau  <obrufau@igalia.com>
+
+        [css] Turn -webkit-border-image into a shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=237487
+
+        Reviewed by Antti Koivisto.
+
+        Update tests to take into account that '-webkit-border-image' is a shorthand.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-04-06  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for more input pseudo classes

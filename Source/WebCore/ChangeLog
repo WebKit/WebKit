@@ -1,3 +1,149 @@
+2022-04-06  Oriol Brufau  <obrufau@igalia.com>
+
+        [css] Turn -webkit-border-image into a shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=237487
+
+        Reviewed by Antti Koivisto.
+
+        The '-webkit-border-image' property was considered to be a longhand,
+        sharing computed values with the various 'border-image-*'.
+
+        This patch turns it into a shorthand of 'border-image-*'.
+
+        Tests: fast/borders/border-image-legacy.html
+               fast/css/border-image-style-length.html
+               fast/css/getComputedStyle/computed-style.html
+               fast/css/getComputedStyle/computed-style-without-renderer.html
+               fast/css/image-set-parsing.html
+               fast/css/uri-token-parsing.html
+               imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
+               svg/css/getComputedStyle-basic.xhtml
+
+        * Sources.txt:
+        Add the new file CSSBorderImageWidthValue.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add the new files CSSBorderImageWidthValue.h and
+        CSSBorderImageWidthValue.cpp.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        When animating border-image-width, take into account that it can come
+        from -webkit-border-image, and thus override border widths.
+        Do not interpolate a value a does override border widths with another
+        value that does not.
+        Even if border-image-width accepts <length-percentage>, when overriding
+        border widths do not interpolate between a <length-percentage> and a
+        plain <length>, since only the latter are valid border widths.
+
+        * css/CSSBorderImageWidthValue.cpp: Added.
+        (WebCore::CSSBorderImageWidthValue::CSSBorderImageWidthValue):
+        (WebCore::CSSBorderImageWidthValue::customCSSText const):
+        (WebCore::CSSBorderImageWidthValue::equals const):
+        * css/CSSBorderImageWidthValue.h: Added.
+        Add CSSBorderImageWidthValue class, based on CSSBorderImageSliceValue.
+        It's a wrapper for a CSS_QUAD CSSPrimitiveValue, but with a bool that
+        indicates if the value will override border widths.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImage):
+        (WebCore::valueForReflection):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        Serialize border-image-width as empty string if it overrides border
+        widths, since its grammar doesn't allow this.
+        Serialize border-image as empty string if border-image-width overrides
+        border widths, since its grammar doesn't allow this.
+        Handle serialization of -webkit-border-image.
+
+        * css/CSSProperties.json:
+        Turn -webkit-border-image into a shorthand of border-image-source,
+        border-image-slice, border-image-width, border-image-outset and
+        border-image-repeat.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapNinePieceImage):
+        (WebCore::CSSToStyleMap::mapNinePieceImageWidth):
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+        * css/CSSToStyleMap.h:
+        Handle CSSBorderImageWidthValue values.
+        Remove old way of handling -webkit-border-image.
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals const):
+        (WebCore::CSSValue::cssText const):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isBorderImageWidthValue const):
+        Handle new CSSBorderImageWidthValue value.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        (WebCore::StyleProperties::borderImagePropertyValue const):
+        (WebCore::StyleProperties::asText const):
+        * css/StyleProperties.h:
+        Serialize border-image as empty string if border-image-width overrides
+        border widths, since its grammar doesn't allow this.
+        Handle serialization of -webkit-border-image.
+        Make cssText choose the right shorthand between border-image and
+        -webkit-border-image. Prefer the former if both are suitable.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBorderImageWidth):
+        (WebCore::consumeBorderImageComponents):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::consumeBorderImage):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        Parse border-image-width as a CSSBorderImageWidthValue.
+        Parse -webkit-border-image as a shorthand.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        Take into account that border widths may be overridden.
+
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::borderLeftWidth const):
+        (WebCore::BorderData::borderRightWidth const):
+        (WebCore::BorderData::borderTopWidth const):
+        (WebCore::BorderData::borderBottomWidth const):
+        Add logic for overriding border widths. Same approach as 'border-style'
+        set to 'none' making the border widths compute to '0px'.
+
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::NinePieceImage):
+        (WebCore::NinePieceImage::Data::Data):
+        (WebCore::NinePieceImage::Data::create):
+        (WebCore::NinePieceImage::Data::operator== const):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::overridesBorderWidths const):
+        (WebCore::NinePieceImage::setOverridesBorderWidths):
+        (WebCore::NinePieceImage::copyBorderSlicesFrom):
+        Add flag for overriding border widths.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setBorderImageWidthOverridesBorderWidths):
+        * rendering/style/RenderStyle.h:
+        Add method for setting flag to override border widths.
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::shouldApplyPropertyInParseOrder):
+        Stop deferring border image properties. That was previously needed since
+        -webkit-border-image was a longhand sharing a computed value with the
+        border-image longhands. No longer needed since -webkit-border-image is
+        now a horthand.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertBorderMask):
+        (WebCore::Style::BuilderConverter::convertReflection):
+        (WebCore::Style::BuilderConverter::convertBorderImage): Deleted.
+        Remove code no longer needed.
+
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::ApplyPropertyBorderImageModifier::applyInitialValue):
+        (WebCore::Style::ApplyPropertyBorderImageModifier::applyValue):
+        Handle border-image-width as a CSSBorderImageWidthValue.
+
 2022-04-06  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for more input pseudo classes

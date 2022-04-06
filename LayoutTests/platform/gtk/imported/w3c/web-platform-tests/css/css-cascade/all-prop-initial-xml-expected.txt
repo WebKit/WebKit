@@ -339,7 +339,6 @@ PASS -webkit-background-clip
 PASS -webkit-background-origin
 PASS -webkit-background-size
 PASS -webkit-border-horizontal-spacing
-PASS -webkit-border-image
 PASS -webkit-border-vertical-spacing
 PASS -webkit-box-align
 PASS -webkit-box-decoration-break

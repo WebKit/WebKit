@@ -712,6 +712,7 @@ css/CSSAspectRatioValue.cpp
 css/CSSBasicShapes.cpp
 css/CSSBorderImage.cpp
 css/CSSBorderImageSliceValue.cpp
+css/CSSBorderImageWidthValue.cpp
 css/CSSCanvasValue.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSConditionRule.cpp

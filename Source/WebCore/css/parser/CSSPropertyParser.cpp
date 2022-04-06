@@ -33,6 +33,7 @@
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSBorderImageWidthValue.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSCursorImageValue.h"
@@ -3037,7 +3038,7 @@ static RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange& range)
     return CSSValuePool::singleton().createValue(WTFMove(quad));
 }
 
-static RefPtr<CSSValue> consumeBorderImageWidth(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeBorderImageWidth(CSSPropertyID property, CSSParserTokenRange& range)
 {
     RefPtr<CSSPrimitiveValue> widths[4];
 
@@ -3055,15 +3056,18 @@ static RefPtr<CSSValue> consumeBorderImageWidth(CSSParserTokenRange& range)
     if (!widths[0])
         return nullptr;
     complete4Sides(widths);
-    
+
+    // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
+    bool overridesBorderWidths = property == CSSPropertyWebkitBorderImage && (widths[0]->isLength() || widths[1]->isLength() || widths[2]->isLength() || widths[3]->isLength());
+
     // FIXME-NEWPARSER: Should just have a CSSQuadValue.
     auto quad = Quad::create();
     quad->setTop(widths[0].releaseNonNull());
     quad->setRight(widths[1].releaseNonNull());
     quad->setBottom(widths[2].releaseNonNull());
     quad->setLeft(widths[3].releaseNonNull());
-    
-    return CSSValuePool::singleton().createValue(WTFMove(quad));
+
+    return CSSBorderImageWidthValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), overridesBorderWidths);
 }
 
 static bool consumeBorderImageComponents(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context, RefPtr<CSSValue>& source,
@@ -3085,7 +3089,7 @@ static bool consumeBorderImageComponents(CSSPropertyID property, CSSParserTokenR
             if (slice) {
                 ASSERT(!width && !outset);
                 if (consumeSlashIncludingWhitespace(range)) {
-                    width = consumeBorderImageWidth(range);
+                    width = consumeBorderImageWidth(property, range);
                     if (consumeSlashIncludingWhitespace(range)) {
                         outset = consumeBorderImageOutset(range);
                         if (!outset)
@@ -4627,8 +4631,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeBorderImageOutset(m_range);
     case CSSPropertyBorderImageWidth:
     case CSSPropertyWebkitMaskBoxImageWidth:
-        return consumeBorderImageWidth(m_range);
-    case CSSPropertyWebkitBorderImage:
+        return consumeBorderImageWidth(property, m_range);
     case CSSPropertyWebkitMaskBoxImage:
         return consumeWebkitBorderImage(property, m_range, m_context);
     case CSSPropertyWebkitBoxReflect:
@@ -5556,18 +5559,19 @@ bool CSSPropertyParser::consumeBorderImage(CSSPropertyID property, bool importan
         auto& valuePool = CSSValuePool::singleton();
         switch (property) {
         case CSSPropertyWebkitMaskBoxImage:
-            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageSource, CSSPropertyWebkitMaskBoxImage, WTFMove(source), valuePool.createImplicitInitialValue(), important);
-            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageSlice, CSSPropertyWebkitMaskBoxImage, WTFMove(slice), valuePool.createImplicitInitialValue(), important);
-            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageWidth, CSSPropertyWebkitMaskBoxImage, WTFMove(width), valuePool.createImplicitInitialValue(), important);
-            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageOutset, CSSPropertyWebkitMaskBoxImage, WTFMove(outset), valuePool.createImplicitInitialValue(), important);
-            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageRepeat, CSSPropertyWebkitMaskBoxImage, WTFMove(repeat), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageSource, property, WTFMove(source), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageSlice, property, WTFMove(slice), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageWidth, property, WTFMove(width), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageOutset, property, WTFMove(outset), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyWebkitMaskBoxImageRepeat, property, WTFMove(repeat), valuePool.createImplicitInitialValue(), important);
             return true;
         case CSSPropertyBorderImage:
-            addPropertyWithImplicitDefault(CSSPropertyBorderImageSource, CSSPropertyBorderImage, WTFMove(source), valuePool.createImplicitInitialValue(), important);
-            addPropertyWithImplicitDefault(CSSPropertyBorderImageSlice, CSSPropertyBorderImage, WTFMove(slice), valuePool.createImplicitInitialValue(), important);
-            addPropertyWithImplicitDefault(CSSPropertyBorderImageWidth, CSSPropertyBorderImage, WTFMove(width), valuePool.createImplicitInitialValue(), important);
-            addPropertyWithImplicitDefault(CSSPropertyBorderImageOutset, CSSPropertyBorderImage, WTFMove(outset), valuePool.createImplicitInitialValue(), important);
-            addPropertyWithImplicitDefault(CSSPropertyBorderImageRepeat, CSSPropertyBorderImage, WTFMove(repeat), valuePool.createImplicitInitialValue(), important);
+        case CSSPropertyWebkitBorderImage:
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageSource, property, WTFMove(source), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageSlice, property, WTFMove(slice), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageWidth, property, WTFMove(width), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageOutset, property, WTFMove(outset), valuePool.createImplicitInitialValue(), important);
+            addPropertyWithImplicitDefault(CSSPropertyBorderImageRepeat, property, WTFMove(repeat), valuePool.createImplicitInitialValue(), important);
             return true;
         default:
             ASSERT_NOT_REACHED();
@@ -6466,6 +6470,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return true;
     }
     case CSSPropertyBorderImage:
+    case CSSPropertyWebkitBorderImage:
         return consumeBorderImage(property, important);
     case CSSPropertyPageBreakAfter:
     case CSSPropertyPageBreakBefore:

@@ -2507,6 +2507,13 @@ void RenderStyle::setBorderImageWidth(LengthBox&& slices)
     m_surroundData.access().border.m_image.setBorderSlices(WTFMove(slices));
 }
 
+void RenderStyle::setBorderImageWidthOverridesBorderWidths(bool overridesBorderWidths)
+{
+    if (m_surroundData->border.m_image.overridesBorderWidths() == overridesBorderWidths)
+        return;
+    m_surroundData.access().border.m_image.setOverridesBorderWidths(overridesBorderWidths);
+}
+
 void RenderStyle::setBorderImageOutset(LengthBox&& outset)
 {
     if (m_surroundData->border.m_image.outset() == outset)

@@ -47,13 +47,6 @@ static inline bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
     case CSSPropertyBackgroundOrigin:
     case CSSPropertyWebkitBackgroundSize:
     case CSSPropertyBackgroundSize:
-    case CSSPropertyWebkitBorderImage:
-    case CSSPropertyBorderImage:
-    case CSSPropertyBorderImageSlice:
-    case CSSPropertyBorderImageSource:
-    case CSSPropertyBorderImageOutset:
-    case CSSPropertyBorderImageRepeat:
-    case CSSPropertyBorderImageWidth:
     case CSSPropertyWebkitBoxShadow:
     case CSSPropertyBoxShadow:
         return true;

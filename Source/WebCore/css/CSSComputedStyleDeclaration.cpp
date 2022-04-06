@@ -225,7 +225,7 @@ static Ref<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image)
     return cssValuePool.createValue(Pair::create(WTFMove(horizontalRepeat), WTFMove(verticalRepeat)));
 }
 
-static Ref<CSSValue> valueForNinePieceImage(const NinePieceImage& image, const RenderStyle& style)
+static RefPtr<CSSValue> valueForNinePieceImage(CSSPropertyID propertyID, const NinePieceImage& image, const RenderStyle& style)
 {
     if (!image.hasImage())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
@@ -234,10 +234,17 @@ static Ref<CSSValue> valueForNinePieceImage(const NinePieceImage& image, const R
     if (image.image())
         imageValue = image.image()->cssValue();
 
+    // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
+    const LengthBox& slices = image.borderSlices();
+    bool overridesBorderWidths = propertyID == CSSPropertyWebkitBorderImage && (slices.top().isFixed() || slices.right().isFixed() || slices.bottom().isFixed() || slices.left().isFixed());
+    if (overridesBorderWidths != image.overridesBorderWidths())
+        return nullptr;
+
     auto imageSlices = valueForNinePieceImageSlice(image);
-    auto borderSlices = valueForNinePieceImageQuad(image.borderSlices(), style);
+    auto borderSlices = valueForNinePieceImageQuad(slices, style);
     auto outset = valueForNinePieceImageQuad(image.outset(), style);
     auto repeat = valueForNinePieceImageRepeat(image);
+
     return createBorderImageValue(WTFMove(imageValue), WTFMove(imageSlices), WTFMove(borderSlices), WTFMove(outset), WTFMove(repeat));
 }
 
@@ -285,7 +292,7 @@ static Ref<CSSValue> valueForReflection(const StyleReflection* reflection, const
         break;
     }
 
-    return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), valueForNinePieceImage(reflection->mask(), style));
+    return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), valueForNinePieceImage(CSSPropertyWebkitBoxReflect, reflection->mask(), style));
 }
 
 static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, const FillLayer& layer, const RenderStyle& style)
@@ -3763,8 +3770,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         case CSSPropertyBackfaceVisibility:
             return cssValuePool.createIdentifierValue((style.backfaceVisibility() == BackfaceVisibility::Hidden) ? CSSValueHidden : CSSValueVisible);
+        case CSSPropertyBorderImage:
         case CSSPropertyWebkitBorderImage:
-            return valueForNinePieceImage(style.borderImage(), style);
+            return valueForNinePieceImage(propertyID, style.borderImage(), style);
         case CSSPropertyBorderImageOutset:
             return valueForNinePieceImageQuad(style.borderImage().outset(), style);
         case CSSPropertyBorderImageRepeat:
@@ -3772,9 +3780,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyBorderImageSlice:
             return valueForNinePieceImageSlice(style.borderImage());
         case CSSPropertyBorderImageWidth:
+            if (style.borderImage().overridesBorderWidths())
+                return nullptr;
             return valueForNinePieceImageQuad(style.borderImage().borderSlices(), style);
         case CSSPropertyWebkitMaskBoxImage:
-            return valueForNinePieceImage(style.maskBoxImage(), style);
+            return valueForNinePieceImage(propertyID, style.maskBoxImage(), style);
         case CSSPropertyWebkitMaskBoxImageOutset:
             return valueForNinePieceImageQuad(style.maskBoxImage().outset(), style);
         case CSSPropertyWebkitMaskBoxImageRepeat:
@@ -4010,8 +4020,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return getCSSPropertyValuesFor4SidesShorthand(borderColorShorthand());
         case CSSPropertyBorderLeft:
             return getCSSPropertyValuesForShorthandProperties(borderLeftShorthand());
-        case CSSPropertyBorderImage:
-            return valueForNinePieceImage(style.borderImage(), style);
         case CSSPropertyBorderInline: {
             auto value = propertyValue(CSSPropertyBorderInlineStart, DoNotUpdateLayout);
             if (!compareCSSValuePtr<CSSValue>(value, propertyValue(CSSPropertyBorderInlineEnd, DoNotUpdateLayout)))

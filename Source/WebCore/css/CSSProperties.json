@@ -5368,8 +5368,16 @@
         },
         "-webkit-border-image": {
             "codegen-properties": {
-                "initial": "initialNinePieceImage",
-                "converter": "BorderImage<CSSPropertyWebkitBorderImage>"
+                "longhands": [
+                    "border-image-source",
+                    "border-image-slice",
+                    "border-image-width",
+                    "border-image-outset",
+                    "border-image-repeat"
+                ]
+            },
+            "status": {
+                "comment": "Differs from border-image in that it always includes the 'fill' keyword in 'border-image-slice', and makes length values in 'border-image-width' override the corresponding 'border-*-width'."
             }
         },
         "-webkit-border-radius": {

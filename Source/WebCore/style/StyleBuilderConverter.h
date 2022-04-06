@@ -88,7 +88,6 @@ public:
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumberOrAuto(BuilderState&, const CSSValue&);
     static short convertWebkitHyphenateLimitLines(BuilderState&, const CSSValue&);
-    template<CSSPropertyID> static NinePieceImage convertBorderImage(BuilderState&, CSSValue&);
     template<CSSPropertyID> static NinePieceImage convertBorderMask(BuilderState&, CSSValue&);
     template<CSSPropertyID> static RefPtr<StyleImage> convertStyleImage(BuilderState&, CSSValue&);
     static ImageOrientation convertImageOrientation(BuilderState&, const CSSValue&);
@@ -467,18 +466,10 @@ inline short BuilderConverter::convertWebkitHyphenateLimitLines(BuilderState&, c
 }
 
 template<CSSPropertyID property>
-inline NinePieceImage BuilderConverter::convertBorderImage(BuilderState& builderState, CSSValue& value)
-{
-    NinePieceImage image;
-    builderState.styleMap().mapNinePieceImage(property, &value, image);
-    return image;
-}
-
-template<CSSPropertyID property>
 inline NinePieceImage BuilderConverter::convertBorderMask(BuilderState& builderState, CSSValue& value)
 {
     NinePieceImage image(NinePieceImage::Type::Mask);
-    builderState.styleMap().mapNinePieceImage(property, &value, image);
+    builderState.styleMap().mapNinePieceImage(&value, image);
     return image;
 }
 
@@ -812,7 +803,7 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
     reflection->setOffset(reflectValue.offset().convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
 
     NinePieceImage mask(NinePieceImage::Type::Mask);
-    builderState.styleMap().mapNinePieceImage(CSSPropertyWebkitBoxReflect, reflectValue.mask(), mask);
+    builderState.styleMap().mapNinePieceImage(reflectValue.mask(), mask);
     reflection->setMask(mask);
 
     return reflection;

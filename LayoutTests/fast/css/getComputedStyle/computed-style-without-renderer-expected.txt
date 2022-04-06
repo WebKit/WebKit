@@ -209,7 +209,6 @@ zoom: 1
 -webkit-background-origin: padding-box
 -webkit-background-size: auto
 -webkit-border-horizontal-spacing: 0px
--webkit-border-image: none
 -webkit-border-vertical-spacing: 0px
 -webkit-box-align: stretch
 -webkit-box-decoration-break: slice

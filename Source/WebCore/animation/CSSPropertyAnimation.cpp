@@ -549,7 +549,7 @@ static inline NinePieceImage blendFunc(const NinePieceImage& from, const NinePie
 
     // FIXME (74112): Support transitioning between NinePieceImages that differ by more than image content.
 
-    if (from.imageSlices() != to.imageSlices() || from.borderSlices() != to.borderSlices() || from.outset() != to.outset() || from.fill() != to.fill() || from.horizontalRule() != to.horizontalRule() || from.verticalRule() != to.verticalRule())
+    if (from.imageSlices() != to.imageSlices() || from.borderSlices() != to.borderSlices() || from.outset() != to.outset() || from.fill() != to.fill() || from.overridesBorderWidths() != to.overridesBorderWidths() || from.horizontalRule() != to.horizontalRule() || from.verticalRule() != to.verticalRule())
         return to;
 
     if (auto* renderer = context.client->renderer()) {
@@ -558,7 +558,7 @@ static inline NinePieceImage blendFunc(const NinePieceImage& from, const NinePie
     }
 
     return NinePieceImage(blendFunc(from.image(), to.image(), context),
-        from.imageSlices(), from.fill(), from.borderSlices(), from.outset(), from.horizontalRule(), from.verticalRule());
+        from.imageSlices(), from.fill(), from.borderSlices(), from.overridesBorderWidths(), from.outset(), from.horizontalRule(), from.verticalRule());
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -1090,6 +1090,7 @@ public:
         IsLengthPercentage      = 1 << 0,
         UsesFillKeyword         = 1 << 1,
         AllowsNegativeValues    = 1 << 2,
+        MayOverrideBorderWidths = 1 << 3,
     };
     LengthBoxPropertyWrapper(CSSPropertyID property, const LengthBox& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(LengthBox&&), OptionSet<Flags> flags = { })
         : PropertyWrapperGetter<const LengthBox&>(property, getter)
@@ -1103,9 +1104,19 @@ public:
         if (m_flags.contains(Flags::UsesFillKeyword) && from.borderImage().fill() != to.borderImage().fill())
             return false;
 
+        bool isLengthPercentage = m_flags.contains(Flags::IsLengthPercentage);
+
+        if (m_flags.contains(Flags::MayOverrideBorderWidths)) {
+            bool overridesBorderWidths = from.borderImage().overridesBorderWidths();
+            if (overridesBorderWidths != to.borderImage().overridesBorderWidths())
+                return false;
+            // Even if this property accepts <length-percentage>, border widths can only be a <length>.
+            if (overridesBorderWidths)
+                isLengthPercentage = false;
+        }
+
         auto& fromLengthBox = value(from);
         auto& toLengthBox = value(to);
-        bool isLengthPercentage = m_flags.contains(Flags::IsLengthPercentage);
         return canInterpolateLengths(fromLengthBox.top(), toLengthBox.top(), isLengthPercentage)
             && canInterpolateLengths(fromLengthBox.right(), toLengthBox.right(), isLengthPercentage)
             && canInterpolateLengths(fromLengthBox.bottom(), toLengthBox.bottom(), isLengthPercentage)
@@ -1116,6 +1127,8 @@ public:
     {
         if (m_flags.contains(Flags::UsesFillKeyword))
             destination.setBorderImageSliceFill((!context.progress || !context.isDiscrete ? from : to).borderImage().fill());
+        if (m_flags.contains(Flags::MayOverrideBorderWidths))
+            destination.setBorderImageWidthOverridesBorderWidths((!context.progress || !context.isDiscrete ? from : to).borderImage().overridesBorderWidths());
         if (context.isDiscrete) {
             // It is important we have this non-interpolated shortcut because certain CSS properties
             // represented as a LengthBox, such as border-image-slice, don't know how to deal with
@@ -3080,7 +3093,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new StyleImagePropertyWrapper(CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource),
         new LengthBoxPropertyWrapper(CSSPropertyBorderImageSlice, &RenderStyle::borderImageSlices, &RenderStyle::setBorderImageSlices, { LengthBoxPropertyWrapper::Flags::UsesFillKeyword }),
-        new LengthBoxPropertyWrapper(CSSPropertyBorderImageWidth, &RenderStyle::borderImageWidth, &RenderStyle::setBorderImageWidth, { LengthBoxPropertyWrapper::Flags::IsLengthPercentage }),
+        new LengthBoxPropertyWrapper(CSSPropertyBorderImageWidth, &RenderStyle::borderImageWidth, &RenderStyle::setBorderImageWidth, { LengthBoxPropertyWrapper::Flags::IsLengthPercentage, LengthBoxPropertyWrapper::Flags::MayOverrideBorderWidths }),
         new LengthBoxPropertyWrapper(CSSPropertyBorderImageOutset, &RenderStyle::borderImageOutset, &RenderStyle::setBorderImageOutset),
 
         new StyleImagePropertyWrapper(CSSPropertyWebkitMaskBoxImageSource, &RenderStyle::maskBoxImageSource, &RenderStyle::setMaskBoxImageSource),

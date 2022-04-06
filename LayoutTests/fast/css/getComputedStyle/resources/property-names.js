@@ -17,7 +17,6 @@ var propertiesToTest = {
     "-webkit-background-origin": true,
     "-webkit-background-size": true,
     "-webkit-border-horizontal-spacing": true,
-    "-webkit-border-image": true,
     "-webkit-border-vertical-spacing": true,
     "-webkit-box-align": true,
     "-webkit-box-decoration-break": true,

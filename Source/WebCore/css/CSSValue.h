@@ -89,6 +89,7 @@ public:
 
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
+    bool isBorderImageWidthValue() const { return m_classType == BorderImageWidthClass; }
     bool isCanvasValue() const { return m_classType == CanvasClass; }
     bool isCrossfadeValue() const { return m_classType == CrossfadeClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
@@ -191,6 +192,7 @@ protected:
         // Other class types.
         AspectRatioClass,
         BorderImageSliceClass,
+        BorderImageWidthClass,
         FontFeatureClass,
         FontVariationClass,
         FontClass,

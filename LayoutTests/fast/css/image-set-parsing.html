@@ -107,13 +107,13 @@ testImageSetRule("Multiple values for content",
                 "url('#a') 1x, url('#b') 2x", 4,
                 ["a", "1x", "b", "2x"]);
 
-testImageSetRule("Single value for border-image",
-                "-webkit-border-image",
+testImageSetRule("Single value for border-image-source",
+                "border-image-source",
                 "url('#a') 1x", 2,
                 ["a", "1x"]);
 
-testImageSetRule("Multiple values for border-image",
-                "-webkit-border-image",
+testImageSetRule("Multiple values for border-image-source",
+                "border-image-source",
                 "url('#a') 1x, url('#b') 2x", 4,
                 ["a", "1x", "b", "2x"]);
 

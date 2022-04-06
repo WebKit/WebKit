@@ -20,7 +20,7 @@ shouldBe("e.style.length", "5");
 e.style.borderImage = "";
 shouldBe("e.style.length", "0");
 e.style.webkitBorderImage = "url(dummy://test.png) 0 7 0 13 / 0 7 0 13 stretch stretch";
-shouldBe("e.style.length", "1");
+shouldBe("e.style.length", "5");
 document.body.removeChild(testContainer);
 
 </script>

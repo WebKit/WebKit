@@ -936,6 +936,7 @@ public:
     void setBorderImageSliceFill(bool);
     void setBorderImageSlices(LengthBox&&);
     void setBorderImageWidth(LengthBox&&);
+    void setBorderImageWidthOverridesBorderWidths(bool);
     void setBorderImageOutset(LengthBox&&);
     void setBorderImageHorizontalRule(NinePieceImageRule);
     void setBorderImageVerticalRule(NinePieceImageRule);

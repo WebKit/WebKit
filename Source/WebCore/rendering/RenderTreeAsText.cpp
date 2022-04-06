@@ -330,6 +330,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         LayoutUnit borderRight = box.borderRight();
         LayoutUnit borderBottom = box.borderBottom();
         LayoutUnit borderLeft = box.borderLeft();
+        bool overridden = o.style().borderImage().overridesBorderWidths();
         if (box.isFieldset()) {
             const auto& block = downcast<RenderBlock>(box);
             if (o.style().writingMode() == WritingMode::TopToBottom)
@@ -357,7 +358,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 ts << serializationForRenderTreeAsText(color) << ")";
             }
 
-            if (o.style().borderRight() != prevBorder) {
+            if (o.style().borderRight() != prevBorder || (overridden && borderRight != borderTop)) {
                 prevBorder = o.style().borderRight();
                 if (!borderRight)
                     ts << " none";
@@ -371,7 +372,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 }
             }
 
-            if (o.style().borderBottom() != prevBorder) {
+            if (o.style().borderBottom() != prevBorder || (overridden && borderBottom != borderRight)) {
                 prevBorder = box.style().borderBottom();
                 if (!borderBottom)
                     ts << " none";
@@ -385,7 +386,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 }
             }
 
-            if (o.style().borderLeft() != prevBorder) {
+            if (o.style().borderLeft() != prevBorder || (overridden && borderLeft != borderBottom)) {
                 prevBorder = o.style().borderLeft();
                 if (!borderLeft)
                     ts << " none";
