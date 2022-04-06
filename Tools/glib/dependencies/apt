@@ -64,6 +64,7 @@ PACKAGES=(
 
     # These are dependencies necessary for building with the Flatpak SDK.
     flatpak
+    libglib2.0-bin
 
     # These are dependencies necessary for building the jhbuild.
     git

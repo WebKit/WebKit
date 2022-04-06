@@ -741,14 +741,14 @@ class WebkitFlatpak:
         try:
             output = subprocess.check_output(("gdbus", "call", "-e", "-d", "org.a11y.Bus", "-o", "/org/a11y/bus", "-m", "org.a11y.Bus.GetAddress"))
             a11y_bus_address = re.findall(br"'([^']+)", output)[0]  # Extract string from output from: ('unix:abstract=0000f',)
-            Console.message("Found a11y address {}".format(a11y_bus_address))
-        except (subprocess.CalledProcessError, IndexError) as e:
-            Console.message("Failed to get a11y address {}".format(e))
+            _log.debug("Found a11y address {}".format(a11y_bus_address))
+        except (subprocess.CalledProcessError, IndexError, FileNotFoundError) as e:
+            _log.warning("Failed to get a11y address {}".format(e))
             return []
 
         dbus_proxy_path = shutil.which("xdg-dbus-proxy")
         if not dbus_proxy_path:
-            Console.message("Failed to find xdg-dbus-proxy")
+            _log.warning("Failed to find xdg-dbus-proxy. Can't forward a11y bus.")
             return []
 
         self.socket_dir = tempfile.TemporaryDirectory(prefix="webkit-flatpak-a11y-sockets-")
@@ -759,7 +759,7 @@ class WebkitFlatpak:
 
             atexit.register(lambda: proxy_proc.terminate())
         except (subprocess.CalledProcessError) as e:
-            Console.message("Failed to get run xdg-dbus-proxy {}".format(e))
+            _log.warning("Failed to run xdg-dbus-proxy {}. Can't forward a11y bus.".format(e))
             return []
 
         return [

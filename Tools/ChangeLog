@@ -1,3 +1,17 @@
+2022-04-06  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Avoid termination if gdbus is not installed after 249303@main
+        https://bugs.webkit.org/show_bug.cgi?id=238878
+
+        Reviewed by Philippe Normand.
+
+        Instead of bailing out, just disable a11y bus forwarding. Also hide
+        some debug messages.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.setup_a11y_proxy):
+        * glib/dependencies/apt: Add libglib2.0-bin
+
 2022-04-06  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Provide https credentialing program
