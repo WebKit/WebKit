@@ -924,7 +924,7 @@ webkit.org/b/181839 [ Debug ] inspector/debugger/breakpoint-action-log.html [ Pa
 
 webkit.org/b/230412 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html [ Pass Failure ]
 
-webkit.org/b/179352 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Slow ]
+webkit.org/b/179352 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure Slow ]
 
 webkit.org/b/183164 fast/dom/Window/window-focus-self.html [ Pass Failure ]
 
@@ -1703,3 +1703,5 @@ webkit.org/b/237165 [ BigSur+ Debug ] imported/w3c/web-platform-tests/html/webap
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
+
+webkit.org/b/238880 [ Monterey+ Release ] imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-012.html [ Pass ImageOnlyFailure ]
