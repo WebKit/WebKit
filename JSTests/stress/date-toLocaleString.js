@@ -137,4 +137,8 @@ shouldThrow(() => new Date(0).toLocaleTimeString('en', null), TypeError);
 // If time formats specifed, just use them.
 shouldBe(new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', hour: 'numeric', minute: '2-digit' }), '12:00 AM');
 // Adds hms if no time formats specified.
-shouldBe(new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', year: 'numeric', month: 'long' }), 'January 1970, 12:00:00 AM');
+// See https://bugs.webkit.org/show_bug.cgi?id=238852
+const monthLongTimeString = new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', year: 'numeric', month: 'long' });
+if (monthLongTimeString !== 'January 1970, 12:00:00 AM' &&
+    monthLongTimeString !== 'January 1970 at 12:00:00 AM')
+    throw new Error(`Unexpected time string for {month: 'long'}: ${monthLongTimeString}`);

@@ -1,3 +1,19 @@
+2022-04-06  Alexey Shvayka  <ashvayka@apple.com>
+
+        ICU was recently updated to use type="long" format if there is {month: "long"}
+        https://bugs.webkit.org/show_bug.cgi?id=238852
+        <rdar://90462186>
+
+        Reviewed by Saam Barati.
+
+        Since this update [1] is not yet released, we can't set expectations based on major / minor
+        ICU version, this patch loosens the tests to accept either of the format types.
+
+        [1]: https://github.com/unicode-org/icu/commit/23081486ffec0973b01e66e2cbad93a1a7dec267
+
+        * stress/date-toLocaleString.js:
+        * stress/intl-datetimeformat.js:
+
 2022-04-01  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip flaky test on mips

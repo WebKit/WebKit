@@ -636,14 +636,16 @@ for (let locale of localesSample) {
 }
 
 // Exceed the 32 character default buffer size
-shouldBe(
+const actualMonthLongParts =
     JSON.stringify(
         Intl.DateTimeFormat('en-US', {
             hour: 'numeric', minute: 'numeric', second: 'numeric',
             year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
             timeZoneName: 'long', era: 'long', timeZone: 'America/Los_Angeles'
         }).formatToParts(0)
-    ),
+    );
+
+const getExpectedMonthLongParts = separator => (
     JSON.stringify([
         { type: 'weekday', value: 'Wednesday' },
         { type: 'literal', value: ', ' },
@@ -654,7 +656,7 @@ shouldBe(
         { type: 'year', value: '1969' },
         { type: 'literal', value: ' ' },
         { type: 'era', value: 'Anno Domini' },
-        { type: 'literal', value: ', ' },
+        { type: 'literal', value: separator },
         { type: 'hour', value: '4' },
         { type: 'literal', value: ':' },
         { type: 'minute', value: '00' },
@@ -666,6 +668,10 @@ shouldBe(
         { type: 'timeZoneName', value: 'Pacific Standard Time' }
     ])
 );
+
+// See https://bugs.webkit.org/show_bug.cgi?id=238852
+if (actualMonthLongParts !== getExpectedMonthLongParts(', ') && actualMonthLongParts !== getExpectedMonthLongParts(' at '))
+    throw new Error(`Unexpected format parts for {month: 'long'}: ${actualMonthLongParts}`);
 
 // Tests for relativeYear and yearName
 const parts = JSON.stringify([
