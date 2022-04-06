@@ -104,11 +104,11 @@ public:
         return m_rareData->m_captureGroupNames[i];
     }
 
-    unsigned subpatternForName(String groupName)
+    unsigned subpatternForName(StringView groupName)
     {
         if (!m_rareData)
             return 0;
-        auto it = m_rareData->m_namedGroupToParenIndex.find(groupName);
+        auto it = m_rareData->m_namedGroupToParenIndex.find<StringViewHashTranslator>(groupName);
         if (it == m_rareData->m_namedGroupToParenIndex.end())
             return 0;
         return it->value;

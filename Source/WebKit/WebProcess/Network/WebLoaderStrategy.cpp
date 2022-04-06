@@ -263,7 +263,7 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     if (!webPage)
         return false;
 
-    auto* handler = webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying());
+    auto* handler = webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol());
     if (!handler)
         return false;
 
@@ -633,7 +633,7 @@ std::optional<WebLoaderStrategy::SyncLoadResult> WebLoaderStrategy::tryLoadingSy
     if (!webPage)
         return std::nullopt;
 
-    auto* handler = webPage->urlSchemeHandlerForScheme(request.url().protocol().toStringWithoutCopying());
+    auto* handler = webPage->urlSchemeHandlerForScheme(request.url().protocol());
     if (!handler)
         return std::nullopt;
 

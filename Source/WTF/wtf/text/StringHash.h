@@ -202,6 +202,20 @@ namespace WTF {
         }
     };
 
+    struct StringViewHashTranslator {
+        static unsigned hash(StringView key)
+        {
+            if (key.is8Bit())
+                return StringHasher::computeHashAndMaskTop8Bits(key.characters8(), key.length());
+            return StringHasher::computeHashAndMaskTop8Bits(key.characters16(), key.length());
+        }
+
+        static bool equal(const String& a, StringView b)
+        {
+            return a == b;
+        }
+    };
+
     // FIXME: Find a way to incorporate this functionality into ASCIICaseInsensitiveHash and allow
     // a HashMap whose keys are type String to perform operations when given a key of type StringView.
     struct ASCIICaseInsensitiveStringViewHashTranslator {
@@ -228,3 +242,4 @@ using WTF::ASCIICaseInsensitiveHash;
 using WTF::ASCIICaseInsensitiveStringViewHashTranslator;
 using WTF::AlreadyHashed;
 using WTF::StringHash;
+using WTF::StringViewHashTranslator;

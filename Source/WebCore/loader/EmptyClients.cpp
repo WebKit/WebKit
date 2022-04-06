@@ -952,12 +952,12 @@ bool EmptyFrameLoaderClient::canShowMIMETypeAsHTML(const String&) const
     return false;
 }
 
-bool EmptyFrameLoaderClient::representationExistsForURLScheme(const String&) const
+bool EmptyFrameLoaderClient::representationExistsForURLScheme(StringView) const
 {
     return false;
 }
 
-String EmptyFrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const
+String EmptyFrameLoaderClient::generatedMIMETypeForURLScheme(StringView) const
 {
     return emptyString();
 }

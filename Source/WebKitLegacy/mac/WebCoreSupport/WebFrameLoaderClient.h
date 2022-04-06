@@ -193,8 +193,8 @@ private:
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
     bool canShowMIMEType(const WTF::String& MIMEType) const final;
     bool canShowMIMETypeAsHTML(const WTF::String& MIMEType) const final;
-    bool representationExistsForURLScheme(const WTF::String& URLScheme) const final;
-    WTF::String generatedMIMETypeForURLScheme(const WTF::String& URLScheme) const final;
+    bool representationExistsForURLScheme(WTF::StringView URLScheme) const final;
+    WTF::String generatedMIMETypeForURLScheme(WTF::StringView URLScheme) const final;
 
     void frameLoadCompleted() final;
     void saveViewStateToItem(WebCore::HistoryItem&) final;

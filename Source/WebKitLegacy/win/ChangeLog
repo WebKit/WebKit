@@ -1,3 +1,15 @@
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
+        Reduce number of conversions from StringView to String
+        https://bugs.webkit.org/show_bug.cgi?id=238841
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::representationExistsForURLScheme const):
+        (WebFrameLoaderClient::generatedMIMETypeForURLScheme const):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed WinCairo build fix after r292408.

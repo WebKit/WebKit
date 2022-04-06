@@ -40,32 +40,32 @@ public:
     WEBCORE_EXPORT static void registerURLSchemeAsLocal(const String&); // Thread safe.
     static void removeURLSchemeRegisteredAsLocal(const String&); // Thread safe.
 
-    WEBCORE_EXPORT static bool shouldTreatURLSchemeAsLocal(const String&); // Thread safe.
+    WEBCORE_EXPORT static bool shouldTreatURLSchemeAsLocal(StringView); // Thread safe.
     WEBCORE_EXPORT static bool isBuiltinScheme(const String&);
     
     // Secure schemes do not trigger mixed content warnings. For example,
     // https and data are secure schemes because they cannot be corrupted by
     // active network attackers.
     WEBCORE_EXPORT static void registerURLSchemeAsSecure(const String&); // Thread safe.
-    static bool shouldTreatURLSchemeAsSecure(const String&); // Thread safe.
+    static bool shouldTreatURLSchemeAsSecure(StringView); // Thread safe.
 
     WEBCORE_EXPORT static void registerURLSchemeAsNoAccess(const String&); // Thread safe.
-    static bool shouldTreatURLSchemeAsNoAccess(const String&); // Thread safe.
+    static bool shouldTreatURLSchemeAsNoAccess(StringView); // Thread safe.
 
     // Display-isolated schemes can only be displayed (in the sense of
     // SecurityOrigin::canDisplay) by documents from the same scheme.
     WEBCORE_EXPORT static void registerURLSchemeAsDisplayIsolated(const String&); // Thread safe.
-    static bool shouldTreatURLSchemeAsDisplayIsolated(const String&); // Thread safe.
+    static bool shouldTreatURLSchemeAsDisplayIsolated(StringView); // Thread safe.
 
     WEBCORE_EXPORT static void registerURLSchemeAsEmptyDocument(const String&);
-    WEBCORE_EXPORT static bool shouldLoadURLSchemeAsEmptyDocument(const String&);
+    WEBCORE_EXPORT static bool shouldLoadURLSchemeAsEmptyDocument(StringView);
 
     WEBCORE_EXPORT static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String&);
     static bool isDomainRelaxationForbiddenForURLScheme(const String&);
 
     // Such schemes should delegate to SecurityOrigin::canRequest for any URL
     // passed to SecurityOrigin::canDisplay.
-    static bool canDisplayOnlyIfCanRequest(const String& scheme); // Thread safe.
+    static bool canDisplayOnlyIfCanRequest(StringView scheme); // Thread safe.
     WEBCORE_EXPORT static void registerAsCanDisplayOnlyIfCanRequest(const String& scheme); // Thread safe.
 
     // Schemes against which javascript: URLs should not be allowed to run (stop
@@ -80,7 +80,7 @@ public:
 
     // Allow non-HTTP schemes to be registered to allow CORS requests.
     WEBCORE_EXPORT static void registerURLSchemeAsCORSEnabled(const String& scheme);
-    WEBCORE_EXPORT static bool shouldTreatURLSchemeAsCORSEnabled(const String& scheme);
+    WEBCORE_EXPORT static bool shouldTreatURLSchemeAsCORSEnabled(StringView scheme);
     WEBCORE_EXPORT static Vector<String> allURLSchemesRegisteredAsCORSEnabled();
 
     WEBCORE_EXPORT static void registerURLSchemeAsHandledBySchemeHandler(const String&);
@@ -90,17 +90,17 @@ public:
     // Content Security Policy.
     WEBCORE_EXPORT static void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme); // Thread safe.
     WEBCORE_EXPORT static void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme); // Thread safe.
-    static bool schemeShouldBypassContentSecurityPolicy(const String& scheme); // Thread safe.
+    static bool schemeShouldBypassContentSecurityPolicy(StringView scheme); // Thread safe.
 
     // Schemes whose responses should always be revalidated.
     WEBCORE_EXPORT static void registerURLSchemeAsAlwaysRevalidated(const String&);
-    static bool shouldAlwaysRevalidateURLScheme(const String&);
+    static bool shouldAlwaysRevalidateURLScheme(StringView);
 
     // Schemes whose requests should be partitioned in the cache
     WEBCORE_EXPORT static void registerURLSchemeAsCachePartitioned(const String& scheme); // Thread safe.
     static bool shouldPartitionCacheForURLScheme(const String& scheme); // Thread safe.
 
-    static bool isUserExtensionScheme(const String& scheme);
+    static bool isUserExtensionScheme(StringView scheme);
 };
 
 } // namespace WebCore

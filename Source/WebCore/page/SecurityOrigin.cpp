@@ -107,7 +107,7 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     if (schemeRequiresHost(innerURL) && innerURL.host().isEmpty())
         return true;
 
-    if (LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess(innerURL.protocol().toStringWithoutCopying()))
+    if (LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess(innerURL.protocol()))
         return true;
 
     // https://url.spec.whatwg.org/#origin with some additions
@@ -153,7 +153,7 @@ static bool isLoopbackIPAddress(StringView host)
 }
 
 // https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy (Editor's Draft, 17 November 2016)
-static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, StringView host)
+static bool shouldTreatAsPotentiallyTrustworthy(StringView protocol, StringView host)
 {
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(protocol))
         return true;
@@ -172,7 +172,7 @@ static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, StringVi
 
 bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
 {
-    return shouldTreatAsPotentiallyTrustworthy(url.protocol().toStringWithoutCopying(), url.host());
+    return shouldTreatAsPotentiallyTrustworthy(url.protocol(), url.host());
 }
 
 SecurityOrigin::SecurityOrigin(const URL& url)
@@ -259,12 +259,12 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 bool SecurityOrigin::isSecure(const URL& url)
 {
     // Invalid URLs are secure, as are URLs which have a secure protocol.
-    if (!url.isValid() || LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(url.protocol().toStringWithoutCopying()))
+    if (!url.isValid() || LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(url.protocol()))
         return true;
 
     // URLs that wrap inner URLs are secure if those inner URLs are secure.
     if (shouldUseInnerURL(url))
-        return LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(extractInnerURL(url).protocol().toStringWithoutCopying()) || BlobURL::isSecureBlobURL(url);
+        return LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(extractInnerURL(url).protocol()) || BlobURL::isSecureBlobURL(url);
 
     return false;
 }
@@ -398,7 +398,7 @@ bool SecurityOrigin::canDisplay(const URL& url) const
     if (isFeedWithNestedProtocolInHTTPFamily(url))
         return true;
 
-    String protocol = url.protocol().toString();
+    auto protocol = url.protocol();
 
     if (LegacySchemeRegistry::canDisplayOnlyIfCanRequest(protocol))
         return canRequest(url);

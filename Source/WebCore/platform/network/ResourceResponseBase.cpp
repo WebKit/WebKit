@@ -463,7 +463,7 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
             return;
 
         m_httpHeaderFields.commonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) {
-            return !isSafeCrossOriginResponseHeader(header.key) && !corsSafeHeaderSet.contains(httpHeaderNameString(header.key).toStringWithoutCopying());
+            return !isSafeCrossOriginResponseHeader(header.key) && !corsSafeHeaderSet.contains<ASCIICaseInsensitiveStringViewHashTranslator>(httpHeaderNameString(header.key));
         });
         m_httpHeaderFields.uncommonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) { return !corsSafeHeaderSet.contains(header.key); });
         break;
@@ -503,7 +503,7 @@ bool ResourceResponseBase::isHTTP09() const
     return m_httpVersion.startsWith("HTTP/0.9");
 }
 
-String ResourceResponseBase::httpHeaderField(const String& name) const
+String ResourceResponseBase::httpHeaderField(StringView name) const
 {
     lazyInit(CommonFieldsOnly);
 

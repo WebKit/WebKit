@@ -98,7 +98,7 @@ public:
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
     WEBCORE_EXPORT void setHTTPHeaderFields(HTTPHeaderMap);
 
-    WEBCORE_EXPORT String httpHeaderField(const String& name) const;
+    WEBCORE_EXPORT String httpHeaderField(StringView name) const;
     WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
     WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);

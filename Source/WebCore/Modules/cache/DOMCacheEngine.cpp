@@ -102,8 +102,7 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
             isVarying = true;
             return;
         }
-        auto name = nameView.toStringWithoutCopying();
-        isVarying = cachedRequest.httpHeaderField(name) != request.httpHeaderField(name);
+        isVarying = cachedRequest.httpHeaderField(nameView) != request.httpHeaderField(nameView);
     });
 
     return !isVarying;

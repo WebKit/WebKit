@@ -1168,12 +1168,12 @@ static RetainPtr<NSDictionary> proxyDictionary(const URL& httpProxy, const URL& 
 
     auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
     if (httpProxy.isValid()) {
-        [dictionary setObject:httpProxy.host().toString() forKey:(NSString *)kCFStreamPropertyHTTPProxyHost];
+        [dictionary setObject:httpProxy.host().createNSString().get() forKey:(NSString *)kCFStreamPropertyHTTPProxyHost];
         if (auto port = httpProxy.port())
             [dictionary setObject:@(*port) forKey:(NSString *)kCFStreamPropertyHTTPProxyPort];
     }
     if (httpsProxy.isValid()) {
-        [dictionary setObject:httpsProxy.host().toString() forKey:(NSString *)kCFStreamPropertyHTTPSProxyHost];
+        [dictionary setObject:httpsProxy.host().createNSString().get() forKey:(NSString *)kCFStreamPropertyHTTPSProxyHost];
         if (auto port = httpsProxy.port())
             [dictionary setObject:@(*port) forKey:(NSString *)kCFStreamPropertyHTTPSProxyPort];
     }

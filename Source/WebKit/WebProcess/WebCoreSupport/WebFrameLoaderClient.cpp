@@ -1385,13 +1385,13 @@ bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& /*MIMEType*/) con
     return true;
 }
 
-bool WebFrameLoaderClient::representationExistsForURLScheme(const String& /*URLScheme*/) const
+bool WebFrameLoaderClient::representationExistsForURLScheme(StringView /*URLScheme*/) const
 {
     notImplemented();
     return false;
 }
 
-String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& /*URLScheme*/) const
+String WebFrameLoaderClient::generatedMIMETypeForURLScheme(StringView /*URLScheme*/) const
 {
     notImplemented();
     return String();

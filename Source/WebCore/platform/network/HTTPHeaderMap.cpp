@@ -58,7 +58,7 @@ HTTPHeaderMap HTTPHeaderMap::isolatedCopy() &&
     return map;
 }
 
-String HTTPHeaderMap::get(const String& name) const
+String HTTPHeaderMap::get(StringView name) const
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -67,7 +67,7 @@ String HTTPHeaderMap::get(const String& name) const
     return getUncommonHeader(name);
 }
 
-String HTTPHeaderMap::getUncommonHeader(const String& name) const
+String HTTPHeaderMap::getUncommonHeader(StringView name) const
 {
     auto index = m_uncommonHeaders.findIf([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);

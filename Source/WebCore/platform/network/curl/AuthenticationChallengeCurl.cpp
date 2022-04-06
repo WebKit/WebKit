@@ -111,12 +111,12 @@ ProtectionSpace::AuthenticationScheme AuthenticationChallenge::authenticationSch
 
 String AuthenticationChallenge::parseRealm(const ResourceResponse& response)
 {
-    static NeverDestroyed<String> wwwAuthenticate(MAKE_STATIC_STRING_IMPL("www-authenticate"));
-    static NeverDestroyed<String> proxyAuthenticate(MAKE_STATIC_STRING_IMPL("proxy-authenticate"));
+    static constexpr auto wwwAuthenticate = "www-authenticate"_s;
+    static constexpr auto proxyAuthenticate = "proxy-authenticate"_s;
     static NeverDestroyed<String> realmString(MAKE_STATIC_STRING_IMPL("realm="));
 
     String realm;
-    auto authHeader = response.httpHeaderField(response.isUnauthorized() ? wwwAuthenticate : proxyAuthenticate);
+    auto authHeader = response.httpHeaderField(StringView { response.isUnauthorized() ? wwwAuthenticate : proxyAuthenticate });
     auto realmPos = authHeader.findIgnoringASCIICase(realmString.get());
     if (realmPos != notFound) {
         realm = authHeader.substring(realmPos + realmString.get().length());

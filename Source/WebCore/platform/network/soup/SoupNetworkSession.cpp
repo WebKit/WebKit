@@ -340,7 +340,7 @@ std::optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& reque
     if (m_ignoreTLSErrors || !tlsErrors)
         return std::nullopt;
 
-    auto it = allowedCertificates().find(requestURL.host().toStringWithoutCopying());
+    auto it = allowedCertificates().find<ASCIICaseInsensitiveStringViewHashTranslator>(requestURL.host());
     if (it != allowedCertificates().end() && it->value.contains(certificate))
         return std::nullopt;
 

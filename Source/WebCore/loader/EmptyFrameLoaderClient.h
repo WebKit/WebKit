@@ -140,8 +140,8 @@ private:
     bool canHandleRequest(const ResourceRequest&) const final;
     bool canShowMIMEType(const String&) const final;
     bool canShowMIMETypeAsHTML(const String&) const final;
-    bool representationExistsForURLScheme(const String&) const final;
-    String generatedMIMETypeForURLScheme(const String&) const final;
+    bool representationExistsForURLScheme(StringView) const final;
+    String generatedMIMETypeForURLScheme(StringView) const final;
 
     void frameLoadCompleted() final;
     void restoreViewState() final;

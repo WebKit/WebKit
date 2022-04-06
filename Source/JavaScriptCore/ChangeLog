@@ -1,3 +1,14 @@
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
+        Reduce number of conversions from StringView to String
+        https://bugs.webkit.org/show_bug.cgi?id=238841
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/RegExp.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+
 2022-04-06  Justin Michaud  <justin_michaud@apple.com>
 
         CSE should be more careful with values that have WritesPinned, ExitsSideways, or are of different sizes

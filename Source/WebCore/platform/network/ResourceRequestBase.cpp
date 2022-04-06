@@ -308,10 +308,10 @@ const HTTPHeaderMap& ResourceRequestBase::httpHeaderFields() const
     return m_httpHeaderFields; 
 }
 
-String ResourceRequestBase::httpHeaderField(const String& name) const
+String ResourceRequestBase::httpHeaderField(StringView name) const
 {
-    updateResourceRequest(); 
-    
+    updateResourceRequest();
+
     return m_httpHeaderFields.get(name);
 }
 

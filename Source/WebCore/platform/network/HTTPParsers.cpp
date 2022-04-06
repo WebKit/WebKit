@@ -939,7 +939,7 @@ bool isCrossOriginSafeHeader(HTTPHeaderName name, const HTTPHeaderSet& accessCon
     default:
         break;
     }
-    return accessControlExposeHeaderSet.contains(httpHeaderNameString(name).toStringWithoutCopying());
+    return accessControlExposeHeaderSet.contains<ASCIICaseInsensitiveStringViewHashTranslator>(httpHeaderNameString(name));
 }
 
 bool isCrossOriginSafeHeader(const String& name, const HTTPHeaderSet& accessControlExposeHeaderSet)

@@ -427,10 +427,10 @@ static String viewportErrorMessage(ViewportErrorCode errorCode, StringView repla
 {
     String message = viewportErrorMessageTemplate(errorCode);
     if (!replacement1.isNull())
-        message.replace("%replacement1", replacement1.toStringWithoutCopying());
+        message.replace("%replacement1", replacement1);
     // FIXME: This will do the wrong thing if replacement1 contains the substring "%replacement2".
     if (!replacement2.isNull())
-        message.replace("%replacement2", replacement2.toStringWithoutCopying());
+        message.replace("%replacement2", replacement2);
 
     if ((errorCode == UnrecognizedViewportArgumentValueError || errorCode == TruncatedViewportArgumentValueError) && replacement1.contains(';'))
         message.append(" Note that ';' is not a separator in viewport values. The list should be comma-separated."_s);

@@ -215,7 +215,7 @@ static NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, Str
                 continue;
 
             unsigned nameLength = closingBracket - i - 2;
-            unsigned backrefIndex = reg->subpatternForName(replacement.substring(i + 2, nameLength).toString());
+            unsigned backrefIndex = reg->subpatternForName(replacement.substring(i + 2, nameLength));
 
             if (!backrefIndex || backrefIndex > reg->numSubpatterns()) {
                 backrefStart = 0;

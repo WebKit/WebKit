@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-bool isPublicSuffix(const String& domain)
+bool isPublicSuffix(StringView domain)
 {
     if (domain.isEmpty())
         return false;

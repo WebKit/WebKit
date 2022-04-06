@@ -154,8 +154,8 @@ public:
     bool canHandleRequest(const WebCore::ResourceRequest&) const override;
     bool canShowMIMEType(const WTF::String& MIMEType) const override;
     bool canShowMIMETypeAsHTML(const WTF::String& MIMEType) const override;
-    bool representationExistsForURLScheme(const WTF::String& URLScheme) const override;
-    WTF::String generatedMIMETypeForURLScheme(const WTF::String& URLScheme) const override;
+    bool representationExistsForURLScheme(WTF::StringView URLScheme) const override;
+    WTF::String generatedMIMETypeForURLScheme(WTF::StringView URLScheme) const override;
 
     void frameLoadCompleted() override;
     void saveViewStateToItem(WebCore::HistoryItem&) override;

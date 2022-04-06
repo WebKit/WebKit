@@ -171,7 +171,7 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
 
 String validateCrossOriginRedirectionURL(const URL& redirectURL)
 {
-    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol().toStringWithoutCopying()))
+    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol()))
         return makeString("not allowed to follow a cross-origin CORS redirection with non CORS scheme");
 
     if (redirectURL.hasCredentials())

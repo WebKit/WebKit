@@ -1289,7 +1289,7 @@ public:
 
     void didFinishLoadingImageForElement(WebCore::HTMLImageElement&);
 
-    WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(const String&);
+    WebURLSchemeHandlerProxy* urlSchemeHandlerForScheme(StringView);
     void stopAllURLSchemeTasks();
 
     std::optional<double> cpuLimit() const { return m_cpuLimit; }

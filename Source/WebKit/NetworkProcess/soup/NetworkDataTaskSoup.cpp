@@ -1571,7 +1571,7 @@ bool NetworkDataTaskSoup::shouldAllowHSTSPolicySetting() const
 #if ENABLE(PUBLIC_SUFFIX_LIST)
     return isTopLevelNavigation()
         || m_currentRequest.url().host() == m_currentRequest.firstPartyForCookies().host()
-        || isPublicSuffix(m_currentRequest.url().host().toStringWithoutCopying());
+        || isPublicSuffix(m_currentRequest.url().host());
 #else
     return isTopLevelNavigation()
         || m_currentRequest.url().host() == m_currentRequest.firstPartyForCookies().host();

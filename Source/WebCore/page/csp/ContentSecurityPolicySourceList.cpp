@@ -179,7 +179,7 @@ bool ContentSecurityPolicySourceList::matches(const String& nonce) const
     return m_nonces.contains(nonce);
 }
 
-static bool schemeIsInHttpFamily(const String& scheme)
+static bool schemeIsInHttpFamily(StringView scheme)
 {
     return equalIgnoringASCIICase(scheme, "https") || equalIgnoringASCIICase(scheme, "http");
 }
@@ -206,7 +206,7 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
 {
     bool hostIsPublicSuffix = false;
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    hostIsPublicSuffix = isPublicSuffix(parsedSource.host.value.toStringWithoutCopying());
+    hostIsPublicSuffix = isPublicSuffix(parsedSource.host.value);
 #endif
 
     switch (m_contentSecurityPolicyModeForExtension) {
@@ -222,14 +222,14 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
         if (equalIgnoringASCIICase(parsedSource.scheme, "blob"))
             return true;
 
-        if (!equalIgnoringASCIICase(parsedSource.scheme.toString(), "https") || parsedSource.host.value.isEmpty())
+        if (!equalIgnoringASCIICase(parsedSource.scheme, "https") || parsedSource.host.value.isEmpty())
             return false;
         break;
     case ContentSecurityPolicyModeForExtension::ManifestV3:
         if (!isRestrictedDirectiveForMode(m_directiveName, ContentSecurityPolicyModeForExtension::ManifestV3))
             return true;
 
-        if (!schemeIsInHttpFamily(parsedSource.scheme.toStringWithoutCopying()) || !SecurityOrigin::isLocalHostOrLoopbackIPAddress(parsedSource.host.value))
+        if (!schemeIsInHttpFamily(parsedSource.scheme) || !SecurityOrigin::isLocalHostOrLoopbackIPAddress(parsedSource.host.value))
             return false;
     }
     return true;

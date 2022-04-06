@@ -1,3 +1,98 @@
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
+        Reduce number of conversions from StringView to String
+        https://bugs.webkit.org/show_bug.cgi?id=238841
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::queryCacheMatch):
+        * dom/ViewportArguments.cpp:
+        (WebCore::viewportErrorMessage):
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::sourceMapURLForScript):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::validateCrossOriginRedirectionURL):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::disallowWebArchive const):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::checkURLSchemeAsCORSEnabled):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::representationExistsForURLScheme const):
+        (WebCore::EmptyFrameLoaderClient::generatedMIMETypeForURLScheme const):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoaderClient.h:
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::create):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::freshnessLifetime const):
+        * loader/soup/ResourceLoaderSoup.cpp:
+        (WebCore::ResourceLoader::loadGResource):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        (WebCore::Page::allowsLoadFromURL const):
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsUniqueOrigin):
+        (WebCore::shouldTreatAsPotentiallyTrustworthy):
+        (WebCore::SecurityOrigin::isSecure):
+        (WebCore::SecurityOrigin::canDisplay const):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource const):
+        (WebCore::ContentSecurityPolicy::allowChildFrameFromSource const):
+        (WebCore::ContentSecurityPolicy::allowResourceFromSource const):
+        (WebCore::ContentSecurityPolicy::allowWorkerFromSource const):
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource const):
+        (WebCore::ContentSecurityPolicy::allowStyleFromSource const):
+        (WebCore::ContentSecurityPolicy::allowConnectToSource const):
+        (WebCore::ContentSecurityPolicy::allowBaseURI const):
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::schemeIsInHttpFamily):
+        (WebCore::ContentSecurityPolicySourceList::isValidSourceForExtensionMode):
+        * platform/LegacySchemeRegistry.cpp:
+        (WebCore::LegacySchemeRegistry::schemeIsHandledBySchemeHandler):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsLocal):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsSecure):
+        (WebCore::LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument):
+        (WebCore::LegacySchemeRegistry::canDisplayOnlyIfCanRequest):
+        (WebCore::LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled):
+        (WebCore::LegacySchemeRegistry::schemeShouldBypassContentSecurityPolicy):
+        (WebCore::LegacySchemeRegistry::shouldAlwaysRevalidateURLScheme):
+        (WebCore::LegacySchemeRegistry::isUserExtensionScheme):
+        * platform/LegacySchemeRegistry.h:
+        * platform/PublicSuffix.h:
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::isPublicSuffix):
+        (WebCore::topPrivatelyControlledDomain):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::getBlobDataFromURL const):
+        * platform/network/CacheValidation.cpp:
+        (WebCore::headerValueForVary):
+        (WebCore::collectVaryingRequestHeadersInternal):
+        (WebCore::collectVaryingRequestHeaders):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::get const):
+        (WebCore::HTTPHeaderMap::getUncommonHeader const):
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isCrossOriginSafeHeader):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::httpHeaderField const):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting):
+        (WebCore::ResourceResponseBase::httpHeaderField const):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/curl/PublicSuffixCurl.cpp:
+        (WebCore::isPublicSuffix):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::checkTLSErrors):
+        * platform/soup/PublicSuffixSoup.cpp:
+        (WebCore::isPublicSuffix):
+
 2022-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         Further clean-ups for features.json

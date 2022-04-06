@@ -46,14 +46,14 @@ bool WebCookieCache::isSupported()
 
 String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, IncludeSecureCookies includeSecureCookies)
 {
-    String host = url.host().toString();
-    if (!m_hostsWithInMemoryStorage.contains(host)) {
+    if (!m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host())) {
+        auto host = url.host().toString();
         Vector<Cookie> cookies;
         bool subscribeToCookieChangeNotifications = true;
-        if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url.host().toString(), subscribeToCookieChangeNotifications), Messages::NetworkConnectionToWebProcess::DomCookiesForHost::Reply(cookies), 0))
+        if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(host, subscribeToCookieChangeNotifications), Messages::NetworkConnectionToWebProcess::DomCookiesForHost::Reply(cookies), 0))
             return { };
         pruneCacheIfNecessary();
-        m_hostsWithInMemoryStorage.add(host);
+        m_hostsWithInMemoryStorage.add(WTFMove(host));
         for (auto& cookie : cookies)
             inMemoryStorageSession().setCookie(cookie);
     }
@@ -62,8 +62,7 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
 
 void WebCookieCache::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)
 {
-    String host = url.host().toString();
-    if (m_hostsWithInMemoryStorage.contains(host))
+    if (m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host()))
         inMemoryStorageSession().setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, ShouldAskITP::No, cookieString, shouldRelaxThirdPartyCookieBlocking);
 }
 

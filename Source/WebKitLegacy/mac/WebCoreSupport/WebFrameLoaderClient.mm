@@ -1186,14 +1186,14 @@ bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& MIMEType) const
     return [WebView canShowMIMETypeAsHTML:MIMEType];
 }
 
-bool WebFrameLoaderClient::representationExistsForURLScheme(const String& URLScheme) const
+bool WebFrameLoaderClient::representationExistsForURLScheme(StringView URLScheme) const
 {
-    return [WebView _representationExistsForURLScheme:URLScheme];
+    return [WebView _representationExistsForURLScheme:URLScheme.createNSString().get()];
 }
 
-String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& URLScheme) const
+String WebFrameLoaderClient::generatedMIMETypeForURLScheme(StringView URLScheme) const
 {
-    return [WebView _generatedMIMETypeForURLScheme:URLScheme];
+    return [WebView _generatedMIMETypeForURLScheme:URLScheme.createNSString().get()];
 }
 
 void WebFrameLoaderClient::frameLoadCompleted()

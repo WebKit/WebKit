@@ -230,7 +230,7 @@ BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
 {
     ASSERT(isMainThread());
     if (url.hasFragmentIdentifier())
-        return m_blobs.get(url.viewWithoutFragmentIdentifier().toStringWithoutCopying());
+        return m_blobs.get<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier());
     return m_blobs.get(url.string());
 }
 

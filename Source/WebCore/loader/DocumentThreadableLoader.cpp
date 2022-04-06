@@ -156,7 +156,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     if (shouldSetHTTPHeadersToKeep())
         m_options.httpHeadersToKeep = httpHeadersToKeepFromCleaning(request.httpHeaderFields());
 
-    bool shouldDisableCORS = document.isRunningUserScripts() && LegacySchemeRegistry::isUserExtensionScheme(request.url().protocol().toStringWithoutCopying());
+    bool shouldDisableCORS = document.isRunningUserScripts() && LegacySchemeRegistry::isUserExtensionScheme(request.url().protocol());
     if (auto* page = document.page())
         shouldDisableCORS |= page->shouldDisableCorsForRequestTo(request.url());
 
@@ -189,7 +189,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
 bool DocumentThreadableLoader::checkURLSchemeAsCORSEnabled(const URL& url)
 {
     // Cross-origin requests are only allowed for HTTP and registered schemes. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
-    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(url.protocol().toStringWithoutCopying())) {
+    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(url.protocol())) {
         logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, url, "Cross origin requests are only supported for HTTP."_s, ResourceError::Type::AccessControl));
         return false;
     }

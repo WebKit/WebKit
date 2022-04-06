@@ -5871,7 +5871,7 @@ void WebPage::runModal()
 
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
 {
-    if (LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(request.url().protocol().toStringWithoutCopying()))
+    if (LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(request.url().protocol()))
         return true;
 
     if (request.url().protocolIsBlob())
@@ -7220,9 +7220,9 @@ void WebPage::setUseIconLoadingClient(bool useIconLoadingClient)
     static_cast<WebFrameLoaderClient&>(corePage()->mainFrame().loader().client()).setUseIconLoadingClient(useIconLoadingClient);
 }
 
-WebURLSchemeHandlerProxy* WebPage::urlSchemeHandlerForScheme(const String& scheme)
+WebURLSchemeHandlerProxy* WebPage::urlSchemeHandlerForScheme(StringView scheme)
 {
-    return m_schemeToURLSchemeHandlerProxyMap.get(scheme);
+    return m_schemeToURLSchemeHandlerProxyMap.get<StringViewHashTranslator>(scheme);
 }
 
 void WebPage::stopAllURLSchemeTasks()

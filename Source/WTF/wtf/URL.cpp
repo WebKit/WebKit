@@ -317,7 +317,7 @@ std::optional<uint16_t> defaultPortForProtocol(StringView protocol)
     {
         Locker locker { defaultPortForProtocolMapForTestingLock };
         if (auto* overrideMap = defaultPortForProtocolMapForTesting()) {
-            auto iterator = overrideMap->find(protocol.toStringWithoutCopying());
+            auto iterator = overrideMap->find<StringViewHashTranslator>(protocol);
             if (iterator != overrideMap->end())
                 return iterator->value;
         }

@@ -186,8 +186,8 @@ private:
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
     bool canShowMIMEType(const String& MIMEType) const final;
     bool canShowMIMETypeAsHTML(const String& MIMEType) const final;
-    bool representationExistsForURLScheme(const String& URLScheme) const final;
-    String generatedMIMETypeForURLScheme(const String& URLScheme) const final;
+    bool representationExistsForURLScheme(StringView URLScheme) const final;
+    String generatedMIMETypeForURLScheme(StringView URLScheme) const final;
     
     void frameLoadCompleted() final;
     void saveViewStateToItem(WebCore::HistoryItem&) final;

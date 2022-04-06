@@ -1,3 +1,35 @@
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
+        Reduce number of conversions from StringView to String
+        https://bugs.webkit.org/show_bug.cgi?id=238841
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkSchemeRegistry.cpp:
+        (WebKit::NetworkSchemeRegistry::shouldTreatURLSchemeAsCORSEnabled):
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::updateVaryInformation):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::proxyDictionary):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::shouldAllowHSTSPolicySetting const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::tryLoadingUsingURLSchemeHandler):
+        (WebKit::WebLoaderStrategy::tryLoadingSynchronouslyUsingURLSchemeHandler):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::representationExistsForURLScheme const):
+        (WebKit::WebFrameLoaderClient::generatedMIMETypeForURLScheme const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebCookieCache.cpp:
+        (WebKit::WebCookieCache::cookiesForDOM):
+        (WebKit::WebCookieCache::setCookiesFromDOM):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canHandleRequest):
+        (WebKit::WebPage::urlSchemeHandlerForScheme):
+        * WebProcess/WebPage/WebPage.h:
+
 2022-04-06  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ServiceWorkerDownloadTask starts listening for IPC in constructor

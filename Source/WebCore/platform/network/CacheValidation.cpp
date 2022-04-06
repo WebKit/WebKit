@@ -350,7 +350,7 @@ static String cookieRequestHeaderFieldValue(const CookieJar* cookieJar, const Re
     return cookieJar->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
 }
 
-static String headerValueForVary(const ResourceRequest& request, const String& headerName, Function<String()>&& cookieRequestHeaderFieldValueFunction)
+static String headerValueForVary(const ResourceRequest& request, StringView headerName, Function<String()>&& cookieRequestHeaderFieldValueFunction)
 {
     // Explicit handling for cookies is needed because they are added magically by the networking layer.
     // FIXME: The value might have changed between making the request and retrieving the cookie here.
@@ -361,7 +361,7 @@ static String headerValueForVary(const ResourceRequest& request, const String& h
     return request.httpHeaderField(headerName);
 }
 
-static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(const ResourceResponse& response, Function<String(const String& headerName)>&& headerValueForVaryFunction)
+static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(const ResourceResponse& response, Function<String(StringView headerName)>&& headerValueForVaryFunction)
 {
     auto varyValue = response.httpHeaderField(HTTPHeaderName::Vary);
     if (varyValue.isEmpty())
@@ -369,8 +369,8 @@ static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(co
 
     Vector<std::pair<String, String>> headers;
     for (auto varyHeaderName : StringView(varyValue).split(',')) {
-        auto headerName = varyHeaderName.stripWhiteSpace().toString();
-        headers.append(std::pair { headerName, headerValueForVaryFunction(headerName) });
+        auto headerName = varyHeaderName.stripWhiteSpace();
+        headers.append(std::pair { headerName.toString(), headerValueForVaryFunction(headerName) });
     }
     return headers;
 }
@@ -379,7 +379,7 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSes
 {
     if (!storageSession)
         return { };
-    return collectVaryingRequestHeadersInternal(response, [&] (const String& headerName) {
+    return collectVaryingRequestHeadersInternal(response, [&] (StringView headerName) {
         return headerValueForVary(request, headerName, [&] {
             return cookieRequestHeaderFieldValue(*storageSession, request);
         });
@@ -388,7 +388,7 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSes
 
 Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar* cookieJar, const ResourceRequest& request, const ResourceResponse& response)
 {
-    return collectVaryingRequestHeadersInternal(response, [&] (const String& headerName) {
+    return collectVaryingRequestHeadersInternal(response, [&] (StringView headerName) {
         return headerValueForVary(request, headerName, [&] {
             return cookieRequestHeaderFieldValue(cookieJar, request);
         });

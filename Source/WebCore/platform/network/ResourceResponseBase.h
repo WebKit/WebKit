@@ -119,7 +119,7 @@ public:
     enum class SanitizationType { Redirection, RemoveCookies, CrossOriginSafe };
     WEBCORE_EXPORT void sanitizeHTTPHeaderFields(SanitizationType);
 
-    String httpHeaderField(const String& name) const;
+    String httpHeaderField(StringView name) const;
     WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
     WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);

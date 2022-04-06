@@ -94,17 +94,17 @@ void PageDebuggerAgent::internalDisable(bool isBeingDestroyed)
 
 String PageDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& script)
 {
-    static NeverDestroyed<String> sourceMapHTTPHeader(MAKE_STATIC_STRING_IMPL("SourceMap"));
-    static NeverDestroyed<String> sourceMapHTTPHeaderDeprecated(MAKE_STATIC_STRING_IMPL("X-SourceMap"));
+    static constexpr auto sourceMapHTTPHeader = "SourceMap"_s;
+    static constexpr auto sourceMapHTTPHeaderDeprecated = "X-SourceMap"_s;
 
     if (!script.url.isEmpty()) {
         CachedResource* resource = InspectorPageAgent::cachedResource(&m_inspectedPage.mainFrame(), URL({ }, script.url));
         if (resource) {
-            String sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeader);
+            String sourceMapHeader = resource->response().httpHeaderField(StringView { sourceMapHTTPHeader });
             if (!sourceMapHeader.isEmpty())
                 return sourceMapHeader;
 
-            sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeaderDeprecated);
+            sourceMapHeader = resource->response().httpHeaderField(StringView { sourceMapHTTPHeaderDeprecated });
             if (!sourceMapHeader.isEmpty())
                 return sourceMapHeader;
         }

@@ -436,7 +436,7 @@ Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) cons
             // Don't cache non-HTTP main resources since we can't check for freshness.
             // FIXME: We should not cache subresources either, but when we tried this
             // it caused performance and flakiness issues in our test infrastructure.
-            if (m_type == Type::MainResource || LegacySchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol.toStringWithoutCopying()))
+            if (m_type == Type::MainResource || LegacySchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol))
                 return 0_us;
         }
 

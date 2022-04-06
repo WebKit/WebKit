@@ -109,7 +109,7 @@ Ref<MHTMLArchive> MHTMLArchive::create()
 RefPtr<MHTMLArchive> MHTMLArchive::create(const URL& url, FragmentedSharedBuffer& data)
 {
     // For security reasons we only load MHTML pages from local URLs.
-    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toString()))
+    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol()))
         return nullptr;
 
     MHTMLParser parser(&data);

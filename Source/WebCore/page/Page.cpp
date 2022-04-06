@@ -2009,7 +2009,7 @@ void Page::userStyleSheetLocationChanged()
     URL url = m_settings->userStyleSheetLocation();
     
     // Allow any local file URL scheme to be loaded.
-    if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol().toStringWithoutCopying()))
+    if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol()))
         m_userStyleSheetPath = url.fileSystemPath();
     else
         m_userStyleSheetPath = String();
@@ -3534,7 +3534,7 @@ bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMain
         return true;
     if (!url.protocolIsInHTTPFamily() && !url.protocolIs("ws") && !url.protocolIs("wss"))
         return true;
-    return m_allowedNetworkHosts->contains(url.host().toStringWithoutCopying());
+    return m_allowedNetworkHosts->contains<StringViewHashTranslator>(url.host());
 }
 
 void Page::applicationWillResignActive()
