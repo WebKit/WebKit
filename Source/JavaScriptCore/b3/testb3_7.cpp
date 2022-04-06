@@ -596,6 +596,7 @@ void testLICMPureSideExits()
         [&] (BasicBlock* loop, Value*) -> Value* {
             Effects effects = Effects::none();
             effects.exitsSideways = true;
+            effects.reads = HeapRange::top();
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
                 loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(noOpFunction)));
@@ -789,6 +790,7 @@ void testLICMExitsSideways()
         [&] (BasicBlock* loop, Value*) -> Value* {
             Effects effects = Effects::none();
             effects.exitsSideways = true;
+            effects.reads = HeapRange::top();
             return loop->appendNew<CCallValue>(
                 proc, Int32, Origin(), effects,
                 loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(oneFunction)),
@@ -927,6 +929,7 @@ void testLICMControlDependentSideExits()
         [&] (BasicBlock* loop, Value*) -> Value* {
             Effects effects = Effects::none();
             effects.exitsSideways = true;
+            effects.reads = HeapRange::top();
             loop->appendNew<CCallValue>(
                 proc, Void, Origin(), effects,
                 loop->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(noOpFunction)));

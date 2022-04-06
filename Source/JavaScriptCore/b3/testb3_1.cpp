@@ -541,6 +541,12 @@ void run(const char* filter)
     RUN(testSpillGP());
     RUN(testSpillFP());
 
+    RUN(testWasmAddressDoesNotCSE());
+    RUN(testStoreAfterClobberDifferentWidth());
+    RUN(testStoreAfterClobberExitsSideways());
+    RUN(testStoreAfterClobberDifferentWidthSuccessor());
+    RUN(testStoreAfterClobberExitsSidewaysSuccessor());
+
     RUN(testInt32ToDoublePartialRegisterStall());
     RUN(testInt32ToDoublePartialRegisterWithoutStall());
 

@@ -1162,6 +1162,424 @@ void testByteCopyLoopBoundIsLoopDependent()
     delete [] arr2;
 }
 
+void testWasmAddressDoesNotCSE()
+{
+    Procedure proc;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinnedGPR);
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* a = proc.addBlock();
+    BasicBlock* b = proc.addBlock();
+    BasicBlock* c = proc.addBlock();
+    BasicBlock* continuation = proc.addBlock();
+
+    auto* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    auto* path = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+
+    auto* originalAddress = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), originalAddress, 
+        root->appendNew<WasmAddressValue>(proc, Origin(), root->appendNew<Const64Value>(proc, Origin(), 6*8), pinnedGPR), 0);
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(proc, Origin(), path);
+    switchValue->setFallThrough(FrequentedBlock(c));
+    switchValue->appendCase(SwitchCase(0, FrequentedBlock(a)));
+    switchValue->appendCase(SwitchCase(1, FrequentedBlock(b)));
+
+    PatchpointValue* patchpoint = b->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->effects = Effects::forCall();
+    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet(pinnedGPR));
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            CHECK(!params.size());
+            jit.add64(MacroAssembler::TrustedImm32(8), pinnedGPR);
+        });
+
+    UpsilonValue* takeA = a->appendNew<UpsilonValue>(proc, Origin(), a->appendNew<Const32Value>(proc, Origin(), 10));
+    UpsilonValue* takeB = b->appendNew<UpsilonValue>(proc, Origin(), b->appendNew<Const32Value>(proc, Origin(), 20));
+    UpsilonValue* takeC = c->appendNew<UpsilonValue>(proc, Origin(), c->appendNew<Const32Value>(proc, Origin(), 30));
+    for (auto* i : { a, b, c }) {
+        i->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(continuation));
+        i->setSuccessors(FrequentedBlock(continuation));
+    }
+
+    // Continuation
+    auto* takenPhi = continuation->appendNew<Value>(proc, Phi, Int32, Origin());
+
+    auto* address2 = continuation->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR);
+    continuation->appendNew<MemoryValue>(proc, Store, Origin(), takenPhi,
+        continuation->appendNew<WasmAddressValue>(proc, Origin(), continuation->appendNew<Const64Value>(proc, Origin(), 4*8), pinnedGPR),
+        0);
+
+    auto* returnVal = address2;
+    continuation->appendNewControlValue(proc, Return, Origin(), returnVal);
+
+    takeA->setPhi(takenPhi);
+    takeB->setPhi(takenPhi);
+    takeC->setPhi(takenPhi);
+
+    auto binary = compileProc(proc);
+
+    uint64_t* memory = new uint64_t[10];
+    uint64_t ptr = 8;
+
+    uint64_t finalPtr = reinterpret_cast<uint64_t>(static_cast<void*>(memory)) + ptr;
+
+    for (int i = 0; i < 10; ++i)
+        memory[i] = 0;
+
+    {
+        uint64_t result = invoke<uint64_t>(*binary, memory, ptr, 0);
+
+        CHECK_EQ(result, finalPtr);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 0ul);
+        CHECK_EQ(memory[2], 0ul);
+        CHECK_EQ(memory[4], 10ul);
+        CHECK_EQ(memory[6], finalPtr);
+    }
+
+    memory[4] = 0;
+    memory[5] = 0;
+    memory[6] = 0;
+    memory[7] = 0;
+
+    {
+        uint64_t result = invoke<uint64_t>(*binary, memory, ptr, 1);
+
+        CHECK_EQ(result, finalPtr + 8);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 0ul);
+        CHECK_EQ(memory[2], 0ul);
+        CHECK_EQ(memory[5], 20ul);
+        CHECK_EQ(memory[6], finalPtr);
+    }
+
+    memory[4] = 0;
+    memory[5] = 0;
+    memory[6] = 0;
+    memory[7] = 0;
+    {
+        uint64_t result = invoke<uint64_t>(*binary, memory, ptr, 2);
+
+        CHECK_EQ(result, finalPtr);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 0ul);
+        CHECK_EQ(memory[2], 0ul);
+        CHECK_EQ(memory[4], 30ul);
+        CHECK_EQ(memory[6], finalPtr);
+    }
+
+    delete[] memory;
+}
+
+void testStoreAfterClobberExitsSideways()
+{
+    Procedure proc;
+    GPRReg pinnedBaseGPR = GPRInfo::argumentGPR0;
+    GPRReg pinnedSizeGPR = GPRInfo::argumentGPR1;
+    proc.pinRegister(pinnedBaseGPR);
+    proc.pinRegister(pinnedSizeGPR);
+
+    // Please don't make me save anything.
+    RegisterSet csrs;
+    csrs.merge(RegisterSet::calleeSaveRegisters());
+    csrs.exclude(RegisterSet::stackRegisters());
+    csrs.forEach(
+        [&] (Reg reg) {
+            CHECK(reg != pinnedBaseGPR);
+            CHECK(reg != pinnedSizeGPR);
+            proc.pinRegister(reg);
+        });
+
+    proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR) {
+        CHECK_EQ(pinnedGPR, pinnedSizeGPR);
+
+        jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    BasicBlock* root = proc.addBlock();
+
+    auto* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    auto* resultAddress = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedBaseGPR);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const32Value>(proc, Origin(), 10), resultAddress, 0);
+
+    root->appendNew<WasmBoundsCheckValue>(proc, Origin(), pinnedSizeGPR, root->appendNew<Value>(proc, Trunc, Origin(), pointer), 0);
+
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const32Value>(proc, Origin(), 20), resultAddress, 0);
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 30));
+
+    auto binary = compileProc(proc);
+
+    uint64_t* memory = new uint64_t[10];
+    uint64_t ptr = 1*8;
+
+    for (int i = 0; i < 10; ++i)
+        memory[i] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, 16, ptr);
+
+        CHECK_EQ(result, 30);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 20ul);
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    memory[1] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, 1, ptr);
+
+        CHECK_EQ(result, 42);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 10ul);
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    memory[1] = 0;
+
+    delete[] memory;
+}
+
+void testStoreAfterClobberDifferentWidth()
+{
+    Procedure proc;
+    GPRReg pinnedBaseGPR = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinnedBaseGPR);
+
+    BasicBlock* root = proc.addBlock();
+
+    auto* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    auto* resultAddress = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedBaseGPR);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const64Value>(proc, Origin(), -1), resultAddress, 0);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const32Value>(proc, Origin(), 20), resultAddress, 0);
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Const32Value>(proc, Origin(), 30));
+
+    auto binary = compileProc(proc);
+
+    uint64_t* memory = new uint64_t[10];
+    uint64_t ptr = 1*8;
+
+    for (int i = 0; i < 10; ++i)
+        memory[i] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, ptr);
+
+        CHECK_EQ(result, 30);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], (0xFFFFFFFF00000000ul | 20ul));
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    delete[] memory;
+}
+
+void testStoreAfterClobberDifferentWidthSuccessor()
+{
+    Procedure proc;
+    GPRReg pinnedBaseGPR = GPRInfo::argumentGPR0;
+    proc.pinRegister(pinnedBaseGPR);
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* a = proc.addBlock();
+    BasicBlock* b = proc.addBlock();
+    BasicBlock* c = proc.addBlock();
+    BasicBlock* continuation = proc.addBlock();
+
+    auto* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    auto* path = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    auto* resultAddress = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedBaseGPR);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const64Value>(proc, Origin(), -1), resultAddress, 0);
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(proc, Origin(), path);
+    switchValue->setFallThrough(FrequentedBlock(c));
+    switchValue->appendCase(SwitchCase(0, FrequentedBlock(a)));
+    switchValue->appendCase(SwitchCase(1, FrequentedBlock(b)));
+
+    a->appendNew<MemoryValue>(proc, Store, Origin(), a->appendNew<Const32Value>(proc, Origin(), 10), resultAddress, 0);
+    b->appendNew<MemoryValue>(proc, Store, Origin(), b->appendNew<Const32Value>(proc, Origin(), 20), resultAddress, 0);
+    c->appendNew<MemoryValue>(proc, Store, Origin(), c->appendNew<Const32Value>(proc, Origin(), 30), resultAddress, 0);
+
+    for (auto* i : { a, b, c }) {
+        i->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(continuation));
+        i->setSuccessors(FrequentedBlock(continuation));
+    }
+
+    continuation->appendNewControlValue(proc, Return, Origin(), continuation->appendNew<Const32Value>(proc, Origin(), 40));
+
+    auto binary = compileProc(proc);
+
+    uint64_t* memory = new uint64_t[10];
+    uint64_t ptr = 1*8;
+
+    for (int i = 0; i < 10; ++i)
+        memory[i] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, ptr, 0);
+
+        CHECK_EQ(result, 40);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], (0xFFFFFFFF00000000ul | 10ul));
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    memory[1] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, ptr, 1);
+
+        CHECK_EQ(result, 40);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], (0xFFFFFFFF00000000ul | 20ul));
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    memory[1] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, ptr, 2);
+
+        CHECK_EQ(result, 40);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], (0xFFFFFFFF00000000ul | 30ul));
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    delete[] memory;
+}
+
+void testStoreAfterClobberExitsSidewaysSuccessor()
+{
+    Procedure proc;
+    GPRReg pinnedBaseGPR = GPRInfo::argumentGPR0;
+    GPRReg pinnedSizeGPR = GPRInfo::argumentGPR1;
+    proc.pinRegister(pinnedBaseGPR);
+    proc.pinRegister(pinnedSizeGPR);
+
+    // Please don't make me save anything.
+    RegisterSet csrs;
+    csrs.merge(RegisterSet::calleeSaveRegisters());
+    csrs.exclude(RegisterSet::stackRegisters());
+    csrs.forEach(
+        [&] (Reg reg) {
+            CHECK(reg != pinnedBaseGPR);
+            CHECK(reg != pinnedSizeGPR);
+            proc.pinRegister(reg);
+        });
+
+    proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR) {
+        CHECK_EQ(pinnedGPR, pinnedSizeGPR);
+
+        jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* a = proc.addBlock();
+    BasicBlock* b = proc.addBlock();
+    BasicBlock* c = proc.addBlock();
+    BasicBlock* continuation = proc.addBlock();
+
+    auto* pointer = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+    auto* path = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR3);
+    auto* resultAddress = root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedBaseGPR);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const64Value>(proc, Origin(), -1), resultAddress, 0);
+
+    SwitchValue* switchValue = root->appendNew<SwitchValue>(proc, Origin(), path);
+    switchValue->setFallThrough(FrequentedBlock(c));
+    switchValue->appendCase(SwitchCase(0, FrequentedBlock(a)));
+    switchValue->appendCase(SwitchCase(1, FrequentedBlock(b)));
+
+    b->appendNew<WasmBoundsCheckValue>(proc, Origin(), pinnedSizeGPR, b->appendNew<Value>(proc, Trunc, Origin(), pointer), 0);
+
+    UpsilonValue* takeA = a->appendNew<UpsilonValue>(proc, Origin(), a->appendNew<Const64Value>(proc, Origin(), 10));
+    UpsilonValue* takeB = b->appendNew<UpsilonValue>(proc, Origin(), b->appendNew<Const64Value>(proc, Origin(), 20));
+    UpsilonValue* takeC = c->appendNew<UpsilonValue>(proc, Origin(), c->appendNew<Const64Value>(proc, Origin(), 30));
+
+    for (auto* i : { a, b, c }) {
+        i->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(continuation));
+        i->setSuccessors(FrequentedBlock(continuation));
+    }
+
+    auto* takenPhi = continuation->appendNew<Value>(proc, Phi, Int64, Origin());
+    continuation->appendNew<MemoryValue>(proc, Store, Origin(), takenPhi, resultAddress, 0);
+    continuation->appendNewControlValue(proc, Return, Origin(), continuation->appendNew<Const32Value>(proc, Origin(), 40));
+
+    takeA->setPhi(takenPhi);
+    takeB->setPhi(takenPhi);
+    takeC->setPhi(takenPhi);
+
+    auto binary = compileProc(proc);
+
+    uint64_t* memory = new uint64_t[10];
+    uint64_t ptr = 1*8;
+
+    for (int i = 0; i < 10; ++i)
+        memory[i] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, 16, ptr, 0);
+
+        CHECK_EQ(result, 40);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 10ul);
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    memory[1] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, 16, ptr, 1);
+
+        CHECK_EQ(result, 40);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 20ul);
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    memory[1] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, 16, ptr, 2);
+
+        CHECK_EQ(result, 40);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 30ul);
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    memory[1] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, 1, ptr, 2);
+
+        CHECK_EQ(result, 40);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], 30ul);
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    memory[1] = 0;
+
+    {
+        int result = invoke<int>(*binary, memory, 1, ptr, 1);
+
+        CHECK_EQ(result, 42);
+        CHECK_EQ(memory[0], 0ul);
+        CHECK_EQ(memory[1], (0xFFFFFFFFFFFFFFFFul));
+        CHECK_EQ(memory[2], 0ul);
+    }
+
+    delete[] memory;
+}
+
 void addCopyTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
 {
     RUN(testFastForwardCopy32());

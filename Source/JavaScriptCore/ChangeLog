@@ -1,3 +1,30 @@
+2022-04-06  Justin Michaud  <justin_michaud@apple.com>
+
+        CSE should be more careful with values that have WritesPinned, ExitsSideways, or are of different sizes
+        https://bugs.webkit.org/show_bug.cgi?id=238302
+
+        Reviewed by Saam Barati.
+
+        1) CSE for WasmAddressValue searches for any nodes marked with WritesPinned between all paths from the redundant
+        WasmAddressValue to the replacement that dominates it. For a switch construct, we might miss some paths while
+        performing this DFS of predecessor blocks because the termination condition was a break instead of a continue.
+
+        2) The CSE phase looks for a pattern it calls a store after clobber. That is, two stores to the same location where 
+        the first store is not observable. It searches for reads and writes that overlap with the store and its clobber, and
+        bails if it finds them. When we add in CSE for WasmAddressValue, we expose the fact that WasmBoundsCheck has ExitSideways
+        but does not claim to read top, even though the code it exits to totally can. This can cause us to eliminate an observable store.
+
+        3) The store after clobber phase does not check that the size of the clobber is the same as the size of the store. Again,
+        this is usually hidden by JavaScript because the sizes are usually the same. Also, when WASM fast memory is enabled, this
+        bug is hidden because the loads/stores say that they may trap. That is why the unity test case only failed on iOS (although
+        it does fail on mac with __XPC_JSC_useWebAssemblyFastMemory=0).
+
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/testb3.h:
+        * b3/testb3_8.cpp:
+        (testWasmAddressDoesNotCSE):
+        (addCopyTests):
+
 2022-04-06  Xan Lopez  <xan@igalia.com>
 
         [JSC] Add DoNotHaveTagRegisters mode to unboxDouble
