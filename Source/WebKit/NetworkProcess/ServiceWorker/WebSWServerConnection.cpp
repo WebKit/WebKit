@@ -204,6 +204,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
         serviceWorkerRegistrationIdentifier = registration->identifier();
         controlClient(loader.parameters(), *registration, request);
         loader.setResultingClientIdentifier(loader.parameters().options.clientIdentifier->toString());
+        loader.setServiceWorkerRegistration(*registration);
     } else {
         if (!loader.parameters().serviceWorkerRegistrationIdentifier)
             return nullptr;
@@ -664,6 +665,11 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
 void WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
     sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTFMove(callback));
+}
+
+void WebSWServerConnection::transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader& loader, WebCore::SWServerRegistration& registration)
+{
+    controlClient(loader.parameters(), registration, loader.originalRequest());
 }
 
 } // namespace WebKit

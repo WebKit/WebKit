@@ -3077,6 +3077,13 @@ static constexpr auto ServiceWorkerWindowClientNavigateMain =
 "        alert(event.data);"
 "    };"
 "}"
+""
+"function countServiceWorkerClients() {"
+"    worker.postMessage('countServiceWorkerClients');"
+"    navigator.serviceWorker.onmessage = (event) => {"
+"        alert(event.data);"
+"    };"
+"}"
 "</script>"_s;
 
 static constexpr auto ServiceWorkerWindowClientNavigateJS =
@@ -3097,6 +3104,11 @@ static constexpr auto ServiceWorkerWindowClientNavigateJS =
 "       }, (e) => {"
 "           event.source.postMessage('failed');"
 "       });"
+"       return;"
+"   }"
+"   if (event.data === 'countServiceWorkerClients') {"
+"       let currentClients = await self.clients.matchAll();"
+"       event.source.postMessage(currentClients.length + ' client(s)');"
 "       return;"
 "   }"
 "});"_s;
@@ -3179,6 +3191,9 @@ TEST(ServiceWorker, WindowClientNavigate)
 
     [webView1 evaluateJavaScript:[NSString stringWithFormat:@"navigateOtherClientToURL('%@?swap')", baseURL] completionHandler: nil];
     EXPECT_WK_STREQ([webView1 _test_waitForAlert], "client");
+
+    [webView1 evaluateJavaScript:@"countServiceWorkerClients()" completionHandler: nil];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "1 client(s)");
 }
 
 TEST(ServiceWorker, WindowClientNavigateCrossOrigin)

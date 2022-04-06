@@ -589,7 +589,7 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
             if (auto existingLoader = session->takeLoaderAwaitingWebProcessTransfer(*existingLoaderToResume)) {
                 CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: Resuming existing NetworkResourceLoader");
                 m_networkResourceLoaders.add(identifier, *existingLoader);
-                existingLoader->transferToNewWebProcess(*this, identifier);
+                existingLoader->transferToNewWebProcess(*this, loadParameters);
                 return;
             }
             CONNECTION_RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Could not find existing NetworkResourceLoader to resume, will do a fresh load");

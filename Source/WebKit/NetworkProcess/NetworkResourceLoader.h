@@ -40,6 +40,7 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/SWServerRegistration.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
@@ -93,7 +94,7 @@ public:
     void start();
     void abort();
 
-    void transferToNewWebProcess(NetworkConnectionToWebProcess&, WebCore::ResourceLoaderIdentifier);
+    void transferToNewWebProcess(NetworkConnectionToWebProcess&, const NetworkResourceLoadParameters&);
 
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
@@ -154,6 +155,7 @@ public:
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
     void setResultingClientIdentifier(String&& identifier) { m_resultingClientIdentifier = WTFMove(identifier); }
     const String& resultingClientIdentifier() const { return m_resultingClientIdentifier; }
+    void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
 #endif
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
@@ -288,6 +290,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     std::unique_ptr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
     String m_resultingClientIdentifier;
+    WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
 #endif
     NetworkResourceLoadIdentifier m_resourceLoadID;
     WebCore::ResourceResponse m_redirectResponse;
