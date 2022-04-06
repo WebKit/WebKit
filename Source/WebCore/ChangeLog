@@ -1,3 +1,16 @@
+2022-04-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Avoid calling IOSurfaceAlignProperty in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=238870
+        <rdar://91252359>
+
+        Reviewed by Geoffrey Garen.
+
+        Use cached values for bytes per row alignment.
+
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::calculateBytesPerRow):
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function
