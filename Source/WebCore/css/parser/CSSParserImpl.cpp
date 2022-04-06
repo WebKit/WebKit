@@ -431,8 +431,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
     CSSParserTokenRange block = range.consumeBlock();
     if (allowedRules == KeyframeRules)
         return nullptr; // Parse error, no at-rules supported inside @keyframes
-    if (allowedRules == NoRules || allowedRules == ApplyRules)
-        return nullptr; // Parse error, no at-rules with blocks supported inside declaration lists
+    if (allowedRules == NoRules)
+        return nullptr;
 
     ASSERT(allowedRules <= RegularRules);
 
@@ -977,9 +977,7 @@ void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleT
             break;
         }
         case AtKeywordToken: {
-            // FIXME-NEWPARSER: Support apply
-            AllowedRulesType allowedRules = /* ruleType == StyleRuleType::Style && RuntimeEnabledFeatures::cssApplyAtRulesEnabled() ? ApplyRules :*/ NoRules;
-            RefPtr<StyleRuleBase> rule = consumeAtRule(range, allowedRules);
+            RefPtr<StyleRuleBase> rule = consumeAtRule(range, NoRules);
             ASSERT_UNUSED(rule, !rule);
             break;
         }

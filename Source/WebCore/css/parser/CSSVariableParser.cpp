@@ -57,28 +57,28 @@ static bool isValidConstantName(const CSSParserToken& token)
     return token.type() == IdentToken;
 }
 
-static bool isValidVariableReference(CSSParserTokenRange, bool& hasAtApplyRule, const CSSParserContext&);
-static bool isValidConstantReference(CSSParserTokenRange, bool& hasAtApplyRule, const CSSParserContext&);
+static bool isValidVariableReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidConstantReference(CSSParserTokenRange, const CSSParserContext&);
 
-static bool classifyBlock(CSSParserTokenRange range, bool& hasReferences, bool& hasAtApplyRule, const CSSParserContext& parserContext, bool isTopLevelBlock = true)
+static bool classifyBlock(CSSParserTokenRange range, bool& hasReferences, const CSSParserContext& parserContext, bool isTopLevelBlock = true)
 {
     while (!range.atEnd()) {
         if (range.peek().getBlockType() == CSSParserToken::BlockStart) {
             const CSSParserToken& token = range.peek();
             CSSParserTokenRange block = range.consumeBlock();
             if (token.functionId() == CSSValueVar) {
-                if (!isValidVariableReference(block, hasAtApplyRule, parserContext))
+                if (!isValidVariableReference(block, parserContext))
                     return false; // Bail if any references are invalid
                 hasReferences = true;
                 continue;
             }
             if (token.functionId() == CSSValueEnv && parserContext.constantPropertiesEnabled) {
-                if (!isValidConstantReference(block, hasAtApplyRule, parserContext))
+                if (!isValidConstantReference(block, parserContext))
                     return false; // Bail if any references are invalid
                 hasReferences = true;
                 continue;
             }
-            if (!classifyBlock(block, hasReferences, hasAtApplyRule, parserContext, false))
+            if (!classifyBlock(block, hasReferences, parserContext, false))
                 return false;
             continue;
         }
@@ -87,17 +87,8 @@ static bool classifyBlock(CSSParserTokenRange range, bool& hasReferences, bool& 
 
         const CSSParserToken& token = range.consume();
         switch (token.type()) {
-        case AtKeywordToken: {
-            if (equalIgnoringASCIICase(token.value(), "apply")) {
-                range.consumeWhitespace();
-                const CSSParserToken& variableName = range.consumeIncludingWhitespace();
-                if (!CSSVariableParser::isValidVariableName(variableName)
-                    || !(range.atEnd() || range.peek().type() == SemicolonToken || range.peek().type() == RightBraceToken))
-                    return false;
-                hasAtApplyRule = true;
-            }
+        case AtKeywordToken:
             break;
-        }
         case DelimiterToken: {
             if (token.delimiter() == '!' && isTopLevelBlock)
                 return false;
@@ -120,7 +111,7 @@ static bool classifyBlock(CSSParserTokenRange range, bool& hasReferences, bool& 
     return true;
 }
 
-bool isValidVariableReference(CSSParserTokenRange range, bool& hasAtApplyRule, const CSSParserContext& parserContext)
+bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     range.consumeWhitespace();
     if (!CSSVariableParser::isValidVariableName(range.consumeIncludingWhitespace()))
@@ -134,10 +125,10 @@ bool isValidVariableReference(CSSParserTokenRange range, bool& hasAtApplyRule, c
         return true;
 
     bool hasReferences = false;
-    return classifyBlock(range, hasReferences, hasAtApplyRule, parserContext);
+    return classifyBlock(range, hasReferences, parserContext);
 }
 
-bool isValidConstantReference(CSSParserTokenRange range, bool& hasAtApplyRule, const CSSParserContext& parserContext)
+bool isValidConstantReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     range.consumeWhitespace();
     if (!isValidConstantName(range.consumeIncludingWhitespace()))
@@ -151,13 +142,12 @@ bool isValidConstantReference(CSSParserTokenRange range, bool& hasAtApplyRule, c
         return true;
 
     bool hasReferences = false;
-    return classifyBlock(range, hasReferences, hasAtApplyRule, parserContext);
+    return classifyBlock(range, hasReferences, parserContext);
 }
 
-static CSSValueID classifyVariableRange(CSSParserTokenRange range, bool& hasReferences, bool& hasAtApplyRule, const CSSParserContext& parserContext)
+static CSSValueID classifyVariableRange(CSSParserTokenRange range, bool& hasReferences, const CSSParserContext& parserContext)
 {
     hasReferences = false;
-    hasAtApplyRule = false;
 
     range.consumeWhitespace();
     if (range.peek().type() == IdentToken) {
@@ -166,7 +156,7 @@ static CSSValueID classifyVariableRange(CSSParserTokenRange range, bool& hasRefe
             return id;
     }
 
-    if (classifyBlock(range, hasReferences, hasAtApplyRule, parserContext))
+    if (classifyBlock(range, hasReferences, parserContext))
         return CSSValueInternalVariableValue;
     return CSSValueInvalid;
 }
@@ -174,9 +164,8 @@ static CSSValueID classifyVariableRange(CSSParserTokenRange range, bool& hasRefe
 bool CSSVariableParser::containsValidVariableReferences(CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     bool hasReferences;
-    bool hasAtApplyRule;
-    CSSValueID type = classifyVariableRange(range, hasReferences, hasAtApplyRule, parserContext);
-    return type == CSSValueInternalVariableValue && hasReferences && !hasAtApplyRule;
+    CSSValueID type = classifyVariableRange(range, hasReferences, parserContext);
+    return type == CSSValueInternalVariableValue && hasReferences;
 }
 
 RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const AtomString& variableName, CSSParserTokenRange range, const CSSParserContext& parserContext)
@@ -185,8 +174,7 @@ RefPtr<CSSCustomPropertyValue> CSSVariableParser::parseDeclarationValue(const At
         return nullptr;
 
     bool hasReferences;
-    bool hasAtApplyRule;
-    CSSValueID type = classifyVariableRange(range, hasReferences, hasAtApplyRule, parserContext);
+    CSSValueID type = classifyVariableRange(range, hasReferences, parserContext);
 
     if (type == CSSValueInvalid)
         return nullptr;

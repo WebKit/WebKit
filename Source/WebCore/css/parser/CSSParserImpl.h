@@ -82,7 +82,6 @@ public:
         AllowNamespaceRules,
         RegularRules,
         KeyframeRules,
-        ApplyRules, // For @apply inside style rules
         CounterStyleRules,
         NoRules, // For parsing at-rules inside declaration lists
     };

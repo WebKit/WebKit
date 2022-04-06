@@ -1,3 +1,25 @@
+2022-04-06  Antti Koivisto  <antti@apple.com>
+
+        Remove some @apply leftover code
+        https://bugs.webkit.org/show_bug.cgi?id=238857
+
+        Reviewed by Tim Nguyen.
+
+        @apply is not a thing.
+
+        * css/CSSVariableData.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeAtRule):
+        (WebCore::CSSParserImpl::consumeDeclarationList):
+        * css/parser/CSSParserImpl.h:
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::classifyBlock):
+        (WebCore::isValidVariableReference):
+        (WebCore::isValidConstantReference):
+        (WebCore::classifyVariableRange):
+        (WebCore::CSSVariableParser::containsValidVariableReferences):
+        (WebCore::CSSVariableParser::parseDeclarationValue):
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         Remove Notification::m_relatedNotificationIdentifier
