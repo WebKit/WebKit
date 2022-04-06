@@ -1,3 +1,20 @@
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
+        Remove Notification::m_relatedNotificationIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=238603
+
+        Reviewed by Brady Eidson.
+
+        m_relatedNotificationIdentifier was added as a temporary workaround for persistent notifications that are recreated in other contexts.
+        To directly support this case, Notification is no longer a Identified<UUID> and instead has a m_identifier.
+        When created from JS, Notification::m_identifier is generated.
+        When created from NotificationData, Notification::m_identifier is copied from NotificationData.
+
+        Covered by existing tests.
+
+        * Modules/notifications/Notification.cpp:
+        * Modules/notifications/Notification.h:
+
 2022-04-05  Ada Chan  <adachan@apple.com>
 
         [WebXR] Add a new enum type to represent session features

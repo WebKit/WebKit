@@ -38,8 +38,8 @@
 #include "NotificationDirection.h"
 #include "NotificationPermission.h"
 #include "ScriptExecutionContextIdentifier.h"
-#include <wtf/Identified.h>
 #include <wtf/URL.h>
+#include <wtf/UUID.h>
 #include "WritingMode.h"
 
 namespace WebCore {
@@ -51,7 +51,7 @@ class NotificationPermissionCallback;
 
 struct NotificationData;
 
-class Notification final : public ThreadSafeRefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData, public UUIDIdentified<Notification> {
+class Notification final : public ThreadSafeRefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
     using Permission = NotificationPermission;
@@ -98,19 +98,18 @@ public:
 
     WEBCORE_EXPORT NotificationData data() const;
 
-    Ref<Notification> copyForGetNotifications() const;
-
     using ThreadSafeRefCounted::ref;
     using ThreadSafeRefCounted::deref;
 
     void markAsShown();
     void showSoon();
 
-    std::optional<UUID> relatedNotificationIdentifier() const { return m_relatedNotificationIdentifier; }
+    UUID identifier() const { return m_identifier; }
+
+    bool isPersistent() const { return !m_serviceWorkerRegistrationURL.isNull(); }
 
 private:
-    Notification(ScriptExecutionContext&, String&& title, Options&&);
-    Notification(const Notification&);
+    Notification(ScriptExecutionContext&, UUID, String&& title, Options&&);
 
     NotificationClient* clientFromContext();
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
@@ -125,6 +124,8 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
+
+    UUID m_identifier;
 
     String m_title;
     Direction m_direction;
@@ -143,7 +144,6 @@ private:
     };
     NotificationSource m_notificationSource;
     ScriptExecutionContextIdentifier m_contextIdentifier;
-    std::optional<UUID> m_relatedNotificationIdentifier;
     URL m_serviceWorkerRegistrationURL;
 };
 

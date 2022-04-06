@@ -86,9 +86,7 @@ private:
     WebProcess& m_process;
 
 #if ENABLE(NOTIFICATIONS)
-    typedef HashMap<UUID, RefPtr<WebCore::Notification>> NotificationIDMap;
-    NotificationIDMap m_notificationIDMap;
-    
+    HashMap<UUID, Ref<WebCore::Notification>> m_nonPersistentNotifications;    
     HashMap<String, bool> m_permissionsMap;
 #endif
 };

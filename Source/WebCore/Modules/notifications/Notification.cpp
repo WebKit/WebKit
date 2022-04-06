@@ -58,7 +58,7 @@ ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& cont
     if (context.isServiceWorkerGlobalScope())
         return Exception { TypeError, "Notification cannot be directly created in a ServiceWorkerGlobalScope"_s };
 
-    auto notification = adoptRef(*new Notification(context, WTFMove(title), WTFMove(options)));
+    auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options)));
     notification->suspendIfNeeded();
     notification->showSoon();
     return notification;
@@ -66,7 +66,7 @@ ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& cont
 
 Ref<Notification> Notification::createForServiceWorker(ScriptExecutionContext& context, String&& title, Options&& options, const URL& serviceWorkerRegistrationURL)
 {
-    auto notification = adoptRef(*new Notification(context, WTFMove(title), WTFMove(options)));
+    auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options)));
     notification->m_serviceWorkerRegistrationURL = serviceWorkerRegistrationURL;
     notification->suspendIfNeeded();
     return notification;
@@ -75,15 +75,15 @@ Ref<Notification> Notification::createForServiceWorker(ScriptExecutionContext& c
 Ref<Notification> Notification::create(ScriptExecutionContext& context, NotificationData&& data)
 {
     Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL) };
-    auto notification = adoptRef(*new Notification(context, WTFMove(data.title), WTFMove(options)));
+    auto notification = adoptRef(*new Notification(context, data.notificationID, WTFMove(data.title), WTFMove(options)));
     notification->suspendIfNeeded();
-    notification->m_relatedNotificationIdentifier = data.notificationID;
     notification->m_serviceWorkerRegistrationURL = WTFMove(data.serviceWorkerRegistrationURL);
     return notification;
 }
 
-Notification::Notification(ScriptExecutionContext& context, String&& title, Options&& options)
+Notification::Notification(ScriptExecutionContext& context, UUID identifier, String&& title, Options&& options)
     : ActiveDOMObject(&context)
+    , m_identifier(identifier)
     , m_title(WTFMove(title).isolatedCopy())
     , m_direction(options.dir)
     , m_lang(WTFMove(options.lang).isolatedCopy())
@@ -106,28 +106,8 @@ Notification::Notification(ScriptExecutionContext& context, String&& title, Opti
     }
 }
 
-Notification::Notification(const Notification& other)
-    : ActiveDOMObject(other.scriptExecutionContext())
-    , m_title(other.m_title.isolatedCopy())
-    , m_direction(other.m_direction)
-    , m_lang(other.m_lang.isolatedCopy())
-    , m_body(other.m_body.isolatedCopy())
-    , m_tag(other.m_tag.isolatedCopy())
-    , m_icon(other.m_icon.isolatedCopy())
-    , m_state(other.m_state)
-    , m_notificationSource(other.m_notificationSource)
-    , m_contextIdentifier(other.m_contextIdentifier)
-{
-    suspendIfNeeded();
-}
-
 Notification::~Notification()
 {
-}
-
-Ref<Notification> Notification::copyForGetNotifications() const
-{
-    return adoptRef(*new Notification(*this));
 }
 
 void Notification::showSoon()
@@ -222,6 +202,7 @@ void Notification::finalize()
 void Notification::dispatchShowEvent()
 {
     ASSERT(isMainThread());
+    ASSERT(!isPersistent());
 
     if (m_notificationSource != NotificationSource::Document)
         return;
@@ -233,6 +214,8 @@ void Notification::dispatchClickEvent()
 {
     ASSERT(isMainThread());
     ASSERT(m_notificationSource == NotificationSource::Document);
+    ASSERT(!isPersistent());
+
     queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
         WindowFocusAllowedIndicator windowFocusAllowed;
         dispatchEvent(Event::create(eventNames().clickEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -243,6 +226,8 @@ void Notification::dispatchCloseEvent()
 {
     ASSERT(isMainThread());
     ASSERT(m_notificationSource == NotificationSource::Document);
+    ASSERT(!isPersistent());
+
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     finalize();
 }
@@ -251,6 +236,7 @@ void Notification::dispatchErrorEvent()
 {
     ASSERT(isMainThread());
     ASSERT(m_notificationSource == NotificationSource::Document);
+    ASSERT(!isPersistent());
 
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }

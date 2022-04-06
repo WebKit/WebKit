@@ -1,3 +1,16 @@
+2022-04-06  Youenn Fablet  <youenn@apple.com>
+
+        Remove Notification::m_relatedNotificationIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=238603
+
+        Reviewed by Brady Eidson.
+
+        Directly use identifier now that we correctly reuse them when needed.
+        We no longer store persistent notifications in the map since we do not use the map for click/close events.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        * WebProcess/Notifications/WebNotificationManager.h:
+
 2022-04-05  Ada Chan  <adachan@apple.com>
 
         [WebXR] Add a new enum type to represent session features

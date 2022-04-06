@@ -130,7 +130,7 @@ template<typename U> bool WebNotificationManager::sendNotificationMessage(U&& me
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     if (RuntimeEnabledFeatures::sharedFeatures().builtInNotificationsEnabled())
-        return m_process.ensureNetworkProcessConnection().connection().send(WTFMove(message), notification.data().sourceSession.toUInt64());
+        return m_process.ensureNetworkProcessConnection().connection().send(WTFMove(message), WebProcess::singleton().sessionID().toUInt64());
 #endif
 
     std::optional<WebCore::PageIdentifier> pageIdentifier;
@@ -160,7 +160,10 @@ bool WebNotificationManager::show(Notification& notification, WebPage* page)
     if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::ShowNotification(notification.data()), notification, page))
         return false;
 
-    m_notificationIDMap.add(notification.identifier(), &notification);
+    if (!notification.isPersistent()) {
+        ASSERT(!m_nonPersistentNotifications.contains(notification.identifier()));
+        m_nonPersistentNotifications.add(notification.identifier(), notification);
+    }
     return true;
 #else
     UNUSED_PARAM(notification);
@@ -175,14 +178,7 @@ void WebNotificationManager::cancel(Notification& notification, WebPage* page)
 
 #if ENABLE(NOTIFICATIONS)
     auto identifier = notification.identifier();
-    auto mappedNotification = m_notificationIDMap.get(identifier);
-    if (!mappedNotification) {
-        auto relatedIdentifier = notification.relatedNotificationIdentifier();
-        if (!relatedIdentifier)
-            return;
-        identifier = *relatedIdentifier;
-    } else
-        ASSERT(mappedNotification == &notification);
+    ASSERT(notification.isPersistent() || !m_nonPersistentNotifications.contains(identifier) || m_nonPersistentNotifications.get(identifier) == &notification);
 
     if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::CancelNotification(identifier), notification, page))
         return;
@@ -200,14 +196,8 @@ void WebNotificationManager::didDestroyNotification(Notification& notification, 
     Ref protectedNotification { notification };
 
     auto identifier = notification.identifier();
-    auto takenNotification = m_notificationIDMap.take(identifier);
-    if (!takenNotification) {
-        auto relatedIdentifier = notification.relatedNotificationIdentifier();
-        if (!relatedIdentifier)
-            return;
-        identifier = *relatedIdentifier;
-    } else
-        ASSERT(takenNotification == &notification);
+    RefPtr takenNotification = !notification.isPersistent() ? m_nonPersistentNotifications.take(identifier) : nullptr;
+    ASSERT(!takenNotification  || takenNotification == &notification);
 
     sendNotificationMessage(Messages::NotificationManagerMessageHandler::DidDestroyNotification(identifier), notification, page);
 #else
@@ -223,7 +213,7 @@ void WebNotificationManager::didShowNotification(const UUID& notificationID)
     LOG(Notifications, "WebProcess %i DID SHOW notification %s", getpid(), notificationID.toString().utf8().data());
 
 #if ENABLE(NOTIFICATIONS)
-    RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
+    RefPtr<Notification> notification = m_nonPersistentNotifications.get(notificationID);
     if (!notification)
         return;
 
@@ -240,7 +230,7 @@ void WebNotificationManager::didClickNotification(const UUID& notificationID)
     LOG(Notifications, "WebProcess %i DID CLICK notification %s", getpid(), notificationID.toString().utf8().data());
 
 #if ENABLE(NOTIFICATIONS)
-    RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
+    RefPtr<Notification> notification = m_nonPersistentNotifications.get(notificationID);
     if (!notification)
         return;
 
@@ -263,7 +253,7 @@ void WebNotificationManager::didCloseNotifications(const Vector<UUID>& notificat
     for (size_t i = 0; i < count; ++i) {
         auto notificationID = notificationIDs[i];
 
-        RefPtr<Notification> notification = m_notificationIDMap.take(notificationID);
+        RefPtr<Notification> notification = m_nonPersistentNotifications.take(notificationID);
         if (!notification)
             continue;
 
