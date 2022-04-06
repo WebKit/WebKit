@@ -1,3 +1,16 @@
+2022-04-06  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Check for document page in WorkerMessagingProxy::createCacheStorageConnection
+        https://bugs.webkit.org/show_bug.cgi?id=238872
+
+        Reviewed by Chris Dumez.
+
+        Add a check to the document page, similarily to how it is currently done in
+        WorkerMessagingProxy::createRTCDataChannelRemoteHandlerConnection.
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::createCacheStorageConnection):
+
 2022-04-06  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Text filled with pattern sometimes draw with incorrect color
