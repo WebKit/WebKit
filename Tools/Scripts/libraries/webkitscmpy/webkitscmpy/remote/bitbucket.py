@@ -284,6 +284,9 @@ class BitBucket(Scm):
 
         self.pull_requests = self.PRGenerator(self)
 
+    def credentials(self):
+        return None, None
+
     @property
     def is_git(self):
         return True

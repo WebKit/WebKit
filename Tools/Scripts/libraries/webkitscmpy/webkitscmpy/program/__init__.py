@@ -31,6 +31,7 @@ from .canonicalize import Canonicalize
 from .clean import Clean
 from .command import Command
 from .checkout import Checkout
+from .credentials import Credentials
 from .find import Find, Info
 from .install_git_lfs import InstallGitLFS
 from .land import Land
@@ -72,7 +73,7 @@ def main(
     )
 
     subparsers = parser.add_subparsers(help='sub-command help')
-    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Land, Log, Pull, PullRequest, Setup, InstallGitLFS]
+    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Land, Log, Pull, PullRequest, Setup, InstallGitLFS, Credentials]
     if subversion:
         programs.append(SetupGitSvn)
 

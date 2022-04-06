@@ -1,5 +1,24 @@
 2022-04-06  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Provide https credentialing program
+        https://bugs.webkit.org/show_bug.cgi?id=238679
+        <rdar://problem/91177114>
+
+        Reviewed by Stephanie Lewis and Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py: Add Credentials program.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/credentials.py: Added.
+        (Credentials.main): Return credentials for remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.git): Set credential helper if remote is an http remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.credentials): Stub function to be replace by child classes.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+
+2022-04-06  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Add automation to assist in branch cleanup
         https://bugs.webkit.org/show_bug.cgi?id=238637
         <rdar://problem/91127828>
