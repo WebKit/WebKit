@@ -35,11 +35,11 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmHMACInternal {
-static const char* const ALG1 = "HS1";
-static const char* const ALG224 = "HS224";
-static const char* const ALG256 = "HS256";
-static const char* const ALG384 = "HS384";
-static const char* const ALG512 = "HS512";
+static constexpr auto ALG1 = "HS1"_s;
+static constexpr auto ALG224 = "HS224"_s;
+static constexpr auto ALG256 = "HS256"_s;
+static constexpr auto ALG384 = "HS384"_s;
+static constexpr auto ALG512 = "HS512"_s;
 }
 
 static inline bool usagesAreInvalidForCryptoAlgorithmHMAC(CryptoKeyUsageBitmap usages)

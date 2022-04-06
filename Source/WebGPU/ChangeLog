@@ -1,3 +1,21 @@
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
+        Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function
+        https://bugs.webkit.org/show_bug.cgi?id=238701
+
+        Reviewed by Geoffrey Garen.
+
+        * WebGPU/APIConversions.h:
+        (WebGPU::fromAPI):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::requestDevice):
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::createConstantValues):
+        (WebGPU::Device::createComputePipeline):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::earlyCompileShaderModule):
+        (WebGPU::Device::createShaderModule):
+
 2022-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix the tvOS build

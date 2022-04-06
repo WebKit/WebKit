@@ -200,8 +200,7 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
     if (!stringValue)
         return false;
 
-    String aliasedOption;
-    aliasedOption = String(&name[4]) + "=" + stringValue;
+    auto aliasedOption = makeString(&name[4], '=', stringValue);
     if (Options::setOption(aliasedOption.utf8().data()))
         return true;
 
@@ -878,7 +877,7 @@ bool Options::setAliasedOption(const char* arg)
 #define FOR_EACH_OPTION(aliasedName_, unaliasedName_, equivalence) \
     if (strlen(#aliasedName_) == static_cast<size_t>(equalStr - arg)    \
         && !strncasecmp(arg, #aliasedName_, equalStr - arg)) {          \
-        String unaliasedOption(#unaliasedName_);                        \
+        auto unaliasedOption = String::fromLatin1(#unaliasedName_);     \
         if (equivalence == SameOption)                                  \
             unaliasedOption = unaliasedOption + equalStr;               \
         else {                                                          \

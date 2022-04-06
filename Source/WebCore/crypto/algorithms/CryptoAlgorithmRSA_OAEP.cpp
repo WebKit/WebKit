@@ -39,11 +39,11 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmRSA_OAEPInternal {
-static const char* const ALG1 = "RSA-OAEP";
-static const char* const ALG224 = "RSA-OAEP-224";
-static const char* const ALG256 = "RSA-OAEP-256";
-static const char* const ALG384 = "RSA-OAEP-384";
-static const char* const ALG512 = "RSA-OAEP-512";
+static constexpr auto ALG1 = "RSA-OAEP"_s;
+static constexpr auto ALG224 = "RSA-OAEP-224"_s;
+static constexpr auto ALG256 = "RSA-OAEP-256"_s;
+static constexpr auto ALG384 = "RSA-OAEP-384"_s;
+static constexpr auto ALG512 = "RSA-OAEP-512"_s;
 }
 
 Ref<CryptoAlgorithm> CryptoAlgorithmRSA_OAEP::create()

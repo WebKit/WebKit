@@ -1284,7 +1284,7 @@ private:
             if (auto* regExp = jsDynamicCast<RegExpObject*>(vm, obj)) {
                 write(RegExpTag);
                 write(regExp->regExp()->pattern());
-                write(String(JSC::Yarr::flagsString(regExp->regExp()->flags()).data()));
+                write(String::fromLatin1(JSC::Yarr::flagsString(regExp->regExp()->flags()).data()));
                 return true;
             }
             if (obj->inherits<JSMessagePort>(vm)) {

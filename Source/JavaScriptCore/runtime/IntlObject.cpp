@@ -1050,7 +1050,7 @@ Vector<String> numberingSystemsForLocale(const String& locale)
     UErrorCode status = U_ZERO_ERROR;
     UNumberingSystem* defaultSystem = unumsys_open(locale.utf8().data(), &status);
     ASSERT(U_SUCCESS(status));
-    String defaultSystemName(unumsys_getName(defaultSystem));
+    auto defaultSystemName = String::fromLatin1(unumsys_getName(defaultSystem));
     unumsys_close(defaultSystem);
 
     Vector<String> numberingSystems({ defaultSystemName });

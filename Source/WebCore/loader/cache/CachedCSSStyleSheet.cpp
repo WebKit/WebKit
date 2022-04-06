@@ -59,7 +59,7 @@ void CachedCSSStyleSheet::didAddClient(CachedResourceClient& client)
     CachedResource::didAddClient(client);
 
     if (!isLoading())
-        static_cast<CachedStyleSheetClient&>(client).setCSSStyleSheet(m_resourceRequest.url().string(), m_response.url(), String { m_decoder->encoding().name() }, this);
+        static_cast<CachedStyleSheetClient&>(client).setCSSStyleSheet(m_resourceRequest.url().string(), m_response.url(), String::fromLatin1(m_decoder->encoding().name()), this);
 }
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)
@@ -69,7 +69,7 @@ void CachedCSSStyleSheet::setEncoding(const String& chs)
 
 String CachedCSSStyleSheet::encoding() const
 {
-    return String { m_decoder->encoding().name() };
+    return String::fromLatin1(m_decoder->encoding().name());
 }
 
 const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint, bool* hasValidMIMEType) const
@@ -122,7 +122,7 @@ void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&)
 
     CachedResourceClientWalker<CachedStyleSheetClient> w(m_clients);
     while (CachedStyleSheetClient* c = w.next())
-        c->setCSSStyleSheet(m_resourceRequest.url().string(), m_response.url(), String { m_decoder->encoding().name() }, this);
+        c->setCSSStyleSheet(m_resourceRequest.url().string(), m_response.url(), String::fromLatin1(m_decoder->encoding().name()), this);
 }
 
 String CachedCSSStyleSheet::responseMIMEType() const

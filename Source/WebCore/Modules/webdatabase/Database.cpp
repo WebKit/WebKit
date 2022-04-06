@@ -198,7 +198,7 @@ Database::Database(DatabaseContext& context, const String& name, const String& e
     , m_displayName(displayName.isolatedCopy())
     , m_estimatedSize(estimatedSize)
     , m_filename(DatabaseManager::singleton().fullPathForDatabase(m_document->securityOrigin(), m_name))
-    , m_databaseAuthorizer(DatabaseAuthorizer::create(String { unqualifiedInfoTableName }))
+    , m_databaseAuthorizer(DatabaseAuthorizer::create(String::fromLatin1(unqualifiedInfoTableName)))
 {
     {
         Locker locker { guidLock };
@@ -451,7 +451,7 @@ void Database::closeDatabase()
 
 bool Database::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
-    String query(String("SELECT value FROM ") + fullyQualifiedInfoTableName() +  " WHERE key = '" + versionKey + "';");
+    auto query = makeString("SELECT value FROM ", fullyQualifiedInfoTableName(),  " WHERE key = '", versionKey, "';");
 
     m_databaseAuthorizer->disable();
 
@@ -471,7 +471,7 @@ bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersi
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
-    String query(String("INSERT INTO ") + fullyQualifiedInfoTableName() +  " (key, value) VALUES ('" + versionKey + "', ?);");
+    auto query = makeString("INSERT INTO ", fullyQualifiedInfoTableName(),  " (key, value) VALUES ('", versionKey, "', ?);");
 
     m_databaseAuthorizer->disable();
 

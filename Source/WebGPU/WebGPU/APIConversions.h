@@ -171,7 +171,7 @@ inline TextureView& fromAPI(WGPUTextureView textureView)
 
 inline String fromAPI(const char* string)
 {
-    return String(string);
+    return String::fromLatin1(string);
 }
 
 template <typename T>

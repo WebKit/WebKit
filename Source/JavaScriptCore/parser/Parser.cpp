@@ -5009,7 +5009,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         TreeExpression re = context.createRegExp(location, *pattern, *flags, start);
         if (!re) {
             Yarr::ErrorCode errorCode = Yarr::checkSyntax(pattern->string(), flags->string());
-            regexFail(String { Yarr::errorMessage(errorCode) });
+            regexFail(String::fromLatin1(Yarr::errorMessage(errorCode)));
         }
         return re;
     }

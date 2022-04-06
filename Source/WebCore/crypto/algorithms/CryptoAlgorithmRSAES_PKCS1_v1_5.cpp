@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static const char* const ALG = "RSA1_5";
+static constexpr auto ALG = "RSA1_5"_s;
 
 Ref<CryptoAlgorithm> CryptoAlgorithmRSAES_PKCS1_v1_5::create()
 {

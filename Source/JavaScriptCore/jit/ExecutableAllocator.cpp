@@ -1152,7 +1152,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
         static void flush() WTF_REQUIRES_LOCK(dumpJITMemoryLock)
         {
             if (fd == -1) {
-                String path { Options::dumpJITMemoryPath() };
+                auto path = String::fromLatin1(Options::dumpJITMemoryPath());
                 path = path.replace("%pid", String::number(getCurrentProcessID()));
                 fd = open(FileSystem::fileSystemRepresentation(path).data(), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
                 RELEASE_ASSERT(fd != -1);

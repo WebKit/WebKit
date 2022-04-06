@@ -1621,10 +1621,10 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     auto convertCase = mode == CaseConversionMode::Lower ? u_strToLower : u_strToUpper;
     auto status = callBufferProducingFunction(convertCase, buffer, StringView { s }.upconvertedCharacters().get(), s.length(), locale.utf8().data());
     if (U_FAILURE(status))
-        return throwVMTypeError(globalObject, scope, String { u_errorName(status) });
+        return throwVMTypeError(globalObject, scope, String::fromLatin1(u_errorName(status)));
 
     // 18. Return L.
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String(buffer))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String { buffer })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToLocaleLowerCase, (JSGlobalObject* globalObject, CallFrame* callFrame))

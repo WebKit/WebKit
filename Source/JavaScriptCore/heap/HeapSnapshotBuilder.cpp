@@ -583,7 +583,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
 
             unsigned reachabilityReasonIndex = 0;
             if (it.value.reachabilityFromOpaqueRootReasons) {
-                auto result = labelIndexes.add(String { it.value.reachabilityFromOpaqueRootReasons }, nextLabelIndex);
+                auto result = labelIndexes.add(String::fromLatin1(it.value.reachabilityFromOpaqueRootReasons), nextLabelIndex);
                 if (result.isNewEntry)
                     nextLabelIndex++;
                 reachabilityReasonIndex = result.iterator->value;

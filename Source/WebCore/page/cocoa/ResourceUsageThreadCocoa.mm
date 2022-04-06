@@ -117,11 +117,11 @@ static Vector<ThreadInfo> threadInfos()
             usage = threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
 
         // FIXME: dispatch_queue_t can be destroyed concurrently while we are accessing to it here. We should not use it.
-        String threadName = String(threadExtendedInfo.pth_name);
+        auto threadName = String::fromLatin1(threadExtendedInfo.pth_name);
         String dispatchQueueName;
         if (threadIdentifierInfo.dispatch_qaddr) {
             dispatch_queue_t queue = *reinterpret_cast<dispatch_queue_t*>(threadIdentifierInfo.dispatch_qaddr);
-            dispatchQueueName = String(dispatch_queue_get_label(queue));
+            dispatchQueueName = String::fromLatin1(dispatch_queue_get_label(queue));
         }
 
         infos.append(ThreadInfo { WTFMove(sendRight), usage, threadName, dispatchQueueName });

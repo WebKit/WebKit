@@ -114,7 +114,7 @@ const Vector<String>& LocaleCocoa::monthLabels()
     }
     m_monthLabels.reserveCapacity(12);
     for (auto& name : WTF::monthFullName)
-        m_monthLabels.uncheckedAppend(name);
+        m_monthLabels.uncheckedAppend(String::fromLatin1(name));
     return m_monthLabels;
 }
 
@@ -207,7 +207,7 @@ const Vector<String>& LocaleCocoa::shortMonthLabels()
     }
     m_shortMonthLabels.reserveCapacity(12);
     for (auto& name : WTF::monthName)
-        m_shortMonthLabels.uncheckedAppend(name);
+        m_shortMonthLabels.uncheckedAppend(String::fromLatin1(name));
     return m_shortMonthLabels;
 }
 

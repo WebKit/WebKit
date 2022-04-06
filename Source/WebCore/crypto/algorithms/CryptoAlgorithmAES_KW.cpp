@@ -35,9 +35,9 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmAES_KWInternal {
-static const char* const ALG128 = "A128KW";
-static const char* const ALG192 = "A192KW";
-static const char* const ALG256 = "A256KW";
+static constexpr auto ALG128 = "A128KW"_s;
+static constexpr auto ALG192 = "A192KW"_s;
+static constexpr auto ALG256 = "A256KW"_s;
 }
 
 static inline bool usagesAreInvalidForCryptoAlgorithmAES_KW(CryptoKeyUsageBitmap usages)

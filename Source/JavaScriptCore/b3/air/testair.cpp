@@ -2071,7 +2071,7 @@ inline Vector<String> matchAll(const CString& source, std::regex regex)
     std::smatch match;
     for (std::string str = source.data(); std::regex_search(str, match, regex); str = match.suffix()) {
         ASSERT(match.size() == 1);
-        matches.append(match[0].str().c_str());
+        matches.append(String::fromLatin1(match[0].str().c_str()));
     }
     return matches;
 }

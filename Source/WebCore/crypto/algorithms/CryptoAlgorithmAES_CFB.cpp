@@ -36,9 +36,9 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmAES_CFBInternal {
-static const char* const ALG128 = "A128CFB8";
-static const char* const ALG192 = "A192CFB8";
-static const char* const ALG256 = "A256CFB8";
+static constexpr auto ALG128 = "A128CFB8"_s;
+static constexpr auto ALG192 = "A192CFB8"_s;
+static constexpr auto ALG256 = "A256CFB8"_s;
 static const size_t IVSIZE = 16;
 }
 

@@ -36,9 +36,9 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmAES_GCMInternal {
-static const char* const ALG128 = "A128GCM";
-static const char* const ALG192 = "A192GCM";
-static const char* const ALG256 = "A256GCM";
+static constexpr auto ALG128 = "A128GCM"_s;
+static constexpr auto ALG192 = "A192GCM"_s;
+static constexpr auto ALG256 = "A256GCM"_s;
 #if CPU(ADDRESS64)
 static const uint64_t PlainTextMaxLength = 549755813632ULL; // 2^39 - 256
 #endif

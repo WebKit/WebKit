@@ -138,7 +138,7 @@ cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String
         const size_t aaguidOffset = rpIdHashLength + flagsLength + signCounterLength;
         if (authData.size() >= aaguidOffset + aaguidLength)
             memset(authData.data() + aaguidOffset, 0, aaguidLength);
-        format = String { noneAttestationValue };
+        format = String::fromLatin1(noneAttestationValue);
         statementMap.clear();
     }
     attestationObjectMap[cbor::CBORValue("authData")] = cbor::CBORValue(WTFMove(authData));

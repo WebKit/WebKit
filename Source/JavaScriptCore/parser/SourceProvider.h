@@ -178,7 +178,7 @@ class UnlinkedFunctionCodeBlock;
     private:
         WebAssemblySourceProvider(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String&& sourceURL)
             : BaseWebAssemblySourceProvider(sourceOrigin, WTFMove(sourceURL))
-            , m_source("[WebAssembly source]")
+            , m_source("[WebAssembly source]"_s)
             , m_data(WTFMove(data))
         {
         }

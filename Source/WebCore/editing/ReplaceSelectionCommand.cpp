@@ -114,13 +114,13 @@ private:
 
 static bool isInterchangeNewlineNode(const Node* node)
 {
-    static NeverDestroyed<String> interchangeNewlineClassString(AppleInterchangeNewline);
+    static NeverDestroyed<String> interchangeNewlineClassString = String::fromLatin1(AppleInterchangeNewline);
     return is<HTMLBRElement>(node) && downcast<HTMLBRElement>(*node).attributeWithoutSynchronization(classAttr) == interchangeNewlineClassString;
 }
 
 static bool isInterchangeConvertedSpaceSpan(const Node* node)
 {
-    static NeverDestroyed<String> convertedSpaceSpanClassString(AppleConvertedSpace);
+    static NeverDestroyed<String> convertedSpaceSpanClassString = String::fromLatin1(AppleConvertedSpace);
     return is<HTMLElement>(node) && downcast<HTMLElement>(*node).attributeWithoutSynchronization(classAttr) == convertedSpaceSpanClassString;
 }
 

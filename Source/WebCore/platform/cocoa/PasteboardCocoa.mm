@@ -234,7 +234,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
         for (auto cocoaType : info.platformTypesByFidelity) {
             auto imageType = cocoaTypeToImageType(cocoaType);
             auto* mimeType = imageTypeToMIMEType(imageType);
-            if (!mimeType || !reader.shouldReadBuffer(String { mimeType }))
+            if (!mimeType || !reader.shouldReadBuffer(String::fromLatin1(mimeType)))
                 continue;
             auto buffer = readBuffer(itemIndex, cocoaType);
 #if PLATFORM(MAC)
@@ -242,7 +242,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
                 buffer = convertTIFFToPNG(buffer.releaseNonNull());
 #endif
             if (buffer) {
-                reader.readBuffer(imageTypeToFakeFilename(imageType), String { mimeType }, buffer.releaseNonNull());
+                reader.readBuffer(imageTypeToFakeFilename(imageType), String::fromLatin1(mimeType), buffer.releaseNonNull());
                 break;
             }
         }

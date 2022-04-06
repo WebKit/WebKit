@@ -44,7 +44,7 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
     if (!f) {
         if (errno == ENOENT) {
             m_hasActiveAllowlist = true;
-            m_entries.add(String { filename });
+            m_entries.add(String::fromLatin1(filename));
         } else
             dataLogF("Failed to open file %s. Did you add the file-read-data entitlement to WebProcess.sb? Error code: %s\n", filename, safeStrerror(errno).data());
         return;

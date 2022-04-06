@@ -61,7 +61,7 @@ void CachedApplicationManifest::setEncoding(const String& chs)
 
 String CachedApplicationManifest::encoding() const
 {
-    return String { m_decoder->encoding().name() };
+    return String::fromLatin1(m_decoder->encoding().name());
 }
 
 std::optional<ApplicationManifest> CachedApplicationManifest::process(const URL& manifestURL, const URL& documentURL, Document* document)

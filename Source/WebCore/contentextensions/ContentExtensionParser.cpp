@@ -93,7 +93,7 @@ static Expected<Vector<String>, std::error_code> getDomainList(const JSON::Array
             { '$', "\\$" }
         } };
         for (auto& pair : escapeTable)
-            domain = domain.replace(pair.first, String { pair.second });
+            domain = domain.replace(pair.first, StringView { pair.second });
 
         const char* protocolRegex = "[a-z][a-z+.-]*:\\/\\/";
         const char* allowSubdomainsRegex = "(.*\\.)*";

@@ -50,9 +50,9 @@ void PlatformSpeechSynthesizerMock::speakingFinished()
 
 void PlatformSpeechSynthesizerMock::initializeVoiceList()
 {
-    m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.bruce"), String("bruce"), String("en-US"), true, true));
-    m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.clark"), String("clark"), String("en-US"), true, false));
-    m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.logan"), String("logan"), String("fr-CA"), true, true));
+    m_voiceList.append(PlatformSpeechSynthesisVoice::create("mock.voice.bruce"_s, "bruce"_s, "en-US"_s, true, true));
+    m_voiceList.append(PlatformSpeechSynthesisVoice::create("mock.voice.clark"_s, "clark"_s, "en-US"_s, true, false));
+    m_voiceList.append(PlatformSpeechSynthesisVoice::create("mock.voice.logan"_s, "logan"_s, "fr-CA"_s, true, true));
 }
 
 void PlatformSpeechSynthesizerMock::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)

@@ -1,5 +1,18 @@
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
+        Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function
+        https://bugs.webkit.org/show_bug.cgi?id=238701
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Logger.h:
+        (WTF::LogArgument::toString):
+        * wtf/text/WTFString.cpp:
+        (string):
+        * wtf/text/WTFString.h:
+
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
         Reduce number of conversions from StringView to String
         https://bugs.webkit.org/show_bug.cgi?id=238841
 

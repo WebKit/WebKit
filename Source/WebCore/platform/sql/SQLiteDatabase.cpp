@@ -532,8 +532,8 @@ int SQLiteDatabase::authorizerFunction(void* userData, int actionCode, const cha
     DatabaseAuthorizer* auth = static_cast<DatabaseAuthorizer*>(userData);
     ASSERT(auth);
 
-    String parameter1String { parameter1 };
-    String parameter2String { parameter2 };
+    auto parameter1String = String::fromLatin1(parameter1);
+    auto parameter2String = String::fromLatin1(parameter2);
     switch (actionCode) {
         case SQLITE_CREATE_INDEX:
             return auth->createIndex(parameter1String, parameter2String);

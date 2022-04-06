@@ -145,7 +145,7 @@ String DebuggerCallFrame::functionName() const
     if (isTailDeleted()) {
         if (JSFunction* func = jsDynamicCast<JSFunction*>(vm, m_shadowChickenFrame.callee))
             return func->calculatedDisplayName(vm);
-        return String { m_shadowChickenFrame.codeBlock->inferredName().data() };
+        return String::fromLatin1(m_shadowChickenFrame.codeBlock->inferredName().data());
     }
 
     return m_validMachineFrame->friendlyFunctionName();

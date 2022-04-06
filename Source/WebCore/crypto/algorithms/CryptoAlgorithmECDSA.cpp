@@ -37,12 +37,12 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmECDSAInternal {
-static const char* const ALG256 = "ES256";
-static const char* const ALG384 = "ES384";
-static const char* const ALG512 = "ES512";
-static const char* const P256 = "P-256";
-static const char* const P384 = "P-384";
-static const char* const P521 = "P-521";
+static constexpr auto ALG256 = "ES256"_s;
+static constexpr auto ALG384 = "ES384"_s;
+static constexpr auto ALG512 = "ES512"_s;
+static constexpr auto P256 = "P-256"_s;
+static constexpr auto P384 = "P-384"_s;
+static constexpr auto P521 = "P-521"_s;
 }
 
 Ref<CryptoAlgorithm> CryptoAlgorithmECDSA::create()

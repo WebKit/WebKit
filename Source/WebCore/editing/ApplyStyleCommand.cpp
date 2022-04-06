@@ -65,7 +65,7 @@ static int toIdentifier(RefPtr<CSSValue>&& value)
 
 static String& styleSpanClassString()
 {
-    static NeverDestroyed<String> styleSpanClassString(AppleStyleSpanClass);
+    static NeverDestroyed<String> styleSpanClassString = String::fromLatin1(AppleStyleSpanClass);
     return styleSpanClassString;
 }
 

@@ -38,9 +38,9 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmAES_CTRInternal {
-static const char* const ALG128 = "A128CTR";
-static const char* const ALG192 = "A192CTR";
-static const char* const ALG256 = "A256CTR";
+static constexpr auto ALG128 = "A128CTR"_s;
+static constexpr auto ALG192 = "A192CTR"_s;
+static constexpr auto ALG256 = "A256CTR"_s;
 static const size_t CounterSize = 16;
 static const uint64_t AllBitsSet = ~(uint64_t)0;
 }

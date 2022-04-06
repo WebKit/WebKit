@@ -39,7 +39,7 @@ static String adapterName(WGPUAdapter adapter)
 {
     WGPUAdapterProperties properties;
     wgpuAdapterGetProperties(adapter, &properties);
-    return String { properties.name };
+    return String::fromLatin1(properties.name);
 }
 
 static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)

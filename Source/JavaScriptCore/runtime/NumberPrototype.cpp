@@ -375,7 +375,7 @@ String toStringWithRadix(double doubleValue, int32_t radix)
         return String::number(doubleValue);
 
     RadixBuffer buffer;
-    return String { toStringWithRadixInternal(buffer, doubleValue, radix) };
+    return String::fromLatin1(toStringWithRadixInternal(buffer, doubleValue, radix));
 }
 
 // toExponential converts a number to a string, always formatting as an exponential.
@@ -412,7 +412,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
         converter.ToExponential(x, -1, &builder);
     else
         converter.ToExponential(x, decimalPlaces, &builder);
-    return JSValue::encode(jsString(vm, String { builder.Finalize() }));
+    return JSValue::encode(jsString(vm, String::fromLatin1(builder.Finalize())));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.
@@ -513,7 +513,7 @@ static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue
         return jsNontrivialString(vm, String::number(doubleValue));
 
     RadixBuffer buffer;
-    return jsString(vm, String { toStringWithRadixInternal(buffer, doubleValue, radix) });
+    return jsString(vm, String::fromLatin1(toStringWithRadixInternal(buffer, doubleValue, radix)));
 }
 
 JSString* int32ToString(VM& vm, int32_t value, int32_t radix)
@@ -541,7 +541,7 @@ JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
     char* startOfResultString = decimalPoint;
     *decimalPoint = '\0';
 
-    return jsNontrivialString(vm, String { int52ToStringWithRadix(startOfResultString, value, radix) });
+    return jsNontrivialString(vm, String::fromLatin1(int52ToStringWithRadix(startOfResultString, value, radix)));
 }
 
 JSString* numberToString(VM& vm, double doubleValue, int32_t radix)

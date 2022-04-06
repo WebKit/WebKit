@@ -119,7 +119,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleImports, (JSGlobalObject* globalObject
             RETURN_IF_EXCEPTION(throwScope, { });
             obj->putDirect(vm, module, jsString(vm, String::fromUTF8(imp.module)));
             obj->putDirect(vm, name, jsString(vm, String::fromUTF8(imp.field)));
-            obj->putDirect(vm, kind, jsString(vm, String(makeString(imp.kind))));
+            obj->putDirect(vm, kind, jsString(vm, String::fromLatin1(makeString(imp.kind))));
             result->push(globalObject, obj);
             RETURN_IF_EXCEPTION(throwScope, { });
         }
@@ -148,7 +148,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleExports, (JSGlobalObject* globalObject
             JSObject* obj = constructEmptyObject(globalObject);
             RETURN_IF_EXCEPTION(throwScope, { });
             obj->putDirect(vm, name, jsString(vm, String::fromUTF8(exp.field)));
-            obj->putDirect(vm, kind, jsString(vm, String(makeString(exp.kind))));
+            obj->putDirect(vm, kind, jsString(vm, String::fromLatin1(makeString(exp.kind))));
             result->push(globalObject, obj);
             RETURN_IF_EXCEPTION(throwScope, { });
         }

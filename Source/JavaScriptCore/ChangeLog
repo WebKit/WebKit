@@ -1,3 +1,70 @@
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
+        Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function
+        https://bugs.webkit.org/show_bug.cgi?id=238701
+
+        Reviewed by Geoffrey Garen.
+
+        * API/JSValue.mm:
+        (createStructHandlerMap):
+        (handerForStructTag):
+        * API/JSWrapperMap.mm:
+        (allocateConstructorForCustomClass):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::name):
+        * API/glib/JSCContext.cpp:
+        (jsc_context_check_syntax):
+        * b3/air/testair.cpp:
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptCallArgumentHandler::appendArgument):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName const):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::appendAPIBacktrace):
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::sendMessageToBackend):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        (runWithOptions):
+        (CommandLine::parseArguments):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/Parser.h:
+        (JSC::Parser::updateErrorMessage):
+        * parser/SourceProvider.h:
+        * runtime/BytecodeCacheError.cpp:
+        (JSC::BytecodeCacheError::StandardError::message const):
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::keywordValue const):
+        (JSC::IntlLocale::numberingSystems):
+        * runtime/IntlObject.cpp:
+        (JSC::numberingSystemsForLocale):
+        * runtime/NumberPrototype.cpp:
+        (JSC::toStringWithRadix):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::numberToStringInternal):
+        (JSC::int52ToString):
+        * runtime/Options.cpp:
+        (JSC::Options::overrideAliasedOptionWithHeuristic):
+        (JSC::Options::setAliasedOption):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        * runtime/StringPrototype.cpp:
+        (JSC::toLocaleCase):
+        * testRegExp.cpp:
+        (parseArguments):
+        * tools/CompilerTimingScope.cpp:
+        * tools/FunctionAllowlist.cpp:
+        (JSC::FunctionAllowlist::FunctionAllowlist):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2022-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Substring resolving should check 8bit / 16bit again

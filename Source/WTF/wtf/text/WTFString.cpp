@@ -889,7 +889,7 @@ void String::show() const
 String* string(const char* s)
 {
     // Intentionally leaks memory!
-    return new String(s);
+    return new String(String::fromLatin1(s));
 }
 
 Vector<char> asciiDebug(StringImpl* impl)

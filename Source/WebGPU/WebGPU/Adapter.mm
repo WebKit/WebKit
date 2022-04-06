@@ -123,7 +123,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         return;
     }
 
-    callback(WGPURequestDeviceStatus_Success, Device::create(m_device, String { descriptor.label }, m_instance), { });
+    callback(WGPURequestDeviceStatus_Success, Device::create(m_device, String::fromLatin1(descriptor.label), m_instance), { });
 }
 
 } // namespace WebGPU

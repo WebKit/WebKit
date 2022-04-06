@@ -507,11 +507,11 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
         if (!strcmp(arg, "-v") || !strcmp(arg, "--verbose"))
             options.verbose = true;
         else
-            options.files.append(argv[i]);
+            options.files.append(String::fromLatin1(argv[i]));
     }
 
     for (; i < argc; ++i)
-        options.arguments.append(argv[i]);
+        options.arguments.append(String::fromLatin1(argv[i]));
 }
 
 int realMain(int argc, char** argv)

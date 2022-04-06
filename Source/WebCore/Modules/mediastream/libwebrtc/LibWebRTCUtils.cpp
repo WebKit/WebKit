@@ -360,7 +360,7 @@ Exception toException(const webrtc::RTCError& error)
 {
     ASSERT(!error.ok());
 
-    return Exception { toExceptionCode(error.type()), String { error.message() } };
+    return Exception { toExceptionCode(error.type()), String::fromLatin1(error.message()) };
 }
 
 static inline RTCIceComponent toRTCIceComponent(int component)
@@ -455,7 +455,7 @@ RefPtr<RTCError> toRTCError(const webrtc::RTCError& rtcError)
     auto detail = toRTCErrorDetailType(rtcError.error_detail());
     if (!detail)
         return nullptr;
-    return RTCError::create(*detail, String { rtcError.message() });
+    return RTCError::create(*detail, String::fromLatin1(rtcError.message()));
 }
 
 } // namespace WebCore

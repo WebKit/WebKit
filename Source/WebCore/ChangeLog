@@ -1,3 +1,115 @@
+2022-04-06  Chris Dumez  <cdumez@apple.com>
+
+        Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function
+        https://bugs.webkit.org/show_bug.cgi?id=238701
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed):
+        (WebCore::RTCStatsLogger::toJSONString const):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toException):
+        (WebCore::toRTCError):
+        * Modules/webauthn/WebAuthenticationUtils.cpp:
+        (WebCore::buildAttestationMap):
+        * Modules/webauthn/cbor/CBORValue.cpp:
+        (cbor::CBORValue::CBORValue):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::getVersionFromDatabase):
+        (WebCore::Database::setVersionInDatabase):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::processPropertyIndexedKeyframes):
+        * animation/KeyframeEffect.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getDomainList):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        * crypto/algorithms/CryptoAlgorithmECDSA.cpp:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp:
+        * css/DOMCSSCustomPropertyDescriptor.h:
+        * css/makeprop.pl:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::types const):
+        * dom/TextDecoder.cpp:
+        (WebCore::TextDecoder::encoding const):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::styleSpanClassString):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isInterchangeNewlineNode):
+        (WebCore::isInterchangeConvertedSpaceSpan):
+        * editing/TextInsertionBaseCommand.cpp:
+        (WebCore::canAppendNewLineFeedToSelection):
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::appendFormData const):
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::parseFragments):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::testPreloadScannerViewportSupport):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::responseReceived):
+        * loader/cache/CachedApplicationManifest.cpp:
+        (WebCore::CachedApplicationManifest::encoding const):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        (WebCore::CachedCSSStyleSheet::encoding const):
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::encoding const):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::encoding const):
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::encoding const):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::threadInfos):
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::read):
+        * platform/gamepad/GamepadConstants.cpp:
+        (WebCore::standardGamepadMappingString):
+        (WebCore::xrStandardGamepadMappingString):
+        * platform/graphics/FourCC.h:
+        (WTF::LogArgument<WebCore::FourCC>::toString):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::initialize):
+        (WebCore::GraphicsContextGLANGLE::getString):
+        * platform/mac/ThreadCheck.mm:
+        (WebCoreReportThreadViolation):
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::hashStringWithSalt):
+        * platform/mock/PlatformSpeechSynthesizerMock.cpp:
+        (WebCore::PlatformSpeechSynthesizerMock::initializeVoiceList):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::authorizerFunction):
+        * platform/text/cocoa/LocaleCocoa.mm:
+        (WebCore::LocaleCocoa::monthLabels):
+        (WebCore::LocaleCocoa::shortMonthLabels):
+        * testing/Internals.cpp:
+        (WebCore::Internals::testDictionaryLogging):
+        * xml/XPathValue.h:
+        (WebCore::XPath::Value::Value):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::XSLTProcessor::parseErrorFunc):
+        (WebCore::docLoaderFunc):
+        (WebCore::XSLTProcessor::transformToString):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+
 2022-04-06  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Check for document page in WorkerMessagingProxy::createCacheStorageConnection

@@ -287,7 +287,7 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     if (WebGLColorBufferFloat::supported(*m_context))
         result.append("WEBGL_color_buffer_float"_s);
     if (KHRParallelShaderCompile::supported(*m_context))
-        result.append("KHR_parallel_shader_compile");
+        result.append("KHR_parallel_shader_compile"_s);
     if (WebGLMultiDraw::supported(*m_context))
         result.append("WEBGL_multi_draw"_s);
 

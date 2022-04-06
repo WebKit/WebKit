@@ -58,7 +58,7 @@ void CachedXSLStyleSheet::setEncoding(const String& chs)
 
 String CachedXSLStyleSheet::encoding() const
 {
-    return String { m_decoder->encoding().name() };
+    return String::fromLatin1(m_decoder->encoding().name());
 }
 
 void CachedXSLStyleSheet::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

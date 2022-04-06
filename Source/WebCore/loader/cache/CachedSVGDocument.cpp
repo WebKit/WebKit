@@ -49,7 +49,7 @@ void CachedSVGDocument::setEncoding(const String& chs)
 
 String CachedSVGDocument::encoding() const
 {
-    return String { m_decoder->encoding().name() };
+    return String::fromLatin1(m_decoder->encoding().name());
 }
 
 void CachedSVGDocument::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

@@ -66,7 +66,7 @@ public:
 
     struct BaseKeyframe {
         MarkableDouble offset;
-        String easing { "linear" };
+        String easing { "linear"_s };
         CompositeOperationOrAuto composite { CompositeOperationOrAuto::Auto };
     };
 

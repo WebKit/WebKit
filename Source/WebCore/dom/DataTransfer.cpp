@@ -319,7 +319,7 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
         auto types = m_pasteboard->typesForLegacyUnsafeBindings();
         ASSERT(!types.contains("Files"));
         if (m_pasteboard->fileContentState() != Pasteboard::FileContentState::NoFileOrImageData && addFilesType == AddFilesType::Yes)
-            types.append("Files");
+            types.append("Files"_s);
         return types;
     }
 

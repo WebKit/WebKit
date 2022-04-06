@@ -95,7 +95,7 @@ bool HiddenInputType::appendFormData(DOMFormData& formData) const
     auto name = element()->name();
 
     if (equalIgnoringASCIICase(name, "_charset_")) {
-        formData.append(name, String { formData.encoding().name() });
+        formData.append(name, String::fromLatin1(formData.encoding().name()));
         return true;
     }
     return InputType::appendFormData(formData);

@@ -816,7 +816,7 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
         if (frameType == FrameType::C) {
             auto demangled = WTF::StackTrace::demangle(const_cast<void*>(cCodePC));
             if (demangled)
-                return String(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
+                return String::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
             WTF::dataLog("couldn't get a name");
         }
 #endif
