@@ -1,3 +1,13 @@
+2022-04-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Support PKShippingMethods on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=238845
+        <rdar://problem/91320467>
+
+        Reviewed by Devin Rousso.
+
+        * pal/spi/cocoa/PassKitSPI.h: Move PKShippingMethods SPI declarations out of MacOS specific #ifdefs.
+
 2022-04-05  Elliott Williams  <emw@apple.com>
 
         [XCBuild] PAL: Add headers-only dependency on WebGPU
