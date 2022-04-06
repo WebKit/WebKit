@@ -123,7 +123,8 @@
             "status": "In Development",
             "enabled-by-default": false
         },
-        "url": "https://drafts.csswg.org/css-highlight-api-1/",
+        "url": "https://www.w3.org/TR/css-highlight-api-1/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=204903",
         "keywords": ["css pseudo-element", "highlight"],
         "category": "css",
         "description": "A mechanism for styling arbitrary ranges of a document identified by script."
@@ -170,21 +171,6 @@
         "contact": {
             "name": "Sergio Villar Senin",
             "email": "svillar@igalia.com"
-        }
-    },
-    {
-        "name": "CSS Custom Highlight API Module Level 1",
-        "status": {
-            "status": "In Development"
-        },
-        "url": "https://www.w3.org/TR/css-highlight-api-1/",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=204903",
-        "keywords": ["highlight"],
-        "category": "css",
-        "description": "The Custom Highlight API extends the concept of highlight pseudo-elements (see CSS Pseudo-Elements 4 § 3 Highlight Pseudo-elements) by providing a way for web developers to style the text of arbitrary Range objects, rather than being limited to the user agent defined ::selection, ::inactive-selection, ::spelling-error, and ::grammar-error.",
-        "contact": {
-            "name": "Megan Gardner",
-            "email": "megan_gardner@apple.com"
         }
     },
     {
@@ -349,6 +335,16 @@
         }
     },
     {
+        "name": "CSS Shapes Level 1",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "http://www.w3.org/TR/css-shapes-1/",
+        "description": "CSS Shapes describe geometric shapes for use in CSS. For Level 1, CSS Shapes can be applied to floats.",
+        "category": "css",
+        "comment": "The implementation is feature complete and shipping, but is -webkit prefixed."
+    },
+    {
         "name": "CSS Text Decoration Level 4",
         "status": {
             "status": "Supported"
@@ -366,7 +362,7 @@
     {
         "name": "CSS Typed OM Level 1",
         "status": {
-            "status": "Under Development"
+            "status": "In Development"
         },
         "url": "https://drafts.css-houdini.org/css-typed-om/",
         "keywords": ["css", "houdini"],
@@ -528,6 +524,20 @@
         }
     },
     {
+        "name": "File and Directory Entries API",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://wicg.github.io/entries-api/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=175976",
+        "description": "An API to support file and directory upload by drag-and-drop operations.",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
+        }
+    },
+    {
         "name": "Filter Effects Module Level 2",
         "url": "http://dev.w3.org/fxtf/filters-2/",
         "keywords": ["css filters", "filter effects", "filters"],
@@ -574,6 +584,15 @@
         "category": "html"
     },
     {
+        "name": "Idle Detection",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://wicg.github.io/idle-detection/",
+        "keywords": ["user presence", "security", "privacy"],
+        "description": "An API to allow web content to observe system-wide user presence signals."
+    },
+    {
         "name": "Indexed Database",
         "status": {
             "status": "Supported"
@@ -604,6 +623,17 @@
         }
     },
     {
+        "name": "Input Events",
+        "status": {
+            "status": "Supported",
+            "enabled-by-default": false
+        },
+        "url": "https://w3c.github.io/input-events",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=163112",
+        "documentation-url": "https://w3c.github.io/input-events",
+        "description": "Allows pages to override default editing behaviors and to monitor DOM changes due to user input."
+    },
+    {
         "name": "Intersection Observer",
         "status": {
             "status": "Supported"
@@ -624,6 +654,15 @@
         "description": "Allows defering loading of images until they are visible in the viewport."
     },
     {
+        "name": "Magnetometer",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://www.w3.org/TR/magnetometer/",
+        "keywords": ["magnetic field", "security", "privacy"],
+        "description": "A sensor API to measure magnetic field in the X, Y and Z axis."
+    },
+    {
         "name": "Media Capture and Streams",
         "status": {
             "status": "Supported"
@@ -631,6 +670,15 @@
         "url": "https://w3c.github.io/mediacapture-main/",
         "keywords": ["mediastream", "getusermedia"],
         "description": "A set of JavaScript APIs that allow local media, including audio and video, to be requested."
+    },
+    {
+        "name": "MediaStream Recording API",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://w3c.github.io/mediacapture-record",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=85851",
+        "comment": "Allows recording of audio and/or video MediaStream."
     },
     {
         "name": "Navigation Timing Level 1",
@@ -654,6 +702,25 @@
             "twitter": "@alexfchr",
             "email": "achristensen@webkit.org"
         }
+    },
+    {
+        "name": "Network Information",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "http://www.w3.org/TR/netinfo-api/",
+        "keywords": ["network", "security", "privacy"],
+        "description": "An interface for web applications to access the underlying connection information of the device."
+    },
+    {
+        "name": "Payment Request",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://www.w3.org/TR/payment-request/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=174796",
+        "keywords": ["web payments", "payment request", "apple pay"],
+        "description": "An API for merchants to request payments from users."
     },
     {
         "name": "Performance Observer",
@@ -715,6 +782,29 @@
         }
     },
     {
+        "name": "Proximity Sensor",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://www.w3.org/TR/proximity/",
+        "keywords": ["proximity", "security", "privacy"],
+        "description": "A sensor API to monitor the presence of nearby physical objects without physical contact."
+    },
+    {
+        "name": "Resize Observer",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://drafts.csswg.org/resize-observer/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=157743",
+        "keywords": ["resize", "resize observer", "resizeobserver"],
+        "description": "An API for observing changes to Element's size.",
+        "contact": {
+            "name": "Cathie Chen",
+            "email": "cathiechen@igalia.com"
+        }
+    },
+    {
         "name": "Resource Timing Level 2",
         "status": {
             "status": "Supported"
@@ -759,6 +849,17 @@
         }
     },
     {
+        "name": "Scroll Anchoring",
+        "status": {
+            "status": "Under Consideration"
+        },
+        "url": "https://www.w3.org/TR/css-scroll-anchoring-1/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=171099",
+        "description": "Maintains page scroll position when content is modified.",
+        "keywords": ["scroll", "anchor"],
+        "category": "css"
+    },
+    {
         "name": "Service Workers",
         "status": {
             "status": "Supported"
@@ -793,6 +894,25 @@
             "email": "web-evangelist@apple.com",
             "twitter": "@jonathandavis"
         }
+    },
+    {
+        "name": "Vibration API",
+        "status": {
+            "status": "Removed"
+        },
+        "url": "https://w3c.github.io/vibration/",
+        "keywords": ["vibration"],
+        "category": "webapps",
+        "description": "An API that provides access to the vibration mechanism of the hosting device."
+    },
+    {
+        "name": "Visual Viewport API",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://wicg.github.io/visual-viewport/",
+        "description": "A proposal to add explicit APIs to the Web for querying and setting the visual viewport.",
+        "keywords": ["visual viewport", "viewport", "viewportapi"]
     },
     {
         "name": "WOFF File Format 2.0",
@@ -841,6 +961,40 @@
         }
     },
     {
+        "name": "Web Audio",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://www.w3.org/TR/webaudio/",
+        "keywords": ["audio", "webaudio"],
+        "description": "A high-level JavaScript API for processing and synthesizing audio in web applications.",
+        "comment": "WebKit's implementation does not match the current specification."
+    },
+    {
+        "name": "Web Authentication",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://w3c.github.io/webauthn/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=181943",
+        "keywords": ["authentication", "credentials", "webauthn", "security"],
+        "description": "An API enabling the creation and use of strong, attested, cryptographic scoped credentials by web applications, for the purpose of strongly authenticating users.",
+        "contact": {
+            "name": "J Pascoe",
+            "twitter": "@pascoej_",
+            "email": "j_pascoe@apple.com"
+        }
+    },
+    {
+        "name": "Web Bluetooth",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://webbluetoothcg.github.io/web-bluetooth/",
+        "keywords": ["bluetooth", "security", "privacy"],
+        "description": "An API to discover and communicate with devices over the Bluetooth."
+    },
+    {
         "name": "Web Components",
         "url": "http://www.w3.org/wiki/WebComponents/",
         "keywords": ["web components", "shadow dom", "html imports", "custom elements", "template element"],
@@ -869,6 +1023,40 @@
         }
     },
     {
+        "name": "Web Locks",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://w3c.github.io/web-locks/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=232436",
+        "keywords": ["lock", "synchronization"],
+        "category": "webapps",
+        "description": "API to allow browsing contexts (windows, workers) within a web application to coordinate the usage of resources.",
+        "contact": {
+            "name": "Chris Dumez",
+            "email": "cdumez@apple.com",
+            "twitter": "@chris_dumez"
+        }
+    },
+    {
+        "name": "Web MIDI",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://www.w3.org/TR/webmidi/",
+        "keywords": ["MIDI", "music", "synthesizer", "keyboard", "security", "privacy"],
+        "description": "An API supporting the Musical Instrument Digital Interface (MIDI) protocol, enabling web applications to enumerate and select MIDI input and output devices on the client system and send and receive MIDI messages."
+    },
+    {
+        "name": "Web NFC",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://www.w3.org/web-nfc/",
+        "keywords": ["NFC", "security", "privacy"],
+        "description": "An API to enable selected use cases based on NFC technology."
+    },
+    {
         "name": "Web SQL Database",
         "status": {
             "status": "Removed"
@@ -881,6 +1069,25 @@
             "twitter": "@jonathandavis",
             "email": "web-evangelist@apple.com"
         }
+    },
+    {
+        "name": "Web Serial",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://wicg.github.io/serial/",
+        "keywords": ["serial bus", "security", "privacy"],
+        "description": "An API to allow websites to read from and write to serial devices."
+    },
+    {
+        "name": "Web Share",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://github.com/WICG/web-share/blob/master/docs/interface.md",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=171100",
+        "keywords": ["sharing"],
+        "description": "An API to allow content from the page to be exposed to platform sharing APIs."
     },
     {
         "name": "Web Speech",
@@ -911,6 +1118,15 @@
         "category": "html"
     },
     {
+        "name": "WebHID",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://wicg.github.io/webhid/",
+        "keywords": ["HID", "security", "privacy"],
+        "description": "An API for providing access to devices that support the Human Interface Device (HID) protocol."
+    },
+    {
         "name": "WebRTC",
         "status": {
             "status": "Supported"
@@ -925,6 +1141,15 @@
             "twitter": "@jonathandavis",
             "email": "web-evangelist@apple.com"
         }
+    },
+    {
+        "name": "WebUSB",
+        "status": {
+            "status": "Not Considering"
+        },
+        "url": "https://wicg.github.io/webusb/",
+        "keywords": ["USB", "security", "privacy"],
+        "description": "An an API for securely providing access to Universal Serial Bus devices from web pages."
     },
     {
         "name": "WebXR",
@@ -1119,15 +1344,6 @@
         }
     },
     {
-        "name": "CSS Shapes Level 1",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "http://www.w3.org/TR/css-shapes-1/",
-        "description": "CSS Shapes describe geometric shapes for use in CSS. For Level 1, CSS Shapes can be applied to floats.",
-        "comment": "The implementation is feature complete and shipping, but is -webkit prefixed."
-    },
-    {
         "name": "Case-insensitive attribute selectors",
         "status": {
             "status": "Supported"
@@ -1265,20 +1481,6 @@
         }
     },
     {
-        "name": "File and Directory Entries API",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://wicg.github.io/entries-api/",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=175976",
-        "description": "An API to support file and directory upload by drag-and-drop operations.",
-        "contact": {
-            "name": "Chris Dumez",
-            "email": "cdumez@apple.com",
-            "twitter": "@chris_dumez"
-        }
-    },
-    {
         "name": "Filter Effects backdrop-filter property",
         "status": {
             "status": "Supported"
@@ -1370,17 +1572,6 @@
         "description": "This property specifies styling for dropped, raised, and sunken initial letters."
     },
     {
-        "name": "Input Events",
-        "status": {
-            "status": "Supported",
-            "enabled-by-default": false
-        },
-        "url": "https://w3c.github.io/input-events",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=163112",
-        "documentation-url": "https://w3c.github.io/input-events",
-        "description": "Allows pages to override default editing behaviors and to monitor DOM changes due to user input."
-    },
-    {
         "name": "Input modalities (inputmode attribute)",
         "status": {
             "status": "Supported",
@@ -1398,15 +1589,6 @@
         "url": "http://dev.w3.org/csswg/mediaqueries-4/#mf-interaction",
         "specification": "CSS Media Queries Level 4",
         "description": "The \"pointer\" media defines how percise the pointing device is. The \"hover\" media defines the ability of the poiting device to hover elements."
-    },
-    {
-        "name": "MediaStream Recording API",
-        "status": {
-            "status": "In Development"
-        },
-        "url": "https://w3c.github.io/mediacapture-record",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=85851",
-        "comment": "Allows recording of audio and/or video MediaStream."
     },
     {
         "name": "MicroData",
@@ -1427,16 +1609,6 @@
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=183720",
         "specification": "HTML5",
         "comment": "OffscreenCanvas objects are used to create rendering contexts, much like an HTMLCanvasElement, but with no connection to the DOM. This makes it possible to use canvas rendering contexts in workers."
-    },
-    {
-        "name": "Payment Request",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://www.w3.org/TR/payment-request/",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=174796",
-        "keywords": ["web payments", "payment request", "apple pay"],
-        "description": "An API for merchants to request payments from users."
     },
     {
         "name": "Picture element",
@@ -1474,31 +1646,6 @@
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=138967",
         "specification": "Streams",
         "comment": "The implementation does not support ReadableStreamBYOBReader."
-    },
-    {
-        "name": "Resize Observer",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://drafts.csswg.org/resize-observer/",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=157743",
-        "keywords": ["resize", "resize observer", "resizeobserver"],
-        "description": "An API for observing changes to Element's size.",
-        "contact": {
-            "name": "Cathie Chen",
-            "email": "cathiechen@igalia.com"
-        }
-    },
-    {
-        "name": "Scroll Anchoring",
-        "status": {
-            "status": "Under Consideration"
-        },
-        "url": "https://wicg.github.io/ScrollAnchoring/",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=171099",
-        "description": "Maintains page scroll position when content is modified.",
-        "keywords": ["scroll", "anchor"],
-        "category": "html"
     },
     {
         "name": "Shadow DOM",
@@ -1620,110 +1767,14 @@
         "description": "Allows selection of variation values along fonts' exposed axes."
     },
     {
-        "name": "Vibration API",
-        "status": {
-            "status": "Removed"
-        },
-        "url": "https://w3c.github.io/vibration/",
-        "keywords": ["vibration"],
-        "category": "webapps",
-        "description": "An API that provides access to the vibration mechanism of the hosting device."
-    },
-    {
-        "name": "Visual Viewport API",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://wicg.github.io/visual-viewport/",
-        "description": "A proposal to add explicit APIs to the Web for querying and setting the visual viewport.",
-        "keywords": ["visual viewport", "viewport", "viewportapi"]
-    },
-    {
-        "name": "Web Audio",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://www.w3.org/TR/webaudio/",
-        "keywords": ["audio", "webaudio"],
-        "description": "A high-level JavaScript API for processing and synthesizing audio in web applications.",
-        "comment": "WebKit's implementation does not match the current specification."
-    },
-    {
-        "name": "Web Authentication",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://w3c.github.io/webauthn/",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=181943",
-        "keywords": ["authentication", "credentials", "webauthn", "security"],
-        "description": "An API enabling the creation and use of strong, attested, cryptographic scoped credentials by web applications, for the purpose of strongly authenticating users.",
-        "contact": {
-            "name": "J Pascoe",
-            "twitter": "@pascoej_",
-            "email": "j_pascoe@apple.com"
-        }
-    },
-    {
-        "name": "Web Bluetooth",
-        "status": {
-            "status": "Not Considering"
-        },
-        "url": "https://webbluetoothcg.github.io/web-bluetooth/",
-        "keywords": ["bluetooth", "security", "privacy"],
-        "description": "An API to discover and communicate with devices over the Bluetooth."
-    },
-    {
         "name": "Web Bluetooth Scanning",
         "status": {
             "status": "Not Considering"
         },
-        "url": "https://webbluetoothcg.github.io/web-bluetooth/",
+        "url": "https://webbluetoothcg.github.io/web-bluetooth/#device-discovery",
         "keywords": ["bluetooth", "privacy"],
+        "specification": "Web Bluetooth",
         "description": "An API to listen for Bluetooth Low Energy advertising packets."
-    },
-    {
-        "name": "Web Locks",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://w3c.github.io/web-locks/",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=232436",
-        "keywords": ["lock", "synchronization"],
-        "category": "webapps",
-        "description": "API to allow browsing contexts (windows, workers) within a web application to coordinate the usage of resources.",
-        "contact": {
-            "name": "Chris Dumez",
-            "email": "cdumez@apple.com",
-            "twitter": "@chris_dumez"
-        }
-    },
-    {
-        "name": "Web MIDI",
-        "status": {
-            "status": "Not Considering"
-        },
-        "url": "https://www.w3.org/TR/webmidi/",
-        "keywords": ["MIDI", "music", "synthesizer", "keyboard", "security", "privacy"],
-        "description": "An API supporting the Musical Instrument Digital Interface (MIDI) protocol, enabling web applications to enumerate and select MIDI input and output devices on the client system and send and receive MIDI messages."
-    },
-    {
-        "name": "Web Share",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://github.com/WICG/web-share/blob/master/docs/interface.md",
-        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=171100",
-        "keywords": ["sharing"],
-        "description": "An API to allow content from the page to be exposed to platform sharing APIs."
-    },
-    {
-        "name": "WebUSB",
-        "status": {
-            "status": "Not Considering"
-        },
-        "url": "https://wicg.github.io/webusb/",
-        "keywords": ["USB", "security", "privacy"],
-        "description": "An an API for securely providing access to Universal Serial Bus devices from web pages."
     },
     {
         "name": "inert attribute",

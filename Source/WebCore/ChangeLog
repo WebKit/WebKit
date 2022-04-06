@@ -1,3 +1,19 @@
+2022-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Further clean-ups for features.json
+        https://bugs.webkit.org/show_bug.cgi?id=238769
+
+        Reviewed by Tim Nguyen.
+
+        While editing the Features file, I noticed two things:
+
+        1. A number of APIs that we do not support were missing.
+        2. A number of APIs were included in the "Features" section, rather than the "Standards" section.
+
+        This patch corrects both issues.
+
+        * features.json:
+
 2022-04-06  Youenn Fablet  <youenn@apple.com>
 
         [Cocoa] Use GCD webrtc task queue
