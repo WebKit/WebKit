@@ -2208,10 +2208,6 @@ webkit.org/b/234536 webxr/high-performance.html [ Failure ]
 # Wrong text color
 webkit.org/b/236913 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
 
-# No/bad gradient/pattern
-webkit.org/b/236924 svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
-webkit.org/b/236924 imported/blink/svg/text/obb-paintserver.html [ ImageOnlyFailure ]
-
 # Media failures
 webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Timeout Crash Pass ]
 webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]

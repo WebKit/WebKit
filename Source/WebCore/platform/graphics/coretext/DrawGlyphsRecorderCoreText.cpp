@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,10 +108,13 @@ void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& conte
 
 void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& contextState)
 {
-    m_internalContext->setFillBrush(m_originalState.fillBrush);
-    m_internalContext->setStrokeBrush(m_originalState.strokeBrush);
-
     m_internalContext->setCTM(m_originalState.ctm);
+
+    m_internalContext->setFillBrush(m_originalState.fillBrush);
+    m_internalContext->applyFillPattern();
+
+    m_internalContext->setStrokeBrush(m_originalState.strokeBrush);
+    m_internalContext->applyStrokePattern();
 
     m_internalContext->setShadowsIgnoreTransforms(m_originalState.ignoreTransforms);
     m_internalContext->setDropShadow(m_originalState.dropShadow);
@@ -143,9 +146,27 @@ void DrawGlyphsRecorder::concludeInternalContext()
     updateShadow(m_originalState.dropShadow, m_originalState.ignoreTransforms ? ShadowsIgnoreTransforms::Yes : ShadowsIgnoreTransforms::No);
 }
 
+void DrawGlyphsRecorder::updateFillColor(CGColorRef fillColor)
+{
+    if (CGColorGetPattern(fillColor)) {
+        ASSERT(m_originalState.fillBrush.pattern());
+        return;
+    }
+    m_owner.setFillBrush(Color::createAndPreserveColorSpace(fillColor));
+}
+
 void DrawGlyphsRecorder::updateFillBrush(const SourceBrush& newBrush)
 {
     m_owner.setFillBrush(newBrush);
+}
+
+void DrawGlyphsRecorder::updateStrokeColor(CGColorRef strokeColor)
+{
+    if (CGColorGetPattern(strokeColor)) {
+        ASSERT(m_originalState.strokeBrush.pattern());
+        return;
+    }
+    m_owner.setStrokeBrush(Color::createAndPreserveColorSpace(strokeColor));
 }
 
 void DrawGlyphsRecorder::updateStrokeBrush(const SourceBrush& newBrush)
@@ -243,10 +264,8 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
         ctmFixup = AffineTransform();
     m_owner.concatCTM(ctmFixup);
 
-    auto fillColor = CGGStateGetFillColor(gstate);
-    auto strokeColor = CGGStateGetStrokeColor(gstate);
-    updateFillBrush(Color::createAndPreserveColorSpace(fillColor));
-    updateStrokeBrush(Color::createAndPreserveColorSpace(strokeColor));
+    updateFillColor(CGGStateGetFillColor(gstate));
+    updateStrokeColor(CGGStateGetStrokeColor(gstate));
     updateShadow(CGGStateGetStyle(gstate));
 
     auto fontSize = CGGStateGetFontSize(gstate);

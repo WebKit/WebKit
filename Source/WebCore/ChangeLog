@@ -1,3 +1,25 @@
+2022-04-06  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Text filled with pattern sometimes draw with incorrect color
+        https://bugs.webkit.org/show_bug.cgi?id=236924
+        rdar://89196811
+
+        Reviewed by Myles C. Maxfield.
+
+        applyFillPattern() and applyStrokePattern() have to explicitly called
+        for the GraphicsContext or the DisplayList::Recorder before drawing 
+        with the pattern. But this is not happening for the DrawGlyphsRecorder 
+        internalContext. When CoreText calls DrawGlyphsRecorder::recordDrawGlyphs()
+        back, it applies the CGGState fill color to the DisplayList::Recorder so
+        it overrides what applyFillPattern() did before recording the glyphs.
+
+        * platform/graphics/DrawGlyphsRecorder.h:
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DrawGlyphsRecorder::populateInternalContext):
+        (WebCore::DrawGlyphsRecorder::updateFillColor):
+        (WebCore::DrawGlyphsRecorder::updateStrokeColor):
+        (WebCore::DrawGlyphsRecorder::recordDrawGlyphs):
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Reduce number of conversions from StringView to String
