@@ -150,6 +150,10 @@ class Svn(mocks.Subprocess):
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(returncode=0),
             ), mocks.Subprocess.Route(
+                self.executable, 'revert', '-R',
+                cwd=self.path,
+                completion=mocks.ProcessCompletion(returncode=0),
+            ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
                 completion=mocks.ProcessCompletion(
