@@ -6115,7 +6115,7 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=300,
                 logEnviron=False,
-                command=['git', 'pull', 'origin', 'main'],
+                command=['git', 'pull', 'origin', 'main', '--rebase'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=300,
@@ -6164,7 +6164,7 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=300,
                 logEnviron=False,
-                command=['git', 'pull', 'origin', 'main'],
+                command=['git', 'pull', 'origin', 'main', '--rebase'],
             ) + 0, ExpectShell(
                 workdir='wkdir',
                 timeout=300,
