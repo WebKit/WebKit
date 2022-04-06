@@ -1,3 +1,17 @@
+2022-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Fix the tvOS build
+        https://bugs.webkit.org/show_bug.cgi?id=238881
+        <rdar://problem/91351306>
+
+        Unreviewed.
+
+        MTLTextureType2DMultisampleArray is not available on tvOS.
+
+        * WebGPU/Texture.mm:
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::createView):
+
 2022-04-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Set svn:ignore on WebGPU.xcodeproj
