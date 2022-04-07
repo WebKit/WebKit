@@ -356,7 +356,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             if version:
                 labels.append(version)
 
-        if labels:
+        if labels is not None:
             for label in labels:
                 if not self.labels.get(label):
                     raise ValueError("'{}' is not a label for '{}'".format(label, self.url))

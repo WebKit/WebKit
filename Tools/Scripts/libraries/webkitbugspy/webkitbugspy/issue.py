@@ -161,7 +161,7 @@ class Issue(object):
         return self._labels
 
     def set_labels(self, labels):
-        return self.tracker.set(labels=labels)
+        return self.tracker.set(self, labels=labels)
 
     @property
     def project(self):

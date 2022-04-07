@@ -394,7 +394,9 @@ Rebased 'eng/pr-branch' on 'main!'
         )
 
     def test_github_update(self):
-        with mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with mocks.remote.GitHub(labels={
+            'merging-blocked': dict(color='c005E5', description='Applied to prevent a change from being merged'),
+        }) as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -402,12 +404,18 @@ Rebased 'eng/pr-branch' on 'main!'
                     path=self.path,
                 ))
 
+            github_tracker = github.Tracker('https://{}'.format(remote.remote))
+            self.assertEqual(github_tracker.issue(1).labels, [])
+            github_tracker.issue(1).set_labels(['merging-blocked'])
+
             with OutputCapture(level=logging.INFO) as captured:
                 repo.staged['added.txt'] = 'diff'
                 self.assertEqual(0, program.main(
                     args=('pull-request', '-v', '--no-history'),
                     path=self.path,
                 ))
+
+            self.assertEqual(github_tracker.issue(1).labels, [])
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -423,6 +431,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                "Checking PR labels for 'merging-blocked'...",
+                "Removing 'merging-blocked' from PR 1...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
@@ -460,6 +470,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 '    Found 1 commit...',
                 '    Found 2 commits...',
+                "Checking PR labels for 'merging-blocked'...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
@@ -503,6 +514,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                "Checking PR labels for 'merging-blocked'...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
