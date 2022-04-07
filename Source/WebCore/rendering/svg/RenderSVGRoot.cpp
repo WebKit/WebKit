@@ -606,14 +606,6 @@ LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, RenderFr
     return clipRect;
 }
 
-void RenderSVGRoot::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
-{
-    RenderReplaced::applyTransform(transform, boundingBox, options);
-
-    // FIXME: [LBSE] Upstream SVGRenderSupport changes
-    // SVGRenderSupport::applyTransform(*this, transform, style, boundingBox, std::nullopt, std::nullopt, options);
-}
-
 void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     auto localRect = LayoutRect(valueOrDefault(m_supplementalLocalToParentTransform.inverse()).mapRect(borderBoxRect()));

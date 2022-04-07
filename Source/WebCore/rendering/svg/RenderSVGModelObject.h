@@ -58,8 +58,6 @@ public:
 
     inline SVGElement& element() const;
 
-    void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const override;
-
     // Mimic the RenderBox accessors - by sharing the same terminology the painting / hit testing / layout logic is
     // similar to read compared to non-SVG renderers such as RenderBox & friends.
     LayoutRect borderBoxRectEquivalent() const { return { LayoutPoint(), m_layoutRect.size() }; }

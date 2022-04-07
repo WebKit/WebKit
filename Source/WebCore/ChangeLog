@@ -1,3 +1,51 @@
+2022-04-07  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Unify reference box / CTM computation in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=237701
+
+        Reviewed by Rob Buis.
+
+        Extract the code in RenderLayer that computes the reference box, obtains the CTM,
+        applies pixel snapping, etc. into a shared updateTransformFromStyle() helper function.
+        Use that helper to de-duplicate code between updateTransform() / currentTransform()
+        (and RenderLayerBacking::updateTransform() in follow-up patches).
+
+        currentTransform() needs to compute the CTM, based on a non-default RenderStyle (!= renderer().style()),
+        namely the aninmatedStyle(), if an accelerated transform animation is running. Therefore extend
+        RenderLayerModelObject::applyTransform() to take an additional RenderStyle parameter,
+        that is used to access the CSS transform operations, instead of always querying renderer().style().
+        RenderLayer::updateTransform() continues to pass 'renderer().style()' to updateTransformFromStyle(),
+        whereas RenderLayer::currentTransform() passes the elements animatedStyle().
+
+        Covered by existing tests, no change in behaviour.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::applyTransform const):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::applyTransform const):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateTransformFromStyle const):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::currentTransform const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateTransform):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::applyTransform const): Deleted.
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::applyTransform const): Deleted.
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::applyTransform const):
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::applyTransform const):
+        * rendering/svg/RenderSVGTransformableContainer.h:
+
 2022-04-07  Jean-Yves Avenard  <jya@apple.com>
 
         Full screen video progress bar flickers after dragging it.

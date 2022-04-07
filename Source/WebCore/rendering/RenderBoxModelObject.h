@@ -254,7 +254,7 @@ public:
     virtual bool hasOverridingContainingBlockContentWidth() const { return false; }
     virtual bool hasOverridingContainingBlockContentHeight() const { return false; }
 
-    void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const override;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const override;
 
 protected:
     RenderBoxModelObject(Element&, RenderStyle&&, BaseTypeFlags);

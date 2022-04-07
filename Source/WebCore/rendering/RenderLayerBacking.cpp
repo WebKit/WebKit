@@ -643,7 +643,8 @@ void RenderLayerBacking::updateTransform(const RenderStyle&)
     // baked into it, and we don't want that.
     TransformationMatrix t;
     if (m_owningLayer.hasTransform()) {
-        renderer().applyTransform(t, snapRectToDevicePixels(m_owningLayer.rendererBorderBoxRect(), deviceScaleFactor()), RenderStyle::individualTransformOperations);
+        // FIXME: This uses the wrong, transform-box unaware, geometry.
+        renderer().applyTransform(t, renderer().style(), snapRectToDevicePixels(m_owningLayer.rendererBorderBoxRect(), deviceScaleFactor()), RenderStyle::individualTransformOperations);
         makeMatrixRenderable(t, compositor().canRender3DTransforms());
     }
     

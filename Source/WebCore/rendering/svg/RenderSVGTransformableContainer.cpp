@@ -102,10 +102,10 @@ void RenderSVGTransformableContainer::updateFromStyle()
     //    setHasSVGTransform();
 }
 
-void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     // FIXME: [LBSE] Upstream CSS/SVG transform support
-    RenderSVGContainer::applyTransform(transform, boundingBox, options);
+    style.applyTransform(transform, boundingBox, options);
 }
 
 void RenderSVGTransformableContainer::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)

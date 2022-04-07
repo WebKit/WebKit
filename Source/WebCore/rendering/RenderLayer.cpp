@@ -1310,6 +1310,13 @@ FloatRect RenderLayer::referenceBoxRectForClipPath(CSSBoxType boxType, const Lay
     return referenceBoxRect;
 }
 
+void RenderLayer::updateTransformFromStyle(TransformationMatrix& transform, const RenderStyle& style, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    auto referenceBoxRect = snapRectToDevicePixelsIfNeeded(renderer().transformReferenceBoxRect(style), renderer());
+    renderer().applyTransform(transform, style, referenceBoxRect, options);
+    makeMatrixRenderable(transform, canRender3DTransforms());
+}
+
 void RenderLayer::updateTransform()
 {
     bool hasTransform = renderer().hasTransform();
@@ -1335,9 +1342,7 @@ void RenderLayer::updateTransform()
             boxPathOperation.setPathForReferenceRect(FloatRoundedRect { pathReferenceBoxRect });
         }
 
-        auto referenceBoxRect = snapRectToDevicePixelsIfNeeded(renderer().transformReferenceBoxRect(renderer().style()), renderer());
-        renderer().applyTransform(*m_transform, referenceBoxRect);
-        makeMatrixRenderable(*m_transform, canRender3DTransforms());
+        updateTransformFromStyle(*m_transform, renderer().style(), RenderStyle::allTransformOperations);
     }
 
     if (had3DTransform != has3DTransform()) {
@@ -1365,11 +1370,9 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::Transf
     auto styleable = Styleable::fromRenderer(renderBox);
     if ((styleable && styleable->isRunningAcceleratedTransformAnimation()) || !options.contains(RenderStyle::TransformOperationOption::TransformOrigin)) {
         std::unique_ptr<RenderStyle> animatedStyle = renderBox.animatedStyle();
-        auto referenceBoxRect = snapRectToDevicePixelsIfNeeded(renderer().transformReferenceBoxRect(*animatedStyle), renderer());
 
         TransformationMatrix transform;
-        animatedStyle->applyTransform(transform, referenceBoxRect, options);
-        makeMatrixRenderable(transform, canRender3DTransforms());
+        updateTransformFromStyle(transform, *animatedStyle, options);
         return transform;
     }
 

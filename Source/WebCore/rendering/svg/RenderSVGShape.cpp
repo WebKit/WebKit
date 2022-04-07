@@ -534,6 +534,12 @@ void RenderSVGShape::styleWillChange(StyleDifference diff, const RenderStyle& ne
     RenderSVGModelObject::styleWillChange(diff, newStyle);
 }
 
+void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    // FIXME: [LBSE] Upstream CSS/SVG transform support
+    style.applyTransform(transform, boundingBox, options);
+}
+
 }
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

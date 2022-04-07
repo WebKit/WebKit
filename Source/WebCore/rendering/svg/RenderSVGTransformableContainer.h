@@ -45,7 +45,7 @@ private:
     void layoutChildren() final;
     void calculateViewport() final;
     FloatPoint additionalContainerTranslation() const;
-    void applyTransform(TransformationMatrix&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) final;
     void updateFromStyle() final;
 

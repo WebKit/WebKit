@@ -276,15 +276,6 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
     return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinates()));
 }
 
-void RenderSVGModelObject::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
-{
-    UNUSED_PARAM(transform);
-    UNUSED_PARAM(boundingBox);
-    UNUSED_PARAM(options);
-    // FIXME: [LBSE] Upstream SVGRenderSupport changes
-    // SVGRenderSupport::applyTransform(*this, transform, style, boundingBox, std::nullopt, std::nullopt, options);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)
