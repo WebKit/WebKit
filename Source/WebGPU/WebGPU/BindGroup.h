@@ -34,12 +34,15 @@ struct WGPUBindGroupImpl {
 
 namespace WebGPU {
 
+class Device;
+
+// https://gpuweb.github.io/gpuweb/#gpubindgroup
 class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer)
+    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Device& device)
     {
-        return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer));
+        return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, device));
     }
 
     ~BindGroup();
@@ -50,12 +53,16 @@ public:
     id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
     id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
 
+    Device& device() const { return m_device; }
+
 private:
-    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer);
+    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Device&);
 
     const id<MTLBuffer> m_vertexArgumentBuffer { nil };
     const id<MTLBuffer> m_fragmentArgumentBuffer { nil };
     const id<MTLBuffer> m_computeArgumentBuffer { nil };
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

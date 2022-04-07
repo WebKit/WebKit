@@ -165,7 +165,7 @@ RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineD
 
     auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, computeInformation, label);
 
-    return ComputePipeline::create(computePipelineState);
+    return ComputePipeline::create(computePipelineState, *this);
 }
 
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, String&& message)>&& callback)
@@ -175,8 +175,9 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& des
     UNUSED_PARAM(callback);
 }
 
-ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState)
+ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, Device& device)
     : m_computePipelineState(computePipelineState)
+    , m_device(device)
 {
 }
 

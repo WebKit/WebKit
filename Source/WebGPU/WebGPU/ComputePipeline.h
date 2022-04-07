@@ -35,13 +35,15 @@ struct WGPUComputePipelineImpl {
 namespace WebGPU {
 
 class BindGroupLayout;
+class Device;
 
+// https://gpuweb.github.io/gpuweb/#gpucomputepipeline
 class ComputePipeline : public WGPUComputePipelineImpl, public RefCounted<ComputePipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState)
+    static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState, Device& device)
     {
-        return adoptRef(*new ComputePipeline(computePipelineState));
+        return adoptRef(*new ComputePipeline(computePipelineState, device));
     }
 
     ~ComputePipeline();
@@ -51,10 +53,14 @@ public:
 
     id<MTLComputePipelineState> computePipelineState() const { return m_computePipelineState; }
 
+    Device& device() const { return m_device; }
+
 private:
-    ComputePipeline(id<MTLComputePipelineState>);
+    ComputePipeline(id<MTLComputePipelineState>, Device&);
 
     const id<MTLComputePipelineState> m_computePipelineState { nil };
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

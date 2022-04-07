@@ -38,11 +38,12 @@ namespace WebGPU {
 RefPtr<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return RenderBundleEncoder::create(nil);
+    return RenderBundleEncoder::create(nil, *this);
 }
 
-RenderBundleEncoder::RenderBundleEncoder(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
+RenderBundleEncoder::RenderBundleEncoder(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Device& device)
     : m_indirectCommandBuffer(indirectCommandBuffer)
+    , m_device(device)
 {
 }
 
@@ -80,7 +81,7 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
 RefPtr<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return RenderBundle::create(nil);
+    return RenderBundle::create(nil, m_device);
 }
 
 void RenderBundleEncoder::insertDebugMarker(String&&)

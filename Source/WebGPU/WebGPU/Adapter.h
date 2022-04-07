@@ -39,6 +39,7 @@ namespace WebGPU {
 class Device;
 class Instance;
 
+// https://gpuweb.github.io/gpuweb/#gpuadapter
 class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
     WTF_MAKE_FAST_ALLOCATED;
 public:

@@ -31,7 +31,7 @@
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
-#import <wtf/ThreadSafeRefCounted.h>
+#import <wtf/RefCounted.h>
 
 struct WGPUBufferImpl {
 };
@@ -40,7 +40,8 @@ namespace WebGPU {
 
 class Device;
 
-class Buffer : public WGPUBufferImpl, public ThreadSafeRefCounted<Buffer> {
+// https://gpuweb.github.io/gpuweb/#gpubuffer
+class Buffer : public WGPUBufferImpl, public RefCounted<Buffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class State : uint8_t;
@@ -77,6 +78,8 @@ public:
     uint64_t size() const { return m_size; }
     WGPUBufferUsageFlags usage() const { return m_usage; }
     State state() const { return m_state; }
+
+    Device& device() const { return m_device; }
 
 private:
     Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);

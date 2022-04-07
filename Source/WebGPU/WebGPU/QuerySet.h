@@ -34,12 +34,15 @@ struct WGPUQuerySetImpl {
 
 namespace WebGPU {
 
+class Device;
+
+// https://gpuweb.github.io/gpuweb/#gpuqueryset
 class QuerySet : public WGPUQuerySetImpl, public RefCounted<QuerySet> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<QuerySet> create(id<MTLCounterSampleBuffer> counterSampleBuffer)
+    static Ref<QuerySet> create(id<MTLCounterSampleBuffer> counterSampleBuffer, Device& device)
     {
-        return adoptRef(*new QuerySet(counterSampleBuffer));
+        return adoptRef(*new QuerySet(counterSampleBuffer, device));
     }
 
     ~QuerySet();
@@ -49,10 +52,14 @@ public:
 
     id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_counterSampleBuffer; }
 
+    Device& device() const { return m_device; }
+
 private:
-    QuerySet(id<MTLCounterSampleBuffer>);
+    QuerySet(id<MTLCounterSampleBuffer>, Device&);
 
     const id<MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

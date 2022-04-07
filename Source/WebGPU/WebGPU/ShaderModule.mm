@@ -80,7 +80,7 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
     return library;
 }
 
-static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, String&& label)
+static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, String&& label)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
     HashMap<String, WGSL::PipelineLayout> wgslHints;
@@ -94,10 +94,10 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::
         wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
-    auto library = ShaderModule::createLibrary(device, prepareResult.msl, WTFMove(label));
+    auto library = ShaderModule::createLibrary(device.device(), prepareResult.msl, WTFMove(label));
     if (!library)
         return nullptr;
-    return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library);
+    return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, device);
 }
 
 RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
@@ -112,18 +112,19 @@ RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor
     auto checkResult = WGSL::staticCheck(String::fromLatin1(shaderModuleParameters->wgsl.code), std::nullopt);
 
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
-        if (auto result = earlyCompileShaderModule(m_device, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
+        if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
             return result;
     }
 
-    return ShaderModule::create(WTFMove(checkResult), { }, { }, nil);
+    return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);
 }
 
-ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library)
+ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     : m_checkResult(WTFMove(checkResult))
     , m_pipelineLayoutHints(WTFMove(pipelineLayoutHints))
     , m_entryPointInformation(WTFMove(entryPointInformation))
     , m_library(library)
+    , m_device(device)
 {
 }
 

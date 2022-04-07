@@ -38,14 +38,16 @@ namespace WebGPU {
 class BindGroup;
 class Buffer;
 class ComputePipeline;
+class Device;
 class QuerySet;
 
+// https://gpuweb.github.io/gpuweb/#gpucomputepassencoder
 class ComputePassEncoder : public WGPUComputePassEncoderImpl, public RefCounted<ComputePassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder)
+    static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder, Device& device)
     {
-        return adoptRef(*new ComputePassEncoder(computeCommandEncoder));
+        return adoptRef(*new ComputePassEncoder(computeCommandEncoder, device));
     }
 
     ~ComputePassEncoder();
@@ -62,14 +64,18 @@ public:
     void setPipeline(const ComputePipeline&);
     void setLabel(String&&);
 
+    Device& device() const { return m_device; }
+
 private:
-    ComputePassEncoder(id<MTLComputeCommandEncoder>);
+    ComputePassEncoder(id<MTLComputeCommandEncoder>, Device&);
 
     bool validatePopDebugGroup() const;
 
     const id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

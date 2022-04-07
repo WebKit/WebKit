@@ -83,13 +83,13 @@ void CommandEncoder::finalizeBlitCommandEncoder()
 RefPtr<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return ComputePassEncoder::create(nil);
+    return ComputePassEncoder::create(nil, m_device);
 }
 
 RefPtr<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return RenderPassEncoder::create(nil);
+    return RenderPassEncoder::create(nil, m_device);
 }
 
 static bool validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
@@ -750,7 +750,7 @@ RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& 
 
     commandBuffer.label = fromAPI(descriptor.label);
 
-    return CommandBuffer::create(commandBuffer);
+    return CommandBuffer::create(commandBuffer, m_device);
 }
 
 void CommandEncoder::insertDebugMarker(String&& markerLabel)

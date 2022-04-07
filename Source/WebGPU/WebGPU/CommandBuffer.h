@@ -34,12 +34,15 @@ struct WGPUCommandBufferImpl {
 
 namespace WebGPU {
 
+class Device;
+
+// https://gpuweb.github.io/gpuweb/#gpucommandbuffer
 class CommandBuffer : public WGPUCommandBufferImpl, public RefCounted<CommandBuffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer)
+    static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer, Device& device)
     {
-        return adoptRef(*new CommandBuffer(commandBuffer));
+        return adoptRef(*new CommandBuffer(commandBuffer, device));
     }
 
     ~CommandBuffer();
@@ -48,10 +51,14 @@ public:
 
     id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
 
+    Device& device() const { return m_device; }
+
 private:
-    CommandBuffer(id<MTLCommandBuffer>);
+    CommandBuffer(id<MTLCommandBuffer>, Device&);
 
     const id<MTLCommandBuffer> m_commandBuffer { nil };
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

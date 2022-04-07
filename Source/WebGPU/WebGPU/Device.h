@@ -30,8 +30,8 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
+#import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
@@ -56,7 +56,8 @@ class Surface;
 class SwapChain;
 class Texture;
 
-class Device : public WGPUDeviceImpl, public RefCounted<Device> {
+// https://gpuweb.github.io/gpuweb/#gpudevice
+class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<Device> create(id<MTLDevice>, String&& deviceLabel, Instance&);

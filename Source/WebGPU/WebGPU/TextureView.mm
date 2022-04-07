@@ -30,10 +30,11 @@
 
 namespace WebGPU {
 
-TextureView::TextureView(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent)
+TextureView::TextureView(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device)
     : m_texture(texture)
     , m_descriptor(descriptor)
     , m_renderExtent(renderExtent)
+    , m_device(device)
 {
 }
 

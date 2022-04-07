@@ -28,6 +28,7 @@
 #import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 
 struct WGPUCommandEncoderImpl {
@@ -42,6 +43,7 @@ class Device;
 class QuerySet;
 class RenderPassEncoder;
 
+// https://gpuweb.github.io/gpuweb/#gpucommandencoder
 class CommandEncoder : public WGPUCommandEncoderImpl, public RefCounted<CommandEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -66,6 +68,8 @@ public:
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(const QuerySet&, uint32_t queryIndex);
     void setLabel(String&&);
+
+    Device& device() const { return m_device; }
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);

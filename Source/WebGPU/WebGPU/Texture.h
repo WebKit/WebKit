@@ -39,6 +39,7 @@ namespace WebGPU {
 class Device;
 class TextureView;
 
+// https://gpuweb.github.io/gpuweb/#gputexture
 class Texture : public WGPUTextureImpl, public RefCounted<Texture> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -75,6 +76,8 @@ public:
 
     id<MTLTexture> texture() const { return m_texture; }
     const WGPUTextureDescriptor& descriptor() const { return m_descriptor; }
+
+    Device& device() const { return m_device; }
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);

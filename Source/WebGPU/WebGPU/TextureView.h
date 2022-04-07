@@ -34,14 +34,16 @@ struct WGPUTextureViewImpl {
 
 namespace WebGPU {
 
+class Device;
 class Texture;
 
+// https://gpuweb.github.io/gpuweb/#gputextureview
 class TextureView : public WGPUTextureViewImpl, public RefCounted<TextureView> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent)
+    static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device)
     {
-        return adoptRef(*new TextureView(texture, descriptor, renderExtent));
+        return adoptRef(*new TextureView(texture, descriptor, renderExtent, device));
     }
 
     ~TextureView();
@@ -52,13 +54,17 @@ public:
     const WGPUTextureViewDescriptor& descriptor() const { return m_descriptor; }
     const std::optional<WGPUExtent3D>& renderExtent() const { return m_renderExtent; }
 
+    Device& device() const { return m_device; }
+
 private:
-    TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&);
+    TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Device&);
 
     const id<MTLTexture> m_texture { nil };
 
     const WGPUTextureViewDescriptor m_descriptor;
     const std::optional<WGPUExtent3D> m_renderExtent;
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

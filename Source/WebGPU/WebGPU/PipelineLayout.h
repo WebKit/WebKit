@@ -36,13 +36,15 @@ struct WGPUPipelineLayoutImpl {
 namespace WebGPU {
 
 class BindGroupLayout;
+class Device;
 
+// https://gpuweb.github.io/gpuweb/#gpupipelinelayout
 class PipelineLayout : public WGPUPipelineLayoutImpl, public RefCounted<PipelineLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PipelineLayout> create(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts)
+    static Ref<PipelineLayout> create(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts, Device& device)
     {
-        return adoptRef(*new PipelineLayout(WTFMove(bindGroupLayouts)));
+        return adoptRef(*new PipelineLayout(WTFMove(bindGroupLayouts), device));
     }
 
     ~PipelineLayout();
@@ -55,10 +57,14 @@ public:
     size_t numberOfBindGroupLayouts() const { return m_bindGroupLayouts.size(); }
     const BindGroupLayout& bindGroupLayout(size_t i) const { return m_bindGroupLayouts[i]; }
 
+    Device& device() const { return m_device; }
+
 private:
-    PipelineLayout(Vector<Ref<BindGroupLayout>>&&);
+    PipelineLayout(Vector<Ref<BindGroupLayout>>&&, Device&);
 
     const Vector<Ref<BindGroupLayout>> m_bindGroupLayouts;
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

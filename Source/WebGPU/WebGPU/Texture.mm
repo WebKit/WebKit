@@ -2338,7 +2338,7 @@ RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDe
     if  (m_descriptor.usage & WGPUTextureUsage_RenderAttachment)
         renderExtent = computeRenderExtent(m_descriptor.size, descriptor.baseMipLevel);
 
-    return TextureView::create(texture, descriptor, renderExtent);
+    return TextureView::create(texture, descriptor, renderExtent, m_device);
 }
 
 void Texture::destroy()

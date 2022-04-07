@@ -43,11 +43,12 @@ RefPtr<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDesc
         auto* bindGroupLayout = descriptor.bindGroupLayouts[i];
         bindGroupLayouts.uncheckedAppend(WebGPU::fromAPI(bindGroupLayout));
     }
-    return PipelineLayout::create(WTFMove(bindGroupLayouts));
+    return PipelineLayout::create(WTFMove(bindGroupLayouts), *this);
 }
 
-PipelineLayout::PipelineLayout(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts)
+PipelineLayout::PipelineLayout(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts, Device& device)
     : m_bindGroupLayouts(WTFMove(bindGroupLayouts))
+    , m_device(device)
 {
 }
 

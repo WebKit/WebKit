@@ -38,15 +38,17 @@ namespace WebGPU {
 
 class BindGroup;
 class Buffer;
+class Device;
 class RenderBundle;
 class RenderPipeline;
 
+// https://gpuweb.github.io/gpuweb/#gpurenderbundleencoder
 class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleEncoder> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
+    static Ref<RenderBundleEncoder> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Device& device)
     {
-        return adoptRef(*new RenderBundleEncoder(indirectCommandBuffer));
+        return adoptRef(*new RenderBundleEncoder(indirectCommandBuffer, device));
     }
 
     ~RenderBundleEncoder();
@@ -65,14 +67,18 @@ public:
     void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
     void setLabel(String&&);
 
+    Device& device() const { return m_device; }
+
 private:
-    RenderBundleEncoder(id<MTLIndirectCommandBuffer>);
+    RenderBundleEncoder(id<MTLIndirectCommandBuffer>, Device&);
 
     bool validatePopDebugGroup() const;
 
     const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

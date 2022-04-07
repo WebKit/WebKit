@@ -34,8 +34,9 @@
 
 namespace WebGPU {
 
-ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder)
+ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
+    , m_device(device)
 {
 }
 

@@ -36,6 +36,7 @@ namespace WebGPU {
 
 class Device;
 
+// https://gpuweb.github.io/gpuweb/#gpusampler
 class Sampler : public WGPUSamplerImpl, public RefCounted<Sampler> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -52,6 +53,8 @@ public:
     const WGPUSamplerDescriptor& descriptor() const { return m_descriptor; }
     bool isComparison() const { return descriptor().compare != WGPUCompareFunction_Undefined; }
     bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUFilterMode_Linear; }
+
+    Device& device() const { return m_device; }
 
 private:
     Sampler(id<MTLSamplerState>, const WGPUSamplerDescriptor&, Device&);

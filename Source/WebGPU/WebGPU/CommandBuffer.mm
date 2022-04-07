@@ -30,8 +30,9 @@
 
 namespace WebGPU {
 
-CommandBuffer::CommandBuffer(id<MTLCommandBuffer> commandBuffer)
+CommandBuffer::CommandBuffer(id<MTLCommandBuffer> commandBuffer, Device& device)
     : m_commandBuffer(commandBuffer)
+    , m_device(device)
 {
 }
 

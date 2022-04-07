@@ -25,10 +25,9 @@
 
 #pragma once
 
-#import <wtf/RefCounted.h>
-
 namespace WebGPU {
 
+// https://gpuweb.github.io/gpuweb/#gpucommandsmixin
 class CommandsMixin {
 protected:
     bool prepareTheEncoderState() const;

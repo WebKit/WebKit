@@ -42,6 +42,8 @@ class Buffer;
 class CommandBuffer;
 class Device;
 
+// https://gpuweb.github.io/gpuweb/#gpuqueue
+// A device owns its default queue, not the other way around.
 class Queue : public WGPUQueueImpl, public ThreadSafeRefCounted<Queue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:

@@ -41,6 +41,7 @@ namespace WebGPU {
 class Adapter;
 class Surface;
 
+// https://gpuweb.github.io/gpuweb/#gpu
 class Instance : public WGPUInstanceImpl, public ThreadSafeRefCounted<Instance> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
