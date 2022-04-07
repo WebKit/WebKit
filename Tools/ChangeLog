@@ -1,5 +1,18 @@
 2022-04-07  Jonathan Bedard  <jbedard@apple.com>
 
+        [Merge-Queue] Canonicalize parent commits
+        https://bugs.webkit.org/show_bug.cgi?id=238951
+        <rdar://problem/91436607>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (Canonicalize.run): Canonicalize first 2 parent commits if not rebasing.
+        (Canonicalize.getResultSummary): Pluralize summary.
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-04-07  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Change label names
         https://bugs.webkit.org/show_bug.cgi?id=238950
         <rdar://problem/91435211>

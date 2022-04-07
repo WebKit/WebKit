@@ -6147,10 +6147,10 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=300,
                 logEnviron=False,
-                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '3'],
             ) + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Canonicalized commit')
+        self.expectOutcome(result=SUCCESS, state_string='Canonicalized commits')
         return self.runStep()
 
     def test_failure(self):
