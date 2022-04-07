@@ -32,6 +32,7 @@ class CSSValue;
 class FillLayer;
 class LengthBox;
 class NinePieceImage;
+class Quad;
 class RenderStyle;
 class StyleImage;
 

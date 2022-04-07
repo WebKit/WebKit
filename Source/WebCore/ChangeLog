@@ -1,3 +1,12 @@
+2022-04-07  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=238933
+
+        * css/CSSToStyleMap.h: Forward declare Quad
+        * platform/graphics/filters/FilterEffectVector.h: Replace forward with
+        actual include for Ref.
+
 2022-04-07  Tim Nguyen  <ntim@apple.com>
 
         Remove redundant invalidateStyleForSubtree() calls
