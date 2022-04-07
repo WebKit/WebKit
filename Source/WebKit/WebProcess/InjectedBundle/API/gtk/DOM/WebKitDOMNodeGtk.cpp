@@ -513,11 +513,7 @@ void webkit_dom_node_set_node_value(WebKitDOMNode* self, const gchar* value, GEr
     g_return_if_fail(!error || !*error);
     WebCore::Node* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    auto result = item->setNodeValue(convertedValue);
-    if (result.hasException()) {
-        auto description = WebCore::DOMException::description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
-    }
+    item->setNodeValue(convertedValue);
 }
 
 gushort webkit_dom_node_get_node_type(WebKitDOMNode* self)
@@ -618,11 +614,7 @@ void webkit_dom_node_set_text_content(WebKitDOMNode* self, const gchar* value, G
     g_return_if_fail(!error || !*error);
     WebCore::Node* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    auto result = item->setTextContent(convertedValue);
-    if (result.hasException()) {
-        auto description = WebCore::DOMException::description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
-    }
+    item->setTextContent(convertedValue);
 }
 
 WebKitDOMElement* webkit_dom_node_get_parent_element(WebKitDOMNode* self)
