@@ -323,7 +323,10 @@ bool rendererNeedsPixelSnapping(const RenderLayerModelObject& renderer)
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer() && !renderer.isSVGRoot())
         return false;
+#else
+    UNUSED_PARAM(renderer);
 #endif
+
     return true;
 }
 
