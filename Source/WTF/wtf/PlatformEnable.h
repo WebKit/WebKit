@@ -611,8 +611,10 @@
 #endif
 #endif
 
-#if !defined(ENABLE_JUMP_ISLANDS) && CPU(ARM64) && CPU(ADDRESS64) && ENABLE(JIT)
+#if !defined(ENABLE_JUMP_ISLANDS) && ENABLE(JIT)
+#if (CPU(ARM64) && CPU(ADDRESS64)) || CPU(ARM_THUMB2)
 #define ENABLE_JUMP_ISLANDS 1
+#endif
 #endif
 
 /* FIXME: This should be turned into an #error invariant */

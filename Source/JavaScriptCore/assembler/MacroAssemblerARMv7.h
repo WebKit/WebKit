@@ -38,6 +38,10 @@ namespace JSC {
 using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerARMv7 : public AbstractMacroAssembler<Assembler> {
+public:
+    static constexpr size_t nearJumpRange = 16 * MB;
+
+private:
     static constexpr RegisterID dataTempRegister = ARMRegisters::ip;
     static constexpr RegisterID addressTempRegister = ARMRegisters::r6;
 
@@ -2237,16 +2241,14 @@ public:
 
     ALWAYS_INLINE Call nearCall()
     {
-        moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         invalidateAllTempRegisters();
-        return Call(m_assembler.blx(dataTempRegister), Call::LinkableNear);
+        return Call(m_assembler.bl(), Call::LinkableNear);
     }
 
     ALWAYS_INLINE Call nearTailCall()
     {
-        moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
         invalidateAllTempRegisters();
-        return Call(m_assembler.bx(dataTempRegister), Call::LinkableNearTail);
+        return Call(m_assembler.b(), Call::LinkableNearTail);
     }
 
     ALWAYS_INLINE Call call(PtrTag)
@@ -2654,10 +2656,12 @@ private:
     template<PtrTag tag>
     static void linkCall(void* code, Call call, FunctionPtr<tag> function)
     {
-        if (call.isFlagSet(Call::Tail))
-            ARMv7Assembler::linkJump(code, call.m_label, function.executableAddress());
+        if (!call.isFlagSet(Call::Near))
+            Assembler::linkPointer(code, call.m_label.labelAtOffset(-2), function.executableAddress());
+        else if (call.isFlagSet(Call::Tail))
+            Assembler::linkTailCall(code, call.m_label, function.executableAddress());
         else
-            ARMv7Assembler::linkCall(code, call.m_label, function.executableAddress());
+            Assembler::linkCall(code, call.m_label, function.executableAddress());
     }
 
     bool m_makeJumpPatchable;

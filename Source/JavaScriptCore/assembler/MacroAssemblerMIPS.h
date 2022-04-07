@@ -41,6 +41,8 @@ public:
     static constexpr unsigned numGPRs = 32;
     static constexpr unsigned numFPRs = 32;
 
+    static constexpr size_t nearJumpRange = 2 * GB;
+
     MacroAssemblerMIPS()
         : m_fixedWidth(false)
     {

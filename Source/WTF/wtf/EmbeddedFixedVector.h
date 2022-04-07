@@ -67,6 +67,12 @@ public:
         return UniqueRef { *new (NotNull, fastMalloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::move_iterator { container.begin() }, std::move_iterator { container.end() }) };
     }
 
+    template<typename... Args>
+    static UniqueRef<EmbeddedFixedVector> createWithSizeAndConstructorArguments(unsigned size, Args&&... args)
+    {
+        return UniqueRef { *new (NotNull, fastMalloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<Args>(args)...) };
+    }
+
     UniqueRef<EmbeddedFixedVector> clone() const
     {
         return create(Base::begin(), Base::end());
@@ -94,9 +100,16 @@ private:
     {
     }
 
+
     template<typename InputIterator>
     EmbeddedFixedVector(unsigned size, InputIterator first, InputIterator last)
         : Base(size, first, last)
+    {
+    }
+
+    template<typename... Args>
+    explicit EmbeddedFixedVector(unsigned size, Args&&... args) // create with given size and constructor arguments for all elements
+        : Base(size, std::forward<Args>(args)...)
     {
     }
 };

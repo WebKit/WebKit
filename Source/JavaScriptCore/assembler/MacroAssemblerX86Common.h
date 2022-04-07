@@ -37,6 +37,8 @@ using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerX86Common : public AbstractMacroAssembler<Assembler> {
 public:
+    static constexpr size_t nearJumpRange = 2 * GB;
+
 #if CPU(X86_64)
     // Use this directly only if you're not generating code with it.
     static constexpr X86Registers::RegisterID s_scratchRegister = X86Registers::r11;
@@ -1235,13 +1237,6 @@ public:
         load16(address, dest);
     }
 
-    template<PtrTag tag>
-    static void repatchCompact(CodeLocationDataLabelCompact<tag> dataLabelCompact, int32_t value)
-    {
-        ASSERT(isCompactPtrAlignedAddressOffset(value));
-        AssemblerType_T::repatchCompact(dataLabelCompact.dataLocation(), value);
-    }
-    
     DataLabelCompact loadCompactWithAddressOffsetPatch(Address address, RegisterID dest)
     {
         padBeforePatch();

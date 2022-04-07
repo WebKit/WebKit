@@ -56,14 +56,6 @@
 
 namespace JSC {
 
-template<size_t bits, typename Type>
-ALWAYS_INLINE constexpr bool isInt(Type t)
-{
-    constexpr size_t shift = sizeof(Type) * CHAR_BIT - bits;
-    static_assert(sizeof(Type) * CHAR_BIT > shift, "shift is larger than the size of the value");
-    return ((t << shift) >> shift) == t;
-}
-
 static ALWAYS_INLINE bool is4ByteAligned(const void* ptr)
 {
     return !(reinterpret_cast<intptr_t>(ptr) & 0x3);
@@ -2889,6 +2881,11 @@ public:
         cacheFlush(reinterpret_cast<int*>(from) - 1, sizeof(int));
     }
 
+    static void relinkTailCall(void* from, void* to)
+    {
+        relinkJump(from, to);
+    }
+
 #if ENABLE(JUMP_ISLANDS)
     static void* prepareForAtomicRelinkJumpConcurrently(void* from, void* to)
     {
@@ -2908,30 +2905,6 @@ public:
     }
 #endif
     
-    static void repatchCompact(void* where, int32_t value)
-    {
-        ASSERT(!(value & ~0x3ff8));
-
-        MemOpSize size;
-        bool V;
-        MemOp opc;
-        int imm12;
-        RegisterID rn;
-        RegisterID rt;
-        bool expected = disassembleLoadStoreRegisterUnsignedImmediate(where, size, V, opc, imm12, rn, rt);
-        ASSERT_UNUSED(expected, expected && size >= MemOpSize_32 && !V && opc == MemOp_LOAD); // expect 32/64 bit load to GPR.
-
-        if (size == MemOpSize_32)
-            imm12 = encodePositiveImmediate<32>(value);
-        else
-            imm12 = encodePositiveImmediate<64>(value);
-        int insn = loadStoreRegisterUnsignedImmediate(size, V, opc, imm12, rn, rt);
-        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(where) == where);
-        performJITMemcpy(where, &insn, sizeof(int));
-
-        cacheFlush(where, sizeof(int));
-    }
-
     unsigned debugOffset() { return m_buffer.debugOffset(); }
 
 #if OS(LINUX) && COMPILER(GCC_COMPATIBLE)

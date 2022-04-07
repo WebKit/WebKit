@@ -44,6 +44,8 @@ public:
     static constexpr unsigned numGPRs = 32;
     static constexpr unsigned numFPRs = 32;
 
+    static constexpr size_t nearJumpRange = 2 * GB;
+
     static constexpr RegisterID dataTempRegister = RISCV64Registers::x30;
     static constexpr RegisterID memoryTempRegister = RISCV64Registers::x31;
 

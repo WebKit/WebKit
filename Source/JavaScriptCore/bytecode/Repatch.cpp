@@ -1926,17 +1926,8 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     }
     
     RELEASE_ASSERT(callCases.size() == calls.size());
-    for (CallToCodePtr callToCodePtr : calls) {
-#if CPU(ARM_THUMB2)
-        // Tail call special-casing ensures proper linking on ARM Thumb2, where a tail call jumps to an address
-        // with a non-decorated bottom bit but a normal call calls an address with a decorated bottom bit.
-        bool isTailCall = callToCodePtr.call.isFlagSet(CCallHelpers::Call::Tail);
-        void* target = isTailCall ? callToCodePtr.codePtr.dataLocation() : callToCodePtr.codePtr.executableAddress();
-        patchBuffer.link(callToCodePtr.call, FunctionPtr<JSEntryPtrTag>(MacroAssemblerCodePtr<JSEntryPtrTag>::createFromExecutableAddress(target)));
-#else
+    for (CallToCodePtr callToCodePtr : calls)
         patchBuffer.link(callToCodePtr.call, FunctionPtr<JSEntryPtrTag>(callToCodePtr.codePtr));
-#endif
-    }
 
     if (!done.empty()) {
         ASSERT(!isDataIC);

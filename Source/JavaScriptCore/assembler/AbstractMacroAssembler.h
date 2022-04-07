@@ -545,8 +545,8 @@ public:
             Linkable = 0x1,
             Near = 0x2,
             Tail = 0x4,
-            LinkableNear = 0x3,
-            LinkableNearTail = 0x7,
+            LinkableNear = Linkable | Near,
+            LinkableNearTail = Linkable | Near | Tail,
         };
 
         Call()
@@ -904,7 +904,7 @@ public:
     {
         switch (nearCall.callMode()) {
         case NearCallMode::Tail:
-            AssemblerType::relinkJump(nearCall.dataLocation(), destination.dataLocation());
+            AssemblerType::relinkTailCall(nearCall.dataLocation(), destination.dataLocation());
             return;
         case NearCallMode::Regular:
             AssemblerType::relinkCall(nearCall.dataLocation(), destination.untaggedExecutableAddress());
@@ -927,12 +927,6 @@ public:
         UNUSED_PARAM(nearCall);
         return destination;
 #endif
-    }
-
-    template<PtrTag tag>
-    static void repatchCompact(CodeLocationDataLabelCompact<tag> dataLabelCompact, int32_t value)
-    {
-        AssemblerType::repatchCompact(dataLabelCompact.template dataLocation(), value);
     }
 
     template<PtrTag tag>

@@ -1,5 +1,76 @@
 2022-04-07  Geza Lore  <glore@igalia.com>
 
+        [JSC][ARMv7] Support proper near calls and JUMP_ISLANDS
+        https://bugs.webkit.org/show_bug.cgi?id=238143
+
+        Reviewed by Yusuke Suzuki.
+
+        Implement nearCall and nearTailCall as single instruction direct
+        branches on ARMv7/Thumb-2. (Will need to support these for Wasm JITs,
+        to implement threadSafePatchableNearcall.) To make this possible while
+        also having an executable pool size larger than the branch range, I
+        also ported JUMP_ISLANDS.
+
+        To port JUMP_ISLANDS, a reformulation of the region allocations was
+        necessary, which is now done in terms of the range of the
+        nearCall/nearTailCall macroassembler macros. For ARM64, the behaviour
+        should be identical.
+
+        The jump islad reservation on ARMv7 is set to 5% of executable memory
+        size, which is approximately the same as the baseline JIT code size
+        saving provided by using short branches for near calls, so the change
+        should be neutral overall with respect to executable memory
+        consumption.
+
+        Also made it possible for the --jitMemoryReservationSize option to
+        request JIT memory that is larger than the default hardcoded size
+        while using JUMP_ISLANDS (we need this for testing on ARMv7, which has
+        a smaller default executable pool size). To do this the region
+        allocators are no longer statically allocated but are held in a
+        FixedVector.
+
+        Also removed the unused repatchCompact methods from assemblers.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::isEven):
+        (JSC::ARMv7Assembler::makeEven):
+        (JSC::ARMv7Assembler::bl):
+        (JSC::ARMv7Assembler::link):
+        (JSC::ARMv7Assembler::linkTailCall):
+        (JSC::ARMv7Assembler::linkCall):
+        (JSC::ARMv7Assembler::relinkCall):
+        (JSC::ARMv7Assembler::relinkTailCall):
+        (JSC::ARMv7Assembler::prepareForAtomicRelinkJumpConcurrently):
+        (JSC::ARMv7Assembler::prepareForAtomicRelinkCallConcurrently):
+        (JSC::ARMv7Assembler::replaceWithJump):
+        (JSC::ARMv7Assembler::canEmitJump):
+        (JSC::ARMv7Assembler::isBL):
+        (JSC::ARMv7Assembler::linkJumpT4):
+        (JSC::ARMv7Assembler::linkConditionalJumpT4):
+        (JSC::ARMv7Assembler::linkJumpAbsolute):
+        (JSC::ARMv7Assembler::linkBranch):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::repatchNearCall):
+        * assembler/AssemblerCommon.h:
+        (JSC::isInt):
+        * assembler/MIPSAssembler.h:
+        * assembler/MacroAssemblerARM64.h:
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::nearTailCall):
+        (JSC::MacroAssemblerARMv7::linkCall):
+        * assembler/MacroAssemblerMIPS.h:
+        * assembler/MacroAssemblerRISCV64.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * assembler/X86Assembler.h:
+        * bytecode/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+
+2022-04-07  Geza Lore  <glore@igalia.com>
+
         [JSC][32bit] Use constexpr tags instead of enums
         https://bugs.webkit.org/show_bug.cgi?id=238926
 

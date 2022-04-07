@@ -1,3 +1,21 @@
+2022-04-07  Geza Lore  <glore@igalia.com>
+
+        [JSC][ARMv7] Support proper near calls and JUMP_ISLANDS
+        https://bugs.webkit.org/show_bug.cgi?id=238143
+
+        Reviewed by Yusuke Suzuki.
+
+        Support constructor arguments for FixedVector element initialization.
+
+        * wtf/EmbeddedFixedVector.h:
+        * wtf/FixedVector.h:
+        (WTF::FixedVector::FixedVector):
+        * wtf/PlatformEnable.h:
+        * wtf/TrailingArray.h:
+        (WTF::TrailingArray::TrailingArray):
+        * wtf/Vector.h:
+        (WTF::VectorTypeOperations::initializeWithArgs):
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function

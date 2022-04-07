@@ -41,7 +41,9 @@ class MacroAssemblerARM64 : public AbstractMacroAssembler<Assembler> {
 public:
     static constexpr unsigned numGPRs = 32;
     static constexpr unsigned numFPRs = 32;
-    
+
+    static constexpr size_t nearJumpRange = 128 * MB;
+
     static constexpr RegisterID dataTempRegister = ARM64Registers::ip0;
     static constexpr RegisterID memoryTempRegister = ARM64Registers::ip1;
 

@@ -97,6 +97,13 @@ struct VectorInitializer<true, false, T>
     {
         initializeIfNonPOD(begin, end);
     }
+
+    template<typename... Args>
+    static void initializeWithArgs(T* begin, T* end, Args&&... args)
+    {
+        for (T *cur = begin; cur != end; ++cur)
+            new (NotNull, cur) T(args...);
+    }
 };
 
 template<typename T>
@@ -253,6 +260,12 @@ struct VectorTypeOperations
     static void initialize(T* begin, T* end)
     {
         VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::initialize(begin, end);
+    }
+
+    template<typename ... Args>
+    static void initializeWithArgs(T* begin, T* end, Args&&... args)
+    {
+        VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::initializeWithArgs(begin, end, std::forward<Args>(args)...);
     }
 
     static void move(T* src, T* srcEnd, T* dst)

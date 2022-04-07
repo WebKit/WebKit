@@ -1642,6 +1642,11 @@ public:
         cacheFlush(location, sizeof(uint32_t) * 2);
     }
 
+    static void relinkTailCall(void* from, void* to)
+    {
+        relinkJump(from, to);
+    }
+
     static void replaceWithVMHalt(void* where)
     {
         uint32_t* location = reinterpret_cast<uint32_t*>(where);

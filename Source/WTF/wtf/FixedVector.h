@@ -99,6 +99,18 @@ public:
         return *this;
     }
 
+private:
+    FixedVector(std::unique_ptr<Storage>&& storage)
+        :  m_storage { WTFMove(storage) }
+    { }
+
+public:
+    template<typename... Args>
+    static FixedVector createWithSizeAndConstructorArguments(size_t size, Args&&... args)
+    {
+        return FixedVector<T> { size ? Storage::createWithSizeAndConstructorArguments(size, std::forward<Args>(args)...).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
+    }
+
     size_t size() const { return m_storage ? m_storage->size() : 0; }
     bool isEmpty() const { return m_storage ? m_storage->isEmpty() : true; }
     size_t byteSize() const { return m_storage ? m_storage->byteSize() : 0; }

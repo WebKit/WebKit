@@ -33,6 +33,7 @@
 #include "LinkBuffer.h"
 #include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
+#include <wtf/FixedVector.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/PageReservation.h>
 #include <wtf/ProcessID.h>
@@ -94,20 +95,34 @@ static constexpr size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_
 #elif CPU(ARM64)
 #if ENABLE(JUMP_ISLANDS)
 static constexpr size_t fixedExecutableMemoryPoolSize = 512 * MB;
-// These sizes guarantee that any jump within an island can jump forwards or backwards
-// to the adjacent island in a single instruction.
-static constexpr size_t regionSize = 112 * MB;
-static constexpr size_t islandRegionSize = 16 * MB;
-static constexpr size_t maxNumberOfRegions = fixedExecutableMemoryPoolSize / regionSize;
-static constexpr size_t islandSizeInBytes = 4;
-static constexpr size_t maxIslandsPerRegion = islandRegionSize / islandSizeInBytes;
 #else
 static constexpr size_t fixedExecutableMemoryPoolSize = 128 * MB;
+#endif
+#elif CPU(ARM_THUMB2)
+#if ENABLE(JUMP_ISLANDS)
+static constexpr size_t fixedExecutableMemoryPoolSize = 32 * MB;
+#else
+static constexpr size_t fixedExecutableMemoryPoolSize = 16 * MB;
 #endif
 #elif CPU(X86_64)
 static constexpr size_t fixedExecutableMemoryPoolSize = 1 * GB;
 #else
 static constexpr size_t fixedExecutableMemoryPoolSize = 32 * MB;
+#endif
+
+#if ENABLE(JUMP_ISLANDS)
+#if CPU(ARM64)
+static constexpr double islandRegionSizeFraction = 0.125;
+static constexpr size_t islandSizeInBytes = 4;
+#elif CPU(ARM_THUMB2)
+static constexpr double islandRegionSizeFraction = 0.05;
+static constexpr size_t islandSizeInBytes = 4;
+#endif
+#endif
+
+// Quick sanity check, in case FIXED_EXECUTABLE_MEMORY_POOL_SIZE_IN_MB was set.
+#if !ENABLE(JUMP_ISLANDS)
+static_assert(fixedExecutableMemoryPoolSize <= MacroAssembler::nearJumpRange, "Executable pool size is too large for near jump/call without JUMP_ISLANDS");
 #endif
 
 #if CPU(ARM)
@@ -343,19 +358,12 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         if (reservation.size * executablePoolReservationFraction < minimumExecutablePoolReservationSize)
             reservation.size += minimumExecutablePoolReservationSize;
 #endif
-
-#if ENABLE(JUMP_ISLANDS)
-        // If asked for a reservation smaller than island size, assume that we want that size allocation
-        // plus an island. The alternative would be to turn off jump islands, but since we only use
-        // this for testing, this is probably the easier way to do it.
-        //
-        // The main reason for this is that some JSC stress tests run with a 50KB pool. This hack means
-        // we don't have to change anything about those tests.
-        if (reservation.size < islandRegionSize)
-            reservation.size += islandRegionSize;
-#endif // ENABLE(JUMP_ISLANDS)
     }
     reservation.size = std::max(roundUpToMultipleOf(pageSize(), reservation.size), pageSize() * 2);
+
+#if !ENABLE(JUMP_ISLANDS)
+    RELEASE_ASSERT(reservation.size <= MacroAssembler::nearJumpRange, "Executable pool size is too large for near jump/call without JUMP_ISLANDS");
+#endif
 
 #if USE(LIBPAS_JIT_HEAP)
     if (reservation.size < minimumPoolSizeForSegregatedHeap)
@@ -430,10 +438,7 @@ class FixedVMPoolExecutableAllocator final {
 
 public:
     FixedVMPoolExecutableAllocator()
-#if ENABLE(JUMP_ISLANDS)
-        : m_allocators(constructFixedSizeArrayWithArguments<RegionAllocator, maxNumberOfRegions>(*this))
-        , m_numAllocators(maxNumberOfRegions)
-#else
+#if !ENABLE(JUMP_ISLANDS)
         : m_allocator(*this)
 #endif
     {
@@ -441,31 +446,28 @@ public:
         m_reservation = WTFMove(reservation.pageReservation);
         if (m_reservation) {
 #if ENABLE(JUMP_ISLANDS)
+            // These sizes guarantee that any jump within an island can jump forwards or backwards
+            // to the adjacent island in a single instruction.
+            const size_t islandRegionSize = roundUpToMultipleOf(pageSize(), static_cast<size_t>(MacroAssembler::nearJumpRange * islandRegionSizeFraction));
+            m_regionSize = MacroAssembler::nearJumpRange - islandRegionSize;
+            RELEASE_ASSERT(isPageAligned(islandRegionSize));
+            RELEASE_ASSERT(isPageAligned(m_regionSize));
+            const unsigned numAllocators = (reservation.size + m_regionSize - 1) / m_regionSize;
+            m_allocators = FixedVector<RegionAllocator>::createWithSizeAndConstructorArguments(numAllocators, *this);
+
             uintptr_t start = bitwise_cast<uintptr_t>(memoryStart());
             uintptr_t reservationEnd = bitwise_cast<uintptr_t>(memoryEnd());
-            for (size_t i = 0; i < maxNumberOfRegions; ++i) {
-                RELEASE_ASSERT(start < reservationEnd || Options::jitMemoryReservationSize());
-                if (start >= reservationEnd) {
-                    m_numAllocators = i;
-                    break;
-                }
-                m_allocators[i].m_start = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(start));
-                m_allocators[i].m_end = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(start + regionSize));
-                if (m_allocators[i].end() > reservationEnd) {
-                    // We may have taken a page for the executable only copy thunk.
-                    RELEASE_ASSERT(i == maxNumberOfRegions - 1 || Options::jitMemoryReservationSize());
-                    m_allocators[i].m_end = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(reservationEnd));
-                }
-
-                size_t sizeInBytes = m_allocators[i].allocatorSize();
-                m_allocators[i].addFreshFreeSpace(bitwise_cast<void*>(m_allocators[i].start()), sizeInBytes);
-                m_bytesReserved += sizeInBytes;
-
-                RELEASE_ASSERT(m_allocators[i].allocatorSize() < regionSize);
-                RELEASE_ASSERT(m_allocators[i].islandBegin() > m_allocators[i].start());
-                RELEASE_ASSERT(m_allocators[i].islandBegin() < m_allocators[i].end());
-
-                start += regionSize;
+            for (size_t i = 0; i < numAllocators; ++i) {
+                uintptr_t end = start + m_regionSize;
+                uintptr_t islandBegin = end - islandRegionSize;
+                // The island in the very last region is never actually used (everything goes backwards), but we
+                // can't put code there in case they do need to use a backward jump island, so set up accordingly.
+                if (i == numAllocators - 1)
+                    islandBegin = end = std::min(islandBegin, reservationEnd);
+                RELEASE_ASSERT(end <= reservationEnd);
+                m_allocators[i].configure(start, islandBegin, end);
+                m_bytesReserved += m_allocators[i].allocatorSize();
+                start += m_regionSize;
             }
 #else
             m_allocator.addFreshFreeSpace(reservation.base, reservation.size);
@@ -495,14 +497,14 @@ public:
 
         unsigned start = 0;
         if (Options::useRandomizingExecutableIslandAllocation())
-            start = cryptographicallyRandomNumber() % m_numAllocators;
+            start = cryptographicallyRandomNumber() % m_allocators.size();
 
         unsigned i = start;
         while (true) {
             RegionAllocator& allocator = m_allocators[i];
             if (RefPtr<ExecutableMemoryHandle> result = allocator.allocate(locker, sizeInBytes))
                 return result;
-            i = (i + 1) % m_numAllocators;
+            i = (i + 1) % m_allocators.size();
             if (i == start)
                 break;
         }
@@ -700,7 +702,7 @@ private:
             m_islandsForJumpSourceLocation.insert(islands);
         }
 
-        RegionAllocator* allocator = findRegion(jumpLocation > target ? jumpLocation - regionSize : jumpLocation);
+        RegionAllocator* allocator = findRegion(jumpLocation > target ? jumpLocation - m_regionSize : jumpLocation);
         RELEASE_ASSERT(allocator);
         void* result = allocator->allocateIsland();
         void* currentIsland = result;
@@ -709,10 +711,10 @@ private:
             islands->jumpIslands.append(CodeLocationLabel<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(currentIsland)));
 
             auto emitJumpTo = [&] (void* target) {
-                RELEASE_ASSERT(ARM64Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), target));
+                RELEASE_ASSERT(Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), target));
 
                 MacroAssembler jit;
-                auto jump = jit.jump();
+                auto nearTailCall = jit.nearTailCall();
                 LinkBuffer linkBuffer(jit, MacroAssemblerCodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::JumpIsland, JITCompilationMustSucceed, false);
                 RELEASE_ASSERT(linkBuffer.isValid());
 
@@ -724,20 +726,20 @@ private:
                 // has a jump linked to this island hasn't finalized yet, they're guaranteed to finalize there code and run an isb.
                 linkBuffer.setIsJumpIsland();
 
-                linkBuffer.link(jump, CodeLocationLabel<NoPtrTag>(target));
+                linkBuffer.link(nearTailCall, CodeLocationLabel<NoPtrTag>(target));
                 FINALIZE_CODE(linkBuffer, NoPtrTag, "Jump Island: %lu", jumpLocation);
             };
 
-            if (ARM64Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), bitwise_cast<void*>(target))) {
+            if (Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), bitwise_cast<void*>(target))) {
                 emitJumpTo(bitwise_cast<void*>(target));
                 break;
             }
 
             uintptr_t nextIslandRegion;
             if (jumpLocation > target)
-                nextIslandRegion = jumpLocation - regionSize;
+                nextIslandRegion = jumpLocation - m_regionSize;
             else
-                nextIslandRegion = jumpLocation + regionSize;
+                nextIslandRegion = jumpLocation + m_regionSize;
 
             RegionAllocator* allocator = findRegion(nextIslandRegion);
             RELEASE_ASSERT(allocator);
@@ -821,6 +823,19 @@ private:
         RegionAllocator(FixedVMPoolExecutableAllocator& allocator)
             : Base(allocator)
         {
+            RELEASE_ASSERT(!(pageSize() % islandSizeInBytes), "Current implementation relies on this");
+        }
+
+        void configure(uintptr_t start, uintptr_t islandBegin, uintptr_t end)
+        {
+            RELEASE_ASSERT(start < islandBegin);
+            RELEASE_ASSERT(islandBegin <= end);
+            m_start = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(start));
+            m_islandBegin = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(islandBegin));
+            m_end = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(end));
+            RELEASE_ASSERT(!((this->end() - this->start()) % pageSize()));
+            RELEASE_ASSERT(!((this->end() - this->islandBegin()) % pageSize()));
+            addFreshFreeSpace(bitwise_cast<void*>(this->start()), allocatorSize());
         }
 
         //  ------------------------------------
@@ -828,13 +843,10 @@ private:
         //  -------------------------------------
 
         uintptr_t start() { return bitwise_cast<uintptr_t>(untagCodePtr<ExecutableMemoryPtrTag>(m_start)); }
+        uintptr_t islandBegin() { return bitwise_cast<uintptr_t>(untagCodePtr<ExecutableMemoryPtrTag>(m_islandBegin)); }
         uintptr_t end() { return bitwise_cast<uintptr_t>(untagCodePtr<ExecutableMemoryPtrTag>(m_end)); }
 
-        uintptr_t islandBegin()
-        {
-            // [start, allocatorEnd)
-            return end() - islandRegionSize;
-        }
+        size_t maxIslandsInThisRegion() { return (end() - islandBegin()) / islandSizeInBytes; }
 
         uintptr_t allocatorSize()
         {
@@ -872,12 +884,18 @@ private:
             if (void* result = findResult())
                 return result;
 
-            islandBits.resize(islandBits.size() + islandsPerPage());
-            if (UNLIKELY(islandBits.size() > maxIslandsPerRegion))
+            const size_t oldSize = islandBits.size();
+            const size_t maxIslandsInThisRegion = this->maxIslandsInThisRegion();
+
+            RELEASE_ASSERT(oldSize <= maxIslandsInThisRegion);
+            if (UNLIKELY(oldSize == maxIslandsInThisRegion))
                 crashOnJumpIslandExhaustion();
 
-            uintptr_t pageBegin = end - (islandBits.size() * islandSizeInBytes); // [islandBegin, end)
-            m_fixedAllocator.m_reservation.commit(bitwise_cast<void*>(pageBegin), pageSize());
+            const size_t newSize = std::min(oldSize + islandsPerPage(), maxIslandsInThisRegion);
+            islandBits.resize(newSize);
+
+            uintptr_t islandsBegin = end - (newSize * islandSizeInBytes); // [islandsBegin, end)
+            m_fixedAllocator.m_reservation.commit(bitwise_cast<void*>(islandsBegin), (newSize - oldSize) * islandSizeInBytes);
 
             void* result = findResult();
             RELEASE_ASSERT(result);
@@ -916,8 +934,10 @@ private:
             return false;
         }
 
+    private:
         // Range: [start, end)
         void* m_start;
+        void* m_islandBegin;
         void* m_end;
         FastBitVector islandBits;
     };
@@ -955,8 +975,8 @@ private:
     Lock m_lock;
     PageReservation m_reservation;
 #if ENABLE(JUMP_ISLANDS)
-    std::array<RegionAllocator, maxNumberOfRegions> m_allocators;
-    unsigned m_numAllocators;
+    size_t m_regionSize;
+    FixedVector<RegionAllocator> m_allocators;
     RedBlackTree<Islands, void*> m_islandsForJumpSourceLocation;
 #else
     Allocator m_allocator;

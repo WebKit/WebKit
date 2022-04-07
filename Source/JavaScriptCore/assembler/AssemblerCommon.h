@@ -45,6 +45,14 @@ ALWAYS_INLINE constexpr bool isIOS()
 #endif
 }
 
+template<size_t bits, typename Type>
+ALWAYS_INLINE constexpr bool isInt(Type t)
+{
+    constexpr size_t shift = sizeof(Type) * CHAR_BIT - bits;
+    static_assert(sizeof(Type) * CHAR_BIT > shift, "shift is larger than the size of the value");
+    return ((t << shift) >> shift) == t;
+}
+
 ALWAYS_INLINE bool isInt9(int32_t value)
 {
     return value == ((value << 23) >> 23);

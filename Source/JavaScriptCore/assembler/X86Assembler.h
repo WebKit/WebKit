@@ -3798,12 +3798,10 @@ public:
     {
         setRel32(from, to);
     }
-    
-    static void repatchCompact(void* where, int32_t value)
+
+    static void relinkTailCall(void* from, void* to)
     {
-        ASSERT(value >= std::numeric_limits<int8_t>::min());
-        ASSERT(value <= std::numeric_limits<int8_t>::max());
-        setInt8(where, value);
+        relinkJump(from, to);
     }
 
     static void repatchInt32(void* where, int32_t value)
