@@ -1,3 +1,18 @@
+2022-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [WebKitLegacy] Remove NPAPIPlugInsEnabledForTestingInWebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=238882
+
+        Reviewed by Tim Horton.
+
+        We have completely removed the NPAPI code and no longer run the tests. We no longer need this setting
+        and should remove it to reduce complexity and build time.
+
+        The specific skipped tests will be removed in a follow-up patch.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2022-04-06  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Remove labels from pull request
