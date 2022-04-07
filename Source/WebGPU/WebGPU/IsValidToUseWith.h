@@ -28,7 +28,7 @@
 namespace WebGPU {
 
 template <typename T, typename U>
-bool isValidToUseWith(const T& object, const U& targetObject) const
+bool isValidToUseWith(const T& object, const U& targetObject)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-valid-to-use-with
 

@@ -1,5 +1,18 @@
 2022-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Add support for the "is valid to use with" operation to WebGPU objects
+        https://bugs.webkit.org/show_bug.cgi?id=238719
+
+        Addressing post-review comment.
+
+        Unreviewed.
+
+        * WebGPU/IsValidToUseWith.h:
+        (WebGPU::isValidToUseWith):
+        (WebGPU::isValidToUseWith const): Deleted.
+
+2022-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Give objects a notion of invalidity
         https://bugs.webkit.org/show_bug.cgi?id=238720
 
