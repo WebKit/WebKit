@@ -1693,6 +1693,40 @@ class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
         return not self.doStepIf(step)
 
 
+class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
+    name = 'remove-labels-from-pull-request'
+    flunkOnFailure = False
+    haltOnFailure = False
+    LABELS_TO_REMOVE = [
+        GitHubMixin.MERGE_QUEUE_LABEL,
+        GitHubMixin.FAST_MERGE_QUEUE_LABEL,
+        GitHubMixin.BLOCKED_LABEL,
+    ]
+
+    def start(self):
+        pr_number = self.getProperty('github.number', '')
+
+        repository_url = self.getProperty('repository', '')
+        rc = SUCCESS
+        if not self.remove_labels(pr_number, self.LABELS_TO_REMOVE, repository_url=repository_url):
+            rc = FAILURE
+        self.finished(rc)
+        return None
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': f"Removed labels from pull request"}
+        elif self.results == FAILURE:
+            return {'step': f"Failed to remove labels from pull request"}
+        return buildstep.BuildStep.getResultSummary(self)
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number') and CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
 class CloseBug(buildstep.BuildStep, BugzillaMixin):
     name = 'close-bugzilla-bug'
     flunkOnFailure = False

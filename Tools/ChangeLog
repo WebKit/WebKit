@@ -1,3 +1,20 @@
+2022-04-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Remove labels from pull request
+        https://bugs.webkit.org/show_bug.cgi?id=238909
+        <rdar://problem/91383048>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (RemoveLabelsFromPullRequest):
+        (RemoveLabelsFromPullRequest._addToLog):
+        (RemoveLabelsFromPullRequest.start): Remove active labels.
+        (RemoveLabelsFromPullRequest.getResultSummary):
+        (RemoveLabelsFromPullRequest.doStepIf): Only do step if pull request
+        number is defined. 
+        (RemoveLabelsFromPullRequest.hideStepIf): Hide stip if step not executed.
+
 2022-04-07  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Extract bug_id when updating pull-request (Follow-up fix)
