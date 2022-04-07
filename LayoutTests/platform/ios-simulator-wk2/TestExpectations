@@ -175,7 +175,5 @@ webkit.org/b/236928 webgl/1.0.3/conformance/textures/gl-teximage.html [ Failure 
 webkit.org/b/236928 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
 webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
 webkit.org/b/236926 webrtc/vp9-profile2.html [ Timeout Pass ]
-webkit.org/b/236927 fast/forms/ios/choose-select-option.html [ Timeout Pass ]
-webkit.org/b/236927 fast/forms/input-text-autofocus.html [ Pass Failure ]
 # This passes only on the arm64 host
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]

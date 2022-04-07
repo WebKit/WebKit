@@ -2,13 +2,19 @@
 <html>
 <head>
 <script>
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 
 function log(msg) {
     var console = document.getElementById("console");
     console.innerText = msg;
 }
+
+requestAnimationFrame(() => {
+    window.testRunner?.notifyDone();
+});
 </script>
 </head>
 <body>

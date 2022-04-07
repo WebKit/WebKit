@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
-<script src="../../resources/ui-helper.js"></script>
 </head>
 <body>
+
+<p>Test for &lt;input autofocus&gt;</p>
+<div id="console"></div>
 
 <input id="input" type="text" value="foo" autofocus>
 
 <script>
 
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
 // iOS places the caret at the end of the input field.
 if (window.internals)
     internals.settings.setEditingBehavior("mac");
 
-description("Test for &lt;input autofocus&gt;");
-
-jsTestIsAsync = true;
+function log(msg) {
+    document.getElementById("console").appendChild(document.createElement("div")).textContent = msg;
+}
 
 inputFocusCount = 0;
 input.addEventListener("focus", (event) => {
@@ -24,15 +30,13 @@ input.addEventListener("focus", (event) => {
 });
 
 requestAnimationFrame(() => {
-    shouldBe("inputFocusCount", "1");
-    shouldBe("input.selectionStart", "0");
-    shouldBe("input.selectionEnd", "0");
+    log(`${inputFocusCount === 1 ? "PASS" : "FAIL"} inputFocusCount is 1`);
+    log(`${input.selectionStart === 0 ? "PASS" : "FAIL"} input.selectionStart is 0`);
+    log(`${input.selectionEnd === 0 ? "PASS" : "FAIL"} input.selectionEnd is 0`);
 
-    finishJSTest();
+    window.testRunner?.notifyDone();
 });
 
 </script>
-
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>

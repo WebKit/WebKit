@@ -1,3 +1,32 @@
+2022-04-07  Devin Rousso  <drousso@apple.com>
+
+        [GPU Process] Test failures in forms
+        https://bugs.webkit.org/show_bug.cgi?id=236927
+        <rdar://problem/89196867>
+
+        Unreviewed, fix test failures and adjust related expectations.
+
+        * fast/forms/autofocus-readonly-attribute.html:
+        This test appeared to be failing because it ended before the `"focus"` event had a chance
+        to fire. Make the test async by delaying its completion until after a `requestAnimationFrame`
+        which should be enough time for the `"focus"` event to be dispatched (and handled).
+
+        * fast/forms/input-text-autofocus.html:
+        * fast/forms/input-text-autofocus-expected.txt:
+        Slightly rework this test to manually tell the `testRunner` to `waitUntilDone`, as for some
+        reason the `js-test-{pre,post}` test harness seems to somehow not output the `PASS` messages
+        while still finishing the test (i.e. not a timeout).
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ipad/TestExpectations:
+        Remove non-skipped expectations for:
+        - fast/forms/ios/choose-select-option.html
+        - fast/forms/autofocus-readonly-attribute.html
+        - fast/forms/input-text-autofocus.html
+        Note that `fast/forms/ios/choose-select-option.html` is still skipped on iPad, because there
+        is already a `platform/ipad/fast/forms/choose-select-option.html` specifically to test iPad.
+
 2022-04-07  Tyler Wilcock  <tyler_w@apple.com>
 
         AX ITM: ARIATreeItemContent, ARIATreeRows, and DisclosedRows properties need to be updated after dynamic page changes
