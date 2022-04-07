@@ -1,5 +1,130 @@
 2022-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Give objects a notion of invalidity
+        https://bugs.webkit.org/show_bug.cgi?id=238720
+
+        Reviewed by Kimmo Kinnunen.
+
+        This is the biggest blocker for running the WebGPU conformance test suite. WebGPU is designed
+        such that creation routines don't return undefined if the object couldn't be created; instead,
+        in "invalid" object is returned. This patch is a step on the path to making creation routines
+        never return nullptr.
+
+        Some objects have destroy() methods which makes the object invalid. Those will be implemented
+        in a forthcoming patch.
+
+        * WebGPU/Adapter.h:
+        (WebGPU::Adapter::createInvalid):
+        (WebGPU::Adapter::isValid const):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::Adapter):
+        * WebGPU/BindGroup.h:
+        (WebGPU::BindGroup::createInvalid):
+        (WebGPU::BindGroup::isValid const):
+        * WebGPU/BindGroup.mm:
+        (WebGPU::BindGroup::BindGroup):
+        * WebGPU/BindGroupLayout.h:
+        (WebGPU::BindGroupLayout::createInvalid):
+        (WebGPU::BindGroupLayout::isValid const):
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::BindGroupLayout::BindGroupLayout):
+        * WebGPU/Buffer.h:
+        (WebGPU::Buffer::createInvalid):
+        (WebGPU::Buffer::isValid const):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::Buffer):
+        * WebGPU/CommandBuffer.h:
+        (WebGPU::CommandBuffer::createInvalid):
+        (WebGPU::CommandBuffer::isValid const):
+        * WebGPU/CommandBuffer.mm:
+        (WebGPU::CommandBuffer::CommandBuffer):
+        * WebGPU/CommandEncoder.h:
+        (WebGPU::CommandEncoder::createInvalid):
+        (WebGPU::CommandEncoder::isValid const):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::CommandEncoder):
+        * WebGPU/ComputePassEncoder.h:
+        (WebGPU::ComputePassEncoder::createInvalid):
+        (WebGPU::ComputePassEncoder::isValid const):
+        * WebGPU/ComputePassEncoder.mm:
+        (WebGPU::ComputePassEncoder::ComputePassEncoder):
+        * WebGPU/ComputePipeline.h:
+        (WebGPU::ComputePipeline::createInvalid):
+        (WebGPU::ComputePipeline::isValid const):
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::ComputePipeline::ComputePipeline):
+        * WebGPU/Device.h:
+        (WebGPU::Device::createInvalid):
+        (WebGPU::Device::isValid const):
+        * WebGPU/Device.mm:
+        (WebGPU::Device::Device):
+        * WebGPU/Instance.h:
+        (WebGPU::Instance::createInvalid):
+        (WebGPU::Instance::isValid const):
+        * WebGPU/Instance.mm:
+        (WebGPU::Instance::Instance):
+        (WebGPU::m_isValid):
+        * WebGPU/PipelineLayout.h:
+        (WebGPU::PipelineLayout::createInvalid):
+        (WebGPU::PipelineLayout::isValid const):
+        * WebGPU/PipelineLayout.mm:
+        (WebGPU::PipelineLayout::PipelineLayout):
+        * WebGPU/QuerySet.h:
+        (WebGPU::QuerySet::createInvalid):
+        (WebGPU::QuerySet::isValid const):
+        * WebGPU/QuerySet.mm:
+        (WebGPU::QuerySet::QuerySet):
+        * WebGPU/Queue.h:
+        (WebGPU::Queue::createInvalid):
+        (WebGPU::Queue::isValid const):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::Queue):
+        * WebGPU/RenderBundle.h:
+        (WebGPU::RenderBundle::createInvalid):
+        (WebGPU::RenderBundle::isValid const):
+        * WebGPU/RenderBundle.mm:
+        (WebGPU::RenderBundle::RenderBundle):
+        * WebGPU/RenderBundleEncoder.h:
+        (WebGPU::RenderBundleEncoder::createInvalid):
+        (WebGPU::RenderBundleEncoder::isValid const):
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::RenderBundleEncoder::RenderBundleEncoder):
+        * WebGPU/RenderPassEncoder.h:
+        (WebGPU::RenderPassEncoder::createInvalid):
+        (WebGPU::RenderPassEncoder::isValid const):
+        * WebGPU/RenderPassEncoder.mm:
+        (WebGPU::RenderPassEncoder::RenderPassEncoder):
+        * WebGPU/RenderPipeline.h:
+        (WebGPU::RenderPipeline::createInvalid):
+        (WebGPU::RenderPipeline::isValid const):
+        * WebGPU/RenderPipeline.mm:
+        (WebGPU::RenderPipeline::RenderPipeline):
+        * WebGPU/Sampler.h:
+        (WebGPU::Sampler::createInvalid):
+        (WebGPU::Sampler::isValid const):
+        * WebGPU/Sampler.mm:
+        (WebGPU::Sampler::Sampler):
+        * WebGPU/ShaderModule.h:
+        (WebGPU::ShaderModule::createInvalid):
+        (WebGPU::ShaderModule::isValid const):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::ShaderModule::convertCheckResult):
+        (WebGPU::ShaderModule::ShaderModule):
+        (WebGPU::ShaderModule::getCompilationInfo):
+        (WebGPU::ShaderModule::ast const):
+        * WebGPU/Texture.h:
+        (WebGPU::Texture::createInvalid):
+        (WebGPU::Texture::isValid const):
+        * WebGPU/Texture.mm:
+        (WebGPU::Texture::Texture):
+        * WebGPU/TextureView.h:
+        (WebGPU::TextureView::createInvalid):
+        (WebGPU::TextureView::isValid const):
+        * WebGPU/TextureView.mm:
+        (WebGPU::TextureView::TextureView):
+
+2022-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Add support for the "is valid to use with" operation to WebGPU objects
         https://bugs.webkit.org/show_bug.cgi?id=238719
 

@@ -51,6 +51,10 @@ public:
     {
         return adoptRef(*new Queue(commandQueue, device));
     }
+    static Ref<Queue> createInvalid(Device& device)
+    {
+        return adoptRef(*new Queue(device));
+    }
 
     ~Queue();
 
@@ -60,10 +64,13 @@ public:
     void writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
     void setLabel(String&&);
 
+    bool isValid() const { return m_commandQueue; }
+
     id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
 
 private:
     Queue(id<MTLCommandQueue>, Device&);
+    Queue(Device&);
 
     bool validateSubmit() const;
     bool validateWriteBuffer(const Buffer&, uint64_t bufferOffset, size_t) const;

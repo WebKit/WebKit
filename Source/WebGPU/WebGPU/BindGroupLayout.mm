@@ -224,6 +224,11 @@ BindGroupLayout::BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, i
 {
 }
 
+BindGroupLayout::BindGroupLayout(Device& device)
+    : m_device(device)
+{
+}
+
 BindGroupLayout::~BindGroupLayout() = default;
 
 void BindGroupLayout::setLabel(String&& label)

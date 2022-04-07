@@ -36,6 +36,11 @@ RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, D
 {
 }
 
+RenderBundle::RenderBundle(Device& device)
+    : m_device(device)
+{
+}
+
 RenderBundle::~RenderBundle() = default;
 
 void RenderBundle::setLabel(String&& label)

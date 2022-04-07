@@ -68,6 +68,12 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, Instance&
 {
 }
 
+Device::Device(Instance& instance)
+    : m_defaultQueue(Queue::createInvalid(*this))
+    , m_instance(instance)
+{
+}
+
 Device::~Device() = default;
 
 void Device::destroy()

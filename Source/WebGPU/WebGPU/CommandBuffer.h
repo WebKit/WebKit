@@ -44,10 +44,16 @@ public:
     {
         return adoptRef(*new CommandBuffer(commandBuffer, device));
     }
+    static Ref<CommandBuffer> createInvalid(Device& device)
+    {
+        return adoptRef(*new CommandBuffer(device));
+    }
 
     ~CommandBuffer();
 
     void setLabel(String&&);
+
+    bool isValid() const { return m_commandBuffer; }
 
     id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
 
@@ -55,6 +61,7 @@ public:
 
 private:
     CommandBuffer(id<MTLCommandBuffer>, Device&);
+    CommandBuffer(Device&);
 
     const id<MTLCommandBuffer> m_commandBuffer { nil };
 

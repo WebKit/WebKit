@@ -44,11 +44,17 @@ public:
     {
         return adoptRef(*new QuerySet(counterSampleBuffer, device));
     }
+    static Ref<QuerySet> createInvalid(Device& device)
+    {
+        return adoptRef(*new QuerySet(device));
+    }
 
     ~QuerySet();
 
     void destroy();
     void setLabel(String&&);
+
+    bool isValid() const { return m_counterSampleBuffer; }
 
     id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_counterSampleBuffer; }
 
@@ -56,6 +62,7 @@ public:
 
 private:
     QuerySet(id<MTLCounterSampleBuffer>, Device&);
+    QuerySet(Device&);
 
     const id<MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
 

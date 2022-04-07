@@ -47,6 +47,10 @@ public:
     {
         return adoptRef(*new Adapter(device, instance));
     }
+    static Ref<Adapter> createInvalid(Instance& instance)
+    {
+        return adoptRef(*new Adapter(instance));
+    }
 
     ~Adapter();
 
@@ -56,8 +60,11 @@ public:
     bool hasFeature(WGPUFeatureName);
     void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, String&&)>&& callback);
 
+    bool isValid() const { return m_device; }
+
 private:
     Adapter(id<MTLDevice>, Instance&);
+    Adapter(Instance&);
 
     const id<MTLDevice> m_device { nil };
     const Ref<Instance> m_instance;

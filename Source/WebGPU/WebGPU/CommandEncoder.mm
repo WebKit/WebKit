@@ -61,6 +61,11 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
 {
 }
 
+CommandEncoder::CommandEncoder(Device& device)
+    : m_device(device)
+{
+}
+
 CommandEncoder::~CommandEncoder()
 {
     finalizeBlitCommandEncoder();

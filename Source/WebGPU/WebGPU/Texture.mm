@@ -2061,6 +2061,11 @@ Texture::Texture(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor
 {
 }
 
+Texture::Texture(Device& device)
+    : m_device(device)
+{
+}
+
 Texture::~Texture() = default;
 
 WGPUTextureViewDescriptor Texture::resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor& descriptor) const

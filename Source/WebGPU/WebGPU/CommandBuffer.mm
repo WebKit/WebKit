@@ -36,6 +36,11 @@ CommandBuffer::CommandBuffer(id<MTLCommandBuffer> commandBuffer, Device& device)
 {
 }
 
+CommandBuffer::CommandBuffer(Device& device)
+    : m_device(device)
+{
+}
+
 CommandBuffer::~CommandBuffer() = default;
 
 void CommandBuffer::setLabel(String&& label)

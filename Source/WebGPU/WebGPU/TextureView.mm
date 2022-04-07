@@ -38,6 +38,12 @@ TextureView::TextureView(id<MTLTexture> texture, const WGPUTextureViewDescriptor
 {
 }
 
+TextureView::TextureView(Device& device)
+    : m_descriptor { }
+    , m_device(device)
+{
+}
+
 TextureView::~TextureView() = default;
 
 void TextureView::setLabel(String&& label)

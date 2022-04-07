@@ -51,6 +51,10 @@ public:
     {
         return adoptRef(*new RenderPassEncoder(renderCommandEncoder, device));
     }
+    static Ref<RenderPassEncoder> createInvalid(Device& device)
+    {
+        return adoptRef(*new RenderPassEncoder(device));
+    }
 
     ~RenderPassEncoder();
 
@@ -79,8 +83,11 @@ public:
 
     Device& device() const { return m_device; }
 
+    bool isValid() const { return m_renderCommandEncoder; }
+
 private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>, Device&);
+    RenderPassEncoder(Device&);
 
     bool validatePopDebugGroup() const;
 

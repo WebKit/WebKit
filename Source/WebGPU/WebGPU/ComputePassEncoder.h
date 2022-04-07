@@ -49,6 +49,10 @@ public:
     {
         return adoptRef(*new ComputePassEncoder(computeCommandEncoder, device));
     }
+    static Ref<ComputePassEncoder> createInvalid(Device& device)
+    {
+        return adoptRef(*new ComputePassEncoder(device));
+    }
 
     ~ComputePassEncoder();
 
@@ -66,8 +70,11 @@ public:
 
     Device& device() const { return m_device; }
 
+    bool isValid() const { return m_computeCommandEncoder; }
+
 private:
     ComputePassEncoder(id<MTLComputeCommandEncoder>, Device&);
+    ComputePassEncoder(Device&);
 
     bool validatePopDebugGroup() const;
 

@@ -122,6 +122,11 @@ BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentA
 {
 }
 
+BindGroup::BindGroup(Device& device)
+    : m_device(device)
+{
+}
+
 BindGroup::~BindGroup() = default;
 
 void BindGroup::setLabel(String&& label)

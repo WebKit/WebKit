@@ -47,6 +47,11 @@ RenderBundleEncoder::RenderBundleEncoder(id<MTLIndirectCommandBuffer> indirectCo
 {
 }
 
+RenderBundleEncoder::RenderBundleEncoder(Device& device)
+    : m_device(device)
+{
+}
+
 RenderBundleEncoder::~RenderBundleEncoder() = default;
 
 void RenderBundleEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)

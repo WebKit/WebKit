@@ -56,6 +56,12 @@ Instance::Instance(WGPUScheduleWorkBlock scheduleWorkBlock)
 {
 }
 
+Instance::Instance()
+    : m_scheduleWorkBlock(^(WGPUWorkItem workItem) { defaultScheduleWork(WTFMove(workItem)); })
+    , m_isValid(false)
+{
+}
+
 Instance::~Instance() = default;
 
 RefPtr<Surface> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)

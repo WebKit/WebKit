@@ -44,10 +44,16 @@ public:
     {
         return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, device));
     }
+    static Ref<BindGroup> createInvalid(Device& device)
+    {
+        return adoptRef(*new BindGroup(device));
+    }
 
     ~BindGroup();
 
     void setLabel(String&&);
+
+    bool isValid() const { return m_vertexArgumentBuffer || m_fragmentArgumentBuffer || m_computeArgumentBuffer; }
 
     id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
     id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
@@ -57,6 +63,7 @@ public:
 
 private:
     BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Device&);
+    BindGroup(Device&);
 
     const id<MTLBuffer> m_vertexArgumentBuffer { nil };
     const id<MTLBuffer> m_fragmentArgumentBuffer { nil };

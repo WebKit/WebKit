@@ -45,11 +45,17 @@ public:
     {
         return adoptRef(*new ComputePipeline(computePipelineState, device));
     }
+    static Ref<ComputePipeline> createInvalid(Device& device)
+    {
+        return adoptRef(*new ComputePipeline(device));
+    }
 
     ~ComputePipeline();
 
     BindGroupLayout* getBindGroupLayout(uint32_t groupIndex);
     void setLabel(String&&);
+
+    bool isValid() const { return m_computePipelineState; }
 
     id<MTLComputePipelineState> computePipelineState() const { return m_computePipelineState; }
 
@@ -57,6 +63,7 @@ public:
 
 private:
     ComputePipeline(id<MTLComputePipelineState>, Device&);
+    ComputePipeline(Device&);
 
     const id<MTLComputePipelineState> m_computePipelineState { nil };
 

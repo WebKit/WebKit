@@ -54,6 +54,10 @@ public:
     {
         return adoptRef(*new Buffer(buffer, size, usage, initialState, initialMappingRange, device));
     }
+    static Ref<Buffer> createInvalid(Device& device)
+    {
+        return adoptRef(*new Buffer(device));
+    }
 
     ~Buffer();
 
@@ -63,6 +67,8 @@ public:
     void mapAsync(WGPUMapModeFlags, size_t offset, size_t, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback);
     void unmap();
     void setLabel(String&&);
+
+    bool isValid() const { return m_buffer; }
 
     // https://gpuweb.github.io/gpuweb/#buffer-state
     // Each GPUBuffer has a current buffer state on the Content timeline which is one of the following:
@@ -83,6 +89,7 @@ public:
 
 private:
     Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
+    Buffer(Device&);
 
     bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
     bool validateMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;

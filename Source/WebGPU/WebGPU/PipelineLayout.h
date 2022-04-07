@@ -46,10 +46,17 @@ public:
     {
         return adoptRef(*new PipelineLayout(WTFMove(bindGroupLayouts), device));
     }
+    static Ref<PipelineLayout> createInvalid(Device& device)
+    {
+        return adoptRef(*new PipelineLayout(device));
+    }
 
     ~PipelineLayout();
 
     void setLabel(String&&);
+
+    // FIXME: Is it impossible to legitimately have no bind group layouts in a valid object?
+    bool isValid() const { return !m_bindGroupLayouts.isEmpty(); }
 
     bool operator==(const PipelineLayout&) const;
     bool operator!=(const PipelineLayout&) const;
@@ -61,6 +68,7 @@ public:
 
 private:
     PipelineLayout(Vector<Ref<BindGroupLayout>>&&, Device&);
+    PipelineLayout(Device&);
 
     const Vector<Ref<BindGroupLayout>> m_bindGroupLayouts;
 

@@ -134,6 +134,11 @@ Buffer::Buffer(id<MTLBuffer> buffer, uint64_t size, WGPUBufferUsageFlags usage, 
 {
 }
 
+Buffer::Buffer(Device& device)
+    : m_device(device)
+{
+}
+
 Buffer::~Buffer() = default;
 
 void Buffer::destroy()

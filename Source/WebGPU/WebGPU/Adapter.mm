@@ -39,6 +39,11 @@ Adapter::Adapter(id<MTLDevice> device, Instance& instance)
 {
 }
 
+Adapter::Adapter(Instance& instance)
+    : m_instance(instance)
+{
+}
+
 Adapter::~Adapter() = default;
 
 size_t Adapter::enumerateFeatures(WGPUFeatureName*)

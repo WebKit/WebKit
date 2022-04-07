@@ -50,6 +50,11 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, D
 {
 }
 
+RenderPipeline::RenderPipeline(Device& device)
+    : m_device(device)
+{
+}
+
 RenderPipeline::~RenderPipeline() = default;
 
 BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)

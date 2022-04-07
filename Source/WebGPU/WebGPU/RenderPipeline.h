@@ -45,11 +45,17 @@ public:
     {
         return adoptRef(*new RenderPipeline(renderPipelineState, device));
     }
+    static Ref<RenderPipeline> createInvalid(Device& device)
+    {
+        return adoptRef(*new RenderPipeline(device));
+    }
 
     ~RenderPipeline();
 
     BindGroupLayout* getBindGroupLayout(uint32_t groupIndex);
     void setLabel(String&&);
+
+    bool isValid() const { return m_renderPipelineState; }
 
     id<MTLRenderPipelineState> renderPipelineState() const { return m_renderPipelineState; }
 
@@ -57,6 +63,7 @@ public:
 
 private:
     RenderPipeline(id<MTLRenderPipelineState>, Device&);
+    RenderPipeline(Device&);
 
     const id<MTLRenderPipelineState> m_renderPipelineState { nil };
 

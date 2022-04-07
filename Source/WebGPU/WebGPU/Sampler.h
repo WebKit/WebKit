@@ -44,10 +44,16 @@ public:
     {
         return adoptRef(*new Sampler(samplerState, descriptor, device));
     }
+    static Ref<Sampler> createInvalid(Device& device)
+    {
+        return adoptRef(*new Sampler(device));
+    }
 
     ~Sampler();
 
     void setLabel(String&&);
+
+    bool isValid() const { return m_samplerState; }
 
     id<MTLSamplerState> samplerState() const { return m_samplerState; }
     const WGPUSamplerDescriptor& descriptor() const { return m_descriptor; }
@@ -58,6 +64,7 @@ public:
 
 private:
     Sampler(id<MTLSamplerState>, const WGPUSamplerDescriptor&, Device&);
+    Sampler(Device&);
 
     const id<MTLSamplerState> m_samplerState { nil };
 

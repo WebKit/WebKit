@@ -51,6 +51,10 @@ public:
     {
         return adoptRef(*new CommandEncoder(commandBuffer, device));
     }
+    static Ref<CommandEncoder> createInvalid(Device& device)
+    {
+        return adoptRef(*new CommandEncoder(device));
+    }
 
     ~CommandEncoder();
 
@@ -71,8 +75,11 @@ public:
 
     Device& device() const { return m_device; }
 
+    bool isValid() const { return m_commandBuffer; }
+
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
+    CommandEncoder(Device&);
 
     bool validateFinish() const;
     bool validatePopDebugGroup() const;

@@ -43,6 +43,11 @@ QuerySet::QuerySet(id<MTLCounterSampleBuffer> counterSampleBuffer, Device& devic
 {
 }
 
+QuerySet::QuerySet(Device& device)
+    : m_device(device)
+{
+}
+
 QuerySet::~QuerySet() = default;
 
 void QuerySet::destroy()

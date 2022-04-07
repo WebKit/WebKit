@@ -40,6 +40,11 @@ ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeComma
 {
 }
 
+ComputePassEncoder::ComputePassEncoder(Device& device)
+    : m_device(device)
+{
+}
+
 ComputePassEncoder::~ComputePassEncoder() = default;
 
 void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, uint32_t queryIndex)

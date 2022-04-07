@@ -45,10 +45,16 @@ public:
     {
         return adoptRef(*new TextureView(texture, descriptor, renderExtent, device));
     }
+    static Ref<TextureView> createInvalid(Device& device)
+    {
+        return adoptRef(*new TextureView(device));
+    }
 
     ~TextureView();
 
     void setLabel(String&&);
+
+    bool isValid() const { return m_texture; }
 
     id<MTLTexture> texture() const { return m_texture; }
     const WGPUTextureViewDescriptor& descriptor() const { return m_descriptor; }
@@ -58,6 +64,7 @@ public:
 
 private:
     TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Device&);
+    TextureView(Device&);
 
     const id<MTLTexture> m_texture { nil };
 

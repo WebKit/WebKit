@@ -181,6 +181,11 @@ ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineStat
 {
 }
 
+ComputePipeline::ComputePipeline(Device& device)
+    : m_device(device)
+{
+}
+
 ComputePipeline::~ComputePipeline() = default;
 
 BindGroupLayout* ComputePipeline::getBindGroupLayout(uint32_t groupIndex)

@@ -50,6 +50,10 @@ public:
     {
         return adoptRef(*new RenderBundleEncoder(indirectCommandBuffer, device));
     }
+    static Ref<RenderBundleEncoder> createInvalid(Device& device)
+    {
+        return adoptRef(*new RenderBundleEncoder(device));
+    }
 
     ~RenderBundleEncoder();
 
@@ -69,8 +73,11 @@ public:
 
     Device& device() const { return m_device; }
 
+    bool isValid() const { return m_indirectCommandBuffer; }
+
 private:
     RenderBundleEncoder(id<MTLIndirectCommandBuffer>, Device&);
+    RenderBundleEncoder(Device&);
 
     bool validatePopDebugGroup() const;
 

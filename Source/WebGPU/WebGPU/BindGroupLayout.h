@@ -44,10 +44,16 @@ public:
     {
         return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, device));
     }
+    static Ref<BindGroupLayout> createInvalid(Device& device)
+    {
+        return adoptRef(*new BindGroupLayout(device));
+    }
 
     ~BindGroupLayout();
 
     void setLabel(String&&);
+
+    bool isValid() const { return m_vertexArgumentEncoder || m_fragmentArgumentEncoder || m_computeArgumentEncoder; }
 
     NSUInteger encodedLength() const;
 
@@ -59,6 +65,7 @@ public:
 
 private:
     BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Device&);
+    BindGroupLayout(Device&);
 
     const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };

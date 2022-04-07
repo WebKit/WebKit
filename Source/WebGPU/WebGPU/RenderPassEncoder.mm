@@ -41,6 +41,11 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
 {
 }
 
+RenderPassEncoder::RenderPassEncoder(Device& device)
+    : m_device(device)
+{
+}
+
 RenderPassEncoder::~RenderPassEncoder() = default;
 
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)

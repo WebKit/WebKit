@@ -30,8 +30,8 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
-#import <wtf/RefPtr.h>
 #import <wtf/ThreadSafeRefCounted.h>
+#import <wtf/RefPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
@@ -61,6 +61,10 @@ class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<Device> create(id<MTLDevice>, String&& deviceLabel, Instance&);
+    static Ref<Device> createInvalid(Instance& instance)
+    {
+        return adoptRef(*new Device(instance));
+    }
 
     ~Device();
 
@@ -90,6 +94,8 @@ public:
     void setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&&);
     void setLabel(String&&);
 
+    bool isValid() const { return m_device; }
+
     id<MTLDevice> device() const { return m_device; }
 
     void generateAValidationError(String&& message);
@@ -99,6 +105,7 @@ public:
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, Instance&);
+    Device(Instance&);
 
     struct ErrorScope;
     ErrorScope* currentErrorScope(WGPUErrorFilter);

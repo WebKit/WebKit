@@ -44,10 +44,16 @@ public:
     {
         return adoptRef(*new RenderBundle(indirectCommandBuffer, device));
     }
+    static Ref<RenderBundle> createInvalid(Device& device)
+    {
+        return adoptRef(*new RenderBundle(device));
+    }
 
     ~RenderBundle();
 
     void setLabel(String&&);
+
+    bool isValid() const { return m_indirectCommandBuffer; }
 
     id<MTLIndirectCommandBuffer> indirectCommandBuffer() const { return m_indirectCommandBuffer; }
 
@@ -55,6 +61,7 @@ public:
 
 private:
     RenderBundle(id<MTLIndirectCommandBuffer>, Device&);
+    RenderBundle(Device&);
 
     const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 

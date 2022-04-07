@@ -40,6 +40,11 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
 {
 }
 
+Queue::Queue(Device& device)
+    : m_device(device)
+{
+}
+
 Queue::~Queue()
 {
     // If we're not idle, then there's a pending completed handler to be run,

@@ -169,6 +169,11 @@ Sampler::Sampler(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& 
 {
 }
 
+Sampler::Sampler(Device& device)
+    : m_device(device)
+{
+}
+
 Sampler::~Sampler() = default;
 
 void Sampler::setLabel(String&&)

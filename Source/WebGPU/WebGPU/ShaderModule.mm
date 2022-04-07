@@ -119,11 +119,24 @@ RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor
     return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);
 }
 
+auto ShaderModule::convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult) -> CheckResult
+{
+    return WTF::switchOn(WTFMove(checkResult), [](auto&& check) -> CheckResult {
+        return WTFMove(check);
+    });
+}
+
 ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
-    : m_checkResult(WTFMove(checkResult))
+    : m_checkResult(convertCheckResult(WTFMove(checkResult)))
     , m_pipelineLayoutHints(WTFMove(pipelineLayoutHints))
     , m_entryPointInformation(WTFMove(entryPointInformation))
     , m_library(library)
+    , m_device(device)
+{
+}
+
+ShaderModule::ShaderModule(Device& device)
+    : m_checkResult(std::monostate { })
     , m_device(device)
 {
 }
@@ -205,6 +218,8 @@ void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfo
             compilationMessageData.compilationMessages.data(),
         };
         callback(WGPUCompilationInfoRequestStatus_Error, compilationInfo);
+    }, [](std::monostate) {
+        ASSERT_NOT_REACHED();
     });
 }
 
@@ -226,6 +241,9 @@ const WGSL::AST::ShaderModule* ShaderModule::ast() const
     return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> const WGSL::AST::ShaderModule* {
         return successfulCheck.ast.ptr();
     }, [&](const WGSL::FailedCheck&) -> const WGSL::AST::ShaderModule* {
+        return nullptr;
+    }, [](std::monostate) -> const WGSL::AST::ShaderModule* {
+        ASSERT_NOT_REACHED();
         return nullptr;
     });
 }

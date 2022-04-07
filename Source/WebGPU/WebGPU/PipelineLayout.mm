@@ -52,6 +52,11 @@ PipelineLayout::PipelineLayout(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts, 
 {
 }
 
+PipelineLayout::PipelineLayout(Device& device)
+    : m_device(device)
+{
+}
+
 PipelineLayout::~PipelineLayout() = default;
 
 void PipelineLayout::setLabel(String&&)

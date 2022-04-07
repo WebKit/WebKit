@@ -47,12 +47,18 @@ public:
     {
         return adoptRef(*new Texture(texture, descriptor, WTFMove(viewFormats), device));
     }
+    static Ref<Texture> createInvalid(Device& device)
+    {
+        return adoptRef(*new Texture(device));
+    }
 
     ~Texture();
 
     RefPtr<TextureView> createView(const WGPUTextureViewDescriptor&);
     void destroy();
     void setLabel(String&&);
+
+    bool isValid() const { return m_texture; }
 
     static uint32_t texelBlockWidth(WGPUTextureFormat); // Texels
     static uint32_t texelBlockHeight(WGPUTextureFormat); // Texels
@@ -81,6 +87,7 @@ public:
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
+    Texture(Device&);
 
     WGPUTextureViewDescriptor resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
     uint32_t arrayLayerCount() const;
