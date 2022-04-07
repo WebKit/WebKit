@@ -1,5 +1,13 @@
 2022-04-07  Alan Bujtas  <zalan@apple.com>
 
+        Fix the expected failure type.
+
+        Unreviewed.
+
+        * platform/mac-wk1/TestExpectations:
+
+2022-04-07  Alan Bujtas  <zalan@apple.com>
+
         A float avoider should never take a vertical position where a float is present even when its used width is zero
         https://bugs.webkit.org/show_bug.cgi?id=238895
 

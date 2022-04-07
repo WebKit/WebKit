@@ -1870,4 +1870,4 @@ http/tests/webgpu/webgpu/shader/validation/shader_io/generic.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/shader_io/locations.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/wgsl/basic.html [ Skip ]
 
-webkit.org/b/238642 imported/w3c/web-platform-tests/css/css-contain/contain-body-overflow-002.html [ Failure ]
+webkit.org/b/238642 imported/w3c/web-platform-tests/css/css-contain/contain-body-overflow-002.html [ ImageOnlyFailure ]
