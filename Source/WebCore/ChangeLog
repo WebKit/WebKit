@@ -1,3 +1,17 @@
+2022-04-07  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] REGRESSION (r287881): loading performance for diply.com regressed
+        https://bugs.webkit.org/show_bug.cgi?id=238931
+        rdar://91190007
+
+        Reviewed by Simon Fraser.
+
+        We only need to resolve effects in the stack if they are targeting the property we are
+        considering for the creation, update or removal of a CSS Transition.
+
+        * style/Styleable.cpp:
+        (WebCore::updateCSSTransitionsForStyleableAndProperty):
+
 2022-04-07  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Iterate over copy of animated properties in WebCore::WebAnimation::commitStyles

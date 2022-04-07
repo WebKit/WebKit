@@ -442,6 +442,14 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         }
     }
 
+    auto effectTargetsProperty = [property](KeyframeEffect& effect) {
+        if (effect.animatedProperties().contains(property))
+            return true;
+        if (auto* transition = dynamicDowncast<CSSTransition>(effect.animation()))
+            return transition->property() == property;
+        return false;
+    };
+
     // https://drafts.csswg.org/css-transitions-1/#before-change-style
     // Define the before-change style as the computed values of all properties on the element as of the previous style change event, except with
     // any styles derived from declarative animations such as CSS Transitions, CSS Animations, and SMIL Animations updated to the current time.
@@ -450,6 +458,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             auto style = RenderStyle::clone(*lastStyleChangeEventStyle);
             if (auto* keyframeEffectStack = styleable.keyframeEffectStack()) {
                 for (const auto& effect : keyframeEffectStack->sortedEffects()) {
+                    if (!effectTargetsProperty(*effect))
+                        continue;
                     auto* effectAnimation = effect->animation();
                     bool shouldUseTimelineTimeAtCreation = is<CSSTransition>(effectAnimation) && (!effectAnimation->startTime() || *effectAnimation->startTime() == styleable.element.document().timeline().currentTime());
                     effectAnimation->resolve(style, { nullptr }, shouldUseTimelineTimeAtCreation ? downcast<CSSTransition>(*effectAnimation).timelineTimeAtCreation() : std::nullopt);
