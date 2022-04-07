@@ -1,3 +1,38 @@
+2022-04-07  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX ITM: ARIATreeItemContent, ARIATreeRows, and DisclosedRows properties need to be updated after dynamic page changes
+        https://bugs.webkit.org/show_bug.cgi?id=238844
+
+        Reviewed by Chris Fleizach.
+
+        Before this patch, we never updated these properties after
+        initializing isolated objects, so they become inaccurate
+        when content / rows were added or removed.
+
+        Test: accessibility/mac/tree-properties-update-after-dynamic-change.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::ariaTreeItemContent):
+        Make this function return a value instead of by out-parameter.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateNodeProperty):
+        Handle updates to AXPropertyName::ARIATreeItemContent, AXPropertyName::ARIATreeRows, and
+        AXPropertyName::DisclosedRows. Also, updateNodeProperty now
+        takes an `AXCoreObject&` instead of `const AXCoreObject&`
+        since calling ariaTreeItemContent(), ariaTreeRows(), and disclosedRows() is inherently not const.
+        (WebCore::AXIsolatedTree::updateChildren):
+        If the object being updated is a treeitem, also update AXPropertyName::ARIATreeItemContent
+        and AXPropertyName::DisclosedRows. And if the object has a tree role ancestor, update
+        AXPropertyName::ARIATreeRows for that ancestor.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2022-04-07  Youenn Fablet  <youenn@apple.com>
 
         (Safari 15 - iOS15):  Increased audio latency on streaming via webrtc

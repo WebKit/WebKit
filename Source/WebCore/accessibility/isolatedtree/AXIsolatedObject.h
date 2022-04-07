@@ -291,7 +291,7 @@ private:
     bool isValueAutofillAvailable() const override { return boolAttributeValue(AXPropertyName::IsValueAutofillAvailable); }
     AutoFillButtonType valueAutofillButtonType() const override { return static_cast<AutoFillButtonType>(intAttributeValue(AXPropertyName::ValueAutofillButtonType)); }
     void ariaTreeRows(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::ARIATreeRows, children); }
-    void ariaTreeItemContent(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::ARIATreeItemContent, children); }
+    AccessibilityChildrenVector ariaTreeItemContent() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ARIATreeItemContent)); }
     URL url() const override { return urlAttributeValue(AXPropertyName::URL); }
     String accessKey() const override { return stringAttributeValue(AXPropertyName::AccessKey); }
     String localizedActionVerb() const override { return stringAttributeValue(AXPropertyName::LocalizedActionVerb); }

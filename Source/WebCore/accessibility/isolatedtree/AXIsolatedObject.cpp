@@ -285,11 +285,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
 
     if (object.isTreeItem()) {
         setProperty(AXPropertyName::IsTreeItem, true);
-
-        AccessibilityChildrenVector ariaTreeItemContent;
-        object.ariaTreeItemContent(ariaTreeItemContent);
-        setObjectVectorProperty(AXPropertyName::ARIATreeItemContent, ariaTreeItemContent);
-
+        setObjectVectorProperty(AXPropertyName::ARIATreeItemContent, object.ariaTreeItemContent());
         setObjectVectorProperty(AXPropertyName::DisclosedRows, object.disclosedRows());
     }
 

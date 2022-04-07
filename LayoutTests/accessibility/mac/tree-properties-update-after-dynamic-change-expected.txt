@@ -1,0 +1,28 @@
+This test ensures that tree and treeitem objects report the most up-to-date children and rows after dynamic page changes.
+
+#treeitem1 childrenCount: 0
+#treeitem2 childrenCount: 0
+#tree rowCount: 3
+    row 0: AXRole: AXRow, #treeitem1
+    row 1: AXRole: AXRow, #treeitem2
+    row 2: AXRole: AXRow, #treeitem3
+
+Adding content to #treeitem1 and #treeitem2.
+
+#treeitem1 childrenCount: 1
+    child: AXRole: AXButton
+#treeitem2 childrenCount: 0
+#treeitem2 had disclosed row #treeitem3
+#treeitem2 had disclosed row #treeitem4
+#tree rowCount: 4
+    row 0: AXRole: AXRow, #treeitem1
+    row 1: AXRole: AXRow, #treeitem2
+    row 2: AXRole: AXRow, #treeitem3
+    row 3: AXRole: AXRow, #treeitem4
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button inside treeitem1
+Button inside treeitem3
+Button inside treeitem4

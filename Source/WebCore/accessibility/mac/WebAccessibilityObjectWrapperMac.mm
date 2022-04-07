@@ -1982,11 +1982,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return [self accessibilityAttributeValue:NSAccessibilityRowsAttribute];
 
         // A tree item should only expose its content as its children (not its rows)
-        if (backingObject->isTreeItem()) {
-            AccessibilityObject::AccessibilityChildrenVector contentCopy;
-            backingObject->ariaTreeItemContent(contentCopy);
-            return makeNSArray(contentCopy);
-        }
+        if (backingObject->isTreeItem())
+            return makeNSArray(backingObject->ariaTreeItemContent());
 
         return self.childrenVectorArray;
     }

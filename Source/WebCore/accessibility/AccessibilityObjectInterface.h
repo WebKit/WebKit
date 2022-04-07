@@ -1354,7 +1354,7 @@ public:
     // Used by an ARIA tree to get all its rows.
     virtual void ariaTreeRows(AccessibilityChildrenVector&) = 0;
     // Used by an ARIA tree item to get only its content, and not its child tree items and groups.
-    virtual void ariaTreeItemContent(AccessibilityChildrenVector&) = 0;
+    virtual AccessibilityChildrenVector ariaTreeItemContent() = 0;
 
     // ARIA live-region features.
     virtual bool supportsLiveRegion(bool excludeIfOff = true) const = 0;

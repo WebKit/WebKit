@@ -352,7 +352,7 @@ public:
 
     void generateSubtree(AXCoreObject&, AXCoreObject*, bool attachWrapper);
     void updateNode(AXCoreObject&);
-    void updateNodeProperty(const AXCoreObject&, AXPropertyName);
+    void updateNodeProperty(AXCoreObject&, AXPropertyName);
     void updateChildren(AXCoreObject&);
 
     double loadingProgress() { return m_loadingProgress; }

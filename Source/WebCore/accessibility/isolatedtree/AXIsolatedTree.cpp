@@ -311,18 +311,30 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
     queueChange(change);
 }
 
-void AXIsolatedTree::updateNodeProperty(const AXCoreObject& axObject, AXPropertyName property)
+void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName property)
 {
     AXTRACE("AXIsolatedTree::updateNodeProperty"_s);
     ASSERT(isMainThread());
 
     AXPropertyMap propertyMap;
     switch (property) {
+    case AXPropertyName::ARIATreeItemContent:
+        propertyMap.set(AXPropertyName::ARIATreeItemContent, idsForObjects(axObject.ariaTreeItemContent()));
+        break;
+    case AXPropertyName::ARIATreeRows: {
+        AXCoreObject::AccessibilityChildrenVector ariaTreeRows;
+        axObject.ariaTreeRows(ariaTreeRows);
+        propertyMap.set(AXPropertyName::ARIATreeRows, idsForObjects(ariaTreeRows));
+        break;
+    }
     case AXPropertyName::CanSetFocusAttribute:
         propertyMap.set(AXPropertyName::CanSetFocusAttribute, axObject.canSetFocusAttribute());
         break;
     case AXPropertyName::CurrentValue:
         propertyMap.set(AXPropertyName::CurrentValue, axObject.currentValue().isolatedCopy());
+        break;
+    case AXPropertyName::DisclosedRows:
+        propertyMap.set(AXPropertyName::DisclosedRows, idsForObjects(axObject.disclosedRows()));
         break;
     case AXPropertyName::IsChecked:
         ASSERT(axObject.supportsCheckedState());
@@ -421,6 +433,15 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
         removeSubtreeFromNodeMap(axID, axAncestor, idsBeingChanged);
     }
     queueChangesAndRemovals(changes, oldChildrenIDs);
+
+    // Also queue updates for properties that derive from children().
+    if (axAncestor->isTreeItem()) {
+        updateNodeProperty(*axAncestor, AXPropertyName::ARIATreeItemContent);
+        updateNodeProperty(*axAncestor, AXPropertyName::DisclosedRows);
+    }
+
+    if (auto* treeAncestor = Accessibility::findAncestor(*axAncestor, true, [] (const auto& axObject) { return axObject.isTree(); }))
+        updateNodeProperty(*treeAncestor, AXPropertyName::ARIATreeRows);
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
