@@ -3404,6 +3404,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetFocusAttribute);
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsEnabled);
             break;
+        case AXExpandedChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::IsExpanded);
+            break;
         case AXSortDirectionChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::SortDirection);
             break;
@@ -3427,8 +3430,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXLanguageChanged:
         case AXRowCountChanged:
         case AXRowCollapsed:
-        case AXRowExpanded:
-        case AXExpandedChanged: {
+        case AXRowExpanded: {
             bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {
                 return note.second == notification.second && note.first.get() == notification.first.get();
             });

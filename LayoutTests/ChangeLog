@@ -1,3 +1,19 @@
+2022-04-06  Andres Gonzalez  <andresg_22@apple.com>
+
+        [ Mac ] accessibility/mac/expanded-notification.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238830
+        rdar://91313419
+
+        Reviewed by Chris Fleizach.
+
+        Fixes the flakiness by checking the number of notifications received in
+        the same async block where the changes are occuring. This now passes
+        with no flakiness in both isolated tree mode on and off.
+
+        * accessibility/mac/expanded-notification-expected.txt:
+        * accessibility/mac/expanded-notification.html:
+        * platform/mac/TestExpectations:
+
 2022-04-06  J Pascoe  <j_pascoe@apple.com>
 
         Fix expected, actual links for variant-based imported wpt tests
