@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,41 @@
 
 #pragma once
 
-#include "Decoder.h"
-#include "MessageReceiveQueue.h"
-#include <variant>
-#include <wtf/HashMap.h>
-
 namespace IPC {
 
-enum class ReceiverName : uint8_t;
+struct ReceiverMatcher {
+    // Matches all messages.
+    ReceiverMatcher() = default;
 
-class MessageReceiveQueueMap {
-public:
-    MessageReceiveQueueMap() = default;
-    ~MessageReceiveQueueMap() = default;
-
-    static bool isValidMessage(const Decoder& message)
+    // Matches message to specific receiver, any destination ID.
+    ReceiverMatcher(ReceiverName receiverName)
+        : receiverName(receiverName)
     {
-        return QueueMap::isValidKey(std::make_pair(static_cast<uint8_t>(message.messageReceiverName()), message.destinationID()));
     }
 
-    void add(MessageReceiveQueue& queue, const ReceiverMatcher& matcher) { addImpl(StoreType(&queue), matcher); }
-    void add(std::unique_ptr<MessageReceiveQueue>&& queue, const ReceiverMatcher& matcher) { addImpl(StoreType(WTFMove(queue)), matcher); }
-    void remove(const ReceiverMatcher&);
+    // Matches message to specific receiver, specific destination ID.
+    // Note: destinationID == 0 matches only 0 ids.
+    ReceiverMatcher(ReceiverName receiverName, uint64_t destinationID)
+        : receiverName(receiverName)
+        , destinationID(destinationID)
+    {
+    }
 
-    MessageReceiveQueue* get(const Decoder&) const;
-private:
-    using StoreType = std::variant<MessageReceiveQueue*, std::unique_ptr<MessageReceiveQueue>>;
-    void addImpl(StoreType&&, const ReceiverMatcher&);
-    using QueueMap = HashMap<std::pair<uint8_t, uint64_t>, StoreType>;
-    // Key is ReceiverName. FIXME: make it possible to use ReceiverName.
-    using AnyIDQueueMap = HashMap<uint8_t, StoreType>;
-    QueueMap m_queues;
-    AnyIDQueueMap m_anyIDQueues;
-    std::optional<StoreType> m_anyReceiverQueue;
+    // Creates a matcher from parameters where destinationID == 0 means any destintation ID. Deprecated.
+    static ReceiverMatcher createWithZeroAsAnyDestination(ReceiverName receiverName, uint64_t destinationID)
+    {
+        if (destinationID)
+            return ReceiverMatcher { receiverName, destinationID };
+        return ReceiverMatcher { receiverName };
+    }
+
+    bool matches(ReceiverName matchReceiverName, uint64_t matchDestinationID) const
+    {
+        return !receiverName || (*receiverName == matchReceiverName && (!destinationID || *destinationID == matchDestinationID));
+    }
+
+    std::optional<ReceiverName> receiverName;
+    std::optional<uint64_t> destinationID;
 };
 
-} // namespace IPC
+}

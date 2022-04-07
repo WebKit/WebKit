@@ -102,7 +102,7 @@ void StorageManagerSet::addConnection(IPC::Connection& connection)
     auto connectionID = connection.uniqueID();
     ASSERT(!m_connections.contains(connectionID));
     if (m_connections.add(connectionID).isNewEntry)
-        connection.addWorkQueueMessageReceiver(Messages::StorageManagerSet::messageReceiverName(), m_queue.get(), this);
+        connection.addWorkQueueMessageReceiver(Messages::StorageManagerSet::messageReceiverName(), m_queue.get(), *this);
 }
 
 void StorageManagerSet::removeConnection(IPC::Connection& connection)

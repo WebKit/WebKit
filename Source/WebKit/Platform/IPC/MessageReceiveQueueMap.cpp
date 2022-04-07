@@ -29,44 +29,67 @@
 
 namespace IPC {
 
-void MessageReceiveQueueMap::addImpl(StoreType&& queue, ReceiverName receiverName, uint64_t destinationID)
+void MessageReceiveQueueMap::addImpl(StoreType&& queue, const ReceiverMatcher& matcher)
 {
-    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-    if (m_queues.contains(key)) {
-        // FIXME: This should be an assertion. See webkit.org/b/237674 and webkit.org/b/238391.
-        ALWAYS_LOG_WITH_STREAM(stream << "MessageReceiveQueueMap::addImpl - adding duplicate receiver " << static_cast<uint8_t>(receiverName) << " for destination " << destinationID);
+    if (!matcher.receiverName) {
+        ASSERT(!m_anyReceiverQueue);
+        m_anyReceiverQueue = WTFMove(queue);
+        return;
     }
-    m_queues.add(key, WTFMove(queue));
+    uint8_t receiverName = static_cast<uint8_t>(*matcher.receiverName);
+    if (!matcher.destinationID.has_value()) {
+        auto result = m_anyIDQueues.add(receiverName, WTFMove(queue));
+        if (!result.isNewEntry) {
+            // FIXME: This should be an assertion. See webkit.org/b/237674 and webkit.org/b/238391.
+            ALWAYS_LOG_WITH_STREAM(stream << "MessageReceiveQueueMap::addImpl - adding duplicate any id receiver " << static_cast<uint8_t>(receiverName));
+        }
+        return;
+    }
+    auto result = m_queues.add(std::make_pair(receiverName, *matcher.destinationID), WTFMove(queue));
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void MessageReceiveQueueMap::remove(ReceiverName receiverName, uint64_t destinationID)
+void MessageReceiveQueueMap::remove(const ReceiverMatcher& matcher)
 {
-    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-    if (!m_queues.contains(key)) {
-        // FIXME: This should be an assertion. See webkit.org/b/237674 and webkit.org/b/238391.
-        ALWAYS_LOG_WITH_STREAM(stream << "MessageReceiveQueueMap::remove - failed to remove receiver " << static_cast<uint8_t>(receiverName) << " with destination " << destinationID);
+    if (!matcher.receiverName) {
+        ASSERT(m_anyReceiverQueue);
+        m_anyReceiverQueue = nullptr;
+        return;
     }
-    m_queues.remove(key);
+    uint8_t receiverName = static_cast<uint8_t>(*matcher.receiverName);
+    if (!matcher.destinationID.has_value()) {
+        auto result = m_anyIDQueues.remove(receiverName);
+        if (result) {
+            // FIXME: This should be an assertion. See webkit.org/b/237674 and webkit.org/b/238391.
+            ALWAYS_LOG_WITH_STREAM(stream << "MessageReceiveQueueMap::addImpl - adding duplicate any id receiver " << static_cast<uint8_t>(receiverName));
+        }
+        return;
+    }
+    auto result = m_queues.remove(std::make_pair(receiverName, *matcher.destinationID));
+    ASSERT_UNUSED(result, result);
 }
 
 MessageReceiveQueue* MessageReceiveQueueMap::get(const Decoder& message) const
 {
-    if (m_queues.isEmpty())
-        return nullptr;
-    auto key = std::make_pair(static_cast<uint8_t>(message.messageReceiverName()), 0);
-    auto it = m_queues.find(key);
-    if (it == m_queues.end()) {
-        key.second = message.destinationID();
-        if (key.second)
-            it = m_queues.find(key);
+    uint8_t receiverName = static_cast<uint8_t>(message.messageReceiverName());
+    auto queueExtractor = WTF::makeVisitor(
+        [](const std::unique_ptr<MessageReceiveQueue>& queue) { return queue.get(); },
+        [](MessageReceiveQueue* queue) { return queue; }
+    );
+
+    {
+        auto it = m_anyIDQueues.find(receiverName);
+        if (it != m_anyIDQueues.end())
+            return std::visit(queueExtractor, it->value);
     }
-    if (it == m_queues.end())
-        return nullptr;
-    return std::visit(
-        WTF::makeVisitor(
-            [](const std::unique_ptr<MessageReceiveQueue>& queue) { return queue.get(); },
-            [](MessageReceiveQueue* queue) { return queue; }
-        ), it->value);
+    {
+        auto it = m_queues.find(std::make_pair(receiverName, message.destinationID()));
+        if (it != m_queues.end())
+            return std::visit(queueExtractor, it->value);
+    }
+    if (m_anyReceiverQueue)
+        return std::visit(queueExtractor, *m_anyReceiverQueue);
+    return nullptr;
 }
 
 }

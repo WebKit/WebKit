@@ -410,7 +410,7 @@ void WebIDBServer::addConnection(IPC::Connection& connection, WebCore::ProcessId
         m_server->registerConnection(iter->value->connectionToClient());
     });
     m_connections.add(connection);
-    connection.addWorkQueueMessageReceiver(Messages::WebIDBServer::messageReceiverName(), m_queue.get(), this);
+    connection.addWorkQueueMessageReceiver(Messages::WebIDBServer::messageReceiverName(), m_queue.get(), *this);
 }
 
 void WebIDBServer::removeConnection(IPC::Connection& connection)

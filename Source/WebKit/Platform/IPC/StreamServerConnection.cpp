@@ -49,7 +49,7 @@ void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& recei
 
     // FIXME: Can we avoid synchronous dispatch here by adjusting the assertion in `Connection::enqueueMatchingMessagesToMessageReceiveQueue`?
     callOnMainRunLoopAndWait([&] {
-        m_connection->addMessageReceiveQueue(*this, receiverName, destinationID);
+        m_connection->addMessageReceiveQueue(*this, { receiverName, destinationID });
     });
     m_workQueue.addStreamConnection(*this);
 }
@@ -57,20 +57,20 @@ void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& recei
 void StreamServerConnection::startReceivingMessages(ReceiverName receiverName)
 {
     callOnMainRunLoopAndWait([&] {
-        m_connection->addMessageReceiveQueue(*this, receiverName);
+        m_connection->addMessageReceiveQueue(*this, { receiverName });
     });
     m_workQueue.addStreamConnection(*this);
 }
 
 void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName)
 {
-    m_connection->removeMessageReceiveQueue(receiverName);
+    m_connection->removeMessageReceiveQueue({ receiverName });
     m_workQueue.removeStreamConnection(*this);
 }
 
 void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
 {
-    m_connection->removeMessageReceiveQueue(receiverName, destinationID);
+    m_connection->removeMessageReceiveQueue({ receiverName, destinationID });
     m_workQueue.removeStreamConnection(*this);
 
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);

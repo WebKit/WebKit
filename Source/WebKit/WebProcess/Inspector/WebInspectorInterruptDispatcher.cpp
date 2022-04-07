@@ -50,7 +50,7 @@ WebInspectorInterruptDispatcher::~WebInspectorInterruptDispatcher()
 
 void WebInspectorInterruptDispatcher::initializeConnection(IPC::Connection* connection)
 {
-    connection->addWorkQueueMessageReceiver(Messages::WebInspectorInterruptDispatcher::messageReceiverName(), m_queue.get(), this);
+    connection->addWorkQueueMessageReceiver(Messages::WebInspectorInterruptDispatcher::messageReceiverName(), m_queue.get(), *this);
 }
 
 void WebInspectorInterruptDispatcher::notifyNeedDebuggerBreak()

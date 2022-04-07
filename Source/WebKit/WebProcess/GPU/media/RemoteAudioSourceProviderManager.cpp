@@ -64,7 +64,7 @@ void RemoteAudioSourceProviderManager::setConnection(IPC::Connection* connection
     m_connection = WTFMove(connection);
 
     if (m_connection)
-        m_connection->addWorkQueueMessageReceiver(Messages::RemoteAudioSourceProviderManager::messageReceiverName(), m_queue, this);
+        m_connection->addWorkQueueMessageReceiver(Messages::RemoteAudioSourceProviderManager::messageReceiverName(), m_queue, *this);
 }
 
 void RemoteAudioSourceProviderManager::addProvider(Ref<RemoteAudioSourceProvider>&& provider)
