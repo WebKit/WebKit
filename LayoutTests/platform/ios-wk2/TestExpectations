@@ -2177,6 +2177,9 @@ webkit.org/b/232310 [ Release ] fast/flexbox/aspect-ratio-intrinsic-adjust.html 
 # This test is currently failing on EWS
 webkit.org/b/238954 imported/w3c/web-platform-tests/css/selectors/invalidation/user-action-pseudo-classes-in-has.html [ Pass Failure ]
 
+#This test is currently failing on EWS
+webkit.org/b/238960 fast/attachment/attachment-disabled-rendering.html [ Pass Failure ]
+
 webkit.org/b/231780 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html [ Pass Failure ]
 
 webkit.org/b/232099 imported/w3c/web-platform-tests/websockets/Close-1000.any.html [ Pass Crash ]
