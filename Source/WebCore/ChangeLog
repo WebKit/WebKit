@@ -1,3 +1,18 @@
+2022-04-07  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Iterate over copy of animated properties in WebCore::WebAnimation::commitStyles
+        https://bugs.webkit.org/show_bug.cgi?id=238940
+
+        Reviewed by Antoine Quint.
+
+        WebAnimation::resolve can end up clearing the animated properties during iteration.
+
+        The proposal here will make a copy of the properties before applying the steps
+        outlined in the spec. 
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::commitStyles):
+
 2022-04-07  Tim Nguyen  <ntim@apple.com>
 
         [CSS resize property] Correct minimum size computation to allow resizing below initial size
