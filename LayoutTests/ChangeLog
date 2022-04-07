@@ -1,3 +1,13 @@
+2022-04-07  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ BigSur wk1 ] printing/css2.1/page-break-after-000.html is a flaky failure (231102)
+        https://bugs.webkit.org/show_bug.cgi?id=231102
+        <rdar://problem/83781666>
+
+        Unreviewed. Fixing expectations for a no-longer-flaky test.
+
+        * platform/mac-wk1/TestExpectations:
+
 2022-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust and refactor some UA styles and logic for injecting Live Text
