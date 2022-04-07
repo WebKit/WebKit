@@ -13,7 +13,7 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
             for (let scaleImage of [false, true]) {
                 async_test(function(t) {
                     let video = document.createElement("video");
-                    let testVidoe = t.step_func_done(function() {
+                    let testVideo = t.step_func_done(function() {
 
                         let canvas = document.createElement("canvas");
                         canvas.width = 2;

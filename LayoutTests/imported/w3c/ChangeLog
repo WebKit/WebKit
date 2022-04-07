@@ -1,3 +1,14 @@
+2022-04-06  Matteo Flores  <matteo_flores@apple.com>
+
+        REGRESSION(r291509): imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238920
+
+        Reviewed by NOBODY (OOPS!).
+
+        Fixed typo.
+
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html:
+
 2022-04-06  Oriol Brufau  <obrufau@igalia.com>
 
         [css] Turn -webkit-border-image into a shorthand
