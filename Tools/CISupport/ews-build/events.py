@@ -312,7 +312,7 @@ class Events(service.BuildbotService):
 
 class GitHubEventHandlerNoEdits(GitHubEventHandler):
     OPEN_STATES = ('open',)
-    MERGE_QUEUE_LABELS = ('merge-queue', 'fast-merge-queue')
+    MERGE_QUEUE_LABELS = ('merge-queue', 'unsafe-merge-queue')
 
     @classmethod
     def file_with_status_sign(cls, info):

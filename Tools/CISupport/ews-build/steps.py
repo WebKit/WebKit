@@ -142,7 +142,7 @@ class GitHubMixin(object):
     pr_closed_states = ['closed']
     BLOCKED_LABEL = 'merging-blocked'
     MERGE_QUEUE_LABEL = 'merge-queue'
-    FAST_MERGE_QUEUE_LABEL = 'fast-merge-queue'
+    UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
 
     def fetch_data_from_url_with_authentication(self, url):
         response = None
@@ -229,7 +229,7 @@ class GitHubMixin(object):
 
     def _is_pr_in_merge_queue(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
-            if label.get('name', '') in (self.MERGE_QUEUE_LABEL, self.FAST_MERGE_QUEUE_LABEL):
+            if label.get('name', '') in (self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL):
                 return 1
         return 0
 
@@ -1667,7 +1667,7 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
             repository_url = self.getProperty('repository', '')
             rc = SUCCESS
             if any((
-                not self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.FAST_MERGE_QUEUE_LABEL], repository_url=repository_url),
+                not self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL], repository_url=repository_url),
                 not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
             )):
                 rc = FAILURE
@@ -1727,7 +1727,7 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
     haltOnFailure = False
     LABELS_TO_REMOVE = [
         GitHubMixin.MERGE_QUEUE_LABEL,
-        GitHubMixin.FAST_MERGE_QUEUE_LABEL,
+        GitHubMixin.UNSAFE_MERGE_QUEUE_LABEL,
         GitHubMixin.BLOCKED_LABEL,
     ]
 
