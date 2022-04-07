@@ -225,7 +225,7 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
             m_hasAspectRatioBlockSizeDependentItem = true;
         }
 
-        // We keep a cache of items with baseline as alignment values so that we only compute the baseline shims for
+        // We keep a cache of items with baseline as aligcnment values so that we only compute the baseline shims for
         // such items. This cache is needed for performance related reasons due to the cost of evaluating the item's
         // participation in a baseline context during the track sizing algorithm.
         if (isBaselineAlignmentForChild(*child, GridColumnAxis))
@@ -1653,9 +1653,17 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
 
 bool RenderGrid::isSubgrid(GridTrackSizingDirection direction) const
 {
-    if (!mayBeSubgridExcludingAbsPos(direction))
+    // If the grid container is forced to establish an independent formatting
+    // context (like contain layout, or position:absolute), then the used value
+    // of grid-template-rows/columns is 'none' and the container is not a subgrid.
+    // https://drafts.csswg.org/css-grid-2/#subgrid-listing
+    if (RenderElement::establishesIndependentFormattingContext())
         return false;
-    return downcast<RenderGrid>(parent())->gridSpanCoversRealTracks(*this, direction);
+    if (direction == ForColumns ? !style().gridSubgridColumns() : !style().gridSubgridRows())
+        return false;
+    if (!is<RenderGrid>(parent()))
+        return false;
+    return true;
 }
 
 bool RenderGrid::isSubgridInParentDirection(GridTrackSizingDirection parentDirection) const
@@ -1676,18 +1684,6 @@ bool RenderGrid::isSubgridOf(GridTrackSizingDirection direction, const RenderGri
     auto& parentGrid = *downcast<RenderGrid>(parent());
     GridTrackSizingDirection parentDirection = GridLayoutFunctions::flowAwareDirectionForParent(parentGrid, *this, direction);
     return parentGrid.isSubgridOf(parentDirection, ancestor);
-}
-
-bool RenderGrid::mayBeSubgridExcludingAbsPos(GridTrackSizingDirection direction) const
-{
-    // Should exclude cases where we establish an IFC, like contain layout.
-    if (isExcludedFromNormalLayout())
-        return false;
-    if (direction == ForColumns ? !style().gridSubgridColumns() : !style().gridSubgridRows())
-        return false;
-    if (!is<RenderGrid>(parent()))
-        return false;
-    return true;
 }
 
 LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, GridTrackSizingDirection direction)
@@ -2107,26 +2103,16 @@ GridSpan RenderGrid::gridSpanForChild(const RenderBox& child, GridTrackSizingDir
     return span;
 }
 
-bool RenderGrid::gridSpanCoversRealTracks(const RenderBox& child, GridTrackSizingDirection direction) const
+bool RenderGrid::establishesIndependentFormattingContext() const
 {
-    // Only out of flow positioned items can span to the special line that covers
-    // the padding area.
-    if (!child.isOutOfFlowPositioned())
-        return true;
-
-    int lastLine = numTracks(direction, m_grid);
-    int startLine, endLine;
-    bool startIsAuto, endIsAuto;
-    if (!computeGridPositionsForOutOfFlowChild(child, direction, startLine, startIsAuto, endLine, endIsAuto))
-        return lastLine > 0;
-
-    // If the resulting span covers only the padding area, then it's not a real
-    // track that could be used for a subgrid.
-    if (startIsAuto && !endLine)
-        return false;
-    if (endIsAuto && startLine == lastLine)
-        return false;
-    return true;
+    // Grid items establish a new independent formatting context, unless
+    // they're a subgrid
+    // https://drafts.csswg.org/css-grid-2/#grid-item-display
+    if (isGridItem()) {
+        if (!isSubgridRows() && !isSubgridColumns())
+            return true;
+    }
+    return RenderElement::establishesIndependentFormattingContext();
 }
 
 } // namespace WebCore

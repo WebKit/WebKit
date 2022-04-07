@@ -4944,11 +4944,9 @@ bool RenderBox::shrinkToAvoidFloats() const
     return style().width().isAuto();
 }
 
-bool RenderBox::createsNewFormattingContext() const
+bool RenderBox::establishesIndependentFormattingContext() const
 {
-    return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasPotentiallyScrollableOverflow() || isFlexItemIncludingDeprecated()
-        || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isDocumentElementRenderer() || isRenderFragmentedFlow()
-        || style().containsLayout() || paintContainmentApplies() || isGridItem() || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot;
+    return isGridItem() || RenderElement::establishesIndependentFormattingContext();
 }
 
 bool RenderBox::avoidsFloats() const

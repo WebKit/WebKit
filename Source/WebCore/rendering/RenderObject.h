@@ -387,6 +387,7 @@ public:
     bool hasIntrinsicAspectRatio() const { return isReplacedOrInlineBlock() && (isImage() || isVideo() || isCanvas()); }
     bool isAnonymous() const { return m_bitfields.isAnonymous(); }
     bool isAnonymousBlock() const;
+    bool isBlockContainer() const;
 
     bool isFloating() const { return m_bitfields.floating(); }
 

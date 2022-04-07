@@ -1,3 +1,21 @@
+2022-04-07  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Grid items that establish an independent formatting context should not be subgrids.
+        https://bugs.webkit.org/show_bug.cgi?id=237692
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-003-expected.html: Removed.
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-003.html: Removed.
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-004-expected.html: Removed.
+        * web-platform-tests/css/css-grid/subgrid/abs-pos-004.html: Removed.
+        * web-platform-tests/css/css-grid/subgrid/independent-formatting-context-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/independent-formatting-context.html: Added.
+
+        Removes tests that expect position:absolute combined with grid-template-X: subgrid to work.
+        Adds new test to confirm that elements that establish an independent formatting context can't
+        also be a subgrid.
+
 2022-04-06  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for :placeholder-shown

@@ -2389,4 +2389,22 @@ Overflow RenderElement::effectiveOverflowY() const
     return overflowY;
 }
 
+bool RenderElement::createsNewFormattingContext() const
+{
+    // Writing-mode changes establish an independent block formatting context
+    // if the box is a block-container.
+    // https://drafts.csswg.org/css-writing-modes/#block-flow
+    if (isWritingModeRoot() && isBlockContainer())
+        return true;
+    return isInlineBlockOrInlineTable() || isFlexItemIncludingDeprecated()
+        || isTableCell() || isTableCaption() || isFieldset() || isDocumentElementRenderer() || isRenderFragmentedFlow()
+        || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot || establishesIndependentFormattingContext();
+}
+
+bool RenderElement::establishesIndependentFormattingContext() const
+{
+    return isFloatingOrOutOfFlowPositioned() || hasPotentiallyScrollableOverflow() || style().containsLayout() || paintContainmentApplies();
+}
+
+
 }

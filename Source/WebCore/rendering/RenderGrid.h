@@ -102,8 +102,6 @@ public:
     // nested subgrids, where ancestor may not be our direct parent.
     bool isSubgridOf(GridTrackSizingDirection, const RenderGrid& ancestor);
 
-    bool mayBeSubgridExcludingAbsPos(GridTrackSizingDirection) const;
-
     const Grid& currentGrid() const
     {
         return m_grid;
@@ -220,6 +218,7 @@ private:
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
+    bool establishesIndependentFormattingContext() const override;
 
     bool aspectRatioPrefersInline(const RenderBox& child, bool blockFlowIsColumnAxis);
 
@@ -228,7 +227,6 @@ private:
     GridSpan gridSpanForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection) const;
 
     bool computeGridPositionsForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection, int&, bool&, int&, bool&) const;
-    bool gridSpanCoversRealTracks(const RenderBox&, GridTrackSizingDirection) const;
 
     Grid m_grid;
 

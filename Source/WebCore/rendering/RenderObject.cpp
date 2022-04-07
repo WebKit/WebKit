@@ -195,6 +195,17 @@ bool RenderObject::isHTMLMarquee() const
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
 }
 
+bool RenderObject::isBlockContainer() const
+{
+    auto display = style().display();
+    return (display == DisplayType::Block
+        || display == DisplayType::InlineBlock
+        || display == DisplayType::FlowRoot
+        || display == DisplayType::ListItem
+        || display == DisplayType::TableCell
+        || display == DisplayType::TableCaption) && !isRenderReplaced();
+}
+
 void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowState state, const RenderElement* fragmentedFlowRoot)
 {
     setFragmentedFlowState(state);

@@ -1,3 +1,55 @@
+2022-04-07  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Grid items that establish an independent formatting context should not be subgrids.
+        https://bugs.webkit.org/show_bug.cgi?id=237692
+
+        Reviewed by Alan Bujtas.
+
+        New WPT css/css-grid/subgrid/independent-formatting-context.html added to check this case.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::createsNewFormattingContext const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::markForPaginationRelayoutIfNeeded):
+        (WebCore::RenderBox::isWritingModeRoot const): Deleted.
+        (WebCore::RenderBox::isDeprecatedFlexItem const): Deleted.
+        (WebCore::RenderBox::isFlexItemIncludingDeprecated const): Deleted.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createsNewFormattingContext const):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::isWritingModeRoot const):
+        (WebCore::RenderElement::isDeprecatedFlexItem const):
+        (WebCore::RenderElement::isFlexItemIncludingDeprecated const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isBlockContainer const):
+        * rendering/RenderObject.h:
+
+        Grid items establish a new formatting context, unless they're a subgrid [1], but subgrid
+        is disabled if any other property causes the element to establish a formatting context [2].
+        Adds a new helper to check everything except grid, so that we can resolve this without
+        infinite recursion.
+        Stops writing-mode changes from establishing an independent formatting context if
+        the box is a grid container, since this should only happen is the box is a block
+        container [3].
+        Adds new helper for isBlockContainer, since writing-mode changes use it.
+
+        [1] https://drafts.csswg.org/css-grid-2/#grid-item-display
+        [2] https://drafts.csswg.org/css-grid-2/#subgrid-listing
+        [3] https://drafts.csswg.org/css-writing-modes/#block-flow
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::isSubgrid const):
+        (WebCore::RenderGrid::createsNewFormattingContext const):
+        (WebCore::RenderGrid::mayBeSubgridExcludingAbsPos const): Deleted.
+        (WebCore::RenderGrid::gridSpanCoversRealTracks const): Deleted.
+        * rendering/RenderGrid.h:
+        * rendering/style/GridPositionsResolver.cpp:
+        (WebCore::adjustGridPositionsFromStyle):
+
+        Makes isSubgrid return false if the element establishes an independent formatting context
+        (excluding contexts established by being a grid item), and removes no longer needed code
+        for handling position:absolute subgrids.
+
 2022-04-06  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for :placeholder-shown

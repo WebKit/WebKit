@@ -571,11 +571,6 @@ override;
     virtual bool avoidsFloats() const;
 
     virtual void markForPaginationRelayoutIfNeeded() { }
-
-    bool isWritingModeRoot() const { return !parent() || parent()->style().writingMode() != style().writingMode(); }
-
-    bool isDeprecatedFlexItem() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isDeprecatedFlexibleBox(); }
-    bool isFlexItemIncludingDeprecated() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isFlexibleBoxIncludingDeprecated(); }
     
     LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
@@ -683,7 +678,7 @@ protected:
 
     void willBeDestroyed() override;
 
-    bool createsNewFormattingContext() const;
+    bool establishesIndependentFormattingContext() const override;
 
     virtual bool shouldResetLogicalHeightBeforeLayout() const { return false; }
     void resetLogicalHeightBeforeLayoutIfNeeded();

@@ -380,10 +380,7 @@ static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSiz
     if (finalPosition.isAuto() && initialPosition.isSpan() && !initialPosition.namedGridLine().isNull())
         initialPosition.setSpanPosition(1, String());
 
-    // Absolutely positioned items specifying subgrid might not actually be a subgrid if their grid
-    // span doesn't cover any tracks and only the padding area. We don't know if that is the case until
-    // we've figured out their grid position though, which is what we're trying to do now.
-    if (isIndefiniteSpan(initialPosition, finalPosition) && is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem).mayBeSubgridExcludingAbsPos(direction)) {
+    if (isIndefiniteSpan(initialPosition, finalPosition) && is<RenderGrid>(gridItem) && downcast<RenderGrid>(gridItem).isSubgrid(direction)) {
         // Indefinite span for an item that is subgridded in this axis.
         int lineCount = (isForColumns ? gridItem.style().orderedNamedGridColumnLines() : gridItem.style().orderedNamedGridRowLines()).size();
 

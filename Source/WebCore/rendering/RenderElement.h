@@ -271,6 +271,11 @@ public:
     Overflow effectiveOverflowInlineDirection() const { return style().isHorizontalWritingMode() ? effectiveOverflowX() : effectiveOverflowY(); }
     Overflow effectiveOverflowBlockDirection() const { return style().isHorizontalWritingMode() ? effectiveOverflowY() : effectiveOverflowX(); }
 
+    bool isWritingModeRoot() const { return !parent() || parent()->style().writingMode() != style().writingMode(); }
+
+    bool isDeprecatedFlexItem() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isDeprecatedFlexibleBox(); }
+    bool isFlexItemIncludingDeprecated() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isFlexibleBoxIncludingDeprecated(); }
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
@@ -326,6 +331,9 @@ protected:
     void adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle);
 
     bool isVisibleInViewport() const;
+
+    bool createsNewFormattingContext() const;
+    virtual bool establishesIndependentFormattingContext() const;
 
 private:
     RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
