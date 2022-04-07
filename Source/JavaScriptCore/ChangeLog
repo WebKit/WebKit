@@ -1,3 +1,17 @@
+2022-04-07  Geza Lore  <glore@igalia.com>
+
+        [JSC][32bit] Use constexpr tags instead of enums
+        https://bugs.webkit.org/show_bug.cgi?id=238926
+
+        Reviewed by Yusuke Suzuki.
+
+        The *Tag values are just 32-bit constants, so define them as
+        constexpr. This reduces compiler nuisance warnings about enum
+        comparisons.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        * runtime/JSCJSValue.h:
+
 2022-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] RemoteInspector add support for IPv6

@@ -157,16 +157,15 @@ class JSValue {
 
 public:
 #if USE(JSVALUE32_64)
-    enum { Int32Tag =        0xffffffff };
-    enum { BooleanTag =      0xfffffffe };
-    enum { NullTag =         0xfffffffd };
-    enum { UndefinedTag =    0xfffffffc };
-    enum { CellTag =         0xfffffffb };
-    enum { EmptyValueTag =   0xfffffffa };
-    enum { DeletedValueTag = 0xfffffff9 };
+    static constexpr uint32_t Int32Tag =        0xffffffff;
+    static constexpr uint32_t BooleanTag =      0xfffffffe;
+    static constexpr uint32_t NullTag =         0xfffffffd;
+    static constexpr uint32_t UndefinedTag =    0xfffffffc;
+    static constexpr uint32_t CellTag =         0xfffffffb;
+    static constexpr uint32_t EmptyValueTag =   0xfffffffa;
+    static constexpr uint32_t DeletedValueTag = 0xfffffff9;
 
-    enum { LowestTag =  DeletedValueTag };
-
+    static constexpr uint32_t LowestTag =  DeletedValueTag;
 #endif
 
     static EncodedJSValue encode(JSValue);
