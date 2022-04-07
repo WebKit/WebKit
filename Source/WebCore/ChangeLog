@@ -1,3 +1,17 @@
+2022-04-06  Tim Nguyen  <ntim@apple.com>
+
+        [:has() pseudo-class] Support invalidation for :placeholder-shown
+        https://bugs.webkit.org/show_bug.cgi?id=238894
+
+        Reviewed by Simon Fraser.
+
+        Test: imported/w3c/web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has.html
+
+        Use same pattern as other input pseudo classes.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+
 2022-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         NBSP characters drawn in fonts that don't support the space character turn into boxes

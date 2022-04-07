@@ -7,5 +7,5 @@ PASS :valid invalidation
 FAIL :default invalidation with input[type=radio] assert_equals: ancestor should be lightblue expected "rgb(173, 216, 230)" but got "rgb(0, 0, 0)"
 PASS :required invalidation
 FAIL :out-of-range invalidation assert_equals: ancestor should be darkgreen expected "rgb(0, 100, 0)" but got "rgb(0, 0, 0)"
-FAIL :placeholder-shown invalidation assert_equals: ancestor should be navy expected "rgb(0, 0, 128)" but got "rgb(0, 0, 0)"
+PASS :placeholder-shown invalidation
 

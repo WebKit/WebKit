@@ -49,6 +49,7 @@
 #include "Logging.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderLineBreak.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
@@ -183,13 +184,15 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 
 void HTMLTextFormControlElement::updatePlaceholderVisibility()
 {
-    bool placeHolderWasVisible = m_isPlaceholderVisible;
-    m_isPlaceholderVisible = placeholderShouldBeVisible();
-
-    if (placeHolderWasVisible == m_isPlaceholderVisible)
+    bool newIsPlaceholderVisible = placeholderShouldBeVisible();
+    if (m_isPlaceholderVisible == newIsPlaceholderVisible)
         return;
 
-    invalidateStyleForSubtree();
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassPlaceholderShown, newIsPlaceholderVisible);
+    m_isPlaceholderVisible = newIsPlaceholderVisible;
+
+    if (RefPtr placeholder = placeholderElement())
+        placeholder->invalidateStyle();
 }
 
 void HTMLTextFormControlElement::setCanShowPlaceholder(bool canShowPlaceholder)

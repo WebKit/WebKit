@@ -1,3 +1,12 @@
+2022-04-06  Tim Nguyen  <ntim@apple.com>
+
+        [:has() pseudo-class] Support invalidation for :placeholder-shown
+        https://bugs.webkit.org/show_bug.cgi?id=238894
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has-expected.txt:
+
 2022-04-06  Oriol Brufau  <obrufau@igalia.com>
 
         [css] Turn -webkit-border-image into a shorthand
