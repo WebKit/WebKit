@@ -2135,18 +2135,8 @@ void WebsiteDataStore::openWindowFromServiceWorker(const String& urlString, cons
             return;
         }
 
-        auto innerCallback = [pageID = newPage->identifier(), callback = WTFMove(callback)] (bool success) mutable {
-            auto* newPage = WebProcessProxy::webPage(pageID);
-            if (!newPage || !success) {
-                callback(std::nullopt);
-                return;
-            }
-
-            callback(newPage->webPageID());
-        };
-
 #if ENABLE(SERVICE_WORKER)
-        newPage->setServiceWorkerOpenWindowCompletionCallback(WTFMove(innerCallback));
+        newPage->setServiceWorkerOpenWindowCompletionCallback(WTFMove(callback));
 #endif
     };
 

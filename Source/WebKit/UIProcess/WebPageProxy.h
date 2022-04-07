@@ -2087,7 +2087,7 @@ public:
     void interactionRegions(WebCore::FloatRect rectInContentCoordinates, CompletionHandler<void(Vector<WebCore::InteractionRegion>)>&&);
 
 #if ENABLE(SERVICE_WORKER)
-    void setServiceWorkerOpenWindowCompletionCallback(CompletionHandler<void(bool)>&& completionCallback)
+    void setServiceWorkerOpenWindowCompletionCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&& completionCallback)
     {
         ASSERT(!m_serviceWorkerOpenWindowCompletionCallback);
         m_serviceWorkerOpenWindowCompletionCallback = WTFMove(completionCallback);
@@ -3137,7 +3137,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     bool m_isServiceWorkerPage { false };
     CompletionHandler<void(bool)> m_serviceWorkerLaunchCompletionHandler;
-    CompletionHandler<void(bool)> m_serviceWorkerOpenWindowCompletionCallback;
+    CompletionHandler<void(std::optional<WebCore::PageIdentifier>)> m_serviceWorkerOpenWindowCompletionCallback;
 #endif
 
     RunLoop::Timer<WebPageProxy> m_tryCloseTimeoutTimer;

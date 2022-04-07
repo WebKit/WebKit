@@ -130,7 +130,8 @@ public:
     void collapseSelection();
 #endif
 
-    void transferNavigationCallbackToFrame(WebFrameProxy& frame) { frame.m_navigateCallback = WTFMove(m_navigateCallback); }
+    void transferNavigationCallbackToFrame(WebFrameProxy&);
+    void setNavigationCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
 
 private:
     WebFrameProxy(WebPageProxy&, WebCore::FrameIdentifier);

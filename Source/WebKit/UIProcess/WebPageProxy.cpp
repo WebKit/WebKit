@@ -4610,6 +4610,9 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 
     m_mainFrame = WebFrameProxy::create(*this, frameID);
 
+    if (m_serviceWorkerOpenWindowCompletionCallback)
+        m_mainFrame->setNavigationCallback(WTFMove(m_serviceWorkerOpenWindowCompletionCallback));
+
     // Add the frame to the process wide map.
     m_process->frameCreated(frameID, *m_mainFrame);
 }
@@ -4956,7 +4959,7 @@ void WebPageProxy::callLoadCompletionHandlersIfNecessary(bool success)
         m_serviceWorkerLaunchCompletionHandler(false);
 
     if (m_serviceWorkerOpenWindowCompletionCallback)
-        m_serviceWorkerOpenWindowCompletionCallback(success);
+        m_serviceWorkerOpenWindowCompletionCallback(success ? webPageID() : std::optional<WebCore::PageIdentifier> { });
 #endif
 }
 

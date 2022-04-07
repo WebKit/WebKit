@@ -282,6 +282,17 @@ void WebFrameProxy::setUnreachableURL(const URL& unreachableURL)
     m_frameLoadState.setUnreachableURL(unreachableURL);
 }
 
+void WebFrameProxy::transferNavigationCallbackToFrame(WebFrameProxy& frame)
+{
+    frame.setNavigationCallback(WTFMove(m_navigateCallback));
+}
+
+void WebFrameProxy::setNavigationCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&& navigateCallback)
+{
+    ASSERT(!m_navigateCallback);
+    m_navigateCallback = WTFMove(navigateCallback);
+}
+
 #if ENABLE(CONTENT_FILTERING)
 bool WebFrameProxy::didHandleContentFilterUnblockNavigation(const ResourceRequest& request)
 {

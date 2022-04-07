@@ -1,3 +1,27 @@
+2022-04-07  Youenn Fablet  <youenn@apple.com>
+
+        Use the same callback mechanism for ServiceWorker openWindow and navigate in UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=238924
+
+        Reviewed by Chris Dumez.
+
+        Reuse WebFrameProxy navigation delegate for openWindow once the main frame is created.
+        This ensures we get the same behavior for both code paths and makes sure openWindow does not hang if a delegate cancels the load.
+
+        Covered by API test.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::transferNavigationCallbackToFrame):
+        (WebKit::WebFrameProxy::setNavigationCallback):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::transferNavigationCallbackToFrame): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::callLoadCompletionHandlersIfNecessary):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::openWindowFromServiceWorker):
+
 2022-04-07  Chris Dumez  <cdumez@apple.com>
 
         Drop unused EditorClient::getAutoCorrectSuggestionForMisspelledWord()

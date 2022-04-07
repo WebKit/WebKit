@@ -1,3 +1,16 @@
+2022-04-07  Youenn Fablet  <youenn@apple.com>
+
+        Use the same callback mechanism for ServiceWorker openWindow and navigate in UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=238924
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[ServiceWorkerPSONNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[ServiceWorkerPSONNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[ServiceWorkerOpenWindowWebsiteDataStoreDelegate initWithConfiguration:]):
+        (-[ServiceWorkerOpenWindowWebsiteDataStoreDelegate websiteDataStore:openWindow:fromServiceWorkerOrigin:completionHandler:]):
+
 2022-04-07  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Clear merging-blocked label on PR update
