@@ -6254,9 +6254,11 @@ class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_success(self):
-        def update_pr(x, pr_number, title, description, repository_url=None):
+        def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
             self.assertEqual(pr_number, '1234')
             self.assertEqual(title, '[Merge-Queue] Add http credential helper')
+            self.assertEqual(base, 'main')
+            self.assertEqual(head, 'HEAD:eng/pull-request-branch')
 
             self.assertEqual(
                 description,
@@ -6283,6 +6285,9 @@ Canonical link: <a href="https://commits.webkit.org/249006@main">https://commits
         UpdatePullRequest.update_pr = update_pr
         self.setupStep(UpdatePullRequest())
         self.setProperty('github.number', '1234')
+        self.setProperty('github.head.user.login', 'JonWBedard')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.base.ref', 'main')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
@@ -6312,12 +6317,15 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
             return self.runStep()
 
     def test_success(self):
-        def update_pr(x, pr_number, title, description, repository_url=None):
+        def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
             return False
 
         UpdatePullRequest.update_pr = update_pr
         self.setupStep(UpdatePullRequest())
         self.setProperty('github.number', '1234')
+        self.setProperty('github.head.user.login', 'JonWBedard')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.base.ref', 'main')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,

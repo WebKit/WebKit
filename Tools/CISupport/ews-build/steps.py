@@ -331,10 +331,19 @@ class GitHubMixin(object):
             return False
         return True
 
-    def update_pr(self, pr_number, title, description, repository_url=None):
+    def update_pr(self, pr_number, title, description, base=None, head=None, repository_url=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
             return False
+
+        pr_info = dict(
+            title=title,
+            body=description,
+        )
+        if base:
+            pr_info['base'] = base
+        if head:
+            pr_info['head'] = head
 
         update_url = f'{api_url}/pulls/{pr_number}'
         try:
@@ -343,10 +352,7 @@ class GitHubMixin(object):
             response = requests.request(
                 'POST', update_url, timeout=60, auth=auth,
                 headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(
-                    title=title,
-                    body=description,
-                ),
+                json=pr_info,
             )
             if response.status_code // 100 != 2:
                 self._addToLog('stdio', f"Failed to update PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
@@ -4975,10 +4981,15 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
         if bug_id:
             self.setProperty('bug_id', bug_id)
 
+        user = self.getProperty('github.head.user.login', '')
+        head = self.getProperty('github.head.ref', '')
+
         if not self.update_pr(
             self.getProperty('github.number'),
             title=title,
             description=description,
+            base=self.getProperty('github.base.ref', ''),
+            head=f"{user}:{head}" if user and head else None,
             repository_url=self.getProperty('repository', ''),
         ):
             return FAILURE
