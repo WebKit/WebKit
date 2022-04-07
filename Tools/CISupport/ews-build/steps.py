@@ -1736,7 +1736,7 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             return None
 
         rc = SUCCESS
-        if self.pr_number and not self.comment_on_pr(self.pr_number, self.comment_text):
+        if self.pr_number and not self.comment_on_pr(self.pr_number, self.comment_text, self.getProperty('repository')):
             rc = FAILURE
         if self.bug_id and self.comment_on_bug(self.bug_id, self.comment_text) != SUCCESS:
             rc = FAILURE

@@ -1,5 +1,16 @@
 2022-04-07  Jonathan Bedard  <jbedard@apple.com>
 
+        [Merge-Queue] Extract bug_id when updating pull-request (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=238772
+        <rdar://problem/91263398>
+
+        Unreviewed follow-up fix.
+
+        * CISupport/ews-build/steps.py:
+        (LeaveComment.start): Pass repository to GitHubMixin.comment_on_pr.
+
+2022-04-07  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Update pull-request with landed content (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=238554
         <rdar://problem/91047260>
