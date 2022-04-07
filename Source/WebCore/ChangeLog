@@ -1,3 +1,15 @@
+2022-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a LayerBacking RenderingPurpose
+        https://bugs.webkit.org/show_bug.cgi?id=238896
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add RenderingPurpose::LayerBacking so the GPU Process knows which buffers are
+        associated with layer backing.
+
+        * platform/graphics/RenderingMode.h:
+
 2022-04-07  Tyler Wilcock  <tyler_w@apple.com>
 
         AX ITM: ARIATreeItemContent, ARIATreeRows, and DisclosedRows properties need to be updated after dynamic page changes

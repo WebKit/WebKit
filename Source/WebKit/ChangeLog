@@ -1,3 +1,21 @@
+2022-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a LayerBacking RenderingPurpose
+        https://bugs.webkit.org/show_bug.cgi?id=238896
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add RenderingPurpose::LayerBacking so the GPU Process knows which buffers are
+        associated with layer backing.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::allocateBufferForBackingStore):
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::allocateBufferForBackingStore):
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shouldUseRemoteRenderingFor):
+
 2022-04-07  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Block kernel routines

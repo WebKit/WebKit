@@ -871,6 +871,7 @@ template<> struct EnumTraits<WebCore::RenderingPurpose> {
         WebCore::RenderingPurpose::Unspecified,
         WebCore::RenderingPurpose::Canvas,
         WebCore::RenderingPurpose::DOM,
+        WebCore::RenderingPurpose::LayerBacking,
         WebCore::RenderingPurpose::MediaPainting
     >;
 };
