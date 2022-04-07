@@ -358,8 +358,15 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             }
 
             for (size_t index = 0; index < result.blocks.size(); ++index) {
-                if (result.blocks[index].text != elements.blocks[index]->textContent())
-                    return false;
+                auto textContentByLine = result.blocks[index].text.split(newlineCharacter);
+                size_t lineIndex = 0;
+                for (auto& text : childrenOfType<Text>(elements.blocks[index])) {
+                    if (textContentByLine.size() <= lineIndex)
+                        return false;
+
+                    if (textContentByLine[lineIndex++].stripWhiteSpace() != text.wholeText().stripWhiteSpace())
+                        return false;
+                }
             }
 
             return true;
@@ -428,8 +435,18 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
         for (auto& block : result.blocks) {
             auto blockContainer = HTMLDivElement::create(document.get());
             blockContainer->classList().add(imageOverlayBlockClass());
+            auto lines = block.text.split(newlineCharacter);
+            for (auto& textContent : lines) {
+                if (blockContainer->hasChildNodes())
+                    blockContainer->appendChild(HTMLBRElement::create(document.get()));
+                blockContainer->appendChild(Text::create(document.get(), textContent));
+            }
+
+            constexpr auto maxLineCountForCenterAlignedText = 2;
+            if (lines.size() > maxLineCountForCenterAlignedText)
+                blockContainer->setInlineStyleProperty(CSSPropertyTextAlign, CSSValueStart);
+
             elements.root->appendChild(blockContainer);
-            blockContainer->appendChild(Text::create(document.get(), makeString('\n', block.text)));
             elements.blocks.uncheckedAppend(WTFMove(blockContainer));
         }
 
@@ -445,11 +462,13 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
     return elements;
 }
 
-static RotatedRect fitElementToQuad(HTMLElement& container, const FloatQuad& quad)
+enum class ConstrainHeight : bool { No, Yes };
+static RotatedRect fitElementToQuad(HTMLElement& container, const FloatQuad& quad, ConstrainHeight constrainHeight = ConstrainHeight::Yes)
 {
     auto bounds = rotatedBoundingRectWithMinimumAngleOfRotation(quad, 0.01);
     container.setInlineStyleProperty(CSSPropertyWidth, bounds.size.width(), CSSUnitType::CSS_PX);
-    container.setInlineStyleProperty(CSSPropertyHeight, bounds.size.height(), CSSUnitType::CSS_PX);
+    if (constrainHeight == ConstrainHeight::Yes)
+        container.setInlineStyleProperty(CSSPropertyHeight, bounds.size.height(), CSSUnitType::CSS_PX);
     container.setInlineStyleProperty(CSSPropertyTransform, makeString(
         "translate("_s,
         std::round(bounds.center.x() - (bounds.size.width() / 2)), "px, "_s,
@@ -605,6 +624,17 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
     Vector<FontSizeAdjustmentState> elementsToAdjust;
     elementsToAdjust.reserveInitialCapacity(result.blocks.size());
 
+    auto setInlineStylesForBlock = [&](HTMLElement& block, float scale, float targetHeight) {
+        float fontSize = scale * targetHeight;
+        float borderRadius = fontSize / 5 + (targetHeight - fontSize) / 50;
+        block.setInlineStyleProperty(CSSPropertyFontSize, fontSize, CSSUnitType::CSS_PX);
+        block.setInlineStyleProperty(CSSPropertyBorderRadius, makeString(borderRadius, "px"_s));
+        block.setInlineStyleProperty(CSSPropertyPaddingLeft, 2 * borderRadius, CSSUnitType::CSS_PX);
+        block.setInlineStyleProperty(CSSPropertyPaddingRight, 2 * borderRadius, CSSUnitType::CSS_PX);
+        block.setInlineStyleProperty(CSSPropertyPaddingTop, borderRadius, CSSUnitType::CSS_PX);
+        block.setInlineStyleProperty(CSSPropertyPaddingBottom, borderRadius, CSSUnitType::CSS_PX);
+    };
+
     ASSERT(result.blocks.size() == elements.blocks.size());
     for (size_t index = 0; index < result.blocks.size(); ++index) {
         auto& block = result.blocks[index];
@@ -612,8 +642,8 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             continue;
 
         auto blockContainer = elements.blocks[index];
-        auto bounds = fitElementToQuad(blockContainer.get(), convertToContainerCoordinates(block.normalizedQuad));
-        blockContainer->setInlineStyleProperty(CSSPropertyFontSize, initialScaleForFontSize * bounds.size.height(), CSSUnitType::CSS_PX);
+        auto bounds = fitElementToQuad(blockContainer.get(), convertToContainerCoordinates(block.normalizedQuad), ConstrainHeight::No);
+        setInlineStylesForBlock(blockContainer.get(), initialScaleForFontSize, bounds.size.height());
         elementsToAdjust.uncheckedAppend({ WTFMove(blockContainer), bounds.size });
     }
 
@@ -622,24 +652,16 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         document->updateLayoutIgnorePendingStylesheets();
 
         for (auto& state : elementsToAdjust) {
-            RefPtr textNode = state.container->firstChild();
-            if (!is<Text>(textNode)) {
-                ASSERT_NOT_REACHED();
-                state.mayRequireAdjustment = false;
+            auto* box = state.container->renderBox();
+            if (!box)
                 continue;
-            }
 
-            auto* textRenderer = downcast<Text>(*textNode).renderer();
-            if (!textRenderer) {
-                ASSERT_NOT_REACHED();
-                state.mayRequireAdjustment = false;
-                continue;
-            }
-
-            auto currentScore = (textRenderer->linesBoundingBox().size() / state.targetSize).maxDimension();
-            if (currentScore < minTargetScore)
+            auto targetHeight = state.targetSize.height();
+            auto currentScore = box->contentHeight() / targetHeight;
+            bool hasHorizontalOverflow = box->hasHorizontalOverflow();
+            if (currentScore < minTargetScore && !hasHorizontalOverflow)
                 state.minScale = state.scale;
-            else if (currentScore > maxTargetScore)
+            else if (currentScore > maxTargetScore || hasHorizontalOverflow)
                 state.maxScale = state.scale;
             else {
                 state.mayRequireAdjustment = false;
@@ -647,7 +669,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             }
 
             state.scale = (state.minScale + state.maxScale) / 2;
-            state.container->setInlineStyleProperty(CSSPropertyFontSize, state.targetSize.height() * state.scale, CSSUnitType::CSS_PX);
+            setInlineStylesForBlock(state.container.get(), state.scale, targetHeight);
         }
 
         elementsToAdjust.removeAllMatching([](auto& state) {
