@@ -1645,8 +1645,7 @@
                 (allow mach-message-send
                     (kernel-mig-routine-only-in-use-during-launch)))
             (with-filter (state-flag "WebContentProcessLaunched")
-                (allow mach-message-send
-                    (with report)
+                (deny mach-message-send
                     (with telemetry)
                     (with message "kernel mig routine used after launch")
                     (kernel-mig-routine-only-in-use-during-launch)))
