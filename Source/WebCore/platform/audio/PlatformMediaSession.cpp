@@ -365,6 +365,11 @@ bool PlatformMediaSession::canProduceAudio() const
     return m_client.canProduceAudio();
 }
 
+bool PlatformMediaSession::hasMediaStreamSource() const
+{
+    return m_client.hasMediaStreamSource();
+}
+
 void PlatformMediaSession::canProduceAudioChanged()
 {
     PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();

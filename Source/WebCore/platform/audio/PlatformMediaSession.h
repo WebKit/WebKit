@@ -179,6 +179,7 @@ public:
 
     bool activeAudioSessionRequired() const;
     bool canProduceAudio() const;
+    bool hasMediaStreamSource() const;
     void canProduceAudioChanged();
 
     virtual void resetPlaybackSessionState() { }

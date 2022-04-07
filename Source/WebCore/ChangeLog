@@ -1,3 +1,22 @@
+2022-04-07  Youenn Fablet  <youenn@apple.com>
+
+        (Safari 15 - iOS15):  Increased audio latency on streaming via webrtc
+        https://bugs.webkit.org/show_bug.cgi?id=236363
+        <rdar://problem/88969850>
+
+        Reviewed by Eric Carlson.
+
+        On macOS 12.3, the default preferred buffer size is roughly 100 ms.
+        This is ok for regular audio playback but is not desirable when playing realtime audio.
+        To reduce the perceived latency, we now reduce the preferred buffer size to 20ms
+        whenever playing an audio MediaStreamTrack, similarly to when capturing audio.
+
+        Manually tested.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        * platform/audio/PlatformMediaSession.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+
 2022-04-07  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] REGRESSION (r287881): loading performance for diply.com regressed
