@@ -512,12 +512,6 @@ void WebEditorClient::checkSpellingOfString(StringView text, int* misspellingLoc
     *misspellingLength = resultLength;
 }
 
-String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String&)
-{
-    notImplemented();
-    return String();
-}
-
 void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::GrammarDetail>& grammarDetails, int* badGrammarLocation, int* badGrammarLength)
 {
     int32_t resultLocation = -1;

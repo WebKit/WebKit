@@ -2642,27 +2642,6 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
     // Autocorrect the misspelled word.
     if (!misspellingRange)
         return;
-    
-    // Get the misspelled word.
-    String autocorrectedString = textChecker()->getAutoCorrectSuggestionForMisspelledWord(plainText(*misspellingRange));
-
-    // If autocorrected word is non empty, replace the misspelled word by this word.
-    if (!autocorrectedString.isEmpty()) {
-        VisibleSelection newSelection(*misspellingRange);
-        if (newSelection != m_document.selection().selection()) {
-            if (!m_document.selection().shouldChangeSelection(newSelection))
-                return;
-            m_document.selection().setSelection(newSelection);
-        }
-
-        if (!m_document.editor().shouldInsertText(autocorrectedString, misspellingRange, EditorInsertAction::Typed))
-            return;
-        m_document.editor().replaceSelectionWithText(autocorrectedString, SelectReplacement::No, SmartReplace::No, EditAction::Insert);
-
-        // Reset the charet one character further.
-        m_document.selection().moveTo(m_document.selection().selection().end());
-        m_document.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
-    }
 
     if (!isGrammarCheckingEnabled())
         return;

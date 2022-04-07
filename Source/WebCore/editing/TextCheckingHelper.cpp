@@ -94,7 +94,6 @@ static void findMisspellings(TextCheckerClient& client, StringView text, Vector<
             TextCheckingResult misspelling;
             misspelling.type = TextCheckingType::Spelling;
             misspelling.range = CharacterRange(wordStart + misspellingLocation, misspellingLength);
-            misspelling.replacement = client.getAutoCorrectSuggestionForMisspelledWord(text.substring(misspelling.range.location, misspelling.range.length).toStringWithoutCopying());
             results.append(misspelling);
         }
 

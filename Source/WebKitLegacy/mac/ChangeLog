@@ -1,3 +1,15 @@
+2022-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused EditorClient::getAutoCorrectSuggestionForMisspelledWord()
+        https://bugs.webkit.org/show_bug.cgi?id=238897
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient::getAutoCorrectSuggestionForMisspelledWord): Deleted.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::getAutoCorrectSuggestionForMisspelledWord): Deleted.
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Drop unnecessary ExceptionOr<> return types

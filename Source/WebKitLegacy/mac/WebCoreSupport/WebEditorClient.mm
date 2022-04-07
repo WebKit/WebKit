@@ -917,13 +917,6 @@ void WebEditorClient::checkSpellingOfString(StringView text, int* misspellingLoc
         *misspellingLength = range.length;
 }
 
-String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String& inputWord)
-{
-    // This method can be implemented using customized algorithms for the particular browser.
-    // Currently, it computes an empty string.
-    return String();
-}
-
 void WebEditorClient::checkGrammarOfString(StringView text, Vector<GrammarDetail>& details, int* badGrammarLocation, int* badGrammarLength)
 {
     NSArray *grammarDetails;

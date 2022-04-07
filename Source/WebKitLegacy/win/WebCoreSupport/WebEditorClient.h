@@ -104,7 +104,6 @@ private:
     void ignoreWordInSpellDocument(const WTF::String&) final;
     void learnWord(const WTF::String&) final;
     void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) final;
-    WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) final;
     void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) final;
     void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) final;
     void updateSpellingUIWithMisspelledWord(const WTF::String&) final;

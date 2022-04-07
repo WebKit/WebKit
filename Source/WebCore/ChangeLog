@@ -1,3 +1,17 @@
+2022-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused EditorClient::getAutoCorrectSuggestionForMisspelledWord()
+        https://bugs.webkit.org/show_bug.cgi?id=238897
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::findMisspellings):
+        * loader/EmptyClients.cpp:
+        * platform/text/TextCheckerClient.h:
+
 2022-04-07  Alan Bujtas  <zalan@apple.com>
 
         A float avoider should never take a vertical position where a float is present even when its used width is zero

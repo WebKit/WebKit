@@ -374,7 +374,6 @@ private:
         void ignoreWordInSpellDocument(const String&) final { }
         void learnWord(const String&) final { }
         void checkSpellingOfString(StringView, int*, int*) final { }
-        String getAutoCorrectSuggestionForMisspelledWord(const String&) final { return { }; }
         void checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*) final { }
 
 #if USE(UNIFIED_TEXT_CHECKING)

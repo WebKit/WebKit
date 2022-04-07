@@ -41,7 +41,6 @@ public:
     virtual void ignoreWordInSpellDocument(const String&) = 0;
     virtual void learnWord(const String&) = 0;
     virtual void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) = 0;
-    virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord) = 0;
     virtual void checkGrammarOfString(StringView, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
 
 #if USE(UNIFIED_TEXT_CHECKING)
