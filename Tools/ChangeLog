@@ -1,3 +1,41 @@
+2022-04-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Share code for _addToLog
+        https://bugs.webkit.org/show_bug.cgi?id=238913
+        <rdar://problem/91383969>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (AddToLogMixin): Base class for all classes using _addToLog
+        (ConfigureBuild): Use from AddToLogMixin.
+        (AnalyzeChange): Ditto.
+        (BugzillaMixin): Ditto.
+        (ValidateCommitterAndReviewer): Ditto.
+        (BlockPullRequest): Ditto.
+        (RunBindingsTests): Ditto.
+        (WebKitPyTest): Ditto.
+        (CompileWebKit): Ditto.
+        (RunJavaScriptCoreTests): Ditto.
+        (AnalyzeJSCTestsResults): Ditto.
+        (RunWebKitTests): Ditto.
+        (AnalyzeAPITestsResults): Ditto.
+        (UpdatePullRequest): Ditto.
+        (ConfigureBuild._addToLog): Deleted.
+        (AnalyzeChange._addToLog): Deleted.
+        (BugzillaMixin._addToLog): Deleted.
+        (ValidateCommitterAndReviewer._addToLog): Deleted.
+        (BlockPullRequest._addToLog): Deleted.
+        (RunBindingsTests._addToLog): Deleted.
+        (WebKitPyTest._addToLog): Deleted.
+        (CompileWebKit._addToLog): Deleted.
+        (RunJavaScriptCoreTests._addToLog): Deleted.
+        (AnalyzeJSCTestsResults._addToLog): Deleted.
+        (RunWebKitTests._addToLog): Deleted.
+        (AnalyzeAPITestsResults._addToLog): Deleted.
+        (CheckPatchStatusOnEWSQueues._addToLog): Deleted.
+        (UpdatePullRequest._addToLog): Deleted.
+
 2022-04-06  Dewei Zhu  <dewei_zhu@apple.com>
 
         Use 'open' command on macOS to launch URL should pass Safari app bundle instead of binary
