@@ -83,15 +83,19 @@ static RTCRtpCapabilities gstreamerRtpCapatiblities(const String& kind)
         capabilities.codecs.reserveCapacity(4);
         capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP8"_s,
             .clockRate = 90000,
+            .channels = std::nullopt,
             .sdpFmtpLine = emptyString() });
         capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP9"_s,
             .clockRate = 90000,
+            .channels = std::nullopt,
             .sdpFmtpLine = "profile-id=0"_s });
         capabilities.codecs.uncheckedAppend({ .mimeType = "video/VP9"_s,
             .clockRate = 90000,
+            .channels = std::nullopt,
             .sdpFmtpLine = "profile-id=1"_s });
         capabilities.codecs.uncheckedAppend({ .mimeType = "video/H264"_s,
             .clockRate = 90000,
+            .channels = std::nullopt,
             .sdpFmtpLine = "packetization-mode=1;profile-level-id=42e01f"_s });
     }
     return capabilities;
