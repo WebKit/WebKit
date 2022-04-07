@@ -1,5 +1,14 @@
 2022-04-07  Matteo Flores  <matteo_flores@apple.com>
 
+        REGRESSION(r292419): [ iOS EWS ] imported/w3c/web-platform-tests/css/selectors/invalidation/user-action-pseudo-classes-in-has.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238954
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2022-04-07  Matteo Flores  <matteo_flores@apple.com>
+
         REGRESSION(r290770): [ Mac wk2 ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html is a flaky text failure
         https://bugs.webkit.org/show_bug.cgi?id=238033
 
