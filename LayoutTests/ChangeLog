@@ -1,3 +1,12 @@
+2022-04-07  Matteo Flores  <matteo_flores@apple.com>
+
+        REBASLINE: [ Monterey ] fast/text/khmer-lao-font.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238917
+
+        Unreviewed test gardening
+
+        * platform/mac/TestExpectations:
+
 2022-04-07  Kate Cheney  <katherine_cheney@apple.com>
 
         [ BigSur wk1 ] printing/css2.1/page-break-after-000.html is a flaky failure (231102)

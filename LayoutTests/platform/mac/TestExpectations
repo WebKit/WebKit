@@ -2242,6 +2242,8 @@ webkit.org/b/230984 [ BigSur Debug arm64 ] streams/readableStream-then.html [ Pa
 
 webkit.org/b/231757 [ BigSur ] inspector/canvas/updateShader-webgl.html [ Pass Failure ]
 
+webkit.org/b/238917 [ Monterey ] fast/text/khmer-lao-font.html [ Failure ]
+
 webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
 
 webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Pass Failure Crash ]
