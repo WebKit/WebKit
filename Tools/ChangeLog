@@ -1,3 +1,16 @@
+2022-04-06  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Use 'open' command on macOS to launch URL should pass Safari app bundle instead of binary
+        https://bugs.webkit.org/show_bug.cgi?id=238915
+        <rdar://91384008>
+
+        Reviewed by Stephanie Lewis.
+
+        Pass 'Safari.app' instead of 'Safari.app/Contents/MacOS/Safari' when launching URL via 'open' command.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_url):
+
 2022-04-04  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Run `git svn fetch`
