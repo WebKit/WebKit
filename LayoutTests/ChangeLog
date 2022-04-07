@@ -1,3 +1,17 @@
+2022-04-07  Alan Bujtas  <zalan@apple.com>
+
+        Unreviewed test gardening.
+
+        * imported/blink/fast/multicol/vertical-lr/float-content-break-expected.html:
+        .html is rendered using the legacy codepath while -expected.html is renderer using the modern codepath.
+        In case of fractional pixel values, they sometimes produce different final baselines due to (unintentional) implicit flooring in legacy line layout.
+        While most of these intentional/unintentional floors/ceils are matched (with FIXMEs) in the modern line layout, some would make the line layout
+        codebase a lot more complicated. These type of bugs are mostly not visible to the user anyway ever since we have stopped swapping between modern
+        and legacy line layout dynamically (e.g. on selection).
+        * imported/blink/fast/multicol/vertical-lr/float-content-break.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2022-04-07  Tim Nguyen  <ntim@apple.com>
 
         [CSS resize property] Correct minimum size computation to allow resizing below initial size

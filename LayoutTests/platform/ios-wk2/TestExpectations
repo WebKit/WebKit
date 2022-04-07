@@ -2208,9 +2208,6 @@ http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.
 # Test failures from turning GPU Process on by default
 webkit.org/b/234536 webxr/high-performance.html [ Failure ]
 
-# Wrong text color
-webkit.org/b/236913 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
-
 # Media failures
 webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Timeout Crash Pass ]
 webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
