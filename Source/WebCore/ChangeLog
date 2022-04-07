@@ -1,3 +1,19 @@
+2022-04-07  Tim Nguyen  <ntim@apple.com>
+
+        [:has() pseudo-class] Support invalidation for :autofill pseudo class
+        https://bugs.webkit.org/show_bug.cgi?id=238899
+
+        Reviewed by Antti Koivisto.
+
+        Tests: LayoutTests/fast/forms/input-autofilled-*.html
+
+        I've only added tests for the :autofill case, since the other pseudo-classes are supposed to be internal-only.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setAutoFilled):
+        (WebCore::HTMLInputElement::setAutoFilledAndViewable):
+        (WebCore::HTMLInputElement::setAutoFilledAndObscured):
+
 2022-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. [GStreamer] Fix compile warning

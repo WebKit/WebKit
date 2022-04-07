@@ -1,4 +1,6 @@
-This tests that foreground and background colors properly change for autofilled inputs. It can only be run using DumpRenderTree.
+This tests that foreground and background colors properly change for autofilled inputs.
 
-PASS
+
+PASS Testing input style changing with UA stylesheet
+PASS Testing form style changing with :has() selector
 

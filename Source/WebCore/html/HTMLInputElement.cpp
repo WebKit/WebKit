@@ -1406,8 +1406,8 @@ void HTMLInputElement::setAutoFilled(bool autoFilled)
     if (autoFilled == m_isAutoFilled)
         return;
 
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassAutofill, autoFilled);
     m_isAutoFilled = autoFilled;
-    invalidateStyleForSubtree();
 }
 
 void HTMLInputElement::setAutoFilledAndViewable(bool autoFilledAndViewable)
@@ -1415,8 +1415,8 @@ void HTMLInputElement::setAutoFilledAndViewable(bool autoFilledAndViewable)
     if (autoFilledAndViewable == m_isAutoFilledAndViewable)
         return;
 
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassAutofillStrongPasswordViewable, autoFilledAndViewable);
     m_isAutoFilledAndViewable = autoFilledAndViewable;
-    invalidateStyleForSubtree();
 }
 
 void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
@@ -1424,8 +1424,8 @@ void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
     if (autoFilledAndObscured == m_isAutoFilledAndObscured)
         return;
 
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassAutofillAndObscured, autoFilledAndObscured);
     m_isAutoFilledAndObscured = autoFilledAndObscured;
-    invalidateStyleForSubtree();
 }
 
 void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonType)
