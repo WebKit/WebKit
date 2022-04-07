@@ -30,6 +30,15 @@
 
 2022-04-06  Matteo Flores  <matteo_flores@apple.com>
 
+        REBASLINE: [ Monterey ] fast/text/khmer-lao-font.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238917
+
+        Unreviewed test rebasline.
+
+        * platform/mac/fast/text/khmer-lao-font-expected.txt:
+
+2022-04-06  Matteo Flores  <matteo_flores@apple.com>
+
         [ Mac , iOS Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=228127
 
