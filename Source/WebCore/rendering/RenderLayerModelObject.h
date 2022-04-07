@@ -96,6 +96,11 @@ private:
     static bool s_layerWasSelfPainting;
 };
 
+// Pixel-snapping (== 'device pixel alignment') helpers.
+bool rendererNeedsPixelSnapping(const RenderLayerModelObject&);
+FloatRect snapRectToDevicePixelsIfNeeded(const LayoutRect&, const RenderLayerModelObject&);
+FloatRect snapRectToDevicePixelsIfNeeded(const FloatRect&, const RenderLayerModelObject&);
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderLayerModelObject, isRenderLayerModelObject())

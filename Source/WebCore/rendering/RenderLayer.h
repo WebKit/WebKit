@@ -698,6 +698,8 @@ public:
     WEBCORE_EXPORT IntRect absoluteBoundingBox() const;
     // Device pixel snapped bounding box relative to the root. absoluteBoundingBox() callers will be directed to this.
     FloatRect absoluteBoundingBoxForPainting() const;
+    // Returns the 'reference box' used for clip-path handling (different rules for inlines, wrt. to boxes).
+    FloatRect referenceBoxRectForClipPath(CSSBoxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds) const;
 
     // Bounds used for layer overlap testing in RenderLayerCompositor.
     LayoutRect overlapBounds() const;

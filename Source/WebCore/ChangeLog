@@ -1,3 +1,57 @@
+2022-04-07  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Unify 'transform-box' reference box computation
+        https://bugs.webkit.org/show_bug.cgi?id=237554
+
+        Reviewed by Simon Fraser.
+
+        Currently the code to compute the reference box, according to the CSS 'transform-box'
+        property is sprinkled over various places: CSSComputedStyleDeclaration, SVGRenderSupport,
+        RenderBox, parts in RenderLayer.
+
+        Cleanup and unify the code in a new 'FloatRect referenceBoxRect(CSSBoxType) const' method.
+        RenderElement::referenceBoxRect(CSSBoxType) contains the SVG specific implementation, and
+        RenderBox::referenceBoxRect() the HTML/CSS one (previously named referenceBox()).
+.
+        RenderElement provides an additional transfromReferenceBoxRect() helper which is used in
+        various places that previously manually converted the transform-box value into a CSSBoxType.
+
+        Remove code from SVGRenderSupport/CSSComputedStyleDeclaration that can now use the shared logic.
+
+        Covered by existing tests, no change in behaviour.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        (WebCore::transformReferenceBox): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::referenceBoxRect const):
+        (WebCore::RenderBox::hitTestClipPath const):
+        (WebCore::RenderBox::referenceBox const): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::referenceBoxRect const):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::transformReferenceBoxRect const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::referenceBoxRectForClipPath const):
+        (WebCore::RenderLayer::updateTransform):
+        (WebCore::RenderLayer::currentTransform const):
+        (WebCore::RenderLayer::perspectiveTransform const):
+        (WebCore::RenderLayer::perspectiveOrigin const):
+        (WebCore::RenderLayer::rendererNeedsPixelSnapping const):
+        (WebCore::RenderLayer::snapRectToDevicePixelsIfNeeded const):
+        (WebCore::RenderLayer::computeClipPath const):
+        (WebCore::RenderLayer::setupClipPath):
+        (WebCore::computeReferenceRectFromBox): Deleted.
+        (WebCore::computeReferenceBox): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::transformReferenceBox): Deleted.
+        * rendering/svg/SVGRenderSupport.h:
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::animatedLocalTransform const):
+
 2022-04-07  Matt Woodrow  <mattwoodrow@apple.com>
 
         Grid items that establish an independent formatting context should not be subgrids.

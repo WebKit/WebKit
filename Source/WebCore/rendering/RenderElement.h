@@ -258,6 +258,13 @@ public:
     virtual void animationFinished(const String& /* name */) { }
     virtual void transformRelatedPropertyDidChange() { }
 
+    // https://www.w3.org/TR/css-transforms-1/#transform-box
+    FloatRect transformReferenceBoxRect(const RenderStyle& style) const { return referenceBoxRect(transformBoxToCSSBoxType(style.transformBox())); }
+    FloatRect transformReferenceBoxRect() const { return transformReferenceBoxRect(style()); }
+
+    // https://www.w3.org/TR/css-transforms-1/#reference-box
+    virtual FloatRect referenceBoxRect(CSSBoxType) const;
+
     virtual void suspendAnimations(MonotonicTime = MonotonicTime()) { }
     std::unique_ptr<RenderStyle> animatedStyle();
 

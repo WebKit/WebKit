@@ -82,8 +82,6 @@ public:
 
     static void styleChanged(RenderElement&, const RenderStyle*);
     
-    static FloatRect transformReferenceBox(const RenderElement&, const SVGElement&, const RenderStyle&);
-
 #if ENABLE(CSS_COMPOSITING)
     static bool isolatesBlending(const RenderStyle&);
     static void updateMaskedAncestorShouldIsolateBlending(const RenderElement&);

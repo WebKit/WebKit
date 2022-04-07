@@ -568,17 +568,6 @@ static LayoutRect sizingBox(RenderObject& renderer)
     return box.style().boxSizing() == BoxSizing::BorderBox ? box.borderBoxRect() : box.computedCSSContentBoxRect();
 }
 
-static FloatRect transformReferenceBox(const RenderStyle& style, const RenderElement& renderer)
-{
-    if (is<RenderBox>(renderer))
-        return downcast<RenderBox>(renderer).referenceBox(transformBoxToCSSBoxType(style.transformBox()));
-
-    if (is<SVGElement>(renderer.element()))
-        return SVGRenderSupport::transformReferenceBox(renderer, downcast<SVGElement>(*renderer.element()), style);
-
-    return { };
-}
-
 static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix& transform, const RenderStyle& style)
 {
     RefPtr<CSSFunctionValue> transformValue;
@@ -631,7 +620,8 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     TransformationMatrix transform;
-    style.applyTransform(transform, transformReferenceBox(style, *renderer), { });
+    style.applyTransform(transform, renderer->transformReferenceBoxRect(style), { });
+
     // Note that this does not flatten to an affine transform if ENABLE(3D_TRANSFORMS) is off, by design.
 
     // FIXME: Need to print out individual functions (https://bugs.webkit.org/show_bug.cgi?id=23924)
@@ -3822,7 +3812,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyPerspectiveOrigin: {
             auto list = CSSValueList::createSpaceSeparated();
             if (renderer) {
-                auto box = transformReferenceBox(style, *renderer);
+                auto box = renderer->transformReferenceBoxRect(style);
                 list->append(zoomAdjustedPixelValue(minimumValueForLength(style.perspectiveOriginX(), box.width()), style));
                 list->append(zoomAdjustedPixelValue(minimumValueForLength(style.perspectiveOriginY(), box.height()), style));
             } else {
@@ -3878,7 +3868,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTransformOrigin: {
             auto list = CSSValueList::createSpaceSeparated();
             if (renderer) {
-                auto box = transformReferenceBox(style, *renderer);
+                auto box = renderer->transformReferenceBoxRect(style);
                 list->append(zoomAdjustedPixelValue(minimumValueForLength(style.transformOriginX(), box.width()), style));
                 list->append(zoomAdjustedPixelValue(minimumValueForLength(style.transformOriginY(), box.height()), style));
                 if (style.transformOriginZ())

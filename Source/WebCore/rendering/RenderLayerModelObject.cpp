@@ -318,5 +318,28 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
 }
 #endif
 
+bool rendererNeedsPixelSnapping(const RenderLayerModelObject& renderer)
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer() && !renderer.isSVGRoot())
+        return false;
+#endif
+    return true;
+}
+
+FloatRect snapRectToDevicePixelsIfNeeded(const LayoutRect& rect, const RenderLayerModelObject& renderer)
+{
+    if (!rendererNeedsPixelSnapping(renderer))
+        return rect;
+    return snapRectToDevicePixels(rect, renderer.document().deviceScaleFactor());
+}
+
+FloatRect snapRectToDevicePixelsIfNeeded(const FloatRect& rect, const RenderLayerModelObject& renderer)
+{
+    if (!rendererNeedsPixelSnapping(renderer))
+        return rect;
+    return snapRectToDevicePixels(LayoutRect { rect }, renderer.document().deviceScaleFactor());
+}
+
 } // namespace WebCore
 
