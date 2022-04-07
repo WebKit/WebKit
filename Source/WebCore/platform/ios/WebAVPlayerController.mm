@@ -65,6 +65,7 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     BOOL _liveStreamEventModePossible;
     BOOL _isScrubbing;
     BOOL _allowsPictureInPicture;
+    NSTimeInterval _seekToTime;
 }
 
 - (instancetype)init
@@ -271,12 +272,14 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (void)seekToTime:(NSTimeInterval)time
 {
+    _seekToTime = time;
     if (self.delegate)
         self.delegate->seekToTime(time);
 }
 
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)before toleranceAfter:(NSTimeInterval)after
 {
+    _seekToTime = time;
     if (self.delegate)
         self.delegate->seekToTime(time, before, after);
 }
@@ -393,6 +396,16 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 - (BOOL)isScrubbing
 {
     return _isScrubbing;
+}
+
+- (BOOL)isSeeking
+{
+    return _isScrubbing;
+}
+
+- (NSTimeInterval)seekToTime
+{
+    return _seekToTime;
 }
 
 - (BOOL)canScanForward

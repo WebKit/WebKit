@@ -61,6 +61,8 @@ WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {
 @property (readonly) BOOL canSeekFrameBackward;
 @property (readonly) BOOL canSeekFrameForward;
 @property (readonly) BOOL hasContentChapters;
+@property (readonly) BOOL isSeeking;
+@property (readonly) NSTimeInterval seekToTime;
 
 @property BOOL canPlay;
 @property (getter=isPlaying) BOOL playing;

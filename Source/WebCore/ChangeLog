@@ -1,3 +1,29 @@
+2022-04-07  Jean-Yves Avenard  <jya@apple.com>
+
+        Full screen video progress bar flickers after dragging it.
+        https://bugs.webkit.org/show_bug.cgi?id=238859
+        rdar://90412851
+
+        A WebAVPlayerController pretends to be an AVPlayerController by
+        implementing most methods of it, but not all.
+        When dragging the progress bar, AVKit calls the method isSeeking to
+        determine if we are seeking or not and if true will call seekToTime
+        to retrieve the last seek position and display the progress bar
+        accordingly.
+        Those two methods weren't implemented by WebAVPlayerController.
+        At present, we don't have information about the seeking operation having
+        completed or not, but we do know if we are scrubbing. So map isSeeking
+        to isScrubbing, this approximation is sufficient at present.
+
+        Reviewed by Jer Noble.
+
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController seekToTime:]):
+        (-[WebAVPlayerController seekToTime:toleranceBefore:toleranceAfter:]):
+        (-[WebAVPlayerController isSeeking]):
+        (-[WebAVPlayerController seekToTime]):
+
 2022-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Add a LayerBacking RenderingPurpose
