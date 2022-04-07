@@ -27,6 +27,7 @@
 
 #include "Attachment.h"
 #include "MessageNames.h"
+#include "ReceiverMatcher.h"
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -62,6 +63,7 @@ public:
     ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
     MessageName messageName() const { return m_messageName; }
     uint64_t destinationID() const { return m_destinationID; }
+    bool matches(const ReceiverMatcher& matcher) const { return matcher.matches(messageReceiverName(), destinationID()); }
 
     bool isSyncMessage() const { return messageIsSync(messageName()); }
     ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;

@@ -32,6 +32,7 @@
 #include "Encoder.h"
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
+#include "ReceiverMatcher.h"
 #include "Timeout.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
@@ -235,19 +236,21 @@ public:
 
     // Adds a message receive queue. The client should make sure the instance is removed before it goes
     // out of scope.
-    void addMessageReceiveQueue(MessageReceiveQueue&, ReceiverName, uint64_t destinationID = 0);
-
-    void removeMessageReceiveQueue(ReceiverName, uint64_t destinationID = 0);
+    // std::nullopt ReceiverMatchSpec matches all receivers.
+    void addMessageReceiveQueue(MessageReceiveQueue&, const ReceiverMatcher&);
+    void removeMessageReceiveQueue(const ReceiverMatcher&);
 
     // Adds a message receieve queue that dispatches through WorkQueue to WorkQueueMessageReceiver.
     // Keeps the WorkQueue and the WorkQueueMessageReceiver alive. Dispatched tasks keep WorkQueueMessageReceiver alive.
+    // destinationID == 0 matches all ids.
     void addWorkQueueMessageReceiver(ReceiverName, WorkQueue&, WorkQueueMessageReceiver&, uint64_t destinationID = 0);
-    void removeWorkQueueMessageReceiver(ReceiverName receiverName, uint64_t destinationID = 0) { removeMessageReceiveQueue(receiverName, destinationID); }
+    void removeWorkQueueMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
     // Adds a message receieve queue that dispatches through ThreadMessageReceiver.
     // Keeps the ThreadMessageReceiver alive. Dispatched tasks keep the ThreadMessageReceiver alive.
+    // destinationID == 0 matches all ids.
     void addThreadMessageReceiver(ReceiverName, ThreadMessageReceiver*, uint64_t destinationID = 0);
-    void removeThreadMessageReceiver(ReceiverName receiverName, uint64_t destinationID = 0) { removeMessageReceiveQueue(receiverName, destinationID); }
+    void removeThreadMessageReceiver(ReceiverName, uint64_t destinationID = 0);
 
     bool open();
     void invalidate();
@@ -351,7 +354,7 @@ private:
     void popPendingSyncRequestID(SyncRequestID);
     std::unique_ptr<Decoder> waitForSyncReply(SyncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
-    void enqueueMatchingMessagesToMessageReceiveQueue(MessageReceiveQueue&, ReceiverName, uint64_t destinationID) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
+    void enqueueMatchingMessagesToMessageReceiveQueue(MessageReceiveQueue&, const ReceiverMatcher&) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
 
     // Called on the connection work queue.
     void processIncomingMessage(std::unique_ptr<Decoder>);

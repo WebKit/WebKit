@@ -1,3 +1,54 @@
+2022-04-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC::Connection should support diverting all messages to a message queue in other thread
+        https://bugs.webkit.org/show_bug.cgi?id=238608
+
+        Reviewed by Simon Fraser.
+
+        Previously, it was possible to divert all messages to certain ReceiverName to
+        a message queue. This is used in IPC streams functionality.
+
+        Add a possibility to divert all messages to a message queue. Instead of
+        passing ReceiverName, id pair to Connection, pass new struct ReceiverMatcher.
+        Use ReceiverMatcher instead of pair optional<ReceiverName>, optional<id>, since
+        nullopt, id is not a valid case.
+        This will be used in future patch for the case where IPC::Connection is created for
+        the sole purpose of using it together with IPC stream connection.
+        This also clarifies the overloaded use of destinationID 0 as a wildcard as well as
+        a valid message destination.
+
+        Also implement the possibility to divert all messages to particular ReceiverName,
+        id 0. Previously this was signifying the destination ID wildcard.
+
+        No new tests, refactor.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::enqueueMatchingMessages):
+        (IPC::Connection::enqueueMatchingMessagesToMessageReceiveQueue):
+        (IPC::Connection::addMessageReceiveQueue):
+        (IPC::Connection::removeMessageReceiveQueue):
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::removeWorkQueueMessageReceiver):
+        (IPC::Connection::addThreadMessageReceiver):
+        (IPC::Connection::removeThreadMessageReceiver):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/Decoder.h:
+        (IPC::Decoder::matches const):
+        * Platform/IPC/MessageReceiveQueueMap.cpp:
+        (IPC::MessageReceiveQueueMap::addImpl):
+        (IPC::MessageReceiveQueueMap::remove):
+        (IPC::MessageReceiveQueueMap::get const):
+        * Platform/IPC/MessageReceiveQueueMap.h:
+        (IPC::MessageReceiveQueueMap::add):
+        * Platform/IPC/ReceiverMatcher.h: Copied from Source/WebKit/Platform/IPC/MessageReceiveQueueMap.h.
+        (IPC::ReceiverMatcher::ReceiverMatcher):
+        (IPC::ReceiverMatcher::createForLegacyAPI):
+        (IPC::ReceiverMatcher::matches const):
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnectionBase::startReceivingMessagesImpl):
+        (IPC::StreamServerConnectionBase::stopReceivingMessagesImpl):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK build after r292506
