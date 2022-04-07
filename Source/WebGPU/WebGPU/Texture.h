@@ -85,7 +85,7 @@ private:
 
     const id<MTLTexture> m_texture { nil };
 
-    const WGPUTextureDescriptor m_descriptor { }; // "The GPUTextureDescriptor describing this texture."
+    const WGPUTextureDescriptor m_descriptor { };
     const Vector<WGPUTextureFormat> m_viewFormats;
 
     const Ref<Device> m_device;

@@ -129,29 +129,19 @@ void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& command
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
 
-    // "If any of the following conditions are unsatisfied"
     if (!validateSubmit()) {
-        // "generate a validation error and stop."
         m_device.generateAValidationError("Validation failure."_s);
         return;
     }
 
     finalizeBlitCommandEncoder();
 
-    // "For each commandBuffer in commandBuffers:"
-    for (auto commandBuffer : commands) {
-        // "Execute each command in commandBuffer.[[command_list]]."
+    for (auto commandBuffer : commands)
         commitMTLCommandBuffer(commandBuffer.get().commandBuffer());
-    }
 }
 
 static bool validateWriteBufferInitial(size_t size)
 {
-    // "contentsSize ≥ 0."
-
-    // "dataOffset + contentsSize ≤ dataSize."
-
-    // "contentsSize, converted to bytes, is a multiple of 4 bytes."
     if (size % 4)
         return false;
 
@@ -162,19 +152,15 @@ bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, siz
 {
     // FIXME: "buffer is valid to use with this."
 
-    // "buffer.[[state]] is unmapped."
     if (buffer.state() != Buffer::State::Unmapped)
         return false;
 
-    // "buffer.[[usage]] includes COPY_DST."
     if (!(buffer.usage() & WGPUBufferUsage_CopyDst))
         return false;
 
-    // "bufferOffset, converted to bytes, is a multiple of 4 bytes."
     if (bufferOffset % 4)
         return false;
 
-    // "bufferOffset + contentsSize, converted to bytes, ≤ buffer.[[size]] bytes."
     // FIXME: Use checked arithmetic
     if (bufferOffset + size > buffer.size())
         return false;
@@ -186,30 +172,16 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void*
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writebuffer
 
-    // "If data is an ArrayBuffer or DataView, let the element type be "byte". Otherwise, data is a TypedArray; let the element type be the type of the TypedArray."
-
-    // "Let dataSize be the size of data, in elements."
-
-    // "If size is missing, let contentsSize be dataSize − dataOffset. Otherwise, let contentsSize be size."
-
-    // "If any of the following conditions are unsatisfied"
     if (!validateWriteBufferInitial(size)) {
         // FIXME: "throw OperationError and stop."
         return;
     }
 
-    // "Let dataContents be a copy of the bytes held by the buffer source."
-
-    // "Let contents be the contentsSize elements of dataContents starting at an offset of dataOffset elements."
-
-    // "If any of the following conditions are unsatisfied"
     if (!validateWriteBuffer(buffer, bufferOffset, size)) {
-        // "generate a validation error and stop."
         m_device.generateAValidationError("Validation failure."_s);
         return;
     }
 
-    // "Write contents into buffer starting at bufferOffset."
     if (!size)
         return;
 
@@ -251,40 +223,29 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void*
 
 static bool validateWriteTexture(const WGPUImageCopyTexture& destination, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size, size_t dataByteSize, const WGPUTextureDescriptor& textureDesc)
 {
-    // "validating GPUImageCopyTexture(destination, size) returns true."
     if (!Texture::validateImageCopyTexture(destination, size))
         return false;
 
-    // "textureDesc.usage includes COPY_DST."
     if (!(textureDesc.usage & WGPUTextureUsage_CopyDst))
         return false;
 
-    // "textureDesc.sampleCount is 1."
     if (textureDesc.sampleCount != 1)
         return false;
 
-    // "validating texture copy range(destination, size) return true."
     if (!Texture::validateTextureCopyRange(destination, size))
         return false;
 
-    // "destination.aspect must refer to a single aspect of textureDesc.format."
     if (!Texture::refersToSingleAspect(textureDesc.format, destination.aspect))
         return false;
 
-    // "That aspect must be a valid image copy destination according to § 25.1.2 Depth-stencil formats."
     if (!Texture::isValidImageCopyDestination(textureDesc.format, destination.aspect))
         return false;
 
-    // "Let aspectSpecificFormat = textureDesc.format."
     auto aspectSpecificFormat = textureDesc.format;
 
-    // "If textureDesc.format is a depth-or-stencil format:"
-    if (Texture::isDepthOrStencilFormat(textureDesc.format)) {
-        // "Set aspectSpecificFormat to the aspect-specific format of textureDesc.format according to § 25.1.2 Depth-stencil formats."
+    if (Texture::isDepthOrStencilFormat(textureDesc.format))
         aspectSpecificFormat = Texture::aspectSpecificFormat(textureDesc.format, destination.aspect);
-    }
 
-    // "validating linear texture data(dataLayout, dataByteSize, aspectSpecificFormat, size) succeeds."
     if (!Texture::validateLinearTextureData(dataLayout, dataByteSize, aspectSpecificFormat, size))
         return false;
 
@@ -298,23 +259,15 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writetexture
 
-    // "Let dataBytes be a copy of the bytes held by the buffer source data."
-    // "Let dataByteSize be the number of bytes in dataBytes."
     auto dataByteSize = dataSize;
 
-    // "Let textureDesc be destination.texture.[[descriptor]]."
     const auto& textureDesc = fromAPI(destination.texture).descriptor();
 
-    // "Let contents be the contents of the images seen by viewing dataBytes with dataLayout and size."
-
-    // "If any of the following conditions are unsatisfied"
     if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, textureDesc)) {
-        // "generate a validation error and stop."
         m_device.generateAValidationError("Validation failure."_s);
         return;
     }
 
-    // "Write contents into destination."
     if (!dataSize)
         return;
 

@@ -50,9 +50,7 @@ public:
 
     id<MTLSamplerState> samplerState() const { return m_samplerState; }
     const WGPUSamplerDescriptor& descriptor() const { return m_descriptor; }
-    // "Set s.[[isComparison]] to false if the compare attribute of s.[[descriptor]] is null or undefined. Otherwise, set it to true."
     bool isComparison() const { return descriptor().compare != WGPUCompareFunction_Undefined; }
-    // "Set s.[[isFiltering]] to false if none of minFilter, magFilter, or mipmapFilter has the value of "linear". Otherwise, set it to true."
     bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUFilterMode_Linear; }
 
 private:
@@ -60,9 +58,7 @@ private:
 
     const id<MTLSamplerState> m_samplerState { nil };
 
-    const WGPUSamplerDescriptor m_descriptor { }; // "The GPUSamplerDescriptor with which the GPUSampler was created."
-    // "[[isComparison]] of type boolean." This is unnecessary; it's implemented in isComparison().
-    // "[[isFiltering]] of type boolean." This is unnecessary; it's implemented in isFiltering().
+    const WGPUSamplerDescriptor m_descriptor { };
 
     const Ref<Device> m_device;
 };

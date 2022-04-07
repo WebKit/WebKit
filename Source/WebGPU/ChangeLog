@@ -1,5 +1,106 @@
 2022-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Delete redundant spec quotes
+        https://bugs.webkit.org/show_bug.cgi?id=238711
+
+        Reviewed by Kimmo Kinnunen.
+
+        I actually prefer to have lots and lots of spec quotes throughout the implementation,
+        but enough people have commented about it that it's become clear that we probably
+        shouldn't have them. This deletes almost all of them (and leaves just the ones that
+        are particularly insightful).
+
+        * WebGPU/Buffer.h:
+        * WebGPU/Buffer.mm:
+        (WebGPU::validateDescriptor):
+        (WebGPU::validateCreateBuffer):
+        (WebGPU::Device::createBuffer):
+        (WebGPU::Buffer::destroy):
+        (WebGPU::Buffer::validateGetMappedRange const):
+        (WebGPU::Buffer::getMappedRange):
+        (WebGPU::Buffer::validateMapAsync const):
+        (WebGPU::Buffer::mapAsync):
+        (WebGPU::Buffer::validateUnmap const):
+        (WebGPU::Buffer::unmap):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::validateCopyBufferToBuffer):
+        (WebGPU::CommandEncoder::copyBufferToBuffer):
+        (WebGPU::validateImageCopyBuffer):
+        (WebGPU::validateCopyBufferToTexture):
+        (WebGPU::CommandEncoder::copyBufferToTexture):
+        (WebGPU::validateCopyTextureToBuffer):
+        (WebGPU::CommandEncoder::copyTextureToBuffer):
+        (WebGPU::areCopyCompatible):
+        (WebGPU::validateCopyTextureToTexture):
+        (WebGPU::CommandEncoder::copyTextureToTexture):
+        (WebGPU::validateClearBuffer):
+        (WebGPU::CommandEncoder::clearBuffer):
+        (WebGPU::CommandEncoder::validateFinish const):
+        (WebGPU::CommandEncoder::finish):
+        (WebGPU::CommandEncoder::insertDebugMarker):
+        (WebGPU::CommandEncoder::validatePopDebugGroup const):
+        (WebGPU::CommandEncoder::popDebugGroup):
+        (WebGPU::CommandEncoder::pushDebugGroup):
+        * WebGPU/ComputePassEncoder.mm:
+        (WebGPU::ComputePassEncoder::insertDebugMarker):
+        (WebGPU::ComputePassEncoder::validatePopDebugGroup const):
+        (WebGPU::ComputePassEncoder::popDebugGroup):
+        (WebGPU::ComputePassEncoder::pushDebugGroup):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (WebGPU::Device::currentErrorScope):
+        (WebGPU::Device::generateAValidationError):
+        (WebGPU::Device::validatePopErrorScope const):
+        (WebGPU::Device::popErrorScope):
+        (WebGPU::Device::pushErrorScope):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::submit):
+        (WebGPU::validateWriteBufferInitial):
+        (WebGPU::Queue::validateWriteBuffer const):
+        (WebGPU::Queue::writeBuffer):
+        (WebGPU::validateWriteTexture):
+        (WebGPU::Queue::writeTexture):
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::RenderBundleEncoder::insertDebugMarker):
+        (WebGPU::RenderBundleEncoder::validatePopDebugGroup const):
+        (WebGPU::RenderBundleEncoder::popDebugGroup):
+        (WebGPU::RenderBundleEncoder::pushDebugGroup):
+        * WebGPU/RenderPassEncoder.mm:
+        (WebGPU::RenderPassEncoder::insertDebugMarker):
+        (WebGPU::RenderPassEncoder::validatePopDebugGroup const):
+        (WebGPU::RenderPassEncoder::popDebugGroup):
+        (WebGPU::RenderPassEncoder::pushDebugGroup):
+        * WebGPU/Sampler.h:
+        (WebGPU::Sampler::descriptor const):
+        (WebGPU::Sampler::isComparison const):
+        * WebGPU/Sampler.mm:
+        (WebGPU::validateCreateSampler):
+        (WebGPU::Device::createSampler):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::isCompressedFormat):
+        (WebGPU::Texture::isDepthOrStencilFormat):
+        (WebGPU::Texture::texelBlockWidth):
+        (WebGPU::Texture::texelBlockHeight):
+        (WebGPU::isRenderableFormat):
+        (WebGPU::supportsMultisampling):
+        (WebGPU::maximumMiplevelCount):
+        (WebGPU::Device::validateCreateTexture):
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::resolveTextureViewDescriptorDefaults const):
+        (WebGPU::Texture::arrayLayerCount const):
+        (WebGPU::Texture::validateCreateView const):
+        (WebGPU::computeRenderExtent):
+        (WebGPU::Texture::createView):
+        (WebGPU::Texture::logicalMiplevelSpecificTextureExtent):
+        (WebGPU::Texture::physicalMiplevelSpecificTextureExtent):
+        (WebGPU::imageCopyTextureSubresourceSize):
+        (WebGPU::Texture::validateImageCopyTexture):
+        (WebGPU::Texture::validateTextureCopyRange):
+        (WebGPU::Texture::validateLinearTextureData):
+
+2022-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement Texture view format compatibility
         https://bugs.webkit.org/show_bug.cgi?id=238710
 

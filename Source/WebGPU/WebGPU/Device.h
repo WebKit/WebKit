@@ -110,8 +110,8 @@ private:
         String message;
     };
     struct ErrorScope {
-        std::optional<Error> error; // "The first GPUError, if any, observed while the GPU error scope was current."
-        const WGPUErrorFilter filter; // Determines what type of GPUError this GPU error scope observes.
+        std::optional<Error> error;
+        const WGPUErrorFilter filter;
     };
 
     const id<MTLDevice> m_device { nil };
@@ -119,7 +119,7 @@ private:
     const Ref<Instance> m_instance;
 
     Function<void(WGPUErrorType, String&&)> m_uncapturedErrorCallback;
-    Vector<ErrorScope> m_errorScopeStack; // "A stack of GPU error scopes that have been pushed to the GPUDevice."
+    Vector<ErrorScope> m_errorScopeStack;
 };
 
 } // namespace WebGPU

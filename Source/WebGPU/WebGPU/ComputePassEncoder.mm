@@ -72,7 +72,6 @@ void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
 
-    // "Prepare the encoder state of this. If it returns false, stop."
     if (!prepareTheEncoderState())
         return;
 
@@ -81,7 +80,6 @@ void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
 
 bool ComputePassEncoder::validatePopDebugGroup() const
 {
-    // "this.[[debug_group_stack]] must not be empty."
     if (!m_debugGroupStackSize)
         return false;
 
@@ -92,17 +90,14 @@ void ComputePassEncoder::popDebugGroup()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup
 
-    // "Prepare the encoder state of this. If it returns false, stop."
     if (!prepareTheEncoderState())
         return;
 
-    // "If any of the following requirements are unmet"
     if (!validatePopDebugGroup()) {
         // FIXME: "make this invalid, and stop."
         return;
     }
 
-    // "Pop an entry off of this.[[debug_group_stack]]."
     --m_debugGroupStackSize;
     [m_computeCommandEncoder popDebugGroup];
 }
@@ -111,11 +106,9 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
 
-    // "Prepare the encoder state of this. If it returns false, stop."
     if (!prepareTheEncoderState())
         return;
 
-    // "Push groupLabel onto this.[[debug_group_stack]]."
     ++m_debugGroupStackSize;
     [m_computeCommandEncoder pushDebugGroup:groupLabel];
 }

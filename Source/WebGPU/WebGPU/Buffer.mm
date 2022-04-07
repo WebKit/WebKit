@@ -42,7 +42,6 @@ static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor&
 
     // FIXME: "If any of the bits of descriptor’s usage aren’t present in this device’s [[allowed buffer usages]] return false."
 
-    // "If both the MAP_READ and MAP_WRITE bits of descriptor’s usage attribute are set, return false."
     if ((descriptor.usage & WGPUBufferUsage_MapRead) && (descriptor.usage & WGPUBufferUsage_MapWrite))
         return false;
 
@@ -53,27 +52,22 @@ static bool validateCreateBuffer(const Device& device, const WGPUBufferDescripto
 {
     // FIXME: "this is a valid GPUDevice."
 
-    // "validating GPUBufferDescriptor(this, descriptor) returns true."
     if (!validateDescriptor(device, descriptor))
         return false;
 
-    // "descriptor.usage must not be 0."
     if (!descriptor.usage)
         return false;
 
     // FIXME: "descriptor.usage is a subset of this.[[allowed buffer usages]]."
 
-    // "If descriptor.usage contains MAP_READ: descriptor.usage contains no other flags except COPY_DST."
     if ((descriptor.usage & WGPUBufferUsage_MapRead)
         && (descriptor.usage & ~WGPUBufferUsage_CopyDst & ~WGPUBufferUsage_MapRead))
         return false;
 
-    // "If descriptor.usage contains MAP_WRITE: descriptor.usage contains no other flags except COPY_SRC."
     if ((descriptor.usage & WGPUBufferUsage_MapWrite)
         && (descriptor.usage & ~WGPUBufferUsage_CopySrc & ~WGPUBufferUsage_MapWrite))
         return false;
 
-    // "If descriptor.mappedAtCreation is true: descriptor.size is a multiple of 4."
     if (descriptor.mappedAtCreation && (descriptor.size % 4))
         return false;
 
@@ -112,7 +106,6 @@ RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createbuffer
 
-    // "If any of the following conditions are unsatisfied, return an error buffer and stop."
     if (!validateCreateBuffer(*this, descriptor))
         return nullptr;
 
@@ -125,29 +118,9 @@ RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 
     buffer.label = fromAPI(descriptor.label);
 
-    // FIXME: Handle descriptor.mappedAtCreation.
-    // Because non-mappable buffers can be mapped at creation,
-    // this means we have to have a temporary buffer mapped,
-    // and we can to schedule a copy command when it gets unmapped,
-    // presumably at first use.
-
-    // "Let b be a new GPUBuffer object."
-    // "Set b.[[size]] to descriptor.size."
-    // "Set b.[[usage]] to descriptor.usage."
-
-    // "If descriptor.mappedAtCreation is true:"
-    if (descriptor.mappedAtCreation) {
-        // "Set b.[[mapping]] to a new ArrayBuffer of size b.[[size]]." This is unnecessary.
-        // "Set b.[[mapping_range]] to [0, descriptor.size]."
-        // "Set b.[[mapped_ranges]] to []."
-        // "Set b.[[state]] to mapped at creation."
+    if (descriptor.mappedAtCreation)
         return Buffer::create(buffer, descriptor.size, descriptor.usage, Buffer::State::MappedAtCreation, { static_cast<size_t>(0), static_cast<size_t>(descriptor.size) }, *this);
-    }
 
-    // "Set b.[[mapping]] to null." This is unnecessary.
-    // "Set b.[[mapping_range]] to null."
-    // "Set b.[[mapped_ranges]] to null."
-    // "Set b.[[state]] to unmapped."
     return Buffer::create(buffer, descriptor.size, descriptor.usage, Buffer::State::Unmapped, { static_cast<size_t>(0), static_cast<size_t>(0) }, *this);
 }
 
@@ -167,13 +140,11 @@ void Buffer::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-destroy
 
-    // "If the this.[[state]] is not either of unmapped or destroyed: Run the steps to unmap this."
     if (m_state != State::Unmapped && m_state != State::Destroyed) {
         // FIXME: ASSERT() that this call doesn't fail.
         unmap();
     }
 
-    // "Set this.[[state]] to destroyed."
     m_state = State::Destroyed;
 
     m_buffer = nil;
@@ -186,29 +157,23 @@ const void* Buffer::getConstMappedRange(size_t offset, size_t size)
 
 bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
 {
-    // "this.[[state]] is mapped or mapped at creation."
     if (m_state != State::Mapped && m_state != State::MappedAtCreation)
         return false;
 
-    // "offset is a multiple of 8."
     if (offset % 8)
         return false;
 
-    // "rangeSize is a multiple of 4."
     if (rangeSize % 4)
         return false;
 
-    // "offset is greater than or equal to this.[[mapping_range]][0]."
     if (offset < m_mappingRange.beginOffset)
         return false;
 
-    // "offset + rangeSize is less than or equal to this.[[mapping_range]][1]."
     // FIXME: Used checked arithmetic.
     auto endOffset = offset + rangeSize;
     if (endOffset > m_mappingRange.endOffset)
         return false;
 
-    // "[offset, offset + rangeSize) does not overlap another range in this.[[mapped_ranges]]."
     if (m_mappedRanges.overlaps({ offset, endOffset }))
         return false;
 
@@ -219,25 +184,19 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
 
-    // "If size is missing: Let rangeSize be max(0, this.[[size]] - offset)."
     // FIXME: Use checked arithmetic.
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
         rangeSize = static_cast<size_t>(std::max(static_cast<uint64_t>(0), m_size - static_cast<uint64_t>(offset)));
 
-    // "If any of the following conditions are unsatisfied"
     if (!validateGetMappedRange(offset, rangeSize)) {
         // FIXME: "throw an OperationError and stop."
         return nullptr;
     }
 
-    // "Let m be a new ArrayBuffer of size rangeSize pointing at the content of this.[[mapping]] at offset offset - this.[[mapping_range]][0]."
-
-    // "Append m to this.[[mapped_ranges]]."
     m_mappedRanges.add({ offset, offset + rangeSize });
     m_mappedRanges.compact();
 
-    // "Return m."
     return static_cast<char*>(m_buffer.contents) + offset;
 }
 
@@ -245,33 +204,26 @@ bool Buffer::validateMapAsync(WGPUMapModeFlags mode, size_t offset, size_t range
 {
     // FIXME: "this is a valid GPUBuffer. TODO: check destroyed state?"
 
-    // "offset is a multiple of 8."
     if (offset % 8)
         return false;
 
-    // "rangeSize is a multiple of 4."
     if (rangeSize % 4)
         return false;
 
-    // "offset + rangeSize is less or equal to this.[[size]]"
     // FIXME: Use checked arithmetic.
     if (static_cast<uint64_t>(offset + rangeSize) > m_size)
         return false;
 
-    // "this.[[state]] is unmapped"
     if (m_state != State::Unmapped)
         return false;
 
-    // "mode contains exactly one of READ or WRITE."
     auto readWriteModeFlags = mode & (WGPUMapMode_Read | WGPUMapMode_Write);
     if (readWriteModeFlags != WGPUMapMode_Read && readWriteModeFlags != WGPUMapMode_Write)
         return false;
 
-    // "If mode contains READ then this.[[usage]] must contain MAP_READ."
     if ((mode & WGPUMapMode_Read) && !(m_usage & WGPUBufferUsage_MapRead))
         return false;
 
-    // "If mode contains WRITE then this.[[usage]] must contain MAP_WRITE."
     if ((mode & WGPUMapMode_Write) && !(m_usage & WGPUBufferUsage_MapWrite))
         return false;
 
@@ -282,51 +234,31 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-mapasync
 
-    // "If size is missing: Let rangeSize be max(0, this.[[size]] - offset)."
     // FIXME: Use checked arithmetic.
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
         rangeSize = static_cast<size_t>(std::max(static_cast<uint64_t>(0), static_cast<uint64_t>(m_size - offset)));
 
-    // "If any of the following conditions are unsatisfied:"
     if (!validateMapAsync(mode, offset, rangeSize)) {
-        // "Record a validation error on the current scope."
         m_device->generateAValidationError("Validation failure."_s);
 
-        // "Return a promise rejected with an OperationError on the Device timeline."
         callback(WGPUBufferMapAsyncStatus_Error);
         return;
     }
 
-    // "Set this.[[mapping]] to p."
-
-    // "Set this.[[state]] to mapping pending."
     m_state = State::MappingPending;
 
-    // "Set this.[[map_mode]] to mode."
     m_mapMode = mode;
 
-    // "Enqueue an operation on the default queue’s Queue timeline that will execute the following:"
     m_device->getQueue().onSubmittedWorkDone(0, [protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
-        // "If this.[[state]] is mapping pending:"
         if (protectedThis->m_state == State::MappingPending) {
-            // "Let m be a new ArrayBuffer of size rangeSize."
-
-            // "Set the content of m to the content of this’s allocation starting at offset offset and for rangeSize bytes."
-
-            // "Set this.[[mapping]] to m."
-
-            // "Set this.[[state]] to mapped."
             protectedThis->m_state = State::Mapped;
 
-            // "Set this.[[mapping_range]] to [offset, offset + rangeSize]."
             protectedThis->m_mappingRange = { offset, offset + rangeSize };
 
-            // "Set this.[[mapped_ranges]] to []."
             protectedThis->m_mappedRanges = MappedRanges();
         }
 
-        // "Resolve p."
         switch (status) {
         case WGPUQueueWorkDoneStatus_Success:
             callback(WGPUBufferMapAsyncStatus_Success);
@@ -350,7 +282,6 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 
 bool Buffer::validateUnmap() const
 {
-    // "this.[[state]] must be mapped at creation, mapping pending, or mapped."
     if (m_state != State::MappedAtCreation
         && m_state != State::MappingPending
         && m_state != State::Mapped)
@@ -363,35 +294,14 @@ void Buffer::unmap()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-unmap
 
-    // "If any of the following requirements are unmet"
     if (!validateUnmap()) {
-        // "generate a validation error and stop."
         m_device->generateAValidationError("Validation failure."_s);
         return;
     }
 
-    // "If this.[[state]] is mapping pending:"
-    if (m_state == State::MappingPending) {
-        // FIXME: "Reject [[mapping]] with an AbortError."
+    // FIXME: "If this.[[state]] is mapping pending: Reject [[mapping]] with an AbortError."
 
-        // "Set this.[[mapping]] to null."
-    }
-
-    // "If this.[[state]] is mapped or mapped at creation:"
-    if (m_state == State::Mapped || m_state == State::MappedAtCreation) {
-        // "If one of the two following conditions holds:"
-        // "this.[[state]] is mapped at creation"
-        // "this.[[state]] is mapped and this.[[map_mode]] contains WRITE"
-        // "Enqueue an operation on the default queue’s Queue timeline that updates the this.[[mapping_range]] of this’s allocation to the content of this.[[mapping]]."
-
-        // "Detach each ArrayBuffer in this.[[mapped_ranges]] from its content."
-
-        // "Set this.[[mapping]] to null."
-
-        // "Set this.[[mapping_range]] to null."
-
-        // "Set this.[[mapped_ranges]] to null."
-    }
+    // FIXME: Handle array buffer detaching.
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (m_state == State::MappedAtCreation && m_buffer.storageMode == MTLStorageModeManaged) {
@@ -400,7 +310,6 @@ void Buffer::unmap()
     }
 #endif
 
-    // "Set this.[[state]] to unmapped."
     m_state = State::Unmapped;
 }
 
