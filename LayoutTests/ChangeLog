@@ -1,3 +1,29 @@
+2022-04-07  Tim Nguyen  <ntim@apple.com>
+
+        [CSS resize property] Correct minimum size computation to allow resizing below initial size
+        https://bugs.webkit.org/show_bug.cgi?id=135335
+
+        Reviewed by Simon Fraser.
+
+        Tests ported from the Chromium changeset: https://chromium-review.googlesource.com/c/chromium/src/+/545395/
+        They've been tweaked to:
+        - not rely on <textarea>
+        - use WPT harness instead of Chrome specific methods
+        - use async functions instead of callbacks
+
+        * fast/css/resize-above-min-size-and-below-initial-size-expected.txt: Added.
+        * fast/css/resize-above-min-size-and-below-initial-size.html: Added.
+        * fast/css/resize-below-min-intrinsic-size-large-scrollbars-expected.txt: Added.
+        * fast/css/resize-below-min-intrinsic-size-large-scrollbars.html: Added.
+        * fast/css/resize-below-min-intrinsic-size-expected.txt: Added.
+        * fast/css/resize-below-min-intrinsic-size.html: Added.
+        * fast/css/resize-below-min-size-expected.txt: Added.
+        * fast/css/resize-below-min-size-zoomed-expected.txt: Added.
+        * fast/css/resize-below-min-size-zoomed.html: Added.
+        * fast/css/resize-below-min-size.html: Added.
+        * fast/css/resize-orthogonal-containing-block-expected.txt: Added.
+        * fast/css/resize-orthogonal-containing-block.html: Added.
+
 2022-04-07  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r292419): [ iOS EWS ] imported/w3c/web-platform-tests/css/selectors/invalidation/user-action-pseudo-classes-in-has.html is a flaky text failure

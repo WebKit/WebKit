@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        zoom: 2;
+    }
+
+    #resizable {
+        background: yellow;
+        box-sizing: border-box;
+        resize: both;
+        overflow: auto;
+        width: 200px;
+        height: 200px;
+        min-width: 100px;
+        min-height: 100px;
+    }
+</style>
+</head>
+<body>
+
+<div id="resizable"></div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-actions.js"></script>
+<script src="../../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<script>
+const zoomFactor = 2;
+
+function drag(startX, startY, destX, destY) {
+    const actions = new test_driver.Actions()
+        .pointerMove((startX - 1) * 2, (startY - 1) * 2)
+        .pointerDown()
+        .pointerMove((destX - 1) * 2, (destY - 1) * 2)
+        .pointerUp();
+    return actions.send();
+}
+
+promise_test(async () => {
+    const box = document.getElementById("resizable");
+    const startX = box.getBoundingClientRect().right;
+    const startY = box.getBoundingClientRect().bottom;
+    await drag(startX, startY, startX - 150, startY - 150);
+    assert_equals(box.style.width, "100px");
+    assert_equals(box.style.height, "100px");
+}, "Test for resizing the box below the minimum size set in zoomed environment.");
+</script>
+</body>
+</html>

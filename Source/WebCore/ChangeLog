@@ -1,3 +1,43 @@
+2022-04-07  Tim Nguyen  <ntim@apple.com>
+
+        [CSS resize property] Correct minimum size computation to allow resizing below initial size
+        https://bugs.webkit.org/show_bug.cgi?id=135335
+
+        Reviewed by Simon Fraser.
+
+        Tests:
+        - LayoutTests/fast/css/resize-above-min-size-and-below-initial-size.html
+        - LayoutTests/fast/css/resize-below-min-intrinsic-size.html
+        - LayoutTests/fast/css/resize-below-min-intrinsic-size-large-scrollbars.html
+        - LayoutTests/fast/css/resize-below-min-size-zoomed.html
+        - LayoutTests/fast/css/resize-below-min-size.html
+        - LayoutTests/fast/css/resize-orthogonal-containing-block.html
+
+        Ports the relevant Chromium changeset with a few tweaks: https://chromium-review.googlesource.com/c/chromium/src/+/545395/
+
+        The previous minimum size used to be whatever size was there before the first resize, which is wrong, and does not allow
+        resizing below the initial size. It is now based on the min-width/height properties and the scroll corner size.
+
+        It is no longer stored in ElementRareData since it is no longer fixed to the initial element size, but depends on the container
+        on the element style.
+
+        * dom/Element.cpp:
+        (WebCore::Element::minimumSizeForResizing const): Deleted.
+        (WebCore::Element::setMinimumSizeForResizing): Deleted.
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::useTypes const):
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::defaultMinimumSizeForResizing): Deleted.
+        (WebCore::ElementRareData::minimumSizeForResizing const): Deleted.
+        (WebCore::ElementRareData::setMinimumSizeForResizing): Deleted.
+        * dom/NodeRareData.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::minimumSizeForResizing const):
+        (WebCore::RenderLayer::resize):
+        * rendering/RenderLayer.h:
+
 2022-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Have ImageBuffer store the RenderingPurpose, and send it to the GPU process

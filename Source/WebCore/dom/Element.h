@@ -447,9 +447,6 @@ public:
     const AtomString& pseudo() const;
     WEBCORE_EXPORT void setPseudo(const AtomString&);
 
-    LayoutSize minimumSizeForResizing() const;
-    void setMinimumSizeForResizing(const LayoutSize&);
-
     // Use Document::registerForDocumentActivationCallbacks() to subscribe to these
     virtual void prepareForDocumentSuspension() { }
     virtual void resumeFromDocumentSuspension() { }

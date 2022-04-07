@@ -3375,18 +3375,6 @@ void Element::setPseudo(const AtomString& value)
     setAttributeWithoutSynchronization(pseudoAttr, value);
 }
 
-LayoutSize Element::minimumSizeForResizing() const
-{
-    return hasRareData() ? elementRareData()->minimumSizeForResizing() : defaultMinimumSizeForResizing();
-}
-
-void Element::setMinimumSizeForResizing(const LayoutSize& size)
-{
-    if (!hasRareData() && size == defaultMinimumSizeForResizing())
-        return;
-    ensureElementRareData().setMinimumSizeForResizing(size);
-}
-
 void Element::willBecomeFullscreenElement()
 {
     for (auto& child : descendantsOfType<Element>(*this))

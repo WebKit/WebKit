@@ -39,11 +39,6 @@
 
 namespace WebCore {
 
-inline IntSize defaultMinimumSizeForResizing()
-{
-    return IntSize(LayoutUnit::max(), LayoutUnit::max());
-}
-
 class ElementRareData : public NodeRareData {
 public:
     explicit ElementRareData();
@@ -83,9 +78,6 @@ public:
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
     void setDataset(std::unique_ptr<DatasetDOMStringMap> dataset) { m_dataset = WTFMove(dataset); }
 
-    LayoutSize minimumSizeForResizing() const { return m_minimumSizeForResizing; }
-    void setMinimumSizeForResizing(LayoutSize size) { m_minimumSizeForResizing = size; }
-
     IntPoint savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
     void setSavedLayerScrollPosition(IntPoint position) { m_savedLayerScrollPosition = position; }
 
@@ -121,8 +113,6 @@ public:
         auto result = NodeRareData::useTypes();
         if (m_unusualTabIndex)
             result.add(UseType::TabIndex);
-        if (m_minimumSizeForResizing != defaultMinimumSizeForResizing())
-            result.add(UseType::MinimumSize);
         if (!m_savedLayerScrollPosition.isZero())
             result.add(UseType::ScrollingPosition);
         if (m_computedStyle)
@@ -162,7 +152,6 @@ public:
 #endif
 
 private:
-    LayoutSize m_minimumSizeForResizing;
     IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;
 
@@ -196,7 +185,6 @@ private:
 
 inline ElementRareData::ElementRareData()
     : NodeRareData(Type::Element)
-    , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }
 
