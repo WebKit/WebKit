@@ -276,6 +276,12 @@ SET_AND_EXPOSE_TO_BUILD(USE_ATSPI ${ENABLE_ACCESSIBILITY})
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTK_UNIX_PRINT_FOUND})
 SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
 
+# https://bugs.webkit.org/show_bug.cgi?id=182247
+if (ENABLED_COMPILER_SANITIZERS)
+    set(ENABLE_INTROSPECTION OFF)
+    set(ENABLE_DOCUMENTATION OFF)
+endif ()
+
 # GUri is available in GLib since version 2.66, but we only want to use it if version is >= 2.67.1.
 if (PC_GLIB_VERSION VERSION_GREATER "2.67.1" OR PC_GLIB_VERSION STREQUAL "2.67.1")
     SET_AND_EXPOSE_TO_BUILD(HAVE_GURI 1)
@@ -492,11 +498,6 @@ if (USE_LCMS)
     if (NOT LCMS2_FOUND)
         message(FATAL_ERROR "libcms2 is required for USE_LCMS.")
     endif ()
-endif ()
-
-# https://bugs.webkit.org/show_bug.cgi?id=182247
-if (ENABLED_COMPILER_SANITIZERS)
-    set(ENABLE_INTROSPECTION OFF)
 endif ()
 
 # Override the cached variable, gtk-doc does not really work when building on Mac.
