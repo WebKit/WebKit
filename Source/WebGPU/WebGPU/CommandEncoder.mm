@@ -33,6 +33,7 @@
 #import "Device.h"
 #import "QuerySet.h"
 #import "RenderPassEncoder.h"
+#import "Texture.h"
 
 namespace WebGPU {
 
@@ -556,139 +557,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     }
 }
 
-static std::optional<WGPUTextureFormat> isSRGBCompatible(WGPUTextureFormat format)
-{
-    switch (format) {
-    case WGPUTextureFormat_R8Unorm:
-    case WGPUTextureFormat_R8Snorm:
-    case WGPUTextureFormat_R8Uint:
-    case WGPUTextureFormat_R8Sint:
-    case WGPUTextureFormat_R16Uint:
-    case WGPUTextureFormat_R16Sint:
-    case WGPUTextureFormat_R16Float:
-    case WGPUTextureFormat_RG8Unorm:
-    case WGPUTextureFormat_RG8Snorm:
-    case WGPUTextureFormat_RG8Uint:
-    case WGPUTextureFormat_RG8Sint:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
-    case WGPUTextureFormat_RG16Uint:
-    case WGPUTextureFormat_RG16Sint:
-    case WGPUTextureFormat_RG16Float:
-        return std::nullopt;
-    case WGPUTextureFormat_RGBA8Unorm:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-        return WGPUTextureFormat_RGBA8Unorm;
-    case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RGBA8Uint:
-    case WGPUTextureFormat_RGBA8Sint:
-        return std::nullopt;
-    case WGPUTextureFormat_BGRA8Unorm:
-    case WGPUTextureFormat_BGRA8UnormSrgb:
-        return WGPUTextureFormat_BGRA8Unorm;
-    case WGPUTextureFormat_RGB10A2Unorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
-    case WGPUTextureFormat_RGB9E5Ufloat:
-    case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
-    case WGPUTextureFormat_RGBA16Uint:
-    case WGPUTextureFormat_RGBA16Sint:
-    case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_RGBA32Float:
-    case WGPUTextureFormat_RGBA32Uint:
-    case WGPUTextureFormat_RGBA32Sint:
-    case WGPUTextureFormat_Stencil8:
-    case WGPUTextureFormat_Depth16Unorm:
-    case WGPUTextureFormat_Depth24Plus:
-    case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
-    case WGPUTextureFormat_Depth32Float:
-    case WGPUTextureFormat_Depth32FloatStencil8:
-        return std::nullopt;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-        return WGPUTextureFormat_BC1RGBAUnorm;
-    case WGPUTextureFormat_BC2RGBAUnorm:
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-        return WGPUTextureFormat_BC2RGBAUnorm;
-    case WGPUTextureFormat_BC3RGBAUnorm:
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-        return WGPUTextureFormat_BC3RGBAUnorm;
-    case WGPUTextureFormat_BC4RUnorm:
-    case WGPUTextureFormat_BC4RSnorm:
-    case WGPUTextureFormat_BC5RGUnorm:
-    case WGPUTextureFormat_BC5RGSnorm:
-    case WGPUTextureFormat_BC6HRGBUfloat:
-    case WGPUTextureFormat_BC6HRGBFloat:
-        return std::nullopt;
-    case WGPUTextureFormat_BC7RGBAUnorm:
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-        return WGPUTextureFormat_BC7RGBAUnorm;
-    case WGPUTextureFormat_ETC2RGB8Unorm:
-    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
-        return WGPUTextureFormat_ETC2RGB8Unorm;
-    case WGPUTextureFormat_ETC2RGB8A1Unorm:
-    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
-        return WGPUTextureFormat_ETC2RGB8A1Unorm;
-    case WGPUTextureFormat_ETC2RGBA8Unorm:
-    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
-        return WGPUTextureFormat_ETC2RGBA8Unorm;
-    case WGPUTextureFormat_EACR11Unorm:
-    case WGPUTextureFormat_EACR11Snorm:
-    case WGPUTextureFormat_EACRG11Unorm:
-    case WGPUTextureFormat_EACRG11Snorm:
-        return std::nullopt;
-    case WGPUTextureFormat_ASTC4x4Unorm:
-    case WGPUTextureFormat_ASTC4x4UnormSrgb:
-        return WGPUTextureFormat_ASTC4x4Unorm;
-    case WGPUTextureFormat_ASTC5x4Unorm:
-    case WGPUTextureFormat_ASTC5x4UnormSrgb:
-        return WGPUTextureFormat_ASTC5x4Unorm;
-    case WGPUTextureFormat_ASTC5x5Unorm:
-    case WGPUTextureFormat_ASTC5x5UnormSrgb:
-        return WGPUTextureFormat_ASTC5x5Unorm;
-    case WGPUTextureFormat_ASTC6x5Unorm:
-    case WGPUTextureFormat_ASTC6x5UnormSrgb:
-        return WGPUTextureFormat_ASTC6x5Unorm;
-    case WGPUTextureFormat_ASTC6x6Unorm:
-    case WGPUTextureFormat_ASTC6x6UnormSrgb:
-        return WGPUTextureFormat_ASTC6x6Unorm;
-    case WGPUTextureFormat_ASTC8x5Unorm:
-    case WGPUTextureFormat_ASTC8x5UnormSrgb:
-        return WGPUTextureFormat_ASTC8x5Unorm;
-    case WGPUTextureFormat_ASTC8x6Unorm:
-    case WGPUTextureFormat_ASTC8x6UnormSrgb:
-        return WGPUTextureFormat_ASTC8x6Unorm;
-    case WGPUTextureFormat_ASTC8x8Unorm:
-    case WGPUTextureFormat_ASTC8x8UnormSrgb:
-        return WGPUTextureFormat_ASTC8x8Unorm;
-    case WGPUTextureFormat_ASTC10x5Unorm:
-    case WGPUTextureFormat_ASTC10x5UnormSrgb:
-        return WGPUTextureFormat_ASTC10x5Unorm;
-    case WGPUTextureFormat_ASTC10x6Unorm:
-    case WGPUTextureFormat_ASTC10x6UnormSrgb:
-        return WGPUTextureFormat_ASTC10x6Unorm;
-    case WGPUTextureFormat_ASTC10x8Unorm:
-    case WGPUTextureFormat_ASTC10x8UnormSrgb:
-        return WGPUTextureFormat_ASTC10x8Unorm;
-    case WGPUTextureFormat_ASTC10x10Unorm:
-    case WGPUTextureFormat_ASTC10x10UnormSrgb:
-        return WGPUTextureFormat_ASTC10x10Unorm;
-    case WGPUTextureFormat_ASTC12x10Unorm:
-    case WGPUTextureFormat_ASTC12x10UnormSrgb:
-        return WGPUTextureFormat_ASTC12x10Unorm;
-    case WGPUTextureFormat_ASTC12x12Unorm:
-    case WGPUTextureFormat_ASTC12x12UnormSrgb:
-        return WGPUTextureFormat_ASTC12x12Unorm;
-    case WGPUTextureFormat_Undefined:
-    case WGPUTextureFormat_Force32:
-        ASSERT_NOT_REACHED();
-        return std::nullopt;
-    }
-}
-
 static bool areCopyCompatible(WGPUTextureFormat format1, WGPUTextureFormat format2)
 {
     // https://gpuweb.github.io/gpuweb/#copy-compatible
@@ -698,14 +566,7 @@ static bool areCopyCompatible(WGPUTextureFormat format1, WGPUTextureFormat forma
         return true;
 
     // "format1 and format2 differ only in whether they are srgb formats (have the -srgb suffix)."
-    auto canonicalizedFormat1 = isSRGBCompatible(format1);
-    auto canonicalizedFormat2 = isSRGBCompatible(format2);
-    if (!canonicalizedFormat1 || !canonicalizedFormat2)
-        return false;
-    if (canonicalizedFormat1 != canonicalizedFormat1)
-        return false;
-
-    return true;
+    return Texture::removeSRGBSuffix(format1) == Texture::removeSRGBSuffix(format2);
 }
 
 static bool validateCopyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)

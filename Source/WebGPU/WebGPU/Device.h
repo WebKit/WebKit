@@ -103,7 +103,7 @@ private:
     ErrorScope* currentErrorScope(WGPUErrorFilter);
     bool validatePopErrorScope() const;
     id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
-    bool validateCreateTexture(const WGPUTextureDescriptor&);
+    bool validateCreateTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);
 
     struct Error {
         WGPUErrorType type;

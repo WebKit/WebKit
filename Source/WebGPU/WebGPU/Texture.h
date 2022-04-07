@@ -29,6 +29,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
+#import <wtf/Vector.h>
 
 struct WGPUTextureImpl {
 };
@@ -41,9 +42,9 @@ class TextureView;
 class Texture : public WGPUTextureImpl, public RefCounted<Texture> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Device& device)
+    static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
     {
-        return adoptRef(*new Texture(texture, descriptor, device));
+        return adoptRef(*new Texture(texture, descriptor, WTFMove(viewFormats), device));
     }
 
     ~Texture();
@@ -67,6 +68,7 @@ public:
     static bool isValidImageCopySource(WGPUTextureFormat, WGPUTextureAspect);
     static bool isValidImageCopyDestination(WGPUTextureFormat, WGPUTextureAspect);
     static bool validateLinearTextureData(const WGPUTextureDataLayout&, uint64_t, WGPUTextureFormat, WGPUExtent3D);
+    static WGPUTextureFormat removeSRGBSuffix(WGPUTextureFormat);
 
     WGPUExtent3D logicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
     WGPUExtent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
@@ -75,7 +77,7 @@ public:
     const WGPUTextureDescriptor& descriptor() const { return m_descriptor; }
 
 private:
-    Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Device&);
+    Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
 
     WGPUTextureViewDescriptor resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
     uint32_t arrayLayerCount() const;
@@ -84,6 +86,7 @@ private:
     const id<MTLTexture> m_texture { nil };
 
     const WGPUTextureDescriptor m_descriptor { }; // "The GPUTextureDescriptor describing this texture."
+    const Vector<WGPUTextureFormat> m_viewFormats;
 
     const Ref<Device> m_device;
 };

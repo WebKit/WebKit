@@ -1,3 +1,31 @@
+2022-04-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Implement Texture view format compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=238710
+
+        Reviewed by Kimmo Kinnunen.
+
+        Right now, the definition of texture view format compatibility is narrow enough that we'll
+        never need to add MTLTextureUsagePixelFormatView to the usage of any textures. So, all we
+        have to do is validate.
+
+        Test: http/tests/webgpu/webgpu/api/validation/createTexture.html
+
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::areCopyCompatible):
+        (WebGPU::isSRGBCompatible): Deleted.
+        * WebGPU/Device.h:
+        * WebGPU/Texture.h:
+        (WebGPU::Texture::create):
+        * WebGPU/Texture.mm:
+        (WebGPU::Texture::removeSRGBSuffix):
+        (WebGPU::textureViewFormatCompatible):
+        (WebGPU::Device::validateCreateTexture):
+        (WebGPU::usage):
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::Texture):
+        (WebGPU::Texture::validateCreateView const):
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function
