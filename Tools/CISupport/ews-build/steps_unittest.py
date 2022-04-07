@@ -45,7 +45,7 @@ import send_email
 from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, AddReviewerToChangeLog, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
-                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
+                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, ClosePullRequest, CompileJSC, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitHub, GitResetHard, GitSvnFetch,
@@ -6389,6 +6389,34 @@ class TestGitSvnFetch(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout=''),
         )
         self.expectOutcome(result=FAILURE, state_string='Recent SVN commits did not match GitHub record')
+        return self.runStep()
+
+
+class TestClosePullRequest(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        ClosePullRequest.close_pr = lambda x, pr_number, repository_url=None: True
+        self.setupStep(ClosePullRequest())
+        self.setProperty('github.number', '1234')
+        self.expectOutcome(result=SUCCESS, state_string='Closed PR 1234')
+        return self.runStep()
+
+    def test_failure(self):
+        ClosePullRequest.close_pr = lambda x, pr_number, repository_url=None: False
+        self.setupStep(ClosePullRequest())
+        self.setProperty('github.number', '1234')
+        self.expectOutcome(result=FAILURE, state_string='Failed to close PR 1234')
+        return self.runStep()
+
+    def test_skip(self):
+        self.setupStep(ClosePullRequest())
+        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
         return self.runStep()
 
 
