@@ -1,0 +1,40 @@
+<style>
+.outer {
+  width: 150px;
+}
+
+.float {
+  float: left;
+  background-color: green;
+  width: 100px;
+  height: 100px
+}
+
+.right {
+  float: right;
+  background-color: blue;
+}
+
+#float_avoider {
+  overflow: hidden;
+  width: 0px;
+}
+
+.content {
+  display: inline-block;
+  width: 100px;
+  height: 200px;
+  background: yellow;
+}
+</style>
+<div class=outer>
+  <div class="float"></div>
+  <div class="float right"></div>
+  <div id=float_avoider><span class=content></span></div>
+</div>
+<pre id=result></pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+result.innerText = "float avoider top position: " + float_avoider.offsetTop;
+</script>

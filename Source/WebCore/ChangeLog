@@ -1,3 +1,17 @@
+2022-04-07  Alan Bujtas  <zalan@apple.com>
+
+        A float avoider should never take a vertical position where a float is present even when its used width is zero
+        https://bugs.webkit.org/show_bug.cgi?id=238895
+
+        Reviewed by Antti Koivisto.
+
+        A zero width available space is never a valid vertical position for a float avoider even when its width is zero too.
+
+        Test: fast/block/float/float-avoider-with-zero-width.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::getClearDelta): skip and check the next candidate poisition when no space is available.
+
 2022-04-07  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for :autofill pseudo class

@@ -1,0 +1,33 @@
+<style>
+.outer {
+  width: 150px;
+}
+
+.float {
+  float: left;
+  background-color: green;
+  width: 100px;
+  height: 100px
+}
+
+.right {
+  float: right;
+  background-color: blue;
+}
+
+.float_avoider {
+  overflow: hidden;
+}
+
+.content {
+  display: inline-block;
+  width: 100px;
+  height: 200px;
+  background: yellow;
+}
+</style>
+<div class=outer>
+  <div class="float"></div>
+  <div class="float right"></div>
+  <div class=float_avoider><span class=content></span></div>
+</div>

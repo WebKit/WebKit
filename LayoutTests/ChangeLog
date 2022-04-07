@@ -1,3 +1,14 @@
+2022-04-07  Alan Bujtas  <zalan@apple.com>
+
+        A float avoider should never take a vertical position where a float is present even when its used width is zero
+        https://bugs.webkit.org/show_bug.cgi?id=238895
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: inline-size-bfc-floats.html: never produced correct rendering, the red box just happened to be hidden (which made this test pass).
+        * fast/block/float/float-avoider-with-zero-width-expected.html: Added.
+        * fast/block/float/float-avoider-with-zero-width.html: Added.
+
 2022-04-07  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for :autofill pseudo class
