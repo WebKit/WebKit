@@ -1,3 +1,39 @@
+2022-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Have ImageBuffer store the RenderingPurpose, and send it to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=238887
+
+        Reviewed by Said Abou-Hallawa.
+        
+        Add RenderingPurpose to ImageBufferBackend::Parameters so it's stored on ImageBufferBackend/ImageBuffer,
+        and propagate that to the GPU process.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::create):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::allocateBufferForBackingStore):
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::allocateBufferForBackingStore):
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::RemoteDisplayListRecorderProxy::createImageBuffer const):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createRemoteImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+
 2022-04-07  Youenn Fablet  <youenn@apple.com>
 
         Use the same callback mechanism for ServiceWorker openWindow and navigate in UIProcess

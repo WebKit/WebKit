@@ -88,6 +88,7 @@ public:
     virtual ImageBufferBackend* ensureBackendCreated() const = 0;
 
     virtual RenderingMode renderingMode() const = 0;
+    virtual RenderingPurpose renderingPurpose() const = 0;
     virtual bool canMapBackingStore() const = 0;
     virtual RenderingResourceIdentifier renderingResourceIdentifier() const { return { }; }
 

@@ -365,7 +365,7 @@ void DrawingAreaWC::commitLayerUpateInfo(WCLayerUpateInfo&& info)
 RefPtr<ImageBuffer> DrawingAreaWC::createImageBuffer(FloatSize size)
 {
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM))
-        return m_webPage.ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        return m_webPage.ensureRemoteRenderingBackendProxy().createImageBuffer(size, RenderingPurpose::DOM, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     return ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, nullptr);
 }
 

@@ -37,9 +37,9 @@ template<typename BackendType>
 class ConcreteImageBuffer : public ImageBuffer {
 public:
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const CreationContext& creationContext, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const CreationContext& creationContext, Arguments&&... arguments)
     {
-        auto parameters = ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat };
+        auto parameters = ImageBufferBackend::Parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
         auto backend = BackendType::create(parameters, creationContext);
         if (!backend)
             return nullptr;
@@ -47,9 +47,9 @@ public:
     }
 
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose, Arguments&&... arguments)
     {
-        auto parameters = ImageBufferBackend::Parameters { size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
+        auto parameters = ImageBufferBackend::Parameters { size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, purpose };
         auto backend = BackendType::create(parameters, context);
         if (!backend)
             return nullptr;
@@ -97,6 +97,7 @@ protected:
     IntSize truncatedLogicalSize() const override { return IntSize(m_parameters.logicalSize); } // You probably should be calling logicalSize() instead.
     float resolutionScale() const override { return m_parameters.resolutionScale; }
     DestinationColorSpace colorSpace() const override { return m_parameters.colorSpace; }
+    RenderingPurpose renderingPurpose() const override { return m_parameters.purpose; }
     PixelFormat pixelFormat() const override { return m_parameters.pixelFormat; }
     const ImageBufferBackend::Parameters& parameters() const override { return m_parameters; }
 

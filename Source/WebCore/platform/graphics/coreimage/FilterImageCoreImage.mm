@@ -55,7 +55,7 @@ ImageBuffer* FilterImage::imageBufferFromCIImage()
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = IOSurfaceImageBuffer::create(m_absoluteImageRect.size(), 1, m_colorSpace, PixelFormat::BGRA8);
+    m_imageBuffer = IOSurfaceImageBuffer::create(m_absoluteImageRect.size(), 1, m_colorSpace, PixelFormat::BGRA8, RenderingPurpose::Unspecified);
     if (!m_imageBuffer)
         return nullptr;
 

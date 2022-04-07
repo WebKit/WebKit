@@ -40,14 +40,14 @@ class ImageBuffer final : public ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer::baseTransform;
 
 public:
-    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const WebCore::ImageBuffer::CreationContext& creationContext)
+    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const WebCore::ImageBuffer::CreationContext& creationContext)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, creationContext);
+        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
 
-    static auto create(const FloatSize& size, const GraphicsContext& context)
+    static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, context);
+        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, context, purpose);
     }
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend)

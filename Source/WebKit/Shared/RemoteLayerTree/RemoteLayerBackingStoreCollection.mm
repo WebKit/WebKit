@@ -264,9 +264,9 @@ RefPtr<WebCore::ImageBuffer> RemoteLayerBackingStoreCollection::allocateBufferFo
 {
     switch (backingStore.type()) {
     case RemoteLayerBackingStore::Type::IOSurface:
-        return WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(backingStore.size(), backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat(), { nullptr, &WebCore::IOSurfacePool::sharedPool() });
+        return WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(backingStore.size(), backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat(), WebCore::RenderingPurpose::DOM, { nullptr, &WebCore::IOSurfacePool::sharedPool() });
     case RemoteLayerBackingStore::Type::Bitmap:
-        return WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStore.size(), backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat(), { });
+        return WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStore.size(), backingStore.scale(), WebCore::DestinationColorSpace::SRGB(), backingStore.pixelFormat(), WebCore::RenderingPurpose::DOM, { });
     }
     return nullptr;
 }

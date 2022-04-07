@@ -44,10 +44,10 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
     // Give UseDisplayList a higher precedence since it is a debug option.
     if (options.contains(ImageBufferOptions::UseDisplayList)) {
         if (options.contains(ImageBufferOptions::Accelerated))
-            imageBuffer = DisplayListAcceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, creationContext);
+            imageBuffer = DisplayListAcceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
         
         if (!imageBuffer)
-            imageBuffer = DisplayListUnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, creationContext);
+            imageBuffer = DisplayListUnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
     
     if (creationContext.hostWindow && !imageBuffer) {
@@ -59,10 +59,10 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
         return imageBuffer;
 
     if (options.contains(ImageBufferOptions::Accelerated))
-        imageBuffer = AcceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, creationContext);
+        imageBuffer = AcceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     
     if (!imageBuffer)
-        imageBuffer = UnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, creationContext);
+        imageBuffer = UnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
 
     return imageBuffer;
 }

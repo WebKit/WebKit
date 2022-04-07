@@ -865,6 +865,16 @@ template<> struct EnumTraits<WebCore::RenderingMode> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::RenderingPurpose> {
+    using values = EnumValues<
+        WebCore::RenderingPurpose,
+        WebCore::RenderingPurpose::Unspecified,
+        WebCore::RenderingPurpose::Canvas,
+        WebCore::RenderingPurpose::DOM,
+        WebCore::RenderingPurpose::MediaPainting
+    >;
+};
+
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 template<> struct EnumTraits<WebCore::MockContentFilterSettings::DecisionPoint> {
     using values = EnumValues<

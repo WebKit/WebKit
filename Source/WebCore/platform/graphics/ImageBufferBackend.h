@@ -89,6 +89,7 @@ public:
         float resolutionScale;
         DestinationColorSpace colorSpace;
         PixelFormat pixelFormat;
+        RenderingPurpose purpose;
     };
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
@@ -171,6 +172,7 @@ protected:
     float resolutionScale() const { return m_parameters.resolutionScale; }
     const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
+    RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
 
     IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };
     IntRect backendRect() const { return IntRect(IntPoint::zero(), backendSize()); };

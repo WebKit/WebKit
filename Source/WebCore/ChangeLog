@@ -1,3 +1,25 @@
+2022-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Have ImageBuffer store the RenderingPurpose, and send it to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=238887
+
+        Reviewed by Said Abou-Hallawa.
+
+        Add RenderingPurpose to ImageBufferBackend::Parameters so it's stored on ImageBufferBackend/ImageBuffer,
+        and propagate that to the GPU process.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+        (WebCore::ConcreteImageBuffer::create):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::create):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferBackend.h:
+        (WebCore::ImageBufferBackend::renderingPurpose const):
+        * platform/graphics/PlatformImageBuffer.h:
+        * platform/graphics/coreimage/FilterImageCoreImage.mm:
+        (WebCore::FilterImage::imageBufferFromCIImage):
+        * platform/graphics/displaylists/DisplayListImageBuffer.h:
+
 2022-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust and refactor some UA styles and logic for injecting Live Text

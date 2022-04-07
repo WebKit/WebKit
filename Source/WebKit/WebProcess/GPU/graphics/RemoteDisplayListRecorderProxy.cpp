@@ -449,7 +449,9 @@ RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const Floa
     if (renderingMethod)
         return Recorder::createImageBuffer(size, resolutionScale, colorSpace, renderingMode, renderingMethod);
 
-    return m_renderingBackend->createImageBuffer(size, renderingMode.value_or(this->renderingMode()), resolutionScale, colorSpace, PixelFormat::BGRA8);
+    // FIXME: Ideally we'd plumb the purpose through for callers of GraphicsContext::createImageBuffer().
+    RenderingPurpose purpose = m_imageBuffer ? m_imageBuffer->renderingPurpose() : RenderingPurpose::Unspecified;
+    return m_renderingBackend->createImageBuffer(size, renderingMode.value_or(this->renderingMode()), purpose, resolutionScale, colorSpace, PixelFormat::BGRA8);
 }
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createAlignedImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
