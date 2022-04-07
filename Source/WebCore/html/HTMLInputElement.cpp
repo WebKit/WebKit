@@ -1911,8 +1911,6 @@ void HTMLInputElement::maxLengthAttributeChanged(const AtomString& newValue)
     if (oldEffectiveMaxLength != effectiveMaxLength())
         updateValueIfNeeded();
 
-    // FIXME: Do we really need to do this if the effective maxLength has not changed?
-    invalidateStyleForSubtree();
     updateValidity();
 }
 
@@ -1923,8 +1921,6 @@ void HTMLInputElement::minLengthAttributeChanged(const AtomString& newValue)
     if (oldMinLength != minLength())
         updateValueIfNeeded();
 
-    // FIXME: Do we really need to do this if the effective minLength has not changed?
-    invalidateStyleForSubtree();
     updateValidity();
 }
 

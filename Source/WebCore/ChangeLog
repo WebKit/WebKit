@@ -1,3 +1,16 @@
+2022-04-07  Tim Nguyen  <ntim@apple.com>
+
+        Remove redundant invalidateStyleForSubtree() calls
+        https://bugs.webkit.org/show_bug.cgi?id=238922
+
+        Reviewed by Antti Koivisto.
+
+        These calls were for :invalid/:valid validation, which now are invalidated using Style::PseudoClassChangeInvalidation.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::maxLengthAttributeChanged):
+        (WebCore::HTMLInputElement::minLengthAttributeChanged):
+
 2022-04-07  Chris Dumez  <cdumez@apple.com>
 
         Drop unused EditorClient::getAutoCorrectSuggestionForMisspelledWord()
