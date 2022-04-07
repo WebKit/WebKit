@@ -374,6 +374,16 @@ class ShellMixin(object):
         return 'true'
 
 
+class AddToLogMixin(object):
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+
 class Contributors(object):
     url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json'
     contributors = {}
@@ -432,7 +442,7 @@ class Contributors(object):
         return contributors, errors
 
 
-class ConfigureBuild(buildstep.BuildStep):
+class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
     name = 'configure-build'
     description = ['configuring build']
     descriptionDone = ['Configured build']
@@ -450,14 +460,6 @@ class ConfigureBuild(buildstep.BuildStep):
         self.triggered_by = triggered_by
         self.remotes = remotes
         self.additionalArguments = additionalArguments
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def start(self):
         if self.platform and self.platform != '*':
@@ -848,7 +850,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
         return super(CheckOutPullRequest, self).getResultSummary()
 
 
-class AnalyzeChange(buildstep.BuildStep):
+class AnalyzeChange(buildstep.BuildStep, AddToLogMixin):
     flunkOnFailure = True
     haltOnFailure = True
 
@@ -859,14 +861,6 @@ class AnalyzeChange(buildstep.BuildStep):
         if sourcestamp and sourcestamp.patch:
             return sourcestamp.patch[1]
         return None
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     @property
     def change_type(self):
@@ -1051,18 +1045,11 @@ class Bugzilla(object):
         return '{}attachment.cgi?id={}&action=prettypatch'.format(BUG_SERVER_URL, patch_id)
 
 
-class BugzillaMixin(object):
+class BugzillaMixin(AddToLogMixin):
     addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
     fast_cq_preambles = ('revert of r', 'fast-cq', '[fast-cq]')
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def fetch_data_from_url_with_authentication(self, url):
         response = None
@@ -1487,21 +1474,13 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         return True
 
 
-class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin):
+class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
 
     def __init__(self, *args, **kwargs):
         super(ValidateCommitterAndReviewer, self).__init__(*args, **kwargs)
         self.contributors = {}
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def getResultSummary(self):
         if self.results == FAILURE:
@@ -1648,16 +1627,8 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
         return not self.doStepIf(step)
 
 
-class BlockPullRequest(buildstep.BuildStep, GitHubMixin):
+class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'block-pull-request'
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def start(self):
         pr_number = self.getProperty('github.number', '')
@@ -1929,7 +1900,7 @@ class CheckStyle(TestWithFailureCount):
         return int(match.group('errors'))
 
 
-class RunBindingsTests(shell.ShellCommand):
+class RunBindingsTests(shell.ShellCommand, AddToLogMixin):
     name = 'bindings-tests'
     description = ['bindings-tests running']
     descriptionDone = ['bindings-tests']
@@ -1968,14 +1939,6 @@ class RunBindingsTests(shell.ShellCommand):
         message = 'Found {} Binding test failure{}: {}'.format(len(failures), pluralSuffix, failures_string)
         self.build.buildFinished([message], FAILURE)
         return {'step': message}
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
 
 class RunWebKitPerlTests(shell.ShellCommand):
@@ -2093,7 +2056,7 @@ class RunResultsdbpyTests(shell.ShellCommand):
         return {'step': 'Failed resultsdbpy unit tests'}
 
 
-class WebKitPyTest(shell.ShellCommand):
+class WebKitPyTest(shell.ShellCommand, AddToLogMixin):
     language = 'python'
     descriptionDone = ['webkitpy-tests']
     flunkOnFailure = True
@@ -2145,14 +2108,6 @@ class WebKitPyTest(shell.ShellCommand):
             message += ' ...'
         self.setBuildSummary(message)
         return {'step': message}
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
 
 class RunWebKitPyPython2Tests(WebKitPyTest):
@@ -2236,7 +2191,7 @@ class BuildLogLineObserver(logobserver.LogLineObserver, object):
             self.error_context_buffer = []
 
 
-class CompileWebKit(shell.Compile):
+class CompileWebKit(shell.Compile, AddToLogMixin):
     name = 'compile-webkit'
     description = ['compiling']
     descriptionDone = ['Compiled WebKit']
@@ -2282,14 +2237,6 @@ class CompileWebKit(shell.Compile):
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
 
         return shell.Compile.start(self)
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def errorReceived(self, error):
         self._addToLog('errors', error + '\n')
@@ -2560,7 +2507,7 @@ class CompileJSCWithoutChange(CompileJSC):
         return shell.Compile.evaluateCommand(self, cmd)
 
 
-class RunJavaScriptCoreTests(shell.Test):
+class RunJavaScriptCoreTests(shell.Test, AddToLogMixin):
     name = 'jscore-test'
     description = ['jscore-tests running']
     descriptionDone = ['jscore-tests']
@@ -2672,14 +2619,6 @@ class RunJavaScriptCoreTests(shell.Test):
 
         return shell.Test.getResultSummary(self)
 
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
-
 
 class RunJSCTestsWithoutChange(RunJavaScriptCoreTests):
     name = 'jscore-test-without-change'
@@ -2691,7 +2630,7 @@ class RunJSCTestsWithoutChange(RunJavaScriptCoreTests):
         return rc
 
 
-class AnalyzeJSCTestsResults(buildstep.BuildStep):
+class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
     name = 'analyze-jsc-tests-results'
     description = ['analyze-jsc-test-results']
     descriptionDone = ['analyze-jsc-tests-results']
@@ -2778,14 +2717,6 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep):
         self.descriptionDone = message
         self.build.buildFinished([message], FAILURE)
         return defer.succeed(None)
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def send_email_for_flaky_failure(self, test_name):
         try:
@@ -2880,7 +2811,7 @@ class WaitForCrashCollection(shell.Compile):
         return shell.Compile.getResultSummary(self)
 
 
-class RunWebKitTests(shell.Test):
+class RunWebKitTests(shell.Test, AddToLogMixin):
     name = 'layout-tests'
     description = ['layout-tests running']
     descriptionDone = ['layout-tests']
@@ -2946,14 +2877,6 @@ class RunWebKitTests(shell.Test):
         if match_object:
             return match_object.group('message')
         return line
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def _parseRunWebKitTestsOutput(self, logText):
         incorrectLayoutLines = []
@@ -4016,7 +3939,7 @@ class RunAPITestsWithoutChange(RunAPITests):
         return TestWithFailureCount.evaluateCommand(self, cmd)
 
 
-class AnalyzeAPITestsResults(buildstep.BuildStep):
+class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
     name = 'analyze-api-tests-results'
     description = ['analyze-api-test-results']
     descriptionDone = ['analyze-api-tests-results']
@@ -4101,14 +4024,6 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
                 for flaky_failure in flaky_failures:
                     self.send_email_for_flaky_failure(flaky_failure)
             self.build.buildFinished([message], SUCCESS)
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def getBuildStepByName(self, name):
         for step in self.build.executedSteps:
@@ -4577,14 +4492,6 @@ class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
             self._addToLog('stdio', 'Failed to access {}\n'.format(url))
             return -1
 
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
-
     def start(self):
         patch_id = self.getProperty('patch_id', '')
         patch_status_on_mac_wk2 = self.get_patch_status(patch_id, 'mac-wk2')
@@ -4968,7 +4875,8 @@ class PushPullRequestBranch(shell.ShellCommand):
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
 
-class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
+
+class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
     name = 'update-pull-request'
     haltOnFailure = True
     command = ['git', 'log', '-1', '--no-decorate']
@@ -4994,14 +4902,6 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin):
 
     def __init__(self, **kwargs):
         super(UpdatePullRequest, self).__init__(logEnviron=False, timeout=300, **kwargs)
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
 
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         self.log_observer = BufferLogObserverClass(wantStderr=True)
