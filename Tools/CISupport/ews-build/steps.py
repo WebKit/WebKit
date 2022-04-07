@@ -4854,7 +4854,7 @@ class PushPullRequestBranch(shell.ShellCommand):
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         remote = self.getProperty('github.head.repo.full_name').split('/')[0]
         head_ref = self.getProperty('github.head.ref')
-        self.command = ['git', 'push', remote, head_ref, '-f']
+        self.command = ['git', 'push', '-f', remote, f'HEAD:{head_ref}']
 
         username, access_token = GitHub.credentials()
         self.workerEnvironment['GIT_USER'] = username

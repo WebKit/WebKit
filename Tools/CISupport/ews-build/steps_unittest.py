@@ -6211,7 +6211,7 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         timeout=300,
                         env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
-                        command=['git', 'push', 'Contributor', 'eng/pull-request-branch', '-f'])
+                        command=['git', 'push', '-f', 'Contributor', 'HEAD:eng/pull-request-branch'])
             + 0
             + ExpectShell.log('stdio', stdout='To https://github.com/Contributor/WebKit.git\n37b7da95723b...9e2cb83b07b6 eng/pull-request-branch -> eng/pull-request-branch (forced update)\n'),
         )
@@ -6230,7 +6230,7 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
                         logEnviron=False,
                         timeout=300,
                         env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
-                        command=['git', 'push', 'Contributor', 'eng/pull-request-branch', '-f'])
+                        command=['git', 'push', '-f', 'Contributor', 'HEAD:eng/pull-request-branch'])
             + 1
             + ExpectShell.log('stdio', stdout="fatal: could not read Username for 'https://github.com': Device not configured\n"),
         )
