@@ -1,3 +1,17 @@
+2022-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust and refactor some UA styles and logic for injecting Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=238912
+        rdar://91383570
+
+        Reviewed by Aditya Keerthi.
+
+        Add a layout test to exercise "block"-style Live Text injection, in the case where the injected text contains
+        newlines. The resulting selected text should preserve the newline.
+
+        * fast/images/text-recognition/image-overlay-block-with-newlines-expected.txt: Added.
+        * fast/images/text-recognition/image-overlay-block-with-newlines.html: Added.
+
 2022-04-07  Alan Bujtas  <zalan@apple.com>
 
         Fix the expected failure type.

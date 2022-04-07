@@ -1,3 +1,35 @@
+2022-04-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust and refactor some UA styles and logic for injecting Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=238912
+        rdar://91383570
+
+        Reviewed by Aditya Keerthi.
+
+        Adjust various Live-Text-related UA styles for "text recognition blocks", along with other miscellaneous
+        adjustments:
+
+        -   Compute and set the border radius, based on the font size and overall height of the block.
+        -   Add horizontal/vertical padding to text recognition, computed relative to the border radius.
+        -   Allow hyphenation in blocks.
+        -   Only center-align text in blocks if there are fewer than 3 text runs in the block.
+        -   Adjust box shadows, backdrop filter blur radius and line height.
+        -   Specify a `line-height`, such that `line-height` from the host element doesn't erroneously apply to blocks.
+        -   Handle text recognition blocks with newline characters (\n) by injecting line break elements between text.
+
+        Test: fast/images/text-recognition/image-overlay-block-with-newlines.html
+
+        * dom/ImageOverlay.cpp:
+        (WebCore::ImageOverlay::updateSubtree):
+        (WebCore::ImageOverlay::fitElementToQuad):
+        (WebCore::ImageOverlay::updateWithTextRecognitionResult):
+        * html/shadow/imageOverlay.css:
+        (:host(:not(img)) div#image-overlay:-webkit-full-screen-document):
+        (div.image-overlay-block):
+        (div.image-overlay-line, .image-overlay-text, div.image-overlay-block):
+        (div.image-overlay-line, .image-overlay-text):
+        (.image-overlay-block):
+
 2022-04-07  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified build fixes
