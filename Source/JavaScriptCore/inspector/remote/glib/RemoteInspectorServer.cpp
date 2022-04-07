@@ -182,16 +182,16 @@ RemoteInspectorServer::~RemoteInspectorServer()
         g_signal_handlers_disconnect_matched(m_service.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 }
 
-bool RemoteInspectorServer::start(const char* address, unsigned port)
+bool RemoteInspectorServer::start(GRefPtr<GSocketAddress>&& socketAddress)
 {
     m_service = adoptGRef(g_socket_service_new());
     g_signal_connect(m_service.get(), "incoming", G_CALLBACK(incomingConnectionCallback), this);
 
-    GRefPtr<GSocketAddress> socketAddress = adoptGRef(g_inet_socket_address_new_from_string(address, port));
     GRefPtr<GSocketAddress> effectiveAddress;
     GUniqueOutPtr<GError> error;
     if (!g_socket_listener_add_address(G_SOCKET_LISTENER(m_service.get()), socketAddress.get(), G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, nullptr, &effectiveAddress.outPtr(), &error.outPtr())) {
-        g_warning("Failed to start remote inspector server on %s:%u: %s\n", address, port, error->message);
+        GUniquePtr<char> address(g_socket_connectable_to_string(G_SOCKET_CONNECTABLE(socketAddress.get())));
+        g_warning("Failed to start remote inspector server on %s: %s", address.get(), error->message);
         return false;
     }
 

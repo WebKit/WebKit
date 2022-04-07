@@ -1,3 +1,14 @@
+2022-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] RemoteInspector add support for IPv6
+        https://bugs.webkit.org/show_bug.cgi?id=238797
+
+        Reviewed by Adrian Perez de Castro.
+
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::start): Receive a GSocketAddress instead of address and port parameters.
+        * inspector/remote/glib/RemoteInspectorServer.h:
+
 2022-04-06  Saam Barati  <sbarati@apple.com>
 
         Call Structure::get instead of Structure::getConcurrently on the mutator thread

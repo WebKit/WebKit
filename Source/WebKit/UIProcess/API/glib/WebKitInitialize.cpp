@@ -30,7 +30,9 @@
 #include "WebKit2Initialize.h"
 #include <JavaScriptCore/RemoteInspector.h>
 #include <JavaScriptCore/RemoteInspectorServer.h>
+#include <limits>
 #include <mutex>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -46,7 +48,7 @@ static void initializeRemoteInspectorServer()
     if (Inspector::RemoteInspectorServer::singleton().isRunning())
         return;
 
-    auto parseAddress = [](const char* address, guint64& port) -> GUniquePtr<char> {
+    auto parseAddress = [](const char* address) -> GRefPtr<GSocketAddress> {
         if (!address || !address[0])
             return nullptr;
 
@@ -57,29 +59,37 @@ static void initializeRemoteInspectorServer()
 
         *portPtr = '\0';
         portPtr++;
-        port = g_ascii_strtoull(portPtr, nullptr, 10);
-        if (!port)
+        auto port = g_ascii_strtoull(portPtr, nullptr, 10);
+        if (!port || port > std::numeric_limits<uint16_t>::max())
             return nullptr;
 
-        return inspectorAddress;
+        char* addressPtr = inspectorAddress.get();
+        if (addressPtr[0] == '[' && *(portPtr - 2) == ']') {
+            // Strip the square brackets.
+            addressPtr++;
+            *(portPtr - 2) = '\0';
+        }
+
+        return adoptGRef(g_inet_socket_address_new_from_string(addressPtr, port));
     };
 
-    guint64 inspectorHTTPPort;
-    auto inspectorHTTPAddress = parseAddress(httpAddress, inspectorHTTPPort);
-    guint64 inspectorPort;
-    auto inspectorAddress = !httpAddress ? parseAddress(address, inspectorPort) : GUniquePtr<char>();
-    if (!inspectorHTTPAddress && !inspectorAddress)
+    auto inspectorHTTPAddress = parseAddress(httpAddress);
+    GRefPtr<GSocketAddress> inspectorAddress;
+    if (inspectorHTTPAddress)
+        inspectorAddress = adoptGRef(G_SOCKET_ADDRESS(g_inet_socket_address_new(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(inspectorHTTPAddress.get())), 0)));
+    else
+        inspectorAddress = parseAddress(address);
+    if (!inspectorHTTPAddress && !inspectorAddress) {
+        g_warning("Failed to start remote inspector server on %s: invalid address", address ? address : httpAddress);
+        return;
+    }
+
+    if (!Inspector::RemoteInspectorServer::singleton().start(WTFMove(inspectorAddress)))
         return;
 
-    if (!Inspector::RemoteInspectorServer::singleton().start(inspectorAddress ? inspectorAddress.get() : inspectorHTTPAddress.get(), inspectorAddress ? inspectorPort : 0))
-        return;
-
-    Inspector::RemoteInspector::setInspectorServerAddress(address);
-
-    if (httpAddress) {
-        inspectorAddress.reset(g_strdup_printf("%s:%u", inspectorHTTPAddress.get(), Inspector::RemoteInspectorServer::singleton().port()));
-        Inspector::RemoteInspector::setInspectorServerAddress(inspectorAddress.get());
-        RemoteInspectorHTTPServer::singleton().start(inspectorHTTPAddress.get(), inspectorHTTPPort, Inspector::RemoteInspectorServer::singleton().port());
+    if (inspectorHTTPAddress) {
+        if (RemoteInspectorHTTPServer::singleton().start(WTFMove(inspectorHTTPAddress), Inspector::RemoteInspectorServer::singleton().port()))
+            Inspector::RemoteInspector::setInspectorServerAddress(RemoteInspectorHTTPServer::singleton().inspectorServerAddress().utf8());
     } else
         Inspector::RemoteInspector::setInspectorServerAddress(address);
 }

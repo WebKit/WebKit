@@ -33,6 +33,7 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/SocketConnection.h>
 
+typedef struct _GSocketAddress GSocketAddress;
 typedef struct _GSocketConnection GSocketConnection;
 typedef struct _GSocketService GSocketService;
 
@@ -43,7 +44,7 @@ public:
     JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
     ~RemoteInspectorServer();
 
-    JS_EXPORT_PRIVATE bool start(const char* address, unsigned port);
+    JS_EXPORT_PRIVATE bool start(GRefPtr<GSocketAddress>&&);
     bool isRunning() const { return !!m_service; }
     uint16_t port() const { return m_port; }
 

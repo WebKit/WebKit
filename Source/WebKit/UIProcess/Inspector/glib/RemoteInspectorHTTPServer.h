@@ -38,8 +38,9 @@ public:
     static RemoteInspectorHTTPServer& singleton();
     ~RemoteInspectorHTTPServer() = default;
 
-    bool start(const char* address, unsigned port, unsigned inspectorPort);
+    bool start(GRefPtr<GSocketAddress>&&, unsigned inspectorPort);
     bool isRunning() const { return !!m_server; }
+    const String& inspectorServerAddress() const;
 
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const String& message) const;
     void targetDidClose(uint64_t connectionID, uint64_t targetID);

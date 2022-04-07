@@ -42,18 +42,14 @@ RemoteInspectorHTTPServer& RemoteInspectorHTTPServer::singleton()
     return server;
 }
 
-bool RemoteInspectorHTTPServer::start(const char* address, unsigned port, unsigned inspectorPort)
+bool RemoteInspectorHTTPServer::start(GRefPtr<GSocketAddress>&& socketAddress, unsigned inspectorPort)
 {
     m_server = adoptGRef(soup_server_new("server-header", "WebKitInspectorHTTPServer ", nullptr));
-    GRefPtr<GSocketAddress> socketAddress = adoptGRef(g_inet_socket_address_new_from_string(address, port));
-    if (!socketAddress) {
-        g_warning("Failed to start remote inspector HTTP server on %s:%u: invalid address", address, port);
-        return false;
-    }
 
     GUniqueOutPtr<GError> error;
     if (!soup_server_listen(m_server.get(), socketAddress.get(), static_cast<SoupServerListenOptions>(0), &error.outPtr())) {
-        g_warning("Failed to start remote inspector HTTP server on %s:%u: %s", address, port, error->message);
+        GUniquePtr<char> address(g_socket_connectable_to_string(G_SOCKET_CONNECTABLE(socketAddress.get())));
+        g_warning("Failed to start remote inspector HTTP server on %s: %s", address.get(), error->message);
         return false;
     }
 
@@ -78,9 +74,21 @@ bool RemoteInspectorHTTPServer::start(const char* address, unsigned port, unsign
             httpServer.handleWebSocket(path, connection);
         }, this, nullptr);
 
-    m_client = makeUnique<RemoteInspectorClient>(address, inspectorPort, *this);
+    auto* inetAddress = g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(socketAddress.get()));
+    GUniquePtr<char> host(g_inet_address_to_string(inetAddress));
+    GUniquePtr<char> inspectorServerAddress;
+    if (g_inet_address_get_family(inetAddress) == G_SOCKET_FAMILY_IPV6)
+        inspectorServerAddress.reset(g_strdup_printf("[%s]:%u", host.get(), inspectorPort));
+    else
+        inspectorServerAddress.reset(g_strdup_printf("%s:%u", host.get(), inspectorPort));
+    m_client = makeUnique<RemoteInspectorClient>(String::fromUTF8(inspectorServerAddress.get()), *this);
 
     return true;
+}
+
+const String& RemoteInspectorHTTPServer::inspectorServerAddress() const
+{
+    return m_client ? m_client->hostAndPort() : emptyString();
 }
 
 unsigned RemoteInspectorHTTPServer::handleRequest(const char* path, SoupMessageHeaders* responseHeaders, SoupMessageBody* responseBody) const

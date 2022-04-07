@@ -167,8 +167,8 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
     return messageHandlers;
 }
 
-RemoteInspectorClient::RemoteInspectorClient(const char* address, unsigned port, RemoteInspectorObserver& observer)
-    : m_hostAndPort(String::fromUTF8(address) + ':' + String::number(port))
+RemoteInspectorClient::RemoteInspectorClient(String&& hostAndPort, RemoteInspectorObserver& observer)
+    : m_hostAndPort(WTFMove(hostAndPort))
     , m_observer(observer)
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {

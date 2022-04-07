@@ -1,3 +1,24 @@
+2022-04-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] RemoteInspector add support for IPv6
+        https://bugs.webkit.org/show_bug.cgi?id=238797
+
+        Reviewed by Adrian Perez de Castro.
+
+        Make it possible to connect to remote inspector server using IPv6 address.
+
+        * UIProcess/API/glib/WebKitInitialize.cpp:
+        (WebKit::initializeRemoteInspectorServer): Parse IPv6 address and build GSocketAddress to pass to inspector ot
+        HTTP server.
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest): RemoteInspectorClient now expects host and port in a
+        single String.
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::RemoteInspectorClient): Receive the host and port in a String.
+        * UIProcess/Inspector/glib/RemoteInspectorClient.h:
+        * UIProcess/Inspector/glib/RemoteInspectorHTTPServer.cpp:
+        * UIProcess/Inspector/glib/RemoteInspectorHTTPServer.h:
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Improve API::SerializedScriptValue::deserialize to not allocate a new JSContext every second

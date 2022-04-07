@@ -51,7 +51,7 @@ public:
 class RemoteInspectorClient {
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    RemoteInspectorClient(const char* address, unsigned port, RemoteInspectorObserver&);
+    RemoteInspectorClient(String&& hostAndPort, RemoteInspectorObserver&);
     ~RemoteInspectorClient();
 
     const String& hostAndPort() const { return m_hostAndPort; }

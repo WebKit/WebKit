@@ -121,7 +121,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     }
 
     auto* client = m_inspectorClients.ensure(requestURL.hostAndPort(), [this, &requestURL] {
-        return makeUnique<RemoteInspectorClient>(requestURL.host().utf8().data(), requestURL.port().value(), *this);
+        return makeUnique<RemoteInspectorClient>(requestURL.hostAndPort(), *this);
     }).iterator->value.get();
 
     auto* html = client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI);
