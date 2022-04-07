@@ -645,9 +645,10 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'add-reviewer-to-changelog',
             'validate-commit-message',
             'validate-changelog-and-reviewer',
+            'validate-change',
             'canonicalize-commit',
-            'push-pull-request-branch',
-            'update-pull-request',
+            'push-commit-to-webkit-repo',
+            'set-build-summary'
         ],
     }
 

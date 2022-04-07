@@ -47,7 +47,7 @@ from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, AddRevi
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, ClosePullRequest, CompileJSC, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
-                   DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
+                   DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitHub, GitResetHard, GitSvnFetch,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
@@ -5325,6 +5325,88 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
+    def test_success(self):
+        self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('patch_id', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'svn', 'dcommit', '--rmdir']) +
+            ExpectShell.log('stdio', stdout='Committed r256729') +
+            0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
+        self.assertEqual(self.getProperty('svn_revision'), '256729')
+        return rc
+
+    def test_failure_retry(self):
+        self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('patch_id', '2345')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'svn', 'dcommit', '--rmdir']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
+        self.assertEqual(self.getProperty('retry_count'), 1)
+        self.assertEqual(self.getProperty('svn_revision'), None)
+        return rc
+
+    def test_failure_patch(self):
+        self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
+        self.setProperty('patch_id', '2345')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'svn', 'dcommit', '--rmdir']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
+        self.assertEqual(self.getProperty('comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
+        return rc
+
+    def test_failure_pr(self):
+        self.setupStep(PushCommitToWebKitRepo())
+        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
+        self.setProperty('github.number', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'svn', 'dcommit', '--rmdir']) +
+            ExpectShell.log('stdio', stdout='Unexpected failure') +
+            2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
+        self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
+        self.assertEqual(self.getProperty('comment_text'), 'merge-queue failed to commit PR to repository. To retry, remove any blocking labels and re-apply merge-queue label')
+        return rc
+
+
+class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
     def mock_commits_webkit_org(self, identifier=None):
         class Response(object):
             def __init__(self, data=None, status_code=200):
@@ -5347,87 +5429,127 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
     def mock_sleep(cls):
         return patch('time.sleep', lambda _: None)
 
-
-    def test_success(self):
-        with self.mock_commits_webkit_org(identifier='220797@main'), self.mock_sleep():
-            self.setupStep(PushCommitToWebKitRepo())
-            self.setProperty('patch_id', '1234')
-            self.expectRemoteCommands(
-                ExpectShell(workdir='wkdir',
-                            timeout=300,
-                            logEnviron=False,
-                            command=['git', 'svn', 'dcommit', '--rmdir']) +
-                ExpectShell.log('stdio', stdout='Committed r256729') +
-                0,
-            )
-            self.expectOutcome(result=SUCCESS, state_string='Committed 220797@main')
-            with current_hostname(EWS_BUILD_HOSTNAME):
-                rc = self.runStep()
-            self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (220797@main): <https://commits.webkit.org/220797@main>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
-            self.assertEqual(self.getProperty('build_finish_summary'), None)
-            self.assertEqual(self.getProperty('build_summary'), 'Committed 220797@main')
-            return rc
-
-    def test_success_no_identifier(self):
+    def test_success_pr(self):
         with self.mock_commits_webkit_org(), self.mock_sleep():
-            self.setupStep(PushCommitToWebKitRepo())
-            self.setProperty('patch_id', '1234')
+            self.setupStep(DetermineLandedIdentifier())
+            self.setProperty('svn_revision', '256729')
+            self.setProperty('github.number', '1234')
             self.expectRemoteCommands(
-                ExpectShell(workdir='wkdir',
-                            timeout=300,
-                            logEnviron=False,
-                            command=['git', 'svn', 'dcommit', '--rmdir']) +
-                ExpectShell.log('stdio', stdout='Committed r256729') +
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'log', '-1', '--no-decorate']) +
+                ExpectShell.log('stdio', stdout=''''commit 220797@main (14dbf1155cf56a1dd4d86a847e61af3c3e5d2ca5, r256729)
+Author: Aakash Jain <aakash_jain@apple.com>
+Date:   Mon Feb 17 15:09:42 2020 +0000
+
+    [ews] add SetBuildSummary step for Windows EWS
+    https://bugs.webkit.org/show_bug.cgi?id=207556
+    
+    Reviewed by Jonathan Bedard.
+    
+    * BuildSlaveSupport/ews-build/factories.py:
+    (WindowsFactory.__init__):
+    (GTKBuildAndTestFactory.__init__):
+    * BuildSlaveSupport/ews-build/factories_unittest.py:
+    (TestBuildAndTestsFactory.test_windows_factory): Added unit-test.
+    
+    
+    Canonical link: https://commits.webkit.org/220797@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256729 268f45cc-cd09-0410-ab3c-d52691b4dbfc''') +
                 0,
             )
-            self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
+            self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
             with current_hostname(EWS_BUILD_HOSTNAME):
                 rc = self.runStep()
-            self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (?): <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
-            self.assertEqual(self.getProperty('build_finish_summary'), None)
-            self.assertEqual(self.getProperty('build_summary'), 'Committed r256729')
-            return rc
 
-    def test_failure_retry(self):
-        with self.mock_sleep():
-            self.setupStep(PushCommitToWebKitRepo())
-            self.setProperty('patch_id', '2345')
+        self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (220797@main): <https://commits.webkit.org/220797@main>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
+        self.assertEqual(self.getProperty('build_summary'), 'Committed 220797@main')
+        return rc
+
+    def test_success_pr_fallback(self):
+        with self.mock_commits_webkit_org(identifier='220797@main'), self.mock_sleep():
+            self.setupStep(DetermineLandedIdentifier())
+            self.setProperty('svn_revision', '256729')
+            self.setProperty('github.number', '1234')
             self.expectRemoteCommands(
-                ExpectShell(workdir='wkdir',
-                            timeout=300,
-                            logEnviron=False,
-                            command=['git', 'svn', 'dcommit', '--rmdir']) +
-                ExpectShell.log('stdio', stdout='Unexpected failure') +
-                2,
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'log', '-1', '--no-decorate']) +
+                ExpectShell.log('stdio', stdout='') +
+                0,
             )
-            self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+            self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
             with current_hostname(EWS_BUILD_HOSTNAME):
                 rc = self.runStep()
-            self.assertEqual(self.getProperty('retry_count'), 1)
-            self.assertEqual(self.getProperty('build_finish_summary'), None)
-            self.assertEqual(self.getProperty('comment_text'), None)
-            return rc
 
-    def test_failure(self):
-        with self.mock_sleep():
-            self.setupStep(PushCommitToWebKitRepo())
-            self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
-            self.setProperty('patch_id', '2345')
+        self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (220797@main): <https://commits.webkit.org/220797@main>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
+        self.assertEqual(self.getProperty('build_summary'), 'Committed 220797@main')
+        return rc
+
+    def test_pr_no_identifier(self):
+        with self.mock_commits_webkit_org(), self.mock_sleep():
+            self.setupStep(DetermineLandedIdentifier())
+            self.setProperty('svn_revision', '256729')
+            self.setProperty('github.number', '1234')
             self.expectRemoteCommands(
-                ExpectShell(workdir='wkdir',
-                            timeout=300,
-                            logEnviron=False,
-                            command=['git', 'svn', 'dcommit', '--rmdir']) +
-                ExpectShell.log('stdio', stdout='Unexpected failure') +
-                2,
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'log', '-1', '--no-decorate']) +
+                ExpectShell.log('stdio', stdout='') +
+                0,
             )
-            self.expectOutcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
+            self.expectOutcome(result=FAILURE, state_string='Failed to determine identifier')
             with current_hostname(EWS_BUILD_HOSTNAME):
                 rc = self.runStep()
-            self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
-            self.assertEqual(self.getProperty('comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
-            return rc
 
+        self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (?): <https://commits.webkit.org/r256729>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
+        self.assertEqual(self.getProperty('build_summary'), 'Committed r256729')
+        return rc
+
+    def test_success_patch(self):
+        with self.mock_commits_webkit_org(identifier='220797@main'), self.mock_sleep():
+            self.setupStep(DetermineLandedIdentifier())
+            self.setProperty('svn_revision', '256729')
+            self.setProperty('patch_id', '1234')
+            self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'log', '-1', '--no-decorate']) +
+                ExpectShell.log('stdio', stdout='') +
+                0,
+            )
+            self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
+            with current_hostname(EWS_BUILD_HOSTNAME):
+                rc = self.runStep()
+
+        self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (220797@main): <https://commits.webkit.org/220797@main>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+        self.assertEqual(self.getProperty('build_summary'), 'Committed 220797@main')
+        return rc
+
+    def test_patch_no_identifier(self):
+        with self.mock_commits_webkit_org(), self.mock_sleep():
+            self.setupStep(DetermineLandedIdentifier())
+            self.setProperty('svn_revision', '256729')
+            self.setProperty('patch_id', '1234')
+            self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'log', '-1', '--no-decorate']) +
+                ExpectShell.log('stdio', stdout='') +
+                0,
+            )
+            self.expectOutcome(result=FAILURE, state_string='Failed to determine identifier')
+            with current_hostname(EWS_BUILD_HOSTNAME):
+                rc = self.runStep()
+
+        self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (?): <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+        self.assertEqual(self.getProperty('build_summary'), 'Committed r256729')
+        return rc
 
 class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

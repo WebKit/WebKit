@@ -4497,26 +4497,128 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
         if rc == SUCCESS:
-            time.sleep(60)  # It takes time for commits.webkit.org to digest commits
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
             svn_revision = self.svn_revision_from_commit_text(log_text)
-            identifier = self.identifier_for_revision(svn_revision)
-            self.setProperty('comment_text', self.comment_text_for_bug(svn_revision, identifier))
-            commit_summary = 'Committed {}'.format(identifier)
-            self.descriptionDone = commit_summary
-            self.setProperty('build_summary', commit_summary)
-            self.build.addStepsAfterCurrentStep([LeaveComment(), RemoveFlagsOnPatch(), CloseBug()])
-            self.addURL(identifier, self.url_for_identifier(identifier))
+            if svn_revision:
+                self.setProperty('svn_revision', svn_revision)
+
+            steps_to_add = []
+            if self.getProperty('github.number', ''):
+                steps_to_add += [
+                    Canonicalize(rebase_enabled=False),
+                    PushPullRequestBranch(),
+                    UpdatePullRequest(),
+                    GitSvnFetch(),
+                ]
+            steps_to_add += [
+                DetermineLandedIdentifier(),
+                LeaveComment(),
+                RemoveFlagsOnPatch(), RemoveLabelsFromPullRequest(),
+                CloseBug(), ClosePullRequest(),
+            ]
+            self.build.addStepsAfterCurrentStep(steps_to_add)
+
         else:
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
                 self.setProperty('retry_count', retry_count + 1)
-                self.build.addStepsAfterCurrentStep([GitResetHard(), CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
+                if self.getProperty('github.number', ''):
+                    self.build.addStepsAfterCurrentStep([
+                        CleanGitRepo(),
+                        CheckOutSource(),
+                        GitSvnFetch(),
+                        ShowIdentifier(),
+                        UpdateWorkingDirectory(),
+                        CheckOutPullRequest(),
+                        AddReviewerToCommitMessage(),
+                        AddAuthorToCommitMessage(),
+                        AddReviewerToChangeLog(),
+                        ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True),
+                        Canonicalize(),
+                        PushCommitToWebKitRepo(),
+                    ])
+                else:
+                    self.build.addStepsAfterCurrentStep([
+                        GitResetHard(),
+                        CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'),
+                        ShowIdentifier(),
+                        UpdateWorkingDirectory(),
+                        ApplyPatch(),
+                        CreateLocalGITCommit(),
+                        PushCommitToWebKitRepo(),
+                    ])
                 return rc
 
-            self.setProperty('comment_text', self.comment_text_for_bug())
+            if self.getProperty('github.number', ''):
+                self.setProperty('comment_text', 'merge-queue failed to commit PR to repository. To retry, remove any blocking labels and re-apply merge-queue label')
+            else:
+                patch_id = self.getProperty('patch_id', '')
+                self.setProperty('comment_text', f'commit-queue failed to commit attachment {patch_id} to WebKit repository. To retry, please set cq+ flag again.')
+
             self.setProperty('build_finish_summary', 'Failed to commit to WebKit repository')
-            self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
+            self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()])
+        return rc
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Failed to push commit to Webkit repository'}
+        return shell.ShellCommand.getResultSummary(self)
+
+    def doStepIf(self, step):
+        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
+
+    def svn_revision_from_commit_text(self, commit_text):
+        match = re.search(self.commit_success_regexp, commit_text, re.MULTILINE)
+        return match.group('svn_revision')
+
+
+class DetermineLandedIdentifier(shell.ShellCommand):
+    name = 'determine-landed-identifier'
+    descriptionDone = ['Determined landed identifier']
+    command = ['git', 'log', '-1', '--no-decorate']
+    CANONICAL_LINK_RE = re.compile(r'\ACanonical link: https://commits\.webkit\.org/(?P<identifier>\d+.?\d*@\S+)\Z')
+    haltOnFailure = False
+
+    def __init__(self, **kwargs):
+        self.identifier = None
+        super(DetermineLandedIdentifier, self).__init__(logEnviron=False, timeout=300, **kwargs)
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        return super(DetermineLandedIdentifier, self).start()
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': f'Identifier: {self.identifier}'}
+        if self.results == FAILURE:
+            return {'step': 'Failed to determine identifier'}
+        return super(DetermineLandedIdentifier, self).getResultSummary()
+
+    def evaluateCommand(self, cmd):
+        rc = super(DetermineLandedIdentifier, self).evaluateCommand(cmd)
+
+        loglines = self.log_observer.getStdout().splitlines()
+
+        for line in loglines[4:]:
+            match = self.CANONICAL_LINK_RE.match(line[4:])
+            if match:
+                self.identifier = match.group('identifier')
+                break
+
+        svn_revision = self.getProperty('svn_revision')
+        if not self.identifier:
+            time.sleep(60)  # It takes time for commits.webkit.org to digest commits
+            self.identifier = self.identifier_for_revision(svn_revision)
+            if '@' not in self.identifier:
+                rc = FAILURE
+
+        self.setProperty('comment_text', self.comment_text_for_bug(svn_revision, self.identifier))
+        commit_summary = f'Committed {self.identifier or svn_revision}'
+        self.descriptionDone = commit_summary
+        self.setProperty('build_summary', commit_summary)
+        self.addURL(self.identifier, self.url_for_identifier(self.identifier))
+
         return rc
 
     def url_for_revision_details(self, revision):
@@ -4538,28 +4640,16 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         return 'r{}'.format(revision)
 
     def comment_text_for_bug(self, svn_revision=None, identifier=None):
-        patch_id = self.getProperty('patch_id', '')
-        if not svn_revision:
-            comment = 'commit-queue failed to commit attachment {} to WebKit repository.'.format(patch_id)
-            comment += ' To retry, please set cq+ flag again.'
-            return comment
-
         identifier_str = identifier if identifier and '@' in identifier else '?'
         comment = 'Committed r{} ({}): <{}>'.format(svn_revision, identifier_str, self.url_for_identifier(identifier))
-        comment += '\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment {}.'.format(patch_id)
+
+        patch_id = self.getProperty('patch_id', '')
+        if patch_id:
+            comment += f'\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment {patch_id}.'
+        pr_number = self.getProperty('github.number', '')
+        if pr_number:
+            comment += f'\n\nReviewed commits have been landed. Closing PR #{pr_number} and removing active labels.'
         return comment
-
-    def svn_revision_from_commit_text(self, commit_text):
-        match = re.search(self.commit_success_regexp, commit_text, re.MULTILINE)
-        return match.group('svn_revision')
-
-    def getResultSummary(self):
-        if self.results != SUCCESS:
-            return {'step': 'Failed to push commit to Webkit repository'}
-        return shell.ShellCommand.getResultSummary(self)
-
-    def doStepIf(self, step):
-        return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
 
 
 class CheckPatchStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):

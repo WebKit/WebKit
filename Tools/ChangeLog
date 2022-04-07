@@ -1,5 +1,34 @@
 2022-04-07  Jonathan Bedard  <jbedard@apple.com>
 
+        [Merge-Queue] Add PushCommitToWebKitRepo
+        https://bugs.webkit.org/show_bug.cgi?id=238959
+        <rdar://problem/91443987>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Add PushCommitToWebKitRepo, pre-commit validation.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Ditto.
+        * CISupport/ews-build/steps.py:
+        (PushCommitToWebKitRepo.evaluateCommand): Add merge-queue steps.
+        (PushCommitToWebKitRepo.getResultSummary): Remove identifier computation.
+        (PushCommitToWebKitRepo.svn_revision_from_commit_text):
+        (DetermineLandedIdentifier): Move code to determine identifier into a seperate step because
+        merge-queue has already computed the identifier.
+        (DetermineLandedIdentifier.__init__):
+        (DetermineLandedIdentifier.start): Capture log output of command.
+        (DetermineLandedIdentifier.getResultSummary):
+        (DetermineLandedIdentifier.evaluateCommand): Attempt to pull identifier from commit message,
+        otherwise, fall back to commits.webkit.org.
+        (DetermineLandedIdentifier.url_for_revision_details): Moved from PushCommitToWebKitRepo.
+        (DetermineLandedIdentifier.url_for_identifier): Ditto.
+        (DetermineLandedIdentifier.identifier_for_revision): Ditto.
+        (DetermineLandedIdentifier.comment_text_for_bug): Ditto.
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-04-07  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Canonicalize parent commits
         https://bugs.webkit.org/show_bug.cgi?id=238951
         <rdar://problem/91436607>
