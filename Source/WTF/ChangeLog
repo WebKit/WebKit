@@ -1,3 +1,21 @@
+2022-04-07  Sam Sneddon  <gsnedders@apple.com>
+
+        Move long-enabled preferences away from experimental
+        https://bugs.webkit.org/show_bug.cgi?id=238929
+
+        Reviewed by Tim Horton.
+
+        This only moves things which have a simple `default: true` and
+        have since Safari 15's release; there are likely other things
+        which could be moved.
+
+        It does, however, leave GoogleAntiFlickerOptimizationQuirkEnabled
+        as an experimental feature, as this seems something it is more
+        likely a developer may wish to toggle.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-04-07  Brent Fulgham  <bfulgham@apple.com>
 
         [WebKitLegacy] Remove NPAPIPlugInsEnabledForTestingInWebKitLegacy
