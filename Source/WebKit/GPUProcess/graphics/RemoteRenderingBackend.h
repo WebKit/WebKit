@@ -48,15 +48,18 @@
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
+namespace WTF {
+enum class Critical : bool;
+enum class Synchronous : bool;
+}
 
+namespace WebCore {
 class DestinationColorSpace;
 class FloatSize;
 class MediaPlayer;
 class NativeImage;
 
 enum class RenderingMode : bool;
-
 }
 
 namespace IPC {
@@ -94,6 +97,8 @@ public:
 
     IPC::StreamServerConnection& streamConnection() const { return m_streamConnection.get(); }
     void performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&);
+
+    void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
 
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::StreamConnectionBuffer&&);

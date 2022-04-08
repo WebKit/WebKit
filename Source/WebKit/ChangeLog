@@ -1,3 +1,22 @@
+2022-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Have GPU Process call lowMemoryHandler() on each RemoteRenderingBackend
+        https://bugs.webkit.org/show_bug.cgi?id=238967
+
+        Reviewed by Tim Horton.
+
+        Hook up RemoteRenderingBackend::lowMemoryHandler(), which doesn't do anything yet,
+        but will clear the IOSurface pool.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::lowMemoryHandler):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::lowMemoryHandler):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::lowMemoryHandler):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
 2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] RemoteInspector: update target list page contents on change instead of reloading

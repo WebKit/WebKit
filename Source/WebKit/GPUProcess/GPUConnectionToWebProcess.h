@@ -68,6 +68,11 @@
 #include "IPCTester.h"
 #endif
 
+namespace WTF {
+enum class Critical : bool;
+enum class Synchronous : bool;
+}
+
 namespace WebCore {
 class SecurityOrigin;
 struct SecurityOriginData;
@@ -188,8 +193,10 @@ public:
     void updateSupportedRemoteCommands();
 
     bool allowsExitUnderMemoryPressure() const;
-
     void terminateWebProcess();
+
+    void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
+
 #if ENABLE(WEBGL)
     void releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier);
 #endif

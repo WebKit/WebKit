@@ -540,6 +540,12 @@ void RemoteRenderingBackend::performWithMediaPlayerOnMainThread(MediaPlayerIdent
     });
 }
 
+void RemoteRenderingBackend::lowMemoryHandler(Critical, Synchronous)
+{
+    ASSERT(isMainRunLoop());
+    // This will clear the IOSurfacePool.
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

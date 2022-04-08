@@ -215,6 +215,9 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
     RELEASE_LOG(Process, "GPUProcess::lowMemoryHandler: critical=%d, synchronous=%d", critical == Critical::Yes, synchronous == Synchronous::Yes);
     tryExitIfUnused();
 
+    for (auto& connection : m_webProcessConnections.values())
+        connection->lowMemoryHandler(critical, synchronous);
+
     WebCore::releaseGraphicsMemory(critical, synchronous);
 }
 

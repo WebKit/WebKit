@@ -453,6 +453,12 @@ void GPUConnectionToWebProcess::terminateWebProcess()
     gpuProcess().parentProcessConnection()->send(Messages::GPUProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
 
+void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
+{
+    for (auto& remoteRenderingBackend : m_remoteRenderingBackendMap.values())
+        remoteRenderingBackend->lowMemoryHandler(critical, synchronous);
+}
+
 #if ENABLE(WEB_AUDIO)
 RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestinationManager()
 {
