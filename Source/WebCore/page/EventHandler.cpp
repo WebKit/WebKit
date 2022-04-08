@@ -3430,7 +3430,7 @@ bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& event)
 
     if ((event.modifiers() - PlatformEvent::Modifier::ShiftKey) != accessKeyModifiers())
         return false;
-    auto* element = m_frame.document()->elementForAccessKey(event.unmodifiedText());
+    RefPtr element = m_frame.document()->elementForAccessKey(event.unmodifiedText());
     if (!element)
         return false;
     element->accessKeyAction(false);

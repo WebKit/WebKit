@@ -1,3 +1,27 @@
+2022-01-31  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix handling of access key events
+        https://bugs.webkit.org/show_bug.cgi?id=234147
+        <rdar://problem/86320218>
+
+        Reviewed by David Kilzer.
+
+        Improve focus handling for HTMLElement-based elements to ensure accessKey events
+        are properly dispatched.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press): Ensure correct object is used after 'accessKeyAction'
+        is invoked.
+        * dom/EventDispatcher.cpp:
+        (WebCore::callDefaultEventHandlersInBubblingOrder) Protect element during default
+        event bubbling.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::reportValidity): Ensure correct element is
+        used after focus event.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAccessKey): Ensure correct object is used after
+        'accessKeyAction' is invoked.
+
 2021-12-15  Brent Fulgham  <bfulgham@apple.com>
 
         Clean-up: Adopt Page::forEachDocument in some missed spots
