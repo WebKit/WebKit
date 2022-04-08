@@ -79,9 +79,9 @@ bool RenderVTTCue::initializeLayoutParameters(LegacyInlineFlowBox*& firstLineBox
 
     RenderBlock* parentBlock = containingBlock();
 
-    firstLineBox = cueBox().firstLineBox();
+    firstLineBox = cueBox().firstLineBox() ? cueBox().firstLineBox() : this->firstRootBox();
     if (!firstLineBox)
-        firstLineBox = this->firstRootBox();
+        return false;
 
     // 1. Horizontal: Let step be the height of the first line box in boxes.
     //    Vertical: Let step be the width of the first line box in boxes.

@@ -1,3 +1,23 @@
+2022-04-07  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        When using a TrackDisplayUpdateScope queue updateActiveTextTrackCues as a task
+        https://bugs.webkit.org/show_bug.cgi?id=238963
+
+        Reviewed by Eric Carlson.
+
+        The HTMLMediaElement::didRemoveTextTrack call is done under ScriptDisallowedScope but this path
+        currently can call updateActiveTextTrackCues which could result in updating the layout downstream.
+        To resolve this we execute updateActiveTextTrackCues under a queueCancellableTaskKeepingObjectAlive call.
+
+        We also add a needed check in RenderVTTCue::initializeLayoutParameters exposed by queueing the task.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests):
+        (WebCore::HTMLMediaElement::cancelPendingTasks):
+        * html/HTMLMediaElement.h:
+        * rendering/RenderVTTCue.cpp:
+        (WebCore::RenderVTTCue::initializeLayoutParameters):
+
 2022-04-07  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for :indeterminate pseudo class on <progress>
