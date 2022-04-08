@@ -1,12 +1,12 @@
 
-FAIL Match container in outer tree null is not an object (evaluating 'document.querySelector("#inclusive-ancestor-across-root > div").shadowRoot.querySelector')
+PASS Match container in outer tree
 PASS Match container in same tree, not walking flat tree ancestors
 FAIL Match container in ::slotted selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Match container in outer tree for :host assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Match container in ::part selector's originating element tree null is not an object (evaluating 'document.querySelector("#inclusive-ancestor-part > div").shadowRoot.querySelector')
+PASS Match container in outer tree for :host
+FAIL Match container in ::part selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL Match container for ::before in ::slotted selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Match container in outer tree for :host::before assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL Match container for ::before in ::part selector's originating element tree null is not an object (evaluating 'document.querySelector("#inclusive-ancestor-part-before > div").shadowRoot.querySelector')
-FAIL Match container for ::part selector's originating element tree for exportparts null is not an object (evaluating 'outerhost.shadowRoot.querySelector')
-FAIL Match container for slot light tree child fallback null is not an object (evaluating 'document.querySelector("#inclusive-ancestor-slot-fallback > div").shadowRoot.querySelector')
+PASS Match container in outer tree for :host::before
+FAIL Match container for ::before in ::part selector's originating element tree assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Match container for ::part selector's originating element tree for exportparts assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Match container for slot light tree child fallback
 

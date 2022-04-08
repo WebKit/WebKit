@@ -88,6 +88,7 @@ TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
     , shadowRoot(&shadowRoot)
     , enclosingScope(&enclosingScope)
 {
+    selectorMatchingState.queryContainers = enclosingScope.selectorMatchingState.queryContainers;
 }
 
 TreeResolver::Scope::~Scope()

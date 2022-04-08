@@ -1,3 +1,27 @@
+2022-04-07  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Evaluate against shadow-including ancestors
+        https://bugs.webkit.org/show_bug.cgi?id=238934
+
+        Reviewed by Tim Nguyen.
+
+        "Style rules applying to its shadow-including descendants can then be conditioned by querying against it,
+        using the @container conditional group rule."
+
+        https://drafts.csswg.org/css-contain-3/#container-queries
+
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer):
+
+        Evaluate against shadow-including ancestors instead of flat tree ancestors if the cache is not available.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::Scope::Scope):
+
+        Copy the container state when pushing scope. This also creates a stack of shadow-including ancestors.
+
+        * style/StyleTreeResolver.h:
+
 2022-04-07  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Enable dependency validation by default

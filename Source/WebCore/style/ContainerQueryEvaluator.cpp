@@ -136,9 +136,9 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
             return &element;
     }
 
-    for (auto& ancestor : composedTreeAncestors(const_cast<Element&>(element))) {
-        if (isContainerForQuery(ancestor))
-            return &ancestor;
+    for (auto* ancestor = element.parentOrShadowHostElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
+        if (isContainerForQuery(*ancestor))
+            return ancestor;
     }
     return { };
 }

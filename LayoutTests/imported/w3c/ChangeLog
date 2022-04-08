@@ -1,3 +1,15 @@
+2022-04-07  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Evaluate against shadow-including ancestors
+        https://bugs.webkit.org/show_bug.cgi?id=238934
+
+        Reviewed by Tim Nguyen.
+
+        * web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.html:
+
+        Add declarative shadow DOM polyfill.
+
 2022-04-07  Tim Nguyen  <ntim@apple.com>
 
         [:has() pseudo-class] Support invalidation for :indeterminate pseudo class on <progress>
