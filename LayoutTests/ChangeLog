@@ -1,3 +1,16 @@
+2022-04-08  Matteo Flores  <matteo_flores@apple.com>
+
+        Unreviewed, reverting r292521.
+
+        This broke the test further.
+
+        Reverted changeset:
+
+        "[ Mac ] accessibility/mac/expanded-notification.html is a
+        flaky text failure"
+        https://bugs.webkit.org/show_bug.cgi?id=238830
+        https://commits.webkit.org/r292521
+
 2022-04-08  Alan Bujtas  <zalan@apple.com>
 
         imported/blink/fast/multicol/vertical-lr/float-content-break.html is a constant failure
