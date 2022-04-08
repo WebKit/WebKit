@@ -1,3 +1,17 @@
+2022-04-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/roles-table-and-cell.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=238936
+        <rdar://problem/91414958>
+
+        Reviewed by Chris Fleizach.
+
+        Fixes this test in isolated tree mode by not writing to the console
+        until the end of the test.
+
+        * accessibility/roles-table-and-cell-expected.txt:
+        * accessibility/roles-table-and-cell.html:
+
 2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Incorrect CORP/COEP check in 304 responses
