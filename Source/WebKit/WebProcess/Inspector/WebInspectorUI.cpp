@@ -61,6 +61,9 @@ void WebInspectorUI::enableFrontendFeatures(WebPage& page)
 #if ENABLE(WEBGL2)
     page.corePage()->settings().setWebGL2Enabled(true);
 #endif
+#if ENABLE(CSS_TYPED_OM)
+    page.corePage()->settings().setCSSTypedOMEnabled(true);
+#endif
 }
 
 WebInspectorUI::WebInspectorUI(WebPage& page)

@@ -856,7 +856,7 @@ WI.TabBar = class TabBar extends WI.View
         // FIXME: Animate the tabs that move to make room for the selected tab. This was causing me trouble when I tried.
 
         function inlineStyleValue(element, property) {
-            return element.style.getPropertyCSSValue(property).getFloatValue(CSSPrimitiveValue.CSS_PX) || 0;
+            return element.getComputedCSSPropertyNumberValue(property) || 0;
         }
 
         let accumulatedLeft = 0;

@@ -488,6 +488,15 @@ Object.defineProperty(Element.prototype, "recalculateStyles",
     }
 });
 
+Object.defineProperty(Element.prototype, "getComputedCSSPropertyNumberValue", {
+    value(property) {
+        let result = undefined;
+        result ??= this.computedStyleMap?.().get(property)?.value;
+        result ??= window.getComputedStyle(this).getPropertyCSSValue(property)?.getFloatValue(CSSPrimitiveValue.CSS_PX);
+        return result;
+    },
+});
+
 Object.defineProperty(DocumentFragment.prototype, "createChild",
 {
     value: Element.prototype.createChild

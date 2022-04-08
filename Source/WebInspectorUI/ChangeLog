@@ -1,3 +1,23 @@
+2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Inspector: Use computedStyleMap() instead of deprecated getPropertyCSSValue()
+        https://bugs.webkit.org/show_bug.cgi?id=238661
+
+        Reviewed by Devin Rousso.
+
+        Add Element.getComputedCSSPropertyNumberValue() instead of using computedStyleMap() directly to have a fallback
+        in case CSS_TYPED_OM is disabled in build.
+
+        * UserInterface/Base/Utilities.js:
+        (get return):
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.isEventWithinDisclosureTriangle):
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype._handleMouseMoved.inlineStyleValue):
+        (WI.TabBar.prototype._handleMouseMoved):
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.isEventWithinDisclosureTriangle):
+
 2022-04-07  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Enable dependency validation by default

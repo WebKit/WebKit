@@ -1,5 +1,17 @@
 2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Web Inspector: Use computedStyleMap() instead of deprecated getPropertyCSSValue()
+        https://bugs.webkit.org/show_bug.cgi?id=238661
+
+        Reviewed by Devin Rousso.
+
+        Ensure CSS Type OM is enabled in inspector frontend page.
+
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::enableFrontendFeatures):
+
+2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Incorrect CORP/COEP check in 304 responses
         https://bugs.webkit.org/show_bug.cgi?id=238238
         <rdar://problem/90706510>
