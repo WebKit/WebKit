@@ -59,7 +59,7 @@ void VirtualLocalConnection::verifyUser(const String&, ClientDataType, SecAccess
         }
         ASSERT(weakThis->m_configuration.transport == AuthenticatorTransport::Internal);
 
-        UserVerification userVerification = weakThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::No;
+        UserVerification userVerification = weakThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::Presence;
 
         callback(userVerification, adoptNS([allocLAContextInstance() init]).get());
     });
@@ -75,7 +75,7 @@ void VirtualLocalConnection::verifyUser(SecAccessControlRef, LAContext *, Comple
         }
         ASSERT(weakThis->m_configuration.transport == AuthenticatorTransport::Internal);
 
-        UserVerification userVerification = weakThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::No;
+        UserVerification userVerification = weakThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::Presence;
 
         callback(userVerification);
     });

@@ -63,6 +63,8 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        addResult = result.add(AuthenticatorTransport::Ble);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
 
@@ -75,6 +77,8 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         auto addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        addResult = result.add(AuthenticatorTransport::Ble);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
@@ -98,6 +102,8 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        addResult = result.add(AuthenticatorTransport::Ble);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
     for (auto& allowCredential : allowCredentials) {
@@ -105,6 +111,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             result.add(AuthenticatorTransport::Internal);
             result.add(AuthenticatorTransport::Usb);
             result.add(AuthenticatorTransport::Nfc);
+            result.add(AuthenticatorTransport::Ble);
 
             break;
         }
@@ -124,6 +131,7 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
         if (authenticatorAttachment == AuthenticatorAttachment::Platform) {
             result.remove(AuthenticatorTransport::Usb);
             result.remove(AuthenticatorTransport::Nfc);
+            result.remove(AuthenticatorTransport::Ble);
         }
 
         if (authenticatorAttachment == AuthenticatorAttachment::CrossPlatform)
@@ -163,7 +171,7 @@ static String getUserName(const std::variant<PublicKeyCredentialCreationOptions,
 
 } // namespace
 
-const size_t AuthenticatorManager::maxTransportNumber = 3;
+const size_t AuthenticatorManager::maxTransportNumber = 4;
 
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
@@ -406,6 +414,7 @@ void AuthenticatorManager::filterTransports(TransportSet& transports) const
         transports.remove(AuthenticatorTransport::Nfc);
     if (!LocalService::isAvailable())
         transports.remove(AuthenticatorTransport::Internal);
+    transports.remove(AuthenticatorTransport::Ble);
 
     // For the modern UI, we should only consider invoking it when the operation is triggered by users.
     if (!m_pendingRequestData.processingUserGesture)

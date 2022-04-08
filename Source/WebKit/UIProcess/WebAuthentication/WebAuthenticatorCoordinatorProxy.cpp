@@ -107,7 +107,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
             handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
     };
     
-    if (!data.processingUserGesture)
+    if (!data.processingUserGesture && !m_webPageProxy.websiteDataStore().authenticatorManager().isVirtual())
         m_webPageProxy.uiClient().requestWebAuthenticationNoGesture(origin, WTFMove(afterConsent));
     else
         afterConsent(true);

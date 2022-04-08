@@ -1,3 +1,30 @@
+2022-04-07  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support all CTAP transports and remove gesture requirement for virtual authenticators
+        https://bugs.webkit.org/show_bug.cgi?id=238814
+        rdar://problem/91300515
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds support for the other CTAP virtual authenticator transports and removes
+        the user gesture requirement when using virtual authenticators. These changes are needed
+        to run the webauthn web-platform-tests.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::WebCore::collectTransports):
+        (WebKit::AuthenticatorManager::filterTransports const):
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp:
+        (WebKit::MockAuthenticatorManager::filterTransports const):
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.cpp:
+        (WebKit::VirtualAuthenticatorManager::createAuthenticator):
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Virtual/VirtualLocalConnection.mm:
+        (WebKit::VirtualLocalConnection::verifyUser):
+        * UIProcess/WebAuthentication/Virtual/VirtualService.mm:
+        (WebKit::VirtualService::startDiscoveryInternal):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::handleRequest):
+
 2022-04-07  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Enable dependency validation by default

@@ -42,8 +42,6 @@ VirtualAuthenticatorManager::VirtualAuthenticatorManager()
 
 String VirtualAuthenticatorManager::createAuthenticator(const VirtualAuthenticatorConfiguration& config)
 {
-    if (config.transport != WebCore::AuthenticatorTransport::Internal && config.transport != WebCore::AuthenticatorTransport::Usb)
-        UNIMPLEMENTED();
     auto id = createVersion4UUIDString();
     m_virtualAuthenticators.set(id, makeUniqueRef<VirtualAuthenticatorConfiguration>(config));
     Vector<VirtualCredential> credentials;

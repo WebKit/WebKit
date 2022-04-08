@@ -70,6 +70,8 @@ void VirtualService::startDiscoveryInternal()
         auto config = authenticator.second;
         auto authenticatorId = authenticator.first;
         switch (config.transport) {
+        case WebCore::AuthenticatorTransport::Nfc:
+        case WebCore::AuthenticatorTransport::Ble:
         case WebCore::AuthenticatorTransport::Usb:
             observer()->authenticatorAdded(CtapAuthenticator::create(WTF::makeUnique<CtapHidDriver>(makeUniqueRef<VirtualHidConnection>(authenticatorId, config, WeakPtr { static_cast<VirtualAuthenticatorManager *>(observer()) })), authenticatorInfoForConfig(config)));
             break;
