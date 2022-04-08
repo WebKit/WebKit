@@ -1,3 +1,77 @@
+2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Incorrect CORP/COEP check in 304 responses
+        https://bugs.webkit.org/show_bug.cgi?id=238238
+        <rdar://problem/90706510>
+
+        Reviewed by Youenn Fablet.
+
+        Sync cross-origin-embedder-policy tests to include the new test require-corp-revalidated-images.https.html.
+
+        * web-platform-tests/html/cross-origin-embedder-policy/block-local-documents-inheriting-none.https.html:
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache-storage.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache-storage.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache-storage.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache.tentative.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/dedicated-worker.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/dedicated-worker.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/dedicated-worker.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/fetch.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/fetch.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/fetch.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-credentialless.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-credentialless.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-credentialless.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-none.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-none.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-none.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-require-corp.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-require-corp.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-require-corp.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe.tentative.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/image.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/image.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/image.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/link.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/link.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/link.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/redirect.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/redirect.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/redirect.tentative.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-navigation.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-navigation.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-navigation.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-subresource-corp.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-subresource-corp.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-subresource-corp.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/script.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/script.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/script.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-credentialless-proxy.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-credentialless-proxy.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-credentialless-proxy.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-none-proxy.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-none-proxy.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-none-proxy.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/shared-worker.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/shared-worker.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/shared-worker.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.https.window.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.https.window.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.tentative.https.window.js.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.https.window.js.headers: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.tentative.https.window.js.headers.
+        * web-platform-tests/html/cross-origin-embedder-policy/credentialless/w3c-import.log:
+        * web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/dedicated-worker.https.html:
+        * web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html:
+        * web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html.headers:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-cached-images.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-cached-images.https.html:
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-revalidated-images.https-expected.txt: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/require-corp-revalidated-images.https.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/resources/corp-image.py:
+        (main):
+        * web-platform-tests/html/cross-origin-embedder-policy/resources/fetch-and-create-url.html: Added.
+        * web-platform-tests/html/cross-origin-embedder-policy/resources/load-corp-images.html:
+        * web-platform-tests/html/cross-origin-embedder-policy/resources/w3c-import.log:
+        * web-platform-tests/html/cross-origin-embedder-policy/resources/worker-support.js: Added.
+        (setCoep):
+        (resolveUrl):
+        (async withIframe):
+        (waitForMessage):
+        (async createLocalUrl):
+        * web-platform-tests/html/cross-origin-embedder-policy/shared-workers.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/shared-workers.https.html:
+        * web-platform-tests/html/cross-origin-embedder-policy/w3c-import.log:
+
 2022-04-07  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Evaluate against shadow-including ancestors

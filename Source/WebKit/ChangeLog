@@ -1,3 +1,18 @@
+2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Incorrect CORP/COEP check in 304 responses
+        https://bugs.webkit.org/show_bug.cgi?id=238238
+        <rdar://problem/90706510>
+
+        Reviewed by Youenn Fablet.
+
+        Add CORP header to the 304 response if previously set to avoid being blocked by load checker due to COEP.
+
+        Test: imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-revalidated-images.https.html
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+
 2022-04-07  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Support all CTAP transports and remove gesture requirement for virtual authenticators
