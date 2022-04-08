@@ -26,6 +26,7 @@
 
 #include "ContainerQuery.h"
 #include "SelectorMatchingState.h"
+#include "StyleScopeOrdinal.h"
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -38,11 +39,11 @@ enum class EvaluationResult : uint8_t { False, True, Unknown };
 
 class ContainerQueryEvaluator {
 public:
-    ContainerQueryEvaluator(const Element&, PseudoId, SelectorMatchingState*);
+    ContainerQueryEvaluator(const Element&, PseudoId, ScopeOrdinal, SelectorMatchingState*);
 
     bool evaluate(const FilteredContainerQuery&) const;
 
-    static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, const CachedQueryContainers*, PseudoId = PseudoId::None);
+    static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, const CachedQueryContainers*, PseudoId = PseudoId::None, ScopeOrdinal = ScopeOrdinal::Element);
 
 private:
     struct SelectedContainer;
@@ -54,6 +55,7 @@ private:
 
     const Ref<const Element> m_element;
     const PseudoId m_pseudoId;
+    ScopeOrdinal m_scopeOrdinal;
     SelectorMatchingState* m_selectorMatchingState;
 };
 

@@ -1,3 +1,31 @@
+2022-04-08  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Search query containers for ::slotted and and ::part rules in their scope
+        https://bugs.webkit.org/show_bug.cgi?id=238997
+
+        Reviewed by Sam Weinig.
+
+        "For selectors with pseudo elements, query containers can be established by the shadow-including inclusive ancestors of
+        the ultimate originating element."
+
+        https://drafts.csswg.org/css-contain-3/#container-queries
+
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::ContainerQueryEvaluator):
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer const):
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer):
+
+        For rules coming from a non-local scope, search query container starting from the originating element in that scope.
+
+        * style/ContainerQueryEvaluator.h:
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::collectMatchingRulesForList):
+        (WebCore::Style::ElementRuleCollector::containerQueriesMatch):
+
+        Pass rule's style scope ordinal so we can find the right scope.
+
+        * style/ElementRuleCollector.h:
+
 2022-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         Move WebGPU to WebCore/features.json and add <model> element
