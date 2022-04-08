@@ -1,3 +1,66 @@
+2022-04-08  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Sort deferred properties at the end of CSSPropertyID enum
+        https://bugs.webkit.org/show_bug.cgi?id=238345
+
+        Reviewed by Darin Adler.
+
+        Bug 238260 will optimize the logic for cascading deferred properties.
+        This sorts them at the end, after low priority ones, which will allow
+        some further optimizations.
+        This is in preparation of bug 238260, which plans to turn all logical
+        and physical properties into deferred.
+
+        No new tests since there should be no change in behavior.
+
+        * css/makeprop.pl:
+        (sortByDescendingPriorityAndName):
+        Sort deferred properties at the end of CSSPropertyID enum.
+        Add firstHighPriorityProperty, firstLowPriorityProperty,
+        lastLowPriorityProperty, firstDeferredProperty and lastDeferredProperty.
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::set):
+        (WebCore::Style::PropertyCascade::setDeferred):
+        (WebCore::Style::PropertyCascade::addMatch):
+        (WebCore::Style::shouldApplyPropertyInParseOrder): Deleted.
+        Delete shouldApplyPropertyInParseOrder(), since instead we can just
+        compare the CSSPropertyId and firstDeferredProperty with < or >=.
+
+        * style/PropertyCascade.h:
+        (WebCore::Style::PropertyCascade::hasNormalProperty const):
+        (WebCore::Style::PropertyCascade::normalProperty const):
+        (WebCore::Style::PropertyCascade::hasDeferredProperty const):
+        (WebCore::Style::PropertyCascade::hasProperty const): Deleted.
+        (WebCore::Style::PropertyCascade::property const): Deleted.
+        Rename hasProperty() and property() to hasNormalProperty() and
+        normalProperty(), to make it clear they are not for deferred properties.
+        Reduce the size of m_properties array and m_propertyIsPresent bitset,
+        since they don't need to include deferred properties.
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyAllProperties):
+        (WebCore::Style::Builder::applyHighPriorityProperties):
+        (WebCore::Style::Builder::applyNonHighPriorityProperties):
+        (WebCore::Style::Builder::applyPropertiesImpl):
+        (WebCore::Style::Builder::applyProperty):
+        (WebCore::Style::Builder::applyLowPriorityProperties): Deleted.
+        Rename applyLowPriorityProperties() to applyNonHighPriorityProperties()
+        to make it clear that it includes custom and deferred properties.
+        Use the new firstHighPriorityProperty and lastLowPriorityProperty
+        constants for clarity and to skip deferred properties.
+        Rename hasProperty() and property() to hasNormalProperty() and
+        normalProperty(), to make it clear they are not for deferred properties.
+
+        * style/StyleBuilder.h:
+        Rename applyLowPriorityProperties() to applyNonHighPriorityProperties()
+        to make it clear that it includes custom and deferred properties.
+
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::applyMatchedProperties):
+        Rename applyLowPriorityProperties() to applyNonHighPriorityProperties()
+        to make it clear that it includes custom and deferred properties.
+
 2022-04-08  Chris Dumez  <cdumez@apple.com>
 
         Simplify / Optimize the whitespace cache implementation

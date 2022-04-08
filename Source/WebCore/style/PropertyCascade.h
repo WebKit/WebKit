@@ -59,8 +59,8 @@ public:
         CSSValue* cssValue[3]; // Values for link match states MatchDefault, MatchLink and MatchVisited
     };
 
-    bool hasProperty(CSSPropertyID) const;
-    const Property& property(CSSPropertyID) const;
+    bool hasNormalProperty(CSSPropertyID) const;
+    const Property& normalProperty(CSSPropertyID) const;
 
     bool hasDeferredProperty(CSSPropertyID) const;
     const Property& deferredProperty(CSSPropertyID) const;
@@ -92,8 +92,8 @@ private:
     mutable Direction m_direction;
     mutable bool m_directionIsUnresolved { true };
 
-    Property m_properties[numCSSProperties + 2];
-    std::bitset<numCSSProperties + 2> m_propertyIsPresent;
+    Property m_properties[firstDeferredProperty];
+    std::bitset<firstDeferredProperty> m_propertyIsPresent;
 
     Vector<Property, 8> m_deferredProperties;
     HashMap<CSSPropertyID, unsigned> m_deferredPropertiesIndices;
@@ -101,19 +101,21 @@ private:
     HashMap<AtomString, Property> m_customProperties;
 };
 
-inline bool PropertyCascade::hasProperty(CSSPropertyID id) const
+inline bool PropertyCascade::hasNormalProperty(CSSPropertyID id) const
 {
-    ASSERT(id < m_propertyIsPresent.size());
+    ASSERT(id < firstDeferredProperty);
     return m_propertyIsPresent[id];
 }
 
-inline const PropertyCascade::Property& PropertyCascade::property(CSSPropertyID id) const
+inline const PropertyCascade::Property& PropertyCascade::normalProperty(CSSPropertyID id) const
 {
+    ASSERT(hasNormalProperty(id));
     return m_properties[id];
 }
 
 inline bool PropertyCascade::hasDeferredProperty(CSSPropertyID id) const
 {
+    ASSERT(id >= firstDeferredProperty);
     return m_deferredPropertiesIndices.contains(id);
 }
 

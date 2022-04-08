@@ -91,7 +91,7 @@ Builder::~Builder() = default;
 void Builder::applyAllProperties()
 {
     applyHighPriorityProperties();
-    applyLowPriorityProperties();
+    applyNonHighPriorityProperties();
 }
 
 // High priority properties may affect resolution of other properties (they are mostly font related).
@@ -105,17 +105,17 @@ void Builder::applyHighPriorityProperties()
     applyProperties(CSSPropertyColorScheme, CSSPropertyColorScheme);
 #endif
 
-    applyProperties(firstCSSProperty, lastHighPriorityProperty);
+    applyProperties(firstHighPriorityProperty, lastHighPriorityProperty);
 
     m_state.updateFont();
 }
 
-void Builder::applyLowPriorityProperties()
+void Builder::applyNonHighPriorityProperties()
 {
     ASSERT(!m_state.fontDirty());
 
     applyCustomProperties();
-    applyProperties(firstLowPriorityProperty, lastCSSProperty);
+    applyProperties(firstLowPriorityProperty, lastLowPriorityProperty);
     applyDeferredProperties();
 
     ASSERT(!m_state.fontDirty());
@@ -140,10 +140,10 @@ inline void Builder::applyPropertiesImpl(int firstProperty, int lastProperty)
 {
     for (int id = firstProperty; id <= lastProperty; ++id) {
         CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
-        if (!m_cascade.hasProperty(propertyID))
+        if (!m_cascade.hasNormalProperty(propertyID))
             continue;
         ASSERT(propertyID != CSSPropertyCustom);
-        auto& property = m_cascade.property(propertyID);
+        auto& property = m_cascade.normalProperty(propertyID);
 
         if (trackCycles == CustomPropertyCycleTracking::Enabled) {
             if (UNLIKELY(m_state.m_inProgressProperties.get(propertyID))) {
@@ -316,10 +316,12 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
                     applyRollbackCascadeProperty(property, linkMatchMask);
                     return;
                 }
-            } else if (rollbackCascade->hasProperty(id)) {
-                auto& property = rollbackCascade->property(id);
-                applyRollbackCascadeProperty(property, linkMatchMask);
-                return;
+            } else if (id < firstDeferredProperty) {
+                if (rollbackCascade->hasNormalProperty(id)) {
+                    auto& property = rollbackCascade->normalProperty(id);
+                    applyRollbackCascadeProperty(property, linkMatchMask);
+                    return;
+                }
             } else if (rollbackCascade->hasDeferredProperty(id)) {
                 auto& property = rollbackCascade->deferredProperty(id);
                 applyRollbackCascadeProperty(property, linkMatchMask);

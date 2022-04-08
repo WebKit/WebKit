@@ -38,11 +38,6 @@
 namespace WebCore {
 namespace Style {
 
-static inline bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
-{
-    return getRelatedPropertyId(propertyID) != CSSPropertyInvalid;
-}
-
 PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, IncludedProperties includedProperties, Direction direction)
     : m_matchResult(matchResult)
     , m_includedProperties(includedProperties)
@@ -108,7 +103,7 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
         id = CSSProperty::resolveDirectionAwareProperty(id, direction.textDirection, direction.writingMode);
     }
 
-    ASSERT(!shouldApplyPropertyInParseOrder(id));
+    ASSERT(id < firstDeferredProperty);
 
     auto& property = m_properties[id];
     ASSERT(id < m_propertyIsPresent.size());
@@ -139,7 +134,7 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
 void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
 {
     ASSERT(!CSSProperty::isDirectionAwareProperty(id));
-    ASSERT(shouldApplyPropertyInParseOrder(id));
+    ASSERT(id >= firstDeferredProperty);
 
     Property property;
     memset(property.cssValue, 0, sizeof(property.cssValue));
@@ -192,10 +187,10 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
         if (propertyAllowlist == PropertyAllowlist::Marker && !isValidMarkerStyleProperty(propertyID))
             continue;
 
-        if (shouldApplyPropertyInParseOrder(propertyID))
-            setDeferred(propertyID, *current.value(), matchedProperties, cascadeLevel);
-        else
+        if (propertyID < firstDeferredProperty)
             set(propertyID, *current.value(), matchedProperties, cascadeLevel);
+        else
+            setDeferred(propertyID, *current.value(), matchedProperties, cascadeLevel);
     }
 
     return hasImportantProperties;

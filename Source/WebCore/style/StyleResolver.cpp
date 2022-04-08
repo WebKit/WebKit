@@ -628,7 +628,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         return;
     }
 
-    builder.applyLowPriorityProperties();
+    builder.applyNonHighPriorityProperties();
 
     for (auto& contentAttribute : builder.state().registeredContentAttributes())
         ruleSets().mutableFeatures().registerContentAttribute(contentAttribute);
