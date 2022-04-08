@@ -93,7 +93,7 @@ private:
     uint32_t arrayLayerCount() const;
     bool validateCreateView(const WGPUTextureViewDescriptor&) const;
 
-    const id<MTLTexture> m_texture { nil };
+    id<MTLTexture> m_texture { nil };
 
     const WGPUTextureDescriptor m_descriptor { };
     const Vector<WGPUTextureFormat> m_viewFormats;

@@ -65,6 +65,7 @@ public:
     void setLabel(String&&);
 
     bool isValid() const { return m_commandQueue; }
+    void makeInvalid() { m_commandQueue = nil; }
 
     id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
 
@@ -84,7 +85,7 @@ private:
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
 
-    const id<MTLCommandQueue> m_commandQueue { nil };
+    id<MTLCommandQueue> m_commandQueue { nil };
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
     Device& m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.

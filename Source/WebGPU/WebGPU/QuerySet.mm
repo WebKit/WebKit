@@ -52,6 +52,9 @@ QuerySet::~QuerySet() = default;
 
 void QuerySet::destroy()
 {
+    // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
+
+    m_counterSampleBuffer = nil;
 }
 
 void QuerySet::setLabel(String&&)

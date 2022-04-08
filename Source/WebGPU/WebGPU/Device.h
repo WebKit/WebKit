@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "Adapter.h"
 #import "Queue.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
@@ -60,10 +61,10 @@ class Texture;
 class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<Device> create(id<MTLDevice>, String&& deviceLabel, Instance&);
-    static Ref<Device> createInvalid(Instance& instance)
+    static RefPtr<Device> create(id<MTLDevice>, String&& deviceLabel, Adapter&);
+    static Ref<Device> createInvalid(Adapter& adapter)
     {
-        return adoptRef(*new Device(instance));
+        return adoptRef(*new Device(adapter));
     }
 
     ~Device();
@@ -100,18 +101,22 @@ public:
 
     void generateAValidationError(String&& message);
 
-    Instance& instance() const { return m_instance; }
+    Instance& instance() const { return m_adapter->instance(); }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
 private:
-    Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, Instance&);
-    Device(Instance&);
+    Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, Adapter&);
+    Device(Adapter&);
 
     struct ErrorScope;
     ErrorScope* currentErrorScope(WGPUErrorFilter);
     bool validatePopErrorScope() const;
     id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     bool validateCreateTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);
+
+    void makeInvalid() { m_device = nil; }
+
+    void loseTheDevice();
 
     struct Error {
         WGPUErrorType type;
@@ -122,9 +127,9 @@ private:
         const WGPUErrorFilter filter;
     };
 
-    const id<MTLDevice> m_device { nil };
+    id<MTLDevice> m_device { nil };
     const Ref<Queue> m_defaultQueue;
-    const Ref<Instance> m_instance;
+    const Ref<Adapter> m_adapter;
 
     Function<void(WGPUErrorType, String&&)> m_uncapturedErrorCallback;
     Vector<ErrorScope> m_errorScopeStack;

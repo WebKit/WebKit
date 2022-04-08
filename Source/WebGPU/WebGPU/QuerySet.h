@@ -64,7 +64,7 @@ private:
     QuerySet(id<MTLCounterSampleBuffer>, Device&);
     QuerySet(Device&);
 
-    const id<MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
+    id<MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
 
     const Ref<Device> m_device;
 };

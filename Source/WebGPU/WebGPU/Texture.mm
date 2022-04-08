@@ -2348,6 +2348,9 @@ RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDe
 
 void Texture::destroy()
 {
+    // https://gpuweb.github.io/gpuweb/#dom-gputexture-destroy
+
+    m_texture = nil;
 }
 
 void Texture::setLabel(String&& label)

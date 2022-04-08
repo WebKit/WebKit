@@ -61,12 +61,16 @@ public:
     void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, String&&)>&& callback);
 
     bool isValid() const { return m_device; }
+    void makeInvalid() { m_device = nil; }
+
+    Instance& instance() const { return m_instance; }
+
 
 private:
     Adapter(id<MTLDevice>, Instance&);
     Adapter(Instance&);
 
-    const id<MTLDevice> m_device { nil };
+    id<MTLDevice> m_device { nil };
     const Ref<Instance> m_instance;
 };
 

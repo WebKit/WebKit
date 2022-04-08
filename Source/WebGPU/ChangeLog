@@ -1,3 +1,44 @@
+2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Implement destroy() methods
+        https://bugs.webkit.org/show_bug.cgi?id=238723
+
+        Reviewed by Dean Jackson.
+
+        The destroy() methods cause objects to become invalid. This is important because
+        the test suite creates and destroys lots of objects, and we want to make sure we
+        free up resources before GC runs.
+
+        This patch also makes Device own a Ref<Adapter> instead of Ref<Instance> because
+        part of the implementation of Device::destroy() involves interacting with its
+        adapter.
+
+        * WebGPU/Adapter.h:
+        (WebGPU::Adapter::makeInvalid):
+        (WebGPU::Adapter::instance const):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::requestDevice):
+        * WebGPU/Buffer.h:
+        * WebGPU/Device.h:
+        (WebGPU::Device::createInvalid):
+        (WebGPU::Device::instance const):
+        (WebGPU::Device::makeInvalid):
+        * WebGPU/Device.mm:
+        (WebGPU::Device::create):
+        (WebGPU::Device::Device):
+        (WebGPU::Device::loseTheDevice):
+        (WebGPU::Device::destroy):
+        (WebGPU::Device::generateAValidationError):
+        (WebGPU::Device::popErrorScope):
+        * WebGPU/QuerySet.h:
+        * WebGPU/QuerySet.mm:
+        (WebGPU::QuerySet::destroy):
+        * WebGPU/Queue.h:
+        (WebGPU::Queue::makeInvalid):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::Texture::destroy):
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting r292591.

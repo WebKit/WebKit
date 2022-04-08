@@ -71,7 +71,6 @@ public:
     bool isValid() const { return m_buffer; }
 
     // https://gpuweb.github.io/gpuweb/#buffer-state
-    // Each GPUBuffer has a current buffer state on the Content timeline which is one of the following:
     enum class State : uint8_t {
         Mapped,
         MappedAtCreation,

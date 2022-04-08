@@ -46,7 +46,7 @@
 
 namespace WebGPU {
 
-RefPtr<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, Instance& instance)
+RefPtr<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, Adapter& adapter)
 {
     id<MTLCommandQueue> commandQueue = [device newCommandQueue];
     if (!commandQueue)
@@ -58,27 +58,45 @@ RefPtr<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, Instan
     if (!deviceLabel.isEmpty())
         commandQueue.label = [NSString stringWithFormat:@"Default queue for device %s", deviceLabel.utf8().data()];
 
-    return adoptRef(*new Device(device, commandQueue, instance));
+    return adoptRef(*new Device(device, commandQueue, adapter));
 }
 
-Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, Instance& instance)
+Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, Adapter& adapter)
     : m_device(device)
     , m_defaultQueue(Queue::create(defaultQueue, *this))
-    , m_instance(instance)
+    , m_adapter(adapter)
 {
 }
 
-Device::Device(Instance& instance)
+Device::Device(Adapter& adapter)
     : m_defaultQueue(Queue::createInvalid(*this))
-    , m_instance(instance)
+    , m_adapter(adapter)
 {
 }
 
 Device::~Device() = default;
 
+void Device::loseTheDevice()
+{
+    // https://gpuweb.github.io/gpuweb/#lose-the-device
+
+    m_adapter->makeInvalid();
+
+    makeInvalid();
+
+    // FIXME: "Resolve device.lost with a new GPUDeviceLostInfo with reason set to reason and message set to an implementation-defined value."
+
+    // FIXME: The spec doesn't actually say to do this, but it's pretty important because
+    // the total number of command queues alive at a time is limited to a pretty low limit.
+    // We should make sure either that this is unobservable or that the spec says to do this.
+    m_defaultQueue->makeInvalid();
+}
+
 void Device::destroy()
 {
-    // FIXME: Implement this.
+    // https://gpuweb.github.io/gpuweb/#dom-gpudevice-destroy
+
+    loseTheDevice();
 }
 
 size_t Device::enumerateFeatures(WGPUFeatureName*)
@@ -132,7 +150,7 @@ void Device::generateAValidationError(String&& message)
     }
 
     if (m_uncapturedErrorCallback) {
-        m_instance->scheduleWork([protectedThis = Ref { *this }, message = WTFMove(message)]() mutable {
+        instance().scheduleWork([protectedThis = Ref { *this }, message = WTFMove(message)]() mutable {
             protectedThis->m_uncapturedErrorCallback(WGPUErrorType_Validation, WTFMove(message));
         });
     }
@@ -159,7 +177,7 @@ bool Device::popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& ca
 
     auto scope = m_errorScopeStack.takeLast();
 
-    m_instance->scheduleWork([scope = WTFMove(scope), callback = WTFMove(callback)]() mutable {
+    instance().scheduleWork([scope = WTFMove(scope), callback = WTFMove(callback)]() mutable {
         if (scope.error)
             callback(scope.error->type, WTFMove(scope.error->message));
         else
