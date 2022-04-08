@@ -1,3 +1,15 @@
+2022-04-08  Elliott Williams  <emw@apple.com>
+
+        Unreviewed, reverting r292591.
+
+        Causing spurious EWS errors
+
+        Reverted changeset:
+
+        "[XCBuild] Enable dependency validation by default"
+        https://bugs.webkit.org/show_bug.cgi?id=238901
+        https://commits.webkit.org/r292591
+
 2022-04-07  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Enable dependency validation by default

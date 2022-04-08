@@ -30,7 +30,5 @@ ONLY_ACTIVE_ARCH = YES;
 
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 
-VALIDATE_DEPENDENCIES = YES_ERROR;
-
 WK_CCACHE_DIR = $(SRCROOT)/../ccache;
 #include "../../ccache/ccache.xcconfig"

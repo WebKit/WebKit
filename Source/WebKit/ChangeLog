@@ -1,3 +1,15 @@
+2022-04-08  Elliott Williams  <emw@apple.com>
+
+        Unreviewed, reverting r292591.
+
+        Causing spurious EWS errors
+
+        Reverted changeset:
+
+        "[XCBuild] Enable dependency validation by default"
+        https://bugs.webkit.org/show_bug.cgi?id=238901
+        https://commits.webkit.org/r292591
+
 2022-04-08  Gavin Phillips  <gavin.p@apple.com>
 
         Remove misc unused CoreIPC messages/handlers that have no instances of messages being dispatched to them
