@@ -1861,8 +1861,10 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/table-one-cell.html [ Skip ] # Debug assertion
 [ Release ] accessibility/table-roles-hierarchy.html [ Failure ]
 [ Debug ] accessibility/table-roles-hierarchy.html [ Skip ] # Debug assertion
-[ Release ] accessibility/table-sections.html [ Failure ]
-[ Debug ] accessibility/table-sections.html [ Skip ] # Debug assertion
+[ Release ] accessibility/table-multiple-tbodies.html [ Skip ]
+[ Debug ] accessibility/table-multiple-tbodies.html [ Skip ] # Debug assertion
+[ Release ] accessibility/table-thead-tfoot.html [ Skip ]
+[ Debug ] accessibility/table-thead-tfoot.html [ Skip ] # Debug assertion
 [ Release ] accessibility/table-with-rules.html [ Failure ]
 [ Debug ] accessibility/table-with-rules.html [ Skip ] # Debug assertion
 [ Release ] accessibility/transformed-element.html [ Failure ]

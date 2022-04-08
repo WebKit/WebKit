@@ -1,5 +1,36 @@
 2022-04-08  Andres Gonzalez  <andresg_22@apple.com>
 
+        Fix for accessibility/table-sections.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=238970
+        <rdar://problem/91451873>
+
+        Reviewed by Chris Fleizach.
+
+        Fixed this test in ITM by splitting the test into two smaller, faster
+        tests:
+        accessibility/table-multiple-tbodies.html
+        accessibility/table-thead-tfoot.html
+        In addition, the new tests write to the console only once after all the
+        accessibility calls are made.
+
+        * TestExpectations: Removed the old test marked as Slow.
+        * accessibility/resources/table-helper.js: Added.
+        (tableProperties): Helper function used in several tests.
+        * accessibility/table-attributes.html:
+        * accessibility/table-multiple-tbodies-expected.txt: Copied from LayoutTests/accessibility/table-sections-expected.txt.
+        * accessibility/table-multiple-tbodies.html: Added.
+        * accessibility/table-sections.html: Removed.
+        * accessibility/table-thead-tfoot-expected.txt: Added.
+        * accessibility/table-thead-tfoot.html: Added.
+        * platform/glib/accessibility/table-multiple-tbodies-expected.txt: Renamed from LayoutTests/accessibility/table-sections-expected.txt.
+        * platform/glib/accessibility/table-sections-expected.txt: Removed.
+        * platform/glib/accessibility/table-thead-tfoot-expected.txt: Added.
+        * platform/win/TestExpectations:
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2022-04-08  Andres Gonzalez  <andresg_22@apple.com>
+
         Fix for accessibility/roles-table-and-cell.html in isolated tree mode.
         https://bugs.webkit.org/show_bug.cgi?id=238936
         <rdar://problem/91414958>

@@ -2,6 +2,7 @@
 <head>
 <script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="./resources/table-helper.js"></script>
 </head>
 <body>
 
@@ -35,17 +36,8 @@
 
 <script>
     if (window.accessibilityController) {
-        let output = "";
         let table = accessibilityController.accessibleElementById("testTable");
-
-        output += table.attributesOfColumnHeaders() + "\n";
-        output += table.attributesOfRowHeaders() + "\n";
-        output += table.attributesOfColumns() + "\n";
-        output += table.attributesOfRows() + "\n";
-        output += table.attributesOfVisibleCells() + "\n";
-        output += table.attributesOfHeader() + "\n";
-
-        axDebug(output);
+        axDebug(tableProperties(table));
     }
 </script>
 </body>

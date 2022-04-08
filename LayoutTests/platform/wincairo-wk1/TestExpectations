@@ -199,7 +199,6 @@ accessibility/table-attributes.html [ Failure ]
 accessibility/table-detection.html [ Failure ]
 accessibility/table-one-cell.html [ Failure ]
 accessibility/table-roles-hierarchy.html [ Failure ]
-accessibility/table-sections.html [ Failure ]
 accessibility/table-with-rules.html [ Failure ]
 accessibility/transformed-element.html [ Failure ]
 
