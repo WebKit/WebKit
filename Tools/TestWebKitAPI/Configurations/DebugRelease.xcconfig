@@ -36,6 +36,8 @@ SDKROOT_YES = macosx.internal;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -ftemplate-depth=256;
 
+VALIDATE_DEPENDENCIES = YES_ERROR;
+
 WK_RELOCATABLE_FRAMEWORKS = YES;
 
 WK_CCACHE_DIR = $(SRCROOT)/../ccache;

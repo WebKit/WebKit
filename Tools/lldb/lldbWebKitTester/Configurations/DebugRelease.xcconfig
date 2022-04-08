@@ -32,5 +32,7 @@ SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
 SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;
 
+VALIDATE_DEPENDENCIES = YES_ERROR;
+
 WK_CCACHE_DIR = $(SRCROOT)/../../../Tools/ccache;
 #include "../../../ccache/ccache.xcconfig"

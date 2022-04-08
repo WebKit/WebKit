@@ -354,6 +354,8 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
     push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
     push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
     push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
+ 
+    markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
 
     # Build, and abort if the build fails.
     if ($useWorkspace) {

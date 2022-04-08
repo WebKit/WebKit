@@ -1,3 +1,13 @@
+2022-04-07  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Enable dependency validation by default
+        https://bugs.webkit.org/show_bug.cgi?id=238901
+        <rdar://problem/91379968>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2022-04-05  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE changes.diff contains differences that are from stale files or unneeded

@@ -1,3 +1,26 @@
+2022-04-07  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Enable dependency validation by default
+        https://bugs.webkit.org/show_bug.cgi?id=238901
+        <rdar://problem/91379968>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Set VALIDATE_DEPENDENCIES=YES_ERROR everywhere, so that builds fail
+        when task outputs are missing.
+
+        The only interesting detail is that we need to set an extended
+        attribute on the user's build directory in order for XCBuild to
+        validate dependencies _within_ that directory. Since a users' build
+        directory may not be created by XCBuild, have build-webkit and
+        set-webkit-configuration set the attribute manually.
+
+        * Makefile.shared: Remove the VALIDATE_DEPENDENCIES opt-in logic.
+        Always call through to set-webkit-configuration, because that's where
+        we verify that CreatedByBuildSystem is set on the build directory.
+        Don't pass -EnableBuildDebugging=1; it's not actually needed to enable
+        dependency validation.
+
 2022-04-07  Martin Robinson  <mrobinson@webkit.org>
 
         [GTK] Turning on the address sanitizer should disable GIR and documentation

@@ -1,3 +1,27 @@
+2022-04-07  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Enable dependency validation by default
+        https://bugs.webkit.org/show_bug.cgi?id=238901
+        <rdar://problem/91379968>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * ImageDiff/cg/Configurations/DebugRelease.xcconfig:
+        * MiniBrowser/Configurations/DebugRelease.xcconfig:
+        * MobileMiniBrowser/Configurations/DebugRelease.xcconfig:
+        * Scripts/build-webkit:
+        * Scripts/set-webkit-configuration: When run with no arguments, checks
+        the base product directory, prints the configuration, and exits.
+        Recognizes -h and --help flags to show usage.
+        * Scripts/webkitdirs.pm:
+        (markBaseProductDirectoryAsCreatedByXcodeBuildSystem): New name of
+        setCreatedByXcodeBuildSystem.
+        (setCreatedByXcodeBuildSystem): Renamed.
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * lldb/lldbWebKitTester/Configurations/DebugRelease.xcconfig:
+
 2022-04-07  Chris Dumez  <cdumez@apple.com>
 
         Replace deprecated String(const char*) with String::fromLatin1() in more places
