@@ -1,5 +1,32 @@
 2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] RemoteInspector: update target list page contents on change instead of reloading
+        https://bugs.webkit.org/show_bug.cgi?id=238990
+
+        Reviewed by Adrian Perez de Castro.
+
+        We can use webkit_web_view_run_javascript() to replace the target list with the new one. This also fixes the race
+        condition when loading inspector:// for the first time that target list is always empty. The web view HashSet is
+        now a HashMap where the value is a pointer to the client to be able to associate web view with its client
+        without having to check the host and port.
+
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::~RemoteInspectorProtocolHandler): Disconnect web view signals.
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest): On new web view, connect to notify::uri and remove the
+        web view if it's no longer showing an inspector page list.
+        (WebKit::RemoteInspectorProtocolHandler::updateTargetList): Update the target list html.
+        (WebKit::RemoteInspectorProtocolHandler::webViewLoadChanged): Call updateTargetList() when load finished.
+        (WebKit::RemoteInspectorProtocolHandler::targetListChanged): Call updateTargetList() for web views that are not
+        loading. For loading web view connect to load-event to update the target list once the load finishes.
+        (WebKit::RemoteInspectorProtocolHandler::connectionClosed): Remove the associated web views.
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.h:
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::appendTargertList const): Append the target list html to the given GString.
+        (WebKit::RemoteInspectorClient::buildTargetListPage const): Use appendTargertList() now.
+        * UIProcess/Inspector/glib/RemoteInspectorClient.h:
+
+2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Web Inspector: Use computedStyleMap() instead of deprecated getPropertyCSSValue()
         https://bugs.webkit.org/show_bug.cgi?id=238661
 
