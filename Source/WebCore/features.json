@@ -1118,6 +1118,20 @@
         "category": "html"
     },
     {
+        "name": "WebGPU",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://webgpu.io",
+        "description": "WebGPU exposes an API for performing operations, such as rendering and computation, on a Graphics Processing Unit.",
+        "keywords": ["webgpu", "gpu", "compute", "3d", "rendering", "render", "wgsl", "shading"],
+        "contact": {
+            "name": "Myles C. Maxfield",
+            "email": "mmaxfield@apple.com",
+            "twitter": "@Litherum"
+        }
+    },
+    {
         "name": "WebHID",
         "status": {
             "status": "Not Considering"
@@ -1599,6 +1613,23 @@
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=119480",
         "specification": "HTML5",
         "comment": "WebKit used to support MicroData. The feature never gained any traction and was eventually removed to clean up the codebase."
+    },
+    {
+        "name": "Model element",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://github.com/WebKit/explainers/tree/main/model",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=218991",
+        "specification": "HTML5",
+        "category": "html",
+        "description": "Enable display of 3D content using a renderer built-in to the browser.",
+        "contact": {
+            "name": "Antoine Quint",
+            "twitter": "@graouts",
+            "email": "graouts@apple.com"
+        }
     },
     {
         "name": "Offscreen Canvas",

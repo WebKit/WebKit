@@ -1,3 +1,14 @@
+2022-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Move WebGPU to WebCore/features.json and add <model> element
+        https://bugs.webkit.org/show_bug.cgi?id=238981
+
+        Reviewed by Myles C. Maxfield
+
+        Move WebGPU stuff to the WebCore features.json file.
+
+        * features.json:
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting r292591.

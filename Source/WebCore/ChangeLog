@@ -1,3 +1,18 @@
+2022-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Move WebGPU to WebCore/features.json and add <model> element
+        https://bugs.webkit.org/show_bug.cgi?id=238981
+
+        Reviewed by Myles C. Maxfield
+
+        This patch makes the following corrections:
+
+        1. Moves the WebGPU Specification definition from JavaScriptCore/features.json to WebCore/features.json
+        2. Removes the extraneous WebGPU "feature" from both files.
+        3. Adds the HTML <model> element.
+
+        * features.json:
+
 2022-04-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][WebRTC] Fix data-channel handler build for GStreamer 1.21
