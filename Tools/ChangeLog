@@ -1,3 +1,13 @@
+2022-04-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Add queue triggered by label addition (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=237615
+        <rdar://problem/89983452>
+
+        Unreviewed device management.
+
+        * CISupport/ews-build/config.json: Remove ews151 from Merge-Queue
+
 2022-04-07  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Comment on PR when failing validation

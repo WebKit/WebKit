@@ -334,7 +334,7 @@
       "name": "Merge-Queue", "shortname": "merge", "icon": "buildAndTest",
       "factory": "MergeQueueFactory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
-      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "ews151"]
+      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03"]
     }
   ],
   "schedulers": [
