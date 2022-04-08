@@ -151,7 +151,6 @@ private:
 #if PLATFORM(COCOA)
     PlatformLayer* platformLayer() const override;
 #endif
-    JSC::JSObject* scriptObject(JSC::JSGlobalObject*) override;
     void storageBlockingStateChanged() override;
     bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
     WebCore::Scrollbar* horizontalScrollbar() override;
@@ -201,7 +200,6 @@ private:
     Plugin::Parameters m_parameters;
 
     bool m_isInitialized { false };
-    bool m_isWaitingForSynchronousInitialization { false };
     bool m_isWaitingUntilMediaCanStart { false };
 
     // Pending URLRequests that the plug-in has made.

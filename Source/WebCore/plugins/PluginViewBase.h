@@ -56,7 +56,6 @@ public:
     virtual void detachPluginLayer() { }
 #endif
 
-    virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*) { return 0; }
     virtual void storageBlockingStateChanged() { }
     virtual bool scroll(ScrollDirection, ScrollGranularity) { return false; }
 

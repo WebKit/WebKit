@@ -49,25 +49,6 @@ Instance* pluginInstance(HTMLElement& element)
     return instance;
 }
 
-static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement& pluginElement, JSGlobalObject* globalObject)
-{
-    Widget* pluginWidget = pluginElement.pluginWidget();
-    if (!is<PluginViewBase>(pluginWidget))
-        return nullptr;
-
-    return downcast<PluginViewBase>(*pluginWidget).scriptObject(globalObject);
-}
-
-static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLElement)
-{
-    HTMLElement& element = jsHTMLElement->wrapped();
-    if (!is<HTMLPlugInElement>(element))
-        return nullptr;
-
-    HTMLPlugInElement& pluginElement = downcast<HTMLPlugInElement>(element);
-    return pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject());
-}
-
 JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement* jsHTMLElement)
 {
     HTMLElement& element = jsHTMLElement->wrapped();
@@ -78,16 +59,6 @@ JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement*
 
     // Choke point for script/plugin interaction; notify DOMTimer of the event.
     DOMTimer::scriptDidInteractWithPlugin(pluginElement);
-
-    // First, see if the element has a plug-in replacement with a script.
-    if (auto* scriptObject = pluginElement.scriptObjectForPluginReplacement())
-        return scriptObject;
-    
-    // Next, see if we can ask the plug-in view for its script object.
-    if (auto* scriptObject = pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject()))
-        return scriptObject;
-
-    // Otherwise, fall back to getting the object from the instance.
 
     // The plugin element holds an owning reference, so we don't have to.
     auto* instance = pluginElement.bindingsInstance();
@@ -179,20 +150,10 @@ CallData pluginElementCustomGetCallData(JSHTMLElement* element)
 {
     CallData callData;
 
-    // First, ask the plug-in view base for its runtime object.
-    if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(element)) {
-        VM& vm = scriptObject->vm();
-        auto scriptObjectCallData = getCallData(vm, scriptObject);
-        if (scriptObjectCallData.type != CallData::Type::None) {
-            callData.type = CallData::Type::Native;
-            callData.native.function = callPlugin;
-        }
-    } else {
-        Instance* instance = pluginInstance(element->wrapped());
-        if (instance && instance->supportsInvokeDefaultMethod()) {
-            callData.type = CallData::Type::Native;
-            callData.native.function = callPlugin;
-        }
+    Instance* instance = pluginInstance(element->wrapped());
+    if (instance && instance->supportsInvokeDefaultMethod()) {
+        callData.type = CallData::Type::Native;
+        callData.native.function = callPlugin;
     }
 
     return callData;

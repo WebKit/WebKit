@@ -253,9 +253,6 @@ void JSTestPluginInterface::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     auto* thisObject = jsCast<JSTestPluginInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-#if PLATFORM(COCOA)
-    thisObject->wrapped().pluginReplacementScriptObject().visit(visitor);
-#endif
 }
 
 DEFINE_VISIT_CHILDREN(JSTestPluginInterface);

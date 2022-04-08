@@ -49,7 +49,7 @@ private:
     static bool supportsURL(const URL&);
     static bool isEnabledBySettings(const Settings&);
 
-    InstallResult installReplacement(ShadowRoot&) final;
+    void installReplacement(ShadowRoot&) final;
 
     String youTubeURL(const String& rawURL);
 

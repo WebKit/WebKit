@@ -77,7 +77,7 @@ RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlu
     return m_embedShadowElement->createElementRenderer(WTFMove(style), insertionPosition);
 }
 
-auto YouTubePluginReplacement::installReplacement(ShadowRoot& root) -> InstallResult
+void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
 {
     m_embedShadowElement = YouTubeEmbedShadowElement::create(m_parentElement->document());
 
@@ -99,8 +99,6 @@ auto YouTubePluginReplacement::installReplacement(ShadowRoot& root) -> InstallRe
     // Disable frame flattening for this iframe.
     iframeElement->setAttributeWithoutSynchronization(HTMLNames::scrollingAttr, AtomString("no", AtomString::ConstructFromLiteral));
     m_embedShadowElement->appendChild(iframeElement);
-
-    return { true };
 }
     
 static URL createYouTubeURL(StringView videoID, StringView timeID)
