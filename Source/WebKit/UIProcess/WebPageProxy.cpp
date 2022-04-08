@@ -4610,8 +4610,10 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 
     m_mainFrame = WebFrameProxy::create(*this, frameID);
 
+#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerOpenWindowCompletionCallback)
         m_mainFrame->setNavigationCallback(WTFMove(m_serviceWorkerOpenWindowCompletionCallback));
+#endif
 
     // Add the frame to the process wide map.
     m_process->frameCreated(frameID, *m_mainFrame);

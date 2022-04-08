@@ -1,3 +1,12 @@
+2022-04-07  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Build-fix for not ENABLE(SERVICE_WORKER) after r292539
+        https://bugs.webkit.org/show_bug.cgi?id=238957
+
+        Unreviewed build fix.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2022-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Add a LayerBacking RenderingPurpose
