@@ -650,6 +650,30 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'push-commit-to-webkit-repo',
             'set-build-summary'
         ],
+        'Unsafe-Merge-Queue': [
+            'configure-build',
+            'validate-change',
+            'validate-commiter-and-reviewer',
+            'configuration',
+            'clean-up-git-repo',
+            'clean-and-update-working-directory',
+            'git-svn-fetch',
+            'fetch-branch-references',
+            'show-identifier',
+            'verify-github-integrity',
+            'update-working-directory',
+            'checkout-pull-request',
+            'validate-squashed',
+            'add-reviewer-to-commit-message',
+            'add-author-to-commit-message',
+            'add-reviewer-to-changelog',
+            'validate-commit-message',
+            'validate-changelog-and-reviewer',
+            'validate-change',
+            'canonicalize-commit',
+            'push-commit-to-webkit-repo',
+            'set-build-summary'
+        ],
     }
 
     def setUp(self):

@@ -317,9 +317,9 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(SetBuildSummary())
 
 
-class MergeQueueFactory(factory.BuildFactory):
+class MergeQueueFactoryBase(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
-        factory.BuildFactory.__init__(self)
+        super(MergeQueueFactoryBase, self).__init__()
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
         self.addStep(ValidateCommitterAndReviewer())
@@ -338,6 +338,22 @@ class MergeQueueFactory(factory.BuildFactory):
         self.addStep(AddReviewerToChangeLog())
         self.addStep(ValidateCommitMessage())
         self.addStep(ValidateChangeLogAndReviewer())
+
+
+class MergeQueueFactory(MergeQueueFactoryBase):
+    def __init__(self, platform, **kwargs):
+        super(MergeQueueFactory, self).__init__(platform, **kwargs)
+
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(Canonicalize())
+        self.addStep(PushCommitToWebKitRepo())
+        self.addStep(SetBuildSummary())
+
+
+class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
+    def __init__(self, platform, **kwargs):
+        super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
+
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
         self.addStep(Canonicalize())
         self.addStep(PushCommitToWebKitRepo())

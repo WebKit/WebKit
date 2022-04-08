@@ -312,7 +312,8 @@ class Events(service.BuildbotService):
 
 class GitHubEventHandlerNoEdits(GitHubEventHandler):
     OPEN_STATES = ('open',)
-    MERGE_QUEUE_LABELS = ('merge-queue', 'unsafe-merge-queue')
+    UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
+    MERGE_QUEUE_LABEL = 'merge-queue'
 
     @classmethod
     def file_with_status_sign(cls, info):
@@ -355,9 +356,16 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         if state not in self.OPEN_STATES:
             log.msg("PR #{} is '{}', which triggers nothing".format(pr_number, state))
             return ([], 'git')
-        if action == 'labeled' and any(label in self.MERGE_QUEUE_LABELS for label in labels):
+
+        if action == 'labeled' and self.UNSAFE_MERGE_QUEUE_LABEL in labels:
+            log.msg("PR #{} was labeled for unsafe-merge-queue".format(pr_number))
+            # 'labeled' is usually an ignored action, override it to force build
+            payload['action'] = 'synchronize'
+            return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'unsafe_merge_queue')
+        if action == 'labeled' and self.MERGE_QUEUE_LABEL in labels:
             log.msg("PR #{} was labeled for merge-queue".format(pr_number))
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
             return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'merge_queue')
+
         return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)

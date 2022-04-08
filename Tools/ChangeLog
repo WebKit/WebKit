@@ -1,3 +1,26 @@
+2022-04-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Create seperate queue for unsafe version
+        https://bugs.webkit.org/show_bug.cgi?id=239005
+        <rdar://problem/91484664>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/config.json: Add Unsafe-Merge-Queue.
+        * CISupport/ews-build/events.py:
+        (GitHubEventHandlerNoEdits):
+        (GitHubEventHandlerNoEdits.handle_pull_request): merge-queue and unsafe-merge-queue
+        should trigger different queues.
+        * CISupport/ews-build/factories.py:
+        (CommitQueueFactory.__init__):
+        (MergeQueueFactoryBase): Moved from MergeQueueFactory.
+        (MergeQueueFactory): Depend on MergeQueueFactoryBase.
+        (UnsafeMergeQueueFactory): Added.
+        (UnsafeMergeQueueFactory.__init__):
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+        * CISupport/ews-build/loadConfig.py: Import UnsafeMergeQueueFactory.
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting r292591.

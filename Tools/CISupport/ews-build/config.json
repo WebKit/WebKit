@@ -335,6 +335,12 @@
       "factory": "MergeQueueFactory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03"]
+    },
+    {
+      "name": "Unsafe-Merge-Queue", "shortname": "unsafe-merge", "icon": "buildAndTest",
+      "factory": "UnsafeMergeQueueFactory", "platform": "mac-bigsur",
+      "configuration": "release", "architectures": ["arm64"],
+      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03"]
     }
   ],
   "schedulers": [
@@ -365,6 +371,10 @@
     {
       "type": "AnyBranchScheduler", "name": "merge_queue",
       "builderNames": ["Merge-Queue"]
+    },
+    {
+      "type": "AnyBranchScheduler", "name": "unsafe_merge_queue",
+      "builderNames": ["Unsafe-Merge-Queue"]
     },
     {
       "type": "Triggerable", "name": "macos-bigsur-debug-build-ews",
