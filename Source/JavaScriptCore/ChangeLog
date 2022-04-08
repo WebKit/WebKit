@@ -1,3 +1,19 @@
+2022-04-08  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Avoid targeting 32-bit iOS and Mac architectures
+        https://bugs.webkit.org/show_bug.cgi?id=238971
+
+        Reviewed by Alexey Proskuryakov.
+
+        Modern Xcode supports building armv7 iOS and i386 macOS, but only when targeting older OSes.
+        We do not support these targets, but our ARCHS override implies we do. Remove our setting
+        and use the default.
+
+        This improves support for building directly from WebKit.xcworkspace to a `generic/*`
+        destination.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2022-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         Move WebGPU to WebCore/features.json and add <model> element

@@ -17,8 +17,6 @@ USE_INTERNAL_SDK_Release = $(HAVE_INTERNAL_SDK);
 
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 
-ARCHS = $(ARCHS_STANDARD_32_64_BIT);
-
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include ../ ../include/
 
 // Zerolink prevents link warnings so turn it off
