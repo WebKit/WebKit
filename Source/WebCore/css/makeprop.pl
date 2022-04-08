@@ -600,8 +600,14 @@ EOF
         if (!$relatedProperty{$name}) {
             next;
         }
+        my $related = $relatedProperty{$name};
+        die "Property $name has an unknown related property: $related\n" if !exists($nameToId{$related});
+        die "High priority property $name can't have a related property: $related\n" if $nameIsHighPriority{$name};
+        die "Shorthand property $name can't have a related property: $related\n" if exists $propertiesWithStyleBuilderOptions{$name}{"longhands"};
+        die "Property $name can't have itself as a related property\n" if $related eq $name;
+        die "Property $name has $related as a related property, but it's not reciprocal\n" if $relatedProperty{$related} ne $name;
         print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
-        print GPERF "        return CSSPropertyID::CSSProperty" . $nameToId{$relatedProperty{$name}} . ";\n";
+        print GPERF "        return CSSPropertyID::CSSProperty" . $nameToId{$related} . ";\n";
     }
     print GPERF << "EOF";
     default:

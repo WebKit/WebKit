@@ -40,19 +40,7 @@ namespace Style {
 
 static inline bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
 {
-    switch (propertyID) {
-    case CSSPropertyWebkitBackgroundClip:
-    case CSSPropertyBackgroundClip:
-    case CSSPropertyWebkitBackgroundOrigin:
-    case CSSPropertyBackgroundOrigin:
-    case CSSPropertyWebkitBackgroundSize:
-    case CSSPropertyBackgroundSize:
-    case CSSPropertyWebkitBoxShadow:
-    case CSSPropertyBoxShadow:
-        return true;
-    default:
-        return false;
-    }
+    return getRelatedPropertyId(propertyID) != CSSPropertyInvalid;
 }
 
 PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, IncludedProperties includedProperties, Direction direction)

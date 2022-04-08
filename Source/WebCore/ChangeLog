@@ -1,3 +1,49 @@
+2022-04-08  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Merge getRelatedPropertyId() and shouldApplyPropertyInParseOrder()
+        https://bugs.webkit.org/show_bug.cgi?id=238350
+
+        Reviewed by Darin Adler.
+
+        Both getRelatedPropertyId() and shouldApplyPropertyInParseOrder() pursue
+        the same thing: if there are two properties (typically a standard one
+        and a -webkit- prefixed one) which share the same field in RenderStyle,
+        then we should take specified order into account when applying them.
+
+        The problem is that the logic for getRelatedPropertyId() doesn't work
+        well in all cases. It was only used for -webkit-text-orientation and
+        text-orientation, but bug 238356 implemented the former as a shorthand.
+        So now there is no consumer of getRelatedPropertyId().
+
+        On the other hand, shouldApplyPropertyInParseOrder() works better, but
+        it will need to be automatically generated for bug 238345, and bug
+        238125 will need to know which property shares a computed value with a
+        given one.
+
+        So this patch removes the consumers of the old getRelatedPropertyId(),
+        and changes shouldApplyPropertyInParseOrder() to be based on it.
+
+        No new tests since there is no change in behavior.
+
+        * css/CSSProperties.json:
+        Mark properties for which shouldApplyPropertyInParseOrder() returned
+        true with the "related-property" flag.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValueInternal):
+        Remove old getRelatedPropertyId() logic which was unused.
+
+        * css/makeprop.pl:
+        Throw errors if "related-property" flag is invalid.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::filterProperties):
+        Remove old getRelatedPropertyId() logic which was unused.
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::shouldApplyPropertyInParseOrder):
+        Base shouldApplyPropertyInParseOrder() on getRelatedPropertyId().
+
 2022-04-08  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Search query containers for ::slotted and and ::part rules in their scope

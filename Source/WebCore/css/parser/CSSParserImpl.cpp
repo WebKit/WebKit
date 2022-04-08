@@ -125,15 +125,10 @@ static inline void filterProperties(bool important, const ParsedPropertyVector& 
             continue;
         }
 
-        if (seenProperties.test(propertyIDIndex))
+        auto seenPropertyBit = seenProperties[propertyIDIndex];
+        if (seenPropertyBit)
             continue;
-        const unsigned relatedPropertyId = getRelatedPropertyId(property.id());
-        if (property.id() != CSSPropertyInvalid && relatedPropertyId != CSSPropertyInvalid) {
-            const unsigned relatedPropertyIDIndex = relatedPropertyId - firstCSSProperty;
-            seenProperties.set(relatedPropertyIDIndex);
-            seenProperties.set(propertyIDIndex);
-        } else
-            seenProperties.set(propertyIDIndex);
+        seenPropertyBit = true;
 
         output[--unusedEntries] = property;
     }
