@@ -213,11 +213,14 @@ class BinaryBundler:
             dlopenwrap_libname = 'dlopenwrap.so'
             if os.path.isfile(os.path.join(lib_dir, dlopenwrap_libname)):
                 script_handle.write('export LD_PRELOAD="${%s}/lib/%s"\n' % (self.VAR_MYDIR, dlopenwrap_libname))
-            # If we have patched the binaries to use a relative relpath then load the binary directly without prefixing it with the interpreter (it allows the process to use the correct progname)
-            if self._has_patched_interpreter_relpath:
-                script_handle.write('exec "${%s}/bin/%s" "$@"\n' % (self.VAR_MYDIR, binary_to_wrap))
-            else:
-                script_handle.write('INTERPRETER="${%s}/lib/%s"\n' % (self.VAR_MYDIR, os.path.basename(interpreter)))
+
+            # Prefix the program with the interpreter when we are bundling all (interpreter is copied) and the path to the interpreter isn't patched.
+            # Otherwise prefer to not prefix it, because that allow the process to use a more meaningful progname.
+            interpreter_basename = os.path.basename(interpreter)
+            if os.path.isfile(os.path.join(lib_dir, interpreter_basename)) and not self._has_patched_interpreter_relpath:
+                script_handle.write('INTERPRETER="${%s}/lib/%s"\n' % (self.VAR_MYDIR, interpreter_basename))
                 script_handle.write('exec "${INTERPRETER}" "${%s}/bin/%s" "$@"\n' % (self.VAR_MYDIR, binary_to_wrap))
+            else:
+                script_handle.write('exec "${%s}/bin/%s" "$@"\n' % (self.VAR_MYDIR, binary_to_wrap))
 
         os.chmod(script_file, 0o755)

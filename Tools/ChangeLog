@@ -1,3 +1,18 @@
+2022-04-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r292109): [GTK][WPE] generate-bundle: Don't try to use the interpreter prefix when not bundling all.
+        https://bugs.webkit.org/show_bug.cgi?id=237107
+
+        For bundles of type --syslibs=generate-install-script we should
+        not try to prefix the executable with the interpreter.
+        Add a missing check to ensure that the interpreter has been copied
+        into the bundle before trying to use it.
+
+        Unreviewed follow-up fix.
+
+        * Scripts/webkitpy/binary_bundling/bundle.py:
+        (BinaryBundler.generate_wrapper_script):
+
 2022-04-07  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Add PushCommitToWebKitRepo
