@@ -1,3 +1,10 @@
+2022-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER build (again)
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureFrontBuffer):
+
 2022-04-07  Chris Dumez  <cdumez@apple.com>
 
         Add PAL::TextEncoding() constructor that takes in a StringView
