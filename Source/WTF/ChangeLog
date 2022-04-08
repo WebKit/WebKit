@@ -1,3 +1,14 @@
+2022-04-08  Chris Dumez  <cdumez@apple.com>
+
+        static_pointer_cast<>() may cause some unnecessary ref-counting churn
+        https://bugs.webkit.org/show_bug.cgi?id=238961
+
+        Reviewed by Darin Adler.
+
+        * wtf/RefPtr.h:
+        (WTF::adoptRef):
+        (WTF::static_pointer_cast):
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting r292591.

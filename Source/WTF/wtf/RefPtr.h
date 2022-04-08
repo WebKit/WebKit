@@ -236,23 +236,29 @@ inline bool operator!=(T* a, const RefPtr<X, Y, Z>& b)
     return a != b.get(); 
 }
 
-template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
-inline RefPtr<T, U, V> static_pointer_cast(const RefPtr<X, Y, Z>& p)
-{ 
-    return RefPtr<T, U, V>(static_cast<T*>(p.get()));
-}
-
-template <typename T, typename U, typename V>
-struct IsSmartPtr<RefPtr<T, U, V>> {
-    static constexpr bool value = true;
-};
-
 template<typename T, typename U, typename V>
 inline RefPtr<T, U, V> adoptRef(T* p)
 {
     adopted(p);
     return RefPtr<T, U, V>(p, RefPtr<T, U, V>::Adopt);
 }
+
+template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
+inline RefPtr<T, U, V> static_pointer_cast(const RefPtr<X, Y, Z>& p)
+{ 
+    return RefPtr<T, U, V>(static_cast<T*>(p.get()));
+}
+
+template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>
+inline RefPtr<T, U, V> static_pointer_cast(RefPtr<X, Y, Z>&& p)
+{
+    return adoptRef(static_cast<T*>(p.leakRef()));
+}
+
+template <typename T, typename U, typename V>
+struct IsSmartPtr<RefPtr<T, U, V>> {
+    static constexpr bool value = true;
+};
 
 template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
 inline bool is(RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)

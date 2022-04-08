@@ -1,3 +1,30 @@
+2022-04-08  Chris Dumez  <cdumez@apple.com>
+
+        static_pointer_cast<>() may cause some unnecessary ref-counting churn
+        https://bugs.webkit.org/show_bug.cgi?id=238961
+
+        Reviewed by Darin Adler.
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::elementFromPoint):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::textNodeForRebalance const):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::firstInSpecialElement):
+        (WebCore::lastInSpecialElement):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        * page/ImageOverlayController.cpp:
+        (WebCore::ImageOverlayController::selectionQuadsDidChange):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::pageDestroyed):
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+        (WebCore::ScrollingCoordinatorNicosia::pageDestroyed):
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting r292591.

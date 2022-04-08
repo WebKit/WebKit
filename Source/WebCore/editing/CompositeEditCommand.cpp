@@ -892,7 +892,7 @@ RefPtr<Text> CompositeEditCommand::textNodeForRebalance(const Position& position
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !is<Text>(node))
         return nullptr;
 
-    auto textNode = static_pointer_cast<Text>(std::exchange(node, nullptr));
+    auto textNode = static_pointer_cast<Text>(WTFMove(node));
     if (!textNode->length())
         return nullptr;
 

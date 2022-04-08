@@ -2890,8 +2890,8 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
         return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
         if (attachmentObject->isTexture())
-            return static_pointer_cast<WebGLTexture>(attachmentObject);
-        return static_pointer_cast<WebGLRenderbuffer>(attachmentObject);
+            return static_pointer_cast<WebGLTexture>(WTFMove(attachmentObject));
+        return static_pointer_cast<WebGLRenderbuffer>(WTFMove(attachmentObject));
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:

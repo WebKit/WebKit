@@ -498,7 +498,7 @@ RefPtr<HTMLElement> ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node,
             if (!nextHighestAncestorWithUnicodeBidi)
                 return static_pointer_cast<HTMLElement>(WTFMove(highestAncestorWithUnicodeBidi));
 
-            unsplitAncestor = static_pointer_cast<HTMLElement>(highestAncestorWithUnicodeBidi);
+            unsplitAncestor = static_pointer_cast<HTMLElement>(WTFMove(highestAncestorWithUnicodeBidi));
             highestAncestorWithUnicodeBidi = nextHighestAncestorWithUnicodeBidi;
         }
     }

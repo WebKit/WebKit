@@ -326,7 +326,7 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
             return static_cast<unsigned>(GraphicsContextGL::TEXTURE);
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-            return static_pointer_cast<WebGLTexture>(object);
+            return static_pointer_cast<WebGLTexture>(WTFMove(object));
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT:
@@ -341,13 +341,13 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
             return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-            return static_pointer_cast<WebGLRenderbuffer>(object);
+            return static_pointer_cast<WebGLRenderbuffer>(WTFMove(object));
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
             if (!m_extsRGB) {
                 synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
                 return nullptr;
             }
-            RefPtr<WebGLRenderbuffer> renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object.get());
+            RefPtr renderBuffer = static_pointer_cast<WebGLRenderbuffer>(WTFMove(object));
             GCGLenum renderBufferFormat = renderBuffer->getInternalFormat();
             ASSERT(renderBufferFormat != GraphicsContextGL::SRGB_EXT && renderBufferFormat != GraphicsContextGL::SRGB_ALPHA_EXT);
             if (renderBufferFormat == GraphicsContextGL::SRGB8_ALPHA8_EXT)

@@ -380,7 +380,7 @@ RefPtr<Element> TreeScope::elementFromPoint(double clientX, double clientY)
         node = retargetToScope(*node);
     }
 
-    return static_pointer_cast<Element>(node);
+    return static_pointer_cast<Element>(WTFMove(node));
 }
 
 Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clientY)

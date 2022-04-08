@@ -111,7 +111,7 @@ static RefPtr<HTMLElement> firstInSpecialElement(const Position& position)
         VisiblePosition firstInElement = firstPositionInOrBeforeNode(node.get());
         if ((isRenderedTable(node.get()) && visiblePosition == firstInElement.next()) || visiblePosition == firstInElement) {
             RELEASE_ASSERT(is<HTMLElement>(node));
-            return static_pointer_cast<HTMLElement>(node);
+            return static_pointer_cast<HTMLElement>(WTFMove(node));
         }
     }
     return nullptr;
@@ -127,7 +127,7 @@ static RefPtr<HTMLElement> lastInSpecialElement(const Position& position)
         VisiblePosition lastInElement = lastPositionInOrAfterNode(node.get());
         if ((isRenderedTable(node.get()) && visiblePosition == lastInElement.previous()) || visiblePosition == lastInElement) {
             RELEASE_ASSERT(is<HTMLElement>(node));
-            return static_pointer_cast<HTMLElement>(node);
+            return static_pointer_cast<HTMLElement>(WTFMove(node));
         }
     }
     return nullptr;

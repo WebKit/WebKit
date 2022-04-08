@@ -76,7 +76,7 @@ void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<
             return nullptr;
 
         if (RefPtr host = selectedRange->startContainer().shadowHost(); is<HTMLElement>(host))
-            return static_pointer_cast<HTMLElement>(host);
+            return static_pointer_cast<HTMLElement>(WTFMove(host));
 
         return nullptr;
     })();
