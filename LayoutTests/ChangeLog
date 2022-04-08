@@ -1,5 +1,27 @@
 2022-04-08  Alan Bujtas  <zalan@apple.com>
 
+        Do not use std::numeric_limits<float>::min() as the initial value to collect max values for glyph overflow
+        https://bugs.webkit.org/show_bug.cgi?id=238334
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios/fast/block/lineboxcontain/glyphs-expected.txt:
+        * platform/ios/fast/css-generated-content/initial-letter-basic-expected.txt:
+        * platform/ios/fast/css-generated-content/initial-letter-border-padding-expected.txt:
+        * platform/ios/fast/css-generated-content/initial-letter-raised-expected.txt:
+        * platform/ios/fast/css-generated-content/initial-letter-sunken-expected.txt:
+        * platform/ios/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/ios/mathml/presentation/roots-expected.txt:
+        * platform/mac/fast/block/lineboxcontain/glyphs-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-basic-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-border-padding-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-raised-expected.txt:
+        * platform/mac/fast/css-generated-content/initial-letter-sunken-expected.txt:
+        * platform/mac/mathml/opentype/opentype-stretchy-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+
+2022-04-08  Alan Bujtas  <zalan@apple.com>
+
         [ iOS EWS ] fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html is a flaky image failure.
         https://bugs.webkit.org/show_bug.cgi?id=237218
         <rdar://problem/89484834>

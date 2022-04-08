@@ -1,3 +1,13 @@
+2022-04-08  Alan Bujtas  <zalan@apple.com>
+
+        Do not use std::numeric_limits<float>::min() as the initial value to collect max values for glyph overflow
+        https://bugs.webkit.org/show_bug.cgi?id=238334
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-001-expected.txt:
+        * web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-002-expected.txt:
+
 2022-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Incorrect CORP/COEP check in 304 responses
