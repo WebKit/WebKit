@@ -136,7 +136,7 @@ public:
     JS_EXPORT_PRIVATE static bool isValidPrototype(JSValue);
 
 protected:
-    void finishCreation(VM& vm, const Structure* previous)
+    void finishCreation(VM& vm, const Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
     {
         this->finishCreation(vm);
         if (previous->hasRareData()) {
@@ -146,6 +146,7 @@ protected:
                 rareData()->setSharedPolyProtoWatchpoint(previousRareData->copySharedPolyProtoWatchpoint());
             }
         }
+        previous->fireStructureTransitionWatchpoint(deferred);
     }
 
 private:
@@ -674,6 +675,10 @@ public:
         m_transitionWatchpointSet.add(watchpoint);
     }
     
+    void didTransitionFromThisStructureWithoutFiringWatchpoint() const;
+    void fireStructureTransitionWatchpoint(DeferredStructureTransitionWatchpointFire*) const;
+
+    // This function does the both didTransitionFromThisStructureWithoutFiringWatchpoint and fireStructureTransitionWatchpoint.
     void didTransitionFromThisStructure(DeferredStructureTransitionWatchpointFire* = nullptr) const;
     
     InlineWatchpointSet& transitionWatchpointSet() const
@@ -764,7 +769,7 @@ public:
     static_assert(s_bitWidthOfTransitionKind <= sizeof(TransitionKind) * 8);
 
 protected:
-    Structure(VM&, Structure*, DeferredStructureTransitionWatchpointFire*);
+    Structure(VM&, Structure*);
 
 private:
     friend class LLIntOffsetsExtractor;

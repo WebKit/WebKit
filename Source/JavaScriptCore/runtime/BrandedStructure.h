@@ -68,8 +68,8 @@ public:
     }
 
 private:
-    BrandedStructure(VM&, Structure*, UniquedStringImpl* brand, DeferredStructureTransitionWatchpointFire*);
-    BrandedStructure(VM&, BrandedStructure*, DeferredStructureTransitionWatchpointFire*);
+    BrandedStructure(VM&, Structure*, UniquedStringImpl* brand);
+    BrandedStructure(VM&, BrandedStructure*);
 
     static Structure* create(VM&, Structure*, UniquedStringImpl* brand, DeferredStructureTransitionWatchpointFire* = nullptr);
 

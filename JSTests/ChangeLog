@@ -1,3 +1,19 @@
+2022-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fire structure transition watchpoint in Structure::finishCreation instead of Structure constructor
+        https://bugs.webkit.org/show_bug.cgi?id=238980
+
+        Reviewed by Saam Barati.
+
+        * stress/heap-allocation-in-did-structure-transition-watchpoint.js: Added.
+        (__isPropertyOfType):
+        (__getProperties):
+        (__getObjects):
+        (__getRandomObject):
+        (__getRandomProperty):
+        (__callGC):
+        (get var):
+
 2022-04-07  Geza Lore  <glore@igalia.com>
 
         [JSC][ARMv7] Support proper near calls and JUMP_ISLANDS
