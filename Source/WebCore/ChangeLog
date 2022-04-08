@@ -1,3 +1,22 @@
+2022-04-08  Rob Buis  <rbuis@igalia.com>
+
+        Take top layers into account in addLayers/removeLayers
+        https://bugs.webkit.org/show_bug.cgi?id=238946
+
+        Reviewed by Simon Fraser.
+
+        Take top layers into account in addLayers/removeLayers, they
+        should use the RenderView layer as parent (emulating layerParent).
+
+        * rendering/RenderElement.cpp:
+        (WebCore::addLayers):
+        (WebCore::RenderElement::addLayers):
+        (WebCore::RenderElement::removeLayers):
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        * rendering/RenderElement.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2022-04-07  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Evaluate against shadow-including ancestors
