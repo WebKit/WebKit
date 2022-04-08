@@ -1,3 +1,13 @@
+2022-04-07  Tim Nguyen  <ntim@apple.com>
+
+        [:has() pseudo-class] Support invalidation for :indeterminate pseudo class on <progress>
+        https://bugs.webkit.org/show_bug.cgi?id=238923
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has-expected.txt:
+        * web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has.html:
+
 2022-04-07  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r291509): imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html is a constant text failure

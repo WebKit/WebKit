@@ -1,3 +1,21 @@
+2022-04-07  Tim Nguyen  <ntim@apple.com>
+
+        [:has() pseudo-class] Support invalidation for :indeterminate pseudo class on <progress>
+        https://bugs.webkit.org/show_bug.cgi?id=238923
+
+        Reviewed by Antti Koivisto.
+
+        Test: imported/w3c/web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has.html
+
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::HTMLProgressElement):
+        (WebCore::HTMLProgressElement::parseAttribute):
+        (WebCore::HTMLProgressElement::didAttachRenderers):
+        (WebCore::HTMLProgressElement::updateDeterminateState):
+        (WebCore::HTMLProgressElement::didElementStateChange):
+        (WebCore::HTMLProgressElement::isDeterminate const): Deleted.
+        * html/HTMLProgressElement.h:
+
 2022-04-07  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Unify reference box / CTM computation in RenderLayer

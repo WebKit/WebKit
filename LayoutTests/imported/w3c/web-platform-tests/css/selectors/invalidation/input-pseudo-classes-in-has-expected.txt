@@ -1,6 +1,7 @@
  Check me!
 
-PASS :checked & :indeterminate invalidation
+PASS :checked & :indeterminate invalidation on <input>
+PASS :indeterminate invalidation on <progress>
 PASS :disabled invalidation
 PASS :read-only invalidation
 PASS :valid invalidation

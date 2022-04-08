@@ -25,6 +25,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "ProgressShadowElement.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderProgress.h"
 #include "ShadowRoot.h"
 #include <wtf/IsoMallocInlines.h>
@@ -41,6 +42,7 @@ const double HTMLProgressElement::InvalidPosition = -2;
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document& document)
     : LabelableElement(tagName, document)
     , m_value(0)
+    , m_isDeterminate(false)
 {
     ASSERT(hasTagName(progressTag));
     setHasCustomStyleResolveCallbacks();
@@ -77,9 +79,10 @@ RenderProgress* HTMLProgressElement::renderProgress() const
 
 void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == valueAttr)
+    if (name == valueAttr) {
+        updateDeterminateState();
         didElementStateChange();
-    else if (name == maxAttr)
+    } else if (name == maxAttr)
         didElementStateChange();
     else
         LabelableElement::parseAttribute(name, value);
@@ -87,8 +90,8 @@ void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomSt
 
 void HTMLProgressElement::didAttachRenderers()
 {
-    if (RenderProgress* render = renderProgress())
-        render->updateFromElement();
+    if (RenderProgress* renderer = renderProgress())
+        renderer->updateFromElement();
 }
 
 double HTMLProgressElement::value() const
@@ -121,20 +124,20 @@ double HTMLProgressElement::position() const
     return value() / max();
 }
 
-bool HTMLProgressElement::isDeterminate() const
+void HTMLProgressElement::updateDeterminateState()
 {
-    return hasAttributeWithoutSynchronization(valueAttr);
+    bool newIsDeterminate = hasAttributeWithoutSynchronization(valueAttr);
+    if (m_isDeterminate == newIsDeterminate)
+        return;
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassIndeterminate, !newIsDeterminate);
+    m_isDeterminate = newIsDeterminate;
 }
-    
+
 void HTMLProgressElement::didElementStateChange()
 {
     m_value->setWidthPercentage(position() * 100);
-    if (RenderProgress* render = renderProgress()) {
-        bool wasDeterminate = render->isDeterminate();
-        render->updateFromElement();
-        if (wasDeterminate != isDeterminate())
-            invalidateStyleForSubtree();
-    }
+    if (RenderProgress* renderer = renderProgress())
+        renderer->updateFromElement();
 }
 
 void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
