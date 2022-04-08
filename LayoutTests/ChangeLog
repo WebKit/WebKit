@@ -1,3 +1,14 @@
+2022-04-08  Alan Bujtas  <zalan@apple.com>
+
+        [ iOS EWS ] fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html is a flaky image failure.
+        https://bugs.webkit.org/show_bug.cgi?id=237218
+        <rdar://problem/89484834>
+
+        Unreviewed.
+
+        * fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping-expected.html:
+        * fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html: Change font family to Ahem.
+
 2022-04-08  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/table-sections.html in isolated tree mode.
