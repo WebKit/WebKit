@@ -2287,3 +2287,6 @@ fast/text/accessibility-bold.html [ Skip ]
 
 # macOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
+
+# fractional pixel diff between modern and legacy line layout.
+imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]

@@ -1,5 +1,14 @@
 2022-04-08  Alan Bujtas  <zalan@apple.com>
 
+        imported/blink/fast/multicol/vertical-lr/float-content-break.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=239002
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
+2022-04-08  Alan Bujtas  <zalan@apple.com>
+
         Do not use std::numeric_limits<float>::min() as the initial value to collect max values for glyph overflow
         https://bugs.webkit.org/show_bug.cgi?id=238334
 
