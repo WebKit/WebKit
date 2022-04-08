@@ -1983,17 +1983,17 @@ static JSC::JSValue createJSArrayForArgumentDescriptions(JSC::JSGlobalObject* gl
         argumentsArray->putDirectIndex(globalObject, argumentIndex, jsDescriptions);
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
-        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::jsString(vm, String(description.name)));
+        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::jsString(vm, String::fromLatin1(description.name)));
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
-        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsString(vm, String(description.type)));
+        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsString(vm, String::fromLatin1(description.type)));
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
         jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "optional"_s), JSC::jsBoolean(description.isOptional));
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
 
         if (description.enumName) {
-            jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "enum"_s), JSC::jsString(vm, String(description.enumName)));
+            jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "enum"_s), JSC::jsString(vm, String::fromLatin1(description.enumName)));
             RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
         }
     }
@@ -2141,7 +2141,7 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "name"_s), JSC::JSValue(static_cast<unsigned>(decoder.messageName())));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, String { IPC::description(decoder.messageName()) }));
+    jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "description"_s), JSC::jsString(vm, String::fromLatin1(IPC::description(decoder.messageName()))));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "destinationID"_s), JSC::JSValue(decoder.destinationID()));

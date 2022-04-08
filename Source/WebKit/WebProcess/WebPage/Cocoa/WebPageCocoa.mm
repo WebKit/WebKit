@@ -541,7 +541,7 @@ void WebPage::handleClickForDataDetectionResult(const DataDetectorElementInfo& i
 
 static String& replaceSelectionPasteboardName()
 {
-    static NeverDestroyed<String> string("ReplaceSelectionPasteboard");
+    static NeverDestroyed<String> string("ReplaceSelectionPasteboard"_s);
     return string;
 }
 

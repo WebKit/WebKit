@@ -315,7 +315,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
 + (NSArray<NSDictionary *> *)getAllLocalAuthenticatorCredentials
 {
 #if ENABLE(WEB_AUTHN)
-    return getAllLocalAuthenticatorCredentialsImpl(String(WebCore::LocalAuthenticatorAccessGroup)).autorelease();
+    return getAllLocalAuthenticatorCredentialsImpl(@(WebCore::LocalAuthenticatorAccessGroup)).autorelease();
 #else
     return nullptr;
 #endif

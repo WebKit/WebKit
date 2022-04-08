@@ -130,7 +130,7 @@ int WebPushDaemonMain(int argc, char** argv)
         else {
             String libraryPath = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES)[0];
             String pushDatabasePath = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebPush"_s, "PushDatabase.db"_s });
-            ::WebPushD::Daemon::singleton().startPushService(String { incomingPushServiceName }, pushDatabasePath);
+            ::WebPushD::Daemon::singleton().startPushService(String::fromLatin1(incomingPushServiceName), pushDatabasePath);
         }
     }
     CFRunLoopRun();

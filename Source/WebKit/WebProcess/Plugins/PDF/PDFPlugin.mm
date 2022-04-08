@@ -1284,13 +1284,13 @@ PluginInfo PDFPlugin::pluginInfo()
     MimeClassInfo pdfMimeClassInfo;
     pdfMimeClassInfo.type = "application/pdf"_s;
     pdfMimeClassInfo.desc = pdfDocumentTypeDescription();
-    pdfMimeClassInfo.extensions.append("pdf");
+    pdfMimeClassInfo.extensions.append("pdf"_s);
     info.mimes.append(pdfMimeClassInfo);
 
     MimeClassInfo textPDFMimeClassInfo;
     textPDFMimeClassInfo.type = "text/pdf"_s;
     textPDFMimeClassInfo.desc = pdfDocumentTypeDescription();
-    textPDFMimeClassInfo.extensions.append("pdf");
+    textPDFMimeClassInfo.extensions.append("pdf"_s);
     info.mimes.append(textPDFMimeClassInfo);
 
     return info;

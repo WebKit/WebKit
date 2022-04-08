@@ -464,7 +464,7 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
         encoder->_objectsBeingEncoded.remove(object);
     });
 
-    encoder->_currentDictionary->set(classNameKey, API::String::create(String { class_getName(objectClass) }));
+    encoder->_currentDictionary->set(classNameKey, API::String::create(String::fromLatin1(class_getName(objectClass))));
 
     if ([object isKindOfClass:[NSInvocation class]]) {
         // We have to special case NSInvocation since we don't want to encode the target.

@@ -162,7 +162,7 @@ static uint64_t generateReplyIdentifier()
         if (strcmp([NSMethodSignature signatureWithObjCTypes:replyBlockSignature].methodReturnType, "v"))
             [NSException raise:NSInvalidArgumentException format:@"Return value of block argument must be 'void'. (%s)", sel_getName(invocation.selector)];
 
-        replyInfo = makeUnique<WebKit::RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), String { replyBlockSignature });
+        replyInfo = makeUnique<WebKit::RemoteObjectInvocation::ReplyInfo>(generateReplyIdentifier(), String::fromLatin1(replyBlockSignature));
 
         // Replace the block object so we won't try to encode it.
         id null = nullptr;

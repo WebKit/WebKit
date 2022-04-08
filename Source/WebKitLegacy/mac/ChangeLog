@@ -1,5 +1,17 @@
 2022-04-07  Chris Dumez  <cdumez@apple.com>
 
+        Replace deprecated String(const char*) with String::fromLatin1() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=238925
+
+        Reviewed by Darin Adler.
+
+        * History/HistoryPropertyList.mm:
+        (HistoryPropertyListWriter::HistoryPropertyListWriter):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView coreCommandByName:]):
+
+2022-04-07  Chris Dumez  <cdumez@apple.com>
+
         Drop unused EditorClient::getAutoCorrectSuggestionForMisspelledWord()
         https://bugs.webkit.org/show_bug.cgi?id=238897
 

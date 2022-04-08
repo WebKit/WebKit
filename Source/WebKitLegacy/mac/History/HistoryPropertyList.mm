@@ -33,12 +33,12 @@ using namespace WebCore;
 static const int currentFileVersion = 1;
 
 HistoryPropertyListWriter::HistoryPropertyListWriter()
-    : m_displayTitleKey("displayTitle")
-    , m_lastVisitWasFailureKey("lastVisitWasFailure")
-    , m_lastVisitedDateKey("lastVisitedDate")
-    , m_redirectURLsKey("redirectURLs")
-    , m_titleKey("title")
-    , m_urlKey("")
+    : m_displayTitleKey("displayTitle"_s)
+    , m_lastVisitWasFailureKey("lastVisitWasFailure"_s)
+    , m_lastVisitedDateKey("lastVisitedDate"_s)
+    , m_redirectURLsKey("redirectURLs"_s)
+    , m_titleKey("title"_s)
+    , m_urlKey(emptyString())
     , m_buffer(0)
 {
 }

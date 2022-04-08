@@ -2538,11 +2538,11 @@ void WebPageProxy::selectAll()
 static std::optional<DOMPasteAccessCategory> pasteAccessCategoryForCommand(const String& commandName)
 {
     static NeverDestroyed<HashMap<String, DOMPasteAccessCategory, ASCIICaseInsensitiveHash>> pasteCommandNames = HashMap<String, DOMPasteAccessCategory, ASCIICaseInsensitiveHash> {
-        { "Paste", DOMPasteAccessCategory::General },
-        { "PasteAndMatchStyle", DOMPasteAccessCategory::General },
-        { "PasteAsQuotation", DOMPasteAccessCategory::General },
-        { "PasteAsPlainText", DOMPasteAccessCategory::General },
-        { "PasteFont", DOMPasteAccessCategory::Fonts },
+        { "Paste"_s, DOMPasteAccessCategory::General },
+        { "PasteAndMatchStyle"_s, DOMPasteAccessCategory::General },
+        { "PasteAsQuotation"_s, DOMPasteAccessCategory::General },
+        { "PasteAsPlainText"_s, DOMPasteAccessCategory::General },
+        { "PasteFont"_s, DOMPasteAccessCategory::Fonts },
     };
 
     auto it = pasteCommandNames->find(commandName);

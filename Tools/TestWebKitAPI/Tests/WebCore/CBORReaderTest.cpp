@@ -192,7 +192,7 @@ TEST(CBORReaderTest, TestReadStringWithNUL)
         const String value;
         const Vector<uint8_t> cborData;
     } kStringTestCases[] = {
-        { String("string_without_nul"),
+        { "string_without_nul"_str,
             { 0x72, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x5F, 0x77, 0x69, 0x74, 0x68,
                 0x6F, 0x75, 0x74, 0x5F, 0x6E, 0x75, 0x6C } },
         { String("nul_terminated_string\0", 22),

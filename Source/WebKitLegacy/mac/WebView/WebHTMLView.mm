@@ -2650,7 +2650,7 @@ static String commandNameForSelector(SEL selector)
     auto* coreFrame = core([self _frame]);
     if (!coreFrame)
         return WebCore::Editor::Command();
-    return coreFrame->editor().command(String { name });
+    return coreFrame->editor().command(String::fromLatin1(name));
 }
 
 - (void)executeCoreCommandBySelector:(SEL)selector

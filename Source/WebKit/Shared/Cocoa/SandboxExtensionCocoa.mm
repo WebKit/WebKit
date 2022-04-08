@@ -299,7 +299,7 @@ auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type
         WTFLogAlways("Could not create a sandbox extension for temporary file '%s'", path.data());
         return std::nullopt;
     }
-    return {{ WTFMove(handle), String(path.data()) }};
+    return { { WTFMove(handle), String::fromUTF8(path.data()) } };
 }
 
 auto SandboxExtension::createHandleForGenericExtension(ASCIILiteral extensionClass) -> std::optional<Handle>

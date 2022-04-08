@@ -1,3 +1,53 @@
+2022-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Replace deprecated String(const char*) with String::fromLatin1() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=238925
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/DatabaseUtilities.cpp:
+        (WebKit::DatabaseUtilities::stripIndexQueryToMatchStoredValue):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::dumpContentsToFile):
+        * Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesInternalDebugFeatures.cpp.erb:
+        * Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb:
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (encodeObject):
+        * Shared/API/Cocoa/_WKRemoteObjectRegistry.mm:
+        (-[_WKRemoteObjectRegistry _sendInvocation:interface:]):
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtension::createHandleForTemporaryFile):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getClientBundleIdentifier):
+        (WebKit::XPCServiceInitializerDelegate::getClientProcessName):
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (+[_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentials]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::clearAllCredentials):
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::createCredentialPrivateKey const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::pasteAccessCategoryForCommand):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReceiveInvalidMessage):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pluginInfo):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::replaceSelectionPasteboardName):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::createJSArrayForArgumentDescriptions):
+        (WebKit::IPCTestingAPI::JSMessageListener::jsDescriptionFromDecoder):
+        * webpushd/WebPushDaemonMain.mm:
+        (WebKit::WebPushDaemonMain):
+
 2022-04-07  Stephan Szabo  <stephan.szabo@sony.com>
 
         Build-fix for not ENABLE(SERVICE_WORKER) after r292539

@@ -1708,7 +1708,7 @@ void TestInvocation::waitForPostDumpWatchdogTimerFired()
 #if PLATFORM(COCOA)
     char buffer[1024];
     snprintf(buffer, sizeof(buffer), "#PID UNRESPONSIVE - %s (pid %d)\n", getprogname(), getpid());
-    outputText(String { buffer });
+    outputText(String::fromLatin1(buffer));
 #endif
     done();
 }

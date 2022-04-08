@@ -52,7 +52,11 @@ WebPreferencesStore::ValueMap& WebPreferencesStore::defaults()
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
+<%- if @pref.type == "String" -%>
+        defaults.get().set(WebPreferencesKey::<%= @pref.nameLower %>Key(), Value(makeString(DEFAULT_VALUE_FOR_<%= @pref.name %>)));
+<%- else -%>
         defaults.get().set(WebPreferencesKey::<%= @pref.nameLower %>Key(), Value(<%= @pref.type %>(DEFAULT_VALUE_FOR_<%= @pref.name %>)));
+<%- end -%>
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

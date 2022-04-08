@@ -110,9 +110,9 @@ void TestController::cocoaPlatformInitialize(const Options& options)
     if (!dumpRenderTreeTemp)
         return;
 
-    String resourceLoadStatisticsFolder = String(dumpRenderTreeTemp) + '/' + "ResourceLoadStatistics";
+    String resourceLoadStatisticsFolder = makeString(dumpRenderTreeTemp, "/ResourceLoadStatistics");
     [[NSFileManager defaultManager] createDirectoryAtPath:resourceLoadStatisticsFolder withIntermediateDirectories:YES attributes:nil error: nil];
-    String fullBrowsingSessionResourceLog = resourceLoadStatisticsFolder + '/' + "full_browsing_session_resourceLog.plist";
+    String fullBrowsingSessionResourceLog = makeString(resourceLoadStatisticsFolder, "/full_browsing_session_resourceLog.plist");
     NSDictionary *resourceLogPlist = @{ @"version": @(1) };
     if (![resourceLogPlist writeToFile:fullBrowsingSessionResourceLog atomically:YES])
         WTFCrash();
@@ -328,7 +328,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
 
     [globalWebsiteDataStoreDelegateClient() setAllowRaisingQuota:YES];
 
-    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String { options.additionalSupportedImageTypes().c_str() });
+    WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)

@@ -46,7 +46,7 @@ static String testPathFromURL(WKURLRef url)
     String pathString(pathCFString.get());
     
     if (equalLettersIgnoringASCIICase(schemeString, "file")) {
-        String layoutTests("/LayoutTests/");
+        String layoutTests("/LayoutTests/"_s);
         size_t layoutTestsOffset = pathString.find(layoutTests);
         if (layoutTestsOffset == notFound)
             return String();

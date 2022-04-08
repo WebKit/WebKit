@@ -607,8 +607,9 @@ void Cache::dumpContentsToFile()
     auto fd = openFile(dumpFilePath(), FileOpenMode::Write);
     if (!isHandleValid(fd))
         return;
-    auto prologue = String("{\n\"entries\": [\n").utf8();
-    writeToFile(fd, prologue.data(), prologue.length());
+
+    static const char prologue[] = "{\n\"entries\": [\n";
+    writeToFile(fd, prologue, strlen(prologue));
 
     struct Totals {
         unsigned count { 0 };

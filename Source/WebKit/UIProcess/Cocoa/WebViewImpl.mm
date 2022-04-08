@@ -1900,7 +1900,7 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
         return completionHandler(ContinueUnsafeLoad::Yes);
 
     WebCore::DiagnosticLoggingClient::ValueDictionary showedWarningDictionary;
-    showedWarningDictionary.set("source"_s, String("service"));
+    showedWarningDictionary.set("source"_s, "service"_s);
 
     m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.ShowedWarning"_s, "Safari"_s, showedWarningDictionary, WebCore::ShouldSample::No);
 
@@ -1915,7 +1915,7 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
         bool forMainFrameNavigation = [weakThis->m_safeBrowsingWarning forMainFrameNavigation];
 
         WebCore::DiagnosticLoggingClient::ValueDictionary dictionary;
-        dictionary.set("source"_s, String("service"));
+        dictionary.set("source"_s, "service"_s);
         if (navigatesFrame && forMainFrameNavigation) {
             // The safe browsing warning will be hidden once the next page is shown.
             bool continuingUnsafeLoad = WTF::switchOn(result,
@@ -1924,15 +1924,15 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
             );
 
             if (continuingUnsafeLoad)
-                dictionary.set("action"_s, String("visit website"));
+                dictionary.set("action"_s, "visit website"_s);
             else
-                dictionary.set("action"_s, String("redirect to url"));
+                dictionary.set("action"_s, "redirect to url"_s);
 
             weakThis->m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.PerformedAction"_s, "Safari"_s, dictionary, WebCore::ShouldSample::No);
             return;
         }
 
-        dictionary.set("action"_s, String("go back"));
+        dictionary.set("action"_s, "go back"_s);
         weakThis->m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.PerformedAction"_s, "Safari"_s, dictionary, WebCore::ShouldSample::No);
 
         if (!navigatesFrame && weakThis->m_safeBrowsingWarning && !forMainFrameNavigation) {

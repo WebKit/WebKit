@@ -2218,7 +2218,7 @@ void TestRunner::setAccummulateLogsForChannel(JSStringRef channel)
     auto buffer = makeUniqueArray<char>(maxLength + 1);
     JSStringGetUTF8CString(channel, buffer.get(), maxLength + 1);
 
-    WebCoreTestSupport::setLogChannelToAccumulate(String { buffer.get() });
+    WebCoreTestSupport::setLogChannelToAccumulate(String::fromLatin1(buffer.get()));
 }
 
 using CallbackMap = WTF::HashMap<unsigned, JSObjectRef>;

@@ -78,7 +78,7 @@ bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier
 
 bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBundleIdentifier)
 {
-    clientBundleIdentifier = String { xpc_dictionary_get_string(m_initializerMessage, "client-bundle-identifier") };
+    clientBundleIdentifier = String::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "client-bundle-identifier"));
     return !clientBundleIdentifier.isEmpty();
 }
 
@@ -111,7 +111,7 @@ bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentif
 
 bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
 {
-    clientProcessName = String { xpc_dictionary_get_string(m_initializerMessage, "ui-process-name") };
+    clientProcessName = String::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "ui-process-name"));
     return !clientProcessName.isEmpty();
 }
 
@@ -119,30 +119,30 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 {
     xpc_object_t extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage, "extra-initialization-data");
 
-    String inspectorProcess { xpc_dictionary_get_string(extraDataInitializationDataObject, "inspector-process") };
+    auto inspectorProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "inspector-process"));
     if (!inspectorProcess.isEmpty())
         extraInitializationData.add("inspector-process"_s, inspectorProcess);
 
 #if ENABLE(SERVICE_WORKER)
-    String serviceWorkerProcess { xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process") };
+    auto serviceWorkerProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process"));
     if (!serviceWorkerProcess.isEmpty())
         extraInitializationData.add("service-worker-process"_s, WTFMove(serviceWorkerProcess));
-    String registrableDomain { xpc_dictionary_get_string(extraDataInitializationDataObject, "registrable-domain") };
+    auto registrableDomain = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "registrable-domain"));
     if (!registrableDomain.isEmpty())
         extraInitializationData.add("registrable-domain"_s, WTFMove(registrableDomain));
 #endif
 
-    String isPrewarmedProcess { xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed") };
+    auto isPrewarmedProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed"));
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
 
     if (!isClientSandboxed()) {
-        String userDirectorySuffix { xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix") };
+        auto userDirectorySuffix = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix"));
         if (!userDirectorySuffix.isEmpty())
             extraInitializationData.add("user-directory-suffix"_s, userDirectorySuffix);
     }
 
-    String alwaysRunsAtBackgroundPriority { xpc_dictionary_get_string(extraDataInitializationDataObject, "always-runs-at-background-priority") };
+    auto alwaysRunsAtBackgroundPriority = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "always-runs-at-background-priority"));
     if (!alwaysRunsAtBackgroundPriority.isEmpty())
         extraInitializationData.add("always-runs-at-background-priority"_s, alwaysRunsAtBackgroundPriority);
 
