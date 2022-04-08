@@ -1,3 +1,16 @@
+2022-04-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][WebRTC] Fix data-channel handler build for GStreamer 1.21
+        https://bugs.webkit.org/show_bug.cgi?id=238989
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The GST_WEBRTC_DATA_CHANNEL_STATE_NEW enum value was removed from public API in
+        https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/2099.
+
+        * Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp:
+        (WebCore::GStreamerDataChannelHandler::checkState):
+
 2022-04-08  Chris Dumez  <cdumez@apple.com>
 
         static_pointer_cast<>() may cause some unnecessary ref-counting churn
