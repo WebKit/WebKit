@@ -1,3 +1,13 @@
+2022-04-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15.4] Fix embedded device build
+        https://bugs.webkit.org/show_bug.cgi?id=239012
+        <rdar://problem/91495761>
+
+        Reviewed by Ryan Haddad.
+
+        * Configurations/Base.xcconfig: Allow AdHoc codesigning.
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting r292591.

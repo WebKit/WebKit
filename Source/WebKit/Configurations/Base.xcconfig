@@ -126,6 +126,7 @@ STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 SDKROOT = macosx.internal;
 
 CODE_SIGN_IDENTITY = -;
+AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 SUPPORTS_MACCATALYST = YES;
