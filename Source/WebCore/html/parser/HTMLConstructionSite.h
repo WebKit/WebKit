@@ -42,6 +42,7 @@ struct AtomStringWithCode {
     AtomString string;
     uint64_t code { 0 };
 };
+
 }
 
 namespace WTF {
@@ -49,6 +50,7 @@ template<> struct VectorTraits<WebCore::AtomStringWithCode> : SimpleClassVectorT
 }
 
 namespace WebCore {
+
 struct HTMLConstructionSiteTask {
     enum Operation {
         Insert,

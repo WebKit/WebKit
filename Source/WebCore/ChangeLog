@@ -1,3 +1,15 @@
+2022-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Simplify / Optimize the whitespace cache implementation
+        https://bugs.webkit.org/show_bug.cgi?id=238736
+        <rdar://problem/91255370>
+
+        Reviewed by Darin Adler.
+
+        Follow-up to r292310 to add missing blank lines.
+
+        * html/parser/HTMLConstructionSite.h:
+
 2022-04-08  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Merge getRelatedPropertyId() and shouldApplyPropertyInParseOrder()
