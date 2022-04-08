@@ -354,15 +354,9 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
 #if ENABLE(ORIENTATION_EVENTS)
 void Frame::orientationChanged()
 {
-    Vector<Ref<Frame>> frames;
-    for (Frame* frame = this; frame; frame = frame->tree().traverseNext())
-        frames.append(*frame);
-
-    auto newOrientation = orientation();
-    for (auto& frame : frames) {
-        if (Document* document = frame->document())
-            document->orientationChanged(newOrientation);
-    }
+    Page::forEachDocumentFromMainFrame(*this, [newOrientation = orientation()] (Document& document) {
+        document.orientationChanged(newOrientation);
+    });
 }
 
 int Frame::orientation() const

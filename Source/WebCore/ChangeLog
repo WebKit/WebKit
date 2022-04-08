@@ -1,3 +1,33 @@
+2021-12-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Clean-up: Adopt Page::forEachDocument in some missed spots
+        https://bugs.webkit.org/show_bug.cgi?id=234324
+        <rdar://problem/85443831>
+
+        Reviewed by Darin Adler.
+
+        Switch manual loops to our 'forEachDocument' style in a few places that were missed
+        in earlier refactoring.
+
+        No change in behavior.
+
+        * history/BackForwardCache.cpp:
+        (WebCore::setBackForwardCacheState)
+        * page/EventHandler.cpp:
+        (WebCore::removeDraggedContentDocumentMarkersFromAllFramesInPage):
+        * page/Frame.cpp:
+        (WebCore::Frame::orientationChanged):
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        (WebCore::Page::forEachDocumentFromMainFrame): Added.
+        (WebCore::Page::forEachDocument): Use new method.
+        (WebCore::Page::forEachFrameFromMainFrame): Added.
+        (WebCore::Page::windowScreenDidChange):
+        (WebCore::Page::userAgentChanged):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::dispatchPageHideEventBeforePause):
+        (WebCore::Frame::dispatchPageShowEventBeforeResume):
+
 2022-02-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Cannot find OpenGL when system provides opengl.pc instead of gl.pc

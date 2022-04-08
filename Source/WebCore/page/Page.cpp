@@ -393,10 +393,10 @@ Page::~Page()
 
     m_inspectorController->inspectedPageDestroyed();
 
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        frame->willDetachPage();
-        frame->detachFromPage();
-    }
+    forEachFrameFromMainFrame([] (Frame& frame) {
+        frame.willDetachPage();
+        frame.detachFromPage();
+    });
 
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->pageDestroyed();
@@ -1220,10 +1220,9 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
         m_displayNominalFramesPerSecond = DisplayRefreshMonitorManager::sharedManager().nominalFramesPerSecondForDisplay(m_displayID, chrome().client().displayRefreshMonitorFactory());
     }
 
-    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            frame->document()->windowScreenDidChange(displayID);
-    }
+    forEachDocument([&] (Document& document) {
+        document.windowScreenDidChange(displayID);
+    });
 
 #if ENABLE(VIDEO)
     auto mode = preferredDynamicRangeMode(mainFrame().view());
@@ -1937,13 +1936,12 @@ const String& Page::userStyleSheet() const
 
 void Page::userAgentChanged()
 {
-    for (auto* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
-        auto* window = frame->window();
-        if (!window)
-            continue;
-        if (auto* navigator = window->optionalNavigator())
-            navigator->userAgentChanged();
-    }
+    forEachDocument([] (Document& document) {
+        if (auto* window = document.domWindow()) {
+            if (auto* navigator = window->optionalNavigator())
+                navigator->userAgentChanged();
+        }
+    });
 }
 
 void Page::invalidateStylesForAllLinks()
@@ -2926,8 +2924,9 @@ void Page::notifyToInjectUserScripts()
 {
     m_hasBeenNotifiedToInjectUserScripts = true;
 
-    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
-        frame->injectUserScriptsAwaitingNotification();
+    forEachFrameFromMainFrame([] (Frame& frame) {
+        frame.injectUserScriptsAwaitingNotification();
+    });
 }
 
 void Page::setUserContentProvider(Ref<UserContentProvider>&& userContentProvider)
@@ -3337,10 +3336,10 @@ RenderingUpdateScheduler& Page::renderingUpdateScheduler()
     return *m_renderingUpdateScheduler;
 }
 
-void Page::forEachDocument(const Function<void(Document&)>& functor) const
+void Page::forEachDocumentFromMainFrame(const Frame& mainFrame, const Function<void(Document&)>& functor)
 {
     Vector<Ref<Document>> documents;
-    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* document = frame->document();
         if (!document)
             continue;
@@ -3348,6 +3347,11 @@ void Page::forEachDocument(const Function<void(Document&)>& functor) const
     }
     for (auto& document : documents)
         functor(document);
+}
+
+void Page::forEachDocument(const Function<void(Document&)>& functor) const
+{
+    forEachDocumentFromMainFrame(mainFrame(), functor);
 }
 
 void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
@@ -3359,6 +3363,16 @@ void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 #else
     UNUSED_PARAM(functor);
 #endif
+}
+
+void Page::forEachFrameFromMainFrame(const Function<void(Frame&)>& functor)
+{
+    Vector<Ref<Frame>> frames;
+    for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
+        frames.append(*frame);
+
+    for (auto& frame : frames)
+        functor(frame);
 }
 
 bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMainResource) const

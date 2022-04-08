@@ -388,10 +388,9 @@ static String pruningReasonToDiagnosticLoggingKey(PruningReason pruningReason)
 
 static void setBackForwardCacheState(Page& page, Document::BackForwardCacheState BackForwardCacheState)
 {
-    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (auto* document = frame->document())
-            document->setBackForwardCacheState(BackForwardCacheState);
-    }
+    page.forEachDocument([&] (Document& document) {
+        document.setBackForwardCacheState(BackForwardCacheState);
+    });
 }
 
 // When entering back/forward cache, tear down the render tree before setting the in-cache flag.

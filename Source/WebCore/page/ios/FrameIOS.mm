@@ -644,8 +644,9 @@ void Frame::dispatchPageHideEventBeforePause()
     if (!isMainFrame())
         return;
 
-    for (Frame* frame = this; frame; frame = frame->tree().traverseNext(this))
-        frame->document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, true), document());
+    Page::forEachDocumentFromMainFrame(*this, [pagehideEvent = eventNames().pagehideEvent, mainDocument = document()](Document& document) {
+        document.domWindow()->dispatchEvent(PageTransitionEvent::create(pagehideEvent, true), mainDocument);
+    });
 }
 
 void Frame::dispatchPageShowEventBeforeResume()
@@ -654,8 +655,9 @@ void Frame::dispatchPageShowEventBeforeResume()
     if (!isMainFrame())
         return;
 
-    for (Frame* frame = this; frame; frame = frame->tree().traverseNext(this))
-        frame->document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pageshowEvent, true), document());
+    Page::forEachDocumentFromMainFrame(*this, [pageshowEvent = eventNames().pageshowEvent, mainDocument = document()](Document& document) {
+        document.domWindow()->dispatchEvent(PageTransitionEvent::create(pageshowEvent, true), mainDocument);
+    });
 }
 
 void Frame::setRangedSelectionBaseToCurrentSelection()
