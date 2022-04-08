@@ -393,7 +393,7 @@ Page::~Page()
 
     m_inspectorController->inspectedPageDestroyed();
 
-    forEachFrameFromMainFrame([] (Frame& frame) {
+    forEachFrame([] (Frame& frame) {
         frame.willDetachPage();
         frame.detachFromPage();
     });
@@ -2924,7 +2924,7 @@ void Page::notifyToInjectUserScripts()
 {
     m_hasBeenNotifiedToInjectUserScripts = true;
 
-    forEachFrameFromMainFrame([] (Frame& frame) {
+    forEachFrame([] (Frame& frame) {
         frame.injectUserScriptsAwaitingNotification();
     });
 }
@@ -3365,7 +3365,7 @@ void Page::forEachMediaElement(const Function<void(HTMLMediaElement&)>& functor)
 #endif
 }
 
-void Page::forEachFrameFromMainFrame(const Function<void(Frame&)>& functor)
+void Page::forEachFrame(const Function<void(Frame&)>& functor)
 {
     Vector<Ref<Frame>> frames;
     for (auto* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
