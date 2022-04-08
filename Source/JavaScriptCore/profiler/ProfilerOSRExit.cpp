@@ -51,7 +51,7 @@ JSValue OSRExit::toJS(JSGlobalObject* globalObject) const
     JSObject* result = constructEmptyObject(globalObject);
     result->putDirect(vm, vm.propertyNames->id, jsNumber(m_id));
     result->putDirect(vm, vm.propertyNames->origin, m_origin.toJS(globalObject));
-    result->putDirect(vm, vm.propertyNames->exitKind, jsString(vm, exitKindToString(m_exitKind)));
+    result->putDirect(vm, vm.propertyNames->exitKind, jsNontrivialString(vm, exitKindToString(m_exitKind)));
     result->putDirect(vm, vm.propertyNames->isWatchpoint, jsBoolean(m_isWatchpoint));
     result->putDirect(vm, vm.propertyNames->count, jsNumber(m_counter));
     return result;

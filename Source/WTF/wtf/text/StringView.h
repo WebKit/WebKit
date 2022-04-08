@@ -94,6 +94,8 @@ public:
     const LChar* characters8() const;
     const UChar* characters16() const;
 
+    unsigned hash() const;
+
     // Return characters8() or characters16() depending on CharacterType.
     template<typename CharacterType> const CharacterType* characters() const;
 
@@ -147,6 +149,7 @@ public:
     WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start = 0) const;
 
     size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max()) const;
+    WTF_EXPORT_PRIVATE size_t reverseFind(StringView, unsigned start = std::numeric_limits<unsigned>::max()) const;
 
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView) const;
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView, unsigned start) const;
@@ -434,6 +437,13 @@ inline const UChar* StringView::characters16() const
     ASSERT(!is8Bit());
     ASSERT(underlyingStringIsValid());
     return static_cast<const UChar*>(m_characters);
+}
+
+inline unsigned StringView::hash() const
+{
+    if (is8Bit())
+        return StringHasher::computeHashAndMaskTop8Bits(characters8(), length());
+    return StringHasher::computeHashAndMaskTop8Bits(characters16(), length());
 }
 
 template<> ALWAYS_INLINE const LChar* StringView::characters<LChar>() const

@@ -1406,7 +1406,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
         previousEndIndex = endIndex;
 
         if (fieldType >= 0) {
-            auto type = jsString(vm, partTypeString(UDateFormatField(fieldType)));
+            auto type = jsNontrivialString(vm, partTypeString(UDateFormatField(fieldType)));
             auto value = jsString(vm, resultString.substring(beginIndex, endIndex - beginIndex));
             JSObject* part = constructEmptyObject(globalObject);
             part->putDirect(vm, vm.propertyNames->type, type);
@@ -1811,7 +1811,7 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
 
         ASSERT(category == UFIELD_CATEGORY_DATE);
 
-        auto type = jsString(vm, partTypeString(UDateFormatField(fieldType)));
+        auto type = jsNontrivialString(vm, partTypeString(UDateFormatField(fieldType)));
         JSObject* part = createPart(type, beginIndex, endIndex - beginIndex);
         parts->push(globalObject, part);
         RETURN_IF_EXCEPTION(scope, { });

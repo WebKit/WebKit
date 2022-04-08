@@ -1,3 +1,21 @@
+2022-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Reduce number of StringView to String conversions in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=238911
+
+        Reviewed by Darin Adler.
+
+        Provide a reverseFind(StringView, unsigned) overload on StringView, for consistency
+        with String and to facilitate the converting of code from String to StringView.
+
+        * wtf/text/StringCommon.h:
+        (WTF::reverseFindInner):
+        * wtf/text/StringImpl.cpp:
+        (WTF::reverseFindInner): Deleted.
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::reverseFind const):
+        * wtf/text/StringView.h:
+
 2022-04-08  Keith Miller  <keith_miller@apple.com>
 
         Broaden TypedArray API fix to all apps not just Bleacher Report

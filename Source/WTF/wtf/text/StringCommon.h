@@ -458,6 +458,33 @@ inline size_t find(const LChar* characters, unsigned length, UChar matchCharacte
     return find(characters, length, static_cast<LChar>(matchCharacter), index);
 }
 
+template <typename SearchCharacterType, typename MatchCharacterType>
+ALWAYS_INLINE static size_t reverseFindInner(const SearchCharacterType* searchCharacters, const MatchCharacterType* matchCharacters, unsigned start, unsigned length, unsigned matchLength)
+{
+    // Optimization: keep a running hash of the strings,
+    // only call equal if the hashes match.
+
+    // delta is the number of additional times to test; delta == 0 means test only once.
+    unsigned delta = std::min(start, length - matchLength);
+
+    unsigned searchHash = 0;
+    unsigned matchHash = 0;
+    for (unsigned i = 0; i < matchLength; ++i) {
+        searchHash += searchCharacters[delta + i];
+        matchHash += matchCharacters[i];
+    }
+
+    // keep looping until we match
+    while (searchHash != matchHash || !equal(searchCharacters + delta, matchCharacters, matchLength)) {
+        if (!delta)
+            return notFound;
+        --delta;
+        searchHash -= searchCharacters[delta + matchLength];
+        searchHash += searchCharacters[delta];
+    }
+    return delta;
+}
+
 // This is marked inline since it's mostly used in non-inline functions for each string type.
 // When used directly in code it's probably OK to be inline; maybe the loop will be unrolled.
 template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(const CharacterType* characters, const char* lowercaseLetters, unsigned length)

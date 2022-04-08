@@ -983,33 +983,6 @@ size_t StringImpl::reverseFind(UChar character, unsigned start)
     return WTF::reverseFind(characters16(), m_length, character, start);
 }
 
-template <typename SearchCharacterType, typename MatchCharacterType>
-ALWAYS_INLINE static size_t reverseFindInner(const SearchCharacterType* searchCharacters, const MatchCharacterType* matchCharacters, unsigned start, unsigned length, unsigned matchLength)
-{
-    // Optimization: keep a running hash of the strings,
-    // only call equal if the hashes match.
-
-    // delta is the number of additional times to test; delta == 0 means test only once.
-    unsigned delta = std::min(start, length - matchLength);
-    
-    unsigned searchHash = 0;
-    unsigned matchHash = 0;
-    for (unsigned i = 0; i < matchLength; ++i) {
-        searchHash += searchCharacters[delta + i];
-        matchHash += matchCharacters[i];
-    }
-
-    // keep looping until we match
-    while (searchHash != matchHash || !equal(searchCharacters + delta, matchCharacters, matchLength)) {
-        if (!delta)
-            return notFound;
-        --delta;
-        searchHash -= searchCharacters[delta + matchLength];
-        searchHash += searchCharacters[delta];
-    }
-    return delta;
-}
-
 size_t StringImpl::reverseFind(StringView matchString, unsigned start)
 {
     // Check for null or empty string to match against

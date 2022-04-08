@@ -1,3 +1,93 @@
+2022-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Reduce number of StringView to String conversions in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=238911
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::getValue const):
+        Resolve ambiguity by explicitly converting the StringImpl to a String before
+        calling jsString(). [1]
+
+        * jsc.cpp:
+        Avoid constructing a String from the StringView, just to compute a hash.
+        Instead, rely on the StringViewHashTranslator for this.
+
+        * profiler/ProfilerOSRExit.cpp:
+        (JSC::Profiler::OSRExit::toJS const):
+        exitKindToString() returns an ASCIILiteral whose length is always greater
+        than 1 so we can call the more efficient jsNontrivialString() instead of
+        jsString(). Calling jsString() here had become ambiguous because an
+        ASCIILiteral can be implicitely converted to both a String and a
+        StringView [2].
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::fastJoin):
+        Call the new jsString() overload that takes a StringView, to avoid
+        unnecessarily constructing a String in the case where the length is <= 1 [3].
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::appendSourceToErrorMessage):
+        * runtime/ErrorInstance.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::defaultApproximateSourceError):
+        (JSC::defaultSourceAppender):
+        (JSC::functionCallBase):
+        (JSC::notAFunctionSourceAppender):
+        (JSC::invalidParameterInSourceAppender):
+        (JSC::invalidParameterInstanceofSourceAppender):
+        (JSC::invalidParameterInstanceofNotFunctionSourceAppender):
+        (JSC::invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender):
+        (JSC::invalidPrototypeSourceAppender):
+        * runtime/ExceptionHelpers.h:
+        Call SourceAppender with a StringView since this is what we have. In most
+        cases, these appenders end up calling makeString() and it is thus beneficial
+        to avoid temporary/intermediate String constructions. 
+
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::toStringSlow):
+        Same as [3].
+
+        * runtime/IdentifierInlines.h:
+        (JSC::identifierToJSValue):
+        (JSC::identifierToSafePublicJSValue):
+        Same as [1].
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::formatToParts const):
+        (JSC::IntlDateTimeFormat::formatRangeToParts):
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::textInfo):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::formatRangeToPartsInternal):
+        (JSC::IntlNumberFormat::formatToPartsInternal):
+        Same as [2].
+
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::formatToParts const):
+        Same as [3].
+
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        Same as [2].
+
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::requestImportModule):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        Same as [1].
+
+        * runtime/JSString.h:
+        (JSC::jsString):
+        Add a jsString() overload that takes in a StringView instead of a String.
+        This avoids construction of a String for call sites having a StringView
+        in the event where the view's length is <= 1.
+
+        * runtime/SymbolConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        Same as [1].
+
+
 2022-04-08  Keith Miller  <keith_miller@apple.com>
 
         Broaden TypedArray API fix to all apps not just Bleacher Report

@@ -743,16 +743,16 @@ JSObject* IntlLocale::textInfo(JSGlobalObject* globalObject)
     switch (layout) {
     default:
     case ULOC_LAYOUT_LTR:
-        layoutString = jsString(vm, "ltr"_s);
+        layoutString = jsNontrivialString(vm, "ltr"_s);
         break;
     case ULOC_LAYOUT_RTL:
-        layoutString = jsString(vm, "rtl"_s);
+        layoutString = jsNontrivialString(vm, "rtl"_s);
         break;
     case ULOC_LAYOUT_TTB:
-        layoutString = jsString(vm, "ttb"_s);
+        layoutString = jsNontrivialString(vm, "ttb"_s);
         break;
     case ULOC_LAYOUT_BTT:
-        layoutString = jsString(vm, "btt"_s);
+        layoutString = jsNontrivialString(vm, "btt"_s);
         break;
     }
 

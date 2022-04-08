@@ -97,7 +97,7 @@ static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* ex
         return message;
     
     if (expressionStart < expressionStop)
-        return appender(message, codeBlock->source().provider()->getRange(expressionStart, expressionStop).toString(), type, ErrorInstance::FoundExactSource);
+        return appender(message, codeBlock->source().provider()->getRange(expressionStart, expressionStop), type, ErrorInstance::FoundExactSource);
 
     // No range information, so give a few characters of context.
     int dataLength = sourceString.length();
@@ -113,7 +113,7 @@ static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* ex
         stop++;
     while (stop > expressionStart && isStrWhiteSpace(sourceString[stop - 1]))
         stop--;
-    return appender(message, codeBlock->source().provider()->getRange(start, stop).toString(), type, ErrorInstance::FoundApproximateSource);
+    return appender(message, codeBlock->source().provider()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
 }
 
 void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)

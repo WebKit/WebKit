@@ -2065,13 +2065,13 @@ JSValueRef JSIPC::processTargets(JSContextRef context, JSObjectRef thisObject, J
     JSC::JSObject* processTargetsObject = JSC::constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     int index = 0;
-    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsString(vm, processTargetNameUI));
+    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsNontrivialString(vm, processTargetNameUI));
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 #if ENABLE(GPU_PROCESS)
-    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsString(vm, processTargetNameGPU));
+    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsNontrivialString(vm, processTargetNameGPU));
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 #endif
-    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsString(vm, processTargetNameNetworking));
+    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsNontrivialString(vm, processTargetNameNetworking));
     RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     return toRef(vm, processTargetsObject);
 }

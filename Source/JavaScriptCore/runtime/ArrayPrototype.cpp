@@ -544,7 +544,7 @@ inline JSValue fastJoin(JSGlobalObject* globalObject, JSObject* thisObject, Stri
             if (length <= 1)
                 return result;
 
-            JSString* operand = jsString(vm, separator.toString());
+            JSString* operand = jsString(vm, separator);
             RETURN_IF_EXCEPTION(scope, { });
             unsigned count = length - 1;
             for (;;) {

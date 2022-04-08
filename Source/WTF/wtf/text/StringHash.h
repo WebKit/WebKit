@@ -205,9 +205,7 @@ namespace WTF {
     struct StringViewHashTranslator {
         static unsigned hash(StringView key)
         {
-            if (key.is8Bit())
-                return StringHasher::computeHashAndMaskTop8Bits(key.characters8(), key.length());
-            return StringHasher::computeHashAndMaskTop8Bits(key.characters16(), key.length());
+            return key.hash();
         }
 
         static bool equal(const String& a, StringView b)

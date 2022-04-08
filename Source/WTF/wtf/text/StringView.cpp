@@ -359,6 +359,31 @@ StringView StringView::stripWhiteSpace() const
     return stripLeadingAndTrailingMatchedCharacters(isASCIISpace<UChar>);
 }
 
+size_t StringView::reverseFind(StringView matchString, unsigned start) const
+{
+    if (isNull())
+        return notFound;
+
+    unsigned matchLength = matchString.length();
+    unsigned ourLength = length();
+    if (!matchLength)
+        return std::min(start, ourLength);
+
+    // Check start & matchLength are in range.
+    if (matchLength > ourLength)
+        return notFound;
+
+    if (is8Bit()) {
+        if (matchString.is8Bit())
+            return reverseFindInner(characters8(), matchString.characters8(), start, ourLength, matchLength);
+        return reverseFindInner(characters8(), matchString.characters16(), start, ourLength, matchLength);
+    }
+
+    if (matchString.is8Bit())
+        return reverseFindInner(characters16(), matchString.characters8(), start, ourLength, matchLength);
+    return reverseFindInner(characters16(), matchString.characters16(), start, ourLength, matchLength);
+}
+
 int codePointCompare(StringView lhs, StringView rhs)
 {
     bool lhsIs8Bit = lhs.is8Bit();

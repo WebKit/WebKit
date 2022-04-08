@@ -81,12 +81,12 @@ static StringView clampErrorMessage(const String& originalMessage)
     return StringView(originalMessage).substring(0, maxLength);
 }
 
-static String defaultApproximateSourceError(const String& originalMessage, const String& sourceText)
+static String defaultApproximateSourceError(const String& originalMessage, StringView sourceText)
 {
     return makeString(clampErrorMessage(originalMessage), " (near '...", sourceText, "...')");
 }
 
-String defaultSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+String defaultSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
@@ -95,7 +95,7 @@ String defaultSourceAppender(const String& originalMessage, const String& source
     return makeString(clampErrorMessage(originalMessage), " (evaluating '", sourceText, "')");
 }
 
-static String functionCallBase(const String& sourceText)
+static StringView functionCallBase(StringView sourceText)
 { 
     // This function retrieves the 'foo.bar' substring from 'foo.bar(baz)'.
     // FIXME: This function has simple processing of /* */ style comments.
@@ -153,7 +153,7 @@ static String functionCallBase(const String& sourceText)
     return sourceText.left(idx + 1);
 }
 
-static String notAFunctionSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static String notAFunctionSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     ASSERT(type != TypeFunction);
 
@@ -169,7 +169,7 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
     else
         displayValue = StringView(originalMessage.characters16(), notAFunctionIndex - 1);
 
-    String base = functionCallBase(sourceText);
+    StringView base = functionCallBase(sourceText);
     if (!base)
         return defaultApproximateSourceError(originalMessage, sourceText);
     StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
@@ -189,7 +189,7 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
     return builder.toString();
 }
 
-static String invalidParameterInSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static String invalidParameterInSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType type, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     ASSERT_UNUSED(type, type != TypeObject);
 
@@ -208,11 +208,11 @@ static String invalidParameterInSourceAppender(const String& originalMessage, co
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
     static constexpr unsigned inLength = 2;
-    String rightHandSide = sourceText.substring(inIndex + inLength).simplifyWhiteSpace();
+    String rightHandSide = sourceText.substring(inIndex + inLength).toStringWithoutCopying().simplifyWhiteSpace();
     return makeString(rightHandSide, " is not an Object. (evaluating '", sourceText, "')");
 }
 
-inline String invalidParameterInstanceofSourceAppender(const String& content, const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+inline String invalidParameterInstanceofSourceAppender(const String& content, const String& originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
@@ -227,21 +227,21 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
     static constexpr unsigned instanceofLength = 10;
-    String rightHandSide = sourceText.substring(instanceofIndex + instanceofLength).simplifyWhiteSpace();
+    String rightHandSide = sourceText.substring(instanceofIndex + instanceofLength).toStringWithoutCopying().simplifyWhiteSpace();
     return makeString(rightHandSide, content, ". (evaluating '", sourceText, "')");
 }
 
-static String invalidParameterInstanceofNotFunctionSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static String invalidParameterInstanceofNotFunctionSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     return invalidParameterInstanceofSourceAppender(" is not a function"_s, originalMessage, sourceText, runtimeType, occurrence);
 }
 
-static String invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static String invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType runtimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     return invalidParameterInstanceofSourceAppender("[Symbol.hasInstance] is not a function, undefined, or null"_s, originalMessage, sourceText, runtimeType, occurrence);
 }
 
-static String invalidPrototypeSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+static String invalidPrototypeSourceAppender(const String& originalMessage, StringView sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);

@@ -181,7 +181,7 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
         return cacheIfNoException(jsMakeNontrivialString(globalObject, "function ", name().string(), "() {\n    [native code]\n}"));
 
     if (isClass())
-        return cache(jsString(vm, classSource().view().toString()));
+        return cache(jsString(vm, classSource().view()));
 
     ASCIILiteral functionHeader = ""_s;
     switch (parseMode()) {

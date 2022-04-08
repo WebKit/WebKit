@@ -1137,7 +1137,7 @@ void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, 
             sign = end.sign();
         }
         auto fieldType = field.m_field;
-        auto partType = fieldType == literalField ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), style, sign, numberType));
+        auto partType = fieldType == literalField ? literalString : jsNontrivialString(vm, partTypeString(UNumberFormatFields(fieldType), style, sign, numberType));
         JSObject* part = createPart(partType, field.m_range.begin(), field.m_range.distance());
         parts->push(globalObject, part);
         RETURN_IF_EXCEPTION(scope, void());
@@ -1507,7 +1507,7 @@ void IntlNumberFormat::formatToPartsInternal(JSGlobalObject* globalObject, Style
 
     for (auto& field : flatten) {
         auto fieldType = field.m_field;
-        auto partType = fieldType == literalField ? literalString : jsString(vm, partTypeString(UNumberFormatFields(fieldType), style, sign, numberType));
+        auto partType = fieldType == literalField ? literalString : jsNontrivialString(vm, partTypeString(UNumberFormatFields(fieldType), style, sign, numberType));
         auto partValue = jsSubstring(vm, formatted, field.m_range.begin(), field.m_range.distance());
         JSObject* part = constructEmptyObject(globalObject);
         part->putDirect(vm, vm.propertyNames->type, partType);
