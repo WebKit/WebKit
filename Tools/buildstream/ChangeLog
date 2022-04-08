@@ -1,3 +1,15 @@
+2022-04-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [Flatpak SDK] Update patchelf recipe
+        https://bugs.webkit.org/show_bug.cgi?id=238976
+
+        Reviewed by Philippe Normand.
+
+        Update patchelf to the last stable release (0.14.5)
+        patchelf is needed by the script generate-bundle.
+
+        * elements/sdk/patchelf.bst:
+
 2022-03-30  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Bump to Meson 0.62.
