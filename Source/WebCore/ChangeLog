@@ -1,3 +1,16 @@
+2022-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Hardening] Improve multi draw offset validation
+        https://bugs.webkit.org/show_bug.cgi?id=234966
+        <rdar://problem/86814830>
+
+        Reviewed by Darin Adler.
+
+        Incorporate draw count into validation of the offset.
+
+        * html/canvas/WebGLMultiDraw.cpp:
+        (WebCore::WebGLMultiDraw::validateOffset):
+
 2022-01-31  Brent Fulgham  <bfulgham@apple.com>
 
         Fix handling of access key events
