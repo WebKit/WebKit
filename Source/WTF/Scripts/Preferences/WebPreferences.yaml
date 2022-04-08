@@ -312,30 +312,6 @@ ApplePayEnabled:
       "ENABLE(APPLE_PAY_REMOTE_UI)": true
       default: false
 
-AspectRatioEnabled:
-  type: bool
-  humanReadableName: "CSS Aspect Ratio"
-  humanReadableDescription: "Enable aspect-ratio CSS property"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-AspectRatioOfImgFromWidthAndHeightEnabled:
-  type: bool
-  humanReadableName: "Aspect ratio of <img> from width and height"
-  humanReadableDescription: "Map HTML attributes width/height to the default aspect ratio of <img>"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 AsynchronousSpellCheckingEnabled:
   type: bool
   defaultValue:
@@ -393,42 +369,6 @@ BeaconAPIEnabled:
       default: true
     WebCore:
       default: false
-
-BlankAnchorTargetImpliesNoOpenerEnabled:
-  type: bool
-  humanReadableName: "Blank anchor target implies rel=noopener"
-  humanReadableDescription: "target=_blank on anchor elements implies rel=noopener"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-CSSColor4:
-  type: bool
-  humanReadableName: "CSS Color 4 Color Types"
-  humanReadableDescription: "Enable support for CSS Color 4 Color Types"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-CSSIndividualTransformPropertiesEnabled:
-  type: bool
-  humanReadableName: "CSS Individual Transform Properties"
-  humanReadableDescription: "Support for the translate, scale and rotate CSS properties"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 CSSTransformStyleOptimized3DEnabled:
   type: bool
@@ -828,20 +768,6 @@ FantasyFontFamily:
     WebCore:
       default: '""'
 
-# FIXME: This seems to be accidentally enabled for WebKit1 right now due to the old code using the
-# wrong preference key in some places. We should identify whether it really makes sense to keep this
-# enabled.
-FetchAPIKeepAliveEnabled:
-  type: bool
-  humanReadableName: "Fetch API Request KeepAlive"
-  humanReadableDescription: "Enable Fetch API Request KeepAlive"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 FixedFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitFixedFont
@@ -917,33 +843,6 @@ GamepadsEnabled:
     WebCore:
       default: false
 
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-GenericCueAPIEnabled:
-  type: bool
-  condition: ENABLE(VIDEO)
-  humanReadableName: "Generic Text Track Cue API"
-  humanReadableDescription: "Enable Generic Text Track Cue API"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-HDRMediaCapabilitiesEnabled:
-  type: bool
-  humanReadableName: "HDR Media Capabilities"
-  humanReadableDescription: "HDR Media Capabilities"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 HTTPEquivEnabled:
   type: bool
   webcoreName: httpEquivEnabled
@@ -1008,19 +907,6 @@ ImageControlsEnabled:
       default: false
     WebKit:
       default: false
-    WebCore:
-      default: false
-
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-InProcessCookieCacheEnabled:
-  type: bool
-  humanReadableName: "In-Process Cookie Cache"
-  humanReadableDescription: "In-Process DOM Cookie Cache"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
     WebCore:
       default: false
 
@@ -1157,19 +1043,6 @@ InterruptAudioOnPageVisibilityChangeEnabled:
     WebCore:
       default: false
 
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-IntersectionObserverEnabled:
-  type: bool
-  humanReadableName: "Intersection Observer"
-  humanReadableDescription: "Enable Intersection Observer support"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 InvisibleAutoplayNotPermitted:
   type: bool
   webKitLegacyPreferenceKey: InvisibleAutoplayNotPermitted
@@ -1196,20 +1069,6 @@ IsAccessibilityIsolatedTreeEnabled:
       default: false
     WebCore:
       default: false
-
-# FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
-# FIXME: This is not implemented for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-IsNSURLSessionWebSocketEnabled:
-  type: bool
-  humanReadableName: "NSURLSession WebSocket"
-  humanReadableDescription: "Use NSURLSession WebSocket API"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: HAVE(NSURLSESSION_WEBSOCKET)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 ItpDebugModeEnabled:
@@ -1457,19 +1316,6 @@ MainContentUserGestureOverrideEnabled:
     WebCore:
       default: false
 
-MaskWebGLStringsEnabled:
-  type: bool
-  humanReadableName: "Mask WebGL Strings"
-  humanReadableDescription: "Mask WebGL Vendor, Renderer, Shader Language Strings"
-  condition: ENABLE(WEBGL) || ENABLE(WEBGL2)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 MathMLEnabled:
   type: bool
   condition: ENABLE(MATHML)
@@ -1502,19 +1348,6 @@ MediaAudioCodecIDsAllowedInCaptivePortalMode:
 
 MediaCapabilitiesEnabled:
   type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-MediaCapabilitiesExtensionsEnabled:
-  type: bool
-  humanReadableName: "Media Capabilities Extensions"
-  humanReadableDescription: "Media Capabilities Extensions"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1627,19 +1460,6 @@ MediaPreloadingEnabled:
       default: false
     WebCore:
       default: false
-
-MediaSessionEnabled:
-  type: bool
-  humanReadableName: "Media Session API"
-  humanReadableDescription: "Media Session API"
-  condition: ENABLE(MEDIA_SESSION)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 MediaSourceEnabled:
   type: bool
@@ -1842,18 +1662,6 @@ OfflineWebApplicationCacheEnabled:
     WebCore:
       default: false
 
-OpusDecoderEnabled:
-  type: bool
-  humanReadableName: "Opus audio decoder"
-  humanReadableDescription: "Enable Opus audio decoder"
-  condition: ENABLE(OPUS)
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 PDFPluginEnabled:
   type: bool
   webcoreBinding: none
@@ -1880,18 +1688,6 @@ PaginateDuringLayoutEnabled:
       default: false
     WebCore:
       default: false
-
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-PaintTimingEnabled:
-  type: bool
-  humanReadableName: "Paint Timing"
-  humanReadableDescription: "Enable PaintTiming API"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
 
 PassiveTouchListenersAsDefaultOnDocument:
   type: bool
@@ -2016,33 +1812,6 @@ PunchOutWhiteBackgroundsInDarkMode:
     WebCore:
       default: false
 
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-ReferrerPolicyAttributeEnabled:
-  type: bool
-  humanReadableName: "Referrer Policy attribute"
-  humanReadableDescription: "Enable Referrer Policy attribute"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-RemotePlaybackEnabled:
-  type: bool
-  humanReadableName: "Remote Playback API"
-  humanReadableDescription: "Enable Remote Playback API"
-  condition: ENABLE(WIRELESS_PLAYBACK_TARGET)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 RequiresPageVisibilityToPlayAudio:
   type: bool
   defaultValue:
@@ -2096,18 +1865,6 @@ RequiresUserGestureToLoadVideo:
     WebCore:
       "PLATFORM(IOS_FAMILY)": true
       default: false
-
-ResizeObserverEnabled:
-  type: bool
-  humanReadableName: "Resize Observer"
-  humanReadableDescription: "Enable Resize Observer support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 RubberBandingForSubScrollableRegionsEnabled:
   type: bool
@@ -2267,18 +2024,6 @@ ShouldDecidePolicyBeforeLoadingQuickLookPreview:
       default: false
     WebCore:
       default: false
-
-ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
-  type: bool
-  humanReadableName: "Defer async scripts until DOMContentLoaded or first-paint"
-  humanReadableDescription: "Defer async scripts until DOMContentLoaded or first-paint"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 ShouldDisplayCaptions:
   type: bool
@@ -2513,18 +2258,6 @@ SuppressesIncrementalRendering:
     WebCore:
       default: false
 
-SyntheticEditingCommandsEnabled:
-  type: bool
-  humanReadableName: "Synthetic Editing Commands"
-  humanReadableDescription: "Enable Synthetic Editing Commands"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 # FIXME: There is no custom binding implemented for WebKitLegacy.
 SystemLayoutDirection:
   type: uint32_t
@@ -2620,35 +2353,11 @@ TextInteractionEnabled:
       "PLATFORM(WATCHOS)": false
       default: true
 
-ThirdPartyIframeRedirectBlockingEnabled:
-  type: bool
-  humanReadableName: "Block top-level redirects by third-party iframes"
-  humanReadableDescription: "Block top-level redirects by third-party iframes"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 ThreadedScrollingEnabled:
   type: bool
   webcoreBinding: none
   exposed: [ WebKit ]
   defaultValue:
-    WebKit:
-      default: true
-
-TransformStreamAPIEnabled:
-  type: bool
-  humanReadableName: "TransformStream API"
-  humanReadableDescription: "Enable Transform Stream API"
-  defaultValue:
-    WebCore:
-      default: true
-    WebKitLegacy:
-      default: true
     WebKit:
       default: true
 
@@ -2716,17 +2425,6 @@ UsePreHTML5ParserQuirks:
       default: false
     WebCore:
       default: false
-
-UserGesturePromisePropagationEnabled:
-  type: bool
-  humanReadableName: "UserGesture Promise Propagation"
-  humanReadableDescription: "UserGesture Promise Propagation"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
 
 # FIXME: There is no custom binding implemented for WebKitLegacy.
 UserInterfaceDirectionPolicy:
@@ -2813,19 +2511,6 @@ ViewportFitEnabled:
     WebCore:
       default: false
 
-VisualViewportAPIEnabled:
-  type: bool
-  humanReadableName: "Visual Viewport API"
-  humanReadableDescription: "Enable Visual Viewport API"
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)" : false
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 VisualViewportEnabled:
   type: bool
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
@@ -2836,18 +2521,6 @@ VisualViewportEnabled:
     WebKit:
       default: true
     WebCore:
-      default: true
-
-VorbisDecoderEnabled:
-  type: bool
-  humanReadableName: "Vorbis audio decoder"
-  humanReadableDescription: "Enable Vorbis audio decoder"
-  condition: ENABLE(VORBIS)
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
       default: true
 
 WantsBalancedSetDefersLoadingBehavior:
@@ -2883,19 +2556,6 @@ WebAudioEnabled:
       default: true
     WebCore:
       default: false
-
-WebGL2Enabled:
-  type: bool
-  humanReadableName: "WebGL 2.0"
-  humanReadableDescription: "WebGL 2 prototype"
-  condition: ENABLE(WEBGL2)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 WebGLEnabled:
   type: bool
@@ -2934,52 +2594,6 @@ WebMParserEnabled:
     WebKitLegacy:
       default: true
     WebKit:
-      default: true
-
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
-WebRTCH264LowLatencyEncoderEnabled:
-  type: bool
-  humanReadableName: "WebRTC H264 LowLatency encoder"
-  humanReadableDescription: "Enable H264 LowLatency encoder"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-
-WebRTCPlatformTCPSocketsEnabled:
-  type: bool
-  humanReadableName: "WebRTC Platform TCP Sockets"
-  humanReadableDescription: "Enable WebRTC Platform TCP Sockets"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKit:
-      default: true
-
-WebRTCPlatformUDPSocketsEnabled:
-  type: bool
-  humanReadableName: "WebRTC Platform UDP Sockets"
-  humanReadableDescription: "Enable WebRTC Platform UDP Sockets"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKit:
-      default: true
-
-WebRTCVP9Profile0CodecEnabled:
-  type: bool
-  humanReadableName: "WebRTC VP9 profile 0 codec"
-  humanReadableDescription: "Enable WebRTC VP9 profile 0 codec"
-  condition: ENABLE(WEB_RTC)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
       default: true
 
 WebSecurityEnabled:
