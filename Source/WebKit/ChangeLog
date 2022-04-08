@@ -1,3 +1,36 @@
+2022-04-08  Gavin Phillips  <gavin.p@apple.com>
+
+        Remove misc unused CoreIPC messages/handlers that have no instances of messages being dispatched to them
+        https://bugs.webkit.org/show_bug.cgi?id=238996
+
+        Reviewed by Chris Dumez.
+
+        Remove misc unused CoreIPC messages/handlers that have no instances of messages being dispatched to them. This includes:
+        WebPage::FrameBecameRemote, WebInspectorUIProxy::BringInspectedPageToFront, WebProcess::refreshPlugins, NetworkProcess::SetQOS
+        WebPage::GetPositionInformation, WebPage::InvalidateMediaSessionCoordinator, RemoteCDMInstanceSessionProxy::DisplayIDChanged.
+
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        (WebKit::RemoteCDMInstanceSessionProxy::displayIDChanged): Deleted.
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::bringInspectedPageToFront): Deleted.
+        * UIProcess/Inspector/WebInspectorUIProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createMediaSessionCoordinator):
+        (WebKit::WebPage::frameBecameRemote): Deleted.
+        (WebKit::WebPage::invalidateMediaSessionCoordinator): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isObscuredElement):
+        (WebKit::WebPage::getPositionInformation): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::refreshPlugins): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2022-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Have GPU Process call lowMemoryHandler() on each RemoteRenderingBackend

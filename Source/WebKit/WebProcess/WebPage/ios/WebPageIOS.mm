@@ -2695,24 +2695,6 @@ static inline bool isObscuredElement(Element& element)
 
     return true;
 }
-
-void WebPage::getPositionInformation(const InteractionInformationRequest& request, CompletionHandler<void(InteractionInformationAtPosition&&)>&& reply)
-{
-    // Avoid UIProcess hangs when the WebContent process is stuck on a sync IPC.
-    if (IPC::UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC()) {
-        WEBPAGE_RELEASE_LOG_ERROR(Process, "getPositionInformation - Not processing because the process is stuck on unbounded sync IPC");
-        return reply({ });
-    }
-
-    sendEditorStateUpdate();
-
-    m_pendingSynchronousPositionInformationReply = WTFMove(reply);
-
-    auto information = positionInformation(request);
-
-    if (auto reply = WTFMove(m_pendingSynchronousPositionInformationReply))
-        reply(WTFMove(information));
-}
     
 static void focusedElementPositionInformation(WebPage& page, Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {

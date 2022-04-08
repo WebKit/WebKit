@@ -90,7 +90,6 @@ messages -> WebPage LegacyReceiver {
     SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) Synchronous
     HandleAutocorrectionContextRequest()
     RequestEvasionRectsAboveSelection() -> (Vector<WebCore::FloatRect> rects)
-    GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Synchronous
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     StartInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext> elementContext, WebCore::IntPoint point)
     StopInteraction()
@@ -588,8 +587,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas, enum:bool WebCore::EventMakesGamepadsVisible eventVisibility)
 #endif
 
-    FrameBecameRemote(WebCore::FrameIdentifier frameID, struct WebCore::GlobalFrameIdentifier remoteFrameIdentifier, struct WebCore::GlobalWindowIdentifier remoteWindowIdentifier)
-
     RegisterURLSchemeHandler(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, String scheme)
 
     URLSchemeTaskWillPerformRedirection(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest) -> (WebCore::ResourceRequest actualRequest)
@@ -672,7 +669,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     CreateMediaSessionCoordinator(String identifier) -> (bool success)
-    InvalidateMediaSessionCoordinator()
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)

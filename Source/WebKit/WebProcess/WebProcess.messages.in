@@ -58,8 +58,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetHasStylusDevice(bool hasStylusDevice)
 #endif
 
-    RefreshPlugins()
-
     void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);
     void StopMemorySampler();
 

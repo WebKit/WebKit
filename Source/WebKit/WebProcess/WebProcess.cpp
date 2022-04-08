@@ -1029,10 +1029,6 @@ void WebProcess::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
     completionHandler(JSC::Options::useJIT());
 }
 
-void WebProcess::refreshPlugins()
-{
-}
-
 void WebProcess::garbageCollectJavaScriptObjects()
 {
     GCController::singleton().garbageCollectNow();

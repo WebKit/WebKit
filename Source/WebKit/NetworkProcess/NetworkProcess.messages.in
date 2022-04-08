@@ -61,9 +61,6 @@ messages -> NetworkProcess LegacyReceiver {
 
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
 
-#if PLATFORM(COCOA)
-    SetQOS(int latencyQOS, int throughputQOS)
-#endif
     SetAllowsAnySSLCertificateForWebSocket(bool enabled) -> () Synchronous
 
     FlushCookies(PAL::SessionID sessionID) -> ()

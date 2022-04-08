@@ -816,7 +816,6 @@ public:
     void syncApplyAutocorrection(const String& correction, const String& originalText, CompletionHandler<void(bool)>&&);
     void handleAutocorrectionContextRequest();
     void preemptivelySendAutocorrectionContext();
-    void getPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
     void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext>&&, WebCore::IntPoint&&);
     void stopInteraction();
@@ -1506,7 +1505,6 @@ public:
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     void createMediaSessionCoordinator(const String&, CompletionHandler<void(bool)>&&);
-    void invalidateMediaSessionCoordinator();
 #endif
 
     void setLastNavigationWasAppInitiated(bool wasAppBound) { m_lastNavigationWasAppInitiated = wasAppBound; }
@@ -1942,8 +1940,6 @@ private:
     void boundaryEventOccurred(bool wordBoundary, unsigned charIndex, unsigned charLength);
     void voicesDidChange();
 #endif
-
-    void frameBecameRemote(WebCore::FrameIdentifier, WebCore::GlobalFrameIdentifier&& remoteFrameIdentifier, WebCore::GlobalWindowIdentifier&& remoteWindowIdentifier);
 
     void registerURLSchemeHandler(WebURLSchemeHandlerIdentifier, const String& scheme);
 

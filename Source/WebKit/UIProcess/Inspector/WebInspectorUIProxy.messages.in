@@ -29,7 +29,6 @@ messages -> WebInspectorUIProxy {
     FrontendLoaded()
     DidClose()
     BringToFront()
-    BringInspectedPageToFront()
     Reopen()
     ResetState()
 

@@ -7307,37 +7307,6 @@ void WebPage::setIsSuspended(bool suspended)
     suspendForProcessSwap();
 }
 
-void WebPage::frameBecameRemote(FrameIdentifier frameID, GlobalFrameIdentifier&& remoteFrameIdentifier, GlobalWindowIdentifier&& remoteWindowIdentifier)
-{
-    RefPtr<WebFrame> frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
-        return;
-
-    if (frame->page() != this)
-        return;
-
-    auto* coreFrame = frame->coreFrame();
-    auto* previousWindow = coreFrame->window();
-    if (!previousWindow)
-        return;
-
-    auto remoteFrame = RemoteFrame::create(WTFMove(remoteFrameIdentifier));
-    auto remoteWindow = RemoteDOMWindow::create(remoteFrame.copyRef(), WTFMove(remoteWindowIdentifier));
-
-    remoteFrame->setOpener(frame->coreFrame()->loader().opener());
-
-    auto jsWindowProxies = frame->coreFrame()->windowProxy().releaseJSWindowProxies();
-    remoteFrame->windowProxy().setJSWindowProxies(WTFMove(jsWindowProxies));
-    remoteFrame->windowProxy().setDOMWindow(remoteWindow.ptr());
-
-    coreFrame->setView(nullptr);
-    coreFrame->willDetachPage();
-    coreFrame->detachFromPage();
-
-    if (frame->isMainFrame())
-        close();
-}
-
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
@@ -8096,11 +8065,6 @@ void WebPage::createMediaSessionCoordinator(const String& identifier, Completion
 
     m_page->setMediaSessionCoordinator(RemoteMediaSessionCoordinator::create(*this, identifier));
     completionHandler(true);
-}
-
-void WebPage::invalidateMediaSessionCoordinator()
-{
-    m_page->invalidateMediaSessionCoordinator();
 }
 #endif
 

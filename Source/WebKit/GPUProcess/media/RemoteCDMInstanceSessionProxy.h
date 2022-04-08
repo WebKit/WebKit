@@ -74,7 +74,6 @@ private:
     void closeSession(const String& sessionId, CloseSessionCallback&&);
     void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&);
     void storeRecordOfKeyUsage(const String& sessionId);
-    void displayIDChanged(PlatformDisplayID);
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(KeyStatusVector&&) final;

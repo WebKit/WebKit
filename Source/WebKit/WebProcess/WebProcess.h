@@ -209,8 +209,6 @@ public:
     const WTF::MachSendRight& compositingRenderServerPort() const { return m_compositingRenderServerPort; }
 #endif
 
-    void refreshPlugins();
-
     bool fullKeyboardAccessEnabled() const { return m_fullKeyboardAccessEnabled; }
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
