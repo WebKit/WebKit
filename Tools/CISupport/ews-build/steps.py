@@ -4524,6 +4524,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                 self.setProperty('retry_count', retry_count + 1)
                 if self.getProperty('github.number', ''):
                     self.build.addStepsAfterCurrentStep([
+                        ResetGitSvn(),
                         CleanGitRepo(),
                         CheckOutSource(),
                         GitSvnFetch(),
@@ -5157,4 +5158,21 @@ class GitSvnFetch(shell.ShellCommand):
             return {'step': 'Paired recent SVN commits with GitHub record'}
         if self.results == FAILURE:
             return {'step': 'Recent SVN commits did not match GitHub record'}
+        return super(GitSvnFetch, self).getResultSummary()
+
+
+class ResetGitSvn(shell.ShellCommand):
+    name = 'reset-git-svn'
+    haltOnFailure = False
+    flunkOnFailure = False
+    command = ['rm', '-rf', '.git/svn']
+
+    def __init__(self, **kwargs):
+        super(ResetGitSvn, self).__init__(logEnviron=False, timeout=300, **kwargs)
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': 'Removed git-svn references'}
+        if self.results == FAILURE:
+            return {'step': 'Failed to remove git-svn references'}
         return super(GitSvnFetch, self).getResultSummary()
