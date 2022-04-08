@@ -1,3 +1,15 @@
+2022-03-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (r287807): WEBGL_multi_draw validation rejecting valid arguments
+        https://bugs.webkit.org/show_bug.cgi?id=238239
+
+        Reviewed by Darin Adler.
+
+        Enable the newer WebGL conformance tests that test this, marked
+        Slow as they take a while to run.
+
+        * TestExpectations:
+
 2022-02-14  Simon Fraser  <simon.fraser@apple.com>
 
         Fix crash with deeply nested async overflow scroll
