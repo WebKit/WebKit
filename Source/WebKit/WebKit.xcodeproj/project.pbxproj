@@ -1473,9 +1473,6 @@
 		935B579A26F51933008B48AC /* FileSystemStorageHandleRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 935B579826F51270008B48AC /* FileSystemStorageHandleRegistry.h */; };
 		935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935EEB9F127761AC003322B8 /* WKBundleBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB961277616D003322B8 /* WKBundleBackForwardList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9368EEDE2303A90200BDB11A /* StorageManagerSetMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9368EEDC2303A8D800BDB11A /* StorageManagerSetMessageReceiver.cpp */; };
-		9368EEDF2303A9ED00BDB11A /* StorageManagerSetMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 9368EEDD2303A8D800BDB11A /* StorageManagerSetMessages.h */; };
-		936B059823039097002FC06B /* StorageManagerSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 936B05952303900B002FC06B /* StorageManagerSet.h */; };
 		93735EBB1C92986300336FA7 /* WKPreviewActionItemInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93735EBA1C92986300336FA7 /* WKPreviewActionItemInternal.h */; };
 		9391074F1BF6BC65008C17AD /* WKPreviewElementInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391074E1BF6BC65008C17AD /* WKPreviewElementInfoInternal.h */; };
 		9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */; };
@@ -5719,11 +5716,6 @@
 		935EEB961277616D003322B8 /* WKBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardList.h; sourceTree = "<group>"; };
 		935EEB971277616D003322B8 /* WKBundleBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleBackForwardListItem.cpp; sourceTree = "<group>"; };
 		935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardListItem.h; sourceTree = "<group>"; };
-		9368EEDC2303A8D800BDB11A /* StorageManagerSetMessageReceiver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StorageManagerSetMessageReceiver.cpp; path = DerivedSources/WebKit/StorageManagerSetMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
-		9368EEDD2303A8D800BDB11A /* StorageManagerSetMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageManagerSetMessages.h; path = DerivedSources/WebKit/StorageManagerSetMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		936B05952303900B002FC06B /* StorageManagerSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageManagerSet.h; sourceTree = "<group>"; };
-		936B05962303900B002FC06B /* StorageManagerSet.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StorageManagerSet.messages.in; sourceTree = "<group>"; };
-		936B05972303900B002FC06B /* StorageManagerSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageManagerSet.cpp; sourceTree = "<group>"; };
 		93735EBA1C92986300336FA7 /* WKPreviewActionItemInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreviewActionItemInternal.h; sourceTree = "<group>"; };
 		9391074E1BF6BC65008C17AD /* WKPreviewElementInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreviewElementInfoInternal.h; sourceTree = "<group>"; };
 		9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameNetworkingContext.h; sourceTree = "<group>"; };
@@ -11279,9 +11271,6 @@
 				465F4E02230759D5003CEDB7 /* StorageAreaIdentifier.h */,
 				93B2614A227D147200B97A76 /* StorageManager.cpp */,
 				93B26149227D147200B97A76 /* StorageManager.h */,
-				936B05972303900B002FC06B /* StorageManagerSet.cpp */,
-				936B05952303900B002FC06B /* StorageManagerSet.h */,
-				936B05962303900B002FC06B /* StorageManagerSet.messages.in */,
 				46BEB6E222FBB21A00269867 /* TransientLocalStorageNamespace.cpp */,
 				46BEB6E122FBB21A00269867 /* TransientLocalStorageNamespace.h */,
 			);
@@ -13034,8 +13023,6 @@
 				93D6B77F254CCABB0058DD3A /* SpeechRecognitionServerMessagesReplies.h */,
 				1A334DEB16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp */,
 				1A334DEC16DE8F88006A8E38 /* StorageAreaMapMessages.h */,
-				9368EEDC2303A8D800BDB11A /* StorageManagerSetMessageReceiver.cpp */,
-				9368EEDD2303A8D800BDB11A /* StorageManagerSetMessages.h */,
 				CD491B0B1E732E4D00009066 /* UserMediaCaptureManagerMessageReceiver.cpp */,
 				CD491B0C1E732E4D00009066 /* UserMediaCaptureManagerMessages.h */,
 				CD491B151E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp */,
@@ -14636,8 +14623,6 @@
 				1A334DEE16DE8F88006A8E38 /* StorageAreaMapMessages.h in Headers */,
 				93E799C7276027460074008A /* StorageAreaRegistry.h in Headers */,
 				93B2614D227D149E00B97A76 /* StorageManager.h in Headers */,
-				936B059823039097002FC06B /* StorageManagerSet.h in Headers */,
-				9368EEDF2303A9ED00BDB11A /* StorageManagerSetMessages.h in Headers */,
 				465F4E06230B2E95003CEDB7 /* StorageNamespaceIdentifier.h in Headers */,
 				7B73123C25CC8525003B2796 /* StreamClientConnection.h in Headers */,
 				7B73123A25CC8525003B2796 /* StreamConnectionBuffer.h in Headers */,
@@ -17040,7 +17025,6 @@
 				93AB9B562575A28B0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */,
 				93D6B782254CCCF40058DD3A /* SpeechRecognitionServerMessageReceiver.cpp in Sources */,
 				1A334DED16DE8F88006A8E38 /* StorageAreaMapMessageReceiver.cpp in Sources */,
-				9368EEDE2303A90200BDB11A /* StorageManagerSetMessageReceiver.cpp in Sources */,
 				2D11B7512126A282006F8878 /* UnifiedSource1-mm.mm in Sources */,
 				2D11B7522126A282006F8878 /* UnifiedSource1.cpp in Sources */,
 				2D11B7532126A282006F8878 /* UnifiedSource2-mm.mm in Sources */,

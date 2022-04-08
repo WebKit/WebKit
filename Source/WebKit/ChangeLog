@@ -1,3 +1,25 @@
+2022-04-08  Gavin Phillips  <gavin.p@apple.com>
+
+        Remove unneeded CoreIPC messages and corresponding handlers related to StorageManagerSet
+        https://bugs.webkit.org/show_bug.cgi?id=238938
+
+        Reviewed by Chris Dumez.
+
+        There are various CoreIPC messages related to StorageManagerSet which are no longer needed. This
+        change removes them.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp: Removed.
+        * NetworkProcess/WebStorage/StorageManagerSet.h: Removed.
+        * NetworkProcess/WebStorage/StorageManagerSet.messages.in: Removed.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+
 2022-04-08  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 15.4] Fix embedded device build

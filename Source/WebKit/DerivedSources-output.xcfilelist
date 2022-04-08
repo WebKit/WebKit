@@ -438,9 +438,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SpeechRecognitionServerMessagesRepli
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/StorageAreaMapMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/StorageAreaMapMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/StorageAreaMapMessagesReplies.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/StorageManagerSetMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/StorageManagerSetMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/StorageManagerSetMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TextCheckingControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TextCheckingControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TextCheckingControllerProxyMessagesReplies.h

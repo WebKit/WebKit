@@ -205,8 +205,6 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/SharedWorker/WebSharedWorkerServerConnection
     NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection
 
-    NetworkProcess/WebStorage/StorageManagerSet
-
     NetworkProcess/cache/CacheStorageEngineConnection
 
     NetworkProcess/storage/NetworkStorageManager
