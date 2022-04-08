@@ -1622,7 +1622,10 @@ class ValidateChangeLogAndReviewer(shell.ShellCommand):
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
             self.setProperty('comment_text', log_text)
             self.setProperty('build_finish_summary', 'ChangeLog validation failed')
-            self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
+            self.build.addStepsAfterCurrentStep([
+                LeaveComment(),
+                SetCommitQueueMinusFlagOnPatch(), BlockPullRequest(),
+            ])
         return rc
 
 
@@ -4933,7 +4936,9 @@ class AddReviewerToChangeLog(steps.ShellSequence, ShellMixin, AddReviewerMixin):
 
 class ValidateCommitMessage(shell.ShellCommand):
     name = 'validate-commit-message'
-    haltOnFailure = True
+    haltOnFailure = False
+    flunkOnFailure = True
+    OOPS_RE = re.compile(r'\(OO*PP*S!\)')
 
     def __init__(self, **kwargs):
         super(ValidateCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
@@ -4958,20 +4963,25 @@ class ValidateCommitMessage(shell.ShellCommand):
         rc = super(ValidateCommitMessage, self).evaluateCommand(cmd)
         if rc == SKIPPED:
             return rc
-        if rc != SUCCESS:
+
+        if rc == SUCCESS:
+            self.summary = 'Validated commit message'
+            log_text = self.log_observer.getStdout()
+            if self.OOPS_RE.search(log_text):
+                self.summary = 'Commit message contains (OOPS!)'
+                rc = FAILURE
+            elif 'Reviewed by' not in log_text and 'Unreviewed' not in log_text:
+                self.summary = 'No reviewer information in commit message'
+                rc = FAILURE
+        else:
             self.summary = 'Error parsing commit message'
-            return rc
+            rc = FAILURE
 
-        log_text = self.log_observer.getStdout()
-        if '(OOPS!)' in log_text:
-            self.summary = 'Commit message contains (OOPS!)'
-            return FAILURE
-        if 'Reviewed by' not in log_text and 'Unreviewed' not in log_text:
-            self.summary = 'No reviewer information in commit message'
-            return FAILURE
-
-        self.summary = 'Validated commit message'
-        return SUCCESS
+        if rc == FAILURE:
+            self.setProperty('comment_text', f"{self.summary}, blocking PR #{self.getProperty('github.number')}")
+            self.setProperty('build_finish_summary', 'Commit message validation failed')
+            self.build.addStepsAfterCurrentStep([LeaveComment(),  BlockPullRequest()])
+        return rc
 
     def doStepIf(self, step):
         return self.getProperty('github.number')

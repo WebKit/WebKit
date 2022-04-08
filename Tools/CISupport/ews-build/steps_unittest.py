@@ -6191,7 +6191,9 @@ https://bugs.webkit.org/show_bug.cgi?id=238172
 Reviewed by NOBODY (OOPS!)'''),
         )
         self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!)')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('comment_text'), 'Commit message contains (OOPS!), blocking PR #1234')
+        return rc
 
     def test_failure_no_reviewer(self):
         self.setupStep(ValidateCommitMessage())
@@ -6209,7 +6211,9 @@ https://bugs.webkit.org/show_bug.cgi?id=238172
 <rdar://problem/90602594>'''),
         )
         self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('comment_text'), 'No reviewer information in commit message, blocking PR #1234')
+        return rc
 
 
 class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):

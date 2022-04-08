@@ -1,5 +1,19 @@
 2022-04-07  Jonathan Bedard  <jbedard@apple.com>
 
+        [Merge-Queue] Comment on PR when failing validation
+        https://bugs.webkit.org/show_bug.cgi?id=238969
+        <rdar://problem/91451392>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (ValidateChangeLogAndReviewer.evaluateCommand): Add BlockPullRequest on failure.
+        (ValidateCommitMessage.evaluateCommand): Block and comment on pull request if
+        validation fails.
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-04-07  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Reset git-svn cache on commit failure
         https://bugs.webkit.org/show_bug.cgi?id=238975
         <rdar://problem/91454550>
