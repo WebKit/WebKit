@@ -224,7 +224,7 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
     if (!priv->bytesRead) {
         String contentType { webKitURISchemeResponseGetContentType(resp).data() };
         ResourceResponse response(priv->task->request().url(), extractMIMETypeFromMediaType(contentType), webKitURISchemeResponseGetStreamLength(resp), emptyString());
-        response.setTextEncodingName(extractCharsetFromMediaType(contentType));
+        response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
         const CString& statusMessage = webKitURISchemeResponseGetStatusMessage(resp);
         if (statusMessage.isNull()) {
             response.setHTTPStatusCode(200);

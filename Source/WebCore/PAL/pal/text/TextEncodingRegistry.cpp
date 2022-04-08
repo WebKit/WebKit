@@ -292,7 +292,7 @@ template<typename CharacterType> static const char* atomCanonicalTextEncodingNam
     return atomCanonicalTextEncodingName(buffer);
 }
 
-const char* atomCanonicalTextEncodingName(const String& alias)
+const char* atomCanonicalTextEncodingName(StringView alias)
 {
     if (alias.isEmpty() || !alias.isAllASCII())
         return nullptr;

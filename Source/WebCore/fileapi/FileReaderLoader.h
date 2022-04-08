@@ -82,7 +82,7 @@ public:
     unsigned totalBytes() const { return m_totalBytes; }
     std::optional<ExceptionCode> errorCode() const { return m_errorCode; }
 
-    void setEncoding(const String&);
+    void setEncoding(StringView);
     void setDataType(const String& dataType) { m_dataType = dataType; }
 
     const URL& url() { return m_urlForReading; }

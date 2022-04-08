@@ -118,7 +118,7 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.setURL(data.url);
     response.setMimeType(data.mimeType);
     response.setExpectedContentLength(data.expectedContentLength);
-    response.setTextEncodingName(data.textEncodingName);
+    response.setTextEncodingName(WTFMove(data.textEncodingName));
 
     response.setHTTPStatusCode(data.httpStatusCode);
     response.setHTTPStatusText(data.httpStatusText);
@@ -273,13 +273,13 @@ const String& ResourceResponseBase::textEncodingName() const
     return m_textEncodingName;
 }
 
-void ResourceResponseBase::setTextEncodingName(const String& encodingName)
+void ResourceResponseBase::setTextEncodingName(String&& encodingName)
 {
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
     // FIXME: Text encoding is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_textEncodingName.
-    m_textEncodingName = encodingName;
+    m_textEncodingName = WTFMove(encodingName);
 
     // FIXME: Should invalidate or update platform response if present.
 }

@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT void setExpectedContentLength(long long expectedContentLength);
 
     WEBCORE_EXPORT const String& textEncodingName() const;
-    WEBCORE_EXPORT void setTextEncodingName(const String& name);
+    WEBCORE_EXPORT void setTextEncodingName(String&&);
 
     WEBCORE_EXPORT int httpStatusCode() const;
     WEBCORE_EXPORT void setHTTPStatusCode(int);

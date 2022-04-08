@@ -72,7 +72,7 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
     setMimeType(extractMIMETypeFromMediaType(contentType));
     if (m_mimeType.isEmpty() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED)
         setMimeType(MIMETypeRegistry::mimeTypeForPath(m_url.path().toString()));
-    setTextEncodingName(extractCharsetFromMediaType(contentType));
+    setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
 
     setExpectedContentLength(soup_message_headers_get_content_length(responseHeaders));
 }

@@ -362,7 +362,7 @@ bool FileReaderLoader::isCompleted() const
     return m_bytesLoaded == m_totalBytes;
 }
 
-void FileReaderLoader::setEncoding(const String& encoding)
+void FileReaderLoader::setEncoding(StringView encoding)
 {
     if (!encoding.isEmpty())
         m_encoding = PAL::TextEncoding(encoding);

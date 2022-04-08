@@ -1,3 +1,20 @@
+2022-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Add PAL::TextEncoding() constructor that takes in a StringView
+        https://bugs.webkit.org/show_bug.cgi?id=238905
+
+        Reviewed by Darin Adler.
+
+        This allows some call sites to be a bit more efficient.
+
+        * pal/text/TextEncoding.cpp:
+        (PAL::TextEncoding::TextEncoding):
+        * pal/text/TextEncoding.h:
+        (PAL::TextEncoding::TextEncoding):
+        * pal/text/TextEncodingRegistry.cpp:
+        (PAL::atomCanonicalTextEncodingName):
+        * pal/text/TextEncodingRegistry.h:
+
 2022-04-06  Chris Dumez  <cdumez@apple.com>
 
         Start replacing String(const char*) constructor with a String::fromLatin1(const char*) function

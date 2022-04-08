@@ -121,7 +121,7 @@ PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const Attrib
     }
 
     if (mode == Charset || (mode == Pragma && gotPragma))
-        return PAL::TextEncoding(stripLeadingAndTrailingHTMLSpaces(charset.toStringWithoutCopying()));
+        return PAL::TextEncoding(charset.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>));
 
     return PAL::TextEncoding();
 }

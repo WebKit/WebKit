@@ -394,7 +394,7 @@ String extractMIMETypeFromMediaType(const String& mediaType)
     return mediaType.substring(typeStart, typeEnd - typeStart);
 }
 
-String extractCharsetFromMediaType(const String& mediaType)
+StringView extractCharsetFromMediaType(StringView mediaType)
 {
     unsigned charsetPos = 0, charsetLen = 0;
     size_t pos = 0;
@@ -408,7 +408,7 @@ String extractCharsetFromMediaType(const String& mediaType)
         }
 
         // is what we found a beginning of a word?
-        if (mediaType[pos-1] > ' ' && mediaType[pos-1] != ';') {
+        if (mediaType[pos - 1] > ' ' && mediaType[pos - 1] != ';') {
             pos += 7;
             continue;
         }
@@ -416,18 +416,21 @@ String extractCharsetFromMediaType(const String& mediaType)
         pos += 7;
 
         // skip whitespace
-        while (pos != length && mediaType[pos] <= ' ')
+        while (pos < length && mediaType[pos] <= ' ')
             ++pos;
+
+        if (pos >= length)
+            break;
 
         if (mediaType[pos++] != '=') // this "charset" substring wasn't a parameter name, but there may be others
             continue;
 
-        while (pos != length && (mediaType[pos] <= ' ' || mediaType[pos] == '"' || mediaType[pos] == '\''))
+        while (pos < length && (mediaType[pos] <= ' ' || mediaType[pos] == '"' || mediaType[pos] == '\''))
             ++pos;
 
         // we don't handle spaces within quoted parameter values, because charset names cannot have any
         unsigned endpos = pos;
-        while (pos != length && mediaType[endpos] > ' ' && mediaType[endpos] != '"' && mediaType[endpos] != '\'' && mediaType[endpos] != ';')
+        while (endpos < length && mediaType[endpos] > ' ' && mediaType[endpos] != '"' && mediaType[endpos] != '\'' && mediaType[endpos] != ';')
             ++endpos;
 
         charsetPos = pos;

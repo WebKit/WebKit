@@ -994,9 +994,9 @@ static inline bool shouldDecodeResponse(XMLHttpRequest::ResponseType type)
 // https://xhr.spec.whatwg.org/#final-charset
 PAL::TextEncoding XMLHttpRequest::finalResponseCharset() const
 {
-    String label = m_responseEncoding;
+    StringView label = m_responseEncoding;
 
-    String overrideResponseCharset = extractCharsetFromMediaType(m_mimeTypeOverride);
+    StringView overrideResponseCharset = extractCharsetFromMediaType(label);
     if (!overrideResponseCharset.isEmpty())
         label = overrideResponseCharset;
 
@@ -1046,7 +1046,7 @@ void XMLHttpRequest::didReceiveData(const SharedBuffer& buffer)
         changeState(HEADERS_RECEIVED);
 
     if (!m_mimeTypeOverride.isEmpty())
-        m_responseEncoding = extractCharsetFromMediaType(m_mimeTypeOverride);
+        m_responseEncoding = extractCharsetFromMediaType(m_mimeTypeOverride).toString();
     if (m_responseEncoding.isEmpty())
         m_responseEncoding = m_response.textEncodingName();
 

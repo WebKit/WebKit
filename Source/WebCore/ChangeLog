@@ -1,3 +1,38 @@
+2022-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Add PAL::TextEncoding() constructor that takes in a StringView
+        https://bugs.webkit.org/show_bug.cgi?id=238905
+
+        Reviewed by Darin Adler.
+
+        This allows some call sites to be a bit more efficient.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::create):
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::setEncoding):
+        * fileapi/FileReaderLoader.h:
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::encodingFromMetaAttributes):
+        * loader/FormSubmission.cpp:
+        (WebCore::encodingFromAcceptCharset):
+        * loader/soup/ResourceLoaderSoup.cpp:
+        (WebCore::ResourceLoader::loadGResource):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::extractCharsetFromMediaType):
+        * platform/network/HTTPParsers.h:
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::setResponseFromCachedHeaders):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::handleDataURL):
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::finalResponseCharset const):
+        (WebCore::XMLHttpRequest::didReceiveData):
+
 2022-04-07  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         When using a TrackDisplayUpdateScope queue updateActiveTextTrackCues as a task

@@ -1129,7 +1129,7 @@ void NetworkDataTaskSoup::didRequestNextPart(GRefPtr<GInputStream>&& inputStream
     auto* headers = soup_multipart_input_stream_get_headers(m_multipartInputStream.get());
     String contentType { soup_message_headers_get_one(headers, "Content-Type") };
     m_response = ResourceResponse(m_firstRequest.url(), extractMIMETypeFromMediaType(contentType),
-        soup_message_headers_get_content_length(headers), extractCharsetFromMediaType(contentType));
+        soup_message_headers_get_content_length(headers), extractCharsetFromMediaType(contentType).toString());
     m_response.updateFromSoupMessageHeaders(headers);
     dispatchDidReceiveResponse();
 }
@@ -1693,7 +1693,7 @@ void NetworkDataTaskSoup::didGetFileInfo(GFileInfo* info)
     } else {
         String contentType { g_file_info_get_content_type(info) };
         m_response.setMimeType(extractMIMETypeFromMediaType(contentType));
-        m_response.setTextEncodingName(extractCharsetFromMediaType(contentType));
+        m_response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
         if (m_response.mimeType().isEmpty())
             m_response.setMimeType(MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()));
         m_response.setExpectedContentLength(g_file_info_get_size(info));

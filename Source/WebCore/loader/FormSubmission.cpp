@@ -158,7 +158,7 @@ static PAL::TextEncoding encodingFromAcceptCharset(const String& acceptCharset, 
     String normalizedAcceptCharset = acceptCharset;
     normalizedAcceptCharset.replace(',', ' ');
 
-    for (auto& charset : normalizedAcceptCharset.split(' ')) {
+    for (auto charset : StringView { normalizedAcceptCharset }.split(' ')) {
         PAL::TextEncoding encoding(charset);
         if (encoding.isValid())
             return encoding;
