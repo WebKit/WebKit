@@ -102,7 +102,7 @@ ObjectPropertyConditionSet ObjectPropertyConditionSet::mergedWith(
     if (!isValid() || !other.isValid())
         return invalid();
 
-    Vector<ObjectPropertyCondition> result;
+    Vector<ObjectPropertyCondition, 16> result;
     
     if (!isEmpty())
         result.append(m_data->begin(), m_data->size());
@@ -121,7 +121,7 @@ ObjectPropertyConditionSet ObjectPropertyConditionSet::mergedWith(
             result.append(newCondition);
     }
 
-    return create(WTFMove(result));
+    return ObjectPropertyConditionSet::create(WTFMove(result));
 }
 
 bool ObjectPropertyConditionSet::structuresEnsureValidity() const
@@ -247,7 +247,7 @@ template<typename Functor>
 ObjectPropertyConditionSet generateConditions(
     VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* prototype, const Functor& functor)
 {
-    Vector<ObjectPropertyCondition> conditions;
+    Vector<ObjectPropertyCondition, 8> conditions;
     
     for (;;) {
         if (ObjectPropertyConditionSetInternal::verbose)
@@ -315,7 +315,7 @@ ObjectPropertyConditionSet generateConditionsForPropertyMiss(
 {
     return generateConditions(
         vm, globalObject, headStructure, nullptr,
-        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+        [&](auto& conditions, JSObject* object) -> bool {
             ObjectPropertyCondition result =
                 generateCondition(vm, owner, object, uid, PropertyCondition::Absence, Concurrency::MainThread);
             if (!result)
@@ -330,7 +330,7 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMiss(
 {
     return generateConditions(
         vm, globalObject, headStructure, nullptr,
-        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+        [&](auto& conditions, JSObject* object) -> bool {
             ObjectPropertyCondition result =
                 generateCondition(vm, owner, object, uid, PropertyCondition::AbsenceOfSetEffect, Concurrency::MainThread);
             if (!result)
@@ -346,7 +346,7 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHit(
 {
     return generateConditions(
         vm, globalObject, headStructure, prototype,
-        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+        [&](auto& conditions, JSObject* object) -> bool {
             PropertyCondition::Kind kind =
                 object == prototype ? PropertyCondition::Presence : PropertyCondition::Absence;
             ObjectPropertyCondition result =
@@ -364,7 +364,7 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
 {
     return generateConditions(
         vm, globalObject, headStructure, prototype,
-        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+        [&](auto& conditions, JSObject* object) -> bool {
             auto kind = PropertyCondition::Absence;
             if (object == prototype) {
                 Structure* structure = object->structure(vm);
@@ -415,7 +415,7 @@ ObjectPropertyConditionSet generateConditionsForInstanceOf(
         dataLog("Searching for prototype ", JSValue(prototype), " starting with structure ", RawPointer(headStructure), " with shouldHit = ", shouldHit, "\n");
     ObjectPropertyConditionSet result = generateConditions(
         vm, globalObject, headStructure, shouldHit ? prototype : nullptr,
-        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+        [&](auto& conditions, JSObject* object) -> bool {
             if (ObjectPropertyConditionSetInternal::verbose)
                 dataLog("Encountered object: ", RawPointer(object), "\n");
             if (object == prototype) {
@@ -444,7 +444,7 @@ ObjectPropertyConditionSet generateConditionsForPrototypeEquivalenceConcurrently
     VM& vm, JSGlobalObject* globalObject, Structure* headStructure, JSObject* prototype, UniquedStringImpl* uid)
 {
     return generateConditions(vm, globalObject, headStructure, prototype,
-        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+        [&](auto& conditions, JSObject* object) -> bool {
             PropertyCondition::Kind kind =
                 object == prototype ? PropertyCondition::Equivalence : PropertyCondition::Absence;
             ObjectPropertyCondition result = generateCondition(vm, nullptr, object, uid, kind, Concurrency::ConcurrentThread);
@@ -460,7 +460,7 @@ ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
 {
     return generateConditions(
         vm, globalObject, headStructure, nullptr,
-        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+        [&](auto& conditions, JSObject* object) -> bool {
             ObjectPropertyCondition result = generateCondition(vm, nullptr, object, uid, PropertyCondition::Absence, Concurrency::ConcurrentThread);
             if (!result)
                 return false;
@@ -474,7 +474,7 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
 {
     return generateConditions(
         vm, globalObject, headStructure, nullptr,
-        [&] (Vector<ObjectPropertyCondition>& conditions, JSObject* object) -> bool {
+        [&](auto& conditions, JSObject* object) -> bool {
             ObjectPropertyCondition result =
                 generateCondition(vm, nullptr, object, uid, PropertyCondition::AbsenceOfSetEffect, Concurrency::ConcurrentThread);
             if (!result)

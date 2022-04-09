@@ -1,3 +1,27 @@
+2022-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use Vector with inline capacity in ObjectPropertyConditionSet creation
+        https://bugs.webkit.org/show_bug.cgi?id=239025
+
+        Reviewed by Keith Miller.
+
+        Since we anyway allocate ThreadSafeRefCountedFixedVector<ObjectPropertyCondition> in ObjectPropertyConditionSet, which has exact size,
+        generateXXX and mergeWith should not allocate heap Vector just for temporarily collecting ObjectPropertyCondition.
+        We pick 8 in generateXXX function and 16 for mergeWith function. This looks reasonable number and at least covers all cases in Speedometer2.
+
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::mergedWith const):
+        (JSC::generateConditionsForPropertyMiss):
+        (JSC::generateConditionsForPropertySetterMiss):
+        (JSC::generateConditionsForPrototypePropertyHit):
+        (JSC::generateConditionsForPrototypePropertyHitCustom):
+        (JSC::generateConditionsForInstanceOf):
+        (JSC::generateConditionsForPrototypeEquivalenceConcurrently):
+        (JSC::generateConditionsForPropertyMissConcurrently):
+        (JSC::generateConditionsForPropertySetterMissConcurrently):
+        * bytecode/ObjectPropertyConditionSet.h:
+        (JSC::ObjectPropertyConditionSet::create):
+
 2022-04-09  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Missing inter-module documentation links

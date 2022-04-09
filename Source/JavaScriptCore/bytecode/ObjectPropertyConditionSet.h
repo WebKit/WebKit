@@ -54,8 +54,9 @@ public:
         ASSERT(!result.isValid());
         return result;
     }
-    
-    static ObjectPropertyConditionSet create(Vector<ObjectPropertyCondition>&& vector)
+
+    template<typename Vector>
+    static ObjectPropertyConditionSet create(Vector&& vector)
     {
         if (vector.isEmpty())
             return ObjectPropertyConditionSet();
