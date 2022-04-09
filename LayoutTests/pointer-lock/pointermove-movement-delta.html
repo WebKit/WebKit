@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../pointerevents/utils.js"></script>
+<script>
+
+"use strict";
+
+target_test((target, test) => {
+    eventSender.mouseMoveTo(100, 100);
+
+    target.addEventListener("pointermove", (event) => {
+        assert_equals(event.x, 150, "The x property value is as expected.");
+        assert_equals(event.y, 150, "The y property value is as expected.");
+
+        assert_equals(event.movementX, 50, "The movementX property value is as expected.");
+        assert_equals(event.movementY, 50, "The movementY property value is as expected.");
+
+        test.done();
+    });
+
+    eventSender.mouseMoveTo(150, 150);
+}, "Testing the movementX and movementY properties of a pointer event triggered by a mouse.");
+
+</script>
+</body>
+</html>

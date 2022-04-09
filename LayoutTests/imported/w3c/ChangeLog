@@ -1,5 +1,82 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291886. rdar://problem/72814440
+
+    `PointerEvent.movementX` always 0 (breaks https://noisecraft.app/)
+    https://bugs.webkit.org/show_bug.cgi?id=220194
+    <rdar://problem/72814440>
+    
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy_with_pointerlock-expected.txt:
+    This change causes the test to progress further than before, but there still appear to be
+    other issues elsewhere, so adjust the expected output to reflect that.
+    
+    Source/WebCore:
+    
+    Test: pointer-lock/pointermove-movement-delta.html
+    
+    * dom/PointerEvent.cpp:
+    (WebCore::PointerEvent::PointerEvent):
+    Also pass along the movement delta in the constructor that takes a `MouseEvent`.
+    
+    * dom/MouseEvent.h:
+    * dom/MouseEvent.cpp:
+    (WebCore::MouseEvent::create):
+    (WebCore::MouseEvent::MouseEvent):
+    Require that all constructors that aren't invoked from JS always provide a movement delta.
+    
+    * dom/MouseRelatedEvent.h:
+    (WebCore::MouseRelatedEvent::movementX const):
+    (WebCore::MouseRelatedEvent::movementY const):
+    Expose these methods even when `!ENABLE(POINTER_LOCK)` so that they can be called without
+    the callsite having to also have a `#if`.
+    
+    * page/EventHandler.cpp:
+    (WebCore::EventHandler::dispatchDragEvent):
+    Pass along the movement delta even when `!ENABLE(POINTER_LOCK)`.
+    
+    Tools:
+    
+    * DumpRenderTree/mac/EventSendingController.mm:
+    (-[EventSendingController mouseMoveToX:Y:]):
+    * WebKitTestRunner/mac/EventSenderProxy.mm:
+    (WTR::EventSenderProxy::mouseMoveTo):
+    On macOS, the screen's origin is the bottom-left corner, so we need to flip the `deltaY`.
+    
+    LayoutTests:
+    
+    * pointer-lock/pointermove-movement-delta.html: Added.
+    * pointer-lock/pointermove-movement-delta-expected.txt: Added.
+    
+    * pointer-lock/mouse-event-delivery-expected.txt: Added.
+    On macOS, the screen's origin is the bottom-left corner, so we need to flip the `deltaY`.
+    
+    * platform/gtk/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy_with_pointerlock-expected.txt: Added.
+    This change causes the test to progress further than before, but there still appear to be
+    other issues elsewhere, so adjust the expected output to reflect that.
+    
+    * platform/mac-wk1/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291886 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-25  Devin Rousso  <drousso@apple.com>
+
+            `PointerEvent.movementX` always 0 (breaks https://noisecraft.app/)
+            https://bugs.webkit.org/show_bug.cgi?id=220194
+            <rdar://problem/72814440>
+
+            Reviewed by Simon Fraser.
+
+            * web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy_with_pointerlock-expected.txt:
+            This change causes the test to progress further than before, but there still appear to be
+            other issues elsewhere, so adjust the expected output to reflect that.
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291420. rdar://problem/90335275
 
     REGRESSION (iOS 15.4 / r287669): Mobile app stopped working due to CSS / angular animation

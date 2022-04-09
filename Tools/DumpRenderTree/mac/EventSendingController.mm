@@ -766,7 +766,7 @@ static NSUInteger swizzledEventPressedMouseButtons()
                                         pressure:0.0]);
     CGEventRef cgEvent = [event CGEvent];
     CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaX, newMousePosition.x - lastMousePosition.x);
-    CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, newMousePosition.y - lastMousePosition.y);
+    CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, -1 * (newMousePosition.y - lastMousePosition.y));
     event = retainPtr([NSEvent eventWithCGEvent:cgEvent]);
     lastMousePosition = newMousePosition;
 #else
