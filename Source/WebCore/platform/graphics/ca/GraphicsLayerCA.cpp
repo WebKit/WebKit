@@ -3128,8 +3128,8 @@ void GraphicsLayerCA::updateAnimations()
     };
 
     auto addLeafAnimation = [&](LayerPropertyAnimation& animation) {
-        ASSERT(animation.m_beginTime);
-        *animation.m_beginTime += animationGroupBeginTime;
+        if (!animation.m_beginTime)
+            animation.m_beginTime = currentTime;
         prepareAnimationForAddition(animation, Additive::No);
         setAnimationOnLayer(animation);
     };
@@ -3171,12 +3171,6 @@ void GraphicsLayerCA::updateAnimations()
             addAnimationGroup(animation->m_property, { animation->m_animation });
         }
     };
-
-    // Iterate through all animations to set the begin time of any new animations.
-    for (auto& animation : m_animations) {
-        if (!animation.m_pendingRemoval && !animation.m_beginTime)
-            animation.m_beginTime = currentTime - animationGroupBeginTime;
-    }
 
     // Now, remove all animation groups and leaf animations from the layer so that
     // we no longer have any layer animations.
@@ -3267,6 +3261,8 @@ void GraphicsLayerCA::updateAnimations()
             LayerPropertyAnimation* earliestAnimation = nullptr;
             Vector<RefPtr<PlatformCAAnimation>> caAnimations;
             for (auto* animation : makeReversedRange(animations)) {
+                if (!animation->m_beginTime)
+                    animation->m_beginTime = currentTime - animationGroupBeginTime;
                 if (auto beginTime = animation->computedBeginTime()) {
                     if (!earliestAnimation || *earliestAnimation->computedBeginTime() > *beginTime)
                         earliestAnimation = animation;
