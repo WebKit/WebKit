@@ -146,7 +146,17 @@ bool handleEvent(HTMLElement& element, Event& event)
         if (!image)
             return false;
 
-        page->chrome().client().handleImageServiceClick(roundedIntPoint(mouseEvent.absoluteLocation()), *image, *shadowHost);
+        Ref element = downcast<Element>(node);
+        auto* renderer = element->renderer();
+        if (!renderer)
+            return false;
+
+        RefPtr view = frame->view();
+        if (!view)
+            return false;
+
+        auto point = view->contentsToWindow(renderer->absoluteBoundingBoxRect()).minXMaxYCorner();
+        page->chrome().client().handleImageServiceClick(point, *image, *shadowHost);
         event.setDefaultHandled();
         return true;
     }

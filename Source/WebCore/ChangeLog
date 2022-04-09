@@ -1,3 +1,19 @@
+2022-04-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Sharing services picker menu Mail presents in the wrong place when compose web view is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=238672
+        <rdar://problem/88966924>
+
+        Reviewed by Wenson Hsieh.
+
+        Image menu is offset by the amount the view is scrolled. This patch
+        changes the menu location point by calculating the bottom corner of
+        the picker button then using contentsToWindow which handles
+        the scroll position offset
+
+        * dom/mac/ImageControlsMac.cpp:
+        (WebCore::ImageControlsMac::handleEvent):
+
 2022-04-08  Chris Dumez  <cdumez@apple.com>
 
         Drop unused pluginReplacementScriptObject
