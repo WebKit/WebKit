@@ -290,6 +290,17 @@ void WebProcessPool::platformResolvePathsForSandboxExtensions()
 #endif
 }
 
+#if PLATFORM(IOS_FAMILY)
+static const Vector<ASCIILiteral>& nonBrowserServices()
+{
+    ASSERT(isMainRunLoop());
+    static NeverDestroyed services = Vector<ASCIILiteral> {
+        "com.apple.lsd.open"_s,
+    };
+    return services;
+}
+#endif
+
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
     parameters.mediaMIMETypes = process.mediaMIMETypes();
@@ -405,6 +416,9 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    if (!isFullWebBrowser())
+        parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), std::nullopt);
+
     if (WebCore::deviceHasAGXCompilerService())
         parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(WebCore::agxCompilerClasses(), std::nullopt);
 #endif
