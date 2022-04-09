@@ -1,3 +1,16 @@
+2022-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WKTR] Reset minimum font size WKPreference between tests
+        https://bugs.webkit.org/show_bug.cgi?id=239027
+        <rdar://problem/88938768>
+
+        Reviewed by Chris Dumez.
+
+        Some tests use uiController to set the minimum font size WKPreference. We need to reset it between tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2022-04-09  Chris Dumez  <cdumez@apple.com>
 
         The Youtube plugin replacement should only work for actual Youtube URLs

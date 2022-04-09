@@ -1,3 +1,15 @@
+2022-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WKTR] Reset minimum font size WKPreference between tests
+        https://bugs.webkit.org/show_bug.cgi?id=239027
+        <rdar://problem/88938768>
+
+        Reviewed by Chris Dumez.
+
+        Remove unnecessary ephemeral session.
+
+        * fast/forms/visual-hebrew-text-field.html:
+
 2022-04-09  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (Safari 15.4): Focused element doesn't render outline when it has an underline
