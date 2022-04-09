@@ -1,3 +1,23 @@
+2022-04-09  Chris Dumez  <cdumez@apple.com>
+
+        The Youtube plugin replacement should only work for actual Youtube URLs
+        https://bugs.webkit.org/show_bug.cgi?id=239003
+        <rdar://91323230>
+
+        Reviewed by Brent Fulgham.
+
+        The Youtube plugin replacement was too permissive and was falling back to using
+        the original URL in cases there the original URL wasn't an expected Youtube
+        URL. This patch hardens the plugin replacement and drops the URL if it is not
+        a valid youtube URL instead.
+
+        Covered by new API test.
+
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::isYouTubeURL):
+        (WebCore::processAndCreateYouTubeURL):
+        (WebCore::YouTubePluginReplacement::youTubeURLFromAbsoluteURL):
+
 2022-04-09  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (Safari 15.4): Focused element doesn't render outline when it has an underline
