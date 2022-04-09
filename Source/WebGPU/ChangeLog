@@ -1,5 +1,30 @@
 2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement the concept of device lost
+        https://bugs.webkit.org/show_bug.cgi?id=238725
+
+        Reviewed by Dean Jackson.
+
+        This patch builds on https://bugs.webkit.org/show_bug.cgi?id=238723 to finish
+        the implementation of the concept of device lost. The device can only be lost
+        on macOS, where you can register a block callback to be run when it happens.
+        Also, the registration function returns a token that you can pass to the
+        unregistration function, which happens in Device's destructor.
+
+        * WebGPU/Buffer.mm:
+        (WebGPU::validateDescriptor):
+        * WebGPU/Device.h:
+        (WebGPU::Device::isLost const):
+        * WebGPU/Device.mm:
+        (WebGPU::Device::Device):
+        (WebGPU::Device::~Device):
+        (WebGPU::Device::loseTheDevice):
+        (WebGPU::Device::destroy):
+        (WebGPU::Device::validatePopErrorScope const):
+        (WebGPU::Device::setDeviceLostCallback):
+
+2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Represent failure by invalidity rather than nullptr
         https://bugs.webkit.org/show_bug.cgi?id=238724
 

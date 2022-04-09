@@ -38,7 +38,8 @@ static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor&
 
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpubufferdescriptor
 
-    // FIXME: "If device is lost return false."
+    if (device.isLost())
+        return false;
 
     // FIXME: "If any of the bits of descriptor’s usage aren’t present in this device’s [[allowed buffer usages]] return false."
 

@@ -43,6 +43,7 @@
 #import "SwapChain.h"
 #import "Texture.h"
 #import <wtf/StdLibExtras.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebGPU {
 
@@ -66,6 +67,29 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, Adapter& 
     , m_defaultQueue(Queue::create(defaultQueue, *this))
     , m_adapter(adapter)
 {
+#if PLATFORM(MAC)
+    auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = WeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
+        RefPtr<Device> strongThis = weakThis.get();
+        if (!strongThis)
+            return;
+        strongThis->instance().scheduleWork([strongThis = WTFMove(strongThis), device = device]() {
+            if (![strongThis->m_device isEqual:device])
+                return;
+            strongThis->loseTheDevice(WGPUDeviceLostReason_Undefined);
+        });
+    });
+
+#if ASSERT_ENABLED
+    bool found = false;
+    for (id<MTLDevice> observedDevice in devices) {
+        if ([observedDevice isEqual:device]) {
+            found = true;
+            break;
+        }
+    }
+    ASSERT(found);
+#endif
+#endif
 }
 
 Device::Device(Adapter& adapter)
@@ -74,9 +98,14 @@ Device::Device(Adapter& adapter)
 {
 }
 
-Device::~Device() = default;
+Device::~Device()
+{
+#if PLATFORM(MAC)
+    MTLRemoveDeviceObserver(m_deviceObserver);
+#endif
+}
 
-void Device::loseTheDevice()
+void Device::loseTheDevice(WGPUDeviceLostReason reason)
 {
     // https://gpuweb.github.io/gpuweb/#lose-the-device
 
@@ -84,19 +113,22 @@ void Device::loseTheDevice()
 
     makeInvalid();
 
-    // FIXME: "Resolve device.lost with a new GPUDeviceLostInfo with reason set to reason and message set to an implementation-defined value."
+    if (m_deviceLostCallback)
+        m_deviceLostCallback(reason, "Device lost."_s);
 
     // FIXME: The spec doesn't actually say to do this, but it's pretty important because
     // the total number of command queues alive at a time is limited to a pretty low limit.
     // We should make sure either that this is unobservable or that the spec says to do this.
     m_defaultQueue->makeInvalid();
+
+    m_isLost = true;
 }
 
 void Device::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-destroy
 
-    loseTheDevice();
+    loseTheDevice(WGPUDeviceLostReason_Destroyed);
 }
 
 size_t Device::enumerateFeatures(WGPUFeatureName*)
@@ -158,7 +190,8 @@ void Device::generateAValidationError(String&& message)
 
 bool Device::validatePopErrorScope() const
 {
-    // FIXME: "this must not be lost."
+    if (m_isLost)
+        return false;
 
     if (m_errorScopeStack.isEmpty())
         return false;
@@ -199,8 +232,7 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
 
 void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&& callback)
 {
-    // FIXME: Implement this.
-    UNUSED_PARAM(callback);
+    m_deviceLostCallback = WTFMove(callback);
 }
 
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)

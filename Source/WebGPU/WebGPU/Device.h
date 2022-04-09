@@ -33,6 +33,7 @@
 #import <wtf/Ref.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/text/WTFString.h>
 
 struct WGPUDeviceImpl {
@@ -57,7 +58,7 @@ class SwapChain;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gpudevice
-class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device> {
+class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, Adapter&);
@@ -95,6 +96,7 @@ public:
     void setLabel(String&&);
 
     bool isValid() const { return m_device; }
+    bool isLost() const { return m_isLost; }
 
     id<MTLDevice> device() const { return m_device; }
 
@@ -115,7 +117,7 @@ private:
 
     void makeInvalid() { m_device = nil; }
 
-    void loseTheDevice();
+    void loseTheDevice(WGPUDeviceLostReason);
 
     struct Error {
         WGPUErrorType type;
@@ -128,10 +130,15 @@ private:
 
     id<MTLDevice> m_device { nil };
     const Ref<Queue> m_defaultQueue;
-    const Ref<Adapter> m_adapter;
 
     Function<void(WGPUErrorType, String&&)> m_uncapturedErrorCallback;
     Vector<ErrorScope> m_errorScopeStack;
+
+    Function<void(WGPUDeviceLostReason, String&&)> m_deviceLostCallback;
+    bool m_isLost { false };
+    id<NSObject> m_deviceObserver { nil };
+
+    const Ref<Adapter> m_adapter;
 };
 
 } // namespace WebGPU
