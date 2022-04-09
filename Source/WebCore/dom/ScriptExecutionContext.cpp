@@ -578,7 +578,13 @@ JSC::JSGlobalObject* ScriptExecutionContext::globalObject()
 
 String ScriptExecutionContext::domainForCachePartition() const
 {
-    return m_domainForCachePartition.isNull() ? topOrigin().domainForCachePartition() : m_domainForCachePartition;
+    if (!m_domainForCachePartition.isNull())
+        return m_domainForCachePartition;
+
+    if (m_storageBlockingPolicy != StorageBlockingPolicy::BlockThirdParty)
+        return emptyString();
+
+    return topOrigin().domainForCachePartition();
 }
 
 bool ScriptExecutionContext::allowsMediaDevices() const
@@ -707,6 +713,39 @@ void ScriptExecutionContext::postTaskToResponsibleDocument(Function<void(Documen
 
     if (auto document = downcast<WorkletGlobalScope>(this)->responsibleDocument())
         callback(*document);
+}
+
+static bool isOriginEquivalentToLocal(const SecurityOrigin& origin)
+{
+    return origin.isLocal() && !origin.needsStorageAccessFromFileURLsQuirk() && !origin.hasUniversalAccess();
+}
+
+ScriptExecutionContext::HasResourceAccess ScriptExecutionContext::canAccessResource(ResourceType type) const
+{
+    auto* origin = securityOrigin();
+    if (!origin || origin->isUnique())
+        return HasResourceAccess::No;
+
+    switch (type) {
+    case ResourceType::Cookies:
+    case ResourceType::Geolocation:
+        return HasResourceAccess::Yes;
+    case ResourceType::ApplicationCache:
+    case ResourceType::Plugin:
+    case ResourceType::WebSQL:
+    case ResourceType::IndexedDB:
+    case ResourceType::LocalStorage:
+    case ResourceType::StorageManager:
+        if (isOriginEquivalentToLocal(*origin))
+            return HasResourceAccess::No;
+        FALLTHROUGH;
+    case ResourceType::SessionStorage:
+        if (m_storageBlockingPolicy == StorageBlockingPolicy::BlockAll)
+            return HasResourceAccess::No;
+        if ((m_storageBlockingPolicy == StorageBlockingPolicy::BlockThirdParty) && !topOrigin().isSameOriginAs(*origin) && !origin->hasUniversalAccess())
+            return HasResourceAccess::DefaultForThirdParty;
+        return HasResourceAccess::Yes;
+    }
 }
 
 } // namespace WebCore

@@ -55,6 +55,7 @@ struct ServiceWorkerJobData {
     ServiceWorkerOrClientIdentifier sourceContext;
     WorkerType workerType;
     ServiceWorkerJobType type;
+    String domainForCachePartition;
     bool isFromServiceWorkerPage { false };
 
     ServiceWorkerRegistrationOptions registrationOptions;
@@ -75,7 +76,7 @@ private:
 template<class Encoder>
 void ServiceWorkerJobData::encode(Encoder& encoder) const
 {
-    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL << sourceContext << workerType << isFromServiceWorkerPage;
+    encoder << identifier() << scriptURL << clientCreationURL << topOrigin << scopeURL << sourceContext << workerType << domainForCachePartition << isFromServiceWorkerPage;
     encoder << type;
     switch (type) {
     case ServiceWorkerJobType::Register:
@@ -114,6 +115,8 @@ std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decode
     if (!decoder.decode(jobData.sourceContext))
         return std::nullopt;
     if (!decoder.decode(jobData.workerType))
+        return std::nullopt;
+    if (!decoder.decode(jobData.domainForCachePartition))
         return std::nullopt;
     if (!decoder.decode(jobData.isFromServiceWorkerPage))
         return std::nullopt;

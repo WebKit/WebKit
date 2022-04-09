@@ -632,6 +632,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
         nodeListAndCollectionCount = 0;
 
     InspectorInstrumentation::addEventListenersToNode(*this);
+    setStorageBlockingPolicy(m_settings->storageBlockingPolicy());
 }
 
 void Document::createNewIdentifier()
@@ -5340,7 +5341,7 @@ ExceptionOr<String> Document::cookie()
     if (isCookieAverse())
         return String();
 
-    if (!securityOrigin().canAccessCookies())
+    if (canAccessResource(ScriptExecutionContext::ResourceType::Cookies) == ScriptExecutionContext::HasResourceAccess::No)
         return Exception { SecurityError };
 
     URL cookieURL = this->cookieURL();
@@ -5361,7 +5362,7 @@ ExceptionOr<void> Document::setCookie(const String& value)
     if (isCookieAverse())
         return { };
 
-    if (!securityOrigin().canAccessCookies())
+    if (canAccessResource(ScriptExecutionContext::ResourceType::Cookies) == ScriptExecutionContext::HasResourceAccess::No)
         return Exception { SecurityError };
 
     URL cookieURL = this->cookieURL();
@@ -5791,7 +5792,7 @@ bool Document::mediaDataLoadsAutomatically() const
 
 void Document::storageBlockingStateDidChange()
 {
-    securityOrigin().setStorageBlockingPolicy(settings().storageBlockingPolicy());
+    setStorageBlockingPolicy(settings().storageBlockingPolicy());
 }
 
 // Used only by WebKitLegacy.
@@ -6347,7 +6348,6 @@ void Document::initSecurityContext()
             securityOrigin().setEnforcesFilePathSeparation();
         }
     }
-    securityOrigin().setStorageBlockingPolicy(settings().storageBlockingPolicy());
 
     RefPtr parentDocument = ownerElement() ? &ownerElement()->document() : nullptr;
     if (parentDocument && m_frame->loader().shouldTreatURLAsSrcdocDocument(url())) {
@@ -7888,8 +7888,8 @@ void Document::applyQuickLookSandbox()
     ASSERT(!documentURL.protocolIs(QLPreviewProtocol));
     ASSERT(responseURL.protocolIs(QLPreviewProtocol));
 
+    setStorageBlockingPolicy(StorageBlockingPolicy::BlockAll);
     auto securityOrigin = SecurityOrigin::createNonLocalWithAllowedFilePath(responseURL, documentURL.fileSystemPath());
-    securityOrigin->setStorageBlockingPolicy(StorageBlockingPolicy::BlockAll);
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(securityOrigin)));
 
     static NeverDestroyed<String> quickLookCSP = makeString("default-src ", QLPreviewProtocol, ": 'unsafe-inline'; base-uri 'none'; sandbox allow-same-origin allow-scripts");

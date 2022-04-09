@@ -837,7 +837,7 @@ ExceptionOr<Storage*> DOMWindow::sessionStorage()
     if (!document)
         return nullptr;
 
-    if (!document->securityOrigin().canAccessSessionStorage(document->topOrigin()))
+    if (document->canAccessResource(ScriptExecutionContext::ResourceType::SessionStorage) == ScriptExecutionContext::HasResourceAccess::No)
         return Exception { SecurityError };
 
     if (m_sessionStorage)
@@ -863,7 +863,7 @@ ExceptionOr<Storage*> DOMWindow::localStorage()
     if (!document)
         return nullptr;
 
-    if (!document->securityOrigin().canAccessLocalStorage(nullptr))
+    if (document->canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::No)
         return Exception { SecurityError };
 
     auto* page = document->page();

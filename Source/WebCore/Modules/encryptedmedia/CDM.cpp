@@ -96,11 +96,10 @@ void CDM::getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfi
         return;
     }
 
+    auto access = CDMPrivate::LocalStorageAccess::Allowed;
     bool isEphemeral = !document->page() || document->page()->sessionID().isEphemeral();
-
-    SecurityOrigin& origin = document->securityOrigin();
-    SecurityOrigin& topOrigin = document->topOrigin();
-    CDMPrivate::LocalStorageAccess access = !isEphemeral && origin.canAccessLocalStorage(&topOrigin) ? CDMPrivate::LocalStorageAccess::Allowed : CDMPrivate::LocalStorageAccess::NotAllowed;
+    if (isEphemeral || document->canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::No)
+        access = CDMPrivate::LocalStorageAccess::NotAllowed;
     m_private->getSupportedConfiguration(WTFMove(candidateConfiguration), access, WTFMove(callback));
 }
 

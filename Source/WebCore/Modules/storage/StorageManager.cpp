@@ -67,12 +67,11 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
     if (!context)
         return Exception { InvalidStateError, "Context is invalid"_s };
 
-    auto* origin = context->securityOrigin();
-    if (!origin)
-        return Exception { InvalidStateError, "Origin is invalid"_s };
+    if (context->canAccessResource(ScriptExecutionContext::ResourceType::StorageManager) == ScriptExecutionContext::HasResourceAccess::No)
+        return Exception { TypeError, "Context not access storage"_s };
 
-    if (!origin->canAccessStorageManager())
-        return Exception { TypeError, "Origin should not access storage"_s };
+    auto* origin = context->securityOrigin();
+    ASSERT(origin);
 
     if (is<Document>(context)) {
         if (auto* connection = downcast<Document>(context)->storageConnection())

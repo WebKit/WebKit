@@ -29,7 +29,6 @@
 #pragma once
 
 #include "SecurityOriginData.h"
-#include "StorageBlockingPolicy.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -139,21 +138,10 @@ public:
     void grantUniversalAccess();
     bool hasUniversalAccess() const { return m_universalAccess; }
 
-    void setStorageBlockingPolicy(StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
-
     void grantStorageAccessFromFileURLsQuirk();
     bool needsStorageAccessFromFileURLsQuirk() const { return m_needsStorageAccessFromFileURLsQuirk; }
 
     WEBCORE_EXPORT String domainForCachePartition() const;
-
-    bool canAccessDatabase(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); };
-    bool canAccessSessionStorage(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin, AlwaysAllowFromThirdParty); }
-    bool canAccessLocalStorage(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); };
-    bool canAccessStorageManager() const { return canAccessStorage(nullptr); }
-    bool canAccessPluginStorage(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin); }
-    bool canAccessApplicationCache(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin); }
-    bool canAccessCookies() const { return !isUnique(); }
-    bool canRequestGeolocation() const { return !isUnique(); }
     Policy canShowNotifications() const;
 
     // The local SecurityOrigin is the most privileged SecurityOrigin.
@@ -244,7 +232,6 @@ private:
     bool m_universalAccess { false };
     bool m_domainWasSetInDOM { false };
     bool m_canLoadLocalResources { false };
-    StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
     bool m_enforcesFilePathSeparation { false };
     bool m_needsStorageAccessFromFileURLsQuirk { false };
     mutable std::optional<bool> m_isPotentiallyTrustworthy;
@@ -266,7 +253,6 @@ template<class Encoder> inline void SecurityOrigin::encode(Encoder& encoder) con
     encoder << m_universalAccess;
     encoder << m_domainWasSetInDOM;
     encoder << m_canLoadLocalResources;
-    encoder << m_storageBlockingPolicy;
     encoder << m_enforcesFilePathSeparation;
     encoder << m_needsStorageAccessFromFileURLsQuirk;
     encoder << m_isPotentiallyTrustworthy;
@@ -294,8 +280,6 @@ template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Dec
     if (!decoder.decode(origin->m_domainWasSetInDOM))
         return nullptr;
     if (!decoder.decode(origin->m_canLoadLocalResources))
-        return nullptr;
-    if (!decoder.decode(origin->m_storageBlockingPolicy))
         return nullptr;
     if (!decoder.decode(origin->m_enforcesFilePathSeparation))
         return nullptr;

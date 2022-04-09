@@ -208,7 +208,6 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_universalAccess { other->m_universalAccess }
     , m_domainWasSetInDOM { other->m_domainWasSetInDOM }
     , m_canLoadLocalResources { other->m_canLoadLocalResources }
-    , m_storageBlockingPolicy { other->m_storageBlockingPolicy }
     , m_enforcesFilePathSeparation { other->m_enforcesFilePathSeparation }
     , m_needsStorageAccessFromFileURLsQuirk { other->m_needsStorageAccessFromFileURLsQuirk }
     , m_isPotentiallyTrustworthy { other->m_isPotentiallyTrustworthy }
@@ -418,36 +417,6 @@ bool SecurityOrigin::canDisplay(const URL& url) const
     return true;
 }
 
-bool SecurityOrigin::canAccessStorage(const SecurityOrigin* topOrigin, ShouldAllowFromThirdParty shouldAllowFromThirdParty) const
-{
-    if (isUnique())
-        return false;
-
-    if (isLocal() && !needsStorageAccessFromFileURLsQuirk() && !m_universalAccess && shouldAllowFromThirdParty != AlwaysAllowFromThirdParty)
-        return false;
-    
-    if (m_storageBlockingPolicy == StorageBlockingPolicy::BlockAll)
-        return false;
-
-    // FIXME: This check should be replaced with an ASSERT once we can guarantee that topOrigin is not null.
-    if (!topOrigin)
-        return true;
-
-    if (topOrigin->m_storageBlockingPolicy == StorageBlockingPolicy::BlockAll)
-        return false;
-
-    if (shouldAllowFromThirdParty == AlwaysAllowFromThirdParty)
-        return true;
-
-    if (m_universalAccess)
-        return true;
-
-    if ((m_storageBlockingPolicy == StorageBlockingPolicy::BlockThirdParty || topOrigin->m_storageBlockingPolicy == StorageBlockingPolicy::BlockThirdParty) && !topOrigin->isSameOriginAs(*this))
-        return false;
-
-    return true;
-}
-
 SecurityOrigin::Policy SecurityOrigin::canShowNotifications() const
 {
     if (m_universalAccess)
@@ -517,9 +486,6 @@ void SecurityOrigin::grantStorageAccessFromFileURLsQuirk()
 
 String SecurityOrigin::domainForCachePartition() const
 {
-    if (m_storageBlockingPolicy != StorageBlockingPolicy::BlockThirdParty)
-        return emptyString();
-
     if (isHTTPFamily())
         return host();
 

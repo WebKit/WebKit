@@ -1,3 +1,14 @@
+2022-04-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Move canAccessStorage() check from SecurityOrigin to ScriptExecutionContext
+        https://bugs.webkit.org/show_bug.cgi?id=238524
+        <rdar://problem/91318259>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::storageBlockingStateChanged):
+
 2022-04-08  Chris Dumez  <cdumez@apple.com>
 
         Drop unused pluginReplacementScriptObject

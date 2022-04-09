@@ -204,6 +204,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     jobData.topOrigin = context->topOrigin().data();
     jobData.workerType = options.type;
     jobData.type = ServiceWorkerJobType::Register;
+    jobData.domainForCachePartition = context->domainForCachePartition();
     jobData.registrationOptions = options;
 
     scheduleJob(makeUnique<ServiceWorkerJob>(*this, WTFMove(promise), WTFMove(jobData)));
@@ -252,6 +253,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
     jobData.topOrigin = context.topOrigin().data();
     jobData.workerType = workerType;
     jobData.type = ServiceWorkerJobType::Update;
+    jobData.domainForCachePartition = context.domainForCachePartition();
     jobData.scopeURL = scopeURL;
     jobData.scriptURL = scriptURL;
 

@@ -1,3 +1,84 @@
+2022-04-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Move canAccessStorage() check from SecurityOrigin to ScriptExecutionContext
+        https://bugs.webkit.org/show_bug.cgi?id=238524
+        <rdar://problem/91318259>
+
+        Reviewed by Chris Dumez.
+
+        Add canAccessResource() to ScriptExecutionContext because ScriptExecutionContext, instead of SecurityOrigin, 
+        should be the place that holds StorageBlockingPolicy (otherwise it's confusing that the origin and top origin 
+        disagrees with each other on policy). Also, because ScriptExecutionContext has access to origin and topOrigin,
+        callers don't need to explicitly get them before the access check.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedConfiguration):
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::shouldBlockGeolocationRequests):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::shouldThrowSecurityException):
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::connectionInfo):
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase):
+        * dom/Document.cpp:
+        (WebCore::m_whitespaceCache):
+        (WebCore::Document::cookie):
+        (WebCore::Document::setCookie):
+        (WebCore::Document::storageBlockingStateDidChange):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::applyQuickLookSandbox):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::domainForCachePartition const):
+        (WebCore::isOriginEquivalentToLocal):
+        (WebCore::ScriptExecutionContext::canAccessResource const):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::setStorageBlockingPolicy):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::loadMainResource):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::update):
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::isApplicationCacheBlockedForRequest):
+        * page/DOMWindow.cpp:
+        * page/Page.cpp:
+        (WebCore::Page::setupForRemoteWorker):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::domainForCachePartition const):
+        (WebCore::SecurityOrigin::canAccessStorage const): Deleted.
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::encode const):
+        (WebCore::SecurityOrigin::decode):
+        (WebCore::SecurityOrigin::setStorageBlockingPolicy): Deleted.
+        (WebCore::SecurityOrigin::canAccessDatabase const): Deleted.
+        (WebCore::SecurityOrigin::canAccessSessionStorage const): Deleted.
+        (WebCore::SecurityOrigin::canAccessLocalStorage const): Deleted.
+        (WebCore::SecurityOrigin::canAccessStorageManager const): Deleted.
+        (WebCore::SecurityOrigin::canAccessPluginStorage const): Deleted.
+        (WebCore::SecurityOrigin::canAccessApplicationCache const): Deleted.
+        (WebCore::SecurityOrigin::canAccessCookies const): Deleted.
+        (WebCore::SecurityOrigin::canRequestGeolocation const): Deleted.
+        * storage/StorageNamespaceProvider.cpp:
+        (WebCore::StorageNamespaceProvider::localStorageArea):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::m_credentials):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::updateRegistration):
+        * workers/service/ServiceWorkerJobData.cpp:
+        (WebCore::ServiceWorkerJobData::isolatedCopy const):
+        * workers/service/ServiceWorkerJobData.h:
+        (WebCore::ServiceWorkerJobData::encode const):
+        (WebCore::ServiceWorkerJobData::decode):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::startScriptFetch):
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::WorkletGlobalScope):
+
 2022-04-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Sharing services picker menu Mail presents in the wrong place when compose web view is scrolled

@@ -34,6 +34,7 @@
 #include "SecurityContext.h"
 #include "ServiceWorkerIdentifier.h"
 #include "Settings.h"
+#include "StorageBlockingPolicy.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/HandleTypes.h>
 #include <pal/SessionID.h>
@@ -297,6 +298,21 @@ public:
     bool hasLoggedAuthenticatedEncryptionWarning() const { return m_hasLoggedAuthenticatedEncryptionWarning; }
     void setHasLoggedAuthenticatedEncryptionWarning(bool value) { m_hasLoggedAuthenticatedEncryptionWarning = value; }
 
+    void setStorageBlockingPolicy(StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
+    enum class ResourceType : uint8_t {
+        ApplicationCache,
+        Cookies,
+        Geolocation,
+        IndexedDB,
+        LocalStorage,
+        Plugin,
+        SessionStorage,
+        StorageManager,
+        WebSQL
+    };
+    enum class HasResourceAccess : uint8_t { No, Yes, DefaultForThirdParty };
+    WEBCORE_EXPORT HasResourceAccess canAccessResource(ResourceType) const;
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:
@@ -378,6 +394,7 @@ private:
     mutable ScriptExecutionContextIdentifier m_identifier;
 
     bool m_hasLoggedAuthenticatedEncryptionWarning { false };
+    StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
 };
 
 } // namespace WebCore

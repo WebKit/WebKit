@@ -510,7 +510,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
         auto topOrigin = jobData.topOrigin.securityOrigin();
         auto origin = SecurityOrigin::create(jobData.scriptURL);
 
-        request.setDomainForCachePartition(topOrigin->domainForCachePartition());
+        request.setDomainForCachePartition(jobData.domainForCachePartition);
         request.setAllowCookies(true);
         request.setFirstPartyForCookies(originURL(topOrigin));
 

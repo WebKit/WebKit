@@ -116,6 +116,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     if (m_topOrigin->needsStorageAccessFromFileURLsQuirk())
         origin->grantStorageAccessFromFileURLsQuirk();
 
+    setStorageBlockingPolicy(m_settingsValues.storageBlockingPolicy);
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(origin)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
     setCrossOriginEmbedderPolicy(params.crossOriginEmbedderPolicy);

@@ -371,7 +371,7 @@ bool Geolocation::shouldBlockGeolocationRequests()
     bool isSecure = SecurityOrigin::isSecure(document()->url()) || document()->isSecureContext();
     bool hasMixedContent = !document()->foundMixedContent().isEmpty();
     bool isLocalOrigin = securityOrigin()->isLocal();
-    if (securityOrigin()->canRequestGeolocation()) {
+    if (document()->canAccessResource(ScriptExecutionContext::ResourceType::Geolocation) != ScriptExecutionContext::HasResourceAccess::No) {
         if (isLocalOrigin || (isSecure && !hasMixedContent) || isRequestFromIBooks())
             return false;
     }

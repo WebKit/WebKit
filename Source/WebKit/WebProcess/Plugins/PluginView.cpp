@@ -597,8 +597,7 @@ void PluginView::storageBlockingStateChanged()
     if (!m_isInitialized || !m_plugin)
         return;
 
-    bool storageBlockingPolicy = !frame()->document()->securityOrigin().canAccessPluginStorage(frame()->document()->topOrigin());
-
+    bool storageBlockingPolicy = frame()->document()->canAccessResource(ScriptExecutionContext::ResourceType::Plugin) != ScriptExecutionContext::HasResourceAccess::Yes;
     m_plugin->storageBlockingStateChanged(storageBlockingPolicy);
 }
 
