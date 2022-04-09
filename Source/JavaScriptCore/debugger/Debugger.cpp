@@ -170,7 +170,7 @@ void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    if (m_isPaused && m_currentCallFrame && vm.entryScope->globalObject() == globalObject) {
+    if (m_isPaused && m_currentCallFrame && (!vm.isEntered() || vm.entryScope->globalObject() == globalObject)) {
         m_currentCallFrame = nullptr;
         m_pauseOnCallFrame = nullptr;
         continueProgram();
