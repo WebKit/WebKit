@@ -88,6 +88,8 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, Adapter& 
         }
     }
     ASSERT(found);
+#else
+    UNUSED_VARIABLE(devices);
 #endif
 #endif
 }
