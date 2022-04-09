@@ -3647,6 +3647,7 @@ webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Pass ]
 webgl/1.0.x/conformance/glsl/bugs/character-set.html [ Pass ]
 webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
 webgl/1.0.x/conformance/context/constants-and-properties.html [ Pass ]
+webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 
 
 # WebGL conformance test suite 2.0.1 is skipped until 2.0.0 is retired.
@@ -3657,6 +3658,7 @@ webgl/2.0.y/conformance/canvas/to-data-url-test.html [ Pass ]
 webgl/2.0.y/conformance/misc/invalid-passed-params.html [ Pass ]
 webgl/2.0.y/conformance/glsl/bugs/character-set.html [ Pass ]
 webgl/2.0.y/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
+webgl/2.0.y/conformance/extensions/webgl-multi-draw.html [ Pass Slow ]
 webgl/2.0.y/conformance2/context/constants-and-properties-2.html [ Pass ]
 webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html [ Pass ]
 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass ]
