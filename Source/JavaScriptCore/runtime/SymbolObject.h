@@ -49,7 +49,6 @@ public:
         object->finishCreation(vm, symbol);
         return object;
     }
-    static SymbolObject* create(VM&, JSGlobalObject*, Symbol*);
 
     DECLARE_EXPORT_INFO;
 

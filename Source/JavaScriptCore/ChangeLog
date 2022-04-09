@@ -1,5 +1,43 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r292009. rdar://problem/90918765
+
+    The lazy symbolObjectStructure should be realized before we allocate a SymbolObject.
+    https://bugs.webkit.org/show_bug.cgi?id=238474
+    <rdar://problem/90918765>
+    
+    Reviewed by Yusuke Suzuki and Saam Barati.
+    
+    We should not be allocating the symbolObjectStructure while in the middle of
+    initializing a SymbolObject.
+    
+    * runtime/Symbol.cpp:
+    (JSC::Symbol::toObject const):
+    (JSC::SymbolObject::create): Deleted.
+    * runtime/SymbolObject.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292009 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-28  Mark Lam  <mark.lam@apple.com>
+
+            The lazy symbolObjectStructure should be realized before we allocate a SymbolObject.
+            https://bugs.webkit.org/show_bug.cgi?id=238474
+            <rdar://problem/90918765>
+
+            Reviewed by Yusuke Suzuki and Saam Barati.
+
+            We should not be allocating the symbolObjectStructure while in the middle of
+            initializing a SymbolObject.
+
+            * runtime/Symbol.cpp:
+            (JSC::Symbol::toObject const):
+            (JSC::SymbolObject::create): Deleted.
+            * runtime/SymbolObject.h:
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291602. rdar://problem/89822922
 
     Fix bug in Relationship::mergeImpl
