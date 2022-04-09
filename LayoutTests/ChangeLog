@@ -1,5 +1,93 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r292028. rdar://problem/90977255
+
+    Re-import inert and <dialog> WPT
+    https://bugs.webkit.org/show_bug.cgi?id=238502
+    
+    Reviewed by Antti Koivisto.
+    
+    Upstream commit: https://github.com/web-platform-tests/wpt/commit/46e50fc357127c76c898675cd30ae34090a2268d
+    
+    Main changes:
+    - Removes .tentative.html suffix from inert tests
+    - Adds default-color.html test for <dialog>
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/default-color-expected.txt: Added.
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/default-color.html: Added.
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-inert-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-inert.tentative-expected.txt.
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-inert.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-inert.tentative.html.
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection-expected.txt: Added.
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-selection.html: Added.
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/w3c-import.log:
+    * web-platform-tests/inert/dynamic-inert-on-focused-element-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/dynamic-inert-on-focused-element.tentative-expected.txt.
+    * web-platform-tests/inert/dynamic-inert-on-focused-element.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/dynamic-inert-on-focused-element.tentative.html.
+    * web-platform-tests/inert/inert-and-contenteditable-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-and-contenteditable.tentative-expected.txt.
+    * web-platform-tests/inert/inert-and-contenteditable.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-and-contenteditable.tentative.html.
+    * web-platform-tests/inert/inert-canvas-fallback-content-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-canvas-fallback-content.tentative-expected.txt.
+    * web-platform-tests/inert/inert-canvas-fallback-content.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-canvas-fallback-content.tentative.html.
+    * web-platform-tests/inert/inert-does-not-match-disabled-selector-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-does-not-match-disabled-selector.tentative-expected.txt.
+    * web-platform-tests/inert/inert-does-not-match-disabled-selector.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-does-not-match-disabled-selector.tentative.html.
+    * web-platform-tests/inert/inert-iframe-hittest-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-iframe-hittest.tentative-expected.txt.
+    * web-platform-tests/inert/inert-iframe-hittest.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-iframe-hittest.tentative.html.
+    * web-platform-tests/inert/inert-iframe-tabbing-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing.tentative-expected.txt.
+    * web-platform-tests/inert/inert-iframe-tabbing.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing.tentative.html.
+    * web-platform-tests/inert/inert-in-shadow-dom-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-in-shadow-dom.tentative-expected.txt.
+    * web-platform-tests/inert/inert-in-shadow-dom.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-in-shadow-dom.tentative.html.
+    * web-platform-tests/inert/inert-inlines-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-inlines.tentative-expected.txt.
+    * web-platform-tests/inert/inert-inlines.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-inlines.tentative.html.
+    * web-platform-tests/inert/inert-label-focus-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-label-focus.tentative-expected.txt.
+    * web-platform-tests/inert/inert-label-focus.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-label-focus.tentative.html.
+    * web-platform-tests/inert/inert-node-is-uneditable-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.tentative-expected.txt.
+    * web-platform-tests/inert/inert-node-is-uneditable.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.tentative.html.
+    * web-platform-tests/inert/inert-node-is-unfocusable-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unfocusable.tentative-expected.txt.
+    * web-platform-tests/inert/inert-node-is-unfocusable.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unfocusable.tentative.html.
+    * web-platform-tests/inert/inert-node-is-unselectable-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unselectable.tentative-expected.txt.
+    * web-platform-tests/inert/inert-node-is-unselectable.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unselectable.tentative.html.
+    * web-platform-tests/inert/inert-on-non-html-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-non-html.tentative-expected.txt.
+    * web-platform-tests/inert/inert-on-non-html.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-non-html.tentative.html.
+    * web-platform-tests/inert/inert-on-slots-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-slots.tentative-expected.txt.
+    * web-platform-tests/inert/inert-on-slots.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-slots.tentative.html.
+    * web-platform-tests/inert/inert-svg-hittest-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-svg-hittest.tentative-expected.txt.
+    * web-platform-tests/inert/inert-svg-hittest.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-svg-hittest.tentative.html.
+    * web-platform-tests/inert/inert-with-modal-dialog-001-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-with-modal-dialog-001.tentative-expected.txt.
+    * web-platform-tests/inert/inert-with-modal-dialog-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-with-modal-dialog-001.tentative.html.
+    * web-platform-tests/inert/inert-with-modal-dialog-002-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-with-modal-dialog-002.tentative-expected.txt.
+    * web-platform-tests/inert/inert-with-modal-dialog-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/inert/inert-with-modal-dialog-002.tentative.html.
+    * web-platform-tests/inert/w3c-import.log:
+    
+    LayoutTests:
+    
+    * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-hittest-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-hittest.tentative-expected.txt.
+    * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing.tentative-expected.txt.
+    * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.tentative-expected.txt.
+    * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-svg-hittest-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-svg-hittest.tentative-expected.txt.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292028 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-29  Tim Nguyen  <ntim@apple.com>
+
+            Re-import inert and <dialog> WPT
+            https://bugs.webkit.org/show_bug.cgi?id=238502
+
+            Reviewed by Antti Koivisto.
+
+            Upstream commit: https://github.com/web-platform-tests/wpt/commit/46e50fc357127c76c898675cd30ae34090a2268d
+
+            Main changes:
+            - Removes .tentative.html suffix from inert tests
+            - Adds default-color.html test for <dialog>
+
+            * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-hittest-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-hittest.tentative-expected.txt.
+            * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing.tentative-expected.txt.
+            * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.tentative-expected.txt.
+            * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-svg-hittest-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-svg-hittest.tentative-expected.txt.
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291886. rdar://problem/72814440
 
     `PointerEvent.movementX` always 0 (breaks https://noisecraft.app/)

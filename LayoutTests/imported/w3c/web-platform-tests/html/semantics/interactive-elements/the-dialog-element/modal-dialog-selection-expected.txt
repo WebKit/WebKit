@@ -1,0 +1,5 @@
+123456789A
+
+FAIL By default, text inside a modal dialog can be selected assert_equals: expected "345678" but got ""
+PASS 'user-select: none' prevents text from being selected
+
