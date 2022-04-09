@@ -172,7 +172,7 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& des
 {
     // FIXME: Implement this
     UNUSED_PARAM(descriptor);
-    UNUSED_PARAM(callback);
+    callback(WGPUCreatePipelineAsyncStatus_Error, ComputePipeline::createInvalid(*this), { });
 }
 
 ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, Device& device)

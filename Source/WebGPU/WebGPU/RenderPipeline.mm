@@ -40,8 +40,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
 {
+    // FIXME: Implement this.
     UNUSED_PARAM(descriptor);
-    UNUSED_PARAM(callback);
+    callback(WGPUCreatePipelineAsyncStatus_Error, RenderPipeline::createInvalid(*this), { });
 }
 
 RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, Device& device)

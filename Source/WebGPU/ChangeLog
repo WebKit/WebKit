@@ -1,5 +1,21 @@
 2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Make callbacks in unimplemented functions execute
+        https://bugs.webkit.org/show_bug.cgi?id=238727
+
+        Reviewed by Dean Jackson.
+
+        CompletionHandler ASSERT()s that it has been executed in its destructor. We have some
+        functions which we haven't implemented yet which take CompletionHandlers, so let's
+        temporarily just call the completion handlers just to make tests stop ASSERT()ing.
+
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::Device::createComputePipelineAsync):
+        * WebGPU/RenderPipeline.mm:
+        (WebGPU::Device::createRenderPipelineAsync):
+
+2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement the concept of device lost
         https://bugs.webkit.org/show_bug.cgi?id=238725
 
