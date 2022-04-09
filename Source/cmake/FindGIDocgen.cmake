@@ -123,7 +123,8 @@ endif ()
 
   .. code-block:: cmake
 
-    GI_DOCGEN(<namespace> <toml-file>)
+    GI_DOCGEN(<namespace> <toml-file>
+              [CONTENT_TEMPLATES <file...>])
 
    Configures generating documentation for a GObject-Introspection
    ``<namespace>``, which needs to have been previously configured using
@@ -136,6 +137,11 @@ endif ()
 
    __ https://gnome.pages.gitlab.gnome.org/gi-docgen/project-configuration.html
 
+   ``CONTENT_TEMPLATES`` can be used to list files, for each of them a
+   template with the ``.in`` suffix will be expanded using the
+   command:`configure_file` in ``@ONLY`` mode. The ``.in`` sufix must
+   not be present.
+
    Documentation is generated in the ``Documentation/<pkgname>-<nsversion>/``
    subdirectory by the ``doc-<namespace>`` target added by the command.
    Additionally, a ``doc-check-<namespace>`` target is created as well,
@@ -147,6 +153,11 @@ endif ()
 
 #]=======================================================================]
 function(GI_DOCGEN namespace toml)
+    cmake_parse_arguments(PARSE_ARGV 1 opt
+        ""
+        ""
+        "CONTENT_TEMPLATES"
+    )
     if (NOT TARGET "gir-${namespace}")
         message(FATAL_ERROR
             "Introspection not configured for '${namespace}'. "
@@ -154,8 +165,10 @@ function(GI_DOCGEN namespace toml)
         )
     endif ()
 
+    set(contentdir "${CMAKE_BINARY_DIR}/GIDocgenGenerated/${namespace}")
+
     get_property(gir_path TARGET "gir-${namespace}" PROPERTY GI_GIR_PATH)
-    set(toml_path "${CMAKE_BINARY_DIR}/${namespace}.toml")
+    set(toml_path "${contentdir}.toml")
     configure_file("${toml}" "${toml_path}" @ONLY)
 
     get_filename_component(toml_dir "${toml}" DIRECTORY)
@@ -166,6 +179,13 @@ function(GI_DOCGEN namespace toml)
         set(package "${namespace}")
     endif ()
     set(outdir "${CMAKE_BINARY_DIR}/Documentation/${package}")
+
+    set(docdeps "${toml_path};${gir_path}")
+    foreach (item IN LISTS opt_CONTENT_TEMPLATES)
+        get_filename_component(filename "${item}" NAME)
+        configure_file("${item}.in" "${contentdir}/${filename}" @ONLY)
+        list(APPEND docdeps "${contentdir}/${filename}")
+    endforeach ()
 
     set(common_flags)
     list(APPEND common_flags
@@ -179,11 +199,12 @@ function(GI_DOCGEN namespace toml)
         OUTPUT "${outdir}/index.html"
         COMMENT "Generating documentation: ${namespace}"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-        DEPENDS "${toml_path}" "${gir_path}"
+        DEPENDS ${docdeps}
         VERBATIM
         COMMAND "${GIDocgen_EXE}" generate
             ${common_flags}
             --no-namespace-dir
+            --content-dir "${contentdir}"
             --content-dir "${toml_dir}"
             --output-dir "${outdir}"
             --config "${toml_path}"

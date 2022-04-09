@@ -1,3 +1,22 @@
+2022-04-09  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Missing inter-module documentation links
+        https://bugs.webkit.org/show_bug.cgi?id=239016
+
+        Reviewed by Michael Catanzaro.
+
+        Add JS snippets to be used in the gi-docgen output to setup links to
+        other modules. Take advantage of being able to compute the documentation
+        API version suffix from the currently loaded page URL, which avoids having
+        a number of templates depending on the API version and having to deal with
+        the documentation API version being sometimes different than the actual API
+        version of the library. The URLs for GTK3 vs. GTK4 documentation cannot be
+        handled in the same way, and instead the JS snippet is also a template
+        expanded by CMake to allows using the ${GTK_API_VERSION} variable there.
+
+        * API/glib/docs/jsc.toml.in: Use added urlmap.js file.
+        * API/glib/docs/urlmap.js: Added.
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         [Xcode] Avoid targeting 32-bit iOS and Mac architectures

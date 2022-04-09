@@ -726,7 +726,9 @@ GI_INTROSPECT(WebKit2 ${WEBKITGTK_API_VERSION} webkit2/webkit2.h
         UIProcess/API/gtk
     NO_IMPLICIT_SOURCES
 )
-GI_DOCGEN(WebKit2 gtk/webkit2gtk.toml.in)
+GI_DOCGEN(WebKit2 gtk/webkit2gtk.toml.in
+    CONTENT_TEMPLATES gtk/urlmap.js
+)
 
 GI_INTROSPECT(WebKit2WebExtension ${WEBKITGTK_API_VERSION} webkit2/webkit-web-extension.h
     TARGET WebKit
@@ -757,4 +759,6 @@ GI_INTROSPECT(WebKit2WebExtension ${WEBKITGTK_API_VERSION} webkit2/webkit-web-ex
         WebProcess/InjectedBundle/API/glib/DOM
     NO_IMPLICIT_SOURCES
 )
-GI_DOCGEN(WebKit2WebExtension gtk/webkit2gtk-webextension.toml.in)
+GI_DOCGEN(WebKit2WebExtension gtk/webkit2gtk-webextension.toml.in
+    CONTENT_TEMPLATES gtk/urlmap.js
+)

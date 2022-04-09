@@ -36,3 +36,6 @@ show_class_hierarchy = true
 
 [source-location]
 base_url = "https://github.com/WebKit/WebKit/tree/main"
+
+[extra]
+urlmap_file = "urlmap.js"
