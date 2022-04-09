@@ -1,5 +1,17 @@
 2022-04-08  Matteo Flores  <matteo_flores@apple.com>
 
+        REBASLINE: [ Monterey wk2 ] 4 http/tests/inspector/paymentrequest/* tests are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=238908
+
+        Unreviewed test rebaslining.
+
+        * http/tests/inspector/paymentrequest/payment-request-internal-properties.https-expected.txt:
+        * http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-request-change-shipping-option.https-expected.txt:
+        * http/tests/paymentrequest/payment-response-retry-method.https-expected.txt:
+
+2022-04-08  Matteo Flores  <matteo_flores@apple.com>
+
         Unreviewed, reverting r292521.
 
         This broke the test further.
