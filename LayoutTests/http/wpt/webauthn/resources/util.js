@@ -425,6 +425,7 @@ function checkCtapGetAssertionResult(credential, userHandleBase64 = null)
     // Check respond
     assert_array_equals(Base64URL.parse(credential.id), Base64URL.parse(testHidCredentialIdBase64));
     assert_equals(credential.type, 'public-key');
+    assert_equals(credential.authenticatorAttachment, 'cross-platform')
     assert_array_equals(new Uint8Array(credential.rawId), Base64URL.parse(testHidCredentialIdBase64));
     assert_equals(bytesToASCIIString(credential.response.clientDataJSON), '{"type":"webauthn.get","challenge":"MTIzNDU2","origin":"https://localhost:9443"}');
     if (userHandleBase64 == null)

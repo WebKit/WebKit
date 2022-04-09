@@ -53,6 +53,11 @@ AuthenticationExtensionsClientOutputs PublicKeyCredential::getClientExtensionRes
     return m_response->extensions();
 }
 
+AuthenticatorAttachment PublicKeyCredential::authenticatorAttachment() const
+{
+    return m_response->attachment();
+}
+
 PublicKeyCredential::PublicKeyCredential(Ref<AuthenticatorResponse>&& response)
     : BasicCredential(base64URLEncodeToString(response->rawId()->data(), response->rawId()->byteLength()), Type::PublicKey, Discovery::Remote)
     , m_response(WTFMove(response))

@@ -1,5 +1,49 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288622. rdar://problem/91446028
+
+    [WebAuthn] Add authenticator attachment used during authentication to credential payload
+    https://bugs.webkit.org/show_bug.cgi?id=235621
+    rdar://86538235
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    This patch adds the authenticator attachment used to the credential response in get/create
+    webauthn calls as described in the merged PR to the spec: https://github.com/w3c/webauthn/pull/1668/files
+    
+    Modified layout tests to check for authenticator attachment = (cross-platform/platform) where appropriate
+    and verified response in manual calls.
+    
+    * Modules/webauthn/PublicKeyCredential.cpp:
+    (WebCore::PublicKeyCredential::authenticatorAttachment const):
+    * Modules/webauthn/PublicKeyCredential.h:
+    * Modules/webauthn/PublicKeyCredential.idl:
+    
+    LayoutTests:
+    
+    Modify webauthn layout tests to check for new authenticatorAttachment field.
+    * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+    * http/wpt/webauthn/resources/util.js:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288622 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-26  J Pascoe  <j_pascoe@apple.com>
+
+            [WebAuthn] Add authenticator attachment used during authentication to credential payload
+            https://bugs.webkit.org/show_bug.cgi?id=235621
+            rdar://86538235
+
+            Reviewed by Dean Jackson.
+
+            Modify webauthn layout tests to check for new authenticatorAttachment field.
+            * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+            * http/wpt/webauthn/resources/util.js:
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r292229. rdar://problem/90778752
 
     CSP: WASM fails to execute after window.open

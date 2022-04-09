@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+enum class AuthenticatorAttachment;
 class AuthenticatorResponse;
 class Document;
 
@@ -46,6 +47,7 @@ public:
 
     ArrayBuffer* rawId() const;
     AuthenticatorResponse* response() const { return m_response.ptr(); }
+    AuthenticatorAttachment authenticatorAttachment() const;
     AuthenticationExtensionsClientOutputs getClientExtensionResults() const;
 
     static void isUserVerifyingPlatformAuthenticatorAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
