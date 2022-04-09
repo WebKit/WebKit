@@ -45,7 +45,7 @@ bool InlineContent::hasContent() const
 {
     ASSERT(boxes.isEmpty() || boxes[0].isRootInlineBox());
     return boxes.size() > 1;
-};
+}
 
 IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const LayoutRect& rect) const
 {

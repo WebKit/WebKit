@@ -1,3 +1,42 @@
+2022-04-09  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (Safari 15.4): Focused element doesn't render outline when it has an underline
+        https://bugs.webkit.org/show_bug.cgi?id=238998
+        <rdar://problem/91484512>
+
+        Reviewed by Antti Koivisto.
+
+        While outline is supposed to be part of the ink overflow(1), WebKit historically has been
+        treating it as a special "non ink overflow" type of overflow.
+
+        This patch is in preparation for transitioning the outline to regular ink overflow.
+
+        First we start treating outline as part of ink overflow within IFC and
+        handle it as special repaint content only at the block (RenderBlockFlow) level.
+
+        Test: fast/repaint/incorrect-outline-repaint.html
+
+        (1) https://www.w3.org/TR/css-overflow-3/#ink
+
+        * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::computeInkOverflowForInlineLevelBox):
+        (WebCore::Layout::InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox):
+        (WebCore::Layout::InlineDisplayContentBuilder::appendInlineBoxDisplayBox):
+        (WebCore::Layout::InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox):
+        (WebCore::Layout::InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox):
+        (WebCore::Layout::computeBoxShadowInkOverflow): Deleted.
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::hasContent const):
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        (WebCore::LayoutIntegration::InlineContent::hasVisualOverflow const):
+        (WebCore::LayoutIntegration::InlineContent::setHasVisualOverflow):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutModernLines): This may cause overly inflated repaintTop/Bottom when
+        the ink overflow is not outline based (text stroke only atm) but we will anyway trigger 
+        similar repaint rect on that part later when we process ink overflow.
+
 2022-04-09  Sihui Liu  <sihui_liu@apple.com>
 
         Move canAccessStorage() check from SecurityOrigin to ScriptExecutionContext

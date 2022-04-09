@@ -22,7 +22,7 @@
 		document.getElementById("foo").style.left = "100px";
 		document.body.offsetWidth;
 		if (window.internals) {
-			shouldNotBe("internals.repaintRectsAsText().indexOf('90 8 62 18')", "-1");
+			shouldNotBe("internals.repaintRectsAsText().indexOf('90')", "-1");
 			internals.stopTrackingRepaints();
 			finishJSTest();
 		}
