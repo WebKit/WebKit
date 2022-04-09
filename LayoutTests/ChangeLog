@@ -1,5 +1,98 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291813. rdar://problem/88761053
+
+    Safari can't play video completely at bilibili.com
+    https://bugs.webkit.org/show_bug.cgi?id=236440
+    rdar://88761053
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    Video frames were incorrectly evicted during a call to appendBuffer
+    as the Source Buffer incorrectly assumed a discontinuity was present.
+    
+    When appending data to a source buffer, the MSE specs describe a method
+    to detect discontinuities in the Coded Frame Processing algorithm
+    (https://www.w3.org/TR/media-source/#sourcebuffer-coded-frame-processing)
+    step 6:
+    "
+    - If last decode timestamp for track buffer is set and decode timestamp
+      is less than last decode timestamp:
+    OR
+    - If last decode timestamp for track buffer is set and the difference
+      between decode timestamp and last decode timestamp is greater than
+      2 times last frame duration.
+    "
+    The issue being what defines the last frame duration.
+    Is it the frame last seen in the coded frame processing loop or the frame
+    whose presentation timestamp is just before the one we are currently
+    processing.
+    
+    H264 and HEVC have a concept of b-frames: that is a frame that depends
+    on a future frame to be decoded.
+    Those frames are found in the container and can be identified by their
+    presentation timestamp higher than the frame following in decode order.
+    Those present a challenge as the frame prior the current one in
+    presentation order, may actually only be found several frames back in
+    decode order.
+    Bug 181891 attempted to fix a similar issue, and used the longest
+    "decode duration" as a workaround to detect discontinuity in the content.
+    It mentioned adopting the same technique as in Mozilla's MSE
+    implementation, but Mozilla also skip discontinuity detection within a
+    media segment (https://www.w3.org/TR/media-source/#media-segment which for
+    fMP4 is a single moof box) an approach that can't be achieved with
+    CoreMedia's AVStreamDataParser.
+    As mentioned in bug 181891, CoreMedia ignore the decode timestamps' delta
+    and juggles with the sample's duration so that there's no discontinuity
+    in the demuxed samples' presentation time, causing false positive in the
+    gap detection algorithm.
+    
+    Bilibili uses HEVC content, and uses an encoding that generate lots
+    of b-frames, with a very wide sliding window (seen up to 12 frames).
+    By using the longest frame duration found in either presentation or
+    decode duration as threshold to identify a discontinuity, we can
+    properly parse the content and not incorrectly evict appended frames.
+    (As a side note, the use of HEVC with B-Frames is peculiar as not all
+    hardware support it.)
+    It is difficult to identify here if the issue is within the bilibili's
+    content or CoreMedia's output, though the responsibility more than
+    likely lies with bilibili.
+    
+    Test: media/media-source/media-mp4-hevc-bframes.html
+    
+    * platform/graphics/SourceBufferPrivate.cpp:
+    (WebCore::SourceBufferPrivate::TrackBuffer::TrackBuffer):
+    (WebCore::SourceBufferPrivate::resetTrackBuffers):
+    (WebCore::SourceBufferPrivate::didReceiveSample):
+    * platform/graphics/SourceBufferPrivate.h:
+    
+    LayoutTests:
+    
+    * media/media-source/content/test-bframes-hevc-manifest.json: Added.
+    * media/media-source/content/test-bframes-hevc.mp4: Added.
+    * media/media-source/media-mp4-hevc-bframes-expected.txt: Added.
+    * media/media-source/media-mp4-hevc-bframes.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291813 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-24  Jean-Yves Avenard  <jya@apple.com>
+
+            Safari can't play video completely at bilibili.com
+            https://bugs.webkit.org/show_bug.cgi?id=236440
+            rdar://88761053
+
+            Reviewed by Jer Noble.
+
+            * media/media-source/content/test-bframes-hevc-manifest.json: Added.
+            * media/media-source/content/test-bframes-hevc.mp4: Added.
+            * media/media-source/media-mp4-hevc-bframes-expected.txt: Added.
+            * media/media-source/media-mp4-hevc-bframes.html: Added.
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291791. rdar://problem/90694727
 
     REGRESSION (r287807): WEBGL_multi_draw validation rejecting valid arguments

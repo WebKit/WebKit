@@ -55,7 +55,7 @@ static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 
 SourceBufferPrivate::TrackBuffer::TrackBuffer()
     : lastDecodeTimestamp(MediaTime::invalidTime())
-    , greatestDecodeDuration(MediaTime::invalidTime())
+    , greatestFrameDuration(MediaTime::invalidTime())
     , lastFrameDuration(MediaTime::invalidTime())
     , highestPresentationTimestamp(MediaTime::invalidTime())
     , highestEnqueuedPresentationTime(MediaTime::invalidTime())
@@ -89,7 +89,7 @@ void SourceBufferPrivate::resetTrackBuffers()
 {
     for (auto& trackBufferPair : m_trackBufferMap.values()) {
         trackBufferPair.get().lastDecodeTimestamp = MediaTime::invalidTime();
-        trackBufferPair.get().greatestDecodeDuration = MediaTime::invalidTime();
+        trackBufferPair.get().greatestFrameDuration = MediaTime::invalidTime();
         trackBufferPair.get().lastFrameDuration = MediaTime::invalidTime();
         trackBufferPair.get().highestPresentationTimestamp = MediaTime::invalidTime();
         trackBufferPair.get().needRandomAccessFlag = true;
@@ -957,14 +957,8 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
         // OR
         // ↳ If last decode timestamp for track buffer is set and the difference between decode timestamp and
         // last decode timestamp is greater than 2 times last frame duration:
-        MediaTime decodeDurationToCheck = trackBuffer.greatestDecodeDuration;
-
-        if (decodeDurationToCheck.isValid() && trackBuffer.lastFrameDuration.isValid()
-            && (trackBuffer.lastFrameDuration > decodeDurationToCheck))
-            decodeDurationToCheck = trackBuffer.lastFrameDuration;
-
         if (trackBuffer.lastDecodeTimestamp.isValid() && (decodeTimestamp < trackBuffer.lastDecodeTimestamp
-            || (decodeDurationToCheck.isValid() && abs(decodeTimestamp - trackBuffer.lastDecodeTimestamp) > (decodeDurationToCheck * 2)))) {
+            || (trackBuffer.greatestFrameDuration.isValid() && decodeTimestamp - trackBuffer.lastDecodeTimestamp > (trackBuffer.greatestFrameDuration * 2)))) {
 
             // 1.6.1:
             if (m_appendMode == SourceBufferAppendMode::Segments) {
@@ -981,7 +975,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
                 // 1.6.2 Unset the last decode timestamp on all track buffers.
                 trackBuffer.get().lastDecodeTimestamp = MediaTime::invalidTime();
                 // 1.6.3 Unset the last frame duration on all track buffers.
-                trackBuffer.get().greatestDecodeDuration = MediaTime::invalidTime();
+                trackBuffer.get().greatestFrameDuration = MediaTime::invalidTime();
                 trackBuffer.get().lastFrameDuration = MediaTime::invalidTime();
                 // 1.6.4 Unset the highest presentation timestamp on all track buffers.
                 trackBuffer.get().highestPresentationTimestamp = MediaTime::invalidTime();
@@ -1256,12 +1250,15 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
                 trackBuffer.needsMinimumUpcomingPresentationTimeUpdating = true;
         }
 
-        // NOTE: the spec considers "Coded Frame Duration" to be the presentation duration, but this is not necessarily equal
-        // to the decoded duration. When comparing deltas between decode timestamps, the decode duration, not the presentation.
+        // NOTE: the spec considers the need to check the last frame duration but doesn't specify if that last frame
+        // is the one prior in presentation or decode order.
+        // So instead, as a workaround we use the largest frame duration seen in the current coded frame group (as defined in https://www.w3.org/TR/media-source/#coded-frame-group.
         if (trackBuffer.lastDecodeTimestamp.isValid()) {
             MediaTime lastDecodeDuration = decodeTimestamp - trackBuffer.lastDecodeTimestamp;
-            if (!trackBuffer.greatestDecodeDuration.isValid() || lastDecodeDuration > trackBuffer.greatestDecodeDuration)
-                trackBuffer.greatestDecodeDuration = lastDecodeDuration;
+            if (!trackBuffer.greatestFrameDuration.isValid())
+                trackBuffer.greatestFrameDuration = std::max(lastDecodeDuration, frameDuration);
+            else
+                trackBuffer.greatestFrameDuration = std::max({ trackBuffer.greatestFrameDuration, frameDuration, lastDecodeDuration });
         }
 
         // 1.17 Set last decode timestamp for track buffer to decode timestamp.

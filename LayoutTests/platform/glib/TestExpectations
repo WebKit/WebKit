@@ -719,6 +719,7 @@ fast/mediastream/track-ended-while-muted.html [ Failure ]
 webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure Pass ]
 
 webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
+webkit.org/b/238201 media/media-source/media-mp4-hevc-bframes.html [ Failure ]
 
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 webkit.org/b/211995 fast/images/animated-image-mp4-crash.html [ Timeout Pass ]
