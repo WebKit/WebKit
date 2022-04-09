@@ -1,5 +1,51 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291118. rdar://problem/91446071
+
+    [iOS] Netflix.com fails to resume after moving app to background during playback
+    https://bugs.webkit.org/show_bug.cgi?id=237659
+    <rdar://88775037>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-interruption-with-resume-allowing-play.html
+    
+    When the MediaPlayerPrivateMediaSourceAVFObjC player is asked to play or pause, it notifies
+    the client (HTMLMediaElement) that its playback state has changed. HTMLMediaElement will in response
+    call playInternal() or pauseInternal() to ensure that a state change driven by the MediaPlayer
+    is reflected up to the DOM. However, when an interruption causes the media element to suspend
+    and pause playback, this results in an additional call to pauseInternal(), which updates the
+    "state to resume" after an interruption ends to "Paused".
+    
+    In mediaPlayerPlaybackStateChanged(), only call pauseInternal() or playInternal() if the reported
+    player state does not match the HTMLMediaElement's own state.
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::mediaPlayerPlaybackStateChanged):
+    
+    LayoutTests:
+    
+    * media/media-source/media-source-interruption-with-resume-allowing-play-expected.txt: Added.
+    * media/media-source/media-source-interruption-with-resume-allowing-play.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291118 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-10  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Netflix.com fails to resume after moving app to background during playback
+            https://bugs.webkit.org/show_bug.cgi?id=237659
+            <rdar://88775037>
+
+            Reviewed by Eric Carlson.
+
+            * media/media-source/media-source-interruption-with-resume-allowing-play-expected.txt: Added.
+            * media/media-source/media-source-interruption-with-resume-allowing-play.html: Added.
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r288622. rdar://problem/91446028
 
     [WebAuthn] Add authenticator attachment used during authentication to credential payload
