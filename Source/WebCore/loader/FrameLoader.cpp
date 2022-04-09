@@ -3048,7 +3048,8 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
         request.setIsSameSite(true);
         return;
     }
-    request.setIsSameSite(areRegistrableDomainsEqual(initiator->siteForCookies(), request.url()));
+
+    request.setIsSameSite(initiator->isSameSiteForCookies(request.url()));
 }
 
 void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& referrer, FrameLoadType loadType, Event* event, RefPtr<FormState>&& formState, CompletionHandler<void()>&& completionHandler)

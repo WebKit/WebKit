@@ -9082,6 +9082,12 @@ bool Document::hasElementWithPendingUserAgentShadowTreeUpdate(Element& element) 
     return m_elementsWithPendingUserAgentShadowTreeUpdates.contains(element);
 }
 
+bool Document::isSameSiteForCookies(const URL& url) const
+{
+    auto domain = isTopDocument() ? RegistrableDomain(securityOrigin().data()) : RegistrableDomain(siteForCookies());
+    return domain.matches(url);
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG

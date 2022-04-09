@@ -1018,7 +1018,8 @@ public:
     // URL. For the top-level document, it is set to the document's URL.
     const URL& siteForCookies() const { return m_siteForCookies; }
     void setSiteForCookies(const URL& url) { m_siteForCookies = url; }
-    
+    bool isSameSiteForCookies(const URL&) const;
+
     // The following implements the rule from HTML 4 for what valid names are.
     // To get this right for all the XML cases, we probably have to improve this or move it
     // and make it sensitive to the type of document.

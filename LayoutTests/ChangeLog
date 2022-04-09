@@ -1,5 +1,55 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291741. rdar://problem/88979099
+
+    Computation of Document siteForCookies is buggy in case document is created by window.open
+    https://bugs.webkit.org/show_bug.cgi?id=238202
+    <rdar://88979099>
+    
+    Reviewed by John Wilander.
+    
+    Source/WebCore:
+    
+    For top level navigations, we need to use the security origin to compute siteForCookies as the document
+    may have the opener security origin.
+    Add a Document routine to handle this case.
+    
+    Tests: http/tests/cookies/same-site/popup-from-iframe-same-site-with-post-form.html
+           http/tests/cookies/same-site/popup-same-site-with-post-form.html
+    
+    * dom/Document.cpp:
+    * dom/Document.h:
+    * loader/FrameLoader.cpp:
+    
+    LayoutTests:
+    
+    * http/tests/cookies/resources/testharness-helpers.js:
+    * http/tests/cookies/same-site/popup-from-iframe-same-site-with-post-form-expected.txt: Added.
+    * http/tests/cookies/same-site/popup-from-iframe-same-site-with-post-form.html: Added.
+    * http/tests/cookies/same-site/popup-same-site-with-post-form-expected.txt: Added.
+    * http/tests/cookies/same-site/popup-same-site-with-post-form.html: Added.
+    * http/tests/cookies/same-site/resources/popup-iframe.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291741 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-23  Youenn Fablet  <youenn@apple.com>
+
+            Computation of Document siteForCookies is buggy in case document is created by window.open
+            https://bugs.webkit.org/show_bug.cgi?id=238202
+            <rdar://88979099>
+
+            Reviewed by John Wilander.
+
+            * http/tests/cookies/resources/testharness-helpers.js:
+            * http/tests/cookies/same-site/popup-from-iframe-same-site-with-post-form-expected.txt: Added.
+            * http/tests/cookies/same-site/popup-from-iframe-same-site-with-post-form.html: Added.
+            * http/tests/cookies/same-site/popup-same-site-with-post-form-expected.txt: Added.
+            * http/tests/cookies/same-site/popup-same-site-with-post-form.html: Added.
+            * http/tests/cookies/same-site/resources/popup-iframe.html: Added.
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291526. rdar://problem/90385586
 
     REGRESSION (r285529): Flash of missing text when content on https://ahumanfuture.co animates

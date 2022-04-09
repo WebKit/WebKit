@@ -20,3 +20,72 @@ function normalizeCookie(cookie)
     return cookie.split(/;\s*/).sort().join("; ");
 }
 
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { setTimeout(() => resolve(frame), 0); };
+        document.body.appendChild(frame);
+    });
+}
+
+function loadPopupThenTriggerPost()
+{
+    let finish;
+    let promise = new Promise(resolve => finish = resolve);
+
+    clearKnownCookies();
+    document.cookie = LAX_DOM + "=1; SameSite=Lax; Max-Age=100; path=/";
+    document.cookie = NORMAL_DOM + "=1; Max-Age=100; path=/";
+    document.cookie = STRICT_DOM + "=1; SameSite=Strict; Max-Age=100; path=/";
+
+    const opener = window.open("http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.py")
+    window.onmessage = e => {
+        window.onmessage = e => {
+            opener.close();
+            finish(e.data);
+        };
+
+        const newDoc = opener.document;
+        var form = newDoc.createElement('form');
+        form.method = 'POST';
+        form.action = 'http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.py';
+        var input = newDoc.createElement('input');
+        input.name = 'name';
+        input.value = 'value';
+        form.appendChild(input);
+        newDoc.body.appendChild(form);
+        form.submit();
+    };
+    return promise;
+}
+
+function openPopupAndTriggerPost(popupURL, callback)
+{
+    let finish;
+    let promise = new Promise(resolve => finish = resolve);
+
+    clearKnownCookies();
+    document.cookie = LAX_DOM + "=1; SameSite=Lax; Max-Age=100; path=/";
+    document.cookie = NORMAL_DOM + "=1; Max-Age=100; path=/";
+    document.cookie = STRICT_DOM + "=1; SameSite=Strict; Max-Age=100; path=/";
+
+    window.addEventListener("message", e => {
+        opener.close();
+        finish(e.data);
+    });
+
+    const opener = window.open(popupURL)
+    const newDoc = opener.document;
+    var form = newDoc.createElement('form');
+    form.method = 'POST';
+    form.action = 'http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.py';
+    var input = newDoc.createElement('input');
+    input.name = 'name';
+    input.value = 'value';
+    form.appendChild(input);
+    newDoc.body.appendChild(form);
+    form.submit();
+
+    return promise;
+}
