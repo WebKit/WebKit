@@ -49,7 +49,12 @@ class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType> {
 public:
     static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
-        return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, { nullptr }, remoteRenderingBackend, renderingResourceIdentifier);
+        auto context = ImageBuffer::CreationContext { nullptr
+#if HAVE(IOSURFACE)
+            , &remoteRenderingBackend.ioSurfacePool()
+#endif
+        };
+        return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, context, remoteRenderingBackend, renderingResourceIdentifier);
     }
 
     RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
@@ -67,6 +72,8 @@ public:
         // been flushed yet, or the web process may have terminated.
         while (context().stackSize())
             context().restore();
+
+        m_remoteRenderingBackend.willDestroyImageBuffer(*this);
     }
 
     void setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)

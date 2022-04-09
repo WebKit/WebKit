@@ -1,3 +1,17 @@
+2022-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Put layer backing store buffers into the per-RemoteRenderingBackend IOSurfacePool
+        https://bugs.webkit.org/show_bug.cgi?id=238972
+        <rdar://83437978>
+
+        Reviewed by Tim Horton.
+
+        Add IOSurfacePool::create().
+
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::create):
+        * platform/graphics/cg/IOSurfacePool.h:
+
 2022-04-09  Chris Dumez  <cdumez@apple.com>
 
         The Youtube plugin replacement should only work for actual Youtube URLs

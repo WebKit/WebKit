@@ -48,11 +48,12 @@ class IOSurfacePool {
 
 public:
     WEBCORE_EXPORT static IOSurfacePool& sharedPool();
+    WEBCORE_EXPORT static std::unique_ptr<IOSurfacePool> create();
 
     std::unique_ptr<IOSurface> takeSurface(IntSize, const DestinationColorSpace&, IOSurface::Format);
     WEBCORE_EXPORT void addSurface(std::unique_ptr<IOSurface>&&);
 
-    void discardAllSurfaces();
+    WEBCORE_EXPORT void discardAllSurfaces();
 
     WEBCORE_EXPORT void setPoolSize(size_t);
 

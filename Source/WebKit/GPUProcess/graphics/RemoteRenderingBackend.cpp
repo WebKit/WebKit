@@ -47,6 +47,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
 
+#if HAVE(IOSURFACE)
+#include <WebCore/IOSurfacePool.h>
+#endif
+
 #if ENABLE(IPC_TESTING_API)
 #define WEB_PROCESS_TERMINATE_CONDITION !m_gpuConnectionToWebProcess->connection().ignoreInvalidMessageForTesting()
 #else
@@ -90,6 +94,9 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
     , m_renderingBackendIdentifier(creationParameters.identifier)
+#if HAVE(IOSURFACE)
+    , m_ioSurfacePool(IOSurfacePool::create())
+#endif
 {
     ASSERT(RunLoop::isMain());
     send(Messages::RemoteRenderingBackendProxy::DidCreateWakeUpSemaphoreForDisplayListStream(m_workQueue->wakeUpSemaphore()), m_renderingBackendIdentifier);
@@ -159,6 +166,14 @@ void RemoteRenderingBackend::didCreateImageBufferBackend(ImageBufferBackendHandl
     }
     MESSAGE_CHECK(renderingResourceIdentifier.processIdentifier() == m_gpuConnectionToWebProcess->webProcessIdentifier(), "Sending didCreateImageBufferBackend() message to the wrong web process.");
     send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
+}
+
+void RemoteRenderingBackend::willDestroyImageBuffer(ImageBuffer& imageBuffer)
+{
+#if HAVE(IOSURFACE)
+    if (imageBuffer.renderingPurpose() == RenderingPurpose::LayerBacking)
+        imageBuffer.releaseBufferToPool(m_ioSurfacePool.get());
+#endif
 }
 
 void RemoteRenderingBackend::didFlush(GraphicsContextFlushIdentifier flushIdentifier, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
@@ -543,7 +558,9 @@ void RemoteRenderingBackend::performWithMediaPlayerOnMainThread(MediaPlayerIdent
 void RemoteRenderingBackend::lowMemoryHandler(Critical, Synchronous)
 {
     ASSERT(isMainRunLoop());
-    // This will clear the IOSurfacePool.
+#if HAVE(IOSURFACE)
+    m_ioSurfacePool->discardAllSurfaces();
+#endif
 }
 
 } // namespace WebKit

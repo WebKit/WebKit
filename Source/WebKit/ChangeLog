@@ -1,3 +1,27 @@
+2022-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Put layer backing store buffers into the per-RemoteRenderingBackend IOSurfacePool
+        https://bugs.webkit.org/show_bug.cgi?id=238972
+        <rdar://83437978>
+
+        Reviewed by Tim Horton.
+
+        Give each RemoteRenderingBackend its own IOSurfacePool. RemoteImageBuffer gets surfaces
+        from this pool, and RemoteRenderingBackend::willDestroyImageBuffer() puts surfaces in,
+        if they are layer backing store surfaces.
+
+        The low memory handler removes all surfaces from the pool.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::create):
+        (WebKit::RemoteImageBuffer::~RemoteImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::willDestroyImageBuffer):
+        (WebKit::RemoteRenderingBackend::lowMemoryHandler):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        (WebKit::RemoteRenderingBackend::ioSurfacePool const):
+
 2022-04-09  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Missing inter-module documentation links

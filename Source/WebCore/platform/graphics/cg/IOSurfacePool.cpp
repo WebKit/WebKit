@@ -61,6 +61,11 @@ IOSurfacePool& IOSurfacePool::sharedPool()
     return pool;
 }
 
+std::unique_ptr<IOSurfacePool> IOSurfacePool::create()
+{
+    return std::unique_ptr<IOSurfacePool>(new IOSurfacePool());
+}
+
 static bool surfaceMatchesParameters(IOSurface& surface, IntSize requestedSize, const DestinationColorSpace& colorSpace, IOSurface::Format format)
 {
     if (format != surface.format())

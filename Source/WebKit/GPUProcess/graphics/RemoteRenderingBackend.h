@@ -100,6 +100,11 @@ public:
 
     void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
 
+    void willDestroyImageBuffer(WebCore::ImageBuffer&);
+#if HAVE(IOSURFACE)
+    WebCore::IOSurfacePool& ioSurfacePool() const { return *m_ioSurfacePool; }
+#endif
+
 private:
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&, IPC::StreamConnectionBuffer&&);
     void startListeningForIPC();
@@ -149,6 +154,9 @@ private:
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
+#if HAVE(IOSURFACE)
+    std::unique_ptr<WebCore::IOSurfacePool> m_ioSurfacePool;
+#endif
 
     Lock m_remoteDisplayListsLock;
     bool m_canRegisterRemoteDisplayLists WTF_GUARDED_BY_LOCK(m_remoteDisplayListsLock) { false };
