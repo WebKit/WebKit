@@ -1,5 +1,72 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291881. rdar://problem/90848454
+
+    [GPU Process] RemoteRenderingBackend::stopListeningForIPC() should not change the RemoteResourceCache on the main thread
+    https://bugs.webkit.org/show_bug.cgi?id=238298
+    rdar://90731372
+    
+    Reviewed by Simon Fraser.
+    
+    To release the RemoteResourceCache and the rendering resource request on
+    the WorkQueue thread, RemoteRenderingBackend::stopListeningForIPC() dispatches
+    an empty lambda to its WorkQueue but m_renderingResourcesRequest and
+    m_remoteResourceCache are captured by-move to initializers to this lambda.
+    
+    But this means m_remoteResourceCache is changed on the main thread while
+    the WorkQueue thread may be accessing it to get a cached remote resource.
+    The EWS crashes showed that, RemoteRenderingBackend::stopListeningForIPC()
+    on the main thread is waiting its WorkQueue to stop and complete all its
+    work including the dispatched empty lambda. And the WorkQueue thread is
+    getting wrong resource counters from the RemoteResourceCache. This would
+    happen if the HashMaps of RemoteResourceCache were emptied on the main
+    thread while the counters had outdated values.
+    
+    To fix this thread safety issue, the RemoteResourceCache should not ever
+    be changed on the main thread. Since capturing by-move is kind of change,
+    we will capture m_renderingResourcesRequest and m_remoteResourceCache by
+    reference and we let the dispatched lambda explicitly releases them on
+    the WorkQueue thread.
+    
+    * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+    (WebKit::RemoteRenderingBackend::stopListeningForIPC):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291881 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-25  Said Abou-Hallawa  <said@apple.com>
+
+            [GPU Process] RemoteRenderingBackend::stopListeningForIPC() should not change the RemoteResourceCache on the main thread
+            https://bugs.webkit.org/show_bug.cgi?id=238298
+            rdar://90731372
+
+            Reviewed by Simon Fraser.
+
+            To release the RemoteResourceCache and the rendering resource request on
+            the WorkQueue thread, RemoteRenderingBackend::stopListeningForIPC() dispatches
+            an empty lambda to its WorkQueue but m_renderingResourcesRequest and
+            m_remoteResourceCache are captured by-move to initializers to this lambda.
+
+            But this means m_remoteResourceCache is changed on the main thread while
+            the WorkQueue thread may be accessing it to get a cached remote resource.
+            The EWS crashes showed that, RemoteRenderingBackend::stopListeningForIPC()
+            on the main thread is waiting its WorkQueue to stop and complete all its
+            work including the dispatched empty lambda. And the WorkQueue thread is
+            getting wrong resource counters from the RemoteResourceCache. This would
+            happen if the HashMaps of RemoteResourceCache were emptied on the main
+            thread while the counters had outdated values.
+
+            To fix this thread safety issue, the RemoteResourceCache should not ever
+            be changed on the main thread. Since capturing by-move is kind of change,
+            we will capture m_renderingResourcesRequest and m_remoteResourceCache by
+            reference and we let the dispatched lambda explicitly releases them on
+            the WorkQueue thread.
+
+            * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+            (WebKit::RemoteRenderingBackend::stopListeningForIPC):
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291821. rdar://problem/89145552
 
     REGRESSION(r286590): Links with URL schemes are not clickable in Mail

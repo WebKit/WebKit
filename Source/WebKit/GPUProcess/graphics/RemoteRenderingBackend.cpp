@@ -112,9 +112,14 @@ void RemoteRenderingBackend::startListeningForIPC()
 void RemoteRenderingBackend::stopListeningForIPC()
 {
     ASSERT(RunLoop::isMain());
-    // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
-    // Make sure rendering resource request is released after destroying the cache.
-    m_workQueue->dispatch([renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
+
+    // This item is dispatched to the WorkQueue before calling stopAndWaitForCompletion() such that it will process it last, after any existing work.
+    m_workQueue->dispatch([&] {
+        // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
+        // Make sure rendering resource request is released after destroying the cache.
+        m_remoteResourceCache = { m_gpuConnectionToWebProcess->webProcessIdentifier() };
+        m_renderingResourcesRequest = { };
+    });
     m_workQueue->stopAndWaitForCompletion();
 
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
