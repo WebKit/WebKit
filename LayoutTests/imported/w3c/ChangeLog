@@ -1,5 +1,47 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r292029. rdar://problem/90977336
+
+    Use Canvas/CanvasText system colors for <dialog> default styling
+    https://bugs.webkit.org/show_bug.cgi?id=238425
+    
+    Reviewed by Antti Koivisto.
+    
+    Per HTML spec change: https://github.com/whatwg/html/commit/22154a4c1d426dddf187fb12c05fbcb8816c94a5
+    Main change is that the colors now adapt to dark mode by default.
+    
+    LayoutTests/imported/w3c:
+    
+    Updated test result to pass.
+    
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/default-color-expected.txt:
+    
+    Source/WebCore:
+    
+    Test: LayoutTests/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/default-color.html
+    
+    * css/dialog.css:
+    (dialog):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292029 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-29  Tim Nguyen  <ntim@apple.com>
+
+            Use Canvas/CanvasText system colors for <dialog> default styling
+            https://bugs.webkit.org/show_bug.cgi?id=238425
+
+            Reviewed by Antti Koivisto.
+
+            Per HTML spec change: https://github.com/whatwg/html/commit/22154a4c1d426dddf187fb12c05fbcb8816c94a5
+            Main change is that the colors now adapt to dark mode by default.
+
+            Updated test result to pass.
+
+            * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/default-color-expected.txt:
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r292028. rdar://problem/90977255
 
     Re-import inert and <dialog> WPT
