@@ -1351,7 +1351,7 @@ RenderLayer* RenderLayer::enclosingOverflowClipLayer(IncludeSelfOrNot includeSel
 {
     const RenderLayer* layer = (includeSelf == IncludeSelf) ? this : parent();
     while (layer) {
-        if (layer->renderer().hasNonVisibleOverflow())
+        if (layer->renderer().hasPotentiallyScrollableOverflow())
             return const_cast<RenderLayer*>(layer);
 
         layer = layer->parent();

@@ -1,5 +1,46 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r292155. rdar://problem/90572543
+
+    Interop issue with position: sticky within contain: paint
+    https://bugs.webkit.org/show_bug.cgi?id=238016
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2022-03-31
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-expected.html: Added.
+    * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-ref.html: Added.
+    * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container.html: Added.
+    
+    Source/WebCore:
+    
+    Elements with overflow: clip (contain: paint enables it) are
+    not scroll containers, so they can't act as scrolling
+    ancestor for sticky elements.
+    
+    Tests: imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-ref.html
+           imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container.html
+    
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::enclosingOverflowClipLayer const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292155 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-31  Rob Buis  <rbuis@igalia.com>
+
+            Interop issue with position: sticky within contain: paint
+            https://bugs.webkit.org/show_bug.cgi?id=238016
+
+            Reviewed by Simon Fraser.
+
+            * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-expected.html: Added.
+            * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container-ref.html: Added.
+            * web-platform-tests/css/css-position/sticky/position-sticky-overflow-clip-container.html: Added.
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r292029. rdar://problem/90977336
 
     Use Canvas/CanvasText system colors for <dialog> default styling
