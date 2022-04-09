@@ -3699,6 +3699,7 @@ wasm/iframe-parent-postmessage.html [ Skip ]
 wasm/window-postmessage.html [ Skip ]
 imported/w3c/web-platform-tests/wasm/wasm_stream_instantiate_test.html  [ Skip ]
 imported/w3c/web-platform-tests/wasm/wasm_stream_compile_test.html  [ Skip ]
+http/tests/security/contentSecurityPolicy/allow-wasm-after-window-open.html [ Skip ]
 
 # Animated image throttling behaves differently on WK1.
 svg/animations/animated-svg-image-outside-viewport-paused.html [ Skip ]

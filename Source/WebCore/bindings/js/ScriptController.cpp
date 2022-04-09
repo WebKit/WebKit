@@ -368,36 +368,20 @@ TextPosition ScriptController::eventHandlerPosition() const
     return TextPosition();
 }
 
-void ScriptController::enableEval(bool enable, const String& errorMessage)
+void ScriptController::setEvalEnabled(bool value, const String& errorMessage)
 {
     auto* jsWindowProxy = windowProxy().existingJSWindowProxy(mainThreadNormalWorld());
     if (!jsWindowProxy)
         return;
-    jsWindowProxy->window()->setEvalEnabled(enable, errorMessage);
+    jsWindowProxy->window()->setEvalEnabled(value, errorMessage);
 }
 
-void ScriptController::enableWebAssembly()
+void ScriptController::setWebAssemblyEnabled(bool value, const String& errorMessage)
 {
     auto* jsWindowProxy = windowProxy().existingJSWindowProxy(mainThreadNormalWorld());
     if (!jsWindowProxy)
         return;
-    jsWindowProxy->window()->setWebAssemblyEnabled(true);
-}
-
-void ScriptController::disableEval(const String& errorMessage)
-{
-    auto* jsWindowProxy = windowProxy().existingJSWindowProxy(mainThreadNormalWorld());
-    if (!jsWindowProxy)
-        return;
-    jsWindowProxy->window()->setEvalEnabled(false, errorMessage);
-}
-
-void ScriptController::disableWebAssembly(const String& errorMessage)
-{
-    auto* jsWindowProxy = windowProxy().existingJSWindowProxy(mainThreadNormalWorld());
-    if (!jsWindowProxy)
-        return;
-    jsWindowProxy->window()->setWebAssemblyEnabled(false, errorMessage);
+    jsWindowProxy->window()->setWebAssemblyEnabled(value, errorMessage);
 }
 
 bool ScriptController::canAccessFromCurrentOrigin(Frame* frame, Document& accessingDocument)

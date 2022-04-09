@@ -3498,7 +3498,7 @@ void Document::disableEval(const String& errorMessage)
     if (!frame())
         return;
 
-    frame()->script().disableEval(errorMessage);
+    frame()->script().setEvalEnabled(false, errorMessage);
 }
 
 void Document::disableWebAssembly(const String& errorMessage)
@@ -3506,7 +3506,7 @@ void Document::disableWebAssembly(const String& errorMessage)
     if (!frame())
         return;
 
-    frame()->script().disableWebAssembly(errorMessage);
+    frame()->script().setWebAssemblyEnabled(false, errorMessage);
 }
 
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()

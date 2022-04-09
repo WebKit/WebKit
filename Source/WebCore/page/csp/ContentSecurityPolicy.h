@@ -192,6 +192,7 @@ public:
     bool isHeaderDelivered() const { return m_isHeaderDelivered; }
 
     const String& evalErrorMessage() const { return m_lastPolicyEvalDisabledErrorMessage; }
+    const String& webAssemblyErrorMessage() const { return m_lastPolicyWebAssemblyDisabledErrorMessage; }
 
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const OrdinalNumber& contextLine = OrdinalNumber::beforeFirst(), const OrdinalNumber& contextColumn = OrdinalNumber::beforeFirst(), JSC::JSGlobalObject* = nullptr) const;

@@ -1,5 +1,102 @@
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r292229. rdar://problem/90778752
+
+    CSP: WASM fails to execute after window.open
+    https://bugs.webkit.org/show_bug.cgi?id=238562
+    <rdar://problem/90778752>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    Test: http/tests/security/contentSecurityPolicy/allow-wasm-after-window-open.html
+    
+    Reset WASM enabled value after a window.open() call. This patch simplifies
+    eval and wasm setters by removing the distinct enable/disable functions
+    and using one consistent setter.
+    
+    * bindings/js/ScriptController.cpp:
+    (WebCore::ScriptController::setEvalEnabled):
+    (WebCore::ScriptController::setWebAssemblyEnabled):
+    (WebCore::ScriptController::enableEval): Deleted.
+    (WebCore::ScriptController::enableWebAssembly): Deleted.
+    (WebCore::ScriptController::disableEval): Deleted.
+    (WebCore::ScriptController::disableWebAssembly): Deleted.
+    * bindings/js/ScriptController.h:
+    * dom/Document.cpp:
+    (WebCore::Document::disableEval):
+    (WebCore::Document::disableWebAssembly):
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::clear):
+    * page/csp/ContentSecurityPolicy.h:
+    (WebCore::ContentSecurityPolicy::webAssemblyErrorMessage const):
+    
+    LayoutTests:
+    
+    Layout test coverage. Copy some wasm helper scripts into the http directory.
+    
+    * platform/win/TestExpectations:
+    We don't support wasm on win.
+    
+    * http/tests/security/contentSecurityPolicy/allow-wasm-after-window-open-expected.txt: Added.
+    * http/tests/security/contentSecurityPolicy/allow-wasm-after-window-open.html: Added.
+    * http/tests/security/contentSecurityPolicy/resources/load_wasm.js: Added.
+    (createWasmModule):
+    * http/tests/security/contentSecurityPolicy/resources/run-web-assembly.html: Added.
+    * http/tests/security/contentSecurityPolicy/resources/wasm-builder.js: Added.
+    (const._fail):
+    (const.isNotA.assert.isNotA):
+    (const):
+    (switch.typeof):
+    (Builder):
+    (Builder.prototype.setChecked):
+    (Builder.prototype.setPreamble):
+    (Builder.prototype._functionIndexSpaceKeyHash):
+    (Builder.prototype._registerFunctionToIndexSpace):
+    (Builder.prototype._getFunctionFromIndexSpace):
+    (Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+    (Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.const.codeBuilder.End.switch.case.string_appeared_here.e):
+    (Builder.prototype._registerSectionBuilders.this.Unknown):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292229 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-01  Kate Cheney  <katherine_cheney@apple.com>
+
+            CSP: WASM fails to execute after window.open
+            https://bugs.webkit.org/show_bug.cgi?id=238562
+            <rdar://problem/90778752>
+
+            Reviewed by Brent Fulgham.
+
+            Layout test coverage. Copy some wasm helper scripts into the http directory.
+
+            * platform/win/TestExpectations:
+            We don't support wasm on win.
+
+            * http/tests/security/contentSecurityPolicy/allow-wasm-after-window-open-expected.txt: Added.
+            * http/tests/security/contentSecurityPolicy/allow-wasm-after-window-open.html: Added.
+            * http/tests/security/contentSecurityPolicy/resources/load_wasm.js: Added.
+            (createWasmModule):
+            * http/tests/security/contentSecurityPolicy/resources/run-web-assembly.html: Added.
+            * http/tests/security/contentSecurityPolicy/resources/wasm-builder.js: Added.
+            (const._fail):
+            (const.isNotA.assert.isNotA):
+            (const):
+            (switch.typeof):
+            (Builder):
+            (Builder.prototype.setChecked):
+            (Builder.prototype.setPreamble):
+            (Builder.prototype._functionIndexSpaceKeyHash):
+            (Builder.prototype._registerFunctionToIndexSpace):
+            (Builder.prototype._getFunctionFromIndexSpace):
+            (Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+            (Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.const.codeBuilder.End.switch.case.string_appeared_here.e):
+            (Builder.prototype._registerSectionBuilders.this.Unknown):
+
+2022-04-07  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r292028. rdar://problem/90977255
 
     Re-import inert and <dialog> WPT

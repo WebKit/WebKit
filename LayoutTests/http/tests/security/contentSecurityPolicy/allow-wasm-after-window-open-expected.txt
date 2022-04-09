@@ -1,0 +1,2 @@
+ALERT: PASS: wasm result is 7002
+Test we allow web assembly with unsafe-eval after calling window.open.

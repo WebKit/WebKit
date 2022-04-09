@@ -667,10 +667,12 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     if (clearScriptObjects)
         m_frame.script().clearScriptObjects();
 
-    if (newDocument->contentSecurityPolicy() && !newDocument->contentSecurityPolicy()->evalErrorMessage().isNull())
-        m_frame.script().enableEval(false, newDocument->contentSecurityPolicy()->evalErrorMessage());
-    else
-        m_frame.script().enableEval(true);
+    if (newDocument->contentSecurityPolicy()) {
+        bool enableEvalValue = newDocument->contentSecurityPolicy()->evalErrorMessage().isNull();
+        bool enableWASMValue = newDocument->contentSecurityPolicy()->webAssemblyErrorMessage().isNull();
+        m_frame.script().setEvalEnabled(enableEvalValue, newDocument->contentSecurityPolicy()->evalErrorMessage());
+        m_frame.script().setWebAssemblyEnabled(enableWASMValue, newDocument->contentSecurityPolicy()->webAssemblyErrorMessage());
+    }
 
     m_frame.navigationScheduler().clear();
 
