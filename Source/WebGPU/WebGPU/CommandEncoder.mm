@@ -37,10 +37,10 @@
 
 namespace WebGPU {
 
-RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor& descriptor)
+Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return nullptr;
+        return CommandEncoder::createInvalid(*this);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
 
@@ -48,7 +48,7 @@ RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDesc
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
     id<MTLCommandBuffer> commandBuffer = [getQueue().commandQueue() commandBufferWithDescriptor:commandBufferDescriptor];
     if (!commandBuffer)
-        return nullptr;
+        return CommandEncoder::createInvalid(*this);
 
     commandBuffer.label = fromAPI(descriptor.label);
 
@@ -85,16 +85,16 @@ void CommandEncoder::finalizeBlitCommandEncoder()
     }
 }
 
-RefPtr<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
+Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return ComputePassEncoder::create(nil, m_device);
+    return ComputePassEncoder::createInvalid(m_device);
 }
 
-RefPtr<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
+Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return RenderPassEncoder::create(nil, m_device);
+    return RenderPassEncoder::createInvalid(m_device);
 }
 
 static bool validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
@@ -730,10 +730,10 @@ bool CommandEncoder::validateFinish() const
     return true;
 }
 
-RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& descriptor)
+Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return nullptr;
+        return CommandBuffer::createInvalid(m_device);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-finish
 
@@ -743,9 +743,7 @@ RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& 
 
     if (validationFailed) {
         m_device->generateAValidationError("Validation failure."_s);
-
-        // FIXME: "Return a new invalid GPUCommandBuffer."
-        return nullptr;
+        return CommandBuffer::createInvalid(m_device);
     }
 
     finalizeBlitCommandEncoder();

@@ -1,3 +1,74 @@
+2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Represent failure by invalidity rather than nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=238724
+
+        Reviewed by Dean Jackson.
+
+        This is the biggest blocker for running the WebGPU conformance test suite. WebGPU is designed
+        such that creation routines don't return undefined if the object couldn't be created; instead,
+        in "invalid" object is returned. Now that objects have the notion of invalidity, this patch
+        migrates from creation functions returning RefPtr to creation functions returning Ref. All
+        the places where we previously returned nullptr now return invalid objects.
+
+        * WebGPU/APIConversions.h:
+        (WebGPU::releaseToAPI):
+        * WebGPU/Adapter.h:
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::requestDevice):
+        (wgpuAdapterRequestDevice):
+        (wgpuAdapterRequestDeviceWithBlock):
+        * WebGPU/BindGroup.mm:
+        (WebGPU::Device::createBindGroup):
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::Device::createBindGroupLayout):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Device::createBuffer):
+        * WebGPU/CommandEncoder.h:
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::Device::createCommandEncoder):
+        (WebGPU::CommandEncoder::beginComputePass):
+        (WebGPU::CommandEncoder::beginRenderPass):
+        (WebGPU::CommandEncoder::finish):
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::Device::createComputePipeline):
+        (WebGPU::Device::createComputePipelineAsync):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (WebGPU::Device::create):
+        (wgpuDeviceCreateComputePipelineAsync):
+        (wgpuDeviceCreateComputePipelineAsyncWithBlock):
+        (wgpuDeviceCreateRenderPipelineAsync):
+        (wgpuDeviceCreateRenderPipelineAsyncWithBlock):
+        * WebGPU/Instance.h:
+        * WebGPU/Instance.mm:
+        (WebGPU::Instance::create):
+        (WebGPU::Instance::createSurface):
+        (WebGPU::Instance::requestAdapter):
+        (wgpuInstanceRequestAdapter):
+        (wgpuInstanceRequestAdapterWithBlock):
+        * WebGPU/PipelineLayout.mm:
+        (WebGPU::Device::createPipelineLayout):
+        * WebGPU/QuerySet.mm:
+        (WebGPU::Device::createQuerySet):
+        * WebGPU/RenderBundleEncoder.h:
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::Device::createRenderBundleEncoder):
+        (WebGPU::RenderBundleEncoder::finish):
+        * WebGPU/RenderPipeline.mm:
+        (WebGPU::Device::createRenderPipeline):
+        (WebGPU::Device::createRenderPipelineAsync):
+        * WebGPU/Sampler.mm:
+        (WebGPU::Device::createSampler):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::Device::createShaderModule):
+        * WebGPU/SwapChain.mm:
+        (WebGPU::Device::createSwapChain):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::createView):
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         [Xcode] Avoid targeting 32-bit iOS and Mac architectures

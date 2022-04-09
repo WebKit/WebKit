@@ -175,9 +175,9 @@ inline String fromAPI(const char* string)
 }
 
 template <typename T>
-inline T* releaseToAPI(RefPtr<T>&& pointer)
+inline T* releaseToAPI(Ref<T>&& pointer)
 {
-    return pointer.leakRef();
+    return &pointer.leakRef();
 }
 
 } // namespace WebGPU

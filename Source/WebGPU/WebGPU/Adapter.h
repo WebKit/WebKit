@@ -29,7 +29,6 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
-#import <wtf/RefPtr.h>
 
 struct WGPUAdapterImpl {
 };
@@ -58,7 +57,7 @@ public:
     bool getLimits(WGPUSupportedLimits&);
     void getProperties(WGPUAdapterProperties&);
     bool hasFeature(WGPUFeatureName);
-    void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, String&&)>&& callback);
+    void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback);
 
     bool isValid() const { return m_device; }
     void makeInvalid() { m_device = nil; }

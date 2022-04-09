@@ -100,20 +100,20 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, device);
 }
 
-RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
+Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
 {
     if (!descriptor.nextInChain)
-        return nullptr;
+        return ShaderModule::createInvalid(*this);
 
     auto shaderModuleParameters = findShaderModuleParameters(descriptor);
     if (!shaderModuleParameters)
-        return nullptr;
+        return ShaderModule::createInvalid(*this);
 
     auto checkResult = WGSL::staticCheck(String::fromLatin1(shaderModuleParameters->wgsl.code), std::nullopt);
 
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
         if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
-            return result;
+            return result.releaseNonNull();
     }
 
     return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);

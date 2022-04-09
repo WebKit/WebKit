@@ -50,10 +50,10 @@ static bool textureViewIsPresent(const WGPUBindGroupEntry& entry)
     return entry.textureView;
 }
 
-RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
+Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return nullptr;
+        return BindGroup::createInvalid(*this);
 
     const BindGroupLayout& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
 
@@ -63,7 +63,7 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descrip
     id<MTLBuffer> fragmentArgumentBuffer = safeCreateBuffer(bindGroupLayout.encodedLength(), MTLStorageModeShared);
     id<MTLBuffer> computeArgumentBuffer = safeCreateBuffer(bindGroupLayout.encodedLength(), MTLStorageModeShared);
     if (!vertexArgumentBuffer || !fragmentArgumentBuffer || !computeArgumentBuffer)
-        return nullptr;
+        return BindGroup::createInvalid(*this);
 
     auto label = fromAPI(descriptor.label);
     vertexArgumentBuffer.label = label;
@@ -81,13 +81,13 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descrip
         const WGPUBindGroupEntry& entry = descriptor.entries[i];
 
         if (entry.nextInChain)
-            return nullptr;
+            return BindGroup::createInvalid(*this);
 
         bool bufferIsPresent = WebGPU::bufferIsPresent(entry);
         bool samplerIsPresent = WebGPU::samplerIsPresent(entry);
         bool textureViewIsPresent = WebGPU::textureViewIsPresent(entry);
         if (static_cast<int>(bufferIsPresent) + static_cast<int>(samplerIsPresent) + static_cast<int>(textureViewIsPresent) != 1)
-            return nullptr;
+            return BindGroup::createInvalid(*this);
 
         if (bufferIsPresent) {
             id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();
@@ -107,7 +107,7 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descrip
             [computeArgumentEncoder setTexture:texture atIndex:entry.binding];
         } else {
             ASSERT_NOT_REACHED();
-            return nullptr;
+            return BindGroup::createInvalid(*this);
         }
     }
 

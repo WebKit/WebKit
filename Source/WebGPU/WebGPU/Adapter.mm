@@ -111,20 +111,20 @@ static bool deviceMeetsRequiredLimits(id<MTLDevice>, const WGPURequiredLimits& r
         && !requiredLimits.limits.maxComputeWorkgroupsPerDimension;
 }
 
-void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, String&&)>&& callback)
+void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback)
 {
     if (descriptor.nextInChain) {
-        callback(WGPURequestDeviceStatus_Error, nullptr, "Unknown descriptor type"_s);
+        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Unknown descriptor type"_s);
         return;
     }
 
     if (descriptor.requiredFeaturesCount) {
-        callback(WGPURequestDeviceStatus_Error, nullptr, "Device does not support requested features"_s);
+        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested features"_s);
         return;
     }
 
     if (descriptor.requiredLimits && !deviceMeetsRequiredLimits(m_device, *descriptor.requiredLimits)) {
-        callback(WGPURequestDeviceStatus_Error, nullptr, "Device does not support requested limits"_s);
+        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested limits"_s);
         return;
     }
 
@@ -162,14 +162,14 @@ bool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback, userdata](WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, String&& message) {
+    WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback, userdata](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(device)), message.utf8().data(), userdata);
     });
 }
 
 void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
 {
-    WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback = WTFMove(callback)](WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, String&& message) {
+    WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback = WTFMove(callback)](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(device)), message.utf8().data());
     });
 }

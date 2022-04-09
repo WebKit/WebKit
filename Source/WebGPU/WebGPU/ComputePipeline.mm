@@ -141,10 +141,10 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     return computePipelineState;
 }
 
-RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor)
+Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor)
 {
     if (descriptor.nextInChain || descriptor.compute.nextInChain)
-        return nullptr;
+        return ComputePipeline::createInvalid(*this);
 
     const ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
     const PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
@@ -152,13 +152,13 @@ RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineD
 
     auto libraryCreationResult = createLibrary(m_device, shaderModule, pipelineLayout, String::fromLatin1(descriptor.compute.entryPoint), label);
     if (!libraryCreationResult)
-        return nullptr;
+        return ComputePipeline::createInvalid(*this);
 
     auto library = libraryCreationResult->library;
     const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
 
     if (!std::holds_alternative<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint))
-        return nullptr;
+        return ComputePipeline::createInvalid(*this);
     const auto& computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
     auto function = createFunction(library, entryPointInformation, descriptor.compute, label);
@@ -168,7 +168,7 @@ RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineD
     return ComputePipeline::create(computePipelineState, *this);
 }
 
-void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, String&& message)>&& callback)
+void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
 {
     // FIXME: Implement this
     UNUSED_PARAM(descriptor);

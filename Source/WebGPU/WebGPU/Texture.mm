@@ -1963,15 +1963,15 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory)
 #endif
 }
 
-RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
+Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 {
     Vector<WGPUTextureFormat> viewFormats;
     if (descriptor.nextInChain) {
         if (descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorViewFormats))
-            return nullptr;
+            return Texture::createInvalid(*this);
         const auto& descriptorViewFormats = reinterpret_cast<const WGPUTextureDescriptorViewFormats&>(*descriptor.nextInChain);
         if (descriptor.nextInChain->next != nullptr)
-            return nullptr;
+            return Texture::createInvalid(*this);
         // This copy is temporary, just until WGPUTextureDescriptorViewFormats gets folded into WGPUTextureDescriptor.
         viewFormats = Vector { descriptorViewFormats.viewFormats, descriptorViewFormats.viewFormatsCount };
     }
@@ -1980,13 +1980,13 @@ RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     if (featureRequirementForFormat(descriptor.format)) {
         // FIXME: "but this.[[device]].[[features]] does not contain the feature, throw a TypeError."
-        return nullptr;
+        return Texture::createInvalid(*this);
     }
 
     if (!validateCreateTexture(descriptor, viewFormats)) {
         generateAValidationError("Validation failure."_s);
         // FIXME: "Return a new invalid GPUTexture."
-        return nullptr;
+        return Texture::createInvalid(*this);
     }
 
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor new];
@@ -2009,7 +2009,7 @@ RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
             textureDescriptor.arrayLength = descriptor.size.depthOrArrayLayers;
             if (descriptor.sampleCount > 1) {
 #if PLATFORM(WATCHOS) || PLATFORM(TVOS)
-                return nullptr;
+                return Texture::createInvalid(*this);
 #else
                 textureDescriptor.textureType = MTLTextureType2DMultisampleArray;
 #endif
@@ -2030,7 +2030,7 @@ RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
         break;
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();
-        return nullptr;
+        return Texture::createInvalid(*this);
     }
 
     textureDescriptor.pixelFormat = pixelFormat(descriptor.format);
@@ -2046,7 +2046,7 @@ RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     id<MTLTexture> texture = [m_device newTextureWithDescriptor:textureDescriptor];
     if (!texture)
-        return nullptr;
+        return Texture::createInvalid(*this);
 
     texture.label = fromAPI(descriptor.label);
 
@@ -2251,10 +2251,10 @@ static WGPUExtent3D computeRenderExtent(const WGPUExtent3D& baseSize, uint32_t m
     return extent;
 }
 
-RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescriptor)
+Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescriptor)
 {
     if (inputDescriptor.nextInChain)
-        return nullptr;
+        return TextureView::createInvalid(m_device);
 
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
 
@@ -2264,7 +2264,7 @@ RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDe
         m_device->generateAValidationError("Validation failure."_s);
 
         // FIXME: "Return a new invalid GPUTextureView."
-        return nullptr;
+        return TextureView::createInvalid(m_device);
     }
 
     std::optional<MTLPixelFormat> pixelFormat;
@@ -2281,18 +2281,18 @@ RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDe
             break;
         case WGPUTextureAspect_Force32:
             ASSERT_NOT_REACHED();
-            return nullptr;
+            return TextureView::createInvalid(m_device);
         }
     }
     if (!pixelFormat)
-        return nullptr;
+        return TextureView::createInvalid(m_device);
     ASSERT(*pixelFormat != MTLPixelFormatInvalid);
 
     MTLTextureType textureType;
     switch (descriptor.dimension) {
     case WGPUTextureViewDimension_Undefined:
         ASSERT_NOT_REACHED();
-        return nullptr;
+        return TextureView::createInvalid(m_device);
     case WGPUTextureViewDimension_1D:
         if (descriptor.arrayLayerCount == 1)
             textureType = MTLTextureType1D;
@@ -2308,7 +2308,7 @@ RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDe
     case WGPUTextureViewDimension_2DArray:
         if (m_descriptor.sampleCount > 1) {
 #if PLATFORM(WATCHOS) || PLATFORM(TVOS)
-            return nullptr;
+            return TextureView::createInvalid(m_device);
 #else
             textureType = MTLTextureType2DMultisampleArray;
 #endif
@@ -2326,7 +2326,7 @@ RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDe
         break;
     case WGPUTextureViewDimension_Force32:
         ASSERT_NOT_REACHED();
-        return nullptr;
+        return TextureView::createInvalid(m_device);
     }
 
     auto levels = NSMakeRange(descriptor.baseMipLevel, descriptor.mipLevelCount);
@@ -2335,7 +2335,7 @@ RefPtr<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDe
 
     id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:*pixelFormat textureType:textureType levels:levels slices:slices];
     if (!texture)
-        return nullptr;
+        return TextureView::createInvalid(m_device);
 
     texture.label = fromAPI(descriptor.label);
 

@@ -32,7 +32,6 @@
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/ThreadSafeRefCounted.h>
-#import <wtf/RefPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
@@ -61,7 +60,7 @@ class Texture;
 class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<Device> create(id<MTLDevice>, String&& deviceLabel, Adapter&);
+    static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, Adapter&);
     static Ref<Device> createInvalid(Adapter& adapter)
     {
         return adoptRef(*new Device(adapter));
@@ -69,21 +68,21 @@ public:
 
     ~Device();
 
-    RefPtr<BindGroup> createBindGroup(const WGPUBindGroupDescriptor&);
-    RefPtr<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&);
-    RefPtr<Buffer> createBuffer(const WGPUBufferDescriptor&);
-    RefPtr<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
-    RefPtr<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor&);
-    void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, String&& message)>&& callback);
-    RefPtr<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor&);
-    RefPtr<QuerySet> createQuerySet(const WGPUQuerySetDescriptor&);
-    RefPtr<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor&);
-    RefPtr<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor&);
-    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, String&& message)>&& callback);
-    RefPtr<Sampler> createSampler(const WGPUSamplerDescriptor&);
-    RefPtr<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);
-    RefPtr<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor&);
-    RefPtr<Texture> createTexture(const WGPUTextureDescriptor&);
+    Ref<BindGroup> createBindGroup(const WGPUBindGroupDescriptor&);
+    Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&);
+    Ref<Buffer> createBuffer(const WGPUBufferDescriptor&);
+    Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
+    Ref<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor&);
+    void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback);
+    Ref<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor&);
+    Ref<QuerySet> createQuerySet(const WGPUQuerySetDescriptor&);
+    Ref<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor&);
+    Ref<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor&);
+    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback);
+    Ref<Sampler> createSampler(const WGPUSamplerDescriptor&);
+    Ref<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);
+    Ref<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor&);
+    Ref<Texture> createTexture(const WGPUTextureDescriptor&);
     void destroy();
     size_t enumerateFeatures(WGPUFeatureName* features);
     bool getLimits(WGPUSupportedLimits&);

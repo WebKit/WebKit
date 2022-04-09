@@ -32,10 +32,10 @@
 
 namespace WebGPU {
 
-RefPtr<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor& descriptor)
+Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return nullptr;
+        return PipelineLayout::createInvalid(*this);
 
     Vector<Ref<BindGroupLayout>> bindGroupLayouts;
     bindGroupLayouts.reserveInitialCapacity(descriptor.bindGroupLayoutCount);

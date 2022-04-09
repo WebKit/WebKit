@@ -99,22 +99,22 @@ id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, MTLStorageMode storage
     return [m_device newBufferWithLength:std::max(static_cast<NSUInteger>(1), length) options:resourceOptions];
 }
 
-RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
+Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return nullptr;
+        return Buffer::createInvalid(*this);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createbuffer
 
     if (!validateCreateBuffer(*this, descriptor))
-        return nullptr;
+        return Buffer::createInvalid(*this);
 
     // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.
     MTLStorageMode storageMode = WebGPU::storageMode(hasUnifiedMemory(), descriptor.usage, descriptor.mappedAtCreation);
     auto buffer = safeCreateBuffer(static_cast<NSUInteger>(descriptor.size), storageMode);
     if (!buffer)
-        return nullptr;
+        return Buffer::createInvalid(*this);
 
     buffer.label = fromAPI(descriptor.label);
 

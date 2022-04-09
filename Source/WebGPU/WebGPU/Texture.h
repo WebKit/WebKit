@@ -28,7 +28,6 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
-#import <wtf/RefPtr.h>
 #import <wtf/Vector.h>
 
 struct WGPUTextureImpl {
@@ -54,7 +53,7 @@ public:
 
     ~Texture();
 
-    RefPtr<TextureView> createView(const WGPUTextureViewDescriptor&);
+    Ref<TextureView> createView(const WGPUTextureViewDescriptor&);
     void destroy();
     void setLabel(String&&);
 

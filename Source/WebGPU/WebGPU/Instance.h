@@ -30,7 +30,6 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Lock.h>
 #import <wtf/Ref.h>
-#import <wtf/RefPtr.h>
 #import <wtf/ThreadSafeRefCounted.h>
 
 struct WGPUInstanceImpl {
@@ -45,7 +44,7 @@ class Surface;
 class Instance : public WGPUInstanceImpl, public ThreadSafeRefCounted<Instance> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<Instance> create(const WGPUInstanceDescriptor&);
+    static Ref<Instance> create(const WGPUInstanceDescriptor&);
     static Ref<Instance> createInvalid()
     {
         return adoptRef(*new Instance());
@@ -53,9 +52,9 @@ public:
 
     ~Instance();
 
-    RefPtr<Surface> createSurface(const WGPUSurfaceDescriptor&);
+    Ref<Surface> createSurface(const WGPUSurfaceDescriptor&);
     void processEvents();
-    void requestAdapter(const WGPURequestAdapterOptions&, CompletionHandler<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, String&&)>&& callback);
+    void requestAdapter(const WGPURequestAdapterOptions&, CompletionHandler<void(WGPURequestAdapterStatus, Ref<Adapter>&&, String&&)>&& callback);
 
     bool isValid() const { return m_isValid; }
 

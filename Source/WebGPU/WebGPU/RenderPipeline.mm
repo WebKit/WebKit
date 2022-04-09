@@ -32,13 +32,13 @@
 
 namespace WebGPU {
 
-RefPtr<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
+Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
-    return RenderPipeline::create(nil, *this);
+    return RenderPipeline::createInvalid(*this);
 }
 
-void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, String&& message)>&& callback)
+void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
 {
     UNUSED_PARAM(descriptor);
     UNUSED_PARAM(callback);

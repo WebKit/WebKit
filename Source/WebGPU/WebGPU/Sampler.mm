@@ -124,17 +124,16 @@ static MTLCompareFunction compareFunction(WGPUCompareFunction compareFunction)
     }
 }
 
-RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
+Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return nullptr;
+        return Sampler::createInvalid(*this);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createsampler
 
     if (!validateCreateSampler(*this, descriptor)) {
         generateAValidationError("Validation failure."_s);
-
-        return nullptr;
+        return Sampler::createInvalid(*this);
     }
 
     MTLSamplerDescriptor *samplerDescriptor = [MTLSamplerDescriptor new];
@@ -157,7 +156,7 @@ RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 
     id<MTLSamplerState> samplerState = [m_device newSamplerStateWithDescriptor:samplerDescriptor];
     if (!samplerState)
-        return nullptr;
+        return Sampler::createInvalid(*this);
 
     return Sampler::create(samplerState, descriptor, *this);
 }
