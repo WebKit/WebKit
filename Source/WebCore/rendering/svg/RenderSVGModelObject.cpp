@@ -36,6 +36,7 @@
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGElementInlines.h"
@@ -59,15 +60,13 @@ RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& st
 void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();
-    setHasTransformRelatedProperty(style().hasTransformRelatedProperty());
 
-    AffineTransform transform;
-    if (is<SVGGraphicsElement>(nodeForNonAnonymous()))
-        transform = downcast<SVGGraphicsElement>(nodeForNonAnonymous()).animatedLocalTransform();
+    bool hasSVGTransform = false;
+    if (is<SVGGraphicsElement>(element()))
+        hasSVGTransform = !downcast<SVGGraphicsElement>(element()).animatedLocalTransform().isIdentity();
 
-    // FIXME: [LBSE] Upstream RenderObject changes
-    // if (!transform.isIdentity())
-    //     setHasSVGTransform();
+    setHasTransformRelatedProperty(style().hasTransformRelatedProperty() || hasSVGTransform);
+    setHasSVGTransform(hasSVGTransform);
 }
 
 FloatRect RenderSVGModelObject::borderBoxRectInFragmentEquivalent(RenderFragmentContainer*, RenderBox::RenderBoxFragmentInfoFlags) const

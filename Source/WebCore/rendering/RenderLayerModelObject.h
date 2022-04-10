@@ -28,6 +28,7 @@ namespace WebCore {
 
 class KeyframeList;
 class RenderLayer;
+class SVGGraphicsElement;
 
 struct LayerRepaintRects {
     LayoutRect clippedOverflowRect;
@@ -75,7 +76,11 @@ public:
     // Provides the SVG implementation for mapLocalToContainer().
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
+
+    void applySVGTransform(TransformationMatrix&, SVGGraphicsElement&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const;
 #endif
+
+    void updateLayerTransform();
 
     virtual void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const = 0;
 

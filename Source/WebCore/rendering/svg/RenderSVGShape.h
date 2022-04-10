@@ -82,7 +82,7 @@ public:
 
     FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const override;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
 
 protected:
     void element() const = delete;

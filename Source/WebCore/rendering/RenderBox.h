@@ -218,7 +218,6 @@ public:
     void addOverflowFromChild(const RenderBox* child) { addOverflowFromChild(child, child->locationOffset()); }
     void addOverflowFromChild(const RenderBox* child, const LayoutSize& delta);
 
-    void updateLayerTransform();
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const override;
 
     LayoutSize contentSize() const { return { contentWidth(), contentHeight() }; }
