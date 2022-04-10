@@ -10,7 +10,6 @@ depends:
 # replaced (patched) elements:
 - sdk/adwaita-icon-theme.bst
 - sdk/apitrace.bst
-- sdk/bubblewrap.bst
 - sdk/capnp.bst
 - sdk/cargo-c.bst
 - sdk/ccls.bst
@@ -31,7 +30,6 @@ depends:
 - sdk/gst-plugins-good.bst
 - sdk/gst-plugins-ugly.bst
 - sdk/gstreamer.bst
-- sdk/gtk+-3.bst
 - sdk/gtk.bst
 - sdk/icecc.bst
 - sdk/krb5.bst
@@ -75,6 +73,7 @@ depends:
 - freedesktop-sdk.bst:components/at-spi2-core.bst
 - freedesktop-sdk.bst:components/atk.bst
 - freedesktop-sdk.bst:components/brotli.bst
+- freedesktop-sdk.bst:components/bubblewrap.bst
 - freedesktop-sdk.bst:components/ca-certificates.bst
 - freedesktop-sdk.bst:components/cairo.bst
 - freedesktop-sdk.bst:components/ccache.bst
@@ -108,6 +107,7 @@ depends:
 - freedesktop-sdk.bst:components/google-crosextra-carlito.bst
 - freedesktop-sdk.bst:components/gpgme.bst
 - freedesktop-sdk.bst:components/graphite2.bst
+- freedesktop-sdk.bst:components/gtk3.bst
 - freedesktop-sdk.bst:components/gtk-doc.bst
 - freedesktop-sdk.bst:components/gzip.bst
 - freedesktop-sdk.bst:components/harfbuzz.bst

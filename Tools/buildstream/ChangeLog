@@ -1,3 +1,22 @@
+2022-04-10  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Pre-easter eggs update
+        https://bugs.webkit.org/show_bug.cgi?id=239007
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/freedesktop-sdk.bst: Bump junction.
+        * elements/qt5/qtbase.bst: Remove reference to removed gtk3 recipe.
+        * elements/sdk-platform.bst: Replace duplicate recipes with their upstream version.
+        * elements/sdk/adwaita-icon-theme.bst: Remove reference to removed gtk3 recipe.
+        * elements/sdk/bubblewrap.bst: Removed.
+        * elements/sdk/ffmpeg.bst: Bump to version 5, inspired from upstream version of the recipe.
+        * elements/sdk/gst-plugins-base.bst: Remove reference to removed gtk3 recipe.
+        * elements/sdk/gst-plugins-good.bst: Remove reference to removed gtk3 recipe.
+        * elements/sdk/gtk+-3.bst: Removed.
+        * patches/fdo-0001-shared-mime-info-Backport-meson-0.60-build-fix.patch: Removed.
+        * patches/gtk-gcc11-build-fix.patch: Removed.
+
 2022-04-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [Flatpak SDK] Update patchelf recipe
