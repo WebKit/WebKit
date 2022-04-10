@@ -1,3 +1,20 @@
+2022-04-10  Alan Bujtas  <zalan@apple.com>
+
+        [Line clamp] Move line clamp only code from RenderBlockFlow to RenderDeprecatedFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=239041
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::shouldIncludeLinesForParentLineCount): Deleted.
+        (WebCore::RenderBlockFlow::clearTruncation): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::shouldIncludeLinesForParentLineCount):
+        (WebCore::clearTruncation):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::clearLineClamp):
+
 2022-04-10  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [LBSE] Activate SVG transform support through layers

@@ -342,7 +342,6 @@ public:
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 
     int lineCount() const;
-    void clearTruncation();
 
     void setHasMarkupTruncation(bool b) { setRenderBlockFlowHasMarkupTruncation(b); }
     bool hasMarkupTruncation() const { return renderBlockFlowHasMarkupTruncation(); }
@@ -615,8 +614,6 @@ inline LayoutUnit RenderBlockFlow::endPaddingWidthForCaret() const
         return caretWidth;
     return { };
 }
-
-bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow&);
 
 } // namespace WebCore
 

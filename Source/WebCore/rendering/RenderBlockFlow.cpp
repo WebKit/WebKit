@@ -3224,12 +3224,6 @@ void RenderBlockFlow::clearMultiColumnFlow()
     rareBlockFlowData()->m_multiColumnFlow.clear();
 }
 
-bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow& blockFlow)
-{
-    // FIXME: This test does not make much sense.
-    return !blockFlow.isFloatingOrOutOfFlowPositioned() && blockFlow.style().height().isAuto();
-}
-
 int RenderBlockFlow::lineCount() const
 {
     if (!childrenInline()) {
@@ -3244,24 +3238,6 @@ int RenderBlockFlow::lineCount() const
         return legacyLineLayout()->lineCount();
 
     return 0;
-}
-
-void RenderBlockFlow::clearTruncation()
-{
-    if (style().visibility() != Visibility::Visible)
-        return;
-
-    if (childrenInline() && hasMarkupTruncation()) {
-        setHasMarkupTruncation(false);
-        for (auto* box = firstRootBox(); box; box = box->nextRootBox())
-            box->clearTruncation();
-        return;
-    }
-
-    for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
-        if (shouldIncludeLinesForParentLineCount(blockFlow))
-            blockFlow.clearTruncation();
-    }
 }
 
 bool RenderBlockFlow::containsNonZeroBidiLevel() const

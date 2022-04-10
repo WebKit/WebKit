@@ -937,6 +937,29 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         setHeight(oldHeight);
 }
 
+static bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow& blockFlow)
+{
+    return !blockFlow.isFloatingOrOutOfFlowPositioned() && blockFlow.style().height().isAuto();
+}
+
+static void clearTruncation(RenderBlockFlow& blockFlow)
+{
+    if (blockFlow.style().visibility() != Visibility::Visible)
+        return;
+
+    if (blockFlow.childrenInline() && blockFlow.hasMarkupTruncation()) {
+        blockFlow.setHasMarkupTruncation(false);
+        for (auto* box = blockFlow.firstRootBox(); box; box = box->nextRootBox())
+            box->clearTruncation();
+        return;
+    }
+
+    for (auto& child : childrenOfType<RenderBlockFlow>(blockFlow)) {
+        if (shouldIncludeLinesForParentLineCount(child))
+            clearTruncation(child);
+    }
+}
+
 static LegacyRootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
 {
     ASSERT(i >= 0);
@@ -1027,7 +1050,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             // Dirty all the positioned objects.
             if (is<RenderBlockFlow>(*child)) {
                 downcast<RenderBlockFlow>(*child).markPositionedObjectsForLayout();
-                downcast<RenderBlockFlow>(*child).clearTruncation();
+                clearTruncation(downcast<RenderBlockFlow>(*child));
             }
         }
         child->layoutIfNeeded();
@@ -1127,7 +1150,7 @@ void RenderDeprecatedFlexibleBox::clearLineClamp()
 
             if (is<RenderBlockFlow>(*child)) {
                 downcast<RenderBlockFlow>(*child).markPositionedObjectsForLayout();
-                downcast<RenderBlockFlow>(*child).clearTruncation();
+                clearTruncation(downcast<RenderBlockFlow>(*child));
             }
         }
     }
