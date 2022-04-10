@@ -336,6 +336,9 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::DisclosedRows:
         propertyMap.set(AXPropertyName::DisclosedRows, idsForObjects(axObject.disclosedRows()));
         break;
+    case AXPropertyName::IdentifierAttribute:
+        propertyMap.set(AXPropertyName::IdentifierAttribute, axObject.identifierAttribute().isolatedCopy());
+        break;
     case AXPropertyName::IsChecked:
         ASSERT(axObject.supportsCheckedState());
         propertyMap.set(AXPropertyName::IsChecked, axObject.isChecked());
@@ -349,9 +352,6 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
         break;
     case AXPropertyName::SortDirection:
         propertyMap.set(AXPropertyName::SortDirection, static_cast<int>(axObject.sortDirection()));
-        break;
-    case AXPropertyName::IdentifierAttribute:
-        propertyMap.set(AXPropertyName::IdentifierAttribute, axObject.identifierAttribute().isolatedCopy());
         break;
     default:
         return;

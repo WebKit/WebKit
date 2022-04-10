@@ -3415,6 +3415,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:
+        case AXInvalidStatusChanged:
         case AXMenuListValueChanged:
         case AXSelectedChildrenChanged:
         case AXValueChanged: {

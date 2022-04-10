@@ -1,3 +1,22 @@
+2022-04-10  Tyler Wilcock  <tyler_w@apple.com>
+
+        Fix accessibility/aria-invalid.html in isolated tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=238978
+
+        Reviewed by Chris Fleizach.
+
+        With this patch, we update the isolated tree when the aria-invalid
+        attribute changes.
+
+        Fixes accessibility/aria-invalid.html in isolated tree mode.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::updateIsolatedTree):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateNodeProperty):
+        Drive-by re-ordering of `case AXPropertyName::IdentifierAttribute` such that this
+        function handles properties in alphabetical order.
+
 2022-04-09  Alan Bujtas  <zalan@apple.com>
 
         [Text autosizing] Remove redundant lineCountForTextAutosizing member function

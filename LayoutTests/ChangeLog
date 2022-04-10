@@ -1,3 +1,20 @@
+2022-04-10  Tyler Wilcock  <tyler_w@apple.com>
+
+        Fix accessibility/aria-invalid.html in isolated tree mode
+        https://bugs.webkit.org/show_bug.cgi?id=238978
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-invalid-expected.txt:
+        * accessibility/aria-invalid.html:
+        Rewrite to call `debug` only once at the end of the test. Also made
+        this test use accessibleElementById instead of
+        accessibilityController.focusedElement.
+        * resources/accessibility-helper.js:
+        Add new `expect` function, which is like the more ubiquitous
+        `shouldBe` from js-test.js, but returns the output as a string instead
+        of calling `debug` to output to a console DOM element.
+
 2022-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WKTR] Reset minimum font size WKPreference between tests

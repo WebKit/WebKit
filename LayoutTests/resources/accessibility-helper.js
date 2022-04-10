@@ -142,6 +142,19 @@ async function waitForElementById(id) {
     return element;
 }
 
+// Expect an expression to equal a value and return the result as a string.
+// This is essentially the more ubiquitous `shouldBe` function from js-test,
+// but returns the result as a string rather than `debug`ing to a console DOM element.
+function expect(expression, expectedValue) {
+    if (typeof expression !== "string")
+        debug("WARN: The expression arg in bufferShouldBe() should be a string.");
+
+    const evalExpression = `${expression} === ${expectedValue}`;
+    if (eval(evalExpression))
+        return `PASS: ${evalExpression}\n`;
+    return `FAIL: ${expression} !== ${expectedValue}\n`;
+}
+
 async function expectAsyncExpression(expression, expectedValue) {
     if (typeof expression !== "string")
         debug("WARN: The expression arg in waitForExpression() should be a string.");
