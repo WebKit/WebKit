@@ -1,3 +1,12 @@
+2022-04-09  Khem Raj  <raj.khem@gmail.com>
+
+        Include locale.h for LC_MESSAGES definition.
+        https://bugs.webkit.org/show_bug.cgi?id=239030
+
+        Reviewed by Michael Catanzaro.
+
+        * accessibility/atspi/AccessibilityRootAtspi.cpp:
+
 2022-04-09  Simon Fraser  <simon.fraser@apple.com>
 
         Put layer backing store buffers into the per-RemoteRenderingBackend IOSurfacePool
