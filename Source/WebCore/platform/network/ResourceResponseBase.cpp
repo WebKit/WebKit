@@ -566,13 +566,18 @@ void ResourceResponseBase::updateHeaderParsedState(HTTPHeaderName name)
 
 void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& value)
 {
-    lazyInit(AllFields);
-
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
-        updateHeaderParsedState(headerName);
+        setHTTPHeaderField(headerName, value);
+    else
+        setUncommonHTTPHeaderField(name, value);
+}
 
-    m_httpHeaderFields.set(name, value);
+void ResourceResponseBase::setUncommonHTTPHeaderField(const String& name, const String& value)
+{
+    lazyInit(AllFields);
+
+    m_httpHeaderFields.setUncommonHeader(name, value);
 
     // FIXME: Should invalidate or update platform response if present.
 }
@@ -607,10 +612,14 @@ void ResourceResponseBase::addHTTPHeaderField(const String& name, const String& 
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
         addHTTPHeaderField(headerName, value);
-    else {
-        lazyInit(AllFields);
-        m_httpHeaderFields.add(name, value);
-    }
+    else
+        addUncommonHTTPHeaderField(name, value);
+}
+
+void ResourceResponseBase::addUncommonHTTPHeaderField(const String& name, const String& value)
+{
+    lazyInit(AllFields);
+    m_httpHeaderFields.addUncommonHeader(name, value);
 }
 
 const HTTPHeaderMap& ResourceResponseBase::httpHeaderFields() const

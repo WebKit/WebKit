@@ -87,7 +87,7 @@ static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapCon
     if (header.keyAsHTTPHeaderName)
         headers.add(header.keyAsHTTPHeaderName.value(), header.value);
     else
-        headers.add(header.key, header.value);
+        headers.addUncommonHeader(header.key, header.value);
 
     if (guard == FetchHeaders::Guard::RequestNoCors)
         removePrivilegedNoCORSRequestHeaders(headers);
@@ -218,7 +218,7 @@ void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
         if (header.keyAsHTTPHeaderName)
             m_headers.add(header.keyAsHTTPHeaderName.value(), header.value);
         else
-            m_headers.add(header.key, header.value);
+            m_headers.addUncommonHeader(header.key, header.value);
     }
 }
 

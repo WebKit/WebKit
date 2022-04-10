@@ -105,7 +105,7 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, F
 
     ResourceRequest request { m_jobData.scriptURL };
     request.setInitiatorIdentifier(context.resourceRequestIdentifier());
-    request.addHTTPHeaderField("Service-Worker"_s, "script"_s);
+    request.addHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
 
     FetchOptions options;
     options.mode = FetchOptions::Mode::SameOrigin;

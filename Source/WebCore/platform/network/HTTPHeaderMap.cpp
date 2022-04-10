@@ -109,6 +109,11 @@ void HTTPHeaderMap::set(const String& name, const String& value)
 
 void HTTPHeaderMap::setUncommonHeader(const String& name, const String& value)
 {
+#if ASSERT_ENABLED
+    HTTPHeaderName headerName;
+    ASSERT(!findHTTPHeaderName(name, headerName));
+#endif
+
     auto index = m_uncommonHeaders.findIf([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });
@@ -125,6 +130,16 @@ void HTTPHeaderMap::add(const String& name, const String& value)
         add(headerName, value);
         return;
     }
+    addUncommonHeader(name, value);
+}
+
+void HTTPHeaderMap::addUncommonHeader(const String& name, const String& value)
+{
+#if ASSERT_ENABLED
+    HTTPHeaderName headerName;
+    ASSERT(!findHTTPHeaderName(name, headerName));
+#endif
+
     auto index = m_uncommonHeaders.findIf([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });

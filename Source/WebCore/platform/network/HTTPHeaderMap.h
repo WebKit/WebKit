@@ -157,6 +157,8 @@ public:
     WEBCORE_EXPORT String get(StringView name) const;
     WEBCORE_EXPORT void set(const String& name, const String& value);
     WEBCORE_EXPORT void add(const String& name, const String& value);
+    void setUncommonHeader(const String& name, const String& value);
+    void addUncommonHeader(const String& name, const String& value);
     WEBCORE_EXPORT void append(const String& name, const String& value);
     WEBCORE_EXPORT bool contains(const String&) const;
     WEBCORE_EXPORT bool remove(const String&);
@@ -213,7 +215,6 @@ public:
     template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, HTTPHeaderMap&);
 
 private:
-    void setUncommonHeader(const String& name, const String& value);
     WEBCORE_EXPORT String getUncommonHeader(StringView name) const;
 
     CommonHeadersVector m_commonHeaders;

@@ -93,7 +93,10 @@ void updateResponseHeadersAfterRevalidation(ResourceResponse& response, const Re
         // we care about.
         if (!shouldUpdateHeaderAfterRevalidation(header.key))
             continue;
-        response.setHTTPHeaderField(header.key, header.value);
+        if (header.keyAsHTTPHeaderName)
+            response.setHTTPHeaderField(*header.keyAsHTTPHeaderName, header.value);
+        else
+            response.setUncommonHTTPHeaderField(header.key, header.value);
     }
 }
 

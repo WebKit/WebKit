@@ -453,7 +453,7 @@ const uint8_t* WebSocketHandshake::readHTTPHeaders(const uint8_t* start, const u
         HTTPHeaderName headerName;
         if (!findHTTPHeaderName(name, headerName)) {
             // Evidence in the wild shows that services make use of custom headers in the handshake
-            m_serverHandshakeResponse.addHTTPHeaderField(name.toString(), value);
+            m_serverHandshakeResponse.addUncommonHTTPHeaderField(name.toString(), value);
             continue;
         }
 
