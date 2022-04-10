@@ -995,6 +995,23 @@ static int heightForLineCount(const RenderBlockFlow& flow, int lineCount)
     return getHeightForLineCount(flow, lineCount, true, count);
 }
 
+static size_t lineCountFor(const RenderBlockFlow& blockFlow)
+{
+    if (blockFlow.style().visibility() != Visibility::Visible)
+        return 0;
+
+    if (blockFlow.childrenInline())
+        return blockFlow.lineCount();
+
+    size_t count = 0;
+    for (auto& child : childrenOfType<RenderBlockFlow>(blockFlow)) {
+        if (blockFlow.isFloatingOrOutOfFlowPositioned() || !blockFlow.style().height().isAuto())
+            continue;
+        count += lineCountFor(child);
+    }
+    return count;
+}
+
 void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutChildren)
 {
     int maxLineCount = 0;
@@ -1015,7 +1032,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         }
         child->layoutIfNeeded();
         if (child->style().height().isAuto() && is<RenderBlockFlow>(*child))
-            maxLineCount = std::max(maxLineCount, downcast<RenderBlockFlow>(*child).lineCount());
+            maxLineCount = std::max<int>(maxLineCount, lineCountFor(downcast<RenderBlockFlow>(*child)));
     }
 
     // Get the number of lines and then alter all block flow children with auto height to use the
@@ -1030,7 +1047,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         RenderBlockFlow& blockChild = downcast<RenderBlockFlow>(*child);
-        int lineCount = blockChild.lineCount();
+        int lineCount = lineCountFor(blockChild);
         if (lineCount <= numVisibleLines)
             continue;
 

@@ -1,3 +1,17 @@
+2022-04-10  Alan Bujtas  <zalan@apple.com>
+
+        Line clamp specific line-count code should be in RenderDeprecatedFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=239029
+
+        Reviewed by Antti Koivisto.
+
+        Moving the line-clamp specific code to RenderDeprecatedFlexibleBox enables us to
+        make RenderBlockFlow::lineCount "children inline" only.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::lineCountFor):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+
 2022-04-10  Tyler Wilcock  <tyler_w@apple.com>
 
         Fix accessibility/aria-invalid.html in isolated tree mode

@@ -3232,29 +3232,18 @@ bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow& blockFlow)
 
 int RenderBlockFlow::lineCount() const
 {
-    // FIXME: This should be tested by clients.
-    if (style().visibility() != Visibility::Visible)
+    if (!childrenInline()) {
+        ASSERT_NOT_REACHED();
         return 0;
-
-    if (childrenInline()) {
+    }
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (modernLineLayout())
-            return modernLineLayout()->lineCount();
+    if (modernLineLayout())
+        return modernLineLayout()->lineCount();
 #endif
-        if (legacyLineLayout())
-            return legacyLineLayout()->lineCount();
+    if (legacyLineLayout())
+        return legacyLineLayout()->lineCount();
 
-        return 0;
-    }
-
-    int count = 0;
-    for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
-        if (!shouldIncludeLinesForParentLineCount(blockFlow))
-            continue;
-        count += blockFlow.lineCount();
-    }
-
-    return count;
+    return 0;
 }
 
 void RenderBlockFlow::clearTruncation()
@@ -3550,15 +3539,7 @@ bool RenderBlockFlow::relayoutForPagination()
 
 bool RenderBlockFlow::hasLines() const
 {
-    if (!childrenInline())
-        return false;
-
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (modernLineLayout())
-        return modernLineLayout()->lineCount();
-#endif
-
-    return legacyLineLayout() && legacyLineLayout()->lineBoxes().firstLineBox();
+    return childrenInline() ? lineCount() : false;
 }
 
 void RenderBlockFlow::invalidateLineLayoutPath()
@@ -3812,6 +3793,8 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
                 lineCountInBlock = this->lineCount();
             else {
                 for (auto& listItem : childrenOfType<RenderListItem>(*this)) {
+                    if (!listItem.childrenInline() || listItem.style().visibility() != Visibility::Visible)
+                        continue;
                     lineCountInBlock += listItem.lineCount();
                     if (lineCountInBlock > 1)
                         break;
