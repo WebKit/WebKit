@@ -3771,19 +3771,6 @@ static inline bool resizeTextPermitted(const RenderObject& renderer)
     return true;
 }
 
-int RenderBlockFlow::lineCountForTextAutosizing()
-{
-    if (style().visibility() != Visibility::Visible)
-        return 0;
-    if (childrenInline())
-        return lineCount();
-    // Only descend into list items.
-    int count = 0;
-    for (auto& listItem : childrenOfType<RenderListItem>(*this))
-        count += listItem.lineCount();
-    return count;
-}
-
 static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject& renderer)
 {
     if (!renderer.isRenderBlock())
@@ -3815,18 +3802,25 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     if (visibleWidth >= width())
         return;
     
-    unsigned lineCount;
-    if (m_lineCountForTextAutosizing == NOT_SET) {
-        int count = lineCountForTextAutosizing();
-        if (!count)
+    unsigned lineCount = m_lineCountForTextAutosizing;
+    if (lineCount == NOT_SET) {
+        if (style().visibility() != Visibility::Visible)
             lineCount = NO_LINE;
-        else if (count == 1)
-            lineCount = ONE_LINE;
-        else
-            lineCount = MULTI_LINE;
-    } else
-        lineCount = m_lineCountForTextAutosizing;
-    
+        else {
+            size_t lineCountInBlock = 0;
+            if (childrenInline())
+                lineCountInBlock = this->lineCount();
+            else {
+                for (auto& listItem : childrenOfType<RenderListItem>(*this)) {
+                    lineCountInBlock += listItem.lineCount();
+                    if (lineCountInBlock > 1)
+                        break;
+                }
+            }
+            lineCount = !lineCountInBlock ? NO_LINE : lineCountInBlock == 1 ? ONE_LINE : MULTI_LINE;
+        }
+    }
+
     ASSERT(lineCount != NOT_SET);
     if (lineCount == NO_LINE)
         return;

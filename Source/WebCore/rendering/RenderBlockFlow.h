@@ -546,7 +546,6 @@ public:
     void materializeRareBlockFlowData();
 
 #if ENABLE(TEXT_AUTOSIZING)
-    int lineCountForTextAutosizing();
     void adjustComputedFontSizes(float size, float visibleWidth);
     void resetComputedFontSize()
     {
