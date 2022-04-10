@@ -22,28 +22,36 @@ import os
 import sys
 
 platform = "GTK"
+build_type = "Release"
 if "--wpe" in sys.argv:
     platform = "WPE"
     sys.argv.remove("--wpe")
 if "--gtk" in sys.argv:
     sys.argv.remove("--gtk")
 
+if "--debug" in sys.argv:
+    build_type = "Debug"
+    sys.argv.remove("--debug")
+if "--release" in sys.argv:
+    sys.argv.remove("--release")
+
 build_path = os.environ['WEBKIT_OUTPUTDIR'] if 'WEBKIT_OUTPUTDIR' in os.environ \
     else flatpakutils.DEFAULT_BUILD_ROOT
 mappings = "--path-mappings=" + ",".join([
     "{}={}".format(
-        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, "Debug"),
+        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, flatpakutils.BUILD_ROOT_DIR_NAME, "Debug"),
         os.path.join(build_path, platform, "Debug")),
     "{}={}".format(
-        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, "Release"),
+        os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, flatpakutils.BUILD_ROOT_DIR_NAME, "Release"),
         os.path.join(build_path, platform, "Release")),
     "{}={}".format(
         os.path.join(flatpakutils.WEBKIT_SOURCE_DIR, "Source"),
         os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, "Source")),
-    "/usr/include={}".format(
-        os.path.join(flatpakutils.FLATPAK_USER_DIR_PATH, "runtime", "org.webkit.Sdk",
-                     "x86_64", flatpakutils.SDK_BRANCH, "active", "files", "include")),
 ])
 
-print(f"Running clangd with arguments: {[mappings] + sys.argv[1:]}")
-flatpakutils.run_in_sandbox_if_available(["clangd", mappings] + sys.argv[1:])
+build_dir = os.path.join(flatpakutils.SANDBOX_SOURCE_ROOT, flatpakutils.BUILD_ROOT_DIR_NAME, build_type)
+extra_options = [f"--compile-commands-dir={build_dir}"]
+
+command = ["clangd", mappings] + extra_options + sys.argv[1:]
+print(f"Running clangd with arguments: {command}")
+flatpakutils.run_in_sandbox_if_available(command)

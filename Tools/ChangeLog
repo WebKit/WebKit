@@ -1,3 +1,23 @@
+2022-04-10  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak] clangd wrapper improvements
+        https://bugs.webkit.org/show_bug.cgi?id=239032
+
+        Reviewed by Adrian Perez de Castro.
+
+        The path of the compile_commands.json is now implied from the webkit-clangd command-line
+        arguments, defaulting to the GTK/Release configuration.
+
+        The path mappings were incorrect, the src part being /app/webkit/{Debug,Release}, which are
+        invalid paths in the sandbox. They should instead point to
+        /app/webkit/WebKitBuild/{Debug,Release}.
+
+        Finally, there should be no need to add a path mapping for /usr/include because clangd is
+        launched in the sandbox runtime, where /usr/include/ is already bind-mounded by
+        flatpak/bwrap.
+
+        * flatpak/webkit-clangd:
+
 2022-04-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WKTR] Reset minimum font size WKPreference between tests
