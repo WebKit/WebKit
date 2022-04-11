@@ -1,3 +1,16 @@
+2022-04-11  Alex Christensen  <achristensen@webkit.org>
+
+        Use WebKit::blockedError instead of ResourceLoader::blockedError in WebLoaderStrategy::scheduleLoadFromNetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=239089
+        <rdar://91295875>
+
+        Reviewed by Chris Dumez.
+
+        The latter dereferences the frame loader which can be null.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+
 2022-04-11  Simon Fraser  <simon.fraser@apple.com>
 
         Crash under ShareableBitmap::makeCGImageCopy()
