@@ -1078,6 +1078,10 @@ private:
             break;
         }
 
+        case ResolveRope:
+            setPrediction(SpecString);
+            break;
+
         case CheckJSCast:
         case CheckNotJSCast:
             break;

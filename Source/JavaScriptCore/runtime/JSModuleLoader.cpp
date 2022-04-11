@@ -257,7 +257,7 @@ JSInternalPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JS
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     scope.release();
-    promise->reject(globalObject, createError(globalObject, makeString("Could not import the module '", moduleNameString, "'.")));
+    promise->reject(globalObject, createError(globalObject, makeString("Could not import the module '", WTFMove(moduleNameString), "'.")));
     return promise;
 }
 

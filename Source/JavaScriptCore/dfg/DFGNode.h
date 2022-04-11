@@ -1965,9 +1965,6 @@ public:
     bool hasStorageChild() const
     {
         switch (op()) {
-        case StringCharAt:
-        case StringCharCodeAt:
-        case StringCodePointAt:
         case EnumeratorGetByVal:
         case GetByVal:
         case PutByValDirect:
@@ -2000,9 +1997,6 @@ public:
     {
         ASSERT(hasStorageChild());
         switch (op()) {
-        case StringCharAt:
-        case StringCharCodeAt:
-        case StringCodePointAt:
         case EnumeratorGetByVal:
         case GetByVal:
             return 2;

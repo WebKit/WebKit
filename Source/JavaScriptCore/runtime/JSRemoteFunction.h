@@ -58,7 +58,7 @@ public:
     JSObject* targetFunction() { return m_targetFunction.get(); }
     JSGlobalObject* targetGlobalObject() { return targetFunction()->globalObject(); }
     JSString* nameMayBeNull() const { return m_nameMayBeNull.get(); }
-    const String& nameString()
+    String nameString()
     {
         if (!m_nameMayBeNull)
             return emptyString();

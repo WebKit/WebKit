@@ -4458,7 +4458,11 @@ void SpeculativeJIT::compile(Node* node)
         compileGetIndexedPropertyStorage(node);
         break;
     }
-        
+
+    case ResolveRope:
+        compileResolveRope(node);
+        break;
+
     case ConstantStoragePointer: {
         compileConstantStoragePointer(node);
         break;
@@ -6166,17 +6170,17 @@ void SpeculativeJIT::compileStringCodePointAt(Node* node)
     // And CheckArray also ensures that this String is not a rope.
     SpeculateCellOperand string(this, node->child1());
     SpeculateStrictInt32Operand index(this, node->child2());
-    StorageOperand storage(this, node->child3());
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
     GPRTemporary scratch3(this);
+    GPRTemporary scratch4(this);
 
     GPRReg stringGPR = string.gpr();
     GPRReg indexGPR = index.gpr();
-    GPRReg storageGPR = storage.gpr();
     GPRReg scratch1GPR = scratch1.gpr();
     GPRReg scratch2GPR = scratch2.gpr();
     GPRReg scratch3GPR = scratch3.gpr();
+    GPRReg scratch4GPR = scratch4.gpr();
 
     m_jit.loadPtr(CCallHelpers::Address(stringGPR, JSString::offsetOfValue()), scratch1GPR);
     m_jit.load32(CCallHelpers::Address(scratch1GPR, StringImpl::lengthMemoryOffset()), scratch2GPR);
@@ -6185,21 +6189,22 @@ void SpeculativeJIT::compileStringCodePointAt(Node* node)
     speculationCheck(Uncountable, JSValueRegs(), nullptr, m_jit.branch32(CCallHelpers::AboveOrEqual, indexGPR, scratch2GPR));
 
     // Load the character into scratch1GPR
+    m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, StringImpl::dataOffset()), scratch4GPR);
     auto is16Bit = m_jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch1GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
     CCallHelpers::JumpList done;
 
-    m_jit.load8(CCallHelpers::BaseIndex(storageGPR, indexGPR, CCallHelpers::TimesOne, 0), scratch1GPR);
+    m_jit.load8(CCallHelpers::BaseIndex(scratch4GPR, indexGPR, CCallHelpers::TimesOne, 0), scratch1GPR);
     done.append(m_jit.jump());
 
     is16Bit.link(&m_jit);
-    m_jit.load16(CCallHelpers::BaseIndex(storageGPR, indexGPR, CCallHelpers::TimesTwo, 0), scratch1GPR);
+    m_jit.load16(CCallHelpers::BaseIndex(scratch4GPR, indexGPR, CCallHelpers::TimesTwo, 0), scratch1GPR);
     // This is ok. indexGPR must be positive int32_t here and adding 1 never causes overflow if we treat indexGPR as uint32_t.
     m_jit.add32(CCallHelpers::TrustedImm32(1), indexGPR, scratch3GPR);
     done.append(m_jit.branch32(CCallHelpers::AboveOrEqual, scratch3GPR, scratch2GPR));
     m_jit.and32(CCallHelpers::TrustedImm32(0xfffffc00), scratch1GPR, scratch2GPR);
     done.append(m_jit.branch32(CCallHelpers::NotEqual, scratch2GPR, CCallHelpers::TrustedImm32(0xd800)));
-    m_jit.load16(CCallHelpers::BaseIndex(storageGPR, scratch3GPR, CCallHelpers::TimesTwo, 0), scratch3GPR);
+    m_jit.load16(CCallHelpers::BaseIndex(scratch4GPR, scratch3GPR, CCallHelpers::TimesTwo, 0), scratch3GPR);
     m_jit.and32(CCallHelpers::TrustedImm32(0xfffffc00), scratch3GPR, scratch2GPR);
     done.append(m_jit.branch32(CCallHelpers::NotEqual, scratch2GPR, CCallHelpers::TrustedImm32(0xdc00)));
     m_jit.lshift32(CCallHelpers::TrustedImm32(10), scratch1GPR);

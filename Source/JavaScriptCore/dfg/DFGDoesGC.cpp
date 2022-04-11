@@ -501,11 +501,16 @@ bool doesGC(Graph& graph, Node* node)
         return true;
 
     case GetIndexedPropertyStorage:
+        return false;
+
     case GetByVal:
     case EnumeratorGetByVal:
         if (node->arrayMode().type() == Array::String)
             return true;
         return false;
+
+    case ResolveRope:
+        return true;
 
     case EnumeratorNextExtractMode:
     case EnumeratorNextExtractIndex:

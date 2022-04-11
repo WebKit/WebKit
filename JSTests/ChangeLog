@@ -1,3 +1,23 @@
+2022-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG / FTL should be aware of JSString's String replacement
+        https://bugs.webkit.org/show_bug.cgi?id=238918
+
+        Reviewed by Saam Barati.
+
+        * stress/resolve-rope-get-by-val.js: Added.
+        (shouldBe):
+        (test):
+        * stress/resolve-rope-string-char-at.js: Added.
+        (shouldBe):
+        (test):
+        * stress/resolve-rope-string-char-code-at.js: Added.
+        (shouldBe):
+        (test):
+        * stress/resolve-rope-string-code-point-at.js: Added.
+        (shouldBe):
+        (test):
+
 2022-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fire structure transition watchpoint in Structure::finishCreation instead of Structure constructor

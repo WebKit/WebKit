@@ -1,3 +1,13 @@
+2022-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG / FTL should be aware of JSString's String replacement
+        https://bugs.webkit.org/show_bug.cgi?id=238918
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::reportViolationForUnsafeEval):
+
 2022-04-10  Chris Dumez  <cdumez@apple.com>
 
         Finish porting code base to String::fromLatin1() and make String(const char*) private

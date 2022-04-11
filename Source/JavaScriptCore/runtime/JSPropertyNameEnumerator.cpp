@@ -193,7 +193,7 @@ JSString* JSPropertyNameEnumerator::computeNext(JSGlobalObject* globalObject, JS
                 break;
             if (index < endStructurePropertyIndex() && base->structureID() == cachedStructureID())
                 break;
-            auto id = Identifier::fromString(vm, name->value(globalObject));
+            auto id = name->toIdentifier(globalObject);
             RETURN_IF_EXCEPTION(scope, nullptr);
             if (base->hasEnumerableProperty(globalObject, id))
                 break;

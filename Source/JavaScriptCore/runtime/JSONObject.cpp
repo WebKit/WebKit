@@ -371,9 +371,9 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     }
 
     if (value.isString()) {
-        const String& string = asString(value)->value(m_globalObject);
+        String string = asString(value)->value(m_globalObject);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
-        builder.appendQuotedJSONString(string);
+        builder.appendQuotedJSONString(WTFMove(string));
         return StringifySucceeded;
     }
 

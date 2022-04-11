@@ -1338,14 +1338,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
         
     case GetIndexedPropertyStorage:
-        if (node->arrayMode().type() == Array::String) {
-            def(PureValue(node, node->arrayMode().asWord()));
-            return;
-        }
+        ASSERT(node->arrayMode().type() != Array::String);
         read(MiscFields);
         def(HeapLocation(IndexedPropertyStorageLoc, MiscFields, node->child1()), LazyNode(node));
         return;
-        
+
+    case ResolveRope:
+        def(PureValue(node));
+        return;
+
     case GetTypedArrayByteOffset:
         read(MiscFields);
         def(HeapLocation(TypedArrayByteOffsetLoc, MiscFields, node->child1()), LazyNode(node));

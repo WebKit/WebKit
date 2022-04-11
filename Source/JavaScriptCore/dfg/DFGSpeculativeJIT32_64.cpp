@@ -3344,6 +3344,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ResolveRope:
+        compileResolveRope(node);
+        break;
+
     case ConstantStoragePointer: {
         compileConstantStoragePointer(node);
         break;

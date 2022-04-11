@@ -283,6 +283,7 @@ private:
                 case CheckArray:
                 case CheckDetached:
                 case GetIndexedPropertyStorage:
+                case ResolveRope:
                 case GetTypedArrayByteOffset:
                 case GetTypedArrayByteOffsetAsInt52:
                 case Phantom:
@@ -363,6 +364,7 @@ private:
                 case GetArrayLength:
                 case GetTypedArrayLengthAsInt52:
                 case GetIndexedPropertyStorage:
+                case ResolveRope:
                 case Phantom:
                 case MovHint:
                 case MultiGetByOffset:

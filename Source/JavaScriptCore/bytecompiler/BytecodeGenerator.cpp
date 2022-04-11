@@ -1729,7 +1729,7 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             && src1->isTemporary()
             && src2->virtualRegister().isConstant()
             && m_codeBlock->constantRegister(src2->virtualRegister()).get().isString()) {
-            const String& value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
+            String value = asString(m_codeBlock->constantRegister(src2->virtualRegister()).get())->tryGetValue();
             if (value == "undefined") {
                 rewind();
                 OpTypeofIsUndefined::emit(this, dst, op.m_value);
