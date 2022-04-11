@@ -195,8 +195,10 @@ void Connection::readEventHandler()
             continue;
         }
 
-        if (error == ERROR_BROKEN_PIPE)
+        if (error == ERROR_BROKEN_PIPE) {
+            connectionDidClose();
             return;
+        }
 
         // FIXME: We need to handle other errors here.
         ASSERT_NOT_REACHED();

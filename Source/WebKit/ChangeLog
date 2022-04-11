@@ -1,3 +1,18 @@
+2022-04-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Child process happens to remain alive even after IPC::Connection is disconnected
+        https://bugs.webkit.org/show_bug.cgi?id=204221
+
+        Reviewed by Don Olmstead.
+
+        After running layout tests, I observed some processes of
+        WebKitWebProcess.exe and WebKitNetworkProcess.exe were still
+        alive. These child processed should exit if the named pipe of
+        IPC::Connection is broken.
+
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::readEventHandler): Call connectionDidClose() in the case of ERROR_BROKEN_PIPE.
+
 2022-04-09  Simon Fraser  <simon.fraser@apple.com>
 
         Put layer backing store buffers into the per-RemoteRenderingBackend IOSurfacePool
