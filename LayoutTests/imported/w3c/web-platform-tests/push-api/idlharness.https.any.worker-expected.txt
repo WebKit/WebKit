@@ -40,5 +40,5 @@ PASS PushSubscription interface: operation toJSON()
 PASS PushMessageData interface: existence and properties of interface object
 PASS PushEvent interface: existence and properties of interface object
 PASS PushSubscriptionChangeEvent interface: existence and properties of interface object
-FAIL ServiceWorkerRegistration interface: attribute pushManager assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
+PASS ServiceWorkerRegistration interface: attribute pushManager
 

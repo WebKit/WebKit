@@ -242,11 +242,17 @@ void Worker::createRTCRtpScriptTransformer(RTCRtpScriptTransform& transform, Mes
     });
 
 }
+#endif
 
 void Worker::postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&& task)
 {
     m_contextProxy.postTaskToWorkerGlobalScope(WTFMove(task));
 }
-#endif
+
+void Worker::forEachWorker(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
+{
+    for (auto* worker : allWorkers())
+        worker->postTaskToWorkerGlobalScope(callback());
+}
 
 } // namespace WebCore

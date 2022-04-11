@@ -29,7 +29,7 @@
 [
     ActiveDOMObject,
     SecureContext,
-    Exposed=(Window,ServiceWorker),
+    Exposed=(Window,Worker),
     Conditional=SERVICE_WORKER,
     EnabledBySetting=ServiceWorkersEnabled,
     GenerateIsReachable=ReachableFromNavigator

@@ -28,48 +28,48 @@ PASS WorkerNavigator includes NavigatorOnLine: member names are unique
 PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
-FAIL ServiceWorker interface: existence and properties of interface object assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface object length assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface object name assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface: attribute scriptURL assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface: attribute state assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface: operation postMessage(any, sequence<object>) assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface: operation postMessage(any, optional StructuredSerializeOptions) assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorker interface: attribute onstatechange assert_own_property: self does not have own property "ServiceWorker" expected property "ServiceWorker" missing
-FAIL ServiceWorkerRegistration interface: existence and properties of interface object assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface object length assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface object name assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: attribute installing assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: attribute waiting assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: attribute active assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: attribute navigationPreload assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: attribute scope assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: attribute updateViaCache assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: operation update() assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: operation unregister() assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerRegistration interface: attribute onupdatefound assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
-FAIL ServiceWorkerContainer interface: existence and properties of interface object assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface object length assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface object name assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: attribute controller assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: attribute ready assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: operation register(USVString, optional RegistrationOptions) assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: operation getRegistration(optional USVString) assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: operation getRegistrations() assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: operation startMessages() assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: attribute oncontrollerchange assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: attribute onmessage assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer interface: attribute onmessageerror assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
-FAIL ServiceWorkerContainer must be primary interface of navigator.serviceWorker assert_own_property: self does not have own property "ServiceWorkerContainer" expected property "ServiceWorkerContainer" missing
+PASS ServiceWorker interface: existence and properties of interface object
+PASS ServiceWorker interface object length
+PASS ServiceWorker interface object name
+PASS ServiceWorker interface: existence and properties of interface prototype object
+PASS ServiceWorker interface: existence and properties of interface prototype object's "constructor" property
+PASS ServiceWorker interface: existence and properties of interface prototype object's @@unscopables property
+PASS ServiceWorker interface: attribute scriptURL
+PASS ServiceWorker interface: attribute state
+PASS ServiceWorker interface: operation postMessage(any, sequence<object>)
+PASS ServiceWorker interface: operation postMessage(any, optional StructuredSerializeOptions)
+PASS ServiceWorker interface: attribute onstatechange
+PASS ServiceWorkerRegistration interface: existence and properties of interface object
+PASS ServiceWorkerRegistration interface object length
+PASS ServiceWorkerRegistration interface object name
+PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object
+PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object's "constructor" property
+PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object's @@unscopables property
+PASS ServiceWorkerRegistration interface: attribute installing
+PASS ServiceWorkerRegistration interface: attribute waiting
+PASS ServiceWorkerRegistration interface: attribute active
+PASS ServiceWorkerRegistration interface: attribute navigationPreload
+PASS ServiceWorkerRegistration interface: attribute scope
+PASS ServiceWorkerRegistration interface: attribute updateViaCache
+PASS ServiceWorkerRegistration interface: operation update()
+PASS ServiceWorkerRegistration interface: operation unregister()
+PASS ServiceWorkerRegistration interface: attribute onupdatefound
+PASS ServiceWorkerContainer interface: existence and properties of interface object
+PASS ServiceWorkerContainer interface object length
+PASS ServiceWorkerContainer interface object name
+PASS ServiceWorkerContainer interface: existence and properties of interface prototype object
+PASS ServiceWorkerContainer interface: existence and properties of interface prototype object's "constructor" property
+PASS ServiceWorkerContainer interface: existence and properties of interface prototype object's @@unscopables property
+PASS ServiceWorkerContainer interface: attribute controller
+PASS ServiceWorkerContainer interface: attribute ready
+PASS ServiceWorkerContainer interface: operation register(USVString, optional RegistrationOptions)
+PASS ServiceWorkerContainer interface: operation getRegistration(optional USVString)
+PASS ServiceWorkerContainer interface: operation getRegistrations()
+PASS ServiceWorkerContainer interface: operation startMessages()
+PASS ServiceWorkerContainer interface: attribute oncontrollerchange
+PASS ServiceWorkerContainer interface: attribute onmessage
+PASS ServiceWorkerContainer interface: attribute onmessageerror
+PASS ServiceWorkerContainer must be primary interface of navigator.serviceWorker
 PASS Stringification of navigator.serviceWorker
 PASS ServiceWorkerContainer interface: navigator.serviceWorker must inherit property "controller" with the proper type
 PASS ServiceWorkerContainer interface: navigator.serviceWorker must inherit property "ready" with the proper type

@@ -1,3 +1,27 @@
+2022-04-11  Youenn Fablet  <youenn@apple.com>
+
+        Expose more ServiceWorker interfaces to workers
+        https://bugs.webkit.org/show_bug.cgi?id=238992
+
+        Reviewed by Chris Dumez.
+
+        Expose ServiceWorker, ServiceWorkerContainer and ServiceWorkerRegistration interfaces.
+        Update task posting to support workers and shared workers.
+
+        Tests: http/wpt/service-workers/serviceworker-in-dedicatedworker.https.html
+               http/wpt/service-workers/serviceworker-in-sharedworker.https.html
+
+        * workers/Worker.cpp:
+        * workers/Worker.h:
+        * workers/service/SWClientConnection.cpp:
+        * workers/service/ServiceWorker.idl:
+        * workers/service/ServiceWorkerContainer.idl:
+        * workers/service/ServiceWorkerRegistration.idl:
+        * workers/service/context/SWContextManager.cpp:
+        * workers/service/context/SWContextManager.h:
+        * workers/shared/context/SharedWorkerContextManager.cpp:
+        * workers/shared/context/SharedWorkerContextManager.h:
+
 2022-04-11  Sihui Liu  <sihui_liu@apple.com>
 
         Fix size computation in WebCore::StorageMap

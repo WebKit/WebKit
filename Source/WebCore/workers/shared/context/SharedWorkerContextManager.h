@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class ScriptExecutionContext;
 class SharedWorkerThreadProxy;
 
 class SharedWorkerContextManager {
@@ -64,6 +65,8 @@ public:
     WEBCORE_EXPORT Connection* connection() const;
 
     WEBCORE_EXPORT void registerSharedWorkerThread(Ref<SharedWorkerThreadProxy>&&);
+
+    void forEachSharedWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
 
 private:
     friend class NeverDestroyed<SharedWorkerContextManager>;

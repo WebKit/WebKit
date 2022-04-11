@@ -105,7 +105,7 @@ public:
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Seconds timeout, Function<void()>&&);
     WEBCORE_EXPORT void didSaveScriptsToDisk(ServiceWorkerIdentifier, ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
-    void forEachServiceWorkerThread(const Function<void(ServiceWorkerThreadProxy&)>&);
+    void forEachServiceWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
 
     WEBCORE_EXPORT bool postTaskToServiceWorker(ServiceWorkerIdentifier, Function<void(ServiceWorkerGlobalScope&)>&&);
 

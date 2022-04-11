@@ -177,10 +177,10 @@ void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Secon
     });
 }
 
-void SWContextManager::forEachServiceWorkerThread(const Function<void(ServiceWorkerThreadProxy&)>& apply)
+void SWContextManager::forEachServiceWorker(const Function<Function<void(ScriptExecutionContext&)>()>& createTask)
 {
-    for (auto& workerThread : m_workerMap.values())
-        apply(workerThread);
+    for (auto& worker : m_workerMap.values())
+        worker->thread().runLoop().postTask(createTask());
 }
 
 bool SWContextManager::postTaskToServiceWorker(ServiceWorkerIdentifier identifier, Function<void(ServiceWorkerGlobalScope&)>&& task)

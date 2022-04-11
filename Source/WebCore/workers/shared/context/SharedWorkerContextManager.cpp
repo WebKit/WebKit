@@ -113,4 +113,10 @@ void SharedWorkerContextManager::Connection::terminateSharedWorker(SharedWorkerI
     SharedWorkerContextManager::singleton().stopSharedWorker(sharedWorkerIdentifier);
 }
 
+void SharedWorkerContextManager::forEachSharedWorker(const Function<Function<void(ScriptExecutionContext&)>()>& createTask)
+{
+    for (auto& worker : m_workerMap.values())
+        worker->thread().runLoop().postTask(createTask());
+}
+
 } // namespace WebCore

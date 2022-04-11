@@ -76,10 +76,12 @@ public:
 
 #if ENABLE(WEB_RTC)
     void createRTCRtpScriptTransformer(RTCRtpScriptTransform&, MessageWithMessagePorts&&);
-    void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
 #endif
 
     WorkerType type() const { return m_options.type; }
+
+    void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
+    static void forEachWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
 
 private:
     explicit Worker(ScriptExecutionContext&, JSC::RuntimeFlags, WorkerOptions&&);
