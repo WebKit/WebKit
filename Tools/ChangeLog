@@ -1,3 +1,14 @@
+2022-04-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix size computation in WebCore::StorageMap
+        https://bugs.webkit.org/show_bug.cgi?id=239024
+        rdar://88249235
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+        (TEST):
+
 2022-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mail Compose] Preserve attachment identifiers when cloning attachment-backed images

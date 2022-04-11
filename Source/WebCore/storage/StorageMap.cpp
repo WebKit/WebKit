@@ -88,30 +88,29 @@ String StorageMap::getItem(const String& key) const
 void StorageMap::setItem(const String& key, const String& value, String& oldValue, bool& quotaException)
 {
     ASSERT(!value.isNull());
+
     quotaException = false;
+    CheckedUint32 newSize = m_impl->currentSize;
+    auto iter = m_impl->map.find(key);
+    if (iter != m_impl->map.end()) {
+        oldValue = iter->value;
+        newSize -= oldValue.sizeInBytes();
+    } else {
+        oldValue = nullString();
+        newSize += key.sizeInBytes();
+    }
+    newSize += value.sizeInBytes();
+    if (m_quotaSize != noQuota && (newSize.hasOverflowed() || newSize > m_quotaSize)) {
+        quotaException = true;
+        return;
+    }
 
     // Implement copy-on-write semantics.
     if (m_impl->refCount() > 1)
         m_impl = m_impl->copy();
 
-    oldValue = m_impl->map.get(key);
-
-    // Quota tracking. This is done in a couple of steps to keep the overflow tracking simple.
-    CheckedUint32 newSize = m_impl->currentSize;
-    newSize -= oldValue.sizeInBytes();
-    newSize += value.sizeInBytes();
-    if (oldValue.isNull())
-        newSize += key.sizeInBytes();
-    if (m_quotaSize != noQuota && (newSize.hasOverflowed() || newSize > m_quotaSize)) {
-        quotaException = true;
-        return;
-    }
+    m_impl->map.set(key, value);
     m_impl->currentSize = newSize;
-
-    HashMap<String, String>::AddResult addResult = m_impl->map.add(key, value);
-    if (!addResult.isNewEntry)
-        addResult.iterator->value = value;
-
     invalidateIterator();
 }
 
@@ -127,19 +126,21 @@ void StorageMap::setItemIgnoringQuota(const String& key, const String& value)
 
 void StorageMap::removeItem(const String& key, String& oldValue)
 {
+    oldValue = nullString();
+    CheckedUint32 newSize = m_impl->currentSize;
+    auto iter = m_impl->map.find(key);
+    if (iter == m_impl->map.end())
+        return;
+    oldValue = iter->value;
+    newSize = newSize - iter->key.sizeInBytes() - oldValue.sizeInBytes();
+
     // Implement copy-on-write semantics.
     if (m_impl->refCount() > 1)
         m_impl = m_impl->copy();
 
-    oldValue = m_impl->map.take(key);
-    if (oldValue.isNull())
-        return;
-
+    m_impl->map.remove(iter);
+    m_impl->currentSize = newSize;
     invalidateIterator();
-    ASSERT(m_impl->currentSize - key.sizeInBytes() <= m_impl->currentSize);
-    m_impl->currentSize -= key.sizeInBytes();
-    ASSERT(m_impl->currentSize - oldValue.sizeInBytes() <= m_impl->currentSize);
-    m_impl->currentSize -= oldValue.sizeInBytes();
 }
 
 void StorageMap::clear()
@@ -160,26 +161,24 @@ bool StorageMap::contains(const String& key) const
 
 void StorageMap::importItems(HashMap<String, String>&& items)
 {
+    CheckedUint32 newSize = m_impl->currentSize;
     if (m_impl->map.isEmpty()) {
-        // Fast path.
         m_impl->map = WTFMove(items);
-        for (auto& pair : m_impl->map) {
-            ASSERT(m_impl->currentSize + pair.key.sizeInBytes() + pair.value.sizeInBytes() >= m_impl->currentSize);
-            m_impl->currentSize += (pair.key.sizeInBytes() + pair.value.sizeInBytes());
+        for (auto& [key, value] : m_impl->map) {
+            newSize += key.sizeInBytes();
+            newSize += value.sizeInBytes();
         }
+        m_impl->currentSize = newSize;
         return;
     }
 
-    for (auto& item : items) {
-        auto& key = item.key;
-        auto& value = item.value;
-
-        ASSERT(m_impl->currentSize + key.sizeInBytes() + value.sizeInBytes() >= m_impl->currentSize);
-        m_impl->currentSize += (key.sizeInBytes() + value.sizeInBytes());
-
+    for (auto& [key, value] : items) {
+        newSize += key.sizeInBytes();
+        newSize += value.sizeInBytes();
         auto result = m_impl->map.add(WTFMove(key), WTFMove(value));
-        ASSERT_UNUSED(result, result.isNewEntry); // True if the key didn't exist previously.
+        ASSERT_UNUSED(result, result.isNewEntry);
     }
+    m_impl->currentSize = newSize;
 }
 
 Ref<StorageMap::Impl> StorageMap::Impl::copy() const
