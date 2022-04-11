@@ -1,3 +1,17 @@
+2022-04-11  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r292051-r292022): [ iOS ] media/video-object-fit.html is a constant image failure
+        https://bugs.webkit.org/show_bug.cgi?id=238634
+        <rdar://problem/91125776>
+
+        Reviewed by Eric Carlson.
+
+        Use an `std::<optional> bool` rather than `bool` to cache values sent to WebContent, so that
+        when a new value is pushed in, it's sent to WebContent the first time regardless of the default
+        value.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
 2022-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r289785): [iOS] Unable to double-click to select a word in a received email

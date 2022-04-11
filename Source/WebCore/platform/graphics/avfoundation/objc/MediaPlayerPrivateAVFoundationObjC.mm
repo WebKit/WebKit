@@ -1317,6 +1317,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* 
     if (videoFullscreenLayer)
         updateLastImage(UpdateType::UpdateSynchronously);
     m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
+    updateVideoLayerGravity(ShouldAnimate::Yes);
     updateDisableExternalPlayback();
 }
 
@@ -1329,25 +1330,7 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenGravity(MediaPlayer::VideoGravity gravity)
 {
     m_videoFullscreenGravity = gravity;
-
-    if (!m_videoLayer)
-        return;
-
-    NSString *videoGravity = AVLayerVideoGravityResizeAspect;
-    if (gravity == MediaPlayer::VideoGravity::Resize)
-        videoGravity = AVLayerVideoGravityResize;
-    else if (gravity == MediaPlayer::VideoGravity::ResizeAspect)
-        videoGravity = AVLayerVideoGravityResizeAspect;
-    else if (gravity == MediaPlayer::VideoGravity::ResizeAspectFill)
-        videoGravity = AVLayerVideoGravityResizeAspectFill;
-    else
-        ASSERT_NOT_REACHED();
-    
-    if ([m_videoLayer videoGravity] == videoGravity)
-        return;
-
-    [m_videoLayer setVideoGravity:videoGravity];
-    syncTextTrackBounds();
+    updateVideoLayerGravity(ShouldAnimate::Yes);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode mode)
@@ -2219,23 +2202,40 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(const MediaT
     return timeValue;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
+void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity(ShouldAnimate shouldAnimate)
 {
     if (!m_videoLayer)
         return;
 
+    NSString* videoGravity = shouldMaintainAspectRatio() ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize;
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    // Do not attempt to change the video gravity while in full screen mode.
-    // See setVideoFullscreenGravity().
-    if (m_videoLayerManager->videoFullscreenLayer())
-        return;
+    if (m_videoLayerManager->videoFullscreenLayer()) {
+        switch (m_videoFullscreenGravity) {
+        case MediaPlayer::VideoGravity::Resize:
+            videoGravity = AVLayerVideoGravityResize;
+            break;
+        case MediaPlayer::VideoGravity::ResizeAspect:
+            videoGravity = AVLayerVideoGravityResizeAspect;
+            break;
+        case MediaPlayer::VideoGravity::ResizeAspectFill:
+            videoGravity = AVLayerVideoGravityResizeAspectFill;
+            break;
+        }
+    }
 #endif
 
+    if ([m_videoLayer videoGravity] == videoGravity)
+        return;
+
+    bool shouldDisableActions = shouldAnimate == ShouldAnimate::No;
+    ALWAYS_LOG(LOGIDENTIFIER, "Setting gravity to \"", String { videoGravity }, "\", animated: ", !shouldDisableActions);
+
     [CATransaction begin];
-    [CATransaction setDisableActions:YES];    
-    NSString* gravity = shouldMaintainAspectRatio() ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize;
-    [m_videoLayer setVideoGravity:gravity];
+    [CATransaction setDisableActions:shouldDisableActions];
+    [m_videoLayer setVideoGravity:videoGravity];
     [CATransaction commit];
+
+    syncTextTrackBounds();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::metadataLoaded()

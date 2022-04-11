@@ -92,7 +92,6 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    void invalidate() { m_invalid = true; }
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
     WebCore::MediaPlayerIdentifier itentifier() const { return m_id; }
     IPC::Connection& connection() const { return m_manager.gpuProcessConnection().connection(); }
@@ -462,12 +461,11 @@ private:
     bool m_muted { false };
     bool m_seeking { false };
     bool m_isCurrentPlaybackTargetWireless { false };
-    bool m_invalid { false };
     bool m_waitingForKey { false };
     bool m_timeIsProgressing { false };
     bool m_renderingCanBeAccelerated { false };
-    bool m_shouldMaintainAspectRatio { false };
-    bool m_pageIsVisible { false };
+    std::optional<bool> m_shouldMaintainAspectRatio;
+    std::optional<bool> m_pageIsVisible;
     RefPtr<RemoteVideoFrameProxy> m_videoFrameForCurrentTime;
 #if PLATFORM(COCOA)
     RetainPtr<CVPixelBufferRef> m_pixelBufferGatheredWithVideoFrameMetadata;

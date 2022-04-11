@@ -233,7 +233,10 @@ private:
     bool hasContextRenderer() const final;
     bool hasLayerRenderer() const final;
 
-    void updateVideoLayerGravity() final;
+
+    enum class ShouldAnimate : bool { No, Yes };
+    void updateVideoLayerGravity() final { updateVideoLayerGravity(ShouldAnimate::No); }
+    void updateVideoLayerGravity(ShouldAnimate);
 
     bool didPassCORSAccessCheck() const final;
     std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
