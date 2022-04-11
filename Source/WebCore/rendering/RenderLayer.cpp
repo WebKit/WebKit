@@ -552,9 +552,6 @@ static bool canCreateStackingContext(const RenderLayer& layer)
 {
     auto& renderer = layer.renderer();
     return renderer.hasTransformRelatedProperty()
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        || renderer.hasSVGTransform()
-#endif
         || renderer.hasClipPath()
         || renderer.hasFilter()
         || renderer.hasMask()
@@ -1360,13 +1357,19 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::Transf
     if (!m_transform)
         return { };
 
+    // FIXME: [LBSE] Upstream transform support for RenderSVGModelObject derived renderers
+    if (!is<RenderBox>(renderer()))
+        return { };
+
+    auto& renderBox = downcast<RenderBox>(renderer());
+
     // m_transform includes transform-origin and is affected by the choice of the transform-box.
     // Therefore we can only use the cached m_transform, if the animation doesn't alter transform-box or excludes transform-origin.
 
     // Query the animatedStyle() to obtain the current transformation, when accelerated transform animations are running.
-    auto styleable = Styleable::fromRenderer(renderer());
+    auto styleable = Styleable::fromRenderer(renderBox);
     if ((styleable && styleable->isRunningAcceleratedTransformAnimation()) || !options.contains(RenderStyle::TransformOperationOption::TransformOrigin)) {
-        std::unique_ptr<RenderStyle> animatedStyle = renderer().animatedStyle();
+        std::unique_ptr<RenderStyle> animatedStyle = renderBox.animatedStyle();
 
         TransformationMatrix transform;
         updateTransformFromStyle(transform, *animatedStyle, options);

@@ -55,6 +55,7 @@ protected:
     virtual void layoutChildren();
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
+    virtual void updateLayerInformation() { }
     virtual void calculateViewport();
     virtual bool pointIsInsideViewportClip(const FloatPoint&) { return true; }
 

@@ -1,3 +1,16 @@
+2022-04-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r292690.
+        https://bugs.webkit.org/show_bug.cgi?id=239060
+
+        fast/multicol tests are randomly failing
+
+        Reverted changeset:
+
+        "[LBSE] Activate SVG transform support through layers"
+        https://bugs.webkit.org/show_bug.cgi?id=237711
+        https://commits.webkit.org/r292690
+
 2022-04-10  Chris Dumez  <cdumez@apple.com>
 
         Update listMarkerTextForNodeAndPosition() to return a StringView instead of a String

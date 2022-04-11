@@ -154,7 +154,8 @@ void RenderSVGShape::layout()
         setLayoutRect(enclosingLayoutRect(m_fillBoundingBox));
     }
 
-    updateLayerTransform();
+    // FIXME: [LBSE] Upstream SVGLayerTransformUpdater
+    // SVGRenderSupport::updateLayerTransform(*this);
 
     // Invalidate all resources of this client if our layout changed.
     if (everHadLayout() && selfNeedsLayout())
@@ -535,7 +536,8 @@ void RenderSVGShape::styleWillChange(StyleDifference diff, const RenderStyle& ne
 
 void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    applySVGTransform(transform, graphicsElement(), style, boundingBox, options);
+    // FIXME: [LBSE] Upstream CSS/SVG transform support
+    style.applyTransform(transform, boundingBox, options);
 }
 
 }

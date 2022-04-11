@@ -73,15 +73,6 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
 
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (m_supplementalTransform)
-            return *m_supplementalTransform * transform().concatenate();
-        return transform().concatenate();
-    }
-#endif
-
     AffineTransform matrix;
 
     auto* style = renderer() ? &renderer()->style() : nullptr;
