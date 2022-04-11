@@ -1,0 +1,12 @@
+Original number of rows: 1
+null
+Number of rows after appending 1 row: 2
+null
+null
+Number of rows after removing first row: 1
+null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+d	e	f

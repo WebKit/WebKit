@@ -1927,7 +1927,7 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/selection-states.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/svg-image.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-destroyed-crash.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/table-modification-crash.html [ Skip ] # Debug assertion
+accessibility/table-add-remove-row.html [ Skip ]
 [ Debug ] accessibility/table-notbody.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-nofirstbody.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-remove-cell-crash.html [ Skip ] # Debug assertion

@@ -1,3 +1,22 @@
+2022-04-11  Andres Gonzalez  <andresg_22@apple.com>
+
+        Rewrite accessibility/table-modification-crash.html to test that the AX tree reflects the changes made to the table rows.
+        https://bugs.webkit.org/show_bug.cgi?id=239013
+        <rdar://problem/91498453>
+
+        Reviewed by Darin Adler.
+
+        Renamed and rewrote this test to actually test more than just that it
+        doesn't crash. Now we check that the AX tree reflects the changes of
+        adding and removing table rows.
+
+        * accessibility/table-add-remove-row-expected.txt: Added.
+        * accessibility/table-add-remove-row.html: Added.
+        * accessibility/table-modification-crash-expected.txt: Removed.
+        * accessibility/table-modification-crash.html: Removed.
+        * platform/glib/accessibility/table-add-remove-row-expected.txt:
+        * platform/win/TestExpectations:
+
 2022-04-10  Tyler Wilcock  <tyler_w@apple.com>
 
         Fix accessibility/aria-invalid.html in isolated tree mode
