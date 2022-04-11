@@ -401,6 +401,7 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<id> attributeValueForParameter(NSString *, id) const;
+    unsigned arrayAttributeCount(NSString *) const;
     RetainPtr<NSString> descriptionOfValue(id valueObject) const;
     bool boolAttributeValue(NSString *attribute) const;
     JSRetainPtr<JSStringRef> stringAttributeValue(NSString *attribute) const;

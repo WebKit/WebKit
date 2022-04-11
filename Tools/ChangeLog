@@ -1,3 +1,23 @@
+2022-04-11  Andres Gonzalez  <andresg_22@apple.com>
+
+        TestRunner’s calls to [WebAccessibilityObjectWrapper accessibilityArrayAttributeCount:] need to be dispatch to the AX secondary thread.
+        https://bugs.webkit.org/show_bug.cgi?id=239010
+        <rdar://problem/91493569>
+
+        Reviewed by Chris Fleizach.
+
+        Added AccessibilityUIElement::arrayAttributeCount to dispatch to the AX
+        secondary thread calls to the platform wrapper's
+        accessibilityArrayAttributeCount. Replaced the instances to the
+        platform wrapper's method with the calls to this new method.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::arrayAttributeCount const):
+        (WTR::AccessibilityUIElement::selectedChildrenCount const):
+        (WTR::AccessibilityUIElement::rowCount):
+        (WTR::AccessibilityUIElement::columnCount):
+
 2022-04-11  Youenn Fablet  <youenn@apple.com>
 
         Split TestWebKitAPI.GPUProcess.ExitsUnderMemoryPressureWebRTCCase in more tests

@@ -333,6 +333,19 @@ RetainPtr<id> AccessibilityUIElement::attributeValueForParameter(NSString *attri
     return value;
 }
 
+unsigned AccessibilityUIElement::arrayAttributeCount(NSString *attributeName) const
+{
+    unsigned count = 0;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    s_controller->executeOnAXThreadAndWait([&attributeName, &count, this] {
+        count = [m_element accessibilityArrayAttributeCount:attributeName];
+    });
+    END_AX_OBJC_EXCEPTIONS
+
+    return count;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
 {
     return stringAttributeValue(NSAccessibilityDOMIdentifierAttribute);
@@ -524,15 +537,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsi
 
 unsigned AccessibilityUIElement::selectedChildrenCount() const
 {
-    unsigned count = 0;
-
-    BEGIN_AX_OBJC_EXCEPTIONS
-    s_controller->executeOnAXThreadAndWait([&count, this] {
-        count = [m_element accessibilityArrayAttributeCount:NSAccessibilitySelectedChildrenAttribute];
-    });
-    END_AX_OBJC_EXCEPTIONS
-
-    return count;
+    return arrayAttributeCount(NSAccessibilitySelectedChildrenAttribute);
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedRowAtIndex(unsigned index)
@@ -1341,20 +1346,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfHeader()
 
 int AccessibilityUIElement::rowCount()
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    return [m_element accessibilityArrayAttributeCount:NSAccessibilityRowsAttribute];
-    END_AX_OBJC_EXCEPTIONS
-    
-    return 0;
+    return arrayAttributeCount(NSAccessibilityRowsAttribute);
 }
 
 int AccessibilityUIElement::columnCount()
 {
-    BEGIN_AX_OBJC_EXCEPTIONS
-    return [m_element accessibilityArrayAttributeCount:NSAccessibilityColumnsAttribute];
-    END_AX_OBJC_EXCEPTIONS
-    
-    return 0;
+    return arrayAttributeCount(NSAccessibilityColumnsAttribute);
 }
 
 int AccessibilityUIElement::indexInTable()
