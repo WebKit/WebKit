@@ -3563,7 +3563,9 @@ static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 
         if (enabled) {
             if (!_findInteraction) {
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 _findInteraction = adoptNS([[_UIFindInteraction alloc] init]);
+                ALLOW_DEPRECATED_DECLARATIONS_END
                 [_findInteraction setSearchableObject:[self _searchableObject]];
             }
 
