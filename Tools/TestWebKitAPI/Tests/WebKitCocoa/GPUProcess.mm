@@ -681,8 +681,7 @@ static bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprec
     return false;
 }
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=237854DISABLED_
-TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureWebRTCCase)
+TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaAudioCase)
 {
     runMemoryPressureExitTest([](WKWebView *webView) {
         auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
@@ -690,7 +689,45 @@ TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureWebRTCCase)
 
         [webView loadTestPageNamed:@"getUserMedia"];
         EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateDeprecatedActiveCamera));
-        [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo(true)"];
+        [webView stringByEvaluatingJavaScript:@"captureAudio(true)"];
+    }, [](WKWebViewConfiguration* configuration) {
+        auto preferences = configuration.preferences;
+        preferences._mediaCaptureRequiresSecureConnection = NO;
+        configuration._mediaCaptureEnabled = YES;
+        preferences._mockCaptureDevicesEnabled = YES;
+        preferences._getUserMediaRequiresFocus = NO;
+    });
+}
+
+TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaVideoCase)
+{
+    runMemoryPressureExitTest([](WKWebView *webView) {
+        auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+        webView.UIDelegate = delegate.get();
+
+        [webView loadTestPageNamed:@"getUserMedia"];
+        EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateDeprecatedActiveCamera));
+        [webView stringByEvaluatingJavaScript:@"captureVideo(true)"];
+    }, [](WKWebViewConfiguration* configuration) {
+        auto preferences = configuration.preferences;
+        preferences._mediaCaptureRequiresSecureConnection = NO;
+        configuration._mediaCaptureEnabled = YES;
+        preferences._mockCaptureDevicesEnabled = YES;
+        preferences._getUserMediaRequiresFocus = NO;
+    });
+}
+
+#if PLATFORM(MAC)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=237854 is disabled for IOS
+TEST(GPUProcess, ExitsUnderMemoryPressureWebRTCCase)
+{
+    runMemoryPressureExitTest([](WKWebView *webView) {
+        auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+        webView.UIDelegate = delegate.get();
+
+        [webView loadTestPageNamed:@"getUserMedia"];
+        EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateDeprecatedActiveCamera));
+        [webView stringByEvaluatingJavaScript:@"captureVideo(true)"];
         [webView stringByEvaluatingJavaScript:@"createConnection()"];
     }, [](WKWebViewConfiguration* configuration) {
         auto preferences = configuration.preferences;
@@ -700,6 +737,7 @@ TEST(GPUProcess, DISABLED_ExitsUnderMemoryPressureWebRTCCase)
         preferences._getUserMediaRequiresFocus = NO;
     });
 }
+#endif // PLATFORM(MAC)
 #endif // ENABLE(MEDIA_STREAM)
 
 TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)

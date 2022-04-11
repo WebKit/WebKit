@@ -1,3 +1,16 @@
+2022-04-11  Youenn Fablet  <youenn@apple.com>
+
+        Split TestWebKitAPI.GPUProcess.ExitsUnderMemoryPressureWebRTCCase in more tests
+        https://bugs.webkit.org/show_bug.cgi?id=238927
+
+        Reviewed by Eric Carlson.
+
+        Split the tests in sub tests (microphone, camera, camera+video codec).
+
+        * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2022-04-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix use of ASCIILiteral for a literal containing non-ASCII characters after r292251.
