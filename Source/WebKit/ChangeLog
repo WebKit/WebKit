@@ -1,3 +1,17 @@
+2022-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash under ShareableBitmap::makeCGImageCopy()
+        https://bugs.webkit.org/show_bug.cgi?id=239085
+        <rdar://91073153>
+
+        Reviewed by Wenson Hsieh.
+
+        ShareableBitmap::create() can return null, so check it before calling makeCGImageCopy()
+        on the result.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+
 2022-04-11  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Ignore find interaction deprecation warnings

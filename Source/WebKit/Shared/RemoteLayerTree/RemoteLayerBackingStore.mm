@@ -572,7 +572,8 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
     WTF::switchOn(*m_bufferHandle,
         [&] (ShareableBitmap::Handle& handle) {
             ASSERT(m_type == Type::Bitmap);
-            contents = bridge_id_cast(ShareableBitmap::create(handle)->makeCGImageCopy());
+            if (auto bitmap = ShareableBitmap::create(handle))
+                contents = bridge_id_cast(bitmap->makeCGImageCopy());
         },
         [&] (MachSendRight& machSendRight) {
             ASSERT(m_type == Type::IOSurface);
