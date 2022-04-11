@@ -396,8 +396,7 @@ void RenderSVGRoot::updateFromStyle()
 {
     RenderReplaced::updateFromStyle();
 
-    // FIXME: [LBSE] Upstream RenderObject changes
-    // setHasSVGTransform();
+    setHasSVGTransform();
 
     if (shouldApplyViewportClip())
         setHasNonVisibleOverflow();

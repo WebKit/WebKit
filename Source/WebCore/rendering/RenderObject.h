@@ -416,6 +416,12 @@ public:
     bool hasOutlineAutoAncestor() const { return m_bitfields.hasRareData() && rareData().hasOutlineAutoAncestor(); }
     bool paintContainmentApplies() const { return m_bitfields.hasRareData() && rareData().paintContainmentApplies(); }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool hasSVGTransform() const { return m_bitfields.hasRareData() && rareData().hasSVGTransform(); }
+#else
+    bool hasSVGTransform() const { return false; }
+#endif
+
     bool isExcludedFromNormalLayout() const { return m_bitfields.isExcludedFromNormalLayout(); }
     void setIsExcludedFromNormalLayout(bool excluded) { m_bitfields.setIsExcludedFromNormalLayout(excluded); }
     bool isExcludedAndPlacedInBorder() const { return isExcludedFromNormalLayout() && isLegend(); }
@@ -450,7 +456,7 @@ public:
     bool hasPotentiallyScrollableOverflow() const;
 
     bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
-    bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate()); }
+    bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate() || hasSVGTransform()); }
     bool hasTransformOrPespective() const { return hasTransformRelatedProperty() && (hasTransform() || style().hasPerspective()); }
 
     inline bool preservesNewline() const;
@@ -515,6 +521,9 @@ public:
     void setIsRenderFragmentedFlow(bool = true);
     void setHasOutlineAutoAncestor(bool = true);
     void setPaintContainmentApplies(bool = true);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    void setHasSVGTransform(bool = true);
+#endif
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
     // For other renderers, the value is the same as lineHeight(false).
@@ -944,6 +953,9 @@ private:
         ADD_BOOLEAN_BITFIELD(isRenderFragmentedFlow, IsRenderFragmentedFlow);
         ADD_BOOLEAN_BITFIELD(hasOutlineAutoAncestor, HasOutlineAutoAncestor);
         ADD_BOOLEAN_BITFIELD(paintContainmentApplies, PaintContainmentApplies);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        ADD_BOOLEAN_BITFIELD(hasSVGTransform, HasSVGTransform);
+#endif
 
         // From RenderElement
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;

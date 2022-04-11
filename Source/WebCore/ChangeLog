@@ -1,3 +1,63 @@
+2022-04-11  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [LBSE] Activate SVG transform support through layers
+        https://bugs.webkit.org/show_bug.cgi?id=237711
+
+        Reviewed by Rob Buis.
+
+        Activate transforms for SVG layers.
+
+        Use the flag to keep track of the presence of SVG transformations
+        on a renderer. CSS/HTML renderers can rely only on the RenderStyle
+        to determine if transformations are applied, whereas SVG has to
+        consult additional sources, such as the SVG 'transform' attribute.
+
+        A SVG renderer with the 'HasSVGTransform' flag set should behave
+        like any SVG/HTML renderer that has CSS transformations applied.
+
+        With this patch applied SVG transform and CSS transforms can
+        be applied to <g> / <rect> elements in LBSE.
+
+        Covered by existing tests, no change in behaviour.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::multiplyAffineTransform):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateLayerTransform): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::canCreateStackingContext):
+        (WebCore::RenderLayer::currentTransform const):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::updateLayerTransform):
+        (WebCore::RenderLayerModelObject::applySVGTransform const):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setHasSVGTransform):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasSVGTransform const):
+        (WebCore::RenderObject::hasTransform const):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::SVGLayerTransformUpdater::SVGLayerTransformUpdater):
+        (WebCore::SVGLayerTransformUpdater::~SVGLayerTransformUpdater):
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/svg/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::updateLayerInformation): Deleted.
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::updateFromStyle):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::updateFromStyle):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::layout):
+        (WebCore::RenderSVGShape::applyTransform const):
+        * rendering/svg/RenderSVGShape.h:
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::updateFromStyle):
+        (WebCore::RenderSVGTransformableContainer::applyTransform const):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::animatedLocalTransform const):
+
 2022-04-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed Windows build fix after r292696.

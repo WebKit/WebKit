@@ -52,6 +52,36 @@ RenderSVGContainer::RenderSVGContainer(SVGElement& element, RenderStyle&& style)
 
 RenderSVGContainer::~RenderSVGContainer() = default;
 
+// Helper class, move to its own file once utilized in more than one place.
+class SVGLayerTransformUpdater {
+    WTF_MAKE_NONCOPYABLE(SVGLayerTransformUpdater);
+public:
+    SVGLayerTransformUpdater(RenderLayerModelObject& renderer)
+        : m_renderer(renderer)
+    {
+        if (!m_renderer.hasLayer())
+            return;
+
+        m_transformReferenceBox = m_renderer.transformReferenceBoxRect();
+        m_renderer.updateLayerTransform();
+    }
+
+
+    ~SVGLayerTransformUpdater()
+    {
+        if (!m_renderer.hasLayer())
+            return;
+        if (m_renderer.transformReferenceBoxRect() == m_transformReferenceBox)
+            return;
+
+        m_renderer.updateLayerTransform();
+    }
+
+private:
+    RenderLayerModelObject& m_renderer;
+    FloatRect m_transformReferenceBox;
+};
+
 void RenderSVGContainer::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
@@ -64,12 +94,9 @@ void RenderSVGContainer::layout()
     // Update layer transform before laying out children (SVG needs access to the transform matrices during layout for on-screen text font-size calculations).
     // Eventually re-update if the transform reference box, relevant for transform-origin, has changed during layout.
     {
-        // FIXME: [LBSE] Upstream SVGLayerTransformUpdater
-        // SVGLayerTransformUpdater transformUpdater(*this);
+        SVGLayerTransformUpdater updateTransform(*this);
         layoutChildren();
     }
-
-    updateLayerInformation();
 
     // Invalidate all resources of this client if our layout changed.
     if (everHadLayout() && needsLayout())
