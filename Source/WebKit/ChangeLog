@@ -1,3 +1,36 @@
+2022-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r289785): [iOS] Unable to double-click to select a word in a received email
+        https://bugs.webkit.org/show_bug.cgi?id=239055
+        rdar://90736710
+
+        Reviewed by Tim Horton.
+
+        Following r289785, double-clicking text in Mail message viewer on iOS (or more generally, any web view in an app
+        that does not have the "UIApplicationSupportsIndirectInputEvents" application plist key set to `YES`) produces a
+        selection that is immediately removed. This is because after double clicking, the synthetic click gesture fires
+        and immediately clears the selection.
+
+        In Safari (an application that sets UIApplicationSupportsIndirectInputEvents), the non-pointer gesture
+        recognizers (e.g. synthetic taps) don't fire because the type of the `UITouch` is `UITouchTypeIndirectPointer`,
+        which allows us to return `NO` from `-gestureRecognizer:shouldReceiveTouch:` for anything that is not the mouse
+        gesture recognizer's current mouse touch.
+
+        For apps that lack this plist key, the touch type remains `UITouchTypeDirect` to avoid breaking compatibility,
+        even for events that are generated via a pointing device (i.e. trackpad). This means that we no longer route
+        these events solely to the mouse gesture recognizer. To fix this, use `-_isPointerTouch` instead of
+        `-[UITouch type]` here. Unlike the latter, the former isn't affected by the "supports indirect input" plist key.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldReceiveTouch:]):
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer _shouldReceiveTouch:forEvent:recognizerView:]):
+
+        Also fix a similar bug here, where the check against `UITouchTypeIndirectPointer` instead of `-_isPointerEvent`
+        causes apps without the UIApplicationSupportsIndirectInputEvents key to lose the ability to listen for mousedown
+        and mouseup events when the user clicks via trackpad on iPad.
+
 2022-04-11  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Ensure requestPin callback on main thread

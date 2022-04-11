@@ -75,6 +75,7 @@
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UITextInteractionAssistant_Private.h>
 #import <UIKit/UITextInteraction_Private.h>
+#import <UIKit/UITouch_Private.h>
 #import <UIKit/UIViewControllerTransitioning_Private.h>
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIViewController_ViewService.h>
@@ -1362,6 +1363,12 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @interface UIScene ()
 @property (nonatomic, readonly) NSString *_sceneIdentifier;
 @end
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+@interface UITouch ()
+@property (nonatomic, readonly) BOOL _isPointerTouch;
+@end
+#endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

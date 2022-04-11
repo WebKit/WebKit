@@ -87,7 +87,7 @@ static String pointerTypeForUITouchType(UITouchType)
 {
     // FIXME: We should move off of this UIKit IPI method once we have a viable SPI or API alternative
     // for opting a UIHoverGestureRecognizer subclass into receiving UITouches. See also: rdar://80700227.
-    return touch == _currentTouch && touch.type == UITouchTypeIndirectPointer;
+    return touch == _currentTouch && touch._isPointerTouch;
 }
 
 - (WebKit::NativeWebMouseEvent *)lastMouseEvent
