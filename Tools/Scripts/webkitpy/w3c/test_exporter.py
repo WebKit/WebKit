@@ -348,12 +348,15 @@ class WebPlatformTestExporter(object):
         pr_number = None
         try:
             pr_number = self._github.create_pr(remote_branch_name, title, body)
-        except Exception as e:
+        except HTTPError as e:
             if e.code == 422:
                 _log.info('Unable to create a new pull request for branch "%s" because a pull request already exists. The branch has been updated and there is no further action needed.' % (remote_branch_name))
             else:
                 _log.warning(e)
                 _log.info('Error creating a pull request on github. Please ensure that the provided github token has the "public_repo" scope.')
+        except Exception as e:
+            _log.warning(e)
+            _log.info('Error creating a pull request on github. Please ensure that the provided github token has the "public_repo" scope.')
         return pr_number
 
     def delete_local_branch(self):

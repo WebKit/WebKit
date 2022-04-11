@@ -1,3 +1,17 @@
+2022-04-11  Sam Sneddon  <gsnedders@apple.com>
+
+        webkitpy.w3c.test_exporter assumes all exceptions are HTTPError
+        https://bugs.webkit.org/show_bug.cgi?id=238737
+
+        Reviewed by Jonathan Bedard.
+
+        This currently isn't at all easy to test, as our existing mocks for much
+        of this don't make it easy to throw arbitrary exceptions from given
+        functions.
+
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter.create_wpt_pull_request):
+
 2022-04-11  Sihui Liu  <sihui_liu@apple.com>
 
         Fix size computation in WebCore::StorageMap
