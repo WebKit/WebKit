@@ -80,8 +80,12 @@ private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
     CommandEncoder(Device&);
 
+    bool validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
+    bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     bool validateFinish() const;
     bool validatePopDebugGroup() const;
+
+    void makeInvalid() { m_commandBuffer = nil; }
 
     void ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();

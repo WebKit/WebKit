@@ -1228,7 +1228,8 @@ static bool textureViewFormatCompatible(WGPUTextureFormat format1, WGPUTextureFo
 
 bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, const Vector<WGPUTextureFormat>& viewFormats)
 {
-    // FIXME: "this must be a valid GPUDevice."
+    if (!isValid())
+        return false;
 
     if (!descriptor.usage)
         return false;
@@ -1985,7 +1986,6 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     if (!validateCreateTexture(descriptor, viewFormats)) {
         generateAValidationError("Validation failure."_s);
-        // FIXME: "Return a new invalid GPUTexture."
         return Texture::createInvalid(*this);
     }
 
@@ -2144,7 +2144,8 @@ uint32_t Texture::arrayLayerCount() const
 
 bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) const
 {
-    // FIXME: "this is valid"
+    if (!isValid())
+        return false;
 
     switch (descriptor.aspect) {
     case WGPUTextureAspect_All:
@@ -2427,7 +2428,8 @@ bool Texture::validateImageCopyTexture(const WGPUImageCopyTexture& imageCopyText
 
     uint32_t blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).descriptor().format);
 
-    // FIXME: "imageCopyTexture.texture must be a valid GPUTexture."
+    if (!fromAPI(imageCopyTexture.texture).isValid())
+        return false;
 
     if (imageCopyTexture.mipLevel >= fromAPI(imageCopyTexture.texture).descriptor().mipLevelCount)
         return false;

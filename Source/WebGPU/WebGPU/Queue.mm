@@ -30,6 +30,7 @@
 #import "Buffer.h"
 #import "CommandBuffer.h"
 #import "Device.h"
+#import "IsValidToUseWith.h"
 #import "Texture.h"
 
 namespace WebGPU {
@@ -101,9 +102,12 @@ void Queue::onSubmittedWorkDone(uint64_t, CompletionHandler<void(WGPUQueueWorkDo
     callbacks.append(WTFMove(callback));
 }
 
-bool Queue::validateSubmit() const
+bool Queue::validateSubmit(const Vector<std::reference_wrapper<const CommandBuffer>>& commands) const
 {
-    // FIXME: "Every {{GPUCommandBuffer}} in |commandBuffers| is [$valid to use with$] |this|."
+    for (auto command : commands) {
+        if (!isValidToUseWith(command.get(), *this))
+            return false;
+    }
 
     // FIXME: "Every GPUBuffer referenced in any element of commandBuffers is in the "unmapped" buffer state."
 
@@ -134,7 +138,7 @@ void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& command
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
 
-    if (!validateSubmit()) {
+    if (!validateSubmit(commands)) {
         m_device.generateAValidationError("Validation failure."_s);
         return;
     }
@@ -155,7 +159,8 @@ static bool validateWriteBufferInitial(size_t size)
 
 bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, size_t size) const
 {
-    // FIXME: "buffer is valid to use with this."
+    if (!isValidToUseWith(buffer, *this))
+        return false;
 
     if (buffer.state() != Buffer::State::Unmapped)
         return false;

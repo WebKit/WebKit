@@ -1,3 +1,57 @@
+2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Implement missing validity checks
+        https://bugs.webkit.org/show_bug.cgi?id=238722
+
+        Reviewed by Kimmo Kinnunen.
+
+        Now that WebGPU objects have a notion of validity, we can implement all the
+        FIXMEs for validity checks.
+
+        * WebGPU/Buffer.mm:
+        (WebGPU::validateCreateBuffer):
+        (WebGPU::Buffer::validateMapAsync const):
+        * WebGPU/CommandEncoder.h:
+        (WebGPU::CommandEncoder::makeInvalid):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::validateCopyBufferToBuffer):
+        (WebGPU::validateImageCopyBuffer):
+        (WebGPU::CommandEncoder::validateClearBuffer):
+        (WebGPU::CommandEncoder::validateFinish const):
+        (WebGPU::CommandEncoder::finish):
+        (WebGPU::CommandEncoder::popDebugGroup):
+        (WebGPU::validateCopyBufferToBuffer): Deleted.
+        (WebGPU::validateClearBuffer): Deleted.
+        * WebGPU/ComputePassEncoder.h:
+        (WebGPU::ComputePassEncoder::makeInvalid):
+        * WebGPU/ComputePassEncoder.mm:
+        (WebGPU::ComputePassEncoder::popDebugGroup):
+        * WebGPU/ObjectBase.h:
+        (WebGPU::ObjectBase::isValidToUseWith const):
+        (WebGPU::ObjectBase::device const):
+        * WebGPU/Queue.h:
+        (WebGPU::Queue::device const):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::validateSubmit const):
+        (WebGPU::Queue::submit):
+        (WebGPU::Queue::validateWriteBuffer const):
+        * WebGPU/RenderBundleEncoder.h:
+        (WebGPU::RenderBundleEncoder::makeInvalid):
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::RenderBundleEncoder::popDebugGroup):
+        * WebGPU/RenderPassEncoder.h:
+        (WebGPU::RenderPassEncoder::makeInvalid):
+        * WebGPU/RenderPassEncoder.mm:
+        (WebGPU::RenderPassEncoder::popDebugGroup):
+        * WebGPU/Sampler.mm:
+        (WebGPU::validateCreateSampler):
+        * WebGPU/Texture.mm:
+        (WebGPU::Device::validateCreateTexture):
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::validateCreateView const):
+        (WebGPU::Texture::createView):
+        (WebGPU::Texture::validateImageCopyTexture):
+
 2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix the release build

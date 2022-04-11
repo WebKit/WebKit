@@ -69,11 +69,13 @@ public:
 
     id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
 
+    const Device& device() const { return m_device; }
+
 private:
     Queue(id<MTLCommandQueue>, Device&);
     Queue(Device&);
 
-    bool validateSubmit() const;
+    bool validateSubmit(const Vector<std::reference_wrapper<const CommandBuffer>>&) const;
     bool validateWriteBuffer(const Buffer&, uint64_t bufferOffset, size_t) const;
 
     void ensureBlitCommandEncoder();

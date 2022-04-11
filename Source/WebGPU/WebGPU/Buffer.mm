@@ -51,7 +51,8 @@ static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor&
 
 static bool validateCreateBuffer(const Device& device, const WGPUBufferDescriptor& descriptor)
 {
-    // FIXME: "this is a valid GPUDevice."
+    if (!device.isValid())
+        return false;
 
     if (!validateDescriptor(device, descriptor))
         return false;
@@ -208,7 +209,10 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
 
 bool Buffer::validateMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const
 {
-    // FIXME: "this is a valid GPUBuffer. TODO: check destroyed state?"
+    if (!isValid())
+        return false;
+
+    // FIXME: The spec says "TODO: check destroyed state?"
 
     if (offset % 8)
         return false;

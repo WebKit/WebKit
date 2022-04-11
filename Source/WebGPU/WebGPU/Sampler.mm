@@ -32,11 +32,12 @@
 
 namespace WebGPU {
 
-static bool validateCreateSampler(Device&, const WGPUSamplerDescriptor& descriptor)
+static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpusamplerdescriptor
 
-    // FIXME: "device is valid."
+    if (!device.isValid())
+        return false;
 
     if (std::isnan(descriptor.lodMinClamp) || descriptor.lodMinClamp < 0)
         return false;

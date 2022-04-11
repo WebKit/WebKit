@@ -91,7 +91,9 @@ private:
 
     bool validatePopDebugGroup() const;
 
-    const id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
+    void makeInvalid() { m_renderCommandEncoder = nil; }
+
+    id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
 

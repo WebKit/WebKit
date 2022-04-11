@@ -80,7 +80,9 @@ private:
 
     bool validatePopDebugGroup() const;
 
-    const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
+    void makeInvalid() { m_indirectCommandBuffer = nil; }
+
+    id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
 

@@ -78,7 +78,9 @@ private:
 
     bool validatePopDebugGroup() const;
 
-    const id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
+    void makeInvalid() { m_computeCommandEncoder = nil; }
+
+    id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
 

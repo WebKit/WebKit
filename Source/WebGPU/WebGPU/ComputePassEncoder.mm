@@ -100,7 +100,7 @@ void ComputePassEncoder::popDebugGroup()
         return;
 
     if (!validatePopDebugGroup()) {
-        // FIXME: "make this invalid, and stop."
+        makeInvalid();
         return;
     }
 

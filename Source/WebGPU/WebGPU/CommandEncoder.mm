@@ -31,6 +31,7 @@
 #import "CommandBuffer.h"
 #import "ComputePassEncoder.h"
 #import "Device.h"
+#import "IsValidToUseWith.h"
 #import "QuerySet.h"
 #import "RenderPassEncoder.h"
 #import "Texture.h"
@@ -97,11 +98,13 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     return RenderPassEncoder::createInvalid(m_device);
 }
 
-static bool validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
+bool CommandEncoder::validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
 {
-    // FIXME: "source is valid to use with this."
+    if (!isValidToUseWith(source, *this))
+        return false;
 
-    // FIXME: "destination is valid to use with this."
+    if (!isValidToUseWith(destination, *this))
+        return false;
 
     if (!(source.usage() & WGPUBufferUsage_CopySrc))
         return false;
@@ -160,7 +163,8 @@ static bool validateImageCopyBuffer(const WGPUImageCopyBuffer& imageCopyBuffer)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpuimagecopybuffer
 
-    // FIXME: "imageCopyBuffer.buffer must be a valid GPUBuffer."
+    if (!fromAPI(imageCopyBuffer.buffer).isValid())
+        return false;
 
     if (imageCopyBuffer.layout.bytesPerRow % 256)
         return false;
@@ -674,9 +678,10 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
     }
 }
 
-static bool validateClearBuffer(const Buffer& buffer, uint64_t offset, uint64_t size)
+bool CommandEncoder::validateClearBuffer(const Buffer& buffer, uint64_t offset, uint64_t size)
 {
-    // FIXME: "buffer is valid to use with this."
+    if (!isValidToUseWith(buffer, *this))
+        return false;
 
     if (!(buffer.usage() & WGPUBufferUsage_CopyDst))
         return false;
@@ -718,7 +723,8 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
 
 bool CommandEncoder::validateFinish() const
 {
-    // FIXME: "this must be valid."
+    if (!isValid())
+        return false;
 
     if (m_state != EncoderState::Open)
         return false;
@@ -786,7 +792,7 @@ void CommandEncoder::popDebugGroup()
         return;
 
     if (!validatePopDebugGroup()) {
-        // FIXME: "make this invalid, and stop."
+        makeInvalid();
         return;
     }
 
