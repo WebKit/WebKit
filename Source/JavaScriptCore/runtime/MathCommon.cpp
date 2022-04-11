@@ -175,11 +175,10 @@ static double fdlibmPow(double x, double y)
 {
     double z,ax,z_h,z_l,p_h,p_l;
     double y1,t1,t2,r,s,t,u,v,w;
-    int i0,i,j,k,yisint,n;
+    int i,j,k,yisint,n;
     int hx,hy,ix,iy;
     unsigned lx,ly;
 
-    i0 = ((*(const int*)&one)>>29)^1;
     hx = __HI(x); lx = __LO(x);
     hy = __HI(y); ly = __LO(y);
     ix = hx&0x7fffffff;  iy = hy&0x7fffffff;
