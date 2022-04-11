@@ -1,5 +1,35 @@
 2022-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Reduce use of unnecessary cryptographicallyRandom numbers
+        https://bugs.webkit.org/show_bug.cgi?id=239026
+
+        Reviewed by Saam Barati.
+
+        This patch removes cryptographically random calls in some of super hot critical path.
+        MarkedBlock's use is very hot and it appears on Speedometer2 artrace. But this is just
+        a random shuffling of freelist, and WeakRandom is enough for that. This patch replaces
+        them with WeakRandom. It offers 0.3% improvement in Speedometer2.
+
+        * assembler/AbstractMacroAssembler.cpp:
+        (JSC::AbstractMacroAssemblerBase::initializeRandom):
+        (WTF::printInternal):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssemblerBase::random):
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+        (JSC::AbstractMacroAssembler::random): Deleted.
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::weakRandom): Deleted.
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::heapRandom):
+
+2022-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, use std::forward instead of WTFMove since it becomes template typename Vector&&
         https://bugs.webkit.org/show_bug.cgi?id=239025
 

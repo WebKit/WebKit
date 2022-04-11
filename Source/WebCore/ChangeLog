@@ -1,3 +1,17 @@
+2022-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Reduce use of unnecessary cryptographicallyRandom numbers
+        https://bugs.webkit.org/show_bug.cgi?id=239026
+
+        Reviewed by Saam Barati.
+
+        We use createVersion4UUIDStringWeak since there is no need to use cryptographically random numbers for KeyframeEffect names.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::copyPropertiesFromSource):
+        (WebCore::KeyframeEffect::updateBlendingKeyframes):
+        (WebCore::KeyframeEffect::computeCSSTransitionBlendingKeyframes):
+
 2022-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mail Compose] Preserve attachment identifiers when cloning attachment-backed images

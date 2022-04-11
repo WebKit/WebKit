@@ -85,6 +85,11 @@ public:
         }
     }
 
+    uint64_t getUint64()
+    {
+        return advance();
+    }
+
     bool returnTrueWithProbability(double probability)
     {
         ASSERT(0.0 <= probability && probability <= 1.0);

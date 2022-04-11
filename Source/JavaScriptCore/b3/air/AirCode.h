@@ -355,8 +355,6 @@ public:
     RegisterSet mutableFPRs();
     RegisterSet pinnedRegisters() const { return m_pinnedRegs; }
     
-    WeakRandom& weakRandom() { return m_weakRandom; }
-
     void emitDefaultPrologue(CCallHelpers&);
     void emitEpilogue(CCallHelpers&);
 
@@ -384,7 +382,6 @@ private:
         ASSERT_NOT_REACHED();
     }
 
-    WeakRandom m_weakRandom;
     Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.
     Vector<Reg> m_gpRegsInPriorityOrder;
     Vector<Reg> m_fpRegsInPriorityOrder;

@@ -35,6 +35,8 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
+#include <wtf/Lock.h>
+#include <wtf/WeakRandom.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if OS(DARWIN)
@@ -43,18 +45,40 @@
 
 namespace WTF {
 
-UUID::UUID()
+static ALWAYS_INLINE UInt128 convertRandomUInt128ToUUIDVersion4(UInt128 buffer)
 {
-    static_assert(sizeof(m_data) == 16);
-    auto* data = reinterpret_cast<unsigned char*>(&m_data);
-
-    cryptographicallyRandomValues(data, 16);
-
     // By default, we generate a v4 UUID value, as per https://datatracker.ietf.org/doc/html/rfc4122#section-4.4.
-    auto high = static_cast<uint64_t>((m_data >> 64) & 0xffffffffffff0fff) | 0x4000;
-    auto low = static_cast<uint64_t>(m_data & 0x3fffffffffffffff) | 0x8000000000000000;
+    auto high = static_cast<uint64_t>((buffer >> 64) & 0xffffffffffff0fff) | 0x4000;
+    auto low = static_cast<uint64_t>(buffer & 0x3fffffffffffffff) | 0x8000000000000000;
 
-    m_data = (static_cast<UInt128>(high) << 64) | low;
+    return (static_cast<UInt128>(high) << 64) | low;
+}
+
+static UInt128 generateCryptographicallyRandomUUIDVersion4()
+{
+    UInt128 buffer { };
+    static_assert(sizeof(buffer) == 16);
+    cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(&buffer), 16);
+    return convertRandomUInt128ToUUIDVersion4(buffer);
+}
+
+static UInt128 generateWeakRandomUUIDVersion4()
+{
+    static Lock lock;
+    UInt128 buffer { 0 };
+    {
+        Locker locker { lock };
+        static std::optional<WeakRandom> weakRandom;
+        if (!weakRandom)
+            weakRandom.emplace();
+        buffer = static_cast<UInt128>(weakRandom->getUint64()) << 64 | weakRandom->getUint64();
+    }
+    return convertRandomUInt128ToUUIDVersion4(buffer);
+}
+
+UUID::UUID()
+    : m_data(generateCryptographicallyRandomUUIDVersion4())
+{
 }
 
 String UUID::toString() const
@@ -140,6 +164,11 @@ std::optional<UUID> UUID::parseVersion4(StringView value)
 String createVersion4UUIDString()
 {
     return UUID::createVersion4().toString();
+}
+
+String createVersion4UUIDStringWeak()
+{
+    return UUID(generateWeakRandomUUIDVersion4()).toString();
 }
 
 String bootSessionUUIDString()

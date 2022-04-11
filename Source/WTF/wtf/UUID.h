@@ -148,6 +148,7 @@ std::optional<UUID> UUID::decode(Decoder& decoder)
 // 9, A, or B for y.
 
 WTF_EXPORT_PRIVATE String createVersion4UUIDString();
+WTF_EXPORT_PRIVATE String createVersion4UUIDStringWeak();
 
 WTF_EXPORT_PRIVATE String bootSessionUUIDString();
 WTF_EXPORT_PRIVATE bool isVersion4UUID(StringView);
@@ -156,4 +157,5 @@ WTF_EXPORT_PRIVATE bool isVersion4UUID(StringView);
 
 using WTF::UUID;
 using WTF::createVersion4UUIDString;
+using WTF::createVersion4UUIDStringWeak;
 using WTF::bootSessionUUIDString;
