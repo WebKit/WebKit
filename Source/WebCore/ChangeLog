@@ -1,3 +1,17 @@
+2022-04-11  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Use unaccelerated rendering for ImageBitmapRenderingContext's placeholder image.
+        https://bugs.webkit.org/show_bug.cgi?id=238846
+
+        Reviewed by Simon Fraser.
+
+        This is a blank immutable image used a placeholder until a real ImageBitmap is provided, so there's
+        no need to allocate to allocate an accelerated IOSurface.
+
+        * html/canvas/ImageBitmapRenderingContext.cpp:
+        (WebCore::ImageBitmapRenderingContext::isAccelerated const):
+        (WebCore::ImageBitmapRenderingContext::setOutputBitmap):
+
 2022-04-11  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r292051-r292022): [ iOS ] media/video-object-fit.html is a constant image failure
