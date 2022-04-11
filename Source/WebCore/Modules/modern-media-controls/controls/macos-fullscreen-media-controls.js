@@ -37,6 +37,10 @@ class MacOSFullscreenMediaControls extends MediaControls
         this.element.classList.add("mac");
         this.element.classList.add("fullscreen");
 
+        this.timeControl.scrubber.knobStyle = Slider.KnobStyle.Bar;
+
+        this.playPauseButton.scaleFactor = 2;
+
         // Set up fullscreen-specific buttons.
         this.rewindButton = new RewindButton(this);
         this.forwardButton = new ForwardButton(this);

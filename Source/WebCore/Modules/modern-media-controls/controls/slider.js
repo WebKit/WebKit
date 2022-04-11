@@ -105,6 +105,25 @@ class Slider extends LayoutNode
         this.needsLayout = true;
     }
 
+    get knobStyle()
+    {
+        return this._knobStyle;
+    }
+
+    set knobStyle(knobStyle)
+    {
+        if (this._knobStyle === knobStyle)
+            return;
+
+        this._knob.element.classList.remove(this._knobStyle);
+
+        this._knobStyle = knobStyle;
+
+        this._knob.element.classList.add(this._knobStyle);
+
+        this.needsLayout = true;
+    }
+
     // Protected
 
     handleEvent(event)

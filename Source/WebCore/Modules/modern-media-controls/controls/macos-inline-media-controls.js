@@ -36,6 +36,8 @@ class MacOSInlineMediaControls extends InlineMediaControls
 
         this.element.classList.add("mac");
 
+        this.timeControl.scrubber.knobStyle = Slider.KnobStyle.Bar;
+
         this._backgroundClickDelegateNotifier = new BackgroundClickDelegateNotifier(this);
 
         this.volumeSlider = new Slider("volume");

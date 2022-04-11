@@ -55,19 +55,9 @@ class IOSLayoutTraits extends LayoutTraits
         return false;
     }
 
-    knobStyleForScrubber()
-    {
-        return Slider.KnobStyle.Circle;
-    }
-
     supportsDurationTimeLabel()
     {
         return false;
-    }
-
-    playPauseButtonScaleFactor()
-    {
-        return 1;
     }
 
     controlsDependOnPageScaleFactor()

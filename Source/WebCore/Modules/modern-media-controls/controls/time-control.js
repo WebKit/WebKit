@@ -42,7 +42,7 @@ class TimeControl extends LayoutItem
         this._shouldShowDurationTimeLabel = this.layoutTraits.supportsDurationTimeLabel();
 
         this.elapsedTimeLabel = new TimeLabel(TimeLabel.Type.Elapsed);
-        this.scrubber = new Slider("scrubber", this.layoutTraits.knobStyleForScrubber());
+        this.scrubber = new Slider("scrubber");
         if (this._shouldShowDurationTimeLabel)
             this.durationTimeLabel = new TimeLabel(TimeLabel.Type.Duration);
         this.remainingTimeLabel = new TimeLabel(TimeLabel.Type.Remaining);

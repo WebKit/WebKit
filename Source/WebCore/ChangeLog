@@ -1,3 +1,47 @@
+2022-04-11  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] remove unnecessary `LayoutTraits` methods
+        https://bugs.webkit.org/show_bug.cgi?id=239018
+        <rdar://problem/91324687>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/modern-media-controls/controls/layout-traits.js:
+        (LayoutTraits.prototype.knobStyleForScrubber): Deleted.
+        (LayoutTraits.prototype.playPauseButtonScaleFactor): Deleted.
+        * Modules/modern-media-controls/controls/ios-layout-traits.js:
+        (IOSLayoutTraits.prototype.knobStyleForScrubber): Deleted.
+        (IOSLayoutTraits.prototype.playPauseButtonScaleFactor): Deleted.
+        * Modules/modern-media-controls/controls/macos-layout-traits.js:
+        (MacOSLayoutTraits.prototype.knobStyleForScrubber): Deleted.
+        (MacOSLayoutTraits.prototype.playPauseButtonScaleFactor): Deleted.
+        * Modules/modern-media-controls/controls/watchos-layout-traits.js:
+        (WatchOSLayoutTraits.prototype.knobStyleForScrubber): Deleted.
+        (WatchOSLayoutTraits.prototype.playPauseButtonScaleFactor): Deleted.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls):
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls):
+        * Modules/modern-media-controls/controls/play-pause-button.js:
+        (PlayPauseButton):
+        * Modules/modern-media-controls/controls/time-control.js:
+        (TimeControl):
+        Remove these functions as they are much more controllable by having the `MediaControls`
+        subclass set the related property directly. Having them be on `LayoutTraits` also makes it
+        more difficult to handle situations where the state of the `MediaControls` influences the
+        value given to the property (e.g. whether to use the video or audio layout).
+
+        * Modules/modern-media-controls/controls/buttons-container.js:
+        (ButtonsContainer):
+        Expose the default value of `leftMargin`, `rightMargin`, and `buttonMargin` so that if the
+        `MediaControls` wants to reset one of the above overrides, it doesn't need a magic number.
+
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.get knobStyle): Added.
+        (Slider.prototype.set knobStyle): Added.
+        Provide a way to change the `knobStyle` after construction in case the `MediaControls` state
+        changes.
+
 2022-04-11  Matt Woodrow  <mattwoodrow@apple.com>
 
         Use unaccelerated rendering for ImageBitmapRenderingContext's placeholder image.

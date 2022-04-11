@@ -66,17 +66,7 @@ class LayoutTraits
         throw "Derived class must implement this function.";
     }
 
-    knobStyleForScrubber()
-    {
-        throw "Derived class must implement this function.";
-    }
-
     supportsDurationTimeLabel()
-    {
-        throw "Derived class must implement this function.";
-    }
-
-    playPauseButtonScaleFactor()
     {
         throw "Derived class must implement this function.";
     }
