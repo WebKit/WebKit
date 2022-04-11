@@ -26,8 +26,16 @@
 
 using namespace WebCore;
 
+GST_DEBUG_CATEGORY(webkit_gst_video_sink_common_debug);
+#define GST_CAT_DEFAULT webkit_gst_video_sink_common_debug
+
 void webKitVideoSinkSetMediaPlayerPrivate(GstElement* appSink, MediaPlayerPrivateGStreamer* player)
 {
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_gst_video_sink_common_debug, "webkitvideosinkcommon", 0, "WebKit Video Sink Common utilities");
+    });
+
     g_signal_connect(appSink, "new-sample", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
         GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
         GstBuffer* buffer = gst_sample_get_buffer(sample.get());

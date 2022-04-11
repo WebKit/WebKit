@@ -1,3 +1,15 @@
+2022-04-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Debugs logs from VideoSinkCommon are missing
+        https://bugs.webkit.org/show_bug.cgi?id=239049
+
+        Reviewed by Adrian Perez de Castro.
+
+        When this new module was added, the logging support was lost due to missing logging category.
+        
+        * platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp:
+        (webKitVideoSinkSetMediaPlayerPrivate):
+
 2022-04-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         calc(): Propogate nan for min, max, clamp, and hypot
