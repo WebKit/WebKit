@@ -1,3 +1,24 @@
+2022-04-11  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Ensure requestPin callback on main thread
+        https://bugs.webkit.org/show_bug.cgi?id=238962
+        rdar://problem/91446051
+
+        Reviewed by Brent Fulgham.
+
+        This callback gets called by a non-main thread when making calls via
+        ASA. This patch uses ensureOnMainThread to ensure the completion handler
+        is called on the main thread. It also upgrades the callback asserts to
+        RELEASE_ASSERTs to avoid this issue in the future.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::getAssertion):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        (WebKit::WebAuthenticationPanelClient::requestPin const):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueGetNextAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::continueRequestPinAfterGetKeyAgreement):
+
 2022-04-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed Windows build fix after r292696.

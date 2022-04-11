@@ -544,7 +544,7 @@ void LocalAuthenticator::getAssertion()
 
     if (auto* observer = this->observer()) {
         auto callback = [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
-            ASSERT(RunLoop::isMain());
+            RELEASE_ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
 

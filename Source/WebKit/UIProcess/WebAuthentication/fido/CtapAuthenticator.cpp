@@ -210,7 +210,7 @@ void CtapAuthenticator::continueGetNextAssertionAfterResponseReceived(Vector<uin
     if (!m_remainingAssertionResponses) {
         if (auto* observer = this->observer()) {
             observer->selectAssertionResponse(Vector { m_assertionResponses }, WebAuthenticationSource::External, [this, weakThis = WeakPtr { *this }] (AuthenticatorAssertionResponse* response) {
-                ASSERT(RunLoop::isMain());
+                RELEASE_ASSERT(RunLoop::isMain());
                 if (!weakThis)
                     return;
                 auto result = m_assertionResponses.findIf([expectedResponse = response] (auto& response) {
@@ -272,7 +272,7 @@ void CtapAuthenticator::continueRequestPinAfterGetKeyAgreement(Vector<uint8_t>&&
 
     if (auto* observer = this->observer()) {
         observer->requestPin(retries, [weakThis = WeakPtr { *this }, keyAgreement = WTFMove(*keyAgreement)] (const String& pin) {
-            ASSERT(RunLoop::isMain());
+            RELEASE_ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
             weakThis->continueGetPinTokenAfterRequestPin(pin, keyAgreement.peerKey);
