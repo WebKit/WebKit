@@ -119,7 +119,6 @@ static tsf_bool_t tear_to_none(tsf_adpt_rdr_t *reader) {
 	free(reader->buf);
 	reader->geti=0;
 	reader->puti=reader->abstract.avail_in;
-	reader->buf=buf;
     }
     reader->mode=TSF_ZIP_NONE;
     return tsf_true;
