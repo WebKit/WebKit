@@ -60,7 +60,7 @@ TEST_F(PublicSuffix, IsPublicSuffix)
     EXPECT_FALSE(isPublicSuffix(utf16String(bidirectionalDomain)));
     EXPECT_TRUE(isPublicSuffix(utf16String(u"\u6803\u6728.jp")));
     EXPECT_FALSE(isPublicSuffix(""_s));
-    EXPECT_FALSE(isPublicSuffix("åäö"_s));
+    EXPECT_FALSE(isPublicSuffix(String::fromUTF8("åäö")));
 
     // UK
     EXPECT_TRUE(isPublicSuffix("uk"_s));
