@@ -165,6 +165,8 @@ private:
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
     void invalidateAttributeMapping();
 
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) final;
+
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;

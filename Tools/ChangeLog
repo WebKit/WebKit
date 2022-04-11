@@ -1,3 +1,16 @@
+2022-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mail Compose] Preserve attachment identifiers when cloning attachment-backed images
+        https://bugs.webkit.org/show_bug.cgi?id=239040
+        rdar://91527065
+
+        Reviewed by Aditya Keerthi.
+
+        Add an API test to exercise the change.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-11  Andres Gonzalez  <andresg_22@apple.com>
 
         TestRunner’s calls to [WebAccessibilityObjectWrapper accessibilityArrayAttributeCount:] need to be dispatch to the AX secondary thread.

@@ -948,4 +948,17 @@ void HTMLImageElement::invalidateAttributeMapping()
     invalidateStyle();
 }
 
+Ref<Element> HTMLImageElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+{
+    auto clone = create(targetDocument);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (auto attachment = attachmentElement()) {
+        auto attachmentClone = attachment->cloneElementWithoutChildren(targetDocument);
+        RELEASE_ASSERT(is<HTMLAttachmentElement>(attachmentClone));
+        clone->setAttachmentElement(downcast<HTMLAttachmentElement>(attachmentClone.get()));
+    }
+#endif
+    return clone;
+}
+
 }

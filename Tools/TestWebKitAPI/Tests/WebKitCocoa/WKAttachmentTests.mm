@@ -1632,6 +1632,30 @@ TEST(WKAttachmentTests, AttachmentIdentifierOfClonedAttachment)
     EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.body.cloneNode(true).querySelector('attachment').uniqueIdentifier"]);
 }
 
+TEST(WKAttachmentTests, CloneImageWithAttachment)
+{
+    auto webView = webViewForTestingAttachments();
+    platformCopyPNG();
+
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+
+        attachment = observer.observer().inserted.firstObject;
+        EXPECT_WK_STREQ("image/png", [attachment info].contentType);
+    }
+
+    NSString *clonedAttachmentIdentifier = [webView stringByEvaluatingJavaScript:@"const original = document.querySelector('img');"
+        "const clone = original.cloneNode();"
+        "original.remove();"
+        "document.body.appendChild(clone);"
+        "HTMLAttachmentElement.getAttachmentIdentifier(clone);"];
+
+    EXPECT_WK_STREQ([attachment uniqueIdentifier], clonedAttachmentIdentifier);
+}
+
 TEST(WKAttachmentTests, SetFileWrapperForPDFImageAttachment)
 {
     auto webView = webViewForTestingAttachments();

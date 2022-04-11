@@ -1,3 +1,22 @@
+2022-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mail Compose] Preserve attachment identifiers when cloning attachment-backed images
+        https://bugs.webkit.org/show_bug.cgi?id=239040
+        rdar://91527065
+
+        Reviewed by Aditya Keerthi.
+
+        Override HTMLImageElement's `cloneElementWithoutAttributesAndChildren` method so that it additionally clones the
+        attachment element underneath the original image element, if it exists. This ensures that an image element that
+        is copied from existing attachment-backed images using `cloneNode` will contain an `attachment` in its shadow
+        root that points to the same `_WKAttachment` in the embedding client.
+
+        Test: WKAttachmentTests.CloneImageWithAttachment
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::cloneElementWithoutAttributesAndChildren):
+        * html/HTMLImageElement.h:
+
 2022-04-11  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [LBSE] Activate SVG transform support through layers
