@@ -1,3 +1,10 @@
+2022-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed WatchOS build fix.
+
+        * runtime/MathCommon.cpp:
+        (JSC::fdlibmPow):
+
 2022-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG / FTL should be aware of JSString's String replacement
