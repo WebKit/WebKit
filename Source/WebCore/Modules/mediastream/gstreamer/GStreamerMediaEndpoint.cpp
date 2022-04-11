@@ -269,7 +269,7 @@ static std::optional<std::pair<RTCSdpType, String>> fetchDescription(GstElement*
 
     GUniquePtr<char> sdpString(gst_sdp_message_as_text(description->sdp));
     GST_TRACE_OBJECT(webrtcBin, "%s-description SDP: %s", name, sdpString.get());
-    return { { fromSessionDescriptionType(*description.get()), String { sdpString.get() } } };
+    return { { fromSessionDescriptionType(*description.get()), String::fromLatin1(sdpString.get()) } };
 }
 
 static GstWebRTCSignalingState fetchSignalingState(GstElement* webrtcBin)
@@ -456,7 +456,7 @@ void GStreamerMediaEndpoint::storeRemoteMLineInfo(GstSDPMessage* message)
             continue;
         }
 
-        m_mediaForMid.set(String { mid }, g_str_equal(mediaType, "audio"_s) ? RealtimeMediaSource::Type::Audio : RealtimeMediaSource::Type::Video);
+        m_mediaForMid.set(String::fromLatin1(mid), g_str_equal(mediaType, "audio"_s) ? RealtimeMediaSource::Type::Audio : RealtimeMediaSource::Type::Video);
 
         // https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/1907
         if (sdpMediaHasAttributeKey(media, "ice-lite")) {
@@ -733,7 +733,7 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     auto sdpString = makeString(sdp.get());
 
     GUniquePtr<gchar> name(gst_pad_get_name(pad));
-    String label(name.get());
+    auto label = String::fromLatin1(name.get());
     auto key = makeString("msid:");
     auto lines = sdpString.split('\n');
     for (auto& line : lines) {
@@ -1085,9 +1085,9 @@ void GStreamerMediaEndpoint::createSessionDescriptionSucceeded(GUniquePtr<GstWeb
 
         GUniquePtr<char> sdp(gst_sdp_message_as_text(description->sdp));
         if (m_isInitiator)
-            m_peerConnectionBackend.createOfferSucceeded(String { sdp.get() });
+            m_peerConnectionBackend.createOfferSucceeded(String::fromLatin1(sdp.get()));
         else
-            m_peerConnectionBackend.createAnswerSucceeded(String { sdp.get() });
+            m_peerConnectionBackend.createAnswerSucceeded(String::fromLatin1(sdp.get()));
     });
 }
 
@@ -1125,7 +1125,7 @@ void GStreamerMediaEndpoint::collectTransceivers()
         if (!receiver || !mid)
             continue;
 
-        m_peerConnectionBackend.newRemoteTransceiver(WTF::makeUnique<GStreamerRtpTransceiverBackend>(WTFMove(current)), m_mediaForMid.get(String { mid.get() }));
+        m_peerConnectionBackend.newRemoteTransceiver(WTF::makeUnique<GStreamerRtpTransceiverBackend>(WTFMove(current)), m_mediaForMid.get(String::fromLatin1(mid.get())));
     }
 }
 

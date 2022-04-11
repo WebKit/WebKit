@@ -176,7 +176,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     if (shouldCheckHardwareClassifier == CheckHardwareClassifier::Yes) {
         for (GList* factories = candidates; factories; factories = g_list_next(factories)) {
             auto* factory = reinterpret_cast<GstElementFactory*>(factories->data);
-            String metadata { gst_element_factory_get_metadata(factory, GST_ELEMENT_METADATA_KLASS) };
+            auto metadata = String::fromLatin1(gst_element_factory_get_metadata(factory, GST_ELEMENT_METADATA_KLASS));
             auto components = metadata.split('/');
             if (components.contains("Hardware")) {
                 isUsingHardware = true;

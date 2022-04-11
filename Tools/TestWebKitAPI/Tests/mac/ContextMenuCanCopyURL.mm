@@ -101,7 +101,7 @@ TEST(WebKitLegacy, ContextMenuCanCopyURL)
     contextMenuCopyLink(webView.get(), 0);
     
     NSURL *url = [NSURL URLFromPasteboard:[NSPasteboard generalPasteboard]];
-    EXPECT_EQ(String("http://www.webkit.org/"), String([url absoluteString]));
+    EXPECT_EQ(String([url absoluteString]), "http://www.webkit.org/"_s);
 
     contextMenuCopyLink(webView.get(), 1);
     

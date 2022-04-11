@@ -32,7 +32,7 @@ namespace WTF {
 // always the same value.
 static String platformLanguage()
 {
-    String localeDefault(setlocale(LC_CTYPE, nullptr));
+    auto localeDefault = String::fromLatin1(setlocale(LC_CTYPE, nullptr));
     if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C") || equalIgnoringASCIICase(localeDefault, "POSIX"))
         return "en-US"_s;
 

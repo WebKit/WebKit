@@ -1300,11 +1300,11 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
     case GDK_KEY_ISO_Enter:
     case GDK_KEY_KP_Enter:
     case GDK_KEY_Return:
-        return String("\r");
+        return String("\r"_s);
     case GDK_KEY_BackSpace:
-        return String("\x8");
+        return String("\x8"_s);
     case GDK_KEY_Tab:
-        return String("\t");
+        return String("\t"_s);
     default:
         gunichar c = gdk_keyval_to_unicode(val);
         glong nwc;

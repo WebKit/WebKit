@@ -102,7 +102,7 @@ void RemoteInspectorProtocolHandler::userContentManagerDestroyed(RemoteInspector
 
 void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
 {
-    URL requestURL = URL(String { webkit_uri_scheme_request_get_uri(request) });
+    URL requestURL = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
     if (!requestURL.port()) {
         GUniquePtr<GError> error(g_error_new_literal(WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI, "Cannot show inspector URL: no port provided"));
         webkit_uri_scheme_request_finish_error(request, error.get());

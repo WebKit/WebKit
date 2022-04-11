@@ -44,6 +44,7 @@
 #include <wtf/SafeStrerror.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(LINUX_MEMFD_H)
@@ -153,7 +154,7 @@ static int createSharedMemory()
 #else
     CString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
-        String name = String("/WK2SharedMemory.") + String::number(static_cast<unsigned>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)));
+        auto name = makeString("/WK2SharedMemory.", static_cast<unsigned>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)));
         tempName = name.utf8();
 
         do {

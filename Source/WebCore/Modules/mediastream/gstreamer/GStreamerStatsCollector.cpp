@@ -43,15 +43,15 @@ static inline void fillRTCStats(RTCStatsReport::Stats& stats, const GstStructure
     double timestamp;
     if (gst_structure_get_double(structure, "timestamp", &timestamp))
         stats.timestamp = timestamp;
-    stats.id = String { gst_structure_get_string(structure, "id") };
+    stats.id = String::fromLatin1(gst_structure_get_string(structure, "id"));
 }
 
 static inline void fillRTCRTPStreamStats(RTCStatsReport::RtpStreamStats& stats, const GstStructure* structure)
 {
     fillRTCStats(stats, structure);
 
-    stats.transportId = String { gst_structure_get_string(structure, "transport-id") };
-    stats.codecId = String { gst_structure_get_string(structure, "codec-id") };
+    stats.transportId = String::fromLatin1(gst_structure_get_string(structure, "transport-id"));
+    stats.codecId = String::fromLatin1(gst_structure_get_string(structure, "codec-id"));
 
     unsigned value;
     if (gst_structure_get_uint(structure, "ssrc", &value))
@@ -166,7 +166,7 @@ static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRtpStreamS
         stats.nackCount = nackCount;
 
     if (const char* remoteId = gst_structure_get_string(structure, "remote-id"))
-        stats.remoteId = String { remoteId };
+        stats.remoteId = String::fromLatin1(remoteId);
 
     // FIXME
     // stats.targetBitrate =

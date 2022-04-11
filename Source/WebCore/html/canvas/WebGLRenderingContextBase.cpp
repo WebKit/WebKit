@@ -1904,8 +1904,7 @@ GCGLenum WebGLRenderingContextBase::checkFramebufferStatus(GCGLenum target)
     const char* reason = "framebuffer incomplete";
     GCGLenum result = targetFramebuffer->checkStatus(&reason);
     if (result != GraphicsContextGL::FRAMEBUFFER_COMPLETE) {
-        String str = "WebGL: checkFramebufferStatus:" + String(reason);
-        printToConsole(MessageLevel::Warning, str);
+        printToConsole(MessageLevel::Warning, makeString("WebGL: checkFramebufferStatus: ", reason));
         return result;
     }
     result = m_context->checkFramebufferStatus(target);

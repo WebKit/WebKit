@@ -141,7 +141,7 @@ RetainPtr<SecIdentityRef> testIdentity2()
     "miK1TXtLlWN06r43anQqZyRbu5IoHmHAybpk4Stq29wOSBoZdyarQWkloyiYJKdX"
     "oDdkKF8cwoBeAeiRLkT45stRNklBg4VlgCFELPOcWYMFOoSkQg19VS/VaHi48t+z"
     "668Bn1U3U9d/iNCXFM78iKqoJCBoURyirmG/tI6gfJiLn05Tz6nYz31Y40Fm1Swg"
-    "hgOy/TdJO/NjmTHBgpITP6lv69QvaV9z");
+    "hgOy/TdJO/NjmTHBgpITP6lv69QvaV9z"_s);
 
     String pemEncodedCertificate(""
     "MIIFgDCCA2gCCQD+QY1JRnM3IjANBgkqhkiG9w0BAQsFADCBgTELMAkGA1UEBhMC"
@@ -173,7 +173,7 @@ RetainPtr<SecIdentityRef> testIdentity2()
     "46izhou3GSKz3X1eYpYbZHF52dxmOUdvpSoqfmlMF1Egv94crD1xh9asdjg2DnXc"
     "948YxPaFjoOGd6Ync+fv9pJzjTjximbIiWm2r6yt2j9hAuKJXpNOIa4oIMAIGjCi"
     "JAH2nxKGuqtAK2hWbACu61RT5gAqAv/hB9JYnc2OiQ2VmjYkOk2GEdIjn0xSgX7W"
-    "mI/hHbxKMG3Rkv9q1Cx+WB/v1t8=");
+    "mI/hHbxKMG3Rkv9q1Cx+WB/v1t8="_s);
 
     auto privateKeyBytes = base64Decode(pemEncodedPrivateKey);
     auto certificateBytes = base64Decode(pemEncodedCertificate);

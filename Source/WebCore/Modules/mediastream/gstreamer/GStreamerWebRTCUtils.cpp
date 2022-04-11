@@ -156,7 +156,7 @@ static inline RTCRtpEncodingParameters toRTCEncodingParameters(const GstStructur
     if (gst_structure_get_uint64(rtcParameters, "max-framerate", &maxFramerate))
         parameters.maxFramerate = maxFramerate;
 
-    parameters.rid = String { gst_structure_get_string(rtcParameters, "rid") };
+    parameters.rid = String::fromLatin1(gst_structure_get_string(rtcParameters, "rid"));
 
     double scaleResolutionDownBy;
     if (gst_structure_get_double(rtcParameters, "scale-resolution-down-by", &scaleResolutionDownBy))

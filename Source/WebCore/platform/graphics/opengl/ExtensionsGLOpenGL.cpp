@@ -225,7 +225,7 @@ void ExtensionsGLOpenGL::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divis
 String ExtensionsGLOpenGL::getExtensions()
 {
     ASSERT(!m_useIndexedGetString);
-    return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
+    return String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
 }
 
 #if PLATFORM(GTK) || PLATFORM(WIN)

@@ -150,7 +150,7 @@ TEST(KeyedCoding, SetAndGetDouble)
 
 TEST(KeyedCoding, SetAndGetString)
 {
-    EXPECT_TRUE(testSimpleValue(&WebCore::KeyedEncoder::encodeString, &WebCore::KeyedDecoder::decodeString, String("WebKit")));
+    EXPECT_TRUE(testSimpleValue(&WebCore::KeyedEncoder::encodeString, &WebCore::KeyedDecoder::decodeString, String("WebKit"_s)));
 }
 
 TEST(KeyedCoding, GetNonExistingRecord)

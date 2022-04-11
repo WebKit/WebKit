@@ -101,12 +101,12 @@ CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
 {
     g_assert_false(m_baseWebSocketURL.isNull());
     g_assert_true(path && *path == '/');
-    return URL(m_baseWebSocketURL, String { path + 1 }).string().utf8(); // Ignore the leading slash.
+    return URL(m_baseWebSocketURL, String::fromLatin1(path + 1)).string().utf8(); // Ignore the leading slash.
 }
 
 CString WebKitTestServer::getURIForPath(const char* path) const
 {
-    return URL(m_baseURL, String { path }).string().utf8();
+    return URL(m_baseURL, String::fromLatin1(path)).string().utf8();
 }
 
 unsigned WebKitTestServer::port() const

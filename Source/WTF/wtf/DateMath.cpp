@@ -94,9 +94,9 @@ template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const c
 
 /* Constants */
 
-const char* const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-const char* const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-const char* const monthFullName[12] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+const ASCIILiteral weekdayName[7] = { "Mon"_s, "Tue"_s, "Wed"_s, "Thu"_s, "Fri"_s, "Sat"_s, "Sun"_s };
+const ASCIILiteral monthName[12] = { "Jan"_s, "Feb"_s, "Mar"_s, "Apr"_s, "May"_s, "Jun"_s, "Jul"_s, "Aug"_s, "Sep"_s, "Oct"_s, "Nov"_s, "Dec"_s };
+const ASCIILiteral monthFullName[12] = { "January"_s, "February"_s, "March"_s, "April"_s, "May"_s, "June"_s, "July"_s, "August"_s, "September"_s, "October"_s, "November"_s, "December"_s };
 
 // Day of year for the first day of each month, where index 0 is January, and day 0 is January 1.
 // First for non-leap years, then for leap years.

@@ -122,7 +122,7 @@ private:
 TEST_F(FileSystemTest, MappingMissingFile)
 {
     bool success;
-    FileSystem::MappedFileData mappedFileData(String("not_existing_file"), FileSystem::MappedFileMode::Shared, success);
+    FileSystem::MappedFileData mappedFileData(String("not_existing_file"_s), FileSystem::MappedFileMode::Shared, success);
     EXPECT_FALSE(success);
     EXPECT_TRUE(!mappedFileData);
 }

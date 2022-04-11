@@ -320,7 +320,7 @@ CurlHandle::~CurlHandle()
 
 const String CurlHandle::errorDescription(CURLcode errorCode)
 {
-    return String(curl_easy_strerror(errorCode));
+    return String::fromLatin1(curl_easy_strerror(errorCode));
 }
 
 void CurlHandle::enableSSLForHost(const String& host)
@@ -891,7 +891,7 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     additionalMetrics->responseHeaderBytesReceived = responseHeaderSize;
 
     if (ip) {
-        additionalMetrics->remoteAddress = String(ip);
+        additionalMetrics->remoteAddress = String::fromLatin1(ip);
         if (port)
             additionalMetrics->remoteAddress.append(":" + String::number(port));
     }

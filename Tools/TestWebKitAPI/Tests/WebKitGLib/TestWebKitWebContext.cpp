@@ -195,7 +195,7 @@ public:
 
 String generateHTMLContent(unsigned contentLength)
 {
-    String baseString("abcdefghijklmnopqrstuvwxyz0123457890");
+    String baseString("abcdefghijklmnopqrstuvwxyz0123457890"_s);
     unsigned baseLength = baseString.length();
 
     StringBuilder builder;

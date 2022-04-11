@@ -146,7 +146,7 @@ void webkit_uri_request_set_uri(WebKitURIRequest* request, const char* uri)
     g_return_if_fail(WEBKIT_IS_URI_REQUEST(request));
     g_return_if_fail(uri);
 
-    URL url { String { uri } };
+    URL url { String::fromLatin1(uri) };
     if (url == request->priv->resourceRequest.url())
         return;
 

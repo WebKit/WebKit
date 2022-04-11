@@ -53,7 +53,7 @@ void ResourceLoader::loadGResource()
         GUniqueOutPtr<GError> error;
         GRefPtr<GBytes> bytes = adoptGRef(static_cast<GBytes*>(g_task_propagate_pointer(task, &error.outPtr())));
         if (!bytes) {
-            loader->didFail(ResourceError(String { g_quark_to_string(error->domain) }, error->code, url, String::fromUTF8(error->message)));
+            loader->didFail(ResourceError(String::fromLatin1(g_quark_to_string(error->domain)), error->code, url, String::fromUTF8(error->message)));
             return;
         }
 
@@ -64,7 +64,7 @@ void ResourceLoader::loadGResource()
         const auto* data = static_cast<const guchar*>(g_bytes_get_data(bytes.get(), &dataSize));
         GUniquePtr<char> fileName(g_path_get_basename(url.path().utf8().data()));
         GUniquePtr<char> contentType(g_content_type_guess(fileName.get(), data, dataSize, nullptr));
-        String contentTypeString { contentType.get() };
+        auto contentTypeString = String::fromLatin1(contentType.get());
         ResourceResponse response { url, extractMIMETypeFromMediaType(contentTypeString), static_cast<long long>(dataSize), extractCharsetFromMediaType(contentTypeString).toString() };
         response.setHTTPStatusCode(200);
         response.setHTTPStatusText("OK"_s);

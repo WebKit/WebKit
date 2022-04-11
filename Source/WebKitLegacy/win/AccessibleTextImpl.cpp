@@ -676,7 +676,7 @@ HRESULT AccessibleText::setAttributes(long startOffset, long endOffset, BSTR* at
 // IAccessible2
 HRESULT AccessibleText::get_attributes(BSTR* attributes)
 {
-    WTF::String text("text-model:a1");
+    WTF::String text("text-model:a1"_s);
     *attributes = BString(text).release();
     return S_OK;
 }

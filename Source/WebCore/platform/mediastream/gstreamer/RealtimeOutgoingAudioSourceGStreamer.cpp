@@ -89,7 +89,7 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     g_object_set(m_payloader.get(), "auto-header-extension", FALSE, nullptr);
 
     if (const char* minPTime = gst_structure_get_string(structure, "minptime")) {
-        String time(minPTime);
+        auto time = String::fromLatin1(minPTime);
         if (auto value = parseIntegerAllowingTrailingJunk<int64_t>(time))
             g_object_set(m_payloader.get(), "min-ptime", *value * GST_MSECOND, nullptr);
     }

@@ -116,7 +116,7 @@ static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
     if (cachedTypes.get().size() > 0)
         return cachedTypes;
 
-    cachedTypes.get().add(String("video/mp4"));
+    cachedTypes.get().add("video/mp4"_s);
 
     PROPVARIANT propVarMimeTypeArray;
     PropVariantInit(&propVarMimeTypeArray);

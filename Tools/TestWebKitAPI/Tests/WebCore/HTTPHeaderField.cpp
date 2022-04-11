@@ -74,9 +74,9 @@ TEST(HTTPHeaderField, Parser)
         "a: \"\""_s,
         "a: \"aA?\t \""_s,
         "a: \"a\" (b) ((c))"_s,
-        String { nonASCIIComment },
-        String { nonASCIIQuotedPairInComment },
-        String { nonASCIIQuotedPairInQuote },
+        String::fromLatin1(nonASCIIComment),
+        String::fromLatin1(nonASCIIQuotedPairInComment),
+        String::fromLatin1(nonASCIIQuotedPairInQuote),
     });
     
     shouldBeInvalid({
@@ -95,7 +95,7 @@ TEST(HTTPHeaderField, Parser)
         "a: (\a)"_s,
         "a: \"\a\""_s,
         "a: \"a\" (b)}((c))"_s,
-        String { delInQuote },
+        String::fromLatin1(delInQuote),
     });
     
     shouldBecome({

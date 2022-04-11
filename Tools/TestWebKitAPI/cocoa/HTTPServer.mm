@@ -467,9 +467,9 @@ void Connection::webSocketHandshake(CompletionHandler<void()>&& connectionHandle
         };
 
         connection.send(HTTPResponse(101, {
-            { "Upgrade", "websocket" },
-            { "Connection", "Upgrade" },
-            { "Sec-WebSocket-Accept", webSocketAcceptValue(request) }
+            { "Upgrade"_s, "websocket"_s },
+            { "Connection"_s, "Upgrade"_s },
+            { "Sec-WebSocket-Accept"_s, webSocketAcceptValue(request) }
         }).serialize(HTTPResponse::IncludeContentLength::No), WTFMove(connectionHandler));
     });
 }
@@ -633,7 +633,7 @@ Vector<uint8_t> HTTPServer::testCertificate()
     "q7+Tfk1MRkJlL1PH6Yu/IPhZiNh4tyIqDOtlYfzp577A+OUU+q5PPRFRIsqheOxt"
     "mNlHx4Uzd4U3ITfmogJazjqwYO2viBZY4jUQmyZs75eH/jiUFHWRsha3AdnW5LWa"
     "G3PFnYbW8urH0NSJG/W+/9DA+Y7Aa0cs4TPpuBGZ0NU1W94OoCMo4lkO6H/y6Leu"
-    "3vjZD3y9kZk7mre9XHwkI8MdK5s=");
+    "3vjZD3y9kZk7mre9XHwkI8MdK5s="_s);
     
     auto decodedCertificate = base64Decode(pemEncodedCertificate);
     return WTFMove(*decodedCertificate);
@@ -691,7 +691,7 @@ Vector<uint8_t> HTTPServer::testPrivateKey()
     "bkUbiHIbQ8dJ5yj8SKr0bHzqEtOy9/JeRjkYGHC6bVWpq5FA2MBhf4dNjJ4UDlnT"
     "vuePcTjr7nnfY1sztvfVl9D8dmgT+TBnOOV6yWj1gm5bS1DxQSLgNmtKxJ8tAh2u"
     "dEObvcpShP22ItOVjSampRuAuRG26ZemEbGCI3J6Mqx3y6m+6HwultsgtdzDgrFe"
-    "qJfU8bbdbu2pi47Y4FdJK0HLffl5Rw==");
+    "qJfU8bbdbu2pi47Y4FdJK0HLffl5Rw=="_s);
 
     auto decodedPrivateKey = base64Decode(pemEncodedPrivateKey);
     return WTFMove(*decodedPrivateKey);

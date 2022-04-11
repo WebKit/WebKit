@@ -45,7 +45,7 @@ TEST(WTF, StringViewStartsWithEmptyVsNull)
 {
     StringView nullView;
     StringView emptyView = StringView::empty();
-    String stringWithCharacters("hello");
+    String stringWithCharacters("hello"_s);
     StringView viewWithCharacters(stringWithCharacters);
 
     EXPECT_TRUE(viewWithCharacters.startsWith(nullView));
@@ -84,7 +84,7 @@ TEST(WTF, StringViewEmptyVsNull)
     else
         SUCCEED();
 
-    StringView viewWithCharacters(String("hello"));
+    StringView viewWithCharacters(String("hello"_s));
     EXPECT_FALSE(viewWithCharacters.isNull());
     EXPECT_FALSE(viewWithCharacters.isEmpty());
 
@@ -141,7 +141,7 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(StringView::empty().codeUnits(), { }));
     EXPECT_TRUE(compareLoopIterations(StringView::empty().graphemeClusters(), { }));
 
-    String helo("helo");
+    String helo("helo"_s);
     StringView heloView(helo);
 
     auto codePoints = heloView.codePoints();
@@ -156,7 +156,7 @@ TEST(WTF, StringViewIterators)
     EXPECT_EQ(*codePointsIterator, 'h');
     codePointsIterator = savedIterator;
     EXPECT_EQ(*codePointsIterator, 'l');
-    String webkit("webkit");
+    String webkit("webkit"_s);
     auto webkitCodePoints = StringView(webkit).codePoints();
     codePointsIterator = webkitCodePoints.begin();
     ++codePointsIterator;
@@ -983,10 +983,10 @@ TEST(WTF, StringViewStripLeadingAndTrailingMatchedCharacters)
 
 TEST(WTF, StringViewIsAllASCII)
 {
-    EXPECT_TRUE(StringView(String("Hello")).isAllASCII());
-    EXPECT_TRUE(StringView(String("Cocoa")).isAllASCII());
-    EXPECT_FALSE(StringView(String("📱")).isAllASCII());
-    EXPECT_FALSE(StringView(String("\u0080")).isAllASCII());
+    EXPECT_TRUE(StringView(String("Hello"_s)).isAllASCII());
+    EXPECT_TRUE(StringView(String("Cocoa"_s)).isAllASCII());
+    EXPECT_FALSE(StringView(String::fromLatin1("📱")).isAllASCII());
+    EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).isAllASCII());
     EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"))).isAllASCII());
 }
 

@@ -456,7 +456,7 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
     } else if (SUCCEEDED(dataObject->GetData(urlFormat(), &store))) {
         // URL using ASCII
         char* data = static_cast<char*>(GlobalLock(store.hGlobal));
-        url = extractURL(String(data), title);
+        url = extractURL(String::fromLatin1(data), title);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
     }
@@ -475,7 +475,7 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
             // filename using ascii
             char* data = static_cast<char*>(GlobalLock(store.hGlobal));
             if (data && data[0] && (PathFileExistsA(data) || PathIsUNCA(data))) {
-                url = URL::fileURLWithFileSystemPath(String(data)).fileSystemPath();
+                url = URL::fileURLWithFileSystemPath(String::fromLatin1(data)).fileSystemPath();
                 if (title)
                     *title = url;
             }
@@ -527,7 +527,7 @@ String getPlainText(IDataObject* dataObject)
     } else if (SUCCEEDED(dataObject->GetData(plainTextFormat(), &store))) {
         // ASCII text
         char* data = static_cast<char*>(GlobalLock(store.hGlobal));
-        text = String(data);
+        text = String::fromLatin1(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
     } else {
@@ -613,7 +613,7 @@ bool containsFilenames(const DragDataMap*)
 Ref<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
 {
     // obtain baseURL if present
-    String srcURLStr("sourceURL:");
+    String srcURLStr("sourceURL:"_s);
     String srcURL;
     unsigned lineStart = cfhtml.findIgnoringASCIICase(srcURLStr);
     if (lineStart != -1) {

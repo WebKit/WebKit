@@ -74,8 +74,8 @@ ExtensionsGLOpenGLCommon::ExtensionsGLOpenGLCommon(GraphicsContextGLOpenGL* cont
     , m_requiresRestrictedMaximumTextureSize(false)
     , m_useIndexedGetString(useIndexedGetString)
 {
-    m_vendor = String(reinterpret_cast<const char*>(::glGetString(GL_VENDOR)));
-    m_renderer = String(reinterpret_cast<const char*>(::glGetString(GL_RENDERER)));
+    m_vendor = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_VENDOR)));
+    m_renderer = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_RENDERER)));
 
     Vector<String> vendorComponents = m_vendor.convertToASCIILowercase().split(' ');
     if (vendorComponents.contains("nvidia"))
@@ -215,7 +215,7 @@ void ExtensionsGLOpenGLCommon::initializeAvailableExtensions()
         GLint numExtensions = 0;
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         for (GLint i = 0; i < numExtensions; ++i)
-            m_availableExtensions.add(String { reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)) });
+            m_availableExtensions.add(String::fromLatin1(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i))));
 
         if (!m_availableExtensions.contains("GL_ARB_texture_storage"_s)) {
             GLint majorVersion;

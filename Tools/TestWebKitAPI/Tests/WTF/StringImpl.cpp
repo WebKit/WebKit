@@ -440,14 +440,14 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithEmpty)
 
 TEST(WTF, StartsWithLettersIgnoringASCIICase)
 {
-    String string("Test tEST");
+    String string("Test tEST"_s);
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test t"));
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test te"));
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test test"));
     ASSERT_FALSE(startsWithLettersIgnoringASCIICase(string, "test tex"));
 
     ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, ""));
-    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(String(""), ""));
+    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(emptyString(), ""));
 
     ASSERT_FALSE(startsWithLettersIgnoringASCIICase(String(), "t"));
     ASSERT_FALSE(startsWithLettersIgnoringASCIICase(String(), ""));

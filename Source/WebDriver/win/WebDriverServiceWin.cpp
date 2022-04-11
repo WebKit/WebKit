@@ -38,7 +38,7 @@ void WebDriverService::platformInit()
 Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;
-    capabilities.platformName = String("win");
+    capabilities.platformName = String("win"_s);
     capabilities.setWindowRect = true;
     return capabilities;
 }

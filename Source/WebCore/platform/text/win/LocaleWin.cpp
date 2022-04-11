@@ -398,16 +398,16 @@ void LocaleWin::initializeLocaleData()
     DWORD digitSubstitution = DigitSubstitution0to9;
     getLocaleInfo(LOCALE_IDIGITSUBSTITUTION, digitSubstitution);
     if (digitSubstitution == DigitSubstitution0to9) {
-        symbols.append("0");
-        symbols.append("1");
-        symbols.append("2");
-        symbols.append("3");
-        symbols.append("4");
-        symbols.append("5");
-        symbols.append("6");
-        symbols.append("7");
-        symbols.append("8");
-        symbols.append("9");
+        symbols.append("0"_s);
+        symbols.append("1"_s);
+        symbols.append("2"_s);
+        symbols.append("3"_s);
+        symbols.append("4"_s);
+        symbols.append("5"_s);
+        symbols.append("6"_s);
+        symbols.append("7"_s);
+        symbols.append("8"_s);
+        symbols.append("9"_s);
     } else {
         String digits = getLocaleInfoString(LOCALE_SNATIVEDIGITS);
         ASSERT(digits.length() >= 10);

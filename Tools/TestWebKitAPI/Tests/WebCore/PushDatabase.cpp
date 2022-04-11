@@ -432,8 +432,8 @@ TEST(PushDatabase, ManyInFlightOps)
         for (unsigned i = 0; i < recordCount; i++) {
             snprintf(scope, sizeof(scope), "http://www.webkit.org/test/%d", i);
             snprintf(topic, sizeof(topic), "topic_%d", i);
-            record.scope = String { scope };
-            record.topic = String { topic };
+            record.scope = String::fromLatin1(scope);
+            record.topic = String::fromLatin1(topic);
 
             database.insertRecord(record, [](auto&& result) {
                 ASSERT_TRUE(result);

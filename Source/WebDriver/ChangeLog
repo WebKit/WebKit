@@ -1,3 +1,34 @@
+2022-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Finish porting code base to String::fromLatin1() and make String(const char*) private
+        https://bugs.webkit.org/show_bug.cgi?id=238977
+
+        Reviewed by Darin Adler.
+
+        * Session.cpp:
+        (WebDriver::Session::pageLoadStrategyString const):
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::run):
+        (WebDriver::WebDriverService::findSessionOrCompleteWithError):
+        (WebDriver::WebDriverService::processCapabilities const):
+        (WebDriver::WebDriverService::newSession):
+        (WebDriver::WebDriverService::connectToBrowser):
+        (WebDriver::processPauseAction):
+        (WebDriver::processNullAction):
+        (WebDriver::processKeyAction):
+        (WebDriver::processPointerMoveAction):
+        (WebDriver::processPointerAction):
+        (WebDriver::processWheelAction):
+        (WebDriver::processPointerParameters):
+        (WebDriver::processInputActionSequence):
+        (WebDriver::WebDriverService::performActions):
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformCapabilities):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformCapabilities):
+        (WebDriver::WebDriverService::platformParseCapabilities const):
+
 2022-04-05  Chris Dumez  <cdumez@apple.com>
 
         Mark String(const char*) constructor as explicit

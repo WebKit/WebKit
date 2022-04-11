@@ -85,7 +85,7 @@ Ref<RTCDataChannelEvent> GStreamerDataChannelHandler::createDataChannelEvent(Doc
     init.ordered = ordered;
     init.maxPacketLifeTime = maxPacketLifeTime;
     init.maxRetransmits = maxRetransmits;
-    init.protocol = String(protocol.get());
+    init.protocol = String::fromLatin1(protocol.get());
     init.negotiated = negotiated;
     init.id = id;
 

@@ -291,7 +291,7 @@ TEST(PrivateClickMeasurement, InvalidSourceNonce)
     ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcde/0123456789"_s };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Illegal, non-ASCII character 'å'.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdeå0123456789"_s };
+    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { String::fromLatin1("ABCDEFabcdeå0123456789") };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Empty string.
     ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { StringImpl::empty() };

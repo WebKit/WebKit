@@ -44,9 +44,9 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
     
-const String FileMonitorTestData("This is a test");
-const String FileMonitorRevisedData("This is some changed text for the test");
-const String FileMonitorSecondRevisedData("This is some changed text for the test");
+const String FileMonitorTestData("This is a test"_s);
+const String FileMonitorRevisedData("This is some changed text for the test"_s);
+const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
 
 class FileMonitorTest : public testing::Test {
 public:

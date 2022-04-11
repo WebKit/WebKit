@@ -750,7 +750,7 @@ ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& reques
 {
     // FIXME: Need ChickenCat to include CFNetwork/CFURLError.h to get these values
     // Alternatively, we could create our own error domain/codes.
-    return ResourceError(String(WebURLErrorDomain), -999, request.url(), String("Cancelled"));
+    return ResourceError(String(WebURLErrorDomain), -999, request.url(), String("Cancelled"_s));
 }
 
 ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request) const
@@ -780,7 +780,7 @@ ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceRespon
 
 ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse& response) const
 {
-    return ResourceError(String(WebURLErrorDomain), -1100, response.url(), String("File does not exist."));
+    return ResourceError(String(WebURLErrorDomain), -1100, response.url(), String("File does not exist."_s));
 }
 
 ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response) const

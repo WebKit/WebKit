@@ -7389,23 +7389,23 @@ TEST(ProcessSwap, NavigateBackAfterNavigatingAwayFromCOOP)
 
 enum class IsSameOrigin : bool { No, Yes };
 enum class DoServerSideRedirect : bool { No, Yes };
-static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOEP, const char* destinationCOOP, const char* destinationCOEP, IsSameOrigin isSameOrigin, DoServerSideRedirect doServerSideRedirect, ExpectSwap expectSwap)
+static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceCOEP, ASCIILiteral destinationCOOP, ASCIILiteral destinationCOEP, IsSameOrigin isSameOrigin, DoServerSideRedirect doServerSideRedirect, ExpectSwap expectSwap)
 {
     using namespace TestWebKitAPI;
 
     HashMap<String, String> sourceHeaders;
     sourceHeaders.add("Content-Type"_s, "text/html"_s);
     if (sourceCOOP)
-        sourceHeaders.add("Cross-Origin-Opener-Policy"_s, String(sourceCOOP));
+        sourceHeaders.add("Cross-Origin-Opener-Policy"_s, sourceCOOP);
     if (sourceCOEP)
-        sourceHeaders.add("Cross-Origin-Embedder-Policy"_s, String(sourceCOEP));
+        sourceHeaders.add("Cross-Origin-Embedder-Policy"_s, sourceCOEP);
 
     HashMap<String, String> destinationHeaders;
     destinationHeaders.add("Content-Type"_s, "text/html"_s);
     if (destinationCOOP)
-        destinationHeaders.add("Cross-Origin-Opener-Policy"_s, String(destinationCOOP));
+        destinationHeaders.add("Cross-Origin-Opener-Policy"_s, destinationCOOP);
     if (destinationCOEP)
-        destinationHeaders.add("Cross-Origin-Embedder-Policy"_s, String(destinationCOEP));
+        destinationHeaders.add("Cross-Origin-Embedder-Policy"_s, destinationCOEP);
     HTTPResponse destinationResponse(WTFMove(destinationHeaders), "popup"_s);
 
     HTTPServer server(std::initializer_list<std::pair<String, HTTPResponse>> { }, HTTPServer::Protocol::Https);
@@ -7427,8 +7427,8 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOE
 
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
-    bool sourceShouldBeCrossOriginIsolated = sourceCOOP && !strcmp(sourceCOOP, "same-origin") && sourceCOEP && !strcmp(sourceCOEP, "require-corp");
-    bool destinationShouldBeCrossOriginIsolated = destinationCOOP && !strcmp(destinationCOOP, "same-origin") && destinationCOEP && !strcmp(destinationCOEP, "require-corp");
+    bool sourceShouldBeCrossOriginIsolated = sourceCOOP == "same-origin"_s && sourceCOEP == "require-corp"_s;
+    bool destinationShouldBeCrossOriginIsolated = destinationCOOP == "same-origin"_s && destinationCOEP == "require-corp"_s;
     EXPECT_TRUE(sourceShouldBeCrossOriginIsolated == destinationShouldBeCrossOriginIsolated || expectSwap == ExpectSwap::Yes);
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -7582,211 +7582,211 @@ static void runCOOPProcessSwapTest(const char* sourceCOOP, const char* sourceCOE
 
 TEST(ProcessSwap, NavigatingSameOriginToCOOPSameOrigin)
 {
-    runCOOPProcessSwapTest(nullptr, nullptr, "same-origin", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest({ }, { }, "same-origin"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginToCOOPSameOrigin2)
 {
-    runCOOPProcessSwapTest("unsafe-none", nullptr, "same-origin", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("unsafe-none"_s, { }, "same-origin"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginToCOOPSameOrigin3)
 {
-    runCOOPProcessSwapTest("unsafe-none", nullptr, "same-origin", "unsafe-none", IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("unsafe-none"_s, { }, "same-origin"_s, "unsafe-none"_s, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginToCOOPSameOrigin4)
 {
-    runCOOPProcessSwapTest("unsafe-none", "unsafe-none", "same-origin", "unsafe-none", IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("unsafe-none"_s, "unsafe-none"_s, "same-origin"_s, "unsafe-none"_s, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginToCOOPAndCOEPSameOrigin)
 {
-    runCOOPProcessSwapTest(nullptr, nullptr, "same-origin", "require-corp", IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest({ }, { }, "same-origin"_s, "require-corp"_s, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", nullptr, nullptr, nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, { }, { }, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOrigin2)
 {
-    runCOOPProcessSwapTest("same-origin", nullptr, "unsafe-none", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, { }, "unsafe-none"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOrigin3)
 {
-    runCOOPProcessSwapTest("same-origin", "unsafe-none", "unsafe-none", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "unsafe-none"_s, "unsafe-none"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPAndCOEPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", "require-corp", nullptr, nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, { }, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginAllowPopup)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", nullptr, nullptr, nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, { }, { }, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginAllowPopup2)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", nullptr, "unsafe-none", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, { }, "unsafe-none"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginAllowPopup3)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", "unsafe-none", "unsafe-none", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, "unsafe-none"_s, "unsafe-none"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginAllowPopup4)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", "unsafe-none", "unsafe-none", "unsafe-none", IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, "unsafe-none"_s, "unsafe-none"_s, "unsafe-none"_s, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPAndCOEPSameOriginAllowPopup)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", "require-corp", nullptr, nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, "require-corp"_s, { }, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginToCOOPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", nullptr, "same-origin", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin"_s, { }, "same-origin"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginToCOOPSameOrigin2)
 {
-    runCOOPProcessSwapTest("same-origin", "unsafe-none", "same-origin", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin"_s, "unsafe-none"_s, "same-origin"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginToCOOPSameOrigin3)
 {
-    runCOOPProcessSwapTest("same-origin", "unsafe-none", "same-origin", "unsafe-none", IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin"_s, "unsafe-none"_s, "same-origin"_s, "unsafe-none"_s, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPAndCOEPSameOriginToCOOPAndCOEPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", "require-corp", "same-origin", "require-corp", IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, "same-origin"_s, "require-corp"_s, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPAndCOEPSameOriginToCOOPSameOrigin)
 {
     // Should swap because the destination is missing COEP.
-    runCOOPProcessSwapTest("same-origin", "require-corp", "same-origin", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, "same-origin"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginToCOOPAndCOEPSameOrigin)
 {
     // Should swap because the source is missing COEP.
-    runCOOPProcessSwapTest("same-origin", nullptr, "same-origin", "require-corp", IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, { }, "same-origin"_s, "require-corp"_s, IsSameOrigin::Yes, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPSameOriginToCOOPSameOriginWithRedirect)
 {
     // We expect a swap because the redirect doesn't have COOP=same-origin.
-    runCOOPProcessSwapTest("same-origin", nullptr, "same-origin", nullptr, IsSameOrigin::Yes, DoServerSideRedirect::Yes, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, { }, "same-origin"_s, { }, IsSameOrigin::Yes, DoServerSideRedirect::Yes, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginFromCOOPAndCOEPSameOriginToCOOPAndCOEPSameOriginWithRedirect)
 {
     // We expect a swap because the redirect doesn't have COOP=same-origin and COEP=require-corp.
-    runCOOPProcessSwapTest("same-origin", "require-corp", "same-origin", "require-corp", IsSameOrigin::Yes, DoServerSideRedirect::Yes, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, "same-origin"_s, "require-corp"_s, IsSameOrigin::Yes, DoServerSideRedirect::Yes, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingSameOriginWithoutCOOPWithRedirect)
 {
-    runCOOPProcessSwapTest(nullptr, nullptr, nullptr, nullptr, IsSameOrigin::Yes, DoServerSideRedirect::Yes, ExpectSwap::No);
+    runCOOPProcessSwapTest({ }, { }, { }, { }, IsSameOrigin::Yes, DoServerSideRedirect::Yes, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginToCOOPSameOrigin)
 {
-    runCOOPProcessSwapTest(nullptr, nullptr, "same-origin", nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest({ }, { }, "same-origin"_s, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginToCOOPSameOrigin2)
 {
-    runCOOPProcessSwapTest("unsafe-none", nullptr, "same-origin", nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("unsafe-none"_s, { }, "same-origin"_s, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginToCOOPSameOrigin3)
 {
-    runCOOPProcessSwapTest("unsafe-none", nullptr, "same-origin", "unsafe-none", IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("unsafe-none"_s, { }, "same-origin"_s, "unsafe-none"_s, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginToCOOPSameOrigin4)
 {
-    runCOOPProcessSwapTest("unsafe-none", "unsafe-none", "same-origin", "unsafe-none", IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("unsafe-none"_s, "unsafe-none"_s, "same-origin"_s, "unsafe-none"_s, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginToCOOPAndCOEPSameOrigin)
 {
-    runCOOPProcessSwapTest(nullptr, nullptr, "same-origin", "require-corp", IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest({ }, { }, "same-origin"_s, "require-corp"_s, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", nullptr, nullptr, nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, { }, { }, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOrigin2)
 {
-    runCOOPProcessSwapTest("same-origin", nullptr, "unsafe-none", nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, { }, "unsafe-none"_s, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOrigin3)
 {
-    runCOOPProcessSwapTest("same-origin", "unsafe-none", "unsafe-none", nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "unsafe-none"_s, "unsafe-none"_s, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOrigin4)
 {
-    runCOOPProcessSwapTest("same-origin", "unsafe-none", "unsafe-none", "unsafe-none", IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "unsafe-none"_s, "unsafe-none"_s, "unsafe-none"_s, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPAndCOEPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", "require-corp", nullptr, nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, { }, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOriginToCOOPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", nullptr, "same-origin", nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, { }, "same-origin"_s, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPAndCOEPSameOriginToCOOPAndCOEPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", "require-corp", "same-origin", "require-corp", IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, "same-origin"_s, "require-corp"_s, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPAndCOEPSameOriginToCOOPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", "require-corp", "same-origin", nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, "require-corp"_s, "same-origin"_s, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOriginToCOOPAndCOEPSameOrigin)
 {
-    runCOOPProcessSwapTest("same-origin", nullptr, "same-origin", "require-corp", IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
+    runCOOPProcessSwapTest("same-origin"_s, { }, "same-origin"_s, "require-corp"_s, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::Yes);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOriginAllowPopup)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", nullptr, nullptr, nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, { }, { }, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOriginAllowPopup2)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", nullptr, "unsafe-none", nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, { }, "unsafe-none"_s, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOriginAllowPopup3)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", "unsafe-none", "unsafe-none", nullptr, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, "unsafe-none"_s, "unsafe-none"_s, { }, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 TEST(ProcessSwap, NavigatingCrossOriginFromCOOPSameOriginAllowPopup4)
 {
-    runCOOPProcessSwapTest("same-origin-allow-popup", "unsafe-none", "unsafe-none", "unsafe-none", IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
+    runCOOPProcessSwapTest("same-origin-allow-popup"_s, "unsafe-none"_s, "unsafe-none"_s, "unsafe-none"_s, IsSameOrigin::No, DoServerSideRedirect::No, ExpectSwap::No);
 }
 
 static bool isJITEnabled(WKWebView *webView)

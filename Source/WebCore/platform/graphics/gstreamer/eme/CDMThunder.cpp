@@ -122,9 +122,9 @@ const Vector<String>& CDMFactoryThunder::supportedKeySystems() const
     if (supportedKeySystems.isEmpty()) {
         std::string emptyString;
         if (opencdm_is_type_supported(GStreamerEMEUtilities::s_WidevineKeySystem, emptyString.c_str()) == ERROR_NONE)
-            supportedKeySystems.append(GStreamerEMEUtilities::s_WidevineKeySystem);
+            supportedKeySystems.append(String::fromLatin1(GStreamerEMEUtilities::s_WidevineKeySystem));
         if (opencdm_is_type_supported(GStreamerEMEUtilities::s_ClearKeyKeySystem, emptyString.c_str()) == ERROR_NONE)
-            supportedKeySystems.append(GStreamerEMEUtilities::s_ClearKeyKeySystem);
+            supportedKeySystems.append(String::fromLatin1(GStreamerEMEUtilities::s_ClearKeyKeySystem));
         GST_DEBUG("%zu supported key systems", supportedKeySystems.size());
     };
     return supportedKeySystems;

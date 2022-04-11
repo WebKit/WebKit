@@ -42,11 +42,11 @@ namespace TestWebKitAPI {
 
 TEST(WTF, StringOperators)
 {
-    String string("String");
+    String string("String"_s);
     AtomString atomString("AtomString");
     ASCIILiteral literal { "ASCIILiteral"_s };
 
-    String stringViewBacking { "StringView" };
+    String stringViewBacking { "StringView"_s };
     StringView stringView { stringViewBacking };
 
     EXPECT_EQ(0, wtfStringCopyCount);

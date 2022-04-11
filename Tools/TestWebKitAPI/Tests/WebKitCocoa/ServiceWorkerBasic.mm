@@ -2135,9 +2135,9 @@ TEST(ServiceWorkers, ContentRuleList)
     using namespace TestWebKitAPI;
     HTTPServer server([] (Connection connection) {
         connection.receiveHTTPRequest([=](Vector<char>&&) {
-            connection.send(HTTPResponse({{ "Content-Type", "text/html" }}, mainBytes).serialize(), [=] {
+            connection.send(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, mainBytes).serialize(), [=] {
                 connection.receiveHTTPRequest([=](Vector<char>&&) {
-                    connection.send(HTTPResponse({{ "Content-Type", "application/javascript" }}, contentRuleListWorkerScript).serialize(), [=] {
+                    connection.send(HTTPResponse({ { "Content-Type"_s, "application/javascript"_s } }, contentRuleListWorkerScript).serialize(), [=] {
                         connection.receiveHTTPRequest([=](Vector<char>&& lastRequest) {
                             EXPECT_TRUE(strnstr((const char*)lastRequest.data(), "allowedsubresource", lastRequest.size()));
                             connection.send(HTTPResponse("successful fetch"_s).serialize());

@@ -47,5 +47,5 @@ String WebDatabaseProvider::indexedDatabaseDirectoryPath()
         && ::GetLastError() != ERROR_ALREADY_EXISTS)
         return emptyString();
 
-    return String(databaseDirectory);
+    return String::fromLatin1(databaseDirectory);
 }

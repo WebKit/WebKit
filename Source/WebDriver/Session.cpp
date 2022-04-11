@@ -188,11 +188,11 @@ std::optional<String> Session::pageLoadStrategyString() const
 
     switch (capabilities().pageLoadStrategy.value()) {
     case PageLoadStrategy::None:
-        return String("None");
+        return String("None"_s);
     case PageLoadStrategy::Normal:
-        return String("Normal");
+        return String("Normal"_s);
     case PageLoadStrategy::Eager:
-        return String("Eager");
+        return String("Eager"_s);
     }
 
     return std::nullopt;

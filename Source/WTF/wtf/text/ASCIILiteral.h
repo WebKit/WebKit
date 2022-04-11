@@ -67,11 +67,15 @@ private:
 
 inline bool operator==(ASCIILiteral a, const char* b)
 {
-    return b && !strcmp(a.characters(), b);
+    if (!a || !b)
+        return a.characters() == b;
+    return !strcmp(a.characters(), b);
 }
 
 inline bool operator==(ASCIILiteral a, ASCIILiteral b)
 {
+    if (!a || !b)
+        return a.characters() == b.characters();
     return !strcmp(a.characters(), b.characters());
 }
 

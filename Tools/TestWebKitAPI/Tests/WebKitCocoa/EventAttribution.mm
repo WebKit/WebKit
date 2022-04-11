@@ -282,7 +282,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                         EXPECT_TRUE(strnstr(request2.data(), "POST / HTTP/1.1\r\n", request2.size()));
 
                         auto request2String = String(request2.data(), request2.size());
-                        auto key = signingParty == TokenSigningParty::Source ? String("source_unlinkable_token") : String("destination_unlinkable_token");
+                        auto key = signingParty == TokenSigningParty::Source ? "source_unlinkable_token"_s : "destination_unlinkable_token"_s;
                         auto start = request2String.find(key);
                         start += key.length() + 3;
                         auto end = request2String.find('"', start);
@@ -320,7 +320,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
 
                                         auto request4String = String(request4.data(), request4.size());
 
-                                        auto key = signingParty == TokenSigningParty::Source ? String("source_secret_token") : String("destination_secret_token");
+                                        auto key = signingParty == TokenSigningParty::Source ? "source_secret_token"_s : "destination_secret_token"_s;
                                         auto start = request4String.find(key);
                                         start += key.length() + 3;
                                         auto end = request4String.find('"', start);
@@ -328,7 +328,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                         auto tokenVector = base64URLDecode(token);
                                         auto tokenData = adoptNS([[NSData alloc] initWithBytes:tokenVector->data() length:tokenVector->size()]);
 
-                                        key = signingParty == TokenSigningParty::Source ? String("source_secret_token_signature") : String("destination_secret_token_signature");
+                                        key = signingParty == TokenSigningParty::Source ? "source_secret_token_signature"_s : "destination_secret_token_signature"_s;
                                         start = request4String.find(key);
                                         start += key.length() + 3;
                                         end = request4String.find('"', start);

@@ -176,7 +176,7 @@ unsigned GLContext::version()
     if (!m_version) {
         // Version string can start with the version number (all versions except GLES 1 and 2) or with
         // "OpenGL". Different fields inside the version string are separated by spaces.
-        String versionString = String(reinterpret_cast<const char*>(::glGetString(GL_VERSION)));
+        auto versionString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_VERSION)));
         Vector<String> versionStringComponents = versionString.split(' ');
 
         Vector<String> versionDigits;

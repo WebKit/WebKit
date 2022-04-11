@@ -931,7 +931,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 #if USE(SOUP2)
         didFail(ResourceError::transportError(m_currentRequest.url(), SOUP_STATUS_TOO_MANY_REDIRECTS, "Too many redirects"_s));
 #else
-        didFail(ResourceError(String { g_quark_to_string(SOUP_SESSION_ERROR) }, SOUP_SESSION_ERROR_TOO_MANY_REDIRECTS, m_currentRequest.url(), String::fromUTF8("Too many redirects")));
+        didFail(ResourceError(String::fromLatin1(g_quark_to_string(SOUP_SESSION_ERROR)), SOUP_SESSION_ERROR_TOO_MANY_REDIRECTS, m_currentRequest.url(), String::fromUTF8("Too many redirects")));
 #endif
         return;
     }
@@ -1037,7 +1037,7 @@ void NetworkDataTaskSoup::readCallback(GInputStream* inputStream, GAsyncResult* 
         if (task->m_soupMessage)
             task->didFail(ResourceError::genericGError(task->m_currentRequest.url(), error.get()));
         else if (task->m_file)
-            task->didFail(ResourceError(String { g_quark_to_string(error->domain) }, error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
+            task->didFail(ResourceError(String::fromLatin1(g_quark_to_string(error->domain)), error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
         else
             RELEASE_ASSERT_NOT_REACHED();
     } else if (bytesRead > 0)
@@ -1127,7 +1127,7 @@ void NetworkDataTaskSoup::didRequestNextPart(GRefPtr<GInputStream>&& inputStream
     ASSERT(!m_inputStream);
     m_inputStream = WTFMove(inputStream);
     auto* headers = soup_multipart_input_stream_get_headers(m_multipartInputStream.get());
-    String contentType { soup_message_headers_get_one(headers, "Content-Type") };
+    auto contentType = String::fromLatin1(soup_message_headers_get_one(headers, "Content-Type"));
     m_response = ResourceResponse(m_firstRequest.url(), extractMIMETypeFromMediaType(contentType),
         soup_message_headers_get_content_length(headers), extractCharsetFromMediaType(contentType).toString());
     m_response.updateFromSoupMessageHeaders(headers);
@@ -1249,7 +1249,7 @@ void NetworkDataTaskSoup::didGetHeaders()
         const char* headerName;
         const char* headerValue;
         while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-            requestHeaders.set(String(headerName), String(headerValue));
+            requestHeaders.set(String::fromLatin1(headerName), String::fromLatin1(headerValue));
         additionalMetrics.requestHeaders = WTFMove(requestHeaders);
 
         additionalMetrics.priority = toNetworkLoadPriority(soup_message_get_priority(m_soupMessage.get()));
@@ -1691,7 +1691,7 @@ void NetworkDataTaskSoup::didGetFileInfo(GFileInfo* info)
         m_response.setMimeType("text/html"_s);
         m_response.setExpectedContentLength(-1);
     } else {
-        String contentType { g_file_info_get_content_type(info) };
+        auto contentType = String::fromLatin1(g_file_info_get_content_type(info));
         m_response.setMimeType(extractMIMETypeFromMediaType(contentType));
         m_response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
         if (m_response.mimeType().isEmpty())
@@ -1719,7 +1719,7 @@ void NetworkDataTaskSoup::readFileCallback(GFile* file, GAsyncResult* result, Ne
     GUniqueOutPtr<GError> error;
     GRefPtr<GInputStream> inputStream = adoptGRef(G_INPUT_STREAM(g_file_read_finish(file, result, &error.outPtr())));
     if (error)
-        task->didFail(ResourceError(String { g_quark_to_string(error->domain) }, error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
+        task->didFail(ResourceError(String::fromLatin1(g_quark_to_string(error->domain)), error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
     else
         task->didReadFile(WTFMove(inputStream));
 }
@@ -1743,7 +1743,7 @@ void NetworkDataTaskSoup::enumerateFileChildrenCallback(GFile* file, GAsyncResul
     GUniqueOutPtr<GError> error;
     GRefPtr<GFileEnumerator> enumerator = adoptGRef(g_file_enumerate_children_finish(file, result, &error.outPtr()));
     if (error)
-        task->didFail(ResourceError(String { g_quark_to_string(error->domain) }, error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
+        task->didFail(ResourceError(String::fromLatin1(g_quark_to_string(error->domain)), error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
     else
         task->didReadFile(webkitDirectoryInputStreamNew(WTFMove(enumerator), task->m_firstRequest.url().string().utf8()));
 }

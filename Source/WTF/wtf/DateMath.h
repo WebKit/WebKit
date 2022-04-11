@@ -96,9 +96,9 @@ inline double jsCurrentTime()
     return floor(WallTime::now().secondsSinceEpoch().milliseconds());
 }
 
-extern WTF_EXPORT_PRIVATE const char* const weekdayName[7];
-extern WTF_EXPORT_PRIVATE const char* const monthName[12];
-extern WTF_EXPORT_PRIVATE const char* const monthFullName[12];
+extern WTF_EXPORT_PRIVATE const ASCIILiteral weekdayName[7];
+extern WTF_EXPORT_PRIVATE const ASCIILiteral monthName[12];
+extern WTF_EXPORT_PRIVATE const ASCIILiteral monthFullName[12];
 extern WTF_EXPORT_PRIVATE const int firstDayOfMonth[2][12];
 
 static constexpr double hoursPerDay = 24.0;

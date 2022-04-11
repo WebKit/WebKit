@@ -158,7 +158,7 @@ void ResourceRequest::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHeade
     const char* headerName;
     const char* headerValue;
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        m_httpHeaderFields.set(String(headerName), String(headerValue));
+        m_httpHeaderFields.set(String::fromLatin1(headerName), String::fromLatin1(headerValue));
 }
 
 unsigned initializeMaximumHTTPConnectionCountPerHost()

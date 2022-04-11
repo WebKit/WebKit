@@ -84,14 +84,14 @@ static bool isEGLImageAvailable(bool useIndexedGetString)
         GLint numExtensions = 0;
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         for (GLint i = 0; i < numExtensions; ++i) {
-            String extension = String(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+            String extension = String::fromLatin1(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
             if (extension == "GL_OES_EGL_image" || extension == "GL_OES_EGL_image_external")
                 return true;
         }
     } else
 #endif
     {
-        String extensionsString = String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
+        String extensionsString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
         for (auto& extension : extensionsString.split(' ')) {
             if (extension == "GL_OES_EGL_image" || extension == "GL_OES_EGL_image_external")
                 return true;

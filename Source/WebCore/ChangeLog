@@ -1,3 +1,39 @@
+2022-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Finish porting code base to String::fromLatin1() and make String(const char*) private
+        https://bugs.webkit.org/show_bug.cgi?id=238977
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp:
+        (WebCore::GStreamerDataChannelHandler::createDataChannelEvent):
+        * Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp:
+        (WebCore::fetchDescription):
+        (WebCore::GStreamerMediaEndpoint::storeRemoteMLineInfo):
+        (WebCore::GStreamerMediaEndpoint::addRemoteStream):
+        (WebCore::GStreamerMediaEndpoint::createSessionDescriptionSucceeded):
+        (WebCore::GStreamerMediaEndpoint::collectTransceivers):
+        * Modules/mediastream/gstreamer/GStreamerRtpTransceiverBackend.cpp:
+        (WebCore::GStreamerRtpTransceiverBackend::mid):
+        * Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp:
+        (WebCore::fillRTCStats):
+        (WebCore::fillRTCRTPStreamStats):
+        (WebCore::fillOutboundRTPStreamStats):
+        * Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp:
+        (WebCore::toRTCEncodingParameters):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::updateConfigurationFromCaps):
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h:
+        (WebCore::ProtectionSystemEvents::ProtectionSystemEvents):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::platformMaximumBufferSize const):
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp:
+        (WebCore::ExtensionsGLOpenGLCommon::ExtensionsGLOpenGLCommon):
+        * platform/graphics/opengl/ExtensionsGLOpenGLES.cpp:
+        (WebCore::ExtensionsGLOpenGLES::getExtensions):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getString):
+
 2022-04-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r292690.

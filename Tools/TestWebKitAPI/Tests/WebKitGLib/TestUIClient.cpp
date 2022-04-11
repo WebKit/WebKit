@@ -131,7 +131,7 @@ public:
 
     static void windowPropertiesNotifyCallback(GObject*, GParamSpec* paramSpec, UIClientTest* test)
     {
-        test->m_windowPropertiesChanged.add(String { g_param_spec_get_name(paramSpec) });
+        test->m_windowPropertiesChanged.add(String::fromLatin1(g_param_spec_get_name(paramSpec)));
     }
 
     static WebKitWebView* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction* navigation, UIClientTest* test)

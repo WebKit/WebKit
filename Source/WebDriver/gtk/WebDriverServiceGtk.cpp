@@ -39,7 +39,7 @@ void WebDriverService::platformInit()
 Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;
-    capabilities.platformName = String("linux");
+    capabilities.platformName = String("linux"_s);
     capabilities.setWindowRect = true;
     return capabilities;
 }
@@ -110,7 +110,7 @@ bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Va
 
 void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
 {
-    capabilities.browserBinary = String(LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser");
+    capabilities.browserBinary = String(LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser"_s);
     capabilities.browserArguments = Vector<String> { "--automation"_s };
     capabilities.useOverlayScrollbars = true;
 

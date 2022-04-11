@@ -44,7 +44,7 @@ namespace WebCore {
 
 ResourceError ResourceError::transportError(const URL& failingURL, int statusCode, const String& reasonPhrase)
 {
-    return ResourceError(String { g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN) }, statusCode, failingURL, reasonPhrase);
+    return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN)), statusCode, failingURL, reasonPhrase);
 }
 
 ResourceError ResourceError::httpError(SoupMessage* message, GError* error)
@@ -61,22 +61,22 @@ ResourceError ResourceError::authenticationError(SoupMessage* message)
 {
     ASSERT(message);
 #if USE(SOUP2)
-    return ResourceError(String { g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN) }, message->status_code,
+    return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_HTTP_ERROR_DOMAIN)), message->status_code,
         soupURIToURL(soup_message_get_uri(message)), String::fromUTF8(message->reason_phrase));
 #else
-    return ResourceError(String { g_quark_to_string(SOUP_SESSION_ERROR) }, soup_message_get_status(message),
+    return ResourceError(String::fromLatin1(g_quark_to_string(SOUP_SESSION_ERROR)), soup_message_get_status(message),
         soup_message_get_uri(message), String::fromUTF8(soup_message_get_reason_phrase(message)));
 #endif
 }
 
 ResourceError ResourceError::genericGError(const URL& failingURL, GError* error)
 {
-    return ResourceError(String { g_quark_to_string(error->domain) }, error->code, failingURL, String::fromUTF8(error->message));
+    return ResourceError(String::fromLatin1(g_quark_to_string(error->domain)), error->code, failingURL, String::fromUTF8(error->message));
 }
 
 ResourceError ResourceError::tlsError(const URL& failingURL, unsigned tlsErrors, GTlsCertificate* certificate)
 {
-    ResourceError resourceError(String { g_quark_to_string(G_TLS_ERROR) }, G_TLS_ERROR_BAD_CERTIFICATE, failingURL, unacceptableTLSCertificate());
+    ResourceError resourceError(String::fromLatin1(g_quark_to_string(G_TLS_ERROR)), G_TLS_ERROR_BAD_CERTIFICATE, failingURL, unacceptableTLSCertificate());
     resourceError.setTLSErrors(tlsErrors);
     resourceError.setCertificate(certificate);
     return resourceError;

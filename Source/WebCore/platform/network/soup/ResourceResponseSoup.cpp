@@ -55,7 +55,7 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
     }
 
     m_httpStatusCode = soup_message_get_status(soupMessage);
-    setHTTPStatusText(String { soup_message_get_reason_phrase(soupMessage) });
+    setHTTPStatusText(String::fromLatin1(soup_message_get_reason_phrase(soupMessage)));
 
     m_certificate = soup_message_get_tls_peer_certificate(soupMessage);
     m_tlsErrors = soup_message_get_tls_peer_certificate_errors(soupMessage);
@@ -66,9 +66,9 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
     String contentType;
     const char* officialType = soup_message_headers_get_one(responseHeaders, "Content-Type");
     if (!sniffedContentType.isNull() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED && sniffedContentType != officialType)
-        contentType = String { sniffedContentType.data() };
+        contentType = String::fromLatin1(sniffedContentType.data());
     else
-        contentType = String { officialType };
+        contentType = String::fromLatin1(officialType);
     setMimeType(extractMIMETypeFromMediaType(contentType));
     if (m_mimeType.isEmpty() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED)
         setMimeType(MIMETypeRegistry::mimeTypeForPath(m_url.path().toString()));
@@ -90,7 +90,7 @@ void ResourceResponse::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHead
     const char* headerValue;
     soup_message_headers_iter_init(&headersIter, soupHeaders);
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        addHTTPHeaderField(String(headerName), String(headerValue));
+        addHTTPHeaderField(String::fromLatin1(headerName), String::fromLatin1(headerValue));
 }
 
 CertificateInfo ResourceResponse::platformCertificateInfo() const

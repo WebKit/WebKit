@@ -301,7 +301,7 @@ bool ExtensionsGLOpenGLES::platformSupportsExtension(const String& name)
 
 String ExtensionsGLOpenGLES::getExtensions()
 {
-    return String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
+    return String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
 }
 
 } // namespace WebCore

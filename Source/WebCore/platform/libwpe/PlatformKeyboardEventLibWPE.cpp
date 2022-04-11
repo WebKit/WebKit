@@ -1297,11 +1297,11 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
     case WPE_KEY_ISO_Enter:
     case WPE_KEY_KP_Enter:
     case WPE_KEY_Return:
-        return String("\r");
+        return String("\r"_s);
     case WPE_KEY_BackSpace:
-        return String("\x8");
+        return String("\x8"_s);
     case WPE_KEY_Tab:
-        return String("\t");
+        return String("\t"_s);
     default:
         break;
     }

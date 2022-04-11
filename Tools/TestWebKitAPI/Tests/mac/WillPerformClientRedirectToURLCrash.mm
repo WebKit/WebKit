@@ -64,7 +64,7 @@ static NSURL *testURL()
 
 -(void)webView:(WebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
 {
-    EXPECT_EQ(String("PASS"), String(message));
+    EXPECT_EQ(String(message), "PASS"_s);
     testFinished = true;
 }
 

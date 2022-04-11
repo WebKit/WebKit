@@ -295,7 +295,7 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
         //           MSE_MAX_BUFFER_SIZE='*:100M'
         //           MSE_MAX_BUFFER_SIZE='video:90M,T:100000'
 
-        String s(std::getenv("MSE_MAX_BUFFER_SIZE"));
+        auto s = String::fromLatin1(std::getenv("MSE_MAX_BUFFER_SIZE"));
         if (!s.isEmpty()) {
             Vector<String> entries = s.split(',');
             for (const String& entry : entries) {

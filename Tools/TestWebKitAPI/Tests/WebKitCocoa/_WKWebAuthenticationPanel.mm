@@ -283,8 +283,8 @@ using namespace WebCore;
 
 namespace {
 
-const char parentFrame[] = "<html><iframe id='theFrame' src='iFrame.html'></iframe></html>";
-const char subFrame[] =
+static constexpr auto parentFrame = "<html><iframe id='theFrame' src='iFrame.html'></iframe></html>"_s;
+static constexpr auto subFrame =
 "<html>"
 "<input type='text' id='input'>"
 "<script>"
@@ -299,7 +299,7 @@ const char subFrame[] =
 "    };"
 "    navigator.credentials.get(options);"
 "</script>"
-"</html>";
+"</html>"_s;
 
 static _WKExperimentalFeature *webAuthenticationModernExperimentalFeature()
 {

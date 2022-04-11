@@ -39,7 +39,7 @@ String logLevelString()
     WTFLogAlways("WEBKIT_DEBUG is not empty, but this is a release build. Notice that many log messages will only appear in a debug build.");
 #endif
 
-    return String { logEnv };
+    return String::fromLatin1(logEnv);
 }
 
 } // namespace WTF

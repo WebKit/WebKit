@@ -149,7 +149,7 @@ HRESULT WebCoreStatistics::javaScriptProtectedObjectTypeCounts(_COM_Outptr_opt_ 
     Iterator end = jsObjectTypeNames->end();
     HashMap<String, int> typeCountMap;
     for (Iterator current = jsObjectTypeNames->begin(); current != end; ++current)
-        typeCountMap.set(String { current->key }, current->value);
+        typeCountMap.set(String::fromLatin1(current->key), current->value);
 
     COMPtr<IPropertyBag2> results(AdoptCOM, COMPropertyBag<int>::createInstance(typeCountMap));
     results.copyRefTo(typeNamesAndCounts);
@@ -167,7 +167,7 @@ HRESULT WebCoreStatistics::javaScriptObjectTypeCounts(_COM_Outptr_opt_ IProperty
     Iterator end = jsObjectTypeNames->end();
     HashMap<String, int> typeCountMap;
     for (Iterator current = jsObjectTypeNames->begin(); current != end; ++current)
-        typeCountMap.set(String { current->key }, current->value);
+        typeCountMap.set(String::fromLatin1(current->key), current->value);
 
     COMPtr<IPropertyBag2> results(AdoptCOM, COMPropertyBag<int>::createInstance(typeCountMap));
     results.copyRefTo(typeNamesAndCounts);

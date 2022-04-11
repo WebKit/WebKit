@@ -46,7 +46,7 @@ public:
 #endif
     Vector<String> commandsForKeyval(unsigned keyval, unsigned modifiers);
 
-    void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(command); }
+    void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(String::fromLatin1(command)); }
 
 private:
     GtkWidget* m_nativeWidget;

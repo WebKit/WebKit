@@ -92,7 +92,7 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps()
 
 #if GST_CHECK_VERSION(1, 20, 0)
     GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
-    configuration.codec = String { codec.get() };
+    configuration.codec = String::fromLatin1(codec.get());
 #endif
 
     callOnMainThreadAndWait([&] {

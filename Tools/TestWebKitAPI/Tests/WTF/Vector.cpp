@@ -895,9 +895,9 @@ TEST(WTF_Vector, MapLambdaMove)
 TEST(WTF_Vector, MapFromHashMap)
 {
     HashMap<String, String> map;
-    map.set(String { "k1" }, String { "v1" });
-    map.set(String { "k2" }, String { "v2" });
-    map.set(String { "k3" }, String { "v3" });
+    map.set("k1"_s, "v1"_s);
+    map.set("k2"_s, "v2"_s);
+    map.set("k3"_s, "v3"_s);
 
     auto mapped = WTF::map(map, [&] (KeyValuePair<String, String>& pair) -> String {
         return pair.value;

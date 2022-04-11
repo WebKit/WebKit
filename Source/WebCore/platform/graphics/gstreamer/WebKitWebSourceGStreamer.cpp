@@ -596,7 +596,7 @@ static bool webKitWebSrcSetExtraHeader(GQuark fieldId, const GValue* value, gpoi
 
     GST_DEBUG("Appending extra header: \"%s: %s\"", fieldName, fieldContent.get());
     ResourceRequest* request = static_cast<ResourceRequest*>(userData);
-    request->setHTTPHeaderField(String { fieldName }, String { fieldContent.get() });
+    request->setHTTPHeaderField(String::fromLatin1(fieldName), String::fromLatin1(fieldContent.get()));
     return true;
 }
 
@@ -644,7 +644,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     ASSERT(members->requestedPosition != members->stopPosition);
 
     GST_DEBUG_OBJECT(src, "Posting task to request R%u %s requestedPosition=%" G_GUINT64_FORMAT " stopPosition=%" G_GUINT64_FORMAT, members->requestNumber, priv->originalURI.data(), members->requestedPosition, members->stopPosition);
-    URL url { String { priv->originalURI.data() } };
+    URL url { String::fromLatin1(priv->originalURI.data()) };
 
     ResourceRequest request(url);
     request.setAllowCookies(true);
@@ -653,7 +653,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
     request.setHTTPReferrer(members->referrer);
 
     if (priv->httpMethod.get())
-        request.setHTTPMethod(String { priv->httpMethod.get() });
+        request.setHTTPMethod(String::fromLatin1(priv->httpMethod.get()));
 
 #if USE(SOUP)
     // By default, HTTP Accept-Encoding is disabled here as we don't
@@ -681,7 +681,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
         else
             formatedRange.reset(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", members->requestedPosition));
         GST_DEBUG_OBJECT(src, "Range request: %s", formatedRange.get());
-        request.setHTTPHeaderField(HTTPHeaderName::Range, String { formatedRange.get() });
+        request.setHTTPHeaderField(HTTPHeaderName::Range, String::fromLatin1(formatedRange.get()));
     }
     ASSERT(members->readPosition == members->requestedPosition);
 
@@ -881,7 +881,7 @@ const gchar* const* webKitWebSrcGetProtocols(GType)
 
 static URL convertPlaybinURI(const char* uriString)
 {
-    return URL { String { uriString } };
+    return URL { String::fromLatin1(uriString) };
 }
 
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)

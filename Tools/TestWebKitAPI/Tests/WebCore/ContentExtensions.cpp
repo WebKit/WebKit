@@ -1792,7 +1792,7 @@ TEST_F(ContentExtensionTest, ParsingFailures)
     testPatternStatus("a{a,b}"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);
 
     const char nonASCII[2] = {-1, '\0'};
-    testPatternStatus(String { nonASCII }, ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
+    testPatternStatus(String::fromLatin1(nonASCII), ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
     testPatternStatus("\\xff"_s, ContentExtensions::URLFilterParser::ParseStatus::NonASCII);
     
     testPatternStatus("\\x\\r\\n"_s, ContentExtensions::URLFilterParser::ParseStatus::Ok);

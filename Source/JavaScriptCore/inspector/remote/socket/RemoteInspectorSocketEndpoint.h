@@ -132,7 +132,7 @@ protected:
 
         ListenerConnection(ConnectionID id, Listener& listener, const char* address, uint16_t port)
             : BaseConnection(id)
-            , address { address }
+            , address { String::fromLatin1(address) }
             , port { port }
             , listener { listener }
         {

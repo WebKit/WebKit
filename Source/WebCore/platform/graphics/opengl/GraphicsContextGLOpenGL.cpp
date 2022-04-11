@@ -1346,7 +1346,7 @@ String GraphicsContextGLOpenGL::getString(GCGLenum name)
     if (!makeContextCurrent())
         return String();
 
-    return String(reinterpret_cast<const char*>(::glGetString(name)));
+    return String::fromLatin1(reinterpret_cast<const char*>(::glGetString(name)));
 }
 
 void GraphicsContextGLOpenGL::hint(GCGLenum target, GCGLenum mode)

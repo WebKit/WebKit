@@ -2147,7 +2147,7 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent& event)
     if (event.type() != eventNames().keydownEvent && event.type() != eventNames().keypressEvent)
         return false;
 
-    auto command = frame->editor().command(String { interpretKeyEvent(&event) });
+    auto command = frame->editor().command(String::fromLatin1(interpretKeyEvent(&event)));
 
     if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,

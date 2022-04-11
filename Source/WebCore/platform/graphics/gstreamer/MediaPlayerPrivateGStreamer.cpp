@@ -365,7 +365,7 @@ void MediaPlayerPrivateGStreamer::load(const URL&, const ContentType&, MediaSour
 void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate& stream)
 {
     m_streamPrivate = &stream;
-    load(String("mediastream://") + stream.id());
+    load(makeString("mediastream://", stream.id()));
     syncOnClock(false);
 
     m_player->play();
@@ -1735,7 +1735,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         GST_ERROR("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
 
-        m_errorMessage = String { err->message };
+        m_errorMessage = String::fromLatin1(err->message);
 
         error = MediaPlayer::NetworkState::Empty;
         if (g_error_matches(err.get(), GST_STREAM_ERROR, GST_STREAM_ERROR_CODEC_NOT_FOUND)
@@ -1889,7 +1889,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         else if (gst_structure_has_name(structure, "http-headers")) {
             GST_DEBUG_OBJECT(pipeline(), "Processing HTTP headers: %" GST_PTR_FORMAT, structure);
             if (const char* uri = gst_structure_get_string(structure, "uri")) {
-                URL url { String { uri } };
+                URL url { String::fromLatin1(uri) };
                 m_origins.add(SecurityOrigin::create(url));
 
                 if (url != m_url) {
@@ -2166,7 +2166,7 @@ void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
     g_object_set(element, "temp-template", newDownloadTemplate.get(), nullptr);
     GST_DEBUG_OBJECT(pipeline(), "Reconfigured file download template from '%s' to '%s'", oldDownloadTemplate.get(), newDownloadTemplate.get());
 
-    String newDownloadPrefixPath { newDownloadTemplate.get() };
+    auto newDownloadPrefixPath = String::fromLatin1(newDownloadTemplate.get());
     purgeOldDownloadFiles(newDownloadPrefixPath.replace("XXXXXX", ""));
 }
 
@@ -2470,11 +2470,11 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         // though. We need to take the base of the current url and
         // append the value of new-location to it.
         URL baseUrl = gst_uri_is_valid(newLocation) ? URL() : m_url;
-        URL newUrl = URL(baseUrl, String { newLocation });
+        URL newUrl = URL(baseUrl, String::fromLatin1(newLocation));
 
         GUniqueOutPtr<gchar> playbinUrlStr;
         g_object_get(m_pipeline.get(), "current-uri", &playbinUrlStr.outPtr(), nullptr);
-        URL playbinUrl { String { playbinUrlStr.get() } };
+        URL playbinUrl { String::fromLatin1(playbinUrlStr.get()) };
 
         if (playbinUrl == newUrl) {
             GST_DEBUG_OBJECT(pipeline(), "Playbin already handled redirection.");
@@ -2599,7 +2599,7 @@ bool isMediaDiskCacheDisabled()
 #if PLATFORM(WPE)
     static std::once_flag once;
     std::call_once(once, []() {
-        String s(std::getenv("WPE_SHELL_DISABLE_MEDIA_DISK_CACHE"));
+        auto s = String::fromLatin1(std::getenv("WPE_SHELL_DISABLE_MEDIA_DISK_CACHE"));
         if (!s.isEmpty()) {
             String value = s.stripWhiteSpace().convertToLowercaseWithoutLocale();
             result = (value == "1" || value == "t" || value == "true");
@@ -3918,7 +3918,7 @@ InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMess
             GstBuffer* data = nullptr;
             gst_event_parse_protection(event.get(), &eventKeySystemId, &data, nullptr);
 
-            initData.append({ String { eventKeySystemId }, data });
+            initData.append({ String::fromLatin1(eventKeySystemId), data });
             m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
         }
     }
@@ -4039,7 +4039,7 @@ void MediaPlayerPrivateGStreamer::handleProtectionEvent(GstEvent* event)
     const char* eventKeySystemUUID = nullptr;
     GstBuffer* initData = nullptr;
     gst_event_parse_protection(event, &eventKeySystemUUID, &initData, nullptr);
-    initializationDataEncountered({ String { eventKeySystemUUID }, initData });
+    initializationDataEncountered({ String::fromLatin1(eventKeySystemUUID), initData });
 }
 
 bool MediaPlayerPrivateGStreamer::waitingForKey() const

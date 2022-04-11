@@ -109,7 +109,7 @@ public:
         const char** streamEncryptionAllowedSystems = reinterpret_cast<const char**>(g_value_get_boxed(streamEncryptionAllowedSystemsValue));
         if (streamEncryptionAllowedSystems) {
             for (unsigned i = 0; streamEncryptionAllowedSystems[i]; ++i)
-                m_availableSystems.append(streamEncryptionAllowedSystems[i]);
+                m_availableSystems.append(String::fromLatin1(streamEncryptionAllowedSystems[i]));
         }
     }
     const EventVector& events() const { return m_events; }

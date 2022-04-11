@@ -1174,13 +1174,9 @@ static void removeFontFallbackIfPresent(const String& fontFallbackPath)
 static bool handleControlCommand(const char* command)
 {
     if (!strcmp("#CHECK FOR ABANDONED DOCUMENTS", command)) {
-        // DumpRenderTree does not support checking for abandonded documents.
-        String result("\n");
-        printf("Content-Type: text/plain\n");
-        printf("Content-Length: %u\n", result.length());
-        fwrite(result.utf8().data(), 1, result.length(), stdout);
-        printf("#EOF\n");
-        fprintf(stderr, "#EOF\n");
+        // DumpRenderTree does not support checking for abandoned documents.
+        fputs("Content-Type: text/plain\nContent-Length: 1\n\n#EOF\n", stdout);
+        fputs("#EOF\n", stderr);
         fflush(stdout);
         fflush(stderr);
         return true;

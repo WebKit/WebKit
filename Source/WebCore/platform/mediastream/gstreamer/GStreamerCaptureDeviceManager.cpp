@@ -103,7 +103,7 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
 
     CaptureDevice::DeviceType type = deviceType();
     GUniquePtr<char> deviceClassChar(gst_device_get_device_class(device.get()));
-    String deviceClass(String(deviceClassChar.get()));
+    auto deviceClass = String::fromLatin1(deviceClassChar.get());
     if (type == CaptureDevice::DeviceType::Microphone && !deviceClass.startsWith("Audio"))
         return;
     if (type == CaptureDevice::DeviceType::Camera && !deviceClass.startsWith("Video"))

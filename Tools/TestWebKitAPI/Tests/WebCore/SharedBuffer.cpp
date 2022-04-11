@@ -43,7 +43,7 @@ namespace TestWebKitAPI {
 
 TEST_F(FragmentedSharedBufferTest, createWithContentsOfMissingFile)
 {
-    auto buffer = SharedBuffer::createWithContentsOfFile(String("not_existing_file"));
+    auto buffer = SharedBuffer::createWithContentsOfFile(String("not_existing_file"_s));
     ASSERT_NULL(buffer);
 }
 
@@ -52,7 +52,7 @@ TEST_F(FragmentedSharedBufferTest, createWithContentsOfExistingFile)
     auto buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
     EXPECT_TRUE(buffer->size() == strlen(FragmentedSharedBufferTest::testData()));
-    EXPECT_TRUE(String(FragmentedSharedBufferTest::testData()) == String(buffer->makeContiguous()->data(), buffer->size()));
+    EXPECT_TRUE(String::fromLatin1(FragmentedSharedBufferTest::testData()) == String(buffer->makeContiguous()->data(), buffer->size()));
 }
 
 TEST_F(FragmentedSharedBufferTest, createWithContentsOfExistingEmptyFile)

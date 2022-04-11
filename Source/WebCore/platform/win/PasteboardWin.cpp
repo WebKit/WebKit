@@ -840,7 +840,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std:
     if (::IsClipboardFormatAvailable(CF_TEXT) && ::OpenClipboard(m_owner)) {
         if (HANDLE cbData = ::GetClipboardData(CF_TEXT)) {
             // FIXME: This treats the characters as Latin-1, not UTF-8 or even Windows Latin-1. Is that the right encoding?
-            text.text = String { static_cast<char*>(GlobalLock(cbData)) };
+            text.text = String::fromLatin1(static_cast<char*>(GlobalLock(cbData)));
             GlobalUnlock(cbData);
             ::CloseClipboard();
             return;
@@ -888,7 +888,7 @@ RefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, const Simple
             HANDLE cbData = ::GetClipboardData(CF_TEXT);
             if (cbData) {
                 char* buffer = static_cast<char*>(GlobalLock(cbData));
-                String str(buffer);
+                auto str = String::fromLatin1(buffer);
                 GlobalUnlock(cbData);
                 ::CloseClipboard();
                 return createFragmentFromText(context, str);

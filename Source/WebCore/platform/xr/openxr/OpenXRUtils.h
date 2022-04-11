@@ -60,7 +60,7 @@ inline String resultToString(XrResult value, XrInstance instance)
     char buffer[XR_MAX_RESULT_STRING_SIZE];
     XrResult result = xrResultToString(instance, value, buffer);
     if (result == XR_SUCCESS)
-        return String(buffer);
+        return String::fromLatin1(buffer);
     return makeString("<unknown ", int(value), ">");
 }
 

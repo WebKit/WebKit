@@ -234,98 +234,98 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEvent::Type type)
     unsigned short keyCode = static_cast<unsigned short>(wparam);
     switch (keyCode) {
     case VK_MENU:
-        return String("Alt");
+        return "Alt"_s;
     case VK_CONTROL:
-        return String("Control");
+        return "Control"_s;
     case VK_SHIFT:
-        return String("Shift");
+        return "Shift"_s;
     case VK_CAPITAL:
-        return String("CapsLock");
+        return "CapsLock"_s;
     case VK_LWIN:
     case VK_RWIN:
-        return String("Win");
+        return "Win"_s;
     case VK_CLEAR:
-        return String("Clear");
+        return "Clear"_s;
     case VK_DOWN:
-        return String("Down");
+        return "Down"_s;
     case VK_END:
-        return String("End");
+        return "End"_s;
     case VK_RETURN:
-        return String("Enter");
+        return "Enter"_s;
     case VK_EXECUTE:
-        return String("Execute");
+        return "Execute"_s;
     case VK_F1:
-        return String("F1");
+        return "F1"_s;
     case VK_F2:
-        return String("F2");
+        return "F2"_s;
     case VK_F3:
-        return String("F3");
+        return "F3"_s;
     case VK_F4:
-        return String("F4");
+        return "F4"_s;
     case VK_F5:
-        return String("F5");
+        return "F5"_s;
     case VK_F6:
-        return String("F6");
+        return "F6"_s;
     case VK_F7:
-        return String("F7");
+        return "F7"_s;
     case VK_F8:
-        return String("F8");
+        return "F8"_s;
     case VK_F9:
-        return String("F9");
+        return "F9"_s;
     case VK_F10:
-        return String("F11");
+        return "F11"_s;
     case VK_F12:
-        return String("F12");
+        return "F12"_s;
     case VK_F13:
-        return String("F13");
+        return "F13"_s;
     case VK_F14:
-        return String("F14");
+        return "F14"_s;
     case VK_F15:
-        return String("F15");
+        return "F15"_s;
     case VK_F16:
-        return String("F16");
+        return "F16"_s;
     case VK_F17:
-        return String("F17");
+        return "F17"_s;
     case VK_F18:
-        return String("F18");
+        return "F18"_s;
     case VK_F19:
-        return String("F19");
+        return "F19"_s;
     case VK_F20:
-        return String("F20");
+        return "F20"_s;
     case VK_F21:
-        return String("F21");
+        return "F21"_s;
     case VK_F22:
-        return String("F22");
+        return "F22"_s;
     case VK_F23:
-        return String("F23");
+        return "F23"_s;
     case VK_F24:
-        return String("F24");
+        return "F24"_s;
     case VK_HELP:
-        return String("Help");
+        return "Help"_s;
     case VK_HOME:
-        return String("Home");
+        return "Home"_s;
     case VK_INSERT:
-        return String("Insert");
+        return "Insert"_s;
     case VK_LEFT:
-        return String("Left");
+        return "Left"_s;
     case VK_NEXT:
-        return String("PageDown");
+        return "PageDown"_s;
     case VK_PRIOR:
-        return String("PageUp");
+        return "PageUp"_s;
     case VK_PAUSE:
-        return String("Pause");
+        return "Pause"_s;
     case VK_SNAPSHOT:
-        return String("PrintScreen");
+        return "PrintScreen"_s;
     case VK_RIGHT:
-        return String("Right");
+        return "Right"_s;
     case VK_SCROLL:
-        return String("Scroll");
+        return "Scroll"_s;
     case VK_SELECT:
-        return String("Select");
+        return "Select"_s;
     case VK_UP:
-        return String("Up");
+        return "Up"_s;
     case VK_DELETE:
-        return String("U+007F"); // Standard says that DEL becomes U+007F.
+        return "U+007F"_s; // Standard says that DEL becomes U+007F.
     default:
         return makeString("U+", hex(toASCIIUpper(keyCode), 4));
     }

@@ -631,7 +631,7 @@ static gboolean parseGstStructureValue(GQuark fieldId, const GValue* value, gpoi
 {
     if (auto jsonValue = gstStructureValueToJSON(value)) {
         auto* object = reinterpret_cast<JSON::Object*>(userData);
-        object->setValue(String { g_quark_to_string(fieldId) }, jsonValue->releaseNonNull());
+        object->setValue(String::fromLatin1(g_quark_to_string(fieldId)), jsonValue->releaseNonNull());
     }
     return TRUE;
 }
