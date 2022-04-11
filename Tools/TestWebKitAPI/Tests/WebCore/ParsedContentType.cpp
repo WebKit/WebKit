@@ -237,8 +237,8 @@ TEST(ParsedContentType, Serialize)
     EXPECT_STREQ(serializeIfValid("text"_s), "NOTVALID");
     EXPECT_STREQ(serializeIfValid("text/"_s), "NOTVALID");
     EXPECT_STREQ(serializeIfValid("/plain"_s), "NOTVALID");
-    EXPECT_STREQ(serializeIfValid("†/†"_s), "NOTVALID");
-    EXPECT_STREQ(serializeIfValid("text/\xD8\x88\x12\x34"_s), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid(String::fromUTF8("†/†")), "NOTVALID");
+    EXPECT_STREQ(serializeIfValid(String::fromUTF8("text/\xD8\x88\x12\x34")), "NOTVALID");
 
     EXPECT_STREQ(serializeIfValid("text/plain;"_s), "text/plain");
     EXPECT_STREQ(serializeIfValid("text/plain;;"_s), "text/plain");

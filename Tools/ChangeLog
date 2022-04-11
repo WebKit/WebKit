@@ -2,6 +2,13 @@
 
         Unreviewed, fix use of ASCIILiteral for a literal containing non-ASCII characters after r292251.
 
+        * TestWebKitAPI/Tests/WebCore/ParsedContentType.cpp:
+        (TestWebKitAPI::TEST):
+
+2022-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix use of ASCIILiteral for a literal containing non-ASCII characters after r292251.
+
         * TestWebKitAPI/Tests/WebCore/PublicSuffix.cpp:
         (TestWebKitAPI::TEST_F):
 
