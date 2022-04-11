@@ -1600,8 +1600,6 @@ webkit.org/b/227762 imported/w3c/web-platform-tests/html/interaction/focus/the-a
 
 webkit.org/b/232276 imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/spin-by-blocking-style-sheet.html [ Pass Failure ]
 
-webkit.org/b/228561 http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html [ Pass Timeout ]
-
 webkit.org/b/228704 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-002.html [ Pass Failure ]
 
 webkit.org/b/229058 imported/w3c/web-platform-tests/FileAPI/url/url-in-tags.window.html [ Pass Failure ]
