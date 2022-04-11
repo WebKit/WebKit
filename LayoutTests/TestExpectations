@@ -2942,6 +2942,13 @@ webkit.org/b/163046 [ Debug ] js/regress-141098.html [ Slow Pass Failure ]
 
 webkit.org/b/169625 imported/w3c/web-platform-tests/cors/status.htm [ Pass Failure ]
 
+# webkit.org/b/238908 Global expectations for these until baselines are resolved
+http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html [ Pass Failure ]
+http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html [ Pass Failure ]
+http/tests/paymentrequest/payment-request-change-shipping-option.https.html [ Pass Failure ]
+http/tests/paymentrequest/payment-response-retry-method.https.html [ Pass Failure ]
+http/tests/paymentrequest/updateWith-shippingOptions.https.html [ Pass Failure ]
+
 webkit.org/b/170130 fast/events/before-unload-adopt-subframe-to-outside.html [ Pass Timeout ]
 
 webkit.org/b/170355 [ Release ] fast/mediastream/MediaStream-page-muted.html [ Pass Timeout ]
