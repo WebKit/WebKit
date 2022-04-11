@@ -24,6 +24,7 @@ depends:
 - freedesktop-sdk.bst:components/libsrtp2.bst
 - freedesktop-sdk.bst:components/libwebp.bst
 - freedesktop-sdk.bst:components/libgudev.bst
+- freedesktop-sdk.bst:components/libva.bst
 - freedesktop-sdk.bst:components/openal.bst
 - freedesktop-sdk.bst:components/orc.bst
 - freedesktop-sdk.bst:components/sndfile.bst
@@ -97,7 +98,6 @@ variables:
     -Dteletext=disabled
     -Dtinyalsa=disabled
     -Dttml=disabled
-    -Dva=disabled
     -Dvoaacenc=disabled
     -Dvoamrwbenc=disabled
     -Dvulkan=disabled
