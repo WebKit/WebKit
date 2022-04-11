@@ -671,17 +671,17 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
         [attrString addAttribute:UIAccessibilityTextAttributeContext value:UIAccessibilityTextualContextSourceCode range:range];
 }
 
-static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, NSString *text)
+static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, StringView text)
 {
     // skip invisible text
     if (!node->renderer())
         return;
 
     // easier to calculate the range before appending the string
-    NSRange attrStringRange = NSMakeRange([attrString length], [text length]);
+    NSRange attrStringRange = NSMakeRange([attrString length], text.length());
 
     // append the string from this node
-    [[attrString mutableString] appendString:text];
+    [[attrString mutableString] appendString:text.createNSStringWithoutCopying().get()];
 
     // set new attributes
     AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
@@ -757,13 +757,13 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
                 if (addObjectWrapperToArray(headingObject, array.get()))
                     continue;
 
-                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
+                StringView listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
                 if (!listMarkerText.isEmpty())
-                    [array addObject:listMarkerText];
+                    [array addObject:listMarkerText.createNSString().get()];
                 // There was not an element representation, so just return the text.
                 [array addObject:it.text().createNSString().get()];
             } else {
-                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
+                StringView listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
                 if (!listMarkerText.isEmpty()) {
                     auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
                     AXAttributedStringAppendText(attrString.get(), &node, listMarkerText);
@@ -771,7 +771,7 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
                 }
 
                 auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
-                AXAttributedStringAppendText(attrString.get(), &node, it.text().createNSStringWithoutCopying().get());
+                AXAttributedStringAppendText(attrString.get(), &node, it.text());
                 [array addObject:attrString.get()];
             }
         } else {

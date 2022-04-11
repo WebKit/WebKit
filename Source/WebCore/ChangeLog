@@ -1,5 +1,27 @@
 2022-04-10  Chris Dumez  <cdumez@apple.com>
 
+        Update listMarkerTextForNodeAndPosition() to return a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=239022
+        <rdar://problem/91509602>
+
+        Reviewed by Darin Adler.
+
+        Update listMarkerTextForNodeAndPosition() to return a StringView instead of a String. listMarkerTextForNodeAndPosition()
+        has a StringView internally and none it its call sites actually need a String. The call sites either use StringBuilder
+        or want a NSString*. This avoids unnecessary String allocations.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::listMarkerTextForNode):
+        (WebCore::AccessibilityObject::listMarkerTextForNodeAndPosition):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (AXAttributedStringAppendText):
+        (-[WebAccessibilityObjectWrapperBase contentForSimpleRange:attributed:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:spellCheck:]):
+
+2022-04-10  Chris Dumez  <cdumez@apple.com>
+
         Avoid redundant calls to findHTTPHeaderName()
         https://bugs.webkit.org/show_bug.cgi?id=239021
 

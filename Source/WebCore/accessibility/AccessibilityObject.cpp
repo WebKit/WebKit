@@ -1440,20 +1440,20 @@ static RenderListItem* renderListItemContainerForNode(Node* node)
     return nullptr;
 }
 
-static String listMarkerTextForNode(Node* node)
+static StringView listMarkerTextForNode(Node* node)
 {
     RenderListItem* listItem = renderListItemContainerForNode(node);
     if (!listItem)
-        return String();
+        return { };
     
     // If this is in a list item, we need to manually add the text for the list marker
     // because a RenderListMarker does not have a Node equivalent and thus does not appear
     // when iterating text.
-    return listItem->markerTextWithSuffix().toString();
+    return listItem->markerTextWithSuffix();
 }
 
 // Returns the text associated with a list marker if this node is contained within a list item.
-String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& visiblePositionStart)
+StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& visiblePositionStart)
 {
     auto* listItem = renderListItemContainerForNode(node);
     if (!listItem)

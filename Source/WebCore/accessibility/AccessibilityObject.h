@@ -607,7 +607,7 @@ public:
     String doAXStringForRange(const PlainTextRange&) const override { return String(); }
     IntRect doAXBoundsForRange(const PlainTextRange&) const override { return IntRect(); }
     IntRect doAXBoundsForRangeUsingCharacterOffset(const PlainTextRange&) const override { return IntRect(); }
-    static String listMarkerTextForNodeAndPosition(Node*, const VisiblePosition&);
+    static StringView listMarkerTextForNodeAndPosition(Node*, const VisiblePosition&);
 
     unsigned doAXLineForIndex(unsigned) override;
 
