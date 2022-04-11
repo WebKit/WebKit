@@ -69,7 +69,8 @@ public:
     bool isRoundConstant() const { return (isRoundOperation()) && !m_children.size(); }
     bool isHypotNode() const { return m_operator == CalcOperator::Hypot; }
     bool isPowOrSqrtNode() const { return m_operator == CalcOperator::Pow || m_operator == CalcOperator::Sqrt; }
-    bool shouldPreserveFunction() const { return isTrigNode() || isExpNode() || isInverseTrigNode() || isAtan2Node() || isSignNode() || isSignNode() || isSteppedNode() || isRoundOperation() || isPowOrSqrtNode(); }
+    bool shouldPreserveFunction() const { return isTrigNode() || isExpNode() || isInverseTrigNode() || isAtan2Node() || isSignNode() || isSignNode() || isSteppedNode() || isRoundOperation() || isPowOrSqrtNode() || isClampNode(); }
+    bool isClampNode() const { return m_operator == CalcOperator::Clamp; }
 
     void hoistChildrenWithOperator(CalcOperator);
     void combineChildren();

@@ -781,7 +781,7 @@ void CSSCalcOperationNode::combineChildren()
         m_children = WTFMove(newChildren);
     }
 
-    if ((isMinOrMaxNode() || isHypotNode()) && canCombineAllChildren()) {
+    if ((isMinOrMaxNode() || isHypotNode() || isClampNode()) && canCombineAllChildren()) {
         auto combinedUnitType = m_children[0]->primitiveType();
         auto involvesPercentageComparisons = [&]() {
             return combinedUnitType == CSSUnitType::CSS_PERCENTAGE && m_children.size() > 1;
@@ -1303,16 +1303,22 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         if (children.isEmpty())
             return std::numeric_limits<double>::quiet_NaN();
         double minimum = children[0];
-        for (auto child : children)
+        for (auto child : children) {
+            if (std::isnan(child))
+                return child;
             minimum = std::min(minimum, child);
+        }
         return minimum;
     }
     case CalcOperator::Max: {
         if (children.isEmpty())
             return std::numeric_limits<double>::quiet_NaN();
         double maximum = children[0];
-        for (auto child : children)
+        for (auto child : children) {
+            if (std::isnan(child))
+                return child;
             maximum = std::max(maximum, child);
+        }
         return maximum;
     }
     case CalcOperator::Clamp: {
@@ -1321,6 +1327,8 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         double min = children[0];
         double value = children[1];
         double max = children[2];
+        if (std::isnan(min) || std::isnan(value) || std::isnan(max))
+            return std::numeric_limits<double>::quiet_NaN();
         return std::max(min, std::min(value, max));
     }
     case CalcOperator::Pow:
@@ -1338,8 +1346,11 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         if (children.size() == 1)
             return std::abs(children[0]);
         double sum = 0;
-        for (auto child : children)
+        for (auto child : children) {
+            if (std::isnan(child))
+                return child;
             sum += (child * child);
+        }
         return std::sqrt(sum);
     }
     case CalcOperator::Sin: {

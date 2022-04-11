@@ -13,11 +13,11 @@ PASS 'calc(1px * min(1/0, 0))' as a specified value should serialize as 'calc(0p
 PASS 'calc(1px * max(0/0, 0))' as a specified value should serialize as 'calc(NaN * 1px)'.
 PASS 'calc(1px * min(0/0, 0))' as a specified value should serialize as 'calc(NaN * 1px)'.
 PASS 'calc(1px * max(0/0, min(0,10)))' as a specified value should serialize as 'calc(NaN * 1px)'.
-FAIL 'calc(1px * clamp(0/0, 0, 10))' as a specified value should serialize as 'calc(NaN * 1px)'. assert_equals: 'calc(1px * clamp(0/0, 0, 10))' and 'calc(NaN * 1px)' should serialize the same in specified values. expected "calc(NaN * 1px)" but got "calc(1px * clamp(NaN, 0, 10))"
-FAIL 'calc(1px * max(0, min(10, 0/0)))' as a specified value should serialize as 'calc(NaN * 1px)'. assert_equals: 'calc(1px * max(0, min(10, 0/0)))' and 'calc(NaN * 1px)' should serialize the same in specified values. expected "calc(NaN * 1px)" but got "calc(10px)"
-FAIL 'calc(1px * clamp(0, 10, 0/0))' as a specified value should serialize as 'calc(NaN * 1px)'. assert_equals: 'calc(1px * clamp(0, 10, 0/0))' and 'calc(NaN * 1px)' should serialize the same in specified values. expected "calc(NaN * 1px)" but got "calc(1px * clamp(0, 10, NaN))"
-FAIL 'calc(1px * max(0, min(0/0, 10)))' as a specified value should serialize as 'calc(NaN * 1px)'. assert_equals: 'calc(1px * max(0, min(0/0, 10)))' and 'calc(NaN * 1px)' should serialize the same in specified values. expected "calc(NaN * 1px)" but got "calc(0px)"
-FAIL 'calc(1px * clamp(0, 0/0, 10))' as a specified value should serialize as 'calc(NaN * 1px)'. assert_equals: 'calc(1px * clamp(0, 0/0, 10))' and 'calc(NaN * 1px)' should serialize the same in specified values. expected "calc(NaN * 1px)" but got "calc(1px * clamp(0, NaN, 10))"
-FAIL 'calc(1px * clamp(-1/0, 0, 1/0))' as a specified value should serialize as 'calc(0px)'. assert_equals: 'calc(1px * clamp(-1/0, 0, 1/0))' and 'calc(0px)' should serialize the same in specified values. expected "calc(0px)" but got "calc(1px * clamp(-infinity, 0, infinity))"
-FAIL 'calc(1px * clamp(-1/0, 1/0, 10))' as a specified value should serialize as 'calc(10px)'. assert_equals: 'calc(1px * clamp(-1/0, 1/0, 10))' and 'calc(10px)' should serialize the same in specified values. expected "calc(10px)" but got "calc(1px * clamp(-infinity, infinity, 10))"
+PASS 'calc(1px * clamp(0/0, 0, 10))' as a specified value should serialize as 'calc(NaN * 1px)'.
+PASS 'calc(1px * max(0, min(10, 0/0)))' as a specified value should serialize as 'calc(NaN * 1px)'.
+PASS 'calc(1px * clamp(0, 10, 0/0))' as a specified value should serialize as 'calc(NaN * 1px)'.
+PASS 'calc(1px * max(0, min(0/0, 10)))' as a specified value should serialize as 'calc(NaN * 1px)'.
+PASS 'calc(1px * clamp(0, 0/0, 10))' as a specified value should serialize as 'calc(NaN * 1px)'.
+PASS 'calc(1px * clamp(-1/0, 0, 1/0))' as a specified value should serialize as 'calc(0px)'.
+PASS 'calc(1px * clamp(-1/0, 1/0, 10))' as a specified value should serialize as 'calc(10px)'.
 

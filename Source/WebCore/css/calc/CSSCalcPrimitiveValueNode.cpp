@@ -85,11 +85,6 @@ void CSSCalcPrimitiveValueNode::negate()
 void CSSCalcPrimitiveValueNode::invert()
 {
     ASSERT(isNumericValue());
-    if (!m_value->doubleValue()) {
-        m_value = CSSPrimitiveValue::create(std::copysign(std::numeric_limits<double>::infinity(), m_value->doubleValue()), m_value->primitiveType());
-        return;
-    }
-
     m_value = CSSPrimitiveValue::create(1.0 / m_value->doubleValue(), m_value->primitiveType());
 }
 
