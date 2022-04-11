@@ -1,3 +1,11 @@
+2022-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, use std::forward instead of WTFMove since it becomes template typename Vector&&
+        https://bugs.webkit.org/show_bug.cgi?id=239025
+
+        * bytecode/ObjectPropertyConditionSet.h:
+        (JSC::ObjectPropertyConditionSet::create):
+
 2022-04-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed WatchOS build fix.

@@ -62,7 +62,7 @@ public:
             return ObjectPropertyConditionSet();
         
         ObjectPropertyConditionSet result;
-        result.m_data = Conditions::createFromVector(WTFMove(vector));
+        result.m_data = Conditions::createFromVector(std::forward<Vector>(vector));
         ASSERT(result.isValid());
         return result;
     }
