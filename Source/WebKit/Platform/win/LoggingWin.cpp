@@ -48,7 +48,7 @@ String logLevelString()
     if (!GetEnvironmentVariableA(loggingEnvironmentVariable, buffer.data(), length))
         return emptyString();
 
-    return String(buffer.data());
+    return String::fromLatin1(buffer.data());
 #else
     return String();
 #endif
