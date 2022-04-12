@@ -28,14 +28,22 @@
 
 #include "WTFStringUtilities.h"
 #include <WebKit/WKArray.h>
+#include <WebKit/WKContext.h>
 #include <WebKit/WKMutableDictionary.h>
+#include <WebKit/WKNotification.h>
 #include <WebKit/WKNotificationManager.h>
 #include <WebKit/WKNumber.h>
+#include <WebKit/WKPage.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKString.h>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
+
+static void showWebNotification(WKPageRef page, WKNotificationRef notification, const void* clientInfo)
+{
+    static_cast<TestNotificationProvider*>(const_cast<void*>(clientInfo))->showWebNotification(page, notification);
+}
 
 static WKDictionaryRef notificationPermissions(const void* clientInfo)
 {
@@ -47,7 +55,7 @@ TestNotificationProvider::TestNotificationProvider(Vector<WKNotificationManagerR
 {
     m_provider = {
         { 0, this },
-        0, // showWebNotification
+        &TestWebKitAPI::showWebNotification,
         0, // closeWebNotification
         0, // didDestroyNotification
         0, // addNotificationManager
@@ -101,6 +109,32 @@ void TestNotificationProvider::resetPermission(const String& origin)
 
     for (auto& manager : m_managers)
         WKNotificationManagerProviderDidRemoveNotificationPolicies(manager, wkOriginArray.get());
+}
+
+static WKNotificationManagerRef notificationManagerForPage(WKPageRef page)
+{
+    if (page)
+        return WKContextGetNotificationManager(WKPageGetContext(page));
+
+    return WKNotificationManagerGetSharedServiceWorkerNotificationManager();
+}
+
+void TestNotificationProvider::showWebNotification(WKPageRef page, WKNotificationRef notification)
+{
+    auto notificationManager = notificationManagerForPage(page);
+    uint64_t identifier = WKNotificationGetID(notification);
+    WKNotificationManagerProviderDidShowNotification(notificationManager, identifier);
+
+    WKRetain(notificationManager);
+    m_pendingNotification = std::make_pair(notificationManager, identifier);
+}
+
+void TestNotificationProvider::simulateNotificationClick()
+{
+    callOnMainThread([pair = std::exchange(m_pendingNotification, { })] {
+        WKNotificationManagerProviderDidClickNotification(pair.first, pair.second);
+        WKRelease(pair.first);
+    });
 }
 
 } // namespace TestWebKitAPI

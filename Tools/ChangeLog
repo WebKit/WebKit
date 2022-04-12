@@ -1,3 +1,14 @@
+2022-04-12  Youenn Fablet  <youenn@apple.com>
+
+        Add persistent notification click API test
+        https://bugs.webkit.org/show_bug.cgi?id=238995
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/TestNotificationProvider.cpp:
+        * TestWebKitAPI/TestNotificationProvider.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+
 2022-04-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] generate-bundle: fix typo/bug in the wrapper shell code for the bundle after r292109.

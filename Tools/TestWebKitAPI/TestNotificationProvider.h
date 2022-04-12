@@ -40,14 +40,19 @@ public:
     explicit TestNotificationProvider(Vector<WKNotificationManagerRef>&&);
     ~TestNotificationProvider();
 
-    WKDictionaryRef notificationPermissions() const;
     void setPermission(const String& origin, bool allowed);
     void resetPermission(const String& origin);
+
+    WKDictionaryRef notificationPermissions() const;
+    void showWebNotification(WKPageRef, WKNotificationRef);
+    void simulateNotificationClick();
 
 private:
     Vector<WKNotificationManagerRef> m_managers;
     HashMap<String, bool> m_permissions;
     WKNotificationProviderV0 m_provider;
+
+    std::pair<WKNotificationManagerRef, uint64_t> m_pendingNotification;
 };
 
 }
