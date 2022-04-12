@@ -1,3 +1,15 @@
+2022-04-11  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r292411): libwebrtc header files aren't installed in system content path
+        https://bugs.webkit.org/show_bug.cgi?id=239100
+
+        Reviewed by Mark Lam.
+
+        Restored System Content Path processing for absl and webrtc header files.
+
+        * Configurations/libabsl.xcconfig:
+        * Configurations/libwebrtc.xcconfig:
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         [Xcode] Avoid targeting 32-bit iOS and Mac architectures
