@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/FileSystem.h>
-#include <wtf/FunctionDispatcher.h>
 #include <wtf/SHA1.h>
 #include <wtf/Span.h>
 #include <wtf/ThreadSafeRefCounted.h>

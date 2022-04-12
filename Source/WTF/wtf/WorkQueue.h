@@ -42,7 +42,7 @@
 
 namespace WTF {
 
-class WorkQueueBase : public FunctionDispatcher {
+class WorkQueueBase : public FunctionDispatcher, public ThreadSafeRefCounted<WorkQueueBase> {
 public:
     using QOS = Thread::QOS;
 

@@ -1,3 +1,18 @@
+2022-04-12  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        FunctionDispatcher should not be RefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=231940
+
+        Reviewed by Chris Dumez.
+
+        Remove ThreadSafeRefCounted from FunctionDispatcher. Make all existing
+        function dispatchers refcounted.
+
+        No new tests, refactor.
+
+        * NetworkProcess/cache/NetworkCacheData.h:
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+
 2022-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Simplify IPC encoding, decoding of tuples

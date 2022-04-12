@@ -36,7 +36,7 @@
 
 namespace IPC {
 
-class WTF_CAPABILITY("is current") StreamConnectionWorkQueue final : public FunctionDispatcher {
+class WTF_CAPABILITY("is current") StreamConnectionWorkQueue final : public FunctionDispatcher, public ThreadSafeRefCounted<StreamConnectionWorkQueue> {
 public:
     static Ref<StreamConnectionWorkQueue> create(const char* name)
     {

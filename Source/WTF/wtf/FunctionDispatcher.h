@@ -26,14 +26,13 @@
 #pragma once
 
 #include <wtf/Function.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
 
 // FunctionDispatcher is an abstract representation of something that functions can be
 // dispatched to. This can for example be a run loop or a work queue.
 
-class FunctionDispatcher : public ThreadSafeRefCounted<FunctionDispatcher> {
+class FunctionDispatcher {
 public:
     WTF_EXPORT_PRIVATE virtual ~FunctionDispatcher();
 
