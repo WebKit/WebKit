@@ -1,5 +1,16 @@
 2022-04-12  Youenn Fablet  <youenn@apple.com>
 
+        Remove getsockopt from WebProcess sandboxes
+        https://bugs.webkit.org/show_bug.cgi?id=239120
+        <rdar://74988599>
+
+        Reviewed by Anders Carlsson.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2022-04-12  Youenn Fablet  <youenn@apple.com>
+
         Add logging in case WebsiteDataStore is not found for persistent notification events
         https://bugs.webkit.org/show_bug.cgi?id=239111
 
