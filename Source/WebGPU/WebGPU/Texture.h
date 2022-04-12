@@ -88,7 +88,7 @@ private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
     Texture(Device&);
 
-    WGPUTextureViewDescriptor resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
+    std::optional<WGPUTextureViewDescriptor> resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
     uint32_t arrayLayerCount() const;
     bool validateCreateView(const WGPUTextureViewDescriptor&) const;
 

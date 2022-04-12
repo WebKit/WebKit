@@ -55,6 +55,8 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     if (descriptor.nextInChain)
         return BindGroup::createInvalid(*this);
 
+    // FIXME: Validate this according to the spec.
+
     const BindGroupLayout& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
 
     // FIXME(PERFORMANCE): Don't allocate 3 new buffers for every bind group.
@@ -91,7 +93,6 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
 
         if (bufferIsPresent) {
             id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();
-            // FIXME: Use checked casts.
             [vertexArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
             [fragmentArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
             [computeArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];

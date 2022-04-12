@@ -32,6 +32,7 @@
 #import "Device.h"
 #import "IsValidToUseWith.h"
 #import "Texture.h"
+#import <wtf/CheckedArithmetic.h>
 
 namespace WebGPU {
 
@@ -171,8 +172,8 @@ bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, siz
     if (bufferOffset % 4)
         return false;
 
-    // FIXME: Use checked arithmetic
-    if (bufferOffset + size > buffer.size())
+    auto end = checkedSum<uint64_t>(bufferOffset, size);
+    if (end.hasOverflowed() || end.value() > buffer.size())
         return false;
 
     return true;
@@ -283,7 +284,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
     NSUInteger bytesPerRow = dataLayout.bytesPerRow;
 
-    // FIXME: Use checked arithmetic.
     NSUInteger bytesPerImage = dataLayout.bytesPerRow * dataLayout.rowsPerImage;
 
     MTLBlitOption options = MTLBlitOptionNone;
@@ -315,7 +315,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 case WGPUTextureDimension_1D: {
                     auto region = MTLRegionMake1D(destination.origin.x, size.width);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
-                        // FIXME: Use checked arithmetic.
                         auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset + layer * bytesPerImage);
                         NSUInteger destinationSlice = destination.origin.z + layer;
                         [fromAPI(destination.texture).texture()
@@ -331,7 +330,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 case WGPUTextureDimension_2D: {
                     auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, size.width, size.height);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
-                        // FIXME: Use checked arithmetic.
                         auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset + layer * bytesPerImage);
                         NSUInteger destinationSlice = destination.origin.z + layer;
                         [fromAPI(destination.texture).texture()
@@ -390,7 +388,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 1, 1);
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
-            // FIXME: Use checked arithmetic.
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
@@ -413,7 +410,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 1);
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
-            // FIXME: Use checked arithmetic.
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder

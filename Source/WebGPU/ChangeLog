@@ -1,5 +1,46 @@
 2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Use checked arithmetic
+        https://bugs.webkit.org/show_bug.cgi?id=239058
+
+        Reviewed by Kimmo Kinnunen.
+
+        We have a bunch of places where overflow can occur.
+
+        Luckily, we can just detect overflow inside the validation functions, and not have
+        to do any inside the code that creates platform types (NSUInteger, etc.). This is
+        because if the validation code succeeds, then we are guaranteed that the cast to
+        NSUIntegers will succeed. This is because ranges in a resource are checked against
+        the size of the resource, and the size of the resource has been checked against
+        platform maximums, which are guaranteed to be smaller than the largest NSUInteger.
+
+        * WebGPU/BindGroup.mm:
+        (WebGPU::Device::createBindGroup):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::validateGetMappedRange const):
+        (WebGPU::Buffer::getMappedRange):
+        (WebGPU::Buffer::validateMapAsync const):
+        (WebGPU::Buffer::mapAsync):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::validateCopyBufferToBuffer):
+        (WebGPU::CommandEncoder::copyBufferToTexture):
+        (WebGPU::CommandEncoder::copyTextureToBuffer):
+        (WebGPU::CommandEncoder::copyTextureToTexture):
+        (WebGPU::CommandEncoder::validateClearBuffer):
+        (WebGPU::CommandEncoder::clearBuffer):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::validateWriteBuffer const):
+        (WebGPU::Queue::writeTexture):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::Texture::resolveTextureViewDescriptorDefaults const):
+        (WebGPU::Texture::validateCreateView const):
+        (WebGPU::Texture::createView):
+        (WebGPU::Texture::validateTextureCopyRange):
+        (WebGPU::Texture::validateLinearTextureData):
+
+2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] WebGPU strings are UTF-8, not Latin-1
         https://bugs.webkit.org/show_bug.cgi?id=239057
 

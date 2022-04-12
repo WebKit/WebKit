@@ -1000,6 +1000,12 @@ Checked<T, RecordOverflow> checkedSum(U value, Args... args)
     return Checked<T, RecordOverflow>(value) + checkedSum<T>(args...);
 }
 
+template<typename T, typename U, typename V>
+Checked<T, RecordOverflow> checkedDifference(U left, V right)
+{
+    return Checked<T, RecordOverflow>(left) - Checked<T, RecordOverflow>(right);
+}
+
 // Sometimes, you just want to check if some math would overflow - the code to do the math is
 // already in place, and you want to guard it.
 
@@ -1010,7 +1016,7 @@ template<typename T, typename... Args> bool sumOverflows(Args... args)
 
 template<typename T, typename U> bool differenceOverflows(U left, U right)
 {
-    return (Checked<T, RecordOverflow>(left) - Checked<T, RecordOverflow>(right)).hasOverflowed();
+    return checkedDifference<T>(left, right).hasOverflowed();
 }
 
 template<typename T, typename U>
@@ -1056,6 +1062,8 @@ using WTF::CheckedSize;
 using WTF::CrashOnOverflow;
 using WTF::RecordOverflow;
 using WTF::checkedSum;
+using WTF::checkedDifference;
+using WTF::checkedProduct;
 using WTF::differenceOverflows;
 using WTF::isInBounds;
 using WTF::productOverflows;

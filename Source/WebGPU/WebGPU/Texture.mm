@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import "TextureView.h"
+#import <wtf/CheckedArithmetic.h>
 #import <wtf/MathExtras.h>
 
 namespace WebGPU {
@@ -2068,7 +2069,7 @@ Texture::Texture(Device& device)
 
 Texture::~Texture() = default;
 
-WGPUTextureViewDescriptor Texture::resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor& descriptor) const
+std::optional<WGPUTextureViewDescriptor> Texture::resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor& descriptor) const
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-resolving-gputextureviewdescriptor-defaults
 
@@ -2078,8 +2079,10 @@ WGPUTextureViewDescriptor Texture::resolveTextureViewDescriptorDefaults(const WG
         resolved.format = m_descriptor.format;
 
     if (resolved.mipLevelCount == WGPU_MIP_LEVEL_COUNT_UNDEFINED) {
-        // FIXME: Use checked arithmetic.
-        resolved.mipLevelCount = m_descriptor.mipLevelCount - resolved.baseMipLevel;
+        auto mipLevelCount = checkedDifference<uint32_t>(m_descriptor.mipLevelCount, resolved.baseMipLevel);
+        if (mipLevelCount.hasOverflowed())
+            return std::nullopt;
+        resolved.mipLevelCount = mipLevelCount.value();
     }
 
     if (resolved.dimension == WGPUTextureViewDimension_Undefined) {
@@ -2112,10 +2115,13 @@ WGPUTextureViewDescriptor Texture::resolveTextureViewDescriptorDefaults(const WG
             resolved.arrayLayerCount = 6;
             break;
         case WGPUTextureViewDimension_2DArray:
-        case WGPUTextureViewDimension_CubeArray:
-            // FIXME: Use checked arithmetic
-            resolved.arrayLayerCount = m_descriptor.size.depthOrArrayLayers - resolved.baseArrayLayer;
+        case WGPUTextureViewDimension_CubeArray: {
+            auto arrayLayerCount = checkedDifference<uint32_t>(m_descriptor.size.depthOrArrayLayers, resolved.baseArrayLayer);
+            if (arrayLayerCount.hasOverflowed())
+                return std::nullopt;
+            resolved.arrayLayerCount = arrayLayerCount.value();
             break;
+        }
         case WGPUTextureViewDimension_Force32:
             ASSERT_NOT_REACHED();
             return resolved;
@@ -2166,18 +2172,17 @@ bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) co
     if (!descriptor.mipLevelCount)
         return false;
 
-    // FIXME: Use checked arithmetic.
-    if (descriptor.baseMipLevel + descriptor.mipLevelCount > m_descriptor.mipLevelCount)
+    auto endMipLevel = checkedSum<uint32_t>(descriptor.baseMipLevel, descriptor.mipLevelCount);
+    if (endMipLevel.hasOverflowed() || endMipLevel.value() > m_descriptor.mipLevelCount)
         return false;
 
     if (!descriptor.arrayLayerCount)
         return false;
 
-    // FIXME: Use checked arithmetic.
-    if (descriptor.baseArrayLayer + descriptor.arrayLayerCount > arrayLayerCount())
+    auto endArrayLayer = checkedSum<uint32_t>(descriptor.baseArrayLayer, descriptor.arrayLayerCount);
+    if (endArrayLayer.hasOverflowed() || endArrayLayer.value() > arrayLayerCount())
         return false;
 
-    // "descriptor.format must be equal to either this.[[descriptor]].format or one of the formats in this.[[descriptor]].viewFormats."
     if (descriptor.format != m_descriptor.format && !m_viewFormats.contains(descriptor.format))
         return false;
 
@@ -2261,7 +2266,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 
     auto descriptor = resolveTextureViewDescriptorDefaults(inputDescriptor);
 
-    if (!validateCreateView(descriptor)) {
+    if (!descriptor || !validateCreateView(*descriptor)) {
         m_device->generateAValidationError("Validation failure."_s);
 
         // FIXME: "Return a new invalid GPUTextureView."
@@ -2269,16 +2274,16 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     }
 
     std::optional<MTLPixelFormat> pixelFormat;
-    if (isDepthOrStencilFormat(descriptor.format)) {
-        switch (descriptor.aspect) {
+    if (isDepthOrStencilFormat(descriptor->format)) {
+        switch (descriptor->aspect) {
         case WGPUTextureAspect_All:
-            pixelFormat = WebGPU::pixelFormat(descriptor.format);
+            pixelFormat = WebGPU::pixelFormat(descriptor->format);
             break;
         case WGPUTextureAspect_StencilOnly:
-            pixelFormat = stencilOnlyAspectMetalFormat(descriptor.format);
+            pixelFormat = stencilOnlyAspectMetalFormat(descriptor->format);
             break;
         case WGPUTextureAspect_DepthOnly:
-            pixelFormat = depthOnlyAspectMetalFormat(descriptor.format);
+            pixelFormat = depthOnlyAspectMetalFormat(descriptor->format);
             break;
         case WGPUTextureAspect_Force32:
             ASSERT_NOT_REACHED();
@@ -2290,12 +2295,12 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     ASSERT(*pixelFormat != MTLPixelFormatInvalid);
 
     MTLTextureType textureType;
-    switch (descriptor.dimension) {
+    switch (descriptor->dimension) {
     case WGPUTextureViewDimension_Undefined:
         ASSERT_NOT_REACHED();
         return TextureView::createInvalid(m_device);
     case WGPUTextureViewDimension_1D:
-        if (descriptor.arrayLayerCount == 1)
+        if (descriptor->arrayLayerCount == 1)
             textureType = MTLTextureType1D;
         else
             textureType = MTLTextureType1DArray;
@@ -2330,21 +2335,21 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
         return TextureView::createInvalid(m_device);
     }
 
-    auto levels = NSMakeRange(descriptor.baseMipLevel, descriptor.mipLevelCount);
+    auto levels = NSMakeRange(descriptor->baseMipLevel, descriptor->mipLevelCount);
 
-    auto slices = NSMakeRange(descriptor.baseArrayLayer, descriptor.arrayLayerCount);
+    auto slices = NSMakeRange(descriptor->baseArrayLayer, descriptor->arrayLayerCount);
 
     id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:*pixelFormat textureType:textureType levels:levels slices:slices];
     if (!texture)
         return TextureView::createInvalid(m_device);
 
-    texture.label = fromAPI(descriptor.label);
+    texture.label = fromAPI(descriptor->label);
 
     std::optional<WGPUExtent3D> renderExtent;
     if  (m_descriptor.usage & WGPUTextureUsage_RenderAttachment)
-        renderExtent = computeRenderExtent(m_descriptor.size, descriptor.baseMipLevel);
+        renderExtent = computeRenderExtent(m_descriptor.size, descriptor->baseMipLevel);
 
-    return TextureView::create(texture, descriptor, renderExtent, m_device);
+    return TextureView::create(texture, *descriptor, renderExtent, m_device);
 }
 
 void Texture::destroy()
@@ -2713,16 +2718,16 @@ bool Texture::validateTextureCopyRange(const WGPUImageCopyTexture& imageCopyText
 
     auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
 
-    // FIXME: Used checked arithmetic
-    if (imageCopyTexture.origin.x + copySize.width > subresourceSize.width)
+    auto endX = checkedSum<uint32_t>(imageCopyTexture.origin.x, copySize.width);
+    if (endX.hasOverflowed() || endX.value() > subresourceSize.width)
         return false;
 
-    // FIXME: Used checked arithmetic
-    if ((imageCopyTexture.origin.y + copySize.height) > subresourceSize.height)
+    auto endY = checkedSum<uint32_t>(imageCopyTexture.origin.y, copySize.height);
+    if (endY.hasOverflowed() || endY.value() > subresourceSize.height)
         return false;
 
-    // FIXME: Used checked arithmetic
-    if ((imageCopyTexture.origin.z + copySize.depthOrArrayLayers) > subresourceSize.depthOrArrayLayers)
+    auto endZ = checkedSum<uint32_t>(imageCopyTexture.origin.z, copySize.depthOrArrayLayers);
+    if (endZ.hasOverflowed() || endZ.value() > subresourceSize.depthOrArrayLayers)
         return false;
 
     if (copySize.width % blockWidth)
@@ -2746,8 +2751,9 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
 
     auto heightInBlocks = copyExtent.height / blockHeight;
 
-    // FIXME: Use checked arithmetic.
-    auto bytesInLastRow = blockSize * widthInBlocks;
+    auto bytesInLastRow = checkedProduct<uint64_t>(blockSize, widthInBlocks);
+    if (bytesInLastRow.hasOverflowed())
+        return false;
 
     if (heightInBlocks > 1) {
         if (layout.bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
@@ -2760,7 +2766,7 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
     }
 
     if (layout.bytesPerRow != WGPU_COPY_STRIDE_UNDEFINED) {
-        if (layout.bytesPerRow < bytesInLastRow)
+        if (layout.bytesPerRow < bytesInLastRow.value())
             return false;
     }
 
@@ -2769,33 +2775,26 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
             return false;
     }
 
-    uint64_t requiredBytesInCopy = 0;
+    auto requiredBytesInCopy = CheckedUint64(0);
 
     if (copyExtent.depthOrArrayLayers > 1) {
-        // FIXME: Use checked arithmetic.
-        auto bytesPerImage = layout.bytesPerRow * layout.rowsPerImage;
+        auto bytesPerImage = checkedProduct<uint64_t>(layout.bytesPerRow, layout.rowsPerImage);
 
-        // FIXME: Use checked arithmetic.
-        auto bytesBeforeLastImage = bytesPerImage * (copyExtent.depthOrArrayLayers - 1);
+        auto bytesBeforeLastImage = checkedProduct<uint64_t>(bytesPerImage, checkedDifference<uint64_t>(copyExtent.depthOrArrayLayers, 1));
 
-        // FIXME: Use checked arithmetic.
         requiredBytesInCopy += bytesBeforeLastImage;
     }
 
     if (copyExtent.depthOrArrayLayers > 0) {
-        if (heightInBlocks > 1) {
-            // FIXME: Use checked arithmetic.
-            requiredBytesInCopy += layout.bytesPerRow * (heightInBlocks - 1);
-        }
+        if (heightInBlocks > 1)
+            requiredBytesInCopy += checkedProduct<uint64_t>(layout.bytesPerRow, checkedDifference<uint64_t>(heightInBlocks, 1));
 
-        if (heightInBlocks > 0) {
-            // FIXME: Use checked arithmetic.
+        if (heightInBlocks > 0)
             requiredBytesInCopy += bytesInLastRow;
-        }
     }
 
-    // FIXME: Use checked arithmetic.
-    if (layout.offset + requiredBytesInCopy > byteSize)
+    auto end = checkedSum<uint64_t>(layout.offset, requiredBytesInCopy);
+    if (end.hasOverflowed() || end.value() > byteSize)
         return false;
 
     return true;

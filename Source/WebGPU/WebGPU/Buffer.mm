@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "Device.h"
+#import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {
@@ -176,9 +177,8 @@ bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
     if (offset < m_mappingRange.beginOffset)
         return false;
 
-    // FIXME: Used checked arithmetic.
-    auto endOffset = offset + rangeSize;
-    if (endOffset > m_mappingRange.endOffset)
+    auto endOffset = checkedSum<size_t>(offset, rangeSize);
+    if (endOffset.hasOverflowed() || endOffset.value() > m_mappingRange.endOffset)
         return false;
 
     if (m_mappedRanges.overlaps({ offset, endOffset }))
@@ -186,15 +186,22 @@ bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
 
     return true;
 }
+
+static uint64_t computeRangeSize(uint64_t size, size_t offset)
+{
+    auto result = checkedDifference<uint64_t>(size, offset);
+    if (result.hasOverflowed())
+        return 0;
+    return result.value();
+}
   
 void* Buffer::getMappedRange(size_t offset, size_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
 
-    // FIXME: Use checked arithmetic.
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = static_cast<size_t>(std::max(static_cast<uint64_t>(0), m_size - static_cast<uint64_t>(offset)));
+        rangeSize = computeRangeSize(m_size, offset);
 
     if (!validateGetMappedRange(offset, rangeSize)) {
         // FIXME: "throw an OperationError and stop."
@@ -220,8 +227,8 @@ bool Buffer::validateMapAsync(WGPUMapModeFlags mode, size_t offset, size_t range
     if (rangeSize % 4)
         return false;
 
-    // FIXME: Use checked arithmetic.
-    if (static_cast<uint64_t>(offset + rangeSize) > m_size)
+    auto end = checkedSum<uint64_t>(offset, rangeSize);
+    if (end.hasOverflowed() || end.value() > m_size)
         return false;
 
     if (m_state != State::Unmapped)
@@ -244,10 +251,9 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-mapasync
 
-    // FIXME: Use checked arithmetic.
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = static_cast<size_t>(std::max(static_cast<uint64_t>(0), static_cast<uint64_t>(m_size - offset)));
+        rangeSize = computeRangeSize(m_size, offset);
 
     if (!validateMapAsync(mode, offset, rangeSize)) {
         m_device->generateAValidationError("Validation failure."_s);

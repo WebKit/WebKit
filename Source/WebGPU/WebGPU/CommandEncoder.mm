@@ -35,6 +35,7 @@
 #import "QuerySet.h"
 #import "RenderPassEncoder.h"
 #import "Texture.h"
+#import <wtf/CheckedArithmetic.h>
 
 namespace WebGPU {
 
@@ -121,21 +122,20 @@ bool CommandEncoder::validateCopyBufferToBuffer(const Buffer& source, uint64_t s
     if (destinationOffset % 4)
         return false;
 
-    // FIXME: "(sourceOffset + size) does not overflow a GPUSize64."
-
-    // FIXME: "(destinationOffset + size) does not overflow a GPUSize64."
-
-    // FIXME: "source.[[size]] is greater than or equal to (sourceOffset + size)."
-    // FIXME: Use checked arithmetic
-    if (source.size() < sourceOffset + size)
+    auto sourceEnd = checkedSum<uint64_t>(sourceOffset, size);
+    if (sourceEnd.hasOverflowed())
         return false;
 
-    // FIXME: "destination.[[size]] is greater than or equal to (destinationOffset + size)."
-    // FIXME: Use checked arithmetic
-    if (destination.size() < destinationOffset + size)
+    auto destinationEnd = checkedSum<uint64_t>(destinationOffset, size);
+    if (destinationEnd.hasOverflowed())
         return false;
 
-    // FIXME: "source and destination are not the same GPUBuffer."
+    if (source.size() < sourceEnd.value())
+        return false;
+
+    if (destination.size() < destinationEnd.value())
+        return false;
+
     if (&source == &destination)
         return false;
 
@@ -257,7 +257,6 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
 
     NSUInteger sourceBytesPerRow = source.layout.bytesPerRow;
 
-    // FIXME: Use checked arithmetic
     NSUInteger sourceBytesPerImage = source.layout.rowsPerImage * source.layout.bytesPerRow;
 
     MTLBlitOption options = MTLBlitOptionNone;
@@ -289,7 +288,6 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 1, 1);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
-            // FIXME: Use checked arithmetic.
             auto sourceOffset = static_cast<NSUInteger>(source.layout.offset + layer * sourceBytesPerImage);
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
@@ -312,7 +310,6 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 1);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
-            // FIXME: Use checked arithmetic.
             auto sourceOffset = static_cast<NSUInteger>(source.layout.offset + layer * sourceBytesPerImage);
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
@@ -422,7 +419,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
 
     NSUInteger destinationBytesPerRow = destination.layout.bytesPerRow;
 
-    // FIXME: Use checked arithmetic
     NSUInteger destinationBytesPerImage = destination.layout.rowsPerImage * destination.layout.bytesPerRow;
 
     MTLBlitOption options = MTLBlitOptionNone;
@@ -454,7 +450,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
         auto sourceOrigin = MTLOriginMake(source.origin.x, 1, 1);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
-            // FIXME: Use checked arithmetic.
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
             NSUInteger sourceSlice = source.origin.z + layer;
             [m_blitCommandEncoder
@@ -477,7 +472,6 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, 1);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
-            // FIXME: Use checked arithmetic.
             auto destinationOffset = static_cast<NSUInteger>(destination.layout.offset + layer * destinationBytesPerImage);
             NSUInteger sourceSlice = source.origin.z + layer;
             [m_blitCommandEncoder
@@ -617,7 +611,6 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         auto sourceOrigin = MTLOriginMake(source.origin.x, 1, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 1, 1);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
-            // FIXME: Use checked arithmetic.
             NSUInteger sourceSlice = source.origin.z + layer;
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
@@ -640,7 +633,6 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
         auto sourceOrigin = MTLOriginMake(source.origin.x, source.origin.y, 1);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 1);
         for (uint32_t layer = 0; layer < copySize.depthOrArrayLayers; ++layer) {
-            // FIXME: Use checked arithmetic.
             NSUInteger sourceSlice = source.origin.z + layer;
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
@@ -692,8 +684,8 @@ bool CommandEncoder::validateClearBuffer(const Buffer& buffer, uint64_t offset, 
     if (offset % 4)
         return false;
 
-    // FIXME: Use checked arithmetic.
-    if (buffer.size() < offset + size)
+    auto end = checkedSum<uint64_t>(offset, size);
+    if (end.hasOverflowed() || buffer.size() < end.value())
         return false;
 
     return true;
@@ -707,8 +699,12 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
         return;
 
     if (size == WGPU_WHOLE_SIZE) {
-        // FIXME: Use checked arithmetic.
-        size = buffer.size() - offset;
+        auto localSize = checkedDifference<uint64_t>(buffer.size(), offset);
+        if (localSize.hasOverflowed()) {
+            m_device->generateAValidationError("CommandEncoder::clearBuffer(): offset > buffer.size"_s);
+            return;
+        }
+        size = localSize.value();
     }
 
     if (!validateClearBuffer(buffer, offset, size)) {
