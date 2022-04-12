@@ -1732,6 +1732,7 @@ static void resetWebViewToConsistentState(const WTR::TestOptions& options, Reset
 #if PLATFORM(IOS_FAMILY)
     adjustWebDocumentForStandardViewport(gWebBrowserView.get(), gWebScrollView.get());
     [webView _setAllowsMessaging:YES];
+    [[UIScreen mainScreen] _setScale:2.0];
 #endif
     [webView setEditable:NO];
     [(EditingDelegate *)[webView editingDelegate] setAcceptsEditing:YES];

@@ -1,3 +1,20 @@
+2022-04-11  Alan Bujtas  <zalan@apple.com>
+
+        [ iOS iPhone 12 ] fast/hidpi & fast/layers/hidpi tests are flaky text/image failing
+        https://bugs.webkit.org/show_bug.cgi?id=232384
+        <rdar://problem/84714121>
+
+        Reviewed by Wenson Hsieh.
+
+        Rotation (initiated by UiController::simulateRotationLikeSafari) may confuse UIScreen and produce unexpected scale value.
+        This patch ensures that we set the scale value back to the default (2) in between test runs.
+        (Currently we only set this value in TestController::platformInitialize/dumpRenderTree.)
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentState):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2022-04-11  Sam Sneddon  <gsnedders@apple.com>
 
         webkitpy.w3c.test_exporter assumes all exceptions are HTTPError

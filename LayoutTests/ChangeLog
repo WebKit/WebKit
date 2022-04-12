@@ -1,3 +1,13 @@
+2022-04-11  Alan Bujtas  <zalan@apple.com>
+
+        [ iOS iPhone 12 ] fast/hidpi & fast/layers/hidpi tests are flaky text/image failing
+        https://bugs.webkit.org/show_bug.cgi?id=232384
+        <rdar://problem/84714121>
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/ios/TestExpectations:
+
 2022-04-11  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION (249023-249029@main): [ Monterey ] http/wpt/cache-storage/cache-storage-networkprocess-crash.html is a flaky CRASH with ASSERTION FAILED: m_pageMap.isEmpty()
