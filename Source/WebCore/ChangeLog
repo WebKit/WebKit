@@ -1,3 +1,90 @@
+2022-04-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Move DMABuf-backed GraphicsContextGLANGLE functionality into a standalone derivation chain
+        https://bugs.webkit.org/show_bug.cgi?id=239037
+
+        Reviewed by Carlos Garcia Campos.
+
+        For the purposes of ANGLE-backed WebGL execution, the Linux-y ports are
+        for now leveraging DMABuf infrastructure through the libgbm dependency.
+        Right now this could be used for both the current in-WebProcess
+        execution as well as under-construction in-GPUProcess execution.
+
+        The former requires all the GBM bits and bolts that are then tied
+        together with a Nicosia::GCGLANGLELayer instance that takes care of
+        presenting the rendered-into DMABuf objects in TextureMapper. The latter
+        requires just the bits and bolts, but it runs those in the GPUProcess
+        and then takes the DMABuf objects and transports them over IPC to the
+        point of integration into the composition engine. At the moment that's
+        still the TextureMapper in WebProcess, but that can move in the future.
+
+        The GraphicsContextGLTextureMapperANGLE class has different parts of
+        GBM/DMABuf integration removed. Class is now additionally guarded with
+        the !USE(NICOSIA) flag so that it remains buildable on the Win port
+        which uses this class for ANGLE integration into the Nicosia-less
+        TextureMapper configuration.
+
+        These parts are now moved into the GraphicsContextGLGBM and
+        GraphicsContextGLGBMTextureMapper classes. The first one does all the
+        heavy work, and the second one just adds on top the TextureMapper
+        integration through the Nicosia::GCGLANGLELayer class.
+
+        In the GraphicsContextGLGBMTextureMapper implementation file, the
+        createWebProcessGraphicsContextGL() function returns an object of that
+        type, meaning it's the implementation that should be used on the
+        WebProcess side. The TextureMapper-less GraphicsContextGLGBM class is
+        the implementation that will be used inside the GPUProcess.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * platform/TextureMapper.cmake:
+        * platform/graphics/gbm/GraphicsContextGLGBM.cpp: Copied from Source/WebCore/platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp.
+        (WebCore::GraphicsContextGLANGLE::GraphicsContextGLANGLE):
+        (WebCore::GraphicsContextGLANGLE::~GraphicsContextGLANGLE):
+        (WebCore::GraphicsContextGLANGLE::platformDisplay const):
+        (WebCore::GraphicsContextGLANGLE::platformConfig const):
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+        (WebCore::GraphicsContextGLANGLE::checkGPUStatus):
+        (WebCore::GraphicsContextGLANGLE::platformReleaseThreadResources):
+        (WebCore::GraphicsContextGLANGLE::readCompositedResults):
+        (WebCore::GraphicsContextGLGBM::create):
+        (WebCore::GraphicsContextGLGBM::GraphicsContextGLGBM):
+        (WebCore::GraphicsContextGLGBM::platformInitializeContext):
+        (WebCore::GraphicsContextGLGBM::platformInitialize):
+        (WebCore::GraphicsContextGLGBM::prepareTexture):
+        (WebCore::GraphicsContextGLGBM::layerContentsDisplayDelegate):
+        (WebCore::GraphicsContextGLGBM::copyTextureFromMedia):
+        (WebCore::GraphicsContextGLGBM::paintCompositedResultsToVideoFrame):
+        (WebCore::GraphicsContextGLGBM::setContextVisibility):
+        (WebCore::GraphicsContextGLGBM::reshapeDisplayBufferBacking):
+        (WebCore::GraphicsContextGLGBM::prepareForDisplay):
+        (WebCore::GraphicsContextGLGBM::Swapchain::Swapchain):
+        (WebCore::GraphicsContextGLGBM::Swapchain::~Swapchain):
+        * platform/graphics/gbm/GraphicsContextGLGBM.h: Added.
+        (WebCore::GraphicsContextGLGBM::swapchain):
+        * platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp: Added.
+        (WebCore::createWebProcessGraphicsContextGL):
+        (WebCore::GraphicsContextGLGBMTextureMapper::create):
+        (WebCore::GraphicsContextGLGBMTextureMapper::GraphicsContextGLGBMTextureMapper):
+        (WebCore::GraphicsContextGLGBMTextureMapper::layerContentsDisplayDelegate):
+        (WebCore::GraphicsContextGLGBMTextureMapper::platformInitialize):
+        * platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.h: Added.
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.cpp:
+        (Nicosia::GCGLANGLELayer::swapBuffersIfNeeded):
+        (Nicosia::GCGLANGLELayer::GCGLANGLELayer):
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::platformInitializeContext):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::platformInitialize):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareTexture):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::reshapeDisplayBufferBacking):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareForDisplay):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::Swapchain::Swapchain): Deleted.
+        (WebCore::GraphicsContextGLTextureMapperANGLE::Swapchain::~Swapchain): Deleted.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h:
+
 2022-04-11  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Update isolated tree in response to AXReadOnlyStatusChanged, AXRequiredStatusChanged, and AXPressedStateChanged notifications

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
- * Copyright (C) 2019 Google Inc. All rights reserved.
+ * Copyright (C) 2022 Metrological Group B.V.
+ * Copyright (C) 2022 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,36 +11,29 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include "GraphicsContextGLTextureMapperANGLE.h"
+#include "GraphicsContextGLGBM.h"
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(LIBGBM) && USE(ANGLE)
 
 #include "ANGLEHeaders.h"
-#include "ANGLEUtilities.h"
-#include "Logging.h"
 #include "PixelBuffer.h"
-#include "PlatformLayerDisplayDelegate.h"
 
-#include "GLContext.h"
-#include "PlatformDisplay.h"
-#include "TextureMapperGCGLPlatformLayer.h"
-
-#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
-#include "VideoFrameGStreamer.h"
+#if ENABLE(MEDIA_STREAM)
+#include "VideoFrame.h"
 #endif
 
 namespace WebCore {
@@ -83,9 +76,69 @@ GCGLConfig GraphicsContextGLANGLE::platformConfig() const
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
-    if (EGL_GetCurrentContext() == m_contextObj)
-        return true;
-    return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
+    auto madeCurrent =
+        [&] {
+            if (EGL_GetCurrentContext() == m_contextObj)
+                return true;
+            return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
+        }();
+
+    auto& contextSwapchain = static_cast<GraphicsContextGLGBM&>(*this).swapchain();
+    if (madeCurrent && contextSwapchain.swapchain && !contextSwapchain.drawBO) {
+        auto size = getInternalFramebufferSize();
+        contextSwapchain.drawBO = contextSwapchain.swapchain->getBuffer(
+            GBMBufferSwapchain::BufferDescription {
+                .format = DMABufFormat::create(uint32_t(contextAttributes().alpha ? DMABufFormat::FourCC::ARGB8888 : DMABufFormat::FourCC::XRGB8888)),
+                .width = std::clamp<uint32_t>(size.width(), 0, UINT_MAX),
+                .height = std::clamp<uint32_t>(size.height(), 0, UINT_MAX),
+            });
+
+        GLenum textureTarget = drawingBufferTextureTarget();
+        ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
+
+        auto result = contextSwapchain.images.ensure(contextSwapchain.drawBO->handle(),
+            [&] {
+                auto dmabufObject = contextSwapchain.drawBO->createDMABufObject(0);
+
+                std::initializer_list<EGLint> attributes {
+                    EGL_WIDTH, EGLint(dmabufObject.format.planeWidth(0, dmabufObject.width)),
+                    EGL_HEIGHT, EGLint(dmabufObject.format.planeHeight(0, dmabufObject.height)),
+                    EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLint>(dmabufObject.format.planes[0].fourcc),
+                    EGL_DMA_BUF_PLANE0_FD_EXT, dmabufObject.fd[0].value(),
+                    EGL_DMA_BUF_PLANE0_PITCH_EXT, static_cast<EGLint>(dmabufObject.stride[0]),
+                    EGL_DMA_BUF_PLANE0_OFFSET_EXT, 0,
+                    EGL_NONE,
+                };
+                return EGL_CreateImageKHR(contextSwapchain.platformDisplay, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, (EGLClientBuffer)nullptr, std::data(attributes));
+            });
+
+        GL_BindTexture(textureTarget, m_texture);
+        GL_EGLImageTargetTexture2DOES(textureTarget, result.iterator->value);
+
+        // If just created, the dmabuf has to be cleared to provide a zeroed-out buffer.
+        // Current color-clear and framebuffer state has to be preserved and re-established after this.
+        if (result.isNewEntry) {
+            GCGLuint boundFBO { 0 };
+            GL_GetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GCGLint*>(&boundFBO));
+
+            GCGLuint targetFBO = contextAttributes().antialias ? m_multisampleFBO : m_fbo;
+            if (targetFBO != boundFBO)
+                GL_BindFramebuffer(GL_FRAMEBUFFER, targetFBO);
+
+            std::array<float, 4> clearColor { 0, 0, 0, 0 };
+            GL_GetFloatv(GL_COLOR_CLEAR_VALUE, clearColor.data());
+
+            GL_ClearColor(0, 0, 0, 0);
+            GL_Clear(GL_COLOR_BUFFER_BIT);
+
+            GL_ClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+
+            if (targetFBO != boundFBO)
+                GL_BindFramebuffer(GL_FRAMEBUFFER, boundFBO);
+        }
+    }
+
+    return madeCurrent;
 }
 
 void GraphicsContextGLANGLE::checkGPUStatus()
@@ -101,62 +154,55 @@ std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
     return readRenderingResults();
 }
 
-RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
+RefPtr<GraphicsContextGLGBM> GraphicsContextGLGBM::create(GraphicsContextGLAttributes&& attributes)
 {
-    return GraphicsContextGLTextureMapperANGLE::create(GraphicsContextGLAttributes { attributes });
-}
-
-RefPtr<GraphicsContextGLTextureMapperANGLE> GraphicsContextGLTextureMapperANGLE::create(GraphicsContextGLAttributes&& attributes)
-{
-    auto context = adoptRef(*new GraphicsContextGLTextureMapperANGLE(WTFMove(attributes)));
+    auto context = adoptRef(*new GraphicsContextGLGBM(WTFMove(attributes)));
     if (!context->initialize())
         return nullptr;
     return context;
 }
 
-GraphicsContextGLTextureMapperANGLE::GraphicsContextGLTextureMapperANGLE(GraphicsContextGLAttributes&& attributes)
+GraphicsContextGLGBM::GraphicsContextGLGBM(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLANGLE(WTFMove(attributes))
+{ }
+
+GraphicsContextGLGBM::~GraphicsContextGLGBM() = default;
+
+RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLGBM::layerContentsDisplayDelegate()
 {
+    return { };
 }
 
-GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE()
+#if ENABLE(MEDIA_STREAM)
+RefPtr<VideoFrame> GraphicsContextGLGBM::paintCompositedResultsToVideoFrame()
 {
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
-
-    if (m_compositorTexture)
-        GL_DeleteTextures(1, &m_compositorTexture);
-#if USE(COORDINATED_GRAPHICS)
-    if (m_intermediateTexture)
-        GL_DeleteTextures(1, &m_intermediateTexture);
+    return { };
+}
 #endif
-}
-
-RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLTextureMapperANGLE::layerContentsDisplayDelegate()
-{
-    return m_layerContentsDisplayDelegate;
-}
 
 #if ENABLE(VIDEO)
-bool GraphicsContextGLTextureMapperANGLE::copyTextureFromMedia(MediaPlayer&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
+bool GraphicsContextGLGBM::copyTextureFromMedia(MediaPlayer&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
 {
-    // FIXME: Implement copy-free (or at least, software copy-free) texture transfer via dmabuf.
     return false;
 }
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::paintCompositedResultsToVideoFrame()
+void GraphicsContextGLGBM::setContextVisibility(bool)
 {
-#if USE(GSTREAMER)
-    if (auto pixelBuffer = readCompositedResults())
-        return VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer));
-#endif
-    return nullptr;
 }
-#endif
 
-bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
+void GraphicsContextGLGBM::prepareForDisplay()
+{
+    if (m_layerComposited || !makeContextCurrent())
+        return;
+
+    prepareTexture();
+    markLayerComposited();
+
+    m_swapchain.displayBO = WTFMove(m_swapchain.drawBO);
+}
+
+bool GraphicsContextGLGBM::platformInitializeContext()
 {
 #if ENABLE(WEBGL2)
     m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
@@ -240,8 +286,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     }
     eglContextAttributes.append(EGL_NONE);
 
-    auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
-    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharingContext, eglContextAttributes.data());
+    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, EGL_NO_CONTEXT, eglContextAttributes.data());
     if (m_contextObj == EGL_NO_CONTEXT) {
         LOG(WebGL, "EGLContext Initialization failed.");
         return false;
@@ -254,11 +299,8 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     return true;
 }
 
-bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
+bool GraphicsContextGLGBM::platformInitialize()
 {
-    m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
-    m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
-
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
 
@@ -283,24 +325,6 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     GL_GenFramebuffers(1, &m_fbo);
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-    GL_GenTextures(1, &m_compositorTexture);
-    GL_BindTexture(textureTarget, m_compositorTexture);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-#if USE(COORDINATED_GRAPHICS)
-    GL_GenTextures(1, &m_intermediateTexture);
-    GL_BindTexture(textureTarget, m_intermediateTexture);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    GL_BindTexture(textureTarget, 0);
-#endif
-
     // Create a multisample FBO.
     ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
     if (attributes.antialias) {
@@ -322,17 +346,12 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     return GraphicsContextGLANGLE::platformInitialize();
 }
 
-void GraphicsContextGLTextureMapperANGLE::prepareTexture()
+void GraphicsContextGLGBM::prepareTexture()
 {
     ASSERT(!m_layerComposited);
 
     if (contextAttributes().antialias)
         resolveMultisamplingIfNecessary();
-
-    std::swap(m_texture, m_compositorTexture);
-#if USE(COORDINATED_GRAPHICS)
-    std::swap(m_texture, m_intermediateTexture);
-#endif
 
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
@@ -342,11 +361,7 @@ void GraphicsContextGLTextureMapperANGLE::prepareTexture()
         GL_BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
 }
 
-void GraphicsContextGLTextureMapperANGLE::setContextVisibility(bool)
-{
-}
-
-bool GraphicsContextGLTextureMapperANGLE::reshapeDisplayBufferBacking()
+bool GraphicsContextGLGBM::reshapeDisplayBufferBacking()
 {
     auto attrs = contextAttributes();
     const auto size = getInternalFramebufferSize();
@@ -357,12 +372,8 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDisplayBufferBacking()
     GLuint internalColorFormat = textureTarget == GL_TEXTURE_2D ? colorFormat : m_internalColorFormat;
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
 
-    GL_BindTexture(textureTarget, m_compositorTexture);
-    GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-#if USE(COORDINATED_GRAPHICS)
-    GL_BindTexture(textureTarget, m_intermediateTexture);
-    GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-#endif
+    m_swapchain = Swapchain(platformDisplay());
+
     GL_BindTexture(textureTarget, m_texture);
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
@@ -370,15 +381,19 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDisplayBufferBacking()
     return true;
 }
 
-void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
-{
-    if (m_layerComposited || !makeContextCurrent())
-        return;
+GraphicsContextGLGBM::Swapchain::Swapchain(GCGLDisplay platformDisplay)
+    : platformDisplay(platformDisplay)
+    , swapchain(adoptRef(new GBMBufferSwapchain(GBMBufferSwapchain::BufferSwapchainSize::Four)))
+{ }
 
-    prepareTexture();
-    markLayerComposited();
+GraphicsContextGLGBM::Swapchain::~Swapchain()
+{
+    for (EGLImageKHR image : images.values()) {
+        if (image != EGL_NO_IMAGE_KHR)
+            EGL_DestroyImageKHR(platformDisplay, image);
+    }
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(LIBGBM) && USE(ANGLE)

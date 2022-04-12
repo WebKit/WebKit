@@ -29,9 +29,9 @@
 #include "config.h"
 #include "NicosiaGCGLANGLELayer.h"
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
 
-#include "GraphicsContextGLTextureMapperANGLE.h"
+#include "GraphicsContextGLGBM.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include "TextureMapperGL.h"
@@ -54,7 +54,8 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
 
 #if USE(TEXTURE_MAPPER_DMABUF)
     if (is<TextureMapperPlatformLayerProxyDMABuf>(proxy)) {
-        auto bo = WTFMove(m_context.m_swapchain.displayBO);
+        auto& swapchain = m_context.swapchain();
+        auto bo = WTFMove(swapchain.displayBO);
         if (bo) {
             Locker locker { proxy.lock() };
 
@@ -63,7 +64,7 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
                 flags |= TextureMapperGL::ShouldBlend;
 
             downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
-                DMABufObject(reinterpret_cast<uintptr_t>(m_context.m_swapchain.swapchain.get()) + bo->handle()),
+                DMABufObject(reinterpret_cast<uintptr_t>(swapchain.swapchain.get()) + bo->handle()),
                 [&](auto&& object) {
                     return bo->createDMABufObject(object.handle);
                 }, flags);
@@ -99,7 +100,7 @@ using PlatformLayerProxyType = TextureMapperPlatformLayerProxyDMABuf;
 using PlatformLayerProxyType = TextureMapperPlatformLayerProxyGL;
 #endif
 
-GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLTextureMapperANGLE& context)
+GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLGBM& context)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this, adoptRef(*new PlatformLayerProxyType))))
 {
@@ -112,4 +113,4 @@ GCGLANGLELayer::~GCGLANGLELayer()
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)

@@ -25,23 +25,9 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA) && USE(ANGLE)
 
 #include "GraphicsContextGLANGLE.h"
-
-#if USE(TEXTURE_MAPPER_DMABUF)
-#include "GBMBufferSwapchain.h"
-#include <wtf/HashMap.h>
-#endif
-
-#if USE(NICOSIA)
-namespace Nicosia {
-class GCGLANGLELayer;
-class GCGLLayer;
-}
-
-typedef void *EGLImageKHR;
-#endif
 
 namespace WebCore {
 
@@ -75,49 +61,16 @@ private:
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 
-#if USE(TEXTURE_MAPPER_DMABUF)
-    struct Swapchain {
-        Swapchain() = default;
-        Swapchain(GCGLDisplay);
-        ~Swapchain();
-
-        GCGLDisplay platformDisplay { nullptr };
-        RefPtr<GBMBufferSwapchain> swapchain;
-        RefPtr<GBMBufferSwapchain::Buffer> drawBO;
-        RefPtr<GBMBufferSwapchain::Buffer> displayBO;
-
-        // Cache for EGLImage objects corresponding to the buffers originating from the swapchain.
-        // The swapchain is regenerated (and these EGLImage objects destroyed) upon each buffer reshaping,
-        // so we should be fine without managing stale buffers and corresponding EGLImages (which shouldn't occur anyway).
-        HashMap<uint32_t, EGLImageKHR, WTF::DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> images;
-    } m_swapchain;
-#else
     GCGLuint m_compositorTexture { 0 };
 #if USE(COORDINATED_GRAPHICS)
     GCGLuint m_intermediateTexture { 0 };
 #endif
-#endif
 
-#if USE(NICOSIA)
-    std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
-#else
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
-#endif
 
-#if USE(TEXTURE_MAPPER_DMABUF)
-    // Required (for now) in GraphicsContextGLANGLE::makeContextCurrent()
-    // to construct and set the draw buffer-object.
-    friend class GraphicsContextGLANGLE;
-#endif
-
-#if USE(NICOSIA)
-    friend class Nicosia::GCGLANGLELayer;
-    friend class Nicosia::GCGLLayer;
-#else
     friend class TextureMapperGCGLPlatformLayer;
-#endif
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA) && USE(ANGLE)

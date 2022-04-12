@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
 
 #include "NicosiaContentLayerTextureMapperImpl.h"
 
@@ -39,7 +39,7 @@ typedef void *EGLSurface;
 
 namespace WebCore {
 class IntSize;
-class GraphicsContextGLTextureMapperANGLE;
+class GraphicsContextGLGBM;
 class PlatformDisplay;
 }
 
@@ -48,17 +48,17 @@ namespace Nicosia {
 class GCGLANGLELayer final : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GCGLANGLELayer(WebCore::GraphicsContextGLTextureMapperANGLE&);
+    GCGLANGLELayer(WebCore::GraphicsContextGLGBM&);
     virtual ~GCGLANGLELayer();
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     void swapBuffersIfNeeded() final;
 
 private:
-    WebCore::GraphicsContextGLTextureMapperANGLE& m_context;
+    WebCore::GraphicsContextGLGBM& m_context;
     Ref<ContentLayer> m_contentLayer;
 };
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
