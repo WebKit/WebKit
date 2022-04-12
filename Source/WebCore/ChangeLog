@@ -1,3 +1,106 @@
+2022-04-12  Ada Chan  <adachan@apple.com>
+
+        [WebXR] Implement the WebXRFrame methods for getting joints' poses and radii
+        https://bugs.webkit.org/show_bug.cgi?id=238968
+
+        Reviewed by Dean Jackson.
+
+        Tests: http/wpt/webxr/xrFrame_fillJointRadii.html
+               http/wpt/webxr/xrFrame_fillJointRadii_missing_joint_pose.html
+               http/wpt/webxr/xrFrame_fillPoses.html
+               http/wpt/webxr/xrFrame_fillPoses_missing_joint_pose.html
+               http/wpt/webxr/xrFrame_getJointPose.html
+               http/wpt/webxr/xrFrame_getJointPose_missing_joint_pose.html
+               http/wpt/webxr/xrHand.html
+
+        - Implement the methods in WebXRFrame for getting joints' poses and radii.
+        - Add a new InputSourceHandJoint struct to represent joint data, and add
+        a vector of InputSourceHandJoint in PlatformXR::Device::FrameData::InputSource
+        to represent the joints data.
+        - Implement logic for managing a vector of WebXRJointSpaces in WebXRHand and
+        updating it with new hand joints data from PlatformXR::Device::FrameData::InputSource.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webxr/WebXRFrame+HandInput.idl:
+        * Modules/webxr/WebXRFrame.cpp:
+        (WebCore::WebXRFrame::populatePose):
+        There are valid cases when the WebXRSpace's effective origin can be null,
+        for example, a joint pose from a hand that has other missing joint poses.
+        Just return null and not throw an exception in that case. 
+        (WebCore::WebXRFrame::getJointPose):
+        Populate the joint's pose, and create a WebXRJointPose with the pose's 
+        transform and the joint's radius.
+        (WebCore::WebXRFrame::fillJointRadii):
+        Validate the inputs and fill in the radii array. Fill in with NaN
+        if the hand has missing joint poses.
+        (WebCore::WebXRFrame::fillPoses):
+        Validate the inputs and fill in the transforms array. Fill in with NaN
+        if the hand has missing joint poses.
+        * Modules/webxr/WebXRFrame.h:
+        * Modules/webxr/WebXRHand.cpp:
+        (WebCore::WebXRHand::WebXRHand):
+        Initialize the m_joints array.
+        (WebCore::WebXRHand::get):
+        (WebCore::WebXRHand::Iterator::next):
+        (WebCore::WebXRHand::session):
+        (WebCore::WebXRHand::updateFromInputSource):
+        Update m_joints array based on the latest hands data from InputSource.
+        * Modules/webxr/WebXRHand.h:
+        (WebCore::WebXRHand::size):
+        (WebCore::WebXRHand::hasMissingPoses const):
+        * Modules/webxr/WebXRInputSource.cpp:
+        (WebCore::WebXRInputSource::update):
+        * Modules/webxr/WebXRJointPose.cpp:
+        (WebCore::WebXRJointPose::create):
+        (WebCore::WebXRJointPose::WebXRJointPose):
+        Handle joint radius.
+        * Modules/webxr/WebXRJointPose.h:
+        * Modules/webxr/WebXRJointPose.idl:
+        * Modules/webxr/WebXRJointSpace.cpp:
+        (WebCore::WebXRJointSpace::create):
+        (WebCore::WebXRJointSpace::WebXRJointSpace):
+        Handle joint name and the actual pose data. Keep a weak ptr to the WebXRHand.
+        (WebCore::WebXRJointSpace::updateFromJoint):
+        (WebCore::WebXRJointSpace::handHasMissingPoses const):
+        (WebCore::WebXRJointSpace::session const):
+        (WebCore::WebXRJointSpace::nativeOrigin const):
+        Return null pose transforms if there are missing joint poses.
+        * Modules/webxr/WebXRJointSpace.h:
+        (WebCore::WebXRJointSpace::jointName const):
+        (WebCore::WebXRJointSpace::radius const):
+        * Modules/webxr/WebXRJointSpace.idl:
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::isHandTrackingEnabled const):
+        * Modules/webxr/WebXRSession.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::FrameData::InputSourceHandJoint::encode const):
+        (PlatformXR::Device::FrameData::InputSourceHandJoint::decode):
+        (PlatformXR::Device::FrameData::InputSource::encode const):
+        (PlatformXR::Device::FrameData::InputSource::decode):
+        * testing/FakeXRInputSourceInit.h:
+        * testing/FakeXRInputSourceInit.idl:
+        Allow test InputSource to be created with an array of joints.
+        * testing/FakeXRJointStateInit.h: Copied from Source/WebCore/Modules/webxr/WebXRJointPose.idl.
+        * testing/FakeXRJointStateInit.idl: Copied from Source/WebCore/Modules/webxr/WebXRJointPose.idl.
+        Define init dictionary for joint data.
+        * testing/WebFakeXRInputController.cpp:
+        (WebCore::WebFakeXRInputController::WebFakeXRInputController):
+        (WebCore::WebFakeXRInputController::getFrameData):
+        (WebCore::WebFakeXRInputController::updateHandJoints):
+        Update m_handJoints based on joint init dictionaries.
+        * testing/WebFakeXRInputController.h:
+        * testing/WebFakeXRInputController.idl:
+        * testing/WebXRTest.cpp:
+        (WebCore::parseFeatures):
+        (WebCore::WebXRTest::simulateDeviceConnection):
+        Allow test device to specify a list of enabled features that don't need
+        further explicit consent.
+        * testing/WebXRTest.h:
+        * testing/WebXRTest.idl:
+
 2022-04-12  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         RejectedPromiseTracker can be recreated if we are in a worker / worklet whose execution is terminating

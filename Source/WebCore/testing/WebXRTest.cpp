@@ -39,6 +39,19 @@ namespace WebCore {
 
 WebXRTest::~WebXRTest() = default;
 
+static PlatformXR::Device::FeatureList parseFeatures(const Vector<JSC::JSValue>& featureList, ScriptExecutionContext& context)
+{
+    PlatformXR::Device::FeatureList features;
+    if (auto* globalObject = context.globalObject()) {
+        for (auto& feature : featureList) {
+            auto featureString = feature.toWTFString(globalObject);
+            if (auto sessionFeature = PlatformXR::parseSessionFeatureDescriptor(featureString))
+                features.append(*sessionFeature);
+        }
+    }
+    return features;
+}
+
 void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const FakeXRDeviceInit& init, WebFakeXRDevicePromise&& promise)
 {
     // https://immersive-web.github.io/webxr-test-api/#dom-xrtest-simulatedeviceconnection
@@ -48,16 +61,12 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
 
         device->setViews(init.views);
 
-        PlatformXR::Device::FeatureList features;
-        if (init.supportedFeatures) {
-            if (auto* globalObject = context.globalObject()) {
-                for (auto& feature : init.supportedFeatures.value()) {
-                    auto featureString = feature.toWTFString(globalObject);
-                    if (auto sessionFeature = PlatformXR::parseSessionFeatureDescriptor(featureString))
-                        features.append(*sessionFeature);
-                }
-            }
-        }
+        PlatformXR::Device::FeatureList supportedFeatures;
+        if (init.supportedFeatures)
+            supportedFeatures = parseFeatures(init.supportedFeatures.value(), context);
+        PlatformXR::Device::FeatureList enabledFeatures;
+        if (init.enabledFeatures)
+            enabledFeatures = parseFeatures(init.enabledFeatures.value(), context);
 
         if (init.boundsCoordinates) {
             if (init.boundsCoordinates->size() < 3) {
@@ -84,8 +93,10 @@ void WebXRTest::simulateDeviceConnection(ScriptExecutionContext& context, const 
                 supportedModes.append(XRSessionMode::ImmersiveVr);
         }
 
-        for (auto& mode : supportedModes)
-            simulatedDevice.setSupportedFeatures(mode, features);
+        for (auto& mode : supportedModes) {
+            simulatedDevice.setSupportedFeatures(mode, supportedFeatures);
+            simulatedDevice.setEnabledFeatures(mode, enabledFeatures);
+        }
 
         m_context->registerSimulatedXRDeviceForTesting(simulatedDevice);
 

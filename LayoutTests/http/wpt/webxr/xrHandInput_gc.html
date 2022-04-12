@@ -17,7 +17,7 @@ function gc()
 
 let testName = "Test object lifetime of Hand Input module";
 
-let fakeDeviceInitParams = TRACKED_IMMERSIVE_SINGLE_VIEWDEVICE;
+let fakeDeviceInitParams = TRACKED_IMMERSIVE_DEVICE_WITH_HAND_TRACKING;
 
 let testFunction = function(session, fakeDeviceController, t, sessionObjects) {
 
@@ -26,7 +26,7 @@ let testFunction = function(session, fakeDeviceController, t, sessionObjects) {
     targetRayMode: "tracked-pointer",
     pointerOrigin: VALID_POINTER_TRANSFORM,
     profiles: [],
-    simulateHand: true,
+    handJoints: VALID_HAND_JOINTS,
   });
 
   return session.requestReferenceSpace('local')

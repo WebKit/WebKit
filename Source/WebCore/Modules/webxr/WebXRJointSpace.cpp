@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBXR) && ENABLE(WEBXR_HANDS)
 
+#include "WebXRFrame.h"
+#include "WebXRHand.h"
 #include "WebXRRigidTransform.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -35,22 +37,47 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRJointSpace);
 
-Ref<WebXRJointSpace> WebXRJointSpace::create(Document& document, WebXRSession& session)
+Ref<WebXRJointSpace> WebXRJointSpace::create(Document& document, WebXRHand& hand, XRHandJoint jointName, std::optional<PlatformXR::Device::FrameData::InputSourceHandJoint>&& joint)
 {
-    return adoptRef(*new WebXRJointSpace(document, session));
+    return adoptRef(*new WebXRJointSpace(document, hand, jointName, WTFMove(joint)));
 }
 
-WebXRJointSpace::WebXRJointSpace(Document& document, WebXRSession& session)
+WebXRJointSpace::WebXRJointSpace(Document& document, WebXRHand& hand, XRHandJoint jointName, std::optional<PlatformXR::Device::FrameData::InputSourceHandJoint>&& joint)
     : WebXRSpace(document, WebXRRigidTransform::create())
-    , m_session(session)
+    , m_hand(hand)
+    , m_jointName(jointName)
+    , m_joint(WTFMove(joint))
 {
 }
 
 WebXRJointSpace::~WebXRJointSpace() = default;
 
+void WebXRJointSpace::updateFromJoint(const std::optional<PlatformXR::Device::FrameData::InputSourceHandJoint>& joint)
+{
+    m_joint = joint;
+}
+
+bool WebXRJointSpace::handHasMissingPoses() const
+{
+    return !m_hand || m_hand->hasMissingPoses();
+}
+
+WebXRSession* WebXRJointSpace::session() const
+{
+    return m_hand ? m_hand->session() : nullptr;
+}
+
 std::optional<TransformationMatrix> WebXRJointSpace::nativeOrigin() const
 {
-    return std::nullopt;
+    // https://immersive-web.github.io/webxr-hand-input/#xrjointspace-interface
+    // The native origin of the XRJointSpace may only be reported when native origins of
+    // all other XRJointSpaces on the same hand are being reported. When a hand is partially
+    // obscured the user agent MUST either emulate the obscured joints, or report null poses
+    // for all of the joints.
+    if (handHasMissingPoses() || !m_joint)
+        return std::nullopt;
+
+    return WebXRFrame::matrixFromPose(m_joint->pose.pose);
 }
 
 }

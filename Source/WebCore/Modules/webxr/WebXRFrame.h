@@ -60,9 +60,9 @@ public:
     ExceptionOr<RefPtr<WebXRPose>> getPose(const Document&, const WebXRSpace&, const WebXRSpace&);
 
 #if ENABLE(WEBXR_HANDS)
-    ExceptionOr<RefPtr<WebXRJointPose>> getJointPose(const WebXRJointSpace&, const WebXRSpace&);
-    ExceptionOr<bool> fillJointRadii(const Vector<RefPtr<WebXRJointSpace>>, const Float32Array&);
-    ExceptionOr<bool> fillPoses(const Vector<RefPtr<WebXRSpace>>, const WebXRSpace&, const Float32Array&);
+    ExceptionOr<RefPtr<WebXRJointPose>> getJointPose(const Document&, const WebXRJointSpace&, const WebXRSpace&);
+    ExceptionOr<bool> fillJointRadii(const Vector<RefPtr<WebXRJointSpace>>&, Float32Array&);
+    ExceptionOr<bool> fillPoses(const Document&, const Vector<RefPtr<WebXRSpace>>&, const WebXRSpace&, Float32Array&);
 #endif
 
     void setTime(DOMHighResTimeStamp time) { m_time = time; }

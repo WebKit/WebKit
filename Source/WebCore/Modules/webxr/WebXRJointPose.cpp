@@ -34,13 +34,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRJointPose);
 
-Ref<WebXRJointPose> WebXRJointPose::create(Ref<WebXRRigidTransform>&& transform, bool emulatedPosition)
+Ref<WebXRJointPose> WebXRJointPose::create(Ref<WebXRRigidTransform>&& transform, bool emulatedPosition, float radius)
 {
-    return adoptRef(*new WebXRJointPose(WTFMove(transform), emulatedPosition));
+    return adoptRef(*new WebXRJointPose(WTFMove(transform), emulatedPosition, radius));
 }
 
-WebXRJointPose::WebXRJointPose(Ref<WebXRRigidTransform>&& transform, bool emulatedPosition)
+WebXRJointPose::WebXRJointPose(Ref<WebXRRigidTransform>&& transform, bool emulatedPosition, float radius)
     : WebXRPose(WTFMove(transform), emulatedPosition)
+    , m_radius(radius)
 {
 }
 

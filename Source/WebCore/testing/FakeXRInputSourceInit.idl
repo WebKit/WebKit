@@ -43,5 +43,5 @@
     FakeXRRigidTransformInit gripOrigin;
     // Optional hand input. For now we don't care about the actual
     // data. We're just creating the object for testing.
-    [Conditional=WEBXR_HANDS] boolean simulateHand = false;
+    [Conditional=WEBXR_HANDS] sequence<FakeXRJointStateInit> handJoints;
 };

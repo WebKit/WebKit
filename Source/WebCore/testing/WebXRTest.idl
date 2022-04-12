@@ -61,6 +61,10 @@
     // NOTE: This is meant to emulate hardware support, not whether a feature is
     // currently available (e.g. bounds not being tracked per below)
     sequence<any> supportedFeatures;
+    
+    // The list of features that are automatically enabled and do
+    // not need further explicit consent.
+    sequence<any> enabledFeatures;
 
     // The bounds coordinates. If empty, no bounded reference space is currently tracked.
     // If not, must have at least three elements.

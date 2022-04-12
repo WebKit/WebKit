@@ -88,16 +88,19 @@ void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameD
 #endif
 
 #if ENABLE(WEBXR_HANDS)
-    if (source.simulateHand) {
-        // FIXME: This currently creates an object just for use in testing.
-        // The real implementation will use actual data and only be visible
-        // if hand-tracking was requested at session start.
-        if (!m_hand)
+    if (source.handJoints) {
+        // https://www.w3.org/TR/webxr-hand-input-1/#xrinputsource-interface
+        // If the XRInputSource belongs to an XRSession that has not been requested
+        // with the "hand-tracking" feature descriptor, hand MUST be null.
+        if (!m_hand && session->isHandTrackingEnabled())
             m_hand = WebXRHand::create(*this);
-    } else
-        m_hand = nullptr;
-#endif
 
+        if (m_hand)
+            m_hand->updateFromInputSource(source);
+
+        return;
+    }
+#endif
 }
 
 bool WebXRInputSource::requiresInputSourceChange(const InputSource& source)

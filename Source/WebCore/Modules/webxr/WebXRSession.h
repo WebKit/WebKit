@@ -98,6 +98,10 @@ public:
     const PlatformXR::Device::FrameData& frameData() const { return m_frameData; }
     const WebXRViewerSpace& viewerReferenceSpace() const { return *m_viewerReferenceSpace; }
     bool posesCanBeReported(const Document&) const;
+    
+#if ENABLE(WEBXR_HANDS)
+    bool isHandTrackingEnabled() const;
+#endif
 
 private:
     WebXRSession(Document&, WebXRSystem&, XRSessionMode, PlatformXR::Device&, FeatureList&&);

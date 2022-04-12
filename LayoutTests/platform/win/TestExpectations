@@ -4910,6 +4910,8 @@ storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
 
 # WebXR is not enabled on windows.
 webxr [ Skip ]
+imported/w3c/web-platform-tests/webxr [ Skip ]
+http/wpt/webxr [ Skip ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=226970
 fast/css/parse-border-image-repeat-null-crash.html [ Failure ]

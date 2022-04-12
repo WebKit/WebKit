@@ -163,7 +163,7 @@ inline String sessionFeatureDescriptor(SessionFeature sessionFeature)
 #if ENABLE(WEBXR_HANDS)
 
 enum class HandJoint : unsigned {
-    Wrist,
+    Wrist = 0,
     ThumbMetacarpal,
     ThumbPhalanxProximal,
     ThumbPhalanxDistal,
@@ -187,7 +187,8 @@ enum class HandJoint : unsigned {
     PinkyFingerPhalanxProximal,
     PinkyFingerPhalanxIntermediate,
     PinkyFingerPhalanxDistal,
-    PinkyFingerTip
+    PinkyFingerTip,
+    Count
 };
 
 #endif
@@ -313,6 +314,18 @@ public:
             template<class Decoder> static std::optional<InputSourcePose> decode(Decoder&);
         };
 
+#if ENABLE(WEBXR_HANDS)
+        struct InputSourceHandJoint {
+            InputSourcePose pose;
+            float radius { 0 };
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static std::optional<InputSourceHandJoint> decode(Decoder&);
+        };
+
+        using HandJointsVector = Vector<std::optional<InputSourceHandJoint>>;
+#endif
+
         struct InputSource {
             InputSourceHandle handle { 0 };
             XRHandedness handeness { XRHandedness::None };
@@ -323,8 +336,7 @@ public:
             Vector<InputSourceButton> buttons;
             Vector<float> axes;
 #if ENABLE(WEBXR_HANDS)
-            // FIXME: Actually hold some hand data.
-            bool simulateHand { false };
+            std::optional<HandJointsVector> handJoints;
 #endif
 
             template<class Encoder> void encode(Encoder&) const;
@@ -624,6 +636,29 @@ std::optional<Device::FrameData::InputSourcePose> Device::FrameData::InputSource
     return inputSourcePose;
 }
 
+#if ENABLE(WEBXR_HANDS)
+template<class Encoder>
+void Device::FrameData::InputSourceHandJoint::encode(Encoder& encoder) const
+{
+    encoder << pose;
+    encoder << radius;
+}
+
+template<class Decoder>
+std::optional<Device::FrameData::InputSourceHandJoint> Device::FrameData::InputSourceHandJoint::decode(Decoder& decoder)
+{
+    std::optional<InputSourcePose> pose;
+    decoder >> pose;
+    if (!pose)
+        return std::nullopt;
+    std::optional<float> radius;
+    decoder >> radius;
+    if (!radius)
+        return std::nullopt;
+    return { { WTFMove(*pose), *radius } };
+}
+#endif
+
 template<class Encoder>
 void Device::FrameData::InputSource::encode(Encoder& encoder) const
 {
@@ -635,6 +670,9 @@ void Device::FrameData::InputSource::encode(Encoder& encoder) const
     encoder << gripOrigin;
     encoder << buttons;
     encoder << axes;
+#if ENABLE(WEBXR_HANDS)
+    encoder << handJoints;
+#endif
 }
 
 template<class Decoder>
@@ -657,6 +695,10 @@ std::optional<Device::FrameData::InputSource> Device::FrameData::InputSource::de
         return std::nullopt;
     if (!decoder.decode(source.axes))
         return std::nullopt;
+#if ENABLE(WEBXR_HANDS)
+    if (!decoder.decode(source.handJoints))
+        return std::nullopt;
+#endif
     return source;
 }
 

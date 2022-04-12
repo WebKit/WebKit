@@ -645,6 +645,14 @@ bool WebXRSession::posesCanBeReported(const Document& document) const
     return true;
 }
 
+#if ENABLE(WEBXR_HANDS)
+bool WebXRSession::isHandTrackingEnabled() const
+{
+    return m_requestedFeatures.contains(PlatformXR::SessionFeature::HandTracking);
+}
+#endif
+
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBXR)

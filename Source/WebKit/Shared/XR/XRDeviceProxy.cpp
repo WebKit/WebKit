@@ -68,8 +68,21 @@ void XRDeviceProxy::initializeTrackingAndRendering(PlatformXR::SessionMode sessi
     if (sessionMode != PlatformXR::SessionMode::ImmersiveVr)
         return;
 
-    if (m_xrSystem)
-        m_xrSystem->initializeTrackingAndRendering();
+    if (!m_xrSystem)
+        return;
+
+    m_xrSystem->initializeTrackingAndRendering();
+
+    // This is called from the constructor of WebXRSession. Since sessionDidInitializeInputSources()
+    // ends up calling queueTaskKeepingObjectAlive() which refs the WebXRSession object, we
+    // should delay this call after the WebXRSession has finished construction.
+    callOnMainRunLoop([this, weakThis = WeakPtr { *this }]() {
+        if (!weakThis)
+            return;
+
+        if (trackingAndRenderingClient())
+            trackingAndRenderingClient()->sessionDidInitializeInputSources({ });
+    });    
 }
 
 void XRDeviceProxy::shutDownTrackingAndRendering()

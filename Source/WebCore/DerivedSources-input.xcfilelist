@@ -1622,6 +1622,7 @@ $(PROJECT_DIR)/svg/xlinkattrs.in
 $(PROJECT_DIR)/testing/FakeXRBoundsPoint.idl
 $(PROJECT_DIR)/testing/FakeXRButtonStateInit.idl
 $(PROJECT_DIR)/testing/FakeXRInputSourceInit.idl
+$(PROJECT_DIR)/testing/FakeXRJointStateInit.idl
 $(PROJECT_DIR)/testing/FakeXRRigidTransformInit.idl
 $(PROJECT_DIR)/testing/FakeXRViewInit.idl
 $(PROJECT_DIR)/testing/GCObservation.idl

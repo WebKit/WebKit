@@ -28,7 +28,7 @@
     Conditional=WEBXR_HANDS,
     EnabledBySetting=WebXREnabled&WebXRHandInputModuleEnabled,
 ] partial interface WebXRFrame {
-    WebXRJointPose? getJointPose(WebXRJointSpace joint, WebXRSpace baseSpace);
+    [CallWith=CurrentDocument] WebXRJointPose? getJointPose(WebXRJointSpace joint, WebXRSpace baseSpace);
     boolean fillJointRadii(sequence<WebXRJointSpace> jointSpaces, Float32Array radii);
-    boolean fillPoses(sequence<WebXRSpace> spaces, WebXRSpace baseSpace, Float32Array transforms);
+    [CallWith=CurrentDocument] boolean fillPoses(sequence<WebXRSpace> spaces, WebXRSpace baseSpace, Float32Array transforms);
 };

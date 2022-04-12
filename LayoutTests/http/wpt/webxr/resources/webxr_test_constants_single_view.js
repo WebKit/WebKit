@@ -47,6 +47,74 @@ const VALID_GRIP_TRANSFORM = {
     orientation: [0, 0, 0, 1]
 };
 
+const JOINT_COUNT = 25;
+const TEST_HAND_JOINT_RADIUS = 0.02;
+
+const VALID_HAND_JOINT = {
+    pose: VALID_POSE_TRANSFORM,
+    radius: TEST_HAND_JOINT_RADIUS
+};
+
+const VALID_HAND_JOINTS = [
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT
+];
+
+const INVALID_HAND_JOINT = {
+
+};
+
+const HAND_JOINTS_WITH_ONE_INVALID = [
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    VALID_HAND_JOINT,
+    INVALID_HAND_JOINT
+];
+
 // A valid input pointer offset for  when we don't care about specific values
 const VALID_POINTER = [1, 0, 0, 0,
                        0, 1, 0, 0,
@@ -156,6 +224,17 @@ const TRACKED_IMMERSIVE_DEVICE = {
     views: VALID_VIEWS,
     viewerOrigin: IDENTITY_TRANSFORM,
     supportedFeatures: ALL_FEATURES,
+    environmentBlendMode: "opaque",
+    interactionMode: "world-space"
+};
+
+const TRACKED_IMMERSIVE_DEVICE_WITH_HAND_TRACKING = {
+    supportsImmersive: true,
+    supportedModes: [ "inline", "immersive-vr"],
+    views: VALID_VIEWS,
+    viewerOrigin: IDENTITY_TRANSFORM,
+    supportedFeatures: ALL_FEATURES,
+    enabledFeatures: [ "hand-tracking" ],
     environmentBlendMode: "opaque",
     interactionMode: "world-space"
 };

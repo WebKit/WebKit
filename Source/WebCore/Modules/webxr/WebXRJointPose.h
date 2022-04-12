@@ -39,13 +39,13 @@ namespace WebCore {
 class WebXRJointPose : public WebXRPose {
     WTF_MAKE_ISO_ALLOCATED(WebXRJointPose);
 public:
-    static Ref<WebXRJointPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition);
+    static Ref<WebXRJointPose> create(Ref<WebXRRigidTransform>&&, bool emulatedPosition, float radius);
     ~WebXRJointPose() = default;
 
     float radius() const { return m_radius; }
 
 private:
-    WebXRJointPose(Ref<WebXRRigidTransform>&&, bool emulatedPosition);
+    WebXRJointPose(Ref<WebXRRigidTransform>&&, bool emulatedPosition, float radius);
 
     float m_radius { 0 };
 };
