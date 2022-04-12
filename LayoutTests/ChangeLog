@@ -1,3 +1,16 @@
+2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/otsvg-canvas.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=239109
+        <rdar://problem/88838078>
+
+        Unreviewed test gardening.
+
+        Turns out loading fonts is asynchronous.
+
+        * fast/text/otsvg-canvas.html:
+        * platform/mac-wk1/TestExpectations:
+
 2022-04-11  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Update isolated tree in response to AXReadOnlyStatusChanged, AXRequiredStatusChanged, and AXPressedStateChanged notifications

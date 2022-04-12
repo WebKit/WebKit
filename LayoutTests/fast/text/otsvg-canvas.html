@@ -20,10 +20,14 @@ The test passes if you see:
 </p>
 <canvas id="canvas" width="400" height="400"></canvas>
 <script>
+if (self.testRunner)
+    testRunner.waitUntilDone();
 var context = document.getElementById("canvas").getContext("2d");
 [...document.fonts][0].load().then(function() {
     context.font = "50px 'WebFont'";
     context.fillText("bAbA", 10, 100);
+    if (self.testRunner)
+        testRunner.notifyDone();
 });
 </script>
 </body>
