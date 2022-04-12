@@ -37,6 +37,7 @@
 #include "RemoteExternalTextureProxy.h"
 #include "RemotePipelineLayoutProxy.h"
 #include "RemoteQuerySetProxy.h"
+#include "RemoteQueueProxy.h"
 #include "RemoteRenderBundleEncoderProxy.h"
 #include "RemoteRenderPipelineProxy.h"
 #include "RemoteSamplerProxy.h"
@@ -47,16 +48,22 @@
 
 namespace WebKit::WebGPU {
 
-RemoteDeviceProxy::RemoteDeviceProxy(Ref<PAL::WebGPU::SupportedFeatures>&& features, Ref<PAL::WebGPU::SupportedLimits>&& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteDeviceProxy::RemoteDeviceProxy(Ref<PAL::WebGPU::SupportedFeatures>&& features, Ref<PAL::WebGPU::SupportedLimits>&& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     : Device(WTFMove(features), WTFMove(limits))
     , m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
+    , m_queue(RemoteQueueProxy::create(*this, convertToBackingContext, queueIdentifier))
 {
 }
 
 RemoteDeviceProxy::~RemoteDeviceProxy()
 {
+}
+
+PAL::WebGPU::Queue& RemoteDeviceProxy::queue()
+{
+    return m_queue;
 }
 
 void RemoteDeviceProxy::destroy()

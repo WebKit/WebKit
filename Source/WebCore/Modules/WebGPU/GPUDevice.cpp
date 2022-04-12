@@ -86,6 +86,11 @@ Ref<GPUSupportedLimits> GPUDevice::limits() const
     return GPUSupportedLimits::create(m_backing->limits());
 }
 
+GPUQueue& GPUDevice::queue() const
+{
+    return m_queue;
+}
+
 void GPUDevice::destroy()
 {
     m_backing->destroy();

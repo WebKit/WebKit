@@ -30,6 +30,7 @@
 
 #include "RemoteAdapterMessages.h"
 #include "RemoteDevice.h"
+#include "RemoteQueue.h"
 #include "StreamServerConnection.h"
 #include "WebGPUDeviceDescriptor.h"
 #include "WebGPUObjectHeap.h"
@@ -56,7 +57,7 @@ void RemoteAdapter::stopListeningForIPC()
     m_streamConnection->stopReceivingMessages(Messages::RemoteAdapter::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUIdentifier identifier, CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
+void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier, CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
 {
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
@@ -65,9 +66,10 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
         return;
     }
 
-    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, streamConnection = m_streamConnection.copyRef(), identifier] (Ref<PAL::WebGPU::Device>&& device) mutable {
-        auto remoteDevice = RemoteDevice::create(device, objectHeap, WTFMove(streamConnection), identifier);
+    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier] (Ref<PAL::WebGPU::Device>&& device) mutable {
+        auto remoteDevice = RemoteDevice::create(device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier);
         objectHeap->addObject(identifier, remoteDevice);
+        objectHeap->addObject(queueIdentifier, remoteDevice->queue());
         const auto& features = device->features();
         const auto& limits = device->limits();
         callback(WebGPU::SupportedFeatures { features.features() }, WebGPU::SupportedLimits {

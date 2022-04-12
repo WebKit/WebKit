@@ -54,9 +54,10 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
         return;
 
     auto identifier = WebGPUIdentifier::generate();
+    auto queueIdentifier = WebGPUIdentifier::generate();
     SupportedFeatures supportedFeatures;
     SupportedLimits supportedLimits;
-    auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier), { supportedFeatures, supportedLimits });
+    auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier, queueIdentifier), { supportedFeatures, supportedLimits });
     if (!sendResult)
         return;
 
@@ -89,7 +90,7 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
         supportedLimits.maxComputeWorkgroupSizeZ,
         supportedLimits.maxComputeWorkgroupsPerDimension
     );
-    callback(RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, m_convertToBackingContext, identifier));
+    callback(RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, m_convertToBackingContext, identifier, queueIdentifier));
 }
 
 } // namespace WebKit::WebGPU

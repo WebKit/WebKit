@@ -66,12 +66,18 @@ DeviceImpl::DeviceImpl(WGPUDevice device, Ref<SupportedFeatures>&& features, Ref
     : Device(WTFMove(features), WTFMove(limits))
     , m_backing(device)
     , m_convertToBackingContext(convertToBackingContext)
+    , m_queue(QueueImpl::create(wgpuDeviceGetQueue(device), convertToBackingContext))
 {
 }
 
 DeviceImpl::~DeviceImpl()
 {
     wgpuDeviceRelease(m_backing);
+}
+
+Queue& DeviceImpl::queue()
+{
+    return m_queue;
 }
 
 void DeviceImpl::destroy()

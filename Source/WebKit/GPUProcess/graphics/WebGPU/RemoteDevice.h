@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteQueue.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUError.h"
 #include "WebGPUIdentifier.h"
@@ -65,19 +66,21 @@ struct TextureDescriptor;
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteDevice> create(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteDevice> create(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
-        return adoptRef(*new RemoteDevice(device, objectHeap, WTFMove(streamConnection), identifier));
+        return adoptRef(*new RemoteDevice(device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
     }
 
     ~RemoteDevice();
 
     void stopListeningForIPC();
 
+    RemoteQueue& queue();
+
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(PAL::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteDevice(PAL::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
@@ -119,6 +122,7 @@ private:
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
+    Ref<RemoteQueue> m_queue;
 };
 
 } // namespace WebKit

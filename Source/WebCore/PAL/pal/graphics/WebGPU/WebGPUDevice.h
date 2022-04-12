@@ -58,6 +58,7 @@ class PipelineLayout;
 struct PipelineLayoutDescriptor;
 class QuerySet;
 struct QuerySetDescriptor;
+class Queue;
 class RenderBundleEncoder;
 struct RenderBundleEncoderDescriptor;
 class RenderPipeline;
@@ -85,6 +86,8 @@ public:
     const SupportedFeatures& features() const { return m_features; }
     SupportedLimits& limits() { return m_limits; }
     const SupportedLimits& limits() const { return m_limits; }
+
+    virtual Queue& queue() = 0;
 
     virtual void destroy() = 0;
 

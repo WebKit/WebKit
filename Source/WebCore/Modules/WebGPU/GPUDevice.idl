@@ -35,6 +35,8 @@ interface GPUDevice : EventTarget {
     [SameObject] readonly attribute GPUSupportedFeatures features;
     [SameObject] readonly attribute GPUSupportedLimits limits;
 
+    [SameObject] readonly attribute GPUQueue queue;
+
     undefined destroy();
 
     GPUBuffer createBuffer(GPUBufferDescriptor descriptor);

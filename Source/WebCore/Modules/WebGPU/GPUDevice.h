@@ -33,6 +33,7 @@
 #include "GPUError.h"
 #include "GPUErrorFilter.h"
 #include "GPURenderPipeline.h"
+#include "GPUQueue.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContext.h"
 #include <optional>
@@ -90,6 +91,8 @@ public:
     Ref<GPUSupportedFeatures> features() const;
     Ref<GPUSupportedLimits> limits() const;
 
+    GPUQueue& queue() const;
+
     void destroy();
 
     Ref<GPUBuffer> createBuffer(const GPUBufferDescriptor&);
@@ -131,6 +134,7 @@ private:
     GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<PAL::WebGPU::Device>&& backing)
         : ActiveDOMObject { scriptExecutionContext }
         , m_backing(WTFMove(backing))
+        , m_queue(GPUQueue::create(Ref { m_backing->queue() }))
     {
     }
 
@@ -146,6 +150,7 @@ private:
 
     LostPromise m_lostPromise;
     Ref<PAL::WebGPU::Device> m_backing;
+    Ref<GPUQueue> m_queue;
 };
 
 }

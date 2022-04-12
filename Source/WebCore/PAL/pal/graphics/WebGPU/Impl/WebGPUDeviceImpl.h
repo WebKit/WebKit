@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUDevice.h"
+#include "WebGPUQueueImpl.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
 
@@ -56,6 +57,8 @@ private:
     DeviceImpl& operator=(DeviceImpl&&) = delete;
 
     WGPUDevice backing() const { return m_backing; }
+
+    Queue& queue() final;
 
     void destroy() final;
 
@@ -86,6 +89,7 @@ private:
 
     WGPUDevice m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    Ref<QueueImpl> m_queue;
 };
 
 } // namespace PAL::WebGPU

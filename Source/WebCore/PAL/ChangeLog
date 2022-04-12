@@ -1,5 +1,18 @@
 2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Hook up device.queue to the IDL
+        https://bugs.webkit.org/show_bug.cgi?id=239043
+
+        Reviewed by Kimmo Kinnunen.
+
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        (PAL::WebGPU::DeviceImpl::DeviceImpl):
+        (PAL::WebGPU::DeviceImpl::queue):
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.h:
+        * pal/graphics/WebGPU/WebGPUDevice.h:
+
+2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Sort PAL.xcodeproj.
         https://bugs.webkit.org/show_bug.cgi?id=239050
 

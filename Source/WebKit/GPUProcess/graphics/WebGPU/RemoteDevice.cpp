@@ -78,11 +78,12 @@
 
 namespace WebKit {
 
-RemoteDevice::RemoteDevice(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteDevice::RemoteDevice(PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     : m_backing(device)
     , m_objectHeap(objectHeap)
-    , m_streamConnection(WTFMove(streamConnection))
+    , m_streamConnection(streamConnection.copyRef())
     , m_identifier(identifier)
+    , m_queue(RemoteQueue::create(device.queue(), objectHeap, WTFMove(streamConnection), queueIdentifier))
 {
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
 }
@@ -92,6 +93,11 @@ RemoteDevice::~RemoteDevice() = default;
 void RemoteDevice::stopListeningForIPC()
 {
     m_streamConnection->stopReceivingMessages(Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
+}
+
+RemoteQueue& RemoteDevice::queue()
+{
+    return m_queue;
 }
 
 void RemoteDevice::destroy()

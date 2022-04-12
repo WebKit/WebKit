@@ -36,13 +36,14 @@
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
+class RemoteQueueProxy;
 
 class RemoteDeviceProxy final : public PAL::WebGPU::Device {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteDeviceProxy> create(Ref<PAL::WebGPU::SupportedFeatures>&& features, Ref<PAL::WebGPU::SupportedLimits>&& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteDeviceProxy> create(Ref<PAL::WebGPU::SupportedFeatures>&& features, Ref<PAL::WebGPU::SupportedLimits>&& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
-        return adoptRef(*new RemoteDeviceProxy(WTFMove(features), WTFMove(limits), parent, convertToBackingContext, identifier));
+        return adoptRef(*new RemoteDeviceProxy(WTFMove(features), WTFMove(limits), parent, convertToBackingContext, identifier, queueIdentifier));
     }
 
     virtual ~RemoteDeviceProxy();
@@ -53,7 +54,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteDeviceProxy(Ref<PAL::WebGPU::SupportedFeatures>&&, Ref<PAL::WebGPU::SupportedLimits>&&, RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteDeviceProxy(Ref<PAL::WebGPU::SupportedFeatures>&&, Ref<PAL::WebGPU::SupportedLimits>&&, RemoteAdapterProxy&, ConvertToBackingContext&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
 
     RemoteDeviceProxy(const RemoteDeviceProxy&) = delete;
     RemoteDeviceProxy(RemoteDeviceProxy&&) = delete;
@@ -73,6 +74,8 @@ private:
     {
         return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
     }
+
+    PAL::WebGPU::Queue& queue() final;
 
     void destroy() final;
 
@@ -106,8 +109,10 @@ private:
     Deque<CompletionHandler<void(std::optional<PAL::WebGPU::Error>&&)>> m_popErrorScopeCallbacks;
 
     WebGPUIdentifier m_backing;
+    WebGPUIdentifier m_queueBacking;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteAdapterProxy> m_parent;
+    Ref<RemoteQueueProxy> m_queue;
 };
 
 } // namespace WebKit::WebGPU
