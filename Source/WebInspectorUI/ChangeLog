@@ -1,3 +1,22 @@
+2022-04-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: REGRESSION(r290770): Styles: creating a new property scrolls the input to the top of the panel
+        https://bugs.webkit.org/show_bug.cgi?id=237747
+        <rdar://problem/90130669>
+
+        Reviewed by Patrick Angle.
+
+        Remove unnecessary scrollIntoViewIfNeeded call. I added the scrollIntoViewIfNeeded call in 2017 (r222959) because,
+        at the time, focusing on an input field didn't scroll it into the viewport. It was possible to tab into an element
+        outside of the viewport and  WebKit wouldn't scroll it make it visible. This is no longer the case.
+
+        * UserInterface/Views/SpreadsheetSelectorField.js:
+        (WI.SpreadsheetSelectorField.prototype.startEditing):
+        Call `focus()` to scroll to the edited element.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype.startEditing):
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         [Xcode] Avoid targeting 32-bit iOS and Mac architectures

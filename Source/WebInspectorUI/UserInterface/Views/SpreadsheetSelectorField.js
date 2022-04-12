@@ -59,7 +59,7 @@ WI.SpreadsheetSelectorField = class SpreadsheetSelectorField extends WI.Object
         element.classList.add("editing");
         element.contentEditable = "plaintext-only";
         element.spellcheck = false;
-        element.scrollIntoViewIfNeeded(false);
+        element.focus();
 
         // Disable syntax highlighting.
         element.textContent = element.textContent;

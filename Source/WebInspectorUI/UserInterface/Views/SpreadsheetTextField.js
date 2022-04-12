@@ -123,7 +123,6 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         this._element.classList.add("editing");
         this._element.contentEditable = "plaintext-only";
         this._element.spellcheck = false;
-        this._element.scrollIntoViewIfNeeded(false);
 
         this._element.focus();
         this._selectText();
