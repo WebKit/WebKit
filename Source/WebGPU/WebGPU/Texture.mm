@@ -2009,7 +2009,7 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
         if (descriptor.size.depthOrArrayLayers > 1) {
             textureDescriptor.arrayLength = descriptor.size.depthOrArrayLayers;
             if (descriptor.sampleCount > 1) {
-#if PLATFORM(WATCHOS) || PLATFORM(TVOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
                 return Texture::createInvalid(*this);
 #else
                 textureDescriptor.textureType = MTLTextureType2DMultisampleArray;
@@ -2313,7 +2313,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
         break;
     case WGPUTextureViewDimension_2DArray:
         if (m_descriptor.sampleCount > 1) {
-#if PLATFORM(WATCHOS) || PLATFORM(TVOS)
+#if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
             return TextureView::createInvalid(m_device);
 #else
             textureType = MTLTextureType2DMultisampleArray;
