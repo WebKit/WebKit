@@ -1,3 +1,9 @@
+2022-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, removing one of my email addresses.
+
+        * metadata/contributors.json:
+
 2022-04-09  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Missing inter-module documentation links
