@@ -53,7 +53,7 @@ public:
 
     void load(const String&) final;
 #if ENABLE(MEDIA_SOURCE)
-    void load(const URL&, const ContentType&, MediaSourcePrivateClient*) final { };
+    void load(const URL&, const ContentType&, MediaSourcePrivateClient&) final { };
 #endif
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) final { };

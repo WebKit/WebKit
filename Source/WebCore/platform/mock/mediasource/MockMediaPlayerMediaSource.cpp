@@ -111,9 +111,9 @@ void MockMediaPlayerMediaSource::load(const String&)
     ASSERT_NOT_REACHED();
 }
 
-void MockMediaPlayerMediaSource::load(const URL&, const ContentType&, MediaSourcePrivateClient* source)
+void MockMediaPlayerMediaSource::load(const URL&, const ContentType&, MediaSourcePrivateClient& source)
 {
-    m_mediaSourcePrivate = MockMediaSourcePrivate::create(*this, *source);
+    m_mediaSourcePrivate = MockMediaSourcePrivate::create(*this, source);
 }
 
 void MockMediaPlayerMediaSource::cancelLoad()

@@ -67,7 +67,7 @@ public:
 private:
     // MediaPlayerPrivate Overrides
     void load(const String& url) override;
-    void load(const URL&, const ContentType&, MediaSourcePrivateClient*) override;
+    void load(const URL&, const ContentType&, MediaSourcePrivateClient&) override;
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override { }
 #endif

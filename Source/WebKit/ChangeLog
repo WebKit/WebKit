@@ -1,3 +1,25 @@
+2022-04-12  Jer Noble  <jer.noble@apple.com>
+
+        Leak of MediaSourcePrivateAVFObjC and RemoteMediaSourceProxy
+        https://bugs.webkit.org/show_bug.cgi?id=239088
+        <rdar://90693094>
+
+        Reviewed by Eric Carlson.
+
+        Adopt changes to MediaSourcePrivateClient making it a CanMakeWeakPtr class.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::loadMediaSource):
+        * GPUProcess/media/RemoteMediaSourceProxy.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::create):
+        (WebKit::MediaSourcePrivateRemote::MediaSourcePrivateRemote):
+        (WebKit::MediaSourcePrivateRemote::seekToTime):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h:
+
 2022-04-12  Ada Chan  <adachan@apple.com>
 
         [WebXR] Implement the WebXRFrame methods for getting joints' poses and radii

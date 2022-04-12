@@ -96,7 +96,7 @@ private:
     friend class MockSourceBufferPrivate;
 
     MockMediaPlayerMediaSource& m_player;
-    Ref<MediaSourcePrivateClient> m_client;
+    WeakPtr<MediaSourcePrivateClient> m_client;
     Vector<RefPtr<MockSourceBufferPrivate>> m_sourceBuffers;
     Vector<MockSourceBufferPrivate*> m_activeSourceBuffers;
     bool m_isEnded { false };

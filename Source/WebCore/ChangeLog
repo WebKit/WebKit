@@ -1,3 +1,65 @@
+2022-04-12  Jer Noble  <jer.noble@apple.com>
+
+        Leak of MediaSourcePrivateAVFObjC and RemoteMediaSourceProxy
+        https://bugs.webkit.org/show_bug.cgi?id=239088
+        <rdar://90693094>
+
+        Reviewed by Eric Carlson.
+
+        MediaSourcePrivateAVFObjC holds a strong reference to its MediaSourcePrivateClient, which is
+        a MediaSource when running in-process, but a RemoteMediaSourceProxy when running in multi-process.
+        In both cases, the MediaSourcePrivateClient holds a strong reference to its private object as well.
+        However, in the multi-process scenario, this cycle is never broken, causing a leak.
+
+        Rather than determine the correct point to break this retain-cycle, modify MediaSourcePrivateClient
+        to be a CanMakeWeakPtr abstract class (rather than a RefCounted one), and convert all cases where
+        that client's pointer is stored from a Ref/RefPtr to a WeakPtr. This means having to null-check
+        every time that pointer is used.
+
+        * Modules/mediasource/MediaSource.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        * platform/graphics/MediaSourcePrivateClient.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::load):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::load):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::create):
+        (WebCore::MediaSourcePrivateAVFObjC::MediaSourcePrivateAVFObjC):
+        (WebCore::MediaSourcePrivateAVFObjC::duration const):
+        (WebCore::MediaSourcePrivateAVFObjC::buffered):
+        (WebCore::MediaSourcePrivateAVFObjC::seekToTime):
+        (WebCore::MediaSourcePrivateAVFObjC::failedToCreateRenderer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::unblockDurationChanges):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.h:
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::MockMediaPlayerMediaSource::load):
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::MockMediaSourcePrivate):
+        (WebCore::MockMediaSourcePrivate::duration):
+        (WebCore::MockMediaSourcePrivate::buffered):
+        (WebCore::MockMediaSourcePrivate::seekToTime):
+        * platform/mock/mediasource/MockMediaSourcePrivate.h:
+
 2022-04-12  Ada Chan  <adachan@apple.com>
 
         [WebXR] Implement the WebXRFrame methods for getting joints' poses and radii

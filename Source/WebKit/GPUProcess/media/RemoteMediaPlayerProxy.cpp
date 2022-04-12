@@ -171,7 +171,7 @@ void RemoteMediaPlayerProxy::loadMediaSource(URL&& url, const WebCore::ContentTy
     }
 
     m_mediaSourceProxy = adoptRef(*new RemoteMediaSourceProxy(*m_manager->gpuConnectionToWebProcess(), mediaSourceIdentifier, webMParserEnabled, *this));
-    m_player->load(url, contentType, m_mediaSourceProxy.get());
+    m_player->load(url, contentType, *m_mediaSourceProxy);
     getConfiguration(configuration);
     completionHandler(WTFMove(configuration));
 }

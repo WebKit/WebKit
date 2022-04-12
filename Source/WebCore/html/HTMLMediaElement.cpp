@@ -1569,7 +1569,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
             // while processing remainder of load failure.
             m_mediaSource = nullptr;
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
-        } else if (!m_player->load(url, contentType, m_mediaSource.get())) {
+        } else if (!m_player->load(url, contentType, *m_mediaSource)) {
             // We have to detach the MediaSource before we forget the reference to it.
             m_mediaSource->detachFromElement(*this);
             m_mediaSource = nullptr;

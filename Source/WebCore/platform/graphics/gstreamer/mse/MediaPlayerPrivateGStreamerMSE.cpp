@@ -123,7 +123,7 @@ void MediaPlayerPrivateGStreamerMSE::load(const String&)
     m_player->networkStateChanged();
 }
 
-void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, MediaSourcePrivateClient* mediaSource)
+void MediaPlayerPrivateGStreamerMSE::load(const URL& url, const ContentType&, MediaSourcePrivateClient& mediaSource)
 {
     auto mseBlobURI = makeString("mediasource", url.string().isEmpty() ? "blob://"_s : url.string());
     GST_DEBUG("Loading %s", mseBlobURI.ascii().data());
@@ -317,7 +317,7 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
     ASSERT(isMainThread());
 
     MediaTime previousDuration = m_mediaTimeDuration;
-    m_mediaTimeDuration = m_mediaSource->duration();
+    m_mediaTimeDuration = m_mediaSource ? m_mediaSource->duration() : MediaTime::invalidTime();
 
     GST_TRACE("previous=%s, new=%s", toString(previousDuration).utf8().data(), toString(m_mediaTimeDuration).utf8().data());
 

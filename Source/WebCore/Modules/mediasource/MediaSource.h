@@ -39,6 +39,7 @@
 #include "MediaSourcePrivateClient.h"
 #include "URLRegistry.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -50,7 +51,8 @@ class SourceBufferPrivate;
 class TimeRanges;
 
 class MediaSource final
-    : public MediaSourcePrivateClient
+    : public RefCounted<MediaSource>
+    , public MediaSourcePrivateClient
     , public ActiveDOMObject
     , public EventTargetWithInlineData
     , public URLRegistrable

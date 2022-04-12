@@ -361,7 +361,6 @@ SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    ASSERT(!m_client);
     sourceBufferMap().remove(m_mapID);
     destroyStreamDataParser();
     destroyRenderers();
