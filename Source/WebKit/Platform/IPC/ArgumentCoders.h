@@ -290,38 +290,26 @@ template<typename T> struct ArgumentCoder<RefPtr<T>> {
     }
 };
 
-template<size_t index, typename... Elements>
+template<typename... Elements>
 struct TupleEncoder {
     template<typename Encoder>
     static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
     {
-        encoder << std::get<sizeof...(Elements) - index>(tuple);
-        TupleEncoder<index - 1, Elements...>::encode(encoder, tuple);
+        encode(encoder, tuple, std::index_sequence_for<Elements...> { });
     }
-};
 
-template<typename... Elements>
-struct TupleEncoder<0, Elements...> {
-    template<typename Encoder>
-    static void encode(Encoder&, const std::tuple<Elements...>&)
+    template<typename Encoder, size_t... Indices>
+    static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple, std::index_sequence<Indices...>)
     {
+        if constexpr (sizeof...(Indices) > 0)
+            (encoder << ... << std::get<Indices>(tuple));
     }
 };
 
-template <typename T, typename... Elements, size_t... Indices>
-auto tupleFromTupleAndObject(T&& object, std::tuple<Elements...>&& tuple, std::index_sequence<Indices...>)
-{
-    return std::make_tuple(WTFMove(object), WTFMove(std::get<Indices>(tuple))...);
-}
-
-template <typename T, typename... Elements>
-auto tupleFromTupleAndObject(T&& object, std::tuple<Elements...>&& tuple)
-{
-    return tupleFromTupleAndObject(WTFMove(object), WTFMove(tuple), std::index_sequence_for<Elements...>());
-}
+template<typename... Elements> struct TupleDecoder;
 
 template<typename Type, typename... Types>
-struct TupleDecoderImpl {
+struct TupleDecoder<Type, Types...> {
     template<typename Decoder>
     static std::optional<std::tuple<Type, Types...>> decode(Decoder& decoder)
     {
@@ -330,38 +318,16 @@ struct TupleDecoderImpl {
         if (!optional)
             return std::nullopt;
 
-        std::optional<std::tuple<Types...>> subTuple = TupleDecoderImpl<Types...>::decode(decoder);
-        if (!subTuple)
+        std::optional<std::tuple<Types...>> remainder = TupleDecoder<Types...>::decode(decoder);
+        if (!remainder)
             return std::nullopt;
 
-        return tupleFromTupleAndObject(WTFMove(*optional), WTFMove(*subTuple));
-    }
-};
-
-template<typename Type>
-struct TupleDecoderImpl<Type> {
-    template<typename Decoder>
-    static std::optional<std::tuple<Type>> decode(Decoder& decoder)
-    {
-        std::optional<Type> optional;
-        decoder >> optional;
-        if (!optional)
-            return std::nullopt;
-        return std::make_tuple(WTFMove(*optional));
-    }
-};
-
-template<size_t size, typename... Elements>
-struct TupleDecoder {
-    template<typename Decoder>
-    static std::optional<std::tuple<Elements...>> decode(Decoder& decoder)
-    {
-        return TupleDecoderImpl<Elements...>::decode(decoder);
+        return std::tuple_cat(std::make_tuple(WTFMove(*optional)), WTFMove(*remainder));
     }
 };
 
 template<>
-struct TupleDecoder<0> {
+struct TupleDecoder<> {
     template<typename Decoder>
     static std::optional<std::tuple<>> decode(Decoder&)
     {
@@ -373,13 +339,13 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, const std::tuple<Elements...>& tuple)
     {
-        TupleEncoder<sizeof...(Elements), Elements...>::encode(encoder, tuple);
+        TupleEncoder<Elements...>::encode(encoder, tuple);
     }
 
     template<typename Decoder>
     static std::optional<std::tuple<Elements...>> decode(Decoder& decoder)
     {
-        return TupleDecoder<sizeof...(Elements), Elements...>::decode(decoder);
+        return TupleDecoder<Elements...>::decode(decoder);
     }
 };
 

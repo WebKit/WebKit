@@ -1,3 +1,28 @@
+2022-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Simplify IPC encoding, decoding of tuples
+        https://bugs.webkit.org/show_bug.cgi?id=239062
+
+        Reviewed by Darin Adler.
+
+        For encoding each element of a given tuple, an index sequence is used in
+        combination with a fold expression calling ArgumentCoder<T>::encode().
+
+        For decoding, std::tuple_cat() is used to concatenate a single-element
+        tuple containing the current element with the tuple of the remaining
+        decoded elements.
+
+        No real change in behavior, sequence of encoding and decoding remains
+        the same.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::TupleEncoder::encode):
+        (IPC::tupleFromTupleAndObject): Deleted.
+        (IPC::TupleDecoderImpl::decode): Deleted.
+        (IPC::TupleDecoderImpl<Type>::decode): Deleted.
+        (IPC::TupleDecoder::decode): Deleted.
+        (IPC::TupleDecoder<0>::decode): Deleted.
+
 2022-04-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed, build fix for Debian Stable after r292251
