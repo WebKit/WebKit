@@ -1,3 +1,29 @@
+2022-04-11  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Update container shorthand order
+        https://bugs.webkit.org/show_bug.cgi?id=239065
+
+        Reviewed by Alan Bujtas.
+
+        The format is now 'name / type' instead of 'type / name'.
+
+        https://drafts.csswg.org/css-contain-3/#container-shorthand
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/StyleProperties.cpp:
+        (WebCore::isNoneValue):
+        (WebCore::isValueID):
+        (WebCore::StyleProperties::getPropertyValue const):
+
+        Also make "foo / none" serialize as "foo".
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeContainerName):
+        (WebCore::CSSPropertyParser::consumeContainerShorthand):
+
 2022-04-11  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: preserve DOM.NodeId if a node is removed and re-added

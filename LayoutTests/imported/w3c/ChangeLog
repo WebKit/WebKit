@@ -1,3 +1,30 @@
+2022-04-11  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Update container shorthand order
+        https://bugs.webkit.org/show_bug.cgi?id=239065
+
+        Reviewed by Alan Bujtas.
+
+        Update from WPT repo.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/container-computed-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-computed.html:
+        * web-platform-tests/css/css-contain/container-queries/container-name-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/container-selection.html:
+        * web-platform-tests/css/css-contain/container-queries/container-type-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/crashtests/canvas-as-container-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-000-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-001-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/crashtests/chrome-quotes-crash.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/crashtests/force-sibling-style-crash.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/crashtests/w3c-import.log:
+
 2022-04-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         calc(): Propogate nan for min, max, clamp, and hypot

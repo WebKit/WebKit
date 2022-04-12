@@ -5286,8 +5286,8 @@
         "container": {
             "codegen-properties": {
                 "longhands": [
-                    "container-type",
-                    "container-name"
+                    "container-name",
+                    "container-type"
                 ]
             },
             "status": {

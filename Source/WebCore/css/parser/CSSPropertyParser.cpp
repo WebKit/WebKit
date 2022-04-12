@@ -3862,7 +3862,7 @@ static RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange& range)
     do {
         auto name = consumeSingleContainerName(range);
         if (!name)
-            return nullptr;
+            return list;
         list->append(name.releaseNonNull());
     } while (!range.atEnd());
 
@@ -6211,28 +6211,28 @@ bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
 
 bool CSSPropertyParser::consumeContainerShorthand(bool important)
 {
-    auto type = parseSingleValue(CSSPropertyContainerType);
-    if (!type)
+    auto name = consumeContainerName(m_range);
+    if (!name)
         return false;
 
     bool sawSlash = false;
 
-    auto consumeSlashName = [&]() -> RefPtr<CSSValue> {
+    auto consumeSlashType = [&]() -> RefPtr<CSSValue> {
         if (m_range.atEnd())
             return nullptr;
         if (!consumeSlashIncludingWhitespace(m_range))
             return nullptr;
         sawSlash = true;
-        return parseSingleValue(CSSPropertyContainerName);
+        return parseSingleValue(CSSPropertyContainerType);
     };
 
-    auto name = consumeSlashName();
+    auto type = consumeSlashType();
 
-    if (!m_range.atEnd() || (sawSlash && !name))
+    if (!m_range.atEnd() || (sawSlash && !type))
         return false;
 
-    addProperty(CSSPropertyContainerType, CSSPropertyContainer, type.releaseNonNull(), important);
-    addPropertyWithImplicitDefault(CSSPropertyContainerName, CSSPropertyContainer, WTFMove(name), CSSValuePool::singleton().createImplicitInitialValue(), important);
+    addProperty(CSSPropertyContainerName, CSSPropertyContainer, name.releaseNonNull(), important);
+    addPropertyWithImplicitDefault(CSSPropertyContainerType, CSSPropertyContainer, WTFMove(type), CSSValuePool::singleton().createImplicitInitialValue(), important);
     return true;
 }
 

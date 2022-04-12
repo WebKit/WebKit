@@ -19,10 +19,27 @@ PASS (width: 100px)
 PASS ((width: 100px))
 PASS (not (width: 100px))
 PASS ((width: 100px) and (height: 100px))
-PASS ((width: 50px) or (height: 100px))
+PASS (((width: 40px) or (width: 50px)) and (height: 100px))
+PASS ((width: 100px) and ((height: 40px) or (height: 50px)))
+PASS (((width: 40x) and (height: 50px)) or (height: 100px))
+PASS ((width: 50px) or ((width: 40px) and (height: 50px)))
+PASS ((width: 100px) and (not (height: 100px)))
 PASS (width < 100px)
+PASS (width <= 100px)
+PASS (width = 100px)
+PASS (width > 100px)
+PASS (width >= 100px)
 PASS (100px < width)
+PASS (100px <= width)
+PASS (100px = width)
+PASS (100px > width)
+PASS (100px >= width)
 PASS (100px < width < 200px)
+PASS (100px < width <= 200px)
+PASS (100px <= width < 200px)
+PASS (100px > width > 200px)
+PASS (100px > width >= 200px)
+PASS (100px >= width > 200px)
 PASS foo(width)
 PASS size(width)
 PASS (asdf)
@@ -33,6 +50,14 @@ PASS (min-color: 1)
 PASS (color-index >= 1)
 PASS size(grid)
 PASS (grid)
+PASS (width == 100px)
+FAIL (100px == width) assert_equals: expected 2 but got 0
+FAIL (100px = width = 200px) assert_equals: expected "" but got "true"
+FAIL (100px < width > 200px) assert_equals: expected "" but got "true"
+FAIL (100px <= width >= 200px) assert_equals: expected "" but got "true"
+FAIL (100px <= width > 200px) assert_equals: expected "" but got "true"
+FAIL (100px < width >= 200px) assert_equals: expected "" but got "true"
+FAIL (100px : width : 200px) assert_equals: expected 2 but got 0
 PASS screen
 PASS print
 PASS not print
@@ -42,6 +67,10 @@ PASS screen or (width: 100px)
 PASS not screen and (width: 100px)
 PASS not screen or (width: 100px)
 PASS (width: 100px), (height: 100px)
+PASS (width: 100px) and (height: 100px)
+PASS (width: 100px) or (height: 100px)
+PASS not (width: 100px)
+PASS foo (width: 100px)
 PASS Container selector: foo
 PASS Container selector:  foo
 PASS Container selector:  foo

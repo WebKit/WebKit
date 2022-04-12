@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/canvas-as-container-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-001-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-quotes-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/columns-in-table-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/container-type-change-chrome-legacy-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/flex-in-columns-000-crash.html
@@ -24,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/flex-in-columns-002-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/flex-in-columns-003-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/focus-inside-content-visibility-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/force-sibling-style-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/grid-in-columns-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/grid-in-columns-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/grid-in-columns-002-crash.html

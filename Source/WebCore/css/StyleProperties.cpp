@@ -68,6 +68,21 @@ static bool isCSSWideValueKeyword(StringView value)
     return value == "initial" || value == "inherit" || value == "unset" || value == "revert";
 }
 
+static bool isNoneValue(const RefPtr<CSSValue>& value)
+{
+    return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNone;
+}
+
+static bool isValueID(const Ref<CSSValue>& value, CSSValueID id)
+{
+    return value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get()).isValueID() && downcast<CSSPrimitiveValue>(value.get()).valueID() == id;
+}
+
+static bool isValueID(const RefPtr<CSSValue>& value, CSSValueID id)
+{
+    return value && isValueID(*value, id);
+}
+
 Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
     void* slot = ImmutableStylePropertiesMalloc::malloc(sizeForImmutableStylePropertiesWithPropertyCount(count));
@@ -251,6 +266,13 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyColumns:
         return getShorthandValue(columnsShorthand());
     case CSSPropertyContainer:
+        if (auto type = getPropertyCSSValue(CSSPropertyContainerType)) {
+            if (isNoneValue(type)) {
+                if (auto name = getPropertyCSSValue(CSSPropertyContainerName))
+                    return name->cssText();
+                return { };
+            }
+        }
         return getShorthandValue(containerShorthand(), " / ");
     case CSSPropertyFlex:
         return getShorthandValue(flexShorthand());
@@ -840,21 +862,6 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
         return commonValue;
 
     return result.isEmpty() ? String() : result.toString();
-}
-
-static bool isNoneValue(const RefPtr<CSSValue>& value)
-{
-    return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNone;
-}
-
-static bool isValueID(const Ref<CSSValue>& value, CSSValueID id)
-{
-    return value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get()).isValueID() && downcast<CSSPrimitiveValue>(value.get()).valueID() == id;
-}
-
-static bool isValueID(const RefPtr<CSSValue>& value, CSSValueID id)
-{
-    return value && isValueID(*value, id);
 }
 
 String StyleProperties::getGridTemplateValue() const
