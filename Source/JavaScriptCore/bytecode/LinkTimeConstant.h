@@ -119,6 +119,7 @@ class JSGlobalObject;
     v(sentinelString, nullptr) \
     v(createRemoteFunction, nullptr) \
     v(isRemoteFunction, nullptr) \
+    v(arraySort, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

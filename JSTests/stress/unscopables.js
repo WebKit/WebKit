@@ -1,4 +1,4 @@
-//@ requireOptions("--useAtMethod=1")
+//@ requireOptions("--useAtMethod=1", "--useChangeArrayByCopyMethods=1")
 
 function test(actual, expected) {
     if (actual !== expected)
@@ -11,7 +11,7 @@ function test(actual, expected) {
 
     test(typeof unscopables, "object");
     test(unscopables.__proto__, undefined);
-    test(String(Object.keys(unscopables).sort()), "at,copyWithin,entries,fill,find,findIndex,findLast,findLastIndex,flat,flatMap,includes,keys,values");
+    test(String(Object.keys(unscopables).sort()), "at,copyWithin,entries,fill,find,findIndex,findLast,findLastIndex,flat,flatMap,includes,keys,toReversed,toSorted,toSpliced,values");
 }());
 
 (function () {

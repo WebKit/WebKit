@@ -1,3 +1,50 @@
+2022-04-12  Aditi Singh  <asingh@igalia.com>
+
+        Implement Change Array by copy proposal
+        https://bugs.webkit.org/show_bug.cgi?id=234604
+
+        Reviewed by Alexey Shvayka.
+
+        This patch implements proposal Change Array By Copy. The proposal provides additional 
+        methods on Array.prototype and TypedArray.prototype to enable changes on the array by 
+        returning a new copy of it with the change.
+        Since, a call to intrinsic functions: Array.prototype.sort(comparefn) and 
+        %TypedArray%.prototype.sort(comparefn) was needed, LinkTimeConstants have
+        been added for the same.
+        LinkTimeConstants were added instead of:
+        function sort(comparefn) { return @arraySort.@call(this, cmp); }
+        because this introduces an extra function call, which is slower.
+        %%TypedArray%%.prototype.sort(comparefn) and Array.prototype.sort(comparefn) are
+        implemented differently to avoid eager initialisation for TypedArrayPrototype
+        because it is quite large and not commonly used on the web. 
+        
+        The proposal details can be found here:
+        https://github.com/tc39/proposal-change-array-by-copy
+
+        * builtins/ArrayPrototype.js:
+        (toReversed):
+        (toSorted):
+        (toSpliced):
+        (with):
+        * builtins/BuiltinNames.h:
+        * builtins/TypedArrayPrototype.js:
+        (toReversed):
+        (toSorted):
+        (toSpliced):
+        (with):
+        (sort):
+        * bytecode/LinkTimeConstant.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::typedArrayProtoSort const):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/OptionsList.h:
+
 2022-04-12  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-GC] Introduce structs types

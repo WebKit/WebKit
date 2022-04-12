@@ -795,3 +795,159 @@ function at(index)
 
     return (k >= 0 && k < length) ? array[k] : @undefined;
 }
+
+function toReversed()
+{
+    "use strict";
+
+    // Step 1.
+    var array = @toObject(this, "Array.prototype.toReversed requires that |this| not be null or undefined");
+
+    // Step 2.
+    var length = @toLength(array.length);
+
+    // Step 3.
+    var result = @newArrayWithSize(length);
+
+    // Step 4-5.
+    for (var k = 0; k < length; k++) {
+        var fromValue = array[length - k - 1];
+        @putByValDirect(result, k, fromValue);
+    }
+
+    return result;
+}
+
+function toSorted(comparefn)
+{
+    "use strict";
+
+    // Step 1.
+    if (comparefn !== @undefined && !@isCallable(comparefn))
+        @throwTypeError("Array.prototype.toSorted requires the comparator argument to be a function or undefined");
+
+    // Step 2.
+    var array = @toObject(this, "Array.prototype.toSorted requires that |this| not be null or undefined");
+
+    // Step 3.
+    var length = @toLength(array.length);
+
+    // Step 4.
+    var result = @newArrayWithSize(length);
+
+    // Step 8.
+    for (var k = 0; k < length; k++)
+        @putByValDirect(result, k, array[k]);
+
+    // Step 6.
+    @arraySort.@call(result, comparefn);
+
+    return result;
+}
+
+function toSpliced(start, deleteCount /*, ...items */)
+{
+    "use strict"
+
+    // Step 1.
+    var array = @toObject(this, "Array.prototype.toSpliced requires that |this| not be null or undefined");
+
+    // Step 2.
+    var length = @toLength(array.length);
+
+    // Step 3.
+    var relativeStart = @toIntegerOrInfinity(start);
+
+    var actualStart;
+    // Step 4-6.
+    if (relativeStart === -@Infinity)
+        actualStart = 0;
+    else if (relativeStart < 0)
+        actualStart = length + relativeStart > 0 ? length + relativeStart : 0;
+    else
+        actualStart = @min(relativeStart, length);
+
+    // Step 7.
+    var insertCount = 0;
+    var actualDeleteCount;
+
+    // Step 8-10.
+    if (arguments.length === 0)
+        actualDeleteCount = 0;
+    else if (arguments.length === 1)
+        actualDeleteCount = length - actualStart;
+    else {
+        insertCount = arguments.length - 2;
+        var tempDeleteCount = @toIntegerOrInfinity(deleteCount);
+        tempDeleteCount = tempDeleteCount > 0 ? tempDeleteCount : 0;
+        actualDeleteCount = @min(tempDeleteCount, length - actualStart);
+    }
+
+    // Step 11.
+    var newLen = length + insertCount - actualDeleteCount;
+
+    // Step 12.
+    if (newLen >= @MAX_SAFE_INTEGER)
+        @throwTypeError("Array length exceeds 2**53 - 1");
+
+    // Step 13.
+    var result = @newArrayWithSize(newLen);
+
+    // Step 14.
+    var k = 0;
+
+    // Step 16.
+    for (; k < actualStart; k++)
+        @putByValDirect(result, k, array[k]);
+
+    // Step 17.
+    for (var i = 0; i < insertCount; i++, k++)
+        @putByValDirect(result, k, arguments[i + 2]);
+
+    // Step 18.
+    for (; k < newLen; k++) {
+        var from = k + actualDeleteCount - insertCount;
+        @putByValDirect(result, k, array[from]);
+    }
+
+    return result;
+
+}
+
+function with(index, value)
+{
+    "use strict";
+
+    // Step 1.
+    var array = @toObject(this, "Array.prototype.with requires that |this| not be null or undefined");
+
+    // Step 2.
+    var length = @toLength(array.length);
+
+    // Step 3.
+    var relativeIndex = @toIntegerOrInfinity(index);
+
+    // Step 4-5.
+    var actualIndex;
+    if (relativeIndex >= 0)
+        actualIndex = relativeIndex;
+    else
+        actualIndex = length + relativeIndex;
+
+    // Step 6.
+    if (actualIndex >= length || actualIndex < 0)
+        @throwRangeError("Array index out of Range");
+
+    // Step 7.
+    var result = @newArrayWithSize(length);
+
+    // Step 8-9
+    for (var k = 0; k < length; k++) {
+        if (k === actualIndex)
+            @putByValDirect(result, k, value);
+        else
+            @putByValDirect(result, k, array[k]);
+    }
+
+    return result;
+}

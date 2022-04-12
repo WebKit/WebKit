@@ -1,3 +1,22 @@
+2022-04-12  Aditi Singh  <asingh@igalia.com>
+
+        Implement Change Array by copy proposal
+        https://bugs.webkit.org/show_bug.cgi?id=234604
+
+        Reviewed by Alexey Shvayka.
+
+        * stress/change-array-by-copy.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shallowEqual):
+        (shouldThrow.Array.prototype.toSpliced.toReversed):
+        * stress/typed-array-change-by-copy.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shallowEqual):
+        (sequence.new.Uint8Array):
+        * stress/unscopables.js:
+
 2022-04-12  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-GC] Introduce structs types

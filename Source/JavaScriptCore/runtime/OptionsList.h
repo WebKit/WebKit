@@ -540,6 +540,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useArrayFindLastMethod, true, Normal, "Expose the findLast() and findLastIndex() methods on Array and %TypedArray%.") \
     v(Bool, useArrayGroupByMethod, false, Normal, "Expose the groupBy() and groupByToMap() methods on Array.") \
     v(Bool, useAtMethod, true, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
+    v(Bool, useChangeArrayByCopyMethods, false, Normal, "Expose the withAt(), withReversed(), withSorted() and withSpliced() methods on Array and %TypedArray%.") \
     v(Bool, useHasOwn, true, Normal, "Expose the Object.hasOwn method") \
     v(Bool, useImportAssertion, false, Normal, "Enable import assertion.") \
     v(Bool, useIntlEnumeration, true, Normal, "Expose the Intl enumeration APIs.") \

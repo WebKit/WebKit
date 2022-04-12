@@ -191,6 +191,7 @@ namespace JSC {
     macro(sentinelString) \
     macro(createRemoteFunction) \
     macro(isRemoteFunction) \
+    macro(arraySort) \
 
 
 namespace Symbols {

@@ -122,7 +122,12 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     if (Options::useAtMethod())
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().atPublicName(), arrayPrototypeAtCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-
+    if (Options::useChangeArrayByCopyMethods()) {
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().toReversedPublicName(), arrayPrototypeToReversedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().toSortedPublicName(), arrayPrototypeToSortedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().toSplicedPublicName(), arrayPrototypeToSplicedCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().withPublicName(), arrayPrototypeWithCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPrivateName(), getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(PropertyAttribute::ReadOnly));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().forEachPrivateName(), getDirect(vm, vm.propertyNames->builtinNames().forEachPublicName()), static_cast<unsigned>(PropertyAttribute::ReadOnly));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().keysPrivateName(), getDirect(vm, vm.propertyNames->builtinNames().keysPublicName()), static_cast<unsigned>(PropertyAttribute::ReadOnly));
@@ -145,6 +150,9 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
         Options::useArrayGroupByMethod() ? &vm.propertyNames->builtinNames().groupByToMapPublicName() : nullptr,
         &vm.propertyNames->builtinNames().includesPublicName(),
         &vm.propertyNames->builtinNames().keysPublicName(),
+        Options::useChangeArrayByCopyMethods() ? &vm.propertyNames->builtinNames().toReversedPublicName() : nullptr,
+        Options::useChangeArrayByCopyMethods() ? &vm.propertyNames->builtinNames().toSortedPublicName() : nullptr,
+        Options::useChangeArrayByCopyMethods() ? &vm.propertyNames->builtinNames().toSplicedPublicName() : nullptr,
         &vm.propertyNames->builtinNames().valuesPublicName()
     };
     for (const auto* unscopableName : unscopableNames) {
