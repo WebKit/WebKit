@@ -1,3 +1,32 @@
+2022-04-12  Elliott Williams  <emw@apple.com>
+
+        Reland "[XCBuild] Enable dependency validation by default"
+        https://bugs.webkit.org/show_bug.cgi?id=238901
+        <rdar://problem/91379968>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig: In
+        open-source builds, disable VALIDATE_DEPENDENCIES when there is no
+        PRODUCT_TYPE (i.e. not building a native target).
+        * ImageDiff/cg/Configurations/DebugRelease.xcconfig: Same as above.
+        * MiniBrowser/Configurations/DebugRelease.xcconfig: Same as above.
+        * MobileMiniBrowser/Configurations/DebugRelease.xcconfig: Same as
+        above.
+        * Scripts/build-webkit: Turn on validation errors when
+        USE_WORKSPACE=YES. Use a new build setting, WK_VALIDATE_DEPENDENCIES,
+        which is the "requested" validation level. The actual validation level
+        set in VALIDATE_DEPENDENCIES may be lower.
+        * Scripts/set-webkit-configuration: 
+        * Scripts/webkitdirs.pm:
+        (markBaseProductDirectoryAsCreatedByXcodeBuildSystem): 
+        (setCreatedByXcodeBuildSystem):
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig: Same as above.
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig: Same as
+        above.
+        * lldb/lldbWebKitTester/Configurations/DebugRelease.xcconfig: Same as
+        above.
+
 2022-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WKTR] [DRT] Only enable WebGPU for the LayoutTests/http/tests/webgpu directory

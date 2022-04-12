@@ -1,3 +1,15 @@
+2022-04-12  Elliott Williams  <emw@apple.com>
+
+        Reland "[XCBuild] Enable dependency validation by default"
+        https://bugs.webkit.org/show_bug.cgi?id=238901
+        <rdar://problem/91379968>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/DebugRelease.xcconfig: In open-source builds, disable
+        VALIDATE_DEPENDENCIES when there is no PRODUCT_TYPE (i.e. not building
+        a native target).
+
 2022-04-12  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         FunctionDispatcher should not be RefCounted

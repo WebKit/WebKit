@@ -341,7 +341,7 @@ sub setBaseProductDir($)
     ($baseProductDir) = @_;
 }
 
-sub setCreatedByXcodeBuildSystem
+sub markBaseProductDirectoryAsCreatedByXcodeBuildSystem
 {
     determineBaseProductDir();
     make_path($baseProductDir);

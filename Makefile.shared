@@ -6,6 +6,7 @@ ifeq ($(USE_WORKSPACE),YES)
 SCHEME ?= $(notdir $(CURDIR))
 WORKSPACE_PATH ?= $(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace
 XCODE_TARGET = -workspace $(WORKSPACE_PATH) -scheme "$(SCHEME)"
+XCODE_OPTIONS += WK_VALIDATE_DEPENDENCIES=YES_ERROR
 else
 USE_WORKSPACE =
 endif
@@ -97,11 +98,6 @@ else ifeq ($(WK_LTO_MODE),none)
 CONFIG_OPTIONS += --lto-mode=none
 endif
 
-ifeq (YES,$(findstring YES,$(VALIDATE_DEPENDENCIES)))
-CONFIG_OPTIONS += --validate-dependencies
-XCODE_OPTIONS += -EnableBuildDebugging=1 VALIDATE_DEPENDENCIES=$(VALIDATE_DEPENDENCIES)
-endif
-
 export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
 
 # Run xcodebuild with the same PATH with which the Xcode IDE runs, to mitigate unnecessary rebuilds due to PATH differences.
@@ -124,9 +120,7 @@ define invoke_xcode
 endef
 
 all:
-ifneq (,$(CONFIG_OPTIONS))
 	@$(call set_webkit_configuration,)
-endif
 	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 debug d: force

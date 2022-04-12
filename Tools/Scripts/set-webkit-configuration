@@ -28,6 +28,7 @@
 
 use strict;
 use warnings;
+use File::Path qw(make_path);
 use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
@@ -46,8 +47,8 @@ Usage: $programName [options]
   --lto-mode=<mode>                  Set LTO mode: full, thin, or none
   --debug                            Set the default configuration to debug
   --release                          Set the default configuration to release
-  --validate-dependencies            Configure the build directory for Xcode dependency validation
   --reset                            Reset configurations
+  -h, --help                         Show this message and exit
 EOF
 
 sub printCurrentSettings();
@@ -64,7 +65,6 @@ my $enableUBSAN = checkForArgumentAndRemoveFromARGV("--ubsan");
 my $disableUBSAN = checkForArgumentAndRemoveFromARGV("--no-ubsan");
 my $enableCoverage = checkForArgumentAndRemoveFromARGV("--coverage");
 my $disableCoverage = checkForArgumentAndRemoveFromARGV("--no-coverage");
-my $validateDependencies = checkForArgumentAndRemoveFromARGV("--validate-dependencies");
 my $ltoMode;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
     $ltoMode="";
@@ -73,6 +73,11 @@ my $forceOptimizationLevel;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--force-optimization-level", \$forceOptimizationLevel)
     && !checkForArgumentAndRemoveFromARGVGettingValue("--force-opt", \$forceOptimizationLevel)) {
     $forceOptimizationLevel="";
+}
+
+if (checkForArgumentAndRemoveFromARGV("-h") || checkForArgumentAndRemoveFromARGV("--help")) {
+    printUsage();
+    exit 1;
 }
 
 if (!$architecture) {
@@ -87,7 +92,11 @@ if (!$architecture) {
 }
 
 my $baseProductDir = baseProductDir();
-system "mkdir", "-p", "$baseProductDir";
+if (isAppleCocoaWebKit() && !isCMakeBuild()) {
+    markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
+} else {
+    make_path($baseProductDir);
+}
 
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
     for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LTO TSan UBSan)) {
@@ -95,16 +104,6 @@ if (checkForArgumentAndRemoveFromARGV("--reset")) {
     }
     printCurrentSettings();
     exit 0;
-}
-
-if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$enableCoverage && !$disableCoverage && !$enableTSAN && !$disableTSAN && !$enableUBSAN && !$disableUBSAN && !$ltoMode && !$forceOptimizationLevel)
-    || ($enableASAN && $disableASAN)
-    || ($enableCoverage && $disableCoverage)
-    || ($enableTSAN && $disableTSAN)
-    || ($enableUBSAN && $disableUBSAN)
-    ) {
-    printUsage();
-    exit 1;
 }
 
 if ($enableASAN && $enableTSAN) {
@@ -164,10 +163,6 @@ if ($ltoMode) {
     open LTO, ">", "$baseProductDir/LTO" or die;
     print LTO "$ltoMode";
     close LTO;
-}
-
-if ($validateDependencies) {
-    setCreatedByXcodeBuildSystem();
 }
 
 printCurrentSettings();

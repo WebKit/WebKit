@@ -1,3 +1,32 @@
+2022-04-12  Elliott Williams  <emw@apple.com>
+
+        Reland "[XCBuild] Enable dependency validation by default"
+        https://bugs.webkit.org/show_bug.cgi?id=238901
+        <rdar://problem/91379968>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Addresses two problems that impacted the previous attempt at landing:
+
+        Derived Sources scripts which use generated xcfilelists contain
+        "optional" inputs which are only available in internal builds. These
+        inputs lead to spurious dependency validation errors. These scripts
+        are unique in that they run from script-only targets, not as a phase
+        in one of the project's native targets. So, in open-source builds,
+        restrict VALIDATE_DEPENDENCIES to only run on native targets.
+
+        When building an individual project, and not a workspace, it's
+        expected that many input dependencies in the build directory will be
+        missing from XCBuild's graph. Disable dependency validation unless we
+        _know_ we're building from a workspace, defined as when the
+        USE_WORKSPACE Make flag or --use-workspace build-webkit flag is
+        passed.
+
+        * Makefile.shared: Turn on validation errors when USE_WORKSPACE=YES.
+        Use a new build setting, WK_VALIDATE_DEPENDENCIES, which is the
+        "requested" validation level. The actual validation level set in
+        VALIDATE_DEPENDENCIES may be lower (see above).
+
 2022-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, removing one of my email addresses.

@@ -354,6 +354,13 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
     push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
     push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
     push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
+    # When we know we're in a workspace (and not an individual project), turn
+    # on dependency validation errors. Other conditions (e.g. whether we're in
+    # a script phase or not) influence the actual VALIDATE_DEPENDENCIES setting
+    # recognized by the build system.
+    push @local_options, "WK_VALIDATE_DEPENDENCIES=YES_ERROR" if $useWorkspace;
+ 
+    markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
 
     # Build, and abort if the build fails.
     if ($useWorkspace) {
