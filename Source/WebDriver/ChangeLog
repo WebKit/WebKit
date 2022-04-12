@@ -1,3 +1,13 @@
+2022-04-11  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix PlayStation build after r292696
+        https://bugs.webkit.org/show_bug.cgi?id=239098
+
+        Unreviewed build fix.
+
+        * playstation/WebDriverServicePlayStation.cpp:
+        (WebDriver::WebDriverService::platformCapabilities):
+
 2022-04-10  Chris Dumez  <cdumez@apple.com>
 
         Finish porting code base to String::fromLatin1() and make String(const char*) private

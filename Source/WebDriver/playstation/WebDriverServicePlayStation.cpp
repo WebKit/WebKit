@@ -45,7 +45,7 @@ void WebDriverService::platformInit()
 Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;
-    capabilities.platformName = String("playstation");
+    capabilities.platformName = String::fromLatin1("playstation");
     capabilities.setWindowRect = true;
     return capabilities;
 }

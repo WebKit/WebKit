@@ -36,7 +36,7 @@ Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)
 
     char buffer[16];
     if (!getenv_np("SYSTEM_LANGUAGE", buffer, sizeof(buffer)))
-        languages.append(buffer);
+        languages.append(String::fromLatin1(buffer));
 
     return languages;
 }
