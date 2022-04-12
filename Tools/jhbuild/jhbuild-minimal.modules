@@ -10,6 +10,10 @@
       <dep package="libsoup"/>
       <dep package="manette"/>
       <dep package="libvpx"/>
+      <dep package="glib"/>
+      <dep package="glib-networking"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-atk"/>
     </dependencies>
   </metamodule>
 
@@ -20,6 +24,10 @@
       <dep package="libsoup"/>
       <dep package="openxr"/>
       <dep package="libvpx"/>
+      <dep package="glib"/>
+      <dep package="glib-networking"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-atk"/>
     </dependencies>
   </metamodule>
 
@@ -127,7 +135,6 @@
             hash="sha256:4fe0a4bed6b4c3ae7249d341031c27b32f8d9e0ffb5337d71cbcec7160362cf7"/>
   </meson>
 
-
   <!-- meson 0.50.1 required to build libsoup 2.69 -->
   <distutils id="meson" python3="1">
     <branch repo="github-tarball"
@@ -155,5 +162,60 @@
             checkoutdir="libvpx-${version}"
             hash="sha256:85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a"/>
   </autotools>
+
+  <!-- glib needed to upgrade gdbus-codegen -->
+  <meson id="glib"
+         mesonargs="-Dlibmount=disabled -Dselinux=disabled">
+    <dependencies>
+      <dep package="libffi"/>
+    </dependencies>
+    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
+    </branch>
+  </meson>
+
+  <meson id="glib-networking">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/glib-networking/2.70/glib-networking-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
+  </meson>
+
+  <!-- atk needed to build with A11y support -->
+  <meson id="atk" mesonargs="-Dintrospection=false">
+      <branch module="/sources/atk/2.34/atk-${version}.tar.xz" version="2.34.1"
+            repo="download.gnome.org"
+            hash="sha256:d4f0e3b3d21265fcf2bc371e117da51c42ede1a71f6db1c834e6976bb20997cb"/>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </meson>
+
+  <!-- at-spi2-core needed to build with A11y support -->
+  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
+    <branch module="/sources/at-spi2-core/2.34/at-spi2-core-${version}.tar.xz" version="2.34.0"
+            repo="download.gnome.org"
+            hash="sha256:d629cdbd674e539f8912028512af583990938c7b49e25184c126b00121ef11c6">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+  </meson>
+
+  <!-- at-spi2-atk needed to build with A11y support -->
+  <meson id="at-spi2-atk" mesonargs="-Dintrospection=no">
+      <branch module="/sources/at-spi2-atk/2.34/at-spi2-atk-${version}.tar.xz" version="2.34.0"
+            repo="download.gnome.org"
+            hash="sha256:3a9a7e96a1eb549529e60a42201dd78ccce413d9c1706e16351cc5288e064500">
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-core"/>
+    </dependencies>
+  </meson>
 
 </moduleset>

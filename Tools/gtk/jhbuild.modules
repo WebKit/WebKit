@@ -229,9 +229,9 @@
 
   <meson id="glib"
          mesonargs="-Dlibmount=false -Dselinux=false">
-    <branch module="/pub/GNOME/sources/glib/2.58/glib-${version}.tar.xz" version="2.58.1"
-            repo="ftp.gnome.org"
-            hash="sha256:97d6a9d926b6aa3dfaadad3077cfb43eec74432ab455dff14250c769d526d7d6">
+    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
     </branch>
   </meson>
 
@@ -239,9 +239,9 @@
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib-networking/2.58/glib-networking-${version}.tar.xz" version="2.58.0"
-            repo="ftp.gnome.org"
-            hash="sha256:bdfa0255e031b8ee003cc283002536b77ee76450105f1dc6ab066b9bf4330068"/>
+    <branch module="/pub/GNOME/sources/glib-networking/2.70/glib-networking-${version}.tar.xz" version="2.70.0"
+            repo="download.gnome.org"
+            hash="sha256:66b408e7afa86c582fe38963db56133869ab4b57d34e48ec56aba621940d6f35"/>
   </meson>
 
   <autotools id="libpsl"
@@ -295,27 +295,28 @@
   </autotools>
 
   <meson id="atk" mesonargs="-Dintrospection=false">
-    <branch module="pub/GNOME/sources/atk/2.33/atk-2.33.3.tar.xz" version="2.33.3"
-            repo="ftp.gnome.org"
-            hash="sha256:532d1081e87b9f0a8d71733101e791818442fa1896531621d1aecc189e1a4ffe"/>
+      <branch module="/sources/atk/2.34/atk-${version}.tar.xz" version="2.34.1"
+            repo="download.gnome.org"
+            hash="sha256:d4f0e3b3d21265fcf2bc371e117da51c42ede1a71f6db1c834e6976bb20997cb"/>
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
   </meson>
 
-  <meson id="at-spi2-core" mesonargs="-Dintrospection=no">
-    <branch module="pub/GNOME/sources/at-spi2-core/2.33/at-spi2-core-2.33.2.tar.xz" version="2.33.2"
-            repo="ftp.gnome.org"
-            hash="sha256:0e3f44707cccf9ec9098f84abdf91ea654c919eac3c688400f8d261383cc2abe">
+  <meson id="at-spi2-core" mesonargs="-Dintrospection=no -Dx11=no">
+    <branch module="/sources/at-spi2-core/2.34/at-spi2-core-${version}.tar.xz" version="2.34.0"
+            repo="download.gnome.org"
+            hash="sha256:d629cdbd674e539f8912028512af583990938c7b49e25184c126b00121ef11c6">
     </branch>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
   </meson>
 
-  <meson id="at-spi2-atk">
-    <branch module="pub/GNOME/sources/at-spi2-atk/2.33/at-spi2-atk-2.33.2.tar.xz" version="2.33.2"
-            repo="ftp.gnome.org"
-            hash="sha256:64d4351b245d717ec6f4f81fd40fe67481ff8e62d3893d465f01e71d9a3db3d3">
-      <patch file="at-spi2-atk-tests-Replace-common-variable-with-usual-external.patch" strip="1"/>
-      <patch file="at-spi2-atk-tests-fix-child_pid-reference.patch" strip="1"/>
+  <meson id="at-spi2-atk" mesonargs="-Dintrospection=no">
+      <branch module="/sources/at-spi2-atk/2.34/at-spi2-atk-${version}.tar.xz" version="2.34.0"
+            repo="download.gnome.org"
+            hash="sha256:3a9a7e96a1eb549529e60a42201dd78ccce413d9c1706e16351cc5288e064500">
     </branch>
     <dependencies>
       <dep package="glib"/>
@@ -560,10 +561,13 @@
 
   <distutils id="meson" python3="1">
     <branch repo="github-tarball"
-            version="0.50.1"
+            version="0.59.0"
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
-            hash="sha256:f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc"/>
+            hash="sha256:e376c298df64b643dfe01eccb2d7b6f1e02e95aa38c19f19d120d129612ce476"/>
+    <dependencies>
+      <dep package="ninja"/>
+    </dependencies>
   </distutils>
 
   <autotools id="xdg-dbus-proxy" autogen-sh="configure">

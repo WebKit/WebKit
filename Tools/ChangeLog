@@ -1,3 +1,24 @@
+2022-04-12  Diego Pino Garcia  <dpino@igalia.com>
+
+        [JHBuild] Update ATSPI, GLib and GStreamer libraries
+        https://bugs.webkit.org/show_bug.cgi?id=239117
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update several libraries to the same version as their Flatpak
+        counterparts.
+
+        JHBuild dependencies didn't build because ATSPI required a more recent
+        version of gdbus-codegen, provided by GLib. The patch also fixes
+        dependencies build in WPE, which required to update several GStreamer
+        libs. Finally, ATSPI and GLib are added to the minimal dependencies
+        modules set to make it possible to build with A11y support via ATSPI.
+
+        * gstreamer/jhbuild.modules:
+        * gtk/jhbuild.modules:
+        * jhbuild/jhbuild-minimal.modules:
+        * wpe/jhbuild.modules:
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         Reland "[XCBuild] Enable dependency validation by default"
