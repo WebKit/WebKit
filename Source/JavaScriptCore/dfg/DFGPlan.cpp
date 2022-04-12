@@ -681,6 +681,22 @@ void Plan::cleanMustHandleValuesIfNecessary()
     }
 }
 
+unsigned Plan::addUnlinkedConstant(void* ptr)
+{
+    ASSERT(!ptr);
+    return m_constantPool.add(ptr, m_constantPool.size()).iterator->value;
+}
+
+std::unique_ptr<DFGJITData> Plan::finalizeJITData()
+{
+    if (m_constantPool.isEmpty())
+        return nullptr;
+    auto jitData = DFGJITData::create(m_constantPool.size());
+    for (auto& pair : m_constantPool)
+        jitData->at(pair.value) = pair.key;
+    return jitData;
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

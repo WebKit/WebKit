@@ -1962,6 +1962,17 @@ public:
         store64(dataTempRegister, address);
     }
 
+    void transfer64(Address src, Address dest)
+    {
+        load64(src, getCachedDataTempRegisterIDAndInvalidate());
+        store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
+    }
+
+    void transferPtr(Address src, Address dest)
+    {
+        transfer64(src, dest);
+    }
+
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         DataLabel32 label(this);
@@ -3344,6 +3355,19 @@ public:
     {
         load64(left, getCachedMemoryTempRegisterIDAndInvalidate());
         return branch64(cond, memoryTempRegister, right);
+    }
+
+    Jump branch64(RelationalCondition cond, Address left, Address right)
+    {
+        // load64 clobbers memoryTempRegister, thus we should first use dataTempRegister here.
+        load64(left, getCachedDataTempRegisterIDAndInvalidate());
+        // And branch64 will use memoryTempRegister to load right to a register.
+        return branch64(cond, dataTempRegister, right);
+    }
+
+    Jump branchPtr(RelationalCondition cond, Address left, Address right)
+    {
+        return branch64(cond, left, right);
     }
 
     Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)

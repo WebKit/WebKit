@@ -251,7 +251,7 @@ void JIT::privateCompileMainPass()
         if (opcodeID != op_catch) {
             loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
             loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), regT1);
-            loadPtr(Address(regT0, CodeBlock::offsetOfBaselineJITData()), regT2);
+            loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2);
 
             auto metadataOK = branchPtr(Equal, regT1, s_metadataGPR);
             breakpoint();
@@ -675,7 +675,7 @@ void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 {
     loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
     loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), s_metadataGPR);
-    loadPtr(Address(regT0, CodeBlock::offsetOfBaselineJITData()), s_constantsGPR);
+    loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR);
 }
 
 void JIT::emitSaveCalleeSaves()

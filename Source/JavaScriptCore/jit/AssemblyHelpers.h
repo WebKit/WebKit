@@ -1545,13 +1545,6 @@ public:
     void clearSamplingFlag(int32_t flag);
 #endif
 
-    JSGlobalObject* globalObjectFor(CodeOrigin codeOrigin)
-    {
-        return codeBlock()->globalObjectFor(codeOrigin);
-    }
-    
-    ExecutableBase* executableFor(CodeBlock*, const CodeOrigin&);
-    
     CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
     {
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, baselineCodeBlock());

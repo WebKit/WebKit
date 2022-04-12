@@ -2084,7 +2084,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
     return encodeResult(nullptr, nullptr);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, char*, (VM* vmPointer, uint32_t bytecodeIndexBits))
+JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, SlowPathReturnType, (VM* vmPointer, uint32_t bytecodeIndexBits))
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2094,13 +2094,13 @@ JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, char*, (VM*
     CodeBlock* codeBlock = callFrame->codeBlock();
     CodeBlock* optimizedReplacement = codeBlock->replacement();
     if (UNLIKELY(!optimizedReplacement))
-        return nullptr;
+        return encodeResult(nullptr, nullptr);
 
     switch (optimizedReplacement->jitType()) {
     case JITType::DFGJIT:
     case JITType::FTLJIT: {
         MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(vm, callFrame, codeBlock, optimizedReplacement, bytecodeIndex);
-        return entry.executableAddress<char*>();
+        return encodeResult(entry.executableAddress<char*>(), optimizedReplacement);
     }
     default:
         break;
@@ -2113,7 +2113,7 @@ JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, char*, (VM*
         profile.m_buckets[0] = JSValue::encode(callFrame->uncheckedR(profile.m_operand).jsValue());
     });
 
-    return nullptr;
+    return encodeResult(nullptr, nullptr);
 }
 
 #endif
