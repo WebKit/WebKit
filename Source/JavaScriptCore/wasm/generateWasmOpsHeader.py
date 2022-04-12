@@ -218,12 +218,12 @@ enum class Nullable : bool {
   Yes = true,
 };
 
-using SignatureIndex = uintptr_t;
+using TypeIndex = uintptr_t;
 
 struct Type {
     TypeKind kind;
     Nullable nullable;
-    SignatureIndex index;
+    TypeIndex index;
 
     bool operator==(const Type& other) const
     {

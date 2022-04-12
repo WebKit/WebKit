@@ -1,3 +1,18 @@
+2022-04-12  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-GC] Introduce structs types
+        https://bugs.webkit.org/show_bug.cgi?id=237029
+
+        Reviewed by Keith Miller.
+
+        Added basic tests for struct types declaration.
+
+        * wasm.yaml:
+        * wasm/gc/structs.js: Added.
+        (module):
+        (testStructDeclaration):
+        * wasm/wasm.json:
+
 2022-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG / FTL should be aware of JSString's String replacement

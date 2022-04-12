@@ -48,13 +48,13 @@ public:
         Value* m_pointer;
     };
 
-    static Ref<Global> create(Wasm::Type type, Wasm::GlobalInformation::Mutability mutability, uint64_t initialValue = 0)
+    static Ref<Global> create(Wasm::Type type, Wasm::Mutability mutability, uint64_t initialValue = 0)
     {
         return adoptRef(*new Global(type, mutability, initialValue));
     }
 
     Wasm::Type type() const { return m_type; }
-    Wasm::GlobalInformation::Mutability mutability() const { return m_mutability; }
+    Wasm::Mutability mutability() const { return m_mutability; }
     JSValue get(JSGlobalObject*) const;
     uint64_t getPrimitive() const { return m_value.m_primitive; }
     void set(JSGlobalObject*, JSValue);
@@ -79,7 +79,7 @@ public:
     Value* valuePointer() { return &m_value; }
 
 private:
-    Global(Wasm::Type type, Wasm::GlobalInformation::Mutability mutability, uint64_t initialValue)
+    Global(Wasm::Type type, Wasm::Mutability mutability, uint64_t initialValue)
         : m_type(type)
         , m_mutability(mutability)
         , m_value()
@@ -88,7 +88,7 @@ private:
     }
 
     Wasm::Type m_type;
-    Wasm::GlobalInformation::Mutability m_mutability;
+    Wasm::Mutability m_mutability;
     JSObject* m_owner { nullptr };
     Value m_value;
 };

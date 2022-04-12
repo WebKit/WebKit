@@ -1,3 +1,306 @@
+2022-04-12  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-GC] Introduce structs types
+        https://bugs.webkit.org/show_bug.cgi?id=237029
+
+        Reviewed by Keith Miller.
+
+        Introduce struct types via extending existing Signature infrastructure.
+        Signature is a unique representation of Wasm function types and we use them
+        to compare signatures from different wasm modules. Signatures are held globally
+        in a hash set and have one point of access.
+
+        With GC proposal and new struct types we want to represent new types uniformly with existing
+        Signature infrastructure. So, in this patch we extend Signature class with two options -
+        FunctionSignature and StructType. FunctionSignature (can be named as FunctionType) is a
+        representation of signatures as it was before the patch and StructType is a new option which
+        is representing struct types from GC proposal. Generally speaking we replace Signature class
+        with new algebraic type TypeDefinition = Signature | StructType.
+
+        This representation of struct types allows us not to change WasmType representation and 
+        uniformly store FunctionType (aka FunctionSignature) or StructType. New options for types,
+        for example arrays, also can be easily added. Also, we save memory because we reuse existing
+        uniqueness of signatures. Additionally we can compare different struct types as fast as we do it for 
+        signatures.
+
+        As Signature class now doesn't only holds Signature it has been renamed into TypeDefinition.
+        All corresponding signature related things also have been renamed.
+
+        To access specific option two classes was introduced StructType and FunctionSignature, so TypeDefinition
+        can be casted to specific option and only via it option methods of that option can be called.
+        This is done with preserving the cache-locality optimization for allocation signatures.
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::Wasm::BytecodeDumper::dumpBlock):
+        * bytecode/BytecodeList.rb:
+        * runtime/OptionsList.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::ControlData::branchTargetArity const):
+        (JSC::Wasm::AirIRGenerator::ControlData::branchTargetType const):
+        (JSC::Wasm::AirIRGenerator::emitCallPatchpoint):
+        (JSC::Wasm::AirIRGenerator::tmpsForSignature):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::toB3ResultType):
+        (JSC::Wasm::AirIRGenerator::addArguments):
+        (JSC::Wasm::AirIRGenerator::addRefFunc):
+        (JSC::Wasm::AirIRGenerator::getGlobal):
+        (JSC::Wasm::AirIRGenerator::setGlobal):
+        (JSC::Wasm::AirIRGenerator::addCatch):
+        (JSC::Wasm::AirIRGenerator::addCatchToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addReturn):
+        (JSC::Wasm::AirIRGenerator::addEndToUnreachable):
+        (JSC::Wasm::AirIRGenerator::addCall):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::AirIRGenerator::addCallRef):
+        (JSC::Wasm::AirIRGenerator::emitIndirectCall):
+        (JSC::Wasm::parseAndCompileAir):
+        * wasm/WasmAirIRGenerator.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::ControlData::ControlData):
+        (JSC::Wasm::B3IRGenerator::ControlData::hasNonVoidresult const):
+        (JSC::Wasm::B3IRGenerator::ControlData::branchTargetArity const):
+        (JSC::Wasm::B3IRGenerator::ControlData::branchTargetType const):
+        (JSC::Wasm::B3IRGenerator::toB3ResultType):
+        (JSC::Wasm::B3IRGenerator::addArguments):
+        (JSC::Wasm::B3IRGenerator::emitIndirectCall):
+        (JSC::Wasm::B3IRGenerator::getGlobal):
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        (JSC::Wasm::B3IRGenerator::addLoop):
+        (JSC::Wasm::B3IRGenerator::addElseToUnreachable):
+        (JSC::Wasm::B3IRGenerator::addCatch):
+        (JSC::Wasm::B3IRGenerator::addCatchToUnreachable):
+        (JSC::Wasm::B3IRGenerator::endBlock):
+        (JSC::Wasm::B3IRGenerator::addEndToUnreachable):
+        (JSC::Wasm::B3IRGenerator::createCallPatchpoint):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::B3IRGenerator::addCallRef):
+        (JSC::Wasm::parseAndCompileB3):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::work):
+        (JSC::Wasm::BBQPlan::compileFunction):
+        (JSC::Wasm::BBQPlan::didCompleteCompilation):
+        * wasm/WasmCallee.h:
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::WasmCallingConvention::callInformationFor const):
+        (JSC::Wasm::JSCallingConvention::callInformationFor const):
+        * wasm/WasmEmbedder.h:
+        * wasm/WasmEntryPlan.cpp:
+        (JSC::Wasm::EntryPlan::prepare):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isExternref):
+        (JSC::Wasm::isFuncref):
+        (JSC::Wasm::funcrefType):
+        (JSC::Wasm::externrefType):
+        (JSC::Wasm::WasmToWasmImportableFunction::offsetOfSignatureIndex):
+        * wasm/WasmFunctionCodeBlockGenerator.cpp:
+        (JSC::Wasm::FunctionCodeBlockGenerator::addSignature):
+        * wasm/WasmFunctionCodeBlockGenerator.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::splitStack):
+        (JSC::Wasm::FunctionParser::signature const):
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        (JSC::Wasm::FunctionParser<Context>::parse):
+        (JSC::Wasm::FunctionParser<Context>::unify):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::set):
+        * wasm/WasmGlobal.h:
+        * wasm/WasmInstance.cpp:
+        (JSC::Wasm::Instance::initElementSegment):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::ControlType::loop):
+        (JSC::Wasm::LLIntGenerator::ControlType::block):
+        (JSC::Wasm::LLIntGenerator::ControlType::if_):
+        (JSC::Wasm::LLIntGenerator::ControlType::createTry):
+        (JSC::Wasm::LLIntGenerator::ControlType::createCatch):
+        (JSC::Wasm::LLIntGenerator::ControlType::branchTargetArity const):
+        (JSC::Wasm::LLIntGenerator::ControlType::branchTargetType const):
+        (JSC::Wasm::parseAndCompileBytecode):
+        (JSC::Wasm::LLIntGenerator::LLIntGenerator):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        (JSC::Wasm::LLIntGenerator::addElseToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addCatch):
+        (JSC::Wasm::LLIntGenerator::addCatchToUnreachable):
+        (JSC::Wasm::LLIntGenerator::addReturn):
+        (JSC::Wasm::LLIntGenerator::addEndToUnreachable):
+        (JSC::Wasm::LLIntGenerator::endTopLevel):
+        (JSC::Wasm::LLIntGenerator::addCall):
+        (JSC::Wasm::LLIntGenerator::addCallIndirect):
+        (JSC::Wasm::LLIntGenerator::addCallRef):
+        * wasm/WasmLLIntGenerator.h:
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::compileFunction):
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        * wasm/WasmLimits.h:
+        * wasm/WasmModule.cpp:
+        (JSC::Wasm::Module::typeIndexFromFunctionIndexSpace const):
+        (JSC::Wasm::Module::signatureIndexFromFunctionIndexSpace const): Deleted.
+        * wasm/WasmModule.h:
+        * wasm/WasmModuleInformation.h:
+        (JSC::Wasm::ModuleInformation::functionIndexSpaceSize const):
+        (JSC::Wasm::ModuleInformation::isImportedFunctionFromFunctionIndexSpace const):
+        (JSC::Wasm::ModuleInformation::typeIndexFromFunctionIndexSpace const):
+        (JSC::Wasm::ModuleInformation::exceptionIndexSpaceSize const):
+        (JSC::Wasm::ModuleInformation::isImportedExceptionFromExceptionIndexSpace const):
+        (JSC::Wasm::ModuleInformation::typeIndexFromExceptionIndexSpace const):
+        (JSC::Wasm::ModuleInformation::importFunctionCount const):
+        (JSC::Wasm::ModuleInformation::internalFunctionCount const):
+        (JSC::Wasm::ModuleInformation::importExceptionCount const):
+        (JSC::Wasm::ModuleInformation::internalExceptionCount const):
+        (JSC::Wasm::ModuleInformation::typeCount const):
+        (JSC::Wasm::ModuleInformation::signatureIndexFromFunctionIndexSpace const): Deleted.
+        (JSC::Wasm::ModuleInformation::signatureIndexFromExceptionIndexSpace const): Deleted.
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmOSREntryPlan.cpp:
+        (JSC::Wasm::OSREntryPlan::work):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::Parser):
+        (JSC::Wasm::Parser<SuccessType>::parseBlockSignature):
+        (JSC::Wasm::Parser<SuccessType>::parseHeapType):
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseType):
+        (JSC::Wasm::SectionParser::parseImport):
+        (JSC::Wasm::SectionParser::parseFunction):
+        (JSC::Wasm::SectionParser::parseExport):
+        (JSC::Wasm::SectionParser::parseStart):
+        (JSC::Wasm::SectionParser::parseInitExpr):
+        (JSC::Wasm::SectionParser::parseFunctionType):
+        (JSC::Wasm::SectionParser::parseStructType):
+        (JSC::Wasm::SectionParser::parseGlobalType):
+        (JSC::Wasm::SectionParser::parseException):
+        * wasm/WasmSectionParser.h:
+        * wasm/WasmSignature.cpp: Removed.
+        * wasm/WasmSignature.h: Removed.
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::doWasmCallIndirect):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        (JSC::LLInt::doWasmCallRef):
+        * wasm/WasmStreamingParser.cpp:
+        * wasm/WasmStreamingPlan.cpp:
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::clear):
+        (JSC::Wasm::FuncRefTable::FuncRefTable):
+        * wasm/WasmTag.h:
+        * wasm/WasmTypeDefinition.cpp: Added.
+        (JSC::Wasm::TypeDefinition::toString const):
+        (JSC::Wasm::TypeDefinition::dump const):
+        (JSC::Wasm::FunctionSignature::toString const):
+        (JSC::Wasm::FunctionSignature::dump const):
+        (JSC::Wasm::StructType::toString const):
+        (JSC::Wasm::StructType::dump const):
+        (JSC::Wasm::computeSignatureHash):
+        (JSC::Wasm::computeStructTypeHash):
+        (JSC::Wasm::TypeDefinition::hash const):
+        (JSC::Wasm::TypeDefinition::tryCreateFunctionSignature):
+        (JSC::Wasm::TypeDefinition::tryCreateStructType):
+        (JSC::Wasm::TypeInformation::TypeInformation):
+        (JSC::Wasm::FunctionParameterTypes::hash):
+        (JSC::Wasm::FunctionParameterTypes::equal):
+        (JSC::Wasm::FunctionParameterTypes::translate):
+        (JSC::Wasm::StructParameterTypes::hash):
+        (JSC::Wasm::StructParameterTypes::equal):
+        (JSC::Wasm::StructParameterTypes::translate):
+        (JSC::Wasm::TypeInformation::typeDefinitionForFunction):
+        (JSC::Wasm::TypeInformation::typeDefinitionForStruct):
+        (JSC::Wasm::TypeInformation::tryCleanup):
+        * wasm/WasmTypeDefinition.h: Added.
+        (JSC::Wasm::FunctionSignature::FunctionSignature):
+        (JSC::Wasm::FunctionSignature::argumentCount const):
+        (JSC::Wasm::FunctionSignature::returnCount const):
+        (JSC::Wasm::FunctionSignature::returnType const):
+        (JSC::Wasm::FunctionSignature::returnsVoid const):
+        (JSC::Wasm::FunctionSignature::argumentType const):
+        (JSC::Wasm::FunctionSignature::getReturnType):
+        (JSC::Wasm::FunctionSignature::getArgumentType):
+        (JSC::Wasm::FunctionSignature::storage):
+        (JSC::Wasm::FunctionSignature::storage const):
+        (JSC::Wasm::StructField::operator== const):
+        (JSC::Wasm::StructField::operator!= const):
+        (JSC::Wasm::StructType::StructType):
+        (JSC::Wasm::StructType::fieldCount const):
+        (JSC::Wasm::StructType::field const):
+        (JSC::Wasm::StructType::getField):
+        (JSC::Wasm::StructType::storage):
+        (JSC::Wasm::StructType::storage const):
+        (JSC::Wasm::TypeDefinition::TypeDefinition):
+        (JSC::Wasm::TypeDefinition::payload):
+        (JSC::Wasm::TypeDefinition::allocatedFunctionSize):
+        (JSC::Wasm::TypeDefinition::allocatedStructSize):
+        (JSC::Wasm::TypeDefinition::is const):
+        (JSC::Wasm::TypeDefinition::as):
+        (JSC::Wasm::TypeDefinition::as const):
+        (JSC::Wasm::TypeDefinition::index const):
+        (JSC::Wasm::TypeDefinition::operator== const):
+        (JSC::Wasm::TypeHash::TypeHash):
+        (JSC::Wasm::TypeHash::operator== const):
+        (JSC::Wasm::TypeHash::equal):
+        (JSC::Wasm::TypeHash::hash):
+        (JSC::Wasm::TypeHash::isHashTableDeletedValue const):
+        (JSC::Wasm::TypeInformation::thunkFor const):
+        * wasm/WasmTypeDefinitionInlines.h: Renamed from Source/JavaScriptCore/wasm/WasmSignatureInlines.h.
+        (JSC::Wasm::TypeInformation::singleton):
+        (JSC::Wasm::TypeInformation::get):
+        (JSC::Wasm::TypeInformation::getFunctionSignature):
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::marshallJSResult):
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSToWasm.h:
+        * wasm/js/JSWebAssemblyException.cpp:
+        (JSC::JSWebAssemblyException::visitChildrenImpl):
+        (JSC::JSWebAssemblyException::getArg const):
+        * wasm/js/JSWebAssemblyGlobal.cpp:
+        (JSC::JSWebAssemblyGlobal::type):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::fromJSValue):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::destroy):
+        (JSC::JSWebAssemblyModule::typeIndexFromFunctionIndexSpace const):
+        (JSC::JSWebAssemblyModule::generateWasmToJSStubs):
+        (JSC::JSWebAssemblyModule::signatureIndexFromFunctionIndexSpace const): Deleted.
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTag.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WasmToJS.h:
+        * wasm/js/WebAssemblyExceptionConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::WebAssemblyFunction::usesTagRegisters const):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyFunctionBase.h:
+        (JSC::WebAssemblyFunctionBase::typeIndex const):
+        (JSC::WebAssemblyFunctionBase::signatureIndex const): Deleted.
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::initializeImports):
+        (JSC::WebAssemblyModuleRecord::initializeExports):
+        * wasm/js/WebAssemblyTagConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+        * wasm/wasm.json:
+
 2022-04-12  Geza Lore  <glore@igalia.com>
 
         [JSC] Reduce Baseline JIT code size in debug builds

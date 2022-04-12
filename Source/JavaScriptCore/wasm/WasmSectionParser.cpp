@@ -34,7 +34,7 @@
 #include "WasmMemoryInformation.h"
 #include "WasmNameSectionParser.h"
 #include "WasmOps.h"
-#include "WasmSignatureInlines.h"
+#include "WasmTypeDefinitionInlines.h"
 #include <wtf/HexNumber.h>
 
 namespace JSC { namespace Wasm {
@@ -45,41 +45,30 @@ auto SectionParser::parseType() -> PartialResult
 
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Type section's count");
     WASM_PARSER_FAIL_IF(count > maxTypes, "Type section's count is too big ", count, " maximum ", maxTypes);
-    WASM_PARSER_FAIL_IF(!m_info->usedSignatures.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
+    WASM_PARSER_FAIL_IF(!m_info->typeSignatures.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
 
     for (uint32_t i = 0; i < count; ++i) {
-        int8_t type;
-        uint32_t argumentCount;
-        Vector<Type> argumentTypes;
+        int8_t typeKind;
+        WASM_PARSER_FAIL_IF(!parseInt7(typeKind), "can't get ", i, "th Type's type");
+        RefPtr<TypeDefinition> signature;
+        switch (static_cast<TypeKind>(typeKind)) {
+        case TypeKind::Func: {
+            WASM_FAIL_IF_HELPER_FAILS(parseFunctionType(i, signature));
+            break;
+        }
+        case TypeKind::Struct: {
+            if (!Options::useWebAssemblyGC())
+                return fail(i, "th type failed to parse because struct types are not enabled");
 
-        WASM_PARSER_FAIL_IF(!parseInt7(type), "can't get ", i, "th Type's type");
-        WASM_PARSER_FAIL_IF(type != static_cast<int8_t>(TypeKind::Func), i, "th Type is non-Func ", type);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get ", i, "th Type's argument count");
-        WASM_PARSER_FAIL_IF(argumentCount > maxFunctionParams, i, "th argument count is too big ", argumentCount, " maximum ", maxFunctionParams);
-        Vector<Type> arguments;
-        WASM_PARSER_FAIL_IF(!arguments.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", i, "th signature");
-
-        for (unsigned i = 0; i < argumentCount; ++i) {
-            Type argumentType;
-            WASM_PARSER_FAIL_IF(!parseValueType(m_info, argumentType), "can't get ", i, "th argument Type");
-            arguments.append(argumentType);
+            WASM_FAIL_IF_HELPER_FAILS(parseStructType(i, signature));
+            break;
+        }
+        default:
+            return fail(i, "th Type is non-Func ", typeKind);
         }
 
-        uint32_t returnCount;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(returnCount), "can't get ", i, "th Type's return count");
-
-        Vector<Type, 1> returnTypes;
-        WASM_PARSER_FAIL_IF(!returnTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", i, "th signature");
-        for (unsigned i = 0; i < returnCount; ++i) {
-            Type value;
-            WASM_PARSER_FAIL_IF(!parseValueType(m_info, value), "can't get ", i, "th Type's return value");
-            returnTypes.append(value);
-        }
-
-        RefPtr<Signature> signature = SignatureInformation::signatureFor(returnTypes, arguments);
         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's ", i, "th signature");
-
-        m_info->usedSignatures.uncheckedAppend(signature.releaseNonNull());
+        m_info->typeSignatures.uncheckedAppend(signature.releaseNonNull());
     }
     return { };
 }
@@ -91,9 +80,9 @@ auto SectionParser::parseImport() -> PartialResult
     WASM_PARSER_FAIL_IF(importCount > maxImports, "Import section's count is too big ", importCount, " maximum ", maxImports);
     WASM_PARSER_FAIL_IF(!m_info->globals.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " globals"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_info->imports.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " imports"); // FIXME this over-allocates when we fix the FIXMEs below.
-    WASM_PARSER_FAIL_IF(!m_info->importFunctionSignatureIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import function signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
+    WASM_PARSER_FAIL_IF(!m_info->importFunctionTypeIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import function signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
     if (Options::useWebAssemblyExceptions())
-        WASM_PARSER_FAIL_IF(!m_info->importExceptionSignatureIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import exception signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
+        WASM_PARSER_FAIL_IF(!m_info->importExceptionTypeIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import exception signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
 
     for (uint32_t importNumber = 0; importNumber < importCount; ++importNumber) {
         uint32_t moduleLen;
@@ -112,12 +101,12 @@ auto SectionParser::parseImport() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseExternalKind(kind), "can't get ", importNumber, "th Import's kind in module '", moduleString, "' field '", fieldString, "'");
         switch (kind) {
         case ExternalKind::Function: {
-            uint32_t functionSignatureIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(functionSignatureIndex), "can't get ", importNumber, "th Import's function signature in module '", moduleString, "' field '", fieldString, "'");
-            WASM_PARSER_FAIL_IF(functionSignatureIndex >= m_info->usedSignatures.size(), "invalid function signature for ", importNumber, "th Import, ", functionSignatureIndex, " is out of range of ", m_info->usedSignatures.size(), " in module '", moduleString, "' field '", fieldString, "'");
-            kindIndex = m_info->importFunctionSignatureIndices.size();
-            SignatureIndex signatureIndex = SignatureInformation::get(m_info->usedSignatures[functionSignatureIndex]);
-            m_info->importFunctionSignatureIndices.uncheckedAppend(signatureIndex);
+            uint32_t functionTypeIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(functionTypeIndex), "can't get ", importNumber, "th Import's function signature in module '", moduleString, "' field '", fieldString, "'");
+            WASM_PARSER_FAIL_IF(functionTypeIndex >= m_info->typeCount(), "invalid function signature for ", importNumber, "th Import, ", functionTypeIndex, " is out of range of ", m_info->typeCount(), " in module '", moduleString, "' field '", fieldString, "'");
+            kindIndex = m_info->importFunctionTypeIndices.size();
+            TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[functionTypeIndex]);
+            m_info->importFunctionTypeIndices.uncheckedAppend(typeIndex);
             break;
         }
         case ExternalKind::Table: {
@@ -139,7 +128,7 @@ auto SectionParser::parseImport() -> PartialResult
             GlobalInformation global;
             WASM_FAIL_IF_HELPER_FAILS(parseGlobalType(global));
             // Only mutable globals need floating bindings.
-            if (global.mutability == GlobalInformation::Mutability::Mutable)
+            if (global.mutability == Mutability::Mutable)
                 global.bindingMode = GlobalInformation::BindingMode::Portable;
             kindIndex = m_info->globals.size();
             m_info->globals.uncheckedAppend(WTFMove(global));
@@ -154,10 +143,10 @@ auto SectionParser::parseImport() -> PartialResult
 
             uint32_t exceptionSignatureIndex;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionSignatureIndex), "can't get ", importNumber, "th Import's exception signature in module '", moduleString, "' field '", fieldString, "'");
-            WASM_PARSER_FAIL_IF(exceptionSignatureIndex >= m_info->usedSignatures.size(), "invalid exception signature for ", importNumber, "th Import, ", exceptionSignatureIndex, " is out of range of ", m_info->usedSignatures.size(), " in module '", moduleString, "' field '", fieldString, "'");
-            kindIndex = m_info->importExceptionSignatureIndices.size();
-            SignatureIndex signatureIndex = SignatureInformation::get(m_info->usedSignatures[exceptionSignatureIndex]);
-            m_info->importExceptionSignatureIndices.uncheckedAppend(signatureIndex);
+            WASM_PARSER_FAIL_IF(exceptionSignatureIndex >= m_info->typeCount(), "invalid exception signature for ", importNumber, "th Import, ", exceptionSignatureIndex, " is out of range of ", m_info->typeCount(), " in module '", moduleString, "' field '", fieldString, "'");
+            kindIndex = m_info->importExceptionTypeIndices.size();
+            TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[exceptionSignatureIndex]);
+            m_info->importExceptionTypeIndices.uncheckedAppend(typeIndex);
             break;
         }
         }
@@ -174,19 +163,19 @@ auto SectionParser::parseFunction() -> PartialResult
     uint32_t count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Function section's count");
     WASM_PARSER_FAIL_IF(count > maxFunctions, "Function section's count is too big ", count, " maximum ", maxFunctions);
-    WASM_PARSER_FAIL_IF(!m_info->internalFunctionSignatureIndices.tryReserveCapacity(count), "can't allocate enough memory for ", count, " Function signatures");
+    WASM_PARSER_FAIL_IF(!m_info->internalFunctionTypeIndices.tryReserveCapacity(count), "can't allocate enough memory for ", count, " Function signatures");
     WASM_PARSER_FAIL_IF(!m_info->functions.tryReserveCapacity(count), "can't allocate enough memory for ", count, "Function locations");
 
     for (uint32_t i = 0; i < count; ++i) {
         uint32_t typeNumber;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeNumber), "can't get ", i, "th Function's type number");
-        WASM_PARSER_FAIL_IF(typeNumber >= m_info->usedSignatures.size(), i, "th Function type number is invalid ", typeNumber);
+        WASM_PARSER_FAIL_IF(typeNumber >= m_info->typeCount(), i, "th Function type number is invalid ", typeNumber);
 
-        SignatureIndex signatureIndex = SignatureInformation::get(m_info->usedSignatures[typeNumber]);
+        TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[typeNumber]);
         // The Code section fixes up start and end.
         size_t start = 0;
         size_t end = 0;
-        m_info->internalFunctionSignatureIndices.uncheckedAppend(signatureIndex);
+        m_info->internalFunctionTypeIndices.uncheckedAppend(typeIndex);
         m_info->functions.uncheckedAppend({ start, end, Vector<uint8_t>() });
     }
 
@@ -372,7 +361,7 @@ auto SectionParser::parseExport() -> PartialResult
             WASM_PARSER_FAIL_IF(kindIndex >= m_info->globals.size(), exportNumber, "th Export has invalid global number ", kindIndex, " it exceeds the globals count ", m_info->globals.size(), ", named '", fieldString, "'");
             // Only mutable globals need floating bindings.
             GlobalInformation& global = m_info->globals[kindIndex];
-            if (global.mutability == GlobalInformation::Mutability::Mutable)
+            if (global.mutability == Mutability::Mutable)
                 global.bindingMode = GlobalInformation::BindingMode::Portable;
             break;
         }
@@ -396,8 +385,8 @@ auto SectionParser::parseStart() -> PartialResult
     uint32_t startFunctionIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(startFunctionIndex), "can't get Start index");
     WASM_PARSER_FAIL_IF(startFunctionIndex >= m_info->functionIndexSpaceSize(), "Start index ", startFunctionIndex, " exceeds function index space ", m_info->functionIndexSpaceSize());
-    SignatureIndex signatureIndex = m_info->signatureIndexFromFunctionIndexSpace(startFunctionIndex);
-    const Signature& signature = SignatureInformation::get(signatureIndex);
+    TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(startFunctionIndex);
+    const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
     WASM_PARSER_FAIL_IF(signature.argumentCount(), "Start function can't have arguments");
     WASM_PARSER_FAIL_IF(!signature.returnsVoid(), "Start function can't return a value");
     m_info->startFunctionIndexSpace = startFunctionIndex;
@@ -610,7 +599,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
 
         WASM_PARSER_FAIL_IF(index >= m_info->globals.size(), "get_global's index ", index, " exceeds the number of globals ", m_info->globals.size());
         WASM_PARSER_FAIL_IF(index >= m_info->firstInternalGlobal, "get_global import kind index ", index, " exceeds the first internal global ", m_info->firstInternalGlobal);
-        WASM_PARSER_FAIL_IF(m_info->globals[index].mutability != GlobalInformation::Immutable, "get_global import kind index ", index, " is mutable ");
+        WASM_PARSER_FAIL_IF(m_info->globals[index].mutability != Mutability::Immutable, "get_global import kind index ", index, " is mutable ");
 
         resultType = m_info->globals[index].type;
         bitsOrImportNumber = index;
@@ -623,10 +612,10 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
             int32_t heapType;
             WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx");
             if (isTypeIndexHeapType(heapType)) {
-                SignatureIndex signatureIndex = SignatureInformation::get(m_info->usedSignatures[heapType].get());
-                typeOfNull = Type { TypeKind::RefNull, Nullable::Yes, signatureIndex };
+                TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[heapType].get());
+                typeOfNull = Type { TypeKind::RefNull, Nullable::Yes, typeIndex };
             } else
-                typeOfNull = Type { TypeKind::RefNull, Nullable::Yes, static_cast<SignatureIndex>(heapType) };
+                typeOfNull = Type { TypeKind::RefNull, Nullable::Yes, static_cast<TypeIndex>(heapType) };
         } else
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, typeOfNull), "ref.null type must be a reference type");
 
@@ -641,8 +630,8 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
         WASM_PARSER_FAIL_IF(index >= m_info->functions.size(), "ref.func index", index, " exceeds the number of functions ", m_info->functions.size());
 
         if (Options::useWebAssemblyTypedFunctionReferences()) {
-            SignatureIndex signatureIndex = m_info->signatureIndexFromFunctionIndexSpace(index);
-            resultType = { TypeKind::Ref, Nullable::No, signatureIndex };
+            TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(index);
+            resultType = { TypeKind::Ref, Nullable::No, typeIndex };
         } else
             resultType = Types::Funcref;
 
@@ -678,6 +667,60 @@ auto SectionParser::parseI32InitExpr(std::optional<I32InitExpr>& initExpr, ASCII
     WASM_PARSER_FAIL_IF(!initExprType.isI32(), failMessage);
     initExpr = makeI32InitExpr(initOpcode, initExprBits);
 
+    return { };
+}
+
+auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>& functionSignature) -> PartialResult
+{
+    uint32_t argumentCount;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get ", position, "th Type's argument count");
+    WASM_PARSER_FAIL_IF(argumentCount > maxFunctionParams, position, "th argument count is too big ", argumentCount, " maximum ", maxFunctionParams);
+    Vector<Type> argumentTypes;
+    WASM_PARSER_FAIL_IF(!argumentTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", position, "th signature");
+
+    for (unsigned i = 0; i < argumentCount; ++i) {
+        Type argumentType;
+        WASM_PARSER_FAIL_IF(!parseValueType(m_info, argumentType), "can't get ", i, "th argument Type");
+        argumentTypes.append(argumentType);
+    }
+
+    uint32_t returnCount;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(returnCount), "can't get ", position, "th Type's return count");
+
+    Vector<Type, 1> returnTypes;
+    WASM_PARSER_FAIL_IF(!returnTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", position, "th signature");
+    for (unsigned i = 0; i < returnCount; ++i) {
+        Type value;
+        WASM_PARSER_FAIL_IF(!parseValueType(m_info, value), "can't get ", i, "th Type's return value");
+        returnTypes.append(value);
+    }
+
+    functionSignature = TypeInformation::typeDefinitionForFunction(returnTypes, argumentTypes);
+    return { };
+}
+
+auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& structType) -> PartialResult
+{
+    ASSERT(Options::useWebAssemblyGC());
+
+    uint32_t fieldCount;
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldCount), "can't get ", position, "th struct type's field count");
+    WASM_PARSER_FAIL_IF(fieldCount > maxStructFieldCount, "number of fields for struct type at position ", position, " is too big ", fieldCount, " maximum ", maxStructFieldCount);
+    Vector<StructField> fields;
+    WASM_PARSER_FAIL_IF(!fields.tryReserveCapacity(fieldCount), "can't allocate enough memory for struct fields ", fieldCount, " entries");
+
+    for (uint32_t fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
+        Type fieldType;
+        WASM_PARSER_FAIL_IF(!parseValueType(m_info, fieldType), "can't get ", fieldIndex, "th field Type");
+
+        uint8_t mutability;
+        WASM_PARSER_FAIL_IF(!parseUInt8(mutability), position, "can't get ", fieldIndex, "th field mutability");
+        WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Field's mutability: 0x", hex(mutability, 2, Lowercase));
+
+        fields.uncheckedAppend(StructField { fieldType, static_cast<Mutability>(mutability) });
+    }
+
+    structType = TypeInformation::typeDefinitionForStruct(fields);
     return { };
 }
 
@@ -759,7 +802,7 @@ auto SectionParser::parseGlobalType(GlobalInformation& global) -> PartialResult
     WASM_PARSER_FAIL_IF(!parseValueType(m_info, global.type), "can't get Global's value type");
     WASM_PARSER_FAIL_IF(!parseUInt8(mutability), "can't get Global type's mutability");
     WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Global's mutability: 0x", hex(mutability, 2, Lowercase));
-    global.mutability = static_cast<GlobalInformation::Mutability>(mutability);
+    global.mutability = static_cast<Mutability>(mutability);
     return { };
 }
 
@@ -859,7 +902,7 @@ auto SectionParser::parseException() -> PartialResult
     uint32_t exceptionCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(exceptionCount), "can't get Exception section's count");
     WASM_PARSER_FAIL_IF(exceptionCount > maxExceptions, "Export section's count is too big ", exceptionCount, " maximum ", maxExceptions);
-    WASM_PARSER_FAIL_IF(!m_info->internalExceptionSignatureIndices.tryReserveCapacity(exceptionCount), "can't allocate enough memory for ", exceptionCount, " exceptions");
+    WASM_PARSER_FAIL_IF(!m_info->internalExceptionTypeIndices.tryReserveCapacity(exceptionCount), "can't allocate enough memory for ", exceptionCount, " exceptions");
 
     for (uint32_t exceptionNumber = 0; exceptionNumber < exceptionCount; ++exceptionNumber) {
         uint8_t tagType;
@@ -868,9 +911,9 @@ auto SectionParser::parseException() -> PartialResult
 
         uint32_t typeNumber;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeNumber), "can't get ", exceptionNumber, "th Exception's type number");
-        WASM_PARSER_FAIL_IF(typeNumber >= m_info->usedSignatures.size(), exceptionNumber, "th Exception type number is invalid ", typeNumber);
-        SignatureIndex signatureIndex = SignatureInformation::get(m_info->usedSignatures[typeNumber]);
-        m_info->internalExceptionSignatureIndices.uncheckedAppend(signatureIndex);
+        WASM_PARSER_FAIL_IF(typeNumber >= m_info->typeCount(), exceptionNumber, "th Exception type number is invalid ", typeNumber);
+        TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[typeNumber]);
+        m_info->internalExceptionTypeIndices.uncheckedAppend(typeIndex);
     }
 
     return { };

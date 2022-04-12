@@ -37,7 +37,7 @@
 #include "WasmFunctionCodeBlockGenerator.h"
 #include "WasmGeneratorTraits.h"
 #include "WasmModuleInformation.h"
-#include "WasmSignatureInlines.h"
+#include "WasmTypeDefinitionInlines.h"
 
 namespace JSC {
 
@@ -349,9 +349,9 @@ void BytecodeDumper::dumpBlock(FunctionCodeBlockGenerator* block, const ModuleIn
     out.print(makeString(IndexOrName(functionIndexSpace, moduleInformation.nameSection->get(functionIndexSpace))));
 
     const auto& function = moduleInformation.functions[block->functionIndex()];
-    SignatureIndex signatureIndex = moduleInformation.internalFunctionSignatureIndices[block->functionIndex()];
-    const Signature& signature = SignatureInformation::get(signatureIndex);
-    out.print(" : ", signature, "\n");
+    TypeIndex typeIndex = moduleInformation.internalFunctionTypeIndices[block->functionIndex()];
+    const auto& typeDefinition = TypeInformation::get(typeIndex);
+    out.print(" : ", typeDefinition, "\n");
     out.print("wasm size: ", function.data.size(), " bytes\n");
 
     out.printf(

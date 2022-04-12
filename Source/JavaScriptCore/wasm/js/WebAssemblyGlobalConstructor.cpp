@@ -66,7 +66,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         globalDescriptor = jsCast<JSObject*>(argument);
     }
 
-    Wasm::GlobalInformation::Mutability mutability;
+    Wasm::Mutability mutability;
     {
         Identifier mutableIdent = Identifier::fromString(vm, "mutable"_s);
         JSValue mutableValue = globalDescriptor->get(globalObject, mutableIdent);
@@ -74,9 +74,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         bool mutableBoolean = mutableValue.toBoolean(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (mutableBoolean)
-            mutability = Wasm::GlobalInformation::Mutable;
+            mutability = Wasm::Mutable;
         else
-            mutability = Wasm::GlobalInformation::Immutable;
+            mutability = Wasm::Immutable;
     }
 
     Wasm::Type type;

@@ -33,8 +33,8 @@
 #include "JSWebAssemblyInstance.h"
 #include "Register.h"
 #include "WasmModuleInformation.h"
-#include "WasmSignatureInlines.h"
 #include "WasmTag.h"
+#include "WasmTypeDefinitionInlines.h"
 #include <wtf/CheckedArithmetic.h>
 
 namespace JSC { namespace Wasm {
@@ -232,7 +232,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
         // for the import.
         // https://bugs.webkit.org/show_bug.cgi?id=165510
         uint32_t functionIndex = segment.functionIndices[srcIndex];
-        SignatureIndex signatureIndex = m_module->signatureIndexFromFunctionIndexSpace(functionIndex);
+        TypeIndex typeIndex = m_module->typeIndexFromFunctionIndexSpace(functionIndex);
         if (isImportFunction(functionIndex)) {
             JSObject* functionImport = importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
             if (isWebAssemblyHostFunction(vm, functionImport)) {
@@ -251,14 +251,14 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
                 functionImport,
                 functionIndex,
                 jsInstance,
-                signatureIndex);
+                typeIndex);
             jsTable->set(dstIndex, wrapperFunction);
             continue;
         }
 
         Callee& embedderEntrypointCallee = calleeGroup()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
         WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
-        const Signature& signature = SignatureInformation::get(signatureIndex);
+        const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
         // FIXME: Say we export local function "foo" at function index 0.
         // What if we also set it to the table an Element w/ index 0.
         // Does (new Instance(...)).exports.foo === table.get(0)?
@@ -272,7 +272,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             jsInstance,
             embedderEntrypointCallee,
             entrypointLoadLocation,
-            signatureIndex);
+            typeIndex);
         jsTable->set(dstIndex, function);
     }
 }

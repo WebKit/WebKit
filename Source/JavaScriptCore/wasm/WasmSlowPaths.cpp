@@ -41,7 +41,7 @@
 #include "WasmOMGPlan.h"
 #include "WasmOSREntryPlan.h"
 #include "WasmOperations.h"
-#include "WasmSignatureInlines.h"
+#include "WasmTypeDefinitionInlines.h"
 #include "WasmWorklist.h"
 #include "WebAssemblyFunction.h"
 
@@ -486,7 +486,7 @@ WASM_SLOW_PATH_DECL(call_no_tls)
     return doWasmCall(instance, instruction.m_functionIndex);
 }
 
-inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instance, unsigned functionIndex, unsigned tableIndex, unsigned signatureIndex)
+inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
 {
     Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
 
@@ -496,11 +496,11 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
     Wasm::Instance* targetInstance = table->instance(functionIndex);
     const Wasm::WasmToWasmImportableFunction& function = table->function(functionIndex);
 
-    if (function.signatureIndex == Wasm::Signature::invalidIndex)
+    if (function.typeIndex == Wasm::TypeDefinition::invalidIndex)
         WASM_THROW(Wasm::ExceptionType::NullTableEntry);
 
-    const Wasm::Signature& callSignature = CALLEE()->signature(signatureIndex);
-    if (function.signatureIndex != Wasm::SignatureInformation::get(callSignature))
+    const auto& callSignature = CALLEE()->signature(typeIndex);
+    if (function.typeIndex != Wasm::TypeInformation::get(callSignature))
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
     if (targetInstance != instance)
@@ -513,17 +513,17 @@ WASM_SLOW_PATH_DECL(call_indirect)
 {
     auto instruction = pc->as<WasmCallIndirect>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
-    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
+    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
 }
 
 WASM_SLOW_PATH_DECL(call_indirect_no_tls)
 {
     auto instruction = pc->as<WasmCallIndirectNoTls>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
-    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
+    return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
 }
 
-inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* callerInstance, JSValue targetReference, unsigned signatureIndex)
+inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* callerInstance, JSValue targetReference, unsigned typeIndex)
 {
     UNUSED_PARAM(callFrame);
 
@@ -541,8 +541,8 @@ inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* ca
     if (calleeInstance != callerInstance)
         calleeInstance->setCachedStackLimit(callerInstance->cachedStackLimit());
 
-    ASSERT(function.signatureIndex == Wasm::SignatureInformation::get(CALLEE()->signature(signatureIndex)));
-    UNUSED_PARAM(signatureIndex);
+    ASSERT(function.typeIndex == Wasm::TypeInformation::get(CALLEE()->signature(typeIndex)));
+    UNUSED_PARAM(typeIndex);
     WASM_CALL_RETURN(calleeInstance, function.entrypointLoadLocation->executableAddress(), WasmEntryPtrTag);
 }
 
@@ -550,14 +550,14 @@ WASM_SLOW_PATH_DECL(call_ref)
 {
     auto instruction = pc->as<WasmCallRef>();
     JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
-    return doWasmCallRef(callFrame, instance, reference, instruction.m_signatureIndex);
+    return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
 }
 
 WASM_SLOW_PATH_DECL(call_ref_no_tls)
 {
     auto instruction = pc->as<WasmCallRefNoTls>();
     JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
-    return doWasmCallRef(callFrame, instance, reference, instruction.m_signatureIndex);
+    return doWasmCallRef(callFrame, instance, reference, instruction.m_typeIndex);
 }
 
 WASM_SLOW_PATH_DECL(set_global_ref)

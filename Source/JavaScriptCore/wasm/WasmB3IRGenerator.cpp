@@ -63,8 +63,8 @@
 #include "WasmOSREntryData.h"
 #include "WasmOpcodeOrigin.h"
 #include "WasmOperations.h"
-#include "WasmSignatureInlines.h"
 #include "WasmThunks.h"
+#include "WasmTypeDefinitionInlines.h"
 #include <limits>
 #include <wtf/StdLibExtras.h>
 
@@ -103,14 +103,14 @@ public:
         {
             ASSERT(type != BlockType::Try && type != BlockType::Catch);
             if (type != BlockType::TopLevel)
-                m_stackSize -= signature->argumentCount();
+                m_stackSize -= signature->as<FunctionSignature>()->argumentCount();
 
             if (type == BlockType::Loop) {
-                for (unsigned i = 0; i < signature->argumentCount(); ++i)
-                    phis.append(proc.add<Value>(Phi, toB3Type(signature->argument(i)), origin));
+                for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i)
+                    phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->argumentType(i)), origin));
             } else {
-                for (unsigned i = 0; i < signature->returnCount(); ++i)
-                    phis.append(proc.add<Value>(Phi, toB3Type(signature->returnType(i)), origin));
+                for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
+                    phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->returnType(i)), origin));
             }
         }
 
@@ -123,8 +123,8 @@ public:
             , m_tryStart(tryStart)
             , m_tryCatchDepth(tryDepth)
         {
-            for (unsigned i = 0; i < signature->returnCount(); ++i)
-                phis.append(proc.add<Value>(Phi, toB3Type(signature->returnType(i)), origin));
+            for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
+                phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->returnType(i)), origin));
         }
 
         ControlData()
@@ -177,7 +177,7 @@ public:
 
         BlockSignature signature() const { return m_signature; }
 
-        bool hasNonVoidresult() const { return m_signature->returnsVoid(); }
+        bool hasNonVoidresult() const { return m_signature->as<FunctionSignature>()->returnsVoid(); }
 
         BasicBlock* targetBlockForBranch()
         {
@@ -211,19 +211,19 @@ public:
             m_exception = exception;
         }
 
-        SignatureArgCount branchTargetArity() const
+        FunctionArgCount branchTargetArity() const
         {
             if (blockType() == BlockType::Loop)
-                return m_signature->argumentCount();
-            return m_signature->returnCount();
+                return m_signature->as<FunctionSignature>()->argumentCount();
+            return m_signature->as<FunctionSignature>()->returnCount();
         }
 
         Type branchTargetType(unsigned i) const
         {
             ASSERT(i < branchTargetArity());
             if (blockType() == BlockType::Loop)
-                return m_signature->argument(i);
-            return m_signature->returnType(i);
+                return m_signature->as<FunctionSignature>()->argumentType(i);
+            return m_signature->as<FunctionSignature>()->returnType(i);
         }
 
         unsigned tryStart() const
@@ -305,7 +305,7 @@ public:
 
     B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, unsigned loopIndexForOSREntry, TierUpCount*);
 
-    PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
+    PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
 
@@ -371,8 +371,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
     PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
-    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const Signature&, Stack&, ControlType&, ResultList&);
-    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const Signature&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition&, Stack&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
@@ -389,12 +389,12 @@ public:
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const Signature&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
-    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, const Signature&, Vector<ExpressionType>& args, ResultList&);
-    B3::Value* createCallPatchpoint(BasicBlock*, Origin, const Signature&, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, const TypeDefinition&, Vector<ExpressionType>& args, ResultList&);
+    B3::Value* createCallPatchpoint(BasicBlock*, Origin, const TypeDefinition&, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<B3IRGenerator>* parser) { m_parser = parser; };
@@ -869,16 +869,16 @@ void B3IRGenerator::insertConstants()
 
 B3::Type B3IRGenerator::toB3ResultType(BlockSignature returnType)
 {
-    if (returnType->returnsVoid())
+    if (returnType->as<FunctionSignature>()->returnsVoid())
         return B3::Void;
 
-    if (returnType->returnCount() == 1)
-        return toB3Type(returnType->returnType(0));
+    if (returnType->as<FunctionSignature>()->returnCount() == 1)
+        return toB3Type(returnType->as<FunctionSignature>()->returnType(0));
 
     auto result = m_tupleMap.ensure(returnType, [&] {
         Vector<B3::Type> result;
-        for (unsigned i = 0; i < returnType->returnCount(); ++i)
-            result.append(toB3Type(returnType->returnType(i)));
+        for (unsigned i = 0; i < returnType->as<FunctionSignature>()->returnCount(); ++i)
+            result.append(toB3Type(returnType->as<FunctionSignature>()->returnType(i)));
         return m_proc.addTuple(WTFMove(result));
     });
     return result.iterator->value;
@@ -900,16 +900,16 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
     return { };
 }
 
-auto B3IRGenerator::addArguments(const Signature& signature) -> PartialResult
+auto B3IRGenerator::addArguments(const TypeDefinition& signature) -> PartialResult
 {
     ASSERT(!m_locals.size());
-    WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(signature.argumentCount()), "can't allocate memory for ", signature.argumentCount(), " arguments");
+    WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(signature.as<FunctionSignature>()->argumentCount()), "can't allocate memory for ", signature.as<FunctionSignature>()->argumentCount(), " arguments");
 
-    m_locals.grow(signature.argumentCount());
+    m_locals.grow(signature.as<FunctionSignature>()->argumentCount());
     CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
 
-    for (size_t i = 0; i < signature.argumentCount(); ++i) {
-        B3::Type type = toB3Type(signature.argument(i));
+    for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
+        B3::Type type = toB3Type(signature.as<FunctionSignature>()->argumentType(i));
         B3::Value* argument;
         auto rep = wasmCallInfo.params[i];
         if (rep.isReg()) {
@@ -1096,7 +1096,7 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
     return { };
 }
 
-auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     // Do a context switch if needed.
     {
@@ -1170,7 +1170,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, c
     }
     case B3::Tuple: {
         const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-        for (unsigned i = 0; i < signature.returnCount(); ++i)
+        for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
             results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
         break;
     }
@@ -1303,7 +1303,7 @@ auto B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partial
         result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register))));
         break;
     case Wasm::GlobalInformation::BindingMode::Portable: {
-        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
+        ASSERT(global.mutability == Wasm::Mutability::Mutable);
         Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
         result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(global.type), origin(), pointer));
         break;
@@ -1324,7 +1324,7 @@ auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialRe
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable: {
-        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
+        ASSERT(global.mutability == Wasm::Mutability::Mutable);
         Value* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, origin(), globalsArray, safeCast<int32_t>(index * sizeof(Register)));
         m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), pointer);
         // We emit a write-barrier onto JSWebAssemblyGlobal, not JSWebAssemblyInstance.
@@ -2413,8 +2413,8 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
 
     block = ControlData(m_proc, origin(), signature, BlockType::Loop, m_stackSize, continuation, body);
 
-    unsigned offset = enclosingStack.size() - signature->argumentCount();
-    for (unsigned i = 0; i < signature->argumentCount(); ++i) {
+    unsigned offset = enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount();
+    for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i) {
         TypedExpression value = enclosingStack.at(offset + i);
         Value* phi = block.phis[i];
         m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), get(value), phi);
@@ -2514,7 +2514,7 @@ auto B3IRGenerator::addElse(ControlData& data, const Stack& currentStack) -> Par
 auto B3IRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
 {
     ASSERT(data.blockType() == BlockType::If);
-    m_stackSize = data.stackSize() + data.m_signature->argumentCount();
+    m_stackSize = data.stackSize() + data.m_signature->as<FunctionSignature>()->argumentCount();
     m_currentBlock = data.special;
     data.convertIfToBlock();
     return { };
@@ -2530,7 +2530,7 @@ auto B3IRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Cont
     return { };
 }
 
-auto B3IRGenerator::addCatch(unsigned exceptionIndex, const Signature& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
+auto B3IRGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
 {
     unifyValuesWithBlock(currentStack, data);
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), data.continuation);
@@ -2564,12 +2564,12 @@ PatchpointExceptionHandle B3IRGenerator::preparePatchpointForExceptions(BasicBlo
     return PatchpointExceptionHandle { m_callSiteIndex, static_cast<unsigned>(liveValues.size()) };
 }
 
-auto B3IRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const Signature& signature, ControlType& data, ResultList& results) -> PartialResult
+auto B3IRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
 {
     Value* operationResult = emitCatchImpl(CatchKind::Catch, data, exceptionIndex);
     Value* payload = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), pointerType(), operationResult, 1);
-    for (unsigned i = 0; i < signature.argumentCount(); ++i) {
-        Type type = signature.argument(i);
+    for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
+        Type type = signature.as<FunctionSignature>()->argumentType(i);
         Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(type), origin(), payload, i * sizeof(uint64_t));
         results.append(push(value));
     }
@@ -2790,7 +2790,7 @@ auto B3IRGenerator::endBlock(ControlEntry& entry, Stack& expressionStack) -> Par
 {
     ControlData& data = entry.controlData;
 
-    ASSERT(expressionStack.size() == data.signature()->returnCount());
+    ASSERT(expressionStack.size() == data.signature()->as<FunctionSignature>()->returnCount());
     if (data.blockType() != BlockType::Loop)
         unifyValuesWithBlock(expressionStack, data);
 
@@ -2813,19 +2813,19 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expres
         --m_tryCatchDepth;
 
     if (data.blockType() != BlockType::Loop) {
-        for (unsigned i = 0; i < data.signature()->returnCount(); ++i) {
+        for (unsigned i = 0; i < data.signature()->as<FunctionSignature>()->returnCount(); ++i) {
             Value* result = data.phis[i];
             m_currentBlock->append(result);
-            entry.enclosedExpressionStack.constructAndAppend(data.signature()->returnType(i), push(result));
+            entry.enclosedExpressionStack.constructAndAppend(data.signature()->as<FunctionSignature>()->returnType(i), push(result));
         }
     } else {
         m_outerLoops.removeLast();
-        for (unsigned i = 0; i < data.signature()->returnCount(); ++i) {
+        for (unsigned i = 0; i < data.signature()->as<FunctionSignature>()->returnCount(); ++i) {
             if (i < expressionStack.size()) {
                 ++m_stackSize;
                 entry.enclosedExpressionStack.append(expressionStack[i]);
             } else {
-                Type returnType = data.signature()->returnType(i);
+                Type returnType = data.signature()->as<FunctionSignature>()->returnType(i);
                 entry.enclosedExpressionStack.constructAndAppend(returnType, push(constant(toB3Type(returnType), 0xbbadbeef)));
             }
         }
@@ -2840,7 +2840,7 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expres
 }
 
 
-B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin, const Signature& signature, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
+B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin, const TypeDefinition& signature, Vector<ExpressionType>& args, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
 {
     Vector<B3::ConstrainedValue> constrainedArguments;
     CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(signature);
@@ -2870,9 +2870,9 @@ B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin,
     return patchpoint;
 }
 
-auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
-    ASSERT(signature.argumentCount() == args.size());
+    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     m_makesCalls = true;
     B3::Type returnType = toB3ResultType(&signature);
@@ -2886,8 +2886,8 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
         }
         case B3::Tuple: {
             const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-            ASSERT(signature.returnCount() == tuple.size());
-            for (unsigned i = 0; i < signature.returnCount(); ++i)
+            ASSERT(signature.as<FunctionSignature>()->returnCount() == tuple.size());
+            for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
                 results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
             break;
         }
@@ -2994,10 +2994,10 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature& signature, 
     return { };
 }
 
-auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     Value* calleeIndex = get(args.takeLast());
-    ASSERT(signature.argumentCount() == args.size());
+    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     m_makesCalls = true;
     // Note: call indirect can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
@@ -3040,13 +3040,13 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signat
 
         // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
         // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
-        static_assert(sizeof(WasmToWasmImportableFunction::signatureIndex) == sizeof(uint64_t), "Load codegen assumes i64");
+        static_assert(sizeof(WasmToWasmImportableFunction::typeIndex) == sizeof(uint64_t), "Load codegen assumes i64");
         Value* calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), callableFunction, safeCast<int32_t>(WasmToWasmImportableFunction::offsetOfSignatureIndex()));
         {
             CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
                 m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
                     calleeSignatureIndex,
-                    m_currentBlock->appendNew<Const64Value>(m_proc, origin(), Signature::invalidIndex)));
+                    m_currentBlock->appendNew<Const64Value>(m_proc, origin(), TypeDefinition::invalidIndex)));
 
             check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
@@ -3055,7 +3055,7 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signat
 
         // Check the signature matches the value we expect.
         {
-            Value* expectedSignatureIndex = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), SignatureInformation::get(signature));
+            Value* expectedSignatureIndex = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), TypeInformation::get(signature));
             CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
                 m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), calleeSignatureIndex, expectedSignatureIndex));
 
@@ -3076,10 +3076,10 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signat
     return emitIndirectCall(calleeInstance, calleeCode, signature, args, results);
 }
 
-auto B3IRGenerator::addCallRef(const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto B3IRGenerator::addCallRef(const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     Value* callee = get(args.takeLast());
-    ASSERT(signature.argumentCount() == args.size());
+    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
     m_makesCalls = true;
 
     // Note: call ref can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
@@ -3173,7 +3173,7 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
     return dumpAllowlist->shouldDumpWasmFunction(functionIndex);
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
 

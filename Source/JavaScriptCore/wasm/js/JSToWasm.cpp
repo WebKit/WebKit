@@ -38,8 +38,9 @@
 
 namespace JSC { namespace Wasm {
 
-void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters)
+void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters)
 {
+    const auto& signature = *typeDefinition.as<FunctionSignature>();
     auto boxWasmResult = [](CCallHelpers& jit, Type type, Reg src, JSValueRegs dst) {
         switch (type.kind) {
         case TypeKind::Void:
@@ -164,12 +165,12 @@ void marshallJSResult(CCallHelpers& jit, const Signature& signature, const CallI
             jit.loadWasmContextInstance(wasmContextInstanceGPR);
         }
 
-        jit.setupArguments<decltype(operationAllocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&signature), indexingType, CCallHelpers::stackPointerRegister);
+        jit.setupArguments<decltype(operationAllocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&typeDefinition), indexingType, CCallHelpers::stackPointerRegister);
         jit.callOperation(FunctionPtr<OperationPtrTag>(operationAllocateResultsArray));
     }
 }
 
-std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const Signature& signature, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
+std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const TypeDefinition& typeDefinition, Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, unsigned functionIndex)
 {
     auto result = makeUnique<InternalFunction>();
     jit.emitFunctionPrologue();
@@ -197,7 +198,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     result->entrypoint.calleeSaveRegisters = registersToSpill;
 
     size_t totalFrameSize = registersToSpill.size() * sizeof(CPURegister);
-    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature);
+    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(typeDefinition);
     RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
     totalFrameSize += wasmFrameConvention.headerAndArgumentStackSizeInBytes;
     totalFrameSize += savedResultRegisters.size() * sizeof(CPURegister);
@@ -218,7 +219,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
     GPRReg wasmContextInstanceGPR = pinnedRegs.wasmContextInstancePointer;
 
     {
-        CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(signature, CallRole::Callee);
+        CallInformation jsFrameConvention = jsCallingConvention().callInformationFor(typeDefinition, CallRole::Callee);
 
         CCallHelpers::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, 0);
 
@@ -231,10 +232,11 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
             jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfInstance()), wasmContextInstanceGPR);
         }
 
+        const auto& signature = *typeDefinition.as<FunctionSignature>();
         for (unsigned i = 0; i < signature.argumentCount(); i++) {
             RELEASE_ASSERT(jsFrameConvention.params[i].isStack());
 
-            Type type = signature.argument(i);
+            Type type = signature.argumentType(i);
             CCallHelpers::Address jsParam(GPRInfo::callFrameRegister, jsFrameConvention.params[i].offsetFromFP());
             if (wasmFrameConvention.params[i].isStackArgument()) {
                 if (type.isI32() || type.isF32()) {
@@ -282,7 +284,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
         unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace });
     });
 
-    marshallJSResult(jit, signature, wasmFrameConvention, savedResultRegisters);
+    marshallJSResult(jit, typeDefinition, wasmFrameConvention, savedResultRegisters);
 
     for (const RegisterAtOffset& regAtOffset : registersToSpill) {
         GPRReg reg = regAtOffset.reg().gpr();

@@ -32,7 +32,7 @@
 #include "WasmOps.h"
 #include "WasmParser.h"
 #include "WasmSectionParser.h"
-#include "WasmSignatureInlines.h"
+#include "WasmTypeDefinitionInlines.h"
 #include <wtf/UnalignedAccess.h>
 
 namespace JSC { namespace Wasm {

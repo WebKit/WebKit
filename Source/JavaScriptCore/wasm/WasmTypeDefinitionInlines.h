@@ -28,32 +28,45 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmSignature.h"
+#include "WasmTypeDefinition.h"
 
 namespace JSC { namespace Wasm {
 
-inline SignatureInformation& SignatureInformation::singleton()
+inline TypeInformation& TypeInformation::singleton()
 {
-    std::call_once(signatureInformationFlag, [] () {
-        theOne = new SignatureInformation;
+    static TypeInformation* theOne;
+    static std::once_flag typeInformationFlag;
+
+    std::call_once(typeInformationFlag, [] () {
+        theOne = new TypeInformation;
     });
     return *theOne;
 }
 
-inline const Signature& SignatureInformation::get(SignatureIndex index)
+inline const TypeDefinition& TypeInformation::get(TypeIndex index)
 {
-    ASSERT(index != Signature::invalidIndex);
-    return *bitwise_cast<const Signature*>(index);
+    ASSERT(index != TypeDefinition::invalidIndex);
+    return *bitwise_cast<const TypeDefinition*>(index);
 }
 
-inline SignatureIndex SignatureInformation::get(const Signature& signature)
+inline const FunctionSignature& TypeInformation::getFunctionSignature(TypeIndex index)
+{
+    return *get(index).as<FunctionSignature>();
+}
+
+inline TypeIndex TypeInformation::get(const TypeDefinition& type)
 {
     if (ASSERT_ENABLED) {
-        SignatureInformation& info = singleton();
+        TypeInformation& info = singleton();
         Locker locker { info.m_lock };
-        ASSERT_UNUSED(info, info.m_signatureSet.contains(SignatureHash { const_cast<Signature&>(signature) }));
+        ASSERT_UNUSED(info, info.m_typeSet.contains(TypeHash { const_cast<TypeDefinition&>(type) }));
     }
-    return bitwise_cast<SignatureIndex>(&signature);
+    return bitwise_cast<TypeIndex>(&type);
+}
+
+inline TypeIndex TypeInformation::get(const FunctionSignature& functionType)
+{
+    return get(*reinterpret_cast<TypeDefinition*>(const_cast<char*>(functionType.m_payload) - sizeof(TypeDefinition)));
 }
 
 } } // namespace JSC::Wasm

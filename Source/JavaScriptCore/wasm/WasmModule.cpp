@@ -43,9 +43,9 @@ Module::Module(LLIntPlan& plan)
 
 Module::~Module() { }
 
-Wasm::SignatureIndex Module::signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
+Wasm::TypeIndex Module::typeIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
 {
-    return m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace);
+    return m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace);
 }
 
 static Module::ValidationResult makeValidationResult(LLIntPlan& plan)

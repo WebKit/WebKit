@@ -56,7 +56,7 @@ public:
         return adoptRef(*new Module(plan));
     }
 
-    Wasm::SignatureIndex signatureIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const;
+    Wasm::TypeIndex typeIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const;
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
 
     Ref<CalleeGroup> compileSync(Context*, MemoryMode);

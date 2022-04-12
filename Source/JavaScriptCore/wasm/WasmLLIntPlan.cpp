@@ -38,7 +38,7 @@
 #include "LinkBuffer.h"
 #include "WasmCallee.h"
 #include "WasmLLIntGenerator.h"
-#include "WasmSignatureInlines.h"
+#include "WasmTypeDefinitionInlines.h"
 
 namespace JSC { namespace Wasm {
 
@@ -79,10 +79,10 @@ bool LLIntPlan::prepareImpl()
 void LLIntPlan::compileFunction(uint32_t functionIndex)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
-    SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-    const Signature& signature = SignatureInformation::get(signatureIndex);
+    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
+    const TypeDefinition& signature = TypeInformation::get(typeIndex);
     unsigned functionIndexSpace = m_wasmToWasmExitStubs.size() + functionIndex;
-    ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
+    ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
 
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
     Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileResult = parseAndCompileBytecode(function.data.data(), function.data.size(), signature, m_moduleInformation.get(), functionIndex);
@@ -148,8 +148,8 @@ void LLIntPlan::didCompleteCompilation()
 
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
-            SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-            const Signature& signature = SignatureInformation::get(signatureIndex);
+            TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
+            const TypeDefinition& signature = TypeInformation::get(typeIndex);
             CCallHelpers jit;
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;

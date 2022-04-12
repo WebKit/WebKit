@@ -111,15 +111,15 @@ protected:
 private:
     const uint8_t* m_source;
     size_t m_sourceLength;
-    // We keep a local reference to the global table so we don't have to fetch it to find thunk signatures.
-    const SignatureInformation& m_signatureInformation;
+    // We keep a local reference to the global table so we don't have to fetch it to find thunk types.
+    const TypeInformation& m_typeInformation;
 };
 
 template<typename SuccessType>
 ALWAYS_INLINE Parser<SuccessType>::Parser(const uint8_t* sourceBuffer, size_t sourceLength)
     : m_source(sourceBuffer)
     , m_sourceLength(sourceLength)
-    , m_signatureInformation(SignatureInformation::singleton())
+    , m_typeInformation(TypeInformation::singleton())
 {
 }
 
@@ -280,7 +280,7 @@ ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::p
     if (peekInt7(typeKind) && isValidTypeKind(typeKind)) {
         Type type = {static_cast<TypeKind>(typeKind), Nullable::Yes, 0};
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: ", makeString(type.kind), " is not a value type or Void");
-        result = m_signatureInformation.thunkFor(type);
+        result = m_typeInformation.thunkFor(type);
         m_offset++;
         return { };
     }
@@ -288,9 +288,9 @@ ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::p
     int64_t index;
     WASM_PARSER_FAIL_IF(!parseVarInt64(index), "Block-like instruction doesn't return value type but can't decode type section index");
     WASM_PARSER_FAIL_IF(index < 0, "Block-like instruction signature index is negative");
-    WASM_PARSER_FAIL_IF(static_cast<size_t>(index) >= info.usedSignatures.size(), "Block-like instruction signature index is out of bounds. Index: ", index, " type index space: ", info.usedSignatures.size());
+    WASM_PARSER_FAIL_IF(static_cast<size_t>(index) >= info.typeCount(), "Block-like instruction signature index is out of bounds. Index: ", index, " type index space: ", info.typeCount());
 
-    result = &info.usedSignatures[index].get();
+    result = &info.typeSignatures[index].get();
     return { };
 }
 
@@ -312,7 +312,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseHeapType(const ModuleInformation& i
         return false;
     }
 
-    if (static_cast<size_t>(heapType) >= info.usedSignatures.size())
+    if (static_cast<size_t>(heapType) >= info.typeCount())
         return false;
 
     result = heapType;
@@ -330,20 +330,19 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
 
     TypeKind typeKind = static_cast<TypeKind>(kind);
     bool isNullable = true;
-    SignatureIndex sigIndex = 0;
-
+    TypeIndex typeIndex = 0;
     if (Options::useWebAssemblyTypedFunctionReferences() && (typeKind == TypeKind::Funcref || typeKind == TypeKind::Externref)) {
-        sigIndex = static_cast<SignatureIndex>(typeKind);
+        typeIndex = static_cast<TypeIndex>(typeKind);
         typeKind = TypeKind::RefNull;
     } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
         isNullable = typeKind == TypeKind::RefNull;
         int32_t heapType;
         if (!parseHeapType(info, heapType))
             return false;
-        sigIndex = heapType < 0 ? static_cast<SignatureIndex>(heapType) : SignatureInformation::get(info.usedSignatures[heapType].get());
+        typeIndex = heapType < 0 ? static_cast<TypeIndex>(heapType) : TypeInformation::get(info.typeSignatures[heapType].get());
     }
 
-    Type type = { typeKind, static_cast<Nullable>(isNullable), sigIndex };
+    Type type = { typeKind, static_cast<Nullable>(isNullable), typeIndex };
     if (!isValueType(type))
         return false;
     result = type;

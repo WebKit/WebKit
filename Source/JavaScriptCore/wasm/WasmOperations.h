@@ -45,7 +45,7 @@ class Context;
 namespace Wasm {
 
 class Instance;
-class Signature;
+class TypeDefinition;
 
 void loadValuesIntoBuffer(Probe::Context&, const StackMap&, uint64_t* buffer);
 
@@ -62,8 +62,8 @@ JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (CallFrame*, JSValue));
 
 JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame*, Instance*, int64_t));
 
-JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (CallFrame*, Instance*, const Signature*, JSValue, uint64_t*, uint64_t*));
-JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame*, Wasm::Instance*, const Signature*, IndexingType, JSValue*));
+JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (CallFrame*, Instance*, const TypeDefinition*, JSValue, uint64_t*, uint64_t*));
+JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame*, Wasm::Instance*, const TypeDefinition*, IndexingType, JSValue*));
 
 JSC_DECLARE_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*));
 JSC_DECLARE_JIT_OPERATION(operationPopcount32, uint32_t, (int32_t));

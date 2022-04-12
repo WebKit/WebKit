@@ -48,7 +48,7 @@ class BytecodeGeneratorBase;
 namespace Wasm {
 
 class LLIntCallee;
-class Signature;
+class FunctionSignature;
 struct GeneratorTraits;
 
 struct JumpTableEntry {
@@ -116,7 +116,7 @@ public:
 
     HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
 
-    unsigned addSignature(const Signature&);
+    unsigned addSignature(const FunctionSignature&);
 
     JumpTable& addJumpTable(size_t numberOfEntries);
     unsigned numberOfJumpTables() const;
@@ -140,7 +140,7 @@ private:
     std::unique_ptr<WasmInstructionStream> m_instructions;
     const void* m_instructionsRawPointer { nullptr };
     Vector<WasmInstructionStream::Offset> m_jumpTargets;
-    Vector<const Signature*> m_signatures;
+    Vector<const FunctionSignature*> m_signatures;
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<JumpTable> m_jumpTables;

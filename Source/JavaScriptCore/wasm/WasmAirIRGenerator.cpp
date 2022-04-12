@@ -55,8 +55,8 @@
 #include "WasmOSREntryData.h"
 #include "WasmOpcodeOrigin.h"
 #include "WasmOperations.h"
-#include "WasmSignatureInlines.h"
 #include "WasmThunks.h"
+#include "WasmTypeDefinitionInlines.h"
 #include <limits>
 #include <wtf/Box.h>
 #include <wtf/StdLibExtras.h>
@@ -218,19 +218,19 @@ public:
             special = nullptr;
         }
 
-        SignatureArgCount branchTargetArity() const
+        FunctionArgCount branchTargetArity() const
         {
             if (blockType() == BlockType::Loop)
-                return returnType->argumentCount();
-            return returnType->returnCount();
+                return returnType->as<FunctionSignature>()->argumentCount();
+            return returnType->as<FunctionSignature>()->returnCount();
         }
 
         Type branchTargetType(unsigned i) const
         {
             ASSERT(i < branchTargetArity());
             if (blockType() == BlockType::Loop)
-                return returnType->argument(i);
-            return returnType->returnType(i);
+                return returnType->as<FunctionSignature>()->argumentType(i);
+            return returnType->as<FunctionSignature>()->returnType(i);
         }
 
         void convertTryToCatch(unsigned tryEndCallSiteIndex, TypedTmp exception)
@@ -323,11 +323,11 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, const Signature&, unsigned& osrEntryScratchBufferSize);
+    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, const TypeDefinition&, unsigned& osrEntryScratchBufferSize);
 
     void finalizeEntrypoints();
 
-    PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
+    PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
     ExpressionType addConstant(BasicBlock*, Type, uint64_t);
@@ -393,8 +393,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
     PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
-    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const Signature&, Stack&, ControlType&, ResultList&);
-    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const Signature&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition&, Stack&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
@@ -411,12 +411,12 @@ public:
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const Signature&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
-    PartialResult WARN_UNUSED_RETURN emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const Signature&, const Vector<ExpressionType>& args, ResultList&);
-    std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const Signature&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> extraArgs = { });
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&);
+    std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const TypeDefinition&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> extraArgs = { });
 
     PartialResult addShift(Type, B3::Air::Opcode, ExpressionType value, ExpressionType shift, ExpressionType& result);
     PartialResult addIntegerSub(B3::Air::Opcode, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
@@ -541,9 +541,9 @@ private:
 
     ResultList tmpsForSignature(BlockSignature signature)
     {
-        ResultList result(signature->returnCount());
-        for (unsigned i = 0; i < signature->returnCount(); ++i)
-            result[i] = tmpForType(signature->returnType(i));
+        ResultList result(signature->as<FunctionSignature>()->returnCount());
+        for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
+            result[i] = tmpForType(signature->as<FunctionSignature>()->returnType(i));
         return result;
     }
 
@@ -933,7 +933,7 @@ void AirIRGenerator::restoreWasmContextInstance(BasicBlock* block, TypedTmp inst
     emitPatchpoint(block, patchpoint, Tmp(), instance);
 }
 
-AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, const Signature& signature, unsigned& osrEntryScratchBufferSize)
+AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, const TypeDefinition& signature, unsigned& osrEntryScratchBufferSize)
     : m_info(info)
     , m_mode(mode)
     , m_functionIndex(functionIndex)
@@ -1039,9 +1039,9 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     m_currentBlock = m_mainEntrypointStart;
 
     ASSERT(!m_locals.size());
-    m_locals.grow(signature.argumentCount());
-    for (unsigned i = 0; i < signature.argumentCount(); ++i) {
-        Type type = signature.argument(i);
+    m_locals.grow(signature.as<FunctionSignature>()->argumentCount());
+    for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
+        Type type = signature.as<FunctionSignature>()->argumentType(i);
         m_locals[i] = tmpForType(type);
     }
 
@@ -1050,7 +1050,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     for (unsigned i = 0; i < wasmCallInfo.params.size(); ++i) {
         B3::ValueRep location = wasmCallInfo.params[i];
         Arg arg = location.isReg() ? Arg(Tmp(location.reg())) : Arg::addr(Tmp(GPRInfo::callFrameRegister), location.offsetFromFP());
-        switch (signature.argument(i).kind) {
+        switch (signature.as<FunctionSignature>()->argumentType(i).kind) {
         case TypeKind::I32:
             append(Move32, arg, m_locals[i]);
             break;
@@ -1127,16 +1127,16 @@ void AirIRGenerator::finalizeEntrypoints()
 
 B3::Type AirIRGenerator::toB3ResultType(BlockSignature returnType)
 {
-    if (returnType->returnsVoid())
+    if (returnType->as<FunctionSignature>()->returnsVoid())
         return B3::Void;
 
-    if (returnType->returnCount() == 1)
-        return toB3Type(returnType->returnType(0));
+    if (returnType->as<FunctionSignature>()->returnCount() == 1)
+        return toB3Type(returnType->as<FunctionSignature>()->returnType(0));
 
     auto result = m_tupleMap.ensure(returnType, [&] {
         Vector<B3::Type> result;
-        for (unsigned i = 0; i < returnType->returnCount(); ++i)
-            result.append(toB3Type(returnType->returnType(i)));
+        for (unsigned i = 0; i < returnType->as<FunctionSignature>()->returnCount(); ++i)
+            result.append(toB3Type(returnType->as<FunctionSignature>()->returnType(i)));
         return m_proc.addTuple(WTFMove(result));
     });
     return result.iterator->value;
@@ -1288,9 +1288,9 @@ auto AirIRGenerator::addBottom(BasicBlock* block, Type type) -> ExpressionType
     return addConstant(type, 0);
 }
 
-auto AirIRGenerator::addArguments(const Signature& signature) -> PartialResult
+auto AirIRGenerator::addArguments(const TypeDefinition& signature) -> PartialResult
 {
-    RELEASE_ASSERT(m_locals.size() == signature.argumentCount()); // We handle arguments in the prologue
+    RELEASE_ASSERT(m_locals.size() == signature.as<FunctionSignature>()->argumentCount()); // We handle arguments in the prologue
     return { };
 }
 
@@ -1310,8 +1310,8 @@ auto AirIRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Parti
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     if (Options::useWebAssemblyTypedFunctionReferences()) {
-        SignatureIndex signatureIndex = m_info.signatureIndexFromFunctionIndexSpace(index);
-        result = tmpForType(Type { TypeKind::Ref, Nullable::No, signatureIndex });
+        TypeIndex typeIndex = m_info.typeIndexFromFunctionIndexSpace(index);
+        result = tmpForType(Type { TypeKind::Ref, Nullable::No, typeIndex });
     } else
         result = tmpForType(Types::Funcref);
     emitCCall(&operationWasmRefFunc, result, instanceValue(), addConstant(Types::I32, index));
@@ -1624,7 +1624,7 @@ auto AirIRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partia
         }
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
-        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
+        ASSERT(global.mutability == Wasm::Mutability::Mutable);
         if (Arg::isValidAddrForm(offset, B3::Width64))
             append(Move, Arg::addr(temp, offset), temp);
         else {
@@ -1664,7 +1664,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
-        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
+        ASSERT(global.mutability == Wasm::Mutability::Mutable);
         if (Arg::isValidAddrForm(offset, B3::Width64))
             append(Move, Arg::addr(temp, offset), temp);
         else {
@@ -3229,7 +3229,7 @@ auto AirIRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Con
     return { };
 }
 
-auto AirIRGenerator::addCatch(unsigned exceptionIndex, const Signature& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
 {
     unifyValuesWithBlock(currentStack, data.results);
     append(Jump);
@@ -3245,11 +3245,11 @@ auto AirIRGenerator::addCatchAll(Stack& currentStack, ControlType& data) -> Part
     return addCatchAllToUnreachable(data);
 }
 
-auto AirIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const Signature& signature, ControlType& data, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
 {
     Tmp buffer = emitCatchImpl(CatchKind::Catch, data, exceptionIndex);
-    for (unsigned i = 0; i < signature.argumentCount(); ++i) {
-        Type type = signature.argument(i);
+    for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
+        Type type = signature.as<FunctionSignature>()->argumentType(i);
         TypedTmp tmp = tmpForType(type);
         emitLoad(buffer, i * sizeof(uint64_t), tmp);
         results.append(tmp);
@@ -3419,7 +3419,7 @@ auto AirIRGenerator::addReturn(const ControlData& data, const Stack& returnValue
         }
 
         ASSERT(rep.isReg());
-        if (data.signature()->returnType(i).isI32())
+        if (data.signature()->as<FunctionSignature>()->returnType(i).isI32())
             append(Move32, tmp, tmp);
         returnConstraints.append(ConstrainedTmp(tmp, wasmCallInfo.results[i]));
     }
@@ -3555,17 +3555,17 @@ auto AirIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 
     if (data.blockType() == BlockType::Loop) {
         m_outerLoops.removeLast();
-        for (unsigned i = 0; i < data.signature()->returnCount(); ++i) {
+        for (unsigned i = 0; i < data.signature()->as<FunctionSignature>()->returnCount(); ++i) {
             if (i < expressionStack.size())
                 entry.enclosedExpressionStack.append(expressionStack[i]);
             else {
-                Type type = data.signature()->returnType(i);
+                Type type = data.signature()->as<FunctionSignature>()->returnType(i);
                 entry.enclosedExpressionStack.constructAndAppend(type, addBottom(m_currentBlock, type));
             }
         }
     } else {
-        for (unsigned i = 0; i < data.signature()->returnCount(); ++i)
-            entry.enclosedExpressionStack.constructAndAppend(data.signature()->returnType(i), data.results[i]);
+        for (unsigned i = 0; i < data.signature()->as<FunctionSignature>()->returnCount(); ++i)
+            entry.enclosedExpressionStack.constructAndAppend(data.signature()->as<FunctionSignature>()->returnType(i), data.results[i]);
     }
 
     // TopLevel does not have any code after this so we need to make sure we emit a return here.
@@ -3575,7 +3575,7 @@ auto AirIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
     return { };
 }
 
-std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const Signature& signature, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> patchArgs)
+std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const TypeDefinition& signature, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> patchArgs)
 {
     auto* patchpoint = addPatchpoint(toB3ResultType(&signature));
     patchpoint->effects.writesPinned = true;
@@ -3605,14 +3605,14 @@ std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitC
     return { patchpoint, exceptionHandle };
 }
 
-auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
-    ASSERT(signature.argumentCount() == args.size());
+    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     m_makesCalls = true;
 
-    for (unsigned i = 0; i < signature.returnCount(); ++i)
-        results.append(tmpForType(signature.returnType(i)));
+    for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
+        results.append(tmpForType(signature.as<FunctionSignature>()->returnType(i)));
 
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
@@ -3708,10 +3708,10 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature,
     return { };
 }
 
-auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     ExpressionType calleeIndex = args.takeLast();
-    ASSERT(signature.argumentCount() == args.size());
+    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
     ASSERT(m_info.tableCount() > tableIndex);
     ASSERT(m_info.tables[tableIndex].type() == TableElementType::Funcref);
 
@@ -3761,7 +3761,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
 
         // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
         // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
-        static_assert(sizeof(WasmToWasmImportableFunction::signatureIndex) == sizeof(uint64_t), "Load codegen assumes i64");
+        static_assert(sizeof(WasmToWasmImportableFunction::typeIndex) == sizeof(uint64_t), "Load codegen assumes i64");
 
         // FIXME: This seems wasteful to do two checks just for a nicer error message.
         // We should move just to use a single branch and then figure out what
@@ -3770,14 +3770,14 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
         append(Move, Arg::addr(calleeSignatureIndex, WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
 
         emitCheck([&] {
-            static_assert(Signature::invalidIndex == 0);
+            static_assert(!TypeDefinition::invalidIndex, "");
             return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::Zero), calleeSignatureIndex, calleeSignatureIndex);
         }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::NullTableEntry);
         });
 
         ExpressionType expectedSignatureIndex = g64();
-        append(Move, Arg::bigImm(SignatureInformation::get(signature)), expectedSignatureIndex);
+        append(Move, Arg::bigImm(TypeInformation::get(signature)), expectedSignatureIndex);
         emitCheck([&] {
             return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::NotEqual), calleeSignatureIndex, expectedSignatureIndex);
         }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
@@ -3791,7 +3791,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
     return emitIndirectCall(calleeInstance, calleeCode, signature, args, results);
 }
 
-auto AirIRGenerator::addCallRef(const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCallRef(const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     m_makesCalls = true;
     // Note: call ref can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
@@ -3819,7 +3819,7 @@ auto AirIRGenerator::addCallRef(const Signature& signature, Vector<ExpressionTyp
     return emitIndirectCall(calleeInstance, calleeCode, signature, args, results);
 }
 
-auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const Signature& signature, const Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     auto currentInstance = g64();
     append(Move, instanceValue(), currentInstance);
@@ -3873,8 +3873,8 @@ auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType ca
     Vector<ConstrainedTmp> extraArgs;
     extraArgs.append(calleeCode);
 
-    for (unsigned i = 0; i < signature.returnCount(); ++i)
-        results.append(tmpForType(signature.returnType(i)));
+    for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
+        results.append(tmpForType(signature.as<FunctionSignature>()->returnType(i)));
 
     auto pair = emitCallPatchpoint(m_currentBlock, signature, results, args, WTFMove(extraArgs));
     auto* patchpoint = pair.first;
@@ -3944,7 +3944,7 @@ auto AirIRGenerator::origin() -> B3::Origin
     return B3::Origin();
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
 

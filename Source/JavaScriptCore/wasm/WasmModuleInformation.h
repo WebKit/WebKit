@@ -50,36 +50,36 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
     JS_EXPORT_PRIVATE ~ModuleInformation();
     
-    size_t functionIndexSpaceSize() const { return importFunctionSignatureIndices.size() + internalFunctionSignatureIndices.size(); }
+    size_t functionIndexSpaceSize() const { return importFunctionTypeIndices.size() + internalFunctionTypeIndices.size(); }
     bool isImportedFunctionFromFunctionIndexSpace(size_t functionIndex) const
     {
         ASSERT(functionIndex < functionIndexSpaceSize());
-        return functionIndex < importFunctionSignatureIndices.size();
+        return functionIndex < importFunctionTypeIndices.size();
     }
-    SignatureIndex signatureIndexFromFunctionIndexSpace(size_t functionIndex) const
+    TypeIndex typeIndexFromFunctionIndexSpace(size_t functionIndex) const
     {
         return isImportedFunctionFromFunctionIndexSpace(functionIndex)
-            ? importFunctionSignatureIndices[functionIndex]
-            : internalFunctionSignatureIndices[functionIndex - importFunctionSignatureIndices.size()];
+            ? importFunctionTypeIndices[functionIndex]
+            : internalFunctionTypeIndices[functionIndex - importFunctionTypeIndices.size()];
     }
 
-    size_t exceptionIndexSpaceSize() const { return importExceptionSignatureIndices.size() + internalExceptionSignatureIndices.size(); }
+    size_t exceptionIndexSpaceSize() const { return importExceptionTypeIndices.size() + internalExceptionTypeIndices.size(); }
     bool isImportedExceptionFromExceptionIndexSpace(size_t exceptionIndex) const
     {
         ASSERT(exceptionIndex < exceptionIndexSpaceSize());
-        return exceptionIndex < importExceptionSignatureIndices.size();
+        return exceptionIndex < importExceptionTypeIndices.size();
     }
-    SignatureIndex signatureIndexFromExceptionIndexSpace(size_t exceptionIndex) const
+    TypeIndex typeIndexFromExceptionIndexSpace(size_t exceptionIndex) const
     {
         return isImportedExceptionFromExceptionIndexSpace(exceptionIndex)
-            ? importExceptionSignatureIndices[exceptionIndex]
-            : internalExceptionSignatureIndices[exceptionIndex - importExceptionSignatureIndices.size()];
+            ? importExceptionTypeIndices[exceptionIndex]
+            : internalExceptionTypeIndices[exceptionIndex - importExceptionTypeIndices.size()];
     }
 
-    uint32_t importFunctionCount() const { return importFunctionSignatureIndices.size(); }
-    uint32_t internalFunctionCount() const { return internalFunctionSignatureIndices.size(); }
-    uint32_t importExceptionCount() const { return importExceptionSignatureIndices.size(); }
-    uint32_t internalExceptionCount() const { return internalExceptionSignatureIndices.size(); }
+    uint32_t importFunctionCount() const { return importFunctionTypeIndices.size(); }
+    uint32_t internalFunctionCount() const { return internalFunctionTypeIndices.size(); }
+    uint32_t importExceptionCount() const { return importExceptionTypeIndices.size(); }
+    uint32_t internalExceptionCount() const { return internalExceptionTypeIndices.size(); }
 
     // Currently, our wasm implementation allows only one memory and table.
     // If we need to remove this limitation, we would have MemoryInformation and TableInformation in the Vectors.
@@ -99,6 +99,8 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     bool isDeclaredException(uint32_t index) const { return m_declaredExceptions.contains(index); }
     void addDeclaredException(uint32_t index) { m_declaredExceptions.set(index); }
 
+    uint32_t typeCount() const { return typeSignatures.size(); }
+
     bool hasMemoryImport() const { return memory.isImport(); }
 
     BranchHint getBranchHint(uint32_t functionOffset, uint32_t branchOffset) const
@@ -110,11 +112,11 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     }
 
     Vector<Import> imports;
-    Vector<SignatureIndex> importFunctionSignatureIndices;
-    Vector<SignatureIndex> internalFunctionSignatureIndices;
-    Vector<SignatureIndex> importExceptionSignatureIndices;
-    Vector<SignatureIndex> internalExceptionSignatureIndices;
-    Vector<Ref<Signature>> usedSignatures;
+    Vector<TypeIndex> importFunctionTypeIndices;
+    Vector<TypeIndex> internalFunctionTypeIndices;
+    Vector<TypeIndex> importExceptionTypeIndices;
+    Vector<TypeIndex> internalExceptionTypeIndices;
+    Vector<Ref<TypeDefinition>> typeSignatures;
 
     MemoryInformation memory;
 

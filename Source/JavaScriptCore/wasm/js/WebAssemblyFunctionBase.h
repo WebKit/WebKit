@@ -46,7 +46,7 @@ public:
 
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
 
-    Wasm::SignatureIndex signatureIndex() const { return m_importableFunction.signatureIndex; }
+    Wasm::TypeIndex typeIndex() const { return m_importableFunction.typeIndex; }
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
     WasmToWasmImportableFunction importableFunction() const { return m_importableFunction; }
 

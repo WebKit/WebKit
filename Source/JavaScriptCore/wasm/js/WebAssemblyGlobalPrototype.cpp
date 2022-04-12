@@ -111,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue, (JSGlobalObject*
     JSWebAssemblyGlobal* global = getGlobal(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    if (global->global()->mutability() == Wasm::GlobalInformation::Mutability::Immutable)
+    if (global->global()->mutability() == Wasm::Mutability::Immutable)
         return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global.prototype.value attempts to modify immutable global value"_s)));
 
     global->global()->set(globalObject, callFrame->argument(0));

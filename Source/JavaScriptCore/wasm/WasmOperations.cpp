@@ -514,7 +514,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame* c
 }
 
 // https://webassembly.github.io/multi-value/js-api/index.html#run-a-host-function
-JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, Instance* instance, const Signature* signature, JSValue result, uint64_t* registerResults, uint64_t* calleeFramePointer))
+JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, Instance* instance, const TypeDefinition* type, JSValue result, uint64_t* registerResults, uint64_t* calleeFramePointer))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
     // https://bugs.webkit.org/show_bug.cgi?id=203206
@@ -524,7 +524,9 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
     NativeCallFrameTracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature, CallRole::Callee);
+    const FunctionSignature* signature = type->as<FunctionSignature>();
+
+    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*type, CallRole::Callee);
     RegisterAtOffsetList registerResultOffsets = wasmCallInfo.computeResultsOffsetList();
 
     unsigned iterationCount = 0;
@@ -588,7 +590,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
 // FIXME: It would be much easier to inline this when we have a global GC, which could probably mean we could avoid
 // spilling the results onto the stack.
 // Saved result registers should be placed on the stack just above the last stack result.
-JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* callFrame, Wasm::Instance* instance, const Signature* signature, IndexingType indexingType, JSValue* stackPointerFromCallee))
+JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* callFrame, Wasm::Instance* instance, const TypeDefinition* type, IndexingType indexingType, JSValue* stackPointerFromCallee))
 {
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     VM& vm = jsInstance->vm();
@@ -596,12 +598,13 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* ca
 
     JSGlobalObject* globalObject = jsInstance->globalObject();
     ObjectInitializationScope initializationScope(globalObject->vm());
+    const FunctionSignature* signature = type->as<FunctionSignature>();
     JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), signature->returnCount());
 
     // FIXME: Handle allocation failure...
     RELEASE_ASSERT(result);
 
-    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature);
+    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*type);
     RegisterAtOffsetList registerResults = wasmCallInfo.computeResultsOffsetList();
 
     static_assert(sizeof(JSValue) == sizeof(CPURegister), "The code below relies on this.");

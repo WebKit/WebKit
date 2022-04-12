@@ -45,11 +45,11 @@ struct CompilationContext;
 class Instance;
 struct InternalFunction;
 struct ModuleInformation;
-class Signature;
+class TypeDefinition;
 struct UnlinkedWasmToWasmCall;
 
 // Create wrapper code to call from embedder -> WebAssembly.
-using CreateEmbedderWrapper = WTF::Function<std::unique_ptr<InternalFunction>(CCallHelpers&, const Signature&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t)>;
+using CreateEmbedderWrapper = WTF::Function<std::unique_ptr<InternalFunction>(CCallHelpers&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>*, const ModuleInformation&, MemoryMode, uint32_t)>;
 
 // Called as soon as an exception is detected. The return value is the PC to continue at.
 using ThrowWasmException = void* (*)(CallFrame*, Wasm::ExceptionType, Instance*);

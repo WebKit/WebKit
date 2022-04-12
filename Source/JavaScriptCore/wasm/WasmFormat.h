@@ -38,7 +38,7 @@
 #include "WasmOSREntryData.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
-#include "WasmSignature.h"
+#include "WasmTypeDefinition.h"
 #include <cstdint>
 #include <limits>
 #include <memory>
@@ -54,7 +54,7 @@ struct CompilationContext;
 struct ModuleInformation;
 struct UnlinkedHandlerInfo;
 
-using BlockSignature = const Signature*;
+using BlockSignature = const TypeDefinition*;
 
 enum class TableElementType : uint8_t {
     Externref,
@@ -105,28 +105,28 @@ inline bool isRefType(Type type)
 inline bool isExternref(Type type)
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return isRefType(type) && type.index == static_cast<SignatureIndex>(TypeKind::Externref);
+        return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Externref);
     return type.kind == TypeKind::Externref;
 }
 
 inline bool isFuncref(Type type)
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return isRefType(type) && type.index == static_cast<SignatureIndex>(TypeKind::Funcref);
+        return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Funcref);
     return type.kind == TypeKind::Funcref;
 }
 
 inline Type funcrefType()
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::SignatureIndex>(Wasm::TypeKind::Funcref) };
+        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
     return Types::Funcref;
 }
 
 inline Type externrefType()
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::SignatureIndex>(Wasm::TypeKind::Externref) };
+        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
     return Types::Externref;
 }
 
@@ -238,11 +238,6 @@ String makeString(const Name& characters);
 
 struct GlobalInformation {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    enum Mutability : uint8_t {
-        // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
-        Mutable = 1,
-        Immutable = 0
-    };
 
     enum InitializationType : uint8_t {
         IsImport,
@@ -456,11 +451,11 @@ struct InternalFunction {
 struct WasmToWasmImportableFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     using LoadLocation = MacroAssemblerCodePtr<WasmEntryPtrTag>*;
-    static ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, signatureIndex); }
+    static ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, typeIndex); }
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, entrypointLoadLocation); }
 
-    // FIXME: Pack signature index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
-    SignatureIndex signatureIndex { Signature::invalidIndex };
+    // FIXME: Pack type index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
+    TypeIndex typeIndex { TypeDefinition::invalidIndex };
     LoadLocation entrypointLoadLocation;
 };
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;

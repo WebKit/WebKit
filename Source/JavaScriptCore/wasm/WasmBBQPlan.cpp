@@ -37,8 +37,8 @@
 #include "WasmCalleeGroup.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmIRGeneratorHelpers.h"
-#include "WasmSignatureInlines.h"
 #include "WasmTierUpCount.h"
+#include "WasmTypeDefinitionInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
@@ -123,8 +123,8 @@ void BBQPlan::work(CompilationEffort effort)
     computePCToCodeOriginMap(context, linkBuffer);
 
     size_t functionIndexSpace = m_functionIndex + m_moduleInformation->importFunctionCount();
-    SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[m_functionIndex];
-    const Signature& signature = SignatureInformation::get(signatureIndex);
+    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
+    const TypeDefinition& signature = TypeInformation::get(typeIndex);
     function->entrypoint.compilation = makeUnique<Compilation>(
         FINALIZE_WASM_CODE_FOR_MODE(CompilationMode::BBQMode, linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
         WTFMove(context.wasmEntrypointByproducts));
@@ -192,8 +192,8 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
 
     if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
         Locker locker { m_lock };
-        SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-        const Signature& signature = SignatureInformation::get(signatureIndex);
+        TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
+        const TypeDefinition& signature = TypeInformation::get(typeIndex);
 
         m_compilationContexts[functionIndex].embedderEntrypointJIT = makeUnique<CCallHelpers>();
         auto embedderToWasmInternalFunction = createJSToWasmWrapper(*m_compilationContexts[functionIndex].embedderEntrypointJIT, signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), m_mode, functionIndex);
@@ -207,10 +207,10 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
 std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionIndex, CompilationContext& context, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, TierUpCount* tierUp)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
-    SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-    const Signature& signature = SignatureInformation::get(signatureIndex);
+    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
+    const TypeDefinition& signature = TypeInformation::get(typeIndex);
     unsigned functionIndexSpace = m_moduleInformation->importFunctionCount() + functionIndex;
-    ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
+    ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
 
     // FIXME: Some webpages use very large Wasm module, and it exhausts all executable memory in ARM64 devices since the size of executable memory region is only limited to 128MB.
@@ -244,8 +244,8 @@ void BBQPlan::didCompleteCompilation()
 {
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         CompilationContext& context = m_compilationContexts[functionIndex];
-        SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-        const Signature& signature = SignatureInformation::get(signatureIndex);
+        TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
+        const TypeDefinition& signature = TypeInformation::get(typeIndex);
         const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
         ASSERT(functionIndexSpace < m_moduleInformation->functionIndexSpaceSize());
         {

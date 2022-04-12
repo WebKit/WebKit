@@ -39,7 +39,7 @@
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
-#include "WasmSignatureInlines.h"
+#include "WasmTypeDefinitionInlines.h"
 #include "WebAssemblyFunction.h"
 
 namespace JSC {
@@ -207,18 +207,18 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             WebAssemblyWrapperFunction* wasmWrapperFunction;
             if (isWebAssemblyHostFunction(vm, function, wasmFunction, wasmWrapperFunction)) {
                 // a. If the signature of v does not match the signature of i, throw a WebAssembly.LinkError.
-                Wasm::SignatureIndex importedSignatureIndex;
+                Wasm::TypeIndex importedTypeIndex;
                 if (wasmFunction) {
-                    importedSignatureIndex = wasmFunction->signatureIndex();
+                    importedTypeIndex = wasmFunction->typeIndex();
                     calleeInstance = &wasmFunction->instance()->instance();
                     entrypointLoadLocation = wasmFunction->entrypointLoadLocation();
                 } else {
-                    importedSignatureIndex = wasmWrapperFunction->signatureIndex();
+                    importedTypeIndex = wasmWrapperFunction->typeIndex();
                     // b. Let closure be v.[[Closure]].
                     function = wasmWrapperFunction->function();
                 }
-                Wasm::SignatureIndex expectedSignatureIndex = moduleInformation.importFunctionSignatureIndices[import.kindIndex];
-                if (importedSignatureIndex != expectedSignatureIndex)
+                Wasm::TypeIndex expectedTypeIndex = moduleInformation.importFunctionTypeIndices[import.kindIndex];
+                if (importedTypeIndex != expectedTypeIndex)
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported function", "signature doesn't match the provided WebAssembly function's signature")));
             }
             // iii. Otherwise:
@@ -237,12 +237,12 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
         case Wasm::ExternalKind::Global: {
             // 5. If i is a global import:
             const Wasm::GlobalInformation& global = moduleInformation.globals[import.kindIndex];
-            if (global.mutability == Wasm::GlobalInformation::Immutable) {
+            if (global.mutability == Wasm::Immutable) {
                 if (value.inherits<JSWebAssemblyGlobal>(vm)) {
                     JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
                     if (globalValue->global()->type() != global.type)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same type")));
-                    if (globalValue->global()->mutability() != Wasm::GlobalInformation::Immutable)
+                    if (globalValue->global()->mutability() != Wasm::Immutable)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
                     const auto& declaredGlobalType = moduleInformation.globals[import.kindIndex].type;
                     switch (declaredGlobalType.kind) {
@@ -270,8 +270,8 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             }
 
                             if (Wasm::isRefWithTypeIndex(declaredGlobalType) && !value.isNull()) {
-                                Wasm::SignatureIndex paramIndex = global.type.index;
-                                Wasm::SignatureIndex argIndex = wasmFunction ? wasmFunction->signatureIndex() : wasmWrapperFunction->signatureIndex();
+                                Wasm::TypeIndex paramIndex = global.type.index;
+                                Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                                 if (paramIndex != argIndex)
                                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "Argument function did not match the reference type")));
                             }
@@ -324,8 +324,8 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             }
 
                             if (Wasm::isRefWithTypeIndex(globalType) && !value.isNull()) {
-                                Wasm::SignatureIndex paramIndex = global.type.index;
-                                Wasm::SignatureIndex argIndex = wasmFunction ? wasmFunction->signatureIndex() : wasmWrapperFunction->signatureIndex();
+                                Wasm::TypeIndex paramIndex = global.type.index;
+                                Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                                 if (paramIndex != argIndex)
                                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "Argument function did not match the reference type")));
                             }
@@ -386,9 +386,9 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (!tag)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Tag import", "is not an instance of WebAssembly.Tag")));
 
-            Wasm::SignatureIndex expectedSignatureIndex = moduleInformation.importExceptionSignatureIndices[import.kindIndex];
+            Wasm::TypeIndex expectedTypeIndex = moduleInformation.importExceptionTypeIndices[import.kindIndex];
 
-            if (expectedSignatureIndex != tag->tag().signature().index())
+            if (expectedTypeIndex != tag->tag().typeIndex())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported Tag", "signature doesn't match the imported WebAssembly Tag's signature")));
 
             m_instance->instance().setTag(import.kindIndex, tag->tag());
@@ -481,9 +481,9 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
     // This needs to be looked up after the memory is initialized, as the codeBlock depends on the memory mode.
     Wasm::CalleeGroup* calleeGroup = m_instance->instance().calleeGroup();
 
-    for (unsigned index = 0; index < moduleInformation.internalExceptionSignatureIndices.size(); ++index) {
-        Wasm::SignatureIndex signatureIndex = moduleInformation.internalExceptionSignatureIndices[index];
-        m_instance->instance().setTag(moduleInformation.importExceptionCount() + index, Wasm::Tag::create(Wasm::SignatureInformation::get(signatureIndex)));
+    for (unsigned index = 0; index < moduleInformation.internalExceptionTypeIndices.size(); ++index) {
+        Wasm::TypeIndex typeIndex = moduleInformation.internalExceptionTypeIndices[index];
+        m_instance->instance().setTag(moduleInformation.importExceptionCount() + index, Wasm::Tag::create(Wasm::TypeInformation::get(typeIndex)));
     }
 
     unsigned functionImportCount = calleeGroup->functionImportCount();
@@ -502,8 +502,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             if (isWebAssemblyHostFunction(vm, functionImport))
                 wrapper = functionImport;
             else {
-                Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(index);
-                wrapper = WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, index, m_instance.get(), signatureIndex);
+                Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(index);
+                wrapper = WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, index, m_instance.get(), typeIndex);
             }
         } else {
             //   iii. Otherwise:
@@ -512,9 +512,9 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             //     c. Return func.
             Wasm::Callee& embedderEntrypointCallee = calleeGroup->embedderEntrypointCalleeFromFunctionIndexSpace(index);
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(index);
-            Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(index);
-            const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(index), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
+            Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(index);
+            const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(index), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, typeIndex);
             wrapper = function;
         }
 
@@ -549,8 +549,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 break;
             }
             case Wasm::GlobalInformation::BindingMode::Portable: {
-                ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
-                Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::GlobalInformation::Mutability::Mutable, initialBits);
+                ASSERT(global.mutability == Wasm::Mutable);
+                Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::Mutability::Mutable, initialBits);
                 JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
                 scope.assertNoException();
                 m_instance->linkGlobal(vm, globalIndex, globalValue);
@@ -605,12 +605,12 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                     exportedValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
                     scope.assertNoException();
                 } else {
-                    ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
+                    ASSERT(global.mutability == Wasm::Mutability::Mutable);
                     RefPtr<Wasm::Global> globalRef = m_instance->instance().getGlobalBinding(exp.kindIndex);
                     ASSERT(globalRef);
                     ASSERT(globalRef->type() == global.type);
                     ASSERT(globalRef->mutability() == global.mutability);
-                    ASSERT(globalRef->mutability() == Wasm::GlobalInformation::Mutability::Mutable);
+                    ASSERT(globalRef->mutability() == Wasm::Mutability::Mutable);
                     ASSERT(globalRef->owner<JSWebAssemblyGlobal>());
                     exportedValue = globalRef->owner<JSWebAssemblyGlobal>();
                 }
@@ -650,8 +650,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
     bool hasStart = !!moduleInformation.startFunctionIndexSpace;
     if (hasStart) {
         auto startFunctionIndexSpace = moduleInformation.startFunctionIndexSpace.value_or(0);
-        Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(startFunctionIndexSpace);
-        const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
+        Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(startFunctionIndexSpace);
+        const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
         // The start function must not take any arguments or return anything. This is enforced by the parser.
         ASSERT(!signature.argumentCount());
         ASSERT(signature.returnsVoid());
@@ -661,7 +661,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         } else {
             Wasm::Callee& embedderEntrypointCallee = calleeGroup->embedderEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(startFunctionIndexSpace);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), "start"_s, m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), "start"_s, m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, typeIndex);
             m_startFunction.set(vm, this, function);
         }
     }

@@ -88,7 +88,7 @@ JSObject* JSWebAssemblyGlobal::type(JSGlobalObject* globalObject)
 
     JSObject* result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
-    result->putDirect(vm, Identifier::fromString(vm, "mutable"_s), jsBoolean(m_global->mutability() == Wasm::GlobalInformation::Mutable));
+    result->putDirect(vm, Identifier::fromString(vm, "mutable"_s), jsBoolean(m_global->mutability() == Wasm::Mutable));
 
     Wasm::Type valueType = m_global->type();
     JSString* valueString = nullptr;

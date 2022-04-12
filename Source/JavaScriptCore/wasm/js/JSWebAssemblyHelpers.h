@@ -198,8 +198,8 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
             if (!isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
                 return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
             if (isRefWithTypeIndex(type) && !value.isNull()) {
-                Wasm::SignatureIndex paramIndex = type.index;
-                Wasm::SignatureIndex argIndex = wasmFunction ? wasmFunction->signatureIndex() : wasmWrapperFunction->signatureIndex();
+                Wasm::TypeIndex paramIndex = type.index;
+                Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                 if (paramIndex != argIndex)
                     return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"_s));
             }

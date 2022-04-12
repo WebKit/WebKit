@@ -35,6 +35,8 @@
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/function-references
   cmd: runWebAssemblySuite unless parseRunCommands
+- path: wasm/gc
+  cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/fuzz
   cmd: runWebAssemblySuite unless parseRunCommands
 - path: wasm/lowExecutableMemory

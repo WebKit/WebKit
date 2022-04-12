@@ -35,7 +35,7 @@
 #include "WasmIRGeneratorHelpers.h"
 #include "WasmMachineThreads.h"
 #include "WasmNameSection.h"
-#include "WasmSignatureInlines.h"
+#include "WasmTypeDefinitionInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
@@ -70,8 +70,8 @@ void OSREntryPlan::work(CompilationEffort)
     const uint32_t functionIndexSpace = m_functionIndex + m_module->moduleInformation().importFunctionCount();
     ASSERT(functionIndexSpace < m_module->moduleInformation().functionIndexSpaceSize());
 
-    SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[m_functionIndex];
-    const Signature& signature = SignatureInformation::get(signatureIndex);
+    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[m_functionIndex];
+    const TypeDefinition& signature = TypeInformation::get(typeIndex);
 
     CompilationMode targetCompilationMode = m_callee->compilationMode() == CompilationMode::LLIntMode ? CompilationMode::BBQForOSREntryMode : CompilationMode::OMGForOSREntryMode;
 

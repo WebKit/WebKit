@@ -66,13 +66,14 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     });
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (values.size() != tag->signature().argumentCount())
+    const auto& tagFunctionType = tag->type();
+    if (values.size() != tagFunctionType.argumentCount())
         return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the number of paremeters in WebAssembly.Tag to match the tags parameter count."_s);
 
     // Any GC'd values in here will be marked by the MarkedArugementBuffer until stored in the Exception.
     FixedVector<uint64_t> payload(values.size());
     for (unsigned i = 0; i < values.size(); ++i) {
-        payload[i] = fromJSValue(globalObject, tag->signature().argument(i), values.at(i));
+        payload[i] = fromJSValue(globalObject, tagFunctionType.argumentType(i), values.at(i));
         RETURN_IF_EXCEPTION(scope, { });
     }
 
