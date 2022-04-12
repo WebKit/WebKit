@@ -1,5 +1,25 @@
 2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] WebGPU strings are UTF-8, not Latin-1
+        https://bugs.webkit.org/show_bug.cgi?id=239057
+
+        Reviewed by Kimmo Kinnunen.
+
+        Replace String::fromLatin1() with String::fromUTF8().
+
+        * WebGPU/APIConversions.h:
+        (WebGPU::fromAPI):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::requestDevice):
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::createConstantValues):
+        (WebGPU::Device::createComputePipeline):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::earlyCompileShaderModule):
+        (WebGPU::Device::createShaderModule):
+
+2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Make sure asynchronous things are asynchronous
         https://bugs.webkit.org/show_bug.cgi?id=239056
 

@@ -134,7 +134,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         return;
     }
 
-    auto label = String::fromLatin1(descriptor.label);
+    auto label = fromAPI(descriptor.label);
     instance().scheduleWork([strongThis = Ref { *this }, label = WTFMove(label), callback = WTFMove(callback)]() mutable {
         callback(WGPURequestDeviceStatus_Success, Device::create(strongThis->m_device, WTFMove(label), strongThis), { });
     });
