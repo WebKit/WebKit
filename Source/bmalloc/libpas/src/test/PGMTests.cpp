@@ -33,7 +33,6 @@
 #include "iso_heap_config.h"
 #include "pas_heap_ref_kind.h"
 
-
 using namespace std;
 
 namespace {

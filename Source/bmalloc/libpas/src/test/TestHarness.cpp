@@ -353,6 +353,7 @@ int resultPipe[2];
 void addBitfieldVectorTests();
 void addBitfitTests();
 void addBitvectorTests();
+void addBmallocTests();
 void addCartesianTreeTests();
 void addCoalignTests();
 void addExpendableMemoryTests();
@@ -721,6 +722,7 @@ int main(int argc, char** argv)
     ADD_SUITE(BitfieldVector);
     ADD_SUITE(Bitfit);
     ADD_SUITE(Bitvector);
+    ADD_SUITE(Bmalloc);
     ADD_SUITE(CartesianTree);
     ADD_SUITE(Coalign);
     ADD_SUITE(ExpendableMemory);

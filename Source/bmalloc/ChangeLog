@@ -1,3 +1,23 @@
+2022-04-12  Brandon Stewart  <brandonstewart@apple.com>
+
+        [libpas] Update macOS build to c++20 and add bmalloc api test cases
+        https://bugs.webkit.org/show_bug.cgi?id=239105
+
+        Reviewed by Yusuke Suzuki and Yusuke Suzuki.
+
+        Update libpas build config to c++20.
+        Add several basic bmalloc api tests.
+
+        * libpas/CMakeLists.txt:
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/test/BmallocTests.cpp: Added.
+        (std::testBmallocAllocate):
+        (std::testBmallocDeallocate):
+        (addBmallocTests):
+        * libpas/src/test/PGMTests.cpp:
+        * libpas/src/test/TestHarness.cpp:
+        (main):
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         [Xcode] Avoid targeting 32-bit iOS and Mac architectures
