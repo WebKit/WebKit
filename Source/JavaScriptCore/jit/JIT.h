@@ -388,8 +388,6 @@ namespace JSC {
         template<typename SlowOperation>
         void emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, size_t instructionSize, DoubleCondition, SlowOperation, bool invert, Vector<SlowCaseEntry>::iterator&);
 
-        void assertStackPointerOffset();
-
         void emit_op_add(const JSInstruction*);
         void emit_op_bitand(const JSInstruction*);
         void emit_op_bitor(const JSInstruction*);
@@ -884,6 +882,11 @@ namespace JSC {
         void emitSaveCalleeSaves();
         void emitRestoreCalleeSaves();
 
+#if ASSERT_ENABLED
+        static MacroAssemblerCodeRef<JITThunkPtrTag> consistencyCheckGenerator(VM&);
+        void emitConsistencyCheck();
+#endif
+
         static bool reportCompileTimes();
         static bool computeCompileTimes();
 
@@ -921,6 +924,10 @@ namespace JSC {
 
         JumpList m_exceptionChecks;
         JumpList m_exceptionChecksWithCallFrameRollback;
+#if ASSERT_ENABLED
+        Label m_consistencyCheckLabel;
+        Vector<Call> m_consistencyCheckCalls;
+#endif
 
         unsigned m_getByIdIndex { UINT_MAX };
         unsigned m_getByValIndex { UINT_MAX };

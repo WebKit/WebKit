@@ -143,17 +143,6 @@ void JIT::emitVarReadOnlyCheck(ResolveType resolveType, GPRReg scratchGPR)
     }
 }
 
-void JIT::assertStackPointerOffset()
-{
-    if (!ASSERT_ENABLED)
-        return;
-    
-    addPtr(TrustedImm32(stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register)), callFrameRegister, regT0);
-    Jump ok = branchPtr(Equal, regT0, stackPointerRegister);
-    breakpoint();
-    ok.link(this);
-}
-
 void JIT::resetSP()
 {
     addPtr(TrustedImm32(stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
@@ -248,19 +237,8 @@ void JIT::privateCompileMainPass()
         }
 
 #if ASSERT_ENABLED
-        if (opcodeID != op_catch) {
-            loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-            loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), regT1);
-            loadPtr(Address(regT0, CodeBlock::offsetOfBaselineJITData()), regT2);
-
-            auto metadataOK = branchPtr(Equal, regT1, s_metadataGPR);
-            breakpoint();
-            metadataOK.link(this);
-
-            auto constantsOK = branchPtr(Equal, regT2, s_constantsGPR);
-            breakpoint();
-            constantsOK.link(this);
-        }
+        if (opcodeID != op_catch)
+            m_consistencyCheckCalls.append(nearCall());
 #endif
 
         if (UNLIKELY(m_compilation)) {
@@ -280,9 +258,6 @@ void JIT::privateCompileMainPass()
                 dataLogLn("JIT [", bytecodeOffset, "] ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
             });
         }
-
-        if (opcodeID != op_catch)
-            assertStackPointerOffset();
 
         switch (opcodeID) {
         DEFINE_SLOW_OP(less)
@@ -688,6 +663,57 @@ void JIT::emitRestoreCalleeSaves()
     Base::emitRestoreCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
 }
 
+#if ASSERT_ENABLED
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
+{
+    CCallHelpers jit;
+
+    constexpr GPRReg stackOffsetGPR = regT0; // Incoming
+    constexpr GPRReg expectedStackPointerGPR = regT1;
+    constexpr GPRReg expectedMetadataGPR = regT2;
+    constexpr GPRReg expectedConstantsGPR = regT3;
+
+    jit.tagReturnAddress();
+
+    jit.mul32(TrustedImm32(sizeof(Register)), stackOffsetGPR, stackOffsetGPR);
+    jit.subPtr(callFrameRegister, stackOffsetGPR, expectedStackPointerGPR);
+    // Fix up in case the call sequence (from the op) changed the stack pointer, e.g.: like on x86
+    if (constexpr size_t delta = sizeof(CallerFrameAndPC) - prologueStackPointerDelta())
+        jit.subPtr(TrustedImm32(delta), expectedStackPointerGPR);
+
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), expectedConstantsGPR);
+    jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfMetadataTable()), expectedMetadataGPR);
+    jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfBaselineJITData()), expectedConstantsGPR);
+
+    auto stackPointerOK = jit.branchPtr(Equal, expectedStackPointerGPR, stackPointerRegister);
+    jit.breakpoint();
+    stackPointerOK.link(&jit);
+
+    auto metadataOK = jit.branchPtr(Equal, expectedMetadataGPR, s_metadataGPR);
+    jit.breakpoint();
+    metadataOK.link(&jit);
+
+    auto constantsOK = jit.branchPtr(Equal, expectedConstantsGPR, s_constantsGPR);
+    jit.breakpoint();
+    constantsOK.link(&jit);
+
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: generateConsistencyCheck");
+}
+
+void JIT::emitConsistencyCheck()
+{
+    ASSERT(!m_consistencyCheckLabel.isSet());
+    m_consistencyCheckLabel = label();
+    move(TrustedImm32(-stackPointerOffsetFor(m_unlinkedCodeBlock)), regT0);
+    m_bytecodeIndex = BytecodeIndex(0);
+    emitNakedNearTailCall(vm().getCTIStub(consistencyCheckGenerator).retaggedCode<NoPtrTag>());
+    m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
+}
+#endif
+
 void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 {
     DFG::CapabilityLevel level = m_profiledCodeBlock->capabilityLevel();
@@ -790,6 +816,10 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     if (m_disassembler)
         m_disassembler->setEndOfSlowPath(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
+
+#if ASSERT_ENABLED
+    emitConsistencyCheck();
+#endif
 
     stackOverflow.link(this);
     m_bytecodeIndex = BytecodeIndex(0);
@@ -902,6 +932,12 @@ void JIT::link()
         if (record.callee)
             patchBuffer.link(record.from, record.callee);
     }
+
+#if ASSERT_ENABLED
+    const auto consistencyCheck = patchBuffer.locationOf<JSInternalPtrTag>(m_consistencyCheckLabel);
+    for (auto& call : m_consistencyCheckCalls)
+        patchBuffer.link<JSInternalPtrTag>(call, consistencyCheck);
+#endif
 
     auto finalizeICs = [&] (auto& generators) {
         for (auto& gen : generators) {

@@ -1,3 +1,31 @@
+2022-04-12  Geza Lore  <glore@igalia.com>
+
+        [JSC] Reduce Baseline JIT code size in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=238928
+
+        Reviewed by Saam Barati.
+
+        The Baseline JIT used to emit a substantial but identical sequence to
+        check pinned registers and the SP at the beginning of every bytecode.
+        This caused large code bloat and made it somewhat difficult to use
+        debug builds on resource constrained platforms. Trying to alleviate
+        this by emitting a small dispatcher after the slow path section (but
+        before the stack overflow check), which then tail-calls a shared
+        thunk. The opcodes then call this very small dispatcher. The source op
+        of a faulting bytecode is easily visible in the link register (or on
+        the stack on x86).
+
+        This saves 34% Baseline JIT code size (and 14% overall) on a debug
+        build with JetStream2. Also fixes all code-size related test failures
+        on the ARMv7 debug build.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::emitConsistencyCheck):
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+
 2022-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Reduce use of unnecessary cryptographicallyRandom numbers
