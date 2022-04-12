@@ -40,6 +40,7 @@ use lib $FindBin::Bin;
 use List::Util qw(min max);
 use POSIX;
 use webkitdirs;
+use Scalar::Util qw(looks_like_number);
 use Text::ParseWords;
 
 # determine configuration
@@ -946,21 +947,6 @@ sub runJSCStressTests
         $reportData{$testSucceeded} = {actual => "PASS"};
     }
 
-    my @jscStressFlaky = readAllLines($jscStressResultsDir . "/flaky");
-    @jscStressFlaky = sort @jscStressFlaky;
-    my $numJSCStressFlaky = @jscStressFlaky;
-
-    my %jscStressFlakyInfo = ();
-    if ($numJSCStressFlaky) {
-        print "\n** The following JSC stress tests were flaky:\n";
-        foreach my $testFlaky (@jscStressFlaky) {
-            my @fields = split / /, $testFlaky;
-            print "\t$fields[0] $fields[1]/$fields[2] passes\n";
-            $jscStressFlakyInfo{$fields[0]} = { 'P' => $fields[1], 'T' => $fields[2]}
-        }
-        print "\n";
-    }
-
     my @jscStressFailList = readAllLines($jscStressResultsDir . "/failed");
     @jscStressFailList = sort @jscStressFailList;
     my $numJSCStressFailures = @jscStressFailList;
@@ -975,6 +961,32 @@ sub runJSCStressTests
     }
     print "\n";
 
+    my @jscStressFlaky = readAllLines($jscStressResultsDir . "/flaky");
+    @jscStressFlaky = sort @jscStressFlaky;
+    my $numJSCStressFlaky = @jscStressFlaky;
+
+    my %jscStressFlakyInfo = ();
+
+    my $numJSCStressFlakyButPassed = 0;
+    if ($numJSCStressFlaky) {
+        print "\n** The following JSC stress tests were flaky:\n";
+        foreach my $testFlaky (@jscStressFlaky) {
+            my @fields = split / /, $testFlaky;
+            my $testName = $fields[0];
+            my $numPasses = $fields[1];
+            my $numTotal = $fields[2];
+            looks_like_number($fields[3]) || die "Malformed line: $testFlaky";
+            my $successful = int($fields[3]);
+            my $passFail = $successful ? "passed" : "failed";
+            print "\t$testName $fields[1]/$fields[2] passes, $passFail\n";
+            $jscStressFlakyInfo{$testName} = { 'P' => $numPasses, 'T' => $numTotal, 'S' => $successful };
+            # NB: the dict has been created above, we're only adding the flakiness field.
+            $reportData{$testName}{"flakiness_num_passes"} = int($numPasses);
+            $reportData{$testName}{"flakiness_num_tries"} =  int($numTotal);
+        }
+        print "\n";
+    }
+
     my @jscStressNoResultList = readAllLines($jscStressResultsDir . "/noresult");
     my $numJSCStressNoResultTests = @jscStressNoResultList;
 
@@ -987,14 +999,15 @@ sub runJSCStressTests
 
     print "Results for JSC stress tests:\n";
     printThingsFound($numJSCStressFailures, "failure", "failures", "found");
-    printThingsFound($numJSCStressFlaky, "test", "tests", "flaky but passed");
+    printThingsFound($numJSCStressFlakyButPassed, "test", "tests", "flaky but passed");
+    printThingsFound($numJSCStressFlaky - $numJSCStressFlakyButPassed, "test", "tests", "flaky and failed");
     printThingsFound($numJSCStressNoResultTests, "test", "tests", "failed to complete");
     print "    OK.\n" if $numJSCStressFailures == 0 and $numJSCStressNoResultTests == 0;
 
     print "\n";
 
     if (defined($jsonFileName)) {
-        $jsonData{'flakyAndPassed'} =  \%jscStressFlakyInfo;
+        $jsonData{'flaky'} =  \%jscStressFlakyInfo;
         $jsonData{'stressTestFailures'} = \@jscStressFailList;
     }
 

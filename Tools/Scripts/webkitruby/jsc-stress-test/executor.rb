@@ -169,10 +169,18 @@ class BaseTestsExecutor
 end
 
 module ExecutorSelfTests
+    class TestCase
+        attr_reader :testsWithFlaky, :iterations, :expectedTestResults, :opts
+        def initialize(testsWithFlaky, iterations, expectedTestResults, opts={})
+            @testsWithFlaky = testsWithFlaky
+            @iterations = iterations
+            @expectedTestResults = expectedTestResults
+            @opts = opts
+        end
+    end
     FinalTestResult = Struct.new(:result)
     TestResult = Struct.new(:results)
     Iteration = Struct.new(:testResults)
-    TestCase = Struct.new(:testsWithFlaky, :iterations, :expectedTestResults, :treatFailingAsFlaky)
     MOCK_TEST_FAMILY = "f"
     ITERATION_LIMITS = OpenStruct.new(:infraIterationsFloor => 3,
                                       :iterationsCeiling => 8)
@@ -302,9 +310,11 @@ module ExecutorSelfTests
                              Iteration.new([tre, trp]),
                          ],
                          [ftrp, ftrp],
-                         OpenStruct.new(:passPercentage => 0.4,
-                                        :maxTries => 6,
-                                        :maxFailing => 3)),
+                         {
+                             :treatFailingAsFlaky => OpenStruct.new(:passPercentage => 0.4,
+                                                                  :maxTries => 6,
+                                                                  :maxFailing => 3)
+                         }),
             # Same, with different variability.
             TestCase.new([nil, nil],
                          [
@@ -317,9 +327,11 @@ module ExecutorSelfTests
                              Iteration.new([tre, trf]),
                          ],
                          [ftrp, ftrf],
-                         OpenStruct.new(:passPercentage => 0.4,
-                                        :maxTries => 6,
-                                        :maxFailing => 3)),
+                         {
+                             :treatFailingAsFlaky => OpenStruct.new(:passPercentage => 0.4,
+                                                                    :maxTries => 6,
+                                                                    :maxFailing => 3)
+                         }),
             # Test that a flaky for which not enough results come in is not marked as completed.
             TestCase.new([nil],
                          [
@@ -332,9 +344,12 @@ module ExecutorSelfTests
                              Iteration.new([tre]),
                          ],
                          [ftre],
-                         OpenStruct.new(:passPercentage => 0.49,
-                                        :maxTries => 4,
-                                        :maxFailing => 1)),
+                         {
+                             :treatFailingAsFlaky => OpenStruct.new(:passPercentage => 0.49,
+                                                                    :maxTries => 4,
+                                                                    :maxFailing => 1),
+                             :acceptIncomplete => true,
+                         }),
             # Test that (statically) flaky tests aren't adjusted
             TestCase.new([RetryParameters.new(0.5, 3), nil],
                          [
@@ -343,18 +358,22 @@ module ExecutorSelfTests
                              Iteration.new([trf, tre]),
                          ],
                          [ftrf, ftrp],
-                         OpenStruct.new(:passPercentage => 0.7, # > 2/3
-                                        :maxTries => 6,
-                                        :maxFailing => 3)),
+                         {
+                             :treatFailingAsFlaky => OpenStruct.new(:passPercentage => 0.7, # > 2/3
+                                                                    :maxTries => 6,
+                                                                    :maxFailing => 3)
+                         }),
             # Test that we respect maxFailing.
             TestCase.new([nil, nil, nil],
                          [
                              Iteration.new([trf, trf, trf]),
                          ],
                          [ftrf, ftrf, ftrf],
-                         OpenStruct.new(:passPercentage => 0.7, # > 2/3
-                                        :maxTries => 6,
-                                        :maxFailing => 2)),
+                         {
+                             :treatFailingAsFlaky => OpenStruct.new(:passPercentage => 0.7, # > 2/3
+                                                                    :maxTries => 6,
+                                                                    :maxFailing => 2)
+                         }),
             # Test that we halt at maxIterations (3 + 5 = 8) if no results come in.
             TestCase.new([RetryParameters.new(0.5, 5), nil],
                          [
@@ -378,7 +397,7 @@ module ExecutorSelfTests
             }
             putd("runlist: #{runlist.collect { |p| p.to_s }}, expected: #{testcase.expectedTestResults}")
             executor = MockTestsExecutor.new(runlist, testcase.iterations,
-                                             ITERATION_LIMITS, testcase.treatFailingAsFlaky,
+                                             ITERATION_LIMITS, testcase.opts[:treatFailingAsFlaky],
                                              $testsDebugStream)
             statusMap = executor.loop
             if executor.executedIterations != testcase.iterations.size
@@ -392,7 +411,9 @@ module ExecutorSelfTests
 
             evaluator = TestResultEvaluatorSimple.new(runlist, statusMap)
             evaluator.visit!
-
+            if not testcase.opts[:acceptIncomplete]
+                evaluator.validate
+            end
             verifyCompletedTestsMatchExpected(statusMap, evaluator.completed, expectCompleted)
 
             testcaseFailed = false

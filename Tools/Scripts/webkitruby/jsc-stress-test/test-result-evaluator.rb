@@ -35,11 +35,13 @@ class TestResultEvaluator
     end
     def failed(plan)
     end
-    def wasFlakyAndPassed(plan, successes, tries)
+    def wasFlaky(plan, successes, tries, successful)
     end
     def visiting(plan)
     end
-    def visit!
+    def validate
+    end
+    def visit!(opts={})
         @runlist.each {
             |plan|
             visiting(plan)
@@ -59,8 +61,14 @@ class TestResultEvaluator
             else
                 testWasSuccessful = plan.retryParameters.result(statuses)
                 if testWasSuccessful.nil?
-                    # Not completed yet
-                    next
+                    if opts[:treatIncompleteAsFailed]
+                        # Maximum number of iterations reached without a
+                        # conclusive result; draw the developer's attention.
+                        testWasSuccessful = false
+                    else
+                        # Not completed yet
+                        next
+                    end
                 end
             end
             if testWasSuccessful
@@ -72,8 +80,15 @@ class TestResultEvaluator
             if nresults < 1
                 $stderr.puts("Unexpected number of results: #{nresults} for plan #{plan}")
                 raise "Unexpected number of results"
-            elsif nresults != 1 and testWasSuccessful
-                wasFlakyAndPassed(plan, statuses.count(STATUS_FILE_PASS), statuses.size)
+            elsif nresults != 1 and not plan.retryParameters.nil?
+                # The flakiness stats are about diagnosing code issues, so only
+                # record flakiness when we've intentionally retried the test.
+                # Otherwise, multiple results might have come in because of
+                # transient infrastructure failures causing the test to be
+                # rescheduled on another host too. But then any failures might
+                # be because the machine was under load (causing the test to hit
+                # a timeout) or OOM'd.
+                wasFlaky(plan, statuses.count(STATUS_FILE_PASS), statuses.size, testWasSuccessful)
             end
         }
     end
@@ -107,6 +122,14 @@ class TestResultEvaluatorSimple < TestResultEvaluator
     def missing
         @noResult
     end
+    def validate
+        counted = @testsPassed.size + @testsFailed.size + @noResult.size
+        if counted != @all.size
+            $stderr.puts("Accounting mismatch: expected #{@all.size} test results " +
+                         "but got #{counted} (#{@testsPassed.size}, #{@testsFailed.size}, #{@noResult.size})")
+            raise "Internal error in #{File.basename($0)}"
+        end
+    end
 end
 
 class ResultsWriter
@@ -128,8 +151,9 @@ class ResultsWriter
     def appendNoResult(plan)
         append("noresult", plan.name)
     end
-    def appendFlaky(plan, successes, tries)
-        append("flaky", "#{plan.name} #{successes} #{tries}")
+    def appendFlaky(plan, successes, tries, successful)
+        successful = successful ? 1 : 0
+        append("flaky", "#{plan.name} #{successes} #{tries} #{successful}")
     end
     def appendResult(plan, didPass)
         append("results", "#{plan.name}: #{didPass ? 'PASS' : 'FAIL'}")
@@ -143,7 +167,7 @@ class ResultsWriter
 end
 
 # Final accounting of results.
-class TestResultEvaluatorFinal < TestResultEvaluator
+class TestResultEvaluatorFinal < TestResultEvaluatorSimple
     attr_reader :noresult, :familyMap
     def initialize(runlist, statusMap)
         super(runlist, statusMap)
@@ -152,21 +176,24 @@ class TestResultEvaluatorFinal < TestResultEvaluator
         @writer = ResultsWriter.new
     end
     def noResult(plan)
+        super(plan)
         @writer.appendNoResult(plan)
         @noresult += 1
     end
     def passed(plan)
+        super(plan)
         @writer.appendPass(plan)
         appendResult(plan, true)
         addToFamilyMap(plan, "PASS")
     end
     def failed(plan)
+        super(plan)
         @writer.appendFailure(plan)
         appendResult(plan, false)
         addToFamilyMap(plan, "FAIL")
     end
-    def wasFlakyAndPassed(plan, successes, tries)
-        @writer.appendFlaky(plan, successes, tries)
+    def wasFlaky(plan, successes, tries, successful)
+        @writer.appendFlaky(plan, successes, tries, successful)
     end
     private
     def appendResult(plan, successful)

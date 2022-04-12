@@ -84,7 +84,7 @@ PARALLEL_REMOTE_WRAPPER_MARK_BEGIN = "5d65329bd1a3"
 PARALLEL_REMOTE_WRAPPER_MARK_END = "a9aea5c3b843"
 PARALLEL_REMOTE_STATE_LOST_MARKER = "709fb7a77c45231918eb118a"
 ITERATION_LIMITS = OpenStruct.new(:infraIterationsFloor => 3,
-                                  :iterationsCeiling => 10)
+                                  :iterationsCeiling => 50)
 
 REMOTE_TIMEOUT = 120
 SSH_OPTIONS_DEFAULT = [
@@ -2813,7 +2813,8 @@ def detectFailures(statusMap={})
     end
 
     evaluator = TestResultEvaluatorFinal.new($runlist, statusMap)
-    evaluator.visit!
+    evaluator.visit!({:treatIncompleteAsFailed => true})
+    evaluator.validate
 
     if evaluator.noresult > 0
         $stderr.puts("Could not get the exit status for #{evaluator.noresult} tests")
