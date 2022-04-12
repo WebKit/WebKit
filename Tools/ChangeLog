@@ -1,3 +1,16 @@
+2022-04-11  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION:(r292696) lldb_webkit_unittest.TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_null_string is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=239087
+
+        Reviewed by Jonathan Bedard.
+
+        Revert change to aNullString made in r292696 as the the following test relies on this String being empty:
+        lldb_webkit_unittest.TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_null_string
+
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders):
+
 2022-04-11  Alan Bujtas  <zalan@apple.com>
 
         [ iOS iPhone 12 ] fast/hidpi & fast/layers/hidpi tests are flaky text/image failing

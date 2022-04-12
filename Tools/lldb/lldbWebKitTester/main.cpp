@@ -57,7 +57,7 @@ enum class ExampleFlags {
 
 static void testSummaryProviders()
 {
-    String aNullString { };
+    String aNullString { ""_s };
     StringImpl* aNullStringImpl = aNullString.impl();
 
     String anEmptyString { ""_s };
