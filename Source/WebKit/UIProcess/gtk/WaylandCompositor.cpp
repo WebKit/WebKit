@@ -432,7 +432,7 @@ bool WaylandCompositor::initializeEGL()
 #else
     std::unique_ptr<ExtensionsGLOpenGL> glExtensions = makeUnique<ExtensionsGLOpenGL>(nullptr, GLContext::current()->version() >= 320);
 #endif
-    if (glExtensions->supports("GL_OES_EGL_image") || glExtensions->supports("GL_OES_EGL_image_external"))
+    if (glExtensions->supports("GL_OES_EGL_image"_s) || glExtensions->supports("GL_OES_EGL_image_external"_s))
         glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 
     if (!glImageTargetTexture2D) {
