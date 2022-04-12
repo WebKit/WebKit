@@ -52,6 +52,18 @@
         (WebGPU::Texture::createView):
         (WebGPU::Texture::validateImageCopyTexture):
 
+2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] RGB9E5Ufloat textures should not be multisamplable
+        https://bugs.webkit.org/show_bug.cgi?id=239053
+
+        Reviewed by Kimmo Kinnunen.
+
+        It's classified as a "packed format" rather than a "mixed component width format."
+
+        * WebGPU/Texture.mm:
+        (WebGPU::supportsMultisampling):
+
 2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix the release build
