@@ -1,3 +1,43 @@
+2022-04-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: preserve DOM.NodeId if a node is removed and re-added
+        https://bugs.webkit.org/show_bug.cgi?id=189687
+
+        Reviewed by Devin Rousso.
+
+        Instead of unbinding and rebinding nodes upon removal/reinsertion to the DOM tree, we should only perform the
+        unbinding actions on a `Node` that is being destroyed.
+
+        This resolves an issue where console messages with DOM nodes would behave unexpectedly because the node for a
+        visible console message could have its children removed in `DOMManager.prototype._unbind`, even though the node
+        would still have its children when it is removed from the DOM tree (unless it is being destroyed, which is
+        handled by `DOMManager.prototype.willDestroyDOMNode`).
+
+        While not a cause of an issue here, it is worth noting (due to confusion it caused me while investigating) that
+        even after we stopped keeping `RefPtr<Node>` for nodes in r278785 the nodes themselves continued to be kept
+        alive as part of the `RemoteObject` mechanism because the inspector injected script holds on to nodes until the
+        `RemoteObject` is released.
+
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::nodeLayoutContextTypeChanged):
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::reset):
+        (WebCore::InspectorDOMAgent::bind):
+        (WebCore::InspectorDOMAgent::didCommitLoad):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::pseudoElementDestroyed):
+        (WebCore::InspectorDOMAgent::unbind): Deleted.
+        - We should no longer be unbinding and rebinding nodes on insertion/removal, since nodes should keep the same ID
+        for their lifetime, and we will clean up the binding upon the Node's destruction.
+
+        (WebCore::InspectorDOMAgent::willDestroyDOMNode):
+        (WebCore::InspectorDOMAgent::destroyedNodesTimerFired):
+        - A Node in middle of being destroyed will no longer have a parent.
+        
+        * inspector/agents/InspectorDOMAgent.h:
+
 2022-04-11  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] LayoutIntegration::LineLayout should not expose InlineContent

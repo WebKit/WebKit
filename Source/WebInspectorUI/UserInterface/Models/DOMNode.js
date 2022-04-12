@@ -163,6 +163,12 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     // Static
 
+    static newOrExistingFromPayload(document, payload, {isInShadowTree} = {})
+    {
+        // FIXME: <webkit.org/b/238947> Don't send node payloads to the frontend for already-bound nodes.
+        return WI.domManager.nodeForId(payload.nodeId) || new WI.DOMNode(WI.domManager, document, !!isInShadowTree, payload);
+    }
+
     static resetDefaultLayoutOverlayConfiguration()
     {
         let configuration = WI.DOMNode._defaultLayoutOverlayConfiguration;
@@ -1068,7 +1074,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     _insertChild(prev, payload)
     {
-        var node = new WI.DOMNode(this._domManager, this.ownerDocument, this._isInShadowTree, payload);
+        let node = WI.DOMNode.newOrExistingFromPayload(this.ownerDocument, payload, {isInShadowTree: this._isInShadowTree});
         if (!prev) {
             if (!this._children) {
                 // First node
@@ -1101,10 +1107,9 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
 
         this._children = this._shadowRoots.slice();
-        for (var i = 0; i < payloads.length; ++i) {
-            var node = new WI.DOMNode(this._domManager, this.ownerDocument, this._isInShadowTree, payloads[i]);
-            this._children.push(node);
-        }
+        for (let payload of payloads)
+            this._children.push(WI.DOMNode.newOrExistingFromPayload(this.ownerDocument, payload, {isInShadowTree: this._isInShadowTree}));
+
         this._renumber();
     }
 

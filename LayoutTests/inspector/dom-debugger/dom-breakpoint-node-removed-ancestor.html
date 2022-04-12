@@ -46,8 +46,6 @@ function test()
 
             await InspectorTest.evaluateInPage(`testNodeRemovedAncestor()`);
 
-            InspectorTest.assert(!breakpoint.domNode, "Should not have domNode.");
-
             InspectorTest.assert(paused, "Should pause.");
             WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
         },
@@ -72,12 +70,8 @@ function test()
             InspectorTest.log("Disabling breakpoint...");
             breakpoint.disabled = true;
 
-            InspectorTest.assert(breakpoint.domNode === node, "Should have domNode.");
-
             InspectorTest.log("Triggering breakpoint...");
             await InspectorTest.evaluateInPage(`testNodeRemovedAncestor()`);
-
-            InspectorTest.assert(!breakpoint.domNode, "Should not have domNode.");
 
             InspectorTest.expectFalse(paused, "Should not pause for disabled breakpoint.");
             WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
@@ -106,8 +100,6 @@ function test()
             InspectorTest.log("Triggering breakpoint...");
             await InspectorTest.evaluateInPage(`testNodeRemovedAncestor()`);
 
-            InspectorTest.assert(!breakpoint.domNode, "Should not have domNode.");
-
             InspectorTest.log("Enabling all breakpoints...");
             await DebuggerAgent.setBreakpointsActive(true);
 
@@ -135,12 +127,8 @@ function test()
             InspectorTest.log("Removing breakpoint...");
             WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
 
-            InspectorTest.assert(!breakpoint.domNode, "Should not have domNode.");
-
             InspectorTest.log("Triggering breakpoint...");
             await InspectorTest.evaluateInPage(`testNodeRemovedAncestor()`);
-
-            InspectorTest.assert(!breakpoint.domNode, "Should not have domNode.");
 
             InspectorTest.expectFalse(paused, "Should not pause for removed breakpoint.");
             WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);

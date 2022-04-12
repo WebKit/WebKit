@@ -188,10 +188,12 @@ WI.DOMManager = class DOMManager extends WI.Object
     willDestroyDOMNode(nodeId)
     {
         let node = this._idToDOMNode[nodeId];
+        console.assert(!node.parentNode, "Node should have been removed from its parent before `willDestroyDOMNode` is invoked.", node);
+
         node.markDestroyed();
         delete this._idToDOMNode[nodeId];
 
-        this.dispatchEventToListeners(WI.DOMManager.Event.NodeRemoved, {node});
+        this.dispatchEventToListeners(WI.DOMManager.Event.NodeDestroyed, {node});
     }
 
     didAddEventListener(nodeId)
@@ -483,7 +485,7 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!parent)
             return;
 
-        var node = new WI.DOMNode(this, parent.ownerDocument, false, pseudoElement);
+        let node = WI.DOMNode.newOrExistingFromPayload(parent.ownerDocument, pseudoElement);
         node.parentNode = parent;
         this._idToDOMNode[node.id] = node;
         console.assert(!parent.pseudoElements().get(node.pseudoType()));
@@ -510,6 +512,13 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     _unbind(node)
     {
+        // COMPATIBILITY (iOS 15.4): After iOS 15.4, the backend no longer unbinds nodes from their IDs until the node
+        // is destroyed. Because there are no protocol changes associated with this change, check for flexbox overlay
+        // support, which was also new after iOS 15.4.
+        // FIXME: <https://webkit.org/b/148680> Use explicit version checking.
+        if (WI.assumingMainTarget().hasCommand("DOM.showFlexOverlay"))
+            return;
+
         node.markDestroyed();
 
         delete this._idToDOMNode[node.id];
@@ -876,4 +885,5 @@ WI.DOMManager.Event = {
     DOMNodeWasInspected: "dom-manager-dom-node-was-inspected",
     InspectModeStateChanged: "dom-manager-inspect-mode-state-changed",
     InspectedNodeChanged: "dom-manager-inspected-node-changed",
+    NodeDestroyed: "dom-manager-node-destroyed",
 };

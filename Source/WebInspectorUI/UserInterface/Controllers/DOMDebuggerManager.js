@@ -63,6 +63,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         WI.URLBreakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, this._handleURLBreakpointActionsChanged, this);
 
         WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._nodeRemoved, this);
+        WI.domManager.addEventListener(WI.DOMManager.Event.NodeDestroyed, this._nodeRemoved, this);
+        
         WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, this._nodeInserted, this);
 
         WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);

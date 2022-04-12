@@ -16,12 +16,16 @@ PASS: Pause targetNodeId should be expected value.
 CALL STACK:
 0: [F] testNodeRemovedAncestor
 1: [P] Global Code
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 -- Running test teardown.
 
 -- Running test case: DOMBreakpoint.NodeRemoved.Ancestor.BreakpointDisabled
 Adding "node-removed:1,HTML,1,BODY,1,DIV,0,DIV,0,DIV" DOM Breakpoint...
 Disabling breakpoint...
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
@@ -29,6 +33,8 @@ PASS: Should not pause for disabled breakpoint.
 Adding "node-removed:1,HTML,1,BODY,1,DIV,0,DIV,0,DIV" DOM Breakpoint...
 Disabling all breakpoints...
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 Enabling all breakpoints...
 PASS: Should not pause when all breakpoints disabled.
 -- Running test teardown.
@@ -46,17 +52,25 @@ Adding "node-removed:1,HTML,1,BODY,1,DIV,0,DIV,0,DIV" DOM Breakpoint...
 Setting condition to 'false'...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should not pause.
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should not pause.
 
 Setting condition to 'true'...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should pause.
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should pause.
 
 -- Running test case: DOMBreakpoint.NodeRemoved.Ancestor.Options.Condition.ConsoleCommandLineAPI
@@ -66,18 +80,26 @@ Adding "node-removed:1,HTML,1,BODY,1,DIV,0,DIV,0,DIV" DOM Breakpoint...
 Setting condition to saved console value...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should not pause.
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should not pause.
 
 Adding saved console value 'true'...
 Setting condition to saved console value...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should pause.
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should pause.
 
 -- Running test case: DOMBreakpoint.NodeRemoved.Ancestor.Options.Action.Log
@@ -86,12 +108,16 @@ Adding "node-removed:1,HTML,1,BODY,1,DIV,0,DIV,0,DIV" DOM Breakpoint...
 Adding log action...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should pause.
 
 Editing log action...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should pause.
 
@@ -99,12 +125,16 @@ Editing log action...
 Enabling auto-continue...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
 
 Editing log action...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
 
@@ -114,12 +144,16 @@ Adding "node-removed:1,HTML,1,BODY,1,DIV,0,DIV,0,DIV" DOM Breakpoint...
 Adding evaluate action...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should pause.
 
 Editing evaluate action...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should pause.
 
@@ -127,12 +161,16 @@ Editing evaluate action...
 Enabling auto-continue...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
 
 Editing evaluate action...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
 
@@ -143,6 +181,8 @@ Adding "node-removed:1,HTML,1,BODY,1,DIV,0,DIV,0,DIV" DOM Breakpoint...
 Adding evaluate action using saved console value...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should pause.
 
@@ -150,6 +190,8 @@ Adding saved console value '2'...
 Editing evaluate action using saved console value...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should pause.
 
@@ -158,6 +200,8 @@ Editing evaluate action using saved console value...
 Enabling auto-continue...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
 
@@ -165,6 +209,8 @@ Adding saved console value '4'...
 Editing evaluate action using saved console value...
 
 Triggering breakpoint...
+Breakpoint "domNode" set to "null".
+Breakpoint "domNode" set to "div#node-removed-ancestor-test".
 PASS: Should execute breakpoint action.
 PASS: Should not pause.
 

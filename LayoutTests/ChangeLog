@@ -1,3 +1,23 @@
+2022-04-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: preserve DOM.NodeId if a node is removed and re-added
+        https://bugs.webkit.org/show_bug.cgi?id=189687
+
+        Reviewed by Devin Rousso.
+
+        Update test to reflect that DOM breakpoints are now able to be reattached to their original node upon insertion
+        following removal.
+
+        * inspector/dom-debugger/dom-breakpoint-node-removed-ancestor.html:
+        * inspector/dom-debugger/dom-breakpoint-node-removed-ancestor-expected.txt:
+        * inspector/dom-debugger/dom-breakpoint-node-removed-direct-expected.txt:
+
+        * inspector/dom-debugger/resources/dom-breakpoint-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.DOMBreakpoint.createBreakpoint):
+        - Add an event handler to log the setting of the domNode for breakpoints. In order to prevent spurious output
+        when removing breakpoints, instrument the removal of breakpoints to remove the testing event handler before the
+        node is changed.
+
 2022-04-11  Matteo Flores  <matteo_flores@apple.com>
 
         [ Mac wk2 Debug ] accessibility/ancestor-computation.html is a constant timeout

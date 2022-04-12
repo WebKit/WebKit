@@ -1,3 +1,30 @@
+2022-04-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: preserve DOM.NodeId if a node is removed and re-added
+        https://bugs.webkit.org/show_bug.cgi?id=189687
+
+        Reviewed by Devin Rousso.
+
+        Instead of unbinding and rebinding nodes upon removal/reinsertion to the DOM tree, we should only perform the
+        unbinding actions on a `Node` that is being destroyed.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype._pseudoElementAdded):
+
+        (WI.DOMManager.prototype.willDestroyDOMNode):
+        (WI.DOMManager.prototype._unbind):
+        - To match the backend, we should only unbind nodes when they are destroyed, not removed.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype.newOrExistingFromPayload):
+        - Reuse an existing orphaned DOMNode if it already exists. In the future, we want to stop sending entire node
+        payloads to the frontend in those situations.
+
+        (WI.DOMNode.prototype._insertChild):
+        (WI.DOMNode.prototype._setChildrenPayload):
+
 2022-04-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: REGRESSION(r290770): Styles: creating a new property scrolls the input to the top of the panel
