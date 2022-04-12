@@ -53,6 +53,8 @@ public:
     float contentLogicalBottom() const { return line().enclosingContentBottom(); }
     float top() const { return line().lineBoxTop(); }
     float bottom() const { return line().lineBoxBottom(); }
+    float inkOverflowTop() const { return line().inkOverflow().y(); }
+    float inkOverflowBottom() const { return line().inkOverflow().maxY(); }
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const { return !m_lineIndex ? contentLogicalTop() : LineBoxIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLineBox(); }
     // FIXME: Implement.

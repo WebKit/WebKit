@@ -1,3 +1,30 @@
+2022-04-11  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] LayoutIntegration::LineLayout should not expose InlineContent
+        https://bugs.webkit.org/show_bug.cgi?id=239059
+
+        Reviewed by Antti Koivisto.
+
+        Implement inkOverflowTop/inkOverflowBottom for inline iterator (LineBox) so that we can
+        keep InlineContent internal to LayoutIntegration::LineLayout.
+
+        * layout/integration/InlineIteratorLineBox.h:
+        (WebCore::InlineIterator::LineBox::inkOverflowTop const):
+        (WebCore::InlineIterator::LineBox::inkOverflowBottom const):
+        * layout/integration/InlineIteratorLineBoxLegacyPath.h:
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::inkOverflowTop const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::inkOverflowBottom const):
+        * layout/integration/InlineIteratorLineBoxModernPath.h:
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::inkOverflowTop const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::inkOverflowBottom const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::hasVisualOverflow const):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        (WebCore::LayoutIntegration::LineLayout::isPaginated const):
+        (WebCore::LayoutIntegration::LineLayout::inlineContent const): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutModernLines):
+
 2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Hook up device.queue to the IDL

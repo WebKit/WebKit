@@ -67,6 +67,9 @@ public:
     float contentLogicalTopAdjustedForPrecedingLineBox() const;
     float contentLogicalBottomAdjustedForFollowingLineBox() const;
 
+    float inkOverflowTop() const;
+    float inkOverflowBottom() const;
+
     const RenderBlockFlow& containingBlock() const;
     RenderFragmentContainer* containingFragment() const;
 
@@ -177,6 +180,20 @@ inline float LineBox::bottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.bottom();
+    });
+}
+
+inline float LineBox::inkOverflowTop() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.inkOverflowTop();
+    });
+}
+
+inline float LineBox::inkOverflowBottom() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.inkOverflowBottom();
     });
 }
 

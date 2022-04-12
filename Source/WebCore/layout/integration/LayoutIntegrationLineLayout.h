@@ -91,21 +91,22 @@ public:
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicWidthConstraints();
 
     void layout();
-
-    LayoutUnit contentLogicalHeight() const;
-    size_t lineCount() const;
-
-    LayoutUnit firstLinePhysicalBaseline() const;
-    LayoutUnit lastLineLogicalBaseline() const;
-
-    void adjustForPagination();
-    void collectOverflow();
-
-    const InlineContent* inlineContent() const { return m_inlineContent.get(); }
-    bool isPaginated() const { return m_isPaginatedContent; }
-
     void paint(PaintInfo&, const LayoutPoint& paintOffset);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction);
+    void adjustForPagination();
+
+    void collectOverflow();
+    LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
+    Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
+
+    bool isPaginated() const { return m_isPaginatedContent; }
+    LayoutUnit contentLogicalHeight() const;
+    size_t lineCount() const;
+    bool hasVisualOverflow() const;
+    LayoutUnit firstLinePhysicalBaseline() const;
+    LayoutUnit lastLineLogicalBaseline() const;
+    LayoutRect firstInlineBoxRect(const RenderInline&) const;
+    LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
 
     InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;
     InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
@@ -113,11 +114,6 @@ public:
     InlineIterator::InlineBoxIterator firstRootInlineBox() const;
     InlineIterator::LineBoxIterator firstLineBox() const;
     InlineIterator::LineBoxIterator lastLineBox() const;
-
-    LayoutRect firstInlineBoxRect(const RenderInline&) const;
-    LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
-    LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
-    Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return m_boxTree.flow(); }

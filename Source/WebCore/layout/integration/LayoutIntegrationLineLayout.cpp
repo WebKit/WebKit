@@ -492,6 +492,11 @@ size_t LineLayout::lineCount() const
     return m_inlineContent->lines.size();
 }
 
+bool LineLayout::hasVisualOverflow() const
+{
+    return m_inlineContent && m_inlineContent->hasVisualOverflow();
+}
+
 LayoutUnit LineLayout::firstLinePhysicalBaseline() const
 {
     if (!m_inlineContent || m_inlineContent->lines.isEmpty()) {
