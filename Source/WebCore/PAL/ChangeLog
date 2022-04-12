@@ -1,5 +1,20 @@
 2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Unspecified texture size values should be set to 1, not 0
+        https://bugs.webkit.org/show_bug.cgi?id=239052
+
+        Reviewed by Kimmo Kinnunen.
+
+        If content says "Please create a texture of size [32, 32]" then we need to pad that
+        to [32, 32, 1] rather than [32, 32, 0].
+
+        Test: http/tests/webgpu/webgpu/api/validation/createTexture.html
+
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp:
+        (PAL::WebGPU::ConvertToBackingContext::convertToBacking):
+
+2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement correct ownership for WGPUQueues
         https://bugs.webkit.org/show_bug.cgi?id=239050
 
