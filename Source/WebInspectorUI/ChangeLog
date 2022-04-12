@@ -1,3 +1,20 @@
+2022-04-12  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add engineering-build-only ability to dump the current known bound nodes tree in Inspector^2 or layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=239086
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Debug/DOMManager.js: Added.
+        (appendLine):
+        (appendChildren):
+        (get let):
+        - To assist with debugging layout tests and patches to the DOMManager, add a utility getter to dump the current
+        node tree.
+        
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
 2022-04-11  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: preserve DOM.NodeId if a node is removed and re-added
