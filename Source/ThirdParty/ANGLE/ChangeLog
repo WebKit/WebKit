@@ -1,3 +1,18 @@
+2022-04-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Build ANGLE with the EGL_NO_PLATFORM_SPECIFIC_TYPES define
+        https://bugs.webkit.org/show_bug.cgi?id=239039
+
+        Reviewed by Adrian Perez de Castro.
+
+        Specify the EGL_NO_PLATFORM_SPECIFIC_TYPES define when building ANGLE
+        subproject for the GTK and WPE ports. This should avoid searching for
+        platform-specific headers that might not be available at all during
+        build, e.g. the X11 headers which are used by default on UNIX platforms.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
 2022-04-11  Kyle Piddington  <kpiddington@apple.com>
 
         This WebGL example crashes
