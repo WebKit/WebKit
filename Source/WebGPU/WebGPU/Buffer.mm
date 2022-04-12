@@ -187,9 +187,9 @@ bool Buffer::validateGetMappedRange(size_t offset, size_t rangeSize) const
     return true;
 }
 
-static uint64_t computeRangeSize(uint64_t size, size_t offset)
+static size_t computeRangeSize(uint64_t size, size_t offset)
 {
-    auto result = checkedDifference<uint64_t>(size, offset);
+    auto result = checkedDifference<size_t>(size, offset);
     if (result.hasOverflowed())
         return 0;
     return result.value();

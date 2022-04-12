@@ -1,3 +1,13 @@
+2022-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Fix the watchOS build
+        https://bugs.webkit.org/show_bug.cgi?id=239256
+
+        Unreviewed.
+
+        * WebGPU/Buffer.mm:
+        (WebGPU::computeRangeSize):
+
 2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix the tvOS build (again)
