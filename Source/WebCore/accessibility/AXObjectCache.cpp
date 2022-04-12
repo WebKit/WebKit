@@ -3413,10 +3413,18 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXIdAttributeChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IdentifierAttribute);
             break;
+        case AXReadOnlyStatusChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::CanSetValueAttribute);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::ReadOnlyValue);
+            break;
+        case AXRequiredStatusChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::IsRequired);
+            break;
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:
         case AXInvalidStatusChanged:
         case AXMenuListValueChanged:
+        case AXPressedStateChanged:
         case AXSelectedChildrenChanged:
         case AXValueChanged: {
             bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {

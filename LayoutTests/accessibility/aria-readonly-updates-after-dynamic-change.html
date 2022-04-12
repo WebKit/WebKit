@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div contenteditable id="contenteditable"></div>
+<script>
+    var testOutput = "This test ensures that objects readonly status is updated after dynamically changing aria-readonly.\n\n";
+
+    var axElement;
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        const domElement = document.getElementById("contenteditable");
+        axElement = accessibilityController.accessibleElementById("contenteditable");
+        testOutput += expect("axElement.isAttributeSettable('AXValue')", "true");
+
+        testOutput += "Updating aria-readonly to true.\n";
+        domElement.ariaReadOnly = "true";
+        setTimeout(async function() {
+            await waitFor(() => { return !axElement.isAttributeSettable('AXValue'); });
+            testOutput += expect("axElement.isAttributeSettable('AXValue')", "false");
+
+            testOutput += "Updating aria-readonly to false.\n";
+            domElement.ariaReadOnly = "false";
+            await waitFor(() => { return axElement.isAttributeSettable('AXValue'); });
+            testOutput += expect("axElement.isAttributeSettable('AXValue')", "true");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

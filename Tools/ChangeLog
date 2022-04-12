@@ -1,3 +1,19 @@
+2022-04-11  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Update isolated tree in response to AXReadOnlyStatusChanged, AXRequiredStatusChanged, and AXPressedStateChanged notifications
+        https://bugs.webkit.org/show_bug.cgi?id=239047
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::isAttributeSettable):
+        (AccessibilityUIElement::isRequired const):
+        Added both of these methods so that the tests added with this patch can run on iOS.
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::isAttributeSettable):
+        (WTR::AccessibilityUIElement::isRequired const):
+        Added both of these methods so that the tests added with this patch can run on iOS.
+
 2022-04-11  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Build before landing

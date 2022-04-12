@@ -2094,6 +2094,8 @@ webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 fast/dom/linkify-phone-numbers.html [ Pass ]
 
 accessibility/aria-hidden-display-contents-element.html [ Pass ]
+accessibility/aria-readonly-updates-after-dynamic-change.html [ Pass ]
+accessibility/aria-required-updates-after-dynamic-change.html [ Pass ]
 accessibility/display-contents-element-roles.html [ Pass ]
 accessibility/node-only-object-element-rect.html [ Pass ]
 accessibility/video-element-url-attribute.html [ Pass ]

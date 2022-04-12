@@ -92,6 +92,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)accessibilityIsInDescriptionListDefinition;
 - (BOOL)accessibilityIsInDescriptionListTerm;
 - (BOOL)_accessibilityIsInTableCell;
+- (BOOL)accessibilityIsAttributeSettable:(NSString *)attributeName;
+- (BOOL)accessibilityIsRequired;
 - (NSString *)_accessibilityPhotoDescription;
 - (BOOL)accessibilityPerformEscape;
 - (NSString *)accessibilityDOMIdentifier;
@@ -747,7 +749,7 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
-    return false;
+    return [m_element accessibilityIsAttributeSettable:[NSString stringWithJSStringRef:attribute]];
 }
 
 bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
@@ -866,7 +868,7 @@ bool AccessibilityUIElement::isEnabled()
 
 bool AccessibilityUIElement::isRequired() const
 {
-    return false;
+    return [m_element accessibilityIsRequired];
 }
 
 bool AccessibilityUIElement::isFocused() const

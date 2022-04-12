@@ -564,6 +564,25 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return self.axBackingObject->isInCell();
 }
 
+- (BOOL)accessibilityIsAttributeSettable:(NSString *)attributeName
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    if ([attributeName isEqualToString:@"AXValue"])
+        return self.axBackingObject->canSetValueAttribute();
+
+    return NO;
+}
+
+- (BOOL)accessibilityIsRequired
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
+    return self.axBackingObject->isRequired();
+}
+
 - (NSString *)accessibilityLanguage
 {
     if (![self _prepareAccessibilityCall])

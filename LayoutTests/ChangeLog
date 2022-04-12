@@ -1,3 +1,21 @@
+2022-04-11  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Update isolated tree in response to AXReadOnlyStatusChanged, AXRequiredStatusChanged, and AXPressedStateChanged notifications
+        https://bugs.webkit.org/show_bug.cgi?id=239047
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-readonly-updates-after-dynamic-change-expected.txt: Added.
+        * accessibility/aria-readonly-updates-after-dynamic-change.html: Added.
+        * accessibility/aria-required-updates-after-dynamic-change-expected.txt: Added.
+        * accessibility/aria-required-updates-after-dynamic-change.html: Added.
+        * accessibility/mac/aria-pressed-button-attributes-expected.txt:
+        * accessibility/mac/aria-pressed-button-attributes.html:
+        Add testcases that dynamically change aria-pressed and expect the
+        right attributes.
+        * platform/ios/TestExpectations: Enable new tests.
+        * platform/win/TestExpectations: Skip new tests.
+
 2022-04-11  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: preserve DOM.NodeId if a node is removed and re-added

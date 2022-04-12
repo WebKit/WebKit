@@ -330,6 +330,9 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::CanSetFocusAttribute:
         propertyMap.set(AXPropertyName::CanSetFocusAttribute, axObject.canSetFocusAttribute());
         break;
+    case AXPropertyName::CanSetValueAttribute:
+        propertyMap.set(AXPropertyName::CanSetValueAttribute, axObject.canSetValueAttribute());
+        break;
     case AXPropertyName::CurrentValue:
         propertyMap.set(AXPropertyName::CurrentValue, axObject.currentValue().isolatedCopy());
         break;
@@ -349,6 +352,12 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
         break;
     case AXPropertyName::IsExpanded:
         propertyMap.set(AXPropertyName::IsExpanded, axObject.isExpanded());
+        break;
+    case AXPropertyName::IsRequired:
+        propertyMap.set(AXPropertyName::IsRequired, axObject.isRequired());
+        break;
+    case AXPropertyName::ReadOnlyValue:
+        propertyMap.set(AXPropertyName::ReadOnlyValue, axObject.readOnlyValue().isolatedCopy());
         break;
     case AXPropertyName::SortDirection:
         propertyMap.set(AXPropertyName::SortDirection, static_cast<int>(axObject.sortDirection()));
