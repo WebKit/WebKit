@@ -101,7 +101,6 @@ const TestFeatures& TestOptions::defaults()
             { "TextAutosizingEnabled", false },
             { "UsesBackForwardCache", false },
             { "WebAudioEnabled", true },
-            { "WebGPU", true },
             { "WebSQLEnabled", true },
             { "XSSAuditorEnabled", false },
 
@@ -119,7 +118,6 @@ const TestFeatures& TestOptions::defaults()
             { "LazyImageLoadingEnabled", false },
             { "RequestIdleCallbackEnabled", false },
             { "WebAuthenticationEnabled", false },
-            { "WebGPUEnabled", false },
 #elif PLATFORM(WIN)
             // These are WebPreference values that must always be set as they may
             // differ from the default set in the WebPreferences*.yaml configuration.
@@ -172,7 +170,6 @@ const TestFeatures& TestOptions::defaults()
             { "TabsToLinks", false },
             { "TelephoneNumberParsingEnabled", false },
             { "UsesBackForwardCache", false },
-            { "WebGPUEnabled", false },
             { "XSSAuditorEnabled", false },
 #endif
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)

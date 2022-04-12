@@ -1,3 +1,21 @@
+2022-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WKTR] [DRT] Only enable WebGPU for the LayoutTests/http/tests/webgpu directory
+        https://bugs.webkit.org/show_bug.cgi?id=238779
+
+        Reviewed by Darin Adler.
+
+        We have a set of hardcoded directories already; this adds to that.
+        WebGPU is only ready for LayoutTests to use; it isn't ready for any other WKTR/DRT usage.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        * TestRunnerShared/TestFeatures.cpp:
+        (WTR::shouldEnableWebGPU):
+        (WTR::hardcodedFeaturesBasedOnPathForTest):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2022-04-12  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Prioritize oldest builds first

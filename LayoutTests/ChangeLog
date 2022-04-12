@@ -1,3 +1,13 @@
+2022-04-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WKTR] [DRT] Only enable WebGPU for the LayoutTests/http/tests/webgpu directory
+        https://bugs.webkit.org/show_bug.cgi?id=238779
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2022-04-12  Karl Rackler  <rackler@apple.com>
 
         [ BigSur+ wk2 Release ] css3/masking/reference-clip-path-animate-transform-repaint.html is a flaky failure

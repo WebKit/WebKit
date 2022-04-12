@@ -122,6 +122,11 @@ static bool shouldDumpJSConsoleLogInStdErr(const std::string& pathOrURL)
         || pathContains(pathOrURL, "localhost:8800/websockets") || pathContains(pathOrURL, "localhost:9443/websockets");
 }
 
+static bool shouldEnableWebGPU(const std::string& pathOrURL)
+{
+    return pathContains(pathOrURL, "127.0.0.1:8000/webgpu");
+}
+
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
 {
     TestFeatures features;
@@ -138,6 +143,8 @@ TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)
         features.doubleTestRunnerFeatures.insert({ "viewWidth", viewWidthAndHeight->first });
         features.doubleTestRunnerFeatures.insert({ "viewHeight", viewWidthAndHeight->second });
     }
+    if (shouldEnableWebGPU(command.pathOrURL))
+        features.boolWebPreferenceFeatures.insert({ "WebGPU", true });
 
     return features;
 }
