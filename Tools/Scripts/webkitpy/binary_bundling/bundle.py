@@ -164,12 +164,12 @@ class BinaryBundler:
                 script_handle.write('# Shipped binaries have a relpath to the interpreter, so update passed args with fullpaths and cd to ${MYDIR}\n')
                 script_handle.write('args_update_relpaths_to_abs() {\n')
                 script_handle.write('    for arg in "$@"; do\n')
-                script_handle.write('      [ -e "${arg}" -a "${arg}" != "${a#/}" ] && arg="$(readlink -f "${arg}")"\n')
+                script_handle.write('      [ "${arg}" = "${arg#/}" ] && [ -e "${arg}" ] && arg="$(readlink -f -- "${arg}")"\n')
                 script_handle.write('      printf %s "${arg}" | sed "s/\'/\'\\\\\\\\\'\'/g;1s/^/\'/;\\$s/\\$/\' /"\n')
                 script_handle.write('    done\n')
                 script_handle.write('echo " "\n')
                 script_handle.write('}\n')
-                script_handle.write('eval "set -- "$(args_update_relpaths_to_abs "$@")""\n')
+                script_handle.write('eval "set -- $(args_update_relpaths_to_abs "$@")"\n')
                 script_handle.write('cd "${MYDIR}"\n')
 
             if os.path.isfile(os.path.join(share_dir, 'certs/bundle-ca-certificates.pem')):

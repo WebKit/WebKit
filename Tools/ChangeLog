@@ -1,3 +1,16 @@
+2022-04-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] generate-bundle: fix typo/bug in the wrapper shell code for the bundle after r292109.
+        https://bugs.webkit.org/show_bug.cgi?id=237107
+
+        There was a typo/bug in the shell code for the bundle that tried to check
+        if a path was absolute. Fix the issue and also improve the code a bit.
+
+        Unreviewed follow-up fix.
+
+        * Scripts/webkitpy/binary_bundling/bundle.py:
+        (BinaryBundler.generate_wrapper_script):
+
 2022-04-11  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Update isolated tree in response to AXReadOnlyStatusChanged, AXRequiredStatusChanged, and AXPressedStateChanged notifications
