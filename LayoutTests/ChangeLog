@@ -1,3 +1,13 @@
+2022-04-12  Karl Rackler  <rackler@apple.com>
+
+        [ BigSur+ wk2 Release ] css3/masking/reference-clip-path-animate-transform-repaint.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=230504
+        Marking test for BigSur "+"
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-04-12  Ada Chan  <adachan@apple.com>
 
         [WebXR] Implement the WebXRFrame methods for getting joints' poses and radii
