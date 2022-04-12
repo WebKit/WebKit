@@ -207,7 +207,9 @@ void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfo
             static_cast<uint32_t>(compilationMessageData.compilationMessages.size()),
             compilationMessageData.compilationMessages.data(),
         };
-        callback(WGPUCompilationInfoRequestStatus_Success, compilationInfo);
+        m_device->instance().scheduleWork([compilationInfo = WTFMove(compilationInfo), callback = WTFMove(callback)]() mutable {
+            callback(WGPUCompilationInfoRequestStatus_Success, compilationInfo);
+        });
     }, [&](const WGSL::FailedCheck& failedCheck) {
         auto compilationMessageData(convertMessages(
             { failedCheck.errors, WGPUCompilationMessageType_Error },
@@ -217,7 +219,9 @@ void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfo
             static_cast<uint32_t>(compilationMessageData.compilationMessages.size()),
             compilationMessageData.compilationMessages.data(),
         };
-        callback(WGPUCompilationInfoRequestStatus_Error, compilationInfo);
+        m_device->instance().scheduleWork([compilationInfo = WTFMove(compilationInfo), callback = WTFMove(callback)]() mutable {
+            callback(WGPUCompilationInfoRequestStatus_Error, compilationInfo);
+        });
     }, [](std::monostate) {
         ASSERT_NOT_REACHED();
     });

@@ -115,8 +115,11 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
 
     makeInvalid();
 
-    if (m_deviceLostCallback)
-        m_deviceLostCallback(reason, "Device lost."_s);
+    if (m_deviceLostCallback) {
+        instance().scheduleWork([deviceLostCallback = WTFMove(m_deviceLostCallback), reason]() {
+            deviceLostCallback(reason, "Device lost."_s);
+        });
+    }
 
     // FIXME: The spec doesn't actually say to do this, but it's pretty important because
     // the total number of command queues alive at a time is limited to a pretty low limit.
@@ -206,7 +209,9 @@ bool Device::popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& ca
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-poperrorscope
 
     if (!validatePopErrorScope()) {
-        callback(WGPUErrorType_Unknown, "popErrorScope() failed validation."_s);
+        instance().scheduleWork([callback = WTFMove(callback)]() mutable {
+            callback(WGPUErrorType_Unknown, "popErrorScope() failed validation."_s);
+        });
         return false;
     }
 

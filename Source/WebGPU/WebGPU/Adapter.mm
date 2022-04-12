@@ -114,21 +114,30 @@ static bool deviceMeetsRequiredLimits(id<MTLDevice>, const WGPURequiredLimits& r
 void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback)
 {
     if (descriptor.nextInChain) {
-        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Unknown descriptor type"_s);
+        instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Unknown descriptor type"_s);
+        });
         return;
     }
 
     if (descriptor.requiredFeaturesCount) {
-        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested features"_s);
+        instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Device does not support requested features"_s);
+        });
         return;
     }
 
     if (descriptor.requiredLimits && !deviceMeetsRequiredLimits(m_device, *descriptor.requiredLimits)) {
-        callback(WGPURequestDeviceStatus_Error, Device::createInvalid(*this), "Device does not support requested limits"_s);
+        instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Device does not support requested limits"_s);
+        });
         return;
     }
 
-    callback(WGPURequestDeviceStatus_Success, Device::create(m_device, String::fromLatin1(descriptor.label), *this), { });
+    auto label = String::fromLatin1(descriptor.label);
+    instance().scheduleWork([strongThis = Ref { *this }, label = WTFMove(label), callback = WTFMove(callback)]() mutable {
+        callback(WGPURequestDeviceStatus_Success, Device::create(strongThis->m_device, WTFMove(label), strongThis), { });
+    });
 }
 
 } // namespace WebGPU

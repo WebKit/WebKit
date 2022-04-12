@@ -252,7 +252,9 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
     if (!validateMapAsync(mode, offset, rangeSize)) {
         m_device->generateAValidationError("Validation failure."_s);
 
-        callback(WGPUBufferMapAsyncStatus_Error);
+        m_device->instance().scheduleWork([callback = WTFMove(callback)]() mutable {
+            callback(WGPUBufferMapAsyncStatus_Error);
+        });
         return;
     }
 
