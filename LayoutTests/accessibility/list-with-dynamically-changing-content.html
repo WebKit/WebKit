@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<ul id="ul-list"></ul>
+<div id="aria-list" role="list"></div>
+
+<script>
+    var testOutput = "This test ensures that lists that are initially empty but gain children later become part of the AX tree with the proper role.\n\n";
+    var ulList, ariaList;
+
+    function verifyLists() {
+        testOutput += `#ul-list: ${ulList.role}\n`;
+        testOutput += `#ul-list: childrenCount ${ulList.childrenCount}\n`;
+        testOutput += `#aria-list: ${ariaList.role}\n`;
+        testOutput += `#aria-list: childrenCount ${ariaList.childrenCount}\n`;
+    }
+
+    async function waitForChildrenCount(count) {
+        await waitFor(() => {
+            return ulList.childrenCount === count && ariaList.childrenCount === count;
+        });
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        ulList = accessibilityController.accessibleElementById("ul-list");
+        ariaList = accessibilityController.accessibleElementById("aria-list");
+        verifyLists();
+
+        testOutput += `\nAdding listitems to both lists.\n\n`;
+        const li = document.createElement("li");
+        li.textContent = "A dynamic list item";
+        document.getElementById("ul-list").appendChild(li);
+
+        const ariaListItem = document.createElement("div");
+        ariaListItem.role = "listitem";
+        document.getElementById("aria-list").appendChild(ariaListItem);
+
+        setTimeout(async function() {
+            await waitForChildrenCount(1);
+            verifyLists();
+
+            document.getElementById("ul-list").removeChild(li);
+            document.getElementById("aria-list").removeChild(ariaListItem);
+            testOutput += `\nClearing listitems from both lists.\n\n`;
+            await waitForChildrenCount(0);
+            verifyLists();
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

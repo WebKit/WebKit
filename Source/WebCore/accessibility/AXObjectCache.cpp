@@ -1075,6 +1075,10 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
     updateIsolatedTree(object, AXChildrenChanged);
 #endif
 
+    // The role of list objects is dependent on their children, so we'll need to re-compute it here.
+    if (is<AccessibilityList>(object))
+        object.updateRole();
+
     postPlatformNotification(&object, AXChildrenChanged);
 }
 
@@ -1792,21 +1796,15 @@ void AXObjectCache::handleActiveDescendantChanged(Node* node)
         obj->handleActiveDescendantChanged();
 }
 
-void AXObjectCache::handleAriaRoleChanged(Node* node)
+void AXObjectCache::handleRoleChange(AccessibilityObject* axObject)
 {
     stopCachingComputedObjectAttributes();
-
-    // Don't make an AX object unless it's needed
-    if (auto* object = get(node)) {
-        object->updateAccessibilityRole();
-
-        if (object->hasIgnoredValueChanged())
-            childrenChanged(object->parentObject());
+    if (axObject->hasIgnoredValueChanged())
+        childrenChanged(axObject->parentObject());
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        updateIsolatedTree(object, AXObjectCache::AXAriaRoleChanged);
+        updateIsolatedTree(axObject, AXObjectCache::AXAriaRoleChanged);
 #endif
-    }
 }
 
 void AXObjectCache::deferAttributeChangeIfNeeded(const QualifiedName& attrName, Element* element)
@@ -1843,8 +1841,10 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     if (!shouldProcessAttributeChange(attrName, element))
         return;
 
-    if (attrName == roleAttr)
-        handleAriaRoleChanged(element);
+    if (attrName == roleAttr) {
+        if (auto* axObject = get(element))
+            axObject->updateRole();
+    }
     else if (attrName == altAttr || attrName == titleAttr)
         textChanged(element);
     else if (attrName == disabledAttr)

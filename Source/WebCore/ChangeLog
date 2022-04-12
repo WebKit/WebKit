@@ -1,3 +1,42 @@
+2022-04-12  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Incorrect role on dynamic lists
+        https://bugs.webkit.org/show_bug.cgi?id=238831
+
+        Reviewed by Andres Gonzalez.
+
+        AccessibilityList objects cache their role after running
+        AccessibilityNodeObject::determineAccessibilityRole, but we never
+        recomputed it when necessary.
+
+        With this patch, when the children of a list changes, we also
+        re-compute its role, since a list's role is dependent on its children.
+
+        Test: accessibility/list-with-dynamically-changing-content.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleChildrenChanged):
+        (WebCore::AXObjectCache::handleRoleChange):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        Renamed to handleRoleChange.
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::handleRoleChange):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        Renamed to handleRoleChange.
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::updateRole):
+        (WebCore::AccessibilityNodeObject::updateAccessibilityRole):
+        Renamed to updateRole.
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::updateRole):
+        (WebCore::AccessibilityObject::updateAccessibilityRole):
+        Renamed to updateRole.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::updateRoleAfterChildrenCreation):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren):
+
 2022-04-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Move DMABuf-backed GraphicsContextGLANGLE functionality into a standalone derivation chain

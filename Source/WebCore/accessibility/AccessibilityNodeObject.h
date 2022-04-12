@@ -133,7 +133,7 @@ public:
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
 
-    void updateAccessibilityRole() override;
+    void updateRole() override;
 
     void increment() override;
     void decrement() override;

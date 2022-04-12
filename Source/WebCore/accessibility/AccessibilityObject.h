@@ -508,7 +508,7 @@ public:
     void increment() override { }
     void decrement() override { }
 
-    virtual void updateAccessibilityRole() { }
+    virtual void updateRole() { }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     virtual void addChildren() { }
     enum class DescendIfIgnored : uint8_t { No, Yes };

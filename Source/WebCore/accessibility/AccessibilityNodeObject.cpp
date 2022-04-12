@@ -120,9 +120,14 @@ void AccessibilityNodeObject::detachRemoteParts(AccessibilityDetachmentType deta
     m_node = nullptr;
 }
 
-void AccessibilityNodeObject::updateAccessibilityRole()
+void AccessibilityNodeObject::updateRole()
 {
+    auto previousRole = m_role;
     m_role = determineAccessibilityRole();
+    if (previousRole != m_role) {
+        if (auto* cache = axObjectCache())
+            cache->handleRoleChange(this);
+    }
 }
 
 AccessibilityObject* AccessibilityNodeObject::firstChild() const
