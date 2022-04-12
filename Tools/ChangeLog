@@ -1,3 +1,16 @@
+2022-04-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Build before landing
+        https://bugs.webkit.org/show_bug.cgi?id=239068
+        <rdar://problem/91565146>
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Build WebKit before landing.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+
 2022-04-11  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION:(r292696) lldb_webkit_unittest.TestSummaryProviders.serial_test_WTFStringImpl_SummaryProvider_null_string is a constant failure

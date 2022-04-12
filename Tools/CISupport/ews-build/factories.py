@@ -344,6 +344,10 @@ class MergeQueueFactory(MergeQueueFactoryBase):
     def __init__(self, platform, **kwargs):
         super(MergeQueueFactory, self).__init__(platform, **kwargs)
 
+        self.addStep(KillOldProcesses())
+        self.addStep(CompileWebKit(skipUpload=True))
+        self.addStep(KillOldProcesses())
+
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
         self.addStep(Canonicalize())
         self.addStep(PushCommitToWebKitRepo())
