@@ -1,3 +1,17 @@
+2022-04-11  Kyle Piddington  <kpiddington@apple.com>
+
+        This WebGL example crashes
+        https://bugs.webkit.org/show_bug.cgi?id=238953
+        
+        Null-check subnodes while performing a deep copy for
+        loops, and branches. These nodes can be null in some cases
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/IntermNode.cpp:
+        (sh::TIntermBranch::TIntermBranch):
+        (sh::TIntermLoop::TIntermLoop):
+
 2022-04-08  Elliott Williams  <emw@apple.com>
 
         [Xcode] Avoid targeting 32-bit iOS and Mac architectures
