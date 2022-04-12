@@ -1,3 +1,22 @@
+2022-04-12  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        RejectedPromiseTracker can be recreated if we are in a worker / worklet whose execution is terminating
+        https://bugs.webkit.org/show_bug.cgi?id=239130
+
+        Reviewed by Chris Dumez.
+
+        We update ScriptExecutionContext::ensureRejectedPromiseTrackerSlow so that we wont
+        recreate the promise tracker if we are in a worker / worklet whose execution is terminating.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::promiseRejectionTracker):
+        * bindings/js/JSExecState.cpp:
+        (WebCore::JSExecState::didLeaveScriptContext):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ensureRejectedPromiseTrackerSlow):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::ensureRejectedPromiseTracker):
+
 2022-04-12  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Incorrect role on dynamic lists
