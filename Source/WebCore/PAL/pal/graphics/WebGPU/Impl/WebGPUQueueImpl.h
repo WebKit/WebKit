@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUDeviceHolderImpl.h"
 #include "WebGPUQueue.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
@@ -38,9 +39,9 @@ class ConvertToBackingContext;
 class QueueImpl final : public Queue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<QueueImpl> create(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext)
+    static Ref<QueueImpl> create(Ref<DeviceHolderImpl>&& deviceHolder, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new QueueImpl(queue, convertToBackingContext));
+        return adoptRef(*new QueueImpl(WTFMove(deviceHolder), convertToBackingContext));
     }
 
     virtual ~QueueImpl();
@@ -48,14 +49,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    QueueImpl(WGPUQueue, ConvertToBackingContext&);
+    QueueImpl(Ref<DeviceHolderImpl>&&, ConvertToBackingContext&);
 
     QueueImpl(const QueueImpl&) = delete;
     QueueImpl(QueueImpl&&) = delete;
     QueueImpl& operator=(const QueueImpl&) = delete;
     QueueImpl& operator=(QueueImpl&&) = delete;
 
-    WGPUQueue backing() const { return m_backing; }
+    WGPUQueue backing() const { return m_deviceHolder->backingQueue(); }
 
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) final;
 
@@ -85,7 +86,7 @@ private:
 
     uint64_t m_signalValue { 1 };
 
-    WGPUQueue m_backing { nullptr };
+    Ref<DeviceHolderImpl> m_deviceHolder;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

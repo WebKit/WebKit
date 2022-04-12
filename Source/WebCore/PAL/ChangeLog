@@ -1,5 +1,112 @@
 2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement correct ownership for WGPUQueues
+        https://bugs.webkit.org/show_bug.cgi?id=239050
+
+        Reviewed by Kimmo Kinnunen.
+
+        WGPUQueues and WGPUDevices have a somewhat interesting relationship: neither is
+        reference-counted, and the WGPUDevice owns its WGPUQueue. This means that, if client
+        code wants to extend the lifetime of a WGPUQueue, it has to do this by extending the
+        lifetime of its owning WGPUDevice. Both objects are Javascript objects, so there has to
+        be some mechanism for a queue to extend the lifetime of its owning device. And yet, a
+        device owns a queue, so a queue can't have a queue have a Ref<> to its owning device,
+        because that would be a circular depndency.
+
+        Here's the old ownership graph:
+
+              J    A    V    A    S    C    R    I    P    T
+             ------------------------------------------------
+                  |                                     |
+                  |                                     |
+                  V                                     |
+        PAL::WebGPU::DeviceImpl                         |
+                  |            \                        |
+                  |             -----                   |
+                  |                   \                 V
+                  |                    -----> PAL::WebGPU::QueueImpl
+                  |                                     |
+                  |                                     |
+                  V                                     |
+              WGPUDevice                                |
+                        \                               |
+                         -------------                  |
+                                      \                 V
+                                       ------------> WGPUQueue
+
+        You can see that there's a problem here: WGPUQueue has 2 owners, but it's not a
+        reference-counted object.
+
+        The solution is to add a new node into the ownership graph, like this:
+
+              J    A    V    A    S    C    R    I    P    T
+             ------------------------------------------------
+                  |                                     |
+                  |                                     |
+                  V                                     |
+        PAL::WebGPU::DeviceImpl                         |
+                   \           \                        |
+                    \           -----                   |
+                     \                \                 V
+                      \                 -----> PAL::WebGPU::QueueImpl
+                       \                              / 
+                        \                            /
+                         \                          /
+                          V                        V 
+                          PAL::WebGPU::DeviceHolder
+                          /
+                         /
+                        /
+                       /
+                      V
+              WGPUDevice
+                        \
+                         -------------
+                                      \
+                                       ------------> WGPUQueue
+
+        This way, both WGPUDevice and WGPUQueue have a single owner, there are no cycles,
+        and there is a path from PAL::WebGPU::QueueImpl to WGPUDevice.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceHolderImpl.cpp: Added.
+        (PAL::WebGPU::DeviceHolderImpl::DeviceHolderImpl):
+        (PAL::WebGPU::DeviceHolderImpl::~DeviceHolderImpl):
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceHolderImpl.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUQueueImpl.h.
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp:
+        (PAL::WebGPU::DeviceImpl::DeviceImpl):
+        (PAL::WebGPU::DeviceImpl::destroy):
+        (PAL::WebGPU::DeviceImpl::createBuffer):
+        (PAL::WebGPU::DeviceImpl::createTexture):
+        (PAL::WebGPU::DeviceImpl::createSampler):
+        (PAL::WebGPU::DeviceImpl::createBindGroupLayout):
+        (PAL::WebGPU::DeviceImpl::createPipelineLayout):
+        (PAL::WebGPU::DeviceImpl::createBindGroup):
+        (PAL::WebGPU::DeviceImpl::createShaderModule):
+        (PAL::WebGPU::DeviceImpl::createComputePipeline):
+        (PAL::WebGPU::DeviceImpl::createRenderPipeline):
+        (PAL::WebGPU::DeviceImpl::createComputePipelineAsync):
+        (PAL::WebGPU::DeviceImpl::createRenderPipelineAsync):
+        (PAL::WebGPU::DeviceImpl::createCommandEncoder):
+        (PAL::WebGPU::DeviceImpl::createRenderBundleEncoder):
+        (PAL::WebGPU::DeviceImpl::createQuerySet):
+        (PAL::WebGPU::DeviceImpl::pushErrorScope):
+        (PAL::WebGPU::DeviceImpl::popErrorScope):
+        (PAL::WebGPU::DeviceImpl::setLabelInternal):
+        (PAL::WebGPU::DeviceImpl::~DeviceImpl): Deleted.
+        * pal/graphics/WebGPU/Impl/WebGPUDeviceImpl.h:
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.cpp:
+        (PAL::WebGPU::QueueImpl::QueueImpl):
+        (PAL::WebGPU::QueueImpl::submit):
+        (PAL::WebGPU::QueueImpl::onSubmittedWorkDone):
+        (PAL::WebGPU::QueueImpl::writeBuffer):
+        (PAL::WebGPU::QueueImpl::writeTexture):
+        (PAL::WebGPU::QueueImpl::setLabelInternal):
+        (PAL::WebGPU::QueueImpl::~QueueImpl): Deleted.
+        * pal/graphics/WebGPU/Impl/WebGPUQueueImpl.h:
+
+2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Hook up device.queue to the IDL
         https://bugs.webkit.org/show_bug.cgi?id=239043
 

@@ -37,16 +37,13 @@
 
 namespace PAL::WebGPU {
 
-QueueImpl::QueueImpl(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(queue)
+QueueImpl::QueueImpl(Ref<DeviceHolderImpl>&& deviceHolder, ConvertToBackingContext& convertToBackingContext)
+    : m_deviceHolder(WTFMove(deviceHolder))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-QueueImpl::~QueueImpl()
-{
-    wgpuQueueRelease(m_backing);
-}
+QueueImpl::~QueueImpl() = default;
 
 void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBuffers)
 {
@@ -54,12 +51,12 @@ void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBu
         return m_convertToBackingContext->convertToBacking(commandBuffer);
     });
 
-    wgpuQueueSubmit(m_backing, backingCommandBuffers.size(), backingCommandBuffers.data());
+    wgpuQueueSubmit(backing(), backingCommandBuffers.size(), backingCommandBuffers.data());
 }
 
 void QueueImpl::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
-    wgpuQueueOnSubmittedWorkDoneWithBlock(m_backing, m_signalValue, makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
+    wgpuQueueOnSubmittedWorkDoneWithBlock(backing(), m_signalValue, makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
         callback();
     }).get());
 
@@ -75,7 +72,7 @@ void QueueImpl::writeBuffer(
     std::optional<Size64> size)
 {
     // FIXME: Use checked arithmetic and check the cast
-    wgpuQueueWriteBuffer(m_backing, m_convertToBackingContext->convertToBacking(buffer), bufferOffset, static_cast<const uint8_t*>(source) + dataOffset, static_cast<size_t>(size.value_or(byteLength - dataOffset)));
+    wgpuQueueWriteBuffer(backing(), m_convertToBackingContext->convertToBacking(buffer), bufferOffset, static_cast<const uint8_t*>(source) + dataOffset, static_cast<size_t>(size.value_or(byteLength - dataOffset)));
 }
 
 void QueueImpl::writeTexture(
@@ -102,7 +99,7 @@ void QueueImpl::writeTexture(
 
     WGPUExtent3D backingSize = m_convertToBackingContext->convertToBacking(size);
 
-    wgpuQueueWriteTexture(m_backing, &backingDestination, source, byteLength, &backingDataLayout, &backingSize);
+    wgpuQueueWriteTexture(backing(), &backingDestination, source, byteLength, &backingDataLayout, &backingSize);
 }
 
 void QueueImpl::copyExternalImageToTexture(
@@ -117,7 +114,7 @@ void QueueImpl::copyExternalImageToTexture(
 
 void QueueImpl::setLabelInternal(const String& label)
 {
-    wgpuQueueSetLabel(m_backing, label.utf8().data());
+    wgpuQueueSetLabel(backing(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU
