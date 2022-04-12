@@ -1,3 +1,18 @@
+2022-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: Web content process crashes when triggering Live Text in recoveryOS
+        https://bugs.webkit.org/show_bug.cgi?id=239096
+        rdar://91592943
+
+        Reviewed by Tim Horton.
+
+        Make encoding or decoding `RetainPtr<VKCImageAnalysis>` a no-op when the VisionKitCore framework is unavailable
+        on Cocoa platforms, rather than crashing (due to `PAL::getVKCImageAnalysisClass()` returning nil).
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<RetainPtr<VKCImageAnalysis>>::encode):
+        (IPC::ArgumentCoder<RetainPtr<VKCImageAnalysis>>::decode):
+
 2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Hook up device.queue to the IDL

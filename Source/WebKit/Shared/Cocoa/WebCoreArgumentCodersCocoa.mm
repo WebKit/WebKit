@@ -736,11 +736,17 @@ bool ArgumentCoder<WebCore::TextRecognitionDataDetector>::decodePlatformData(Dec
 
 void ArgumentCoder<RetainPtr<VKCImageAnalysis>>::encode(Encoder& encoder, const RetainPtr<VKCImageAnalysis>& data)
 {
+    if (!PAL::isVisionKitCoreFrameworkAvailable())
+        return;
+
     encoder << data.get();
 }
 
 std::optional<RetainPtr<VKCImageAnalysis>> ArgumentCoder<RetainPtr<VKCImageAnalysis>>::decode(Decoder& decoder)
 {
+    if (!PAL::isVisionKitCoreFrameworkAvailable())
+        return nil;
+
     return IPC::decode<VKCImageAnalysis>(decoder, @[ PAL::getVKCImageAnalysisClass() ]);
 }
 
