@@ -27,8 +27,6 @@
 
 #if ENABLE(IPC_TESTING_API)
 
-#if ENABLE(IPC_TESTING_API)
-
 #include "IPCStreamTesterIdentifier.h"
 #include "MessageReceiver.h"
 #include "ScopedActiveMessageReceiveQueue.h"
@@ -40,8 +38,6 @@
 #include <atomic>
 #include <wtf/HashMap.h>
 #include <wtf/WorkQueue.h>
-
-#endif
 
 namespace WebKit {
 

@@ -28,14 +28,81 @@
 
 #include "Connection.h"
 #include "StreamConnectionWorkQueue.h"
-
+#include <mutex>
+#include <wtf/NeverDestroyed.h>
 namespace IPC {
+namespace {
+// FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
+class DedicatedConnectionClient final : public Connection::Client {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DedicatedConnectionClient);
+public:
+    DedicatedConnectionClient() = default;
+    // Connection::Client.
+    void didReceiveMessage(Connection& connection, Decoder& decoder) final { ASSERT_NOT_REACHED(); }
+    bool didReceiveSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder) final { ASSERT_NOT_REACHED(); return false; }
+    void didClose(Connection&) final { } // Client is expected to listen to Connection::didClose() from the connection it sent to the dedicated connection to.
+    void didReceiveInvalidMessage(Connection&, MessageName) final { ASSERT_NOT_REACHED(); } // The sender is expected to be trusted, so all invalid messages are programming errors.
+private:
+};
 
-StreamServerConnection::StreamServerConnection(Connection& connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue)
-    : m_connection(connection)
+}
+
+Ref<StreamServerConnection> StreamServerConnection::create(Connection& connection, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
+{
+    return adoptRef(*new StreamServerConnection(Ref { connection }, WTFMove(streamBuffer), workQueue, HasDedicatedConnection::No));
+}
+
+Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnection(Attachment&& connectionIdentifier, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
+{
+#if USE(UNIX_DOMAIN_SOCKETS)
+    IPC::Connection::Identifier connectionHandle { connectionIdentifier.release().release() };
+#elif OS(DARWIN)
+    IPC::Connection::Identifier connectionHandle { connectionIdentifier.port() };
+#elif OS(WINDOWS)
+    IPC::Connection::Identifier connectionHandle { connectionIdentifier.handle() };
+#else
+    notImplemented();
+    IPC::Connection::Identifier connectionHandle { };
+#endif
+    static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag, [] {
+        s_dedicatedConnectionClient.construct();
+    });
+    auto connection = IPC::Connection::createClientConnection(connectionHandle, s_dedicatedConnectionClient.get());
+    auto streamConnection = adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(streamBuffer), workQueue, HasDedicatedConnection::Yes));
+    return streamConnection;
+}
+
+StreamServerConnection::StreamServerConnection(Ref<Connection>&& connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue, HasDedicatedConnection hasDedicatedConnection)
+    : m_connection(WTFMove(connection))
     , m_workQueue(workQueue)
     , m_buffer(WTFMove(stream))
+    , m_hasDedicatedConnection(hasDedicatedConnection == HasDedicatedConnection::Yes)
 {
+}
+
+StreamServerConnection::~StreamServerConnection()
+{
+    ASSERT(!m_hasDedicatedConnection || !m_connection->isValid());
+}
+
+void StreamServerConnection::open()
+{
+    if (m_hasDedicatedConnection) {
+        // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
+        m_connection->addMessageReceiveQueue(*this, { });
+        m_connection->open();
+    }
+}
+
+void StreamServerConnection::invalidate()
+{
+    if (m_hasDedicatedConnection) {
+        m_connection->removeMessageReceiveQueue({ });
+        m_connection->invalidate();
+    }
 }
 
 void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
@@ -47,30 +114,15 @@ void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& recei
         m_receivers.add(key, receiver);
     }
 
-    // FIXME: Can we avoid synchronous dispatch here by adjusting the assertion in `Connection::enqueueMatchingMessagesToMessageReceiveQueue`?
-    callOnMainRunLoopAndWait([&] {
+    if (!m_hasDedicatedConnection)
         m_connection->addMessageReceiveQueue(*this, { receiverName, destinationID });
-    });
     m_workQueue.addStreamConnection(*this);
-}
-
-void StreamServerConnection::startReceivingMessages(ReceiverName receiverName)
-{
-    callOnMainRunLoopAndWait([&] {
-        m_connection->addMessageReceiveQueue(*this, { receiverName });
-    });
-    m_workQueue.addStreamConnection(*this);
-}
-
-void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName)
-{
-    m_connection->removeMessageReceiveQueue({ receiverName });
-    m_workQueue.removeStreamConnection(*this);
 }
 
 void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
 {
-    m_connection->removeMessageReceiveQueue({ receiverName, destinationID });
+    if (!m_hasDedicatedConnection)
+        m_connection->removeMessageReceiveQueue({ receiverName, destinationID });
     m_workQueue.removeStreamConnection(*this);
 
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);

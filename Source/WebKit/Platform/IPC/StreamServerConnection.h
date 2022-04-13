@@ -53,18 +53,24 @@ class StreamConnectionWorkQueue;
 class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerConnection>, private MessageReceiveQueue {
     WTF_MAKE_NONCOPYABLE(StreamServerConnection);
 public:
-    static Ref<StreamServerConnection> create(Connection& connection, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
-    {
-        return adoptRef(*new StreamServerConnection(connection, WTFMove(streamBuffer), workQueue));
-    }
-    ~StreamServerConnection() final = default;
+    // Creates StreamClientConnection where the out of stream messages and server replies are
+    // received through the passed IPC::Connection. The messages from the server are sent to
+    // the passed IPC::Connection.
+    // Note: This function should be used only in cases where the
+    // stream server starts listening to messages with new identifiers on the same thread as
+    // in which the server IPC::Connection dispatch messages. At the time of writing,
+    // IPC::Connection dispatches messages only in main thread.
+    static Ref<StreamServerConnection> create(Connection&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
+
+    // Creates StreamServerConnection where the out of stream messages and server replies are
+    // received through a dedidcated, new IPC::Connection. The messages from the server are sent to
+    // the dedicated conneciton.
+    static Ref<StreamServerConnection> createWithDedicatedConnection(Attachment&& connectionIdentifier, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
+    ~StreamServerConnection() final;
 
     void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
     // Stops the message receipt. Note: already received messages might still be delivered.
     void stopReceivingMessages(ReceiverName, uint64_t destinationID);
-
-    void startReceivingMessages(ReceiverName);
-    void stopReceivingMessages(ReceiverName);
 
     Connection& connection() { return m_connection; }
 
@@ -74,11 +80,15 @@ public:
     };
     DispatchResult dispatchStreamMessages(size_t messageLimit);
 
+    void open();
+    void invalidate();
+
     template<typename T, typename... Arguments>
     void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
 
 private:
-    StreamServerConnection(IPC::Connection&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
+    enum class HasDedicatedConnection : bool { No, Yes };
+    StreamServerConnection(Ref<Connection>&&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&, HasDedicatedConnection);
 
     // MessageReceiveQueue
     void enqueueMessage(Connection&, std::unique_ptr<Decoder>&&) final;
@@ -119,6 +129,7 @@ private:
     Deque<std::unique_ptr<Decoder>> m_outOfStreamMessages WTF_GUARDED_BY_LOCK(m_outOfStreamMessagesLock);
 
     bool m_isDispatchingStreamMessage { false };
+    const bool m_hasDedicatedConnection;
     Lock m_receiversLock;
     using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);

@@ -39,10 +39,7 @@ void MessageReceiveQueueMap::addImpl(StoreType&& queue, const ReceiverMatcher& m
     uint8_t receiverName = static_cast<uint8_t>(*matcher.receiverName);
     if (!matcher.destinationID.has_value()) {
         auto result = m_anyIDQueues.add(receiverName, WTFMove(queue));
-        if (!result.isNewEntry) {
-            // FIXME: This should be an assertion. See webkit.org/b/237674 and webkit.org/b/238391.
-            ALWAYS_LOG_WITH_STREAM(stream << "MessageReceiveQueueMap::addImpl - adding duplicate any id receiver " << static_cast<uint8_t>(receiverName));
-        }
+        ASSERT_UNUSED(result, result.isNewEntry);
         return;
     }
     auto result = m_queues.add(std::make_pair(receiverName, *matcher.destinationID), WTFMove(queue));
@@ -59,10 +56,7 @@ void MessageReceiveQueueMap::remove(const ReceiverMatcher& matcher)
     uint8_t receiverName = static_cast<uint8_t>(*matcher.receiverName);
     if (!matcher.destinationID.has_value()) {
         auto result = m_anyIDQueues.remove(receiverName);
-        if (result) {
-            // FIXME: This should be an assertion. See webkit.org/b/237674 and webkit.org/b/238391.
-            ALWAYS_LOG_WITH_STREAM(stream << "MessageReceiveQueueMap::addImpl - adding duplicate any id receiver " << static_cast<uint8_t>(receiverName));
-        }
+        ASSERT_UNUSED(result, result);
         return;
     }
     auto result = m_queues.remove(std::make_pair(receiverName, *matcher.destinationID));
