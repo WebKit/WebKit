@@ -1,3 +1,9 @@
+2022-04-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r292810
+
+        * editing/HTMLInterchange.h:
+
 2022-04-13  Sihui Liu  <sihui_liu@apple.com>
 
         StorageMap::importItems may update currentSize wrongly in release build
