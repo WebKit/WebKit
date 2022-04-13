@@ -406,7 +406,7 @@ WI.DOMManager = class DOMManager extends WI.Object
 
         let newDocument = null;
         if (payload && "nodeId" in payload)
-            newDocument = new WI.DOMNode(this, null, false, payload);
+            newDocument = new WI.DOMNode(payload);
 
         if (this._document === newDocument)
             return;
@@ -422,15 +422,12 @@ WI.DOMManager = class DOMManager extends WI.Object
         this.dispatchEventToListeners(WI.DOMManager.Event.DocumentUpdated, {document: this._document});
     }
 
-    _setDetachedRoot(payload)
-    {
-        new WI.DOMNode(this, null, false, payload);
-    }
-
     _setChildNodes(parentId, payloads)
     {
         if (!parentId && payloads.length) {
-            this._setDetachedRoot(payloads[0]);
+            // `InspectorDOMAgent::pushNodePathToFrontend` can provide a single child as a detached root node.
+            let node = WI.DOMNode.newOrExistingFromPayload(payloads[0]);
+            console.assert(!node.parentNode);
             return;
         }
 
@@ -459,7 +456,6 @@ WI.DOMManager = class DOMManager extends WI.Object
         var parent = this._idToDOMNode[parentId];
         var prev = this._idToDOMNode[prevId];
         var node = parent._insertChild(prev, payload);
-        this._idToDOMNode[node.id] = node;
         this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
     }
 
@@ -485,9 +481,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!parent)
             return;
 
-        let node = WI.DOMNode.newOrExistingFromPayload(parent.ownerDocument, pseudoElement);
+        let node = WI.DOMNode.newOrExistingFromPayload(pseudoElement, {ownerDocument: parent.ownerDocument});
         node.parentNode = parent;
-        this._idToDOMNode[node.id] = node;
         console.assert(!parent.pseudoElements().get(node.pseudoType()));
         parent.pseudoElements().set(node.pseudoType(), node);
         this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
