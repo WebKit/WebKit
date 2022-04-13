@@ -178,7 +178,7 @@ inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject
     // currently. Whoever works on caching structure changes for prototype transitions should consider this problem as well.
     // See: https://bugs.webkit.org/show_bug.cgi?id=152738
     if (prototype.isObject() && prototype.getObject()->globalObject(vm) == globalObject) {
-        result = vm.structureCache.emptyStructureForPrototypeFromBaseStructure(globalObject, prototype.getObject(), result);
+        result = globalObject->structureCache().emptyStructureForPrototypeFromBaseStructure(globalObject, prototype.getObject(), result);
         ASSERT_WITH_SECURITY_IMPLICATION(result->globalObject() == globalObject);
     } else
         result = Structure::create(vm, globalObject, prototype, result->typeInfo(), result->classInfo());

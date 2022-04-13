@@ -1,3 +1,53 @@
+2022-04-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Move StructureCache from VM to JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=239044
+
+        Reviewed by Saam Barati.
+
+        We should have StructureCache per JSGlobalObject since cached structures are tied to some of JSGlobalObject.
+        This can (1) reduce size of each StructureCache, (2) destroy StructureCache timely at the destruction of
+        JSGlobalObject, and (3) simplifies JSGlobalObject::haveABadTime handling in the compiler.
+
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::createAllocationStructureFromBase):
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfileBase<Derived>::initializeProfile):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/IteratorOperations.cpp:
+        (JSC::createIteratorResultObjectStructure):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::getBoundFunctionStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut):
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::structureCache):
+        * runtime/ObjectConstructor.h:
+        (JSC::constructEmptyObject):
+        (JSC::createDataPropertyDescriptorObjectStructure):
+        (JSC::createAccessorPropertyDescriptorObjectStructure):
+        * runtime/PrototypeKey.h:
+        (JSC::PrototypeKey::PrototypeKey):
+        (JSC::PrototypeKey::classInfo const):
+        (JSC::PrototypeKey::operator== const):
+        (JSC::PrototypeKey::hash const):
+        (JSC::PrototypeKey::globalObject const): Deleted.
+        * runtime/StructureCache.cpp:
+        (JSC::StructureCache::createEmptyStructure):
+        (JSC::StructureCache::emptyObjectStructureConcurrently):
+        * runtime/StructureCache.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2022-04-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt "version set"-based linked-on-or-after checks instead of platform-specific ones

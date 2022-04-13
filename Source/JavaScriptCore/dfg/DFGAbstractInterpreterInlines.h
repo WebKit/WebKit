@@ -3127,10 +3127,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case ObjectCreate: {
-        if (JSValue prototype = forNode(node->child1()).m_value) {
-            m_state.setShouldTryConstantFolding(true);
-            if (prototype.isNull()) {
-                Structure* structure = m_graph.globalObjectFor(node->origin.semantic)->nullPrototypeObjectStructure();
+        if (JSValue base = forNode(node->child1()).m_value) {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+            Structure* structure = nullptr;
+            if (base.isNull())
+                structure = globalObject->nullPrototypeObjectStructure();
+            else if (base.isObject()) {
+                // Having a bad time clears the structureCache, and so it should invalidate this structure.
+                bool isHavingABadTime = globalObject->isHavingABadTime();
+                // Normally, we would always install a watchpoint. In this case, however, if we haveABadTime, we
+                // still want to optimize. There is no watchpoint for that case though, so we need to make sure this load
+                // does not get hoisted above the check.
+                WTF::loadLoadFence();
+                if (!isHavingABadTime)
+                    m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
+                structure = globalObject->structureCache().emptyObjectStructureConcurrently(base.getObject(), JSFinalObject::defaultInlineCapacity());
+            }
+
+            if (structure) {
+                m_state.setShouldTryConstantFolding(true);
                 if (node->child1().useKind() == UntypedUse)
                     didFoldClobberWorld();
                 setForNode(node, structure);

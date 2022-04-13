@@ -36,6 +36,7 @@
 #include "ExceptionEventLocation.h"
 #include "FunctionHasExecutedCache.h"
 #include "Heap.h"
+#include "IndexingType.h"
 #include "Integrity.h"
 #include "Intrinsic.h"
 #include "JSCJSValue.h"
@@ -48,11 +49,11 @@
 #include "NumericStrings.h"
 #include "SmallStrings.h"
 #include "Strong.h"
-#include "StructureCache.h"
 #include "SubspaceAccess.h"
 #include "ThunkGenerator.h"
 #include "VMTraps.h"
 #include "WasmContext.h"
+#include "WeakGCMap.h"
 #include <variant>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
@@ -548,8 +549,6 @@ public:
 
     SourceProviderCache* addSourceProviderCache(SourceProvider*);
     void clearSourceProviderCaches();
-
-    StructureCache structureCache;
 
     typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;

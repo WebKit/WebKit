@@ -613,6 +613,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     : Base(vm, structure, nullptr)
     , m_vm(&vm)
     , m_linkTimeConstants(numberOfLinkTimeConstants)
+    , m_structureCache(vm)
     , m_masqueradesAsUndefinedWatchpoint(WatchpointSet::create(IsWatched))
     , m_havingABadTimeWatchpoint(WatchpointSet::create(IsWatched))
     , m_varInjectionWatchpoint(WatchpointSet::create(IsWatched))
@@ -828,7 +829,7 @@ void JSGlobalObject::init(VM& vm)
         JSFunction::create(vm, this, 0, makeString("set ", vm.propertyNames->underscoreProto.string()), globalFuncProtoSetter));
     m_objectPrototype->putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->underscoreProto, protoAccessor, PropertyAttribute::Accessor | PropertyAttribute::DontEnum);
     m_functionPrototype->structure(vm)->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
-    m_objectStructureForObjectConstructor.set(vm, this, vm.structureCache.emptyObjectStructureForPrototype(this, m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity()));
+    m_objectStructureForObjectConstructor.set(vm, this, m_structureCache.emptyObjectStructureForPrototype(this, m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity()));
     m_objectProtoValueOfFunction.set(vm, this, jsCast<JSFunction*>(objectPrototype()->getDirect(vm, vm.propertyNames->valueOf)));
 
     m_speciesGetterSetter.set(vm, this, GetterSetter::create(vm, this, JSFunction::create(vm, globalOperationsSpeciesGetterCodeGenerator(vm), this), nullptr));
@@ -1997,6 +1998,17 @@ void JSGlobalObject::fireWatchpointAndMakeAllArrayStructuresSlowPut(VM& vm)
     if (isHavingABadTime())
         return;
 
+    // This must happen first, because the compiler thread may race with haveABadTime.
+    // Let R_BT, W_BT <- Read/Fire the watchpoint, R_SC, W_SC <- Read/clear the structure cache.
+    // The possible interleavings are:
+    // R_BT, R_SC, W_SC, W_BT: Compiler thread installs a watchpoint, and the code is discarded.
+    // R_BT, W_SC, R_SC, W_BT: ^ Same
+    // R_BT, W_SC, W_BT, W_SC: ^ Same
+    // W_SC, R_BT, R_SC, W_BT: ^ Same
+    // W_SC, R_BT, W_BT, R_SC: ^ Same
+    // W_SC, W_BT, R_BT, R_SC: No watchpoint is installed, but we could not see old structures from the cache.
+    m_structureCache.clear(); // We may be caching array structures in here.
+
     // Make sure that all JSArray allocations that load the appropriate structure from
     // this object now load a structure that uses SlowPut.
     for (unsigned i = 0; i < NumberOfArrayIndexingModes; ++i)
@@ -2030,17 +2042,6 @@ void JSGlobalObject::haveABadTime(VM& vm)
     
     if (isHavingABadTime())
         return;
-
-    // This must happen first, because the compiler thread may race with haveABadTime.
-    // Let R_BT, W_BT <- Read/Fire the watchpoint, R_SC, W_SC <- Read/clear the structure cache.
-    // The possible interleavings are:
-    // R_BT, R_SC, W_SC, W_BT: Compiler thread installs a watchpoint, and the code is discarded.
-    // R_BT, W_SC, R_SC, W_BT: ^ Same
-    // R_BT, W_SC, W_BT, W_SC: ^ Same
-    // W_SC, R_BT, R_SC, W_BT: ^ Same
-    // W_SC, R_BT, W_BT, R_SC: ^ Same
-    // W_SC, W_BT, R_BT, R_SC: No watchpoint is installed, but we could not see old structures from the cache.
-    vm.structureCache.clear(); // We may be caching array structures in here.
 
     DeferGC deferGC(vm);
 

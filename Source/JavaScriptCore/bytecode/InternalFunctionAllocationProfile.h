@@ -56,7 +56,7 @@ inline Structure* InternalFunctionAllocationProfile::createAllocationStructureFr
     if (prototype == baseStructure->storedPrototype())
         structure = baseStructure;
     else
-        structure = vm.structureCache.emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseStructure);
+        structure = baseGlobalObject->structureCache().emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseStructure);
 
     // Ensure that if another thread sees the structure, it will see it properly created.
     WTF::storeStoreFence();

@@ -42,7 +42,8 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
 
     // We don't need to lock here because only the main thread can get here, and only the main thread can mutate the cache
-    PrototypeKey key { makePolyProtoStructure ? nullptr : prototype, executable, inlineCapacity, classInfo, globalObject };
+    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+    PrototypeKey key { makePolyProtoStructure ? nullptr : prototype, executable, inlineCapacity, classInfo };
     if (Structure* structure = m_structures.get(key)) {
         if (makePolyProtoStructure) {
             prototype->didBecomePrototype();
@@ -69,11 +70,11 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
     return structure;
 }
 
-Structure* StructureCache::emptyObjectStructureConcurrently(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity)
+Structure* StructureCache::emptyObjectStructureConcurrently(JSObject* prototype, unsigned inlineCapacity)
 {
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
     
-    PrototypeKey key { prototype, nullptr, inlineCapacity, JSFinalObject::info(), globalObject };
+    PrototypeKey key { prototype, nullptr, inlineCapacity, JSFinalObject::info() };
     Locker locker { m_lock };
     if (Structure* structure = m_structures.get(key)) {
         ASSERT(prototype->mayBePrototype());

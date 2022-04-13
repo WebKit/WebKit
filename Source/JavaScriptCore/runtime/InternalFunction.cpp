@@ -160,7 +160,8 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
         if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue)) {
             // This only happens if someone Reflect.constructs our builtin constructor with another builtin constructor as the new.target.
             // Thus, we don't care about the cost of looking up the structure from our hash table every time.
-            return vm.structureCache.emptyStructureForPrototypeFromBaseStructure(prototype->globalObject(vm), prototype, baseClass);
+            JSGlobalObject* globalObject = prototype->globalObject(vm);
+            return globalObject->structureCache().emptyStructureForPrototypeFromBaseStructure(globalObject, prototype, baseClass);
         }
     }
     

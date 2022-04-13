@@ -42,6 +42,7 @@
 #include "RegExpGlobalData.h"
 #include "RuntimeFlags.h"
 #include "StringPrototype.h"
+#include "StructureCache.h"
 #include "SymbolPrototype.h"
 #include "VM.h"
 #include "Watchpoint.h"
@@ -491,6 +492,8 @@ public:
 #undef DECLARE_TYPED_ARRAY_TYPE_STRUCTURE
 
     FixedVector<LazyProperty<JSGlobalObject, JSCell>> m_linkTimeConstants;
+
+    StructureCache m_structureCache;
 
     String m_name;
 
@@ -945,6 +948,8 @@ public:
 
     void setName(const String&);
     const String& name() const { return m_name; }
+
+    StructureCache& structureCache() { return m_structureCache; }
 
     void setUnhandledRejectionCallback(VM& vm, JSObject* function) { m_unhandledRejectionCallback.set(vm, function); }
     JSObject* unhandledRejectionCallback() const { return m_unhandledRejectionCallback.get(); }

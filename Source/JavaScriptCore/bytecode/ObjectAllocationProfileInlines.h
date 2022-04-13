@@ -109,7 +109,7 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
             inlineCapacity = JSFinalObject::maxInlineCapacity();
     }
 
-    Structure* structure = vm.structureCache.emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity, isPolyProto, executable);
+    Structure* structure = globalObject->structureCache().emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity, isPolyProto, executable);
 
     if (isPolyProto) {
         ASSERT(structure->hasPolyProto());
