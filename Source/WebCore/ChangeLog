@@ -1,3 +1,24 @@
+2022-04-13  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Limit query range syntax
+        https://bugs.webkit.org/show_bug.cgi?id=239118
+
+        Reviewed by Simon Fraser.
+
+        The spec disallows things like (100px = width < 200px) and (100px < width > 200px).
+
+        https://www.w3.org/TR/mediaqueries-4/#mq-range-context
+
+        * css/ContainerQueryParser.cpp:
+        (WebCore::ContainerQueryParser::consumeContainerQuery):
+
+        Try as a condition first.
+        Return UnknownQuery on parse failure.
+
+        (WebCore::ContainerQueryParser::consumeRangeSizeFeature):
+
+        Validate the ranges so what ends up being allowed matches the spec productions.
+
 2022-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         [css-scroll-snap] scrollIntoView fails with scroll-snap-type on :root

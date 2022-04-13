@@ -1,3 +1,12 @@
+2022-04-13  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Limit query range syntax
+        https://bugs.webkit.org/show_bug.cgi?id=239118
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing-expected.txt:
+
 2022-04-13  Youenn Fablet  <youenn@apple.com>
 
         Complement implementation of step 5.5 of https://fetch.spec.whatwg.org/#http-fetch

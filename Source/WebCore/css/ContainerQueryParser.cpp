@@ -73,13 +73,15 @@ std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CS
 
         blockRange.consumeWhitespace();
 
-        // Try to parse as a size query first.
-        auto blockForSizeFeature = blockRange;
-        if (auto sizeFeature = consumeSizeFeature(blockForSizeFeature))
+        // Try to parse as a condition first.
+        auto conditionRange = blockRange;
+        if (auto condition = consumeCondition<CQ::ContainerCondition>(conditionRange))
+            return { condition };
+
+        if (auto sizeFeature = consumeSizeFeature(blockRange))
             return { *sizeFeature };
 
-        if (auto condition = consumeCondition<CQ::ContainerCondition>(blockRange))
-            return { condition };
+        return CQ::UnknownQuery { { }, blockRange.serialize() };
     }
 
     return { };
@@ -155,6 +157,10 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeSizeFeature(CSSParse
     };
 
     auto sizeFeature = consume();
+
+    if (!range.atEnd())
+        return { };
+
     if (sizeFeature)
         m_requiredAxes.add(CQ::requiredAxesForFeature(sizeFeature->name));
 
@@ -203,6 +209,8 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSS
         return { };
 
     auto value = consumeValue(range);
+    if (!value)
+        return { };
 
     return CQ::SizeFeature { featureName, CQ::Syntax::Colon, { }, CQ::Comparison { op, WTFMove(value) } };
 }
@@ -239,13 +247,19 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeRangeSizeFeature(CSS
         }
     };
 
+    bool didFailParsing = false;
+
     auto consumeLeftComparison = [&]() -> std::optional<CQ::Comparison> {
         if (range.peek().type() == IdentToken)
             return { };
         auto value = consumeValue(range);
-        auto op = consumeRangeOperator();
-        if (!op)
+        if (!value)
             return { };
+        auto op = consumeRangeOperator();
+        if (!op) {
+            didFailParsing = true;
+            return { };
+        }
 
         return CQ::Comparison { *op, WTFMove(value) };
     };
@@ -255,6 +269,10 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeRangeSizeFeature(CSS
         if (!op)
             return { };
         auto value = consumeValue(range);
+        if (!value) {
+            didFailParsing = true;
+            return { };
+        }
 
         return CQ::Comparison { *op, WTFMove(value) };
     };
@@ -267,7 +285,23 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeRangeSizeFeature(CSS
 
     auto rightComparison = consumeRightComparison();
 
-    if (!leftComparison && !rightComparison)
+    auto validateComparisons = [&] {
+        if (didFailParsing)
+            return false;
+        if (!leftComparison && !rightComparison)
+            return false;
+        if (!leftComparison || !rightComparison)
+            return true;
+        // Disallow comparisons like (a=b=c), (a=b<c).
+        if (leftComparison->op == CQ::ComparisonOperator::Equal || rightComparison->op == CQ::ComparisonOperator::Equal)
+            return false;
+        // Disallow comparisons like (a<b>c).
+        bool leftIsLess = leftComparison->op == CQ::ComparisonOperator::LessThan || leftComparison->op == CQ::ComparisonOperator::LessThanOrEqual;
+        bool rightIsLess = rightComparison->op == CQ::ComparisonOperator::LessThan || rightComparison->op == CQ::ComparisonOperator::LessThanOrEqual;
+        return leftIsLess == rightIsLess;
+    };
+
+    if (!validateComparisons())
         return { };
 
     return CQ::SizeFeature { WTFMove(featureName), CQ::Syntax::Range, WTFMove(leftComparison), WTFMove(rightComparison) };
@@ -283,7 +317,6 @@ RefPtr<CSSValue> ContainerQueryParser::consumeValue(CSSParserTokenRange& range)
         return value;
     if (auto value = CSSPropertyParserHelpers::consumeAspectRatioValue(range))
         return value;
-    range.consumeIncludingWhitespace();
     return nullptr;
 }
 

@@ -51,13 +51,13 @@ PASS (color-index >= 1)
 PASS size(grid)
 PASS (grid)
 PASS (width == 100px)
-FAIL (100px == width) assert_equals: expected 2 but got 0
-FAIL (100px = width = 200px) assert_equals: expected "" but got "true"
-FAIL (100px < width > 200px) assert_equals: expected "" but got "true"
-FAIL (100px <= width >= 200px) assert_equals: expected "" but got "true"
-FAIL (100px <= width > 200px) assert_equals: expected "" but got "true"
-FAIL (100px < width >= 200px) assert_equals: expected "" but got "true"
-FAIL (100px : width : 200px) assert_equals: expected 2 but got 0
+PASS (100px == width)
+PASS (100px = width = 200px)
+PASS (100px < width > 200px)
+PASS (100px <= width >= 200px)
+PASS (100px <= width > 200px)
+PASS (100px < width >= 200px)
+PASS (100px : width : 200px)
 PASS screen
 PASS print
 PASS not print
