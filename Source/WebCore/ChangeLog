@@ -1,3 +1,22 @@
+2022-04-13  Sihui Liu  <sihui_liu@apple.com>
+
+        StorageMap::importItems may update currentSize wrongly in release build
+        https://bugs.webkit.org/show_bug.cgi?id=239255
+
+        Reviewed by Chris Dumez.
+
+        StorageMap::importItems() has a debug assertion that keys of imported items do not exist in map, but that does 
+        not prevent this from happening in release build. With our current implementation, if this happens in release 
+        build, we increase currentSize without updating the map, which may lead to overflow.
+
+        To make StorageMap more safe to use, we can calculate the correct currentSize based on size of exsiting item, as 
+        in StorageMap::setItem(), or we just don't update currentSize or map if key already exists. Since current users
+        of StorageMap should only call importItems() when the map is empty, we can add an early return if map is not 
+        empty.
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::importItems):
+
 2022-04-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r292817.

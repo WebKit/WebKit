@@ -161,23 +161,16 @@ bool StorageMap::contains(const String& key) const
 
 void StorageMap::importItems(HashMap<String, String>&& items)
 {
-    CheckedUint32 newSize = m_impl->currentSize;
-    if (m_impl->map.isEmpty()) {
-        m_impl->map = WTFMove(items);
-        for (auto& [key, value] : m_impl->map) {
-            newSize += key.sizeInBytes();
-            newSize += value.sizeInBytes();
-        }
-        m_impl->currentSize = newSize;
-        return;
-    }
+    RELEASE_ASSERT(m_impl->map.isEmpty());
+    RELEASE_ASSERT(!m_impl->currentSize);
 
+    CheckedUint32 newSize;
     for (auto& [key, value] : items) {
         newSize += key.sizeInBytes();
         newSize += value.sizeInBytes();
-        auto result = m_impl->map.add(WTFMove(key), WTFMove(value));
-        ASSERT_UNUSED(result, result.isNewEntry);
     }
+
+    m_impl->map = WTFMove(items);
     m_impl->currentSize = newSize;
 }
 
