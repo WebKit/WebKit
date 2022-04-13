@@ -1,3 +1,17 @@
+2022-04-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        MSE video is not drawn onto canvas
+        https://bugs.webkit.org/show_bug.cgi?id=206812
+        rdar://31763425
+
+        Reviewed by Eric Carlson.
+
+        Enable MediaSource inline painting by default on all platforms where `AVSampleBufferVideoOutput` has been tuned
+        with a more aggressive pruning interval; this avoids significant increases in memory and power use when
+        utilizing the sample buffer to snapshot videos with MSE.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace AtomString(const char*) with AtomString::fromLatin1(const char*)
