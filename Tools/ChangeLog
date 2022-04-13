@@ -1,5 +1,19 @@
 2022-04-13  Angelos Oikonomopoulos  <angelos@igalia.com>
 
+        [run-jsc-stress-tests] Minor robustness fix
+        https://bugs.webkit.org/show_bug.cgi?id=239280
+
+        Reviewed by Adrian Perez de Castro.
+
+        Occasionally (e.g. https://build.webkit.org/#/builders/31/builds/3282),
+        run-jsc-stress-tests will receive a partial line when recovering the
+        results because the remote has died. The original code was being too
+        defensive; we should simply ignore those lines and allow for a retry.
+
+        * Scripts/run-jsc-stress-tests:
+
+2022-04-13  Angelos Oikonomopoulos  <angelos@igalia.com>
+
         [run-jsc-stress-tests] Use ServerAliveInterval in GNU parallel
         https://bugs.webkit.org/show_bug.cgi?id=239283
 
