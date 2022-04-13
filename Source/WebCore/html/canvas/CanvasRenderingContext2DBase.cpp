@@ -85,7 +85,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext2DBase);
 static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;
 
 const int CanvasRenderingContext2DBase::DefaultFontSize = 10;
-const char* const CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif";
+const ASCIILiteral CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif"_s;
 static constexpr ASCIILiteral DefaultFont = "10px sans-serif"_s;
 
 static CanvasLineCap toCanvasLineCap(LineCap lineCap)

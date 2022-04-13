@@ -39,6 +39,7 @@
 #include "Element.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
@@ -1474,7 +1475,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     auto computedStyleExtractor = ComputedStyleExtractor(&styledElement);
     auto inlineStyle = styledElement.document().createCSSStyleDeclaration();
-    inlineStyle->setCssText(styledElement.getAttribute("style"));
+    inlineStyle->setCssText(styledElement.getAttribute(HTMLNames::styleAttr));
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
     // During iteration resolve() could clear the underlying properties so we use a copy
@@ -1507,7 +1508,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
             inlineStyle->setPropertyInternal(property, cssValue->cssText(), false);
     }
 
-    styledElement.setAttribute("style", inlineStyle->cssText());
+    styledElement.setAttribute(HTMLNames::styleAttr, inlineStyle->cssText());
 
     return { };
 }

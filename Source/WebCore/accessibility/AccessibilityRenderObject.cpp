@@ -1786,7 +1786,7 @@ void AccessibilityRenderObject::setElementAttributeValue(const QualifiedName& at
     if (!is<Element>(node))
         return;
     
-    downcast<Element>(*node).setAttribute(attributeName, (value) ? "true" : "false");
+    downcast<Element>(*node).setAttribute(attributeName, (value) ? "true"_s : "false"_s);
 }
     
 bool AccessibilityRenderObject::elementAttributeValue(const QualifiedName& attributeName) const

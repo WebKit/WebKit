@@ -206,7 +206,7 @@ Span<const AtomString> VideoFullscreenModelVideoElement::observedEventNames()
 
 const AtomString& VideoFullscreenModelVideoElement::eventNameAll()
 {
-    static MainThreadNeverDestroyed<const AtomString> sEventNameAll = "allEvents";
+    static MainThreadNeverDestroyed<const AtomString> sEventNameAll = "allEvents"_s;
     return sEventNameAll;
 }
 

@@ -83,10 +83,10 @@ void XMLErrors::appendErrorMessage(ASCIILiteral typeString, TextPosition positio
 
 static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, const String& errorMessages)
 {
-    Ref<Element> reportElement = document.createElement(QualifiedName(nullAtom(), "parsererror", xhtmlNamespaceURI), true);
+    Ref<Element> reportElement = document.createElement(QualifiedName(nullAtom(), "parsererror"_s, xhtmlNamespaceURI), true);
 
     Vector<Attribute> reportAttributes;
-    reportAttributes.append(Attribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"));
+    reportAttributes.append(Attribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"_s));
     reportElement->parserSetAttributes(reportAttributes);
 
     auto h3 = HTMLHeadingElement::create(h3Tag, document);
@@ -95,7 +95,7 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, cons
 
     auto fixed = HTMLDivElement::create(document);
     Vector<Attribute> fixedAttributes;
-    fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"));
+    fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"_s));
     fixed->parserSetAttributes(fixedAttributes);
     reportElement->parserAppendChild(fixed);
 
@@ -148,7 +148,7 @@ void XMLErrors::insertErrorMessageBlock()
 #if ENABLE(XSLT)
     if (m_document.transformSourceDocument()) {
         Vector<Attribute> attributes;
-        attributes.append(Attribute(styleAttr, "white-space: normal"));
+        attributes.append(Attribute(styleAttr, "white-space: normal"_s));
         auto paragraph = HTMLParagraphElement::create(m_document);
         paragraph->parserSetAttributes(attributes);
         paragraph->parserAppendChild(m_document.createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."_s));

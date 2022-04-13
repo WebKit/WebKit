@@ -67,13 +67,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueBox);
 
 static const QualifiedName& cueAttributName()
 {
-    static NeverDestroyed<QualifiedName> cueTag(nullAtom(), "cue", nullAtom());
+    static NeverDestroyed<QualifiedName> cueTag(nullAtom(), "cue"_s, nullAtom());
     return cueTag;
 }
 
 static const QualifiedName& cueBackgroundAttributName()
 {
-    static NeverDestroyed<QualifiedName> cueBackgroundTag(nullAtom(), "cuebackground", nullAtom());
+    static NeverDestroyed<QualifiedName> cueBackgroundTag(nullAtom(), "cuebackground"_s, nullAtom());
     return cueBackgroundTag;
 }
 

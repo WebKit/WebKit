@@ -39,10 +39,11 @@ public:
 
     AtomString();
     AtomString(const LChar*);
-    AtomString(const char*);
     AtomString(const LChar*, unsigned length);
     AtomString(const UChar*, unsigned length);
     AtomString(const UChar*);
+
+    ALWAYS_INLINE static AtomString fromLatin1(const char* characters) { return AtomString(characters); }
 
     template<size_t inlineCapacity>
     explicit AtomString(const Vector<UChar, inlineCapacity>& characters)
@@ -167,6 +168,8 @@ public:
 #endif
 
 private:
+    explicit AtomString(const char*);
+
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType> AtomString convertASCIICase() const;
 
@@ -180,6 +183,7 @@ static_assert(sizeof(AtomString) == sizeof(String), "AtomString and String must 
 inline bool operator==(const AtomString& a, const AtomString& b) { return a.impl() == b.impl(); }
 bool operator==(const AtomString&, const LChar*);
 inline bool operator==(const AtomString& a, const char* b) { return WTF::equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
+inline bool operator==(const AtomString& a, ASCIILiteral b) { return WTF::equal(a.impl(), reinterpret_cast<const LChar*>(b.characters())); }
 inline bool operator==(const AtomString& a, const Vector<UChar>& b) { return a.impl() && equal(a.impl(), b.data(), b.size()); }    
 inline bool operator==(const AtomString& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const LChar* a, const AtomString& b) { return b == a; }
@@ -192,6 +196,7 @@ inline bool operator!=(const AtomString& a, const char* b) { return !(a == b); }
 inline bool operator!=(const AtomString& a, const String& b) { return !equal(a.impl(), b.impl()); }
 inline bool operator!=(const AtomString& a, const Vector<UChar>& b) { return !(a == b); }
 inline bool operator!=(const LChar* a, const AtomString& b) { return !(b == a); }
+inline bool operator!=(ASCIILiteral a, const AtomString& b) { return !(b == a); }
 inline bool operator!=(const String& a, const AtomString& b) { return !equal(a.impl(), b.impl()); }
 inline bool operator!=(const Vector<UChar>& a, const AtomString& b) { return !(a == b); }
 

@@ -204,7 +204,7 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
                 String ariaRelevantText = "text"_s;
 
                 const auto& values = SpaceSplitString(ariaRelevantAttrValue, true);
-                if (values.contains("all")) {
+                if (values.contains("all"_s)) {
                     liveRegionRelevant.append(ariaRelevantAdditions);
                     liveRegionRelevant.append(ariaRelevantRemovals);
                     liveRegionRelevant.append(ariaRelevantText);

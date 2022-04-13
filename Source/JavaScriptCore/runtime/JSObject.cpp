@@ -2665,7 +2665,7 @@ void JSObject::reifyAllStaticProperties(JSGlobalObject* globalObject)
 
         for (auto& value : *hashTable) {
             unsigned attributes;
-            auto key = Identifier::fromCString(vm, value.m_key);
+            auto key = Identifier::fromLatin1(vm, value.m_key);
             PropertyOffset offset = getDirectOffset(vm, key, attributes);
             if (!isValidOffset(offset))
                 reifyStaticProperty(vm, hashTable->classForThis, key, value, *this);

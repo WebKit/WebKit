@@ -595,7 +595,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
             
             Ref<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document);
             anchorElement->setHref(correspondingURL);
-            anchorElement->setDir("ltr");
+            anchorElement->setDir("ltr"_s);
 
             if (shouldUseLightLinks) {
                 document.updateStyleIfNeeded();

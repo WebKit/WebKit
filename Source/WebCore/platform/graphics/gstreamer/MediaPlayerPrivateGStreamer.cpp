@@ -1464,7 +1464,7 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
             CREATE_TRACK(video, Video);
         else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource) {
             auto track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, WTFMove(stream));
-            m_textTracks.add(streamId, track.copyRef());
+            m_textTracks.add(AtomString::fromLatin1(streamId), track.copyRef());
             m_player->addTextTrack(track.get());
         } else
             GST_WARNING("Unknown track type found for stream %s", streamId);

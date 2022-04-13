@@ -1,3 +1,122 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Replace AtomString(const char*) with AtomString::fromLatin1(const char*)
+        https://bugs.webkit.org/show_bug.cgi?id=239127
+
+        Reviewed by Darin Adler.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::InitDataRegistry::InitDataRegistry):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setElementAttributeValue):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::commitStyles):
+        * dom/DocumentInlines.h:
+        (WebCore::Document::encoding const):
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWebKitImageReadyEventForTesting):
+        * dom/PseudoElement.cpp:
+        (WebCore::pseudoElementTagName):
+        * editing/Editing.cpp:
+        (WebCore::createTabSpanElement):
+        * editing/Editor.cpp:
+        (WebCore::Editor::willUnapplyEditing const):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::willReapplyEditing const):
+        (WebCore::Editor::reappliedEditing):
+        (WebCore::Editor::quoteFragmentForPasting):
+        * editing/HTMLInterchange.h:
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::IndentOutdentCommand):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText):
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::createForLegacyFactoryFunction):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::summarySlotName):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setTranslate):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateShouldContinueAfterNeedKey):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::layoutSizeChanged):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::setValueClass):
+        (WebCore::HTMLMeterElement::didAddUserAgentShadowRoot):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+        * html/PDFDocument.cpp:
+        (WebCore::PDFDocument::createDocumentStructure):
+        (WebCore::PDFDocument::injectStyleAndContentScript):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::createForeignAttributesMap):
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::captionMenuOffItem):
+        (WebCore::TextTrack::captionMenuAutomaticItem):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::cueAttributName):
+        (WebCore::cueBackgroundAttributName):
+        * html/track/WebVTTElement.cpp:
+        (WebCore::nodeTypeToTagName):
+        * html/track/WebVTTElement.h:
+        * inspector/InspectorAuditAccessibilityObject.cpp:
+        (WebCore::InspectorAuditAccessibilityObject::getComputedProperties):
+        * inspector/InspectorOverlayLabel.cpp:
+        (WebCore::systemFont):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        (WebCore::InspectorStyleSheetForInlineStyle::elementStyleText const):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded):
+        * mathml/MathMLPresentationElement.cpp:
+        (WebCore::MathMLPresentationElement::isFlowContent):
+        * page/DebugPageOverlays.cpp:
+        (WebCore::NonFastScrollableRegionOverlay::drawRect):
+        (WebCore::InteractionRegionOverlay::drawSettings):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldTooltipPreventFromProceedingWithClick const):
+        (WebCore::Quirks::simulatedMouseEventTypeForTarget const):
+        (WebCore::isKinjaLoginAvatarElement):
+        (WebCore::isStorageAccessQuirkDomainAndElement):
+        (WebCore::isBBCPopUpPlayerElement):
+        (WebCore::Quirks::triggerOptionalStorageAccessQuirk const):
+        * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+        (WebCore::VideoFullscreenModelVideoElement::eventNameAll):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMetadataTrack):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack):
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        (WebCore::PlatformCALayer::drawRepaintIndicator):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::drawText):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::registerBlobResourceHandleConstructor):
+        * rendering/RenderCounter.cpp:
+        (showCounterRendererTree):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::patternForDescription):
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::srcValue const):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::transferSizeAttributesToTargetClone const):
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::createForTesting):
+        * xml/XMLErrors.cpp:
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLErrors::insertErrorMessageBlock):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+
 2022-04-13  Youenn Fablet  <youenn@apple.com>
 
         Complement implementation of step 5.5 of https://fetch.spec.whatwg.org/#http-fetch

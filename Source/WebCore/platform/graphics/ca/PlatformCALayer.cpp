@@ -93,7 +93,7 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     TextRun textRun(String::number(repaintCount));
 
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica");
+    fontDescription.setOneFamily("Helvetica"_s);
     fontDescription.setSpecifiedSize(fontSize);
     fontDescription.setComputedSize(fontSize);
 

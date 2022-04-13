@@ -215,7 +215,7 @@ bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element)
 
     if (!equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "covid.cdc.gov"))
         return false;
-    return element.hasClass() && element.classNames().contains("tooltip");
+    return element.hasClass() && element.classNames().contains("tooltip"_s);
 }
 
 // FIXME: Remove after the site is fixed, <rdar://problem/75792913>
@@ -446,7 +446,7 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(EventTarget* target) const
     case ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org:
         if (is<Node>(target)) {
             for (auto* node = downcast<Node>(target); node; node = node->parentNode()) {
-                if (is<Element>(node) && downcast<Element>(*node).classList().contains("lm-DockPanel-tabBar"))
+                if (is<Element>(node) && downcast<Element>(*node).classList().contains("lm-DockPanel-tabBar"_s))
                     return true;
             }
         }
@@ -476,7 +476,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
     }
 
     if (equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "soundcloud.com") && is<Element>(target))
-        return downcast<Element>(*target).classList().contains("sceneLayer");
+        return downcast<Element>(*target).classList().contains("sceneLayer"_s);
 
     return false;
 }
@@ -488,7 +488,7 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
 
     // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.
     if (isGoogleMaps()) {
-        if (is<Element>(target) && downcast<Element>(target)->getAttribute("class") == "widget-expand-button-pegman-icon")
+        if (is<Element>(target) && downcast<Element>(target)->getAttribute(HTMLNames::classAttr) == "widget-expand-button-pegman-icon")
             return Event::IsCancelable::Yes;
         return { };
     }
@@ -501,7 +501,7 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
         // We want to limit simulated mouse events to elements under <div id="paneContainer"> to allow for column re-ordering and multiple cell selection.
         if (is<Node>(target)) {
             auto* node = downcast<Node>(target);
-            if (auto* paneContainer = node->treeScope().getElementById(AtomString("paneContainer"))) {
+            if (auto* paneContainer = node->treeScope().getElementById(AtomString("paneContainer"_s))) {
                 if (paneContainer->contains(node))
                     return Event::IsCancelable::Yes;
             }
@@ -523,7 +523,7 @@ bool Quirks::shouldMakeTouchEventNonCancelableForTarget(EventTarget* target) con
         if (is<Element>(target)) {
             unsigned depth = 3;
             for (auto* element = downcast<Element>(target); element && depth; element = element->parentElement(), --depth) {
-                if (element->localName() == "paper-item" && element->classList().contains("yt-dropdown-menu"))
+                if (element->localName() == "paper-item" && element->classList().contains("yt-dropdown-menu"_s))
                     return true;
             }
         }
@@ -548,7 +548,7 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
 
     if (is<Element>(target) && touchEventType == eventNames().touchendEvent && equalLettersIgnoringASCIICase(m_document->topDocument().url().host(), "sites.google.com")) {
         auto& classList = downcast<Element>(*target).classList();
-        return classList.contains("DPvwYc") && classList.contains("sm8sCf");
+        return classList.contains("DPvwYc"_s) && classList.contains("sm8sCf"_s);
     }
 
     return false;
@@ -631,8 +631,8 @@ bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
     if (element.hasTagName(HTMLNames::inputTag)) {
         if (!equalLettersIgnoringASCIICase(m_document->url().host(), "calendar.google.com"))
             return false;
-        static NeverDestroyed<QualifiedName> dataInitialValueAttr(nullAtom(), "data-initial-value", nullAtom());
-        static NeverDestroyed<QualifiedName> dataPreviousValueAttr(nullAtom(), "data-previous-value", nullAtom());
+        static NeverDestroyed<QualifiedName> dataInitialValueAttr(nullAtom(), "data-initial-value"_s, nullAtom());
+        static NeverDestroyed<QualifiedName> dataPreviousValueAttr(nullAtom(), "data-previous-value"_s, nullAtom());
 
         return equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(HTMLNames::autocompleteAttr), "off")
             && element.hasAttributeWithoutSynchronization(dataInitialValueAttr)
@@ -647,7 +647,7 @@ bool Quirks::needsInputModeNoneImplicitly(const HTMLElement& element) const
     if (!host.endsWithIgnoringASCIICase(".desmos.com"))
         return false;
 
-    return element.parentElement() && element.parentElement()->classNames().contains("dcg-mq-textarea");
+    return element.parentElement() && element.parentElement()->classNames().contains("dcg-mq-textarea"_s);
 #else
     UNUSED_PARAM(element);
     return false;
@@ -1023,10 +1023,10 @@ static bool isKinjaLoginAvatarElement(const Element& element)
     // span with these class names, or the svg, or the svg's path.
     if (element.hasClass()) {
         auto& classNames = element.classNames();
-        if (classNames.contains("js_switch-to-burner-login")
-            || classNames.contains("js_header-userbutton")
-            || classNames.contains("sc-1il3uru-3") || classNames.contains("cIhKfd")
-            || classNames.contains("iyvn34-0") || classNames.contains("bYIjtl"))
+        if (classNames.contains("js_switch-to-burner-login"_s)
+            || classNames.contains("js_header-userbutton"_s)
+            || classNames.contains("sc-1il3uru-3"_s) || classNames.contains("cIhKfd"_s)
+            || classNames.contains("iyvn34-0"_s) || classNames.contains("bYIjtl"_s))
             return true;
     }
 
@@ -1037,7 +1037,7 @@ static bool isKinjaLoginAvatarElement(const Element& element)
         svgElement = element.parentElement();
 
     if (svgElement && svgElement->hasAttributes()) {
-        auto ariaLabelAttr = svgElement->attributes().getNamedItem("aria-label");
+        auto ariaLabelAttr = svgElement->attributes().getNamedItem("aria-label"_s);
         if (ariaLabelAttr && ariaLabelAttr->value() == "UserFilled icon")
             return true;
     }
@@ -1056,24 +1056,24 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
     // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
     if (url.host() == "www.microsoft.com"_s) {
         return element.hasClass()
-        && (element.classNames().contains("glyph_signIn_circle")
-        || element.classNames().contains("mectrl_headertext")
-        || element.classNames().contains("mectrl_header"));
+        && (element.classNames().contains("glyph_signIn_circle"_s)
+        || element.classNames().contains("mectrl_headertext"_s)
+        || element.classNames().contains("mectrl_header"_s));
     }
     // Skype case.
     // FIXME(220105): Remove this quirk once Skype under outlook.live.com completes their login flow redesign.
     if (url.host() == "outlook.live.com"_s) {
         return element.hasClass()
-        && (element.classNames().contains("_3ioEp2RGR5vb0gqRDsaFPa")
-        || element.classNames().contains("_2Am2jvTaBz17UJ8XnfxFOy"));
+        && (element.classNames().contains("_3ioEp2RGR5vb0gqRDsaFPa"_s)
+        || element.classNames().contains("_2Am2jvTaBz17UJ8XnfxFOy"_s));
     }
     // Sony Network Entertainment login case.
     // FIXME(218760): Remove this quirk once playstation.com completes their login flow redesign.
     if (url.host() == "www.playstation.com"_s || url.host() == "my.playstation.com"_s) {
         return element.hasClass()
-        && (element.classNames().contains("web-toolbar__signin-button")
-        || element.classNames().contains("web-toolbar__signin-button-label")
-        || element.classNames().contains("sb-signin-button"));
+        && (element.classNames().contains("web-toolbar__signin-button"_s)
+        || element.classNames().contains("web-toolbar__signin-button-label"_s)
+        || element.classNames().contains("sb-signin-button"_s));
     }
 
     return false;
@@ -1112,7 +1112,7 @@ static bool isBBCPopUpPlayerElement(const Element& element)
     if (!element.parentElement() || !element.parentElement()->hasClass() || !parentElement->parentElement() || !parentElement->parentElement()->hasClass())
         return false;
 
-    return element.parentElement()->classNames().contains("p_audioButton_buttonInner") && parentElement->parentElement()->classNames().contains("hidden");
+    return element.parentElement()->classNames().contains("p_audioButton_buttonInner"_s) && parentElement->parentElement()->classNames().contains("hidden"_s);
 }
 
 Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&& completionHandler) const
@@ -1185,14 +1185,14 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
     static NeverDestroyed<UserScript> kinjaLoginUserScript { "function triggerLoginForm() { let elements = document.getElementsByClassName('js_header-userbutton'); if (elements && elements[0]) { elements[0].click(); clearInterval(interval); } } let interval = setInterval(triggerLoginForm, 200);"_s, URL(aboutBlankURL()), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::Yes };
 
-    if (eventType == "click") {
+    if (eventType == eventNames().clickEvent) {
         if (!m_document)
             return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
         // Embedded YouTube case.
         if (element.hasClass() && domain == youTubeDomain && !m_document->isTopDocument() && ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
             auto& classNames = element.classNames();
-            if (classNames.contains("ytp-watch-later-icon") || classNames.contains("ytp-watch-later-icon")) {
+            if (classNames.contains("ytp-watch-later-icon"_s) || classNames.contains("ytp-watch-later-icon"_s)) {
                 if (ResourceLoadObserver::shared().hasHadUserInteraction(youTubeDomain)) {
                     DocumentStorageAccess::requestStorageAccessForDocumentQuirk(*m_document, [](StorageAccessWasGranted) { });
                     return Quirks::StorageAccessResult::ShouldNotCancelEvent;

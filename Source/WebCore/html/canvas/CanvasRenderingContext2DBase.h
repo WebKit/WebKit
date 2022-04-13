@@ -296,7 +296,7 @@ public:
 
 protected:
     static const int DefaultFontSize;
-    static const char* const DefaultFontFamily;
+    static const ASCIILiteral DefaultFontFamily;
 
     const State& state() const { return m_stateStack.last(); }
     void realizeSaves();

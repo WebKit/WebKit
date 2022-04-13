@@ -52,7 +52,7 @@ void RenderThemeGtk::updateCachedSystemFontDescription(CSSValueID, FontCascadeDe
     if (!pangoDescription)
         return;
 
-    fontDescription.setOneFamily(pango_font_description_get_family(pangoDescription));
+    fontDescription.setOneFamily(AtomString::fromLatin1(pango_font_description_get_family(pangoDescription)));
 
     int size = pango_font_description_get_size(pangoDescription) / PANGO_SCALE;
     // If the size of the font is in points, we need to convert it to pixels.

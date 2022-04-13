@@ -147,10 +147,10 @@ Vector<AtomString> CDMPrivateThunder::supportedInitDataTypes() const
     static Vector<AtomString> supportedInitDataTypes;
     std::call_once(onceFlag, [] {
         supportedInitDataTypes.reserveInitialCapacity(4);
-        supportedInitDataTypes.uncheckedAppend(AtomString("keyids"));
-        supportedInitDataTypes.uncheckedAppend(AtomString("cenc"));
-        supportedInitDataTypes.uncheckedAppend(AtomString("webm"));
-        supportedInitDataTypes.uncheckedAppend(AtomString("cbcs"));
+        supportedInitDataTypes.uncheckedAppend("keyids"_s);
+        supportedInitDataTypes.uncheckedAppend("cenc"_s);
+        supportedInitDataTypes.uncheckedAppend("webm"_s);
+        supportedInitDataTypes.uncheckedAppend("cbcs"_s);
     });
     return supportedInitDataTypes;
 }
@@ -170,9 +170,7 @@ bool CDMPrivateThunder::supportsConfiguration(const CDMKeySystemConfiguration& c
 
 Vector<AtomString> CDMPrivateThunder::supportedRobustnesses() const
 {
-    return { emptyAtom(),
-        "SW_SECURE_DECODE",
-        "SW_SECURE_CRYPTO" };
+    return { emptyAtom(), "SW_SECURE_DECODE"_s, "SW_SECURE_CRYPTO"_s };
 }
 
 CDMRequirement CDMPrivateThunder::distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const

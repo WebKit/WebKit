@@ -713,7 +713,7 @@ AppendPipeline::Track* AppendPipeline::tryMatchPadToExistingTrack(GstPad *demuxe
 {
     ASSERT(isMainThread());
     ASSERT(m_hasReceivedFirstInitializationSegment);
-    AtomString trackId = GST_PAD_NAME(demuxerSrcPad);
+    auto trackId = AtomString::fromLatin1(GST_PAD_NAME(demuxerSrcPad));
     auto [parsedCaps, streamType, presentationSize] = parseDemuxerSrcPadCaps(adoptGRef(gst_pad_get_current_caps(demuxerSrcPad)).get());
 
     // Try to find a matching pre-existing track. Ideally, tracks should be matched by track ID, but matching by type

@@ -41,14 +41,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebVTTElement);
 
 static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 {
-    static NeverDestroyed<QualifiedName> cTag(nullAtom(), "c", nullAtom());
-    static NeverDestroyed<QualifiedName> vTag(nullAtom(), "v", nullAtom());
-    static NeverDestroyed<QualifiedName> langTag(nullAtom(), "lang", nullAtom());
-    static NeverDestroyed<QualifiedName> bTag(nullAtom(), "b", nullAtom());
-    static NeverDestroyed<QualifiedName> uTag(nullAtom(), "u", nullAtom());
-    static NeverDestroyed<QualifiedName> iTag(nullAtom(), "i", nullAtom());
-    static NeverDestroyed<QualifiedName> rubyTag(nullAtom(), "ruby", nullAtom());
-    static NeverDestroyed<QualifiedName> rtTag(nullAtom(), "rt", nullAtom());
+    static NeverDestroyed<QualifiedName> cTag(nullAtom(), "c"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> vTag(nullAtom(), "v"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> langTag(nullAtom(), "lang"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> bTag(nullAtom(), "b"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> uTag(nullAtom(), "u"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> iTag(nullAtom(), "i"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> rubyTag(nullAtom(), "ruby"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> rtTag(nullAtom(), "rt"_s, nullAtom());
     switch (nodeType) {
     case WebVTTNodeTypeClass:
         return cTag;

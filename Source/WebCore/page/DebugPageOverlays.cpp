@@ -193,7 +193,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     FloatRect legendRect = { bounds.maxX() - 30.0f, 10, 20, 20 };
     
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica");
+    fontDescription.setOneFamily("Helvetica"_s);
     fontDescription.setSpecifiedSize(12);
     fontDescription.setComputedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
@@ -407,7 +407,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
     }
 
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica");
+    fontDescription.setOneFamily("Helvetica"_s);
     fontDescription.setSpecifiedSize(12);
     fontDescription.setComputedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));

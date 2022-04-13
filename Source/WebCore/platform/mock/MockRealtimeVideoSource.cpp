@@ -348,7 +348,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     unsigned hours = minutes / 60 % 60;
 
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Courier");
+    fontDescription.setOneFamily("Courier"_s);
     fontDescription.setWeight(FontSelectionValue(500));
 
     fontDescription.setSpecifiedSize(m_baseFontSize);

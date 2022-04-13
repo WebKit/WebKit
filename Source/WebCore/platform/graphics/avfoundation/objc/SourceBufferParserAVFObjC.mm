@@ -177,7 +177,7 @@ public:
         // which is presumably on the main thread.
         ASSERT(isMainThread());
         if (!m_codec)
-            m_codec = AtomString(m_originalCodec.string().data());
+            m_codec = AtomString::fromLatin1(m_originalCodec.string().data());
         return *m_codec;
     }
 

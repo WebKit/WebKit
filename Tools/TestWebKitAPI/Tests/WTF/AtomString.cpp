@@ -49,7 +49,7 @@ TEST(WTF, AtomStringCreationFromLiteralUniqueness)
     AtomString string2("Template Literal", AtomString::ConstructFromLiteral);
     ASSERT_EQ(string1.impl(), string2.impl());
 
-    AtomString string3("Template Literal");
+    AtomString string3("Template Literal"_s);
     ASSERT_EQ(string1.impl(), string3.impl());
 }
 

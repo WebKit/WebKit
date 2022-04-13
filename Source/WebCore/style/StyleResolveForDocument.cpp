@@ -100,7 +100,7 @@ RenderStyle resolveForDocument(const Document& document)
         if (renderView.multiColumnFlow())
             renderView.updateColumnProgressionFromStyle(documentStyle);
         if (renderView.page().paginationLineGridEnabled()) {
-            documentStyle.setLineGrid("-webkit-default-pagination-grid");
+            documentStyle.setLineGrid("-webkit-default-pagination-grid"_s);
             documentStyle.setLineSnap(LineSnap::Contain);
         }
     }

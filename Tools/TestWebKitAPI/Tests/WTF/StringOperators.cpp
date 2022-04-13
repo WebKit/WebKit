@@ -43,7 +43,7 @@ namespace TestWebKitAPI {
 TEST(WTF, StringOperators)
 {
     String string("String"_s);
-    AtomString atomString("AtomString");
+    AtomString atomString("AtomString"_s);
     ASCIILiteral literal { "ASCIILiteral"_s };
 
     String stringViewBacking { "StringView"_s };

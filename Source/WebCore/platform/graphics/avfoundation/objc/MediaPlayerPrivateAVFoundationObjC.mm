@@ -3067,7 +3067,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMetadataTrack()
         return;
 
     m_metadataTrack = InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind::Metadata, InbandTextTrackPrivate::CueFormat::Data);
-    m_metadataTrack->setInBandMetadataTrackDispatchType("com.apple.streaming");
+    m_metadataTrack->setInBandMetadataTrackDispatchType("com.apple.streaming"_s);
     player()->addTextTrack(*m_metadataTrack);
 }
 
@@ -3096,7 +3096,7 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack(InbandTextTrackPriv
     if (m_currentTextTrack == track)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, "selecting track with language ", track ? track->language() : "");
+    INFO_LOG(LOGIDENTIFIER, "selecting track with language ", track ? track->language() : emptyAtom());
 
     m_currentTextTrack = track;
 

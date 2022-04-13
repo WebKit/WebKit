@@ -93,7 +93,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
     , m_owner(owner)
 {
     ASSERT(m_stream);
-    m_id = gst_stream_get_stream_id(m_stream.get());
+    m_id = AtomString::fromLatin1(gst_stream_get_stream_id(m_stream.get()));
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     tagsChanged();
@@ -252,7 +252,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()
         return;
 
     GST_INFO("Track %d got stream start for stream %s.", m_index, streamId.get());
-    m_id = streamId.get();
+    m_id = AtomString::fromLatin1(streamId.get());
 }
 
 void TrackPrivateBaseGStreamer::streamChanged()

@@ -33,10 +33,11 @@ class Text;
 
 #define AppleInterchangeNewline   "Apple-interchange-newline"
 #define AppleConvertedSpace       "Apple-converted-space"
-#define ApplePasteAsQuotation     "Apple-paste-as-quotation"
-#define AppleStyleSpanClass       "Apple-style-span"
-#define AppleTabSpanClass         "Apple-tab-span"
 #define WebKitMSOListQuirksStyle  "WebKit-mso-list-quirks-style"
+
+constexpr auto ApplePasteAsQuotation = "Apple-paste-as-quotation"_s;
+constexpr auto AppleStyleSpanClass = "Apple-style-span"_s;
+constexpr auto AppleTabSpanClass = "Apple-tab-span"_s;
 
 // Controls whether a special BR which is removed upon paste in ReplaceSelectionCommand needs to be inserted
 // and making sequence of spaces not collapsible by inserting non-breaking spaces.

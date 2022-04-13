@@ -1593,7 +1593,7 @@ InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(InspectorPa
     , m_isStyleTextValid(false)
 {
     m_inspectorStyle = InspectorStyle::create(InspectorCSSId(id, 0), inlineStyle(), this);
-    m_styleText = m_element->getAttribute("style").string();
+    m_styleText = m_element->getAttribute(HTMLNames::styleAttr).string();
 }
 
 void InspectorStyleSheetForInlineStyle::didModifyElementAttribute()
@@ -1669,7 +1669,7 @@ CSSStyleDeclaration& InspectorStyleSheetForInlineStyle::inlineStyle() const
 
 const String& InspectorStyleSheetForInlineStyle::elementStyleText() const
 {
-    return m_element->getAttribute("style").string();
+    return m_element->getAttribute(HTMLNames::styleAttr).string();
 }
 
 Ref<CSSRuleSourceData> InspectorStyleSheetForInlineStyle::ruleSourceData() const

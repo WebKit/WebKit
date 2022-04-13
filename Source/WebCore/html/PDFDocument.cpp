@@ -145,7 +145,7 @@ void PDFDocument::createDocumentStructure()
     // Description of parameters:
     // - `#pagemode=none` prevents the sidebar from showing on load.
     // - Empty `?file=` parameter prevents default pdf from loading.
-    auto viewerURL = "webkit-pdfjs-viewer://pdfjs/web/viewer.html?file=#pagemode=none";
+    auto viewerURL = "webkit-pdfjs-viewer://pdfjs/web/viewer.html?file=#pagemode=none"_s;
     auto rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
     rootElement->insertedByParser();
@@ -161,7 +161,7 @@ void PDFDocument::createDocumentStructure()
     m_iframe->setAttribute(styleAttr, AtomString("width: 100%; height: 100%; border: 0; display: block;", AtomString::ConstructFromLiteral));
 
     m_listener = PDFDocumentEventListener::create(*this);
-    m_iframe->addEventListener("load", *m_listener, false);
+    m_iframe->addEventListener(eventNames().loadEvent, *m_listener, false);
 
     body->appendChild(*m_iframe);
 }
@@ -223,9 +223,9 @@ void PDFDocument::injectStyleAndContentScript()
 
     ASSERT(contentDocument->body());
     auto script = HTMLScriptElement::create(scriptTag, *contentDocument, false);
-    script->addEventListener("load", m_listener.releaseNonNull(), false);
+    script->addEventListener(eventNames().loadEvent, m_listener.releaseNonNull(), false);
 
-    script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js");
+    script->setAttribute(srcAttr, "webkit-pdfjs-viewer://pdfjs/extras/content-script.js"_s);
     contentDocument->body()->appendChild(script);
 }
 

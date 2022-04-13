@@ -27,6 +27,7 @@
 #include "FetchEvent.h"
 
 #include "CachedResourceRequestInitiators.h"
+#include "EventNames.h"
 #include "JSDOMPromise.h"
 #include "JSFetchResponse.h"
 #include "Logging.h"
@@ -42,7 +43,7 @@ Ref<FetchEvent> FetchEvent::createForTesting(ScriptExecutionContext& context)
 {
     FetchEvent::Init init;
     init.request = FetchRequest::create(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable, { }), { }, { }, { });
-    return FetchEvent::create(*context.globalObject(), "fetch", WTFMove(init), Event::IsTrusted::Yes);
+    return FetchEvent::create(*context.globalObject(), eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
 }
 
 static inline Ref<DOMPromise> retrieveHandledPromise(JSC::JSGlobalObject& globalObject, RefPtr<DOMPromise>&& promise)

@@ -47,7 +47,7 @@ public:
 TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times");
+    description.setOneFamily("Times"_s);
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -94,7 +94,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times");
+    description.setOneFamily("Times"_s);
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -138,7 +138,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
 TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
 {
     FontCascadeDescription description;
-    description.setOneFamily("LucidaGrande");
+    description.setOneFamily("LucidaGrande"_s);
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -181,7 +181,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
 {
     FontCascadeDescription description;
-    description.setOneFamily("LucidaGrande");
+    description.setOneFamily("LucidaGrande"_s);
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -218,7 +218,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times");
+    description.setOneFamily("Times"_s);
     description.setComputedSize(48);
     FontCascade font(WTFMove(description));
     font.update();
@@ -264,7 +264,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
 TEST_F(ComplexTextControllerTest, LeftExpansion)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times");
+    description.setOneFamily("Times"_s);
     description.setComputedSize(48);
     FontCascade font(WTFMove(description));
     font.update();
@@ -294,7 +294,7 @@ TEST_F(ComplexTextControllerTest, LeftExpansion)
 TEST_F(ComplexTextControllerTest, VerticalAdvances)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times");
+    description.setOneFamily("Times"_s);
     description.setComputedSize(48);
     FontCascade font(WTFMove(description));
     font.update();
@@ -338,7 +338,7 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
 TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times");
+    description.setOneFamily("Times"_s);
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();

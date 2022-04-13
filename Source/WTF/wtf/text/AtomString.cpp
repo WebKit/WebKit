@@ -103,13 +103,13 @@ AtomString AtomString::number(unsigned long long number)
 AtomString AtomString::number(float number)
 {
     NumberToStringBuffer buffer;
-    return numberToString(number, buffer);
+    return AtomString::fromLatin1(numberToString(number, buffer));
 }
 
 AtomString AtomString::number(double number)
 {
     NumberToStringBuffer buffer;
-    return numberToString(number, buffer);
+    return AtomString::fromLatin1(numberToString(number, buffer));
 }
 
 AtomString AtomString::fromUTF8Internal(const char* start, const char* end)
@@ -146,7 +146,7 @@ void AtomString::init()
         ASSERT(isUIThread());
 
         nullAtomData.construct();
-        emptyAtomData.construct("");
+        emptyAtomData.construct(AtomString::fromLatin1(""));
 
         // When starting WebThread via StartWebThread function, we have special period between the prologue of StartWebThread and spawning WebThread actually.
         // In this period, `isMainThread()` returns false even if this is called on the main thread since WebThread is now enabled and we are not taking a WebThread lock.

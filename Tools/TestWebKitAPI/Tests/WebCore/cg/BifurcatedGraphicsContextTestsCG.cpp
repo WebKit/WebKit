@@ -98,7 +98,7 @@ TEST(BifurcatedGraphicsContextTests, Text)
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
     FontCascadeDescription description;
-    description.setOneFamily("Times");
+    description.setOneFamily("Times"_s);
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();

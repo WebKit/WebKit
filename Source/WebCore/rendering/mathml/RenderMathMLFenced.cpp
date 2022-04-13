@@ -45,8 +45,8 @@ using namespace MathMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLFenced);
 
-static const char* gOpeningBraceChar = "(";
-static const char* gClosingBraceChar = ")";
+static constexpr auto gOpeningBraceChar = "("_s;
+static constexpr auto gClosingBraceChar = ")"_s;
 
 RenderMathMLFenced::RenderMathMLFenced(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(element, WTFMove(style))

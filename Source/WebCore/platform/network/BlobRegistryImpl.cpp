@@ -67,8 +67,9 @@ static void registerBlobResourceHandleConstructor()
 {
     static bool didRegister = false;
     if (!didRegister) {
-        ResourceHandle::registerBuiltinConstructor("blob", createBlobResourceHandle);
-        ResourceHandle::registerBuiltinSynchronousLoader("blob", loadBlobResourceSynchronously);
+        AtomString blob = "blob"_s;
+        ResourceHandle::registerBuiltinConstructor(blob, createBlobResourceHandle);
+        ResourceHandle::registerBuiltinSynchronousLoader(blob, loadBlobResourceSynchronously);
         didRegister = true;
     }
 }
