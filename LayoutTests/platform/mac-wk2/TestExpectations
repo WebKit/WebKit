@@ -1663,3 +1663,5 @@ webkit.org/b/239300 http/tests/push-api/subscribe-deny-permissions-on-prompt.htm
 webkit.org/b/239257 fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker.html [ Pass Failure ]
 
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
+
+webkit.org/b/239307 [ Monterey+ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-inherits-from-initiator.sub.html [ Pass Crash ]
