@@ -986,8 +986,6 @@ public:
     };
 
     void installImageOverlay(Element&, Vector<ImageOverlayLine>&&, Vector<ImageOverlayBlock>&& = { }, Vector<ImageOverlayDataDetector>&& = { });
-    void installCroppedImageOverlay(Element&, Ref<DOMRectReadOnly>&&);
-    void uninstallCroppedImageOverlay();
     bool hasActiveDataDetectorHighlight() const;
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -1353,8 +1351,6 @@ private:
 #if ENABLE(VIDEO)
     std::unique_ptr<CaptionUserPreferencesTestingModeToken> m_testingModeToken;
 #endif
-
-    std::unique_ptr<ImageOverlay::CroppedImage> m_croppedImageOverlay;
 };
 
 } // namespace WebCore

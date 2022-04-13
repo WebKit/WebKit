@@ -5950,29 +5950,6 @@ void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&&
 #endif
 }
 
-void Internals::installCroppedImageOverlay(Element& element, Ref<DOMRectReadOnly>&& normalizedCropRect)
-{
-    RefPtr htmlElement = dynamicDowncast<HTMLElement>(element);
-    if (!htmlElement)
-        return;
-
-    auto imageData = pngDataForTesting();
-    if (!imageData)
-        return;
-
-    m_croppedImageOverlay = ImageOverlay::CroppedImage::install(*htmlElement, imageData.releaseNonNull(), "image/png"_s, {
-        static_cast<float>(normalizedCropRect->x()),
-        static_cast<float>(normalizedCropRect->y()),
-        static_cast<float>(normalizedCropRect->width()),
-        static_cast<float>(normalizedCropRect->height())
-    });
-}
-
-void Internals::uninstallCroppedImageOverlay()
-{
-    m_croppedImageOverlay = nullptr;
-}
-
 bool Internals::hasActiveDataDetectorHighlight() const
 {
 #if ENABLE(DATA_DETECTION) && ENABLE(IMAGE_ANALYSIS)

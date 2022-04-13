@@ -1,3 +1,34 @@
+2022-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove support for drawing cropped image overlays when hovering over "Copy Cropped Image"
+        https://bugs.webkit.org/show_bug.cgi?id=239269
+
+        Reviewed by Darin Adler.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode const):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::hitTestedElementContext const): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didDismissContextMenu):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (-[WKMenuDelegate menu:willHighlightItem:]): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::handleContextMenuCopyCroppedImage):
+        (WebKit::WebPageProxy::willHighlightContextMenuItem): Deleted.
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didDismissContextMenu):
+        (WebKit::WebPage::installCroppedImageOverlay): Deleted.
+        (WebKit::WebPage::setCroppedImageOverlayVisibility): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         [Xcode] In open-source builds, disable bitcode in xcconfigs instead of build-webkit

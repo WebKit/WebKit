@@ -1386,7 +1386,6 @@ public:
     void didDismissContextMenu();
     void contextMenuItemSelected(const WebContextMenuItemData&);
     void handleContextMenuKeyEvent();
-    void willHighlightContextMenuItem(WebCore::ContextMenuAction);
 #endif
 
     // Called by the WebOpenPanelResultListenerProxy.
@@ -3245,17 +3244,6 @@ private:
     RunLoop::Timer<WebPageProxy> m_fullscreenVideoExtractionTimer;
 #endif
     bool m_hasPendingElementFullScreenVideoExtraction { false };
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    enum class CroppedImageOverlayState : uint8_t {
-        Inactive,
-        Analyzing,
-        Hidden,
-        Showing,
-    };
-    WebCore::PlatformImagePtr m_croppedImageResult;
-    CroppedImageOverlayState m_croppedImageOverlayState { CroppedImageOverlayState::Inactive };
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 };
 
 #ifdef __OBJC__

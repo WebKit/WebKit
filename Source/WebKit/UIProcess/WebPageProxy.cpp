@@ -7104,11 +7104,6 @@ void WebPageProxy::didDismissContextMenu()
     send(Messages::WebPage::DidDismissContextMenu());
 
     pageClient().didDismissContextMenu();
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    m_croppedImageResult = { };
-    m_croppedImageOverlayState = CroppedImageOverlayState::Inactive;
-#endif
 }
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
@@ -8261,11 +8256,6 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     m_fullscreenVideoExtractionTimer.stop();
     m_currentFullscreenVideoSessionIdentifier = std::nullopt;
-#endif
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    m_croppedImageResult = { };
-    m_croppedImageOverlayState = CroppedImageOverlayState::Inactive;
 #endif
 
     // FIXME: <rdar://problem/38676604> In case of process swaps, the old process should gracefully suspend instead of terminating.

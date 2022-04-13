@@ -1,3 +1,13 @@
+2022-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove support for drawing cropped image overlays when hovering over "Copy Cropped Image"
+        https://bugs.webkit.org/show_bug.cgi?id=239269
+
+        Reviewed by Darin Adler.
+
+        * fast/images/text-recognition/image-overlay-cropped-image-expected.txt: Removed.
+        * fast/images/text-recognition/image-overlay-cropped-image.html: Removed.
+
 2022-04-12  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] allow skipping by durations other than 15s

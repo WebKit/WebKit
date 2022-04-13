@@ -265,10 +265,6 @@ class HTMLAttachmentElement;
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 struct TranslationContextMenuInfo;
 #endif
-
-namespace ImageOverlay {
-class CroppedImage;
-}
 }
 
 namespace WebKit {
@@ -1460,10 +1456,6 @@ public:
 #endif
 
     void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(const ShareableBitmap::Handle&, const String& sourceMIMEType)>&&);
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    void installCroppedImageOverlay(const WebCore::ElementContext&, const SharedMemory::IPCHandle& imageData, const String& mimeType, WebCore::FloatRect normalizedCropRect);
-    void setCroppedImageOverlayVisibility(bool);
-#endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&);
@@ -2462,10 +2454,6 @@ private:
     
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility m_appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
-#endif
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    std::unique_ptr<WebCore::ImageOverlay::CroppedImage> m_croppedImageOverlay;
 #endif
 };
 

@@ -101,18 +101,6 @@ static const AtomString& imageOverlayBlockClass()
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-static const AtomString& imageOverlayCroppedImageIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("image-overlay-cropped-image", AtomString::ConstructFromLiteral);
-    return identifier;
-}
-
-static const AtomString& imageOverlayCroppedImageBackdropIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("image-overlay-cropped-image-backdrop", AtomString::ConstructFromLiteral);
-    return identifier;
-}
-
 bool hasOverlay(const HTMLElement& element)
 {
     auto shadowRoot = element.shadowRoot();
@@ -225,14 +213,6 @@ void removeOverlaySoonIfNeeded(HTMLElement& element)
     });
 }
 
-static void installImageOverlayStyleSheet(ShadowRoot& shadowRoot)
-{
-    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
-    auto style = HTMLStyleElement::create(HTMLNames::styleTag, shadowRoot.document(), false);
-    style->setTextContent(shadowStyle);
-    shadowRoot.appendChild(WTFMove(style));
-}
-
 IntRect containerRect(HTMLElement& element)
 {
     auto* renderer = element.renderer();
@@ -246,6 +226,14 @@ IntRect containerRect(HTMLElement& element)
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
+
+static void installImageOverlayStyleSheet(ShadowRoot& shadowRoot)
+{
+    static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
+    auto style = HTMLStyleElement::create(HTMLNames::styleTag, shadowRoot.document(), false);
+    style->setTextContent(shadowStyle);
+    shadowRoot.appendChild(WTFMove(style));
+}
 
 struct LineElements {
     Ref<HTMLDivElement> line;
@@ -694,88 +682,6 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
-
-std::unique_ptr<CroppedImage> CroppedImage::install(HTMLElement& host, Ref<SharedBuffer>&& imageData, const String& mimeType, FloatRect normalizedRect)
-{
-    Ref document = host.document();
-    Ref shadowRoot = host.ensureUserAgentShadowRoot();
-    RefPtr imageOverlayRoot = dynamicDowncast<HTMLDivElement>(shadowRoot->getElementById(imageOverlayElementIdentifier()));
-    if (!imageOverlayRoot) {
-        imageOverlayRoot = HTMLDivElement::create(document.get());
-        imageOverlayRoot->setIdAttribute(imageOverlayElementIdentifier());
-        imageOverlayRoot->setTranslate(false);
-        shadowRoot->appendChild(*imageOverlayRoot);
-        installImageOverlayStyleSheet(shadowRoot.get());
-    }
-
-    document->updateLayoutIgnorePendingStylesheets();
-
-    if (auto* renderer = dynamicDowncast<RenderImage>(host.renderer()))
-        renderer->setHasImageOverlay();
-
-    auto containerRect = ImageOverlay::containerRect(host);
-    auto cropRect = normalizedRect;
-    cropRect.scale(containerRect.width(), containerRect.height());
-    cropRect.move(containerRect.x(), containerRect.y());
-
-    auto croppedImageBackdrop = HTMLDivElement::create(document.get());
-    croppedImageBackdrop->setIdAttribute(imageOverlayCroppedImageBackdropIdentifier());
-    imageOverlayRoot->appendChild(croppedImageBackdrop.get());
-
-    auto croppedImage = HTMLImageElement::create(document.get());
-    auto croppedImageURL = DOMURL::createObjectURL(document.get(), Blob::create(document.ptr(), imageData->extractData(), mimeType));
-    croppedImage->setIdAttribute(imageOverlayCroppedImageIdentifier());
-    croppedImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, croppedImageURL);
-    croppedImage->setInlineStyleProperty(CSSPropertyLeft, cropRect.x(), CSSUnitType::CSS_PX);
-    croppedImage->setInlineStyleProperty(CSSPropertyTop, cropRect.y(), CSSUnitType::CSS_PX);
-    croppedImage->setInlineStyleProperty(CSSPropertyWidth, cropRect.width(), CSSUnitType::CSS_PX);
-    croppedImage->setInlineStyleProperty(CSSPropertyHeight, cropRect.height(), CSSUnitType::CSS_PX);
-    imageOverlayRoot->appendChild(croppedImage.get());
-
-    document->updateLayoutIgnorePendingStylesheets();
-    croppedImageBackdrop->setInlineStyleProperty(CSSPropertyOpacity, 0.5, CSSUnitType::CSS_NUMBER);
-
-    return makeUnique<CroppedImage>(document.get(), host, croppedImageBackdrop.get(), croppedImageURL);
-}
-
-CroppedImage::CroppedImage(Document& document, HTMLElement& host, HTMLElement& croppedImageBackdrop, const String& imageURL)
-    : m_document(document)
-    , m_host(host)
-    , m_croppedImageBackdrop(croppedImageBackdrop)
-    , m_imageURL(imageURL)
-{
-    setVisibility(true);
-}
-
-CroppedImage::~CroppedImage()
-{
-    if (RefPtr document = m_document.get())
-        DOMURL::revokeObjectURL(*document, m_imageURL);
-
-    RefPtr host = m_host.get();
-    if (!host)
-        return;
-
-    RefPtr shadowRoot = host->shadowRoot();
-    if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent)
-        return;
-
-    if (RefPtr croppedImage = shadowRoot->getElementById(imageOverlayCroppedImageIdentifier()))
-        croppedImage->remove();
-
-    if (RefPtr croppedImageBackdrop = shadowRoot->getElementById(imageOverlayCroppedImageBackdropIdentifier()))
-        croppedImageBackdrop->remove();
-}
-
-void CroppedImage::setVisibility(bool visible)
-{
-    RefPtr croppedImageBackdrop = m_croppedImageBackdrop.get();
-    if (!croppedImageBackdrop)
-        return;
-
-    croppedImageBackdrop->document().updateLayoutIgnorePendingStylesheets();
-    croppedImageBackdrop->setInlineStyleProperty(CSSPropertyOpacity, visible ? 0.5 : 0, CSSUnitType::CSS_NUMBER);
-}
 
 } // namespace ImageOverlay
 } // namespace WebCore

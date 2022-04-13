@@ -186,11 +186,6 @@
     _menuProxy->page()->didDismissContextMenu();
 }
 
-- (void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item
-{
-    _menuProxy->page()->willHighlightContextMenuItem(static_cast<WebCore::ContextMenuAction>(item.tag));
-}
-
 @end
 
 namespace WebKit {

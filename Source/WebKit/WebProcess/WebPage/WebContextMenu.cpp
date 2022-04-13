@@ -63,13 +63,9 @@ void WebContextMenu::show()
     RefPtr<API::Object> userData;
     menuItemsWithUserData(menuItems, userData);
 
-    std::optional<ElementContext> hitTestedElementContext;
-    if (RefPtr hitTestedElement = controller.hitTestResult().innerNonSharedElement())
-        hitTestedElementContext = m_page->contextForElement(*hitTestedElement);
-
     auto menuLocation = view->contentsToRootView(controller.hitTestResult().roundedPointInInnerNodeFrame());
 
-    ContextMenuContextData contextMenuContextData(menuLocation, WTFMove(hitTestedElementContext), menuItems, controller.context());
+    ContextMenuContextData contextMenuContextData(menuLocation, menuItems, controller.context());
 
     // Mark the WebPage has having a shown context menu then notify the UIProcess.
     m_page->startWaitingForContextMenuToShow();

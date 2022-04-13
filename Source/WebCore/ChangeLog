@@ -1,3 +1,31 @@
+2022-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove support for drawing cropped image overlays when hovering over "Copy Cropped Image"
+        https://bugs.webkit.org/show_bug.cgi?id=239269
+
+        Reviewed by Darin Adler.
+
+        Revert <https://trac.webkit.org/r290211> -- the corresponding UI is no longer plan of record.
+
+        * dom/ImageOverlay.cpp:
+        (WebCore::ImageOverlay::installImageOverlayStyleSheet):
+        (WebCore::ImageOverlay::imageOverlayCroppedImageIdentifier): Deleted.
+        (WebCore::ImageOverlay::imageOverlayCroppedImageBackdropIdentifier): Deleted.
+        (WebCore::ImageOverlay::CroppedImage::install): Deleted.
+        (WebCore::ImageOverlay::CroppedImage::CroppedImage): Deleted.
+        (WebCore::ImageOverlay::CroppedImage::~CroppedImage): Deleted.
+        (WebCore::ImageOverlay::CroppedImage::setVisibility): Deleted.
+        * dom/ImageOverlay.h:
+        * html/shadow/imageOverlay.css:
+        (div.image-overlay-data-detector-result):
+        (img#image-overlay-cropped-image): Deleted.
+        (div#image-overlay-cropped-image-backdrop): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::installCroppedImageOverlay): Deleted.
+        (WebCore::Internals::uninstallCroppedImageOverlay): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2022-04-12  Asumu Takikawa  <asumu@igalia.com>
 
         Allow Wasm import from a JS Worker module
