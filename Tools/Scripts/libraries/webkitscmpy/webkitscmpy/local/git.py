@@ -130,7 +130,7 @@ class Git(Scm):
                     kwargs = dict(encoding='utf-8')
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
-                    [self.repo.executable(), 'log', branch],
+                    [self.repo.executable(), 'log', branch, '--no-decorate'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
@@ -560,7 +560,7 @@ class Git(Scm):
 
         default_branch = self.default_branch
         parsed_branch_point = None
-        log_format = ['-1'] if include_log else ['-1', '--format=short']
+        log_format = ['-1', '--no-decorate'] if include_log else ['-1', '--no-decorate', '--format=short']
 
         # Determine the `git log` output and branch for a given identifier
         if identifier is not None:
@@ -743,7 +743,7 @@ class Git(Scm):
         try:
             log = None
             log = subprocess.Popen(
-                [self.executable(), 'log', '--format=fuller', '{}...{}'.format(end.hash, begin.hash)],
+                [self.executable(), 'log', '--format=fuller', '--no-decorate', '{}...{}'.format(end.hash, begin.hash)],
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

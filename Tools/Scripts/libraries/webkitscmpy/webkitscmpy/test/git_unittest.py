@@ -317,7 +317,7 @@ class TestGit(testing.PathTestCase):
         with mocks.local.Git(self.path, git_svn=True):
             self.assertEqual(
                 run([
-                    local.Git.executable(), 'log', '--format=fuller', 'remotes/origin/main...1abe25b4',
+                    local.Git.executable(), 'log', '--format=fuller', '--no-decorate', 'remotes/origin/main...1abe25b4',
                 ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
                 '''commit d8bce26fa65c6fc8f39c17927abb77f69fab82fc
 Author:     Jonathan Bedard <jbedard@apple.com>
@@ -345,7 +345,7 @@ CommitDate: {time_a}
         with mocks.local.Git(self.path, git_svn=True):
             self.assertEqual(
                 run([
-                    local.Git.executable(), 'log', '--format=fuller', 'branch-b...main',
+                    local.Git.executable(), 'log', '--format=fuller', '--no-decorate', 'branch-b...main',
                 ], cwd=self.path, capture_output=True, encoding='utf-8').stdout,
                 '''commit 790725a6d79e28db2ecdde29548d2262c0bd059d
 Author:     Jonathan Bedard <jbedard@apple.com>
