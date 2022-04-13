@@ -1,3 +1,12 @@
+2022-04-12  Elliott Williams  <emw@apple.com>
+
+        [Xcode] In open-source builds, disable bitcode in xcconfigs instead of build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=239262
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+
 2022-04-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt "version set"-based linked-on-or-after checks instead of platform-specific ones

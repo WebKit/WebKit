@@ -1062,7 +1062,6 @@ sub XcodeOptions
     die "Cannot enable both (ASAN or TSAN) and Coverage at this time\n" if $coverageIsEnabled && ($asanIsEnabled || $tsanIsEnabled);
 
     if (willUseIOSDeviceSDK() || willUseWatchDeviceSDK() || willUseAppleTVDeviceSDK()) {
-        push @options, "ENABLE_BITCODE=NO";
         if (hasIOSDevelopmentCertificate()) {
             # FIXME: May match more than one installed development certificate.
             push @options, "CODE_SIGN_IDENTITY=" . IOS_DEVELOPMENT_CERTIFICATE_NAME_PREFIX;
