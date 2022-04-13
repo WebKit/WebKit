@@ -3052,8 +3052,22 @@ if test "x$1" != "x--"; then
 fi
 shift
 EOF
+        extraOptions = [
+            # Many of our jobs are short, ensure GNU parallel won't need to set
+            # up an ssh connection from scratch.
+            "ControlPath=./%C",
+            "ControlMaster=auto",
+            "ControlPersist=10m",
+            # Treat remote boards as volatile. Don't check the host keys, don't
+            # save them locally.
+            "StrictHostKeyChecking=no",
+            "UserKnownHostsFile=/dev/null"
+        ].collect { |opt|
+            ["-o", opt]
+        }.flatten
+        sshOptions = (SSH_OPTIONS_DEFAULT + extraOptions).join(" ")
         wrapper.puts(head +
-                     "echo \"$@\" | ssh -o ControlPath=./%C -o ControlMaster=auto -o ControlPersist=10m -o NoHostAuthenticationForLocalhost=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p \"$remoteport\" -l \"$remoteuser\" -o RemoteCommand=\"if test -d '$remotedir'; then cd '$remotedir'; else echo '#{PARALLEL_REMOTE_WRAPPER_MARK_BEGIN}${remotehost}#{PARALLEL_REMOTE_WRAPPER_MARK_END}'; false; fi && sh -s\" \"$remotehost\""
+                     "echo \"$@\" | ssh #{sshOptions} -p \"$remoteport\" -l \"$remoteuser\" -o RemoteCommand=\"if test -d '$remotedir'; then cd '$remotedir'; else echo '#{PARALLEL_REMOTE_WRAPPER_MARK_BEGIN}${remotehost}#{PARALLEL_REMOTE_WRAPPER_MARK_END}'; false; fi && sh -s\" \"$remotehost\""
         )
         FileUtils.chmod("ugo=rx", wrapper.path)
         wrapper.close # Avoid ETXTBUSY

@@ -1,3 +1,24 @@
+2022-04-13  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [run-jsc-stress-tests] Use ServerAliveInterval in GNU parallel
+        https://bugs.webkit.org/show_bug.cgi?id=239283
+
+        Reviewed by Adrian Perez de Castro.
+
+        run-jsc-stress-tests occasionally dies e.g. in
+        https://build.webkit.org/#/builders/31/builds/3262/steps/8/logs/stdio
+        because the remote commands don't produce any output for a full hour.
+
+        This seems like an issue with hung ssh connections (possibly because of
+        all the remotes rebooting at the same time), so use ServerAliveInterval
+        to detect that.
+
+        Reuse SSH_OPTIONS_DEFAULT to pick up the ServerAliveInterval. While
+        here, move the extra ssh options outside the command string and
+        document them properly.
+
+        * Scripts/run-jsc-stress-tests:
+
 2022-04-12  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Do not duplicate reviewer names
