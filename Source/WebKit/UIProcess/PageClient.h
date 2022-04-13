@@ -480,10 +480,10 @@ public:
     virtual void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel) = 0;
     virtual double minimumZoomScale() const = 0;
     virtual WebCore::FloatRect documentRect() const = 0;
-    virtual void scrollingNodeScrollViewWillStartPanGesture() = 0;
-    virtual void scrollingNodeScrollViewDidScroll() = 0;
-    virtual void scrollingNodeScrollWillStartScroll() = 0;
-    virtual void scrollingNodeScrollDidEndScroll() = 0;
+    virtual void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) = 0;
+    virtual void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) = 0;
+    virtual void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) = 0;
+    virtual void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
 
     virtual void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&) = 0;

@@ -2286,12 +2286,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     [self _cancelInteraction];
 }
 
-- (void)_scrollingNodeScrollingWillBegin
+- (void)_scrollingNodeScrollingWillBegin:(WebCore::ScrollingNodeID)scrollingNodeID
 {
     [_textInteractionAssistant willStartScrollingOverflow];
 }
 
-- (void)_scrollingNodeScrollingDidEnd
+- (void)_scrollingNodeScrollingDidEnd:(WebCore::ScrollingNodeID)scrollingNodeID
 {
     // If scrolling ends before we've received a selection update,
     // we postpone showing the selection until the update is received.
@@ -2301,6 +2301,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     }
     [self _updateChangedSelection];
     [_textInteractionAssistant didEndScrollingOverflow];
+
+    UIScrollView *targetScrollView = nil;
+    if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
+        targetScrollView = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID);
+
+    [_webView _didFinishScrolling:targetScrollView];
 }
 
 - (BOOL)shouldShowAutomaticKeyboardUI
@@ -6340,7 +6346,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)keyboardScrollViewAnimatorDidFinishScrolling:(WKKeyboardScrollViewAnimator *)animator
 {
-    [_webView _didFinishScrolling];
+    [_webView _didFinishScrolling:self.webView.scrollView];
 }
 
 - (void)executeEditCommandWithCallback:(NSString *)commandName

@@ -1,3 +1,17 @@
+2022-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [css-scroll-snap] scrollIntoView fails with scroll-snap-type on :root
+        https://bugs.webkit.org/show_bug.cgi?id=239063
+        <rdar://problem/91603363>
+
+        Reviewed by Dean Jackson.
+
+        _didFinishScrolling: now works for subscrollers too.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _didFinishScrolling:]):
+        (-[TestRunnerWKWebView _didFinishScrolling]): Deleted.
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace AtomString(const char*) with AtomString::fromLatin1(const char*)

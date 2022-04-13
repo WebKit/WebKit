@@ -2549,10 +2549,9 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
                 expandScrollRectToVisibleTargetRectToIncludeScrollPadding(renderer, viewRect, newRect);
 
                 LayoutRect exposeRect = getRectToExpose(viewRect, newRect, insideFixed, options.alignX, options.alignY);
-                IntPoint scrollPosition(roundedIntPoint(exposeRect.location()));
+                auto scrollPosition = roundedIntPoint(exposeRect.location());
 
-                // Adjust offsets if they're outside of the allowable range.
-                scrollPosition = scrollPosition.constrainedBetween(IntPoint(), IntPoint(frameView.contentsSize()));
+                scrollPosition = frameView.constrainedScrollPosition(scrollPosition);
 
                 // FIXME: Should we use contentDocument()->scrollingElement()?
                 // See https://bugs.webkit.org/show_bug.cgi?id=205059

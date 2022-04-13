@@ -44,7 +44,7 @@
 // FIXME: move these to WKWebView_Private.h
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
-- (void)_didFinishScrolling;
+- (void)_didFinishScrolling:(UIScrollView *)scrollView;
 - (void)_scheduleVisibleContentRectUpdate;
 
 @end
@@ -426,9 +426,9 @@ IGNORE_WARNINGS_END
     }
 }
 
-- (void)_didFinishScrolling
+- (void)_didFinishScrolling:(UIScrollView *)scrollView
 {
-    [super _didFinishScrolling];
+    [super _didFinishScrolling:scrollView];
 
     if (self.didEndScrollingCallback)
         self.didEndScrollingCallback();

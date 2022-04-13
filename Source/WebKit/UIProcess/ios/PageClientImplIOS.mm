@@ -760,24 +760,24 @@ void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& 
     [m_webView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];
 }
 
-void PageClientImpl::scrollingNodeScrollViewWillStartPanGesture()
+void PageClientImpl::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID)
 {
     [m_contentView scrollViewWillStartPanOrPinchGesture];
 }
 
-void PageClientImpl::scrollingNodeScrollViewDidScroll()
+void PageClientImpl::scrollingNodeScrollViewDidScroll(ScrollingNodeID)
 {
     [m_contentView _didScroll];
 }
 
-void PageClientImpl::scrollingNodeScrollWillStartScroll()
+void PageClientImpl::scrollingNodeScrollWillStartScroll(ScrollingNodeID nodeID)
 {
-    [m_contentView _scrollingNodeScrollingWillBegin];
+    [m_contentView _scrollingNodeScrollingWillBegin:nodeID];
 }
 
-void PageClientImpl::scrollingNodeScrollDidEndScroll()
+void PageClientImpl::scrollingNodeScrollDidEndScroll(ScrollingNodeID nodeID)
 {
-    [m_contentView _scrollingNodeScrollingDidEnd];
+    [m_contentView _scrollingNodeScrollingDidEnd:nodeID];
 }
 
 Vector<String> PageClientImpl::mimeTypesWithCustomContentProviders()

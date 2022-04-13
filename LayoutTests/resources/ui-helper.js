@@ -141,6 +141,19 @@ window.UIHelper = class UIHelper {
 
     static async waitForScrollCompletion()
     {
+        if (this.isIOSFamily()) {
+            await new Promise(resolve => {
+                testRunner.runUIScript(`
+                    (function() {
+                        uiController.didEndScrollingCallback = function() {
+                            uiController.uiScriptComplete();
+                        }
+                    })()`, resolve);
+            });
+            // Wait for the new scroll position to get back to the web process.
+            return UIHelper.renderingUpdate();
+        }
+
         return new Promise(resolve => {
             eventSender.callAfterScrollingCompletes(() => {
                 requestAnimationFrame(resolve);

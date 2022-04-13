@@ -1,3 +1,20 @@
+2022-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [css-scroll-snap] scrollIntoView fails with scroll-snap-type on :root
+        https://bugs.webkit.org/show_bug.cgi?id=239063
+        <rdar://problem/91603363>
+
+        Reviewed by Dean Jackson.
+
+        Make UIHelper.waitForScrollCompletion() work on iOS.
+
+        * fast/scrolling/ios/constrain-scrollintoview-position-expected.txt: Added.
+        * fast/scrolling/ios/constrain-scrollintoview-position.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.async waitForScrollCompletion.await.new.Promise.):
+        (window.UIHelper.async waitForScrollCompletion.await.new.Promise):
+        (window.UIHelper.async waitForScrollCompletion):
+
 2022-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove support for drawing cropped image overlays when hovering over "Copy Cropped Image"

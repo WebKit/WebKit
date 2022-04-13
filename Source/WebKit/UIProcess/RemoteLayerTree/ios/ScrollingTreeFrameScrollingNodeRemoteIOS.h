@@ -54,6 +54,9 @@ private:
     void repositionScrollingLayers() override;
     void repositionRelatedLayers() override;
 
+    bool startAnimatedScrollToPosition(WebCore::FloatPoint) final;
+    void stopAnimatedScroll() final;
+
     std::unique_ptr<ScrollingTreeScrollingNodeDelegateIOS> m_scrollingNodeDelegate;
 
     RetainPtr<CALayer> m_counterScrollingLayer;

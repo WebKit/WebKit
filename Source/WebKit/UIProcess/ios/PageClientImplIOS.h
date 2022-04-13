@@ -211,10 +211,10 @@ private:
     void enableInspectorNodeSearch() override;
     void disableInspectorNodeSearch() override;
 
-    void scrollingNodeScrollViewWillStartPanGesture() override;
-    void scrollingNodeScrollViewDidScroll() override;
-    void scrollingNodeScrollWillStartScroll() override;
-    void scrollingNodeScrollDidEndScroll() override;
+    void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) override;
+    void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) override;
+    void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) override;
+    void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) override;
         
     void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) override;
         

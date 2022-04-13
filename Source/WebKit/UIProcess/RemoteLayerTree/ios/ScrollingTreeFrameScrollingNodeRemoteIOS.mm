@@ -143,5 +143,26 @@ void ScrollingTreeFrameScrollingNodeRemoteIOS::repositionRelatedLayers()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+bool ScrollingTreeFrameScrollingNodeRemoteIOS::startAnimatedScrollToPosition(FloatPoint destinationPosition)
+{
+    // Main frame animated scrolls are handled via PageClientImpl::requestScroll().
+    if (!m_scrollingNodeDelegate)
+        return false;
+
+    bool started = m_scrollingNodeDelegate->startAnimatedScrollToPosition(destinationPosition);
+    if (started)
+        willStartAnimatedScroll();
+    return started;
+}
+
+void ScrollingTreeFrameScrollingNodeRemoteIOS::stopAnimatedScroll()
+{
+    // Main frame animated scrolls are handled via PageClientImpl::requestScroll().
+    if (!m_scrollingNodeDelegate)
+        return;
+
+    m_scrollingNodeDelegate->stopAnimatedScroll();
+}
+
 }
 #endif

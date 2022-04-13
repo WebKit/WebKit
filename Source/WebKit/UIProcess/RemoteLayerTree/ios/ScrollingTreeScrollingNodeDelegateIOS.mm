@@ -132,6 +132,11 @@
     }
 }
 
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    _scrollingTreeNodeDelegate->scrollDidEnd();
+}
+
 - (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
 {
     auto* panGestureRecognizer = scrollView.panGestureRecognizer;
@@ -331,6 +336,10 @@ void ScrollingTreeScrollingNodeDelegateIOS::handleAsynchronousCancelableScrollEv
 void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    if ([scrollView() _isAnimatingScroll])
+        return;
+
     [scrollView() setContentOffset:scrollingNode().currentScrollOffset()];
     END_BLOCK_OBJC_EXCEPTIONS
 }

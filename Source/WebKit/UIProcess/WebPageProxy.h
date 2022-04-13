@@ -844,10 +844,10 @@ public:
     WebCore::FloatRect unconstrainedLayoutViewportRect() const;
     void adjustLayersForLayoutViewport(const WebCore::FloatRect& layoutViewport);
 
-    void scrollingNodeScrollViewWillStartPanGesture();
-    void scrollingNodeScrollViewDidScroll();
-    void scrollingNodeScrollWillStartScroll();
-    void scrollingNodeScrollDidEndScroll();
+    void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID);
+    void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID);
+    void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID);
+    void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID);
 
     void dynamicViewportSizeUpdate(const WebCore::FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const WebCore::FloatRect& targetExposedContentRect, const WebCore::FloatRect& targetUnobscuredRect, const WebCore::FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID);
 

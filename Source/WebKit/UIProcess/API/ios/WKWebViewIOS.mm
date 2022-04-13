@@ -1676,8 +1676,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
 }
 
-- (void)_didFinishScrolling
+- (void)_didFinishScrolling:(UIScrollView *)scrollView
 {
+    if (scrollView != _scrollView.get())
+        return;
+
     if (![self usesStandardContentView])
         return;
 
@@ -1725,17 +1728,17 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     // If we're decelerating, scroll offset will be updated when scrollViewDidFinishDecelerating: is called.
     if (!decelerate)
-        [self _didFinishScrolling];
+        [self _didFinishScrolling:scrollView];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    [self _didFinishScrolling];
+    [self _didFinishScrolling:scrollView];
 }
 
 - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
 {
-    [self _didFinishScrolling];
+    [self _didFinishScrolling:scrollView];
 }
 
 - (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
@@ -1858,7 +1861,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    [self _didFinishScrolling];
+    [self _didFinishScrolling:scrollView];
 }
 
 - (void)_scrollViewDidInterruptDecelerating:(UIScrollView *)scrollView

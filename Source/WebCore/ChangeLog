@@ -1,3 +1,33 @@
+2022-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [css-scroll-snap] scrollIntoView fails with scroll-snap-type on :root
+        https://bugs.webkit.org/show_bug.cgi?id=239063
+        <rdar://problem/91603363>
+
+        Reviewed by Dean Jackson.
+
+        Programmatic smooth scrolls on iframe documents were broken because
+        ScrollingTreeFrameScrollingNodeRemoteIOS was overlooked when adding support (easily done
+        since the main frame's scrolling is controlled via the WKWebView; some unification here
+        would be beneficial). Implementing startAnimatedScrollToPosition() and stopAnimatedScroll()
+        on ScrollingTreeFrameScrollingNodeRemoteIOS fixes this.
+
+        However, this revealed an additional bug; RenderLayer::scrollRectToVisible() failed to clamp
+        the target scroll position correctly, and nothing in the iOS-smooth scrolling code path
+        clamped, so the scroll would go too far.
+
+        Testing required getting UIHelper.waitForScrollCompletion() to work. This is based on the
+        uiController.didEndScrollingCallback, but that was only hooked up for the main scroller. So
+        make it work for all scrollers by plumbing ScrollingNodeIDs through
+        scrollingNodeScrollViewDidScroll() and friends so that everything ends up in -[WKWebViewIOS
+        _didFinishScrolling:] with a UIScrollView argument; to avoid any behavior change, this bails
+        for non-main scroll views, but TestRunnerWKWebView overrides it to make testing work.
+
+        Test: fast/scrolling/ios/constrain-scrollintoview-position.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace AtomString(const char*) with AtomString::fromLatin1(const char*)

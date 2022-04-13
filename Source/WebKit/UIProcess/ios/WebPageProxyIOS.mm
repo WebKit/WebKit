@@ -245,24 +245,24 @@ void WebPageProxy::adjustLayersForLayoutViewport(const FloatRect& layoutViewport
     m_scrollingCoordinatorProxy->viewportChangedViaDelegatedScrolling(unobscuredContentRect().location(), layoutViewport, displayedContentScale());
 }
 
-void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture()
+void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID nodeID)
 {
-    pageClient().scrollingNodeScrollViewWillStartPanGesture();
+    pageClient().scrollingNodeScrollViewWillStartPanGesture(nodeID);
 }
 
-void WebPageProxy::scrollingNodeScrollViewDidScroll()
+void WebPageProxy::scrollingNodeScrollViewDidScroll(ScrollingNodeID nodeID)
 {
-    pageClient().scrollingNodeScrollViewDidScroll();
+    pageClient().scrollingNodeScrollViewDidScroll(nodeID);
 }
 
-void WebPageProxy::scrollingNodeScrollWillStartScroll()
+void WebPageProxy::scrollingNodeScrollWillStartScroll(ScrollingNodeID nodeID)
 {
-    pageClient().scrollingNodeScrollWillStartScroll();
+    pageClient().scrollingNodeScrollWillStartScroll(nodeID);
 }
 
-void WebPageProxy::scrollingNodeScrollDidEndScroll()
+void WebPageProxy::scrollingNodeScrollDidEndScroll(ScrollingNodeID nodeID)
 {
-    pageClient().scrollingNodeScrollDidEndScroll();
+    pageClient().scrollingNodeScrollDidEndScroll(nodeID);
 }
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
