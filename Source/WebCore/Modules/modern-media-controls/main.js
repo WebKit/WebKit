@@ -23,7 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const SkipSeconds = 15;
 const MinimumSizeToShowAnyControl = 47;
 const MaximumSizeToShowSmallProminentControl = 88;
 

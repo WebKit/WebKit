@@ -71,6 +71,11 @@ class LayoutTraits
         throw "Derived class must implement this function.";
     }
 
+    skipDuration()
+    {
+        throw "Derived class must implement this function.";
+    }
+
     controlsDependOnPageScaleFactor()
     {
         throw "Derived class must implement this function.";

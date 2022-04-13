@@ -41,7 +41,7 @@ class SkipForwardSupport extends MediaControllerSupport
     buttonWasPressed(control)
     {
         const media = this.mediaController.media;
-        media.currentTime = Math.min(media.currentTime + SkipSeconds, media.seekable.end(0));
+        media.currentTime = Math.min(media.currentTime + this.mediaController.layoutTraits.skipDuration(), media.seekable.end(0));
     }
 
     syncControl()

@@ -30,9 +30,10 @@ class SkipBackButton extends Button
     {
         super({
             cssClassName: "skip-back",
-            iconName: Icons.SkipBack,
             layoutDelegate
         });
+
+        this.iconName = Icons["SkipBack" + this.layoutTraits.skipDuration()];
     }
 
 }

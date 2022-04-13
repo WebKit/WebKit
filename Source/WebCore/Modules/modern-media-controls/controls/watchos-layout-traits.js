@@ -65,6 +65,11 @@ class WatchOSLayoutTraits extends LayoutTraits
         return false;
     }
 
+    skipDuration()
+    {
+        return 15;
+    }
+
     promoteSubMenusWhenShowingMediaControlsContextMenu()
     {
         return false;
