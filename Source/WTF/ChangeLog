@@ -1,3 +1,12 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused AtomString(const LChar*) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=239274
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/AtomString.h:
+
 2022-04-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         MSE video is not drawn onto canvas

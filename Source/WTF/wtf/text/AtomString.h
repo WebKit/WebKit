@@ -38,7 +38,6 @@ public:
     WTF_EXPORT_PRIVATE static void init();
 
     AtomString();
-    AtomString(const LChar*);
     AtomString(const LChar*, unsigned length);
     AtomString(const UChar*, unsigned length);
     AtomString(const UChar*);
@@ -208,11 +207,6 @@ bool equalIgnoringASCIICase(const AtomString&, const char*);
 template<unsigned length> bool equalLettersIgnoringASCIICase(const AtomString&, const char (&lowercaseLetters)[length]);
 
 inline AtomString::AtomString()
-{
-}
-
-inline AtomString::AtomString(const LChar* string)
-    : m_string(AtomStringImpl::add(string))
 {
 }
 
