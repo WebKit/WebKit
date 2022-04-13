@@ -66,7 +66,7 @@ Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)
         return adoptRef(*new DebuggerCallFrame(vm, callFrame, emptyFrame));
     }
 
-    if (callFrame->isDeprecatedCallFrameForDebugger()) {
+    if (callFrame->isEmptyTopLevelCallFrameForDebugger()) {
         ShadowChicken::Frame emptyFrame;
         RELEASE_ASSERT(!emptyFrame.isTailDeleted);
         return adoptRef(*new DebuggerCallFrame(vm, callFrame, emptyFrame));
@@ -320,6 +320,8 @@ TextPosition DebuggerCallFrame::currentPosition(VM& vm)
 TextPosition DebuggerCallFrame::positionForCallFrame(VM& vm, CallFrame* callFrame)
 {
     LineAndColumnFunctor functor;
+    if (!callFrame)
+        return TextPosition(OrdinalNumber::fromOneBasedInt(0), OrdinalNumber::fromOneBasedInt(0));
     StackVisitor::visit(callFrame, vm, functor);
     return TextPosition(OrdinalNumber::fromOneBasedInt(functor.line()), OrdinalNumber::fromOneBasedInt(functor.column()));
 }

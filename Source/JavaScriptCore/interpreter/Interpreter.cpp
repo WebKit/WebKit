@@ -770,7 +770,8 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* gl
         // https://bugs.webkit.org/show_bug.cgi?id=121754
 
         GetCatchHandlerFunctor functor;
-        StackVisitor::visit(callFrame, vm, functor);
+        if (callFrame)
+            StackVisitor::visit(callFrame, vm, functor);
         HandlerInfo* handler = functor.handler();
         ASSERT(!handler || handler->isCatchHandler());
         bool hasCatchHandler = !!handler;

@@ -1,3 +1,37 @@
+2022-04-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove DeprecatedCallFrameForDebugger
+        https://bugs.webkit.org/show_bug.cgi?id=239045
+
+        Reviewed by Devin Rousso.
+
+        We should not enlarge sizeof(JSGlobalObject) by having DeprecatedCallFrameForDebugger which is only used for Debugger, and it is used
+        only when we have an error when evaluating top-level SyntaxError. This patch removes it: we introduce EmptyTopLevelCallFrameForDebugger
+        which can be constructed on stack and we use it instead of DeprecatedCallFrameForDebugger.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::updateCallFrame):
+        (JSC::EmptyTopLevelCallFrameForDebugger::EmptyTopLevelCallFrameForDebugger):
+        (JSC::EmptyTopLevelCallFrameForDebugger::asCallFrame):
+        (JSC::Debugger::exception):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::create):
+        (JSC::DebuggerCallFrame::positionForCallFrame):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::convertToStackOverflowFrame):
+        (JSC::CallFrame::initDeprecatedCallFrameForDebugger): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::CallFrame::isEmptyTopLevelCallFrameForDebugger const):
+        (JSC::CallFrame::isDeprecatedCallFrameForDebugger const): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::notifyDebuggerOfExceptionToBeThrown):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::deprecatedCallFrameForDebugger): Deleted.
+        * runtime/JSGlobalObject.h:
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace AtomString(const char*) with AtomString::fromLatin1(const char*)

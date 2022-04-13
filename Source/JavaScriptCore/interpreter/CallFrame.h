@@ -240,8 +240,6 @@ namespace JSC  {
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         inline void setScope(int scopeRegisterOffset, JSScope*);
 
-        static void initDeprecatedCallFrameForDebugger(CallFrame* globalExec, JSCallee* globalCallee);
-
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(VirtualRegister);
         // Read a register for a known non-constant
@@ -301,7 +299,8 @@ namespace JSC  {
         static int offsetFor(size_t argumentCountIncludingThis) { return CallFrameSlot::thisArgument + argumentCountIncludingThis - 1; }
 
         static CallFrame* noCaller() { return nullptr; }
-        bool isDeprecatedCallFrameForDebugger() const
+
+        bool isEmptyTopLevelCallFrameForDebugger() const
         {
             return callerFrameAndPC().callerFrame == noCaller() && callerFrameAndPC().returnPC == nullptr;
         }

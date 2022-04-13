@@ -1035,6 +1035,26 @@ JSC::JSValue Debugger::exceptionOrCaughtValue(JSC::JSGlobalObject* globalObject)
     return { };
 }
 
+class EmptyTopLevelCallFrameForDebugger {
+public:
+    EmptyTopLevelCallFrameForDebugger(JSGlobalObject* globalObject)
+    {
+        CallFrame* callFrame = asCallFrame();
+        callFrame->setCodeBlock(nullptr);
+        callFrame->setCallerFrame(CallFrame::noCaller());
+        callFrame->setReturnPC(nullptr);
+        callFrame->setArgumentCountIncludingThis(1);
+        callFrame->setThisValue(globalObject->globalThis());
+        callFrame->setCallee(globalObject->globalCallee());
+        ASSERT(callFrame->isEmptyTopLevelCallFrameForDebugger());
+    }
+
+    CallFrame* asCallFrame() { return CallFrame::create(m_values); }
+
+private:
+    Register m_values[CallFrame::headerSizeInRegisters + /* thisValue */ 1] { };
+};
+
 void Debugger::exception(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue exception, bool hasCatchHandler)
 {
     if (m_isPaused)
@@ -1056,11 +1076,21 @@ void Debugger::exception(JSGlobalObject* globalObject, CallFrame* callFrame, JSV
         setSteppingMode(SteppingModeEnabled);
     }
 
+    // When callFrame is nullptr, we are throwing an error without JS call frames.
+    // This can happen when program throws SyntaxError without evaluation.
+    EmptyTopLevelCallFrameForDebugger emptyCallFrame(globalObject);
+    bool callFrameWasNull = !callFrame;
+    if (callFrameWasNull)
+        callFrame = emptyCallFrame.asCallFrame();
+
     m_hasHandlerForExceptionCallback = true;
     m_currentException = exception;
     updateCallFrame(globalObject, callFrame, AttemptPause);
     m_currentException = JSValue();
     m_hasHandlerForExceptionCallback = false;
+
+    if (callFrameWasNull)
+        m_currentCallFrame = nullptr;
 }
 
 void Debugger::atStatement(CallFrame* callFrame)

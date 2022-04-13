@@ -743,8 +743,6 @@ void JSGlobalObject::init(VM& vm)
     JSCallee* globalCallee = JSCallee::create(vm, this, globalScope());
     m_globalCallee.set(vm, this, globalCallee);
 
-    CallFrame::initDeprecatedCallFrameForDebugger(JSGlobalObject::deprecatedCallFrameForDebugger(), globalCallee);
-
     JSCallee* stackOverflowFrameCallee = JSCallee::create(vm, this, globalScope());
     m_stackOverflowFrameCallee.set(vm, this, stackOverflowFrameCallee);
 
@@ -2357,11 +2355,6 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 }
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSGlobalObject);
-
-CallFrame* JSGlobalObject::deprecatedCallFrameForDebugger()
-{
-    return CallFrame::create(m_deprecatedCallFrameForDebugger);
-}
 
 SUPPRESS_ASAN void JSGlobalObject::exposeDollarVM(VM& vm)
 {
