@@ -1,5 +1,11 @@
 2022-04-13  Diego Pino Garcia  <dpino@igalia.com>
 
+        [JHBuild] Unreviewed, replace 'false' for 'disabled' in glib mesonargs
+
+        * gtk/jhbuild.modules:
+
+2022-04-13  Diego Pino Garcia  <dpino@igalia.com>
+
         [JHBuild] Unreviewed, fix 'glib-networking' module path in WPE and GTK general modules
 
         * gtk/jhbuild.modules:

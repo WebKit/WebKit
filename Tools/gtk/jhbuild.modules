@@ -228,7 +228,7 @@
   </autotools>
 
   <meson id="glib"
-         mesonargs="-Dlibmount=false -Dselinux=false">
+         mesonargs="-Dlibmount=disabled -Dselinux=disabled">
     <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
             repo="download.gnome.org"
             hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
