@@ -204,7 +204,7 @@ void JSLock::willReleaseLock()
 #if PLATFORM(COCOA)
         static std::once_flag once;
         std::call_once(once, [] {
-            useLegacyDrain = !linkedOnOrAfter(SDKVersion::FirstThatDoesNotDrainTheMicrotaskQueueWhenCallingObjC);
+            useLegacyDrain = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotDrainTheMicrotaskQueueWhenCallingObjC);
         });
 #endif
 

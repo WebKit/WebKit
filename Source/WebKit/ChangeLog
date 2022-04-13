@@ -1,3 +1,89 @@
+2022-04-12  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt "version set"-based linked-on-or-after checks instead of platform-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=239054
+        <rdar://problem/83436715>
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/AuxiliaryProcess.h:
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::platformInitialize):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors):
+        (WebKit::XPCServiceInitializerDelegate::getClientSDKVersion): Deleted.
+        (WebKit::XPCServiceInitializerDelegate::getLinkedOnOrAfterOverride): Deleted.
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        Instead of transmitting the SDK version and override state in the bootstrap
+        message, just send the computed set of behaviors.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID):
+        * Shared/Cocoa/CompletionHandlerCallChecker.mm:
+        (WebKit::shouldThrowExceptionForDuplicateCompletionHandlerCall):
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::determineITPState):
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        (WebKit::InitializeWebKit2):
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultPassiveTouchListenersAsDefaultOnDocument):
+        (WebKit::defaultCSSOMViewScrollingAPIEnabled):
+        (WebKit::defaultPassiveWheelListenersAsDefaultOnDocument):
+        (WebKit::defaultWheelEventGesturesBecomeNonBlocking):
+        (WebKit::defaultOfflineWebApplicationCacheEnabled):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageReload):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _setLinkedOnOrBeforeEverythingForTesting]):
+        (+[WKProcessPool _setLinkedOnOrAfterEverything]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldAllowPictureInPictureMediaPlayback):
+        (shouldAllowSettingAnyXHRHeaderFromFileURLs):
+        (shouldRequireUserGestureToLoadVideo):
+        (shouldRestrictBaseURLSchemes):
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setupPageConfiguration:]):
+        (-[WKWebView reload]):
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (defaultShouldDecidePolicyBeforeLoadingQuickLookPreview):
+        (-[WKWebViewConfiguration init]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore init]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _computedObscuredInset]):
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _web_dragDestinationActionForDraggingInfo:]):
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController inspectorWKWebViewReload:]):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        (WebKit::WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::isMainThreadOrCheckDisabled):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shouldUseContextMenus]):
+        (applicationIsKnownToIgnoreMouseEvents):
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _systemContentInset]):
+        * UIProcess/ios/WKStylusDeviceObserver.mm:
+        (-[WKStylusDeviceObserver start]):
+        (-[WKStylusDeviceObserver stop]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::desktopClassBrowsingRecommended):
+        Adopt the new naming.
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         Reland "[XCBuild] Enable dependency validation by default"

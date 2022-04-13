@@ -100,7 +100,7 @@ static ALWAYS_INLINE bool allowsLegacyExpandoIndexedProperties()
 #if PLATFORM(COCOA)
     // Given that WindowProxy is the default |this| value for sloppy mode functions, it's hard to prove
     // that older iOS and macOS apps don't accidentally depend on this behavior, so we keep it for them.
-    static bool requiresQuirk = !linkedOnOrAfter(SDKVersion::FirstWithoutExpandoIndexedPropertiesOnWindow);
+    static bool requiresQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoExpandoIndexedPropertiesOnWindow);
     return requiresQuirk;
 #else
     return false;

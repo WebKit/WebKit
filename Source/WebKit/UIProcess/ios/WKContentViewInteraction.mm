@@ -8127,7 +8127,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         return NO;
 #endif
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
-    return linkedOnOrAfter(SDKVersion::FirstThatHasUIContextMenuInteraction);
+    return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HasUIContextMenuInteraction);
 #endif
     return NO;
 }
@@ -9883,7 +9883,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return YES;
     }
 
-    if (!linkedOnOrAfter(SDKVersion::FirstVersionWithiOSAppsOnMacOS)) {
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsiOSAppsOnMacOS)) {
         if (WebCore::IOSApplication::isFIFACompanion() // <rdar://problem/67093487>
             || WebCore::IOSApplication::isNoggin() // <rdar://problem/64830335>
             || WebCore::IOSApplication::isOKCupid() // <rdar://problem/65698496>
@@ -9895,7 +9895,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         }
     }
 
-    if (!linkedOnOrAfter(SDKVersion::FirstThatSendsNativeMouseEvents)) {
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SendsNativeMouseEvents)) {
         if (WebCore::IOSApplication::isPocketCity() // <rdar://problem/62273077>
             || WebCore::IOSApplication::isEssentialSkeleton() // <rdar://problem/62694519>
             || WebCore::IOSApplication::isESPNFantasySports() // <rdar://problem/64671543>

@@ -113,7 +113,7 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     // https://url.spec.whatwg.org/#origin with some additions
     if (url.hasSpecialScheme()
 #if PLATFORM(COCOA)
-        || !linkedOnOrAfter(SDKVersion::FirstWithNullOriginForNonSpecialSchemedURLs)
+        || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NullOriginForNonSpecialSchemedURLs)
         || url.protocolIs("applewebdata")
         || url.protocolIs("x-apple-ql-id")
         || url.protocolIs("x-apple-ql-id2")

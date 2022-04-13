@@ -56,7 +56,7 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
 bool canMinimizeLanguages()
 {
     static const bool result = []() -> bool {
-        return linkedOnOrAfter(SDKVersion::FirstThatMinimizesLanguages) && [NSLocale respondsToSelector:@selector(minimizedLanguagesFromLanguages:)];
+        return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MinimizesLanguages) && [NSLocale respondsToSelector:@selector(minimizedLanguagesFromLanguages:)];
     }();
     return result;
 }

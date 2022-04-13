@@ -27,50 +27,196 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #include <wtf/NeverDestroyed.h>
+#include <wtf/spi/darwin/dyldSPI.h>
 
 namespace WTF {
 
-static std::optional<uint32_t>& applicationSDKVersionOverride()
+static bool linkedBefore(dyld_build_version_t version, uint32_t fallbackIOSVersion, uint32_t fallbackMacOSVersion)
 {
-    static std::optional<uint32_t> version;
-    return version;
+#if USE(APPLE_INTERNAL_SDK)
+    // dyld_build_version_t values cannot be forward declared, so we fall back to
+    // traditional SDK version checks when building against an SDK that
+    // does not have dyld_priv.h, or does not define a given version set.
+    if (version.platform || version.version)
+        return !dyld_program_sdk_at_least(version);
+#else
+    UNUSED_PARAM(version);
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(fallbackMacOSVersion);
+    return dyld_get_program_sdk_version() < fallbackIOSVersion;
+#else
+    UNUSED_PARAM(fallbackIOSVersion);
+    return dyld_get_program_sdk_version() < fallbackMacOSVersion;
+#endif
 }
 
-void setApplicationSDKVersion(uint32_t version)
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RuntimeApplicationChecksCocoaAdditions.cpp>)
+#import <WebKitAdditions/RuntimeApplicationChecksCocoaAdditions.cpp>
+#else
+static void disableAdditionalSDKAlignedBehaviors(SDKAlignedBehaviors&)
 {
-    applicationSDKVersionOverride() = version;
+}
+#endif
+
+static SDKAlignedBehaviors computeSDKAlignedBehaviors()
+{
+    SDKAlignedBehaviors behaviors;
+    behaviors.setAll();
+
+    auto disableBehavior = [&] (SDKAlignedBehavior behavior) {
+        behaviors.clear(static_cast<size_t>(behavior));
+    };
+
+    if (linkedBefore(dyld_fall_2015_os_versions, DYLD_IOS_VERSION_9_0, DYLD_MACOSX_VERSION_10_11))
+        disableBehavior(SDKAlignedBehavior::PictureInPictureMediaPlayback);
+
+    if (linkedBefore(dyld_fall_2016_os_versions, DYLD_IOS_VERSION_10_0, DYLD_MACOSX_VERSION_10_12)) {
+        disableBehavior(SDKAlignedBehavior::MediaTypesRequiringUserActionForPlayback);
+        disableBehavior(SDKAlignedBehavior::RequiresUserGestureToLoadVideo);
+        disableBehavior(SDKAlignedBehavior::LinkPreviewEnabledByDefault);
+        disableBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToBlank);
+        disableBehavior(SDKAlignedBehavior::NoTheSecretSocietyHiddenMysteryWindowOpenQuirk);
+        disableBehavior(SDKAlignedBehavior::UnprefixedPlaysInlineAttribute);
+    }
+
+#if PLATFORM(IOS_FAMILY)
+    if (linkedBefore(dyld_fall_2016_os_versions, DYLD_IOS_VERSION_10_0, DYLD_MACOSX_VERSION_10_10))
+        disableBehavior(SDKAlignedBehavior::SupportsInitConstructors);
+#else
+    if (linkedBefore(dyld_fall_2014_os_versions, DYLD_IOS_VERSION_10_0, DYLD_MACOSX_VERSION_10_10))
+        disableBehavior(SDKAlignedBehavior::SupportsInitConstructors);
+#endif
+
+    if (linkedBefore(dyld_fall_2017_os_versions, DYLD_IOS_VERSION_11_0, DYLD_MACOSX_VERSION_10_13)) {
+        disableBehavior(SDKAlignedBehavior::ExceptionsForDuplicateCompletionHandlerCalls);
+        disableBehavior(SDKAlignedBehavior::ExpiredOnlyReloadBehavior);
+        disableBehavior(SDKAlignedBehavior::DropToNavigateDisallowedByDefault);
+        disableBehavior(SDKAlignedBehavior::WebIconDatabaseWarning);
+    }
+
+    if (linkedBefore(dyld_spring_2018_os_versions, DYLD_IOS_VERSION_11_3, DYLD_MACOSX_VERSION_10_13_4)) {
+        disableBehavior(SDKAlignedBehavior::DisallowsSettingAnyXHRHeaderFromFileURLs);
+        disableBehavior(SDKAlignedBehavior::DefaultsToPassiveTouchListenersOnDocument);
+    }
+
+    if (linkedBefore(dyld_fall_2018_os_versions, DYLD_IOS_VERSION_12_0, DYLD_MACOSX_VERSION_10_14)) {
+        disableBehavior(SDKAlignedBehavior::ScrollViewContentInsetsAreNotObscuringInsets);
+        disableBehavior(SDKAlignedBehavior::UIScrollViewDoesNotApplyKeyboardInsetsUnconditionally);
+        disableBehavior(SDKAlignedBehavior::MainThreadReleaseAssertionInWebPageProxy);
+        disableBehavior(SDKAlignedBehavior::NoMoviStarPlusCORSPreflightQuirk);
+        disableBehavior(SDKAlignedBehavior::TimerThreadSafetyChecks);
+    }
+
+    if (linkedBefore(dyld_spring_2019_os_versions, DYLD_IOS_VERSION_12_2, DYLD_MACOSX_VERSION_10_14_4)) {
+        disableBehavior(SDKAlignedBehavior::LazyGestureRecognizerInstallation);
+        disableBehavior(SDKAlignedBehavior::ProcessSwapOnCrossSiteNavigation);
+    }
+
+    if (linkedBefore(dyld_fall_2019_os_versions, DYLD_IOS_VERSION_13_0, DYLD_MACOSX_VERSION_10_15)) {
+        disableBehavior(SDKAlignedBehavior::NoUnconditionalUniversalSandboxExtension);
+        disableBehavior(SDKAlignedBehavior::SnapshotAfterScreenUpdates);
+        disableBehavior(SDKAlignedBehavior::SupportsDeviceOrientationAndMotionPermissionAPI);
+        disableBehavior(SDKAlignedBehavior::DecidesPolicyBeforeLoadingQuickLookPreview);
+        disableBehavior(SDKAlignedBehavior::ExceptionsForRelatedWebViewsUsingDifferentDataStores);
+        disableBehavior(SDKAlignedBehavior::ModernCompabilityModeByDefault);
+        disableBehavior(SDKAlignedBehavior::HasUIContextMenuInteraction);
+        disableBehavior(SDKAlignedBehavior::WKContentViewDoesNotOverrideKeyCommands);
+        disableBehavior(SDKAlignedBehavior::SupportsOverflowHiddenOnMainFrame);
+        disableBehavior(SDKAlignedBehavior::NoIMDbCSSOMViewScrollingQuirk);
+        disableBehavior(SDKAlignedBehavior::DownloadDelegatesCalledOnTheMainThread);
+    }
+
+    if (linkedBefore(dyld_late_fall_2019_os_versions, DYLD_IOS_VERSION_13_2, DYLD_MACOSX_VERSION_10_15_1))
+        disableBehavior(SDKAlignedBehavior::SiteSpecificQuirksAreEnabledByDefault);
+
+    if (linkedBefore(dyld_spring_2020_os_versions, DYLD_IOS_VERSION_13_4, DYLD_MACOSX_VERSION_10_15_4)) {
+        disableBehavior(SDKAlignedBehavior::RestrictsBaseURLSchemes);
+        disableBehavior(SDKAlignedBehavior::SendsNativeMouseEvents);
+        disableBehavior(SDKAlignedBehavior::MinimizesLanguages);
+    }
+
+    if (linkedBefore(dyld_fall_2020_os_versions, DYLD_IOS_VERSION_14_0, DYLD_MACOSX_VERSION_10_16)) {
+        disableBehavior(SDKAlignedBehavior::SessionCleanupByDefault);
+        disableBehavior(SDKAlignedBehavior::InitializeWebKit2MainThreadAssertion);
+        disableBehavior(SDKAlignedBehavior::WKWebsiteDataStoreInitReturningNil);
+        disableBehavior(SDKAlignedBehavior::WebSQLDisabledByDefaultInLegacyWebKit);
+        disableBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
+        disableBehavior(SDKAlignedBehavior::NoPokerBrosBuiltInTagQuirk);
+    }
+
+    if (linkedBefore(dyld_late_fall_2020_os_versions, DYLD_IOS_VERSION_14_2, DYLD_MACOSX_VERSION_10_16))
+        disableBehavior(SDKAlignedBehavior::SupportsiOSAppsOnMacOS);
+
+    if (linkedBefore(dyld_spring_2021_os_versions, DYLD_IOS_VERSION_14_5, DYLD_MACOSX_VERSION_11_3)) {
+        disableBehavior(SDKAlignedBehavior::DataURLFragmentRemoval);
+        disableBehavior(SDKAlignedBehavior::HTMLDocumentSupportedPropertyNames);
+        disableBehavior(SDKAlignedBehavior::ObservesClassProperty);
+        disableBehavior(SDKAlignedBehavior::NoWeChatScrollingQuirk);
+        disableBehavior(SDKAlignedBehavior::SharedNetworkProcess);
+        disableBehavior(SDKAlignedBehavior::BlanksViewOnJSPrompt);
+        disableBehavior(SDKAlignedBehavior::NoClientCertificateLookup);
+        disableBehavior(SDKAlignedBehavior::DefaultsToPassiveWheelListenersOnDocument);
+        disableBehavior(SDKAlignedBehavior::AllowsWheelEventGesturesToBecomeNonBlocking);
+    }
+
+    if (linkedBefore(dyld_fall_2021_os_versions, DYLD_IOS_VERSION_15_0, DYLD_MACOSX_VERSION_12_00)) {
+        disableBehavior(SDKAlignedBehavior::NullOriginForNonSpecialSchemedURLs);
+        disableBehavior(SDKAlignedBehavior::DOMWindowReuseRestriction);
+        disableBehavior(SDKAlignedBehavior::ApplicationCacheDisabledByDefault);
+        disableBehavior(SDKAlignedBehavior::NoExpandoIndexedPropertiesOnWindow);
+        disableBehavior(SDKAlignedBehavior::DoesNotDrainTheMicrotaskQueueWhenCallingObjC);
+    }
+
+    if (linkedBefore(dyld_spring_2022_os_versions, DYLD_IOS_VERSION_15_4, DYLD_MACOSX_VERSION_12_3))
+        disableBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects);
+
+    disableAdditionalSDKAlignedBehaviors(behaviors);
+
+    return behaviors;
 }
 
-uint32_t applicationSDKVersion()
+static std::optional<SDKAlignedBehaviors>& sdkAlignedBehaviorsValue()
 {
-    if (applicationSDKVersionOverride())
-        return *applicationSDKVersionOverride();
-    return dyld_get_program_sdk_version();
+    static NeverDestroyed<std::optional<SDKAlignedBehaviors>> behaviors;
+    return behaviors.get();
 }
 
-static std::optional<LinkedOnOrAfterOverride>& linkedOnOrAfterOverrideValue()
+const SDKAlignedBehaviors& sdkAlignedBehaviors()
 {
-    static std::optional<LinkedOnOrAfterOverride> linkedOnOrAfter;
-    return linkedOnOrAfter;
+    auto& behaviors = sdkAlignedBehaviorsValue();
+
+    if (!behaviors)
+        behaviors = computeSDKAlignedBehaviors();
+
+    return *behaviors;
 }
 
-void setLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride> linkedOnOrAfter)
+void setSDKAlignedBehaviors(SDKAlignedBehaviors behaviors)
 {
-    linkedOnOrAfterOverrideValue() = linkedOnOrAfter;
+    // FIXME: Ideally we would assert that `linkedOnOrAfterSDKWithBehavior` had not
+    // been called at this point (because its reply could have been inaccurate),
+    // but WebPreferences use in Safari (at least) currently prevents this hardening.
+
+    sdkAlignedBehaviorsValue() = behaviors;
 }
 
-std::optional<LinkedOnOrAfterOverride> linkedOnOrAfterOverride()
+void enableAllSDKAlignedBehaviors()
 {
-    return linkedOnOrAfterOverrideValue();
+    SDKAlignedBehaviors behaviors;
+    behaviors.setAll();
+    setSDKAlignedBehaviors(behaviors);
 }
 
-bool linkedOnOrAfter(SDKVersion sdkVersion)
+void disableAllSDKAlignedBehaviors()
 {
-    if (auto overrideValue = linkedOnOrAfterOverride())
-        return *overrideValue == LinkedOnOrAfterOverride::AfterEverything;
+    setSDKAlignedBehaviors({ });
+}
 
-    auto sdkVersionAsInteger = static_cast<uint32_t>(sdkVersion);
-    return sdkVersionAsInteger && applicationSDKVersion() >= sdkVersionAsInteger;
+bool linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior behavior)
+{
+    return sdkAlignedBehaviors().get(static_cast<size_t>(behavior));
 }
 
 }

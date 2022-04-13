@@ -201,7 +201,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
 #if PLATFORM(IOS_FAMILY)
-    bool needsPreflightQuirk = IOSApplication::isMoviStarPlus() && !linkedOnOrAfter(SDKVersion::FirstWithoutMoviStarPlusCORSPreflightQuirk) && (m_options.preflightPolicy == PreflightPolicy::Consider || m_options.preflightPolicy == PreflightPolicy::Force);
+    bool needsPreflightQuirk = IOSApplication::isMoviStarPlus() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoMoviStarPlusCORSPreflightQuirk) && (m_options.preflightPolicy == PreflightPolicy::Consider || m_options.preflightPolicy == PreflightPolicy::Force);
 #else
     bool needsPreflightQuirk = false;
 #endif

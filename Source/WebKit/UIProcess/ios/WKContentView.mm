@@ -200,7 +200,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [self addSubview:_fixedClippingView.get()];
     [_fixedClippingView addSubview:_rootContentView.get()];
 
-    if (!linkedOnOrAfter(SDKVersion::FirstWithLazyGestureRecognizerInstallation))
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LazyGestureRecognizerInstallation))
         [self setUpInteraction];
     [self setUserInteractionEnabled:YES];
 
@@ -224,7 +224,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_screenCapturedDidChange:) name:UIScreenCapturedDidChangeNotification object:[UIScreen mainScreen]];
 
-    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfter(SDKVersion::FirstWhereWKContentViewDoesNotOverrideKeyCommands))
+    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::WKContentViewDoesNotOverrideKeyCommands))
         class_addMethod(self.class, @selector(keyCommands), reinterpret_cast<IMP>(&keyCommandsPlaceholderHackForEvernote), method_getTypeEncoding(class_getInstanceMethod(self.class, @selector(keyCommands))));
 
     return self;

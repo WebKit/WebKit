@@ -250,9 +250,9 @@ private:
 static bool shouldSuppressThreadSafetyCheck()
 {
 #if PLATFORM(IOS_FAMILY)
-    return WebThreadIsEnabled() || !linkedOnOrAfter(SDKVersion::FirstWithTimerThreadSafetyChecks);
+    return WebThreadIsEnabled() || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::TimerThreadSafetyChecks);
 #elif PLATFORM(MAC)
-    return !isInWebProcess() && !linkedOnOrAfter(SDKVersion::FirstWithTimerThreadSafetyChecks);
+    return !isInWebProcess() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::TimerThreadSafetyChecks);
 #else
     return false;
 #endif

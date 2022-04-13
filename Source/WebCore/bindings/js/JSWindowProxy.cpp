@@ -112,7 +112,7 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
         window = JSDOMWindow::create(vm, &windowStructure, localWindow, this);
         bool linkedWithNewSDK = true;
 #if PLATFORM(COCOA)
-        linkedWithNewSDK = linkedOnOrAfter(SDKVersion::FirstWithDOMWindowReuseRestriction);
+        linkedWithNewSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DOMWindowReuseRestriction);
 #endif
         if (!localWindow.document()->haveInitializedSecurityOrigin() && linkedWithNewSDK)
             localWindow.setAsWrappedWithoutInitializedSecurityOrigin();

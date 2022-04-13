@@ -277,7 +277,7 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame() const
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isEventbrite() && !linkedOnOrAfter(SDKVersion::FirstThatSupportsOverflowHiddenOnMainFrame))
+    if (WebCore::IOSApplication::isEventbrite() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsOverflowHiddenOnMainFrame))
         return true;
 #endif
 

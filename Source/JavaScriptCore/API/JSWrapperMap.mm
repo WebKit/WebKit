@@ -705,7 +705,7 @@ bool supportsInitMethodConstructors()
         if (versionOfLinkTimeJavaScriptCore != -1)
             return versionOfLinkTimeJavaScriptCore >= firstJavaScriptCoreVersionWithInitConstructorSupport;
 
-        return linkedOnOrAfter(SDKVersion::FirstVersionThatSupportsInitConstructors);
+        return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsInitConstructors);
     }();
     return supportsInitMethodConstructors;
 #endif

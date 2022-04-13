@@ -216,7 +216,7 @@
 #if PLATFORM(MAC)
 - (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    if (!linkedOnOrAfter(SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DropToNavigateDisallowedByDefault))
         return WebDragDestinationActionAny;
 
     return WebDragDestinationActionAny & ~WebDragDestinationActionLoad;

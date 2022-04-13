@@ -216,7 +216,6 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", WebCore::applicationBundleIdentifier().utf8().data());
-    xpc_dictionary_set_string(bootstrapMessage.get(), "client-sdk-version", String::number(applicationSDKVersion()).utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "process-identifier", String::number(m_launchOptions.processIdentifier.toUInt64()).utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
@@ -227,8 +226,8 @@ void ProcessLauncher::launchProcess()
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);
     }
     
-    if (auto linkedOnOrAfterOverrideValue = linkedOnOrAfterOverride())
-        xpc_dictionary_set_bool(bootstrapMessage.get(), "client-linked-on-or-after-override", *linkedOnOrAfterOverrideValue == LinkedOnOrAfterOverride::AfterEverything);
+    auto sdkBehaviors = sdkAlignedBehaviors();
+    xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviors.storage(), sdkBehaviors.storageLengthInBytes());
 
     auto extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 

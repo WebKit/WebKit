@@ -82,20 +82,15 @@ bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBund
     return !clientBundleIdentifier.isEmpty();
 }
 
-bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersion)
+bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehaviors& behaviors)
 {
-    auto version = parseInteger<uint32_t>(xpc_dictionary_get_string(m_initializerMessage, "client-sdk-version"));
-    clientSDKVersion = version.value_or(0);
-    return version.has_value();
-}
+    size_t length = 0;
+    auto behaviorData = xpc_dictionary_get_data(m_initializerMessage, "client-sdk-aligned-behaviors", &length);
+    if (!length || !behaviorData)
+        return false;
+    RELEASE_ASSERT(length == behaviors.storageLengthInBytes());
+    memcpy(behaviors.storage(), behaviorData, length);
 
-bool XPCServiceInitializerDelegate::getLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride>& linkedOnOrAfterOverride)
-{
-    auto linkedOnOrAfterOverrideValue = xpc_dictionary_get_value(m_initializerMessage, "client-linked-on-or-after-override");
-    if (linkedOnOrAfterOverrideValue)
-        linkedOnOrAfterOverride = xpc_bool_get_value(linkedOnOrAfterOverrideValue) ? LinkedOnOrAfterOverride::AfterEverything : LinkedOnOrAfterOverride::BeforeEverything;
-    else
-        linkedOnOrAfterOverride = std::nullopt;
     return true;
 }
 

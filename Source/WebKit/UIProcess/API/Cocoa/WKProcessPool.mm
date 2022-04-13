@@ -498,8 +498,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 + (void)_setLinkedOnOrBeforeEverythingForTesting
 {
-    setApplicationSDKVersion(0);
-    setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::BeforeEverything);
+    disableAllSDKAlignedBehaviors();
 }
 
 + (void)_setLinkedOnOrAfterEverythingForTesting
@@ -509,8 +508,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 + (void)_setLinkedOnOrAfterEverything
 {
-    setApplicationSDKVersion(std::numeric_limits<uint32_t>::max());
-    setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::AfterEverything);
+    enableAllSDKAlignedBehaviors();
 }
 
 + (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled

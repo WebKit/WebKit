@@ -1391,7 +1391,7 @@ static RetainPtr<NSString> createOutlookQuirksUserScriptContents()
 #if PLATFORM(IOS)
 static bool needsLaBanquePostaleQuirks()
 {
-    static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && !linkedOnOrAfter(SDKVersion::FirstWithoutLaBanquePostaleQuirks);
+    static bool needsQuirks = WebCore::IOSApplication::isLaBanquePostale() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoLaBanquePostaleQuirks);
     return needsQuirks;
 }
 

@@ -368,7 +368,7 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
 #if PLATFORM(IOS)
 inline static bool isLinkedBeforeTypedArrayLengthQuirk()
 {
-    return !linkedOnOrAfter(SDKVersion::FirstWithoutTypedArrayAPIQuirk);
+    return !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoTypedArrayAPIQuirk);
 }
 #else
 inline static bool isLinkedBeforeTypedArrayLengthQuirk() { return false; }

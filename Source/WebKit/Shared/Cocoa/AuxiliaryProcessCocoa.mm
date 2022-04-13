@@ -77,8 +77,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 
     WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
-    setApplicationSDKVersion(parameters.clientSDKVersion);
-    setLinkedOnOrAfterOverride(parameters.clientLinkedOnOrAfterOverride);
+    setSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
 }
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)

@@ -54,13 +54,13 @@ bool defaultAllowsInlineMediaPlaybackAfterFullscreen()
 
 bool defaultAllowsPictureInPictureMediaPlayback()
 {
-    static bool shouldAllowPictureInPictureMediaPlayback = linkedOnOrAfter(SDKVersion::FirstWithPictureInPictureMediaPlayback);
+    static bool shouldAllowPictureInPictureMediaPlayback = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PictureInPictureMediaPlayback);
     return shouldAllowPictureInPictureMediaPlayback;
 }
 
 bool defaultJavaScriptCanOpenWindowsAutomatically()
 {
-    static bool shouldAllowWindowOpenWithoutUserGesture = WebCore::IOSApplication::isTheSecretSocietyHiddenMystery() && !linkedOnOrAfter(SDKVersion::FirstWithoutTheSecretSocietyHiddenMysteryWindowOpenQuirk);
+    static bool shouldAllowWindowOpenWithoutUserGesture = WebCore::IOSApplication::isTheSecretSocietyHiddenMystery() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoTheSecretSocietyHiddenMysteryWindowOpenQuirk);
     return shouldAllowWindowOpenWithoutUserGesture;
 }
 
@@ -71,20 +71,20 @@ bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute()
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
 {
-    static bool result = linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+    static bool result = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DefaultsToPassiveTouchListenersOnDocument);
     return result;
 }
 
 bool defaultRequiresUserGestureToLoadVideo()
 {
-    static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfter(SDKVersion::FirstThatRequiresUserGestureToLoadVideo);
+    static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RequiresUserGestureToLoadVideo);
     return shouldRequireUserGestureToLoadVideo;
 }
 
 bool defaultWebSQLEnabled()
 {
     // For backward compatibility, keep WebSQL working until apps are rebuilt with the iOS 14 SDK.
-    static bool webSQLEnabled = !linkedOnOrAfter(SDKVersion::FirstWithWebSQLDisabledByDefaultInLegacyWebKit);
+    static bool webSQLEnabled = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::WebSQLDisabledByDefaultInLegacyWebKit);
     return webSQLEnabled;
 }
 
@@ -179,7 +179,7 @@ bool defaultAttachmentElementEnabled()
 
 bool defaultShouldRestrictBaseURLSchemes()
 {
-    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(SDKVersion::FirstThatRestrictsBaseURLSchemes);
+    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RestrictsBaseURLSchemes);
     return shouldRestrictBaseURLSchemes;
 }
 
@@ -208,7 +208,7 @@ bool defaultAllowRunningOfInsecureContent()
 
 bool defaultShouldConvertInvalidURLsToBlank()
 {
-    static bool shouldConvertInvalidURLsToBlank = linkedOnOrAfter(SDKVersion::FirstThatConvertsInvalidURLsToBlank);
+    static bool shouldConvertInvalidURLsToBlank = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToBlank);
     return shouldConvertInvalidURLsToBlank;
 }
 
@@ -216,13 +216,13 @@ bool defaultShouldConvertInvalidURLsToBlank()
 
 bool defaultPassiveWheelListenersAsDefaultOnDocument()
 {
-    static bool result = linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveWheelListenersOnDocument);
+    static bool result = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DefaultsToPassiveWheelListenersOnDocument);
     return result;
 }
 
 bool defaultWheelEventGesturesBecomeNonBlocking()
 {
-    static bool result = linkedOnOrAfter(SDKVersion::FirstThatAllowsWheelEventGesturesToBecomeNonBlocking);
+    static bool result = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AllowsWheelEventGesturesToBecomeNonBlocking);
     return result;
 }
 

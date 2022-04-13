@@ -1092,7 +1092,7 @@ static NSURLSessionConfiguration *configurationForSessionID(PAL::SessionID sessi
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
 
 #if PLATFORM(MAC)
-    bool preventCFNetworkClientCertificateLookup = linkedOnOrAfter(SDKVersion::FirstWithoutClientCertificateLookup) || session.isEphemeral();
+    bool preventCFNetworkClientCertificateLookup = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoClientCertificateLookup) || session.isEphemeral();
 #else
     bool preventCFNetworkClientCertificateLookup = true;
 #endif

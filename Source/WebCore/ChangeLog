@@ -1,3 +1,35 @@
+2022-04-12  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt "version set"-based linked-on-or-after checks instead of platform-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=239054
+        <rdar://problem/83436715>
+
+        Reviewed by Wenson Hsieh.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::allowsLegacyExpandoIndexedProperties):
+        * bindings/js/JSWindowProxy.cpp:
+        (WebCore::JSWindowProxy::setWindow):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback const):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsWeChatScrollingQuirk const):
+        (WebCore::Quirks::shouldOmitHTMLDocumentSupportedPropertyNames):
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsUniqueOrigin):
+        * platform/Timer.cpp:
+        (WebCore::shouldSuppressThreadSafetyCheck):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::isDotPrefixedForbiddenFont):
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::shouldRemoveFragmentIdentifier):
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::setLinkedOnOrAfterEverythingForTesting):
+        Adopt the new naming.
+
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         Reland "[XCBuild] Enable dependency validation by default"

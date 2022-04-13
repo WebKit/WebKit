@@ -44,13 +44,13 @@ namespace WebKit {
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument()
 {
-    static bool result = linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+    static bool result = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DefaultsToPassiveTouchListenersOnDocument);
     return result;
 }
 
 bool defaultCSSOMViewScrollingAPIEnabled()
 {
-    static bool result = WebCore::IOSApplication::isIMDb() && !linkedOnOrAfter(SDKVersion::FirstWithoutIMDbCSSOMViewScrollingQuirk);
+    static bool result = WebCore::IOSApplication::isIMDb() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoIMDbCSSOMViewScrollingQuirk);
     return !result;
 }
 
@@ -67,13 +67,13 @@ bool defaultAlternateFormControlDesignEnabled()
 
 bool defaultPassiveWheelListenersAsDefaultOnDocument()
 {
-    static bool result = linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveWheelListenersOnDocument);
+    static bool result = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DefaultsToPassiveWheelListenersOnDocument);
     return result;
 }
 
 bool defaultWheelEventGesturesBecomeNonBlocking()
 {
-    static bool result = linkedOnOrAfter(SDKVersion::FirstThatAllowsWheelEventGesturesToBecomeNonBlocking);
+    static bool result = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AllowsWheelEventGesturesToBecomeNonBlocking);
     return result;
 }
 
@@ -111,7 +111,7 @@ bool defaultAppleMailPaginationQuirkEnabled()
 bool defaultOfflineWebApplicationCacheEnabled()
 {
 #if PLATFORM(COCOA)
-    static bool newSDK = linkedOnOrAfter(SDKVersion::FirstWithApplicationCacheDisabledByDefault);
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ApplicationCacheDisabledByDefault);
     return !newSDK;
 #else
     // FIXME: Other platforms should consider turning this off.

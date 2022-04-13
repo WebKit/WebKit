@@ -707,7 +707,7 @@ bool Quirks::needsFullscreenDisplayNoneQuirk() const
 bool Quirks::needsWeChatScrollingQuirk() const
 {
 #if PLATFORM(IOS)
-    return needsQuirks() && !linkedOnOrAfter(SDKVersion::FirstWithoutWeChatScrollingQuirk) && IOSApplication::isWechat();
+    return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoWeChatScrollingQuirk) && IOSApplication::isWechat();
 #else
     return false;
 #endif
@@ -716,7 +716,7 @@ bool Quirks::needsWeChatScrollingQuirk() const
 bool Quirks::shouldOmitHTMLDocumentSupportedPropertyNames()
 {
 #if PLATFORM(COCOA)
-    static bool shouldOmitHTMLDocumentSupportedPropertyNames = !linkedOnOrAfter(SDKVersion::FirstWithHTMLDocumentSupportedPropertyNames);
+    static bool shouldOmitHTMLDocumentSupportedPropertyNames = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HTMLDocumentSupportedPropertyNames);
     return shouldOmitHTMLDocumentSupportedPropertyNames;
 #else
     return false;

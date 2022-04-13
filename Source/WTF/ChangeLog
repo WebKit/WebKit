@@ -1,3 +1,59 @@
+2022-04-12  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt "version set"-based linked-on-or-after checks instead of platform-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=239054
+        <rdar://problem/83436715>
+
+        Reviewed by Wenson Hsieh.
+
+        Switch to `dyld_program_sdk_at_least`, which correctly handles SDK
+        checks for binaries built for one SDK running on another platform
+        (e.g. iOS apps running on macOS).
+
+        Because `dyld_program_sdk_at_least` is based off more than a simple
+        integer comparison like our old SDK check, we move it into the
+        application process, and just transmit the computed behaviors to
+        subprocesses.
+
+        Remove functions that expose/transmit platform-specific SDK versions,
+        so that usage isn't accidentally reintroduced.
+
+        Re-frame the naming of our linked-on-or-after checks as being about
+        specific behaviors instead of SDK versions.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::setAll):
+        Add `setAll`, which sets all the bits in the Bitmap, like FastBitVector has.
+        Expose the length of the data in bytes to make transmitting the Bitmap simple.
+
+        * wtf/cocoa/LanguageCocoa.mm:
+        (WTF::canMinimizeLanguages):
+        Adopt the new naming.
+
+        * wtf/spi/darwin/dyldSPI.h:
+        Because of the nature of dyld_build_version_t values, we can't forward
+        declare them. Thus, maintain a fallback to the legacy platform-specific
+        SDK checks for use when building against the internal SDK, or when
+        back-deploying to older SDKs that don't yet have values for newer version sets.
+
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.cpp:
+        (disableAdditionalSDKAlignedBehaviors):
+        (WTF::computeSDKAlignedBehaviors):
+        (WTF::sdkAlignedBehaviorsValue):
+        (WTF::sdkAlignedBehaviors):
+        (WTF::setSDKAlignedBehaviors):
+        (WTF::enableAllSDKAlignedBehaviors):
+        (WTF::disableAllSDKAlignedBehaviors):
+        (WTF::linkedOnOrAfterSDKWithBehavior):
+        (WTF::applicationSDKVersionOverride): Deleted.
+        (WTF::setApplicationSDKVersion): Deleted.
+        (WTF::applicationSDKVersion): Deleted.
+        (WTF::linkedOnOrAfterOverrideValue): Deleted.
+        (WTF::setLinkedOnOrAfterOverride): Deleted.
+        (WTF::linkedOnOrAfterOverride): Deleted.
+        (WTF::linkedOnOrAfter): Deleted.
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.h:
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         Reland "[XCBuild] Enable dependency validation by default"

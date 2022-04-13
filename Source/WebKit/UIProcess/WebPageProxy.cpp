@@ -1349,7 +1349,7 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
     }
 
 #if PLATFORM(COCOA)
-    if (!linkedOnOrAfter(SDKVersion::FirstWithoutUnconditionalUniversalSandboxExtension))
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUnconditionalUniversalSandboxExtension))
         willAcquireUniversalFileReadSandboxExtension(process);
 #endif
 
@@ -2667,7 +2667,7 @@ void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
 {
     if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
 #if PLATFORM(COCOA)
-        static bool shouldMakeViewBlank = linkedOnOrAfter(SDKVersion::FirstWithBlankViewOnJSPrompt);
+        static bool shouldMakeViewBlank = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::BlanksViewOnJSPrompt);
 #else
         static bool shouldMakeViewBlank = true;
 #endif

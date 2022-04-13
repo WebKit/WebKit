@@ -1,3 +1,25 @@
+2022-04-12  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt "version set"-based linked-on-or-after checks instead of platform-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=239054
+        <rdar://problem/83436715>
+
+        Reviewed by Wenson Hsieh.
+
+        * API/JSTypedArray.cpp:
+        (isLinkedBeforeTypedArrayLengthQuirk):
+        * API/JSWrapperMap.mm:
+        (supportsInitMethodConstructors):
+        * API/tests/testapi.cpp:
+        (TestAPI::promiseDrainDoesNotEatExceptions):
+        * API/tests/testapi.mm:
+        (testMicrotaskWithFunction):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::willReleaseLock):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::isPokerBros):
+        Adopt the new naming.
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         Reland "[XCBuild] Enable dependency validation by default"

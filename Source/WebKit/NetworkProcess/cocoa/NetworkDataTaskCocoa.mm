@@ -498,7 +498,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.clearHTTPOrigin();
 
     } else {
-        if (auto authorization = m_firstRequest.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull() && linkedOnOrAfter(SDKVersion::FirstWithAuthorizationHeaderOnSameOriginRedirects))
+        if (auto authorization = m_firstRequest.httpHeaderField(WebCore::HTTPHeaderName::Authorization); !authorization.isNull() && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects))
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, authorization);
 
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)

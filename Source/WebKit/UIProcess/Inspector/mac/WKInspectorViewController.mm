@@ -286,7 +286,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
         return;
 
     OptionSet<WebCore::ReloadOption> reloadOptions;
-    if (linkedOnOrAfter(SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
     _inspectedPage->reload(reloadOptions);

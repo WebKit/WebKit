@@ -62,9 +62,8 @@ public:
     virtual bool getProcessIdentifier(WebCore::ProcessIdentifier&);
     virtual bool getClientIdentifier(String& clientIdentifier);
     virtual bool getClientBundleIdentifier(String& clientBundleIdentifier);
-    virtual bool getClientSDKVersion(uint32_t& clientSDKVersion);
     virtual bool getClientProcessName(String& clientProcessName);
-    virtual bool getLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride>&);
+    virtual bool getClientSDKAlignedBehaviors(SDKAlignedBehaviors&);
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
 
 protected:
@@ -135,10 +134,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     // The host process may not have a bundle identifier (e.g. a command line app), so don't require one.
     delegate.getClientBundleIdentifier(parameters.clientBundleIdentifier);
     
-    delegate.getLinkedOnOrAfterOverride(parameters.clientLinkedOnOrAfterOverride);
-
-    if (!delegate.getClientSDKVersion(parameters.clientSDKVersion))
-        exit(EXIT_FAILURE);
+    delegate.getClientSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
 
     WebCore::ProcessIdentifier processIdentifier;
     if (!delegate.getProcessIdentifier(processIdentifier))

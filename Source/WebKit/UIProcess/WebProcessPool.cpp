@@ -237,7 +237,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         bool isSafari = WebCore::MacApplication::isSafari();
 #endif
         if (isSafari)
-            setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::AfterEverything);
+            enableAllSDKAlignedBehaviors();
 #endif
     });
 
@@ -279,7 +279,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     updateBackForwardCacheCapacity();
 
 #if PLATFORM(IOS)
-    if (WebCore::IOSApplication::isLutron() && !linkedOnOrAfter(SDKVersion::FirstWithSharedNetworkProcess)) {
+    if (WebCore::IOSApplication::isLutron() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SharedNetworkProcess)) {
         callOnMainRunLoop([] {
             if (WebsiteDataStore::defaultDataStoreExists())
                 WebsiteDataStore::defaultDataStore()->terminateNetworkProcess();
@@ -1154,7 +1154,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
 
     bool enableProcessSwapOnCrossSiteNavigation = page->preferences().processSwapOnCrossSiteNavigationEnabled();
 #if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isFirefox() && !linkedOnOrAfter(SDKVersion::FirstWithProcessSwapOnCrossSiteNavigation))
+    if (WebCore::IOSApplication::isFirefox() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ProcessSwapOnCrossSiteNavigation))
         enableProcessSwapOnCrossSiteNavigation = false;
 #endif
 

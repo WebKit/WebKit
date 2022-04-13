@@ -319,7 +319,7 @@ void WKPageReload(WKPageRef pageRef)
     CRASH_IF_SUSPENDED;
     OptionSet<WebCore::ReloadOption> reloadOptions;
 #if PLATFORM(COCOA)
-    if (linkedOnOrAfter(SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 #endif
 

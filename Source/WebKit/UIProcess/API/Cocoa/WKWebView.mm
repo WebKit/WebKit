@@ -242,13 +242,13 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& 
 
 static bool shouldAllowPictureInPictureMediaPlayback()
 {
-    static bool shouldAllowPictureInPictureMediaPlayback = linkedOnOrAfter(SDKVersion::FirstWithPictureInPictureMediaPlayback);
+    static bool shouldAllowPictureInPictureMediaPlayback = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PictureInPictureMediaPlayback);
     return shouldAllowPictureInPictureMediaPlayback;
 }
 
 static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 {
-    static bool shouldAllowSettingAnyXHRHeaderFromFileURLs = (WebCore::IOSApplication::isCardiogram() || WebCore::IOSApplication::isNike()) && !linkedOnOrAfter(SDKVersion::FirstThatDisallowsSettingAnyXHRHeaderFromFileURLs);
+    static bool shouldAllowSettingAnyXHRHeaderFromFileURLs = (WebCore::IOSApplication::isCardiogram() || WebCore::IOSApplication::isNike()) && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DisallowsSettingAnyXHRHeaderFromFileURLs);
     return shouldAllowSettingAnyXHRHeaderFromFileURLs;
 }
 
@@ -257,7 +257,7 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 static bool shouldRequireUserGestureToLoadVideo()
 {
 #if PLATFORM(IOS_FAMILY)
-    static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfter(SDKVersion::FirstThatRequiresUserGestureToLoadVideo);
+    static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RequiresUserGestureToLoadVideo);
     return shouldRequireUserGestureToLoadVideo;
 #else
     return false;
@@ -266,7 +266,7 @@ static bool shouldRequireUserGestureToLoadVideo()
 
 static bool shouldRestrictBaseURLSchemes()
 {
-    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(SDKVersion::FirstThatRestrictsBaseURLSchemes);
+    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RestrictsBaseURLSchemes);
     return shouldRestrictBaseURLSchemes;
 }
 
@@ -344,7 +344,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
         WKProcessPool *relatedWebViewProcessPool = [relatedWebView->_configuration processPool];
         if (processPool && processPool != relatedWebViewProcessPool)
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has process pool %@ but configuration specifies a different process pool %@", relatedWebView, relatedWebViewProcessPool, configuration.processPool];
-        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore] && linkedOnOrAfter(SDKVersion::FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores))
+        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore] && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExceptionsForRelatedWebViewsUsingDifferentDataStores))
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has data store %@ but configuration specifies a different data store %@", relatedWebView, [relatedWebView->_configuration websiteDataStore], [_configuration websiteDataStore]];
 
         [_configuration setProcessPool:relatedWebViewProcessPool];
@@ -368,7 +368,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
     _initialScaleFactor = 1;
     _allowsViewportShrinkToFit = defaultAllowsViewportShrinkToFit;
-    _allowsLinkPreview = linkedOnOrAfter(SDKVersion::FirstWithLinkPreviewEnabledByDefault);
+    _allowsLinkPreview = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LinkPreviewEnabledByDefault);
 
 #if HAVE(UIFINDINTERACTION)
     _findInteractionEnabled = NO;
@@ -515,7 +515,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setAllowSettingAnyXHRHeaderFromFileURLs(shouldAllowSettingAnyXHRHeaderFromFileURLs());
     pageConfiguration->preferences()->setShouldDecidePolicyBeforeLoadingQuickLookPreview(!![_configuration _shouldDecidePolicyBeforeLoadingQuickLookPreview]);
 #if ENABLE(DEVICE_ORIENTATION)
-    pageConfiguration->preferences()->setDeviceOrientationPermissionAPIEnabled(linkedOnOrAfter(SDKVersion::FirstWithDeviceOrientationAndMotionPermissionAPI));
+    pageConfiguration->preferences()->setDeviceOrientationPermissionAPIEnabled(linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsDeviceOrientationAndMotionPermissionAPI));
 #endif
 #if USE(SYSTEM_PREVIEW)
     pageConfiguration->preferences()->setSystemPreviewEnabled(!![_configuration _systemPreviewEnabled]);
@@ -570,7 +570,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setSampledPageTopColorMaxDifference([_configuration _sampledPageTopColorMaxDifference]);
     pageConfiguration->preferences()->setSampledPageTopColorMinHeight([_configuration _sampledPageTopColorMinHeight]);
 
-    if (!linkedOnOrAfter(SDKVersion::FirstWhereSiteSpecificQuirksAreEnabledByDefault))
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SiteSpecificQuirksAreEnabledByDefault))
         pageConfiguration->preferences()->setNeedsSiteSpecificQuirks(false);
 
 #if PLATFORM(IOS_FAMILY)
@@ -880,7 +880,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 {
     THROW_IF_SUSPENDED;
     OptionSet<WebCore::ReloadOption> reloadOptions;
-    if (linkedOnOrAfter(SDKVersion::FirstWithExpiredOnlyReloadBehavior))
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
     return wrapper(_page->reload(reloadOptions));
@@ -1250,7 +1250,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         }];
     };
 
-    if ((snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) || !linkedOnOrAfter(SDKVersion::FirstWithSnapshotAfterScreenUpdates)) {
+    if ((snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SnapshotAfterScreenUpdates)) {
         callSnapshotRect();
         return;
     }

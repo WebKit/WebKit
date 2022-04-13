@@ -132,9 +132,9 @@ bool WebProcessProxy::hasReachedProcessCountLimit()
 static bool isMainThreadOrCheckDisabled()
 {
 #if PLATFORM(IOS_FAMILY)
-    return LIKELY(RunLoop::isMain()) || !linkedOnOrAfter(SDKVersion::FirstWithMainThreadReleaseAssertionInWebPageProxy);
+    return LIKELY(RunLoop::isMain()) || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MainThreadReleaseAssertionInWebPageProxy);
 #elif PLATFORM(MAC)
-    return LIKELY(RunLoop::isMain()) || !linkedOnOrAfter(SDKVersion::FirstWithMainThreadReleaseAssertionInWebPageProxy);
+    return LIKELY(RunLoop::isMain()) || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MainThreadReleaseAssertionInWebPageProxy);
 #else
     return RunLoop::isMain();
 #endif

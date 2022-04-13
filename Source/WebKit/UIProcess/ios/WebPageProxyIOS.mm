@@ -1397,7 +1397,7 @@ static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& requ
         auto screenClass = MGGetSInt32Answer(kMGQMainScreenClass, MGScreenClassPad2);
         shouldRecommendDesktopClassBrowsing = screenClass != MGScreenClassPad3 && screenClass != MGScreenClassPad4 && desktopClassBrowsingSupported();
 #endif
-        if (ignoreSafeguards == IgnoreAppCompatibilitySafeguards::No && !linkedOnOrAfter(SDKVersion::FirstWithModernCompabilityModeByDefault)) {
+        if (ignoreSafeguards == IgnoreAppCompatibilitySafeguards::No && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ModernCompabilityModeByDefault)) {
             // Opt out apps that haven't yet built against the iOS 13 SDK to limit any incompatibilities as a result of enabling desktop-class browsing by default in
             // WKWebView on appropriately-sized iPad models.
             shouldRecommendDesktopClassBrowsing = false;

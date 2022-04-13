@@ -422,7 +422,7 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     // to include keyboard insets in the systemContentInset. We always want
     // keyboard insets applied, even when web content has chosen to disable automatic
     // safe area inset adjustment.
-    if (linkedOnOrAfter(SDKVersion::FirstWhereUIScrollViewDoesNotApplyKeyboardInsetsUnconditionally) && self.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever)
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UIScrollViewDoesNotApplyKeyboardInsetsUnconditionally) && self.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever)
         systemContentInset.bottom += _keyboardBottomInsetAdjustment;
 
     return systemContentInset;

@@ -1186,7 +1186,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([uiDelegate respondsToSelector:@selector(_webView:dragDestinationActionMaskForDraggingInfo:)])
         return [uiDelegate _webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo];
 
-    if (!linkedOnOrAfter(SDKVersion::FirstWithDropToNavigateDisallowedByDefault))
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DropToNavigateDisallowedByDefault))
         return WKDragDestinationActionAny;
 
     return WKDragDestinationActionAny & ~WKDragDestinationActionLoad;

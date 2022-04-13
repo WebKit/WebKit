@@ -1248,7 +1248,7 @@ struct FontLookup {
 
 static bool isDotPrefixedForbiddenFont(const AtomString& family)
 {
-    if (linkedOnOrAfter(SDKVersion::FirstForbiddingDotPrefixedFonts))
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ForbidsDotPrefixedFonts))
         return family.startsWith('.');
     return equalLettersIgnoringASCIICase(family, ".applesystemuifontserif")
         || equalLettersIgnoringASCIICase(family, ".sf ns mono")

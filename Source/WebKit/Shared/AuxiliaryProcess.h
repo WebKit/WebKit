@@ -180,14 +180,13 @@ struct AuxiliaryProcessInitializationParameters {
     String uiProcessName;
     String clientIdentifier;
     String clientBundleIdentifier;
-    uint32_t clientSDKVersion;
     std::optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;
     WebCore::AuxiliaryProcessType processType;
 #if PLATFORM(COCOA)
     OSObjectPtr<xpc_object_t> priorityBoostMessage;
-    std::optional<LinkedOnOrAfterOverride> clientLinkedOnOrAfterOverride;
+    SDKAlignedBehaviors clientSDKAlignedBehaviors;
 #endif
 };
 

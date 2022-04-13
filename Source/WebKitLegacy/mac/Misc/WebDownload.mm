@@ -47,7 +47,7 @@
 static bool shouldCallOnNetworkThread()
 {
 #if PLATFORM(MAC)
-    static bool isOldEpsonSoftwareUpdater = WebCore::MacApplication::isEpsonSoftwareUpdater() && !linkedOnOrAfter(SDKVersion::FirstWithDownloadDelegatesCalledOnTheMainThread);
+    static bool isOldEpsonSoftwareUpdater = WebCore::MacApplication::isEpsonSoftwareUpdater() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DownloadDelegatesCalledOnTheMainThread);
     return isOldEpsonSoftwareUpdater;
 #else
     return false;

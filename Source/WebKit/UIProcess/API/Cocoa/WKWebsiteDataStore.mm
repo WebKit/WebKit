@@ -149,7 +149,7 @@ private:
 
 - (instancetype)init
 {
-    if (linkedOnOrAfter(SDKVersion::FirstWithWKWebsiteDataStoreInitReturningNil))
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::WKWebsiteDataStoreInitReturningNil))
         [NSException raise:NSGenericException format:@"Calling [WKWebsiteDataStore init] is not supported."];
     
     if (!(self = [super init]))

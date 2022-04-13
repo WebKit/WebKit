@@ -123,6 +123,13 @@
 
 #else
 
+typedef uint32_t dyld_platform_t;
+
+typedef struct {
+    dyld_platform_t platform;
+    uint32_t version;
+} dyld_build_version_t;
+
 #define DYLD_IOS_VERSION_3_0 0x00030000
 #define DYLD_IOS_VERSION_4_2 0x00040200
 #define DYLD_IOS_VERSION_5_0 0x00050000
@@ -144,10 +151,13 @@
 #define DYLD_IOS_VERSION_15_4 0x000f0400
 #define DYLD_IOS_VERSION_16_0 0x00100000
 
+#define DYLD_MACOSX_VERSION_10_10 0x000A0A00
 #define DYLD_MACOSX_VERSION_10_11 0x000A0B00
 #define DYLD_MACOSX_VERSION_10_12 0x000A0C00
 #define DYLD_MACOSX_VERSION_10_13 0x000A0D00
+#define DYLD_MACOSX_VERSION_10_13_4 0x000A0D04
 #define DYLD_MACOSX_VERSION_10_14 0x000A0E00
+#define DYLD_MACOSX_VERSION_10_14_4 0x000A0E04
 #define DYLD_MACOSX_VERSION_10_15 0x000A0F00
 #define DYLD_MACOSX_VERSION_10_15_1 0x000A0F01
 #define DYLD_MACOSX_VERSION_10_15_4 0x000A0F04
@@ -161,6 +171,75 @@
 
 WTF_EXTERN_C_BEGIN
 
+// Because it is not possible to forward-declare dyld_build_version_t values,
+// we forward-declare placeholders for any missing definitions, and use their empty
+// value to indicate that we need to fall back to antique single-platform SDK checks.
+
+#ifndef dyld_fall_2014_os_versions
+#define dyld_fall_2014_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2015_os_versions
+#define dyld_fall_2015_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2016_os_versions
+#define dyld_fall_2016_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2016_os_versions
+#define dyld_fall_2016_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2017_os_versions
+#define dyld_fall_2017_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_spring_2018_os_versions
+#define dyld_spring_2018_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2018_os_versions
+#define dyld_fall_2018_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_spring_2019_os_versions
+#define dyld_spring_2019_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2019_os_versions
+#define dyld_fall_2019_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_late_fall_2019_os_versions
+#define dyld_late_fall_2019_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_spring_2020_os_versions
+#define dyld_spring_2020_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2020_os_versions
+#define dyld_fall_2020_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_late_fall_2020_os_versions
+#define dyld_late_fall_2020_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_spring_2021_os_versions
+#define dyld_spring_2021_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_fall_2021_os_versions
+#define dyld_fall_2021_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
+#ifndef dyld_spring_2022_os_versions
+#define dyld_spring_2022_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
 uint32_t dyld_get_program_sdk_version();
+bool dyld_program_sdk_at_least(dyld_build_version_t);
 
 WTF_EXTERN_C_END

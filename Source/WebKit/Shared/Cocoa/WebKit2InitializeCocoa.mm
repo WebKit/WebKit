@@ -64,7 +64,7 @@ void InitializeWebKit2()
     // Make sure the initialization code is run only once and on the main thread since things like initializeMainThread()
     // are only safe to call on the main thread.
     std::call_once(flag, [] {
-        if ([NSThread isMainThread] || linkedOnOrAfter(SDKVersion::FirstWithInitializeWebKit2MainThreadAssertion))
+        if ([NSThread isMainThread] || linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::InitializeWebKit2MainThreadAssertion))
             runInitializationCode();
         else
             WorkQueue::main().dispatchSync([] { runInitializationCode(); });

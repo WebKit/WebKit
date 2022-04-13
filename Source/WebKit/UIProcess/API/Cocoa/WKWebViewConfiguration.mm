@@ -106,7 +106,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 {
 #if USE(QUICK_LOOK)
-    static bool shouldDecide = linkedOnOrAfter(SDKVersion::FirstThatDecidesPolicyBeforeLoadingQuickLookPreview);
+    static bool shouldDecide = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DecidesPolicyBeforeLoadingQuickLookPreview);
     return shouldDecide;
 #else
     return false;
@@ -203,7 +203,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
     _mediaDataLoadsAutomatically = _allowsInlineMediaPlayback;
 #if !PLATFORM(WATCHOS)
-    if (linkedOnOrAfter(SDKVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::MediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
     else
 #endif

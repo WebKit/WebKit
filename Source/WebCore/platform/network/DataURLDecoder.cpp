@@ -46,7 +46,7 @@ namespace DataURLDecoder {
 static bool shouldRemoveFragmentIdentifier(const String& mediaType)
 {
 #if PLATFORM(COCOA)
-    if (!linkedOnOrAfter(SDKVersion::FirstWithDataURLFragmentRemoval))
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DataURLFragmentRemoval))
         return false;
 
     // HLS uses # in the middle of the manifests.

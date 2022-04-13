@@ -125,7 +125,7 @@ void determineITPState()
     if (currentITPState != ITPState::Uninitialized)
         return;
 
-    bool appWasLinkedOnOrAfter = linkedOnOrAfter(SDKVersion::FirstWithSessionCleanupByDefault);
+    bool appWasLinkedOnOrAfter = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SessionCleanupByDefault);
 
     itpQueue() = WorkQueue::create("com.apple.WebKit.itpCheckQueue");
     itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {

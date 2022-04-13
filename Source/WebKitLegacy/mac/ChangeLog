@@ -1,3 +1,31 @@
+2022-04-12  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt "version set"-based linked-on-or-after checks instead of platform-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=239054
+        <rdar://problem/83436715>
+
+        Reviewed by Wenson Hsieh.
+
+        * DefaultDelegates/WebDefaultUIDelegate.mm:
+        (-[WebDefaultUIDelegate webView:dragDestinationActionMaskForDraggingInfo:]):
+        * Misc/WebDownload.mm:
+        (shouldCallOnNetworkThread):
+        * Misc/WebIconDatabase.mm:
+        (+[WebIconDatabase sharedIconDatabase]):
+        * WebView/WebPreferencesDefaultValues.mm:
+        (WebKit::defaultAllowsPictureInPictureMediaPlayback):
+        (WebKit::defaultJavaScriptCanOpenWindowsAutomatically):
+        (WebKit::defaultPassiveTouchListenersAsDefaultOnDocument):
+        (WebKit::defaultRequiresUserGestureToLoadVideo):
+        (WebKit::defaultWebSQLEnabled):
+        (WebKit::defaultShouldRestrictBaseURLSchemes):
+        (WebKit::defaultShouldConvertInvalidURLsToBlank):
+        (WebKit::defaultPassiveWheelListenersAsDefaultOnDocument):
+        (WebKit::defaultWheelEventGesturesBecomeNonBlocking):
+        * WebView/WebView.mm:
+        (needsLaBanquePostaleQuirks):
+        Adopt the new naming.
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         Reland "[XCBuild] Enable dependency validation by default"

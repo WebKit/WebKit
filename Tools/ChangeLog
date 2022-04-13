@@ -1,3 +1,18 @@
+2022-04-12  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt "version set"-based linked-on-or-after checks instead of platform-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=239054
+        <rdar://problem/83436715>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WTF/Bitmap.cpp:
+        (TestWebKitAPI::testBitmapCountAfterSetAll):
+        (TestWebKitAPI::TEST):
+        Add a test that Bitmap.count() works correctly after Bitmap.setAll(),
+        because my initial implementation was incorrect for bitmaps where
+        the total number of bits was not a multiple of the word size.
+
 2022-04-12  Diego Pino Garcia  <dpino@igalia.com>
 
         [JHBuild] Update ATSPI, GLib and GStreamer libraries
