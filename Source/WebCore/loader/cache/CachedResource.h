@@ -311,6 +311,7 @@ protected:
 
 private:
     class Callback;
+    template<typename T> friend class CachedResourceClientWalker;
 
     void deleteThis();
 

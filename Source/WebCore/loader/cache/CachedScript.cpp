@@ -28,7 +28,6 @@
 #include "CachedScript.h"
 
 #include "CachedResourceClient.h"
-#include "CachedResourceClientWalker.h"
 #include "CachedResourceRequest.h"
 #include "RuntimeApplicationChecks.h"
 #include "SharedBuffer.h"

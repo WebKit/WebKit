@@ -331,7 +331,7 @@ void CachedResource::checkNotify(const NetworkLoadMetrics& metrics)
     if (isLoading() || stillNeedsLoad())
         return;
 
-    CachedResourceClientWalker<CachedResourceClient> walker(m_clients);
+    CachedResourceClientWalker<CachedResourceClient> walker(*this);
     while (CachedResourceClient* client = walker.next())
         client->notifyFinished(*this, metrics);
 }
@@ -511,8 +511,12 @@ void CachedResource::didAddClient(CachedResourceClient& client)
     if (m_decodedDataDeletionTimer.isActive())
         m_decodedDataDeletionTimer.stop();
 
-    if (m_clientsAwaitingCallback.remove(&client))
+    if (m_clientsAwaitingCallback.remove(&client)) {
         m_clients.add(&client);
+#if ASSERT_ENABLED
+        client.addAssociatedResource(*this);
+#endif
+    }
 
     // FIXME: Make calls to notifyFinished async
     if (!isLoading() && !stillNeedsLoad())
@@ -543,6 +547,9 @@ bool CachedResource::addClientToSet(CachedResourceClient& client)
     }
 
     m_clients.add(&client);
+#if ASSERT_ENABLED
+    client.addAssociatedResource(*this);
+#endif
     return true;
 }
 
@@ -556,6 +563,10 @@ void CachedResource::removeClient(CachedResourceClient& client)
     } else {
         ASSERT(m_clients.contains(&client));
         m_clients.remove(&client);
+#if ASSERT_ENABLED
+        if (!m_clients.contains(&client))
+            client.removeAssociatedResource(*this);
+#endif
         didRemoveClient(client);
     }
 

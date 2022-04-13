@@ -145,7 +145,7 @@ void CachedFont::checkNotify(const NetworkLoadMetrics&)
     if (isLoading())
         return;
 
-    CachedResourceClientWalker<CachedFontClient> walker(m_clients);
+    CachedResourceClientWalker<CachedFontClient> walker(*this);
     while (CachedFontClient* client = walker.next())
         client->fontLoaded(*this);
 }

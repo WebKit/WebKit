@@ -1,3 +1,86 @@
+2022-04-12  Chris Dumez  <cdumez@apple.com>
+
+        Crash under CachedResourceClientWalker<WebCore::CachedImageClient>::next()
+        https://bugs.webkit.org/show_bug.cgi?id=239253
+        <rdar://91346216>
+
+        Reviewed by Simon Fraser and Brent Fulgham.
+
+        I haven't been able to reproduce the issue or figure out why this is happening so I am doing
+        some hardening and adding assertions to help catch the underlying bug.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::didUpdateCachedImage):
+        There is some speculation that r291141 could have caused this because of the timing of when
+        this patch landed and the fact that this patch modifies ImageLoader, which is a CachedImageClient.
+        I couldn't see anything wrong with the change. However, I did notice that we were calling
+        didUpdateCachedImage() twice with the same CachedImage now for lazy loading (once initially and then
+        another time when the image actually starts lazily). This was intentional. However, the registering
+        again as a client of the CachedImage (and then unregistering right away) was not. Technically, this
+        should be fine since CachedResource is using a HashCountedSet for m_clients locally. However, for
+        the sake of safety, I am now not doing this redundant registering/unregistering as a client of
+        the CachedImage when this image has not changed.
+
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::checkNotify):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        (WebCore::CachedImage::addClientWaitingForAsyncDecoding):
+        (WebCore::CachedImage::notifyObservers):
+        (WebCore::CachedImage::canDestroyDecodedData):
+        (WebCore::CachedImage::imageFrameAvailable):
+        (WebCore::CachedImage::scheduleRenderingUpdate):
+        (WebCore::CachedImage::isVisibleInViewport):
+        (WebCore::CachedImage::isVisibleInViewport const): Deleted.
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::notifyClientsDataWasReceived):
+        (WebCore::iterateRedirects):
+
+        (WebCore::CachedRawResource::redirectReceived):
+        The new assertions found a bug here where we were capturing the CachedRawResourceClient by value in the lambda and thus
+        making a copy of it (even though this is a polymorphic class). I fixed the bug and marked CachedResourceClient as non
+        copyable to avoid issues like these.
+
+        (WebCore::CachedRawResource::responseReceived):
+        (WebCore::CachedRawResource::shouldCacheResponse):
+        (WebCore::CachedRawResource::didSendData):
+        (WebCore::CachedRawResource::finishedTimingForWorkerLoad):
+        (WebCore::CachedRawResource::previewResponseReceived):
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::checkNotify):
+        (WebCore::CachedResource::didAddClient):
+        (WebCore::CachedResource::addClientToSet):
+        (WebCore::CachedResource::removeClient):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::~CachedResourceClient):
+        (WebCore::CachedResourceClient::addAssociatedResource):
+        (WebCore::CachedResourceClient::removeAssociatedResource):
+        Add new assertions to make sure that a CachedResourceClient is no longer associated (i.e. marked as a client of) with
+        any CachedResource at the time it is destroyed. Hopefully, this will catch the issue right away and give us a useful
+        stack trace, instead of crashing later on when iterating over the clients of a CachedResource.
+
+        * loader/cache/CachedResourceClientWalker.h:
+        (WebCore::CachedResourceClientWalker::CachedResourceClientWalker):
+        (WebCore::CachedResourceClientWalker::next):
+        CachedResourceClientWalker is meant to be a safe way of iterating over the clients of a CachedResource, allowing clients
+        to unregister themselves as we iterate. However, when clients unregister themselves, it could in theory cause the
+        CachedResource itself to get destroyed. In such cases, the CachedResourceClientWalker would not be safe since its
+        m_clientSet data member would come from a dead CachedResource. To address the issue, the walker now keeps a handle to
+        the cached resource, instead of the reference to the CachedResource's clients set. The handle will ensure the cached
+        resource stays alive.
+
+        * loader/cache/CachedScript.cpp:
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::doUpdateBuffer):
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::checkNotify):
+        * rendering/RenderObject.cpp:
+
 2022-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove support for drawing cropped image overlays when hovering over "Copy Cropped Image"
