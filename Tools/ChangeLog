@@ -1,3 +1,15 @@
+2022-04-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add PlayStation builds to bot watcher's dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=239090
+
+        Reviewed by Jonathan Bedard .
+
+        * CISupport/build-webkit-org/public_html/dashboard/Images/PlayStation.png: Added.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js:
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css:
+
 2022-04-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] WEBKIT_LIBRARIES env var should be customizable
