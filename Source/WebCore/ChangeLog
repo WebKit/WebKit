@@ -1,3 +1,63 @@
+2022-04-13  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r292043): [ Mac ] fast/block/positioning/fixed-container-with-relative-parent.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=239101
+        <rdar://problem/91603539>
+
+        Reviewed by Antti Koivisto.
+
+        1. Out of flow boxes are laid out independently from each other as the last step of their containing block layout.
+        2. However their static positions are computed during regular in-flow layout (as if their positions were static).
+
+        In order to do #1, we maintain a ListHashSet for the out-of-flow boxes and insert them at #2 (and we also have
+        a corresponding HashMap<ContainingBlock, ListHasSet>).
+
+        Normally this is a very simple list of descendant positioned boxes and since out-of-flow boxes don't interact with each
+        other, their position in the list is not important.
+          e.g. 
+            <div id=A style="position: relative">
+              <div>
+                <div id=B style="position: absolute"></div>
+                <div id=C style="position: absolute"></div>
+              </div>
+            </div>
+
+        At in-flow layout (#2), we insert B and C to "ListHashSet of A" as we come across them in DOM order and compute their static positions.
+        Later in the layout flow when we get to the "let's layout the out-of-flow boxes" phase (#1) we simply walk
+        the ListHashSet and lay out B and C (but "C and B" order would also work just fine).  
+
+        However the ICB (RenderView) is a special containing block as it can hold different types of out-of-flow boxes (absolute and fixed)
+        and those out-of-flow boxes may have layout dependencies.
+        e.g.
+            <body><div id=A class=absolute><div id=B class=fixed></div></div></body>
+
+        ICB's ListHasSet has both A and B, but in this case there's (static)layout dependency between these boxes.
+        In order to figure out the static position of B, we have to have A laid out first. In order to lay out A before B,
+        B has to be preceded by A in ICB's ListHasSet.
+
+        Now full layout always guarantees the correct order.
+        However in case of partial layout since we don't run a full #2, the ListHasSet may end up having an unexpected order.
+          e.g.
+           <body><div id=A class=absolute><div id=B><div id=C class=fixed></div></div></div></body>
+
+         1. The initial (full) layout produces the following (correct) order for the ICB's ListHasSet -> AC.
+         2. A subsequent partial layout (e.g. triggered by A's position change) runs an in-flow layout on the <body> which
+         (re-)appends A to the ListHasSet (CA <- incorrect order). Now at this point we assume that the in-flow layout picks up B
+         which eventually (re-)appends C to the ListHashSet (AC <- correct order). However since B does not need layout, we just
+         stop at <body> which leaves us with an unexpected ListHashSet.
+         3. As part of the ICB's out-of-flow layout, we pick C as the first box to lay out followed by A. However since C's static
+         position depends on A's position, we end up using stale geometry when computing C's static position. 
+
+        This patch fixes this issue by ensuring the absolute positioned boxes always come first in the ICB's ListHasSet (note
+        that their order is not really important -see above. What's important is that a potential (as-if-static) containing block always
+        comes before the fixed boxes).
+
+        Test: fast/block/fixed-inside-absolute-positioned.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::PositionedDescendantsMap::addDescendant):
+        (WebCore::RenderBlock::insertPositionedObject):
+
 2022-04-13  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Limit query range syntax

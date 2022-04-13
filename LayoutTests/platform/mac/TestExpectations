@@ -2294,5 +2294,3 @@ http/tests/webgpu [ Pass ]
 
 # fractional pixel diff between modern and legacy line layout.
 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
-
-webkit.org/b/239101 fast/block/positioning/fixed-container-with-relative-parent.html [ Pass ImageOnlyFailure ]

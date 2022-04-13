@@ -153,8 +153,7 @@ static void removeFromTrackedRendererMaps(RenderBox& descendant)
 
 class PositionedDescendantsMap {
 public:
-    enum class MoveDescendantToEnd { No, Yes };
-    void addDescendant(const RenderBlock& containingBlock, RenderBox& positionedDescendant, MoveDescendantToEnd moveDescendantToEnd)
+    void addDescendant(const RenderBlock& containingBlock, RenderBox& positionedDescendant)
     {
         // Protect against double insert where a descendant would end up with multiple containing blocks.
         auto* previousContainingBlock = m_containerMap.get(&positionedDescendant);
@@ -167,8 +166,28 @@ public:
             return makeUnique<TrackedRendererListHashSet>();
         }).iterator->value;
 
-        bool isNewEntry = moveDescendantToEnd == MoveDescendantToEnd::Yes ? descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry
-            : descendants->add(&positionedDescendant).isNewEntry;
+        auto isNewEntry = false;
+        if (!is<RenderView>(containingBlock) || descendants->isEmpty())
+            isNewEntry = descendants->add(&positionedDescendant).isNewEntry;
+        else if (positionedDescendant.isFixedPositioned())
+            isNewEntry = descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry;
+        else {
+            auto ensureLayoutDepentBoxPosition = [&] {
+                // RenderView is a special containing block as it may hold both absolute and fixed positioned containing blocks.
+                // When a fixed positioned box is also a descendant of an absolute positioned box anchored to the RenderView,
+                // we have to make sure that the absolute positioned box is inserted before the fixed box to follow
+                // block layout dependency.
+                for (auto it = descendants->begin(); it != descendants->end(); ++it) {
+                    if ((*it)->isFixedPositioned()) {
+                        isNewEntry = descendants->insertBefore(it, &positionedDescendant).isNewEntry;
+                        return;
+                    }
+                }
+                isNewEntry = descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry;
+            };
+            ensureLayoutDepentBoxPosition();
+        }
+
         if (!isNewEntry) {
             ASSERT(m_containerMap.contains(&positionedDescendant));
             return;
@@ -1791,8 +1810,7 @@ void RenderBlock::insertPositionedObject(RenderBox& positioned)
         ASSERT(posChildNeedsLayout() || view().frameView().layoutContext().isInLayout());
         setPosChildNeedsLayoutBit(true);
     }
-    positionedDescendantsMap().addDescendant(*this, positioned, isRenderView() ? PositionedDescendantsMap::MoveDescendantToEnd::Yes
-        : PositionedDescendantsMap::MoveDescendantToEnd::No);
+    positionedDescendantsMap().addDescendant(*this, positioned);
 }
 
 void RenderBlock::removePositionedObject(const RenderBox& rendererToRemove)
