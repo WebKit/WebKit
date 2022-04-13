@@ -48,7 +48,7 @@ void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
 {
     ASSERT(client.resourceClientType() == CachedStyleSheetClient::expectedType());
     if (!isLoading())
-        static_cast<CachedStyleSheetClient&>(client).setXSLStyleSheet(m_resourceRequest.url().string(), m_response.url(), m_sheet);
+        downcast<CachedStyleSheetClient>(client).setXSLStyleSheet(m_resourceRequest.url().string(), m_response.url(), m_sheet);
 }
 
 void CachedXSLStyleSheet::setEncoding(const String& chs)

@@ -51,4 +51,9 @@ protected:
     CachedResourceClient() = default;
 };
 
-}
+} // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE_CLIENT(ToClassName, CachedResourceTypeValue) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+    static bool isType(const WebCore::CachedResourceClient& client) { return client.resourceClientType() == WebCore::CachedResourceClient::CachedResourceTypeValue; } \
+SPECIALIZE_TYPE_TRAITS_END()

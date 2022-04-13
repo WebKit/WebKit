@@ -166,9 +166,9 @@ static CachedResourceHandle<CachedResource> createResource(CachedResourceRequest
     case CachedResource::Type::Script:
         return new CachedScript(WTFMove(request), resource.sessionID(), resource.cookieJar());
     case CachedResource::Type::SVGDocumentResource:
-        return new CachedSVGDocument(WTFMove(request), static_cast<CachedSVGDocument&>(resource));
+        return new CachedSVGDocument(WTFMove(request), downcast<CachedSVGDocument>(resource));
     case CachedResource::Type::SVGFontResource:
-        return new CachedSVGFont(WTFMove(request), static_cast<CachedSVGFont&>(resource));
+        return new CachedSVGFont(WTFMove(request), downcast<CachedSVGFont>(resource));
     case CachedResource::Type::FontResource:
         return new CachedFont(WTFMove(request), resource.sessionID(), resource.cookieJar());
     case CachedResource::Type::Beacon:

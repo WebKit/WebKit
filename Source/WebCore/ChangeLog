@@ -1,3 +1,31 @@
+2022-04-12  Chris Dumez  <cdumez@apple.com>
+
+        Use safer downcast<>() for CachedResourceClient subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=239220
+
+        Reviewed by Simon Fraser.
+
+        * loader/LinkPreloadResourceClients.h:
+        (WebCore::LinkPreloadImageResourceClient::LinkPreloadImageResourceClient):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::didAddClient):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        (WebCore::CachedImage::didRemoveClient):
+        * loader/cache/CachedImageClient.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::didAddClient):
+        * loader/cache/CachedRawResourceClient.h:
+        * loader/cache/CachedResourceClient.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        * loader/cache/CachedSVGDocumentClient.h:
+        * loader/cache/CachedStyleSheetClient.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::didAddClient):
+
 2022-04-12  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] allow skipping by durations other than 15s

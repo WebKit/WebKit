@@ -159,7 +159,7 @@ static void iterateRedirects(CachedResourceHandle<CachedRawResource>&& handle, C
 
 void CachedRawResource::didAddClient(CachedResourceClient& c)
 {
-    CachedRawResourceClient& client = static_cast<CachedRawResourceClient&>(c);
+    auto& client = downcast<CachedRawResourceClient>(c);
     size_t redirectCount = m_redirectChain.size();
     Vector<std::pair<ResourceRequest, ResourceResponse>> redirectsInReverseOrder;
     redirectsInReverseOrder.reserveInitialCapacity(redirectCount);

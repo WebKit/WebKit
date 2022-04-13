@@ -116,7 +116,7 @@ class LinkPreloadImageResourceClient : public LinkPreloadResourceClient, public 
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LinkPreloadImageResourceClient(LinkLoader& loader, CachedImage& resource)
-        : LinkPreloadResourceClient(loader, static_cast<CachedResource&>(resource))
+        : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
     }

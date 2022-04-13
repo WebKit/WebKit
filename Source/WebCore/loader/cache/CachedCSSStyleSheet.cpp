@@ -59,7 +59,7 @@ void CachedCSSStyleSheet::didAddClient(CachedResourceClient& client)
     CachedResource::didAddClient(client);
 
     if (!isLoading())
-        static_cast<CachedStyleSheetClient&>(client).setCSSStyleSheet(m_resourceRequest.url().string(), m_response.url(), String::fromLatin1(m_decoder->encoding().name()), this);
+        downcast<CachedStyleSheetClient>(client).setCSSStyleSheet(m_resourceRequest.url().string(), m_response.url(), String::fromLatin1(m_decoder->encoding().name()), this);
 }
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)

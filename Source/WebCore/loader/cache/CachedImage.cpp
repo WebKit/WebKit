@@ -133,7 +133,7 @@ void CachedImage::didAddClient(CachedResourceClient& client)
 
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
     if (m_image && !m_image->isNull())
-        static_cast<CachedImageClient&>(client).imageChanged(this);
+        downcast<CachedImageClient>(client).imageChanged(this);
 
     if (m_image)
         m_image->startAnimationAsynchronously();
@@ -145,15 +145,15 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
 {
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
 
-    m_pendingContainerContextRequests.remove(&static_cast<CachedImageClient&>(client));
-    m_clientsWaitingForAsyncDecoding.remove(&static_cast<CachedImageClient&>(client));
+    m_pendingContainerContextRequests.remove(&downcast<CachedImageClient>(client));
+    m_clientsWaitingForAsyncDecoding.remove(&downcast<CachedImageClient>(client));
 
     if (m_svgImageCache)
-        m_svgImageCache->removeClientFromCache(&static_cast<CachedImageClient&>(client));
+        m_svgImageCache->removeClientFromCache(&downcast<CachedImageClient>(client));
 
     CachedResource::didRemoveClient(client);
 
-    static_cast<CachedImageClient&>(client).didRemoveCachedImageClient(*this);
+    downcast<CachedImageClient>(client).didRemoveCachedImageClient(*this);
 }
 
 bool CachedImage::isClientWaitingForAsyncDecoding(CachedImageClient& client) const

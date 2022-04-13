@@ -56,4 +56,6 @@ public:
 #endif
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE_CLIENT(CachedRawResourceClient, RawResourceType);
