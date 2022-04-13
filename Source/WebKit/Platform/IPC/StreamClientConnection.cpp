@@ -28,14 +28,72 @@
 
 namespace IPC {
 
-StreamClientConnection::StreamClientConnection(Connection& connection, size_t size)
-    : m_connection(connection)
-    , m_buffer(size)
+// FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
+class StreamClientConnection::DedicatedConnectionClient final : public Connection::Client {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DedicatedConnectionClient);
+public:
+    DedicatedConnectionClient(MessageReceiver& receiver)
+        : m_receiver(receiver)
+    {
+    }
+    // Connection::Client.
+    void didReceiveMessage(Connection& connection, Decoder& decoder) final { m_receiver.didReceiveMessage(connection, decoder); }
+    bool didReceiveSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder) final { return m_receiver.didReceiveSyncMessage(connection, decoder, replyEncoder); }
+    void didClose(Connection&) final { } // Client is expected to listen to Connection::didClose() from the connection it sent to the dedicated connection to.
+    void didReceiveInvalidMessage(Connection&, MessageName) final { ASSERT_NOT_REACHED(); } // The sender is expected to be trusted, so all invalid messages are programming errors.
+private:
+    MessageReceiver& m_receiver;
+};
+
+StreamClientConnection::StreamConnectionWithDedicatedConnection StreamClientConnection::createWithDedicatedConnection(MessageReceiver& receiver, size_t bufferSize)
+{
+    auto connectionIdentifiers = Connection::createConnectionIdentifierPair();
+    // Create StreamClientConnection with "server" type Connection. The caller will send the "client" type connection identifier via
+    // IPC to the other side, where StreamServerConnection will be created with "client" type Connection.
+    // For Connection, "server" means the connection which was created first, the connection which is not sent through IPC to other party.
+    // For Connection, "client" means the connection which was established by receiving it through IPC and creating IPC::Connection out from the identifier.
+    // The "Client" in StreamClientConnection means the party that mostly does sending, e.g. untrusted party.
+    // The "Server" in StreamServerConnection means the party that mostly does receiving, e.g. the trusted party which holds the destination object to communicate with.
+    auto dedicatedConnectionClient = makeUnique<DedicatedConnectionClient>(receiver);
+    auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server, *dedicatedConnectionClient);
+    std::unique_ptr<StreamClientConnection> streamConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSize, WTFMove(dedicatedConnectionClient)) };
+    // FIXME(http://webkit.org/b238944): Make IPC::Attachment really movable on OS(DARWIN).
+    return { WTFMove(streamConnection), WTFMove(connectionIdentifiers->client) };
+#
+}
+
+StreamClientConnection::StreamClientConnection(Ref<Connection>&& connection, size_t bufferSize, std::unique_ptr<DedicatedConnectionClient>&& dedicatedConnectionClient)
+    : m_connection(WTFMove(connection))
+    , m_dedicatedConnectionClient(WTFMove(dedicatedConnectionClient))
+    , m_buffer(bufferSize)
 {
     // Read starts from 0 with limit of 0 and reader sleeping.
     sharedClientOffset().store(ClientOffset::serverIsSleepingTag, std::memory_order_relaxed);
     // Write starts from 0 with a limit of the whole buffer.
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_relaxed);
+}
+
+StreamClientConnection::StreamClientConnection(Connection& connection, size_t bufferSize)
+    : StreamClientConnection(Ref { connection }, bufferSize, { })
+{
+}
+
+StreamClientConnection::~StreamClientConnection()
+{
+    ASSERT(!m_dedicatedConnectionClient || !m_connection->isValid());
+}
+
+void StreamClientConnection::open()
+{
+    if (m_dedicatedConnectionClient)
+        m_connection->open();
+}
+
+void StreamClientConnection::invalidate()
+{
+    if (m_dedicatedConnectionClient)
+        m_connection->invalidate();
 }
 
 void StreamClientConnection::setWakeUpSemaphore(IPC::Semaphore&& semaphore)
@@ -81,6 +139,11 @@ void StreamClientConnection::sendDeferredWakeUpMessageIfNeeded()
 StreamConnectionBuffer& StreamClientConnection::bufferForTesting()
 {
     return m_buffer;
+}
+
+Connection& StreamClientConnection::connectionForTesting()
+{
+    return m_connection.get();
 }
 
 }

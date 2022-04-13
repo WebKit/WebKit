@@ -80,16 +80,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamConnectionBuffer&& streamBuffer)
+Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::Attachment&& connectionIdentifier, IPC::StreamConnectionBuffer&& streamBuffer)
 {
-    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(creationParameters), WTFMove(streamBuffer)));
+    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(creationParameters), WTFMove(connectionIdentifier), WTFMove(streamBuffer)));
     instance->startListeningForIPC();
     return instance;
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamConnectionBuffer&& streamBuffer)
+RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::Attachment&& connectionIdentifier, IPC::StreamConnectionBuffer&& streamBuffer)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("RemoteRenderingBackend work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(streamBuffer), m_workQueue.get()))
+    , m_streamConnection(IPC::StreamServerConnection::createWithDedicatedConnection(WTFMove(connectionIdentifier), WTFMove(streamBuffer), m_workQueue.get()))
     , m_remoteResourceCache(gpuConnectionToWebProcess.webProcessIdentifier())
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
@@ -110,17 +110,14 @@ void RemoteRenderingBackend::startListeningForIPC()
         Locker locker { m_remoteDisplayListsLock };
         m_canRegisterRemoteDisplayLists = true;
     }
-
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
-    // RemoteDisplayListRecorder messages depend on RemoteRenderingBackend, because RemoteRenderingBackend creates RemoteDisplayListRecorder and
-    // makes a receive queue for it. In order to guarantee correct ordering, ensure that all RemoteDisplayListRecorder messages are processed in
-    // the same sequence as RemoteRenderingBackend messages.
-    m_streamConnection->startReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName());
+    m_streamConnection->open();
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()
 {
     ASSERT(RunLoop::isMain());
+    m_streamConnection->invalidate();
 
     // This item is dispatched to the WorkQueue before calling stopAndWaitForCompletion() such that it will process it last, after any existing work.
     m_workQueue->dispatch([&] {
@@ -132,7 +129,6 @@ void RemoteRenderingBackend::stopListeningForIPC()
     m_workQueue->stopAndWaitForCompletion();
 
     m_streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
-    m_streamConnection->stopReceivingMessages(Messages::RemoteDisplayListRecorder::messageReceiverName());
 
     {
         Locker locker { m_remoteDisplayListsLock };
@@ -149,7 +145,7 @@ void RemoteRenderingBackend::dispatch(Function<void()>&& task)
 
 IPC::Connection* RemoteRenderingBackend::messageSenderConnection() const
 {
-    return &m_gpuConnectionToWebProcess->connection();
+    return &m_streamConnection->connection();
 }
 
 uint64_t RemoteRenderingBackend::messageSenderDestinationID() const

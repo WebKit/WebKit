@@ -44,7 +44,7 @@
 
 namespace WebKit {
 
-#define ASSERT_IS_TESTING_IPC() ASSERT(isTestingIPC(), "Untrusted connection sent invalid data. Should only happen when testing IPC.")
+#define ASSERT_IS_TESTING_IPC() ASSERT(WebKit::isTestingIPC(), "Untrusted connection sent invalid data. Should only happen when testing IPC.")
 
 #if ENABLE(IPC_TESTING_API)
 

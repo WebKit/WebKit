@@ -379,7 +379,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(layerTransaction, scrollingTransaction);
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
-    commitEncoder.get() << message.arguments();
+    commitEncoder.get() << WTFMove(message).arguments();
 
     auto flushers = backingStoreCollection.didFlushLayers(layerTransaction);
     RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(flushers));

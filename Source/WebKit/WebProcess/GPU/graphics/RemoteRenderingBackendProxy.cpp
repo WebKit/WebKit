@@ -70,13 +70,14 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
 GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 {
     if (!m_gpuProcessConnection) {
-        auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
-        gpuProcessConnection.addClient(*this);
-        gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), renderingBackendIdentifier().toUInt64(), *this);
+        m_gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        m_gpuProcessConnection->addClient(*this);
+
         static constexpr auto connectionBufferSize = 1 << 21;
-        m_streamConnection = makeUnique<IPC::StreamClientConnection>(gpuProcessConnection.connection(), connectionBufferSize);
-        gpuProcessConnection.connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, m_streamConnection->streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-        m_gpuProcessConnection = gpuProcessConnection;
+        auto [streamConnection, dedicatedConnectionClientIdentifer] = IPC::StreamClientConnection::createWithDedicatedConnection(*this, connectionBufferSize);
+        m_streamConnection = WTFMove(streamConnection);
+        m_streamConnection->open();
+        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, dedicatedConnectionClientIdentifer, m_streamConnection->streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     return *m_gpuProcessConnection;
 }
@@ -101,6 +102,7 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_getPixelBufferSharedMemory = nullptr;
     m_renderingUpdateID = { };
     m_didRenderingUpdateID = { };
+    m_streamConnection->invalidate();
     m_streamConnection = nullptr;
 }
 

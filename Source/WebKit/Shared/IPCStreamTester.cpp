@@ -55,6 +55,7 @@ IPCStreamTester::~IPCStreamTester() = default;
 void IPCStreamTester::initialize()
 {
     m_streamConnection->startReceivingMessages(*this, Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
+    m_streamConnection->open();
     workQueue().dispatch([this] {
         m_streamConnection->connection().send(Messages::IPCStreamTesterProxy::WasCreated(workQueue().wakeUpSemaphore()), m_identifier);
     });
@@ -62,6 +63,7 @@ void IPCStreamTester::initialize()
 
 void IPCStreamTester::stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection)
 {
+    m_streamConnection->invalidate();
     m_streamConnection->stopReceivingMessages(Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
     workQueue().stopAndWaitForCompletion();
 }

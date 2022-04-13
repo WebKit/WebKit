@@ -1,3 +1,102 @@
+2022-04-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteRenderingBackend should have dedicated IPC::Connection for out-of-stream messages
+        https://bugs.webkit.org/show_bug.cgi?id=238516
+
+        Reviewed by Simon Fraser.
+
+        Use dedicated IPC::Connection for RemoteRenderingBackend IPC stream connection instead
+        of using the WP-GPUP main connection. RemoteDisplayListRecorder starts listening to
+        its messages in the worker thread. At that point, some out-of-stream message for that
+        id might already have been dispatched to main thread, causing missing message and assert.
+
+        Instead, use dedicated connection and route all the messages to the StreamServerConnection
+        in a "message queue". This way when each out-of-stream message marker is processed, the
+        message will be, directly or eventually, found from the message queue.
+
+        Remove workarounds:
+         - Adding a listener to the main WP-GPUP connection for all RemoteDisplayListRecorder messages
+           and routing them to particular StreamServerConnection. This was problematic since
+           there are many RRB StreamServerConnection instances, one per Page, but only one WP-GPUP
+           connection.
+         - RELEASE_LOG in MessageReceiveQueueMap about warning for the above. Turn this back into an
+           ASSERT.
+
+        Since IPC::StreamClientConnection and IPC::StreamServerConnection are like IPC::Connection,
+        add open() and invalidate() calls. These have same contract as with IPC::Connection:
+        open() should be called if connection is to be used, invalidate() must be called if open() was called.
+        These calls have an effect currently only with dedicated connections, but these are added to all
+        IPC::Stream*Connection clients for consistency and future uses.
+
+        Changes semantics of IPC::Connection slightly:
+        Before, there was no untrusted holders of "server" IPC::Connection, e.g. the IPC::Connection instances
+        were never instantiated by WP.
+        After, untrusted WP instantiates these IPC stream dedicated connections.
+        This is accounted in the case where IPC::Connection ensures that IPC::MessageNames::InitializeConnection
+        message is not acted on twice.
+
+        Tested by imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html
+                  --child-processes=1 --experimental-feature=UseGPUProcessForDOMRenderingEnabled=true --iterations=100 --force --simulator
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::initialize):
+        (WebKit::RemoteGraphicsContextGL::stopListeningForIPC):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::startListeningForIPC):
+        (WebKit::RemoteRenderingBackend::stopListeningForIPC):
+        (WebKit::RemoteRenderingBackend::messageSenderConnection const):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/WebGPU/RemoteGPU.cpp:
+        (WebKit::RemoteGPU::initialize):
+        (WebKit::RemoteGPU::stopListeningForIPC):
+        * Platform/IPC/MessageReceiveQueueMap.cpp:
+        (IPC::MessageReceiveQueueMap::addImpl):
+        (IPC::MessageReceiveQueueMap::remove):
+        * Platform/IPC/StreamClientConnection.cpp:
+        (IPC::StreamClientConnection::createWithDedicatedConnection):
+        (IPC::StreamClientConnection::StreamClientConnection):
+        (IPC::StreamClientConnection::~StreamClientConnection):
+        (IPC::StreamClientConnection::open):
+        (IPC::StreamClientConnection::invalidate):
+        (IPC::StreamClientConnection::connectionForTesting):
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::send):
+        (IPC::StreamClientConnection::sendSync):
+        (IPC::StreamClientConnection::waitForAndDispatchImmediately):
+        (IPC::StreamClientConnection::trySendSyncStream):
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnection::create):
+        (IPC::StreamServerConnection::createWithDedicatedConnection):
+        (IPC::StreamServerConnectionBase::StreamServerConnectionBase):
+        (IPC::StreamServerConnectionBase::~StreamServerConnectionBase):
+        (IPC::StreamServerConnectionBase::open):
+        (IPC::StreamServerConnectionBase::invalidate):
+        (IPC::StreamServerConnectionBase::startReceivingMessagesImpl):
+        (IPC::StreamServerConnectionBase::stopReceivingMessagesImpl):
+        * Platform/IPC/StreamServerConnection.h:
+        * Shared/IPCStreamTester.cpp:
+        (WebKit::IPCStreamTester::initialize):
+        (WebKit::IPCStreamTester::stopListeningForIPC):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+        (WebKit::RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::ensureGPUProcessConnection):
+        (WebKit::RemoteRenderingBackendProxy::disconnectGPUProcess):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp:
+        (WebKit::RemoteGPUProxy::RemoteGPUProxy):
+        (WebKit::RemoteGPUProxy::abandonGPUProcess):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::sendMessage):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::sendSyncMessage):
+
 2022-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove support for drawing cropped image overlays when hovering over "Copy Cropped Image"

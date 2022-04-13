@@ -172,9 +172,10 @@ private:
     void didFlush(WebCore::GraphicsContextFlushIdentifier, WebCore::RenderingResourceIdentifier);
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
 
+    GPUProcessConnection* m_gpuProcessConnection { nullptr };
+    RefPtr<IPC::Connection> m_connection;
     std::unique_ptr<IPC::StreamClientConnection> m_streamConnection;
     RemoteRenderingBackendCreationParameters m_parameters;
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };

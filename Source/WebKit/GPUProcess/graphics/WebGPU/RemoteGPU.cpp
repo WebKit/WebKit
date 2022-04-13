@@ -60,6 +60,7 @@ RemoteGPU::~RemoteGPU() = default;
 void RemoteGPU::initialize()
 {
     assertIsMainRunLoop();
+    m_streamConnection->open();
     workQueue().dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize();
     });
@@ -69,6 +70,7 @@ void RemoteGPU::initialize()
 void RemoteGPU::stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection)
 {
     assertIsMainRunLoop();
+    m_streamConnection->invalidate();
     m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
     workQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
         protectedThis->workQueueUninitialize();

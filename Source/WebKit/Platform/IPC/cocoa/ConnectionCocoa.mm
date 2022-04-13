@@ -27,6 +27,7 @@
 #import "Connection.h"
 
 #import "DataReference.h"
+#import "IPCTester.h"
 #import "ImportanceAssertion.h"
 #import "Logging.h"
 #import "MachMessage.h"
@@ -558,11 +559,14 @@ void Connection::receiveSourceEventHandler()
 #if PLATFORM(MAC)
     decoder->setImportanceAssertion(ImportanceAssertion { header });
 #endif
-
+    
     if (decoder->messageName() == MessageName::InitializeConnection) {
         ASSERT(m_isServer);
-        ASSERT(!m_isConnected);
         ASSERT(!m_sendPort);
+        if (m_isConnected) {
+            ASSERT_IS_TESTING_IPC();
+            return;
+        }
 
         MachPort port;
         if (!decoder->decode(port)) {
