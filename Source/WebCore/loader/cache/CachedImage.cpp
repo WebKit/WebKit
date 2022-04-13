@@ -101,7 +101,7 @@ void CachedImage::load(CachedResourceLoader& loader)
     m_skippingRevalidationDocument = loader.document();
     if (loader.shouldPerformImageLoad(url())) {
         CachedResource::load(loader);
-        CachedResourceClientWalker<CachedImageClient> walker(m_clients);
+        CachedResourceClientWalker<CachedImageClient> walker(*this);
         while (auto* client = walker.next())
             client->didStartLoading();
     } else
@@ -173,7 +173,7 @@ void CachedImage::addClientWaitingForAsyncDecoding(CachedImageClient& client)
         // a client to m_clientsWaitingForAsyncDecoding unless it is one of the m_clients, we are going
         // to cancel the repaint optimization we do in CachedImage::imageFrameAvailable() by adding
         // all the m_clients to m_clientsWaitingForAsyncDecoding.
-        CachedResourceClientWalker<CachedImageClient> walker(m_clients);
+        CachedResourceClientWalker<CachedImageClient> walker(*this);
         while (auto* client = walker.next())
             m_clientsWaitingForAsyncDecoding.add(client);
     } else
@@ -342,8 +342,8 @@ void CachedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& int
 
 void CachedImage::notifyObservers(const IntRect* changeRect)
 {
-    CachedResourceClientWalker<CachedImageClient> w(m_clients);
-    while (CachedImageClient* c = w.next())
+    CachedResourceClientWalker<CachedImageClient> walker(*this);
+    while (CachedImageClient* c = walker.next())
         c->imageChanged(this, changeRect);
 }
 
@@ -656,8 +656,8 @@ bool CachedImage::canDestroyDecodedData(const Image& image)
     if (&image != m_image)
         return false;
 
-    CachedResourceClientWalker<CachedImageClient> clientWalker(m_clients);
-    while (CachedImageClient* client = clientWalker.next()) {
+    CachedResourceClientWalker<CachedImageClient> walker(*this);
+    while (CachedImageClient* client = walker.next()) {
         if (!client->canDestroyDecodedData())
             return false;
     }
@@ -670,10 +670,10 @@ void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState an
     if (&image != m_image)
         return;
 
-    CachedResourceClientWalker<CachedImageClient> clientWalker(m_clients);
+    CachedResourceClientWalker<CachedImageClient> walker(*this);
     VisibleInViewportState visibleState = VisibleInViewportState::No;
 
-    while (CachedImageClient* client = clientWalker.next()) {
+    while (CachedImageClient* client = walker.next()) {
         // All the clients of animated images have to be notified. The new frame has to be drawn in all of them.
         if (animatingState == ImageAnimatingState::No && !m_clientsWaitingForAsyncDecoding.contains(client))
             continue;
@@ -700,7 +700,7 @@ void CachedImage::scheduleRenderingUpdate(const Image& image)
     if (&image != m_image)
         return;
 
-    CachedResourceClientWalker<CachedImageClient> walker(m_clients);
+    CachedResourceClientWalker<CachedImageClient> walker(*this);
     while (auto* client = walker.next())
         client->scheduleRenderingUpdateForImage(*this);
 }
@@ -744,7 +744,7 @@ bool CachedImage::canSkipRevalidation(const CachedResourceLoader& loader, const 
 
 bool CachedImage::isVisibleInViewport(const Document& document) const
 {
-    CachedResourceClientWalker<CachedImageClient> walker(m_clients);
+    CachedResourceClientWalker<CachedImageClient> walker(*this);
     while (auto* client = walker.next()) {
         if (client->imageVisibleInViewport(document) == VisibleInViewportState::Yes)
             return true;

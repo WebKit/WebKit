@@ -299,11 +299,14 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, Cached
             // If newImage is cached, addClient() will result in the load event
             // being queued to fire. Ensure this happens after beforeload is
             // dispatched.
-            newImage->addClient(*this);
+            if (!loadHasNowLazilyStarted)
+                newImage->addClient(*this);
         } else
             resetLazyImageLoading(element().document());
+
         if (oldImage) {
-            oldImage->removeClient(*this);
+            if (!loadHasNowLazilyStarted)
+                oldImage->removeClient(*this);
             updateRenderer();
         }
     }
