@@ -1656,6 +1656,8 @@ webkit.org/b/238880 [ Monterey+ Release ] imported/w3c/web-platform-tests/css/cs
 
 webkit.org/b/239095 http/wpt/cache-storage/cache-storage-networkprocess-crash.html [ Pass Crash ]
 
+webkit.org/b/239308 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
+
 webkit.org/b/239300 http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Pass Failure ]
 webkit.org/b/239300 http/tests/push-api/subscribe-default-permissions.html [ Pass Failure ]
 webkit.org/b/239300 http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Pass Failure ]

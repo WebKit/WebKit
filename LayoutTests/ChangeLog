@@ -1,3 +1,12 @@
+2022-04-13  Truitt Savell  <tsavell@apple.com>
+
+        [ Monterey WK2 ] media/media-source/media-source-webm-vorbis-partial.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=239308
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-04-13  Andres Gonzalez  <andresg_22@apple.com>
 
         Rewrite accessibility/mac/stale-table-rows.html to properly check that the number of rows and columns are correct after grid changes.
