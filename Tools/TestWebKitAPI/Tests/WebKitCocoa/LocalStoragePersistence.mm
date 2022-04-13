@@ -454,6 +454,62 @@ TEST(WKWebView, LocalStorageGroup)
     runTest(false);
 }
 
+TEST(WKWebView, LocalStorageNoSizeOverflow)
+{
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    NSString *htmlString = @"<script> \
+        const key = '\u00FF\u00FF'; \
+        function onStorage() { window.webkit.messageHandlers.testHandler.postMessage('storage'); } \
+        function setItem() { localStorage.setItem(key, 'value'); } \
+        function removeItem() { localStorage.removeItem(localStorage.key(0)); } \
+        function getItem() { return localStorage.getItem(key) ? localStorage.getItem(key) : '[null]'; } \
+        window.addEventListener('storage', onStorage);\
+        window.webkit.messageHandlers.testHandler.postMessage(getItem()); \
+        </script>";
+    auto handler = adoptNS([[LocalStorageMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"[null]", [lastScriptMessage body]);
+    receivedScriptMessage = false;
+
+    [webView evaluateJavaScript:@"setItem()" completionHandler:^(NSNumber *result, NSError *error) {
+        receivedScriptMessage = true;
+    }];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    
+    auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [secondWebView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"value", [lastScriptMessage body]);
+    receivedScriptMessage = false;
+
+    [secondWebView evaluateJavaScript:@"removeItem()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"storage", [lastScriptMessage body]);
+    receivedScriptMessage = false;
+
+    [secondWebView evaluateJavaScript:@"setItem()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"storage", [lastScriptMessage body]);
+    receivedScriptMessage = false;
+
+    [webView evaluateJavaScript:@"getItem()" completionHandler:^(NSString* result, NSError *error) {
+        EXPECT_WK_STREQ("value", [result UTF8String]);
+        receivedScriptMessage = true;
+    }];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 TEST(WKWebView, LocalStorageDirectoryExcludedFromBackup)

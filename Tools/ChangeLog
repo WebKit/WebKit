@@ -1,3 +1,55 @@
+2022-04-13  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r292721. rdar://problem/88249235
+
+    Fix size computation in WebCore::StorageMap
+    https://bugs.webkit.org/show_bug.cgi?id=239024
+    rdar://88249235
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    We use currentSize to track size for StorageMap. There are a few issues in current implementation that can make
+    currentSize incorrect and may lead to overflow:
+    1. When computing size of key, StorageMap uses parameter key instead of stored key. The problem is that
+    two Strings can be evaluated to equal while their sizeInBytes() value is different, when one String is 8-bit and
+    the other is 16-bit. That means removeItem() may decrease currentSize by wrong number (e.g setItem() with an
+    8-bit key, converting the key to 16-bit, removeItem() with the key). To fix this, StorageMap now always uses
+    stored key for computation.
+    2. When map.take(key) or map.get(key) returns null string, StorageMap takes it as the key does not exist and
+    will not correctly update currentSize, but user of WebCore::StorageMap may store null string as value. To fix
+    this, StorageMap now check if key exists with find() function.
+    3. StorageMap only uses CheckedUint32 in setItem(), but removeItem() and importItem() may cause overflow in
+    currentSize as mentioned above, and the error will not be caught until setItem() is called. To fix this,
+    StorageMap now uses CheckedUint32 in all places that update currentSize.
+    
+    New test: WKWebView.LocalStorageNoSizeOverflow
+    
+    * storage/StorageMap.cpp:
+    (WebCore::StorageMap::setItem):
+    (WebCore::StorageMap::removeItem):
+    (WebCore::StorageMap::importItems):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292721 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-11  Sihui Liu  <sihui_liu@apple.com>
+
+            Fix size computation in WebCore::StorageMap
+            https://bugs.webkit.org/show_bug.cgi?id=239024
+            rdar://88249235
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/LocalStoragePersistence.mm:
+            (TEST):
+
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r291886. rdar://problem/72814440
