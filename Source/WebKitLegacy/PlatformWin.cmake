@@ -378,11 +378,18 @@ function(GENERATE_INTERFACE _infile)
         USES_TERMINAL VERBATIM)
 endfunction()
 
-add_custom_command(
-    OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${WebKitLegacy_DERIVED_SOURCES_DIR}
-    VERBATIM)
+if (WTF_PLATFORM_WIN_CAIRO)
+    file(WRITE ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
+        "#define __BUILD_NUMBER_MAJOR__ 0\n"
+        "#define __BUILD_NUMBER_MINOR__ 0\n"
+        "#define __BUILD_NUMBER_SHORT__ \"\"\n")
+else ()
+    add_custom_command(
+        OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${WebKitLegacy_DERIVED_SOURCES_DIR}
+        VERBATIM)
+endif ()
 
 GENERATE_INTERFACE(win/Interfaces/WebKit.idl)
 GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleApplication.idl)

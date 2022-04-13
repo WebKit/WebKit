@@ -25,7 +25,7 @@
 
 import importlib
 import json
-import os.path
+import os
 import sys
 import zipfile
 
@@ -33,7 +33,7 @@ download = importlib.import_module('download-github-release')
 
 repo = 'WebKitForWindows/WebKitRequirements'
 file = 'WebKitRequirementsWin64.zip'
-output = 'WebKitLibraries/win'
+output = os.getenv('WEBKIT_LIBRARIES', 'WebKitLibraries/win')
 options = [repo, file, '-o', output]
 
 # Check if there's a specific version to request

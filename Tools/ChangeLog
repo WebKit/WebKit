@@ -1,3 +1,13 @@
+2022-04-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WEBKIT_LIBRARIES env var should be customizable
+        https://bugs.webkit.org/show_bug.cgi?id=239268
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/update-webkit-wincairo-libs.py:
+        Output to WEBKIT_LIBRARIES directory if the env var is set.
+
 2022-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         [css-scroll-snap] scrollIntoView fails with scroll-snap-type on :root

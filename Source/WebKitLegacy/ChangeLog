@@ -1,3 +1,29 @@
+2022-04-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WEBKIT_LIBRARIES env var should be customizable
+        https://bugs.webkit.org/show_bug.cgi?id=239268
+
+        Reviewed by Yusuke Suzuki.
+
+        Even though WEBKIT_LIBRARIES is a env var, it wasn't customizable
+        for WinCairo. It should set to WebKitLibraries\win directory for
+        WinCairo builds.
+
+        This has two problems:
+        1. It is the same directory with one AppleWin is using. This is error prone. See Bug#238988.
+        2. WebKitLibraries\win directory is a source directory. It isn't a good practise to overwrite source directories.
+
+        It should be customizable to set it to a WinCairo specific directory. For example,
+        > set WEBKIT_LIBRARIES=%~dp0WinCairoLibraries
+
+        If I changed the env var, the WinCairo build failed because
+        auto-version.pl and version-stamp.pl were missing. They are in
+        WebKitLibraries/win/tools/scripts directory. However, WinCairo
+        doesn't need both scripts.
+
+        * CMakeLists.txt: Don't use version-stamp.pl for WinCairo builds.
+        * PlatformWin.cmake: Don't use auto-version.pl for WinCairo builds.
+
 2022-04-05  Elliott Williams  <emw@apple.com>
 
         Fix STP build error "no such file or directory: 'Technology'"
