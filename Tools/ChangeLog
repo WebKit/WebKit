@@ -1,3 +1,9 @@
+2022-04-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [JHBuild] Unreviewed, fix 'glib-networking' module path
+
+        * jhbuild/jhbuild-minimal.modules:
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         [Xcode] In open-source builds, disable bitcode in xcconfigs instead of build-webkit
