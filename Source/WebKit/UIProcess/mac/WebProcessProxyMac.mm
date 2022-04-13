@@ -80,20 +80,12 @@ void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserver
 
 void WebProcessProxy::platformSuspendProcess()
 {
-    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformSuspendProcess", this, processIdentifier());
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (auto* connection = this->connection())
-        xpc_connection_kill(connection->xpcConnection(), SIGSTOP);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    // FIXME: Adopt RunningBoard on macOS to support process suspension.
 }
 
 void WebProcessProxy::platformResumeProcess()
 {
-    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformResumeProcess", this, processIdentifier());
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (auto* connection = this->connection())
-        xpc_connection_kill(connection->xpcConnection(), SIGCONT);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    // FIXME: Adopt RunningBoard on macOS to support process suspension.
 }
 
 } // namespace WebKit

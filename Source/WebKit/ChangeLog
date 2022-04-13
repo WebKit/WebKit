@@ -1,3 +1,27 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        WebContent crashes with SIGTERM_TIMEOUT on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=239298
+        <rdar://90665705>
+
+        Reviewed by Darin Adler.
+
+        To make sure that WebProcesses cannot use any CPU time while in the WebProcess cache on macOS, I recently tried to
+        suspend these cached processes. However, since we haven't adopted RunningBoard on macOS yet, I was doing suspension
+        and resuming manually via the SIGSTOP & SIGCONT signals. While this properly suspended our cached processes, this
+        introduced SIGTERM_TIMEOUT crashes and potential delays when exiting Safari or logging out of macOS while Safari is
+        running. This is because our cached & suspended processes are unable to process the SIGTERM signal they receive and
+        thus don't cleanly exit. After a timeout, the system forcefully kills them and generates a crash log with
+        SIGTERM_TIMEOUT to let us know.
+
+        To address the issue, I am disabling the WebProcess suspension logic that I recently added. We can reconsider doing
+        something like this once we adopt RunningBoard on macOS, assuming the same issue doesn't affect suspension via
+        RunningBoard.
+
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::platformSuspendProcess):
+        (WebKit::WebProcessProxy::platformResumeProcess):
+
 2022-04-13  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         Misc compiler warnings, April 2022 edition
