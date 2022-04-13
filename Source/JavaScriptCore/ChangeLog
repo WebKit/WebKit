@@ -1,5 +1,17 @@
 2022-04-13  Michael Catanzaro  <mcatanzaro@redhat.com>
 
+        GCC 12 -Wdangling-pointer warning spam from AbstractSlotVisitorInlines.h
+        https://bugs.webkit.org/show_bug.cgi?id=239299
+
+        Reviewed by Mark Lam.
+        
+        Suppress this warning, so we can see other warnings.
+
+        * heap/AbstractSlotVisitorInlines.h:
+        (JSC::AbstractSlotVisitor::ReferrerContext::ReferrerContext):
+
+2022-04-13  Michael Catanzaro  <mcatanzaro@redhat.com>
+
         Misc compiler warnings, April 2022 edition
         https://bugs.webkit.org/show_bug.cgi?id=239290
 

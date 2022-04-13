@@ -74,7 +74,9 @@ inline AbstractSlotVisitor::ReferrerContext::ReferrerContext(AbstractSlotVisitor
         // An OpaqueRoot contexts can only be on the leaf.
         RELEASE_ASSERT(!m_previous->m_isOpaqueRootContext);
     }
+IGNORE_GCC_WARNINGS_BEGIN("dangling-pointer")
     m_visitor.m_context = this;
+IGNORE_GCC_WARNINGS_END
 }
 
 inline AbstractSlotVisitor::ReferrerContext::ReferrerContext(AbstractSlotVisitor& visitor, AbstractSlotVisitor::OpaqueRootTag)
