@@ -1537,6 +1537,7 @@ static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const 
         // FIXME: implement ray- https://bugs.webkit.org/show_bug.cgi?id=233344
         return std::nullopt;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static PathTraversalState getTraversalStateAtDistance(const Path& path, const Length& distance)

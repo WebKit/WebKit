@@ -1421,8 +1421,9 @@ ALWAYS_INLINE JSValue JSObject::getDirect(Concurrency concurrency, Structure* ex
     case Concurrency::ConcurrentThread:
         return getDirectConcurrently(expectedStructure, offset);
     }
-
+    RELEASE_ASSERT_NOT_REACHED();
 }
+
 inline JSValue JSObject::getDirectConcurrently(Structure* structure, PropertyOffset offset) const
 {
     ConcurrentJSLocker locker(structure->lock());

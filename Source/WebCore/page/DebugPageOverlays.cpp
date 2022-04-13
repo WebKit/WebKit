@@ -80,7 +80,9 @@ protected:
     bool m_regionChanged { true };
 };
 
+#if COMPILER(CLANG)
 #pragma mark - MouseWheelRegionOverlay
+#endif
 
 class MouseWheelRegionOverlay final : public RegionOverlay {
 public:
@@ -123,7 +125,9 @@ bool MouseWheelRegionOverlay::updateRegion()
 #endif
 }
 
+#if COMPILER(CLANG)
 #pragma mark - NonFastScrollableRegionOverlay
+#endif
 
 class NonFastScrollableRegionOverlay final : public RegionOverlay {
 public:
@@ -229,7 +233,9 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     drawRegion(context, m_eventTrackingRegions.asynchronousDispatchRegion, m_color, bounds);
 }
 
+#if COMPILER(CLANG)
 #pragma mark - InteractionRegionOverlay
+#endif
 
 class InteractionRegionOverlay final : public RegionOverlay {
 public:
@@ -550,7 +556,9 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
     return false;
 }
 
+#if COMPILER(CLANG)
 #pragma mark - RegionOverlay
+#endif
 
 Ref<RegionOverlay> RegionOverlay::create(Page& page, DebugPageOverlays::RegionType regionType)
 {
@@ -631,7 +639,9 @@ void RegionOverlay::recomputeRegion()
     m_regionChanged = false;
 }
 
+#if COMPILER(CLANG)
 #pragma mark - DebugPageOverlays
+#endif
 
 DebugPageOverlays& DebugPageOverlays::singleton()
 {

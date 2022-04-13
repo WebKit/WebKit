@@ -5692,6 +5692,7 @@ auto Internals::categoryAtMostRecentPlayback(HTMLMediaElement& element) const ->
 #if USE(AUDIO_SESSION)
     return element.categoryAtMostRecentPlayback();
 #else
+    UNUSED_PARAM(element);
     return AudioSessionCategory::None;
 #endif
 }

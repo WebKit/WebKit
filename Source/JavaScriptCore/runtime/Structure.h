@@ -524,6 +524,7 @@ public:
         case Concurrency::ConcurrentThread:
             return getConcurrently(uid, attributes);
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     ALWAYS_INLINE PropertyOffset get(VM& vm, Concurrency concurrency, UniquedStringImpl* uid)
@@ -535,6 +536,7 @@ public:
         case Concurrency::ConcurrentThread:
             return getConcurrently(uid);
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     PropertyOffset getConcurrently(UniquedStringImpl* uid);

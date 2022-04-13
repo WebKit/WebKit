@@ -435,6 +435,7 @@ String OriginStorageManager::StorageBucket::resolvedPath(WebsiteDataType webiste
     case StorageType::FileSystem:
         return typeStoragePath(*type);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 String OriginStorageManager::originFileIdentifier()

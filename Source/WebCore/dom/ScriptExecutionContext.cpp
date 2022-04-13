@@ -752,6 +752,7 @@ ScriptExecutionContext::HasResourceAccess ScriptExecutionContext::canAccessResou
             return HasResourceAccess::DefaultForThirdParty;
         return HasResourceAccess::Yes;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

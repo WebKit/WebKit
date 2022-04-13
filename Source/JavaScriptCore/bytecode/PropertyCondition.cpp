@@ -263,7 +263,6 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     }
     
     RELEASE_ASSERT_NOT_REACHED();
-    return false;
 }
 
 static ALWAYS_INLINE Concurrency watchabilityToConcurrency(PropertyCondition::WatchabilityEffort effort)
@@ -274,6 +273,7 @@ static ALWAYS_INLINE Concurrency watchabilityToConcurrency(PropertyCondition::Wa
     case PropertyCondition::WatchabilityEffort::MakeNoChanges:
         return Concurrency::ConcurrentThread;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool PropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* structure) const
@@ -293,7 +293,6 @@ bool PropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* stru
     }
     
     RELEASE_ASSERT_NOT_REACHED();
-    return false;
 }
 
 bool PropertyCondition::isStillValid(Concurrency concurrency, Structure* structure, JSObject* base) const

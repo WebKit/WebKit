@@ -154,6 +154,8 @@ static const char* stateChangeName(GraphicsContextState::Change change)
         return "use-dark-appearance";
 #endif
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 TextStream& GraphicsContextState::dump(TextStream& ts) const

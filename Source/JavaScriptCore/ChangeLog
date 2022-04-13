@@ -1,3 +1,19 @@
+2022-04-13  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        Misc compiler warnings, April 2022 edition
+        https://bugs.webkit.org/show_bug.cgi?id=239290
+
+        Reviewed by Adrian Perez de Castro.
+
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::watchabilityToConcurrency):
+        (JSC::PropertyCondition::validityRequiresImpurePropertyWatchpoint const):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect const):
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+
 2022-04-13  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove DeprecatedCallFrameForDebugger

@@ -249,6 +249,7 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
         case ContainerType::None:
             return true;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
     if (!hasEligibleContainment())

@@ -114,7 +114,7 @@ static std::optional<InteractionRegion> regionForElement(Element& element)
         return contentsRect;
     });
         
-    return WTFMove(region);
+    return region;
 }
 
 static CursorType cursorTypeForElement(Element& element)

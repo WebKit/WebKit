@@ -1,3 +1,24 @@
+2022-04-13  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        Misc compiler warnings, April 2022 edition
+        https://bugs.webkit.org/show_bug.cgi?id=239290
+
+        Reviewed by Adrian Perez de Castro.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canAccessResource const):
+        * page/DebugPageOverlays.cpp:
+        * page/InteractionRegion.cpp:
+        (WebCore::regionForElement):
+        * platform/graphics/GraphicsContextState.cpp:
+        (WebCore::stateChangeName):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::getPathFromPathOperation):
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::evaluateSizeFeature const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::categoryAtMostRecentPlayback const):
+
 2022-04-13  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix non-unified build after r292810
