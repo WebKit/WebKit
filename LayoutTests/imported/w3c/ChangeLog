@@ -1,3 +1,20 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html
+        https://bugs.webkit.org/show_bug.cgi?id=238790
+        <rdar://problem/91607355>
+
+        Reviewed by Eric Carlson.
+
+        The audio values may differ slightly from hardware to hardware due to floating point precision and vectorization.
+        On one of our ARM platforms, we were getting values slightly outside the allowed range but still close enough
+        that we consider the behavior to be correct. As a result, I am increasing the tolerance a bit in the test.
+
+        If this resolves the issue on our bot (I cannot reproduce locally), I'll submit a PR upstream.
+
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html:
+
 2022-04-13  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Limit query range syntax

@@ -36,7 +36,7 @@ PASS   Output from gain setter equals [expected array] with an element-wise tole
 PASS   Output from gain setter matches setValueAtTime output is true.
 PASS < [Test 3] All assertions passed. (total 5 assertions)
 PASS > [Test 4] No dezippering of frequency vs JS filter
-PASS   Output from lowpass filter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":5.9607e-7,"relativeThreshold":0}.
+PASS   Output from lowpass filter equals [expected array] with an element-wise tolerance of {"absoluteThreshold":6.8546e-7,"relativeThreshold":0}.
 PASS   Output matches JS filter results is true.
 PASS < [Test 4] All assertions passed. (total 2 assertions)
 PASS > [Test 5] Test with modulation
