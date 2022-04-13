@@ -39,11 +39,12 @@ enum class EvaluationResult : uint8_t { False, True, Unknown };
 
 class ContainerQueryEvaluator {
 public:
-    ContainerQueryEvaluator(const Element&, PseudoId, ScopeOrdinal, SelectorMatchingState*);
+    enum class SelectionMode : bool { Element, PseudoElement };
+    ContainerQueryEvaluator(const Element&, SelectionMode, ScopeOrdinal, SelectorMatchingState*);
 
     bool evaluate(const FilteredContainerQuery&) const;
 
-    static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, const CachedQueryContainers*, PseudoId = PseudoId::None, ScopeOrdinal = ScopeOrdinal::Element);
+    static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, SelectionMode = SelectionMode::Element, ScopeOrdinal = ScopeOrdinal::Element, const CachedQueryContainers* = nullptr);
 
 private:
     struct SelectedContainer;
@@ -54,8 +55,8 @@ private:
     EvaluationResult evaluateSizeFeature(const CQ::SizeFeature&, const SelectedContainer&) const;
 
     const Ref<const Element> m_element;
-    const PseudoId m_pseudoId;
-    ScopeOrdinal m_scopeOrdinal;
+    const SelectionMode m_selectionMode;
+    const ScopeOrdinal m_scopeOrdinal;
     SelectorMatchingState* m_selectorMatchingState;
 };
 

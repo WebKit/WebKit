@@ -826,7 +826,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         if (!conversionData.element())
             return nullptr;
         // FIXME: Use cached query containers when available.
-        auto* container = Style::ContainerQueryEvaluator::selectContainer(axis, nullString(), *conversionData.element(), nullptr);
+        auto* container = Style::ContainerQueryEvaluator::selectContainer(axis, nullString(), *conversionData.element());
         if (!container)
             return nullptr;
         return dynamicDowncast<RenderBox>(container->renderer());

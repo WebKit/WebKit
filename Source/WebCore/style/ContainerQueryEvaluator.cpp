@@ -44,9 +44,9 @@ struct ContainerQueryEvaluator::SelectedContainer {
     CSSToLengthConversionData conversionData;
 };
 
-ContainerQueryEvaluator::ContainerQueryEvaluator(const Element& element, PseudoId pseudoId, ScopeOrdinal scopeOrdinal, SelectorMatchingState* selectorMatchingState)
+ContainerQueryEvaluator::ContainerQueryEvaluator(const Element& element, SelectionMode selectionMode, ScopeOrdinal scopeOrdinal, SelectorMatchingState* selectorMatchingState)
     : m_element(element)
-    , m_pseudoId(pseudoId)
+    , m_selectionMode(selectionMode)
     , m_scopeOrdinal(scopeOrdinal)
     , m_selectorMatchingState(selectorMatchingState)
 {
@@ -82,14 +82,14 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
 
     auto* cachedQueryContainers = m_selectorMatchingState ? &m_selectorMatchingState->queryContainers : nullptr;
 
-    auto* container = selectContainer(filteredContainerQuery.axisFilter, filteredContainerQuery.nameFilter, m_element.get(), cachedQueryContainers, m_pseudoId, m_scopeOrdinal);
+    auto* container = selectContainer(filteredContainerQuery.axisFilter, filteredContainerQuery.nameFilter, m_element.get(), m_selectionMode, m_scopeOrdinal, cachedQueryContainers);
     if (!container)
         return { };
 
     return makeSelectedContainer(*container);
 }
 
-const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes, const String& name, const Element& element, const CachedQueryContainers* cachedQueryContainers, PseudoId pseudoId, ScopeOrdinal scopeOrdinal)
+const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes, const String& name, const Element& element, SelectionMode selectionMode, ScopeOrdinal scopeOrdinal, const CachedQueryContainers* cachedQueryContainers)
 {
     // "For each element, the query container to be queried is selected from among the element’s
     // ancestor query containers that have a valid container-type for all the container features
@@ -144,17 +144,17 @@ const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes
         return nullptr;
     }
 
+    if (selectionMode == SelectionMode::PseudoElement) {
+        if (isContainerForQuery(element))
+            return &element;
+    }
+
     if (cachedQueryContainers) {
         for (auto& container : makeReversedRange(*cachedQueryContainers)) {
             if (isContainerForQuery(container))
                 return container.ptr();
         }
         return { };
-    }
-
-    if (pseudoId != PseudoId::None) {
-        if (isContainerForQuery(element))
-            return &element;
     }
 
     for (auto* ancestor = element.parentOrShadowHostElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {

@@ -1,3 +1,12 @@
+2022-04-13  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Correct container selection for pseudo-elements
+        https://bugs.webkit.org/show_bug.cgi?id=239279
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2022-04-13  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r292043): [ Mac ] fast/block/positioning/fixed-container-with-relative-parent.html is a flaky image failure

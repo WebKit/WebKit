@@ -512,8 +512,11 @@ bool ElementRuleCollector::containerQueriesMatch(const RuleData& ruleData, const
     if (queries.isEmpty())
         return true;
 
+    // Style bits indicating which pseudo-elements match are set during regular element matching. Container queries need to be evaluate in the right mode.
+    auto selectionMode = ruleData.canMatchPseudoElement() ? ContainerQueryEvaluator::SelectionMode::PseudoElement : ContainerQueryEvaluator::SelectionMode::Element;
+
     // "Style rules defined on an element inside multiple nested container queries apply when all of the wrapping container queries are true for that element."
-    ContainerQueryEvaluator evaluator(element(), m_pseudoElementRequest.pseudoId, matchRequest.styleScopeOrdinal, m_selectorMatchingState);
+    ContainerQueryEvaluator evaluator(element(), selectionMode, matchRequest.styleScopeOrdinal, m_selectorMatchingState);
     for (auto* query : queries) {
         if (!evaluator.evaluate(*query))
             return false;

@@ -1,3 +1,30 @@
+2022-04-13  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Correct container selection for pseudo-elements
+        https://bugs.webkit.org/show_bug.cgi?id=239279
+
+        Reviewed by Simon Fraser.
+
+        The element itself may be the container for its pseudo-elements.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeNonCalcLengthDouble):
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::ContainerQueryEvaluator):
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer const):
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer):
+        * style/ContainerQueryEvaluator.h:
+
+        Instead of passing the pseudo-element being matched, pass a container selection mode flag. The exact pseudo-element type
+        doesn't matter.
+
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::containerQueriesMatch):
+
+        We need to use the pseudo-element mode when matching a rule that matches a pseudo-element, even when we are not actually resolving
+        the pseudo element. This is because regular element rule matching sets the style bits that indicate what pseudo-elements the
+        element has.
+
 2022-04-13  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r292043): [ Mac ] fast/block/positioning/fixed-container-with-relative-parent.html is a flaky image failure
