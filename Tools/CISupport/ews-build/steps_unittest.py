@@ -5204,7 +5204,9 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        return rc
 
     def test_success_pr(self):
         self.setupStep(ValidateCommitterAndReviewer())
@@ -5214,7 +5216,21 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
-        return self.runStep()
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        return rc
+
+    def test_success_pr_duplicate(self):
+        self.setupStep(ValidateCommitterAndReviewer())
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer', 'webkit-reviewer']
+        self.setProperty('github.number', '1234')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectHidden(False)
+        self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
+        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
+        return rc
 
     def test_success_no_reviewer_patch(self):
         self.setupStep(ValidateCommitterAndReviewer())

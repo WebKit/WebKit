@@ -1,3 +1,15 @@
+2022-04-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Do not duplicate reviewer names
+        https://bugs.webkit.org/show_bug.cgi?id=239270
+        <rdar://problem/91662347>
+
+        Reviewed by Yusuke Suzuki.
+
+        * CISupport/ews-build/steps.py:
+        (ValidateCommitterAndReviewer.start):
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-04-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [JHBuild] Unreviewed, replace 'false' for 'disabled' in glib mesonargs

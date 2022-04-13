@@ -1578,6 +1578,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         else:
             reviewer = self.getProperty('reviewer', '').lower()
             reviewers = [reviewer] if reviewer else []
+        reviewers = set(reviewers)
 
         if not reviewers:
             # Change has not been reviewed in bug tracker. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
