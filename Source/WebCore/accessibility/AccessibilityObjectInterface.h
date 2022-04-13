@@ -1534,6 +1534,13 @@ private:
     virtual void detachPlatformWrapper(AccessibilityDetachmentType) = 0;
 };
 
+inline Vector<AXID> axIDs(const AXCoreObject::AccessibilityChildrenVector& objects)
+{
+    return objects.map([] (const auto& object) {
+        return object ? object->objectID() : AXID();
+    });
+}
+
 inline AXCoreObject::AXValue AXCoreObject::value()
 {
     if (supportsRangeValue())
@@ -1584,9 +1591,7 @@ inline void AXCoreObject::detachWrapper(AccessibilityDetachmentType detachmentTy
 
 inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNecessary)
 {
-    return children(updateChildrenIfNecessary).map([] (auto& axObject) -> AXID {
-        return axObject->objectID();
-    });
+    return axIDs(children(updateChildrenIfNecessary));
 }
 
 namespace Accessibility {

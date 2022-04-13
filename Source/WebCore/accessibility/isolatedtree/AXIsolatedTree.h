@@ -339,7 +339,6 @@ public:
     RefPtr<AXIsolatedObject> focusedNode();
     RefPtr<AXIsolatedObject> nodeForID(AXID) const;
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
-    Vector<AXID> idsForObjects(const Vector<RefPtr<AXCoreObject>>&) const;
 
     struct NodeChange {
         Ref<AXIsolatedObject> isolatedObject;
@@ -352,8 +351,11 @@ public:
 
     void generateSubtree(AXCoreObject&, AXCoreObject*, bool attachWrapper);
     void updateNode(AXCoreObject&);
-    void updateNodeProperty(AXCoreObject&, AXPropertyName);
     void updateChildren(AXCoreObject&);
+    void updateNodeProperty(AXCoreObject&, AXPropertyName);
+    void updateRelatedProperties(AXCoreObject&);
+    void updateTableProperties(AXCoreObject&);
+    void updateTreeItemProperties(AXCoreObject&);
 
     double loadingProgress() { return m_loadingProgress; }
     void updateLoadingProgress(double);

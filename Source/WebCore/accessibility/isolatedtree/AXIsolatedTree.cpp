@@ -169,13 +169,6 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& a
     return result;
 }
 
-Vector<AXID> AXIsolatedTree::idsForObjects(const Vector<RefPtr<AXCoreObject>>& objects) const
-{
-    return objects.map([] (const RefPtr<AXCoreObject>& object) -> AXID {
-        return object ? object->objectID() : AXID();
-    });
-}
-
 void AXIsolatedTree::generateSubtree(AXCoreObject& axObject, AXCoreObject* axParent, bool attachWrapper)
 {
     AXTRACE("AXIsolatedTree::generateSubtree"_s);
@@ -319,12 +312,12 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     AXPropertyMap propertyMap;
     switch (property) {
     case AXPropertyName::ARIATreeItemContent:
-        propertyMap.set(AXPropertyName::ARIATreeItemContent, idsForObjects(axObject.ariaTreeItemContent()));
+        propertyMap.set(AXPropertyName::ARIATreeItemContent, axIDs(axObject.ariaTreeItemContent()));
         break;
     case AXPropertyName::ARIATreeRows: {
         AXCoreObject::AccessibilityChildrenVector ariaTreeRows;
         axObject.ariaTreeRows(ariaTreeRows);
-        propertyMap.set(AXPropertyName::ARIATreeRows, idsForObjects(ariaTreeRows));
+        propertyMap.set(AXPropertyName::ARIATreeRows, axIDs(ariaTreeRows));
         break;
     }
     case AXPropertyName::CanSetFocusAttribute:
@@ -337,7 +330,7 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
         propertyMap.set(AXPropertyName::CurrentValue, axObject.currentValue().isolatedCopy());
         break;
     case AXPropertyName::DisclosedRows:
-        propertyMap.set(AXPropertyName::DisclosedRows, idsForObjects(axObject.disclosedRows()));
+        propertyMap.set(AXPropertyName::DisclosedRows, axIDs(axObject.disclosedRows()));
         break;
     case AXPropertyName::IdentifierAttribute:
         propertyMap.set(AXPropertyName::IdentifierAttribute, axObject.identifierAttribute().isolatedCopy());
@@ -368,6 +361,61 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
 
     Locker locker { m_changeLogLock };
     m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
+}
+
+void AXIsolatedTree::updateTableProperties(AXCoreObject& axObject)
+{
+    ASSERT(isMainThread());
+    ASSERT(axObject.isTable());
+
+    AXPropertyMap propertyMap {
+        { AXPropertyName::IsTable, true },
+        { AXPropertyName::IsExposable, axObject.isExposable() },
+        { AXPropertyName::IsDataTable, axObject.isDataTable() },
+        { AXPropertyName::TableLevel, axObject.tableLevel() },
+        { AXPropertyName::SupportsSelectedRows, axObject.supportsSelectedRows() },
+        { AXPropertyName::Columns, axIDs(axObject.columns()) },
+        { AXPropertyName::Rows, axIDs(axObject.rows()) },
+        { AXPropertyName::ColumnCount, axObject.columnCount() },
+        { AXPropertyName::RowCount, axObject.rowCount() },
+        { AXPropertyName::Cells, axIDs(axObject.cells()) },
+        { AXPropertyName::ColumnHeaders, axIDs(axObject.columnHeaders()) },
+        { AXPropertyName::RowHeaders, axIDs(axObject.rowHeaders()) },
+        { AXPropertyName::VisibleRows, axIDs(axObject.visibleRows()) },
+        { AXPropertyName::HeaderContainer, axObject.headerContainer() ? axObject.headerContainer()->objectID() : AXID() },
+        { AXPropertyName::AXColumnCount, axObject.axColumnCount() },
+        { AXPropertyName::AXRowCount, axObject.axRowCount() },
+    };
+
+    Locker locker { m_changeLogLock };
+    m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
+}
+
+void AXIsolatedTree::updateTreeItemProperties(AXCoreObject& axObject)
+{
+    ASSERT(isMainThread());
+    ASSERT(axObject.isTreeItem());
+
+    AXPropertyMap propertyMap {
+        { AXPropertyName::ARIATreeItemContent, axIDs(axObject.ariaTreeItemContent()) },
+        { AXPropertyName::DisclosedRows, axIDs(axObject.disclosedRows()) },
+    };
+
+    Locker locker { m_changeLogLock };
+    m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
+}
+
+void AXIsolatedTree::updateRelatedProperties(AXCoreObject& axObject)
+{
+    ASSERT(isMainThread());
+
+    if (axObject.isTable())
+        updateTableProperties(axObject);
+    else if (axObject.isTreeItem())
+        updateTreeItemProperties(axObject);
+
+    if (auto* treeAncestor = Accessibility::findAncestor(axObject, true, [] (const auto& object) { return object.isTree(); }))
+        updateNodeProperty(*treeAncestor, AXPropertyName::ARIATreeRows);
 }
 
 void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
@@ -444,13 +492,7 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     queueChangesAndRemovals(changes, oldChildrenIDs);
 
     // Also queue updates for properties that derive from children().
-    if (axAncestor->isTreeItem()) {
-        updateNodeProperty(*axAncestor, AXPropertyName::ARIATreeItemContent);
-        updateNodeProperty(*axAncestor, AXPropertyName::DisclosedRows);
-    }
-
-    if (auto* treeAncestor = Accessibility::findAncestor(*axAncestor, true, [] (const auto& axObject) { return axObject.isTree(); }))
-        updateNodeProperty(*treeAncestor, AXPropertyName::ARIATreeRows);
+    updateRelatedProperties(*axAncestor);
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()

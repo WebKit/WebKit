@@ -1,3 +1,36 @@
+2022-04-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/table-add-remove-rows.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=239271
+        <rdar://problem/91663287>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/table-add-remove-rows.html
+
+        Added AXIsolatedTree::updateTableProperties() to recalculate all cached
+        table properties when the children of a table object change.
+        AXIsolatedTree::updateChildren now calls updateRelatedProperties to
+        update properties that can change as the result of children changes for
+        specific types of objects like tables, trees and treeitems.
+        Moved and renamed idsForObjects as axIDs() so that it can be used across
+        the board.
+
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::axIDs):
+        (WebCore::AXCoreObject::childrenIDs):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::setObjectVectorProperty):
+        (WebCore::AXIsolatedObject::setSelectedChildren):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateNodeProperty):
+        (WebCore::AXIsolatedTree::updateTableProperties):
+        (WebCore::AXIsolatedTree::updateTreeItemProperties):
+        (WebCore::AXIsolatedTree::updateRelatedProperties):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::idsForObjects const): Moved to AccessibilityObjectInterface.h as axIDs().
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+
 2022-04-13  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Correct container selection for pseudo-elements
