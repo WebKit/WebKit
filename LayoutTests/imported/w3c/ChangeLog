@@ -1,3 +1,17 @@
+2022-04-12  Asumu Takikawa  <asumu@igalia.com>
+
+        Allow Wasm import from a JS Worker module
+        https://bugs.webkit.org/show_bug.cgi?id=238291
+
+        Reviewed by Yusuke Suzuki.
+
+        Fixed worker test and updated expectation.
+
+        * web-platform-tests/wasm/webapi/esm-integration/resources/worker-helper.js:
+        (export.pm):
+        * web-platform-tests/wasm/webapi/esm-integration/worker-import.tentative-expected.txt:
+        * web-platform-tests/wasm/webapi/esm-integration/worker-import.tentative.html:
+
 2022-04-11  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Update container shorthand order

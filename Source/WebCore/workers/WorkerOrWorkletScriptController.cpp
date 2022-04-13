@@ -364,9 +364,13 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
     // task is queued in WorkerRunLoop before start running module scripts. This task should not be discarded
     // in the following driving of the RunLoop which mainly attempt to collect initial load of module scripts.
     String taskMode = WorkerModuleScriptLoader::taskMode();
+
+    // Allow tasks scheduled from the WorkerEventLoop.
+    constexpr bool allowEventLoopTasks = true;
+
     bool success = true;
     while ((!protector->isLoaded() && !protector->wasCanceled()) && success) {
-        success = runLoop.runInMode(m_globalScope, taskMode);
+        success = runLoop.runInMode(m_globalScope, taskMode, allowEventLoopTasks);
         if (success)
             m_globalScope->eventLoop().performMicrotaskCheckpoint();
     }

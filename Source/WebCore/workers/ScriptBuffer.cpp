@@ -69,6 +69,11 @@ void ScriptBuffer::append(const String& string)
     m_buffer.append(utf8.data(), utf8.length());
 }
 
+void ScriptBuffer::append(const FragmentedSharedBuffer& buffer)
+{
+    m_buffer.append(buffer);
+}
+
 bool operator==(const ScriptBuffer& a, const ScriptBuffer& b)
 {
     if (a.buffer() == b.buffer())

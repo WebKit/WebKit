@@ -234,6 +234,13 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
     if (m_failed)
         return;
 
+#if ENABLE(WEBASSEMBLY)
+    if (MIMETypeRegistry::isSupportedWebAssemblyMIMEType(m_responseMIMEType)) {
+        m_script.append(buffer);
+        return;
+    }
+#endif
+
     if (!m_decoder)
         m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
 

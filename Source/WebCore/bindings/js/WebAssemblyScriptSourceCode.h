@@ -32,6 +32,7 @@
 #include "CachedScriptFetcher.h"
 #include "SharedBuffer.h"
 #include "WebAssemblyCachedScriptSourceProvider.h"
+#include "WebAssemblyScriptBufferSourceProvider.h"
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <wtf/RefPtr.h>
@@ -45,6 +46,12 @@ public:
         : m_provider(WebAssemblyCachedScriptSourceProvider::create(cachedScript, WTFMove(scriptFetcher)))
         , m_code(m_provider.copyRef())
         , m_cachedScript(cachedScript)
+    {
+    }
+
+    WebAssemblyScriptSourceCode(const ScriptBuffer& source, URL&& url, Ref<JSC::ScriptFetcher>&& scriptFetcher)
+        : m_provider(WebAssemblyScriptBufferSourceProvider::create(source, WTFMove(url), WTFMove(scriptFetcher)))
+        , m_code(m_provider.copyRef())
     {
     }
 

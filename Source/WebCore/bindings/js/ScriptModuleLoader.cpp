@@ -482,12 +482,8 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(loader.responseMIMEType()))
             type = ModuleType::JavaScript;
 #if ENABLE(WEBASSEMBLY)
-        else if (context().settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(loader.responseMIMEType())) {
+        else if (context().settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(loader.responseMIMEType()))
             type = ModuleType::WebAssembly;
-            // FIXME: add worker support for Wasm/ESM integration.
-            rejectWithFetchError(promise.get(), TypeError, makeString("WebAssembly modules are not supported in workers yet."));
-            return;
-        }
 #endif
         else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
@@ -518,7 +514,12 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
                 return JSC::JSSourceCode::create(jsGlobalObject.vm(),
                     JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
                 break;
+#if ENABLE(WEBASSEMBLY)
             case ModuleType::WebAssembly:
+                return JSC::JSSourceCode::create(jsGlobalObject.vm(),
+                    JSC::SourceCode { WebAssemblyScriptSourceCode { loader.script(), WTFMove(responseURL), loader.scriptFetcher() }.jsSourceCode() });
+                break;
+#endif
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }

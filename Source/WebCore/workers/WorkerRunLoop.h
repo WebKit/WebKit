@@ -48,7 +48,7 @@ public:
 
     virtual ~WorkerRunLoop() = default;
 
-    virtual bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode) = 0;
+    virtual bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode, bool allowEventLoopTasks = false) = 0;
     virtual void postTaskAndTerminate(ScriptExecutionContext::Task&&) = 0;
     virtual void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode) = 0;
     virtual void terminate() = 0;
@@ -75,7 +75,7 @@ public:
     void run(WorkerOrWorkletGlobalScope*);
 
     // Waits for a single task and returns.
-    bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode) final;
+    bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode, bool) final;
     MessageQueueWaitResult runInDebuggerMode(WorkerOrWorkletGlobalScope&);
 
     void terminate() final;
@@ -125,7 +125,7 @@ public:
     void terminate() final { m_terminated = true; }
     bool terminated() const final { return m_terminated; }
 
-    bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode);
+    bool runInMode(WorkerOrWorkletGlobalScope*, const String& mode, bool);
     void postTaskAndTerminate(ScriptExecutionContext::Task&&) final;
     void postTaskForMode(ScriptExecutionContext::Task&&, const String& mode) final;
     Type type() const final { return Type::WorkerMainRunLoop; }

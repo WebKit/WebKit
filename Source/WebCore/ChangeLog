@@ -1,3 +1,72 @@
+2022-04-12  Asumu Takikawa  <asumu@igalia.com>
+
+        Allow Wasm import from a JS Worker module
+        https://bugs.webkit.org/show_bug.cgi?id=238291
+
+        Reviewed by Yusuke Suzuki.
+
+        Adds new source provider for Wasm module loading when imported via
+        a JS module running in a Worker. Also adjust how WorkerRunLoop
+        processes tasks for script module loading. In particular, during
+        the module parsing phase, Wasm modules schedule async tasks that
+        need to be run to produce a module record.
+
+        When a Wasm module is loaded (via the module loader's module parsing
+        step), the validation/compilation happens asynchronously and
+        completion callbacks are run via
+        DeferredWorkTimer::scheduleWorkSoon, which queues up microtasks
+        from the VM. These microtasks, however, don't get run in a Worker
+        run loop during module loading and therefore the Wasm module never
+        finishes loading.
+
+        This is because during non-default modes, the Worker run loop
+        does not install its set timer callback, and continues to wait for
+        a task to run (due to infinite timeout). This means the microtask
+        checkpoint is also not reached, so other microtasks cannot run.
+        In non-default modes, the run loop also ignores all tasks that were
+        not installed in that particular mode.
+
+        In addition, the Worker event loop cannot run either, as it posts
+        default mode tasks to the run loop to trigger its operation.
+
+        The current patch modifies the run loop to allow the run loop to time
+        out even in non-default modes if a `useTimeout` parameter is passed as
+        true (defaults to false). We set this to true for the Worker module
+        loading process. It also allows the timer notification callback to
+        post tasks to non-default run loops.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptBufferSourceProvider.h:
+        (WebCore::AbstractScriptBufferHolder::~AbstractScriptBufferHolder):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::notifyFinished):
+        * bindings/js/WebAssemblyScriptBufferSourceProvider.h: Added.
+        * bindings/js/WebAssemblyScriptSourceCode.h:
+        (WebCore::WebAssemblyScriptSourceCode::WebAssemblyScriptSourceCode):
+        * workers/ScriptBuffer.cpp:
+        (WebCore::ScriptBuffer::append):
+        * workers/ScriptBuffer.h:
+        * workers/WorkerEventLoop.cpp:
+        (WebCore::WorkerEventLoop::scheduleToRun):
+        (WebCore::WorkerEventLoop::taskMode):
+        * workers/WorkerEventLoop.h:
+        * workers/WorkerOrWorkletGlobalScope.cpp:
+        (WebCore::WorkerOrWorkletGlobalScope::postTaskForMode):
+        * workers/WorkerOrWorkletGlobalScope.h:
+        * workers/WorkerOrWorkletScriptController.cpp:
+        (WebCore::WorkerOrWorkletScriptController::loadModuleSynchronously):
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::ModePredicate::ModePredicate):
+        (WebCore::ModePredicate::mode const):
+        (WebCore::ModePredicate::operator() const):
+        (WebCore::WorkerDedicatedRunLoop::run):
+        (WebCore::WorkerDedicatedRunLoop::runInDebuggerMode):
+        (WebCore::WorkerDedicatedRunLoop::runInMode):
+        (WebCore::WorkerMainRunLoop::runInMode):
+        * workers/WorkerRunLoop.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::didReceiveData):
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         [Xcode] In open-source builds, disable bitcode in xcconfigs instead of build-webkit

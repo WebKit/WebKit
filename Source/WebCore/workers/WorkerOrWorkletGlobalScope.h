@@ -65,6 +65,10 @@ public:
     bool isContextThread() const final;
     void postTask(Task&&) final; // Executes the task on context's thread asynchronously.
 
+    // Defined specifcially for WorkerOrWorkletGlobalScope for cooperation with
+    // WorkerEventLoop and WorkerRunLoop, not part of ScriptExecutionContext.
+    void postTaskForMode(Task&&, const String&);
+
     virtual void prepareForDestruction();
 
     using RefCounted::ref;

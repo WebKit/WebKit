@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: WebAssembly modules are not supported in workers yet.
 
-FAIL Testing import of WebAssembly from JavaScript worker Script error.
+PASS Testing import of WebAssembly from JavaScript worker
 

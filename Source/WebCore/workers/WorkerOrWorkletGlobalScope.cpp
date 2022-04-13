@@ -120,4 +120,10 @@ void WorkerOrWorkletGlobalScope::postTask(Task&& task)
     workerOrWorkletThread()->runLoop().postTask(WTFMove(task));
 }
 
+void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, const String& mode)
+{
+    ASSERT(workerOrWorkletThread());
+    workerOrWorkletThread()->runLoop().postTaskForMode(WTFMove(task), mode);
+}
+
 } // namespace WebCore
