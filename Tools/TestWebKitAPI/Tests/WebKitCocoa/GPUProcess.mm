@@ -451,7 +451,8 @@ static NSString *testCanvasPage = @"<body> \n"
     "</script> \n"
     "</body>";
 
-TEST(GPUProcess, CanvasBasicCrashHandling)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=239303
+TEST(GPUProcess, DISABLED_CanvasBasicCrashHandling)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
