@@ -1,3 +1,16 @@
+2022-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Require an existing AtomString for HTMLDocument's named getter parameter
+        https://bugs.webkit.org/show_bug.cgi?id=239334
+
+        Reviewed by Alexey Shvayka.
+
+        Require an existing AtomString for HTMLDocument's named getter parameter. There is no point
+        in allocating a new AtomString as the AtomString should already exist if there is any element
+        with this name.
+
+        * html/HTMLDocument.idl:
+
 2022-04-14  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Clean up WebAuthenticationModern and WebAuthnProcess
