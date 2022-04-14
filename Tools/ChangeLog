@@ -1,3 +1,12 @@
+2022-04-14  Robert Jenner  <Jenner@apple.com>
+
+        Remove bot241 to be re-purposed
+        <rdar://problem/91729033>
+
+        Unreviewed configuration change. 
+
+        * CISupport/build-webkit-org/config.json:
+
 2022-04-14  Justin Michaud  <justin_michaud@apple.com>
 
         [PGO] We should be able to build WebKit to collect PGO profiles easily

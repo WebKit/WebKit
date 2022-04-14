@@ -40,7 +40,6 @@
                     { "name": "bot1027", "platform": "mac-bigsur" },
 
                     { "name": "bot205", "platform": "*" },
-                    { "name": "bot241", "platform": "*" },
                     { "name": "bot242", "platform": "*" },
                     { "name": "bot243", "platform": "*" },
                     { "name": "bot244", "platform": "*" },
