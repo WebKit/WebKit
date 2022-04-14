@@ -1,3 +1,13 @@
+2022-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Reduce use of CallFrame::deprecatedVM
+        https://bugs.webkit.org/show_bug.cgi?id=239326
+
+        Reviewed by Devin Rousso.
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::handlePause):
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace calls to substring(0, x) with the more concise left(x)

@@ -46,14 +46,13 @@ public:
     int line() const { return m_debuggerCallFrame->line(); }
     int column() const { return m_debuggerCallFrame->column(); }
 
-    String functionName() const { return m_debuggerCallFrame->functionName(); }
-    JSC::DebuggerCallFrame::Type type() const { return m_debuggerCallFrame->type(); }
-    JSC::DebuggerScope* scopeChain() const { return m_debuggerCallFrame->scope(); }
-    JSC::JSGlobalObject* deprecatedVMEntryGlobalObject() const { return m_debuggerCallFrame->deprecatedVMEntryGlobalObject(); }
+    String functionName(JSC::VM& vm) const { return m_debuggerCallFrame->functionName(vm); }
+    JSC::DebuggerCallFrame::Type type(JSC::VM& vm) const { return m_debuggerCallFrame->type(vm); }
+    JSC::DebuggerScope* scopeChain(JSC::VM& vm) const { return m_debuggerCallFrame->scope(vm); }
     bool isTailDeleted() const { return m_debuggerCallFrame->isTailDeleted(); }
 
     JSC::JSValue thisValue(JSC::VM& vm) const { return m_debuggerCallFrame->thisValue(vm); }
-    JSC::JSValue evaluateWithScopeExtension(const String& script, JSC::JSObject* scopeExtension, NakedPtr<JSC::Exception>& exception) const { return m_debuggerCallFrame->evaluateWithScopeExtension(script, scopeExtension, exception); }
+    JSC::JSValue evaluateWithScopeExtension(JSC::VM& vm, const String& script, JSC::JSObject* scopeExtension, NakedPtr<JSC::Exception>& exception) const { return m_debuggerCallFrame->evaluateWithScopeExtension(vm, script, scopeExtension, exception); }
 
 private:
     JavaScriptCallFrame(Ref<JSC::DebuggerCallFrame>&&);

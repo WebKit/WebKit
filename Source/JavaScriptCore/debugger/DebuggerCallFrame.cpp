@@ -111,18 +111,9 @@ RefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
     return m_caller;
 }
 
-JSGlobalObject* DebuggerCallFrame::globalObject()
+JSGlobalObject* DebuggerCallFrame::globalObject(VM& vm)
 {
-    return scope()->globalObject();
-}
-
-JSC::JSGlobalObject* DebuggerCallFrame::deprecatedVMEntryGlobalObject() const
-{
-    ASSERT(isValid());
-    if (!isValid())
-        return nullptr;
-    VM& vm = m_validMachineFrame->deprecatedVM();
-    return vm.deprecatedVMEntryGlobalObject(m_validMachineFrame->lexicalGlobalObject(vm));
+    return scope(vm)->globalObject();
 }
 
 SourceID DebuggerCallFrame::sourceID() const
@@ -135,13 +126,12 @@ SourceID DebuggerCallFrame::sourceID() const
     return sourceIDForCallFrame(m_validMachineFrame);
 }
 
-String DebuggerCallFrame::functionName() const
+String DebuggerCallFrame::functionName(VM& vm) const
 {
     ASSERT(isValid());
     if (!isValid())
         return String();
 
-    VM& vm = m_validMachineFrame->deprecatedVM();
     if (isTailDeleted()) {
         if (JSFunction* func = jsDynamicCast<JSFunction*>(vm, m_shadowChickenFrame.callee))
             return func->calculatedDisplayName(vm);
@@ -151,14 +141,13 @@ String DebuggerCallFrame::functionName() const
     return m_validMachineFrame->friendlyFunctionName();
 }
 
-DebuggerScope* DebuggerCallFrame::scope()
+DebuggerScope* DebuggerCallFrame::scope(VM& vm)
 {
     ASSERT(isValid());
     if (!isValid())
         return nullptr;
 
     if (!m_scope) {
-        VM& vm = m_validMachineFrame->deprecatedVM();
         JSScope* scope;
         CodeBlock* codeBlock = m_validMachineFrame->codeBlock();
         if (isTailDeleted())
@@ -175,7 +164,7 @@ DebuggerScope* DebuggerCallFrame::scope()
     return m_scope.get();
 }
 
-DebuggerCallFrame::Type DebuggerCallFrame::type() const
+DebuggerCallFrame::Type DebuggerCallFrame::type(VM& vm) const
 {
     ASSERT(isValid());
     if (!isValid())
@@ -184,7 +173,7 @@ DebuggerCallFrame::Type DebuggerCallFrame::type() const
     if (isTailDeleted())
         return FunctionType;
 
-    if (jsDynamicCast<JSFunction*>(m_validMachineFrame->deprecatedVM(), m_validMachineFrame->jsCallee()))
+    if (jsDynamicCast<JSFunction*>(vm, m_validMachineFrame->jsCallee()))
         return FunctionType;
 
     return ProgramType;
@@ -216,7 +205,7 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
 }
 
 // Evaluate some JavaScript code in the scope of this frame.
-JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
+JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
 {
     CallFrame* callFrame = nullptr;
     CodeBlock* codeBlock = nullptr;
@@ -242,7 +231,6 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
     if (!callFrame || !codeBlock)
         return jsUndefined();
 
-    VM& vm = callFrame->deprecatedVM();
     JSLockHolder lock(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     
@@ -260,7 +248,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
 
     TDZEnvironment variablesUnderTDZ;
     PrivateNameEnvironment privateNameEnvironment;
-    JSScope::collectClosureVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ, privateNameEnvironment);
+    JSScope::collectClosureVariablesUnderTDZ(scope(vm)->jsScope(), variablesUnderTDZ, privateNameEnvironment);
 
     ECMAMode ecmaMode = codeBlock->ownerExecutable()->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
     auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->privateBrandRequirement(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
@@ -275,7 +263,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSOb
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
-    JSValue result = vm.interpreter->execute(eval, globalObject, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope()->jsScope());
+    JSValue result = vm.interpreter->execute(eval, globalObject, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope(vm)->jsScope());
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();

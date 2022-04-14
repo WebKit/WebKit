@@ -85,7 +85,7 @@ JSValue JSJavaScriptCallFrame::evaluateWithScopeExtension(JSGlobalObject* global
 
     NakedPtr<Exception> exception;
     JSObject* scopeExtension = callFrame->argument(1).getObject();
-    JSValue result = impl().evaluateWithScopeExtension(script, scopeExtension, exception);
+    JSValue result = impl().evaluateWithScopeExtension(vm, script, scopeExtension, exception);
     if (exception)
         throwException(globalObject, scope, exception);
 
@@ -130,7 +130,7 @@ JSValue JSJavaScriptCallFrame::scopeDescriptions(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    DebuggerScope* scopeChain = impl().scopeChain();
+    DebuggerScope* scopeChain = impl().scopeChain(vm);
     if (!scopeChain)
         return jsUndefined();
 
@@ -173,7 +173,8 @@ JSValue JSJavaScriptCallFrame::column(JSGlobalObject*) const
 
 JSValue JSJavaScriptCallFrame::functionName(JSGlobalObject* globalObject) const
 {
-    return jsString(globalObject->vm(), impl().functionName());
+    VM& vm = globalObject->vm();
+    return jsString(vm, impl().functionName(vm));
 }
 
 JSValue JSJavaScriptCallFrame::scopeChain(JSGlobalObject* globalObject) const
@@ -181,10 +182,10 @@ JSValue JSJavaScriptCallFrame::scopeChain(JSGlobalObject* globalObject) const
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!impl().scopeChain())
+    if (!impl().scopeChain(vm))
         return jsNull();
 
-    DebuggerScope* scopeChain = impl().scopeChain();
+    DebuggerScope* scopeChain = impl().scopeChain(vm);
     DebuggerScope::iterator iter = scopeChain->begin();
     DebuggerScope::iterator end = scopeChain->end();
 
@@ -217,7 +218,7 @@ JSValue JSJavaScriptCallFrame::isTailDeleted(JSC::JSGlobalObject*) const
 JSValue JSJavaScriptCallFrame::type(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
-    switch (impl().type()) {
+    switch (impl().type(vm)) {
     case DebuggerCallFrame::FunctionType:
         return jsNontrivialString(vm, "function"_s);
     case DebuggerCallFrame::ProgramType:

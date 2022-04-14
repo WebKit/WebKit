@@ -48,7 +48,7 @@ public:
     static Ref<DebuggerCallFrame> create(VM&, CallFrame*);
 
     JS_EXPORT_PRIVATE RefPtr<DebuggerCallFrame> callerFrame();
-    JSGlobalObject* globalObject();
+    JSGlobalObject* globalObject(VM&);
     JS_EXPORT_PRIVATE SourceID sourceID() const;
 
     // line and column are in base 0 e.g. the first line is line 0.
@@ -56,13 +56,12 @@ public:
     int column() const { return m_position.m_column.zeroBasedInt(); }
     JS_EXPORT_PRIVATE const TextPosition& position() const { return m_position; }
 
-    JS_EXPORT_PRIVATE JSGlobalObject* deprecatedVMEntryGlobalObject() const;
-    JS_EXPORT_PRIVATE DebuggerScope* scope();
-    JS_EXPORT_PRIVATE String functionName() const;
-    JS_EXPORT_PRIVATE Type type() const;
+    JS_EXPORT_PRIVATE DebuggerScope* scope(VM&);
+    JS_EXPORT_PRIVATE String functionName(VM&) const;
+    JS_EXPORT_PRIVATE Type type(VM&) const;
     JS_EXPORT_PRIVATE JSValue thisValue(VM&) const;
 
-    JSValue evaluateWithScopeExtension(const String&, JSObject* scopeExtensionObject, NakedPtr<Exception>&);
+    JSValue evaluateWithScopeExtension(VM&, const String&, JSObject* scopeExtensionObject, NakedPtr<Exception>&);
 
     bool isValid() const { return !!m_validMachineFrame || isTailDeleted(); }
     JS_EXPORT_PRIVATE void invalidate();

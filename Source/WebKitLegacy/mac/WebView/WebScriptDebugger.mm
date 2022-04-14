@@ -126,11 +126,12 @@ void WebScriptDebugger::handlePause(JSC::JSGlobalObject* globalObject, Debugger:
 
     m_callingDelegate = true;
 
+    JSC::VM& vm = globalObject->vm();
     WebFrame *webFrame = toWebFrame(globalObject);
     WebView *webView = [webFrame webView];
     JSC::DebuggerCallFrame& debuggerCallFrame = currentDebuggerCallFrame();
     JSC::JSValue exceptionValue = currentException();
-    String functionName = debuggerCallFrame.functionName();
+    String functionName = debuggerCallFrame.functionName(vm);
     RetainPtr<WebScriptCallFrame> webCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script().windowScriptObject() functionName:functionName exceptionValue:exceptionValue]);
 
     WebScriptDebugDelegateImplementationCache* cache = WebViewGetScriptDebugDelegateImplementations(webView);
