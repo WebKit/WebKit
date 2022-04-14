@@ -1,3 +1,25 @@
+2022-04-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Use identifier as version when uploading artifacts
+        https://bugs.webkit.org/show_bug.cgi?id=239321
+        <rdar://problem/91734798>
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/build-webkit-org/steps.py:
+        (GenerateJSCBundle): Use archive_revision to name generated content.
+        (GenerateMiniBrowserBundle): Ditto
+        (UploadBuiltProduct): Ditto
+        (UploadMinifiedBuiltProduct): Ditto
+        (DownloadBuiltProduct): Ditto
+        (DownloadBuiltProductFromMaster): Ditto
+        (RunBenchmarkTests): Ditto
+        (UploadTestResults): Ditto
+        (TransferToS3): Ditto
+        (ExtractTestResults.__init__): Ditto
+        (ShowIdentifier.evaluateCommand): Set archive_revision as identifier,
+        fall back to got_revision.
+
 2022-04-14  Chris Dumez  <cdumez@apple.com>
 
         Drop inefficient String::append() overloads

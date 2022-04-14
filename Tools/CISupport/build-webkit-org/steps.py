@@ -348,7 +348,7 @@ class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
 class GenerateJSCBundle(shell.ShellCommand):
     command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
                "--bundle=jsc", "--syslibs=bundle-all", WithProperties("--platform=%(fullPlatform)s"),
-               WithProperties("--%(configuration)s"), WithProperties("--revision=%(got_revision)s"),
+               WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s"),
                "--remote-config-file", "../../remote-jsc-bundle-upload-config.json"]
     name = "generate-jsc-bundle"
     description = ["generating jsc bundle"]
@@ -359,7 +359,7 @@ class GenerateJSCBundle(shell.ShellCommand):
 class GenerateMiniBrowserBundle(shell.ShellCommand):
     command = ["Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
                "--bundle=MiniBrowser", WithProperties("--platform=%(fullPlatform)s"),
-               WithProperties("--%(configuration)s"), WithProperties("--revision=%(got_revision)s"),
+               WithProperties("--%(configuration)s"), WithProperties("--revision=%(archive_revision)s"),
                "--remote-config-file", "../../remote-minibrowser-bundle-upload-config.json"]
     name = "generate-minibrowser-bundle"
     description = ["generating minibrowser bundle"]
@@ -378,7 +378,7 @@ class ExtractBuiltProduct(shell.ShellCommand):
 
 class UploadBuiltProduct(transfer.FileUpload):
     workersrc = WithProperties("WebKitBuild/%(configuration)s.zip")
-    masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip")
+    masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(archive_revision)s.zip")
     haltOnFailure = True
 
     def __init__(self, **kwargs):
@@ -391,13 +391,13 @@ class UploadBuiltProduct(transfer.FileUpload):
 
 class UploadMinifiedBuiltProduct(UploadBuiltProduct):
     workersrc = WithProperties("WebKitBuild/minified-%(configuration)s.zip")
-    masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/minified-%(got_revision)s.zip")
+    masterdest = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/minified-%(archive_revision)s.zip")
 
 
 class DownloadBuiltProduct(shell.ShellCommand):
     command = ["python3", "Tools/CISupport/download-built-product",
         WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"),
-        WithProperties(S3URL + "archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip")]
+        WithProperties(S3URL + "archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(archive_revision)s.zip")]
     name = "download-built-product"
     description = ["downloading built product"]
     descriptionDone = ["downloaded built product"]
@@ -420,7 +420,7 @@ class DownloadBuiltProduct(shell.ShellCommand):
 
 
 class DownloadBuiltProductFromMaster(transfer.FileDownload):
-    mastersrc = WithProperties('archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip')
+    mastersrc = WithProperties('archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(archive_revision)s.zip')
     workerdest = WithProperties('WebKitBuild/%(configuration)s.zip')
     name = 'download-built-product-from-master'
     description = ['downloading built product from buildbot master']
@@ -1079,7 +1079,7 @@ class RunBenchmarkTests(shell.Test):
     descriptionDone = ["benchmark tests"]
     command = ["python", "Tools/Scripts/browserperfdash-benchmark", "--allplans",
                "--config-file", "../../browserperfdash-benchmark-config.txt",
-               "--browser-version", WithProperties("r%(got_revision)s")]
+               "--browser-version", WithProperties("%(archive_revision)s")]
 
     def start(self):
         platform = self.getProperty("platform")
@@ -1108,7 +1108,7 @@ class ArchiveTestResults(shell.ShellCommand):
 
 class UploadTestResults(transfer.FileUpload):
     workersrc = "layout-test-results.zip"
-    masterdest = WithProperties("public_html/results/%(buildername)s/r%(got_revision)s (%(buildnumber)s).zip")
+    masterdest = WithProperties("public_html/results/%(buildername)s/r%(archive_revision)s (%(buildnumber)s).zip")
 
     def __init__(self, **kwargs):
         kwargs['workersrc'] = self.workersrc
@@ -1122,10 +1122,10 @@ class TransferToS3(master.MasterShellCommand):
     name = "transfer-to-s3"
     description = ["transferring to s3"]
     descriptionDone = ["transferred to s3"]
-    archive = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip")
-    minifiedArchive = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/minified-%(got_revision)s.zip")
+    archive = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(archive_revision)s.zip")
+    minifiedArchive = WithProperties("archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/minified-%(archive_revision)s.zip")
     identifier = WithProperties("%(fullPlatform)s-%(architecture)s-%(configuration)s")
-    revision = WithProperties("%(got_revision)s")
+    revision = WithProperties("%(archive_revision)s")
     command = ["python3", "../Shared/transfer-archive-to-s3", "--revision", revision, "--identifier", identifier, "--archive", archive]
     haltOnFailure = True
 
@@ -1152,8 +1152,8 @@ class ExtractTestResults(master.MasterShellCommand):
     def __init__(self, **kwargs):
         kwargs['command'] = ""
         kwargs['logEnviron'] = False
-        self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s).zip')
-        self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:got_revision)s (%(prop:buildnumber)s)')
+        self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:archive_revision)s (%(prop:buildnumber)s).zip')
+        self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:archive_revision)s (%(prop:buildnumber)s)')
         kwargs['command'] = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
         master.MasterShellCommand.__init__(self, **kwargs)
 
@@ -1277,6 +1277,7 @@ class ShowIdentifier(shell.ShellCommand):
             if identifier:
                 identifier = identifier.replace('trunk', 'main')
             self.setProperty('identifier', identifier)
+            self.setProperty('archive_revision', identifier)
             step = self.getLastBuildStepByName(CheckOutSource.name)
             if not step:
                 step = self
@@ -1284,6 +1285,7 @@ class ShowIdentifier(shell.ShellCommand):
             self.descriptionDone = 'Identifier: {}'.format(identifier)
         else:
             self.descriptionDone = 'Failed to find identifier'
+            self.setProperty('archive_revision', self.getProperty('got_revision'))
         return rc
 
     def getLastBuildStepByName(self, name):
