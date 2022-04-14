@@ -5913,10 +5913,12 @@ void HTMLMediaElement::clearMediaPlayer()
     if (m_textTracks)
         configureTextTrackDisplay();
 
-    if (m_mediaSession) {
-        m_mediaSession->clientCharacteristicsChanged();
-        m_mediaSession->canProduceAudioChanged();
-    }
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+        if (m_mediaSession) {
+            m_mediaSession->clientCharacteristicsChanged();
+            m_mediaSession->canProduceAudioChanged();
+        }
+    });
 
     m_resourceSelectionTaskCancellationGroup.cancel();
 

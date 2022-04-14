@@ -1,3 +1,23 @@
+2022-04-14  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        ScriptDisallowedScope::isEventAllowedInMainThread assert failure when activating AudioSession
+        https://bugs.webkit.org/show_bug.cgi?id=239343
+
+        Reviewed by Eric Carlson.
+
+        As part of HTMLMediaElement::clearMediaPlayer we call PlatformMediaSession::canProduceAudioChanged
+        which can result in activating the AudioSession when the page is capturing audio.
+
+        This sends a synchronous IPC message to the GPU process. As part of IPC::Connection::waitForSyncReply,
+        we also end up  dispatching enqueued messages, including a WebPage_EndPrinting message that
+        fires an event listener on the main thread.
+
+        This patch will instead queue the PlatformMediaSession::canProduceAudioChanged as a task to avoid
+        firing the event listener on the main thread, which results in assertion failure.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+
 2022-04-14  Chris Dumez  <cdumez@apple.com>
 
         Update ContainerNode::getElementsByName() to take in an AtomString
