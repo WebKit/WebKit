@@ -1,3 +1,19 @@
+2022-04-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Revert r291846 because it caused a 3% performance regression
+        https://bugs.webkit.org/show_bug.cgi?id=239323
+        <rdar://problem/91046238>
+
+        Rubber-stamped by Stephanie Lewis.
+
+        * TestExpectations:
+        * fast/text/accessibility-bold-expected-mismatch.html: Removed.
+        * fast/text/accessibility-bold.html: Removed.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-04-13  Antoine Quint  <graouts@apple.com>
 
         [web-animations] REGRESSION(r291527): assertion hit during teardown of document with CSS Animations

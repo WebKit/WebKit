@@ -3562,8 +3562,5 @@ webkit.org/b/237433 editing/pasteboard/paste-and-sanitize.html [ Timeout Pass Fa
 
 webkit.org/b/237955 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-044.html [ Failure ]
 
-# fast/text/accessibility-bold.html requires WK2. The ***-wk2/TestExpectation files mark it as PASS.
-fast/text/accessibility-bold.html [ Skip ]
-
 # iOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]

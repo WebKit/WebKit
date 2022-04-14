@@ -1,3 +1,34 @@
+2022-04-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Revert r291846 because it caused a 3% performance regression
+        https://bugs.webkit.org/show_bug.cgi?id=239323
+        <rdar://problem/91046238>
+
+        Rubber-stamped by Stephanie Lewis.
+
+        I'm having trouble figuring out why this caused a regression, so I'm reverting the patch
+        wholesale while I can do more investigation.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::normalizeWeight):
+        (WebCore::denormalizeWeight):
+        (WebCore::preparePlatformFont):
+        (WebCore::fontCacheRegisteredFontsChangedNotificationCallback):
+        (WebCore::FontCache::platformInit):
+        (WebCore::variationCapabilitiesForFontDescriptor):
+        (WebCore::normalizeGXWeight): Deleted.
+        (WebCore::normalizeCTWeight): Deleted.
+        (WebCore::denormalizeGXWeight): Deleted.
+        (WebCore::denormalizeCTWeight): Deleted.
+        (WebCore::overrideEnhanceTextLegibility): Deleted.
+        (WebCore::setOverrideEnhanceTextLegibility): Deleted.
+        (WebCore::shouldEnhanceTextLegibility): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setOverrideEnhanceTextLegibility): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2022-04-13  Antoine Quint  <graouts@apple.com>
 
         [web-animations] REGRESSION(r291527): assertion hit during teardown of document with CSS Animations

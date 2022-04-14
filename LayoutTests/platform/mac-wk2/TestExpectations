@@ -1645,9 +1645,6 @@ webkit.org/b/237095 imported/w3c/web-platform-tests/workers/semantics/multiple-w
 
 webkit.org/b/237165 [ BigSur+ Debug ] imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.html [ Pass Crash ]
 
-# Monterey and later use the system font's variable-ness.
-[ Monterey+ ] fast/text/accessibility-bold.html [ Pass ]
-
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
 
 fast/text/install-font-style-recalc.html [ Pass ]

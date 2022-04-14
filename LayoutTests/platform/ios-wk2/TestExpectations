@@ -2239,7 +2239,6 @@ model-element/model-element-interactive.html [ Skip ]
 
 webkit.org/b/237358 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
 
-fast/text/accessibility-bold.html [ Pass ]
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-writing-modes/full-width-003.html [ Pass ]
 
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
