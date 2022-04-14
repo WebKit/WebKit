@@ -1,3 +1,16 @@
+2022-04-13  Antoine Quint  <graouts@apple.com>
+
+        [web-animations] REGRESSION(r291527): assertion hit during teardown of document with CSS Animations
+        https://bugs.webkit.org/show_bug.cgi?id=239291
+        rdar://90699078
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that would have asserted prior to the source change.
+
+        * webanimations/css-animation-resolution-during-teardown-expected.txt: Added.
+        * webanimations/css-animation-resolution-during-teardown.html: Added.
+
 2022-04-13  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r292043): [ Mac ] fast/block/positioning/fixed-container-with-relative-parent.html is a flaky image failure

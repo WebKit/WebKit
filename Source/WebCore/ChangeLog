@@ -1,3 +1,36 @@
+2022-04-13  Antoine Quint  <graouts@apple.com>
+
+        [web-animations] REGRESSION(r291527): assertion hit during teardown of document with CSS Animations
+        https://bugs.webkit.org/show_bug.cgi?id=239291
+        rdar://90699078
+
+        Reviewed by Dean Jackson.
+
+        When a CSS Animation is not considered to be relevant anymore, it is removed from both AnimationTimeline::m_animations
+        and Styleable::animations(). However, if that animation becomes relevant again, it will be added back to the associated
+        effect stack as well as AnimationTimeline::m_animations but not to Styleable::animations().
+
+        This causes a problem because when eventually that CSS Animation's target is removed from the tree, such as during
+        document teardown, Styleable::cancelDeclarativeAnimations() will be called an iterate over Styleable::animations()
+        to find declarative animations to cancel. Since the CSS animation was not added to Styleable::animations(), it will
+        not be canceled and the associated effect will not be removed from the effect stack.
+
+        Later in Styleable::cancelDeclarativeAnimations(), the list of associated CSS Animation names is cleared.
+
+        If during that teardown an animation resolution is performed, such as within a "beforeunload" event listener as
+        shown in the new test, we will get into a state where there are effects left in the effect stack of the element
+        being torn down but no associated CSS Animation names and we will hit the RELEASE_ASSERT_NOT_REACHED() at the
+        end of compareCSSAnimations().
+
+        To fix this, we simply ensure that we add animations back to Styleable::animations() within
+        AnimationTimeline::animationTimingDidChange() the same way we add the animations back to
+        AnimationTimeline::m_animations.
+
+        Test: webanimations/css-animation-resolution-during-teardown.html
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::animationTimingDidChange):
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace calls to substring(0, x) with the more concise left(x)
