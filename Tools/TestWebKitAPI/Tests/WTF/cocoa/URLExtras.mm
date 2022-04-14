@@ -89,6 +89,7 @@ TEST(WTF_URLExtras, URLExtras)
     
 TEST(WTF_URLExtras, URLExtras_Spoof)
 {
+<<<<<<< HEAD
     Vector<String> punycodedSpoofHosts = {
         "xn--cfa45g", // U+0131, U+0307
         "xn--tma03b", // U+0237, U+0307
@@ -126,6 +127,8 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--g-idc", // 'g' U+0581
         "xn--o-00e", // U+0BE6 'o'
         "xn--o-10e", // 'o' U+0BE6
+        "xn--a-53i", // U+15AF 'a'
+        "xn--a-63i", // 'a' U+15AF
     };
     for (const String& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
@@ -152,6 +155,9 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
 
     // Tamil
     EXPECT_STREQ("https://\u0BE6\u0BE7\u0BE8\u0BE9count/", userVisibleString(literalURL("https://\u0BE6\u0BE7\u0BE8\u0BE9count/")));
+
+    // Canadian aboriginal
+    EXPECT_STREQ("https://\u15AF\u1401abc/", userVisibleString(literalURL("https://\u15AF\u1401abc/")));
 }
 
 TEST(WTF_URLExtras, URLExtras_DivisionSign)

@@ -1,3 +1,15 @@
+2022-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Punycode encode U+15AF when not in context of other Canadian aboriginal code points
+        https://bugs.webkit.org/show_bug.cgi?id=239316
+        <rdar://91248059>
+
+        Reviewed by Darin Adler.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>):
+        (WTF::URLHelpers::isLookalikeCharacter):
+
 2022-05-13  Ben Nham  <nham@apple.com>
 
         Enforce foreground WebContent memory limit on macOS
