@@ -3474,6 +3474,3 @@ fast/text/design-system-ui-16.html [ Pass ]
 
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
 fast/text/install-font-style-recalc.html [ Pass ]
-
-# fast/text/accessibility-bold.html requires WK2. The ***-wk2/TestExpectation files mark it as PASS.
-fast/text/accessibility-bold.html [ Skip ]

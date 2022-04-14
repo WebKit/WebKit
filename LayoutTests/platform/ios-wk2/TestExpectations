@@ -2213,5 +2213,3 @@ imported/w3c/web-platform-tests/pointerevents [ Skip ]
 pointerevents/mouse [ Failure ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
-
-fast/text/accessibility-bold.html [ Pass ]

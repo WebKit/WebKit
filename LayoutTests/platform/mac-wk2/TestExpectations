@@ -1677,6 +1677,3 @@ webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesuppo
 [ Monterey+ ] http/tests/model/model-document.html [ Skip ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
-
-# Monterey and later use the system font's variable-ness.
-[ Monterey+ ] fast/text/accessibility-bold.html [ Pass ]

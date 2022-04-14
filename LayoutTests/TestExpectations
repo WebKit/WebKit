@@ -5214,6 +5214,3 @@ userscripts/user-script-plugin-document.html [ Skip ]
 
 # Only some ports automatically relayout if a font is installed while the page is open
 fast/text/install-font-style-recalc.html [ Failure ]
-
-# This test is only relevant on Apple platforms.
-fast/text/accessibility-bold.html [ Pass ImageOnlyFailure ]
