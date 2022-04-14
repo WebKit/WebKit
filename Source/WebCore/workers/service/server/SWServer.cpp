@@ -1393,7 +1393,8 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
                 worker->decrementFunctionalEventCounter();
             });
             terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
-            connectionOrStatus.value()->fireNotificationEvent(serviceWorkerIdentifier, data, type, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool /* succeeded */) mutable {
+            connectionOrStatus.value()->fireNotificationEvent(serviceWorkerIdentifier, data, type, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
+                RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Service Worker notification event handler did not succeed");
                 // FIXME: if succeeded is false, should we implement a default action like opening a new page?
                 if (terminateWorkerTimer->isActive()) {
                     worker->decrementFunctionalEventCounter();
