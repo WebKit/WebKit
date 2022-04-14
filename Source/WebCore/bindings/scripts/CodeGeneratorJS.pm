@@ -3205,7 +3205,12 @@ sub GenerateHeader
     # structure flags
     if (%structureFlags) {
         push(@headerContent, "public:\n");
-        push(@headerContent, "    static constexpr unsigned StructureFlags = Base::StructureFlags");
+        if ($interfaceName eq "ShadowRealmGlobalScope") {
+            # Hack to make ShadowRealmGlobalScope a default realm global object (not an ImmutablePrototypeExoticObject)
+            push(@headerContent, "    static constexpr unsigned StructureFlags = (Base::StructureFlags & ~JSC::IsImmutablePrototypeExoticObject)");
+        } else {
+            push(@headerContent, "    static constexpr unsigned StructureFlags = Base::StructureFlags");
+        }
         foreach my $structureFlag (sort (keys %structureFlags)) {
             push(@headerContent, " | " . $structureFlag);
         }

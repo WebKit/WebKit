@@ -1,3 +1,16 @@
+2022-04-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] ShadowRealm global object has a mutable prototype
+        https://bugs.webkit.org/show_bug.cgi?id=239332
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a new layout test to verify changes to verify that ShadowRealmGlobalObject has a properly
+        mutable prototype.
+
+        * js/ShadowRealm-globalThis-expected.txt: Added.
+        * js/ShadowRealm-globalThis.html: Added.
+
 2022-04-14  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         calc(): Serialize top level min/max/hypot as calc()

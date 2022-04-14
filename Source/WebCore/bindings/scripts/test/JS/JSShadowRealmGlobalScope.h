@@ -57,7 +57,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = (Base::StructureFlags & ~JSC::IsImmutablePrototypeExoticObject) | JSC::HasStaticPropertyTable;
 protected:
     JSShadowRealmGlobalScope(JSC::VM&, JSC::Structure*, Ref<ShadowRealmGlobalScope>&&);
     void finishCreation(JSC::VM&, JSC::JSProxy*);

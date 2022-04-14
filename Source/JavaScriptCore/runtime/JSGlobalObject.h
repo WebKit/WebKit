@@ -1099,7 +1099,8 @@ public:
     static JSGlobalObject* deriveShadowRealmGlobalObject(JSGlobalObject* globalObject)
     {
         auto& vm = globalObject->vm();
-        return JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructure(vm, jsNull()), globalObject->globalObjectMethodTable());
+        JSGlobalObject* result = JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructureForShadowRealm(vm, jsNull()), globalObject->globalObjectMethodTable());
+        return result;
     }
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
@@ -1140,6 +1141,12 @@ public:
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
         Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
+        result->setTransitionWatchpointIsLikelyToBeFired(true);
+        return result;
+    }
+    static Structure* createStructureForShadowRealm(VM& vm, JSValue prototype)
+    {
+        Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags & ~IsImmutablePrototypeExoticObject), info());
         result->setTransitionWatchpointIsLikelyToBeFired(true);
         return result;
     }

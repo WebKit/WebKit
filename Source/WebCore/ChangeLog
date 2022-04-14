@@ -1,3 +1,22 @@
+2022-04-14  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] ShadowRealm global object has a mutable prototype
+        https://bugs.webkit.org/show_bug.cgi?id=239332
+
+        Reviewed by Yusuke Suzuki.
+
+        Hack: The IDL code generator now special cases ShadowRealmGlobalObject to remove the 
+        ImmutablePrototypeExoticObject bit from the inherited JSGlobalObject structure flags.
+
+        As a result, this enables the assignment of a ShadowRealm's globalThis.__proto__, or
+        overwriting the prototype with [Object / Reflect].setPrototypeOf().
+
+        Test: js/ShadowRealm-globalThis.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * bindings/scripts/test/JS/JSShadowRealmGlobalScope.h:
+
 2022-04-14  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         calc(): Serialize top level min/max/hypot as calc()
