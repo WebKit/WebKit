@@ -373,7 +373,10 @@ void WebSWContextManagerConnection::focus(ScriptExecutionContextIdentifier clien
 
 void WebSWContextManagerConnection::close()
 {
-    RELEASE_LOG(ServiceWorker, "Service worker process is requested to stop all service workers");
+    RELEASE_LOG(ServiceWorker, "Service worker process is requested to stop all service workers (already stopped = %d)", isClosed());
+    if (isClosed())
+        return;
+
     setAsClosed();
 
     m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::CloseSWContextConnection { }, 0);

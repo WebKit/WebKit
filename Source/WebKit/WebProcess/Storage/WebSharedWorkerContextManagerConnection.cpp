@@ -118,7 +118,10 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 
 void WebSharedWorkerContextManagerConnection::close()
 {
-    RELEASE_LOG(SharedWorker, "WebSharedWorkerContextManagerConnection::close: Shared worker process is requested to stop all shared workers");
+    RELEASE_LOG(SharedWorker, "WebSharedWorkerContextManagerConnection::close: Shared worker process is requested to stop all shared workers (already stopped = %d)", isClosed());
+    if (isClosed())
+        return;
+
     setAsClosed();
 
     m_connectionToNetworkProcess->send(Messages::NetworkConnectionToWebProcess::CloseSharedWorkerContextConnection { }, 0);
