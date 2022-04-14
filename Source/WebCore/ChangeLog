@@ -1,3 +1,37 @@
+2022-04-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebView: navigator.serviceWorker.register method fails for a new version of an already registered service worker.
+        https://bugs.webkit.org/show_bug.cgi?id=229554
+        <rdar://problem/82388593>
+
+        Reviewed by Brent Fulgham.
+
+        Check to see if a domain has already been registered when validating
+        a service worker registration domain. In this case, we allow an
+        updated registration.
+
+        There are a couple of other changes that are key for testing this.
+        First, this adds a way to override the max registration count for
+        tests. This is because we can only use 127.0.0.1 and localhost in
+        tests, but would need 3 domains in order to test the max count.
+        overrideServiceWorkerRegistrationCountTestingValue lets us lower that
+        number.
+
+        Second, we also want a way to override the loopback IP address check
+        to make sure we don't get a false positive test result for localhost
+        and 127.0.0.1 in API tests.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistrationFromStore):
+        (WebCore::SWServer::addRegistration):
+        (WebCore::SWServer::SWServer):
+        (WebCore::SWServer::maxRegistrationCount):
+        (WebCore::SWServer::allowLoopbackIPAddress):
+        (WebCore::SWServer::validateRegistrationDomain):
+        (WebCore::SWServer::scheduleJob):
+        (WebCore::SWServer::removeFromScopeToRegistrationMap):
+        * workers/service/server/SWServer.h:
+
 2022-04-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Provide WK2 IPC encoding, decoding methods for the DMABufObject type

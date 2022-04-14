@@ -1,3 +1,23 @@
+2022-04-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebView: navigator.serviceWorker.register method fails for a new version of an already registered service worker.
+        https://bugs.webkit.org/show_bug.cgi?id=229554
+        <rdar://problem/82388593>
+
+        Reviewed by Brent Fulgham.
+
+        Adds a new test for re-registering and an overdue test for
+        unregistering now that we have the infrastructure. This also does some
+        refactoring to reduce duplicate code.
+
+        * TestWebKitAPI/Info.plist:
+        Update the Info.plist to consider localhost an app-bound domain so we
+        can test the max count when overriding the loopback IP. This requires
+        replacing an existing domain to stay under the count limit.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (TEST):
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace calls to substring(0, x) with the more concise left(x)

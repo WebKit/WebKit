@@ -101,6 +101,7 @@ struct NetworkSessionCreationParameters {
     bool allowsServerPreconnect { true };
     bool requiresSecureHTTPSProxyConnection { false };
     bool shouldRunServiceWorkersOnMainThreadForTesting { false };
+    std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication { false };
     bool appHasRequestedCrossWebsiteTrackingPermission { false };
     bool useNetworkLoader { false };

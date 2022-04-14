@@ -1,3 +1,35 @@
+2022-04-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        WKWebView: navigator.serviceWorker.register method fails for a new version of an already registered service worker.
+        https://bugs.webkit.org/show_bug.cgi?id=229554
+        <rdar://problem/82388593>
+
+        Reviewed by Brent Fulgham.
+
+        Plumbing to override the max service worker registration count for
+        test purposes. See WebCore changelog for details.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::ensureSWServer):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::overrideServiceWorkerRegistrationCountTestingValue const):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration overrideServiceWorkerRegistrationCountTestingValue]):
+        (-[_WKWebsiteDataStoreConfiguration setOverrideServiceWorkerRegistrationCountTestingValue:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::overrideServiceWorkerRegistrationCountTestingValue const):
+        (WebKit::WebsiteDataStoreConfiguration::setOverrideServiceWorkerRegistrationCountTestingValue):
+
 2022-04-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Enable more efficient encoding of synchronous-message reply arguments

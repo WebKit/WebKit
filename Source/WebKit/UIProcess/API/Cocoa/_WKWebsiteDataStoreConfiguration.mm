@@ -506,6 +506,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setShouldRunServiceWorkersOnMainThreadForTesting(shouldRunOnMainThread);
 }
 
+- (NSUInteger)overrideServiceWorkerRegistrationCountTestingValue
+{
+    return _configuration->overrideServiceWorkerRegistrationCountTestingValue().value_or(0);
+}
+
+- (void)setOverrideServiceWorkerRegistrationCountTestingValue:(NSUInteger)count
+{
+    _configuration->setOverrideServiceWorkerRegistrationCountTestingValue(count);
+}
+
 - (BOOL)_shouldAcceptInsecureCertificatesForWebSockets
 {
 #if !HAVE(NSURLSESSION_WEBSOCKET)

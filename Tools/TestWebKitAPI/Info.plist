@@ -20,7 +20,7 @@
 		<string>https://www.apple.com/iphone/</string>
 		<string>http://www.example.com/</string>
 		<string>http://bar.com/</string>
-		<string>http://foo.com/</string>
+		<string>localhost</string>
 		<string>https://searchforlongboards.biz</string>
 		<string>app-bound-custom-scheme:</string>
 		<string>longboardshop.biz</string>
