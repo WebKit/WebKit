@@ -1,3 +1,20 @@
+2022-04-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Make the ENABLE_GPU_PROCESS CMake option depend on USE_ANGLE_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=239330
+
+        Reviewed by Adrian Perez de Castro.
+
+        For the GTK and WPE ports, the ENABLE_GPU_PROCESS CMake option should
+        depend on the USE_ANGLE_WEBGL option being enabled. There's no plans
+        to support 'direct' GL execution in that process, and the ANGLE usage
+        also implies (for these two ports) usage of generic buffer solutions
+        that are shareable across process boundaries, as is necessary for a
+        functioning GPUProcess implementation.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-04-13  Elliott Williams  <emw@apple.com>
 
         [Xcode] Fix public watchOS workspace build by updating scheme and build settings
