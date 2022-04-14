@@ -1,3 +1,17 @@
+2022-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Update ContainerNode::getElementsByName() to take in an AtomString
+        https://bugs.webkit.org/show_bug.cgi?id=239333
+
+        Reviewed by Alexey Shvayka.
+
+        Update ContainerNode::getElementsByName() to take in an AtomString instead of a String.
+        Its implementation ends up atomizing the name anyway.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getElementsByName):
+        * dom/ContainerNode.h:
+
 2022-04-14  Youenn Fablet  <youenn@apple.com>
 
         Add logging for persistent notification event handler failure
