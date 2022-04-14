@@ -74,9 +74,9 @@
     unsigned short compareDocumentPosition(Node other);
     boolean contains(Node? other);
 
-    DOMString? lookupPrefix(DOMString? namespaceURI);
-    DOMString? lookupNamespaceURI(DOMString? prefix);
-    boolean isDefaultNamespace(DOMString? namespaceURI);
+    DOMString? lookupPrefix([AtomString] DOMString? namespaceURI);
+    DOMString? lookupNamespaceURI([AtomString] DOMString? prefix);
+    boolean isDefaultNamespace([AtomString] DOMString? namespaceURI);
 
     [CEReactions] Node insertBefore([ReturnValue] Node node, Node? child);
     [CEReactions] Node appendChild([ReturnValue] Node node);

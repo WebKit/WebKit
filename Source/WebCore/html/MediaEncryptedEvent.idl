@@ -37,7 +37,7 @@ dictionary MediaEncryptedEventInit : EventInit {
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     Exposed=Window
 ] interface MediaEncryptedEvent : Event {
-    constructor(DOMString type, optional MediaEncryptedEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional MediaEncryptedEventInit eventInitDict);
 
     readonly attribute DOMString initDataType;
     readonly attribute ArrayBuffer? initData;

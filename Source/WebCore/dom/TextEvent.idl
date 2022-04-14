@@ -28,7 +28,7 @@
 ] interface TextEvent : UIEvent {
     readonly attribute DOMString data;
 
-    undefined initTextEvent(DOMString typeArg,
+    undefined initTextEvent([AtomString] DOMString typeArg,
                        optional boolean canBubbleArg = false,
                        optional boolean cancelableArg = false,
                        optional WindowProxy? viewArg = null,

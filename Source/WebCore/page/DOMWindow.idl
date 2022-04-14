@@ -73,7 +73,7 @@
     [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
-    [CallWith=ActiveWindow&FirstWindow] WindowProxy? open(optional USVString url = "", optional DOMString target = "_blank", optional [LegacyNullToEmptyString] DOMString features = "");
+    [CallWith=ActiveWindow&FirstWindow] WindowProxy? open(optional USVString url = "", optional [AtomString] DOMString target = "_blank", optional [LegacyNullToEmptyString] DOMString features = "");
 
     // the user agent
     readonly attribute Navigator navigator;

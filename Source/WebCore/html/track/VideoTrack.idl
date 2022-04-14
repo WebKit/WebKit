@@ -29,9 +29,9 @@
     Exposed=Window
 ] interface VideoTrack {
     readonly attribute DOMString id;
-    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute DOMString kind;
+    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute [AtomString] DOMString kind;
     readonly attribute DOMString label;
-    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute DOMString language;
+    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute [AtomString] DOMString language;
 
     attribute boolean selected;
 

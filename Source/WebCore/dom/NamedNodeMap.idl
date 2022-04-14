@@ -26,10 +26,10 @@
 ] interface NamedNodeMap {
     readonly attribute unsigned long length;
     getter Attr? item(unsigned long index);
-    getter Attr? getNamedItem(DOMString qualifiedName);
-    Attr? getNamedItemNS(DOMString? namespaceURI, DOMString localName);
+    getter Attr? getNamedItem([AtomString] DOMString qualifiedName);
+    Attr? getNamedItemNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
     [CEReactions] Attr? setNamedItem(Attr attr);
     [CEReactions, ImplementedAs=setNamedItem] Attr? setNamedItemNS(Attr attr);
-    [CEReactions] Attr removeNamedItem(DOMString qualifiedName);
-    [CEReactions] Attr removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions] Attr removeNamedItem([AtomString] DOMString qualifiedName);
+    [CEReactions] Attr removeNamedItemNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
 };

@@ -1,3 +1,78 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Use [AtomString] where appropriate in IDL files for performance
+        https://bugs.webkit.org/show_bug.cgi?id=239314
+
+        Reviewed by Alexey Shvayka.
+
+        Use [AtomString] where appropriate in IDL files for performance. I added [AtomString] on the
+        IDL side whenever our C++ implementation uses AtomString.
+
+        Without this, the generated bindings code will generate a String, which will then get atomized
+        once passed to our implementation. This means we're doing unnecessary String allocations in
+        cases where the AtomString is already in the AtomStringTable.
+
+        * dom/Attr.idl:
+        * dom/Document+HTML.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::createAttribute):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute const):
+        * dom/Element.idl:
+        * dom/ElementContentEditable.idl:
+        * dom/Event.idl:
+        * dom/FocusEvent.idl:
+        * dom/FormDataEvent.idl:
+        * dom/HashChangeEvent.idl:
+        * dom/InputEvent.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MessageEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/OverflowEvent.idl:
+        * dom/PageTransitionEvent.idl:
+        * dom/PointerEvent.idl:
+        * dom/ProgressEvent.idl:
+        * dom/PromiseRejectionEvent.idl:
+        * dom/SecurityPolicyViolationEvent.idl:
+        * dom/TextEvent.idl:
+        * dom/TouchEvent.idl:
+        * dom/TransitionEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WheelEvent.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLDocument.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLTableCellElement.idl:
+        * html/HTMLTrackElement.idl:
+        * html/MediaEncryptedEvent.idl:
+        * html/SubmitEvent.idl:
+        * html/track/AudioTrack.idl:
+        * html/track/AudioTrackList.idl:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackList.idl:
+        * html/track/VTTRegion.idl:
+        * html/track/VideoTrack.idl:
+        * html/track/VideoTrackList.idl:
+        * page/DOMWindow.idl:
+        * page/UserMessageHandlersNamespace.idl:
+        * storage/StorageEvent.idl:
+        * svg/SVGAltGlyphElement.idl:
+        * svg/SVGStyleElement.idl:
+        * workers/service/ExtendableEvent.idl:
+        * workers/service/ExtendableMessageEvent.idl:
+        * workers/service/FetchEvent.idl:
+
 2022-04-13  Elliott Williams  <emw@apple.com>
 
         [Xcode] Fix public watchOS workspace build by updating scheme and build settings

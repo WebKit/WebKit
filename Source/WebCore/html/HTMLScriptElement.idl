@@ -29,10 +29,10 @@
     [CEReactions=NotNeeded, Reflect] attribute boolean defer;
     [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
-    [CEReactions=NotNeeded] attribute DOMString? crossOrigin;
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect] attribute boolean noModule;
     [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
-    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
+    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
 
     static boolean supports(DOMString type);
 };

@@ -26,7 +26,7 @@
 [
     Exposed=Window
 ] interface StorageEvent : Event {
-    constructor(DOMString type, optional StorageEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional StorageEventInit eventInitDict);
 
     readonly attribute DOMString? key;
     readonly attribute DOMString? oldValue;
@@ -34,7 +34,7 @@
     readonly attribute USVString url;
     readonly attribute Storage? storageArea;
 
-    undefined initStorageEvent(DOMString typeArg,
+    undefined initStorageEvent([AtomString] DOMString typeArg,
                           optional boolean canBubbleArg = false,
                           optional boolean cancelableArg = false,
                           optional DOMString keyArg = "undefined",

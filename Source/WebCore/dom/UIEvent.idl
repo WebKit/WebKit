@@ -20,12 +20,12 @@
 [
     Exposed=Window
 ] interface UIEvent : Event {
-    constructor(DOMString type, optional UIEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional UIEventInit eventInitDict);
 
     readonly attribute WindowProxy view;
     readonly attribute long detail;
     
-    undefined initUIEvent(DOMString type, optional boolean canBubble = false, optional boolean cancelable = false, optional WindowProxy? view = null, optional long detail = 0);
+    undefined initUIEvent([AtomString] DOMString type, optional boolean canBubble = false, optional boolean cancelable = false, optional WindowProxy? view = null, optional long detail = 0);
 
     readonly attribute long layerX;
     readonly attribute long layerY;

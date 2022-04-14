@@ -54,12 +54,12 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     readonly attribute DocumentType? doctype;
     [DOMJIT=Getter] readonly attribute Element? documentElement;
 
-    HTMLCollection getElementsByTagName(DOMString qualifiedName);
-    HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
-    HTMLCollection getElementsByClassName(DOMString classNames);
+    HTMLCollection getElementsByTagName([AtomString] DOMString qualifiedName);
+    HTMLCollection getElementsByTagNameNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
+    HTMLCollection getElementsByClassName([AtomString] DOMString classNames);
 
-    [NewObject, ImplementedAs=createElementForBindings] Element createElement(DOMString localName); // FIXME: missing options parameter.
-    [NewObject] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName); // FIXME: missing options parameter.
+    [NewObject, ImplementedAs=createElementForBindings] Element createElement([AtomString] DOMString localName);
+    [NewObject] Element createElementNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName);
     [NewObject] DocumentFragment createDocumentFragment();
     [NewObject] Text createTextNode(DOMString data);
     [NewObject] CDATASection createCDATASection(DOMString data);
@@ -69,8 +69,8 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     [CEReactions, NewObject] Node importNode(Node node, optional boolean deep = false);
     [CEReactions] Node adoptNode(Node node);
 
-    [NewObject] Attr createAttribute(DOMString localName);
-    [NewObject] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject] Attr createAttribute([AtomString] DOMString localName);
+    [NewObject] Attr createAttributeNS([AtomString] DOMString? namespaceURI, DOMString qualifiedName);
 
     [NewObject] Event createEvent(DOMString type);
 

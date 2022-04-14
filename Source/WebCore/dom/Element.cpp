@@ -1792,7 +1792,7 @@ IntRect Element::screenRect() const
 
 const AtomString& Element::getAttribute(const AtomString& qualifiedName) const
 {
-    if (!elementData())
+    if (!elementData() || qualifiedName.isEmpty())
         return nullAtom();
     synchronizeAttribute(qualifiedName);
     if (const Attribute* attribute = elementData()->findAttributeByName(qualifiedName, shouldIgnoreAttributeCase(*this)))

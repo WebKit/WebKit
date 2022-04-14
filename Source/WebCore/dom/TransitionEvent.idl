@@ -27,7 +27,7 @@
 [
     Exposed=Window
 ] interface TransitionEvent : Event {
-    constructor(DOMString type, optional TransitionEventInit transitionEventInitDict);
+    constructor([AtomString] DOMString type, optional TransitionEventInit transitionEventInitDict);
 
     readonly attribute DOMString propertyName;
     readonly attribute double elapsedTime;

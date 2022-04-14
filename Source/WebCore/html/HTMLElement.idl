@@ -32,7 +32,7 @@
     [CEReactions, Reflect] attribute DOMString title;
     [CEReactions, Reflect] attribute DOMString lang;
     [CEReactions] attribute boolean translate;
-    [CEReactions] attribute DOMString dir;
+    [CEReactions] attribute [AtomString] DOMString dir;
 
     // user interaction
     [CEReactions, Reflect] attribute boolean hidden;

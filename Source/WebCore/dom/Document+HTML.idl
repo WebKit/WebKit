@@ -40,7 +40,7 @@ partial interface Document {
     // DOM tree accessors
     // getter object (DOMString name);
     [CEReactions] attribute DOMString title;
-    [CEReactions] attribute DOMString dir;
+    [CEReactions] attribute [AtomString] DOMString dir;
     [CEReactions, DOMJIT=Getter, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
     readonly attribute HTMLHeadElement? head;
     [SameObject] readonly attribute HTMLCollection images;

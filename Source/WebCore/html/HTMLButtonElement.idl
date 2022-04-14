@@ -27,7 +27,7 @@
 
     [CEReactions=NotNeeded] attribute DOMString formEnctype;
     [CEReactions=NotNeeded] attribute DOMString formMethod;
-    [CEReactions=NotNeeded] attribute DOMString type;
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString type;
 
     [CEReactions=NotNeeded, Reflect] attribute boolean formNoValidate;
     [CEReactions=NotNeeded, Reflect] attribute DOMString formTarget;

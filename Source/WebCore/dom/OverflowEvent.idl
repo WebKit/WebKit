@@ -26,7 +26,7 @@
 [
     Exposed=Window
 ] interface OverflowEvent : Event {
-    constructor(DOMString type, optional OverflowEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional OverflowEventInit eventInitDict);
 
     const unsigned short HORIZONTAL = 0;
     const unsigned short VERTICAL   = 1;

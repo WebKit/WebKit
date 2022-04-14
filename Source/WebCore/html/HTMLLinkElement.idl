@@ -34,11 +34,11 @@
     [PutForwards=value] readonly attribute DOMTokenList sizes;
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
-    [CEReactions=NotNeeded] attribute DOMString as;
-    [CEReactions=NotNeeded] attribute DOMString? crossOrigin;
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString as;
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImagesEnabled] attribute DOMString imageSrcset;
     [CEReactions=NotNeeded, Reflect, EnabledBySetting=LinkPreloadResponsiveImagesEnabled] attribute DOMString imageSizes;
-    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
+    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;

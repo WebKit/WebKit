@@ -27,7 +27,7 @@
     Conditional=TOUCH_EVENTS,
     Exposed=Window
 ] interface TouchEvent : UIEvent {
-    constructor(DOMString type, optional TouchEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional TouchEventInit eventInitDict);
 
     readonly attribute TouchList touches;
     readonly attribute TouchList targetTouches;
