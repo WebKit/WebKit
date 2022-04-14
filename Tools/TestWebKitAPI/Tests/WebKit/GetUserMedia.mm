@@ -560,7 +560,8 @@ TEST(WebKit, WebAudioAndGetUserMedia)
 #endif
 
 #if ENABLE(GPU_PROCESS)
-TEST(WebKit2, CrashGPUProcessWhileCapturing)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=239315
+TEST(WebKit2, DISABLED_CrashGPUProcessWhileCapturing)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
