@@ -126,6 +126,8 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--g-idc"_s, // 'g' U+0581
         "xn--o-00e"_s, // U+0BE6 'o'
         "xn--o-10e"_s, // 'o' U+0BE6
+        "xn--a-53i"_s, // U+15AF 'a'
+        "xn--a-63i"_s, // 'a' U+15AF
     };
     for (auto& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
@@ -152,6 +154,9 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
 
     // Tamil
     EXPECT_STREQ("https://\u0BE6\u0BE7\u0BE8\u0BE9count/", userVisibleString(literalURL("https://\u0BE6\u0BE7\u0BE8\u0BE9count/")));
+
+    // Canadian aboriginal
+    EXPECT_STREQ("https://\u15AF\u1401abc/", userVisibleString(literalURL("https://\u15AF\u1401abc/")));
 }
 
 TEST(WTF_URLExtras, URLExtras_DivisionSign)
