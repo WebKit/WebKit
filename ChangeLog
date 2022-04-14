@@ -1,3 +1,13 @@
+2022-04-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Add .github/pull_request_template.md
+        https://bugs.webkit.org/show_bug.cgi?id=239347
+        <rdar://problem/91763594>
+
+        Reviewed by Michael Catanzaro.
+
+        * .github/pull_request_template.md: Added.
+
 2022-04-14  Justin Michaud  <justin_michaud@apple.com>
 
         [PGO] We should be able to build WebKit to collect PGO profiles easily
