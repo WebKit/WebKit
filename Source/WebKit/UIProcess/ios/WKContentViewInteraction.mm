@@ -4145,6 +4145,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 #if HAVE(UIFINDINTERACTION)
     if (action == @selector(find:) || action == @selector(findNext:) || action == @selector(findPrevious:))
         return self.webView._findInteractionEnabled;
+
+    if (action == @selector(findAndReplace:))
+        return self.webView._findInteractionEnabled && self.supportsTextReplacement;
 #endif
 
     return [super canPerformAction:action withSender:sender];
@@ -10382,6 +10385,11 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (void)findPreviousForWebView:(id)sender
 {
     [self.webView._findInteraction findPrevious];
+}
+
+- (void)findAndReplaceForWebView:(id)sender
+{
+    [self.webView._findInteraction presentFindNavigatorShowingReplace:YES];
 }
 
 - (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
