@@ -9,11 +9,10 @@ const r3 = createGlobalObject();
             for (const newTarget of [
                 r2[key].bind(),
                 new r2.Function,
-                new r2.Proxy(new r2.Function, {}),
             ]) {
                 Object.defineProperty(newTarget, "prototype", { value: new r3.Object });
                 const instance = Reflect.construct(r1[key], [], newTarget);
-                if ($vm.globalObjectForObject(instance) !== r3)
+                if ($vm.globalObjectForObject(instance) !== r2)
                     throw new Error(`Structure of ${key} instance has incorrect global object!`);
             }
         }
