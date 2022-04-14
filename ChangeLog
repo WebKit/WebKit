@@ -1,3 +1,25 @@
+2022-04-13  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Fix public watchOS workspace build by updating scheme and build settings
+        https://bugs.webkit.org/show_bug.cgi?id=239301
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add AD_HOC_CODE_SIGNING_ALLOWED=YES (similar to
+        https://commits.webkit.org/249449@main) and
+        DISABLE_SDK_METADATA_PARSING=YES in various places to work around
+        open-source workspace build failures when building for watchOS.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source.xcscheme:
+        - Remove libwebrtc from the "All Source" scheme. On watchOS, it doesn't
+        build, and on other platforms, it is an implicit dependency, so
+        removing it lets the build system determine whether or not it should
+        build.
+        - Remove MiniBrowser from the "All Source" scheme, as it's part of "All
+        Tools". "All Tools" probably shouldn't be built for embedded
+        platforms, as it contains some Mac-only tools, but we do not enforce
+        this.
+
 2022-04-12  Elliott Williams  <emw@apple.com>
 
         Reland "[XCBuild] Enable dependency validation by default"

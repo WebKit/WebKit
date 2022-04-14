@@ -1,3 +1,14 @@
+2022-04-13  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Fix public watchOS workspace build by updating scheme and build settings
+        https://bugs.webkit.org/show_bug.cgi?id=239301
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebCore.xcconfig:
+        * Configurations/WebCoreTestSupport.xcconfig:
+
 2022-04-13  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         Misc compiler warnings, April 2022 edition

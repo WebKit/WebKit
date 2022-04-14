@@ -56,20 +56,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FB39D0D01200F0E300088E69"
-               BuildableName = "libwebrtc.dylib"
-               BlueprintName = "libwebrtc"
-               ReferencedContainer = "container:Source/ThirdParty/libwebrtc/libwebrtc.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "31DB794F2491C33300982878"
                BuildableName = "ANGLE"
                BlueprintName = "ANGLE"
@@ -166,16 +152,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D1107260486CEB800E47090"
-            BuildableName = "MiniBrowser.app"
-            BlueprintName = "MiniBrowser"
-            ReferencedContainer = "container:Tools/MiniBrowser/MiniBrowser.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

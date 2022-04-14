@@ -4,6 +4,7 @@
 #include "WebKitTargetConditionals.xcconfig"
 
 CODE_SIGN_IDENTITY = -;
+AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
 USE_INTERNAL_SDK_Production = YES;
