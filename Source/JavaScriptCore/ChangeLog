@@ -3,6 +3,16 @@
         InternalFunction::createSubclassStructure() should use base object's global object
         https://bugs.webkit.org/show_bug.cgi?id=239346
 
+        Unreviewed, account for offline feedback by Yusuke Suzuki.
+
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+
+2022-04-14  Alexey Shvayka  <ashvayka@apple.com>
+
+        InternalFunction::createSubclassStructure() should use base object's global object
+        https://bugs.webkit.org/show_bug.cgi?id=239346
+
         Reviewed by Darin Adler.
 
         Chrome and Firefox don't agree on interoperable behavior in case of cross-realm
