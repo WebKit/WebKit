@@ -503,7 +503,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
 
         const size_t maxPrintedLength = 80;
         if (textContent.length() > maxPrintedLength) {
-            auto substring = textContent.substring(0, maxPrintedLength);
+            auto substring = StringView(textContent).left(maxPrintedLength);
             stream << " \"" << substring.utf8().data() << "\"...";
         } else
             stream << " \"" << textContent.utf8().data() << "\"";

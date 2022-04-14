@@ -46,13 +46,13 @@ static String protectionSpaceMapKeyFromURL(const URL& url)
 
     // Remove the last path component that is not a directory to determine the subtree for which credentials will apply.
     // We keep a leading slash, but remove a trailing one.
-    String directoryURL = url.string().substring(0, url.pathEnd());
+    String directoryURL = url.string().left(url.pathEnd());
     unsigned directoryURLPathStart = url.pathStart();
     ASSERT(directoryURL[directoryURLPathStart] == '/');
     if (directoryURL.length() > directoryURLPathStart + 1) {
         size_t index = directoryURL.reverseFind('/');
         ASSERT(index != notFound);
-        directoryURL = directoryURL.substring(0, (index != directoryURLPathStart) ? index : directoryURLPathStart + 1);
+        directoryURL = directoryURL.left((index != directoryURLPathStart) ? index : directoryURLPathStart + 1);
     }
 
     return directoryURL;
@@ -155,7 +155,7 @@ HashMap<String, ProtectionSpace>::iterator CredentialStorage::findDefaultProtect
 
         size_t index = directoryURL.reverseFind('/', directoryURL.length() - 2);
         ASSERT(index != notFound);
-        directoryURL = directoryURL.substring(0, (index == directoryURLPathStart) ? index + 1 : index);
+        directoryURL = directoryURL.left((index == directoryURLPathStart) ? index + 1 : index);
         ASSERT(directoryURL.length() > directoryURLPathStart);
     }
 }

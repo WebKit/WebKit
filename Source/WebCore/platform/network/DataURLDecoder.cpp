@@ -115,7 +115,7 @@ public:
         isBase64 = equalLettersIgnoringASCIICase(formatType, "base64");
 
         // If header does not end with "base64", mediaType should be the whole header.
-        auto mediaType = (isBase64 ? header.substring(0, mediaTypeEnd) : header).toString();
+        auto mediaType = (isBase64 ? header.left(mediaTypeEnd) : header).toString();
         mediaType = stripLeadingAndTrailingHTTPSpaces(mediaType);
         if (mediaType.startsWith(';'))
             mediaType.insert("text/plain"_s, 0);

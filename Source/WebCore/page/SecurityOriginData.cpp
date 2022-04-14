@@ -115,7 +115,7 @@ std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(Str
     if (port && !*port)
         port = std::nullopt;
 
-    auto protocol = databaseIdentifier.substring(0, separator1);
+    auto protocol = databaseIdentifier.left(separator1);
     auto host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
     return SecurityOriginData { protocol.toString(), host.toString(), port };
 }

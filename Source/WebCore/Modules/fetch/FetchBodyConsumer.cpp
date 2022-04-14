@@ -113,7 +113,7 @@ static std::optional<MimeType> parseMIMEType(const String& contentType)
     if (slashIndex == notFound)
         return std::nullopt;
 
-    String type = input.substring(0, slashIndex);
+    String type = input.left(slashIndex);
     if (!type.length() || !isValidHTTPToken(type))
         return std::nullopt;
     

@@ -210,7 +210,7 @@ inline bool isControlCharacterOrSpace(UChar character)
 
 inline StringView trimToNextSeparator(StringView string)
 {
-    return string.substring(0, string.find(isCacheHeaderSeparator));
+    return string.left(string.find(isCacheHeaderSeparator));
 }
 
 static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
@@ -266,7 +266,7 @@ static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
             return result;
         }
         // The value is delimited by the next comma
-        result.append({ directive, trimToNextSeparator(value.substring(0, nextCommaPosition2)).toString() });
+        result.append({ directive, trimToNextSeparator(value.left(nextCommaPosition2)).toString() });
         pos += (safeHeader.find(',', pos) - pos) + 1;
     }
     return result;

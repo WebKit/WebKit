@@ -222,7 +222,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             path = fragment;
             query = emptyString();
         } else {
-            path = fragment.substring(0, location);
+            path = fragment.left(location);
             query = fragment.substring(location + 1);
         }
         fragment = emptyString();
@@ -262,7 +262,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
         size_t ampersandLocation = lastPathComponent.find('&');
         if (ampersandLocation != notFound) {
             // Some URLs we care about use & in place of ? for the first query parameter.
-            videoID = lastPathComponent.substring(0, ampersandLocation);
+            videoID = lastPathComponent.left(ampersandLocation);
             pathAfterFirstAmpersand = lastPathComponent.substring(ampersandLocation + 1, lastPathComponent.length() - ampersandLocation);
         } else
             videoID = lastPathComponent;
@@ -304,7 +304,7 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
         ASSERT(locationOfVideoIDInPath);
     
         // From the original URL, we need to get the part before /path/VideoId.
-        locationOfPathBeforeVideoID = StringView(srcString).find(srcPath.substring(0, locationOfVideoIDInPath));
+        locationOfPathBeforeVideoID = StringView(srcString).find(srcPath.left(locationOfVideoIDInPath));
     } else if (equalLettersIgnoringASCIICase(srcPath, "/watch")) {
         // From the original URL, we need to get the part before /watch/#!v=VideoID
         // FIXME: Shouldn't this be ASCII case-insensitive?
@@ -314,7 +314,7 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
 
     ASSERT(locationOfPathBeforeVideoID != notFound);
 
-    auto srcURLPrefix = StringView(srcString).substring(0, locationOfPathBeforeVideoID);
+    auto srcURLPrefix = StringView(srcString).left(locationOfPathBeforeVideoID);
     auto query = srcURL.query();
 
     // If the URL has no query, use the possibly malformed query we found.

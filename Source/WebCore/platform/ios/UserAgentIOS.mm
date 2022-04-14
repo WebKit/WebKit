@@ -74,7 +74,7 @@ static StringView deviceNameForUserAgent()
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
         size_t location = name.find(" Simulator");
         if (location != notFound)
-            return name.substring(0, location);
+            return name.left(location);
 #endif
         return name;
     }();

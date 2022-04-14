@@ -1,3 +1,27 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Replace calls to substring(0, x) with the more concise left(x)
+        https://bugs.webkit.org/show_bug.cgi?id=239306
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::origins const):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::traverseRecordsFiles):
+        * NetworkProcess/storage/LocalStorageManager.cpp:
+        (WebKit::fileNameToOrigin):
+        * Shared/API/c/WKString.cpp:
+        (WKStringGetCharacters):
+        * UIProcess/API/glib/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::notifySurrounding):
+        * UIProcess/gtk/GtkSettingsManager.cpp:
+        (WebKit::GtkSettingsManager::themeName const):
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        * UIProcess/win/WebProcessPoolWin.cpp:
+        (WebKit::initializeRemoteInspectorServer):
+
 2022-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Adjust when _setPrivacyProxyFailClosedForUnreachableNonMainHosts is called

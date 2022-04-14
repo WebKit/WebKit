@@ -64,7 +64,7 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
     EventQueueScope scope;
     auto oldData = data();
     auto newText = virtualCreate(oldData.substring(offset));
-    setDataWithoutUpdate(oldData.substring(0, offset));
+    setDataWithoutUpdate(oldData.left(offset));
 
     dispatchModifiedEvent(oldData);
 

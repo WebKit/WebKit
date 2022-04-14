@@ -58,7 +58,7 @@ size_t WKStringGetCharacters(WKStringRef stringRef, WKChar* buffer, size_t buffe
     static_assert(sizeof(WKChar) == sizeof(UChar), "Size of WKChar must match size of UChar");
 
     unsigned unsignedBufferLength = std::min<size_t>(bufferLength, std::numeric_limits<unsigned>::max());
-    auto substring = WebKit::toImpl(stringRef)->stringView().substring(0, unsignedBufferLength);
+    auto substring = WebKit::toImpl(stringRef)->stringView().left(unsignedBufferLength);
 
     substring.getCharactersWithUpconvert(reinterpret_cast<UChar*>(buffer));
     return substring.length();

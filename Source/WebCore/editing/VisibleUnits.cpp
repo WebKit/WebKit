@@ -450,7 +450,7 @@ unsigned suffixLengthForRange(const SimpleRange& forwardsScanRange, Vector<UChar
     while (!forwardsIterator.atEnd()) {
         StringView text = forwardsIterator.text();
         unsigned i = endOfFirstWordBoundaryContext(text);
-        append(string, text.substring(0, i));
+        append(string, text.left(i));
         suffixLength += i;
         if (i < text.length())
             break;
@@ -638,7 +638,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
 unsigned startWordBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
     ASSERT(offset);
-    if (mayHaveMoreContext && !startOfLastWordBoundaryContext(text.substring(0, offset))) {
+    if (mayHaveMoreContext && !startOfLastWordBoundaryContext(text.left(offset))) {
         needMoreContext = true;
         return 0;
     }
@@ -697,7 +697,7 @@ VisiblePosition endOfWord(const VisiblePosition& c, EWordSide side)
 
 static unsigned previousWordPositionBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
 {
-    if (mayHaveMoreContext && !startOfLastWordBoundaryContext(text.substring(0, offset))) {
+    if (mayHaveMoreContext && !startOfLastWordBoundaryContext(text.left(offset))) {
         needMoreContext = true;
         return 0;
     }

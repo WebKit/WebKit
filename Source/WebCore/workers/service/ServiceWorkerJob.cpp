@@ -129,7 +129,7 @@ ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorke
     if (serviceWorkerAllowed.isNull()) {
         auto path = jobData.scriptURL.path();
         // Last part of the path is the script's filename.
-        maxScopeString = path.substring(0, path.reverseFind('/') + 1).toString();
+        maxScopeString = path.left(path.reverseFind('/') + 1).toString();
     } else {
         auto maxScope = URL(jobData.scriptURL, serviceWorkerAllowed);
         if (SecurityOrigin::create(maxScope)->isSameOriginAs(SecurityOrigin::create(jobData.scriptURL)))

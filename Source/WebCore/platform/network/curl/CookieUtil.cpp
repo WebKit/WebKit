@@ -97,7 +97,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
     String attributeValue;
 
     if (assignmentPosition != notFound) {
-        attributeName = attribute.substring(0, assignmentPosition).stripWhiteSpace();
+        attributeName = attribute.left(assignmentPosition).stripWhiteSpace();
         attributeValue = attribute.substring(assignmentPosition + 1).stripWhiteSpace();
     } else
         attributeName = attribute.stripWhiteSpace();
@@ -153,7 +153,7 @@ std::optional<Cookie> parseCookieHeader(const String& cookieLine)
 
     size_t separatorPosition = cookieLine.find(';');
 
-    String cookiePair = separatorPosition == notFound ? cookieLine : cookieLine.substring(0, separatorPosition);
+    String cookiePair = separatorPosition == notFound ? cookieLine : cookieLine.left(separatorPosition);
 
     String cookieName;
     String cookieValue;
@@ -164,7 +164,7 @@ std::optional<Cookie> parseCookieHeader(const String& cookieLine)
     if (assignmentPosition == notFound)
         cookieValue = cookiePair;
     else {
-        cookieName = cookiePair.substring(0, assignmentPosition);
+        cookieName = cookiePair.left(assignmentPosition);
         cookieValue = cookiePair.substring(assignmentPosition + 1);
     }
 
@@ -193,7 +193,7 @@ String defaultPathForURL(const URL& url)
     if (!lastSlashPosition)
         return "/"_s;
 
-    return path.substring(0, lastSlashPosition);
+    return path.left(lastSlashPosition);
 }
 
 } // namespace CookieUtil

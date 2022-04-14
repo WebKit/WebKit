@@ -61,7 +61,7 @@ static void initializeRemoteInspectorServer(StringView address)
     if (pos == notFound)
         return;
 
-    auto host = address.substring(0, pos);
+    auto host = address.left(pos);
     auto port = parseInteger<uint16_t>(address.substring(pos + 1));
     if (!port)
         return;

@@ -740,7 +740,7 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
         auto i = line.find(key);
         if (i != notFound) {
             auto tmp = line.substring(i + key.ascii().length());
-            label = tmp.substring(0, tmp.find(' '));
+            label = tmp.left(tmp.find(' '));
             break;
         }
     }

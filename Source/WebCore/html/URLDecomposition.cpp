@@ -117,13 +117,13 @@ void URLDecomposition::setHost(StringView value)
             return;
         unsigned portLength = countASCIIDigits(value.substring(separator + 1));
         if (!portLength) {
-            fullURL.setHost(value.substring(0, separator));
+            fullURL.setHost(value.left(separator));
         } else {
             auto portNumber = parseInteger<uint16_t>(value.substring(separator + 1, portLength));
             if (portNumber && WTF::isDefaultPortForProtocol(*portNumber, fullURL.protocol()))
-                fullURL.setHostAndPort(value.substring(0, separator));
+                fullURL.setHostAndPort(value.left(separator));
             else
-                fullURL.setHostAndPort(value.substring(0, separator + 1 + portLength));
+                fullURL.setHostAndPort(value.left(separator + 1 + portLength));
         }
     }
     if (fullURL.isValid())

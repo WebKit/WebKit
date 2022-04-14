@@ -259,13 +259,13 @@ static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const C
     else {
         switch (characters[0]) {
         case '/':
-            append(buffer, StringView(base.string()).substring(0, base.pathStart()));
+            append(buffer, StringView(base.string()).left(base.pathStart()));
             break;
         case '#':
-            append(buffer, StringView(base.string()).substring(0, base.pathEnd()));
+            append(buffer, StringView(base.string()).left(base.pathEnd()));
             break;
         default:
-            append(buffer, StringView(base.string()).substring(0, base.pathAfterLastSlash()));
+            append(buffer, StringView(base.string()).left(base.pathAfterLastSlash()));
             break;
         }
     }

@@ -273,7 +273,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
         paragraphCheckingResult.append(misspellingResult);
         offset += misspellingLocation + misspellingLength;
         // Generally, we end up checking at the word separator, move to the adjacent word.
-        offset = nextWordOffset(text.substring(0, lengthStrip), offset);
+        offset = nextWordOffset(text.left(lengthStrip), offset);
     }
     return paragraphCheckingResult;
 #else

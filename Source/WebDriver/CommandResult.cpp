@@ -74,7 +74,7 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
         String errorName;
         auto position = errorMessage.find(';');
         if (position != notFound) {
-            errorName = errorMessage.substring(0, position);
+            errorName = errorMessage.left(position);
             m_errorMessage = errorMessage.substring(position + 1);
         } else
             errorName = errorMessage;

@@ -126,7 +126,7 @@ void RTCDTMFSender::playNextTone()
         return;
     }
 
-    auto currentTone = m_tones.substring(0, 1);
+    auto currentTone = m_tones.left(1);
     m_tones.remove(0);
 
     m_backend->playTone(currentTone, m_duration, m_interToneGap);

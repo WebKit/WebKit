@@ -235,7 +235,7 @@ MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(StringView s
     }
 
     bool ok;
-    float lengthValue = string.substring(0, stringLength).toFloat(ok);
+    float lengthValue = string.left(stringLength).toFloat(ok);
     if (!ok)
         return Length();
 

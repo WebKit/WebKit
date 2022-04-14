@@ -58,7 +58,7 @@ String TextBox::debugDescription() const
     textContent.replaceWithLiteral('\n', "\\n");
     const size_t maxPrintedLength = 80;
     if (textContent.length() > maxPrintedLength) {
-        auto substring = textContent.substring(0, maxPrintedLength);
+        auto substring = StringView(textContent).left(maxPrintedLength);
         stream << " \"" << substring << "\"…";
     } else
         stream << " \"" << textContent << "\"";

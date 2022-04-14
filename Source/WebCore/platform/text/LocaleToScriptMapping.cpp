@@ -375,7 +375,7 @@ UScriptCode localeToScriptCodeForFontSelection(const String& locale)
         UScriptCode code = scriptNameToCode(canonicalLocale.substring(underscorePosition + 1));
         if (code != USCRIPT_INVALID_CODE && code != USCRIPT_UNKNOWN)
             return code;
-        canonicalLocale = canonicalLocale.substring(0, underscorePosition);
+        canonicalLocale = canonicalLocale.left(underscorePosition);
     }
     return USCRIPT_COMMON;
 }

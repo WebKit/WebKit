@@ -941,7 +941,7 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
     // Clean out everything after file:// url path.
     String cleanURLString(url.string());
     if (url.isLocalFile())
-        cleanURLString = cleanURLString.substring(0, url.pathEnd());
+        cleanURLString = cleanURLString.left(url.pathEnd());
 
     m_url = URL { cleanURLString };
     GST_INFO_OBJECT(pipeline(), "Load %s", m_url.string().utf8().data());

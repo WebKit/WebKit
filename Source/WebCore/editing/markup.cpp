@@ -995,7 +995,7 @@ static bool shouldPreserveMSOLists(StringView markup)
     auto tagClose = markup.find('>');
     if (tagClose == notFound)
         return false;
-    auto tag = markup.substring(0, tagClose);
+    auto tag = markup.left(tagClose);
     return tag.contains("xmlns:o=\"urn:schemas-microsoft-com:office:office\"")
         && tag.contains("xmlns:w=\"urn:schemas-microsoft-com:office:word\"");
 }

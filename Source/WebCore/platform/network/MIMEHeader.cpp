@@ -67,13 +67,13 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
             key = String();
             value.clear();
         }
-        size_t semiColonIndex = line.find(':');
-        if (semiColonIndex == notFound) {
+        size_t semicolonIndex = line.find(':');
+        if (semicolonIndex == notFound) {
             // This is not a key value pair, ignore.
             continue;
         }
-        key = line.substring(0, semiColonIndex).convertToASCIILowercase().stripWhiteSpace();
-        value.append(line.substring(semiColonIndex + 1));
+        key = StringView(line).left(semicolonIndex).convertToASCIILowercase().stripWhiteSpace();
+        value.append(StringView(line).substring(semicolonIndex + 1));
     }
     // Store the last property if there is one.
     if (!key.isEmpty())

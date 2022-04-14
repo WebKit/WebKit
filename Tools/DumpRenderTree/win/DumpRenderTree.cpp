@@ -1114,23 +1114,24 @@ static String findFontFallback(const char* pathOrUrl)
         return emptyString();
 
     String pathToCheck = fullPath;
+    StringView pathToCheckView { pathToCheck };
 
     static const String layoutTests = "LayoutTests"_s;
 
     // Find the layout test root on the current path:
-    size_t location = pathToCheck.find(layoutTests);
+    size_t location = pathToCheckView.find(layoutTests);
     if (WTF::notFound == location)
         return emptyString();
 
-    String pathToTest = pathToCheck.substring(location + layoutTests.length() + 1);
-    String possiblePathToLogue = FileSystem::pathByAppendingComponent(pathToCheck.substring(0, location + layoutTests.length() + 1), "platform\\win"_s);
+    StringView pathToTest = pathToCheckView.substring(location + layoutTests.length() + 1);
+    String possiblePathToLogue = FileSystem::pathByAppendingComponent(pathToCheckView.left(location + layoutTests.length() + 1), "platform\\win"_s);
 
     Vector<String> possiblePaths;
     possiblePaths.append(FileSystem::pathByAppendingComponent(possiblePathToLogue, pathToTest));
 
     size_t nextCandidateEnd = pathToTest.reverseFind('\\');
     while (nextCandidateEnd && nextCandidateEnd != WTF::notFound) {
-        pathToTest = pathToTest.substring(0, nextCandidateEnd);
+        pathToTest = pathToTest.left(nextCandidateEnd);
         possiblePaths.append(FileSystem::pathByAppendingComponent(possiblePathToLogue, pathToTest));
         nextCandidateEnd = pathToTest.reverseFind('\\');
     }

@@ -55,7 +55,7 @@ static String urlForLoggingTrack(const URL& url)
     
     if (url.string().length() < maximumURLLengthForLogging)
         return url.string();
-    return url.string().substring(0, maximumURLLengthForLogging) + "...";
+    return makeString(StringView(url.string()).left(maximumURLLengthForLogging), "...");
 }
 
 #endif

@@ -389,8 +389,9 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
         bool startsWithWordCharacter = false;
         bool endsWithWordCharacter = false;
         if (label.length()) {
-            startsWithWordCharacter = wordRegExp.get().match(label.substring(0, 1)) >= 0;
-            endsWithWordCharacter = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
+            StringView labelView { label };
+            startsWithWordCharacter = wordRegExp.get().match(labelView.left(1)) >= 0;
+            endsWithWordCharacter = wordRegExp.get().match(labelView.right(1)) >= 0;
         }
 
         // Search for word boundaries only if label starts/ends with "word characters".

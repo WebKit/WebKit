@@ -452,7 +452,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     if (quote != '\0') {
         size_t index = url.find(quote);
         if (index != notFound)
-            url = url.substring(0, index);
+            url = url.left(index);
     }
 
     parsedURL = url.toString();

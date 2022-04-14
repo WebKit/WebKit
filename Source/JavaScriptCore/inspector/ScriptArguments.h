@@ -62,7 +62,7 @@ public:
         constexpr size_t maxMessageLength = 10000;
         if (message.length() <= maxMessageLength)
             return message;
-        return makeString(message.substring(0, maxMessageLength), "..."_s);
+        return makeString(StringView(message).left(maxMessageLength), "..."_s);
     }
 
 private:

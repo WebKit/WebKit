@@ -384,7 +384,7 @@ void StyleSheetHandler::observeComment(unsigned startOffset, unsigned endOffset)
     // Require well-formed comments.
     if (!commentText.endsWith("*/"))
         return;
-    commentText = commentText.substring(0, commentText.length() - 2).stripWhiteSpace();
+    commentText = commentText.left(commentText.length() - 2).stripWhiteSpace();
     if (commentText.isEmpty())
         return;
     

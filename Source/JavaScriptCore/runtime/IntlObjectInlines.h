@@ -58,7 +58,7 @@ template<typename Predicate> String bestAvailableLocale(const String& locale, Pr
         if (pos >= 2 && candidate[pos - 2] == '-')
             pos -= 2;
 
-        candidate = candidate.substring(0, pos);
+        candidate = candidate.left(pos);
     }
 
     return String();

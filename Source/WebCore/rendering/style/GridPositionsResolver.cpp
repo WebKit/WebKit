@@ -147,7 +147,7 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
                 startSide = false;
             } else
                 startSide = true;
-            areaName = name.substring(0, suffix);
+            areaName = name.left(suffix);
         }
         auto implicitLine = clampedImplicitLineForArea(*gridContainerStyle, areaName, 0, m_lastLine, isRowAxis, startSide);
         if (implicitLine)

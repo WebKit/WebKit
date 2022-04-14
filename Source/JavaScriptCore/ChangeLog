@@ -1,3 +1,20 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Replace calls to substring(0, x) with the more concise left(x)
+        https://bugs.webkit.org/show_bug.cgi?id=239306
+
+        Reviewed by Darin Adler.
+
+        * inspector/ScriptArguments.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::clampErrorMessage):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::wellFormedUnitIdentifier):
+        * runtime/IntlObject.cpp:
+        (JSC::resolveLocale):
+        * runtime/IntlObjectInlines.h:
+        (JSC::bestAvailableLocale):
+
 2022-04-13  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         GCC 12 -Wdangling-pointer warning spam from AbstractSlotVisitorInlines.h

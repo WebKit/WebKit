@@ -177,14 +177,14 @@ void String::insert(const String& string, unsigned position)
     if (is8Bit() && string.is8Bit()) {
         LChar* data;
         auto newString = StringImpl::createUninitialized(length() + lengthToInsert, data);
-        StringView(*m_impl).substring(0, position).getCharactersWithUpconvert(data);
+        StringView(*m_impl).left(position).getCharactersWithUpconvert(data);
         StringView(string).getCharactersWithUpconvert(data + position);
         StringView(*m_impl).substring(position).getCharactersWithUpconvert(data + position + lengthToInsert);
         m_impl = WTFMove(newString);
     } else {
         UChar* data;
         auto newString = StringImpl::createUninitialized(length() + lengthToInsert, data);
-        StringView(*m_impl).substring(0, position).getCharactersWithUpconvert(data);
+        StringView(*m_impl).left(position).getCharactersWithUpconvert(data);
         StringView(string).getCharactersWithUpconvert(data + position);
         StringView(*m_impl).substring(position).getCharactersWithUpconvert(data + position + lengthToInsert);
         m_impl = WTFMove(newString);

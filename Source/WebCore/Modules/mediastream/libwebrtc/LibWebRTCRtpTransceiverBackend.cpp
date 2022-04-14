@@ -100,7 +100,7 @@ static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const
         auto position = parameter.find('=');
         if (position == notFound)
             return Exception { InvalidModificationError, "RTCRtpCodecCapability sdpFmtLine badly formated"_s };
-        rtcCodec.parameters.emplace(parameter.substring(0, position).utf8().data(), parameter.substring(position + 1).utf8().data());
+        rtcCodec.parameters.emplace(parameter.left(position).utf8().data(), parameter.substring(position + 1).utf8().data());
     }
 
     return rtcCodec;

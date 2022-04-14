@@ -209,7 +209,7 @@ static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl)
 
     String pathString = toWTFString(adoptWK(WKURLCopyPath(fileUrl)));
     String mainFrameURLPathString = toWTFString(adoptWK(WKURLCopyPath(mainFrameURL.get())));
-    String basePath = mainFrameURLPathString.substring(0, mainFrameURLPathString.reverseFind(divider) + 1);
+    auto basePath = StringView(mainFrameURLPathString).left(mainFrameURLPathString.reverseFind(divider) + 1);
     
     if (!basePath.isEmpty() && pathString.startsWith(basePath))
         return pathString.substring(basePath.length());
@@ -746,7 +746,7 @@ static void dumpFrameText(WKBundleFrameRef frame, StringBuilder& builder)
     auto text = toWTFString(adoptWK(WKBundleFrameCopyInnerText(frame)));
     for (auto line : StringView(text).splitAllowingEmptyEntries('\n')) {
         while (line.endsWith(' '))
-            line = line.substring(0, line.length() - 1);
+            line = line.left(line.length() - 1);
         builder.append(line, '\n');
     }
 }
@@ -1300,7 +1300,7 @@ static WTF::String stripTrailingSpacesAddNewline(const WTF::String& string)
     StringBuilder builder;
     for (auto line : StringView(string).splitAllowingEmptyEntries('\n')) {
         while (line.endsWith(' '))
-            line = line.substring(0, line.length() - 1);
+            line = line.left(line.length() - 1);
         builder.append(line, '\n');
     }
     return builder.toString();
@@ -1312,7 +1312,7 @@ static WTF::String addLeadingSpaceStripTrailingSpacesAddNewline(const WTF::Strin
     return (result.isEmpty() || result.startsWith('\n')) ? result : makeString(' ', result);
 }
 
-static WTF::String lastFileURLPathComponent(const WTF::String& path)
+static StringView lastFileURLPathComponent(StringView path)
 {
     auto pos = path.find("file://");
     ASSERT(WTF::notFound != pos);
@@ -1323,7 +1323,7 @@ static WTF::String lastFileURLPathComponent(const WTF::String& path)
 
     // Remove the trailing delimiter
     if (tmpPath[tmpPath.length() - 1] == '/')
-        tmpPath.remove(tmpPath.length() - 1);
+        tmpPath = tmpPath.left(tmpPath.length() - 1);
 
     pos = tmpPath.reverseFind('/');
     if (WTF::notFound != pos)
@@ -1344,10 +1344,11 @@ void InjectedBundlePage::willAddMessageToConsole(WKStringRef message)
         messageString.truncate(nullCharPos);
 
     size_t fileProtocolStart = messageString.find("file://");
-    if (fileProtocolStart != WTF::notFound)
+    if (fileProtocolStart != WTF::notFound) {
+        StringView messageStringView { messageString };
         // FIXME: The code below does not handle additional text after url nor multiple urls. This matches DumpRenderTree implementation.
-        messageString = messageString.substring(0, fileProtocolStart) + lastFileURLPathComponent(messageString.substring(fileProtocolStart));
-
+        messageString = makeString(messageStringView.left(fileProtocolStart), lastFileURLPathComponent(messageStringView.substring(fileProtocolStart)));
+    }
     messageString = makeString("CONSOLE MESSAGE:", addLeadingSpaceStripTrailingSpacesAddNewline(messageString));
     if (injectedBundle.dumpJSConsoleLogInStdErr())
         injectedBundle.dumpToStdErr(messageString);

@@ -43,7 +43,7 @@ String GtkSettingsManager::themeName() const
     if (auto* themeNameEnv = g_getenv("GTK_THEME")) {
         String name = String::fromUTF8(themeNameEnv);
         if (name.endsWith("-dark") || name.endsWith("-Dark") || name.endsWith(":dark"))
-            return name.substring(0, name.length() - 5);
+            return name.left(name.length() - 5);
         return name;
     }
 
@@ -51,7 +51,7 @@ String GtkSettingsManager::themeName() const
     g_object_get(m_settings, "gtk-theme-name", &themeNameSetting.outPtr(), nullptr);
     String name = String::fromUTF8(themeNameSetting.get());
     if (name.endsWith("-dark") || name.endsWith("-Dark"))
-        return name.substring(0, name.length() - 5);
+        return name.left(name.length() - 5);
     return name;
 }
 

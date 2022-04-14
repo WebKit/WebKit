@@ -166,7 +166,7 @@ static inline void updateList(Document& document, FeaturePolicy::AllowRule& rule
             return;
         }
 
-        processOriginItem(document, rule, value.substring(0, position));
+        processOriginItem(document, rule, value.left(position));
         value = value.substring(position + 1).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
     }
 }

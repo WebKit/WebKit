@@ -348,13 +348,13 @@ SMILTime SVGSMILElement::parseClockValue(StringView data)
     size_t doublePointOne = parse.find(':');
     size_t doublePointTwo = parse.find(':', doublePointOne + 1);
     if (doublePointOne == 2 && doublePointTwo == 5 && parse.length() >= 8) {
-        auto hour = parseInteger<uint8_t>(parse.substring(0, 2));
+        auto hour = parseInteger<uint8_t>(parse.left(2));
         auto minute = parseInteger<uint8_t>(parse.substring(3, 2));
         if (!hour || !minute)
             return SMILTime::unresolved();
         result = *hour * 60 * 60 + *minute * 60 + parse.substring(6).toDouble(ok);
     } else if (doublePointOne == 2 && doublePointTwo == notFound && parse.length() >= 5) { 
-        auto minute = parseInteger<uint8_t>(parse.substring(0, 2));
+        auto minute = parseInteger<uint8_t>(parse.left(2));
         if (!minute)
             return SMILTime::unresolved();
         result = *minute * 60 + parse.substring(3).toDouble(ok);

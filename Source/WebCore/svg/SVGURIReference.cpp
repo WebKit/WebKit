@@ -67,10 +67,10 @@ String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const
     if (!start)
         return url.substring(1);
 
-    URL base = URL(document.baseURL(), url.substring(0, start));
+    URL base = URL(document.baseURL(), url.left(start));
     String fragmentIdentifier = url.substring(start);
-    URL kurl(base, fragmentIdentifier);
-    if (equalIgnoringFragmentIdentifier(kurl, document.url()))
+    URL urlWithFragment(base, fragmentIdentifier);
+    if (equalIgnoringFragmentIdentifier(urlWithFragment, document.url()))
         return fragmentIdentifier.substring(1);
 
     // The url doesn't have any fragment identifier.

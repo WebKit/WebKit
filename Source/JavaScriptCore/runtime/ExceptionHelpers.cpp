@@ -78,7 +78,7 @@ static StringView clampErrorMessage(const String& originalMessage)
 {
     // Hopefully this is sufficiently long. Note, this is the length of the string not the number of bytes used.
     constexpr unsigned maxLength = 2 * KB;
-    return StringView(originalMessage).substring(0, maxLength);
+    return StringView(originalMessage).left(maxLength);
 }
 
 static String defaultApproximateSourceError(const String& originalMessage, StringView sourceText)

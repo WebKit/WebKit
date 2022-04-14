@@ -223,7 +223,7 @@ static std::optional<WellFormedUnit> wellFormedUnitIdentifier(StringView unitIde
         return std::nullopt;
 
     // If the result of IsSanctionedSimpleUnitIdentifier(numerator) is false, then return false.
-    auto numerator = unitIdentifier.substring(0, position);
+    auto numerator = unitIdentifier.left(position);
     auto numeratorUnit = sanctionedSimpleUnitIdentifier(numerator);
     if (!numeratorUnit)
         return std::nullopt;

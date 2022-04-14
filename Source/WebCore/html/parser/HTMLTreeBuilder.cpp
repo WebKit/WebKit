@@ -241,7 +241,7 @@ private:
         skipLeading<characterPredicate>();
         if (start.length() == m_text.length())
             return String();
-        return makeString(start.substring(0, start.length() - m_text.length()));
+        return makeString(start.left(start.length() - m_text.length()));
     }
 
     String makeString(StringView stringView) const

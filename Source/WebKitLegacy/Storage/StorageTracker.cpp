@@ -260,7 +260,7 @@ void StorageTracker::syncFileSystemAndTrackerDatabase()
             continue;
 
         auto filePath = FileSystem::pathByAppendingComponent(m_storageDirectoryPath, fileName);
-        String originIdentifier = fileName.substring(0, fileName.length() - fileExtension.length());
+        String originIdentifier = fileName.left(fileName.length() - fileExtension.length());
         if (!originSetCopy.contains(originIdentifier))
             syncSetOriginDetails(originIdentifier, filePath);
 

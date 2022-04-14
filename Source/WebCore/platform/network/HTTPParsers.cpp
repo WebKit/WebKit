@@ -597,7 +597,7 @@ std::optional<std::pair<StringView, HashMap<String, String>>> parseStructuredFie
             break;
         ++index;
     }
-    StringView bareItem = header.substring(0, index);
+    StringView bareItem = header.left(index);
 
     // Parse parameters (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.3.2).
     HashMap<String, String> parameters;

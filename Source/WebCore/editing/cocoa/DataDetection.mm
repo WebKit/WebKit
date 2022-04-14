@@ -579,7 +579,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
                     lastTextNodeToUpdate->setData(lastNodeContent);
                 contentOffset = 0;
                 if (range.start.offset > 0)
-                    textNodeData = currentTextNode.data().substring(0, range.start.offset);
+                    textNodeData = currentTextNode.data().left(range.start.offset);
             } else
                 textNodeData = currentTextNode.data().substring(contentOffset, range.start.offset - contentOffset);
 

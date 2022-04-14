@@ -517,7 +517,7 @@ static GDIObject<HFONT> createGDIFont(const AtomString& family, LONG desiredWeig
 
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
-    StringView truncatedFamily = StringView(family).substring(0, static_cast<unsigned>(LF_FACESIZE - 1));
+    StringView truncatedFamily = StringView(family).left(static_cast<unsigned>(LF_FACESIZE - 1));
     truncatedFamily.getCharactersWithUpconvert(ucharFrom(logFont.lfFaceName));
     logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;
@@ -631,7 +631,7 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 
     LOGFONT logFont;
     logFont.lfCharSet = DEFAULT_CHARSET;
-    StringView truncatedFamily = StringView(familyName).substring(0, static_cast<unsigned>(LF_FACESIZE - 1));
+    StringView truncatedFamily = StringView(familyName).left(static_cast<unsigned>(LF_FACESIZE - 1));
     truncatedFamily.getCharactersWithUpconvert(ucharFrom(logFont.lfFaceName));
     logFont.lfFaceName[truncatedFamily.length()] = 0;
     logFont.lfPitchAndFamily = 0;

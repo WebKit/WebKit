@@ -60,7 +60,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
 
         int beforeWidth;
         if (underlinedIndex > 0) {
-            TextRun beforeRun(StringView(text).substring(0, underlinedIndex));
+            TextRun beforeRun(StringView(text).left(underlinedIndex));
             beforeWidth = font.width(beforeRun);
         } else
             beforeWidth = 0;

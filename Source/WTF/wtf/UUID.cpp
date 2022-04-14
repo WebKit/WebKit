@@ -113,7 +113,7 @@ std::optional<UUID> UUID::parse(StringView value)
     if (value[0] == '+' || value[9] == '+'  || value[19] == '+' || value[24] == '+')
         return { };
 
-    auto firstValue = parseInteger<uint64_t>(value.substring(0, 8), 16);
+    auto firstValue = parseInteger<uint64_t>(value.left(8), 16);
     if (!firstValue)
         return { };
 

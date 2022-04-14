@@ -135,7 +135,7 @@ StringView URL::protocol() const
     if (!m_isValid)
         return { };
 
-    return StringView(m_string).substring(0, m_schemeEnd);
+    return StringView(m_string).left(m_schemeEnd);
 }
 
 StringView URL::host() const
@@ -162,10 +162,10 @@ String URL::hostAndPort() const
 String URL::protocolHostAndPort() const
 {
     if (!hasCredentials())
-        return m_string.substring(0, pathStart());
+        return m_string.left(pathStart());
 
     return makeString(
-        StringView(m_string).substring(0, m_userStart),
+        StringView(m_string).left(m_userStart),
         StringView(m_string).substring(hostStart(), pathStart() - hostStart())
     );
 }
@@ -377,7 +377,7 @@ StringView URL::path() const
 bool URL::setProtocol(StringView newProtocol)
 {
     // Firefox and IE remove everything after the first ':'.
-    auto newProtocolPrefix = newProtocol.substring(0, newProtocol.find(':'));
+    auto newProtocolPrefix = newProtocol.left(newProtocol.find(':'));
     auto newProtocolCanonicalized = URLParser::maybeCanonicalizeScheme(newProtocolPrefix);
     if (!newProtocolCanonicalized)
         return false;
@@ -457,7 +457,7 @@ void URL::setHost(StringView newHost)
         return;
 
     if (auto index = newHost.find(hasSpecialScheme() ? slashHashOrQuestionMark : forwardSlashHashOrQuestionMark); index != notFound)
-        newHost = newHost.substring(0, index);
+        newHost = newHost.left(index);
 
     Vector<UChar, 512> encodedHostName;
     if (hasSpecialScheme() && !appendEncodedHostname(encodedHostName, newHost))
@@ -500,7 +500,7 @@ void URL::setHostAndPort(StringView hostAndPort)
     auto colonIndex = hostName.reverseFind(':');
     if (colonIndex != notFound) {
         portString = hostName.substring(colonIndex + 1);
-        hostName = hostName.substring(0, colonIndex);
+        hostName = hostName.left(colonIndex);
         // Multiple colons are acceptable only in case of IPv6.
         if (hostName.contains(':') && !hostName.startsWith('['))
             return;
@@ -837,7 +837,7 @@ String URL::strippedForUseAsReferrer() const
         return m_string;
 
     return makeString(
-        StringView(m_string).substring(0, m_userStart),
+        StringView(m_string).left(m_userStart),
         StringView(m_string).substring(end, m_queryEnd - end)
     );
 }

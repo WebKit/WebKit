@@ -310,7 +310,7 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
                 else if (value.endsWith('m'))
                     units = 1024 * 1024;
                 if (units != 1)
-                    value = value.substring(0, value.length()-1);
+                    value = value.left(value.length()-1);
                 auto parsedSize = parseInteger<size_t>(value);
                 if (!parsedSize)
                     continue;

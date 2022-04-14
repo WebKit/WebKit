@@ -50,7 +50,7 @@ static std::optional<WebCore::SecurityOriginData> fileNameToOrigin(const String&
     if (fileNameLength <= suffixLength)
         return std::nullopt;
 
-    auto originIdentifier = fileName.substring(0, fileNameLength - suffixLength);
+    auto originIdentifier = fileName.left(fileNameLength - suffixLength);
     return WebCore::SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
 }
 

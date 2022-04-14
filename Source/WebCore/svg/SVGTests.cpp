@@ -118,8 +118,10 @@ bool SVGTests::isValid() const
         if (feature.isEmpty() || !supportedSVGFeatureSet.contains(feature))
             return false;
     }
+    String defaultLanguage = WTF::defaultLanguage();
+    auto genericDefaultLanguage = StringView(defaultLanguage).left(2);
     for (auto& language : m_systemLanguage->items()) {
-        if (language != defaultLanguage().substring(0, 2))
+        if (language != genericDefaultLanguage)
             return false;
     }
     for (auto& extension : m_requiredExtensions->items()) {

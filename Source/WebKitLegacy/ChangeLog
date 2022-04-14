@@ -1,3 +1,13 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Replace calls to substring(0, x) with the more concise left(x)
+        https://bugs.webkit.org/show_bug.cgi?id=239306
+
+        Reviewed by Darin Adler.
+
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::syncFileSystemAndTrackerDatabase):
+
 2022-04-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] WEBKIT_LIBRARIES env var should be customizable

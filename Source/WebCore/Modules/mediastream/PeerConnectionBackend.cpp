@@ -299,7 +299,7 @@ static inline bool shouldIgnoreIceCandidate(const RTCIceCandidate& iceCandidate)
     if (!address.endsWithIgnoringASCIICase(".local"))
         return false;
 
-    if (!WTF::isVersion4UUID(StringView { address }.substring(0, address.length() - 6))) {
+    if (!WTF::isVersion4UUID(StringView { address }.left(address.length() - 6))) {
         RELEASE_LOG_ERROR(WebRTC, "mDNS candidate is not a Version 4 UUID");
         return true;
     }

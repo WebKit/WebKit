@@ -73,7 +73,7 @@ bool eq(T&& s1, U&& s2)
 static String insertTabAtLocation(StringView string, size_t location)
 {
     ASSERT(location <= string.length());
-    return makeString(string.substring(0, location), "\t", string.substring(location));
+    return makeString(string.left(location), '\t', string.substring(location));
 }
 
 static ExpectedParts invalidParts(StringView urlStringWithTab)

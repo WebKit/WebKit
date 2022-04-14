@@ -106,7 +106,7 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::origins() const
     Vector<SecurityOriginData> databaseOrigins;
     for (auto& path : FileSystem::listDirectory(localStorageDirectory())) {
         auto filename = FileSystem::pathFileName(path);
-        auto originIdentifier = filename.substring(0, filename.length() - strlen(".localstorage"));
+        auto originIdentifier = filename.left(filename.length() - strlen(".localstorage"));
         auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
         if (origin)
             databaseOrigins.append(origin.value());

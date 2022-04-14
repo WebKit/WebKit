@@ -118,7 +118,7 @@ std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDa
     if (!scope.isValid())
         return std::nullopt;
 
-    return ServiceWorkerRegistrationKey { { key.substring(0, first), key.substring(first + 1, second - first - 1), shortPort }, WTFMove(scope) };
+    return ServiceWorkerRegistrationKey { { key.left(first), key.substring(first + 1, second - first - 1), shortPort }, WTFMove(scope) };
 }
 
 #if !LOG_DISABLED

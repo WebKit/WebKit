@@ -1,3 +1,131 @@
+2022-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Replace calls to substring(0, x) with the more concise left(x)
+        https://bugs.webkit.org/show_bug.cgi?id=239306
+
+        Reviewed by Darin Adler.
+
+        Replace calls to substring(0, x) with the more concise left(x). Also use StringView in more cases
+        for performance.
+
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::parseMIMEType):
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setGetResult):
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPathLexer::lexIdentifier):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::shouldIgnoreIceCandidate):
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::playNextTone):
+        * Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp:
+        (WebCore::GStreamerMediaEndpoint::addRemoteStream):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp:
+        (WebCore::toRtpCodecCapability):
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::processAndCreateYouTubeURL):
+        (WebCore::YouTubePluginReplacement::youTubeURLFromAbsoluteURL):
+        * display/css/DisplayTextBox.cpp:
+        (WebCore::Display::TextBox::debugDescription const):
+        * dom/Document.cpp:
+        (WebCore::Document::parseQualifiedName):
+        * dom/Text.cpp:
+        (WebCore::Text::splitText):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::checkTextOfParagraph):
+        * editing/TextIterator.cpp:
+        (WebCore::SearchBuffer::prependContext):
+        * editing/VisibleUnits.cpp:
+        (WebCore::suffixLengthForRange):
+        (WebCore::startWordBoundary):
+        (WebCore::previousWordPositionBoundary):
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        * editing/markup.cpp:
+        (WebCore::shouldPreserveMSOLists):
+        * html/FeaturePolicy.cpp:
+        (WebCore::updateList):
+        * html/HTMLMediaElement.cpp:
+        (WTF::LogArgument<URL>::toString):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::urlForLoggingTrack):
+        * html/URLDecomposition.cpp:
+        (WebCore::URLDecomposition::setHost):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTTPRefreshInternal):
+        * html/parser/HTMLSrcsetParser.cpp:
+        (WebCore::parseDescriptors):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::characterPredicate):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::StyleSheetHandler::observeComment):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputLayoutBox):
+        * loader/appcache/ApplicationCacheManifestParser.cpp:
+        (WebCore::manifestPath):
+        * mathml/MathMLPresentationElement.cpp:
+        (WebCore::MathMLPresentationElement::parseNumberAndUnit):
+        * page/Frame.cpp:
+        (WebCore::createRegExpForLabels):
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::fromDatabaseIdentifier):
+        * platform/SharedStringHash.cpp:
+        (WebCore::computeSharedStringHashInline):
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::centerTruncateToBuffer):
+        (WebCore::rightTruncateToBuffer):
+        (WebCore::rightClipToCharacterBuffer):
+        (WebCore::rightClipToWordBuffer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setPlaybinURL):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::platformMaximumBufferSize const):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont):
+        (WebCore::FontCache::getFontSelectionCapabilitiesInFamily):
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::deviceNameForUserAgent):
+        * platform/network/CacheValidation.cpp:
+        (WebCore::trimToNextSeparator):
+        (WebCore::parseCacheHeader):
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::protectionSpaceMapKeyFromURL):
+        (WebCore::CredentialStorage::findDefaultProtectionSpaceForURL):
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::DecodeTask::process):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseStructuredFieldValue):
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::retrieveKeyValuePairs):
+        * platform/network/curl/CookieUtil.cpp:
+        (WebCore::CookieUtil::parseCookieAttributes):
+        (WebCore::CookieUtil::parseCookieHeader):
+        (WebCore::CookieUtil::defaultPathForURL):
+        * platform/text/LocaleToScriptMapping.cpp:
+        (WebCore::localeToScriptCodeForFontSelection):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::fileSystemPathFromURLOrTitle):
+        (WebCore::Pasteboard::writeURLToDataObject):
+        (WebCore::createGlobalImageFileDescriptor):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::outputRenderObject const):
+        * rendering/style/GridPositionsResolver.cpp:
+        (WebCore::NamedLineCollectionBase::NamedLineCollectionBase):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::isValid const):
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::fragmentIdentifierFromIRIString):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseClockValue):
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::validateServiceWorkerResponse):
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        (WebCore::ServiceWorkerRegistrationKey::fromDatabaseKey):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::canHandleScheme const):
+
 2022-04-13  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r292043): [ Mac ] fast/block/positioning/fixed-container-with-relative-parent.html is a flaky image failure

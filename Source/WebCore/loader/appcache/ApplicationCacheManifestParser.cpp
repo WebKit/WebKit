@@ -40,7 +40,7 @@ static StringView manifestPath(const URL& manifestURL)
 {
     auto manifestPath = manifestURL.path();
     ASSERT(manifestPath[0] == '/');
-    manifestPath = manifestPath.substring(0, manifestPath.reverseFind('/') + 1);
+    manifestPath = manifestPath.left(manifestPath.reverseFind('/') + 1);
     ASSERT(manifestPath[0] == manifestPath[manifestPath.length() - 1]);
     return manifestPath;
 }
