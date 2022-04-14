@@ -23,4 +23,6 @@
 messages -> WebSharedWorkerServerConnection NotRefCounted {
     RequestSharedWorker(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort port, struct WebCore::WorkerOptions workerOptions)
     SharedWorkerObjectIsGoingAway(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+    SuspendForBackForwardCache(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+    ResumeForBackForwardCache(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 }

@@ -75,6 +75,8 @@ private:
     // IPC messages.
     void requestSharedWorker(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&);
     void sharedWorkerObjectIsGoingAway(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
+    void suspendForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
+    void resumeForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
 
     Ref<IPC::Connection> m_contentConnection;
     Ref<NetworkProcess> m_networkProcess;

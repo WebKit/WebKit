@@ -40,6 +40,8 @@ public:
 
     SharedWorkerThreadProxy* sharedWorker(SharedWorkerIdentifier) const;
     void stopSharedWorker(SharedWorkerIdentifier);
+    void suspendSharedWorker(SharedWorkerIdentifier);
+    void resumeSharedWorker(SharedWorkerIdentifier);
     WEBCORE_EXPORT void stopAllSharedWorkers();
 
     class Connection {
@@ -56,6 +58,8 @@ public:
         // IPC message handlers.
         WEBCORE_EXPORT void postConnectEvent(SharedWorkerIdentifier, TransferredMessagePort&&, String&& sourceOrigin);
         WEBCORE_EXPORT void terminateSharedWorker(SharedWorkerIdentifier);
+        WEBCORE_EXPORT void suspendSharedWorker(SharedWorkerIdentifier);
+        WEBCORE_EXPORT void resumeSharedWorker(SharedWorkerIdentifier);
 
     private:
         bool m_isClosed { false };

@@ -105,6 +105,16 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
     });
 }
 
+void WebSharedWorkerServerToContextConnection::suspendSharedWorker(WebCore::SharedWorkerIdentifier identifier)
+{
+    send(Messages::WebSharedWorkerContextManagerConnection::SuspendSharedWorker { identifier });
+}
+
+void WebSharedWorkerServerToContextConnection::resumeSharedWorker(WebCore::SharedWorkerIdentifier identifier)
+{
+    send(Messages::WebSharedWorkerContextManagerConnection::ResumeSharedWorker { identifier });
+}
+
 void WebSharedWorkerServerToContextConnection::postConnectEvent(const WebSharedWorker& sharedWorker, const WebCore::TransferredMessagePort& port)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("postConnectEvent: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());

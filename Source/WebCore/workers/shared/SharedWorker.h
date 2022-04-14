@@ -66,6 +66,8 @@ private:
     const char* activeDOMObjectName() const final;
     void stop() final;
     bool virtualHasPendingActivity() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
 
 
     SharedWorkerKey m_key;
@@ -74,6 +76,7 @@ private:
     String m_identifierForInspector;
     BlobURLHandle m_blobURLExtension;
     bool m_isActive { true };
+    bool m_isSuspendedForBackForwardCache { false };
 };
 
 } // namespace WebCore

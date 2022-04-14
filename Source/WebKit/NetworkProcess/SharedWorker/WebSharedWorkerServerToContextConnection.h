@@ -64,6 +64,9 @@ public:
     void postConnectEvent(const WebSharedWorker&, const WebCore::TransferredMessagePort&);
     void terminateSharedWorker(const WebSharedWorker&);
 
+    void suspendSharedWorker(WebCore::SharedWorkerIdentifier);
+    void resumeSharedWorker(WebCore::SharedWorkerIdentifier);
+
     const HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>>& sharedWorkerObjects() const { return m_sharedWorkerObjects; }
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

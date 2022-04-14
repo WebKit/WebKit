@@ -47,6 +47,8 @@ public:
 
     virtual void requestSharedWorker(const SharedWorkerKey&, SharedWorkerObjectIdentifier, TransferredMessagePort&&, const WorkerOptions&) = 0;
     virtual void sharedWorkerObjectIsGoingAway(const SharedWorkerKey&, SharedWorkerObjectIdentifier) = 0;
+    virtual void suspendForBackForwardCache(const SharedWorkerKey&, SharedWorkerObjectIdentifier) = 0;
+    virtual void resumeForBackForwardCache(const SharedWorkerKey&, SharedWorkerObjectIdentifier) = 0;
 
 protected:
     // IPC messages.

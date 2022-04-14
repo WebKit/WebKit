@@ -64,6 +64,22 @@ void SharedWorkerContextManager::stopSharedWorker(SharedWorkerIdentifier sharedW
     });
 }
 
+void SharedWorkerContextManager::suspendSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
+{
+    auto* worker = m_workerMap.get(sharedWorkerIdentifier);
+    RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::suspendSharedWorker: sharedWorkerIdentifier=%" PRIu64 ", worker=%p", sharedWorkerIdentifier.toUInt64(), worker);
+    if (worker)
+        worker->thread().suspend();
+}
+
+void SharedWorkerContextManager::resumeSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
+{
+    auto* worker = m_workerMap.get(sharedWorkerIdentifier);
+    RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::resumeSharedWorker: sharedWorkerIdentifier=%" PRIu64 ", worker=%p", sharedWorkerIdentifier.toUInt64(), worker);
+    if (worker)
+        worker->thread().resume();
+}
+
 void SharedWorkerContextManager::stopAllSharedWorkers()
 {
     while (!m_workerMap.isEmpty())
@@ -111,6 +127,16 @@ void SharedWorkerContextManager::Connection::terminateSharedWorker(SharedWorkerI
     ASSERT(isMainThread());
     RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::Connection::terminateSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorkerIdentifier.toUInt64());
     SharedWorkerContextManager::singleton().stopSharedWorker(sharedWorkerIdentifier);
+}
+
+void SharedWorkerContextManager::Connection::suspendSharedWorker(SharedWorkerIdentifier identifier)
+{
+    SharedWorkerContextManager::singleton().suspendSharedWorker(identifier);
+}
+
+void SharedWorkerContextManager::Connection::resumeSharedWorker(SharedWorkerIdentifier identifier)
+{
+    SharedWorkerContextManager::singleton().resumeSharedWorker(identifier);
 }
 
 void SharedWorkerContextManager::forEachSharedWorker(const Function<Function<void(ScriptExecutionContext&)>()>& createTask)

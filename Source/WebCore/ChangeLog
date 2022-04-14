@@ -1,3 +1,21 @@
+2022-04-14  Youenn Fablet  <youenn@apple.com>
+
+        A shared worker in a cached page should not allow the remote shared worker to continue executing
+        https://bugs.webkit.org/show_bug.cgi?id=239286
+
+        Reviewed by Chris Dumez.
+
+        SharedWorker need to react to resume/suspend in case of page cache so that the corresponding
+        remote shared worker might get suspended if all its shared worker objects are suspended.
+
+        Test: http/tests/navigation/page-cache-shared-worker.html
+
+        * workers/shared/SharedWorker.cpp:
+        * workers/shared/SharedWorker.h:
+        * workers/shared/SharedWorkerObjectConnection.h:
+        * workers/shared/context/SharedWorkerContextManager.cpp:
+        * workers/shared/context/SharedWorkerContextManager.h:
+
 2022-04-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Revert r291846 because it caused a 3% performance regression

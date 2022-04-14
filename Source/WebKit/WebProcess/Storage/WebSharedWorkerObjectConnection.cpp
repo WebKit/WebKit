@@ -65,6 +65,18 @@ void WebSharedWorkerObjectConnection::sharedWorkerObjectIsGoingAway(const WebCor
     send(Messages::WebSharedWorkerServerConnection::SharedWorkerObjectIsGoingAway { sharedWorkerKey, sharedWorkerObjectIdentifier });
 }
 
+void WebSharedWorkerObjectConnection::suspendForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+{
+    CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
+    send(Messages::WebSharedWorkerServerConnection::SuspendForBackForwardCache { sharedWorkerKey, sharedWorkerObjectIdentifier });
+}
+
+void WebSharedWorkerObjectConnection::resumeForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+{
+    CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
+    send(Messages::WebSharedWorkerServerConnection::ResumeForBackForwardCache { sharedWorkerKey, sharedWorkerObjectIdentifier });
+}
+
 #undef CONNECTION_RELEASE_LOG
 
 } // namespace WebKit

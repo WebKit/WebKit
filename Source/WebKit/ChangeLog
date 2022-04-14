@@ -1,3 +1,29 @@
+2022-04-14  Youenn Fablet  <youenn@apple.com>
+
+        A shared worker in a cached page should not allow the remote shared worker to continue executing
+        https://bugs.webkit.org/show_bug.cgi?id=239286
+
+        Reviewed by Chris Dumez.
+
+        Store whether shared worker objects are suspended or resumed.
+        If all objects are suspended, suspend the remote shared worker.
+        Otherwise, keep the remote shared worker live.
+        Add plumbing code to make this happen.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/SharedWorker/WebSharedWorker.cpp:
+        * NetworkProcess/SharedWorker/WebSharedWorker.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.messages.in:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.h:
+        * WebProcess/Storage/WebSharedWorkerContextManagerConnection.messages.in:
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.cpp:
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.h:
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace calls to substring(0, x) with the more concise left(x)

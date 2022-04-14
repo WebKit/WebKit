@@ -27,4 +27,6 @@ messages -> WebSharedWorkerContextManagerConnection NotRefCounted {
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     SetUserAgent(String userAgent)
     Close()
+    SuspendSharedWorker(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier)
+    ResumeSharedWorker(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier)
 }

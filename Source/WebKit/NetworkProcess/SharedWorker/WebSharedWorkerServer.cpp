@@ -205,6 +205,26 @@ void WebSharedWorkerServer::sharedWorkerObjectIsGoingAway(const WebCore::SharedW
     shutDownSharedWorker(sharedWorkerKey);
 }
 
+void WebSharedWorkerServer::suspendForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+{
+    auto* sharedWorker = m_sharedWorkers.get(sharedWorkerKey);
+    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::suspendForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s, sharedWorker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker);
+    if (!sharedWorker)
+        return;
+
+    sharedWorker->suspend(sharedWorkerObjectIdentifier);
+}
+
+void WebSharedWorkerServer::resumeForBackForwardCache(const WebCore::SharedWorkerKey& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+{
+    auto* sharedWorker = m_sharedWorkers.get(sharedWorkerKey);
+    RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::resumeForBackForwardCache: sharedWorkerObjectIdentifier=%{public}s, sharedWorker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), sharedWorker);
+    if (!sharedWorker)
+        return;
+
+    sharedWorker->resume(sharedWorkerObjectIdentifier);
+}
+
 void WebSharedWorkerServer::shutDownSharedWorker(const WebCore::SharedWorkerKey& key)
 {
     auto sharedWorker = m_sharedWorkers.take(key);

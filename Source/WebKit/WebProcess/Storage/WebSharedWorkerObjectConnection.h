@@ -44,6 +44,8 @@ private:
     // WebCore::SharedWorkerObjectConnection.
     void requestSharedWorker(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&&, const WebCore::WorkerOptions&) final;
     void sharedWorkerObjectIsGoingAway(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier) final;
+    void suspendForBackForwardCache(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier) final;
+    void resumeForBackForwardCache(const WebCore::SharedWorkerKey&, WebCore::SharedWorkerObjectIdentifier) final;
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;

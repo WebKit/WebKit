@@ -1,3 +1,17 @@
+2022-04-14  Youenn Fablet  <youenn@apple.com>
+
+        A shared worker in a cached page should not allow the remote shared worker to continue executing
+        https://bugs.webkit.org/show_bug.cgi?id=239286
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/navigation/page-cache-shared-worker-expected.txt: Added.
+        * http/tests/navigation/page-cache-shared-worker.html: Added.
+        * http/tests/navigation/resources/page-cache-helper-for-sharedworker.html: Added.
+        * http/tests/navigation/resources/shared-worker-script.js: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2022-04-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Revert r291846 because it caused a 3% performance regression

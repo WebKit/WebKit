@@ -1,0 +1,28 @@
+This page should go back. If a test outputs the contents of this
+page, then the test page failed to enter the page cache.
+<script>
+var channel = new BroadcastChannel('shared-worker');
+async function doTest(counter)
+{
+    if (!counter)
+        counter = 0;
+    else if (counter >= 100)
+        return;
+
+    channel.postMessage('ping');
+    return new Promise((resolve, reject) => {
+         let myTimer = setTimeout(resolve, 1000);
+         channel.onmessage = async () => {
+             clearTimeout(myTimer);
+             // We received a message from shared worker, let's call doTest to retry.
+             await new Promise(resolve => setTimeout(resolve, 50));
+             doTest(++counter).then(resolve, reject);
+         };
+    });
+}
+
+window.addEventListener("load", async () => {
+    await doTest();
+    history.back();
+}, false);
+</script>

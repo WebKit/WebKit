@@ -165,6 +165,22 @@ void SharedWorker::stop()
     mainThreadConnection()->sharedWorkerObjectIsGoingAway(m_key, m_identifier);
 }
 
+void SharedWorker::suspend(ReasonForSuspension reason)
+{
+    if (reason == ReasonForSuspension::BackForwardCache) {
+        mainThreadConnection()->suspendForBackForwardCache(m_key, m_identifier);
+        m_isSuspendedForBackForwardCache = true;
+    }
+}
+
+void SharedWorker::resume()
+{
+    if (m_isSuspendedForBackForwardCache) {
+        mainThreadConnection()->resumeForBackForwardCache(m_key, m_identifier);
+        m_isSuspendedForBackForwardCache = false;
+    }
+}
+
 #undef SHARED_WORKER_RELEASE_LOG
 #undef SHARED_WORKER_RELEASE_LOG_ERROR
 

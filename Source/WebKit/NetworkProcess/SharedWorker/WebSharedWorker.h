@@ -60,6 +60,8 @@ public:
 
     void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&);
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
+    void suspend(WebCore::SharedWorkerObjectIdentifier);
+    void resume(WebCore::SharedWorkerObjectIdentifier);
     unsigned sharedWorkerObjectsCount() const { return m_sharedWorkerObjects.size(); }
     void forEachSharedWorkerObject(const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>&) const;
     std::optional<WebCore::ProcessIdentifier> firstSharedWorkerObjectProcess() const;
@@ -79,13 +81,19 @@ private:
     WebSharedWorker(const WebSharedWorker&) = delete;
     WebSharedWorker& operator=(const WebSharedWorker&) = delete;
 
+    struct SharedWorkerObjectState {
+        bool isSuspended { false };
+        WebCore::TransferredMessagePort port;
+    };
+
     WebSharedWorkerServer& m_server;
     WebCore::SharedWorkerIdentifier m_identifier;
     WebCore::SharedWorkerKey m_key;
     WebCore::WorkerOptions m_workerOptions;
-    HashMap<WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort> m_sharedWorkerObjects;
+    HashMap<WebCore::SharedWorkerObjectIdentifier, SharedWorkerObjectState> m_sharedWorkerObjects;
     WebCore::WorkerFetchResult m_fetchResult;
     bool m_isRunning { false };
+    bool m_isSuspended { false };
 };
 
 } // namespace WebKit
