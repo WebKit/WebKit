@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "ClassMethodSwizzler.h"
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
@@ -35,7 +36,7 @@
 #import <UIKit/UIPasteboard.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-#import <wtf/SoftLinking.h>
+#import <pal/ios/ManagedConfigurationSoftLink.h>
 
 typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);
 
@@ -63,6 +64,18 @@ static _UIDataOwner gLastKnownDataOwner = _UIDataOwnerUndefined;
 {
     block();
     gLastKnownDataOwner = owner;
+}
+
+@end
+
+@interface TestMCProfileConnection : NSObject
+@end
+
+@implementation TestMCProfileConnection
+
+- (BOOL)isURLManaged:(NSURL *)url
+{
+    return [url.lastPathComponent isEqualToString:@"simple.html"];
 }
 
 @end
@@ -409,6 +422,36 @@ TEST(UIPasteboardTests, PerformAsDataOwnerWhenPasting)
 
     EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerEnterprise);
     EXPECT_WK_STREQ([webView contentsAsString], "Foo bar\n");
+}
+
+TEST(UIPasteboardTests, PerformAsDataOwnerWithManagedURL)
+{
+    auto pasteboardSwizzler = ClassMethodSwizzler {
+        UIPasteboard.class,
+        @selector(_performAsDataOwner:block:),
+        [TestUIPasteboard methodForSelector:@selector(_performAsDataOwner:block:)]
+    };
+
+    auto managedConfigurationSwizzler = InstanceMethodSwizzler {
+        PAL::getMCProfileConnectionClass(),
+        @selector(isURLManaged:),
+        [TestMCProfileConnection instanceMethodForSelector:@selector(isURLManaged:)]
+    };
+
+    {
+        auto source = setUpWebViewForPasteboardTests(@"simple");
+        [source selectAll:nil];
+        [source copy:nil];
+        [source waitForNextPresentationUpdate];
+        EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerEnterprise);
+    }
+    {
+        auto destination = setUpWebViewForPasteboardTests(@"autofocus-contenteditable");
+        [destination _setDataOwnerForPaste:_UIDataOwnerUser];
+        [destination paste:nil];
+        [destination waitForNextPresentationUpdate];
+        EXPECT_EQ(gLastKnownDataOwner, _UIDataOwnerUser);
+    }
 }
 
 #endif // HAVE(PASTEBOARD_DATA_OWNER)
