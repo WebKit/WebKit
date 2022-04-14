@@ -1,3 +1,13 @@
+2022-04-14  Youenn Fablet  <youenn@apple.com>
+
+        Enable ExitsUnderMemoryPressureWebRTCCase and disable ExitsUnderMemoryPressureGetUserMediaAudioCase on iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=239115
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2022-04-14  Kate Cheney  <katherine_cheney@apple.com>
 
         WKWebView: navigator.serviceWorker.register method fails for a new version of an already registered service worker.

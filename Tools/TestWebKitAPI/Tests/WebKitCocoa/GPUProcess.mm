@@ -682,6 +682,8 @@ static bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprec
     return false;
 }
 
+#if PLATFORM(MAC)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=237854 is disabled for IOS
 TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaAudioCase)
 {
     runMemoryPressureExitTest([](WKWebView *webView) {
@@ -699,6 +701,7 @@ TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaAudioCase)
         preferences._getUserMediaRequiresFocus = NO;
     });
 }
+#endif
 
 TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaVideoCase)
 {
@@ -718,8 +721,6 @@ TEST(GPUProcess, ExitsUnderMemoryPressureGetUserMediaVideoCase)
     });
 }
 
-#if PLATFORM(MAC)
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=237854 is disabled for IOS
 TEST(GPUProcess, ExitsUnderMemoryPressureWebRTCCase)
 {
     runMemoryPressureExitTest([](WKWebView *webView) {
@@ -738,7 +739,6 @@ TEST(GPUProcess, ExitsUnderMemoryPressureWebRTCCase)
         preferences._getUserMediaRequiresFocus = NO;
     });
 }
-#endif // PLATFORM(MAC)
 #endif // ENABLE(MEDIA_STREAM)
 
 TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)
