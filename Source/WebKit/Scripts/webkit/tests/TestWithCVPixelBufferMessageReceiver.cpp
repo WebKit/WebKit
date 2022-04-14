@@ -65,12 +65,6 @@ void ReceiveCVPixelBuffer::cancelReply(CompletionHandler<void(RetainPtr<CVPixelB
     completionHandler(IPC::AsyncReplyError<RetainPtr<CVPixelBufferRef>>::create());
 }
 
-void ReceiveCVPixelBuffer::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const RetainPtr<CVPixelBufferRef>& r0)
-{
-    encoder.get() << r0;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
 #endif
 
 } // namespace TestWithCVPixelBuffer

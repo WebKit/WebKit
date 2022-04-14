@@ -36,6 +36,7 @@
 #include "URLSchemeTaskParameters.h"
 #include "WebBackForwardCacheEntry.h"
 #include "WebBackForwardList.h"
+#include "WebBackForwardListCounts.h"
 #include "WebBackForwardListItem.h"
 #include "WebErrors.h"
 #include "WebNavigationDataStore.h"

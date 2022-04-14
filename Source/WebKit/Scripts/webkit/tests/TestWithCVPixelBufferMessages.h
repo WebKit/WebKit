@@ -80,7 +80,6 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
     using AsyncReply = ReceiveCVPixelBufferAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, const RetainPtr<CVPixelBufferRef>& r0);
     using Reply = std::tuple<RetainPtr<CVPixelBufferRef>&>;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
     const Arguments& arguments() const

@@ -210,11 +210,6 @@ def message_to_struct_declaration(receiver, message):
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;\n')
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
-        if not receiver.has_attribute(STREAM_ATTRIBUTE):
-            result.append('    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&')
-            if len(send_parameters):
-                result.append(', %s' % completion_handler_parameters)
-            result.append(');\n')
         result.append('    using Reply = %s;\n' % reply_tuple(message))
         result.append('    using ReplyArguments = %s;\n' % reply_arguments_type(message))
 
@@ -1111,15 +1106,6 @@ def generate_message_handler(receiver):
                 result.append('void %s::cancelReply(CompletionHandler<void(%s)>&& completionHandler)\n{\n    completionHandler(' % move_parameters)
                 result.append(', '.join(['IPC::AsyncReplyError<' + x.type + '>::create()' for x in message.reply_parameters]))
                 result.append(');\n}\n\n')
-
-            result.append('void %s::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection' % (message.name))
-            if len(send_parameters):
-                result.append(', %s' % ', '.join([' '.join(x) for x in send_parameters]))
-            result.append(')\n{\n')
-            result += ['    encoder.get() << %s;\n' % x.name for x in message.reply_parameters]
-            result.append('    connection.sendSyncReply(WTFMove(encoder));\n')
-            result.append('}\n')
-            result.append('\n')
 
             if message.condition:
                 result.append('#endif\n\n')

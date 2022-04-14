@@ -63,12 +63,6 @@ void TestAsyncMessage::cancelReply(CompletionHandler<void(uint64_t&&)>&& complet
     completionHandler(IPC::AsyncReplyError<uint64_t>::create());
 }
 
-void TestAsyncMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, uint64_t result)
-{
-    encoder.get() << result;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
 #endif
 
 #if ENABLE(TEST_FEATURE)
@@ -81,11 +75,6 @@ void TestAsyncMessageWithNoArguments::callReply(IPC::Decoder& decoder, Completio
 void TestAsyncMessageWithNoArguments::cancelReply(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
-}
-
-void TestAsyncMessageWithNoArguments::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection)
-{
-    connection.sendSyncReply(WTFMove(encoder));
 }
 
 #endif
@@ -116,13 +105,6 @@ void TestAsyncMessageWithMultipleArguments::cancelReply(CompletionHandler<void(b
     completionHandler(IPC::AsyncReplyError<bool>::create(), IPC::AsyncReplyError<uint64_t>::create());
 }
 
-void TestAsyncMessageWithMultipleArguments::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag, uint64_t value)
-{
-    encoder.get() << flag;
-    encoder.get() << value;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
 #endif
 
 #if ENABLE(TEST_FEATURE)
@@ -144,25 +126,7 @@ void TestAsyncMessageWithConnection::cancelReply(CompletionHandler<void(bool&&)>
     completionHandler(IPC::AsyncReplyError<bool>::create());
 }
 
-void TestAsyncMessageWithConnection::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag)
-{
-    encoder.get() << flag;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
 #endif
-
-void TestSyncMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, uint8_t reply)
-{
-    encoder.get() << reply;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
-void TestSynchronousMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const std::optional<WebKit::TestClassName>& optionalReply)
-{
-    encoder.get() << optionalReply;
-    connection.sendSyncReply(WTFMove(encoder));
-}
 
 } // namespace TestWithSuperclass
 

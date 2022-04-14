@@ -154,7 +154,7 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
     }
     auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
 
-    (encoder.get() << ... << arguments);
+    (encoder.get() << ... << std::forward<Arguments>(arguments));
     m_connection->sendSyncReply(WTFMove(encoder));
 }
 

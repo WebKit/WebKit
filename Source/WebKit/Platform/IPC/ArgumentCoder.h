@@ -50,6 +50,12 @@ template<typename T, typename = void> struct ArgumentCoder {
         t.encode(encoder);
     }
 
+    template<typename Encoder>
+    static void encode(Encoder& encoder, T&& t)
+    {
+        WTFMove(t).encode(encoder);
+    }
+
     template<typename Decoder>
     static std::optional<T> decode(Decoder& decoder)
     {

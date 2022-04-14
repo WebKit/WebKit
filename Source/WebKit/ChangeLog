@@ -1,3 +1,123 @@
+2022-04-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Enable more efficient encoding of synchronous-message reply arguments
+        https://bugs.webkit.org/show_bug.cgi?id=238740
+        <rdar://problem/91567779>
+
+        Reviewed by Kimmo Kinnunen.
+
+        Handling of synchronous messages requires construction of a
+        CompletionHandler object that wraps a lambda function which handles
+        logging of the passed-in reply arguments as well as subsequent encoding
+        and dispatching of the reply into the IPC channel.
+
+        Right now, for any given message the CompletionHandler type is generated
+        from the IPC message specification, and it's essentially a function type
+        with a void return value and const lvalue references for every
+        non-builtin parameter type. This type is imposed onto the lambda handler
+        and when invoked, all the reply arguments are passed on to the IPC
+        encoding as lvalue references.
+
+        This inhibits opportunities where the reply argument could instead be
+        moved into the completion handler invocation, enabling a more efficient
+        encoding of the passed-in value. For instance, if a Unix file descriptor
+        was moved into the completion handler invocation, it could be trickled
+        down into an IPC::Attachment object and dispatched over IPC without any
+        problems. Instead, because the lvalue reference is imposed as the type,
+        it will have to be duplicated even if the object itself is expiring or
+        would be movable down the invocation.
+
+        To cover these cases, the actual completion handler type is now deduced
+        from the synchronous-message-handling method itself. This means that
+        the completion handler parameter for the given handler method can now
+        specify whether it wants to receive reply arguments by value or by
+        either lvalue or rvalue reference. The completion handler lambda can
+        combine these parameter types with std::forward() to pass down the
+        actual arguments in the most optimal fashion.
+
+        To avoid problems, each CompletionHandler specialization retrieved from
+        the method siganture is validated against the CompletionHandler type
+        generated from the IPC specification, requiring that the decayed
+        parameter types match between the two. It's still possible to directly
+        use the CompletionHandler type from the IPC specification as the
+        completion handler type in the message-handling method.
+
+        An rvalue reference variant of ArgumentCoder<T>::encode() is added.
+        Generic implementation again casts the passed-in reference into an
+        rvalue and calls the encode() on that object. If that type provides
+        ref-qualified encode() methods, implementations of those methods can
+        adjust and more aggressively move things into the encoder when the
+        method is called on an rvalue. It would also be possible to delete the
+        ref-qualified method covering lvalues, meaning encoding would be allowed
+        only for objects that are moved into the completion handler.
+
+        For types with custom specializations of ArgumentCoder<T>, those
+        specializations would again have to provide rvalue variants of the
+        encode() method and handle the passed-in values appropriately.
+
+        The send() methods that were previously generated for every IPC message
+        are removed in favor of encoding and calling Connection::sendSyncReply()
+        in the completion-handler lambda. Missing std::forward() calls are added
+        in parameter pack expansions as required.
+
+        * GPUProcess/media/RemoteCDMProxy.cpp:
+        (WebKit::RemoteCDMProxy::getSupportedConfiguration):
+        * GPUProcess/media/RemoteCDMProxy.h:
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+        (WebKit::RemoteImageDecoderAVFProxy::createFrameImageAtIndex):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+        * Platform/IPC/ArgumentCoder.h:
+        (IPC::ArgumentCoder::encode):
+        * Platform/IPC/HandleMessage.h:
+        (IPC::C::):
+        (IPC::CompletionHandlerValidation::matchingParameters):
+        (IPC::CompletionHandlerValidation::matchingTypes):
+        (IPC::handleMessageSynchronous):
+        (IPC::handleMessageSynchronousWantsConnection):
+        (IPC::handleMessageAsync):
+        (IPC::handleMessageAsyncWantsConnection):
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnection::sendSyncReply):
+        * Scripts/webkit/messages.py:
+        (message_to_struct_declaration):
+        (generate_message_handler):
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessageReceiver.cpp:
+        (Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::send): Deleted.
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessages.h:
+        * Scripts/webkit/tests/TestWithImageDataMessageReceiver.cpp:
+        (Messages::TestWithImageData::ReceiveImageData::send): Deleted.
+        * Scripts/webkit/tests/TestWithImageDataMessages.h:
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp:
+        (Messages::TestWithLegacyReceiver::CreatePlugin::send): Deleted.
+        (Messages::TestWithLegacyReceiver::RunJavaScriptAlert::send): Deleted.
+        (Messages::TestWithLegacyReceiver::GetPlugins::send): Deleted.
+        (Messages::TestWithLegacyReceiver::GetPluginProcessConnection::send): Deleted.
+        (Messages::TestWithLegacyReceiver::TestMultipleAttributes::send): Deleted.
+        (Messages::TestWithLegacyReceiver::InterpretKeyEvent::send): Deleted.
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessages.h:
+        * Scripts/webkit/tests/TestWithSemaphoreMessageReceiver.cpp:
+        (Messages::TestWithSemaphore::ReceiveSemaphore::send): Deleted.
+        * Scripts/webkit/tests/TestWithSemaphoreMessages.h:
+        * Scripts/webkit/tests/TestWithSuperclassMessageReceiver.cpp:
+        (Messages::TestWithSuperclass::TestAsyncMessage::send): Deleted.
+        (Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::send): Deleted.
+        (Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::send): Deleted.
+        (Messages::TestWithSuperclass::TestAsyncMessageWithConnection::send): Deleted.
+        (Messages::TestWithSuperclass::TestSyncMessage::send): Deleted.
+        (Messages::TestWithSuperclass::TestSynchronousMessage::send): Deleted.
+        * Scripts/webkit/tests/TestWithSuperclassMessages.h:
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp:
+        (Messages::TestWithoutAttributes::CreatePlugin::send): Deleted.
+        (Messages::TestWithoutAttributes::RunJavaScriptAlert::send): Deleted.
+        (Messages::TestWithoutAttributes::GetPlugins::send): Deleted.
+        (Messages::TestWithoutAttributes::GetPluginProcessConnection::send): Deleted.
+        (Messages::TestWithoutAttributes::TestMultipleAttributes::send): Deleted.
+        (Messages::TestWithoutAttributes::InterpretKeyEvent::send): Deleted.
+        * Scripts/webkit/tests/TestWithoutAttributesMessages.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        Add a missing include that brings in the definition of the
+        WebBackForwardListCounts type along with its encode() method.
+
 2022-04-14  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Some IPC related message forwarding functions use const lvalue references

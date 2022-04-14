@@ -58,12 +58,6 @@ void ReceiveImageData::cancelReply(CompletionHandler<void(RefPtr<WebCore::ImageD
     completionHandler(IPC::AsyncReplyError<RefPtr<WebCore::ImageData>>::create());
 }
 
-void ReceiveImageData::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const RefPtr<WebCore::ImageData>& r0)
-{
-    encoder.get() << r0;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
 } // namespace TestWithImageData
 
 } // namespace Messages

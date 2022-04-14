@@ -1,3 +1,23 @@
+2022-04-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WK2] Enable more efficient encoding of synchronous-message reply arguments
+        https://bugs.webkit.org/show_bug.cgi?id=238740
+        <rdar://problem/91567779>
+
+        Reviewed by Kimmo Kinnunen.
+
+        Add two helper types, OutType and InTypes, on both CompletionHandler
+        classes. OutType is an alias against the return type of the invokable
+        handler, InTypes is a tuple with types corresponding to the parameter
+        types of the invokable handler.
+
+        These are especially helpful in various templates dealing with the
+        CompletionHandler types.
+
+        * wtf/CompletionHandler.h:
+        (WTF::CompletionHandler):
+        (WTF::CompletionHandlerWithFinalizer):
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace calls to substring(0, x) with the more concise left(x)

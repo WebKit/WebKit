@@ -55,12 +55,6 @@ void ReceiveSemaphore::cancelReply(CompletionHandler<void(IPC::Semaphore&&)>&& c
     completionHandler(IPC::AsyncReplyError<IPC::Semaphore>::create());
 }
 
-void ReceiveSemaphore::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const IPC::Semaphore& r0)
-{
-    encoder.get() << r0;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
 } // namespace TestWithSemaphore
 
 } // namespace Messages

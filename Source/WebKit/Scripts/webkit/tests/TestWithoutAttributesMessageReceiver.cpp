@@ -84,12 +84,6 @@ void CreatePlugin::cancelReply(CompletionHandler<void(bool&&)>&& completionHandl
     completionHandler(IPC::AsyncReplyError<bool>::create());
 }
 
-void CreatePlugin::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, bool result)
-{
-    encoder.get() << result;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
 void RunJavaScriptAlert::callReply(IPC::Decoder& decoder, CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
@@ -98,11 +92,6 @@ void RunJavaScriptAlert::callReply(IPC::Decoder& decoder, CompletionHandler<void
 void RunJavaScriptAlert::cancelReply(CompletionHandler<void()>&& completionHandler)
 {
     completionHandler();
-}
-
-void RunJavaScriptAlert::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection)
-{
-    connection.sendSyncReply(WTFMove(encoder));
 }
 
 void GetPlugins::callReply(IPC::Decoder& decoder, CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&& completionHandler)
@@ -122,23 +111,6 @@ void GetPlugins::cancelReply(CompletionHandler<void(Vector<WebCore::PluginInfo>&
     completionHandler(IPC::AsyncReplyError<Vector<WebCore::PluginInfo>>::create());
 }
 
-void GetPlugins::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const Vector<WebCore::PluginInfo>& plugins)
-{
-    encoder.get() << plugins;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
-void GetPluginProcessConnection::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const IPC::Connection::Handle& connectionHandle)
-{
-    encoder.get() << connectionHandle;
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
-void TestMultipleAttributes::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection)
-{
-    connection.sendSyncReply(WTFMove(encoder));
-}
-
 #if PLATFORM(MAC)
 
 void InterpretKeyEvent::callReply(IPC::Decoder& decoder, CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&& completionHandler)
@@ -156,12 +128,6 @@ void InterpretKeyEvent::callReply(IPC::Decoder& decoder, CompletionHandler<void(
 void InterpretKeyEvent::cancelReply(CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&& completionHandler)
 {
     completionHandler(IPC::AsyncReplyError<Vector<WebCore::KeypressCommand>>::create());
-}
-
-void InterpretKeyEvent::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const Vector<WebCore::KeypressCommand>& commandName)
-{
-    encoder.get() << commandName;
-    connection.sendSyncReply(WTFMove(encoder));
 }
 
 #endif
