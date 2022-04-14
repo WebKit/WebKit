@@ -1,5 +1,14 @@
 2022-04-13  Matteo Flores  <matteo_flores@apple.com>
 
+        [ iOS ] TestWebKitAPI.WebKit2.CrashGPUProcessWhileCapturingAndCalling is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=239309
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm: Disabling test to help EWS
+
+2022-04-13  Matteo Flores  <matteo_flores@apple.com>
+
         [ iOS ] TestWebKitAPI.SOAuthorizationSubFrame.InterceptionErrorWithReferrer is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=239311
 
