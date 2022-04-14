@@ -54,7 +54,18 @@ class Branch(Command):
     def editable(cls, branch, repository=None):
         if (repository or local.Scm).DEV_BRANCHES.match(branch):
             return True
-        return False
+        if branch in (repository or local.Scm).DEFAULT_BRANCHES:
+            return False
+        if (repository or local.Scm).PROD_BRANCHES.match(branch):
+            return False
+        if not repository or not isinstance(repository, local.Git):
+            return False
+
+        # FIXME: Need to consider alternate remotes
+        for remote in ['origin']:
+            if branch in repository.branches_for(remote=remote, cached=True):
+                return False
+        return True
 
     @classmethod
     def branch_point(cls, repository):

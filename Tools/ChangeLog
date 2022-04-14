@@ -1,3 +1,22 @@
+2022-04-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Personal branch is "not a PR branch"
+        https://bugs.webkit.org/show_bug.cgi?id=239329
+        <rdar://problem/91756286>
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.branches_for): Provide optional caching.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/branch.py:
+        (Branch.editable): If a branch does not exist on production remotes, that branch
+        should also be considered a PR branch.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.main): Only create a new PR branch if the current branch is a
+        production branch.
+
 2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WK2] Managed pasteboard should function for all managed domains

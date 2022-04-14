@@ -505,6 +505,7 @@ class Git(Scm):
             raise self.Exception('Failed to retrieve revision count for {}'.format(native_parameter))
         return int(revision_count.stdout)
 
+    @decorators.Memoize(cached=False)
     def branches_for(self, hash=None, remote=True):
         branch = run(
             [self.executable(), 'branch'] + (['--contains', hash] if hash else ['-a']),

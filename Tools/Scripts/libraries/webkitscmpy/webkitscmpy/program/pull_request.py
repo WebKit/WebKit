@@ -136,7 +136,7 @@ class PullRequest(Command):
             sys.stderr.write('History retention was requested, but repository configuration forbids it\n')
             return 1
 
-        if not repository.DEV_BRANCHES.match(repository.branch):
+        if repository.branch in repository.DEFAULT_BRANCHES or repository.PROD_BRANCHES.match(repository.branch):
             if Branch.main(args, repository, why="'{}' is not a pull request branch".format(repository.branch), **kwargs):
                 sys.stderr.write("Abandoning pushing pull-request because '{}' could not be created\n".format(args.issue))
                 return 1
