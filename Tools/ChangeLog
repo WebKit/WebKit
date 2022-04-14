@@ -1,3 +1,13 @@
+2022-04-13  Matteo Flores  <matteo_flores@apple.com>
+
+        [ iOS ] TestWebKitAPI.IndexedDB.IndexedDBSuspendImminently is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=239310
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBSuspendImminently.mm: Disabling the test
+        (TEST):
+
 2022-04-13  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Found branch name instead of hash

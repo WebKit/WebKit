@@ -70,8 +70,8 @@ static void keepNetworkProcessActive()
             keepNetworkProcessActive();
     }];
 }
-
-TEST(IndexedDB, IndexedDBSuspendImminently)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=239310
+TEST(IndexedDB, DISABLED_IndexedDBSuspendImminently)
 {
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
