@@ -231,13 +231,11 @@ static void appendTextRepresentation(StringBuilder& builder, const Text& text)
     value.replaceWithLiteral('\\', "\\\\");
     value.replaceWithLiteral('\n', "\\n");
     
-    const size_t maxDumpLength = 30;
-    if (value.length() > maxDumpLength) {
-        value.truncate(maxDumpLength - 10);
-        value.append("..."_s);
-    }
-
-    builder.append(" \"", value, '\"');
+    constexpr size_t maxDumpLength = 30;
+    if (value.length() > maxDumpLength)
+        builder.append(" \"", StringView(value).left(maxDumpLength - 10), "...\"");
+    else
+        builder.append(" \"", value, '\"');
 }
 
 String Text::description() const

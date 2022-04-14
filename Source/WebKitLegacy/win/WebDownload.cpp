@@ -140,10 +140,7 @@ HRESULT WebDownload::bundlePathForTargetPath(_In_ BSTR targetPath, __deref_out_o
     if (bundle.isEmpty())
         return E_INVALIDARG;
 
-    if (bundle[bundle.length()-1] == '/')
-        bundle.truncate(1);
-
-    bundle.append(DownloadBundle::fileExtension());
+    bundle = bundle[bundle.length() - 1] == '/' ? makeString(StringView(bundle).left(bundle.length() - 1), DownloadBundle::fileExtension()) : makeString(bundle, DownloadBundle::fileExtension());
     *bundlePath = BString(bundle).release();
     if (!*bundlePath)
        return E_FAIL;

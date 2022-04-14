@@ -703,10 +703,9 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     }
 
     sandboxParameters.addPathParameter("HOME_DIR", pwd.pw_dir);
-    String path = String::fromUTF8(pwd.pw_dir);
-    path.append("/Library"_s);
+    String path = FileSystem::pathByAppendingComponent(String::fromUTF8(pwd.pw_dir), "Library"_s);
     sandboxParameters.addPathParameter("HOME_LIBRARY_DIR", FileSystem::fileSystemRepresentation(path).data());
-    path.append("/Preferences"_s);
+    path = FileSystem::pathByAppendingComponent(path, "/Preferences"_s);
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", FileSystem::fileSystemRepresentation(path).data());
 
 #if CPU(X86_64)

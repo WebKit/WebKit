@@ -73,80 +73,6 @@ String::String(const char* nullTerminatedString)
         m_impl = StringImpl::create(reinterpret_cast<const LChar*>(nullTerminatedString));
 }
 
-void String::append(const String& otherString)
-{
-    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
-
-    if (!m_impl) {
-        m_impl = otherString.m_impl;
-        return;
-    }
-
-    if (otherString.isEmpty())
-        return;
-
-    auto length = m_impl->length();
-    auto otherLength = otherString.m_impl->length();
-    if (otherLength > MaxLength - length)
-        CRASH();
-
-    if (m_impl->is8Bit() && otherString.m_impl->is8Bit()) {
-        LChar* data;
-        auto newImpl = StringImpl::createUninitialized(length + otherLength, data);
-        StringImpl::copyCharacters(data, m_impl->characters8(), length);
-        StringImpl::copyCharacters(data + length, otherString.m_impl->characters8(), otherLength);
-        m_impl = WTFMove(newImpl);
-        return;
-    }
-    UChar* data;
-    auto newImpl = StringImpl::createUninitialized(length + otherLength, data);
-    StringView(*m_impl).getCharactersWithUpconvert(data);
-    StringView(*otherString.m_impl).getCharactersWithUpconvert(data + length);
-    m_impl = WTFMove(newImpl);
-}
-
-void String::append(LChar character)
-{
-    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
-
-    if (!m_impl) {
-        m_impl = StringImpl::create(&character, 1);
-        return;
-    }
-    if (!is8Bit()) {
-        append(static_cast<UChar>(character));
-        return;
-    }
-    if (m_impl->length() >= MaxLength)
-        CRASH();
-    LChar* data;
-    auto newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
-    StringImpl::copyCharacters(data, m_impl->characters8(), m_impl->length());
-    data[m_impl->length()] = character;
-    m_impl = WTFMove(newImpl);
-}
-
-void String::append(UChar character)
-{
-    // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.
-
-    if (!m_impl) {
-        m_impl = StringImpl::create(&character, 1);
-        return;
-    }
-    if (isLatin1(character) && is8Bit()) {
-        append(static_cast<LChar>(character));
-        return;
-    }
-    if (m_impl->length() >= MaxLength)
-        CRASH();
-    UChar* data;
-    auto newImpl = StringImpl::createUninitialized(m_impl->length() + 1, data);
-    StringView(*m_impl).getCharactersWithUpconvert(data);
-    data[m_impl->length()] = character;
-    m_impl = WTFMove(newImpl);
-}
-
 int codePointCompare(const String& a, const String& b)
 {
     return codePointCompare(a.impl(), b.impl());
@@ -167,7 +93,10 @@ void String::insert(const String& string, unsigned position)
     }
 
     if (position >= length()) {
-        append(string);
+        if (string.is8Bit())
+            append(string.characters8(), string.length());
+        else
+            append(string.characters16(), string.length());
         return;
     }
 
@@ -244,7 +173,7 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
         return;
 
     unsigned strLength = m_impl->length();
-    
+
     ASSERT(charactersToAppend);
     if (lengthToAppend > MaxLength - strLength)
         CRASH();

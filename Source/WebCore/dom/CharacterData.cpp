@@ -113,10 +113,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
         styleInvalidation.emplace(*parent, childChange);
 
     String oldData = m_data;
-    if (string.is8Bit())
-        m_data.append(string.characters8() + offset, characterLengthLimit);
-    else
-        m_data.append(string.characters16() + offset, characterLengthLimit);
+    m_data = makeString(m_data, StringView(string).substring(offset, characterLengthLimit));
 
     ASSERT(!renderer() || is<Text>(*this));
     if (auto text = dynamicDowncast<Text>(*this))

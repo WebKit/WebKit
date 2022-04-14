@@ -151,12 +151,9 @@ static StringView singularUnit(StringView unit)
 // For use in error messages where a string value is potentially unbounded
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String& string)
 {
-    WTF::String copy { string };
-    if (string.length() > maxLength) {
-        copy.truncate(maxLength - 1);
-        copy.append(horizontalEllipsis);
-    }
-    return copy;
+    if (string.length() <= maxLength)
+        return string;
+    return makeString(StringView(string).left(maxLength - 1), horizontalEllipsis);
 }
 
 PropertyName temporalUnitPluralPropertyName(VM& vm, TemporalUnit unit)

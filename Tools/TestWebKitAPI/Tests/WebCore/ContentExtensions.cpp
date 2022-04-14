@@ -1507,10 +1507,8 @@ TEST_F(ContentExtensionTest, InvalidJSON)
     rules.append("["_s);
     for (unsigned i = 0; i < 149999; ++i)
         rules.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},"_s);
-    String rules150000 = rules.toString();
-    String rules150001 = rules.toString();
-    rules150000.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]"_s);
-    rules150001.append("{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]"_s);
+    String rules150000 = makeString(rules.toString(), "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]"_s);
+    String rules150001 = makeString(rules.toString(), "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}},{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"a\"}}]"_s);
     checkCompilerError(WTFMove(rules150000), { });
     checkCompilerError(WTFMove(rules150001), ContentExtensionError::JSONTooManyRules);
     

@@ -3074,7 +3074,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
     // FIXME: Do we still need this for the ANGLE backend?
     if (!isGLES2Compliant())
         if (info.size > 1 && !info.name.endsWith("[0]"))
-            info.name.append("[0]"_s);
+            info.name = makeString(info.name, "[0]"_s);
 
     LOG(WebGL, "Returning active uniform %d: %s", index, info.name.utf8().data());
 

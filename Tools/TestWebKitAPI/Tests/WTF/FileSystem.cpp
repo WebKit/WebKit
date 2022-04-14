@@ -485,9 +485,7 @@ TEST_F(FileSystemTest, makeAllDirectories)
     EXPECT_EQ(FileSystem::fileType(subFolderPath), FileSystem::FileType::Directory);
     EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
     EXPECT_FALSE(FileSystem::fileExists(subFolderPath));
-    String invalidFolderPath;
-    invalidFolderPath.append('\0');
-    invalidFolderPath.append('a');
+    String invalidFolderPath = makeString('\0', 'a');
     EXPECT_FALSE(FileSystem::makeAllDirectories(invalidFolderPath));
     EXPECT_FALSE(FileSystem::makeAllDirectories(emptyString()));
 }

@@ -371,10 +371,8 @@ String IDBKeyData::loggingString() const
         return "<minimum>"_s;
     }
 
-    if (result.length() > 150) {
-        result.truncate(147);
-        result.append("..."_s);
-    }
+    if (result.length() > 150)
+        result = makeString(StringView(result).left(147), "..."_s);
 
     return result;
 }

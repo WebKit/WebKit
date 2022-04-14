@@ -97,10 +97,8 @@ enum class Flip : bool { No, Yes };
 
 static void truncateWithEllipsis(String& string, size_t length)
 {
-    if (string.length() > length) {
-        string.truncate(length);
-        string.append(ellipsis);
-    }
+    if (string.length() > length)
+        string = makeString(StringView(string).left(length), ellipsis);
 }
 
 static FloatPoint localPointToRootPoint(const FrameView* view, const FloatPoint& point)

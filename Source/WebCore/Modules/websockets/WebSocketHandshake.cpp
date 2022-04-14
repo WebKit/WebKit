@@ -83,13 +83,12 @@ static String hostName(const URL& url, bool secure)
     return host;
 }
 
-static const size_t maxInputSampleSize = 128;
-static String trimInputSample(const uint8_t* p, size_t len)
+static constexpr size_t maxInputSampleSize = 128;
+static String trimInputSample(const uint8_t* p, size_t length)
 {
-    String s = String(p, std::min<size_t>(len, maxInputSampleSize));
-    if (len > maxInputSampleSize)
-        s.append(horizontalEllipsis);
-    return s;
+    if (length <= maxInputSampleSize)
+        return String(p, length);
+    return makeString(StringView(p, length).left(maxInputSampleSize), horizontalEllipsis);
 }
 
 static String generateSecWebSocketKey()

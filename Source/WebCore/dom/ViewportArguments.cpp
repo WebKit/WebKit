@@ -433,7 +433,7 @@ static String viewportErrorMessage(ViewportErrorCode errorCode, StringView repla
         message.replace("%replacement2", replacement2);
 
     if ((errorCode == UnrecognizedViewportArgumentValueError || errorCode == TruncatedViewportArgumentValueError) && replacement1.contains(';'))
-        message.append(" Note that ';' is not a separator in viewport values. The list should be comma-separated."_s);
+        message = makeString(message, " Note that ';' is not a separator in viewport values. The list should be comma-separated."_s);
 
     return message;
 }

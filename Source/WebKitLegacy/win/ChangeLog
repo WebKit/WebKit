@@ -1,3 +1,13 @@
+2022-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop inefficient String::append() overloads
+        https://bugs.webkit.org/show_bug.cgi?id=239289
+
+        Reviewed by Sam Weinig.
+
+        * WebDownload.cpp:
+        (WebDownload::bundlePathForTargetPath):
+
 2022-04-07  Chris Dumez  <cdumez@apple.com>
 
         Drop unused EditorClient::getAutoCorrectSuggestionForMisspelledWord()

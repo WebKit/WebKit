@@ -61,6 +61,7 @@ public:
     void append(const AtomString& string) { append(string.string()); }
     void append(const String&);
     void append(StringView);
+    void append(ASCIILiteral);
     void append(UChar);
     void append(LChar);
     void append(char character) { append(static_cast<LChar>(character)); }
@@ -219,6 +220,11 @@ inline void StringBuilder::append(StringView string)
         appendCharacters(string.characters8(), string.length());
     else
         appendCharacters(string.characters16(), string.length());
+}
+
+inline void StringBuilder::append(ASCIILiteral string)
+{
+    appendCharacters(string.characters8(), string.length());
 }
 
 inline void StringBuilder::appendSubstring(const String& string, unsigned offset, unsigned length)

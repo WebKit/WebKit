@@ -209,9 +209,9 @@ TEST(StringBuilderTest, ToString)
     // Changing the original result of toString() should not affect the content of the StringBuilder.
     String string1 = builder.toString();
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
-    string1.append("DEF"_s);
+    string1.replace('0', 'a');
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), builder.toString());
-    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"_s), string1);
+    EXPECT_EQ(String("a123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
 
     // Resizing the StringBuilder should not affect the original result of toString().
     string1 = builder.toString();
@@ -251,9 +251,9 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     EXPECT_EQ(capacity, builder.capacity());
     EXPECT_EQ(string1.characters8(), builder.characters8());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
-    string1.append("DEF"_s);
+    string1.replace('0', 'a');
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), builder.toStringPreserveCapacity());
-    EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABCDEF"_s), string1);
+    EXPECT_EQ(String("a123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
 
     // Resizing the StringBuilder should not affect the original result of toStringPreserveCapacity().
     capacity = builder.capacity();

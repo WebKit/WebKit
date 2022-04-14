@@ -355,12 +355,12 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
 
     Vector<String> classList;
     object.classList(classList);
-    String combinedClassList;
+    StringBuilder combinedClassList;
     for (auto it = classList.begin(), end = classList.end(); it != end; ++it) {
         combinedClassList.append(*it);
-        combinedClassList.append(" "_s);
+        combinedClassList.append(' ');
     }
-    setProperty(AXPropertyName::ClassList, combinedClassList);
+    setProperty(AXPropertyName::ClassList, combinedClassList.toString());
 
     setProperty(AXPropertyName::ColorValue, object.colorValue());
 

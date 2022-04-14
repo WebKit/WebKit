@@ -93,7 +93,7 @@ private:
     int m_size { 254 };
     UChar* m_buffer;
     UChar* m_dest;
-    String m_carryOver;
+    StringBuilder m_carryOver;
     
     ListState m_listState;
 };
@@ -262,14 +262,15 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
     if (typeResult == FTPMiscEntry || typeResult == FTPJunkEntry)
         return;
 
-    String filename(result.filename, result.filenameLength);
+    String filename;
     if (result.type == FTPDirectoryEntry) {
-        filename.append('/');
+        filename = makeString(StringView { result.filename, result.filenameLength }, '/');
 
         // We have no interest in linking to "current directory"
         if (filename == "./")
             return;
-    }
+    } else
+        filename = String(result.filename, result.filenameLength);
 
     LOG(FTP, "Appending entry - %s, %s", filename.ascii().data(), result.fileSize.ascii().data());
 
@@ -388,10 +389,10 @@ void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 
     while (cursor < m_dest) {
         if (*cursor == '\n') {
-            m_carryOver.append(String(start, cursor - start));
-            LOG(FTP, "%s", m_carryOver.ascii().data());
-            parseAndAppendOneLine(m_carryOver);
-            m_carryOver = String();
+            m_carryOver.append(StringView(start, cursor - start));
+            LOG(FTP, "%s", m_carryOver.toString().ascii().data());
+            parseAndAppendOneLine(m_carryOver.toString());
+            m_carryOver.clear();
 
             start = ++cursor;
         } else 
@@ -400,15 +401,15 @@ void FTPDirectoryDocumentParser::append(RefPtr<StringImpl>&& inputSource)
 
     // Copy the partial line we have left to the carryover buffer
     if (cursor - start > 1)
-        m_carryOver.append(String(start, cursor - start - 1));
+        m_carryOver.append(StringView(start, cursor - start - 1));
 }
 
 void FTPDirectoryDocumentParser::finish()
 {
     // Possible the last line in the listing had no newline, so try to parse it now
     if (!m_carryOver.isEmpty()) {
-        parseAndAppendOneLine(m_carryOver);
-        m_carryOver = String();
+        parseAndAppendOneLine(m_carryOver.toString());
+        m_carryOver.clear();
     }
 
     m_tableElement = nullptr;

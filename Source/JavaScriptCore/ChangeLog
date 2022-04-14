@@ -1,3 +1,20 @@
+2022-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop inefficient String::append() overloads
+        https://bugs.webkit.org/show_bug.cgi?id=239289
+
+        Reviewed by Sam Weinig.
+
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * runtime/IntlObject.cpp:
+        (JSC::resolveLocale):
+        * runtime/TemporalObject.cpp:
+        (JSC::ellipsizeAt):
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+        (JSC::parseClause):
+
 2022-04-14  Justin Michaud  <justin_michaud@apple.com>
 
         [PGO] We should be able to build WebKit to collect PGO profiles easily

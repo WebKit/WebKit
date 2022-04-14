@@ -390,15 +390,15 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                 flags |= static_cast<unsigned>(NodeFlags::Internal);
 
             if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
-                String nodeLabel;
+                StringBuilder nodeLabel;
                 auto it = m_cellLabels.find(node.cell);
                 if (it != m_cellLabels.end())
-                    nodeLabel = it->value;
+                    nodeLabel.append(it->value);
 
                 if (nodeLabel.isEmpty()) {
                     if (auto* object = jsDynamicCast<JSObject*>(vm, node.cell)) {
                         if (auto* function = jsDynamicCast<JSFunction*>(vm, object))
-                            nodeLabel = function->calculatedDisplayName(vm);
+                            nodeLabel.append(function->calculatedDisplayName(vm));
                     }
                 }
 
@@ -410,7 +410,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                 }
 
                 if (!nodeLabel.isEmpty() && m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
-                    auto result = labelIndexes.add(nodeLabel, nextLabelIndex);
+                    auto result = labelIndexes.add(nodeLabel.toString(), nextLabelIndex);
                     if (result.isNewEntry)
                         nextLabelIndex++;
                     labelIndex = result.iterator->value;

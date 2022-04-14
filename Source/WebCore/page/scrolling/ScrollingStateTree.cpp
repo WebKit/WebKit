@@ -381,10 +381,11 @@ String ScrollingStateTree::scrollingStateTreeAsText(OptionSet<ScrollingStateTree
     if (!rootStateNode())
         return emptyString();
 
-    auto stateTreeAsString = rootStateNode()->scrollingStateTreeAsText(behavior);
+    StringBuilder stateTreeAsString;
+    stateTreeAsString.append(rootStateNode()->scrollingStateTreeAsText(behavior));
     if (!m_unparentedNodes.isEmpty())
-        stateTreeAsString.append(makeString("\nunparented node count: ", m_unparentedNodes.size()));
-    return stateTreeAsString;
+        stateTreeAsString.append("\nunparented node count: ", m_unparentedNodes.size());
+    return stateTreeAsString.toString();
 }
 
 } // namespace WebCore

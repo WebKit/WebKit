@@ -2236,12 +2236,13 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
 
     auto host = toWTFString(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
     int port = WKProtectionSpaceGetPort(protectionSpace);
-    String message = makeString(host, ':', port, " - didReceiveAuthenticationChallenge - ", toString(authenticationScheme), " - ");
+    StringBuilder message;
+    message.append(host, ':', port, " - didReceiveAuthenticationChallenge - ", toString(authenticationScheme), " - ");
     if (!m_handlesAuthenticationChallenges)
         message.append("Simulating cancelled authentication sheet\n"_s);
     else
         message.append("Responding with " + m_authenticationUsername + ":" + m_authenticationPassword + "\n");
-    m_currentInvocation->outputText(message);
+    m_currentInvocation->outputText(message.toString());
 
     if (!m_handlesAuthenticationChallenges) {
         WKAuthenticationDecisionListenerUseCredential(decisionListener, 0);

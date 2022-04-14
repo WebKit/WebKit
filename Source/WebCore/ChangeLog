@@ -1,3 +1,59 @@
+2022-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Drop inefficient String::append() overloads
+        https://bugs.webkit.org/show_bug.cgi?id=239289
+
+        Reviewed by Sam Weinig.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::loggingString const):
+        * Modules/indexeddb/IDBKeyRangeData.cpp:
+        (WebCore::IDBKeyRangeData::loggingString const):
+        * Modules/indexeddb/shared/IDBIndexInfo.cpp:
+        (WebCore::IDBIndexInfo::loggingString const):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::trimInputSample):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        * dom/Text.cpp:
+        (WebCore::appendTextRepresentation):
+        * dom/ViewportArguments.cpp:
+        (WebCore::viewportErrorMessage):
+        * editing/markup.cpp:
+        (WebCore::fillContainerFromString):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::parseAndAppendOneLine):
+        (WebCore::FTPDirectoryDocumentParser::append):
+        (WebCore::FTPDirectoryDocumentParser::finish):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getActiveUniform):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::checkAndStoreStyleSheet):
+        * html/track/WebVTTParser.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::truncateWithEllipsis):
+        * inspector/InspectorOverlayLabel.cpp:
+        (WebCore::InspectorOverlayLabel::draw):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::scrollingStateTreeAsText const):
+        * platform/graphics/HEVCUtilities.cpp:
+        (WebCore::createHEVCCodecParametersString):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::trimInputSample):
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::CurlCacheEntry):
+        (WebCore::CurlCacheEntry::saveResponseHeaders):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::setCacheDirectory):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::addExtraNetworkLoadMetrics):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+
 2022-04-14  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         ScriptDisallowedScope::isEventAllowedInMainThread assert failure when activating AudioSession

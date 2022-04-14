@@ -1691,7 +1691,7 @@ void PDFPlugin::setSuggestedFilename(const String& suggestedFilename)
         m_suggestedFilename = suggestedFilenameWithMIMEType(nil, "application/pdf"_s);
 
     if (!m_suggestedFilename.endsWithIgnoringASCIICase(".pdf"))
-        m_suggestedFilename.append(".pdf"_s);
+        m_suggestedFilename = makeString(m_suggestedFilename, ".pdf"_s);
 }
     
 void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t, uint32_t, const String& mimeType, const String&, const String& suggestedFilename)

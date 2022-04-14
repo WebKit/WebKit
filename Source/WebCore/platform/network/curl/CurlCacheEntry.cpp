@@ -49,9 +49,7 @@
 namespace WebCore {
 
 CurlCacheEntry::CurlCacheEntry(const String& url, ResourceHandle* job, const String& cacheDir)
-    : m_headerFilename(cacheDir)
-    , m_contentFilename(cacheDir)
-    , m_contentFile(FileSystem::invalidPlatformFileHandle)
+    : m_contentFile(FileSystem::invalidPlatformFileHandle)
     , m_entrySize(0)
     , m_expireDate(WallTime::fromRawSeconds(-1))
     , m_headerParsed(false)
@@ -60,11 +58,8 @@ CurlCacheEntry::CurlCacheEntry(const String& url, ResourceHandle* job, const Str
 {
     generateBaseFilename(url.latin1());
 
-    m_headerFilename.append(m_basename);
-    m_headerFilename.append(".header"_s);
-
-    m_contentFilename.append(m_basename);
-    m_contentFilename.append(".content"_s);
+    m_headerFilename = makeString(cacheDir, m_basename, ".header"_s);
+    m_contentFilename = makeString(cacheDir, m_basename, ".content"_s);
 }
 
 CurlCacheEntry::~CurlCacheEntry()
@@ -138,12 +133,8 @@ bool CurlCacheEntry::saveResponseHeaders(const ResourceResponse& response)
     HTTPHeaderMap::const_iterator it = response.httpHeaderFields().begin();
     HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
     while (it != end) {
-        String headerField = it->key;
-        headerField.append(": "_s);
-        headerField.append(it->value);
-        headerField.append("\n"_s);
-        CString headerFieldLatin1 = headerField.latin1();
-        FileSystem::writeToFile(headerFile, headerFieldLatin1.data(), headerFieldLatin1.length());
+        auto headerField = makeString(it->key, ": ", it->value, '\n').latin1();
+        FileSystem::writeToFile(headerFile, headerField.data(), headerField.length());
         m_cachedResponse.setHTTPHeaderField(it->key, it->value);
         ++it;
     }

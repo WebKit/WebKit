@@ -85,7 +85,7 @@ void CurlCacheManager::setCacheDirectory(const String& directory)
         }
     }
 
-    m_cacheDir.append("/"_s);
+    m_cacheDir = makeString(m_cacheDir, '/');
 
     m_disabled = false;
     loadIndex();

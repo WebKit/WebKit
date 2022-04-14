@@ -917,7 +917,8 @@ ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const LocaleSet& avai
     ResolvedLocale resolved;
     resolved.dataLocale = foundLocale;
 
-    String supportedExtension = "-u"_s;
+    StringBuilder supportedExtension;
+    supportedExtension.append("-u"_s);
     for (RelevantExtensionKey key : relevantExtensionKeys) {
         ASCIILiteral keyString = relevantExtensionKeyString(key);
         Vector<String> keyLocaleData = localeData(foundLocale, key);
@@ -957,7 +958,7 @@ ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const LocaleSet& avai
 
     if (supportedExtension.length() > 2) {
         StringView foundLocaleView(foundLocale);
-        foundLocale = makeString(foundLocaleView.left(matcherResult.extensionIndex), supportedExtension, foundLocaleView.substring(matcherResult.extensionIndex));
+        foundLocale = makeString(foundLocaleView.left(matcherResult.extensionIndex), supportedExtension.toString(), foundLocaleView.substring(matcherResult.extensionIndex));
     }
 
     resolved.locale = WTFMove(foundLocale);

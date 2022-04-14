@@ -311,10 +311,9 @@ static const size_t maxInputSampleSize = 128;
 template<typename CharType>
 static String trimInputSample(CharType* p, size_t length)
 {
-    String s = String(p, std::min<size_t>(length, maxInputSampleSize));
-    if (length > maxInputSampleSize)
-        s.append(horizontalEllipsis);
-    return s;
+    if (length <= maxInputSampleSize)
+        return String(p, length);
+    return makeString(StringView(p, length).left(maxInputSampleSize), horizontalEllipsis);
 }
 
 std::optional<WallTime> parseHTTPDate(const String& value)

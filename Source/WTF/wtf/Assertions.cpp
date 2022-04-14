@@ -466,7 +466,7 @@ static void WTFLogVaList(WTFLogChannel* channel, const char* format, va_list arg
     ALLOW_NONLITERAL_FORMAT_END
 
     if (!loggingString.endsWith('\n'))
-        loggingString.append('\n');
+        loggingString = makeString(loggingString, '\n');
 
     loggingAccumulator().accumulate(loggingString);
 

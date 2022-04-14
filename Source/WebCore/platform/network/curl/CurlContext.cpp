@@ -39,6 +39,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #if OS(WINDOWS)
 #include "WebCoreBundleWin.h"
@@ -890,11 +891,8 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     additionalMetrics->requestBodyBytesSent = requestBodySize;
     additionalMetrics->responseHeaderBytesReceived = responseHeaderSize;
 
-    if (ip) {
-        additionalMetrics->remoteAddress = String::fromLatin1(ip);
-        if (port)
-            additionalMetrics->remoteAddress.append(":" + String::number(port));
-    }
+    if (ip)
+        additionalMetrics->remoteAddress = port ? makeString(ip, ':', port) : String::fromLatin1(ip);
 
     if (m_tlsConnectionInfo) {
         additionalMetrics->tlsProtocol = m_tlsConnectionInfo->protocol;

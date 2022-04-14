@@ -202,13 +202,6 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 
 String createHEVCCodecParametersString(const HEVCParameters& parameters)
 {
-    // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
-    char profileSpaceCharacter = 'A' + parameters.generalProfileSpace - 1;
-
-    String profileSpaceString;
-    if (parameters.generalProfileSpace)
-        profileSpaceString.append(profileSpaceCharacter);
-
     // For the second parameter, from ISO/IEC 14496-15:2014, Annex E.3.
     // * the 32 bits of the general_profile_compatibility_flags, but in reverse bit order, i.e. with
     // general_profile_compatibility_flag[ 31 ] as the most significant bit, followed by, general_profile_compatibility_flag[ 30 ],
@@ -226,16 +219,16 @@ String createHEVCCodecParametersString(const HEVCParameters& parameters)
         compatibilityFlags.append(hex(parameters.generalConstraintIndicatorFlags[i], 2));
     }
 
-    return makeString(parameters.codec == HEVCParameters::Codec::Hev1 ? "hev1" : "hvc1"
-        , '.'
-        , profileSpaceString
-        , parameters.generalProfileIDC
-        , '.'
-        , compatFlagParameter
-        , '.'
-        , parameters.generalTierFlag ? 'H' : 'L'
-        , parameters.generalLevelIDC
-        , compatibilityFlags.toString());
+    StringBuilder resultBuilder;
+    resultBuilder.append(parameters.codec == HEVCParameters::Codec::Hev1 ? "hev1" : "hvc1", '.');
+    if (parameters.generalProfileSpace) {
+        // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
+        char profileSpaceCharacter = 'A' + parameters.generalProfileSpace - 1;
+        resultBuilder.append(profileSpaceCharacter);
+    }
+    resultBuilder.append(parameters.generalProfileIDC, '.', compatFlagParameter, '.', parameters.generalTierFlag ? 'H' : 'L', parameters.generalLevelIDC);
+    resultBuilder.append(compatibilityFlags);
+    return resultBuilder.toString();
 }
 
 std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCode, const SharedBuffer& buffer)

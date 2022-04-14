@@ -362,7 +362,8 @@ bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
     if (!line.isEmpty() && !line.contains("-->"))
         return false;
     
-    auto styleSheetText = WTFMove(m_currentSourceStyleSheet);
+    auto styleSheetText = m_currentSourceStyleSheet.toString();
+    m_currentSourceStyleSheet.clear();
 
     // WebVTTMode disallows non-data URLs.
     auto contents = StyleSheetContents::create(CSSParserContext(WebVTTMode));
