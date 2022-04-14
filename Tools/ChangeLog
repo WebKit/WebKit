@@ -1,3 +1,12 @@
+2022-04-14  Robert Jenner  <Jenner@apple.com>
+
+        Add an additional system to unsafe-merge queue
+        https://bugs.webkit.org/show_bug.cgi?id=239354
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/ews-build/config.json:
+
 2022-04-14  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Personal branch is "not a PR branch"
