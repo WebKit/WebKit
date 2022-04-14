@@ -932,6 +932,9 @@ bool HTMLFormElement::matchesInvalidPseudoClass() const
 // FIXME: Use Ref<HTMLElement> for the function result since there are no non-HTML elements returned here.
 Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomString& name)
 {
+    if (name.isEmpty())
+        return { };
+
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-form-nameditem
     Vector<Ref<Element>> namedItems = elements()->namedItems(name);
 

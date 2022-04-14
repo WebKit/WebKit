@@ -39,7 +39,7 @@
     readonly attribute HTMLFormControlsCollection elements;
     readonly attribute unsigned long length;
     getter Element? (unsigned long index);
-    getter (RadioNodeList or Element)? ([AtomString] DOMString name);
+    getter (RadioNodeList or Element)? ([RequiresExistingAtomString] DOMString name);
 
     [ImplementedAs=submitFromJavaScript] undefined submit();
     [EnabledBySetting=RequestSubmitEnabled] undefined requestSubmit(optional HTMLElement? submitter);
