@@ -142,6 +142,8 @@ private:
         return m_isRoot == IsRoot::No ? result : convertToTopLevelValue(result);
     }
 
+    void makeTopLevelCalc();
+    bool shouldNotPreserveFunction() const { return isMinOrMaxNode() || isHypotNode(); }
     static double evaluateOperator(CalcOperator, const Vector<double>&);
     static Ref<CSSCalcExpressionNode> simplifyNode(Ref<CSSCalcExpressionNode>&&, int depth);
     static Ref<CSSCalcExpressionNode> simplifyRecursive(Ref<CSSCalcExpressionNode>&&, int depth);

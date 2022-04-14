@@ -1,3 +1,19 @@
+2022-04-14  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        calc(): Serialize top level min/max/hypot as calc()
+        https://bugs.webkit.org/show_bug.cgi?id=239019
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-invalid-expected.txt:
+        * web-platform-tests/css/css-values/hypot-pow-sqrt-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-angle-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-percent-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-length-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-number-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-percentage-serialize-expected.txt:
+        * web-platform-tests/css/css-values/minmax-time-serialize-expected.txt:
+
 2022-04-14  Youenn Fablet  <youenn@apple.com>
 
         Expose workers as service worker clients and implement registration matching for dedicated workers

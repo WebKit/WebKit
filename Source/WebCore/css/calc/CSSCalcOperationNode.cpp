@@ -866,6 +866,13 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyRecursive(Ref<CSSCalcEx
     return simplifyNode(WTFMove(rootNode), depth);
 }
 
+inline void CSSCalcOperationNode::makeTopLevelCalc()
+{
+    // Top level calc nodes where we need not preserve the function are changed into add nodes because
+    // that’s the best way to make them serialize as "calc(xxx)".
+    m_operator = CalcOperator::Add;
+}
+
 Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpressionNode>&& rootNode, int depth)
 {
     if (is<CSSCalcPrimitiveValueNode>(rootNode)) {
@@ -901,7 +908,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             calcOperationNode.combineChildren();
 
         // If only one child remains, return the child (except at the root).
-        auto shouldCombineParentWithOnlyChild = [](const CSSCalcOperationNode& parent, int depth)
+        auto shouldCombineParentWithOnlyChild = [](CSSCalcOperationNode& parent, int depth)
         {
             if (parent.children().size() != 1)
                 return false;
@@ -909,6 +916,11 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             // Always simplify below the root.
             if (depth)
                 return true;
+            
+            if (parent.shouldNotPreserveFunction() && is<CSSCalcPrimitiveValueNode>(parent.children()[0])) {
+                parent.makeTopLevelCalc();
+                return false;
+            }
 
             // At the root, preserve the root function by only merging nodes with the same function.
             auto& child = parent.children().first();

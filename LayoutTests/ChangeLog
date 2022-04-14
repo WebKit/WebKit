@@ -1,3 +1,13 @@
+2022-04-14  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        calc(): Serialize top level min/max/hypot as calc()
+        https://bugs.webkit.org/show_bug.cgi?id=239019
+
+        Reviewed by Darin Adler.
+
+        * fast/css/calc-parsing-expected.txt:
+        * fast/css/calc-parsing.html:
+
 2022-04-14  Karl Rackler  <rackler@apple.com>
 
         [ Mac ] editing/execCommand/insert-ordered-list-and-delete.html is a flaky failure

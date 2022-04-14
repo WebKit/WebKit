@@ -9,15 +9,15 @@ PASS element.style['width'] is "calc(100px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "100px"
 
 element.style["width"] = "max(100px + 200px)"
-PASS element.style['width'] is "max(300px)"
+PASS element.style['width'] is "calc(300px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "300px"
 
 element.style["width"] = "max(100px , 200px)"
-PASS element.style['width'] is "max(200px)"
+PASS element.style['width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "200px"
 
 element.style["width"] = "max(100px,200px)"
-PASS element.style['width'] is "max(200px)"
+PASS element.style['width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "200px"
 
 element.style["width"] = "clamp(100px,123px,200px)"
@@ -73,11 +73,11 @@ PASS element.style['width'] is "calc(1024px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "1024px"
 
 element.style["width"] = "hypot(4px, 5px, 7px, 9px)"
-PASS element.style['width'] is "hypot(13.076697px)"
+PASS element.style['width'] is "calc(13.076697px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "13.0625px"
 
 element.style["width"] = "hypot(3px, 4px)"
-PASS element.style['width'] is "hypot(5px)"
+PASS element.style['width'] is "calc(5px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "5px"
 
 element.style["width"] = "calc(100px * hypot(3, 4))"
@@ -85,7 +85,7 @@ PASS element.style['width'] is "calc(500px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "500px"
 
 element.style["width"] = "hypot(-5px)"
-PASS element.style['width'] is "hypot(5px)"
+PASS element.style['width'] is "calc(5px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "5px"
 
 element.style["width"] = "calc(1px * hypot(-5))"
@@ -269,15 +269,15 @@ PASS element.style['min-width'] is "calc(100px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "100px"
 
 element.style["min-width"] = "max(100px + 200px)"
-PASS element.style['min-width'] is "max(300px)"
+PASS element.style['min-width'] is "calc(300px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "300px"
 
 element.style["min-width"] = "max(100px , 200px)"
-PASS element.style['min-width'] is "max(200px)"
+PASS element.style['min-width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "200px"
 
 element.style["min-width"] = "max(100px,200px)"
-PASS element.style['min-width'] is "max(200px)"
+PASS element.style['min-width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "200px"
 
 element.style["min-width"] = "clamp(100px,123px,200px)"
@@ -333,11 +333,11 @@ PASS element.style['min-width'] is "calc(1024px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "1024px"
 
 element.style["min-width"] = "hypot(4px, 5px, 7px, 9px)"
-PASS element.style['min-width'] is "hypot(13.076697px)"
+PASS element.style['min-width'] is "calc(13.076697px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "13.076696px"
 
 element.style["min-width"] = "hypot(3px, 4px)"
-PASS element.style['min-width'] is "hypot(5px)"
+PASS element.style['min-width'] is "calc(5px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "5px"
 
 element.style["min-width"] = "calc(100px * hypot(3, 4))"
@@ -345,7 +345,7 @@ PASS element.style['min-width'] is "calc(500px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "500px"
 
 element.style["min-width"] = "hypot(-5px)"
-PASS element.style['min-width'] is "hypot(5px)"
+PASS element.style['min-width'] is "calc(5px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "5px"
 
 element.style["min-width"] = "calc(1px * hypot(-5))"

@@ -31,9 +31,9 @@
 
                 // Valid expressions.
                 testExpression('calc(100px)', 'calc(100px)', '100px');
-                testExpression('max(100px + 200px)', 'max(300px)', '300px');
-                testExpression('max(100px , 200px)', 'max(200px)', '200px');
-                testExpression('max(100px,200px)', 'max(200px)', '200px');
+                testExpression('max(100px + 200px)', 'calc(300px)', '300px');
+                testExpression('max(100px , 200px)', 'calc(200px)', '200px');
+                testExpression('max(100px,200px)', 'calc(200px)', '200px');
                 testExpression('clamp(100px,123px,200px)', 'clamp(100px, 123px, 200px)', '123px');
                 testExpression('clamp(100px,300px,200px)', 'clamp(100px, 300px, 200px)', '200px');
                 testExpression('clamp(200px,300px,100px)', 'clamp(200px, 300px, 100px)', '200px');
@@ -47,10 +47,10 @@
                 testExpression('calc(100px * sqrt(100))', 'calc(1000px)', '1000px');
                 testExpression('calc(1px * sqrt(999))', 'calc(31.606961px)', propertyName == 'width' ? '31.59375px' : '31.606962px');
                 testExpression('calc(1px * pow(2, sqrt(100))', 'calc(1024px)', '1024px');
-                testExpression('hypot(4px, 5px, 7px, 9px)', 'hypot(13.076697px)', propertyName == 'width' ? '13.0625px' : '13.076696px');
-                testExpression('hypot(3px, 4px)', 'hypot(5px)', '5px');
+                testExpression('hypot(4px, 5px, 7px, 9px)', 'calc(13.076697px)', propertyName == 'width' ? '13.0625px' : '13.076696px');
+                testExpression('hypot(3px, 4px)', 'calc(5px)', '5px');
                 testExpression('calc(100px * hypot(3, 4))', 'calc(500px)', '500px');
-                testExpression('hypot(-5px)', 'hypot(5px)', '5px');
+                testExpression('hypot(-5px)', 'calc(5px)', '5px');
                 testExpression('calc(1px * hypot(-5))', 'calc(5px)', '5px');
                 testExpression('calc(1px * hypot(10000))', 'calc(10000px)', '10000px');
                 testExpression('calc(2px * sqrt(100000000))', 'calc(20000px)', '20000px');

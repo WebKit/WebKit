@@ -1,3 +1,17 @@
+2022-04-14  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        calc(): Serialize top level min/max/hypot as calc()
+        https://bugs.webkit.org/show_bug.cgi?id=239019
+
+        Reviewed by Darin Adler.
+
+        For functions that would have no effect on the top level value, serialize as calc() rather
+        than the function.
+
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        * css/calc/CSSCalcOperationNode.h:
+
 2022-04-14  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         WebCore::WorkerStorageConnection::fileSystemGetDirectory could have invalid storageConnection()
