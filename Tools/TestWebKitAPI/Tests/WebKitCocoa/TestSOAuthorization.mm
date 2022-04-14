@@ -2634,7 +2634,8 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnoreAsync)
     EXPECT_FALSE(authorizationPerformed);
 }
 
-TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=239311
+TEST(SOAuthorizationSubFrame, DISABLED_InterceptionErrorWithReferrer)
 {
     resetState();
     ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
