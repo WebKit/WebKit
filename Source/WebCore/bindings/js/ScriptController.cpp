@@ -74,6 +74,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WebAssemblyModuleRecord.h>
+#include <wtf/GenerateProfiles.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
 #include <wtf/Threading.h>
@@ -84,6 +85,8 @@
 namespace WebCore {
 using namespace JSC;
 
+enum class WebCoreProfileTag { };
+
 void ScriptController::initializeMainThread()
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -91,6 +94,7 @@ void ScriptController::initializeMainThread()
     WTF::initializeMainThread();
     WebCore::populateJITOperations();
 #endif
+    WTF::registerProfileGenerationCallback<WebCoreProfileTag>("WebCore");
 }
 
 ScriptController::ScriptController(Frame& frame)

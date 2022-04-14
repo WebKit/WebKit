@@ -1,3 +1,15 @@
+2022-04-14  Justin Michaud  <justin_michaud@apple.com>
+
+        [PGO] We should be able to build WebKit to collect PGO profiles easily
+        https://bugs.webkit.org/show_bug.cgi?id=238776
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/check-for-weak-vtables-and-externals:
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions):
+        * Scripts/webkitperl/FeatureList.pm:
+
 2022-04-14  Youenn Fablet  <youenn@apple.com>
 
         Enable ExitsUnderMemoryPressureWebRTCCase and disable ExitsUnderMemoryPressureGetUserMediaAudioCase on iOS simulator

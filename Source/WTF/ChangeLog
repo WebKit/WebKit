@@ -1,3 +1,25 @@
+2022-04-14  Justin Michaud  <justin_michaud@apple.com>
+
+        [PGO] We should be able to build WebKit to collect PGO profiles easily
+        https://bugs.webkit.org/show_bug.cgi?id=238776
+
+        Reviewed by Wenson Hsieh.
+
+        Build WebKit as follows: make release WK_LTO_MODE=thin ENABLE_LLVM_PROFILE_GENERATION=ON
+        Then, follow the directions in the log output at runtime to collect your raw PGO profiles!
+
+        We add a new compile flag plus WTF::registerProfileGenerationCallback, allowing llvm profiles
+        to be collected by sending a notifyutil signal. The files are written to the temp directory,
+        and it seems like the sandbox permits this by default. You may need to disable the sandbox if
+        you encounter issues, either by editing the *.sb files or by using an inserted dylib to interpose
+        the sandbox initialization calls. 
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/GenerateProfiles.h: Added.
+        (WTF::registerProfileGenerationCallback):
+        * wtf/PlatformEnable.h:
+
 2022-04-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Enable more efficient encoding of synchronous-message reply arguments

@@ -29,6 +29,7 @@
 #import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <mutex>
+#import <wtf/GenerateProfiles.h>
 #import <wtf/MainThread.h>
 #import <wtf/RefCounted.h>
 #import <wtf/WorkQueue.h>
@@ -41,6 +42,8 @@
 namespace WebKit {
 
 static std::once_flag flag;
+
+enum class WebKitProfileTag { };
 
 static void runInitializationCode(void* = nullptr)
 {
@@ -57,6 +60,8 @@ static void runInitializationCode(void* = nullptr)
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 
     WebCore::populateJITOperations();
+
+    WTF::registerProfileGenerationCallback<WebKitProfileTag>("WebKit");
 }
 
 void InitializeWebKit2()

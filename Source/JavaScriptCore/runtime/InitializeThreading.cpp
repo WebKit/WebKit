@@ -44,12 +44,15 @@
 #include "WasmFaultSignalHandler.h"
 #include "WasmThunks.h"
 #include <mutex>
+#include <wtf/GenerateProfiles.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>
 
 namespace JSC {
 
 static_assert(sizeof(bool) == 1, "LLInt and JIT assume sizeof(bool) is always 1 when touching it directly from assembly code.");
+
+enum class JSCProfileTag { };
 
 void initialize()
 {
@@ -115,6 +118,8 @@ void initialize()
         WTF::compilerFence();
         RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
         g_jscConfig.initializeHasBeenCalled = true;
+
+        WTF::registerProfileGenerationCallback<JSCProfileTag>("JavaScriptCore");
     });
 }
 

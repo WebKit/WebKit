@@ -1,3 +1,13 @@
+2022-04-14  Justin Michaud  <justin_michaud@apple.com>
+
+        [PGO] We should be able to build WebKit to collect PGO profiles easily
+        https://bugs.webkit.org/show_bug.cgi?id=238776
+
+        Reviewed by Wenson Hsieh.
+
+        * Makefile.shared:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2022-04-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Make the ENABLE_GPU_PROCESS CMake option depend on USE_ANGLE_WEBGL

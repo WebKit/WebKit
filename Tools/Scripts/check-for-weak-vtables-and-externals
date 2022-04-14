@@ -60,6 +60,7 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
     }
     my @weakVTableClasses = ();
     my @weakExternalSymbols = ();
+    my $skipProfileSymbols = coverageIsEnabled() || $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} == "ON" || $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} == "ENABLE_LLVM_PROFILE_GENERATION";
     while (<NM>) {
         if (/^STDOUT:/) {
             # Ignore undefined, RTTI and typeinfo symbols.
@@ -69,7 +70,7 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
             next if /\b___asan/;
 
             # Ignore weak symbols present when compiling with coverage enabled.
-            next if /\b(___llvm_profile_filename|___llvm_profile_raw_version|_lprofDirMode)/ && coverageIsEnabled();
+            next if /\b(___llvm_profile_filename|___llvm_profile_raw_version|_lprofDirMode|__llvm_profile_reset_counters)/ && $skipProfileSymbols;
 
             if (/weak external vtable for (.*)$/) {
                 push @weakVTableClasses, $1;

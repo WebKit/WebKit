@@ -30,6 +30,7 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/WebCoreJITOperations.h>
+#include <wtf/GenerateProfiles.h>
 #include <wtf/LogInitialization.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>

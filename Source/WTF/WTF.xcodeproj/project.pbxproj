@@ -81,6 +81,7 @@
 		5CC0EE892162BC2200A1A842 /* URLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE862162BC2200A1A842 /* URLCocoa.mm */; };
 		5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CC0EE882162BC2200A1A842 /* NSURLExtras.mm */; };
 		5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */; };
+		641C2E5B27FBAAA5002E0814 /* GenerateProfiles.h in Headers */ = {isa = PBXBuildFile; fileRef = 641C2E5A27FBAAA5002E0814 /* GenerateProfiles.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
 		70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomStringImpl.cpp */; };
 		7A05093F1FB9DCC500B33FB8 /* JSONValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */; };
@@ -1137,6 +1138,7 @@
 		5D247B7314689C4700E78B76 /* WTF.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WTF.xcconfig; sourceTree = "<group>"; };
 		5FAD3AE021B9636600BEE178 /* URLHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLHelpers.h; sourceTree = "<group>"; };
 		5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLHelpers.cpp; sourceTree = "<group>"; };
+		641C2E5A27FBAAA5002E0814 /* GenerateProfiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenerateProfiles.h; sourceTree = "<group>"; };
 		70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolRegistry.cpp; sourceTree = "<group>"; };
 		70A993FD1AD7151300FA615B /* SymbolRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolRegistry.h; sourceTree = "<group>"; };
 		70ECA60A1B02426800449739 /* AtomStringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomStringImpl.cpp; sourceTree = "<group>"; };
@@ -1994,6 +1996,7 @@
 				1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */,
 				1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */,
 				53F1D98620477B9800EBC6BF /* FunctionTraits.h */,
+				641C2E5A27FBAAA5002E0814 /* GenerateProfiles.h */,
 				E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */,
 				E3831F922703101A00EF5EB3 /* GenericTimeMixin.h */,
 				A8A472A8151A825A004123FF /* GetPtr.h */,
@@ -2920,6 +2923,7 @@
 				DD3DC94E27A4BF8E007E5B61 /* FunctionTraits.h in Headers */,
 				DDF3080227C08A77006A526F /* generate-unified-source-bundles.rb in Headers */,
 				DDF3080327C08A77006A526F /* GeneratePreferences.rb in Headers */,
+				641C2E5B27FBAAA5002E0814 /* GenerateProfiles.h in Headers */,
 				DDCAF31D27B1E7C500C45308 /* GenericHashKey.h in Headers */,
 				DD3DC93127A4BF8E007E5B61 /* GenericTimeMixin.h in Headers */,
 				DD3DC94727A4BF8E007E5B61 /* GetPtr.h in Headers */,

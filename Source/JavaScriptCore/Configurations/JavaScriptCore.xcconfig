@@ -31,7 +31,7 @@ OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol,__ZTISt9bad_alloc -Wl,-unexp
 
 OTHER_LDFLAGS_BASE = $(OTHER_LDFLAGS_HIDE_SYMBOLS) -force_load "$(WTF_ARCHIVE)" $(SOURCE_VERSION_LDFLAGS);
 OTHER_LDFLAGS[sdk=embedded*] = $(inherited) $(OTHER_LDFLAGS_BASE);
-OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(OTHER_LDFLAGS_BASE) -framework CoreServices;
+OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(OTHER_LDFLAGS_BASE) -framework CoreServices $(PROFILE_GENERATE_OR_USE_LDFLAGS);
 
 WTF_ARCHIVE = $(BUILT_PRODUCTS_DIR)/libWTF.a;
 WTF_ARCHIVE[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)/usr/local/lib/libWTF.a;
@@ -40,6 +40,8 @@ SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/JavaScriptCore.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,JavaScriptCore.order;
 
+PROFILE_DATA_FLAGS_ENABLED = -fprofile-instr-use=$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.profdata;
+
 PROFILE_DATA_FLAGS = $(PROFILE_DATA_FLAGS_$(CONFIGURATION)_$(WK_PLATFORM_NAME));
 PROFILE_DATA_FLAGS_Release_macosx = $(PROFILE_DATA_FLAGS_Release_macosx$(WK_MACOS_1200));
 PROFILE_DATA_FLAGS_Release_macosx_MACOS_SINCE_1200 = $(PROFILE_DATA_FLAGS_ENABLED);
@@ -47,12 +49,17 @@ PROFILE_DATA_FLAGS_Release_iphoneos = $(PROFILE_DATA_FLAGS_ENABLED);
 PROFILE_DATA_FLAGS_Production_macosx = $(PROFILE_DATA_FLAGS_Production_macosx$(WK_MACOS_1200));
 PROFILE_DATA_FLAGS_Production_macosx_MACOS_SINCE_1200 = $(PROFILE_DATA_FLAGS_ENABLED);
 PROFILE_DATA_FLAGS_Production_iphoneos = $(PROFILE_DATA_FLAGS_ENABLED);
-PROFILE_DATA_FLAGS_ENABLED = -fprofile-instr-use=$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.profdata;
+
+PROFILE_GENERATE_OR_USE_CFLAGS_ENABLE_LLVM_PROFILE_GENERATION = -fprofile-instr-generate -DENABLE_LLVM_PROFILE_GENERATION=1;
+PROFILE_GENERATE_OR_USE_CFLAGS_ = $(PROFILE_DATA_FLAGS);
+PROFILE_GENERATE_OR_USE_CFLAGS = $(PROFILE_GENERATE_OR_USE_CFLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
+PROFILE_GENERATE_OR_USE_LDFLAGS_ENABLE_LLVM_PROFILE_GENERATION = -fprofile-instr-generate -DENABLE_LLVM_PROFILE_GENERATION=1;
+PROFILE_GENERATE_OR_USE_LDFLAGS = $(PROFILE_GENERATE_OR_USE_LDFLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
 
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-OTHER_CFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ -D__STDC_WANT_LIB_EXT1__=1 $(PROFILE_DATA_FLAGS);
-OTHER_CPLUSPLUSFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ $(PROFILE_DATA_FLAGS);
+OTHER_CFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ -D__STDC_WANT_LIB_EXT1__=1 $(PROFILE_GENERATE_OR_USE_CFLAGS);
+OTHER_CPLUSPLUSFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ $(PROFILE_GENERATE_OR_USE_CFLAGS);
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(JAVASCRIPTCORE_FRAMEWORKS_DIR);
