@@ -31,6 +31,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <unistd.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/unix/UnixFileDescriptor.h>
@@ -49,6 +50,10 @@ struct DMABufObject {
     DMABufObject(DMABufObject&&) = default;
     DMABufObject& operator=(DMABufObject&&) = default;
 
+    template<class Encoder> void encode(Encoder&) const &;
+    template<class Encoder> void encode(Encoder&) &&;
+    template<class Decoder> static std::optional<DMABufObject> decode(Decoder&);
+
     uintptr_t handle { 0 };
     DMABufFormat format { };
     uint32_t width { 0 };
@@ -59,5 +64,89 @@ struct DMABufObject {
     std::array<uint32_t, DMABufFormat::c_maxPlanes> stride { 0, 0, 0, 0 };
     std::array<uint64_t, DMABufFormat::c_maxPlanes> modifier { 0, 0, 0, 0 };
 };
+
+template<class Encoder>
+void DMABufObject::encode(Encoder& encoder) const &
+{
+    encoder << handle << uint32_t(format.fourcc) << width << height;
+    encoder << releaseFlag.fd.duplicate();
+
+    for (unsigned i = 0; i < DMABufFormat::c_maxPlanes; ++i) {
+        encoder << fd[i].duplicate();
+        encoder << offset[i] << stride[i] << modifier[i];
+    }
+}
+
+template<class Encoder>
+void DMABufObject::encode(Encoder& encoder) &&
+{
+    encoder << handle << uint32_t(format.fourcc) << width << height;
+    encoder << WTFMove(releaseFlag.fd);
+
+    for (unsigned i = 0; i < DMABufFormat::c_maxPlanes; ++i) {
+        encoder << WTFMove(fd[i]);
+        encoder << offset[i] << stride[i] << modifier[i];
+    }
+}
+
+template<class Decoder>
+std::optional<DMABufObject> DMABufObject::decode(Decoder& decoder)
+{
+    std::optional<uintptr_t> handle;
+    decoder >> handle;
+    if (!handle)
+        return std::nullopt;
+    std::optional<uint32_t> fourcc;
+    decoder >> fourcc;
+    if (!fourcc)
+        return std::nullopt;
+    std::optional<uint32_t> width;
+    decoder >> width;
+    if (!width)
+        return std::nullopt;
+    std::optional<uint32_t> height;
+    decoder >> height;
+    if (!height)
+        return std::nullopt;
+
+    DMABufObject dmabufObject(*handle);
+    dmabufObject.format = DMABufFormat::create(*fourcc);
+    dmabufObject.width = *width;
+    dmabufObject.height = *height;
+
+    std::optional<WTF::UnixFileDescriptor> releaseFlag;
+    decoder >> releaseFlag;
+    if (!releaseFlag)
+        return std::nullopt;
+    dmabufObject.releaseFlag.fd = WTFMove(*releaseFlag);
+
+    for (unsigned i = 0; i < DMABufFormat::c_maxPlanes; ++i) {
+        std::optional<WTF::UnixFileDescriptor> fd;
+        decoder >> fd;
+        if (!fd)
+            return std::nullopt;
+        dmabufObject.fd[i] = WTFMove(*fd);
+
+        std::optional<size_t> offset;
+        decoder >> offset;
+        if (!offset)
+            return std::nullopt;
+        dmabufObject.offset[i] = *offset;
+
+        std::optional<uint32_t> stride;
+        decoder >> stride;
+        if (!stride)
+            return std::nullopt;
+        dmabufObject.stride[i] = *stride;
+
+        std::optional<uint64_t> modifier;
+        decoder >> modifier;
+        if (!modifier)
+            return std::nullopt;
+        dmabufObject.modifier[i] = *modifier;
+    }
+
+    return dmabufObject;
+}
 
 } // namespace WebCore

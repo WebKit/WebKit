@@ -1,3 +1,25 @@
+2022-04-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Provide WK2 IPC encoding, decoding methods for the DMABufObject type
+        https://bugs.webkit.org/show_bug.cgi?id=239038
+
+        Reviewed by Adrian Perez de Castro.
+
+        Provide encoding and decoding methods on the DMABufObject class,
+        enabling transport over IPC channels.
+
+        There are two separate ref-qualified encoding methods. When encoding
+        an object that's managed through an lvalue reference, we duplicate the
+        file descriptor objects since the DMABufObject will live on. When
+        managed through an rvalue object, we know the object's lifetime is
+        intended to be limited to this encoding process, so we can avoid the
+        file descriptor duplication and move the fd values into the encoder.
+
+        * platform/graphics/gbm/DMABufObject.h:
+        (WebCore::DMABufObject::encode const):
+        (WebCore::DMABufObject::encode):
+        (WebCore::DMABufObject::decode):
+
 2022-04-14  Youenn Fablet  <youenn@apple.com>
 
         Expose workers as service worker clients and implement registration matching for dedicated workers
