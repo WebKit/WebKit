@@ -99,6 +99,9 @@ void WorkerStorageConnection::fileSystemGetDirectory(ClientOrigin&& origin, Stor
                 downcast<WorkerGlobalScope>(scope).storageConnection().didGetDirectory(callbackIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         };
+        if (!mainThreadConnection)
+            return mainThreadCallback(Exception { InvalidStateError });
+
         mainThreadConnection->fileSystemGetDirectory(WTFMove(origin), WTFMove(mainThreadCallback));
     });
 }

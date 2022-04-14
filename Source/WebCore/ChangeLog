@@ -1,3 +1,15 @@
+2022-04-14  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        WebCore::WorkerStorageConnection::fileSystemGetDirectory could have invalid storageConnection()
+        https://bugs.webkit.org/show_bug.cgi?id=239355
+
+        Reviewed by Sihui Liu.
+
+        Add a check since storageConnection() can be invalid at this point.
+
+        * Modules/storage/WorkerStorageConnection.cpp:
+        (WebCore::WorkerStorageConnection::fileSystemGetDirectory):
+
 2022-04-14  Chris Dumez  <cdumez@apple.com>
 
         Require an existing AtomString for HTMLFormElement's named getter parameter
