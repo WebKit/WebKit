@@ -1,5 +1,14 @@
 2022-04-14  Karl Rackler  <rackler@apple.com>
 
+        [ Mac ] editing/execCommand/insert-ordered-list-and-delete.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=239345
+
+        Unreviewed test gardening. 
+
+        * platform/mac/TestExpectations:
+
+2022-04-14  Karl Rackler  <rackler@apple.com>
+
         [ Mac wk2 arm64 ] scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=225529
 

@@ -2291,3 +2291,5 @@ http/tests/webgpu [ Pass ]
 
 # fractional pixel diff between modern and legacy line layout.
 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
+
+editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
