@@ -33,7 +33,6 @@ extern "C" {
 void NetworkServiceInitializer();
 void WebContentServiceInitializer();
 void GPUServiceInitializer();
-void WebAuthnServiceInitializer();
 
 #ifdef __cplusplus
 }

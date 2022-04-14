@@ -109,10 +109,6 @@ const char* processTypeDescription(std::optional<AuxiliaryProcessType> type)
     case AuxiliaryProcessType::GPU:
         return "GPU";
 #endif
-#if ENABLE(WEB_AUTHN)
-    case AuxiliaryProcessType::WebAuthn:
-        return "WebAuthn";
-#endif
     }
     return "Unknown";
 }

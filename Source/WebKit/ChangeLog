@@ -1,3 +1,106 @@
+2022-04-14  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Clean up WebAuthenticationModern and WebAuthnProcess
+        https://bugs.webkit.org/show_bug.cgi?id=239073
+        rdar://problem/91571030
+
+        The WebAuthenticationModern flag and WebAuthnProcess are no longer used
+        and can be removed. This patch removes all references to both the flag
+        and the process.
+
+        Reviewed by Brent Fulgham.
+
+        Covered by existing tests and manual testing on macOS / iOS.
+
+        * Configurations/WebAuthnService.xcconfig: Removed.
+        * Configurations/WebKit.xcconfig:
+        * DerivedSources.make:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb.in: Removed.
+        * Scripts/process-entitlements.sh:
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::isInWebKitChildProcess):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::processStorageClass):
+        (WebKit::sandboxDirectory):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebAuthenticationModernEnabled): Deleted.
+        (WKPreferencesGetWebAuthenticationModernEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _webAuthnProcessIdentifier]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (+[_WKWebAuthenticationPanel importLocalAuthenticatorWithAccessGroup:credential:error:]):
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::getLaunchOptions):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::notifyPreferencesChanged):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::serviceName):
+        (WebKit::shouldLeakBoost):
+        * UIProcess/WebAuthentication/Authenticator.h:
+        (WebKit::Authenticator::requestData const):
+        (WebKit::Authenticator::setWebAuthenticationModernEnabled): Deleted.
+        (WebKit::Authenticator::webAuthenticationModernEnabled const): Deleted.
+        (): Deleted.
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::authenticatorAdded):
+        (WebKit::AuthenticatorManager::enableModernWebAuthentication): Deleted.
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::makeCredential):
+        (WebKit::LocalAuthenticator::getAssertion):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterResponseSelected):
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp: Removed.
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.h: Removed.
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueGetNextAssertionAfterResponseReceived):
+        (WebKit::CtapAuthenticator::continueRequestPinAfterGetKeyAgreement):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getWebAuthnProcessConnection): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getWebAuthnProcessConnection): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-OSX.plist: Removed.
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnService/Info-iOS.plist: Removed.
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnServiceEntryPoint.mm: Removed.
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.cpp: Removed.
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.h: Removed.
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.messages.in: Removed.
+        * WebAuthnProcess/WebAuthnProcess.cpp: Removed.
+        * WebAuthnProcess/WebAuthnProcess.h: Removed.
+        * WebAuthnProcess/WebAuthnProcess.messages.in: Removed.
+        * WebAuthnProcess/WebAuthnProcessCreationParameters.cpp: Removed.
+        * WebAuthnProcess/WebAuthnProcessCreationParameters.h: Removed.
+        * WebAuthnProcess/ios/WebAuthnProcessIOS.mm: Removed.
+        * WebAuthnProcess/mac/WebAuthnProcessMac.mm: Removed.
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebAuthenticatorCoordinator::makeCredential):
+        (WebKit::WebAuthenticatorCoordinator::getAssertion):
+        (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+        * WebProcess/WebAuthentication/WebAuthnProcessConnection.cpp: Removed.
+        * WebProcess/WebAuthentication/WebAuthnProcessConnection.h: Removed.
+        * WebProcess/WebAuthentication/WebAuthnProcessConnection.messages.in: Removed.
+        * WebProcess/WebAuthentication/WebAuthnProcessConnectionInfo.h: Removed.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setMockWebAuthenticationConfiguration):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getWebAuthnProcessConnection): Deleted.
+        (WebKit::WebProcess::ensureWebAuthnProcessConnection): Deleted.
+        (WebKit::WebProcess::webAuthnProcessConnectionClosed): Deleted.
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::existingWebAuthnProcessConnection): Deleted.
+
 2022-04-14  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add support for find-and-replace keyboard shortcut

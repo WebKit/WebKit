@@ -1,3 +1,22 @@
+2022-04-14  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Clean up WebAuthenticationModern and WebAuthnProcess
+        https://bugs.webkit.org/show_bug.cgi?id=239073
+        rdar://problem/91571030
+
+        The WebAuthenticationModern flag and WebAuthnProcess are no longer used
+        and can be removed. This patch removes all references to both the flag
+        and the process.
+
+        Reviewed by Brent Fulgham.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebAuthenticationModernEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webAuthenticationModernEnabled const): Deleted.
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::processTypeDescription):
+        * platform/RuntimeApplicationChecks.h:
+
 2022-04-14  Chris Dumez  <cdumez@apple.com>
 
         Drop inefficient String::append() overloads

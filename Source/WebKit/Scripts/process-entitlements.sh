@@ -117,32 +117,6 @@ function mac_process_gpu_entitlements()
     fi
 }
 
-function mac_process_webauthn_entitlements()
-{
-    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
-    then
-        plistbuddy Add :com.apple.security.device.usb bool YES
-
-        plistbuddy Add :keychain-access-groups array
-        plistbuddy Add :keychain-access-groups:0 string com.apple.webkit.webauthn
-        plistbuddy Add :keychain-access-groups:1 string lockdown-identities
-
-        plistbuddy Add :com.apple.security.attestation.access bool YES
-        plistbuddy Add :com.apple.keystore.sik.access bool YES
-        plistbuddy Add :com.apple.private.RemoteServiceDiscovery.allow-sandbox bool YES
-        plistbuddy Add :com.apple.private.RemoteServiceDiscovery.device-admin bool YES
-        plistbuddy Add :com.apple.appattest.spi bool YES
-        plistbuddy Add :com.apple.mobileactivationd.spi bool YES
-        plistbuddy Add :com.apple.mobileactivationd.bridge bool YES
-        plistbuddy Add :com.apple.private.security.bootpolicy bool YES
-
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
-        then
-            plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
-        fi
-    fi
-}
-
 function mac_process_network_entitlements()
 {
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
@@ -425,47 +399,6 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.private.attribution.explicitly-assumed-identities:0:type string wildcard
 }
 
-function ios_family_process_webauthn_entitlements()
-{
-    plistbuddy Add :com.apple.private.memorystatus bool YES
-    plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
-
-    plistbuddy Add :com.apple.security.device.usb bool YES
-
-    plistbuddy Add :com.apple.private.tcc.allow array
-    plistbuddy Add :com.apple.private.tcc.allow:0 string kTCCServiceListenEvent
-
-    plistbuddy Add :com.apple.security.application-groups array
-    plistbuddy Add :com.apple.security.application-groups:0 string group.com.apple.webkit
-
-    plistbuddy Add :com.apple.nfcd.hwmanager bool YES
-    plistbuddy Add :com.apple.nfcd.session.reader.internal bool YES
-    # FIXME(rdar://problem/72646664): Find a better way to invoke NearField in the background.
-    plistbuddy Add :com.apple.internal.nfc.allow.backgrounded.session bool YES
-    plistbuddy Add :com.apple.UIKit.vends-view-services bool YES
-
-    plistbuddy Add :keychain-access-groups array
-    plistbuddy Add :keychain-access-groups:0 string com.apple.webkit.webauthn
-    plistbuddy Add :keychain-access-groups:1 string lockdown-identities
-
-    plistbuddy Add :com.apple.private.MobileGestalt.AllowedProtectedKeys array
-    plistbuddy Add :com.apple.private.MobileGestalt.AllowedProtectedKeys:0 string UniqueChipID
-    plistbuddy Add :com.apple.private.MobileGestalt.AllowedProtectedKeys:1 string SerialNumber
-
-    plistbuddy Add :com.apple.security.system-groups array
-    plistbuddy Add :com.apple.security.system-groups:0 string systemgroup.com.apple.mobileactivationd
-
-    plistbuddy Add :com.apple.security.attestation.access bool YES
-    plistbuddy Add :com.apple.keystore.sik.access bool YES
-    plistbuddy Add :com.apple.appattest.spi bool YES
-    plistbuddy Add :com.apple.mobileactivationd.spi bool YES
-
-    plistbuddy Add :com.apple.springboard.remote-alert bool YES
-    plistbuddy Add :com.apple.frontboard.launchapplications bool YES
-
-    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebAuthn
-}
-
 function ios_family_process_adattributiond_entitlements()
 {
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.adattributiond
@@ -520,7 +453,6 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then mac_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then mac_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then mac_process_gpu_entitlements
-    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebAuthn ]]; then mac_process_webauthn_entitlements
     elif [[ "${PRODUCT_NAME}" == webpushd ]]; then mac_process_webpushd_entitlements
     elif [[ "${PRODUCT_NAME}" != adattributiond ]]; then echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
@@ -544,7 +476,6 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then ios_family_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then ios_family_process_network_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then ios_family_process_gpu_entitlements
-    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebAuthn ]]; then ios_family_process_webauthn_entitlements
     elif [[ "${PRODUCT_NAME}" == adattributiond ]]; then
         ios_family_process_adattributiond_entitlements
     elif [[ "${PRODUCT_NAME}" == webpushd ]]; then
