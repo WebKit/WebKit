@@ -1,3 +1,14 @@
+2022-04-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkit.org] Remove leading r from archive revisions
+        https://bugs.webkit.org/show_bug.cgi?id=239322
+        <rdar://problem/91735590>
+
+        Reviewed by Ryan Haddad.
+
+        * wp-content/themes/webkit/build-archives.php: Remove leading 'r' from revisions,
+        since "revisions" will now be identifiers.
+
 2022-03-11  Jon Davis  <jond@apple.com>
 
         Allow table of contents on posts in special cases

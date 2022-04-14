@@ -47,7 +47,7 @@ class WebKitBuildArchives {
             $revision = new stdClass();
             $revision->url = $entry->s3_url->S;
             $revision->creationTime = $entry->creationTime->N;
-            $latest[$platform_key]["r" . $entry->revision->N] = $revision;
+            $latest[$platform_key][$entry->revision->N] = $revision;
         }
 
         set_transient($cachekey, serialize($latest), 600); // expire cache every 10 minutes
