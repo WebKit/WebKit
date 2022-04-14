@@ -77,6 +77,8 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.redirect = this->redirect;
     copy.referrerPolicy = this->referrerPolicy;
     copy.integrity = this->integrity.isolatedCopy();
+    copy.keepAlive = this->keepAlive;
+    copy.clientIdentifier = this->clientIdentifier;
 
     // ResourceLoaderOptions
     copy.sendLoadCallbacks = this->sendLoadCallbacks;

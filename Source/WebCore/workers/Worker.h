@@ -81,10 +81,12 @@ public:
     WorkerType type() const { return m_options.type; }
 
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
+
     static void forEachWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
+    static Worker* workerByIdentifier(ScriptExecutionContextIdentifier);
 
 private:
-    explicit Worker(ScriptExecutionContext&, JSC::RuntimeFlags, WorkerOptions&&);
+    Worker(ScriptExecutionContext&, JSC::RuntimeFlags, WorkerOptions&&);
 
     EventTargetInterface eventTargetInterface() const final { return WorkerEventTargetInterfaceType; }
 
@@ -116,6 +118,7 @@ private:
 #if ENABLE(WEB_RTC)
     HashSet<String> m_transformers;
 #endif
+    ScriptExecutionContextIdentifier m_clientIdentifier;
 };
 
 } // namespace WebCore

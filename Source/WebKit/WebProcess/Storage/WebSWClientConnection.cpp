@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,7 @@
 #include <WebCore/ServiceWorkerRegistrationData.h>
 #include <WebCore/ServiceWorkerRegistrationKey.h>
 #include <WebCore/WorkerFetchResult.h>
+#include <WebCore/WorkerScriptLoader.h>
 
 namespace WebKit {
 using namespace PAL;
@@ -180,11 +181,18 @@ void WebSWClientConnection::whenRegistrationReady(const SecurityOriginData& topO
     });
 }
 
-void WebSWClientConnection::setDocumentIsControlled(ScriptExecutionContextIdentifier documentIdentifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool)>&& completionHandler)
+void WebSWClientConnection::setServiceWorkerClientIsControlled(ScriptExecutionContextIdentifier identifier, ServiceWorkerRegistrationData&& data, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto* documentLoader = DocumentLoader::fromScriptExecutionContextIdentifier(documentIdentifier);
-    bool result = documentLoader ? documentLoader->setControllingServiceWorkerRegistration(WTFMove(data)) : false;
-    completionHandler(result);
+    if (auto* loader = DocumentLoader::fromScriptExecutionContextIdentifier(identifier)) {
+        completionHandler(loader->setControllingServiceWorkerRegistration(WTFMove(data)));
+        return;
+    }
+
+    if (auto* loader = WorkerScriptLoader::fromScriptExecutionContextIdentifier(identifier)) {
+        completionHandler(data.activeWorker ? loader->setControllingServiceWorker(WTFMove(*data.activeWorker)) : false);
+        return;
+    }
+    completionHandler(false);
 }
 
 void WebSWClientConnection::getRegistrations(SecurityOriginData&& topOrigin, const URL& clientURL, GetRegistrationsCallback&& callback)

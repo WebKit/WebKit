@@ -29,6 +29,8 @@
 #include "CrossOriginEmbedderPolicy.h"
 #include "FetchRequestCredentials.h"
 #include "NotificationPermission.h"
+#include "ScriptExecutionContextIdentifier.h"
+#include "ServiceWorkerRegistrationData.h"
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include "WorkerType.h"
@@ -76,6 +78,10 @@ public:
     Settings::Values settingsValues;
     WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
     std::optional<PAL::SessionID> sessionID { std::nullopt };
+#if ENABLE(SERVICE_WORKER)
+    std::optional<ServiceWorkerData> serviceWorkerData;
+#endif
+    ScriptExecutionContextIdentifier clientIdentifier;
 
     WorkerParameters isolatedCopy() const;
 };

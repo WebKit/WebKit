@@ -38,7 +38,7 @@ messages -> WebSWClientConnection {
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::IPCHandle handle)
     PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 
-    SetDocumentIsControlled(WebCore::ScriptExecutionContextIdentifier temporaryDocumentIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)
+    SetServiceWorkerClientIsControlled(WebCore::ScriptExecutionContextIdentifier workerIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)
 
     FocusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier) -> (std::optional<WebCore::ServiceWorkerClientData> result)
 }

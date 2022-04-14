@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+struct ServiceWorkerRegistrationData;
 class SharedWorker;
 class WorkerScriptLoader;
 struct WorkerFetchResult;

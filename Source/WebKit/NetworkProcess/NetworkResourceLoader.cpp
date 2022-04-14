@@ -1220,7 +1220,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
     LOADER_RELEASE_LOG("continueWillSendRequest: (isAllowedToAskUserForCredentials=%d)", isAllowedToAskUserForCredentials);
 
 #if ENABLE(SERVICE_WORKER)
-    if (parameters().options.mode == FetchOptions::Mode::Navigate) {
+    if (parameters().options.mode == FetchOptions::Mode::Navigate || (parameters().options.destination == FetchOptions::Destination::Worker && m_serviceWorkerFetchTask)) {
         m_serviceWorkerRegistration = { };
         if (auto serviceWorkerFetchTask = m_connection->createFetchTask(*this, newRequest)) {
             LOADER_RELEASE_LOG("continueWillSendRequest: Created a ServiceWorkerFetchTask to handle the redirect (fetchIdentifier=%" PRIu64 ")", serviceWorkerFetchTask->fetchIdentifier().toUInt64());

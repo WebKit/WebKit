@@ -1,5 +1,17 @@
 2022-04-14  Youenn Fablet  <youenn@apple.com>
 
+        Expose workers as service worker clients and implement registration matching for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=239066
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * http/wpt/service-workers/controlled-dedicatedworker.https-expected.txt: Added.
+        * http/wpt/service-workers/controlled-dedicatedworker.https.html: Added.
+        * http/wpt/service-workers/resources/controlled-worker.js: Added.
+
+2022-04-14  Youenn Fablet  <youenn@apple.com>
+
         A shared worker in a cached page should not allow the remote shared worker to continue executing
         https://bugs.webkit.org/show_bug.cgi?id=239286
 

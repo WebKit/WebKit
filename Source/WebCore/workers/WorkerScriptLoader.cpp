@@ -45,12 +45,22 @@
 
 namespace WebCore {
 
+static HashMap<ScriptExecutionContextIdentifier, WorkerScriptLoader*>& scriptExecutionContextIdentifierToWorkerScriptLoaderMap()
+{
+    static MainThreadNeverDestroyed<HashMap<ScriptExecutionContextIdentifier, WorkerScriptLoader*>> map;
+    return map.get();
+}
+
 WorkerScriptLoader::WorkerScriptLoader()
     : m_script(ScriptBuffer::empty())
 {
 }
 
-WorkerScriptLoader::~WorkerScriptLoader() = default;
+WorkerScriptLoader::~WorkerScriptLoader()
+{
+    if (m_clientIdentifier)
+        scriptExecutionContextIdentifierToWorkerScriptLoaderMap().remove(m_clientIdentifier);
+}
 
 std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, Source source, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
 {
@@ -93,11 +103,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
     options.destination = m_destination;
-#if ENABLE(SERVICE_WORKER)
-    options.serviceWorkersMode = isServiceWorkerGlobalScope ? ServiceWorkersMode::None : ServiceWorkersMode::All;
-    if (auto* activeServiceWorker = workerGlobalScope.activeServiceWorker())
-        options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
-#endif
+
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(*request), *this, options);
 
     // If the fetching attempt failed, throw a NetworkError exception and abort all these steps.
@@ -115,7 +121,7 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     return std::nullopt;
 }
 
-void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode)
+void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, Source source, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode, ScriptExecutionContextIdentifier clientIdentifier)
 {
     m_client = &client;
     m_url = scriptRequest.url();
@@ -142,7 +148,17 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     // A service worker job can be executed from a worker context or a document context.
     options.serviceWorkersMode = serviceWorkerMode;
 #if ENABLE(SERVICE_WORKER)
-    if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
+    // FIXME: Add support for shared worker.
+    if (m_destination == FetchOptions::Destination::Worker && is<Document>(scriptExecutionContext)) {
+        ASSERT(clientIdentifier);
+        // In case of blob URLs, we reuse the document controlling service worker.
+        if (request->url().protocolIsBlob() && scriptExecutionContext.activeServiceWorker())
+            setControllingServiceWorker(ServiceWorkerData { scriptExecutionContext.activeServiceWorker()->data() });
+        else {
+            options.clientIdentifier = m_clientIdentifier = clientIdentifier;
+            scriptExecutionContextIdentifierToWorkerScriptLoaderMap().add(m_clientIdentifier, this);
+        }
+    } else if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
 
@@ -304,5 +320,21 @@ WorkerFetchResult WorkerScriptLoader::fetchResult() const
         return workerFetchError(error());
     return { script(), lastRequestURL(), certificateInfo(), contentSecurityPolicy(), crossOriginEmbedderPolicy(), referrerPolicy(), { } };
 }
+
+WorkerScriptLoader* WorkerScriptLoader::fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier identifier)
+{
+    return scriptExecutionContextIdentifierToWorkerScriptLoaderMap().get(identifier);
+}
+
+#if ENABLE(SERVICE_WORKER)
+bool WorkerScriptLoader::setControllingServiceWorker(ServiceWorkerData&& activeServiceWorkerData)
+{
+    if (!m_client)
+        return false;
+
+    m_activeServiceWorkerData = WTFMove(activeServiceWorkerData);
+    return true;
+}
+#endif
 
 } // namespace WebCore

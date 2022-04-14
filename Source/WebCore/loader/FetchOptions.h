@@ -44,9 +44,9 @@ struct FetchOptions {
     enum class Redirect : uint8_t { Follow, Error, Manual };
 
     FetchOptions() = default;
-    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool);
-    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive }; }
-    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, WTFMove(integrity).isolatedCopy(), keepAlive }; }
+    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool, std::optional<ScriptExecutionContextIdentifier>);
+    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive, clientIdentifier }; }
+    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, WTFMove(integrity).isolatedCopy(), keepAlive, clientIdentifier }; }
 
     template<class Encoder> void encodePersistent(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decodePersistent(Decoder&, FetchOptions&);
@@ -59,20 +59,21 @@ struct FetchOptions {
     Cache cache { Cache::Default };
     Redirect redirect { Redirect::Follow };
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
-    bool keepAlive { false };
     String integrity;
+    bool keepAlive { false };
     std::optional<ScriptExecutionContextIdentifier> clientIdentifier;
 };
 
-inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive)
+inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive, std::optional<ScriptExecutionContextIdentifier> clientIdentifier)
     : destination(destination)
     , mode(mode)
     , credentials(credentials)
     , cache(cache)
     , redirect(redirect)
     , referrerPolicy(referrerPolicy)
-    , keepAlive(keepAlive)
     , integrity(WTFMove(integrity))
+    , keepAlive(keepAlive)
+    , clientIdentifier(clientIdentifier)
 {
 }
 

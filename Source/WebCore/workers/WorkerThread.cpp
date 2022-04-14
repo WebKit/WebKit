@@ -64,6 +64,10 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         settingsValues.isolatedCopy(),
         workerThreadMode,
         sessionID,
+#if ENABLE(SERVICE_WORKER)
+        crossThreadCopy(serviceWorkerData),
+#endif
+        clientIdentifier
     };
 }
 

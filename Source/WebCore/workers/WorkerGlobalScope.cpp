@@ -48,6 +48,7 @@
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
+#include "ServiceWorkerClientData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
 #include "WorkerCacheStorageConnection.h"
@@ -91,7 +92,7 @@ static WorkQueue& sharedFileSystemStorageQueue()
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
-    : WorkerOrWorkletGlobalScope(type, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread)
+    : WorkerOrWorkletGlobalScope(type, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread, params.clientIdentifier)
     , m_url(params.scriptURL)
     , m_inspectorIdentifier(params.inspectorIdentifier)
     , m_userAgent(params.userAgent)
@@ -652,5 +653,15 @@ void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScri
             sourceProvider.tryReplaceScriptBuffer(pair.value);
     }
 }
+
+#if ENABLE(SERVICE_WORKER)
+void WorkerGlobalScope::updateServiceWorkerClientData()
+{
+    ASSERT(type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker);
+    auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
+    SWClientConnection& connection = swClientConnection();
+    connection.registerServiceWorkerClient(topOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
+}
+#endif
 
 } // namespace WebCore

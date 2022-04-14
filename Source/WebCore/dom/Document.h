@@ -1568,7 +1568,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void setServiceWorkerConnection(SWClientConnection*);
-    void updateServiceWorkerClientData();
+    void updateServiceWorkerClientData() final;
     WEBCORE_EXPORT void navigateFromServiceWorker(const URL&, CompletionHandler<void(bool)>&&);
 #endif
 

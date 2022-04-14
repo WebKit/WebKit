@@ -1,3 +1,15 @@
+2022-04-14  Youenn Fablet  <youenn@apple.com>
+
+        Expose workers as service worker clients and implement registration matching for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=239066
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/local-url-inherit-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-client-id.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-interception-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/worker-interception.https-expected.txt:
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html

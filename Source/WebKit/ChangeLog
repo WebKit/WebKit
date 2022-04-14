@@ -1,5 +1,27 @@
 2022-04-14  Youenn Fablet  <youenn@apple.com>
 
+        Expose workers as service worker clients and implement registration matching for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=239066
+
+        Reviewed by Chris Dumez.
+
+        Reuse the same strategy for DedicatedWorkers as for Documents to match registrations and control then:
+        - Do matching in network process
+        - If matching, send a message to WebProcess to set the matching registration data.
+        Add specific handling for worker registration rematching in case of redirections:
+        - If redirection comes from service worker (via respondWith), do rematching.
+        - If redirection comes from network, do not do rematching.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
+2022-04-14  Youenn Fablet  <youenn@apple.com>
+
         A shared worker in a cached page should not allow the remote shared worker to continue executing
         https://bugs.webkit.org/show_bug.cgi?id=239286
 

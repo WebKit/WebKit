@@ -95,7 +95,9 @@ static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData&
         FetchRequestCredentials::Omit,
         settingsValues,
         workerThreadMode,
-        sessionID
+        sessionID,
+        { },
+        { }
     };
 }
 

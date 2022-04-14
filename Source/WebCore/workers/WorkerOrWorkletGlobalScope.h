@@ -80,7 +80,7 @@ public:
     virtual FetchOptions::Destination destination() const = 0;
 
 protected:
-    WorkerOrWorkletGlobalScope(WorkerThreadType, Ref<JSC::VM>&&, WorkerOrWorkletThread*);
+    WorkerOrWorkletGlobalScope(WorkerThreadType, Ref<JSC::VM>&&, WorkerOrWorkletThread*, ScriptExecutionContextIdentifier = { });
 
     // ScriptExecutionContext.
     bool isJSExecutionForbidden() const final;

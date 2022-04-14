@@ -33,6 +33,7 @@
 #include "WorkerThreadableLoader.h"
 
 #include "ContentSecurityPolicy.h"
+#include "DedicatedWorkerGlobalScope.h"
 #include "Document.h"
 #include "DocumentThreadableLoader.h"
 #include "InspectorInstrumentation.h"
@@ -133,10 +134,20 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     optionsCopy->options.initiatorContext = InitiatorContext::Worker;
 
 #if ENABLE(SERVICE_WORKER)
-    optionsCopy->options.serviceWorkersMode = is<ServiceWorkerGlobalScope>(globalScope) ? ServiceWorkersMode::None : ServiceWorkersMode::All;
-    if (auto* activeServiceWorker = globalScope.activeServiceWorker())
-        optionsCopy->options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
+    if (optionsCopy->options.serviceWorkersMode == ServiceWorkersMode::All) {
+        if (is<ServiceWorkerGlobalScope>(globalScope))
+            optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::None;
+        else if (auto* activeServiceWorker = globalScope.activeServiceWorker()) {
+            optionsCopy->options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
+            optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::All;
+        } else if (is<DedicatedWorkerGlobalScope>(globalScope))
+            optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::None;
+        else
+            optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::All;
+    }
 #endif
+    if (!optionsCopy->options.clientIdentifier)
+        optionsCopy->options.clientIdentifier = globalScope.identifier();
 
     if (is<WorkerGlobalScope>(globalScope))
         InspectorInstrumentation::willSendRequest(downcast<WorkerGlobalScope>(globalScope), m_workerRequestIdentifier, request);

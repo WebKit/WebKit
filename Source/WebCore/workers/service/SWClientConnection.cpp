@@ -227,20 +227,30 @@ void SWClientConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistration
     });
 }
 
+static void updateController(ScriptExecutionContext& context, ServiceWorkerData&& newController)
+{
+    context.setActiveServiceWorker(ServiceWorker::getOrCreate(context, WTFMove(newController)));
+    if (auto* container = context.serviceWorkerContainer())
+        container->queueTaskToDispatchControllerChangeEvent();
+}
+
 void SWClientConnection::notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, ServiceWorkerData&& newController)
 {
     ASSERT(isMainThread());
     ASSERT(!contextIdentifiers.isEmpty());
 
     for (auto& clientIdentifier : contextIdentifiers) {
-        // FIXME: Support worker contexts.
-        auto* client = Document::allDocumentsMap().get(clientIdentifier);
-        if (!client)
+        if (auto* document = Document::allDocumentsMap().get(clientIdentifier)) {
+            updateController(*document, ServiceWorkerData { newController });
             continue;
-
-        client->setActiveServiceWorker(ServiceWorker::getOrCreate(*client, WTFMove(newController)));
-        if (auto* container = client->serviceWorkerContainer())
-            container->queueTaskToDispatchControllerChangeEvent();
+        }
+        if (auto* worker = Worker::workerByIdentifier(clientIdentifier)) {
+            worker->postTaskToWorkerGlobalScope([newController = newController.isolatedCopy()] (auto& context) mutable {
+                updateController(context, WTFMove(newController));
+            });
+            continue;
+        }
+        // FIXME: Support shared workers.
     }
 }
 
@@ -261,10 +271,11 @@ void SWClientConnection::clearPendingJobs()
 
 void SWClientConnection::registerServiceWorkerClients()
 {
-    for (auto* document : Document::allDocuments()) {
-        auto controllingServiceWorkerRegistrationIdentifier = document->activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(document->activeServiceWorker()->registrationIdentifier()) : std::nullopt;
-        registerServiceWorkerClient(document->topOrigin(), ServiceWorkerClientData::from(*document), controllingServiceWorkerRegistrationIdentifier, document->userAgent(document->url()));
-    }
+    for (auto* document : Document::allDocuments())
+        document->updateServiceWorkerClientData();
+
+    SharedWorkerContextManager::singleton().forEachSharedWorker([] { return [] (auto& context) { context.updateServiceWorkerClientData(); }; });
+    Worker::forEachWorker([] { return [] (auto& context) { context.updateServiceWorkerClientData(); }; });
 }
 
 } // namespace WebCore

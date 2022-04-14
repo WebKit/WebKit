@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    const registration = await navigator.serviceWorker.register("skipFetchEvent-worker.js", { scope : 'resources' });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Register service worker");
+
+promise_test(async (test) => {
+    worker = new Worker('resources/controlled-worker.js');
+    const event = await new Promise(resolve => worker.onmessage = resolve);
+    assert_true(event.data.isControlled);
+}, "Verify dedicated worker is controlled");
+</script>
+</body>
+</html>

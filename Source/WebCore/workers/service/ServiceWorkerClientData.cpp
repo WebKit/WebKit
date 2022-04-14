@@ -69,30 +69,44 @@ ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() &&
 
 ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context)
 {
-    bool isDocument = is<Document>(context);
-    RELEASE_ASSERT(isDocument); // We do not support dedicated workers as clients yet.
+    if (auto* document = dynamicDowncast<Document>(context)) {
+        auto lastNavigationWasAppInitiated = document->loader() && document->loader()->lastNavigationWasAppInitiated() ? LastNavigationWasAppInitiated::Yes : LastNavigationWasAppInitiated::No;
 
-    auto& document = downcast<Document>(context);
-    auto lastNavigationWasAppInitiated = document.loader() && document.loader()->lastNavigationWasAppInitiated() ? LastNavigationWasAppInitiated::Yes : LastNavigationWasAppInitiated::No;
+        Vector<String> ancestorOrigins;
+        if (auto* frame = document->frame()) {
+            for (auto* ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent())
+                ancestorOrigins.append(ancestor->document()->securityOrigin().toString());
+        }
 
-    Vector<String> ancestorOrigins;
-    if (auto* frame = document.frame()) {
-        for (auto* ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent())
-            ancestorOrigins.append(ancestor->document()->securityOrigin().toString());
+        return {
+            context.identifier(),
+            ServiceWorkerClientType::Window,
+            toServiceWorkerClientFrameType(context),
+            document->creationURL(),
+            document->pageID(),
+            document->frameID(),
+            lastNavigationWasAppInitiated,
+            !document->hidden(),
+            document->hasFocus(),
+            0,
+            WTFMove(ancestorOrigins)
+        };
     }
 
+    RELEASE_ASSERT(is<WorkerGlobalScope>(context));
+    auto& scope = downcast<WorkerGlobalScope>(context);
     return {
-        context.identifier(),
-        isDocument ? ServiceWorkerClientType::Window : ServiceWorkerClientType::Worker,
-        toServiceWorkerClientFrameType(context),
-        document.creationURL(),
-        document.pageID(),
-        document.frameID(),
-        lastNavigationWasAppInitiated,
-        !document.hidden(),
-        document.hasFocus(),
+        scope.identifier(),
+        scope.type() == WebCore::WorkerGlobalScope::Type::SharedWorker ? ServiceWorkerClientType::Sharedworker : ServiceWorkerClientType::Worker,
+        ServiceWorkerClientFrameType::None,
+        scope.url(),
+        { },
+        { },
+        LastNavigationWasAppInitiated::No,
+        false,
+        false,
         0,
-        WTFMove(ancestorOrigins)
+        { }
     };
 }
 

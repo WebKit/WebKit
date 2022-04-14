@@ -1,5 +1,61 @@
 2022-04-14  Youenn Fablet  <youenn@apple.com>
 
+        Expose workers as service worker clients and implement registration matching for dedicated workers
+        https://bugs.webkit.org/show_bug.cgi?id=239066
+
+        Reviewed by Chris Dumez.
+
+        Add support for exposing workers (dedicated and shared) as service worker clients.
+        Add support for setting the controlling registration for dedicated workers
+        (a follow-up patch should handle shared workers).
+        To properly handle loads coming from a worker, we properly set clientIdentifier and registration identifier
+        from the worker context, instead of from the worker's document.
+
+        Small refactoring to pass additional data to worker through WorkerInitializationData.
+        This is used to set the context ID and context controlling service worker.
+
+        Adding a specific check in CachedResourceLoader to not reuse the cache in case the service worker modes are different.
+        A potential issue is that the service workers are the same (0) as one request is the main request
+        and the second request is the request triggered by service worker to answer the first request.
+
+        Properly support blob URL matching directly in WorkerScriptLoader for workers.
+
+        Test: http/wpt/service-workers/controlled-dedicatedworker.https.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * loader/DocumentLoader.cpp:
+        * loader/FetchOptions.h:
+        * loader/ThreadableLoader.cpp:
+        * loader/WorkerThreadableLoader.cpp:
+        * loader/cache/CachedResourceLoader.cpp:
+        * workers/DedicatedWorkerThread.cpp:
+        * workers/Worker.cpp:
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerInitializationData.h: Added.
+        * workers/WorkerMessagingProxy.cpp:
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerOrWorkletGlobalScope.cpp:
+        * workers/WorkerOrWorkletGlobalScope.h:
+        * workers/WorkerScriptLoader.cpp:
+        * workers/WorkerScriptLoader.h:
+        * workers/WorkerThread.cpp:
+        * workers/WorkerThread.h:
+        * workers/service/SWClientConnection.cpp:
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorkerClientData.cpp:
+        * workers/service/ServiceWorkerClientType.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        * workers/shared/SharedWorkerScriptLoader.h:
+        * workers/shared/context/SharedWorkerThreadProxy.cpp:
+
+2022-04-14  Youenn Fablet  <youenn@apple.com>
+
         A shared worker in a cached page should not allow the remote shared worker to continue executing
         https://bugs.webkit.org/show_bug.cgi?id=239286
 

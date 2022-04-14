@@ -1202,8 +1202,8 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
 #if ENABLE(SERVICE_WORKER)
     // FIXME: We should validate/specify this behavior.
-    if (cachedResourceRequest.options().serviceWorkerRegistrationIdentifier != existingResource->options().serviceWorkerRegistrationIdentifier) {
-        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker differs");
+    if (cachedResourceRequest.options().serviceWorkerRegistrationIdentifier != existingResource->options().serviceWorkerRegistrationIdentifier || cachedResourceRequest.options().serviceWorkersMode != existingResource->options().serviceWorkersMode) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker may differ");
         return Reload;
     }
 #endif

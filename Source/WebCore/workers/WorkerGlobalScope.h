@@ -192,6 +192,9 @@ private:
     bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) final;
     bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) final;
 #endif
+#if ENABLE(SERVICE_WORKER)
+    void updateServiceWorkerClientData() final;
+#endif
 
     void stopIndexedDatabase();
 

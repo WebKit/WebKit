@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-enum class ServiceWorkerClientType {
+enum class ServiceWorkerClientType : uint8_t {
     Window,
     Worker,
     Sharedworker,
