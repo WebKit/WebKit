@@ -1,3 +1,27 @@
+2022-04-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Some IPC related message forwarding functions use const lvalue references
+        https://bugs.webkit.org/show_bug.cgi?id=238937
+
+        Reviewed by Antti Koivisto.
+
+        Passing the message as const lvalue reference prevents IPC messages to be
+        changed to support move semantics for some message arguments.
+
+        Fix by using universal references in the shell function signatures.
+        Forward the messages from one shell function to other as rvalue references
+        via WTFMove, since the messages are always such that they are forwarded so.
+        This also catches most such errors in the future.
+
+        No new tests, refactor.
+
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::send):
+        (IPC::MessageSender::sendSync):
+        (IPC::MessageSender::sendWithAsyncReply):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::send):
+
 2022-04-14  Youenn Fablet  <youenn@apple.com>
 
         Expose workers as service worker clients and implement registration matching for dedicated workers

@@ -157,9 +157,9 @@ public:
 protected:
     DrawingArea(DrawingAreaType, DrawingAreaIdentifier, WebPage&);
 
-    template<typename U> bool send(const U& message)
+    template<typename T> bool send(T&& message)
     {
-        return m_webPage.send(message, m_identifier.toUInt64(), { });
+        return m_webPage.send(WTFMove(message), m_identifier.toUInt64(), { });
     }
 
     const DrawingAreaType m_type;
