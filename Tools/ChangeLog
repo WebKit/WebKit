@@ -1,3 +1,14 @@
+2022-04-15  Ross Kirsling  <rkirsling@gmail.com>
+
+        Fix parsePlatformFamily on bot watcher's dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=239394
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Settings.js:
+        (Settings.prototype.parsePlatformFamily):
+        Allow for the "family of one" case.
+
 2022-04-15  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Implement getTransports() and getAuthenticatorData() on AuthenticatorAttestationResponse 

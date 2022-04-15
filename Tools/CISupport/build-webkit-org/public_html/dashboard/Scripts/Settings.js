@@ -88,7 +88,7 @@ Settings.prototype = {
     {
         if (!platformName)
             return '';
-        var result = platformName.substr(0, platformName.indexOf("-"));
+        var result = platformName.split('-', 1)[0];
         if (result === "macos")
             result = "mac";
         return result;
