@@ -72,7 +72,6 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/ValidationBubble.h>
-#import <WebCore/WebCoreUIColorExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/Entitlements.h>
 
@@ -1029,7 +1028,7 @@ WebCore::Color PageClientImpl::contentViewBackgroundColor()
     if (color.isValid())
         return color;
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    return WebCore::roundAndClampToSRGBALossy(WebCore::systemBackgroundColor().CGColor);
+    return WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
 #else
     return { };
 #endif

@@ -81,7 +81,6 @@
 #import "Theme.h"
 #import "UTIUtilities.h"
 #import "WebCoreThreadRun.h"
-#import "WebCoreUIColorExtras.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreImage/CoreImage.h>
 #import <objc/runtime.h>
@@ -1446,7 +1445,6 @@ struct CSSValueSystemColorInformation {
     SEL selector;
     bool makeOpaque { false };
     float opacity { 1.0f };
-    UIColor *(*function)(void) { nullptr };
 };
 
 static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformationList()
@@ -1459,7 +1457,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
         [] {
         cssValueSystemColorInformationList.get() = Vector(std::initializer_list<CSSValueSystemColorInformation> {
             { CSSValueText, @selector(labelColor) },
-            { CSSValueWebkitControlBackground, nil, false, 1.0f, &systemBackgroundColor },
+            { CSSValueWebkitControlBackground, @selector(systemBackgroundColor) },
             { CSSValueAppleSystemBlue, @selector(systemBlueColor) },
             { CSSValueAppleSystemBrown, @selector(systemBrownColor) },
             { CSSValueAppleSystemGray, @selector(systemGrayColor) },
@@ -1471,7 +1469,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
             { CSSValueAppleSystemRed, @selector(systemRedColor) },
             { CSSValueAppleSystemTeal, @selector(systemTealColor) },
             { CSSValueAppleSystemYellow, @selector(systemYellowColor) },
-            { CSSValueAppleSystemBackground, nil, false, 1.0f, &systemBackgroundColor },
+            { CSSValueAppleSystemBackground, @selector(systemBackgroundColor) },
             { CSSValueAppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
             { CSSValueAppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
             { CSSValueAppleSystemOpaqueFill, @selector(systemFillColor), true },
@@ -1491,11 +1489,11 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
             // FIXME: <rdar://problem/79471528> Adopt [UIColor opaqueSeparatorColor] once it has a high contrast variant.
             { CSSValueAppleSystemOpaqueSeparator, @selector(separatorColor), true },
             { CSSValueAppleSystemContainerBorder, @selector(separatorColor) },
-            { CSSValueAppleSystemControlBackground, nil, false, 1.0f, &systemBackgroundColor },
+            { CSSValueAppleSystemControlBackground, @selector(systemBackgroundColor) },
             { CSSValueAppleSystemGrid, @selector(separatorColor) },
             { CSSValueAppleSystemHeaderText, @selector(labelColor) },
             { CSSValueAppleSystemSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
-            { CSSValueAppleSystemTextBackground, nil, false, 1.0f, &systemBackgroundColor },
+            { CSSValueAppleSystemTextBackground, @selector(systemBackgroundColor) },
             { CSSValueAppleSystemUnemphasizedSelectedContentBackground, @selector(tableCellDefaultSelectionTintColor) },
             { CSSValueAppleWirelessPlaybackTargetActive, @selector(systemBlueColor) },
         });
@@ -1506,12 +1504,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
 
 static inline std::optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance)
 {
-    UIColor *color = nil;
-    if (systemColorInformation.selector)
-        color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), systemColorInformation.selector);
-    else
-        color = systemColorInformation.function();
-
+    UIColor *color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), systemColorInformation.selector);
     if (!color)
         return std::nullopt;
 

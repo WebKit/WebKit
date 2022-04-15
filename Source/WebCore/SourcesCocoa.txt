@@ -482,7 +482,6 @@ platform/ios/WebAVPlayerController.mm
 platform/ios/WebBackgroundTaskController.mm
 platform/ios/WebCoreMotionManager.mm
 platform/ios/WebEvent.mm @no-unify
-platform/ios/WebCoreUIColorExtras.mm
 platform/ios/WebItemProviderPasteboard.mm @no-unify
 platform/ios/WebSQLiteDatabaseTrackerClient.mm
 platform/ios/WebVideoFullscreenControllerAVKit.mm @no-unify

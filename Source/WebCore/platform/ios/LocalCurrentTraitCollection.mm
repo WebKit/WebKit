@@ -29,6 +29,22 @@
 
 #import <pal/ios/UIKitSoftLink.h>
 
+#if HAVE(OS_DARK_MODE_SUPPORT)
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/LocalCurrentTraitCollectionAdditions.mm>)
+#import <WebKitAdditions/LocalCurrentTraitCollectionAdditions.mm>
+#else
+namespace WebCore {
+
+static UITraitCollection *adjustedTraitCollection(UITraitCollection *traitCollection)
+{
+    return traitCollection;
+}
+
+}
+#endif
+#endif // HAVE(OS_DARK_MODE_SUPPORT)
+
+
 namespace WebCore {
 
 LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
@@ -40,7 +56,7 @@ LocalCurrentTraitCollection::LocalCurrentTraitCollection(bool useDarkAppearance,
 
     auto userInterfaceStyleTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceStyle:m_usingDarkAppearance ? UIUserInterfaceStyleDark : UIUserInterfaceStyleLight];
     auto backgroundLevelTrait = [PAL::getUITraitCollectionClass() traitCollectionWithUserInterfaceLevel:m_usingElevatedUserInterfaceLevel ? UIUserInterfaceLevelElevated : UIUserInterfaceLevelBase];
-    auto newTraitCollection = [PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ m_savedTraitCollection.get(), userInterfaceStyleTrait, backgroundLevelTrait ]];
+    auto newTraitCollection = adjustedTraitCollection([PAL::getUITraitCollectionClass() traitCollectionWithTraitsFromCollections:@[ m_savedTraitCollection.get(), userInterfaceStyleTrait, backgroundLevelTrait ]]);
 
     [PAL::getUITraitCollectionClass() setCurrentTraitCollection:newTraitCollection];
 #else

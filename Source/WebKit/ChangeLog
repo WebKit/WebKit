@@ -1,3 +1,16 @@
+2022-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to adjust the final trait collection applied by LocalCurrentTraitCollection
+        https://bugs.webkit.org/show_bug.cgi?id=239375
+        rdar://problem/87115393
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (scrollViewBackgroundColor):
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::contentViewBackgroundColor):
+
 2022-04-15  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Implement getTransports() and getAuthenticatorData() on AuthenticatorAttestationResponse
