@@ -1,3 +1,9 @@
+2022-04-15  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Add my github into to contributors.json.
+
+        * metadata/contributors.json:
+
 2022-04-14  Jonathan Bedard  <jbedard@apple.com>
 
         Add .github/pull_request_template.md
