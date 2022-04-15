@@ -8216,8 +8216,10 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (specifiedType != WebCore::DataOwnerType::Undefined)
         return specifiedType;
 
+#if !PLATFORM(MACCATALYST)
     if ([[PAL::getMCProfileConnectionClass() sharedConnection] isURLManaged:[_webView URL]])
         return WebCore::DataOwnerType::Enterprise;
+#endif
 
     return WebCore::DataOwnerType::Undefined;
 }
