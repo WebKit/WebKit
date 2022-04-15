@@ -75,10 +75,12 @@ public:
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementCreateRemotePreview(String, WebCore::FloatSize, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&&);
     void modelElementLoadRemotePreview(String, URL, CompletionHandler<void(std::optional<WebCore::ResourceError>&&)>&&);
+    void modelElementDestroyRemotePreview(String);
     void modelElementSizeDidChange(const String& uuid, WebCore::FloatSize, CompletionHandler<void(Expected<MachSendRight, WebCore::ResourceError>)>&&);
     void handleMouseDownForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
     void handleMouseMoveForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
     void handleMouseUpForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
+    void inlinePreviewUUIDs(CompletionHandler<void(Vector<String>&&)>&&);
 #endif
 
 private:

@@ -157,6 +157,10 @@ class MockMediaSessionCoordinator;
 #endif
 #endif
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+class HTMLModelElement;
+#endif
+
 namespace ImageOverlay {
 class CroppedImage;
 }
@@ -1295,6 +1299,12 @@ public:
 #endif
 
     void overrideModalContainerSearchTermForTesting(const String& term);
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+    using ModelInlinePreviewUUIDsPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
+    void modelInlinePreviewUUIDs(ModelInlinePreviewUUIDsPromise&&) const;
+    String modelInlinePreviewUUIDForModelElement(const HTMLModelElement&) const;
+#endif
 
 private:
     explicit Internals(Document&);

@@ -363,6 +363,10 @@
 #include "TextRecognitionResult.h"
 #endif
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+#include "HTMLModelElement.h"
+#endif
+
 using JSC::CallData;
 using JSC::CodeBlock;
 using JSC::FunctionExecutable;
@@ -6762,5 +6766,35 @@ void Internals::overrideModalContainerSearchTermForTesting(const String& term)
     if (auto observer = contextDocument()->modalContainerObserver())
         observer->overrideSearchTermForTesting(term);
 }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+
+void Internals::modelInlinePreviewUUIDs(ModelInlinePreviewUUIDsPromise&& promise) const
+{
+    auto* document = contextDocument();
+    if (!document) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+
+    auto* frame = document->frame();
+    if (!frame) {
+        promise.reject(InvalidStateError);
+        return;
+    }
+
+    CompletionHandler<void(Vector<String>&&)> completionHandler = [promise = WTFMove(promise)] (Vector<String> uuids) mutable {
+        promise.resolve(uuids);
+    };
+
+    frame->loader().client().modelInlinePreviewUUIDs(WTFMove(completionHandler));
+}
+
+String Internals::modelInlinePreviewUUIDForModelElement(const HTMLModelElement& modelElement) const
+{
+    return modelElement.inlinePreviewUUIDForTesting();
+}
+
+#endif
 
 } // namespace WebCore

@@ -668,6 +668,15 @@ LayoutSize HTMLModelElement::contentSize() const
     return downcast<RenderReplaced>(*renderer()).replacedContentRect().size();
 }
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+String HTMLModelElement::inlinePreviewUUIDForTesting() const
+{
+    if (!m_modelPlayer)
+        return emptyString();
+    return m_modelPlayer->inlinePreviewUUIDForTesting();
+}
+#endif
+
 }
 
 #endif // ENABLE(MODEL_ELEMENT)

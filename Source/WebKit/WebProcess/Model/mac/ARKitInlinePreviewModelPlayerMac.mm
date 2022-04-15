@@ -55,6 +55,10 @@ ARKitInlinePreviewModelPlayerMac::ARKitInlinePreviewModelPlayerMac(WebPage& page
 
 ARKitInlinePreviewModelPlayerMac::~ARKitInlinePreviewModelPlayerMac()
 {
+    if (m_inlinePreview) {
+        if (auto* page = this->page())
+            page->send(Messages::WebPageProxy::ModelElementDestroyRemotePreview([m_inlinePreview uuid].UUIDString));
+    }
     clearFile();
 }
 
@@ -293,6 +297,13 @@ void ARKitInlinePreviewModelPlayerMac::handleMouseUp(const LayoutPoint& flippedL
 {
     if (auto* page = this->page())
         page->send(Messages::WebPageProxy::HandleMouseUpForModelElement([m_inlinePreview uuid].UUIDString, flippedLocationInElement, timestamp));
+}
+
+String ARKitInlinePreviewModelPlayerMac::inlinePreviewUUIDForTesting() const
+{
+    if (!m_inlinePreview)
+        return emptyString();
+    return [m_inlinePreview uuid].UUIDString;
 }
 
 }

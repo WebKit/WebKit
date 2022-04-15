@@ -11218,6 +11218,11 @@ void WebPageProxy::modelElementLoadRemotePreview(const String& uuid, const URL& 
     modelElementController()->modelElementLoadRemotePreview(uuid, url, WTFMove(completionHandler));
 }
 
+void WebPageProxy::modelElementDestroyRemotePreview(const String& uuid)
+{
+    modelElementController()->modelElementDestroyRemotePreview(uuid);
+}
+
 void WebPageProxy::modelElementSizeDidChange(const String& uuid, WebCore::FloatSize size, CompletionHandler<void(Expected<MachSendRight, WebCore::ResourceError>)>&& completionHandler)
 {
     modelElementController()->modelElementSizeDidChange(uuid, size, WTFMove(completionHandler));
@@ -11236,6 +11241,11 @@ void WebPageProxy::handleMouseMoveForModelElement(const String& uuid, const WebC
 void WebPageProxy::handleMouseUpForModelElement(const String& uuid, const WebCore::LayoutPoint& flippedLocationInElement, MonotonicTime timestamp)
 {
     modelElementController()->handleMouseUpForModelElement(uuid, flippedLocationInElement, timestamp);
+}
+
+void WebPageProxy::modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    modelElementController()->inlinePreviewUUIDs(WTFMove(completionHandler));
 }
 #endif
 

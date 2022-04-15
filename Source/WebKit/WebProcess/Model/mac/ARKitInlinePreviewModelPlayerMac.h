@@ -58,6 +58,7 @@ private:
     void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) override;
     void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) override;
     void handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime) override;
+    String inlinePreviewUUIDForTesting() const override;
 
     void createFile(WebCore::Model&);
     void clearFile();

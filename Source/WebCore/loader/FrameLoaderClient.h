@@ -389,6 +389,10 @@ public:
 #endif
 
     virtual bool isParentProcessAFullWebBrowser() const { return false; }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+    virtual void modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>)>&&) const { }
+#endif
 };
 
 } // namespace WebCore

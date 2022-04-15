@@ -1,3 +1,38 @@
+2022-04-14  Antoine Quint  <graouts@apple.com>
+
+        [model] ASVInlinePreview objects don't get cleared when the model source changes
+        https://bugs.webkit.org/show_bug.cgi?id=239064
+        <rdar://problem/90391037>
+
+        Reviewed by Dean Jackson.
+
+        We add a new ModelElementDestroyRemotePreview message going from the Web process to the
+        UI process to notify that an ASVInlinePreview with a given UUID should be cleared. This
+        message is sent via ~ARKitInlinePreviewModelPlayerMac since any unused resource will
+        trigger the destruction of such objects. 
+
+        For testing purposes, we also add a new ModelInlinePreviewUUIDs message going from the
+        Web process to the UI process to retreive the list of UUIDs for the ASVInlinePreview
+        objects currently loaded in the UI process. This will allow tests to check whether
+        the UUID for a given <model> element is correctly removed from the UI process.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelElementDestroyRemotePreview):
+        (WebKit::ModelElementController::inlinePreviewUUIDs):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementDestroyRemotePreview):
+        (WebKit::WebPageProxy::modelInlinePreviewUUIDs):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.h:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::~ARKitInlinePreviewModelPlayerMac):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::inlinePreviewUUIDForTesting const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::modelInlinePreviewUUIDs const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Undo option after invoking "Markup Image" says "Undo Paste"

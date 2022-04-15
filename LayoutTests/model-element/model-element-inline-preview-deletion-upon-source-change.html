@@ -1,0 +1,23 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-utils.js"></script>
+<script>
+
+promise_test(async test => {
+    assert_own_property(window, "internals", "This test only work within the WebKit testing environment.");
+
+    // First, we load a <model> with an existing resource.
+    const model = await readyModel(test);
+    const uuid = window.internals.modelInlinePreviewUUIDForModelElement(model);
+    const initialUUIDS = await window.internals.modelInlinePreviewUUIDs();
+    assert_true(initialUUIDS.includes(uuid), "The UUID for the model matches one of the remote previews.");
+    
+    // Then, we unload it by setting a non-existent resource.
+    model.textContent = "";
+    const updatedUUIDS = await window.internals.modelInlinePreviewUUIDs();
+    assert_false(updatedUUIDS.includes(uuid), "The UUID for the model is no longer present in the list of remote previews.");
+}, "Changing a <model> resource should clear any associated remote preview.");
+
+</script>
+</body>
+</html>

@@ -65,6 +65,7 @@ public:
     virtual void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
     virtual void setIsMuted(bool, CompletionHandler<void(bool success)>&&) = 0;
+    virtual String inlinePreviewUUIDForTesting() const;
 #if PLATFORM(COCOA)
     virtual Vector<RetainPtr<id>> accessibilityChildren() = 0;
 #endif

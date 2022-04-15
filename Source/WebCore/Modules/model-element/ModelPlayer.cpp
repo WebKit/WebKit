@@ -44,4 +44,9 @@ void ModelPlayer::setInteractionEnabled(bool)
 {
 }
 
+String ModelPlayer::inlinePreviewUUIDForTesting() const
+{
+    return emptyString();
+}
+
 }

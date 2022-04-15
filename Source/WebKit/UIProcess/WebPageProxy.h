@@ -617,10 +617,12 @@ public:
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementCreateRemotePreview(const String&, const WebCore::FloatSize&, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&&);
     void modelElementLoadRemotePreview(const String&, const URL&, CompletionHandler<void(std::optional<WebCore::ResourceError>&&)>&&);
+    void modelElementDestroyRemotePreview(const String&);
     void modelElementSizeDidChange(const String&, WebCore::FloatSize, CompletionHandler<void(Expected<MachSendRight, WebCore::ResourceError>)>&&);
     void handleMouseDownForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
     void handleMouseMoveForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
     void handleMouseUpForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
+    void modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>&&)>&&);
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)

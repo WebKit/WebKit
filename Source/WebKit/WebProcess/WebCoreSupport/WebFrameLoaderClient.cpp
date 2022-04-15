@@ -2014,6 +2014,19 @@ bool WebFrameLoaderClient::isParentProcessAFullWebBrowser() const
     return page && page->isParentProcessAWebBrowser();
 }
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+void WebFrameLoaderClient::modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>)>&& completionHandler) const
+{
+    auto* webPage = m_frame->page();
+    if (!webPage) {
+        completionHandler({ });
+        return;
+    }
+
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::ModelInlinePreviewUUIDs(), WTFMove(completionHandler));
+}
+#endif
+
 } // namespace WebKit
 
 #undef PREFIX_PARAMETERS

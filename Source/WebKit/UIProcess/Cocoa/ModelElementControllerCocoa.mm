@@ -240,6 +240,11 @@ void ModelElementController::modelElementLoadRemotePreview(String uuid, URL file
     }).get()];
 }
 
+void ModelElementController::modelElementDestroyRemotePreview(String uuid)
+{
+    m_inlinePreviews.remove(uuid);
+}
+
 RetainPtr<ASVInlinePreview> ModelElementController::previewForUUID(const String& uuid)
 {
     return m_inlinePreviews.get(uuid);
@@ -299,6 +304,12 @@ void ModelElementController::modelElementSizeDidChange(const String& uuid, WebCo
     }).get()];
 }
 
+void ModelElementController::inlinePreviewUUIDs(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    completionHandler(WTF::map(m_inlinePreviews, [](auto& entry) {
+        return entry.key;
+    }));
+}
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)

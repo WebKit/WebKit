@@ -109,6 +109,10 @@ public:
 
     void sizeMayHaveChanged();
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+    WEBCORE_EXPORT String inlinePreviewUUIDForTesting() const;
+#endif
+
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 

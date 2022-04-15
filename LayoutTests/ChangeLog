@@ -1,3 +1,22 @@
+2022-04-14  Antoine Quint  <graouts@apple.com>
+
+        [model] ASVInlinePreview objects don't get cleared when the model source changes
+        https://bugs.webkit.org/show_bug.cgi?id=239064
+        <rdar://problem/90391037>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test which loads a <model> element with a valid resource, checks its UUID against
+        those loaded in the UI process, and then removes the <model> source to check that same UUID
+        is not longer loaded.
+
+        This test is currently disabled on OpenSource bots.
+
+        * model-element/model-element-inline-preview-deletion-upon-source-change-expected.txt: Added.
+        * model-element/model-element-inline-preview-deletion-upon-source-change.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-04-14  Matteo Flores  <matteo_flores@apple.com>
 
         EXPECTATIONS: [ Monterey wk2 ] 7 /paymentrequest/* tests are constant text failures

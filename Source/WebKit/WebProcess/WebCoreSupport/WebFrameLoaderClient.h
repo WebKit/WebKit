@@ -296,6 +296,10 @@ private:
 #endif
 
     bool isParentProcessAFullWebBrowser() const final;
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
+    void modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>)>&&) const final;
+#endif
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.
