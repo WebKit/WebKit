@@ -676,21 +676,21 @@ void RenderElement::removeLayers()
         child.removeLayers();
 }
 
-void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer& newParent)
+void RenderElement::moveLayers(RenderLayer& newParent)
 {
     if (hasLayer()) {
         if (isInTopLayerOrBackdrop(style(), element()))
             return;
         RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
-        ASSERT(oldParent == layer->parent());
-        if (oldParent)
-            oldParent->removeChild(*layer);
+        auto* layerParent = layer->parent();
+        if (layerParent)
+            layerParent->removeChild(*layer);
         newParent.addChild(*layer);
         return;
     }
 
     for (auto& child : childrenOfType<RenderElement>(*this))
-        child.moveLayers(oldParent, newParent);
+        child.moveLayers(newParent);
 }
 
 RenderLayer* RenderElement::layerParent() const

@@ -1,3 +1,20 @@
+2022-04-15  Brandon Stewart  <brandonstewart@apple.com>
+
+        Parent Mismatch
+        https://bugs.webkit.org/show_bug.cgi?id=239390
+
+        Reviewed by Simon Fraser.
+
+        The oldParent and layer->parent() may be different under certain circumstances.
+        To account for this, we can just use the layer->parent() and remove the use
+        of oldParent. This also has the benefit of simplifying the moveLayers() function.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::moveLayers):
+        * rendering/RenderElement.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+
 2022-04-15  Youenn Fablet  <youenn@apple.com>
 
         Sandboxed iframe loads should match a service worker registration based on sandbox flags
