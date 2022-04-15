@@ -1693,3 +1693,15 @@ webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-release-up
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Pass Timeout ]
+
+# [ Monterey wk2 ] 10 WebGL conformance tests are a flaky time out
+webkit.org/b/239388 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
