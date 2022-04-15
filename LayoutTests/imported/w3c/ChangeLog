@@ -1,3 +1,33 @@
+2022-04-15  Rob Buis  <rbuis@igalia.com>
+
+        Import css/css-sizing/aspect-ratio tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=239378
+
+        Reviewed by Tim Nguyen.
+
+        Import based on SHA e0b8f9b500.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-034-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-034.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-035-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-035.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-036-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-036.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-037-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-037.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-038-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-038.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/fractional-aspect-ratio-expected.txt: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/fractional-aspect-ratio.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-011.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/large-aspect-ratio-crash.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035-expected.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035-ref.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/select-element-001-ref.html: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
 2022-04-15  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorker.postMessage() doesn't work from inside iframe
