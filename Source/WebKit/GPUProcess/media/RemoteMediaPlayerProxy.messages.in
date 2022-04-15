@@ -133,6 +133,8 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     StartVideoFrameMetadataGathering()
     StopVideoFrameMetadataGathering()
+
+    PlayerContentBoxRectChanged(WebCore::LayoutRect contentRect)
 }
 
 #endif

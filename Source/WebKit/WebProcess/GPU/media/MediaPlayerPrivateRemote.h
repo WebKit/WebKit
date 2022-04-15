@@ -409,6 +409,8 @@ private:
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
 
+    void playerContentBoxRectChanged(const WebCore::LayoutRect&) final;
+
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
 #endif

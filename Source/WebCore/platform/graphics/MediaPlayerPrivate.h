@@ -324,6 +324,7 @@ public:
     virtual std::optional<VideoFrameMetadata> videoFrameMetadata() { return { }; }
     virtual void startVideoFrameMetadataGathering() { }
     virtual void stopVideoFrameMetadataGathering() { }
+    virtual void playerContentBoxRectChanged(const LayoutRect&) { }
 };
 
 }

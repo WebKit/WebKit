@@ -165,6 +165,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
 
     auto documentSecurityOrigin = player->documentSecurityOrigin();
     proxyConfiguration.documentSecurityOrigin = documentSecurityOrigin;
+    proxyConfiguration.playerContentBoxRect = player->playerContentBoxRect();
 
     auto identifier = MediaPlayerIdentifier::generate();
     gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, remoteEngineIdentifier, proxyConfiguration), 0);

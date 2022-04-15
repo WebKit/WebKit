@@ -687,6 +687,8 @@ public:
     void startVideoFrameMetadataGathering();
     void stopVideoFrameMetadataGathering();
 
+    void playerContentBoxRectChanged(const LayoutRect&);
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
