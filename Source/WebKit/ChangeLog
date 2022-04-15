@@ -1,5 +1,25 @@
 2022-04-15  Brent Fulgham  <bfulgham@apple.com>
 
+        Add new dyld support sandbox rules 
+        https://bugs.webkit.org/show_bug.cgi?id=238389
+        <rdar://90593887>
+
+        Reviewed by Eric Carlson.
+
+        Update sandbox profiles to adopt a new dyld-related utility file
+        on platforms where it exists.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+        * webpushd/mac/com.apple.WebKit.webpushd.sb.in:
+
+2022-04-15  Brent Fulgham  <bfulgham@apple.com>
+
         REGRESSION (r291843): Broken Netflix and Amazon video playback
         https://bugs.webkit.org/show_bug.cgi?id=239397
         <rdar://91313460>

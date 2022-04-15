@@ -23,3 +23,7 @@
 
 (version 1)
 (allow (with report) default)
+
+;; We can remove the catch once we no longer need to support older macOS
+(catch (lambda)
+    (import "dyld-support.sb"))
