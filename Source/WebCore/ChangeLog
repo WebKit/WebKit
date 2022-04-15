@@ -1,3 +1,76 @@
+2022-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Use WebCoreBuiltinNames when possible
+        https://bugs.webkit.org/show_bug.cgi?id=239361
+
+        Reviewed by Yusuke Suzuki.
+
+        Use WebCoreBuiltinNames when possible to avoid unnecessary calls to Identifier::fromString().
+        This is more efficient.
+
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::update):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/JSDOMMapLike.cpp:
+        (WebCore::getBackingMap):
+        * bindings/js/JSDOMSetLike.cpp:
+        (WebCore::getBackingSet):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::initStaticGlobals):
+        (WebCore::JSDOMWindowBase::finishCreation):
+        (WebCore::JSDOMWindowBase::updateDocument):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::put):
+        (WebCore::addCrossOriginPropertyNames):
+        (WebCore::JSDOMWindow::defineOwnProperty):
+        (WebCore::JSDOMWindow::setOpener):
+        (WebCore::JSDOMWindow::openDatabase const):
+        (WebCore::JSDOMWindow::setOpenDatabase):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::getOwnPropertySlotCommon):
+        (WebCore::JSLocation::put):
+        * bindings/js/JSRemoteDOMWindowCustom.cpp:
+        (WebCore::JSRemoteDOMWindow::put):
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::ReadableStream::create):
+        (WebCore::ReadableStream::lock):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::setupModuleScriptHandlers):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::rejectToPropagateNetworkError):
+        (WebCore::rejectWithFetchError):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/js/WebCoreJSClientData.h:
+        (WebCore::webCoreBuiltinNames):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSDOMWindow.cpp:
+        (WebCore::JSDOMWindow::finishCreation):
+        * bindings/scripts/test/JS/JSTestConditionallyReadWrite.cpp:
+        (WebCore::JSTestConditionallyReadWritePrototype::finishCreation):
+        (WebCore::JSTestConditionallyReadWrite::finishCreation):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySetting::finishCreation):
+        * bindings/scripts/test/JS/JSTestEnabledForContext.cpp:
+        (WebCore::JSTestEnabledForContext::finishCreation):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObject::finishCreation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::controllerJSValue):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        * testing/Internals.cpp:
+        (WebCore::Internals::cloneArrayBuffer):
+        * workers/WorkerOrWorkletScriptController.cpp:
+        (WebCore::WorkerOrWorkletScriptController::loadModuleSynchronously):
+        (WebCore::WorkerOrWorkletScriptController::loadAndEvaluateModule):
+
 2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Undo option after invoking "Markup Image" says "Undo Paste"

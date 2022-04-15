@@ -35,6 +35,7 @@
 #include "JSExecStateInstrumentation.h"
 #include "JSWorkerGlobalScope.h"
 #include "ScriptController.h"
+#include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ExceptionHelpers.h>
 #include <JavaScriptCore/JSLock.h>
@@ -186,7 +187,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         if (m_isAttribute)
             return;
 
-        handleEventFunction = jsFunction->get(lexicalGlobalObject, Identifier::fromString(vm, "handleEvent"_s));
+        handleEventFunction = jsFunction->get(lexicalGlobalObject, webCoreBuiltinNames(vm).handleEventPublicName());
         if (UNLIKELY(scope.exception())) {
             auto* exception = scope.exception();
             scope.clearException();
