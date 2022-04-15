@@ -1,3 +1,17 @@
+2022-04-15  Keith Miller  <keith_miller@apple.com>
+
+        Git setup svn command should fetch commits from git before running git-svn fetch
+        https://bugs.webkit.org/show_bug.cgi?id=239392
+
+        Reviewed by NOBODY (OOPS!).
+
+        git-svn fetch pulls commits one at a time rather than gathering all the commits at once.
+        This means if someone is far behind the HEAD of tree running setup-git-svn could take a long
+        time. Instead we should fetch commits via `git fetch` then rebuild the mapping.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup_git_svn.py:
+        (SetupGitSvn.main):
+
 2022-04-15  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Implement getTransports() and getAuthenticatorData() on AuthenticatorAttestationResponse 
