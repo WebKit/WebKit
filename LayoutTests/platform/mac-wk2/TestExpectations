@@ -1705,3 +1705,6 @@ webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-uns
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
+
+webkit.org/b/239407 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-046.html [ Pass ImageOnlyFailure ]
+webkit.org/b/239407 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-length-006.html [ Pass ImageOnlyFailure ]
