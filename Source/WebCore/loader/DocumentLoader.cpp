@@ -2116,6 +2116,11 @@ void DocumentLoader::unregisterReservedServiceWorkerClient()
 #endif
 }
 
+static bool isSandboxingAllowingServiceWorkerFetchHandling(SandboxFlags flags)
+{
+    return !(flags & SandboxOrigin) && !(flags & SandboxScripts);
+}
+
 void DocumentLoader::loadMainResource(ResourceRequest&& request)
 {
     ResourceLoaderOptions mainResourceLoadOptions(
@@ -2134,13 +2139,17 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
 #if ENABLE(SERVICE_WORKER)
     if (m_frame && m_frame->settings().serviceWorkersEnabled()) {
-        // The main navigation load will trigger the registration of the client.
-        if (m_resultingClientId)
-            scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
-        m_resultingClientId = ScriptExecutionContextIdentifier::generate();
-        ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
-        scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
-        mainResourceLoadOptions.clientIdentifier = m_resultingClientId;
+        if (!isSandboxingAllowingServiceWorkerFetchHandling(frameLoader()->effectiveSandboxFlags()))
+            mainResourceLoadOptions.serviceWorkersMode = ServiceWorkersMode::None;
+        else {
+            // The main navigation load will trigger the registration of the client.
+            if (m_resultingClientId)
+                scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+            m_resultingClientId = ScriptExecutionContextIdentifier::generate();
+            ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
+            scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
+            mainResourceLoadOptions.clientIdentifier = m_resultingClientId;
+        }
     }
 #endif
 

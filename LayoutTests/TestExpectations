@@ -380,7 +380,6 @@ imported/w3c/web-platform-tests/xhr/send-authentication-basic.htm [ Pass Failure
 imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html [ Pass Failure ]
 
 # Skip service worker tests that are timing out.
-imported/w3c/web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https.html [ Skip ]
 
