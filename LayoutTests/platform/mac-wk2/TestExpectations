@@ -1673,3 +1673,23 @@ webkit.org/b/239257 fast/forms/datetimelocal/datetimelocal-editable-components/d
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
 webkit.org/b/239307 [ Monterey+ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-inherits-from-initiator.sub.html [ Pass Crash ]
+
+# [ Monterey wk2 debug ] 18 WebGL conformance tests are a flaky time out
+webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-release-with-workers.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/texture-size-cube-maps.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/texture-size-limit.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/texture-size.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/textures/misc/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/canvas/rapid-resizing.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/context/context-release-upon-reload.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/extensions/webgl-compressed-texture-s3tc.html [ Pass Timeout ]
+webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Pass Timeout ]
