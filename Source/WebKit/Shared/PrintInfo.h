@@ -31,8 +31,7 @@
 #if USE(APPKIT)
 OBJC_CLASS NSPrintInfo;
 #elif PLATFORM(GTK)
-typedef struct _GtkPrintSettings GtkPrintSettings;
-typedef struct _GtkPageSetup GtkPageSetup;
+#include <gtk/gtk.h>
 #include <wtf/glib/GRefPtr.h>
 #else
 // FIXME: This should use the windows equivalent.
@@ -69,8 +68,8 @@ struct PrintInfo {
 #endif
 
 #if PLATFORM(GTK)
-    GRefPtr<GtkPrintSettings> printSettings;
-    GRefPtr<GtkPageSetup> pageSetup;
+    GRefPtr<GtkPrintSettings> printSettings { adoptGRef(gtk_print_settings_new()) };
+    GRefPtr<GtkPageSetup> pageSetup { adoptGRef(gtk_page_setup_new()) };
     PrintMode printMode { PrintModeAsync };
 #endif
 

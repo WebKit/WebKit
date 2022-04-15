@@ -1,3 +1,15 @@
+2022-04-14  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Default initialize GTK-specific print info in WebKit::PrintInfo
+        https://bugs.webkit.org/show_bug.cgi?id=196542
+
+        Reviewed by Adrian Perez de Castro.
+
+        printInfoFromWKPrintInfo() will not initialize GTK-specific bits,
+        leading to problems down the road with IPC encoders, so add default values.
+
+        * Shared/PrintInfo.h:
+
 2022-04-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Remove exclusive build guards around GPU process preferences, code

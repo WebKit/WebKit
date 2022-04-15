@@ -174,10 +174,6 @@ webkit.org/b/218349 fast/forms/focus2.html [ Failure ]
 webkit.org/b/218349 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/218349 mathml/presentation/href-style.html [ ImageOnlyFailure ]
 
-# Printing
-webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
-webkit.org/b/196542 printing/printing-events.html [ Crash ]
-
 # ResourceLoading
 webkit.org/b/201270 [ Release ] http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
 webkit.org/b/201270 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Crash ]
@@ -936,10 +932,6 @@ webkit.org/b/207605 [ Debug ] http/tests/workers/service/registration-clear-redu
 webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.html [ Crash ]
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
-
-webkit.org/b/225921 editing/execCommand/print.html [ Crash ]
-webkit.org/b/225921 fast/media/print-restores-previous-mediatype.html [ Crash ]
-webkit.org/b/225921 printing/print-close-crash.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
