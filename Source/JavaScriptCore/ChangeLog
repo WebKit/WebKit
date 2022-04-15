@@ -1,3 +1,19 @@
+2022-04-15  Mark Lam  <mark.lam@apple.com>
+
+        Apply purifyNaN in more places.
+        https://bugs.webkit.org/show_bug.cgi?id=239393
+
+        Reviewed by Saam Barati.
+
+        Also removed some unused functions.
+
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::loadI64Global const):
+        (JSC::Wasm::Instance::loadF32Global const): Deleted.
+        (JSC::Wasm::Instance::loadF64Global const): Deleted.
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::toJSValue):
+
 2022-04-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] ShadowRealm global object has a mutable prototype

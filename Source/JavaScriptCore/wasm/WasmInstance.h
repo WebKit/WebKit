@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -132,8 +132,6 @@ public:
         }
         return slot->m_primitive;
     }
-    float loadF32Global(unsigned i) const { return bitwise_cast<float>(loadI32Global(i)); }
-    double loadF64Global(unsigned i) const { return bitwise_cast<double>(loadI64Global(i)); }
     void setGlobal(unsigned i, int64_t bits)
     {
         Global::Value* slot = m_globals.get() + i;

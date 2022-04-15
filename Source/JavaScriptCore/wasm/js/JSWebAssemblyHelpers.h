@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -162,7 +162,7 @@ ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type t
     case Wasm::TypeKind::F32:
         return jsNumber(bitwise_cast<float>(static_cast<int32_t>(bits)));
     case Wasm::TypeKind::F64:
-        return jsNumber(bitwise_cast<double>(bits));
+        return jsNumber(purifyNaN(bitwise_cast<double>(bits)));
     case Wasm::TypeKind::I64:
         return JSBigInt::createFrom(globalObject, static_cast<int64_t>(bits));
     case Wasm::TypeKind::Externref:
