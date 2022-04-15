@@ -267,6 +267,7 @@ enum class CookieConsentDecisionResult : uint8_t;
 enum class CreateNewGroupForHighlight : bool;
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
+enum class EditAction : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class LockBackForwardList : bool;
 enum class HasInsecureContent : bool;
@@ -1194,7 +1195,7 @@ public:
     void registerWebProcessAccessibilityToken(const IPC::DataReference&);
     // Called by the UI process when it is ready to send its tokens to the web process.
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
-    void replaceWithPasteboardData(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
+    void replaceImageWithMarkupResults(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
     void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
     bool readSelectionFromPasteboard(const String& pasteboardName);
     String stringSelectionForPasteboard();

@@ -1,3 +1,54 @@
+2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Undo option after invoking "Markup Image" says "Undo Paste"
+        https://bugs.webkit.org/show_bug.cgi?id=239351
+        rdar://91647863
+
+        Reviewed by Darin Adler.
+
+        Add plumbing to allow a caller of `Editor::replaceNodeFromPasteboard` to specify an `EditAction` for the editing
+        command that is not just `EditAction::Paste`, and use it to supply a more specific edit action type of
+        `MarkupImage` in the case where "Markup Image" is used to replace an image element with other image data. This
+        allows the undo/redo title to be more accurate than simply "Undo/Redo Paste".
+
+        Test: ImageAnalysisTests.PerformImageAnalysisMarkup
+
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::createForPlainTextPaste):
+        (WebCore::TextEvent::createForFragmentPaste):
+        (WebCore::TextEvent::TextEvent):
+        * dom/TextEvent.h:
+        * dom/TextEventInputType.h:
+
+        Introduce TextEventInputMarkup. This is used to preserve the fact that a `TextEvent` was triggered via
+        "Markup Image" as opposed to a regular "Paste" command, when plumbing this event object through DOM event
+        propagation code. Once it reenters editing code, we consult this type to re-map this event to
+        `EditAction::MarkupImage` if appropriate.
+
+        I opted for this (slightly more roundabout) approach to prevent a potential layering violation, due to TextEvent
+        otherwise knowing about `EditAction`.
+
+        * editing/EditAction.cpp:
+        (WebCore::undoRedoLabel):
+        * editing/EditAction.h:
+
+        Introduce EditAction::MarkupImage. Additionally, alphabetically sort these enum types.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::handleTextEvent):
+        (WebCore::Editor::pasteAsFragment):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        * editing/Editor.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::replaceNodeFromPasteboard):
+
+        Add an `EditAction` argument; by default, this is `EditAction::Paste`.
+
+        * en.lproj/Localizable.strings:
+
+        Add a new localized string to represent the name of the "Markup Image" item, for the purposes of setting the
+        Redo/Undo action title.
+
 2022-04-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] ShadowRealm global object has a mutable prototype

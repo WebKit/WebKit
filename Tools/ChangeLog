@@ -1,3 +1,17 @@
+2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Undo option after invoking "Markup Image" says "Undo Paste"
+        https://bugs.webkit.org/show_bug.cgi?id=239351
+        rdar://91647863
+
+        Reviewed by Darin Adler.
+
+        Augment an existing API test to verify that the resulting undo action title after invoking "Markup Image" is not
+        "Undo Paste".
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-14  Robert Jenner  <Jenner@apple.com>
 
         Add an additional system to unsafe-merge queue

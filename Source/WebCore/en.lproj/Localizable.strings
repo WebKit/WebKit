@@ -548,6 +548,9 @@
 "Ignore Spelling" = "Ignore Spelling";
 
 /* Undo action name */
+"Image analysis markup menu item (Undo action name)" = "Markup Image";
+
+/* Undo action name */
 "Indent (Undo action name)" = "Indent";
 
 /* Undo action name */

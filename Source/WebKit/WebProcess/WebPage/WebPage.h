@@ -977,7 +977,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void replaceWithPasteboardData(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
+    void replaceImageWithMarkupResults(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);
     void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
 #endif
 

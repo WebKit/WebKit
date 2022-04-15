@@ -337,15 +337,16 @@ bool Editor::handleTextEvent(TextEvent& event)
     if (event.isDrop())
         return false;
 
-    if (event.isPaste()) {
+    if (event.isPaste() || event.isMarkup()) {
+        auto action = event.isMarkup() ? EditAction::MarkupImage : EditAction::Paste;
         if (event.pastingFragment()) {
 #if PLATFORM(IOS_FAMILY)
             if (client()->performsTwoStepPaste(event.pastingFragment()))
                 return true;
 #endif
-            replaceSelectionWithFragment(*event.pastingFragment(), SelectReplacement::No, event.shouldSmartReplace() ? SmartReplace::Yes : SmartReplace::No, event.shouldMatchStyle() ? MatchStyle::Yes : MatchStyle::No, EditAction::Paste, event.mailBlockquoteHandling());
+            replaceSelectionWithFragment(*event.pastingFragment(), SelectReplacement::No, event.shouldSmartReplace() ? SmartReplace::Yes : SmartReplace::No, event.shouldMatchStyle() ? MatchStyle::Yes : MatchStyle::No, action, event.mailBlockquoteHandling());
         } else
-            replaceSelectionWithText(event.data(), SelectReplacement::No, event.shouldSmartReplace() ? SmartReplace::Yes : SmartReplace::No, EditAction::Paste);
+            replaceSelectionWithText(event.data(), SelectReplacement::No, event.shouldSmartReplace() ? SmartReplace::Yes : SmartReplace::No, action);
         return true;
     }
 
@@ -626,12 +627,15 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
     target->dispatchEvent(TextEvent::createForPlainTextPaste(document().windowProxy(), pastingText, smartReplace));
 }
 
-void Editor::pasteAsFragment(Ref<DocumentFragment>&& pastingFragment, bool smartReplace, bool matchStyle, MailBlockquoteHandling respectsMailBlockquote)
+void Editor::pasteAsFragment(Ref<DocumentFragment>&& pastingFragment, bool smartReplace, bool matchStyle, MailBlockquoteHandling respectsMailBlockquote, EditAction action)
 {
     auto target = findEventTargetFromSelection();
     if (!target)
         return;
-    target->dispatchEvent(TextEvent::createForFragmentPaste(document().windowProxy(), WTFMove(pastingFragment), smartReplace, matchStyle, respectsMailBlockquote));
+
+    ASSERT(action == EditAction::MarkupImage || action == EditAction::Paste);
+    auto type = action == EditAction::MarkupImage ? TextEventInputMarkup : TextEventInputPaste;
+    target->dispatchEvent(TextEvent::createForFragmentPaste(document().windowProxy(), WTFMove(pastingFragment), type, smartReplace, matchStyle, respectsMailBlockquote));
 }
 
 void Editor::pasteAsPlainTextBypassingDHTML()
@@ -686,7 +690,7 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectRepl
         return;
 
     AccessibilityReplacedText replacedText;
-    if (AXObjectCache::accessibilityEnabled() && (editingAction == EditAction::Paste || editingAction == EditAction::Insert))
+    if (AXObjectCache::accessibilityEnabled() && (editingAction == EditAction::Paste || editingAction == EditAction::Insert || editingAction == EditAction::MarkupImage))
         replacedText = AccessibilityReplacedText(selection);
 
     OptionSet<ReplaceSelectionCommand::CommandOption> options { ReplaceSelectionCommand::PreventNesting, ReplaceSelectionCommand::SanitizeFragment };

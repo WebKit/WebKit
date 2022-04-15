@@ -349,7 +349,7 @@ void WebContextMenuProxyMac::applyMarkupToControlledImage()
         if (!data)
             return;
 
-        protectedPage->replaceWithPasteboardData(elementContext, { String(type.get()) }, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]));
+        protectedPage->replaceImageWithMarkupResults(elementContext, { String(type.get()) }, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]));
     });
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }

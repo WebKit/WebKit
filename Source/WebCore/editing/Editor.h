@@ -444,7 +444,7 @@ public:
     WEBCORE_EXPORT void handleAlternativeTextUIResult(const String& correction);
     void dismissCorrectionPanelAsIgnored();
 
-    WEBCORE_EXPORT void pasteAsFragment(Ref<DocumentFragment>&&, bool smartReplace, bool matchStyle, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
+    WEBCORE_EXPORT void pasteAsFragment(Ref<DocumentFragment>&&, bool smartReplace, bool matchStyle, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote, EditAction = EditAction::Paste);
     WEBCORE_EXPORT void pasteAsPlainText(const String&, bool smartReplace);
 
     // This is only called on the mac where paste is implemented primarily at the WebKit level.
@@ -537,7 +537,7 @@ public:
     void takeFindStringFromSelection();
     WEBCORE_EXPORT void replaceSelectionWithAttributedString(NSAttributedString *, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
     WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
-    WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, const String& pasteboardName);
+    WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, const String& pasteboardName, EditAction = EditAction::Paste);
 #endif
 
 #if PLATFORM(MAC)

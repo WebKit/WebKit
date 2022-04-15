@@ -1,5 +1,34 @@
 2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Undo option after invoking "Markup Image" says "Undo Paste"
+        https://bugs.webkit.org/show_bug.cgi?id=239351
+        rdar://91647863
+
+        Reviewed by Darin Adler.
+
+        Rename `replaceWithPasteboardData` to the more specific `replaceImageWithMarkupResults`. This method was
+        introduced (and is currently only used) to drive image replacement using "Markup Image"; giving this method a
+        more specific name allows us to hard-code `EditAction::MarkupImage` when calling into Editor to carry out the
+        replacement editing action in `WebPage::replaceImageWithMarkupResults`.
+
+        See WebCore/ChangeLog for additional details.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::replaceImageWithMarkupResults):
+        (WebKit::WebPageProxy::replaceWithPasteboardData): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView imageAnalysisMarkupMenu]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::applyMarkupToControlledImage):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::replaceImageWithMarkupResults):
+        (WebKit::WebPage::replaceWithPasteboardData): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2022-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, fix the Catalyst build after r292888
 
         `MCProfileConnection` is not available on Mac Catalyst.

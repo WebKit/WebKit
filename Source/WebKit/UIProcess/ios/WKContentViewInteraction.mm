@@ -4734,7 +4734,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
         auto [elementContext, image, preferredMIMEType] = *view->_imageAnalysisMarkupData;
         if (auto [data, type] = WebKit::transcodeWithPreferredMIMEType(image.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier); data)
-            view->_page->replaceWithPasteboardData(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
+            view->_page->replaceImageWithMarkupResults(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
     }];
 }
 

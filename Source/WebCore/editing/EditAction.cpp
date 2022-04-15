@@ -142,6 +142,8 @@ String undoRedoLabel(EditAction editAction)
         return WEB_UI_STRING_KEY("Convert to Ordered List", "Convert to Ordered List (Undo action name)", "Undo action name");
     case EditAction::ConvertToUnorderedList:
         return WEB_UI_STRING_KEY("Convert to Unordered List", "Convert to Unordered List (Undo action name)", "Undo action name");
+    case EditAction::MarkupImage:
+        return WEB_UI_STRING_KEY("Markup Image", "Image analysis markup menu item (Undo action name)", "Undo action name");
     }
     return { };
 }

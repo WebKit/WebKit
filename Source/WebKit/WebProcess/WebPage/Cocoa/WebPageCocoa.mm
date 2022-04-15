@@ -566,7 +566,7 @@ private:
     Vector<String> m_types;
 };
 
-void WebPage::replaceWithPasteboardData(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
+void WebPage::replaceImageWithMarkupResults(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     auto element = elementForContext(elementContext);
@@ -594,7 +594,7 @@ void WebPage::replaceWithPasteboardData(const ElementContext& elementContext, co
     {
         OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
         IgnoreSelectionChangeForScope ignoreSelectionChanges { frame.get() };
-        frame->editor().replaceNodeFromPasteboard(*element, replaceSelectionPasteboardName());
+        frame->editor().replaceNodeFromPasteboard(*element, replaceSelectionPasteboardName(), EditAction::MarkupImage);
     }
 
     constexpr auto restoreSelectionOptions = FrameSelection::defaultSetSelectionOptions(UserTriggered);

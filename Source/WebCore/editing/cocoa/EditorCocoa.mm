@@ -346,7 +346,7 @@ static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment
     }
 }
 
-void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName)
+void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName, EditAction action)
 {
     if (node.document() != m_document)
         return;
@@ -377,7 +377,7 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName)
     if (auto fragment = webContentFromPasteboard(pasteboard, *range, true, chosePlainText)) {
         maybeCopyNodeAttributesToFragment(node, *fragment);
         if (shouldInsertFragment(*fragment, *range, EditorInsertAction::Pasted))
-            pasteAsFragment(fragment.releaseNonNull(), false, false, MailBlockquoteHandling::IgnoreBlockquote);
+            pasteAsFragment(fragment.releaseNonNull(), false, false, MailBlockquoteHandling::IgnoreBlockquote, action);
     }
 
 #if PLATFORM(MAC)

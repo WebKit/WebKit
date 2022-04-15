@@ -48,12 +48,12 @@ Ref<TextEvent> TextEvent::create(RefPtr<WindowProxy>&& view, const String& data,
 
 Ref<TextEvent> TextEvent::createForPlainTextPaste(RefPtr<WindowProxy>&& view, const String& data, bool shouldSmartReplace)
 {
-    return adoptRef(*new TextEvent(WTFMove(view), data, nullptr, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
+    return adoptRef(*new TextEvent(WTFMove(view), data, nullptr, TextEventInputPaste, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
 }
 
-Ref<TextEvent> TextEvent::createForFragmentPaste(RefPtr<WindowProxy>&& view, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+Ref<TextEvent> TextEvent::createForFragmentPaste(RefPtr<WindowProxy>&& view, RefPtr<DocumentFragment>&& data, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
 {
-    return adoptRef(*new TextEvent(WTFMove(view), emptyString(), WTFMove(data), shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
+    return adoptRef(*new TextEvent(WTFMove(view), emptyString(), WTFMove(data), inputType, shouldSmartReplace, shouldMatchStyle, mailBlockquoteHandling));
 }
 
 Ref<TextEvent> TextEvent::createForDrop(RefPtr<WindowProxy>&& view, const String& data)
@@ -84,9 +84,9 @@ TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, TextEventIn
 {
 }
 
-TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
+TextEvent::TextEvent(RefPtr<WindowProxy>&& view, const String& data, RefPtr<DocumentFragment>&& pastingFragment, TextEventInputType inputType, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)
     : UIEvent(eventNames().textInputEvent, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes, WTFMove(view), 0)
-    , m_inputType(TextEventInputPaste)
+    , m_inputType(inputType)
     , m_data(data)
     , m_pastingFragment(WTFMove(pastingFragment))
     , m_shouldSmartReplace(shouldSmartReplace)

@@ -341,6 +341,10 @@ TEST(ImageAnalysisTests, PerformImageAnalysisMarkup)
     Util::waitForConditionWithLogging([&] {
         return [[webView objectByEvaluatingJavaScript:@"document.images[0].getBoundingClientRect().width"] intValue] == 215;
     }, 3, @"Expected bounding client rect to become 215.");
+
+    NSString *undoTitle = [webView undoManager].undoMenuItemTitle;
+    EXPECT_GT(undoTitle.length, 0U);
+    EXPECT_FALSE([undoTitle containsString:@"Paste"]);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
