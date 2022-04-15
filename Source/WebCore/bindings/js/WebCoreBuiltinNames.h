@@ -464,6 +464,7 @@ namespace WebCore {
     macro(getTracks) \
     macro(getUserMedia) \
     macro(gpu) \
+    macro(handleEvent) \
     macro(header) \
     macro(highWaterMark) \
     macro(href) \

@@ -42,7 +42,7 @@ void DOMSetAdapter::clear()
 std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& setLike)
 {
     auto& vm = lexicalGlobalObject.vm();
-    auto backingSet = setLike.get(&lexicalGlobalObject, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingSetPrivateName());
+    auto backingSet = setLike.get(&lexicalGlobalObject, webCoreBuiltinNames(vm).backingSetPrivateName());
     if (backingSet.isUndefined()) {
         auto& vm = lexicalGlobalObject.vm();
         JSC::DeferTermination deferScope(vm);
@@ -51,7 +51,7 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlob
         backingSet = JSC::JSSet::create(&lexicalGlobalObject, vm, lexicalGlobalObject.setStructure());
         scope.releaseAssertNoException();
 
-        setLike.putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingSetPrivateName(), backingSet, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+        setLike.putDirect(vm, webCoreBuiltinNames(vm).backingSetPrivateName(), backingSet, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
         return { true, *JSC::asObject(backingSet) };
     }
     return { false, *JSC::asObject(backingSet) };

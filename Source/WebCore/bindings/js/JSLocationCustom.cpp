@@ -63,7 +63,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, JSGlobalObject& lex
 
     // Getting location.href cross origin needs to throw. However, getOwnPropertyDescriptor() needs to return
     // a descriptor that has a setter but no getter.
-    if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName()) {
+    if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == webCoreBuiltinNames(vm).hrefPublicName()) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
         auto* getterSetter = thisObject.globalObject()->createCrossOriginGetterSetter(&lexicalGlobalObject, propertyName, nullptr, entry->propertyPutter());
         slot.setGetterSlot(&thisObject, PropertyAttribute::Accessor | PropertyAttribute::DontEnum, getterSetter);
@@ -120,7 +120,7 @@ bool JSLocation::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Property
     // So fall through to the access check for those.
     String errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped().window(), errorMessage)) {
-        if (propertyName == static_cast<JSVMClientData*>(vm.clientData)->builtinNames().hrefPublicName()) {
+        if (propertyName == webCoreBuiltinNames(vm).hrefPublicName()) {
             auto* setter = s_info.staticPropHashTable->entry(propertyName)->propertyPutter();
             scope.release();
             setter(lexicalGlobalObject, JSValue::encode(putPropertySlot.thisValue()), JSValue::encode(value), propertyName);

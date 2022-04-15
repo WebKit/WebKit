@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include <pal/text/TextEncoding.h>
 #include "WebKitMediaKeyError.h"
+#include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSONObject.h>
@@ -109,7 +110,7 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
             break;
         }
 
-        auto keysArrayValue = asObject(keysDataValue)->get(&lexicalGlobalObject, Identifier::fromString(vm, "keys"));
+        auto keysArrayValue = asObject(keysDataValue)->get(&lexicalGlobalObject, vm.propertyNames->builtinNames().keysPublicName());
         if (scope.exception() || !isJSArray(keysArrayValue)) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
             break;
