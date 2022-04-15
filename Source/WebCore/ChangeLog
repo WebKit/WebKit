@@ -1,3 +1,19 @@
+2022-04-15  Antoine Quint  <graouts@apple.com>
+
+        WKWebView false positive when testing a.relList.supports("ar"), fails to open USDZ in AR QuickLook
+        https://bugs.webkit.org/show_bug.cgi?id=239135
+        <rdar://problem/91798041>
+
+        Reviewed by Tim Horton.
+
+        Only return "true" for a.relList.supports("ar") when the SystemPreviewEnabled setting is "true".
+
+        Tests: system-preview/rel-ar-setting-disabled.html
+               system-preview/rel-ar-setting-enabled.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::relList):
+
 2022-04-15  Tim Horton  <timothy_horton@apple.com>
 
         Non-fatal fault under RenderThemeIOS::paintAttachment due to use of dynamic UIColors
