@@ -1,3 +1,14 @@
+2022-04-15  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r291843): Broken Netflix and Amazon video playback
+        https://bugs.webkit.org/show_bug.cgi?id=239397
+        <rdar://91313460>
+
+        Unreviewed revert of r291843.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::adjustSettingsForCaptivePortal):
+
 2022-04-15  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to adjust the final trait collection applied by LocalCurrentTraitCollection

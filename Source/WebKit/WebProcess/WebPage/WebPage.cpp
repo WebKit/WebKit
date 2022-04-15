@@ -4128,9 +4128,6 @@ static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferen
     settings.setAllowedMediaAudioCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaAudioCodecIDsAllowedInCaptivePortalModeKey()));
     settings.setAllowedMediaCaptionFormatTypes(store.getStringValueForKey(WebPreferencesKey::mediaCaptionFormatTypesAllowedInCaptivePortalModeKey()));
 
-    settings.setVideoPlaybackRequiresUserGesture(true);
-    settings.setAudioPlaybackRequiresUserGesture(true);
-
     adjustCoreGraphicsForCaptivePortal();
 }
 
