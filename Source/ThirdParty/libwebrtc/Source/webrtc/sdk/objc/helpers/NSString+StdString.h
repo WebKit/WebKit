@@ -16,10 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSString (StdString)
 
-@property(nonatomic, readonly) std::string stdString;
+@property(nonatomic, readonly) std::string rtcStdString;
 
-+ (std::string)stdStringForString:(NSString *)nsString;
-+ (NSString *)stringForStdString:(const std::string &)stdString;
++ (std::string)rtcStdStringForString:(NSString *)nsString;
++ (NSString *)rtcStringForStdString:(const std::string &)stdString;
 
 @end
 

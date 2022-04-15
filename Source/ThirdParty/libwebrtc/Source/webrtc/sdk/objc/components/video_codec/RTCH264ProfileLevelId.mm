@@ -58,7 +58,7 @@ NSString *MaxSupportedLevelForProfile(Profile profile) {
     const absl::optional<std::string> profileString =
         ProfileLevelIdToString(ProfileLevelId(profile, profileLevelId->level));
     if (profileString) {
-      return [NSString stringForStdString:*profileString];
+      return [NSString rtcStringForStdString:*profileString];
     }
   }
   return nil;

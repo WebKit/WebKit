@@ -12,17 +12,17 @@
 
 @implementation NSString (StdString)
 
-- (std::string)stdString {
-  return [NSString stdStringForString:self];
+- (std::string)rtcStdString {
+  return [NSString rtcStdStringForString:self];
 }
 
-+ (std::string)stdStringForString:(NSString *)nsString {
++ (std::string)rtcStdStringForString:(NSString *)nsString {
   NSData *charData = [nsString dataUsingEncoding:NSUTF8StringEncoding];
   return std::string(reinterpret_cast<const char *>(charData.bytes),
                      charData.length);
 }
 
-+ (NSString *)stringForStdString:(const std::string&)stdString {
++ (NSString *)rtcStringForStdString:(const std::string&)stdString {
   // std::string may contain null termination character so we construct
   // using length.
   return [[NSString alloc] initWithBytes:stdString.data()
