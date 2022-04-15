@@ -1665,10 +1665,14 @@ static CGFloat attachmentDynamicTypeScaleFactor()
     return std::max<CGFloat>(1, dynamicPointSize / fixedPointSize);
 }
 
-static UIColor *attachmentTitleColor() { return [PAL::getUIColorClass() systemGrayColor]; }
+static UIColor *attachmentTitleColor(const RenderAttachment& renderer)
+{
+    return cocoaColor(RenderTheme::singleton().systemColor(CSSValueAppleSystemGray, renderer.styleColorOptions())).autorelease();
+}
 
 static RetainPtr<CTFontRef> attachmentSubtitleFont() { return attachmentTitleFont(); }
-static UIColor *attachmentSubtitleColor() { return [PAL::getUIColorClass() systemGrayColor]; }
+
+static UIColor *attachmentSubtitleColor(const RenderAttachment& renderer) { return attachmentTitleColor(renderer); }
 
 struct RenderAttachmentInfo {
     explicit RenderAttachmentInfo(const RenderAttachment&);
@@ -1876,8 +1880,8 @@ RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
         buildWrappedLines(action, attachmentActionFont().get(), attachmentActionColor(attachment).get(), attachmentWrappingTextMaximumLineCount);
 
     bool forceSingleLineTitle = !action.isEmpty() || !subtitle.isEmpty() || hasProgress;
-    buildWrappedLines(title, attachmentTitleFont().get(), attachmentTitleColor(), forceSingleLineTitle ? 1 : attachmentWrappingTextMaximumLineCount);
-    buildSingleLine(subtitle, attachmentSubtitleFont().get(), attachmentSubtitleColor());
+    buildWrappedLines(title, attachmentTitleFont().get(), attachmentTitleColor(attachment), forceSingleLineTitle ? 1 : attachmentWrappingTextMaximumLineCount);
+    buildSingleLine(subtitle, attachmentSubtitleFont().get(), attachmentSubtitleColor(attachment));
 
     if (!lines.isEmpty()) {
         for (auto& line : lines) {
