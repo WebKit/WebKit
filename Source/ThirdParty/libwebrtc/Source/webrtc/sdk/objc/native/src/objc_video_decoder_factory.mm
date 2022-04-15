@@ -34,7 +34,7 @@ namespace {
 class ObjCVideoDecoder : public VideoDecoder {
  public:
   ObjCVideoDecoder(id<RTCVideoDecoder> decoder)
-      : decoder_(decoder), implementation_name_([decoder implementationName].stdString) {}
+      : decoder_(decoder), implementation_name_([decoder implementationName].rtcStdString) {}
 
   bool Configure(const Settings& settings) override {
     return [decoder_ startDecodeWithNumberOfCores:settings.number_of_cores()] == WEBRTC_VIDEO_CODEC_OK;

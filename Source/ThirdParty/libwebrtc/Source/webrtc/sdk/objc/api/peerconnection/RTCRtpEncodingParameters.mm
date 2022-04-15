@@ -32,7 +32,7 @@
     (const webrtc::RtpEncodingParameters &)nativeParameters {
   if (self = [self init]) {
     if (!nativeParameters.rid.empty()) {
-      _rid = [NSString stringForStdString:nativeParameters.rid];
+      _rid = [NSString rtcStringForStdString:nativeParameters.rid];
     }
     _isActive = nativeParameters.active;
     if (nativeParameters.max_bitrate_bps) {
@@ -65,7 +65,7 @@
 - (webrtc::RtpEncodingParameters)nativeParameters {
   webrtc::RtpEncodingParameters parameters;
   if (_rid != nil) {
-    parameters.rid = [NSString stdStringForString:_rid];
+    parameters.rid = [NSString rtcStdStringForString:_rid];
   }
   parameters.active = _isActive;
   if (_maxBitrateBps != nil) {

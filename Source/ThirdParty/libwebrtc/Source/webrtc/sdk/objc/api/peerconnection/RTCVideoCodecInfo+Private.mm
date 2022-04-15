@@ -17,21 +17,21 @@
 - (instancetype)initWithNativeSdpVideoFormat:(webrtc::SdpVideoFormat)format {
   NSMutableDictionary *params = [NSMutableDictionary dictionary];
   for (auto it = format.parameters.begin(); it != format.parameters.end(); ++it) {
-    [params setObject:[NSString stringForStdString:it->second]
-               forKey:[NSString stringForStdString:it->first]];
+    [params setObject:[NSString rtcStringForStdString:it->second]
+               forKey:[NSString rtcStringForStdString:it->first]];
   }
-  return [self initWithName:[NSString stringForStdString:format.name] parameters:params];
+  return [self initWithName:[NSString rtcStringForStdString:format.name] parameters:params];
 }
 
 - (webrtc::SdpVideoFormat)nativeSdpVideoFormat {
   std::map<std::string, std::string> parameters;
   for (NSString *paramKey in self.parameters.allKeys) {
-    std::string key = [NSString stdStringForString:paramKey];
-    std::string value = [NSString stdStringForString:self.parameters[paramKey]];
+    std::string key = [NSString rtcStdStringForString:paramKey];
+    std::string value = [NSString rtcStdStringForString:self.parameters[paramKey]];
     parameters[key] = value;
   }
 
-  return webrtc::SdpVideoFormat([NSString stdStringForString:self.name], parameters);
+  return webrtc::SdpVideoFormat([NSString rtcStdStringForString:self.name], parameters);
 }
 
 @end
