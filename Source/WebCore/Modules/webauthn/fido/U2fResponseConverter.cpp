@@ -137,7 +137,7 @@ static cbor::CBORValue::MapValue createFidoAttestationStatementFromU2fRegisterRe
 
 } // namespace
 
-RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, AuthenticatorAttachment attachment, const AttestationConveyancePreference& attestation)
+RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports, const AttestationConveyancePreference& attestation)
 {
     auto publicKey = extractECPublicKeyFromU2fRegistrationResponse(u2fData);
     if (publicKey.isEmpty())
@@ -160,7 +160,7 @@ RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& r
 
     auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f"_s, WTFMove(fidoAttestationStatement), attestation);
 
-    return AuthenticatorAttestationResponse::create(credentialId, attestationObject, attachment);
+    return AuthenticatorAttestationResponse::create(credentialId, attestationObject, attachment, WTFMove(transports));
 }
 
 RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, const WebCore::BufferSource& keyHandle, const Vector<uint8_t>& u2fData, AuthenticatorAttachment attachment)

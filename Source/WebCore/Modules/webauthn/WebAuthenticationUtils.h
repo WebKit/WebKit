@@ -38,6 +38,8 @@ namespace WebCore {
 
 WEBCORE_EXPORT Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length);
 
+WEBCORE_EXPORT Vector<uint8_t> convertArrayBufferToVector(ArrayBuffer*);
+
 // Produce a SHA-256 hash of the given RP ID.
 WEBCORE_EXPORT Vector<uint8_t> produceRpIdHash(const String& rpId);
 

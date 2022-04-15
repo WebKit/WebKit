@@ -154,6 +154,9 @@ static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(Public
             case AuthenticatorTransport::Internal:
                 transportString = @"internal";
                 break;
+            case AuthenticatorTransport::Cable:
+                transportString = @"cable";
+                break;
             }
 
             if (transportString)
@@ -337,6 +340,17 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     return requestContext;
 }
 
+static Vector<WebCore::AuthenticatorTransport> toAuthenticatorTransports(NSArray<NSNumber *> *ascTransports)
+{
+    Vector<WebCore::AuthenticatorTransport> transports;
+    transports.reserveInitialCapacity(ascTransports.count);
+    for (NSNumber *ascTransport : ascTransports) {
+        if (WTF::isValidEnum<WebCore::AuthenticatorTransport>(ascTransport.intValue))
+            transports.uncheckedAppend(static_cast<WebCore::AuthenticatorTransport>(ascTransport.intValue));
+    }
+    return transports;
+}
+
 RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::contextForRequest(WebAuthenticationRequestData&& requestData)
 {
     RetainPtr<ASCCredentialRequestContext> result;
@@ -361,6 +375,8 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         ASCPlatformPublicKeyCredentialRegistration *registrationCredential = credential.get();
         response.rawId = toArrayBuffer(registrationCredential.credentialID);
         response.attestationObject = toArrayBuffer(registrationCredential.attestationObject);
+        if ([registrationCredential respondsToSelector:@selector(transports)])
+            response.transports = toAuthenticatorTransports(registrationCredential.transports);
     } else if ([credential isKindOfClass:getASCSecurityKeyPublicKeyCredentialRegistrationClass()]) {
         attachment = AuthenticatorAttachment::CrossPlatform;
         response.isAuthenticatorAttestationResponse = true;
@@ -368,6 +384,8 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
         ASCSecurityKeyPublicKeyCredentialRegistration *registrationCredential = credential.get();
         response.rawId = toArrayBuffer(registrationCredential.credentialID);
         response.attestationObject = toArrayBuffer(registrationCredential.attestationObject);
+        if ([registrationCredential respondsToSelector:@selector(transports)])
+            response.transports = toAuthenticatorTransports(registrationCredential.transports);
     } else if ([credential isKindOfClass:getASCPlatformPublicKeyCredentialAssertionClass()]) {
         attachment = AuthenticatorAttachment::Platform;
         response.isAuthenticatorAttestationResponse = false;

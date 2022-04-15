@@ -34,6 +34,7 @@
 #include "FidoTestData.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/AuthenticatorAttachment.h>
+#include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/BufferSource.h>
 #include <WebCore/CBORReader.h>
 #include <WebCore/CBORValue.h>
@@ -353,9 +354,9 @@ Vector<uint8_t> getTestU2fRegisterResponse(size_t prefixSize, const uint8_t appe
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#commands
 TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
 {
-    auto makeCredentialResponse = readCTAPMakeCredentialResponse(convertBytesToVector(TestData::kTestMakeCredentialResponse, sizeof(TestData::kTestMakeCredentialResponse)), AuthenticatorAttachment::CrossPlatform);
+    auto makeCredentialResponse = readCTAPMakeCredentialResponse(convertBytesToVector(TestData::kTestMakeCredentialResponse, sizeof(TestData::kTestMakeCredentialResponse)), AuthenticatorAttachment::CrossPlatform, { });
     ASSERT_TRUE(makeCredentialResponse);
-    auto cborAttestationObject = cbor::CBORReader::read(convertBytesToVector(reinterpret_cast<uint8_t*>(makeCredentialResponse->attestationObject()->data()), makeCredentialResponse->attestationObject()->byteLength()));
+    auto cborAttestationObject = cbor::CBORReader::read(convertArrayBufferToVector(makeCredentialResponse->attestationObject()));
     ASSERT_TRUE(cborAttestationObject);
     ASSERT_TRUE(cborAttestationObject->isMap());
 
@@ -608,6 +609,24 @@ TEST(CTAPResponseTest, TestReadGetInfoResponse2)
     EXPECT_TRUE(getInfoResponse->options().userPresenceRequired());
     EXPECT_EQ(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, getInfoResponse->options().userVerificationAvailability());
     EXPECT_EQ(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedButPinNotSet, getInfoResponse->options().clientPinAvailability());
+}
+
+TEST(CTAPResponseTest, TestReadGetInfoResponseDeviceYubikey5c)
+{
+    auto getInfoResponse = readCTAPGetInfoResponse(convertBytesToVector(TestData::kTestGetInfoResponseDeviceYubikey5c, sizeof(TestData::kTestGetInfoResponseDeviceYubikey5c)));
+    ASSERT_TRUE(getInfoResponse);
+    ASSERT_TRUE(getInfoResponse->maxMsgSize());
+    EXPECT_EQ(*getInfoResponse->maxMsgSize(), 1200u);
+    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap), getInfoResponse->versions().end());
+    EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kU2f), getInfoResponse->versions().end());
+    EXPECT_FALSE(getInfoResponse->options().isPlatformDevice());
+    EXPECT_EQ(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, getInfoResponse->options().residentKeyAvailability());
+    EXPECT_TRUE(getInfoResponse->options().userPresenceRequired());
+    EXPECT_EQ(AuthenticatorSupportedOptions::UserVerificationAvailability::kNotSupported, getInfoResponse->options().userVerificationAvailability());
+    EXPECT_EQ(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet, getInfoResponse->options().clientPinAvailability());
+    EXPECT_TRUE(getInfoResponse->transports());
+    EXPECT_EQ(getInfoResponse->transports()->size(), 1u);
+    EXPECT_EQ(AuthenticatorTransport::Usb, getInfoResponse->transports()->first());
 }
 
 TEST(CTAPResponseTest, TestReadGetInfoResponseWithIncorrectFormat)

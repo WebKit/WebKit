@@ -114,7 +114,7 @@ void CtapAuthenticator::makeCredential()
 
 void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&& data)
 {
-    auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
+    auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, transports(), std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
     if (!response) {
         auto error = getResponseCode(data);
 
@@ -382,6 +382,14 @@ bool CtapAuthenticator::processGoogleLegacyAppIdSupportExtension()
     if (extensions->googleLegacyAppidSupport)
         tryDowngrade();
     return extensions->googleLegacyAppidSupport;
+}
+
+Vector<AuthenticatorTransport> CtapAuthenticator::transports() const
+{
+    
+    if (auto& infoTransports = m_info.transports())
+        return *infoTransports;
+    return Vector { driver().transport() };
 }
 
 } // namespace WebKit

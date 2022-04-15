@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "AuthenticationServicesCoreSoftLink.h"
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
 #import <WebCore/AuthenticatorAttachment.h>
@@ -59,6 +60,10 @@ static void updateQueryIfNecessary(NSMutableDictionary *)
 static inline String groupForAttributes(NSDictionary *attributes)
 {
     return nullString();
+}
+static bool shouldUpdateQuery()
+{
+    return false;
 }
 #endif
 
@@ -179,6 +184,14 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         result.uncheckedAppend(WTFMove(response));
     }
     return result;
+}
+
+static Vector<AuthenticatorTransport> transports()
+{
+    Vector<WebCore::AuthenticatorTransport> transports = { WebCore::AuthenticatorTransport::Internal };
+    if (shouldUpdateQuery())
+        transports.append(WebCore::AuthenticatorTransport::Cable);
+    return transports;
 }
 
 } // LocalAuthenticatorInternal
@@ -426,7 +439,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
 
         auto authData = buildAuthData(creationOptions.rp.id, flags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
         auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
-        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform));
+        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports()));
         return;
     }
 
@@ -453,7 +466,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     if (error) {
         LOG_ERROR("Couldn't attest: %s", String(error.localizedDescription).utf8().data());
         auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
-        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform));
+        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports()));
         return;
     }
     // Attestation Certificate and Attestation Issuing CA
@@ -472,7 +485,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
 
     deleteDuplicateCredential();
-    receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform));
+    receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports()));
 }
 
 void LocalAuthenticator::getAssertion()

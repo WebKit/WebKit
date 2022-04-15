@@ -70,6 +70,8 @@ private:
     bool tryDowngrade();
     bool processGoogleLegacyAppIdSupportExtension();
 
+    Vector<WebCore::AuthenticatorTransport> transports() const;
+
     fido::AuthenticatorGetInfoResponse m_info;
     bool m_isDowngraded { false };
     size_t m_remainingAssertionResponses { 0 };

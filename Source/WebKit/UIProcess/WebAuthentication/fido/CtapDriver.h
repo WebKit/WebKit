@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/FidoConstants.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -45,15 +46,19 @@ public:
 
     void setProtocol(fido::ProtocolVersion protocol) { m_protocol = protocol; }
 
+    WebCore::AuthenticatorTransport transport() const { return m_transport; }
+    fido::ProtocolVersion protocol() const { return m_protocol; }
+
     virtual void transact(Vector<uint8_t>&& data, ResponseCallback&&) = 0;
     virtual void cancel() { };
 
 protected:
-    CtapDriver() = default;
-    fido::ProtocolVersion protocol() const { return m_protocol; }
+    CtapDriver(WebCore::AuthenticatorTransport transport)
+        : m_transport(transport) { }
 
 private:
     fido::ProtocolVersion m_protocol { fido::ProtocolVersion::kCtap };
+    WebCore::AuthenticatorTransport m_transport;
 };
 
 } // namespace WebKit

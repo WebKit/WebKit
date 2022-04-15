@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "CBORReader.h"
 #include "CBORWriter.h"
 #include "FidoConstants.h"
 #include "WebAuthenticationConstants.h"
@@ -41,6 +42,11 @@ namespace WebCore {
 Vector<uint8_t> convertBytesToVector(const uint8_t byteArray[], const size_t length)
 {
     return { byteArray, length };
+}
+
+Vector<uint8_t> convertArrayBufferToVector(ArrayBuffer* buffer)
+{
+    return convertBytesToVector(static_cast<uint8_t*>(buffer->data()), buffer->byteLength());
 }
 
 Vector<uint8_t> produceRpIdHash(const String& rpId)

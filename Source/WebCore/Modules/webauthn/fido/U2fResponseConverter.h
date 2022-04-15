@@ -44,7 +44,7 @@ namespace fido {
 
 // Converts a U2F register response to WebAuthN makeCredential response.
 // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-authenticatorMakeCredential-interoperability
-WEBCORE_EXPORT RefPtr<WebCore::AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, WebCore::AuthenticatorAttachment, const WebCore::AttestationConveyancePreference& = WebCore::AttestationConveyancePreference::Direct);
+WEBCORE_EXPORT RefPtr<WebCore::AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, WebCore::AuthenticatorAttachment, Vector<WebCore::AuthenticatorTransport>&& transports = { }, const WebCore::AttestationConveyancePreference& = WebCore::AttestationConveyancePreference::Direct);
 
 // Converts a U2F authentication response to WebAuthN getAssertion response.
 // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-authenticatorGetAssertion-interoperability

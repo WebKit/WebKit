@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticatorTransport.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Forward.h>
 
@@ -50,6 +51,8 @@ struct AuthenticatorResponseData {
     RefPtr<ArrayBuffer> authenticatorData;
     RefPtr<ArrayBuffer> signature;
     RefPtr<ArrayBuffer> userHandle;
+
+    Vector<WebCore::AuthenticatorTransport> transports;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<AuthenticatorResponseData> decode(Decoder&);
@@ -94,6 +97,7 @@ void AuthenticatorResponseData::encode(Encoder& encoder) const
 
     if (isAuthenticatorAttestationResponse && attestationObject) {
         encodeArrayBuffer(encoder, *attestationObject);
+        encoder << transports;
         return;
     }
 
@@ -139,6 +143,12 @@ std::optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decod
         result.attestationObject = decodeArrayBuffer(decoder);
         if (!result.attestationObject)
             return std::nullopt;
+
+        std::optional<Vector<AuthenticatorTransport>> transports;
+        decoder >> transports;
+        if (!transports)
+            return std::nullopt;
+        result.transports = WTFMove(*transports);
         return result;
     }
 

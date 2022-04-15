@@ -29,22 +29,25 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "AuthenticatorResponseData.h"
+#include "CBORReader.h"
+#include "WebAuthenticationUtils.h"
 
 namespace WebCore {
 
-Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment)
+Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
 {
-    return adoptRef(*new AuthenticatorAttestationResponse(WTFMove(rawId), WTFMove(attestationObject), attachment));
+    return adoptRef(*new AuthenticatorAttestationResponse(WTFMove(rawId), WTFMove(attestationObject), attachment, WTFMove(transports)));
 }
 
-Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, AuthenticatorAttachment attachment)
+Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
 {
-    return create(ArrayBuffer::create(rawId.data(), rawId.size()), ArrayBuffer::create(attestationObject.data(), attestationObject.size()), attachment);
+    return create(ArrayBuffer::create(rawId.data(), rawId.size()), ArrayBuffer::create(attestationObject.data(), attestationObject.size()), attachment, WTFMove(transports));
 }
 
-AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment)
+AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports)
     : AuthenticatorResponse(WTFMove(rawId), attachment)
     , m_attestationObject(WTFMove(attestationObject))
+    , m_transports(WTFMove(transports))
 {
 }
 
@@ -53,7 +56,25 @@ AuthenticatorResponseData AuthenticatorAttestationResponse::data() const
     auto data = AuthenticatorResponse::data();
     data.isAuthenticatorAttestationResponse = true;
     data.attestationObject = m_attestationObject.copyRef();
+    data.transports = m_transports;
     return data;
+}
+
+RefPtr<ArrayBuffer> AuthenticatorAttestationResponse::getAuthenticatorData() const
+{
+    auto decodedResponse = cbor::CBORReader::read(convertArrayBufferToVector(m_attestationObject.ptr()));
+    if (!decodedResponse || !decodedResponse->isMap()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    const auto& attObjMap = decodedResponse->getMap();
+    auto it = attObjMap.find(cbor::CBORValue("authData"));
+    if (it == attObjMap.end() || !it->second.isByteString()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    auto authData = it->second.getByteString();
+    return ArrayBuffer::tryCreate(authData.data(), authData.size());
 }
 
 } // namespace WebCore

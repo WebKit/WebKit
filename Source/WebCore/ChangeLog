@@ -1,3 +1,52 @@
+2022-04-15  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Implement getTransports() and getAuthenticatorData() on AuthenticatorAttestationResponse
+        https://bugs.webkit.org/show_bug.cgi?id=238966
+        rdar://problem/91449906
+
+        This change implements the getTransports() and getAuthenticatorData() functions
+        on AuthenticatorAttestationResponse. For security keys, the supported transports of
+        the key are parsed from authenticatorGetInfo. For the local authenticator, the supported
+        transports are specified according to which features are available. getAuthenticatorData()
+        is a convenience method for RPs who want to avoid parsing CBOR.
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/webauthn/AuthenticatorAttestationResponse.cpp:
+        (WebCore::AuthenticatorAttestationResponse::create):
+        (WebCore::AuthenticatorAttestationResponse::AuthenticatorAttestationResponse):
+        (WebCore::AuthenticatorAttestationResponse::data const):
+        (WebCore::AuthenticatorAttestationResponse::getTransports const):
+        (WebCore::AuthenticatorAttestationResponse::getAuthenticatorData const):
+        * Modules/webauthn/AuthenticatorAttestationResponse.h:
+        * Modules/webauthn/AuthenticatorAttestationResponse.idl:
+        * Modules/webauthn/AuthenticatorResponse.cpp:
+        (WebCore::AuthenticatorResponse::tryCreate):
+        * Modules/webauthn/AuthenticatorResponse.h:
+        * Modules/webauthn/AuthenticatorResponseData.h:
+        (WebCore::AuthenticatorResponseData::encode const):
+        (WebCore::AuthenticatorResponseData::decode):
+        * Modules/webauthn/AuthenticatorTransport.h:
+        * Modules/webauthn/AuthenticatorTransport.idl:
+        * Modules/webauthn/WebAuthenticationConstants.h:
+        * Modules/webauthn/WebAuthenticationUtils.cpp:
+        (WebCore::convertArrayBufferToVector):
+        * Modules/webauthn/WebAuthenticationUtils.h:
+        * Modules/webauthn/fido/AuthenticatorGetInfoResponse.cpp:
+        (fido::AuthenticatorGetInfoResponse::setTransports):
+        (fido::toStringVector):
+        (fido::encodeAsCBOR):
+        * Modules/webauthn/fido/AuthenticatorGetInfoResponse.h:
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::convertStringToAuthenticatorTransport):
+        (fido::readCTAPMakeCredentialResponse):
+        (fido::readCTAPGetInfoResponse):
+        * Modules/webauthn/fido/DeviceResponseConverter.h:
+        * Modules/webauthn/fido/U2fResponseConverter.cpp:
+        (fido::readU2fRegisterResponse):
+        * Modules/webauthn/fido/U2fResponseConverter.h:
+        (fido::readU2fRegisterResponse):
+
 2022-04-15  Brandon Stewart  <brandonstewart@apple.com>
 
         Parent Mismatch

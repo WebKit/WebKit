@@ -1,3 +1,50 @@
+2022-04-15  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Implement getTransports() and getAuthenticatorData() on AuthenticatorAttestationResponse
+        https://bugs.webkit.org/show_bug.cgi?id=238966
+        rdar://problem/91449906
+
+        This change implements the getTransports() and getAuthenticatorData() functions
+        on AuthenticatorAttestationResponse. For security keys, the supported transports of
+        the key are parsed from authenticatorGetInfo. For the local authenticator, the supported
+        transports are specified according to which features are available. getAuthenticatorData()
+        is a convenience method for RPs who want to avoid parsing CBOR.
+
+        Reviewed by Brent Fulgham.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponse.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponse.mm:
+        (-[_WKAuthenticatorAttestationResponse initWithClientDataJSON:rawId:extensions:attestationObject:attachment:transports:]):
+        (-[_WKAuthenticatorAttestationResponse initWithClientDataJSON:rawId:extensions:attestationObject:attachment:]): Deleted.
+        * UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponseInternal.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (wkExtensionsClientOutputs):
+        (wkAuthenticatorAttestationResponse):
+        (wkAuthenticatorAssertionResponse):
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticatorInternal::transports):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::toASCDescriptor):
+        (WebKit::toAuthenticatorTransports):
+        (WebKit::continueAfterRequest):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::continueMakeCredentialAfterResponseReceived):
+        (WebKit::CtapAuthenticator::transports):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.h:
+        * UIProcess/WebAuthentication/fido/CtapDriver.h:
+        (WebKit::CtapDriver::transport const):
+        (WebKit::CtapDriver::protocol const):
+        (WebKit::CtapDriver::CtapDriver):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp:
+        (WebKit::CtapHidDriver::CtapHidDriver):
+        * UIProcess/WebAuthentication/fido/CtapNfcDriver.cpp:
+        (WebKit::CtapNfcDriver::CtapNfcDriver):
+        * UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp:
+        (WebKit::U2fAuthenticator::continueRegisterCommandAfterResponseReceived):
+
 2022-04-14  Simon Fraser  <simon.fraser@apple.com>
 
         Use the ProcessTerminationReason enum for all the process types

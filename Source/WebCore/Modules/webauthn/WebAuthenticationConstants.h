@@ -93,6 +93,12 @@ constexpr const char keySizeKey[] = "key_size";
 constexpr const char relyingPartyKey[] = "rp";
 constexpr const char applicationTagKey[] = "tag";
 
+constexpr auto authenticatorTransportUsb = "usb"_s;
+constexpr auto authenticatorTransportNfc = "nfc"_s;
+constexpr auto authenticatorTransportBle = "ble"_s;
+constexpr auto authenticatorTransportInternal = "internal"_s;
+constexpr auto authenticatorTransportCable = "cable"_s;
+
 } // namespace WebCore
 
 namespace WebAuthn {
