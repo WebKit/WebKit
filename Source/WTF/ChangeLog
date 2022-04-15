@@ -1,3 +1,14 @@
+2022-04-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Remove exclusive build guards around GPU process preferences, code
+        https://bugs.webkit.org/show_bug.cgi?id=239331
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        Make the UseGPUProcessForWebGLEnabled option also usable for the GTK and
+        WPE ports.
+
 2022-04-14  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Clean up WebAuthenticationModern and WebAuthnProcess

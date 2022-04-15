@@ -1,3 +1,15 @@
+2022-04-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Remove exclusive build guards around GPU process preferences, code
+        https://bugs.webkit.org/show_bug.cgi?id=239331
+
+        Reviewed by Philippe Normand.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createGraphicsContextGL const):
+        Remove restrictive guards around the check for remote-WebGL execution,
+        only remaining guard being ENABLE(GPU_PROCESS).
+
 2022-04-14  Antoine Quint  <graouts@apple.com>
 
         [model] ASVInlinePreview objects don't get cleared when the model source changes

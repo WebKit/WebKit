@@ -1462,7 +1462,7 @@ UseGPUProcessForWebGLEnabled:
   humanReadableName: "GPU Process: WebGL"
   humanReadableDescription: "Process all WebGL operations in GPU Process"
   webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !(PLATFORM(GTK) || PLATFORM(WPE))
+  condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
