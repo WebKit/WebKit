@@ -9,7 +9,7 @@ log("");
 
 let topClientIdentifier = null;
 let windowClientIdentifier = null;
-
+let dedicatedWorker = null;
 let tries = 0;
 
 function containsBothClients(clientIdentifiers)
@@ -23,8 +23,8 @@ function containsOnlyTopClient(clientIdentifiers)
 }
 
 navigator.serviceWorker.addEventListener("message", function(event) {
-  if (step == "BothClientsInitiallyActive") {
-    if (!containsBothClients(event.data)) {
+  if (step == "AllClientsInitiallyActive") {
+    if (!containsBothClients(event.data.ids) && event.data.workersCount !== 2) {
       if (++tries > 20) {
           log("FAIL: Wrong initial number of clients");
           finishSWTest();
@@ -33,7 +33,8 @@ navigator.serviceWorker.addEventListener("message", function(event) {
       worker.postMessage("getClientIds");
       return;
     }
-    log("PASS: service worker has initially 2 clients");
+    log("PASS: service worker has initially 2 window clients");
+    log("PASS: service worker has initially 2 worker clients");
 
     otherWindow.addEventListener("pagehide", function(event) {
        if (!event.persisted) {
@@ -54,28 +55,31 @@ navigator.serviceWorker.addEventListener("message", function(event) {
   }
 
   if (step == "OnlyOneClientRemainsActive") {
-    if (!containsOnlyTopClient(event.data)) {
+    if (!containsOnlyTopClient(event.data.ids) && event.data.workersCount !== 1) {
       log("FAIL: Wrong number of clients after one client entered page cache");
       finishSWTest();
     }
 
-    log("PASS: service worker has only 1 client after 1 entered page cache");
+    log("PASS: service worker has only 1 window client after 1 entered page cache");
+    log("PASS: service worker has only 1 worker client after 1 entered page cache");
     finishSWTest();
   }
 });
 
-navigator.serviceWorker.register("resources/getClientIds-worker.js", { }).then(function(registration) {
+navigator.serviceWorker.register("resources/getClientIds-worker.js", { }).then(async (registration) => {
     if (!window.internals)
         return;
     topClientIdentifier = internals.serviceWorkerClientInternalIdentifier(document);
 
     worker = registration.installing;
+
+    dedicatedWorker = new Worker("other_resources/dummy.js");
+
     otherWindow = open("other_resources/test.html");
-    otherWindow.onload = function() {
-      windowClientIdentifier = internals.serviceWorkerClientInternalIdentifier(otherWindow.document);
-      step = "BothClientsInitiallyActive"
-      worker.postMessage("getClientIds");
-    };
+    await new Promise(resolve => otherWindow.onload = resolve);
+    windowClientIdentifier = internals.serviceWorkerClientInternalIdentifier(otherWindow.document);
+    step = "AllClientsInitiallyActive"
+    worker.postMessage("getClientIds");
 });
 </script>
 </body>

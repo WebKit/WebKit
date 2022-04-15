@@ -1,3 +1,22 @@
+2022-04-15  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorker.postMessage() doesn't work from inside iframe
+        https://bugs.webkit.org/show_bug.cgi?id=213984
+        <rdar://problem/65203340>
+
+        Reviewed by Chris Dumez.
+
+        Pass the full ClientOrigin when registering a service worker client.
+        Filter out clients that cannot be matched:
+        - non HTTP/blob/about:blank clients
+        - sandboxed HTTP clients
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        * WebProcess/Storage/WebSWClientConnection.h:
+
 2022-04-14  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Default initialize GTK-specific print info in WebKit::PrintInfo

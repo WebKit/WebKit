@@ -36,6 +36,7 @@
 #include "ServiceWorker.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "ServiceWorkerProvider.h"
 #include "TextResourceDecoder.h"
 #include "WorkerFetchResult.h"
 #include "WorkerGlobalScope.h"
@@ -58,8 +59,14 @@ WorkerScriptLoader::WorkerScriptLoader()
 
 WorkerScriptLoader::~WorkerScriptLoader()
 {
-    if (m_clientIdentifier)
-        scriptExecutionContextIdentifierToWorkerScriptLoaderMap().remove(m_clientIdentifier);
+    if (!m_clientIdentifier)
+        return;
+
+    scriptExecutionContextIdentifierToWorkerScriptLoaderMap().remove(m_clientIdentifier);
+#if ENABLE(SERVICE_WORKER)
+    if (m_activeServiceWorkerData)
+        ServiceWorkerProvider::singleton().serviceWorkerConnection().unregisterServiceWorkerClient(m_clientIdentifier);
+#endif
 }
 
 std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecutionContext, const URL& url, Source source, FetchOptions::Mode mode, FetchOptions::Cache cachePolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, const String& initiatorIdentifier)
@@ -151,13 +158,12 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     // FIXME: Add support for shared worker.
     if (m_destination == FetchOptions::Destination::Worker && is<Document>(scriptExecutionContext)) {
         ASSERT(clientIdentifier);
+        options.clientIdentifier = m_clientIdentifier = clientIdentifier;
         // In case of blob URLs, we reuse the document controlling service worker.
         if (request->url().protocolIsBlob() && scriptExecutionContext.activeServiceWorker())
             setControllingServiceWorker(ServiceWorkerData { scriptExecutionContext.activeServiceWorker()->data() });
-        else {
-            options.clientIdentifier = m_clientIdentifier = clientIdentifier;
+        else
             scriptExecutionContextIdentifierToWorkerScriptLoaderMap().add(m_clientIdentifier, this);
-        }
     } else if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif

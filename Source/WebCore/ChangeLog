@@ -1,3 +1,29 @@
+2022-04-15  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorker.postMessage() doesn't work from inside iframe
+        https://bugs.webkit.org/show_bug.cgi?id=213984
+        <rdar://problem/65203340>
+
+        Reviewed by Chris Dumez.
+
+        postMessage was not working as we do not postMessage to a service worker if the source is not registered.
+        We now register service worker clients more aggresively and pass the client origin to better handle blob and about:blank clients.
+        We also add support for registering/unregistering worker clients when they get suspended/resumed.
+        To make sure a worker client is removed in failure case, WorkerScriptLoader is unregistering the service worker client if
+        the service worker data was not taken by its Worker.
+
+        Test: http/wpt/service-workers/about-blank-iframe.html
+
+        * dom/Document.cpp:
+        * loader/DocumentLoader.cpp:
+        * workers/DedicatedWorkerThread.cpp:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerScriptLoader.cpp:
+        * workers/service/SWClientConnection.h:
+        * workers/service/WorkerSWClientConnection.cpp:
+        * workers/service/WorkerSWClientConnection.h:
+
 2022-04-14  Antoine Quint  <graouts@apple.com>
 
         [model] ASVInlinePreview objects don't get cleared when the model source changes

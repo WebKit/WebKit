@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>Service Worker Fetch Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<iframe id='myframe'></iframe>
+<script>
+promise_test(async () => {
+    const promise = new Promise(resolve => window.resolveCallback = resolve);
+    myframe.contentDocument.write(`
+    <body>
+        <script>
+            navigator.serviceWorker.register('about-blank-iframe-worker.js').then(registration => {
+                window.worker = registration.active ? registration.active : registration.installing;
+                parent.resolveCallback();
+            });
+        </${'script'}>
+    </body>`);
+    return promise;
+}, "setup");
+
+promise_test(async () => {
+    const promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(event.data);
+        });
+        setTimeout(() => reject("No response message from service worker"), 5000);
+    });
+
+    myframe.contentWindow.worker.postMessage("hello");
+    assert_equals(await promise, "hello");
+}, "post messaging from an iframe");
+
+promise_test(async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (let registration of registrations)
+        await registration.unregister();
+    myframe.remove();
+}, "remove iframe");
+</script>
+</body>
+</html>

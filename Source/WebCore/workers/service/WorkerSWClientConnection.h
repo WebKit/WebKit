@@ -39,6 +39,9 @@ public:
     static Ref<WorkerSWClientConnection> create(WorkerGlobalScope& scope) { return adoptRef(*new WorkerSWClientConnection { scope }); }
     ~WorkerSWClientConnection();
 
+    void registerServiceWorkerClient(const ClientOrigin&, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent) final;
+    void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) final;
+
 private:
     explicit WorkerSWClientConnection(WorkerGlobalScope&);
 
@@ -51,8 +54,6 @@ private:
     void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, const ServiceWorkerOrClientIdentifier& source) final;
     SWServerConnectionIdentifier serverConnectionIdentifier() const final;
     bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const final;
-    void registerServiceWorkerClient(const SecurityOrigin& topOrigin, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent) final;
-    void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) final;
     void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationKey&&, WorkerFetchResult&&) final;
     void scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(ServiceWorkerOrClientIdentifier, const ServiceWorkerJobData&) final;

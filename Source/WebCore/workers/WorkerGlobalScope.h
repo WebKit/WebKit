@@ -97,8 +97,10 @@ public:
     WEBCORE_EXPORT WorkerFileSystemStorageConnection* fileSystemStorageConnection();
     WorkerCacheStorageConnection& cacheStorageConnection();
     MessagePortChannelProvider& messagePortChannelProvider();
+
 #if ENABLE(SERVICE_WORKER)
     WorkerSWClientConnection& swClientConnection();
+    void updateServiceWorkerClientData() final;
 #endif
 
     WorkerThread& thread() const;
@@ -191,9 +193,6 @@ private:
 #if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) final;
     bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) final;
-#endif
-#if ENABLE(SERVICE_WORKER)
-    void updateServiceWorkerClientData() final;
 #endif
 
     void stopIndexedDatabase();

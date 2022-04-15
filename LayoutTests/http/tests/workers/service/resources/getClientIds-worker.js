@@ -1,9 +1,12 @@
-self.addEventListener("message", (event) => {
+self.addEventListener("message", async (event) => {
     source = event.source;
-    clients.matchAll({ includeUncontrolled : true }).then(function(clients) {
-        let ids = [];
-        for (let client of clients)
-            ids.push(self.internals.serviceWorkerClientInternalIdentifier(client));
-        source.postMessage(ids);
-    });
+    const matchedClients = await clients.matchAll({ includeUncontrolled : true, type: 'all' })
+    let data = { ids: [], workerCount: 0 };
+    for (let client of matchedClients) {
+        if (client.type === 'worker')
+            data.workerCount++;
+        else
+            data.ids.push(self.internals.serviceWorkerClientInternalIdentifier(client));
+    }
+    source.postMessage(data);
 });

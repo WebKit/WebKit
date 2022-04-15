@@ -151,6 +151,11 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
+#if ENABLE(SERVICE_WORKER)
+    if (settingsValues().serviceWorkersEnabled)
+        swClientConnection().unregisterServiceWorkerClient(identifier());
+#endif
+
     stopIndexedDatabase();
 
     if (m_cacheStorageConnection)
@@ -229,10 +234,20 @@ void WorkerGlobalScope::suspend()
 {
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, true);
+
+#if ENABLE(SERVICE_WORKER)
+    if (settingsValues().serviceWorkersEnabled)
+        swClientConnection().unregisterServiceWorkerClient(identifier());
+#endif
 }
 
 void WorkerGlobalScope::resume()
 {
+#if ENABLE(SERVICE_WORKER)
+    if (settingsValues().serviceWorkersEnabled)
+        updateServiceWorkerClientData();
+#endif
+
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, false);
 }
@@ -657,10 +672,12 @@ void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScri
 #if ENABLE(SERVICE_WORKER)
 void WorkerGlobalScope::updateServiceWorkerClientData()
 {
-    ASSERT(type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker);
+    if (!settingsValues().serviceWorkersEnabled)
+        return;
+
+    ASSERT(type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker || type() == WebCore::WorkerGlobalScope::Type::SharedWorker);
     auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
-    SWClientConnection& connection = swClientConnection();
-    connection.registerServiceWorkerClient(topOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
+    swClientConnection().registerServiceWorkerClient(clientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
 }
 #endif
 

@@ -1,3 +1,20 @@
+2022-04-15  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorker.postMessage() doesn't work from inside iframe
+        https://bugs.webkit.org/show_bug.cgi?id=213984
+        <rdar://problem/65203340>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/about-blank-iframe-expected.txt: Added.
+        * http/wpt/service-workers/about-blank-iframe-worker.js: Added.
+        * http/wpt/service-workers/about-blank-iframe.html: Added.
+        * http/tests/workers/service/client-added-to-clients-when-restored-from-page-cache.html:
+        * http/tests/workers/service/client-removed-from-clients-while-in-page-cache-expected.txt:
+        * http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html:
+        * http/tests/workers/service/other_resources/test.html:
+        * http/tests/workers/service/resources/getClientIds-worker.js:
+
 2022-04-14  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Default initialize GTK-specific print info in WebKit::PrintInfo

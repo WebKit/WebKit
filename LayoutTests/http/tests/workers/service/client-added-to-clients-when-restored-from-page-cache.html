@@ -22,7 +22,7 @@ function containsExpectedClients(clientIdentifiers)
 
 navigator.serviceWorker.addEventListener("message", function(event) {
   if (step == "BothClientsInitiallyActive") {
-    if (!containsExpectedClients(event.data)) {
+    if (!containsExpectedClients(event.data.ids)) {
       if (++tries > 20) {
           log("FAIL: Wrong initial number of clients");
           finishSWTest();
@@ -59,7 +59,7 @@ navigator.serviceWorker.addEventListener("message", function(event) {
   }
 
   if (step == "SecondClientRestoredFromPageCache") {
-    if (!containsExpectedClients(event.data)) {
+    if (!containsExpectedClients(event.data.ids)) {
       log("FAIL: Wrong number of clients after one client was restored from page cache");
       finishSWTest();
     }

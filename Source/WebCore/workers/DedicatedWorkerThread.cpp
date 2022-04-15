@@ -52,6 +52,7 @@ Ref<WorkerGlobalScope> DedicatedWorkerThread::createWorkerGlobalScope(const Work
 #if ENABLE(SERVICE_WORKER)
     if (params.serviceWorkerData)
         scope->setActiveServiceWorker(ServiceWorker::getOrCreate(scope.get(), ServiceWorkerData { *params.serviceWorkerData }));
+    scope->updateServiceWorkerClientData();
 #endif
     return scope;
 }
