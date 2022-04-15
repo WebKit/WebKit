@@ -122,7 +122,7 @@ private:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
 
-    void gpuProcessExited(GPUProcessTerminationReason);
+    void gpuProcessExited(ProcessTerminationReason);
 
     // ProcessThrottlerClient
     ASCIILiteral clientName() const final { return "GPUProcess"_s; }

@@ -415,19 +415,24 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void GPUProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
+void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 {
     Ref protectedThis { *this };
 
     switch (reason) {
-    case GPUProcessTerminationReason::Crash:
-        RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=crash", this);
+    case ProcessTerminationReason::ExceededMemoryLimit:
+    case ProcessTerminationReason::ExceededCPULimit:
+    case ProcessTerminationReason::RequestedByClient:
+    case ProcessTerminationReason::IdleExit:
+    case ProcessTerminationReason::Unresponsive:
+    case ProcessTerminationReason::Crash:
+        RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=reason=%{public}s", this, processTerminationReasonToString(reason));
         break;
-    case GPUProcessTerminationReason::IdleExit:
-        RELEASE_LOG(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=idle-exit", this);
-        break;
-    case GPUProcessTerminationReason::Unresponsive:
-        RELEASE_LOG(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=unresponsive", this);
+    case ProcessTerminationReason::ExceededProcessCountLimit:
+    case ProcessTerminationReason::NavigationSwap:
+    case ProcessTerminationReason::RequestedByNetworkProcess:
+    case ProcessTerminationReason::RequestedByGPUProcess:
+        ASSERT_NOT_REACHED();
         break;
     }
 
@@ -442,7 +447,7 @@ void GPUProcessProxy::processIsReadyToExit()
 {
     RELEASE_LOG(Process, "%p - GPUProcessProxy::processIsReadyToExit:", this);
     terminate();
-    gpuProcessExited(GPUProcessTerminationReason::IdleExit); // May cause |this| to get deleted.
+    gpuProcessExited(ProcessTerminationReason::IdleExit); // May cause |this| to get deleted.
 }
 
 void GPUProcessProxy::terminateForTesting()
@@ -458,7 +463,7 @@ void GPUProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void
 void GPUProcessProxy::didClose(IPC::Connection&)
 {
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::didClose:", this);
-    gpuProcessExited(GPUProcessTerminationReason::Crash); // May cause |this| to get deleted.
+    gpuProcessExited(ProcessTerminationReason::Crash); // May cause |this| to get deleted.
 }
 
 void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
@@ -480,7 +485,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
-        gpuProcessExited(GPUProcessTerminationReason::Crash);
+        gpuProcessExited(ProcessTerminationReason::Crash);
         return;
     }
     
@@ -707,7 +712,7 @@ void GPUProcessProxy::didBecomeUnresponsive()
 {
     RELEASE_LOG_ERROR(Process, "GPUProcessProxy::didBecomeUnresponsive: GPUProcess with PID %d became unresponsive, terminating it", processIdentifier());
     terminate();
-    gpuProcessExited(GPUProcessTerminationReason::Unresponsive);
+    gpuProcessExited(ProcessTerminationReason::Unresponsive);
 }
 
 #if !PLATFORM(COCOA)

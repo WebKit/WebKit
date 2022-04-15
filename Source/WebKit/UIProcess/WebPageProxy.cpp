@@ -7950,36 +7950,15 @@ static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:
+    case ProcessTerminationReason::Unresponsive:
         return true;
     case ProcessTerminationReason::ExceededProcessCountLimit:
     case ProcessTerminationReason::NavigationSwap:
+    case ProcessTerminationReason::IdleExit:
     case ProcessTerminationReason::RequestedByClient:
         break;
     }
     return false;
-}
-
-static const char* processTerminationReasonToString(ProcessTerminationReason reason)
-{
-    switch (reason) {
-    case ProcessTerminationReason::ExceededMemoryLimit:
-        return "ExceededMemoryLimit";
-    case ProcessTerminationReason::ExceededCPULimit:
-        return "ExceededCPULimit";
-    case ProcessTerminationReason::RequestedByNetworkProcess:
-        return "RequestedByNetworkProcess";
-    case ProcessTerminationReason::RequestedByGPUProcess:
-        return "RequestedByGPUProcess";
-    case ProcessTerminationReason::ExceededProcessCountLimit:
-        return "ExceededProcessCountLimit";
-    case ProcessTerminationReason::NavigationSwap:
-        return "NavigationSwap";
-    case ProcessTerminationReason::RequestedByClient:
-        return "RequestedByClient";
-    case ProcessTerminationReason::Crash:
-        break;
-    }
-    return "Crash";
 }
 
 void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
@@ -11020,7 +10999,7 @@ void WebPageProxy::gpuProcessDidFinishLaunching()
     pageClient().gpuProcessDidFinishLaunching();
 }
 
-void WebPageProxy::gpuProcessExited(GPUProcessTerminationReason)
+void WebPageProxy::gpuProcessExited(ProcessTerminationReason)
 {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     m_contextIDForVisibilityPropagationInGPUProcess = 0;

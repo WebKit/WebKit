@@ -91,6 +91,7 @@ class WebCookieManagerProxy;
 class WebPageProxy;
 class WebUserContentControllerProxy;
 
+enum class ProcessTerminationReason;
 enum class RemoteWorkerType : bool;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
@@ -248,8 +249,7 @@ public:
     void registerSchemeForLegacyCustomProtocol(const String&);
     void unregisterSchemeForLegacyCustomProtocol(const String&);
 
-    enum class TerminationReason { RequestedByClient, Crash, ExceededMemoryLimit };
-    void networkProcessDidTerminate(TerminationReason);
+    void networkProcessDidTerminate(ProcessTerminationReason);
     
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
     void clearStorage(PAL::SessionID, CompletionHandler<void()>&&);

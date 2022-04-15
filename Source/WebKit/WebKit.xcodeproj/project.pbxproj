@@ -2936,6 +2936,7 @@
 		0FDCD7F61D47E92A009F08BC /* LogInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
 		0FE27FAE2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TiledCoreAnimationScrollingCoordinator.h; sourceTree = "<group>"; };
 		0FE27FAF2714FC150003AAAE /* TiledCoreAnimationScrollingCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TiledCoreAnimationScrollingCoordinator.mm; sourceTree = "<group>"; };
+		0FEC6E05280915CF008082AC /* ProcessTerminationReason.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessTerminationReason.cpp; sourceTree = "<group>"; };
 		0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; path = DerivedSources/WebKit/RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF24A2B1879E4BC003ABF0D /* RemoteCaptureSampleManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteCaptureSampleManagerMessageReceiver.cpp; path = DerivedSources/WebKit/RemoteCaptureSampleManagerMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteLayerTreeDrawingAreaProxyMessages.h; path = DerivedSources/WebKit/RemoteLayerTreeDrawingAreaProxyMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7893,6 +7894,7 @@
 				E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */,
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				5C05FDF227AB4FA5003A2487 /* PrivateRelayed.h */,
+				0FEC6E05280915CF008082AC /* ProcessTerminationReason.cpp */,
 				463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */,
 				517B5F94275EBA62002DC22D /* PushMessageForTesting.h */,
 				9B1229D023FF2A5E008CA751 /* RemoteAudioDestinationIdentifier.h */,

@@ -830,9 +830,9 @@ void WebProcessProxy::gpuProcessDidFinishLaunching()
         page->gpuProcessDidFinishLaunching();
 }
 
-void WebProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
+void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 {
-    if (reason == GPUProcessTerminationReason::IdleExit)
+    if (reason == ProcessTerminationReason::IdleExit)
         WEBPROCESSPROXY_RELEASE_LOG(Process, "gpuProcessExited: reason=idle-exit");
     else
         WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessExited: reason=%u", static_cast<unsigned>(reason));

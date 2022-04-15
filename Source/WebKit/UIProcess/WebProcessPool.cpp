@@ -428,9 +428,9 @@ void WebProcessPool::screenPropertiesStateChanged()
 #endif
 }
 
-void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProcessProxy, NetworkProcessProxy::TerminationReason reason)
+void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProcessProxy, ProcessTerminationReason reason)
 {
-    if (reason == NetworkProcessProxy::TerminationReason::Crash)
+    if (reason == ProcessTerminationReason::Crash)
         m_client.networkProcessDidCrash(this);
 
     if (m_automationSession)
@@ -466,19 +466,19 @@ void WebProcessPool::gpuProcessDidFinishLaunching(ProcessID)
         process->gpuProcessDidFinishLaunching();
 }
 
-void WebProcessPool::gpuProcessExited(ProcessID identifier, GPUProcessTerminationReason reason)
+void WebProcessPool::gpuProcessExited(ProcessID identifier, ProcessTerminationReason reason)
 {
-    WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%u", identifier, static_cast<unsigned>(reason));
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=reason=%{public}s", identifier, processTerminationReasonToString(reason));
     m_gpuProcess = nullptr;
 
-    if (reason == GPUProcessTerminationReason::Crash || reason == GPUProcessTerminationReason::Unresponsive)
+    if (reason == ProcessTerminationReason::Crash || reason == ProcessTerminationReason::Unresponsive)
         m_client.gpuProcessDidCrash(this, identifier);
 
     Vector<Ref<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes)
         process->gpuProcessExited(reason);
 
-    if (reason == GPUProcessTerminationReason::Crash || reason == GPUProcessTerminationReason::Unresponsive) {
+    if (reason == ProcessTerminationReason::Crash || reason == ProcessTerminationReason::Unresponsive) {
         if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessDidExit: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
             m_resetGPUProcessCrashCountTimer.stop();

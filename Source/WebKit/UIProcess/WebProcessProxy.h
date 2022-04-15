@@ -383,7 +383,7 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidFinishLaunching();
-    void gpuProcessExited(GPUProcessTerminationReason);
+    void gpuProcessExited(ProcessTerminationReason);
 #endif
 
     bool hasSleepDisabler() const;

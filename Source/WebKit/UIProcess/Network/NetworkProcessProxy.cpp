@@ -150,7 +150,7 @@ void NetworkProcessProxy::terminate()
     AuxiliaryProcessProxy::terminate();
     if (auto* connection = this->connection())
         connection->invalidate();
-    networkProcessDidTerminate(TerminationReason::RequestedByClient);
+    networkProcessDidTerminate(ProcessTerminationReason::RequestedByClient);
 }
 
 void NetworkProcessProxy::didBecomeUnresponsive()
@@ -412,7 +412,7 @@ void NetworkProcessProxy::websiteDataOriginDirectoryForTesting(PAL::SessionID se
     sendWithAsyncReply(Messages::NetworkProcess::WebsiteDataOriginDirectoryForTesting(sessionID, WTFMove(origin), WTFMove(topOrigin), type), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
+void NetworkProcessProxy::networkProcessDidTerminate(ProcessTerminationReason reason)
 {
     Ref protectedThis { *this };
 
@@ -461,7 +461,7 @@ void NetworkProcessProxy::didClose(IPC::Connection& connection)
 #endif
 
     // This will cause us to be deleted.
-    networkProcessDidTerminate(TerminationReason::Crash);
+    networkProcessDidTerminate(ProcessTerminationReason::Crash);
 }
 
 void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
@@ -551,7 +551,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
-        networkProcessDidTerminate(TerminationReason::Crash);
+        networkProcessDidTerminate(ProcessTerminationReason::Crash);
         return;
     }
     
@@ -1742,7 +1742,7 @@ void NetworkProcessProxy::didExceedMemoryLimit()
     AuxiliaryProcessProxy::terminate();
     if (auto* connection = this->connection())
         connection->invalidate();
-    networkProcessDidTerminate(TerminationReason::ExceededMemoryLimit);
+    networkProcessDidTerminate(ProcessTerminationReason::ExceededMemoryLimit);
 }
 #endif
 

@@ -1057,12 +1057,14 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
     case ProcessTerminationReason::ExceededCPULimit:
         return _WKProcessTerminationReasonExceededCPULimit;
     case ProcessTerminationReason::NavigationSwap:
+    case ProcessTerminationReason::IdleExit:
         // We probably shouldn't bother coming up with a new API type for process-swapping.
         // "Requested by client" seems like the best match for existing types.
         FALLTHROUGH;
     case ProcessTerminationReason::RequestedByClient:
         return _WKProcessTerminationReasonRequestedByClient;
     case ProcessTerminationReason::ExceededProcessCountLimit:
+    case ProcessTerminationReason::Unresponsive:
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:

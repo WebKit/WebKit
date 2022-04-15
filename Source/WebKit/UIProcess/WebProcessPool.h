@@ -361,7 +361,7 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     void gpuProcessDidFinishLaunching(ProcessID);
-    void gpuProcessExited(ProcessID, GPUProcessTerminationReason);
+    void gpuProcessExited(ProcessID, ProcessTerminationReason);
 
     void getGPUProcessConnection(WebProcessProxy&, GPUProcessConnectionParameters&&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
@@ -369,7 +369,7 @@ public:
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
 #endif
     // Network Process Management
-    void networkProcessDidTerminate(NetworkProcessProxy&, NetworkProcessProxy::TerminationReason);
+    void networkProcessDidTerminate(NetworkProcessProxy&, ProcessTerminationReason);
 
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
     void removeFromRemoteWorkerProcesses(WebProcessProxy&);

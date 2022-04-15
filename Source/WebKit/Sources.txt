@@ -235,6 +235,7 @@ Shared/NavigationActionData.cpp
 Shared/PersistencyUtils.cpp
 Shared/PlatformPopupMenuData.cpp
 Shared/PrintInfo.cpp
+Shared/ProcessTerminationReason.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
 Shared/RemoteWorkerInitializationData.cpp

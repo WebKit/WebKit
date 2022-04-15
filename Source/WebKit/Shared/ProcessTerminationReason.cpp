@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ProcessTerminationReason.h"
 
 namespace WebKit {
 
-enum class ProcessTerminationReason {
-    ExceededMemoryLimit,
-    ExceededCPULimit,
-    RequestedByClient,
-    IdleExit,
-    Unresponsive,
-    Crash,
-    // Those below only relevant for the WebContent process.
-    ExceededProcessCountLimit,
-    NavigationSwap,
-    RequestedByNetworkProcess,
-    RequestedByGPUProcess
-};
+const char* processTerminationReasonToString(ProcessTerminationReason reason)
+{
+    switch (reason) {
+    case ProcessTerminationReason::ExceededMemoryLimit:
+        return "ExceededMemoryLimit";
+    case ProcessTerminationReason::ExceededCPULimit:
+        return "ExceededCPULimit";
+    case ProcessTerminationReason::RequestedByClient:
+        return "RequestedByClient";
+    case ProcessTerminationReason::IdleExit:
+        return "IdleExit";
+    case ProcessTerminationReason::Unresponsive:
+        return "Unresponsive";
+    case ProcessTerminationReason::Crash:
+        return "Crash";
+    case ProcessTerminationReason::ExceededProcessCountLimit:
+        return "ExceededProcessCountLimit";
+    case ProcessTerminationReason::NavigationSwap:
+        return "NavigationSwap";
+    case ProcessTerminationReason::RequestedByNetworkProcess:
+        return "RequestedByNetworkProcess";
+    case ProcessTerminationReason::RequestedByGPUProcess:
+        return "RequestedByGPUProcess";
+    }
 
-const char* processTerminationReasonToString(ProcessTerminationReason);
+    return "";
+}
 
 }
