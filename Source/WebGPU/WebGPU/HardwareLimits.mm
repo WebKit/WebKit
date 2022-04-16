@@ -335,7 +335,7 @@ static std::optional<WGPULimits> rawLimits(id<MTLDevice> device)
     return result;
 }
 
-constexpr static bool checkLimits(const WGPULimits& limits)
+static bool checkLimits(const WGPULimits& limits)
 {
     // https://gpuweb.github.io/gpuweb/#limit-default
     auto defaultLimits = WGPULimits {
