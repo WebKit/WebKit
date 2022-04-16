@@ -1,3 +1,27 @@
+2022-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a helper function to perform additional setup on VKCImageAnalysis(Interaction|OverlayView)
+        https://bugs.webkit.org/show_bug.cgi?id=239391
+        rdar://91466567
+
+        Reviewed by Tim Horton.
+
+        Add a helper function to ImageAnalysisUtilities, and call it on both iOS (WKContentView) and macOS
+        (WebViewImpl).
+
+        * Platform/cocoa/ImageAnalysisUtilities.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::installImageAnalysisOverlayView):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _singleTapIdentified:]):
+        (-[WKContentView installImageAnalysisInteraction:]):
+        (-[WKContentView imageAnalysisInteraction:shouldBeginAtPoint:forAnalysisType:]):
+
+        Add support for toggling the Live Text overlay when tapping on the image analysis button owned by the
+        interaction. This custom handling is necessary, since the synthetic tap gesture recognizer does not recognize
+        simultaneously alongside the tap gesture for VisionKit's UIButton, and we can't (easily) grab VisionKit's
+        button's tap gesture to add failure requirements to our synthetic tap gesture.
+
 2022-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove VM& parameter from structure related code including jsDyamicCast

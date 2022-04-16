@@ -60,7 +60,14 @@ RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAn
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 void requestImageAnalysisWithIdentifier(CocoaImageAnalyzer *, const String& identifier, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
 void requestImageAnalysisMarkup(CGImageRef, CompletionHandler<void(CGImageRef, CGRect)>&&);
+
+#if PLATFORM(IOS_FAMILY)
+using PlatformImageAnalysisObject = VKCImageAnalysisInteraction;
+#else
+using PlatformImageAnalysisObject = VKCImageAnalysisOverlayView;
 #endif
+void setUpAdditionalImageAnalysisBehaviors(PlatformImageAnalysisObject *);
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 }
 

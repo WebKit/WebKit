@@ -5938,6 +5938,7 @@ void WebViewImpl::installImageAnalysisOverlayView(VKCImageAnalysis *analysis)
         [m_imageAnalysisOverlayView setDelegate:m_imageAnalysisOverlayViewDelegate.get()];
         [m_imageAnalysisOverlayView setActiveInteractionTypes:VKImageAnalysisInteractionTypeTextSelection | VKImageAnalysisInteractionTypeDataDetectors];
         [m_imageAnalysisOverlayView setWantsAutomaticContentsRectCalculation:NO];
+        setUpAdditionalImageAnalysisBehaviors(m_imageAnalysisOverlayView.get());
     }
 
     [m_imageAnalysisOverlayView setAnalysis:analysis];

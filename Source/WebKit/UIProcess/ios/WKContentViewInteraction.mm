@@ -3273,6 +3273,19 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (void)_singleTapIdentified:(UITapGestureRecognizer *)gestureRecognizer
 {
+    auto position = [self _locationForGesture:gestureRecognizer];
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (UIButton *analysisButton = [_imageAnalysisInteraction analysisButton]) {
+        auto hitTestedView = dynamic_objc_cast<UIButton>([self hitTest:position withEvent:nil]);
+        // FIXME: Instead of a class check, this should be a straightforward equality check.
+        // However, rdar://91828384 currently prevents us from doing so. We can simplify this logic
+        // once the fix for that bug has landed.
+        if (hitTestedView.class == analysisButton.class)
+            [_imageAnalysisInteraction setHighlightSelectableItems:![_imageAnalysisInteraction highlightSelectableItems]];
+        return;
+    }
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
     ASSERT(gestureRecognizer == _singleTapGestureRecognizer);
     ASSERT(!_potentialTapInProgress);
     [self _resetIsDoubleTapPending];
@@ -3289,7 +3302,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (shouldRequestMagnificationInformation)
         RELEASE_LOG(ViewGestures, "Single tap identified. Request details on potential zoom. (%p, pageProxyID=%llu)", self, _page->identifier().toUInt64());
 
-    _page->potentialTapAtPosition([self _locationForGesture:gestureRecognizer], shouldRequestMagnificationInformation, [self nextTapIdentifier]);
+    _page->potentialTapAtPosition(position, shouldRequestMagnificationInformation, [self nextTapIdentifier]);
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = !_doubleTapGestureRecognizer.get().enabled;
@@ -11016,6 +11029,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [_imageAnalysisInteraction setActiveInteractionTypes:VKImageAnalysisInteractionTypeTextSelection | VKImageAnalysisInteractionTypeDataDetectors];
         [_imageAnalysisInteraction setDelegate:self];
         [_imageAnalysisInteraction setWantsAutomaticContentsRectCalculation:NO];
+        WebKit::setUpAdditionalImageAnalysisBehaviors(_imageAnalysisInteraction.get());
         [self addInteraction:_imageAnalysisInteraction.get()];
     }
     [_imageAnalysisInteraction setAnalysis:analysis];
@@ -11047,7 +11061,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (BOOL)imageAnalysisInteraction:(VKCImageAnalysisInteraction *)interaction shouldBeginAtPoint:(CGPoint)point forAnalysisType:(VKImageAnalysisInteractionTypes)analysisType
 {
-    return [_imageAnalysisInteraction interactableItemExistsAtPoint:point];
+    return interaction.hasActiveTextSelection || [interaction interactableItemExistsAtPoint:point];
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
