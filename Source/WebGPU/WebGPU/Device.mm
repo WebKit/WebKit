@@ -47,7 +47,7 @@
 
 namespace WebGPU {
 
-Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, Adapter& adapter)
+Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, const WGPULimits& limits, Adapter& adapter)
 {
     id<MTLCommandQueue> commandQueue = [device newCommandQueue];
     if (!commandQueue)
@@ -59,12 +59,13 @@ Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, Adapter& 
     if (!deviceLabel.isEmpty())
         commandQueue.label = [NSString stringWithFormat:@"Default queue for device %s", deviceLabel.utf8().data()];
 
-    return adoptRef(*new Device(device, commandQueue, adapter));
+    return adoptRef(*new Device(device, commandQueue, limits, adapter));
 }
 
-Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, Adapter& adapter)
+Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, const WGPULimits& limits, Adapter& adapter)
     : m_device(device)
     , m_defaultQueue(Queue::create(defaultQueue, *this))
+    , m_limits(limits)
     , m_adapter(adapter)
 {
 #if PLATFORM(MAC)

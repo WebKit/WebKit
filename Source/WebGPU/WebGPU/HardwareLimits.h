@@ -25,55 +25,12 @@
 
 #pragma once
 
-#import <wtf/CompletionHandler.h>
-#import <wtf/FastMalloc.h>
-#import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
-
-struct WGPUAdapterImpl {
-};
+#include <optional>
 
 namespace WebGPU {
 
-class Device;
-class Instance;
-
-// https://gpuweb.github.io/gpuweb/#gpuadapter
-class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, const WGPULimits& limits)
-    {
-        return adoptRef(*new Adapter(device, instance, limits));
-    }
-    static Ref<Adapter> createInvalid(Instance& instance)
-    {
-        return adoptRef(*new Adapter(instance));
-    }
-
-    ~Adapter();
-
-    size_t enumerateFeatures(WGPUFeatureName* features);
-    bool getLimits(WGPUSupportedLimits&);
-    void getProperties(WGPUAdapterProperties&);
-    bool hasFeature(WGPUFeatureName);
-    void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback);
-    void requestInvalidDevice(CompletionHandler<void(Ref<Device>&&)>&&);
-
-    bool isValid() const { return m_device; }
-    void makeInvalid() { m_device = nil; }
-
-    Instance& instance() const { return m_instance; }
-
-
-private:
-    Adapter(id<MTLDevice>, Instance&, const WGPULimits&);
-    Adapter(Instance&);
-
-    id<MTLDevice> m_device { nil };
-    const Ref<Instance> m_instance;
-
-    WGPULimits m_limits { };
-};
+std::optional<WGPULimits> limits(id<MTLDevice>);
+bool isValid(const WGPULimits&);
+bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference);
 
 } // namespace WebGPU

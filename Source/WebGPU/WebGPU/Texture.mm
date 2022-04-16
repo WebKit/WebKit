@@ -1246,7 +1246,8 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
 
     switch (descriptor.dimension) {
     case WGPUTextureDimension_1D:
-        // FIXME: "descriptor.size.width must be less than or equal to this.limits.maxTextureDimension1D."
+        if (descriptor.size.width > m_limits.maxTextureDimension1D)
+            return false;
 
         if (descriptor.size.height != 1)
             return false;
@@ -1261,18 +1262,24 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
             return false;
         break;
     case WGPUTextureDimension_2D:
-        // FIXME: "descriptor.size.width must be less than or equal to this.limits.maxTextureDimension2D."
+        if (descriptor.size.width > m_limits.maxTextureDimension2D)
+            return false;
 
-        // FIXME: "descriptor.size.height must be less than or equal to this.limits.maxTextureDimension2D."
+        if (descriptor.size.height > m_limits.maxTextureDimension2D)
+            return false;
 
-        // FIXME: "descriptor.size.depthOrArrayLayers must be less than or equal to this.limits.maxTextureArrayLayers."
+        if (descriptor.size.depthOrArrayLayers > m_limits.maxTextureArrayLayers)
+            return false;
         break;
     case WGPUTextureDimension_3D:
-        // FIXME: "descriptor.size.width must be less than or equal to this.limits.maxTextureDimension3D."
+        if (descriptor.size.width > m_limits.maxTextureDimension3D)
+            return false;
 
-        // FIXME: "descriptor.size.height must be less than or equal to this.limits.maxTextureDimension3D."
+        if (descriptor.size.height > m_limits.maxTextureDimension3D)
+            return false;
 
-        // FIXME: "descriptor.size.depthOrArrayLayers must be less than or equal to this.limits.maxTextureDimension3D."
+        if (descriptor.size.depthOrArrayLayers > m_limits.maxTextureDimension3D)
+            return false;
 
         if (descriptor.sampleCount != 1)
             return false;
@@ -2268,8 +2275,6 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 
     if (!descriptor || !validateCreateView(*descriptor)) {
         m_device->generateAValidationError("Validation failure."_s);
-
-        // FIXME: "Return a new invalid GPUTextureView."
         return TextureView::createInvalid(m_device);
     }
 

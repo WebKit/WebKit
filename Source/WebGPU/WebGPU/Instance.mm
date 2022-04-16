@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "Adapter.h"
+#import "HardwareLimits.h"
 #import "Surface.h"
 #import <cstring>
 #import <wtf/BlockPtr.h>
@@ -183,8 +184,19 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
         return;
     }
 
-    scheduleWork([strongThis = Ref { *this }, device = sortedDevices[0], callback = WTFMove(callback)]() mutable {
-        callback(WGPURequestAdapterStatus_Success, Adapter::create(device, strongThis), { });
+    auto device = sortedDevices[0];
+
+    auto deviceLimits = limits(device);
+
+    if (!deviceLimits) {
+        scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+            callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(strongThis), "Device does not support WebGPU"_s);
+        });
+        return;
+    }
+
+    scheduleWork([strongThis = Ref { *this }, device = sortedDevices[0], limits = WTFMove(*deviceLimits), callback = WTFMove(callback)]() mutable {
+        callback(WGPURequestAdapterStatus_Success, Adapter::create(device, strongThis, WTFMove(limits)), { });
     });
 }
 

@@ -28,14 +28,16 @@
 
 #import "APIConversions.h"
 #import "Device.h"
+#import "HardwareLimits.h"
 #import "Instance.h"
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {
 
-Adapter::Adapter(id<MTLDevice> device, Instance& instance)
+Adapter::Adapter(id<MTLDevice> device, Instance& instance, const WGPULimits& limits)
     : m_device(device)
     , m_instance(instance)
+    , m_limits(limits)
 {
 }
 
@@ -79,38 +81,6 @@ bool Adapter::hasFeature(WGPUFeatureName)
     return false;
 }
 
-static bool deviceMeetsRequiredLimits(id<MTLDevice>, const WGPURequiredLimits& requiredLimits)
-{
-    // FIXME: Implement this.
-    return !requiredLimits.nextInChain
-        && !requiredLimits.limits.maxTextureDimension1D
-        && !requiredLimits.limits.maxTextureDimension2D
-        && !requiredLimits.limits.maxTextureDimension3D
-        && !requiredLimits.limits.maxTextureArrayLayers
-        && !requiredLimits.limits.maxBindGroups
-        && !requiredLimits.limits.maxDynamicUniformBuffersPerPipelineLayout
-        && !requiredLimits.limits.maxDynamicStorageBuffersPerPipelineLayout
-        && !requiredLimits.limits.maxSampledTexturesPerShaderStage
-        && !requiredLimits.limits.maxSamplersPerShaderStage
-        && !requiredLimits.limits.maxStorageBuffersPerShaderStage
-        && !requiredLimits.limits.maxStorageTexturesPerShaderStage
-        && !requiredLimits.limits.maxUniformBuffersPerShaderStage
-        && !requiredLimits.limits.maxUniformBufferBindingSize
-        && !requiredLimits.limits.maxStorageBufferBindingSize
-        && !requiredLimits.limits.minUniformBufferOffsetAlignment
-        && !requiredLimits.limits.minStorageBufferOffsetAlignment
-        && !requiredLimits.limits.maxVertexBuffers
-        && !requiredLimits.limits.maxVertexAttributes
-        && !requiredLimits.limits.maxVertexBufferArrayStride
-        && !requiredLimits.limits.maxInterStageShaderComponents
-        && !requiredLimits.limits.maxComputeWorkgroupStorageSize
-        && !requiredLimits.limits.maxComputeInvocationsPerWorkgroup
-        && !requiredLimits.limits.maxComputeWorkgroupSizeX
-        && !requiredLimits.limits.maxComputeWorkgroupSizeY
-        && !requiredLimits.limits.maxComputeWorkgroupSizeZ
-        && !requiredLimits.limits.maxComputeWorkgroupsPerDimension;
-}
-
 void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback)
 {
     if (descriptor.nextInChain) {
@@ -127,16 +97,43 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         return;
     }
 
-    if (descriptor.requiredLimits && !deviceMeetsRequiredLimits(m_device, *descriptor.requiredLimits)) {
-        instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Device does not support requested limits"_s);
-        });
-        return;
+    auto limits = m_limits;
+
+    if (descriptor.requiredLimits) {
+        if (descriptor.requiredLimits->nextInChain) {
+            instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+                callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Unknown descriptor type"_s);
+            });
+            return;
+        }
+
+        if (!WebGPU::isValid(descriptor.requiredLimits->limits)) {
+            instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+                callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Device does not support requested limits"_s);
+            });
+            return;
+        }
+
+        if (anyLimitIsBetterThan(descriptor.requiredLimits->limits, m_limits)) {
+            instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+                callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Device does not support requested limits"_s);
+            });
+            return;
+        }
+
+        limits = descriptor.requiredLimits->limits;
     }
 
     auto label = fromAPI(descriptor.label);
-    instance().scheduleWork([strongThis = Ref { *this }, label = WTFMove(label), callback = WTFMove(callback)]() mutable {
-        callback(WGPURequestDeviceStatus_Success, Device::create(strongThis->m_device, WTFMove(label), strongThis), { });
+    instance().scheduleWork([strongThis = Ref { *this }, label = WTFMove(label), limits = WTFMove(limits), callback = WTFMove(callback)]() mutable {
+        callback(WGPURequestDeviceStatus_Success, Device::create(strongThis->m_device, WTFMove(label), WTFMove(limits), strongThis), { });
+    });
+}
+
+void Adapter::requestInvalidDevice(CompletionHandler<void(Ref<Device>&&)>&& callback)
+{
+    instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+        callback(Device::createInvalid(strongThis));
     });
 }
 
@@ -180,5 +177,12 @@ void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor
 {
     WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback = WTFMove(callback)](WGPURequestDeviceStatus status, Ref<WebGPU::Device>&& device, String&& message) {
         callback(status, WebGPU::releaseToAPI(WTFMove(device)), message.utf8().data());
+    });
+}
+
+void wgpuAdapterRequestInvalidDeviceWithBlock(WGPUAdapter adapter, WGPURequestInvalidDeviceBlockCallback callback)
+{
+    WebGPU::fromAPI(adapter).requestInvalidDevice([callback = WTFMove(callback)](Ref<WebGPU::Device>&& device) {
+        callback(WebGPU::releaseToAPI(WTFMove(device)));
     });
 }

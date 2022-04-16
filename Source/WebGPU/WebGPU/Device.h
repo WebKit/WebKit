@@ -61,7 +61,7 @@ class Texture;
 class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, Adapter&);
+    static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, const WGPULimits&, Adapter&);
     static Ref<Device> createInvalid(Adapter& adapter)
     {
         return adoptRef(*new Device(adapter));
@@ -106,7 +106,7 @@ public:
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
 private:
-    Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, Adapter&);
+    Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, const WGPULimits&, Adapter&);
     Device(Adapter&);
 
     struct ErrorScope;
@@ -137,6 +137,8 @@ private:
     Function<void(WGPUDeviceLostReason, String&&)> m_deviceLostCallback;
     bool m_isLost { false };
     id<NSObject> m_deviceObserver { nil };
+
+    WGPULimits m_limits { };
 
     const Ref<Adapter> m_adapter;
 };
