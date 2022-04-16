@@ -100,7 +100,7 @@ public:
 
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 
-    static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
+    static SandboxFlags parseSandboxPolicy(StringView policy, String& invalidTokensErrorMessage);
     static bool isSupportedSandboxPolicy(StringView);
 
     enum MixedContentType {

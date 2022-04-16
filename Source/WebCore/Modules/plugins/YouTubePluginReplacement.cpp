@@ -54,7 +54,7 @@ bool YouTubePluginReplacement::supportsMIMEType(const String& mimeType)
         || equalLettersIgnoringASCIICase(mimeType, "application/futuresplash");
 }
 
-bool YouTubePluginReplacement::supportsFileExtension(const String& extension)
+bool YouTubePluginReplacement::supportsFileExtension(StringView extension)
 {
     return equalLettersIgnoringASCIICase(extension, "spl") || equalLettersIgnoringASCIICase(extension, "swf");
 }

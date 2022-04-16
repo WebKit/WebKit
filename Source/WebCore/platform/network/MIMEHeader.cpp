@@ -56,7 +56,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
             break; // Empty line means end of key/value section.
         if (line[0] == '\t') {
             ASSERT(!key.isEmpty());
-            value.append(line.substring(1));
+            value.append(StringView(line).substring(1));
             continue;
         }
         // New key/value, store the previous one if any.

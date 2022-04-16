@@ -181,9 +181,9 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSS
         if (name.isEmpty())
             return { };
         if (name.startsWith("min-"))
-            return { name.substring(4), CQ::ComparisonOperator::GreaterThanOrEqual };
+            return { StringView(name).substring(4).toAtomString(), CQ::ComparisonOperator::GreaterThanOrEqual };
         if (name.startsWith("max-"))
-            return { name.substring(4), CQ::ComparisonOperator::LessThanOrEqual };
+            return { StringView(name).substring(4).toAtomString(), CQ::ComparisonOperator::LessThanOrEqual };
 
         return { name, CQ::ComparisonOperator::Equal };
     };

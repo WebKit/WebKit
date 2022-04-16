@@ -96,7 +96,7 @@ static inline bool isBlobURLContainsNullOrigin(const URL& url)
     ASSERT(url.protocolIsBlob());
     unsigned startIndex = url.pathStart();
     unsigned endIndex = url.pathAfterLastSlash();
-    return url.string().substring(startIndex, endIndex - startIndex - 1) == "null";
+    return StringView(url.string()).substring(startIndex, endIndex - startIndex - 1) == "null";
 }
 
 void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URL& url, const URL& srcURL)

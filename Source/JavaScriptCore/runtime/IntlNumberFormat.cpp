@@ -1033,7 +1033,7 @@ void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, 
         throwTypeError(globalObject, scope, "Failed to format number range"_s);
         return;
     }
-    String resultString(formattedStringPointer, formattedStringLength);
+    StringView resultStringView(formattedStringPointer, formattedStringLength);
 
     // We care multiple categories (UFIELD_CATEGORY_DATE and UFIELD_CATEGORY_DATE_INTERVAL_SPAN).
     // So we do not constraint iterator.
@@ -1118,7 +1118,7 @@ void IntlNumberFormat::formatRangeToPartsInternal(JSGlobalObject* globalObject, 
             return sharedString;
         };
 
-        auto value = jsString(vm, resultString.substring(beginIndex, length));
+        auto value = jsString(vm, resultStringView.substring(beginIndex, length));
         JSObject* part = constructEmptyObject(globalObject);
         part->putDirect(vm, vm.propertyNames->type, type);
         part->putDirect(vm, vm.propertyNames->value, value);

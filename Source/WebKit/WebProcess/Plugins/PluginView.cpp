@@ -1080,7 +1080,8 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     if (!frame)
         return;
     
-    String jsString = PAL::decodeURLEscapeSequences(request->request().url().string().substring(sizeof("javascript:") - 1));
+    auto urlString = request->request().url().string();
+    String jsString = PAL::decodeURLEscapeSequences(StringView(urlString).substring(sizeof("javascript:") - 1));
 
     if (!request->target().isNull()) {
         // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.

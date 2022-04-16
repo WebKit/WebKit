@@ -79,7 +79,7 @@ static String mimeTypeUtilizingFileExtensionOverridingForLocalFiles(const Model&
         if (position != WTF::notFound) {
             auto extension = lastPathComponent.substring(position + 1);
 
-            return MIMETypeRegistry::mediaMIMETypeForExtension(extension.toString());
+            return MIMETypeRegistry::mediaMIMETypeForExtension(extension);
         }
     }
 

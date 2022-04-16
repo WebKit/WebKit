@@ -1,5 +1,98 @@
 2022-04-15  Chris Dumez  <cdumez@apple.com>
 
+        Leverage StringView in more places to avoid some String allocations
+        https://bugs.webkit.org/show_bug.cgi?id=239356
+
+        Reviewed by Darin Adler.
+
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::packageFormData):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp:
+        (WebCore::toRtpCodecCapability):
+        * Modules/model-element/scenekit/SceneKitModelLoader.mm:
+        (WebCore::mimeTypeUtilizingFileExtensionOverridingForLocalFiles):
+        * Modules/plugins/PluginReplacement.h:
+        (WebCore::ReplacementPlugin::supportsFileExtension const):
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::supportsFileExtension):
+        * Modules/plugins/YouTubePluginReplacement.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::setPseudoElement):
+        * css/ContainerQueryParser.cpp:
+        (WebCore::ContainerQueryParser::consumePlainSizeFeature):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::consumeANPlusB):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::parseSandboxPolicy):
+        * dom/SecurityContext.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::isBlobURLContainsNullOrigin):
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::updateTokensFromAttributeValue):
+        * html/DOMTokenList.h:
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseAttribute):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::pluginReplacementForType):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::checkAndCreateRegion):
+        (WebCore::WebVTTParser::checkAndStoreRegion):
+        (WebCore::WebVTTParser::checkStyleSheet):
+        (WebCore::WebVTTParser::checkAndStoreStyleSheet):
+        * html/track/WebVTTParser.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::StyleSheetHandler::observeProperty):
+        (WebCore::StyleSheetHandler::observeComment):
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::toString):
+        * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::appendTextDisplayBox):
+        * layout/layouttree/LayoutInlineTextBox.h:
+        (WebCore::Layout::InlineTextBox::content const):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        (WebCore::ApplicationCacheStorage::writeDataToUniqueFileInDirectory):
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::getSVGFontById const):
+        (WebCore::CachedSVGFont::maybeInitializeExternalSVGFontElement):
+        * loader/cache/CachedSVGFont.h:
+        * page/Location.cpp:
+        (WebCore::Location::setHash):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse):
+        * page/UserContentURLPattern.h:
+        (WebCore::UserContentURLPattern::UserContentURLPattern):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::typesForCommonExtension):
+        (WebCore::MIMETypeRegistry::mediaMIMETypeForExtension):
+        * platform/MIMETypeRegistry.h:
+        * platform/cocoa/DragImageCocoa.mm:
+        (WebCore::createDragImageIconForCachedImageFilename):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::getUnmangledInfoLog):
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getUnmangledInfoLog):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseStructuredFieldValue):
+        (WebCore::parseRange):
+        * platform/network/HTTPParsers.h:
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::retrieveKeyValuePairs):
+        * platform/network/ParsedContentType.cpp:
+        (WebCore::ParsedContentType::setContentType):
+        * platform/network/ParsedContentType.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::textRun const):
+
+2022-04-15  Chris Dumez  <cdumez@apple.com>
+
         Rename WebCore::webCoreBuiltinNames() to WebCore::builtinNames()
         https://bugs.webkit.org/show_bug.cgi?id=239408
 

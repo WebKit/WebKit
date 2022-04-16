@@ -72,6 +72,8 @@ public:
         return m_buffer ? m_buffer->data() : nullptr;
     }
 
+    std::string toStdString() const { return m_buffer ? std::string(m_buffer->data()) : std::string(); }
+
     const uint8_t* dataAsUInt8Ptr() const { return reinterpret_cast<const uint8_t*>(data()); }
 
     Span<const uint8_t> bytes() const

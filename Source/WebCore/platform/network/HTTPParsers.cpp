@@ -618,7 +618,7 @@ std::optional<std::pair<StringView, HashMap<String, String>>> parseStructuredFie
                 break;
             ++index;
         }
-        String key = header.substring(keyStart, index - keyStart).toString();
+        StringView key = header.substring(keyStart, index - keyStart);
         String value = "true"_s;
         if (index < header.length() && header[index] == '=') {
             ++index; // Consume '='.
@@ -659,14 +659,14 @@ std::optional<std::pair<StringView, HashMap<String, String>>> parseStructuredFie
             } else
                 return std::nullopt;
         }
-        parameters.set(WTFMove(key), WTFMove(value));
+        parameters.set(key.toString(), WTFMove(value));
     }
     if (index != header.length())
         return std::nullopt;
     return std::make_pair(bareItem, parameters);
 }
 
-bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength)
+bool parseRange(StringView range, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength)
 {
     // The format of "Range" header is defined in RFC 2616 Section 14.35.1.
     // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.1
@@ -678,8 +678,8 @@ bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd
     static const unsigned bytesLength = 6;
     if (!startsWithLettersIgnoringASCIICase(range, "bytes="))
         return false;
-    // FIXME: The rest of this should use StringView.
-    String byteRange = range.substring(bytesLength);
+
+    StringView byteRange = range.substring(bytesLength);
 
     // The '-' character needs to be present.
     int index = byteRange.find('-');
@@ -690,7 +690,7 @@ bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd
     // Example:
     //     -500
     if (!index) {
-        if (auto value = parseInteger<long long>(StringView { byteRange }.substring(index + 1)))
+        if (auto value = parseInteger<long long>(byteRange.substring(index + 1)))
             rangeSuffixLength = *value;
         return true;
     }
@@ -699,11 +699,11 @@ bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd
     // Examples:
     //     0-499
     //     500-
-    auto firstBytePos = parseInteger<long long>(StringView { byteRange }.left(index));
+    auto firstBytePos = parseInteger<long long>(byteRange.left(index));
     if (!firstBytePos)
         return false;
 
-    auto lastBytePosStr = stripLeadingAndTrailingHTTPSpaces(StringView { byteRange }.substring(index + 1));
+    auto lastBytePosStr = stripLeadingAndTrailingHTTPSpaces(byteRange.substring(index + 1));
     long long lastBytePos = -1;
     if (!lastBytePosStr.isEmpty()) {
         auto value = parseInteger<long long>(lastBytePosStr);

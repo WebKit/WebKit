@@ -1984,7 +1984,7 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
         if (start == -1)
             break;
 
-        processedLog.append(log.substring(startFrom, start - startFrom));
+        processedLog.append(StringView(log).substring(startFrom, start - startFrom));
         startFrom = start + matchedLength;
 
         const String& mangledSymbol = log.substring(start, matchedLength);
@@ -1993,7 +1993,7 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
         processedLog.append(mappedSymbol);
     } while (startFrom < static_cast<int>(log.length()));
 
-    processedLog.append(log.substring(startFrom, log.length() - startFrom));
+    processedLog.append(StringView(log).substring(startFrom, log.length() - startFrom));
 
     LOG(WebGL, "Unmangled ShaderInfoLog:\n%s", processedLog.toString().utf8().data());
     return processedLog.toString();

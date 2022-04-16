@@ -103,7 +103,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomString& remoteURI)
     return m_externalSVGDocument && CachedFont::ensureCustomFontData(m_convertedFont.get());
 }
 
-SVGFontElement* CachedSVGFont::getSVGFontById(const String& fontName) const
+SVGFontElement* CachedSVGFont::getSVGFontById(const AtomString& fontName) const
 {
     ASSERT(m_externalSVGDocument);
     auto elements = descendantsOfType<SVGFontElement>(*m_externalSVGDocument);
@@ -122,10 +122,10 @@ SVGFontElement* CachedSVGFont::maybeInitializeExternalSVGFontElement(const AtomS
 {
     if (m_externalSVGFontElement)
         return m_externalSVGFontElement;
-    String fragmentIdentifier;
+    AtomString fragmentIdentifier;
     size_t start = remoteURI.find('#');
     if (start != notFound)
-        fragmentIdentifier = remoteURI.string().substring(start + 1);
+        fragmentIdentifier = StringView(remoteURI).substring(start + 1).toAtomString();
     m_externalSVGFontElement = getSVGFontById(fragmentIdentifier);
     return m_externalSVGFontElement;
 }

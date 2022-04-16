@@ -798,12 +798,12 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         String flatFileDirectory = FileSystem::pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
         FileSystem::makeAllDirectories(flatFileDirectory);
 
-        String extension;
+        StringView extension;
         
         String fileName = resource->response().suggestedFilename();
         size_t dotIndex = fileName.reverseFind('.');
         if (dotIndex != notFound && dotIndex < (fileName.length() - 1))
-            extension = fileName.substring(dotIndex);
+            extension = StringView(fileName).substring(dotIndex);
 
         String path;
         if (!writeDataToUniqueFileInDirectory(resource->data(), flatFileDirectory, path, extension))
@@ -1272,12 +1272,12 @@ bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheReso
     return startsWithLettersIgnoringASCIICase(type, "audio/") || startsWithLettersIgnoringASCIICase(type, "video/");
 }
     
-bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedBuffer& data, const String& directory, String& path, const String& fileExtension)
+bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedBuffer& data, const String& directory, String& path, StringView fileExtension)
 {
     String fullPath;
     
     do {
-        path = FileSystem::encodeForFileName(createVersion4UUIDString()) + fileExtension;
+        path = makeString(FileSystem::encodeForFileName(createVersion4UUIDString()), fileExtension);
         // Guard against the above function being called on a platform which does not implement
         // createVersion4UUIDString().
         ASSERT(!path.isEmpty());

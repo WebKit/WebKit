@@ -365,9 +365,9 @@ size_t ParsedContentType::parameterCount() const
     return m_parameterValues.size();
 }
 
-void ParsedContentType::setContentType(StringView contentRange, Mode mode)
+void ParsedContentType::setContentType(String&& contentRange, Mode mode)
 {
-    m_mimeType = contentRange.toString();
+    m_mimeType = WTFMove(contentRange);
     if (mode == Mode::MimeSniff)
         m_mimeType = stripLeadingAndTrailingHTTPSpaces(m_mimeType).convertToASCIILowercase();
     else

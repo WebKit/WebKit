@@ -268,7 +268,7 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
     const UChar* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
-    String resultString(formattedStringPointer, formattedStringLength);
+    StringView resultStringView(formattedStringPointer, formattedStringLength);
 
     auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
     if (U_FAILURE(status))
@@ -288,7 +288,7 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
         return part;
     };
 
-    int32_t resultLength = resultString.length();
+    int32_t resultLength = resultStringView.length();
     int32_t previousEndIndex = 0;
     while (true) {
         bool next = ufmtval_nextPosition(formattedValue, iterator.get(), &status);
@@ -304,21 +304,21 @@ JSValue IntlListFormat::formatToParts(JSGlobalObject* globalObject, JSValue list
             return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
         if (previousEndIndex < beginIndex) {
-            auto value = jsString(vm, resultString.substring(previousEndIndex, beginIndex - previousEndIndex));
+            auto value = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
             JSObject* part = createPart(literalString, value);
             parts->push(globalObject, part);
             RETURN_IF_EXCEPTION(scope, { });
         }
         previousEndIndex = endIndex;
 
-        auto value = jsString(vm, resultString.substring(beginIndex, endIndex - beginIndex));
+        auto value = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
         JSObject* part = createPart(elementString, value);
         parts->push(globalObject, part);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
     if (previousEndIndex < resultLength) {
-        auto value = jsString(vm, resultString.substring(previousEndIndex, resultLength - previousEndIndex));
+        auto value = jsString(vm, resultStringView.substring(previousEndIndex, resultLength - previousEndIndex));
         JSObject* part = createPart(literalString, value);
         parts->push(globalObject, part);
         RETURN_IF_EXCEPTION(scope, { });

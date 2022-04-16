@@ -163,10 +163,10 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
 
         return inkOverflow;
     };
-    auto content = downcast<InlineTextBox>(layoutBox).content();
-    auto text = lineRun.textContent();
+    auto& content = downcast<InlineTextBox>(layoutBox).content();
+    auto& text = lineRun.textContent();
     auto adjustedContentToRender = [&] {
-        return text->needsHyphen ? makeString(content.substring(text->start, text->length), style.hyphenString()) : String();
+        return text->needsHyphen ? makeString(StringView(content).substring(text->start, text->length), style.hyphenString()) : String();
     };
     boxes.append({ m_lineIndex
         , lineRun.isWordSeparator() ? InlineDisplay::Box::Type::WordSeparator : InlineDisplay::Box::Type::Text

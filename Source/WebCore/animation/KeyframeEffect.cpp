@@ -1185,7 +1185,7 @@ ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
         auto isLegacy = pseudoElement == ":before" || pseudoElement == ":after" || pseudoElement == ":first-letter" || pseudoElement == ":first-line";
         if (!isLegacy && !pseudoElement.startsWith("::"))
             return Exception { SyntaxError };
-        auto pseudoType = CSSSelector::parsePseudoElementType(pseudoElement.substring(isLegacy ? 1 : 2));
+        auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2));
         if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)
             return Exception { SyntaxError };
         pseudoId = CSSSelector::pseudoId(pseudoType);

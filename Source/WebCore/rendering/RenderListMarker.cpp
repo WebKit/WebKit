@@ -1562,13 +1562,13 @@ auto RenderListMarker::textRun() const -> TextRunWithUnderlyingString
             if (style().listStyleType() == ListStyleType::DisclosureClosed)
                 textForRun = { &blackLeftPointingSmallTriangle, 1 };
             else
-                textForRun = makeString(reversed(m_textWithSuffix.substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
+                textForRun = makeString(reversed(StringView(m_textWithSuffix).substring(m_textWithoutSuffixLength)), m_textWithSuffix.left(m_textWithoutSuffixLength));
         }
     } else {
         if (!style().isLeftToRightDirection())
             textForRun = reversed(m_textWithSuffix);
         else
-            textForRun = makeString(reversed(m_textWithSuffix.left(m_textWithoutSuffixLength)), m_textWithSuffix.substring(m_textWithoutSuffixLength));
+            textForRun = makeString(reversed(StringView(m_textWithSuffix).left(m_textWithoutSuffixLength)), m_textWithSuffix.substring(m_textWithoutSuffixLength));
     }
     auto textRun = RenderBlock::constructTextRun(textForRun, style());
     return { WTFMove(textRun), WTFMove(textForRun) };

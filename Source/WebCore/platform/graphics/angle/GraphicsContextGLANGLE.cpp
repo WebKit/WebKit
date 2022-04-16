@@ -1903,7 +1903,7 @@ String GraphicsContextGLANGLE::getUnmangledInfoLog(PlatformGLObject shaders[2], 
     // is causing it.
     static constexpr char angleWarning[] = "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n";
     int startFrom = log.startsWith(angleWarning) ? strlen(angleWarning) : 0;
-    processedLog.append(log.substring(startFrom, log.length() - startFrom));
+    processedLog.append(StringView(log).substring(startFrom, log.length() - startFrom));
 
     LOG(WebGL, "Unmangled ShaderInfoLog:\n%s", processedLog.toString().utf8().data());
     return processedLog.toString();

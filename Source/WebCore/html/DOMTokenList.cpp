@@ -220,7 +220,7 @@ void DOMTokenList::setValue(const String& value)
     m_element.setAttribute(m_attributeName, value);
 }
 
-void DOMTokenList::updateTokensFromAttributeValue(const String& value)
+void DOMTokenList::updateTokensFromAttributeValue(StringView value)
 {
     // Clear tokens but not capacity.
     m_tokens.shrink(0);
@@ -236,10 +236,11 @@ void DOMTokenList::updateTokensFromAttributeValue(const String& value)
         while (end < value.length() && !isHTMLSpace(value[end]))
             ++end;
 
-        AtomString token = value.substring(start, end - start);
-        if (!addedTokens.contains(token)) {
+        auto tokenView = value.substring(start, end - start);
+        if (!addedTokens.contains<StringViewHashTranslator>(tokenView)) {
+            auto token = tokenView.toAtomString();
             m_tokens.append(token);
-            addedTokens.add(token);
+            addedTokens.add(WTFMove(token));
         }
 
         start = end + 1;

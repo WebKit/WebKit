@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT const AtomString& value() const;
 
 private:
-    void updateTokensFromAttributeValue(const String&);
+    void updateTokensFromAttributeValue(StringView);
     void updateAssociatedAttributeFromTokens();
 
     WEBCORE_EXPORT Vector<AtomString>& tokens();

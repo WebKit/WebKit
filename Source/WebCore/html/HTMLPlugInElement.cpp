@@ -308,11 +308,11 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
     if (replacements.isEmpty())
         return nullptr;
 
-    String extension;
+    StringView extension;
     auto lastPathComponent = url.lastPathComponent();
     size_t dotOffset = lastPathComponent.reverseFind('.');
     if (dotOffset != notFound)
-        extension = lastPathComponent.substring(dotOffset + 1).toString();
+        extension = lastPathComponent.substring(dotOffset + 1);
 
     String type = mimeType;
     if (type.isEmpty() && url.protocolIsData())

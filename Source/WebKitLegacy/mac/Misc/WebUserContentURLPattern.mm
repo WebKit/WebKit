@@ -48,7 +48,7 @@ using namespace WebCore;
         return nil;
 
     _private = [[WebUserContentURLPatternPrivate alloc] init];
-    _private->pattern = UserContentURLPattern(patternString);
+    _private->pattern = UserContentURLPattern(String(patternString));
 
     return self;
 }

@@ -379,15 +379,15 @@ static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMi
     return mimeTypesMap;
 }
 
-static const Vector<String>* typesForCommonExtension(const String& extension)
+static const Vector<String>* typesForCommonExtension(StringView extension)
 {
-    auto mapEntry = commonMimeTypesMap().find(extension);
+    auto mapEntry = commonMimeTypesMap().find<ASCIICaseInsensitiveStringViewHashTranslator>(extension);
     if (mapEntry == commonMimeTypesMap().end())
         return nullptr;
     return &mapEntry->value;
 }
 
-String MIMETypeRegistry::mediaMIMETypeForExtension(const String& extension)
+String MIMETypeRegistry::mediaMIMETypeForExtension(StringView extension)
 {
     auto* vector = typesForCommonExtension(extension);
     if (vector)

@@ -139,18 +139,18 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
     
 RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filename)
 {
-    NSString *extension = nil;
+    RetainPtr<NSString> extension;
     size_t dotIndex = filename.reverseFind('.');
     
     if (dotIndex != notFound && dotIndex < (filename.length() - 1)) // require that a . exists after the first character and before the last
-        extension = filename.substring(dotIndex + 1);
+        extension = StringView(filename).substring(dotIndex + 1).createNSString();
     else {
         // It might be worth doing a further lookup to pull the extension from the MIME type.
         extension = @"";
     }
     
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [[NSWorkspace sharedWorkspace] iconForFileType:extension];
+    return [[NSWorkspace sharedWorkspace] iconForFileType:extension.get()];
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 

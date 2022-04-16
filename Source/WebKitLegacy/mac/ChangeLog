@@ -1,3 +1,13 @@
+2022-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Leverage StringView in more places to avoid some String allocations
+        https://bugs.webkit.org/show_bug.cgi?id=239356
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebUserContentURLPattern.mm:
+        (-[WebUserContentURLPattern initWithPatternString:]):
+
 2022-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove VM& parameter from structure related code including jsDyamicCast

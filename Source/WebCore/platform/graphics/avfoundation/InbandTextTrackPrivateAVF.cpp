@@ -300,7 +300,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
         }
 
         content.append(tagStart);
-        content.append(attributedStringValue.substring(effectiveRange.location, effectiveRange.length));
+        content.append(StringView(attributedStringValue).substring(effectiveRange.location, effectiveRange.length));
         content.append(tagEnd);
     }
 

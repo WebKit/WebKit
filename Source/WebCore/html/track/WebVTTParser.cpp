@@ -315,7 +315,7 @@ WebVTTParser::ParseState WebVTTParser::collectStyleSheet(const String& line)
     return Style;
 }
 
-bool WebVTTParser::checkAndCreateRegion(const String& line)
+bool WebVTTParser::checkAndCreateRegion(StringView line)
 {
     if (m_previousLine.contains("-->"))
         return false;
@@ -329,7 +329,7 @@ bool WebVTTParser::checkAndCreateRegion(const String& line)
     return false;
 }
 
-bool WebVTTParser::checkAndStoreRegion(const String& line)
+bool WebVTTParser::checkAndStoreRegion(StringView line)
 {
     if (!line.isEmpty() && !line.contains("-->"))
         return false;
@@ -344,7 +344,7 @@ bool WebVTTParser::checkAndStoreRegion(const String& line)
     return true;
 }
 
-bool WebVTTParser::checkStyleSheet(const String& line)
+bool WebVTTParser::checkStyleSheet(StringView line)
 {
     if (m_previousLine.contains("-->"))
         return false;
@@ -357,7 +357,7 @@ bool WebVTTParser::checkStyleSheet(const String& line)
     return false;
 }
 
-bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
+bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
 {
     if (!line.isEmpty() && !line.contains("-->"))
         return false;

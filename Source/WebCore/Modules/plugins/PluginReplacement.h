@@ -55,7 +55,7 @@ public:
 
 typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
 typedef bool (*PluginReplacementSupportsType)(const String&);
-typedef bool (*PluginReplacementSupportsFileExtension)(const String&);
+typedef bool (*PluginReplacementSupportsFileExtension)(StringView);
 typedef bool (*PluginReplacementSupportsURL)(const URL&);
 typedef bool (*PluginReplacementEnabledForSettings)(const Settings&);
 
@@ -81,7 +81,7 @@ public:
 
     Ref<PluginReplacement> create(HTMLPlugInElement& element, const Vector<String>& paramNames, const Vector<String>& paramValues) const { return m_constructor(element, paramNames, paramValues); }
     bool supportsType(const String& mimeType) const { return m_supportsType(mimeType); }
-    bool supportsFileExtension(const String& extension) const { return m_supportsFileExtension(extension); }
+    bool supportsFileExtension(StringView extension) const { return m_supportsFileExtension(extension); }
     bool supportsURL(const URL& url) const { return m_supportsURL(url); }
     bool isEnabledBySettings(const Settings& settings) const { return m_isEnabledBySettings(settings); };
 

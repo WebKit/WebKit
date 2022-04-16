@@ -352,14 +352,14 @@ void StyleSheetHandler::observeProperty(unsigned startOffset, unsigned endOffset
         ++endOffset;
     
     ASSERT(startOffset < endOffset);
-    String propertyString = m_parsedText.substring(startOffset, endOffset - startOffset).stripWhiteSpace();
+    StringView propertyString = StringView(m_parsedText).substring(startOffset, endOffset - startOffset).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
     if (propertyString.endsWith(';'))
         propertyString = propertyString.left(propertyString.length() - 1);
     size_t colonIndex = propertyString.find(':');
     ASSERT(colonIndex != notFound);
 
-    String name = propertyString.left(colonIndex).stripWhiteSpace();
-    String value = propertyString.substring(colonIndex + 1, propertyString.length()).stripWhiteSpace();
+    String name = propertyString.left(colonIndex).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline).toString();
+    String value = propertyString.substring(colonIndex + 1, propertyString.length()).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline).toString();
     
     // FIXME-NEWPARSER: The property range is relative to the declaration start offset, but no
     // good reason for it, and it complicates fixUnparsedProperties.
@@ -376,17 +376,19 @@ void StyleSheetHandler::observeComment(unsigned startOffset, unsigned endOffset)
     
     // The lexer is not inside a property AND it is scanning a declaration-aware
     // rule body.
-    String commentText = m_parsedText.substring(startOffset, endOffset - startOffset);
+    auto commentTextView = StringView(m_parsedText).substring(startOffset, endOffset - startOffset);
     
-    ASSERT(commentText.startsWith("/*"));
-    commentText = commentText.substring(2);
+    ASSERT(commentTextView.startsWith("/*"));
+    commentTextView = commentTextView.substring(2);
     
     // Require well-formed comments.
-    if (!commentText.endsWith("*/"))
+    if (!commentTextView.endsWith("*/"))
         return;
-    commentText = commentText.left(commentText.length() - 2).stripWhiteSpace();
-    if (commentText.isEmpty())
+    commentTextView = commentTextView.left(commentTextView.length() - 2).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+    if (commentTextView.isEmpty())
         return;
+
+    auto commentText = commentTextView.toString();
     
     // FIXME: Use the actual rule type rather than STYLE_RULE?
     RuleSourceDataList sourceData;

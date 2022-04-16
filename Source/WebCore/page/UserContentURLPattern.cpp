@@ -61,15 +61,15 @@ bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>
     return matchesAllowlist && !matchesBlocklist;
 }
 
-bool UserContentURLPattern::parse(const String& pattern)
+bool UserContentURLPattern::parse(StringView pattern)
 {
     static constexpr ASCIILiteral schemeSeparator = "://"_s;
 
-    size_t schemeEndPos = pattern.find(StringView { schemeSeparator });
+    size_t schemeEndPos = pattern.find(schemeSeparator);
     if (schemeEndPos == notFound)
         return false;
 
-    m_scheme = pattern.left(schemeEndPos);
+    m_scheme = pattern.left(schemeEndPos).toString();
 
     unsigned hostStartPos = schemeEndPos + schemeSeparator.length();
     if (hostStartPos >= pattern.length())
@@ -84,7 +84,7 @@ bool UserContentURLPattern::parse(const String& pattern)
         if (hostEndPos == notFound)
             return false;
 
-        m_host = pattern.substring(hostStartPos, hostEndPos - hostStartPos);
+        m_host = pattern.substring(hostStartPos, hostEndPos - hostStartPos).toString();
         m_matchSubdomains = false;
 
         if (m_host == "*") {
@@ -104,7 +104,7 @@ bool UserContentURLPattern::parse(const String& pattern)
         pathStartPos = hostEndPos;
     }
 
-    m_path = pattern.right(pattern.length() - pathStartPos);
+    m_path = pattern.right(pattern.length() - pathStartPos).toString();
 
     return true;
 }

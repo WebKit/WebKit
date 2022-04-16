@@ -133,9 +133,9 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     unsigned origFunctionStart = origProviderStr.reverseFind("function", origStart);
     unsigned origBraceStart = origProviderStr.find('{', origStart);
     unsigned headerLength = origBraceStart - origFunctionStart;
-    String origHeader = origProviderStr.substring(origFunctionStart, headerLength);
+    auto origHeaderView = StringView(origProviderStr).substring(origFunctionStart, headerLength);
 
-    String newProviderString = makeString(origHeader, newBody);
+    String newProviderString = makeString(origHeaderView, newBody);
 
     auto overridden = "<overridden>"_s;
     URL url({ }, overridden);

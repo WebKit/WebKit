@@ -208,7 +208,7 @@ static String invalidParameterInSourceAppender(const String& originalMessage, St
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
     static constexpr unsigned inLength = 2;
-    String rightHandSide = sourceText.substring(inIndex + inLength).toStringWithoutCopying().simplifyWhiteSpace();
+    StringView rightHandSide = sourceText.substring(inIndex + inLength).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
     return makeString(rightHandSide, " is not an Object. (evaluating '", sourceText, "')");
 }
 
@@ -227,7 +227,7 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
     static constexpr unsigned instanceofLength = 10;
-    String rightHandSide = sourceText.substring(instanceofIndex + instanceofLength).toStringWithoutCopying().simplifyWhiteSpace();
+    StringView rightHandSide = sourceText.substring(instanceofIndex + instanceofLength).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
     return makeString(rightHandSide, content, ". (evaluating '", sourceText, "')");
 }
 

@@ -45,7 +45,7 @@ private:
     YouTubePluginReplacement(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
     static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
     static bool supportsMIMEType(const String&);
-    static bool supportsFileExtension(const String&);
+    static bool supportsFileExtension(StringView);
     static bool supportsURL(const URL&);
     static bool isEnabledBySettings(const Settings&);
 

@@ -91,7 +91,7 @@ static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const
     else
         return Exception { InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
 
-    rtcCodec.name = codec.mimeType.substring(6).utf8().data();
+    rtcCodec.name = StringView(codec.mimeType).substring(6).utf8().toStdString();
     rtcCodec.clock_rate = codec.clockRate;
     if (codec.channels)
         rtcCodec.num_channels = *codec.channels;

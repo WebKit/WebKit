@@ -32,10 +32,9 @@ namespace WebCore {
 
 class UserContentURLPattern {
 public:
-    UserContentURLPattern() : m_invalid(true), m_matchSubdomains(false) { }
+    UserContentURLPattern() = default;
 
-    UserContentURLPattern(const String& pattern)
-    : m_matchSubdomains(false)
+    explicit UserContentURLPattern(StringView pattern)
     {
         m_invalid = !parse(pattern);
     }
@@ -53,18 +52,17 @@ public:
     static bool matchesPatterns(const URL&, const Vector<String>& allowlist, const Vector<String>& blocklist);
 
 private:
-    WEBCORE_EXPORT bool parse(const String& pattern);
+    WEBCORE_EXPORT bool parse(StringView pattern);
 
     bool matchesHost(const URL&) const;
     bool matchesPath(const URL&) const;
-
-    bool m_invalid;
 
     String m_scheme;
     String m_host;
     String m_path;
 
-    bool m_matchSubdomains;
+    bool m_invalid { true };
+    bool m_matchSubdomains { false };
 };
 
 } // namespace WebCore
