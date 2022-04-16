@@ -210,7 +210,7 @@ bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value, VariableAcce
     } else {
         mergeSpeculation(m_type, speculationFromValue(value));
         if (!!value && value.isCell()) {
-            RegisteredStructure structure = graph.registerStructure(value.asCell()->structure(graph.m_vm));
+            RegisteredStructure structure = graph.registerStructure(value.asCell()->structure());
             mergeArrayModes(m_arrayModes, arrayModesFromStructure(structure.get()));
             m_structure.merge(RegisteredStructureSet(structure));
         }

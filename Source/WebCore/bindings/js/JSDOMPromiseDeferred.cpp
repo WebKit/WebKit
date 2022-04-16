@@ -234,7 +234,7 @@ JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexi
     if (cause == RejectedPromiseWithTypeErrorCause::NativeGetter)
         rejectionValue->setNativeGetterTypeError();
 
-    auto callData = getCallData(vm, rejectFunction);
+    auto callData = JSC::getCallData(rejectFunction);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;

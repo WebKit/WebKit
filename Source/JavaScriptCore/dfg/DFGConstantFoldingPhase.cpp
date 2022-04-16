@@ -197,7 +197,7 @@ private:
             case CheckJSCast: {
                 JSValue constant = m_state.forNode(node->child1()).value();
                 if (constant) {
-                    if (constant.isCell() && constant.asCell()->inherits(m_graph.m_vm, node->classInfo())) {
+                    if (constant.isCell() && constant.asCell()->inherits(node->classInfo())) {
                         m_interpreter.execute(indexInBlock);
                         node->remove(m_graph);
                         eliminated = true;
@@ -219,7 +219,7 @@ private:
             case CheckNotJSCast: {
                 JSValue constant = m_state.forNode(node->child1()).value();
                 if (constant) {
-                    if (constant.isCell() && !constant.asCell()->inherits(m_graph.m_vm, node->classInfo())) {
+                    if (constant.isCell() && !constant.asCell()->inherits(node->classInfo())) {
                         m_interpreter.execute(indexInBlock);
                         node->remove(m_graph);
                         eliminated = true;
@@ -266,7 +266,7 @@ private:
                 const RegisteredStructureSet& set = node->structureSet();
                 
                 if (value.value()) {
-                    if (Structure* structure = jsDynamicCast<Structure*>(m_graph.m_vm, value.value())) {
+                    if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
                         if (set.contains(m_graph.registerStructure(structure))) {
                             m_interpreter.execute(indexInBlock);
                             node->remove(m_graph);
@@ -281,7 +281,7 @@ private:
                     phiChildren->forAllTransitiveIncomingValues(
                         node,
                         [&] (Node* incoming) {
-                            if (Structure* structure = incoming->dynamicCastConstant<Structure*>(m_graph.m_vm)) {
+                            if (Structure* structure = incoming->dynamicCastConstant<Structure*>()) {
                                 if (set.contains(m_graph.registerStructure(structure)))
                                     return;
                             }
@@ -714,7 +714,7 @@ private:
             }
 
             case ToThis: {
-                ToThisResult result = isToThisAnIdentity(m_graph.m_vm, node->ecmaMode(), m_state.forNode(node->child1()));
+                ToThisResult result = isToThisAnIdentity(node->ecmaMode(), m_state.forNode(node->child1()));
                 if (result == ToThisResult::Identity) {
                     node->convertToIdentity();
                     changed = true;
@@ -730,7 +730,7 @@ private:
 
             case CreateThis: {
                 if (JSValue base = m_state.forNode(node->child1()).m_value) {
-                    if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
+                    if (auto* function = jsDynamicCast<JSFunction*>(base)) {
                         if (FunctionRareData* rareData = function->rareData()) {
                             if (rareData->allocationProfileWatchpointSet().isStillValid()) {
                                 Structure* structure = rareData->objectAllocationStructure();
@@ -772,12 +772,12 @@ private:
                         changed = true;
                         break;
                     }
-                    if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
+                    if (auto* function = jsDynamicCast<JSFunction*>(base)) {
                         if (FunctionRareData* rareData = function->rareData()) {
                             if (rareData->allocationProfileWatchpointSet().isStillValid()) {
                                 Structure* structure = rareData->internalFunctionAllocationStructure();
                                 if (structure
-                                    && structure->classInfo() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
+                                    && structure->classInfoForCells() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
                                     && structure->globalObject() == globalObject) {
                                     m_graph.freeze(rareData);
                                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -797,12 +797,12 @@ private:
                 auto foldConstant = [&] (NodeType newOp, const ClassInfo* classInfo) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     if (JSValue base = m_state.forNode(node->child1()).m_value) {
-                        if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
+                        if (auto* function = jsDynamicCast<JSFunction*>(base)) {
                             if (FunctionRareData* rareData = function->rareData()) {
                                 if (rareData->allocationProfileWatchpointSet().isStillValid()) {
                                     Structure* structure = rareData->internalFunctionAllocationStructure();
                                     if (structure
-                                        && structure->classInfo() == classInfo
+                                        && structure->classInfoForCells() == classInfo
                                         && structure->globalObject() == globalObject) {
                                         m_graph.freeze(rareData);
                                         m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -1365,7 +1365,7 @@ private:
     {
         {
             StructureRegistrationResult result;
-            m_graph.registerStructure(cell->structure(m_graph.m_vm), result);
+            m_graph.registerStructure(cell->structure(), result);
             if (result == StructureRegisteredAndWatched)
                 return;
         }
@@ -1443,7 +1443,7 @@ private:
                     if (m_graph.watchCondition(condition))
                         continue;
 
-                    Structure* structure = condition.object()->structure(m_graph.m_vm);
+                    Structure* structure = condition.object()->structure();
                     if (!condition.structureEnsuresValidity(Concurrency::ConcurrentThread, structure))
                         return;
 

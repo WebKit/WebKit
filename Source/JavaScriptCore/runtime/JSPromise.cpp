@@ -109,7 +109,7 @@ JSValue JSPromise::createNewPromiseCapability(JSGlobalObject* globalObject, JSPr
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSFunction* newPromiseCapabilityFunction = globalObject->newPromiseCapabilityFunction();
-    auto callData = JSC::getCallData(globalObject->vm(), newPromiseCapabilityFunction);
+    auto callData = JSC::getCallData(newPromiseCapabilityFunction);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
@@ -149,14 +149,14 @@ JSPromise* JSPromise::resolvedPromise(JSGlobalObject* globalObject, JSValue valu
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSFunction* function = globalObject->promiseResolveFunction();
-    auto callData = JSC::getCallData(vm, function);
+    auto callData = JSC::getCallData(function);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(value);
     auto result = call(globalObject, function, callData, globalObject->promiseConstructor(), arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    ASSERT(result.inherits<JSPromise>(vm));
+    ASSERT(result.inherits<JSPromise>());
     return jsCast<JSPromise*>(result);
 }
 
@@ -178,7 +178,7 @@ JSPromise* JSPromise::rejectedPromise(JSGlobalObject* globalObject, JSValue valu
 
 static inline void callFunction(JSGlobalObject* globalObject, JSValue function, JSPromise* promise, JSValue value)
 {
-    auto callData = getCallData(globalObject->vm(), function);
+    auto callData = getCallData(function);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
@@ -194,10 +194,10 @@ void JSPromise::resolve(JSGlobalObject* lexicalGlobalObject, JSValue value)
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     uint32_t flags = this->flags();
-    ASSERT(!value.inherits<Exception>(vm));
+    ASSERT(!value.inherits<Exception>());
     if (!(flags & isFirstResolvingFunctionCalledFlag)) {
         internalField(Field::Flags).set(vm, this, jsNumber(flags | isFirstResolvingFunctionCalledFlag));
-        JSGlobalObject* globalObject = this->globalObject(vm);
+        JSGlobalObject* globalObject = this->globalObject();
         callFunction(lexicalGlobalObject, globalObject->resolvePromiseFunction(), this, value);
         RETURN_IF_EXCEPTION(scope, void());
     }
@@ -208,10 +208,10 @@ void JSPromise::reject(JSGlobalObject* lexicalGlobalObject, JSValue value)
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     uint32_t flags = this->flags();
-    ASSERT(!value.inherits<Exception>(vm));
+    ASSERT(!value.inherits<Exception>());
     if (!(flags & isFirstResolvingFunctionCalledFlag)) {
         internalField(Field::Flags).set(vm, this, jsNumber(flags | isFirstResolvingFunctionCalledFlag));
-        JSGlobalObject* globalObject = this->globalObject(vm);
+        JSGlobalObject* globalObject = this->globalObject();
         callFunction(lexicalGlobalObject, globalObject->rejectPromiseFunction(), this, value);
         RETURN_IF_EXCEPTION(scope, void());
     }
@@ -255,7 +255,7 @@ JSPromise* JSPromise::rejectWithCaughtException(JSGlobalObject* globalObject, Th
 void JSPromise::performPromiseThen(JSGlobalObject* globalObject, JSFunction* onFulFilled, JSFunction* onRejected, JSValue resultCapability)
 {
     JSFunction* performPromiseThenFunction = globalObject->performPromiseThenFunction();
-    auto callData = JSC::getCallData(globalObject->vm(), performPromiseThenFunction);
+    auto callData = JSC::getCallData(performPromiseThenFunction);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;

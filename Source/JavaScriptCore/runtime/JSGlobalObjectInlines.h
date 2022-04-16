@@ -63,19 +63,17 @@ ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSaneConcurrently(Struct
 
 ALWAYS_INLINE bool JSGlobalObject::arrayPrototypeChainIsSane()
 {
-    VM& vm = this->vm();
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-    Structure* arrayPrototypeStructure = arrayPrototype()->structure(vm);
-    Structure* objectPrototypeStructure = objectPrototype()->structure(vm);
+    Structure* arrayPrototypeStructure = arrayPrototype()->structure();
+    Structure* objectPrototypeStructure = objectPrototype()->structure();
     return arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure);
 }
 
 ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSane()
 {
-    VM& vm = this->vm();
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-    Structure* stringPrototypeStructure = stringPrototype()->structure(vm);
-    Structure* objectPrototypeStructure = objectPrototype()->structure(vm);
+    Structure* stringPrototypeStructure = stringPrototype()->structure();
+    Structure* objectPrototypeStructure = objectPrototype()->structure();
     return stringPrototypeChainIsSaneConcurrently(stringPrototypeStructure, objectPrototypeStructure);
 }
 

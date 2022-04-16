@@ -58,7 +58,7 @@ IntlDisplayNames::IntlDisplayNames(VM& vm, Structure* structure)
 void IntlDisplayNames::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.DisplayNames

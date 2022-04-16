@@ -136,7 +136,7 @@ JSTestLegacyNoInterfaceObject::JSTestLegacyNoInterfaceObject(Structure* structur
 void JSTestLegacyNoInterfaceObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestLegacyNoInterfaceObject>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
@@ -398,9 +398,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-TestLegacyNoInterfaceObject* JSTestLegacyNoInterfaceObject::toWrapped(JSC::VM& vm, JSC::JSValue value)
+TestLegacyNoInterfaceObject* JSTestLegacyNoInterfaceObject::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestLegacyNoInterfaceObject*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestLegacyNoInterfaceObject*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

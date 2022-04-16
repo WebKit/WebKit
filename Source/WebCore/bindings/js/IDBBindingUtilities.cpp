@@ -76,12 +76,12 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
 
     auto* obj = asObject(object);
     Identifier identifier = Identifier::fromString(vm, keyPathElement);
-    if (obj->inherits<JSArray>(vm) && keyPathElement == "length") {
+    if (obj->inherits<JSArray>() && keyPathElement == "length") {
         result = obj->get(&lexicalGlobalObject, identifier);
         RETURN_IF_EXCEPTION(scope, false);
         return true;
     }
-    if (obj->inherits<JSBlob>(vm) && (keyPathElement == "size" || keyPathElement == "type")) {
+    if (obj->inherits<JSBlob>() && (keyPathElement == "size" || keyPathElement == "type")) {
         if (keyPathElement == "size") {
             result = jsNumber(jsCast<JSBlob*>(obj)->wrapped().size());
             return true;
@@ -91,7 +91,7 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
             return true;
         }
     }
-    if (obj->inherits<JSFile>(vm)) {
+    if (obj->inherits<JSFile>()) {
         if (keyPathElement == "name") {
             result = jsString(vm, jsCast<JSFile*>(obj)->wrapped().name());
             return true;
@@ -207,7 +207,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
         return IDBKey::createString(WTFMove(string));
     }
 
-    if (value.inherits<DateInstance>(vm)) {
+    if (value.inherits<DateInstance>()) {
         auto dateValue = valueToDate(lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isnan(dateValue))
@@ -216,7 +216,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
 
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (auto* array = jsDynamicCast<JSArray*>(vm, object)) {
+        if (auto* array = jsDynamicCast<JSArray*>(object)) {
             size_t length = array->length();
 
             if (stack.contains(array))
@@ -243,10 +243,10 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
             return IDBKey::createArray(subkeys);
         }
 
-        if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(vm, value))
+        if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(value))
             return IDBKey::createBinary(*arrayBuffer);
 
-        if (auto* arrayBufferView = jsDynamicCast<JSArrayBufferView*>(vm, value))
+        if (auto* arrayBufferView = jsDynamicCast<JSArrayBufferView*>(value))
             return IDBKey::createBinary(*arrayBufferView);
     }
     return nullptr;

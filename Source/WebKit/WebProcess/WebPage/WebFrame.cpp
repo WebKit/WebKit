@@ -760,7 +760,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
 
 String WebFrame::counterValue(JSObjectRef element)
 {
-    if (!toJS(element)->inherits<JSElement>(toJS(element)->vm()))
+    if (!toJS(element)->inherits<JSElement>())
         return String();
 
     return counterValueForElement(&jsCast<JSElement*>(toJS(element))->wrapped());

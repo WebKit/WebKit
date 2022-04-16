@@ -56,7 +56,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     JSValue tagValue = callFrame->argument(0);
     JSValue tagParameters = callFrame->argument(1);
 
-    auto tag = jsDynamicCast<JSWebAssemblyTag*>(vm, tagValue);
+    auto tag = jsDynamicCast<JSWebAssemblyTag*>(tagValue);
     if (!tag)
         return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the first argument to be a WebAssembly.Tag"_s);
 

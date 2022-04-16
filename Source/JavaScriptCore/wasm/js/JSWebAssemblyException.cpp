@@ -49,7 +49,7 @@ JSWebAssemblyException::JSWebAssemblyException(VM& vm, Structure* structure, con
 void JSWebAssemblyException::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 template<typename Visitor>

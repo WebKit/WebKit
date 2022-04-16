@@ -197,7 +197,7 @@ inline void putNonEnumerable(JSContext *context, JSValue *base, NSString *proper
     descriptor.setConfigurable(true);
     descriptor.setWritable(true);
     bool shouldThrow = false;
-    baseObject->methodTable(vm)->defineOwnProperty(baseObject, globalObject, name->identifier(&vm), descriptor, shouldThrow);
+    baseObject->methodTable()->defineOwnProperty(baseObject, globalObject, name->identifier(&vm), descriptor, shouldThrow);
 
     JSValueRef exception = 0;
     if (handleExceptionIfNeeded(scope, [context JSGlobalContextRef], &exception) == ExceptionStatus::DidThrow)
@@ -275,7 +275,7 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
             // to override normal builtins e.g. "toString" we check if
             // the existing value on the prototype chain is an ObjC
             // callback already.
-            if ([existingMethod isObject] && JSC::jsDynamicCast<JSC::ObjCCallbackFunction*>(globalObject->vm(), toJS(globalObject, [existingMethod JSValueRef])))
+            if ([existingMethod isObject] && JSC::jsDynamicCast<JSC::ObjCCallbackFunction*>(toJS(globalObject, [existingMethod JSValueRef])))
                 return;
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (method)
@@ -677,10 +677,9 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     JSObjectRef object = JSValueToObject(context, value, &exception);
     ASSERT(!exception);
     JSC::JSLockHolder locker(toJS(context));
-    JSC::VM& vm = toJS(context)->vm();
-    if (toJS(object)->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>(vm))
+    if (toJS(object)->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>())
         return (__bridge id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
-    if (id target = tryUnwrapConstructor(&vm, object))
+    if (id target = tryUnwrapConstructor(object))
         return target;
     return nil;
 }

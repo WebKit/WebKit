@@ -44,7 +44,7 @@ StructureChain* StructureChain::create(VM& vm, JSObject* head)
     // By making the size <= UINT16_MAX, we can store length in a high bits of auxiliary pointer.
     // https://bugs.webkit.org/show_bug.cgi?id=200290
     size_t size = 0;
-    for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current))
+    for (JSObject* current = head; current; current = current->structure()->storedPrototypeObject(current))
         ++size;
     ++size; // Sentinel nullptr.
     size_t bytes = Checked<size_t>(size) * sizeof(StructureID);
@@ -60,8 +60,8 @@ void StructureChain::finishCreation(VM& vm, JSObject* head)
 {
     Base::finishCreation(vm);
     size_t i = 0;
-    for (JSObject* current = head; current; current = current->structure(vm)->storedPrototypeObject(current)) {
-        Structure* structure = current->structure(vm);
+    for (JSObject* current = head; current; current = current->structure()->storedPrototypeObject(current)) {
+        Structure* structure = current->structure();
         m_vector.get()[i++] = structure->id();
         vm.writeBarrier(this);
     }

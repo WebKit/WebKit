@@ -37,13 +37,13 @@ DateInstance::DateInstance(VM& vm, Structure* structure)
 void DateInstance::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 void DateInstance::finishCreation(VM& vm, double time)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     m_internalNumber = timeClip(time);
 }
 

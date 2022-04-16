@@ -401,7 +401,7 @@ void ArrayBuffer::notifyDetaching(VM& vm)
 {
     for (size_t i = numberOfIncomingReferences(); i--;) {
         JSCell* cell = incomingReferenceAt(i);
-        if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, cell))
+        if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(cell))
             view->detach();
     }
     m_detachingWatchpointSet.fireAll(vm, "Array buffer was detached");

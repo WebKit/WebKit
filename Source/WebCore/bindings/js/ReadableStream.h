@@ -60,12 +60,11 @@ private:
 struct JSReadableStreamWrapperConverter {
     static RefPtr<ReadableStream> toWrapped(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-        auto* globalObject = JSC::jsDynamicCast<JSDOMGlobalObject*>(vm, &lexicalGlobalObject);
+        auto* globalObject = JSC::jsDynamicCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
         if (!globalObject)
             return nullptr;
 
-        auto* readableStream = JSC::jsDynamicCast<JSReadableStream*>(vm, value);
+        auto* readableStream = JSC::jsDynamicCast<JSReadableStream*>(value);
         if (!readableStream)
             return nullptr;
 

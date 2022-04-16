@@ -125,18 +125,18 @@ inline std::optional<size_t> JSArrayBufferView::byteOffsetConcurrently()
     return byteOffsetImpl<ConcurrentThread, std::optional<size_t>>();
 }
 
-inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM& vm, JSValue value)
+inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(VM&, JSValue value)
 {
-    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, value)) {
+    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value)) {
         if (!view->isShared())
             return view->unsharedImpl();
     }
     return nullptr;
 }
 
-inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrappedAllowShared(VM& vm, JSValue value)
+inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrappedAllowShared(VM&, JSValue value)
 {
-    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, value))
+    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value))
         return view->possiblySharedImpl();
     return nullptr;
 }

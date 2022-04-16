@@ -48,7 +48,7 @@ ClonedArguments* ClonedArguments::createEmpty(
         return nullptr;
 
     Butterfly* butterfly;
-    if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing(vm))) {
+    if (UNLIKELY(structure->mayInterceptIndexedAccesses() || structure->storedPrototypeObject()->needsSlowPutIndexing())) {
         butterfly = createArrayStorageButterfly(vm, nullptr, structure, length, vectorLength);
         butterfly->arrayStorage()->m_numValuesInVector = vectorLength;
     } else {
@@ -79,7 +79,7 @@ ClonedArguments* ClonedArguments::createEmpty(JSGlobalObject* globalObject, JSFu
     // NB. Some clients might expect that the global object of of this object is the global object
     // of the callee. We don't do this for now, but maybe we should.
     ClonedArguments* result = createEmpty(vm, globalObject->clonedArgumentsStructure(), callee, length);
-    ASSERT(!result->needsSlowPutIndexing(vm) || shouldUseSlowPut(result->structure(vm)->indexingType()));
+    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
     return result;
 }
 
@@ -122,15 +122,15 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(JSGlobalObject* globalOb
         break;
     } }
 
-    ASSERT(globalObject->clonedArgumentsStructure() == result->structure(globalObject->vm()));
-    ASSERT(!result->needsSlowPutIndexing(globalObject->vm()) || shouldUseSlowPut(result->structure(globalObject->vm())->indexingType()));
+    ASSERT(globalObject->clonedArgumentsStructure() == result->structure());
+    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
     return result;
 }
 
 ClonedArguments* ClonedArguments::createWithMachineFrame(JSGlobalObject* globalObject, CallFrame* targetFrame, ArgumentsMode mode)
 {
     ClonedArguments* result = createWithInlineFrame(globalObject, targetFrame, nullptr, mode);
-    ASSERT(!result->needsSlowPutIndexing(globalObject->vm()) || shouldUseSlowPut(result->structure(globalObject->vm())->indexingType()));
+    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
     return result;
 }
 
@@ -143,7 +143,7 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
     
     for (unsigned i = length; i--;)
         result->putDirectIndex(globalObject, i, argumentStart[i].jsValue());
-    ASSERT(!result->needsSlowPutIndexing(vm) || shouldUseSlowPut(result->structure(vm)->indexingType()));
+    ASSERT(!result->needsSlowPutIndexing() || shouldUseSlowPut(result->structure()->indexingType()));
     return result;
 }
 
@@ -181,7 +181,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
 
         if (ident == vm.propertyNames->callee) {
             if (isStrictMode || executable->usesNonSimpleParameterList()) {
-                slot.setGetterSlot(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor, thisObject->globalObject(vm)->throwTypeErrorArgumentsCalleeGetterSetter());
+                slot.setGetterSlot(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor, thisObject->globalObject()->throwTypeErrorArgumentsCalleeGetterSetter());
                 return true;
             }
             slot.setValue(thisObject, 0, thisObject->m_callee.get());
@@ -189,7 +189,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
         }
 
         if (ident == vm.propertyNames->iteratorSymbol) {
-            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->globalObject(vm)->arrayProtoValuesFunction());
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->globalObject()->arrayProtoValuesFunction());
             return true;
         }
     }
@@ -252,11 +252,11 @@ void ClonedArguments::materializeSpecials(JSGlobalObject* globalObject)
     bool isStrictMode = executable->isInStrictContext();
     
     if (isStrictMode || executable->usesNonSimpleParameterList())
-        putDirectAccessor(globalObject, vm.propertyNames->callee, this->globalObject(vm)->throwTypeErrorArgumentsCalleeGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
+        putDirectAccessor(globalObject, vm.propertyNames->callee, this->globalObject()->throwTypeErrorArgumentsCalleeGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     else
         putDirect(vm, vm.propertyNames->callee, JSValue(m_callee.get()));
 
-    putDirect(vm, vm.propertyNames->iteratorSymbol, this->globalObject(vm)->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->iteratorSymbol, this->globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     m_callee.clear();
 }

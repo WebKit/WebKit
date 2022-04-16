@@ -55,7 +55,7 @@ FunctionPrototype::FunctionPrototype(VM& vm, Structure* structure)
 void FunctionPrototype::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm, 0, name, PropertyAdditionMode::WithoutStructureTransition);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction, JSFunction** hasInstanceSymbolFunction)
@@ -79,13 +79,13 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    if (thisValue.inherits<JSFunction>(vm)) {
+    if (thisValue.inherits<JSFunction>()) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
         Integrity::auditStructureID(function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(function->toString(globalObject)));
     }
 
-    if (thisValue.inherits<InternalFunction>(vm)) {
+    if (thisValue.inherits<InternalFunction>()) {
         InternalFunction* function = jsCast<InternalFunction*>(thisValue);
         Integrity::auditStructureID(function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", function->name(), "() {\n    [native code]\n}")));
@@ -94,8 +94,8 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
     if (thisValue.isObject()) {
         JSObject* object = asObject(thisValue);
         Integrity::auditStructureID(object->structureID());
-        if (object->isCallable(vm))
-            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", object->classInfo(vm)->className, "() {\n    [native code]\n}")));
+        if (object->isCallable())
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", object->classInfo()->className, "() {\n    [native code]\n}")));
     }
 
     return throwVMTypeError(globalObject, scope);
@@ -155,7 +155,7 @@ JSC_DEFINE_CUSTOM_GETTER(argumentsGetter, (JSGlobalObject* globalObject, Encoded
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(vm, JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         return throwVMTypeError(globalObject, scope, RestrictedPropertyAccessError);
 
@@ -181,7 +181,7 @@ public:
 
         JSCell* callee = visitor->callee().asCell();
 
-        if (callee && (callee->inherits<JSBoundFunction>(callee->vm()) || callee->inherits<JSRemoteFunction>(callee->vm()) || callee->type() == ProxyObjectType))
+        if (callee && (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType))
             return StackVisitor::Continue;
 
         if (!m_hasFoundFrame && callee != m_targetCallee)
@@ -219,7 +219,7 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(vm, JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         return throwVMTypeError(globalObject, scope, RestrictedPropertyAccessError);
 
@@ -228,7 +228,7 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
         return JSValue::encode(jsNull());
 
     // 11. If caller is not an ECMAScript function object, return null.
-    JSFunction* function = jsDynamicCast<JSFunction*>(vm, caller);
+    JSFunction* function = jsDynamicCast<JSFunction*>(caller);
     if (!function || function->isHostOrBuiltinFunction())
         return JSValue::encode(jsNull());
 
@@ -251,7 +251,7 @@ JSC_DEFINE_CUSTOM_SETTER(callerAndArgumentsSetter, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(vm, JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         throwTypeError(globalObject, scope, RestrictedPropertyAccessError);
 

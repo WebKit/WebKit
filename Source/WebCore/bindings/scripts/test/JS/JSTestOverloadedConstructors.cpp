@@ -204,11 +204,11 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestOverloadedConstructorsD
     }
     if (argsCount == 1) {
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSArrayBuffer>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSArrayBuffer>())
             RELEASE_AND_RETURN(throwScope, (constructJSTestOverloadedConstructors1(lexicalGlobalObject, callFrame)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSArrayBufferView>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSArrayBufferView>())
             RELEASE_AND_RETURN(throwScope, (constructJSTestOverloadedConstructors2(lexicalGlobalObject, callFrame)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>())
             RELEASE_AND_RETURN(throwScope, (constructJSTestOverloadedConstructors3(lexicalGlobalObject, callFrame)));
         if (distinguishingArg.isNumber())
             RELEASE_AND_RETURN(throwScope, (constructJSTestOverloadedConstructors5(lexicalGlobalObject, callFrame)));
@@ -261,7 +261,7 @@ JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure,
 void JSTestOverloadedConstructors::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestOverloadedConstructors>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
@@ -292,7 +292,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestOverloadedConstructorsConstructor, (JSGlobalObjec
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestOverloadedConstructorsPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestOverloadedConstructorsPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestOverloadedConstructors::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -368,9 +368,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-TestOverloadedConstructors* JSTestOverloadedConstructors::toWrapped(JSC::VM& vm, JSC::JSValue value)
+TestOverloadedConstructors* JSTestOverloadedConstructors::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestOverloadedConstructors*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestOverloadedConstructors*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -7437,10 +7437,10 @@ IGNORE_CLANG_WARNINGS_END
             compileNewInternalFieldObjectImpl<JSSetIterator>(operationNewSetIterator);
             break;
         case JSPromiseType:
-            if (m_node->structure()->classInfo() == JSInternalPromise::info())
+            if (m_node->structure()->classInfoForCells() == JSInternalPromise::info())
                 compileNewInternalFieldObjectImpl<JSInternalPromise>(operationNewInternalPromise);
             else {
-                ASSERT(m_node->structure()->classInfo() == JSPromise::info());
+                ASSERT(m_node->structure()->classInfoForCells() == JSPromise::info());
                 compileNewInternalFieldObjectImpl<JSPromise>(operationNewPromise);
             }
             break;
@@ -8775,7 +8775,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.storePtr(m_out.constIntPtr(JSString::isRopeInPointer), result, m_heaps.JSRopeString_fiber0);
 
         auto getFlagsAndLength = [&] (Edge& edge, LValue child) {
-            if (JSString* string = edge->dynamicCastConstant<JSString*>(vm())) {
+            if (JSString* string = edge->dynamicCastConstant<JSString*>()) {
                 return FlagsAndLength {
                     m_out.constInt32(string->is8Bit() ? StringImpl::flagIs8Bit() : 0),
                     m_out.constInt32(string->length())
@@ -8949,8 +8949,8 @@ IGNORE_CLANG_WARNINGS_END
             // FIXME: Revisit JSGlobalObject.
             // https://bugs.webkit.org/show_bug.cgi?id=203204
             JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-            Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure(vm());
-            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm());
+            Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure();
+            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
             WTF::dependentLoadLoadFence();
 
             if (globalObject->stringPrototypeChainIsSaneConcurrently(stringPrototypeStructure, objectPrototypeStructure)) {
@@ -10317,7 +10317,7 @@ IGNORE_CLANG_WARNINGS_END
         bool isConstruct = node->op() == DirectConstruct;
         
         ExecutableBase* executable = node->castOperand<ExecutableBase*>();
-        FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(vm(), executable);
+        FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable);
         
         unsigned numPassedArgs = node->numChildren() - 1;
         unsigned numAllocatedArgs = numPassedArgs;
@@ -13124,7 +13124,7 @@ IGNORE_CLANG_WARNINGS_END
     void compileOverridesHasInstance()
     {
         FrozenValue* defaultHasInstanceFunction = m_node->cellOperand();
-        ASSERT(defaultHasInstanceFunction->cell()->inherits<JSFunction>(vm()));
+        ASSERT(defaultHasInstanceFunction->cell()->inherits<JSFunction>());
 
         LValue constructor = lowCell(m_node->child1());
         LValue hasInstance = lowJSValue(m_node->child2());
@@ -14290,10 +14290,10 @@ IGNORE_CLANG_WARNINGS_END
             compileMaterializeNewInternalFieldObjectImpl<JSSetIterator>(operationNewSetIterator);
             break;
         case JSPromiseType:
-            if (m_node->structure()->classInfo() == JSInternalPromise::info())
+            if (m_node->structure()->classInfoForCells() == JSInternalPromise::info())
                 compileMaterializeNewInternalFieldObjectImpl<JSInternalPromise>(operationNewInternalPromise);
             else {
-                ASSERT(m_node->structure()->classInfo() == JSPromise::info());
+                ASSERT(m_node->structure()->classInfoForCells() == JSPromise::info());
                 compileMaterializeNewInternalFieldObjectImpl<JSPromise>(operationNewPromise);
             }
             break;
@@ -14564,7 +14564,7 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         FrozenValue* regexp = m_node->cellOperand();
         LValue lastIndex = lowJSValue(m_node->child1());
-        ASSERT(regexp->cell()->inherits<RegExp>(vm()));
+        ASSERT(regexp->cell()->inherits<RegExp>());
 
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
@@ -14609,7 +14609,7 @@ IGNORE_CLANG_WARNINGS_END
             && m_node->child2().useKind() == RegExpObjectUse
             && m_node->child3().useKind() == StringUse) {
 
-            if (JSString* replace = m_node->child3()->dynamicCastConstant<JSString*>(vm())) {
+            if (JSString* replace = m_node->child3()->dynamicCastConstant<JSString*>()) {
                 if (!replace->length()) {
                     LValue string = lowString(m_node->child1());
                     LValue regExp = lowRegExpObject(m_node->child2());

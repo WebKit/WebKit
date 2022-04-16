@@ -124,7 +124,7 @@ Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
         return makeExceptionResult(exception);
     }
 
-    auto callData = getCallData(vm, function);
+    auto callData = JSC::getCallData(function);
     if (callData.type == CallData::Type::None)
         return { };
 

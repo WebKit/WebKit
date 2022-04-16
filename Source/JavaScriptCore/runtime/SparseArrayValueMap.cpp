@@ -106,7 +106,7 @@ bool SparseArrayValueMap::putEntry(JSGlobalObject* globalObject, JSObject* array
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
-    if (result.isNewEntry && !array->isStructureExtensible(vm)) {
+    if (result.isNewEntry && !array->isStructureExtensible()) {
         remove(result.iterator);
         return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
     }
@@ -128,7 +128,7 @@ bool SparseArrayValueMap::putDirect(JSGlobalObject* globalObject, JSObject* arra
     // To save a separate find & add, we first always add to the sparse map.
     // In the uncommon case that this is a new property, and the array is not
     // extensible, this is not the right thing to have done - so remove again.
-    if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isStructureExtensible(vm)) {
+    if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isStructureExtensible()) {
         remove(result.iterator);
         return typeError(globalObject, scope, shouldThrow, NonExtensibleObjectPropertyDefineError);
     }

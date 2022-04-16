@@ -62,7 +62,7 @@ JSInternalPromise* JSInternalPromise::then(JSGlobalObject* globalObject, JSFunct
 
     JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().thenPublicName());
     RETURN_IF_EXCEPTION(scope, nullptr);
-    auto callData = JSC::getCallData(vm, function);
+    auto callData = JSC::getCallData(function);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;

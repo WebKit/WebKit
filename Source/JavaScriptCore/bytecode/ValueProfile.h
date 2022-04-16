@@ -70,7 +70,7 @@ struct ValueProfileBase {
         if (!!value) {
             if (!value.isCell())
                 return nullptr;
-            return value.asCell()->structure()->classInfo();
+            return value.asCell()->classInfo();
         }
         return nullptr;
     }

@@ -46,7 +46,7 @@ void ShadowChicken::Packet::dump(PrintStream& out) const
     
     if (isPrologue()) {
         String name = "?"_s;
-        if (auto* function = jsDynamicCast<JSFunction*>(callee->vm(), callee)) {
+        if (auto* function = jsDynamicCast<JSFunction*>(callee)) {
             name = function->name(callee->vm());
             if (name.isEmpty())
                 name = "?"_s;
@@ -70,7 +70,7 @@ void ShadowChicken::Packet::dump(PrintStream& out) const
 void ShadowChicken::Frame::dump(PrintStream& out) const
 {
     String name = "?"_s;
-    if (auto* function = jsDynamicCast<JSFunction*>(callee->vm(), callee)) {
+    if (auto* function = jsDynamicCast<JSFunction*>(callee)) {
         name = function->name(callee->vm());
         if (name.isEmpty())
             name = "?"_s;
@@ -310,7 +310,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
             if (ShadowChickenInternal::verbose) {
                 dataLog("    Examining callFrame:", RawPointer(callFrame), ", callee:", RawPointer(callFrame->jsCallee()), ", callerFrame:", RawPointer(callFrame->callerFrame()), "\n");
                 JSObject* callee = callFrame->jsCallee();
-                if (auto* function = jsDynamicCast<JSFunction*>(callee->vm(), callee))
+                if (auto* function = jsDynamicCast<JSFunction*>(callee))
                     dataLog("      Function = ", function->name(callee->vm()), "\n");
             }
 
@@ -334,11 +334,11 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
                 : jsUndefined();
             if (!scopeValue.isUndefined() && codeBlock->wasCompiledWithDebuggingOpcodes()) {
                 scope = jsCast<JSScope*>(scopeValue.asCell());
-                RELEASE_ASSERT(scope->inherits<JSScope>(vm));
+                RELEASE_ASSERT(scope->inherits<JSScope>());
             } else if (foundFrame) {
                 scope = m_log[indexInLog].scope;
                 if (scope)
-                    RELEASE_ASSERT(scope->inherits<JSScope>(vm));
+                    RELEASE_ASSERT(scope->inherits<JSScope>());
             }
             toPush.append(Frame(jsCast<JSObject*>(visitor->callee().asCell()), callFrame, isTailDeleted, callFrame->thisValue(), scope, codeBlock, callFrame->callSiteIndex()));
 
@@ -387,7 +387,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
                     }
                     Packet packet = m_log[indexInLog];
                     bool isTailDeleted = true;
-                    RELEASE_ASSERT(tailPacket.scope->inherits<JSScope>(vm));
+                    RELEASE_ASSERT(tailPacket.scope->inherits<JSScope>());
                     toPush.append(Frame(packet.callee, packet.frame, isTailDeleted, tailPacket.thisValue, tailPacket.scope, tailPacket.codeBlock, tailPacket.callSiteIndex));
                 }
             }

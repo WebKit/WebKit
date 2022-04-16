@@ -77,7 +77,7 @@ Structure* AtomicsObject::createStructure(VM& vm, JSGlobalObject* globalObject, 
 void AtomicsObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     
 #define PUT_DIRECT_NATIVE_FUNC(lowerName, upperName, count) \
     putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(vm, #lowerName ""_s), count, atomicsFunc ## upperName, Atomics ## upperName ## Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));

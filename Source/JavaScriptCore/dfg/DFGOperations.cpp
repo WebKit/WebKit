@@ -101,7 +101,7 @@ static ALWAYS_INLINE void putByVal(JSGlobalObject* globalObject, VM& vm, JSValue
         if (object->trySetIndexQuickly(vm, index, value))
             return;
 
-        object->methodTable(vm)->putByIndex(object, globalObject, index, value, strict);
+        object->methodTable()->putByIndex(object, globalObject, index, value, strict);
         return;
     }
 
@@ -212,7 +212,7 @@ static ALWAYS_INLINE EncodedJSValue parseIntResult(double input)
 
 ALWAYS_INLINE static JSValue getByValObject(JSGlobalObject* globalObject, VM& vm, JSObject* base, PropertyName propertyName)
 {
-    Structure& structure = *base->structure(vm);
+    Structure& structure = *base->structure();
     if (JSCell::canUseFastGetOwnProperty(structure)) {
         if (JSValue result = base->fastGetOwnProperty(vm, structure, propertyName))
             return result;
@@ -313,17 +313,17 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(vm, target) && target->canPerformFastPutInlineExcludingProto(vm) && target->isStructureExtensible(vm);
+    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
 
     if (targetCanPerformFastPut) {
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
-        if (!source->staticPropertiesReified(vm)) {
+        if (!source->staticPropertiesReified()) {
             source->reifyAllStaticProperties(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
         }
 
-        if (canPerformFastPropertyEnumerationForObjectAssign(source->structure(vm))) {
+        if (canPerformFastPropertyEnumerationForObjectAssign(source->structure())) {
             // |source| Structure does not have any getters. And target can perform fast put.
             // So enumerating properties and putting properties are non observable.
 
@@ -340,7 +340,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
             // Do not clear since Vector::clear shrinks the backing store.
             properties.resize(0);
             values.clear();
-            source->structure(vm)->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
+            source->structure()->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
                 if (entry.attributes & PropertyAttribute::DontEnum)
                     return true;
 
@@ -375,7 +375,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(vm, target) && target->canPerformFastPutInlineExcludingProto(vm) && target->isStructureExtensible(vm);
+    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
 
     JSValue sourceValue = JSValue::decode(encodedSource);
     if (sourceValue.isUndefinedOrNull())
@@ -384,12 +384,12 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
     RETURN_IF_EXCEPTION(scope, void());
 
     if (targetCanPerformFastPut) {
-        if (!source->staticPropertiesReified(vm)) {
+        if (!source->staticPropertiesReified()) {
             source->reifyAllStaticProperties(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
         }
 
-        if (canPerformFastPropertyEnumerationForObjectAssign(source->structure(vm))) {
+        if (canPerformFastPropertyEnumerationForObjectAssign(source->structure())) {
             Vector<RefPtr<UniquedStringImpl>, 8> properties;
             MarkedArgumentBuffer values;
             objectAssignFast(vm, target, source, properties, values);
@@ -871,7 +871,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValBeyondArrayBoundsStrict, void, (JSGlob
     }
     
     PutPropertySlot slot(object, true);
-    object->methodTable(vm)->put(
+    object->methodTable()->put(
         object, globalObject, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
 }
 
@@ -887,7 +887,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValBeyondArrayBoundsNonStrict, void, (JSG
     }
     
     PutPropertySlot slot(object, false);
-    object->methodTable(vm)->put(
+    object->methodTable()->put(
         object, globalObject, Identifier::from(vm, index), JSValue::decode(encodedValue), slot);
 }
 
@@ -905,7 +905,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutDoubleByValBeyondArrayBoundsStrict, void, (
     }
     
     PutPropertySlot slot(object, true);
-    object->methodTable(vm)->put(
+    object->methodTable()->put(
         object, globalObject, Identifier::from(vm, index), jsValue, slot);
 }
 
@@ -923,7 +923,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutDoubleByValBeyondArrayBoundsNonStrict, void
     }
     
     PutPropertySlot slot(object, false);
-    object->methodTable(vm)->put(
+    object->methodTable()->put(
         object, globalObject, Identifier::from(vm, index), jsValue, slot);
 }
 
@@ -1176,7 +1176,7 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpExecGeneric, EncodedJSValue, (JSGlobalOb
     JSValue base = JSValue::decode(encodedBase);
     JSValue argument = JSValue::decode(encodedArgument);
     
-    auto* regexp = jsDynamicCast<RegExpObject*>(vm, base);
+    auto* regexp = jsDynamicCast<RegExpObject*>(base);
     if (UNLIKELY(!regexp))
         return throwVMTypeError(globalObject, scope);
 
@@ -1344,7 +1344,7 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpTestGeneric, size_t, (JSGlobalObject* gl
     JSValue base = JSValue::decode(encodedBase);
     JSValue argument = JSValue::decode(encodedArgument);
 
-    auto* regexp = jsDynamicCast<RegExpObject*>(vm, base);
+    auto* regexp = jsDynamicCast<RegExpObject*>(base);
     if (UNLIKELY(!regexp)) {
         throwTypeError(globalObject, scope);
         return false;
@@ -1582,7 +1582,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValWithThis, EncodedJSValue, (JSGlobalObj
     JSValue subscript = JSValue::decode(encodedSubscript);
 
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        Structure& structure = *baseValue.asCell()->structure(vm);
+        Structure& structure = *baseValue.asCell()->structure();
         if (JSCell::canUseFastGetOwnProperty(structure)) {
             RefPtr<AtomStringImpl> existingAtomString = asString(subscript)->toExistingAtomString(globalObject);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -1660,14 +1660,14 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValWithThis, void, (JSGlobalObject* globa
     putWithThis<false>(globalObject, encodedBase, encodedThis, encodedValue, property);
 }
 
-ALWAYS_INLINE static void defineDataProperty(JSGlobalObject* globalObject, VM& vm, JSObject* base, const Identifier& propertyName, JSValue value, int32_t attributes)
+ALWAYS_INLINE static void defineDataProperty(JSGlobalObject* globalObject, JSObject* base, const Identifier& propertyName, JSValue value, int32_t attributes)
 {
     PropertyDescriptor descriptor = toPropertyDescriptor(value, jsUndefined(), jsUndefined(), DefinePropertyAttributes(attributes));
     ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
-    if (base->methodTable(vm)->defineOwnProperty == JSObject::defineOwnProperty)
+    if (base->methodTable()->defineOwnProperty == JSObject::defineOwnProperty)
         JSObject::defineOwnProperty(base, globalObject, propertyName, descriptor, true);
     else
-        base->methodTable(vm)->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
+        base->methodTable()->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDefineDataProperty, void, (JSGlobalObject* globalObject, JSObject* base, EncodedJSValue encodedProperty, EncodedJSValue encodedValue, int32_t attributes))
@@ -1680,7 +1680,7 @@ JSC_DEFINE_JIT_OPERATION(operationDefineDataProperty, void, (JSGlobalObject* glo
     Identifier propertyName = JSValue::decode(encodedProperty).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
-    defineDataProperty(globalObject, vm, base, propertyName, JSValue::decode(encodedValue), attributes);
+    defineDataProperty(globalObject, base, propertyName, JSValue::decode(encodedValue), attributes);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDefineDataPropertyString, void, (JSGlobalObject* globalObject, JSObject* base, JSString* property, EncodedJSValue encodedValue, int32_t attributes))
@@ -1693,7 +1693,7 @@ JSC_DEFINE_JIT_OPERATION(operationDefineDataPropertyString, void, (JSGlobalObjec
     Identifier propertyName = property->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
-    defineDataProperty(globalObject, vm, base, propertyName, JSValue::decode(encodedValue), attributes);
+    defineDataProperty(globalObject, base, propertyName, JSValue::decode(encodedValue), attributes);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDefineDataPropertyStringIdent, void, (JSGlobalObject* globalObject, JSObject* base, UniquedStringImpl* property, EncodedJSValue encodedValue, int32_t attributes))
@@ -1701,7 +1701,7 @@ JSC_DEFINE_JIT_OPERATION(operationDefineDataPropertyStringIdent, void, (JSGlobal
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    defineDataProperty(globalObject, vm, base, Identifier::fromUid(vm, property), JSValue::decode(encodedValue), attributes);
+    defineDataProperty(globalObject, base, Identifier::fromUid(vm, property), JSValue::decode(encodedValue), attributes);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDefineDataPropertySymbol, void, (JSGlobalObject* globalObject, JSObject* base, Symbol* property, EncodedJSValue encodedValue, int32_t attributes))
@@ -1709,17 +1709,17 @@ JSC_DEFINE_JIT_OPERATION(operationDefineDataPropertySymbol, void, (JSGlobalObjec
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    defineDataProperty(globalObject, vm, base, Identifier::fromUid(property->privateName()), JSValue::decode(encodedValue), attributes);
+    defineDataProperty(globalObject, base, Identifier::fromUid(property->privateName()), JSValue::decode(encodedValue), attributes);
 }
 
-ALWAYS_INLINE static void defineAccessorProperty(JSGlobalObject* globalObject, VM& vm, JSObject* base, const Identifier& propertyName, JSObject* getter, JSObject* setter, int32_t attributes)
+ALWAYS_INLINE static void defineAccessorProperty(JSGlobalObject* globalObject, JSObject* base, const Identifier& propertyName, JSObject* getter, JSObject* setter, int32_t attributes)
 {
     PropertyDescriptor descriptor = toPropertyDescriptor(jsUndefined(), getter, setter, DefinePropertyAttributes(attributes));
     ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
-    if (base->methodTable(vm)->defineOwnProperty == JSObject::defineOwnProperty)
+    if (base->methodTable()->defineOwnProperty == JSObject::defineOwnProperty)
         JSObject::defineOwnProperty(base, globalObject, propertyName, descriptor, true);
     else
-        base->methodTable(vm)->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
+        base->methodTable()->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDefineAccessorProperty, void, (JSGlobalObject* globalObject, JSObject* base, EncodedJSValue encodedProperty, JSObject* getter, JSObject* setter, int32_t attributes))
@@ -1731,7 +1731,7 @@ JSC_DEFINE_JIT_OPERATION(operationDefineAccessorProperty, void, (JSGlobalObject*
 
     Identifier propertyName = JSValue::decode(encodedProperty).toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
-    defineAccessorProperty(globalObject, vm, base, propertyName, getter, setter, attributes);
+    defineAccessorProperty(globalObject, base, propertyName, getter, setter, attributes);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDefineAccessorPropertyString, void, (JSGlobalObject* globalObject, JSObject* base, JSString* property, JSObject* getter, JSObject* setter, int32_t attributes))
@@ -1743,7 +1743,7 @@ JSC_DEFINE_JIT_OPERATION(operationDefineAccessorPropertyString, void, (JSGlobalO
 
     Identifier propertyName = property->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
-    defineAccessorProperty(globalObject, vm, base, propertyName, getter, setter, attributes);
+    defineAccessorProperty(globalObject, base, propertyName, getter, setter, attributes);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDefineAccessorPropertyStringIdent, void, (JSGlobalObject* globalObject, JSObject* base, UniquedStringImpl* property, JSObject* getter, JSObject* setter, int32_t attributes))
@@ -1751,7 +1751,7 @@ JSC_DEFINE_JIT_OPERATION(operationDefineAccessorPropertyStringIdent, void, (JSGl
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    defineAccessorProperty(globalObject, vm, base, Identifier::fromUid(vm, property), getter, setter, attributes);
+    defineAccessorProperty(globalObject, base, Identifier::fromUid(vm, property), getter, setter, attributes);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationDefineAccessorPropertySymbol, void, (JSGlobalObject* globalObject, JSObject* base, Symbol* property, JSObject* getter, JSObject* setter, int32_t attributes))
@@ -1759,7 +1759,7 @@ JSC_DEFINE_JIT_OPERATION(operationDefineAccessorPropertySymbol, void, (JSGlobalO
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    defineAccessorProperty(globalObject, vm, base, Identifier::fromUid(property->privateName()), getter, setter, attributes);
+    defineAccessorProperty(globalObject, base, Identifier::fromUid(property->privateName()), getter, setter, attributes);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewArray, char*, (JSGlobalObject* globalObject, Structure* arrayStructure, void* buffer, size_t size))
@@ -1840,8 +1840,8 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM* vmPointer, Struc
     auto* immutableButterfly = jsCast<JSImmutableButterfly*>(immutableButterflyCell);
     ASSERT(arrayStructure->indexingMode() == immutableButterfly->indexingMode() || hasAnyArrayStorage(arrayStructure->indexingMode()));
     auto* result = CommonSlowPaths::allocateNewArrayBuffer(vm, arrayStructure, immutableButterfly);
-    ASSERT(result->indexingMode() == result->structure(vm)->indexingMode());
-    ASSERT(result->structure(vm) == arrayStructure);
+    ASSERT(result->indexingMode() == result->structure()->indexingMode());
+    ASSERT(result->structure() == arrayStructure);
     return result;
 }
 
@@ -2189,7 +2189,7 @@ JSC_DEFINE_JIT_OPERATION(operationTypeOfIsObject, size_t, (JSGlobalObject* globa
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(jsDynamicCast<JSObject*>(vm, object));
+    ASSERT(jsDynamicCast<JSObject*>(object));
     
     return jsTypeofIsObject(globalObject, object);
 }
@@ -2200,7 +2200,7 @@ JSC_DEFINE_JIT_OPERATION(operationTypeOfIsFunction, size_t, (JSGlobalObject* glo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(jsDynamicCast<JSObject*>(vm, object));
+    ASSERT(jsDynamicCast<JSObject*>(object));
 
     return jsTypeofIsFunction(globalObject, object);
 }
@@ -2211,9 +2211,9 @@ JSC_DEFINE_JIT_OPERATION(operationObjectIsCallable, size_t, (JSGlobalObject* glo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(jsDynamicCast<JSObject*>(vm, object));
+    ASSERT(jsDynamicCast<JSObject*>(object));
     
-    return object->isCallable(vm);
+    return object->isCallable();
 }
 
 JSC_DEFINE_JIT_OPERATION(operationIsConstructor, size_t, (JSGlobalObject* globalObject, EncodedJSValue value))
@@ -2222,7 +2222,7 @@ JSC_DEFINE_JIT_OPERATION(operationIsConstructor, size_t, (JSGlobalObject* global
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::decode(value).isConstructor(vm);
+    return JSValue::decode(value).isConstructor();
 }
 
 JSC_DEFINE_JIT_OPERATION(operationTypeOfObject, JSCell*, (JSGlobalObject* globalObject, JSCell* object))
@@ -2231,11 +2231,11 @@ JSC_DEFINE_JIT_OPERATION(operationTypeOfObject, JSCell*, (JSGlobalObject* global
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(jsDynamicCast<JSObject*>(vm, object));
+    ASSERT(jsDynamicCast<JSObject*>(object));
     
-    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+    if (object->structure()->masqueradesAsUndefined(globalObject))
         return vm.smallStrings.undefinedString();
-    if (object->isCallable(vm))
+    if (object->isCallable())
         return vm.smallStrings.functionString();
     return vm.smallStrings.objectString();
 }
@@ -2266,7 +2266,7 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateComplexPropertyStorageWithInitialCapac
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(!object->structure(vm)->outOfLineCapacity());
+    ASSERT(!object->structure()->outOfLineCapacity());
     return reinterpret_cast<char*>(
         object->allocateMoreOutOfLineStorage(vm, 0, initialOutOfLineCapacity));
 }
@@ -2278,7 +2278,7 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateComplexPropertyStorage, char*, (VM* vm
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     return reinterpret_cast<char*>(
-        object->allocateMoreOutOfLineStorage(vm, object->structure(vm)->outOfLineCapacity(), newSize));
+        object->allocateMoreOutOfLineStorage(vm, object->structure()->outOfLineCapacity(), newSize));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationEnsureInt32, char*, (VM* vmPointer, JSCell* cell))
@@ -2472,7 +2472,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorInByVal, EncodedJSValue, (JSGlobalOb
     if (modeNumber == JSPropertyNameEnumerator::IndexedMode && base.isObject())
         RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(jsCast<JSObject*>(base)->hasProperty(globalObject, index))));
 
-    JSString* propertyName = jsSecureCast<JSString*>(vm, JSValue::decode(propertyNameValue));
+    JSString* propertyName = jsSecureCast<JSString*>(JSValue::decode(propertyNameValue));
     RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, propertyName))));
 }
 
@@ -2487,7 +2487,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorHasOwnProperty, EncodedJSValue, (JSG
     if (modeNumber == JSPropertyNameEnumerator::IndexedMode && base.isObject())
         RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(jsCast<JSObject*>(base)->hasOwnProperty(globalObject, index))));
 
-    JSString* propertyName = jsSecureCast<JSString*>(vm, JSValue::decode(propertyNameValue));
+    JSString* propertyName = jsSecureCast<JSString*>(JSValue::decode(propertyNameValue));
     auto identifier = propertyName->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     JSObject* baseObject = base.toObject(globalObject);
@@ -2537,7 +2537,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringValueOf, JSString*, (JSGlobalObject* glo
     if (argument.isString())
         return asString(argument);
 
-    if (auto* stringObject = jsDynamicCast<StringObject*>(vm, argument))
+    if (auto* stringObject = jsDynamicCast<StringObject*>(argument))
         return stringObject->internalValue();
 
     throwVMTypeError(globalObject, scope);
@@ -2949,7 +2949,7 @@ JSC_DEFINE_JIT_OPERATION(operationHasOwnProperty, size_t, (JSGlobalObject* globa
 
     HasOwnPropertyCache* hasOwnPropertyCache = vm.hasOwnPropertyCache();
     ASSERT(hasOwnPropertyCache);
-    hasOwnPropertyCache->tryAdd(vm, slot, thisObject, propertyName.impl(), result);
+    hasOwnPropertyCache->tryAdd(slot, thisObject, propertyName.impl(), result);
     return result;
 }
 
@@ -3161,7 +3161,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObje
     CheckedUint32 checkedLength = 0;
     for (unsigned i = 0; i < numItems; i++) {
         JSValue value = JSValue::decode(values[i]);
-        if (JSImmutableButterfly* array = jsDynamicCast<JSImmutableButterfly*>(vm, value))
+        if (JSImmutableButterfly* array = jsDynamicCast<JSImmutableButterfly*>(value))
             checkedLength += array->publicLength();
         else
             ++checkedLength;
@@ -3190,7 +3190,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObje
     unsigned index = 0;
     for (unsigned i = 0; i < numItems; i++) {
         JSValue value = JSValue::decode(values[i]);
-        if (JSImmutableButterfly* array = jsDynamicCast<JSImmutableButterfly*>(vm, value)) {
+        if (JSImmutableButterfly* array = jsDynamicCast<JSImmutableButterfly*>(value)) {
             // We are spreading.
             for (unsigned i = 0; i < array->publicLength(); i++) {
                 result->putDirectIndex(globalObject, index, array->get(i));
@@ -3242,7 +3242,7 @@ JSC_DEFINE_JIT_OPERATION(operationSpreadGeneric, JSCell*, (JSGlobalObject* globa
     JSArray* array;
     {
         JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
-        auto callData = getCallData(vm, iterationFunction);
+        auto callData = JSC::getCallData(iterationFunction);
         ASSERT(callData.type != CallData::Type::None);
 
         MarkedArgumentBuffer arguments;
@@ -3355,7 +3355,7 @@ ALWAYS_INLINE static void putDynamicVar(JSGlobalObject* globalObject, VM& vm, JS
 
     PutPropertySlot slot(scope, isStrictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     throwScope.release();
-    scope->methodTable(vm)->put(scope, globalObject, ident, JSValue::decode(value), slot);
+    scope->methodTable()->put(scope, globalObject, ident, JSValue::decode(value), slot);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPutDynamicVarStrict, void, (JSGlobalObject* globalObject, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits))

@@ -56,7 +56,7 @@ inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValu
     ASSERT(vm.structureStructure);
     ASSERT(classInfo);
     if (auto* object = prototype.getObject()) {
-        ASSERT(!object->anyObjectInChainMayInterceptIndexedAccesses(vm) || hasSlowPutArrayStorage(indexingModeIncludingHistory) || !hasIndexedProperties(indexingModeIncludingHistory));
+        ASSERT(!object->anyObjectInChainMayInterceptIndexedAccesses() || hasSlowPutArrayStorage(indexingModeIncludingHistory) || !hasIndexedProperties(indexingModeIncludingHistory));
         object->didBecomePrototype();
     }
 
@@ -162,7 +162,7 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes)
 {
     ASSERT(!isCompilationThread());
-    ASSERT(structure(vm)->classInfo() == info());
+    ASSERT(structure()->classInfoForCells() == info());
 
     if (m_seenProperties.ruleOut(bitwise_cast<uintptr_t>(propertyName.uid())))
         return invalidOffset;
@@ -337,7 +337,7 @@ inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject, JSCel
 
 inline StructureChain* Structure::prototypeChain(VM& vm, JSGlobalObject* globalObject, JSObject* base) const
 {
-    ASSERT(base->structure(vm) == this);
+    ASSERT(base->structure() == this);
     // We cache our prototype chain so our clients can share it.
     if (!isValid(globalObject, m_cachedPrototypeChain.get(), base)) {
         JSValue prototype = prototypeForLookup(globalObject, base);
@@ -352,14 +352,13 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
     if (!cachedPrototypeChain)
         return false;
 
-    VM& vm = globalObject->vm();
     JSValue prototype = prototypeForLookup(globalObject, base);
     StructureID* cachedStructure = cachedPrototypeChain->head();
     while (*cachedStructure && !prototype.isNull()) {
         if (asObject(prototype)->structureID() != *cachedStructure)
             return false;
         ++cachedStructure;
-        prototype = asObject(prototype)->getPrototypeDirect(vm);
+        prototype = asObject(prototype)->getPrototypeDirect();
     }
     return prototype.isNull() && !*cachedStructure;
 }
@@ -668,12 +667,11 @@ ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const
     if (a->storedPrototype() == b->storedPrototype())
         return false;
 
-    VM& vm = a->vm();
     JSObject* aObj = a->storedPrototypeObject();
     JSObject* bObj = b->storedPrototypeObject();
     while (aObj && bObj) {
-        a = aObj->structure(vm);
-        b = bObj->structure(vm);
+        a = aObj->structure();
+        b = bObj->structure();
 
         if (a->propertyHash() != b->propertyHash())
             return false;

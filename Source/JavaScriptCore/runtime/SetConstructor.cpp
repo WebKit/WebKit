@@ -71,7 +71,7 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
         RELEASE_AND_RETURN(scope, JSValue::encode(JSSet::create(globalObject, vm, setStructure)));
 
     bool canPerformFastAdd = JSSet::isAddFastAndNonObservable(setStructure);
-    if (auto* iterableSet = jsDynamicCast<JSSet*>(vm, iterable)) {
+    if (auto* iterableSet = jsDynamicCast<JSSet*>(iterable)) {
         if (canPerformFastAdd && iterableSet->isIteratorProtocolFastAndNonObservable()) 
             RELEASE_AND_RETURN(scope, JSValue::encode(iterableSet->clone(globalObject, vm, setStructure)));
     }
@@ -85,7 +85,7 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
         adderFunction = set->JSObject::get(globalObject, vm.propertyNames->add);
         RETURN_IF_EXCEPTION(scope, { });
 
-        adderFunctionCallData = getCallData(vm, adderFunction);
+        adderFunctionCallData = JSC::getCallData(adderFunction);
         if (UNLIKELY(adderFunctionCallData.type == CallData::Type::None))
             return throwVMTypeError(globalObject, scope, "'add' property of a Set should be callable."_s);
     }
@@ -106,9 +106,9 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
     return JSValue::encode(set);
 }
 
-JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketHead, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketHead, (JSGlobalObject*, CallFrame* callFrame))
 {
-    ASSERT_UNUSED(globalObject, jsDynamicCast<JSSet*>(globalObject->vm(), callFrame->argument(0)));
+    ASSERT(jsDynamicCast<JSSet*>(callFrame->argument(0)));
     JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
     auto* head = set->head();
     ASSERT(head);
@@ -117,7 +117,7 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketHead, (JSGlobalObject* globalObj
 
 JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ASSERT(jsDynamicCast<JSSet::BucketType*>(globalObject->vm(), callFrame->argument(0)));
+    ASSERT(jsDynamicCast<JSSet::BucketType*>(callFrame->argument(0)));
     auto* bucket = jsCast<JSSet::BucketType*>(callFrame->uncheckedArgument(0));
     ASSERT(bucket);
     bucket = bucket->next();
@@ -129,9 +129,9 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketNext, (JSGlobalObject* globalObj
     return JSValue::encode(globalObject->vm().sentinelSetBucket());
 }
 
-JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketKey, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketKey, (JSGlobalObject*, CallFrame* callFrame))
 {
-    ASSERT_UNUSED(globalObject, jsDynamicCast<JSSet::BucketType*>(globalObject->vm(), callFrame->argument(0)));
+    ASSERT(jsDynamicCast<JSSet::BucketType*>(callFrame->argument(0)));
     auto* bucket = jsCast<JSSet::BucketType*>(callFrame->uncheckedArgument(0));
     ASSERT(bucket);
     return JSValue::encode(bucket->key());

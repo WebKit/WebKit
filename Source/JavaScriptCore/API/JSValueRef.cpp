@@ -191,10 +191,9 @@ bool JSValueIsArray(JSContextRef ctx, JSValueRef value)
         return false;
     }
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
     JSLockHolder locker(globalObject);
 
-    return toJS(globalObject, value).inherits<JSArray>(vm);
+    return toJS(globalObject, value).inherits<JSArray>();
 }
 
 bool JSValueIsDate(JSContextRef ctx, JSValueRef value)
@@ -204,10 +203,9 @@ bool JSValueIsDate(JSContextRef ctx, JSValueRef value)
         return false;
     }
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
     JSLockHolder locker(globalObject);
 
-    return toJS(globalObject, value).inherits<DateInstance>(vm);
+    return toJS(globalObject, value).inherits<DateInstance>();
 }
 
 bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsClass)
@@ -217,21 +215,20 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
         return false;
     }
     JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
     JSLockHolder locker(globalObject);
 
     JSValue jsValue = toJS(globalObject, value);
     
     if (JSObject* o = jsValue.getObject()) {
-        if (o->inherits<JSProxy>(vm))
+        if (o->inherits<JSProxy>())
             o = jsCast<JSProxy*>(o)->target();
 
-        if (o->inherits<JSCallbackObject<JSGlobalObject>>(vm))
+        if (o->inherits<JSCallbackObject<JSGlobalObject>>())
             return jsCast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
-        if (o->inherits<JSCallbackObject<JSNonFinalObject>>(vm))
+        if (o->inherits<JSCallbackObject<JSNonFinalObject>>())
             return jsCast<JSCallbackObject<JSNonFinalObject>*>(o)->inherits(jsClass);
 #if JSC_OBJC_API_ENABLED
-        if (o->inherits<JSCallbackObject<JSAPIWrapperObject>>(vm))
+        if (o->inherits<JSCallbackObject<JSAPIWrapperObject>>())
             return jsCast<JSCallbackObject<JSAPIWrapperObject>*>(o)->inherits(jsClass);
 #endif
     }
@@ -288,7 +285,7 @@ bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObject
     JSValue jsValue = toJS(globalObject, value);
 
     JSObject* jsConstructor = toJS(constructor);
-    if (!jsConstructor->structure(vm)->typeInfo().implementsHasInstance())
+    if (!jsConstructor->structure()->typeInfo().implementsHasInstance())
         return false;
     bool result = jsConstructor->hasInstance(globalObject, jsValue); // false if an exception is thrown
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)

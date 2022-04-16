@@ -38,7 +38,7 @@ NumberObject::NumberObject(VM& vm, Structure* structure)
 void NumberObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     ASSERT(type() == NumberObjectType);
 }
 

@@ -56,7 +56,7 @@ IntlSegmenter::IntlSegmenter(VM& vm, Structure* structure)
 void IntlSegmenter::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-intl.segmenter

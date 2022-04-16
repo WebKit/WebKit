@@ -56,7 +56,7 @@ DEFINE_VISIT_CHILDREN(WebAssemblyFunctionBase);
 void WebAssemblyFunctionBase::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSWebAssemblyInstance* instance)
 {
     Base::finishCreation(vm, executable, length, name);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     m_instance.set(vm, this, instance);
 }
 

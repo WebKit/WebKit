@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace JSC;
 
 JSTestVoidCallbackFunction::JSTestVoidCallbackFunction(VM& vm, JSObject* callback)
-    : TestVoidCallbackFunction(jsCast<JSDOMGlobalObject*>(callback->globalObject(vm))->scriptExecutionContext())
+    : TestVoidCallbackFunction(jsCast<JSDOMGlobalObject*>(callback->globalObject())->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(vm, callback, this))
 {
 }

@@ -80,25 +80,24 @@ void JSDOMWindowProperties::finishCreation(JSGlobalObject& globalObject)
 {
     VM& vm = globalObject.vm();
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     JSObject::preventExtensions(this, &globalObject);
 }
 
 bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    VM& vm = lexicalGlobalObject->vm();
     auto* thisObject = jsCast<JSDOMWindowProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (Base::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
         return true;
-    JSObject* proto = asObject(thisObject->getPrototypeDirect(vm));
+    JSObject* proto = asObject(thisObject->getPrototypeDirect());
     if (proto->hasProperty(lexicalGlobalObject, propertyName))
         return false;
 
     // FIXME: We should probably add support for JSRemoteDOMWindowBase too.
-    auto* jsWindow = jsDynamicCast<JSDOMWindowBase*>(vm, thisObject->globalObject());
+    auto* jsWindow = jsDynamicCast<JSDOMWindowBase*>(thisObject->globalObject());
     if (!jsWindow)
         return false;
 

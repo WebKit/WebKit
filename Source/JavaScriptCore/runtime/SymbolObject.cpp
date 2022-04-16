@@ -43,7 +43,7 @@ SymbolObject::SymbolObject(VM& vm, Structure* structure)
 void SymbolObject::finishCreation(VM& vm, Symbol* symbol)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     setInternalValue(vm, symbol);
 }
 

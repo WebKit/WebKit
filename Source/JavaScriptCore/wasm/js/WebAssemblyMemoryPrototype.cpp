@@ -62,7 +62,7 @@ ALWAYS_INLINE JSWebAssemblyMemory* getMemory(JSGlobalObject* globalObject, VM& v
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, value); 
+    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(value); 
     if (!memory) {
         throwException(globalObject, throwScope, 
             createTypeError(globalObject, "WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value"_s));
@@ -124,7 +124,7 @@ Structure* WebAssemblyMemoryPrototype::createStructure(VM& vm, JSGlobalObject* g
 void WebAssemblyMemoryPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

@@ -68,7 +68,7 @@ BigIntPrototype::BigIntPrototype(VM& vm, Structure* structure)
 void BigIntPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -86,10 +86,10 @@ static ALWAYS_INLINE JSBigInt* toThisBigIntValue(JSGlobalObject* globalObject, J
 #endif
 
     if (thisValue.isCell()) {
-        if (JSBigInt* bigInt = jsDynamicCast<JSBigInt*>(vm, thisValue.asCell()))
+        if (JSBigInt* bigInt = jsDynamicCast<JSBigInt*>(thisValue.asCell()))
             return bigInt;
 
-        if (BigIntObject* bigIntObject = jsDynamicCast<BigIntObject*>(vm, thisValue.asCell())) {
+        if (BigIntObject* bigIntObject = jsDynamicCast<BigIntObject*>(thisValue.asCell())) {
             JSValue bigInt = bigIntObject->internalValue();
 #if USE(BIGINT32)
             if (bigInt.isBigInt32())

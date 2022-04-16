@@ -77,7 +77,7 @@ Structure* JSFunction::selectStructureForNewFuncExp(JSGlobalObject* globalObject
 
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    return create(vm, executable, scope, selectStructureForNewFuncExp(scope->globalObject(vm), executable));
+    return create(vm, executable, scope, selectStructureForNewFuncExp(scope->globalObject(), executable));
 }
 
 JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
@@ -109,24 +109,24 @@ JSFunction::JSFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* glo
 void JSFunction::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(jsDynamicCast<JSFunction*>(vm, this));
+    ASSERT(jsDynamicCast<JSFunction*>(this));
     ASSERT(type() == JSFunctionType);
     // JSCell::{getCallData,getConstructData} relies on the following conditions.
-    ASSERT(methodTable(vm)->getConstructData == &JSFunction::getConstructData);
-    ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
+    ASSERT(methodTable()->getConstructData == &JSFunction::getConstructData);
+    ASSERT(methodTable()->getCallData == &JSFunction::getCallData);
 }
 
 void JSFunction::finishCreation(VM& vm, NativeExecutable*, unsigned length, const String& name)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     ASSERT(type() == JSFunctionType);
     // JSCell::{getCallData,getConstructData} relies on the following conditions.
-    ASSERT(methodTable(vm)->getConstructData == &JSFunction::getConstructData);
-    ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
+    ASSERT(methodTable()->getConstructData == &JSFunction::getConstructData);
+    ASSERT(methodTable()->getCallData == &JSFunction::getCallData);
 
     // JSBoundFunction/JSRemoteFunction instances use finishCreation(VM&) overload and lazily allocate their name string / length.
-    ASSERT(!this->inherits<JSBoundFunction>(vm) && !this->inherits<JSRemoteFunction>(vm));
+    ASSERT(!this->inherits<JSBoundFunction>() && !this->inherits<JSRemoteFunction>());
 
     putDirect(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     if (!name.isNull())
@@ -210,7 +210,7 @@ FunctionRareData* JSFunction::initializeRareData(JSGlobalObject* globalObject, s
 String JSFunction::name(VM& vm)
 {
     if (isHostFunction()) {
-        if (this->inherits<JSBoundFunction>(vm))
+        if (this->inherits<JSBoundFunction>())
             return jsCast<JSBoundFunction*>(this)->nameString();
         NativeExecutable* executable = jsCast<NativeExecutable*>(this->executable());
         return executable->name();
@@ -248,13 +248,13 @@ const String JSFunction::calculatedDisplayName(VM& vm)
 JSString* JSFunction::toString(JSGlobalObject* globalObject)
 {
     VM& vm = getVM(globalObject);
-    if (inherits<JSBoundFunction>(vm)) {
+    if (inherits<JSBoundFunction>()) {
         JSBoundFunction* function = jsCast<JSBoundFunction*>(this);
         auto scope = DECLARE_THROW_SCOPE(vm);
         JSValue string = jsMakeNontrivialString(globalObject, "function ", function->nameString(), "() {\n    [native code]\n}");
         RETURN_IF_EXCEPTION(scope, nullptr);
         return asString(string);
-    } else if (inherits<JSRemoteFunction>(vm)) {
+    } else if (inherits<JSRemoteFunction>()) {
         JSRemoteFunction* function = jsCast<JSRemoteFunction*>(this);
         auto scope = DECLARE_THROW_SCOPE(vm);
         JSValue string = jsMakeNontrivialString(globalObject, "function ", function->nameString(), "() {\n    [native code]\n}");
@@ -512,14 +512,14 @@ CallData JSFunction::getConstructData(JSCell* cell)
 String getCalculatedDisplayName(VM& vm, JSObject* object)
 {
 #if ENABLE(WEBASSEMBLY)
-    if (jsDynamicCast<JSToWasmICCallee*>(vm, object))
+    if (jsDynamicCast<JSToWasmICCallee*>(object))
         return "wasm-stub"_s;
 #endif
 
-    if (!jsDynamicCast<JSFunction*>(vm, object) && !jsDynamicCast<InternalFunction*>(vm, object))
+    if (!jsDynamicCast<JSFunction*>(object) && !jsDynamicCast<InternalFunction*>(object))
         return emptyString();
 
-    Structure* structure = object->structure(vm);
+    Structure* structure = object->structure();
     unsigned attributes;
     // This function may be called when the mutator isn't running and we are lazily generating a stack trace.
     PropertyOffset offset = structure->getConcurrently(vm.propertyNames->displayName.impl(), attributes);
@@ -529,14 +529,14 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
             return asString(displayName)->tryGetValue();
     }
 
-    if (auto* function = jsDynamicCast<JSFunction*>(vm, object)) {
+    if (auto* function = jsDynamicCast<JSFunction*>(object)) {
         const String actualName = function->name(vm);
         if (!actualName.isEmpty() || function->isHostOrBuiltinFunction())
             return actualName;
 
         return function->jsExecutable()->ecmaName().string();
     }
-    if (auto* function = jsDynamicCast<InternalFunction*>(vm, object))
+    if (auto* function = jsDynamicCast<InternalFunction*>(object))
         return function->name();
 
 
@@ -577,9 +577,9 @@ void JSFunction::reifyLength(VM& vm)
 
     ASSERT(!hasReifiedLength());
     double length = 0;
-    if (this->inherits<JSBoundFunction>(vm))
+    if (this->inherits<JSBoundFunction>())
         length = jsCast<JSBoundFunction*>(this)->length(vm);
-    else if (this->inherits<JSRemoteFunction>(vm))
+    else if (this->inherits<JSRemoteFunction>())
         length = jsCast<JSRemoteFunction*>(this)->length(vm);
     else {
         ASSERT(!isHostFunction());
@@ -634,7 +634,7 @@ void JSFunction::reifyName(VM& vm, JSGlobalObject* globalObject, String name)
 
 JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, JSGlobalObject* globalObject, PropertyName propertyName)
 {
-    if (isHostOrBuiltinFunction() && !this->inherits<JSBoundFunction>(vm) && !this->inherits<JSRemoteFunction>(vm))
+    if (isHostOrBuiltinFunction() && !this->inherits<JSBoundFunction>() && !this->inherits<JSRemoteFunction>())
         return PropertyStatus::Eager;
     PropertyStatus lazyLength = reifyLazyLengthIfNeeded(vm, globalObject, propertyName);
     if (isLazy(lazyLength))
@@ -648,7 +648,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyPropertyIfNeeded(VM& vm, JSGloba
 JSFunction::PropertyStatus JSFunction::reifyLazyPropertyForHostOrBuiltinIfNeeded(VM& vm, JSGlobalObject* globalObject, PropertyName propertyName)
 {
     ASSERT(isHostOrBuiltinFunction());
-    if (isBuiltinFunction() || this->inherits<JSBoundFunction>(vm) || this->inherits<JSRemoteFunction>(vm)) {
+    if (isBuiltinFunction() || this->inherits<JSBoundFunction>() || this->inherits<JSRemoteFunction>()) {
         PropertyStatus lazyLength = reifyLazyLengthIfNeeded(vm, globalObject, propertyName);
         if (isLazy(lazyLength))
             return lazyLength;
@@ -693,7 +693,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
 
     if (isBuiltinFunction())
         reifyName(vm, globalObject);
-    else if (this->inherits<JSBoundFunction>(vm)) {
+    else if (this->inherits<JSBoundFunction>()) {
         FunctionRareData* rareData = this->ensureRareData(vm);
         JSString* nameMayBeNull = jsCast<JSBoundFunction*>(this)->nameMayBeNull();
         JSString* string = nullptr;
@@ -705,7 +705,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
         unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         rareData->setHasReifiedName();
         putDirect(vm, nameIdent, string, initialAttributes);
-    } else if (this->inherits<JSRemoteFunction>(vm)) {
+    } else if (this->inherits<JSRemoteFunction>()) {
         FunctionRareData* rareData = this->ensureRareData(vm);
         JSString* name = jsCast<JSRemoteFunction*>(this)->nameMayBeNull();
         if (!name)
@@ -721,7 +721,7 @@ JSFunction::PropertyStatus JSFunction::reifyLazyBoundNameIfNeeded(VM& vm, JSGlob
 void JSFunction::assertTypeInfoFlagInvariants()
 {
     // If you change this, you'll need to update speculationFromClassInfoInheritance.
-    const ClassInfo* info = classInfo(vm());
+    const ClassInfo* info = classInfo();
     if (!(inlineTypeFlags() & ImplementsDefaultHasInstance))
         RELEASE_ASSERT(info == JSBoundFunction::info());
     else

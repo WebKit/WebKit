@@ -202,15 +202,15 @@ RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
     switch (stubInfo.cacheType()) {
     case CacheType::GetByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return ProxyableAccessCase::create(vm, owner, Load, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure(vm));
+        return ProxyableAccessCase::create(vm, owner, Load, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure());
 
     case CacheType::PutByIdReplace:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure(vm));
+        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure());
 
     case CacheType::InByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, InHit, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure(vm));
+        return AccessCase::create(vm, owner, InHit, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure());
 
     case CacheType::ArrayLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
@@ -1813,7 +1813,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         }
 
         // We will emit code that has a weak reference that isn't otherwise listed anywhere.
-        Structure* structure = condition.object()->structure(vm);
+        Structure* structure = condition.object()->structure();
         state.weakStructures.append(structure->id());
 
         jit.move(CCallHelpers::TrustedImmPtr(condition.object()), scratchGPR);
@@ -1852,7 +1852,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case CustomAccessorSetter: {
         GPRReg valueRegsPayloadGPR = valueRegs.payloadGPR();
 
-        Structure* currStructure = hasAlternateBase() ? alternateBase()->structure(vm) : structure();
+        Structure* currStructure = hasAlternateBase() ? alternateBase()->structure() : structure();
         if (isValidOffset(m_offset))
             currStructure->startWatchingPropertyForReplacements(vm, offset());
 
@@ -1942,7 +1942,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // We do not need to emit CheckDOM operation since structure check ensures
             // that the structure of the given base value is structure()! So all we should
             // do is performing the CheckDOM thingy in IC compiling time here.
-            if (!structure()->classInfo()->isSubClassOf(access.domAttribute()->classInfo)) {
+            if (!structure()->classInfoForCells()->isSubClassOf(access.domAttribute()->classInfo)) {
                 state.failAndIgnore.append(jit.jump());
                 return;
             }
@@ -2503,7 +2503,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         if (!hasAlternateBase())
             currStructure = structure();
         else
-            currStructure = alternateBase()->structure(vm);
+            currStructure = alternateBase()->structure();
         currStructure->startWatchingPropertyForReplacements(vm, offset());
         
         this->as<IntrinsicGetterAccessCase>().emitIntrinsicGetter(state);

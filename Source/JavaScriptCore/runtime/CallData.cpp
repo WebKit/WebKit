@@ -43,7 +43,7 @@ JSValue call(JSGlobalObject* globalObject, JSValue functionObject, JSValue thisV
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto callData = getCallData(vm, functionObject);
+    auto callData = JSC::getCallData(functionObject);
     if (callData.type == CallData::Type::None)
         return throwTypeError(globalObject, scope, errorMessage);
 

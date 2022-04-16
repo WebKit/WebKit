@@ -135,7 +135,7 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
         *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(globalObject)) : 0;
         *sourceURL = sourceURLValue.toWTFString(globalObject);
         result = true;
-    } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(vm, exceptionObject)) {
+    } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(exceptionObject)) {
         unsigned unsignedLine;
         unsigned unsignedColumn;
         result = getLineColumnAndSource(error->stackTrace(), unsignedLine, unsignedColumn, *sourceURL);

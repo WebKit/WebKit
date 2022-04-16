@@ -69,7 +69,7 @@ inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, JSObjec
     JSValue result = construct(globalObject, species, args, "species is not a constructor"_s);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, result)) {
+    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(result)) {
         if (view->type() == DataViewType) {
             throwTypeError(globalObject, scope, "species constructor did not return a TypedArray View"_s);
             return nullptr;
@@ -130,7 +130,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
     RETURN_IF_EXCEPTION(scope, { });
 
     size_t length;
-    if (isTypedView(sourceArray->classInfo(vm)->typedArrayStorageType)) {
+    if (isTypedView(sourceArray->classInfo()->typedArrayStorageType)) {
         JSArrayBufferView* sourceView = jsCast<JSArrayBufferView*>(sourceArray);
         if (UNLIKELY(sourceView->isDetached()))
             return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
@@ -501,7 +501,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
 
     // https://tc39.es/ecma262/#typedarray-species-create
     // If result.[[ContentType]] ≠ exemplar.[[ContentType]], throw a TypeError exception.
-    if (contentType(result->classInfo(vm)->typedArrayStorageType) != ViewClass::contentType)
+    if (contentType(result->classInfo()->typedArrayStorageType) != ViewClass::contentType)
         return throwVMTypeError(globalObject, scope, "Content types of source and created typed arrays are different"_s);
 
     // We return early here since we don't allocate a backing store if length is 0 and memmove does not like nullptrs
@@ -515,7 +515,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
     if (result->length() < length)
         return throwVMTypeError(globalObject, scope, "TypedArray.prototype.slice constructed typed array of insufficient length"_s);
 
-    switch (result->classInfo(vm)->typedArrayStorageType) {
+    switch (result->classInfo()->typedArrayStorageType) {
     case TypeInt8:
         scope.release();
         jsCast<JSInt8Array*>(result)->set(globalObject, 0, thisObject, begin, length, CopyType::LeftToRight);
@@ -620,7 +620,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM& 
     }
 
     MarkedArgumentBuffer args;
-    args.append(vm.m_typedArrayController->toJS(globalObject, thisObject->globalObject(vm), arrayBuffer.get()));
+    args.append(vm.m_typedArrayController->toJS(globalObject, thisObject->globalObject(), arrayBuffer.get()));
     args.append(jsNumber(newByteOffset));
     args.append(jsNumber(length));
     ASSERT(!args.hasOverflowed());
@@ -630,7 +630,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM& 
 
     JSArrayBufferView* validated = validateTypedArray(globalObject, result);
     RETURN_IF_EXCEPTION(scope, { });
-    if (contentType(validated->classInfo(vm)->typedArrayStorageType) != ViewClass::contentType)
+    if (contentType(validated->classInfo()->typedArrayStorageType) != ViewClass::contentType)
         return throwVMTypeError(globalObject, scope, "TypedArray.prototype.subarray constructed typed array of different content type from |this|"_s);
 
     return JSValue::encode(validated);

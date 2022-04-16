@@ -73,7 +73,7 @@ JSC_DEFINE_CUSTOM_GETTER(pluginElementPropertyGetter, (JSGlobalObject* lexicalGl
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSHTMLElement* thisObject = jsDynamicCast<JSHTMLElement*>(vm, JSValue::decode(thisValue));
+    JSHTMLElement* thisObject = jsDynamicCast<JSHTMLElement*>(JSValue::decode(thisValue));
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope);
     JSObject* scriptObject = pluginScriptObject(lexicalGlobalObject, thisObject);
@@ -92,7 +92,7 @@ bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, JSGlobalObjec
         return false;
 
     if (!element->globalObject()->world().isNormal()) {
-        JSValue proto = element->getPrototypeDirect(vm);
+        JSValue proto = element->getPrototypeDirect();
         if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(lexicalGlobalObject, propertyName))
             return false;
     }
@@ -120,7 +120,7 @@ bool pluginElementCustomPut(JSHTMLElement* element, JSGlobalObject* lexicalGloba
         return false;
     if (!scriptObject->hasProperty(lexicalGlobalObject, propertyName))
         return false;
-    putResult = scriptObject->methodTable(lexicalGlobalObject->vm())->put(scriptObject, lexicalGlobalObject, propertyName, value, slot);
+    putResult = scriptObject->methodTable()->put(scriptObject, lexicalGlobalObject, propertyName, value, slot);
     return true;
 }
 
@@ -138,7 +138,7 @@ JSC_DEFINE_HOST_FUNCTION(callPlugin, (JSGlobalObject* lexicalGlobalObject, CallF
         argumentList.append(callFrame->argument(i));
     ASSERT(!argumentList.hasOverflowed());
 
-    auto callData = getCallData(lexicalGlobalObject->vm(), scriptObject);
+    auto callData = JSC::getCallData(scriptObject);
     ASSERT(callData.type == CallData::Type::Native);
 
     // Call the object.

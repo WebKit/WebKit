@@ -47,7 +47,7 @@ JSCallee::JSCallee(VM& vm, JSScope* scope, Structure* structure)
 void JSCallee::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 template<typename Visitor>

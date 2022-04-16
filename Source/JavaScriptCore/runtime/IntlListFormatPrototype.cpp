@@ -71,7 +71,7 @@ IntlListFormatPrototype::IntlListFormatPrototype(VM& vm, Structure* structure)
 void IntlListFormatPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -81,7 +81,7 @@ JSC_DEFINE_HOST_FUNCTION(intlListFormatPrototypeFuncFormat, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* listFormat = jsDynamicCast<IntlListFormat*>(vm, callFrame->thisValue());
+    auto* listFormat = jsDynamicCast<IntlListFormat*>(callFrame->thisValue());
     if (!listFormat)
         return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.format called on value that's not a ListFormat"_s);
 
@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(intlListFormatPrototypeFuncFormatToParts, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* listFormat = jsDynamicCast<IntlListFormat*>(vm, callFrame->thisValue());
+    auto* listFormat = jsDynamicCast<IntlListFormat*>(callFrame->thisValue());
     if (!listFormat)
         return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.formatToParts called on value that's not a ListFormat"_s);
 
@@ -107,7 +107,7 @@ JSC_DEFINE_HOST_FUNCTION(intlListFormatPrototypeFuncResolvedOptions, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* listFormat = jsDynamicCast<IntlListFormat*>(vm, callFrame->thisValue());
+    auto* listFormat = jsDynamicCast<IntlListFormat*>(callFrame->thisValue());
     if (!listFormat)
         return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.resolvedOptions called on value that's not a ListFormat"_s);
 

@@ -77,10 +77,10 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
 
     JSValue value = callFrame->uncheckedArgument(0);
 
-    if (value.inherits<JSArrayBuffer>(vm))
+    if (value.inherits<JSArrayBuffer>())
         RELEASE_AND_RETURN(scope, cloneArrayBufferImpl(globalObject, callFrame, CloneMode::Full));
 
-    if (value.inherits<JSArrayBufferView>(vm)) {
+    if (value.inherits<JSArrayBufferView>()) {
         auto* bufferView = jsCast<JSArrayBufferView*>(value);
         ASSERT(bufferView);
 
@@ -90,11 +90,11 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
             return { };
         }
         auto bufferClone = ArrayBuffer::tryCreate(buffer->data(), buffer->byteLength());
-        Structure* structure = bufferView->structure(vm);
+        Structure* structure = bufferView->structure();
 
 #define CLONE_TYPED_ARRAY(name) \
         do { \
-            if (bufferView->inherits<JS##name##Array>(vm)) \
+            if (bufferView->inherits<JS##name##Array>()) \
                 RELEASE_AND_RETURN(scope, JSValue::encode(JS##name##Array::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length()))); \
         } while (0);
 
@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
 
 #undef CLONE_TYPED_ARRAY
 
-        if (value.inherits<JSDataView>(vm))
+        if (value.inherits<JSDataView>())
             RELEASE_AND_RETURN(scope, JSValue::encode(JSDataView::create(globalObject, structure, WTFMove(bufferClone), bufferView->byteOffset(), bufferView->length())));
     }
 

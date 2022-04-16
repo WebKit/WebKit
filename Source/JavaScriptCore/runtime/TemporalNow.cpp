@@ -70,7 +70,7 @@ Structure* TemporalNow::createStructure(VM& vm, JSGlobalObject* globalObject)
 void TemporalNow::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

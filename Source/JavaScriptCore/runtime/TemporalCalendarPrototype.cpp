@@ -78,7 +78,7 @@ TemporalCalendarPrototype::TemporalCalendarPrototype(VM& vm, Structure* structur
 void TemporalCalendarPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(vm, callFrame->thisValue());
+    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.fields called on value that's not a Calendar"_s);
 
@@ -135,7 +135,7 @@ static JSObject* defaultMergeFields(JSGlobalObject* globalObject, JSObject* fiel
 
     {
         PropertyNameArray originalKeys(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-        fields->methodTable(vm)->getOwnPropertyNames(fields, globalObject, originalKeys, DontEnumPropertiesMode::Include);
+        fields->methodTable()->getOwnPropertyNames(fields, globalObject, originalKeys, DontEnumPropertiesMode::Include);
         RETURN_IF_EXCEPTION(scope, { });
 
         for (const auto& nextKey : originalKeys) {
@@ -154,7 +154,7 @@ static JSObject* defaultMergeFields(JSGlobalObject* globalObject, JSObject* fiel
     bool includesMonthOrMonthCode = false;
     {
         PropertyNameArray newKeys(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-        additionalFields->methodTable(vm)->getOwnPropertyNames(additionalFields, globalObject, newKeys, DontEnumPropertiesMode::Include);
+        additionalFields->methodTable()->getOwnPropertyNames(additionalFields, globalObject, newKeys, DontEnumPropertiesMode::Include);
         RETURN_IF_EXCEPTION(scope, { });
 
         for (const auto& nextKey : newKeys) {
@@ -200,7 +200,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncMergeFields, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(vm, callFrame->thisValue());
+    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.mergeFields called on value that's not a Calendar"_s);
 
@@ -220,7 +220,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncMergeFields, (JSGlobalObje
         auto* copied = constructEmptyObject(globalObject);
 
         PropertyNameArray keys(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-        object->methodTable(vm)->getOwnPropertyNames(object, globalObject, keys, DontEnumPropertiesMode::Include);
+        object->methodTable()->getOwnPropertyNames(object, globalObject, keys, DontEnumPropertiesMode::Include);
         RETURN_IF_EXCEPTION(scope, { });
 
         for (const auto& key : keys) {
@@ -249,7 +249,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncMergeFields, (JSGlobalObje
     JSValue newEraYear = jsUndefined();
     {
         PropertyNameArray keys(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-        additionalFieldsCopied->methodTable(vm)->getOwnPropertyNames(additionalFieldsCopied, globalObject, keys, DontEnumPropertiesMode::Include);
+        additionalFieldsCopied->methodTable()->getOwnPropertyNames(additionalFieldsCopied, globalObject, keys, DontEnumPropertiesMode::Include);
         RETURN_IF_EXCEPTION(scope, { });
 
         for (const auto& key : keys) {
@@ -315,7 +315,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncToString, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(vm, callFrame->thisValue());
+    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.toString called on value that's not a Calendar"_s);
 

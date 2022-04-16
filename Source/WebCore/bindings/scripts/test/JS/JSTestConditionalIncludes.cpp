@@ -460,7 +460,7 @@ JSTestConditionalIncludes::JSTestConditionalIncludes(Structure* structure, JSDOM
 void JSTestConditionalIncludes::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestConditionalIncludes>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
@@ -491,7 +491,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionalIncludesConstructor, (JSGlobalObject* 
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestConditionalIncludesPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestConditionalIncludesPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestConditionalIncludes::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -852,9 +852,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-TestConditionalIncludes* JSTestConditionalIncludes::toWrapped(JSC::VM& vm, JSC::JSValue value)
+TestConditionalIncludes* JSTestConditionalIncludes::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestConditionalIncludes*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestConditionalIncludes*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

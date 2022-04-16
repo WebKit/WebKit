@@ -47,7 +47,7 @@ const ClassInfo GeneratorPrototype::s_info = { "Generator"_s, &Base::s_info, &ge
 void GeneratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

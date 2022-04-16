@@ -340,7 +340,7 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
     }
 
     bool isValid = true;
-    if (Structure* structure = inlineAccessBaseStructure(vm))
+    if (Structure* structure = inlineAccessBaseStructure())
         isValid &= vm.heap.isMarked(structure);
     if (m_cacheType == CacheType::Stub)
         isValid &= m_stub->visitWeak(vm);
@@ -355,7 +355,7 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
 template<typename Visitor>
 void StructureStubInfo::propagateTransitions(Visitor& visitor)
 {
-    if (Structure* structure = inlineAccessBaseStructure(visitor.vm()))
+    if (Structure* structure = inlineAccessBaseStructure())
         structure->markIfCheap(visitor);
 
     if (m_cacheType == CacheType::Stub)

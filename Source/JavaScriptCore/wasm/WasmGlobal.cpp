@@ -98,7 +98,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             RELEASE_ASSERT(m_owner);
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-            if (!isWebAssemblyHostFunction(vm, argument, wasmFunction, wasmWrapperFunction) && (!m_type.isNullable() || !argument.isNull())) {
+            if (!isWebAssemblyHostFunction(argument, wasmFunction, wasmWrapperFunction) && (!m_type.isNullable() || !argument.isNull())) {
                 throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
                 return;
             }

@@ -54,7 +54,7 @@ ErrorPrototypeBase::ErrorPrototypeBase(VM& vm, Structure* structure)
 void ErrorPrototypeBase::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     putDirectWithoutTransition(vm, vm.propertyNames->name, jsString(vm, name), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

@@ -64,7 +64,7 @@ JSWebAssemblyGlobal::JSWebAssemblyGlobal(VM& vm, Structure* structure, Ref<Wasm:
 void JSWebAssemblyGlobal::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 void JSWebAssemblyGlobal::destroy(JSCell* cell)

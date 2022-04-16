@@ -55,7 +55,7 @@ Symbol::Symbol(VM& vm, SymbolImpl& uid)
 void Symbol::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     vm.symbolImplToSymbolMap.set(&m_privateName.uid(), this);
 }

@@ -43,14 +43,14 @@ JSGeneratorFunction::JSGeneratorFunction(VM& vm, FunctionExecutable* executable,
 JSGeneratorFunction* JSGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSGeneratorFunction* generatorFunction = new (NotNull, allocateCell<JSGeneratorFunction>(vm)) JSGeneratorFunction(vm, executable, scope, structure);
-    ASSERT(generatorFunction->structure(vm)->globalObject());
+    ASSERT(generatorFunction->structure()->globalObject());
     generatorFunction->finishCreation(vm);
     return generatorFunction;
 }
 
 JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    return create(vm, executable, scope, scope->globalObject(vm)->generatorFunctionStructure());
+    return create(vm, executable, scope, scope->globalObject()->generatorFunctionStructure());
 }
 
 JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
@@ -62,7 +62,7 @@ JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, FunctionExecutable* exe
 
 JSGeneratorFunction* JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    return createImpl(vm, executable, scope, scope->globalObject(vm)->generatorFunctionStructure());
+    return createImpl(vm, executable, scope, scope->globalObject()->generatorFunctionStructure());
 }
 
 } // namespace JSC

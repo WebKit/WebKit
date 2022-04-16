@@ -51,7 +51,7 @@ JSCallbackFunction::JSCallbackFunction(VM& vm, Structure* structure, JSObjectCal
 void JSCallbackFunction::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm, 0, name);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 JSCallbackFunction* JSCallbackFunction::create(VM& vm, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const String& name)

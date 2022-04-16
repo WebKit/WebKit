@@ -212,7 +212,7 @@ public:
         return considerCaching(vm, codeBlock, structure, impl);
     }
 
-    Structure* inlineAccessBaseStructure(VM&)
+    Structure* inlineAccessBaseStructure() const
     {
         return m_inlineAccessBaseStructureID.get();
     }

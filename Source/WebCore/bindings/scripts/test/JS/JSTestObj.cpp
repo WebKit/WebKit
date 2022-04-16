@@ -2549,7 +2549,7 @@ JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject& globalObject, Ref<
 void JSTestObj::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestObj>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
@@ -2623,7 +2623,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestObjConstructor, (JSGlobalObject* lexicalGlobalObj
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestObjPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestObjPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestObj::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -5048,7 +5048,7 @@ static inline bool setJSTestObj_putForwardsAttributeSetter(JSGlobalObject& lexic
     }
     auto forwardId = Identifier::fromString(vm, "name"_s);
     PutPropertySlot slot(valueToForwardTo, false);
-    asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);
+    asObject(valueToForwardTo)->methodTable()->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);
     RETURN_IF_EXCEPTION(throwScope, false);
     return true;
 }
@@ -5084,7 +5084,7 @@ static inline bool setJSTestObj_putForwardsNullableAttributeSetter(JSGlobalObjec
     }
     auto forwardId = Identifier::fromString(vm, "name"_s);
     PutPropertySlot slot(valueToForwardTo, false);
-    asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);
+    asObject(valueToForwardTo)->methodTable()->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);
     RETURN_IF_EXCEPTION(throwScope, false);
     return true;
 }
@@ -7519,17 +7519,17 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadedMethodOve
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod2Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod2Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestCallbackInterface>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestCallbackInterface>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod5Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSDOMStringList>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSDOMStringList>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod6Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod8Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSWindowProxy>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSWindowProxy>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod9Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod13Body(lexicalGlobalObject, callFrame, castedThis)));
         {
             bool success = hasIteratorMethod(lexicalGlobalObject, distinguishingArg);
@@ -7547,7 +7547,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadedMethodOve
         JSValue distinguishingArg = callFrame->uncheckedArgument(1);
         if (distinguishingArg.isUndefined())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod2Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSBlob>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod13Body(lexicalGlobalObject, callFrame, castedThis)));
         if (distinguishingArg.isNumber())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethod2Body(lexicalGlobalObject, callFrame, castedThis)));
@@ -7604,7 +7604,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadedMethodWit
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithOptionalParameter2Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithOptionalParameter2Body(lexicalGlobalObject, callFrame, castedThis)));
         RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithOptionalParameter1Body(lexicalGlobalObject, callFrame, castedThis)));
     }
@@ -7612,7 +7612,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadedMethodWit
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithOptionalParameter2Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithOptionalParameter2Body(lexicalGlobalObject, callFrame, castedThis)));
         RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithOptionalParameter1Body(lexicalGlobalObject, callFrame, castedThis)));
     }
@@ -7659,9 +7659,9 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadedMethodWit
     size_t argsCount = std::min<size_t>(1, callFrame->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithDistinguishingUnion1Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithDistinguishingUnion1Body(lexicalGlobalObject, callFrame, castedThis)));
         if (distinguishingArg.isNumber())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithDistinguishingUnion2Body(lexicalGlobalObject, callFrame, castedThis)));
@@ -7710,11 +7710,11 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadedMethodWit
     size_t argsCount = std::min<size_t>(1, callFrame->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWith2DistinguishingUnions1Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWith2DistinguishingUnions1Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestInterface>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestInterface>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWith2DistinguishingUnions2Body(lexicalGlobalObject, callFrame, castedThis)));
         if (distinguishingArg.isNumber())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWith2DistinguishingUnions2Body(lexicalGlobalObject, callFrame, castedThis)));
@@ -7769,9 +7769,9 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadedMethodWit
     size_t argsCount = std::min<size_t>(2, callFrame->argumentCount());
     if (argsCount == 2) {
         JSValue distinguishingArg = callFrame->uncheckedArgument(1);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithNonDistinguishingUnion1Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadedMethodWithNonDistinguishingUnion2Body(lexicalGlobalObject, callFrame, castedThis)));
     }
     return argsCount < 2 ? throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject)) : throwVMTypeError(lexicalGlobalObject, throwScope);
@@ -7819,9 +7819,9 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadWithNullabl
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
         if (distinguishingArg.isUndefinedOrNull())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadWithNullableUnion1Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestObj>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadWithNullableUnion1Body(lexicalGlobalObject, callFrame, castedThis)));
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadWithNullableUnion1Body(lexicalGlobalObject, callFrame, castedThis)));
         if (distinguishingArg.isNumber())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadWithNullableUnion2Body(lexicalGlobalObject, callFrame, castedThis)));
@@ -7930,7 +7930,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_overloadWithNullabl
     size_t argsCount = std::min<size_t>(2, callFrame->argumentCount());
     if (argsCount == 2) {
         JSValue distinguishingArg = callFrame->uncheckedArgument(1);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSTestNode>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadWithNullableNonDistinguishingParameter1Body(lexicalGlobalObject, callFrame, castedThis)));
         if (distinguishingArg.isNumber())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_overloadWithNullableNonDistinguishingParameter2Body(lexicalGlobalObject, callFrame, castedThis)));
@@ -8575,7 +8575,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_testPromiseOverload
     size_t argsCount = std::min<size_t>(1, callFrame->argumentCount());
     if (argsCount == 1) {
         JSValue distinguishingArg = callFrame->uncheckedArgument(0);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSFetchRequest>(vm))
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSFetchRequest>())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_testPromiseOverloadedFunction2Body(lexicalGlobalObject, callFrame, castedThis, WTFMove(promise))));
         if (distinguishingArg.isNumber())
             RELEASE_AND_RETURN(throwScope, (jsTestObjPrototypeFunction_testPromiseOverloadedFunction1Body(lexicalGlobalObject, callFrame, castedThis, WTFMove(promise))));
@@ -9177,9 +9177,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-TestObj* JSTestObj::toWrapped(JSC::VM& vm, JSC::JSValue value)
+TestObj* JSTestObj::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestObj*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestObj*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -191,7 +191,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    return toRef(jsCast<JSObject*>(globalObject->methodTable(vm)->toThis(globalObject, globalObject, ECMAMode::sloppy())));
+    return toRef(jsCast<JSObject*>(globalObject->methodTable()->toThis(globalObject, globalObject, ECMAMode::sloppy())));
 }
 
 JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
@@ -260,7 +260,7 @@ void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObje
     JSLockHolder locker(vm);
 
     JSObject* object = toJS(function);
-    if (!object->isCallable(vm)) {
+    if (!object->isCallable()) {
         *exception = toRef(createTypeError(globalObject));
         return;
     }

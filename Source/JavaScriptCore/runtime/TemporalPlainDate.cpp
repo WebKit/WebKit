@@ -61,12 +61,12 @@ TemporalPlainDate::TemporalPlainDate(VM& vm, Structure* structure, ISO8601::Plai
 void TemporalPlainDate::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
             auto* plainDate = jsCast<TemporalPlainDate*>(init.owner);
-            auto* globalObject = plainDate->globalObject(vm);
+            auto* globalObject = plainDate->globalObject();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
         });

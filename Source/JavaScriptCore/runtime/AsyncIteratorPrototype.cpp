@@ -36,7 +36,7 @@ const ClassInfo AsyncIteratorPrototype::s_info = { "AsyncIterator"_s, &Base::s_i
 void AsyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     JSFunction* asyncIteratorPrototypeFunction = JSFunction::create(vm, asyncIteratorPrototypeSymbolAsyncIteratorGetterCodeGenerator(vm), globalObject);
     putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, asyncIteratorPrototypeFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));

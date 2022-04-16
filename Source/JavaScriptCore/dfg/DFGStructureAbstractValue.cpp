@@ -264,7 +264,7 @@ void StructureAbstractValue::filterClassInfoSlow(const ClassInfo* classInfo)
     ASSERT(!isTop());
     m_set.genericFilter(
         [&] (RegisteredStructure structure) {
-            return structure->classInfo()->isSubClassOf(classInfo);
+            return structure->classInfoForCells()->isSubClassOf(classInfo);
         });
 }
 
@@ -344,7 +344,7 @@ bool StructureAbstractValue::isSubClassOf(const ClassInfo* classInfo) const
 
     // Note that this function returns true if the structure set is empty.
     for (const RegisteredStructure structure : m_set) {
-        if (!structure->classInfo()->isSubClassOf(classInfo))
+        if (!structure->classInfoForCells()->isSubClassOf(classInfo))
             return false;
     }
     return true;
@@ -357,7 +357,7 @@ bool StructureAbstractValue::isNotSubClassOf(const ClassInfo* classInfo) const
 
     // Note that this function returns true if the structure set is empty.
     for (const RegisteredStructure structure : m_set) {
-        if (structure->classInfo()->isSubClassOf(classInfo))
+        if (structure->classInfoForCells()->isSubClassOf(classInfo))
             return false;
     }
     return true;

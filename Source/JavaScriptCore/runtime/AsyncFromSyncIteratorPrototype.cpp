@@ -51,7 +51,7 @@ AsyncFromSyncIteratorPrototype::AsyncFromSyncIteratorPrototype(VM& vm, Structure
 void AsyncFromSyncIteratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 AsyncFromSyncIteratorPrototype* AsyncFromSyncIteratorPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)

@@ -478,7 +478,7 @@ bool InspectorController::canAccessInspectedScriptState(JSC::JSGlobalObject* lex
 {
     JSLockHolder lock(lexicalGlobalObject);
 
-    auto* inspectedWindow = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject->vm(), lexicalGlobalObject);
+    auto* inspectedWindow = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject);
     if (!inspectedWindow)
         return false;
 

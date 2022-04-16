@@ -34,19 +34,19 @@ namespace JSArrayBufferPrototypeInternal {
 static constexpr bool verbose = false;
 };
 
-ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject, ArrayBufferSharingMode mode)
+ALWAYS_INLINE bool speciesWatchpointIsValid(JSObject* thisObject, ArrayBufferSharingMode mode)
 {
-    JSGlobalObject* globalObject = thisObject->globalObject(vm);
+    JSGlobalObject* globalObject = thisObject->globalObject();
     auto* prototype = globalObject->arrayBufferPrototype(mode);
 
     if (globalObject->arrayBufferSpeciesWatchpointSet(mode).state() == ClearWatchpoint) {
-        dataLogLnIf(JSArrayBufferPrototypeInternal::verbose, "Initializing ArrayBuffer species watchpoints for ArrayBuffer.prototype: ", pointerDump(prototype), " with structure: ", pointerDump(prototype->structure(vm)), "\nand ArrayBuffer: ", pointerDump(globalObject->arrayBufferConstructor(mode)), " with structure: ", pointerDump(globalObject->arrayBufferConstructor(mode)->structure(vm)));
+        dataLogLnIf(JSArrayBufferPrototypeInternal::verbose, "Initializing ArrayBuffer species watchpoints for ArrayBuffer.prototype: ", pointerDump(prototype), " with structure: ", pointerDump(prototype->structure()), "\nand ArrayBuffer: ", pointerDump(globalObject->arrayBufferConstructor(mode)), " with structure: ", pointerDump(globalObject->arrayBufferConstructor(mode)->structure()));
         globalObject->tryInstallArrayBufferSpeciesWatchpoint(mode);
         ASSERT(globalObject->arrayBufferSpeciesWatchpointSet(mode).state() != ClearWatchpoint);
     }
 
-    return !thisObject->hasCustomProperties(vm)
-        && prototype == thisObject->getPrototypeDirect(vm)
+    return !thisObject->hasCustomProperties()
+        && prototype == thisObject->getPrototypeDirect()
         && globalObject->arrayBufferSpeciesWatchpointSet(mode).state() == IsWatched;
 }
 
@@ -55,7 +55,7 @@ ALWAYS_INLINE std::optional<JSValue> arrayBufferSpeciesConstructor(JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool isValid = speciesWatchpointIsValid(vm, thisObject, mode);
+    bool isValid = speciesWatchpointIsValid(thisObject, mode);
     scope.assertNoException();
     if (LIKELY(isValid))
         return std::nullopt;

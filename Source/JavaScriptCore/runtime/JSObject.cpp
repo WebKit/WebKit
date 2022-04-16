@@ -114,8 +114,6 @@ ALWAYS_INLINE Structure* JSObject::visitButterfly(Visitor& visitor)
 template<typename Visitor>
 ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
 {
-    VM& vm = visitor.vm();
-    
     Butterfly* butterfly;
     Structure* structure;
     PropertyOffset maxOffset;
@@ -138,7 +136,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
 
     if (visitor.mutatorIsStopped()) {
         butterfly = this->butterfly();
-        structure = this->structure(vm);
+        structure = this->structure();
         maxOffset = structure->maxOffset();
         
         markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, maxOffset);
@@ -407,7 +405,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
 size_t JSObject::estimatedSize(JSCell* cell, VM& vm)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
-    size_t butterflyOutOfLineSize = thisObject->m_butterfly ? thisObject->structure(vm)->outOfLineSize() : 0;
+    size_t butterflyOutOfLineSize = thisObject->m_butterfly ? thisObject->structure()->outOfLineSize() : 0;
     return Base::estimatedSize(cell, vm) + butterflyOutOfLineSize;
 }
 
@@ -494,10 +492,10 @@ String JSObject::calculatedClassName(JSObject* object)
     if (object->getOwnPropertySlot(object, globalObject, vm.propertyNames->constructor, slot)) {
         EXCEPTION_ASSERT(!scope.exception());
         if (slot.isValue()) {
-            if (JSObject* ctorObject = jsDynamicCast<JSObject*>(vm, slot.getValue(globalObject, vm.propertyNames->constructor))) {
-                if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(vm, ctorObject))
+            if (JSObject* ctorObject = jsDynamicCast<JSObject*>(slot.getValue(globalObject, vm.propertyNames->constructor))) {
+                if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject))
                     constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
-                else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(vm, ctorObject))
+                else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject))
                     constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
             }
         }
@@ -511,17 +509,17 @@ String JSObject::calculatedClassName(JSObject* object)
     // This is useful to get `Foo` for a `new Foo` object.
     if (constructorFunctionName.isNull()) {
         if (LIKELY(!structure->typeInfo().overridesGetPrototype())) {
-            JSValue protoValue = object->getPrototypeDirect(vm);
+            JSValue protoValue = object->getPrototypeDirect();
             if (protoValue.isObject()) {
                 JSObject* protoObject = asObject(protoValue);
                 PropertySlot slot(protoValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
                 if (protoObject->getPropertySlot(globalObject, vm.propertyNames->constructor, slot)) {
                     EXCEPTION_ASSERT(!scope.exception());
                     if (slot.isValue()) {
-                        if (JSObject* ctorObject = jsDynamicCast<JSObject*>(vm, slot.getValue(globalObject, vm.propertyNames->constructor))) {
-                            if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(vm, ctorObject))
+                        if (JSObject* ctorObject = jsDynamicCast<JSObject*>(slot.getValue(globalObject, vm.propertyNames->constructor))) {
+                            if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject))
                                 constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
-                            else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(vm, ctorObject))
+                            else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject))
                                 constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
                         }
                     }
@@ -552,7 +550,7 @@ String JSObject::calculatedClassName(JSObject* object)
         if (UNLIKELY(scope.exception()))
             scope.clearException();
 
-        String classInfoName = object->classInfo(vm)->className;
+        String classInfoName = object->classInfo()->className;
         if (!classInfoName.isNull())
             return classInfoName;
 
@@ -572,7 +570,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, JSGlobalObject* g
     // getOwnPropertySlotByIndex().
     
     if (i > MAX_ARRAY_INDEX)
-        return thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, globalObject, Identifier::from(vm, i), slot);
+        return thisObject->methodTable()->getOwnPropertySlot(thisObject, globalObject, Identifier::from(vm, i), slot);
     
     switch (thisObject->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -722,12 +720,12 @@ bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyNam
             valueDescriptor.setValue(value);
 
             // 9.1.9.1-4-d-iv Return ? Receiver.[[DefineOwnProperty]](P, valueDesc).
-            RELEASE_AND_RETURN(scope, receiverObject->methodTable(vm)->defineOwnProperty(receiverObject, globalObject, propertyName, valueDescriptor, shouldThrow));
+            RELEASE_AND_RETURN(scope, receiverObject->methodTable()->defineOwnProperty(receiverObject, globalObject, propertyName, valueDescriptor, shouldThrow));
         }
 
         // 9.1.9.1-4-e Else Receiver does not currently have a property P,
         // 9.1.9.1-4-e-i Return ? CreateDataProperty(Receiver, P, V).
-        RELEASE_AND_RETURN(scope, receiverObject->methodTable(vm)->defineOwnProperty(receiverObject, globalObject, propertyName, PropertyDescriptor(value, static_cast<unsigned>(PropertyAttribute::None)), shouldThrow));
+        RELEASE_AND_RETURN(scope, receiverObject->methodTable()->defineOwnProperty(receiverObject, globalObject, propertyName, PropertyDescriptor(value, static_cast<unsigned>(PropertyAttribute::None)), shouldThrow));
     }
 
     // 9.1.9.1-5 Assert: IsAccessorDescriptor(ownDesc) is true.
@@ -745,7 +743,7 @@ bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyNam
     args.append(value);
     ASSERT(!args.hasOverflowed());
 
-    auto callData = getCallData(vm, setterObject);
+    auto callData = JSC::getCallData(setterObject);
     scope.release();
     call(globalObject, setterObject, callData, receiver, args);
 
@@ -773,9 +771,9 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
 
     JSObject* obj = this;
     for (;;) {
-        Structure* structure = obj->structure(vm);
+        Structure* structure = obj->structure();
         if (obj != this && structure->typeInfo().overridesPut())
-            RELEASE_AND_RETURN(scope, obj->methodTable(vm)->put(obj, globalObject, propertyName, value, slot));
+            RELEASE_AND_RETURN(scope, obj->methodTable()->put(obj, globalObject, propertyName, value, slot));
 
         bool hasProperty = false;
         unsigned attributes;
@@ -805,7 +803,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
             if (attributes & PropertyAttribute::Accessor) {
                 ASSERT(isValidOffset(offset));
                 // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
-                if (!this->structure(vm)->isUncacheableDictionary())
+                if (!this->structure()->isUncacheableDictionary())
                     slot.setCacheableSetter(obj, offset);
                 RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(obj->getDirect(offset))->callSetter(globalObject, slot.thisValue(), value, slot.isStrictMode()));
             }
@@ -818,7 +816,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 // https://bugs.webkit.org/show_bug.cgi?id=215347
                 slot.setCustomAccessor(obj, customSetter);
                 scope.release();
-                customSetter(obj->globalObject(vm), JSValue::encode(slot.thisValue()), JSValue::encode(value), propertyName);
+                customSetter(obj->globalObject(), JSValue::encode(slot.thisValue()), JSValue::encode(value), propertyName);
                 return true;
             }
             if (attributes & PropertyAttribute::CustomValue) {
@@ -827,7 +825,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                     // FIXME: We should only be caching these if we're not an uncacheable dictionary:
                     // https://bugs.webkit.org/show_bug.cgi?id=215347
                     slot.setCustomValue(obj, customSetter);
-                    RELEASE_AND_RETURN(scope, customSetter(obj->globalObject(vm), JSValue::encode(obj), JSValue::encode(value), propertyName));
+                    RELEASE_AND_RETURN(scope, customSetter(obj->globalObject(), JSValue::encode(obj), JSValue::encode(value), propertyName));
                 }
                 if (!isThisValueAltered(slot, obj)) {
                     // Avoid PutModePut because it fails for non-extensible structures.
@@ -866,7 +864,7 @@ static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     PropertySlot slot(receiver, PropertySlot::InternalMethodType::GetOwnProperty);
-    bool hasProperty = receiver->methodTable(vm)->getOwnPropertySlot(receiver, globalObject, propertyName, slot);
+    bool hasProperty = receiver->methodTable()->getOwnPropertySlot(receiver, globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, false);
 
     if (hasProperty) {
@@ -877,12 +875,12 @@ static NEVER_INLINE bool definePropertyOnReceiverSlow(JSGlobalObject* globalObje
         if (slot.attributes() & PropertyAttribute::CustomValue) {
             PutPropertySlot::PutValueFunc customSetter = slot.customSetter();
             if (customSetter)
-                RELEASE_AND_RETURN(scope, customSetter(receiver->globalObject(vm), JSValue::encode(receiver), JSValue::encode(value), propertyName));
+                RELEASE_AND_RETURN(scope, customSetter(receiver->globalObject(), JSValue::encode(receiver), JSValue::encode(value), propertyName));
         }
 
         PropertyDescriptor descriptor;
         descriptor.setValue(value);
-        RELEASE_AND_RETURN(scope, receiver->methodTable(vm)->defineOwnProperty(receiver, globalObject, propertyName, descriptor, shouldThrow));
+        RELEASE_AND_RETURN(scope, receiver->methodTable()->defineOwnProperty(receiver, globalObject, propertyName, descriptor, shouldThrow));
     }
 
     RELEASE_AND_RETURN(scope, receiver->createDataProperty(globalObject, propertyName, value, shouldThrow));
@@ -905,17 +903,17 @@ bool JSObject::definePropertyOnReceiver(JSGlobalObject* globalObject, PropertyNa
         receiver = jsCast<JSProxy*>(receiver)->target();
 
     if (slot.isTaintedByOpaqueObject() || slot.context() == PutPropertySlot::ReflectSet) {
-        if (receiver->methodTable(vm)->defineOwnProperty != JSObject::defineOwnProperty)
+        if (receiver->methodTable()->defineOwnProperty != JSObject::defineOwnProperty)
             return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
     }
 
-    if (receiver->structure(vm)->hasCustomGetterSetterProperties()) {
+    if (receiver->structure()->hasCustomGetterSetterProperties()) {
         unsigned attributes;
         if (receiver->getDirectOffset(vm, propertyName, attributes) != invalidOffset && (attributes & PropertyAttribute::CustomValue))
             return definePropertyOnReceiverSlow(globalObject, propertyName, value, receiver, slot.isStrictMode());
     }
 
-    if (UNLIKELY(receiver->hasNonReifiedStaticProperties(vm)))
+    if (UNLIKELY(receiver->hasNonReifiedStaticProperties()))
         return receiver->putInlineFastReplacingStaticPropertyIfNeeded(globalObject, propertyName, value, slot);
     return receiver->putInlineFast(globalObject, propertyName, value, slot);
 }
@@ -927,7 +925,7 @@ bool JSObject::putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     ASSERT(structure->hasNonReifiedStaticProperties());
     if (!isValidOffset(structure->get(vm, propertyName))) {
         if (auto entry = structure->findPropertyHashEntry(propertyName)) {
@@ -957,7 +955,7 @@ bool JSObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned p
 
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(cell, shouldThrow);
-        return thisObject->methodTable(vm)->put(thisObject, globalObject, Identifier::from(vm, propertyName), value, slot);
+        return thisObject->methodTable()->put(thisObject, globalObject, Identifier::from(vm, propertyName), value, slot);
     }
 
     thisObject->ensureWritable(vm);
@@ -1099,7 +1097,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
     }
 
     DeferGC deferGC(vm);
-    Butterfly* newButterfly = storage->butterfly()->resizeArray(vm, this, structure(vm), 0, ArrayStorage::sizeFor(0));
+    Butterfly* newButterfly = storage->butterfly()->resizeArray(vm, this, structure(), 0, ArrayStorage::sizeFor(0));
     RELEASE_ASSERT(newButterfly);
     newButterfly->arrayStorage()->m_indexBias = 0;
     newButterfly->arrayStorage()->setVectorLength(0);
@@ -1135,15 +1133,15 @@ void JSObject::enterDictionaryIndexingMode(VM& vm)
 
 void JSObject::notifyPresenceOfIndexedAccessors(VM& vm)
 {
-    if (mayInterceptIndexedAccesses(vm))
+    if (mayInterceptIndexedAccesses())
         return;
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), TransitionKind::AddIndexedAccessors));
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AddIndexedAccessors));
     
     if (!mayBePrototype())
         return;
     
-    globalObject(vm)->haveABadTime(vm);
+    globalObject()->haveABadTime(vm);
 }
 
 Butterfly* JSObject::createInitialIndexedStorage(VM& vm, unsigned length)
@@ -1151,9 +1149,9 @@ Butterfly* JSObject::createInitialIndexedStorage(VM& vm, unsigned length)
     ASSERT(length <= MAX_STORAGE_VECTOR_LENGTH);
     IndexingType oldType = indexingType();
     ASSERT_UNUSED(oldType, !hasIndexedProperties(oldType));
-    ASSERT(!needsSlowPutIndexing(vm));
-    ASSERT(!indexingShouldBeSparse(vm));
-    Structure* structure = this->structure(vm);
+    ASSERT(!needsSlowPutIndexing());
+    ASSERT(!indexingShouldBeSparse());
+    Structure* structure = this->structure();
     unsigned propertyCapacity = structure->outOfLineCapacity();
     unsigned vectorLength = Butterfly::optimalContiguousVectorLength(propertyCapacity, length);
     Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(
@@ -1247,7 +1245,7 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
 
     Butterfly* newButterfly = createArrayStorageButterfly(vm, this, oldStructure, length, vectorLength, butterfly());
     ArrayStorage* result = newButterfly->arrayStorage();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, suggestedArrayStorageTransition(vm));
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, suggestedArrayStorageTransition());
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
     return result;
@@ -1256,7 +1254,7 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
 ArrayStorage* JSObject::createInitialArrayStorage(VM& vm)
 {
     return createArrayStorage(
-        vm, 0, ArrayStorage::optimalVectorLength(0, structure(vm)->outOfLineCapacity(), 0));
+        vm, 0, ArrayStorage::optimalVectorLength(0, structure()->outOfLineCapacity(), 0));
 }
 
 ContiguousJSValues JSObject::convertUndecidedToInt32(VM& vm)
@@ -1267,7 +1265,7 @@ ContiguousJSValues JSObject::convertUndecidedToInt32(VM& vm)
     for (unsigned i = butterfly->vectorLength(); i--;)
         butterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
 
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), TransitionKind::AllocateInt32));
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateInt32));
     return m_butterfly->contiguousInt32();
 }
 
@@ -1279,7 +1277,7 @@ ContiguousDoubles JSObject::convertUndecidedToDouble(VM& vm)
     for (unsigned i = butterfly->vectorLength(); i--;)
         butterfly->contiguousDouble().at(this, i) = PNaN;
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), TransitionKind::AllocateDouble));
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateDouble));
     return m_butterfly->contiguousDouble();
 }
 
@@ -1292,13 +1290,13 @@ ContiguousJSValues JSObject::convertUndecidedToContiguous(VM& vm)
         butterfly->contiguous().at(this, i).setWithoutWriteBarrier(JSValue());
 
     WTF::storeStoreFence();
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), TransitionKind::AllocateContiguous));
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateContiguous));
     return m_butterfly->contiguous();
 }
 
 ArrayStorage* JSObject::constructConvertedArrayStorageWithoutCopyingElements(VM& vm, unsigned neededLength)
 {
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     unsigned publicLength = m_butterfly->publicLength();
     unsigned propertyCapacity = structure->outOfLineCapacity();
 
@@ -1340,7 +1338,7 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, TransitionKind tr
 
 ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm)
 {
-    return convertUndecidedToArrayStorage(vm, suggestedArrayStorageTransition(vm));
+    return convertUndecidedToArrayStorage(vm, suggestedArrayStorageTransition());
 }
 
 ContiguousDoubles JSObject::convertInt32ToDouble(VM& vm)
@@ -1362,7 +1360,7 @@ ContiguousDoubles JSObject::convertInt32ToDouble(VM& vm)
         *currentAsDouble = v.asInt32();
     }
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), TransitionKind::AllocateDouble));
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateDouble));
     return m_butterfly->contiguousDouble();
 }
 
@@ -1370,7 +1368,7 @@ ContiguousJSValues JSObject::convertInt32ToContiguous(VM& vm)
 {
     ASSERT(hasInt32(indexingType()));
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), TransitionKind::AllocateContiguous));
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateContiguous));
     return m_butterfly->contiguous();
 }
 
@@ -1399,7 +1397,7 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, TransitionKind transi
 
 ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm)
 {
-    return convertInt32ToArrayStorage(vm, suggestedArrayStorageTransition(vm));
+    return convertInt32ToArrayStorage(vm, suggestedArrayStorageTransition());
 }
 
 ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
@@ -1421,7 +1419,7 @@ ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
     }
     
     WTF::storeStoreFence();
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), TransitionKind::AllocateContiguous));
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), TransitionKind::AllocateContiguous));
     return m_butterfly->contiguous();
 }
 
@@ -1453,7 +1451,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, TransitionKind trans
 
 ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm)
 {
-    return convertDoubleToArrayStorage(vm, suggestedArrayStorageTransition(vm));
+    return convertDoubleToArrayStorage(vm, suggestedArrayStorageTransition());
 }
 
 ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, TransitionKind transition)
@@ -1536,7 +1534,7 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, TransitionKind t
 
 ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm)
 {
-    return convertContiguousToArrayStorage(vm, suggestedArrayStorageTransition(vm));
+    return convertContiguousToArrayStorage(vm, suggestedArrayStorageTransition());
 }
 
 void JSObject::convertUndecidedForValue(VM& vm, JSValue value)
@@ -1589,7 +1587,7 @@ void JSObject::convertInt32ForValue(VM& vm, JSValue value)
 void JSObject::convertFromCopyOnWrite(VM& vm)
 {
     ASSERT(isCopyOnWrite(indexingMode()));
-    ASSERT(structure(vm)->indexingMode() == indexingMode());
+    ASSERT(structure()->indexingMode() == indexingMode());
 
     const bool hasIndexingHeader = true;
     Butterfly* oldButterfly = butterfly();
@@ -1614,7 +1612,7 @@ void JSObject::convertFromCopyOnWrite(VM& vm)
         }
     })();
     StructureID oldStructureID = structureID();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), transition);
     nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
 }
@@ -1643,7 +1641,7 @@ void JSObject::convertDoubleToContiguousWhilePerformingSetIndex(VM& vm, unsigned
 
 ContiguousJSValues JSObject::tryMakeWritableInt32Slow(VM& vm)
 {
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     if (isCopyOnWrite(indexingMode())) {
         if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, Int32Shape) == Int32Shape) {
@@ -1654,12 +1652,12 @@ ContiguousJSValues JSObject::tryMakeWritableInt32Slow(VM& vm)
         return ContiguousJSValues();
     }
 
-    if (structure(vm)->hijacksIndexingHeader())
+    if (structure()->hijacksIndexingHeader())
         return ContiguousJSValues();
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
-        if (UNLIKELY(indexingShouldBeSparse(vm) || needsSlowPutIndexing(vm)))
+        if (UNLIKELY(indexingShouldBeSparse() || needsSlowPutIndexing()))
             return ContiguousJSValues();
         return createInitialInt32(vm, 0);
         
@@ -1679,7 +1677,7 @@ ContiguousJSValues JSObject::tryMakeWritableInt32Slow(VM& vm)
 
 ContiguousDoubles JSObject::tryMakeWritableDoubleSlow(VM& vm)
 {
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     if (isCopyOnWrite(indexingMode())) {
         if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, DoubleShape) == DoubleShape) {
@@ -1691,12 +1689,12 @@ ContiguousDoubles JSObject::tryMakeWritableDoubleSlow(VM& vm)
             return ContiguousDoubles();
     }
 
-    if (structure(vm)->hijacksIndexingHeader())
+    if (structure()->hijacksIndexingHeader())
         return ContiguousDoubles();
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
-        if (UNLIKELY(indexingShouldBeSparse(vm) || needsSlowPutIndexing(vm)))
+        if (UNLIKELY(indexingShouldBeSparse() || needsSlowPutIndexing()))
             return ContiguousDoubles();
         return createInitialDouble(vm, 0);
         
@@ -1718,7 +1716,7 @@ ContiguousDoubles JSObject::tryMakeWritableDoubleSlow(VM& vm)
 
 ContiguousJSValues JSObject::tryMakeWritableContiguousSlow(VM& vm)
 {
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     if (isCopyOnWrite(indexingMode())) {
         if (leastUpperBoundOfIndexingTypes(indexingType() & IndexingShapeMask, ContiguousShape) == ContiguousShape) {
@@ -1730,12 +1728,12 @@ ContiguousJSValues JSObject::tryMakeWritableContiguousSlow(VM& vm)
             return ContiguousJSValues();
     }
 
-    if (structure(vm)->hijacksIndexingHeader())
+    if (structure()->hijacksIndexingHeader())
         return ContiguousJSValues();
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
-        if (UNLIKELY(indexingShouldBeSparse(vm) || needsSlowPutIndexing(vm)))
+        if (UNLIKELY(indexingShouldBeSparse() || needsSlowPutIndexing()))
             return ContiguousJSValues();
         return createInitialContiguous(vm, 0);
         
@@ -1759,37 +1757,37 @@ ContiguousJSValues JSObject::tryMakeWritableContiguousSlow(VM& vm)
 
 ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)
 {
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
-    if (structure(vm)->hijacksIndexingHeader())
+    if (structure()->hijacksIndexingHeader())
         return nullptr;
 
     ensureWritable(vm);
 
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
-        if (UNLIKELY(indexingShouldBeSparse(vm)))
+        if (UNLIKELY(indexingShouldBeSparse()))
             return ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm);
         return createInitialArrayStorage(vm);
         
     case ALL_UNDECIDED_INDEXING_TYPES:
-        ASSERT(!indexingShouldBeSparse(vm));
-        ASSERT(!needsSlowPutIndexing(vm));
+        ASSERT(!indexingShouldBeSparse());
+        ASSERT(!needsSlowPutIndexing());
         return convertUndecidedToArrayStorage(vm);
         
     case ALL_INT32_INDEXING_TYPES:
-        ASSERT(!indexingShouldBeSparse(vm));
-        ASSERT(!needsSlowPutIndexing(vm));
+        ASSERT(!indexingShouldBeSparse());
+        ASSERT(!needsSlowPutIndexing());
         return convertInt32ToArrayStorage(vm);
         
     case ALL_DOUBLE_INDEXING_TYPES:
-        ASSERT(!indexingShouldBeSparse(vm));
-        ASSERT(!needsSlowPutIndexing(vm));
+        ASSERT(!indexingShouldBeSparse());
+        ASSERT(!needsSlowPutIndexing());
         return convertDoubleToArrayStorage(vm);
         
     case ALL_CONTIGUOUS_INDEXING_TYPES:
-        ASSERT(!indexingShouldBeSparse(vm));
-        ASSERT(!needsSlowPutIndexing(vm));
+        ASSERT(!indexingShouldBeSparse());
+        ASSERT(!needsSlowPutIndexing());
         return convertContiguousToArrayStorage(vm);
         
     default:
@@ -1862,7 +1860,7 @@ void JSObject::switchToSlowPutArrayStorage(VM& vm)
         
     case NonArrayWithArrayStorage:
     case ArrayWithArrayStorage: {
-        Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), TransitionKind::SwitchToSlowPutArrayStorage);
+        Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), TransitionKind::SwitchToSlowPutArrayStorage);
         setStructure(vm, newStructure);
         break;
     }
@@ -1879,18 +1877,18 @@ void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
     if (prototype.isObject())
         asObject(prototype)->didBecomePrototype();
     
-    if (structure(vm)->hasMonoProto()) {
-        DeferredStructureTransitionWatchpointFire deferred(vm, structure(vm));
-        Structure* newStructure = Structure::changePrototypeTransition(vm, structure(vm), prototype, deferred);
+    if (structure()->hasMonoProto()) {
+        DeferredStructureTransitionWatchpointFire deferred(vm, structure());
+        Structure* newStructure = Structure::changePrototypeTransition(vm, structure(), prototype, deferred);
         setStructure(vm, newStructure);
     } else
         putDirect(vm, knownPolyProtoOffset, prototype);
 
-    if (!anyObjectInChainMayInterceptIndexedAccesses(vm))
+    if (!anyObjectInChainMayInterceptIndexedAccesses())
         return;
     
     if (mayBePrototype()) {
-        structure(vm)->globalObject()->haveABadTime(vm);
+        structure()->globalObject()->haveABadTime(vm);
         return;
     }
     
@@ -1907,7 +1905,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (this->structure(vm)->isImmutablePrototypeExoticObject()) {
+    if (this->structure()->isImmutablePrototypeExoticObject()) {
         // This implements https://tc39.github.io/ecma262/#sec-set-immutable-prototype.
         if (this->getPrototype(vm, globalObject) == prototype)
             return true;
@@ -1917,9 +1915,9 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
 
     // Default realm global objects should have mutable prototypes despite having
     // a Proxy globalThis.
-    ASSERT(this->isGlobalObject() || methodTable(vm)->toThis(this, globalObject, ECMAMode::sloppy()) == this);
+    ASSERT(this->isGlobalObject() || methodTable()->toThis(this, globalObject, ECMAMode::sloppy()) == this);
 
-    if (this->getPrototypeDirect(vm) == prototype)
+    if (this->getPrototypeDirect() == prototype)
         return true;
 
     bool isExtensible = this->isExtensible(globalObject);
@@ -1938,7 +1936,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
         // https://bugs.webkit.org/show_bug.cgi?id=161534
         if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType))
             break; // We're done. Set the prototype.
-        nextPrototype = asObject(nextPrototype)->getPrototypeDirect(vm);
+        nextPrototype = asObject(nextPrototype)->getPrototypeDirect();
     }
     setPrototypeDirect(vm, prototype);
     return true;
@@ -1949,14 +1947,14 @@ bool JSObject::setPrototype(JSObject* object, JSGlobalObject* globalObject, JSVa
     return object->setPrototypeWithCycleCheck(globalObject->vm(), globalObject, prototype, shouldThrowIfCantSet);
 }
 
-JSValue JSObject::getPrototype(JSObject* object, JSGlobalObject* globalObject)
+JSValue JSObject::getPrototype(JSObject* object, JSGlobalObject*)
 {
-    return object->getPrototypeDirect(globalObject->vm());
+    return object->getPrototypeDirect();
 }
 
-bool JSObject::setPrototype(VM& vm, JSGlobalObject* globalObject, JSValue prototype, bool shouldThrowIfCantSet)
+bool JSObject::setPrototype(VM&, JSGlobalObject* globalObject, JSValue prototype, bool shouldThrowIfCantSet)
 {
-    return methodTable(vm)->setPrototype(this, globalObject, prototype, shouldThrowIfCantSet);
+    return methodTable()->setPrototype(this, globalObject, prototype, shouldThrowIfCantSet);
 }
 
 bool JSObject::putGetter(JSGlobalObject* globalObject, PropertyName propertyName, JSValue getter, unsigned attributes)
@@ -2012,7 +2010,7 @@ bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
 
     ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
     structure->setHasCustomGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
@@ -2041,7 +2039,7 @@ bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, Gett
     PutPropertySlot slot(this);
     bool result = putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, accessor, attributes, slot).isNull();
 
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
 
@@ -2092,7 +2090,7 @@ bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, PropertyName 
     RETURN_IF_EXCEPTION(scope, false);
     if (!hasProperty)
         return false;
-    return !(slot.attributes() & PropertyAttribute::DontEnum) || (slot.slotBase() && slot.slotBase()->structure(vm)->typeInfo().getOwnPropertySlotMayBeWrongAboutDontEnum());
+    return !(slot.attributes() & PropertyAttribute::DontEnum) || (slot.slotBase() && slot.slotBase()->structure()->typeInfo().getOwnPropertySlotMayBeWrongAboutDontEnum());
 }
 
 bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, unsigned propertyName) const
@@ -2104,7 +2102,7 @@ bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, unsigned prop
     RETURN_IF_EXCEPTION(scope, false);
     if (!hasProperty)
         return false;
-    return !(slot.attributes() & PropertyAttribute::DontEnum) || (slot.slotBase() && slot.slotBase()->structure(vm)->typeInfo().getOwnPropertySlotMayBeWrongAboutDontEnum());
+    return !(slot.attributes() & PropertyAttribute::DontEnum) || (slot.slotBase() && slot.slotBase()->structure()->typeInfo().getOwnPropertySlotMayBeWrongAboutDontEnum());
 }
 
 // ECMA 8.6.2.5
@@ -2114,24 +2112,24 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
     VM& vm = globalObject->vm();
     
     if (std::optional<uint32_t> index = parseIndex(propertyName))
-        return thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, globalObject, index.value());
+        return thisObject->methodTable()->deletePropertyByIndex(thisObject, globalObject, index.value());
 
     unsigned attributes;
 
-    if (!thisObject->staticPropertiesReified(vm)) {
-        if (auto entry = thisObject->findPropertyHashEntry(vm, propertyName)) {
+    if (!thisObject->staticPropertiesReified()) {
+        if (auto entry = thisObject->findPropertyHashEntry(propertyName)) {
             // If the static table contains a non-configurable (DontDelete) property then we can return early;
             // if there is a property in the storage array it too must be non-configurable (the language does
             // not allow repacement of a non-configurable property with a configurable one).
             if (entry->value->attributes() & PropertyAttribute::DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
-                ASSERT(!isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes)) || attributes & PropertyAttribute::DontDelete);
+                ASSERT(!isValidOffset(thisObject->structure()->get(vm, propertyName, attributes)) || attributes & PropertyAttribute::DontDelete);
                 return false;
             }
             thisObject->reifyAllStaticProperties(globalObject);
         }
     }
 
-    Structure* structure = thisObject->structure(vm);
+    Structure* structure = thisObject->structure();
 
     bool propertyIsPresent = isValidOffset(structure->get(vm, propertyName, attributes));
     if (propertyIsPresent) {
@@ -2150,7 +2148,7 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
             DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
             structure = Structure::removePropertyTransition(vm, structure, propertyName, offset, &deferredWatchpointFire);
             slot.setHit(offset);
-            ASSERT(structure->outOfLineCapacity() || !thisObject->structure(vm)->outOfLineCapacity());
+            ASSERT(structure->outOfLineCapacity() || !thisObject->structure()->outOfLineCapacity());
             thisObject->setStructure(vm, structure);
             ASSERT(!isValidOffset(structure->get(vm, propertyName, attributes)));
             if (offset != invalidOffset)
@@ -2242,7 +2240,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue function = object->structure(vm)->cachedSpecialProperty(key);
+    JSValue function = object->structure()->cachedSpecialProperty(key);
     if (!function) {
         PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
         // FIXME: Remove this when we have fixed: rdar://problem/33451840
@@ -2252,7 +2250,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
         RETURN_IF_EXCEPTION(scope, scope.exception());
         function = hasProperty ? slot.getValue(globalObject, propertyName) : jsUndefined();
         RETURN_IF_EXCEPTION(scope, scope.exception());
-        object->structure(vm)->cacheSpecialProperty(globalObject, vm, function, key, slot);
+        object->structure()->cacheSpecialProperty(globalObject, vm, function, key, slot);
         RETURN_IF_EXCEPTION(scope, scope.exception());
     }
     if (function.isUndefinedOrNull())
@@ -2262,7 +2260,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
     // https://bugs.webkit.org/show_bug.cgi?id=216084
     if constexpr (key == CachedSpecialPropertyKey::ToString) {
         if (function == globalObject->objectProtoToStringFunction()) {
-            if (auto result = object->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag))
+            if (auto result = object->structure()->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag))
                 return result;
         }
     }
@@ -2272,7 +2270,7 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
             return JSValue();
     }
 
-    auto callData = getCallData(vm, function);
+    auto callData = JSC::getCallData(function);
     if (callData.type == CallData::Type::None) {
         if constexpr (key == CachedSpecialPropertyKey::ToPrimitive)
             throwTypeError(globalObject, scope, "Symbol.toPrimitive is not a function, undefined, or null"_s);
@@ -2320,8 +2318,8 @@ JSValue JSObject::ordinaryToPrimitive(JSGlobalObject* globalObject, PreferredPri
     // being watched.
     // FIXME: Remove this hack for DFG.
     // https://bugs.webkit.org/show_bug.cgi?id=216117
-    for (const JSObject* object = this; object; object = object->structure(vm)->storedPrototypeObject(object))
-        object->structure(vm)->startWatchingInternalPropertiesIfNecessary(vm);
+    for (const JSObject* object = this; object; object = object->structure()->storedPrototypeObject(object))
+        object->structure()->startWatchingInternalPropertiesIfNecessary(vm);
 
     JSValue value;
     if (hint == PreferString) {
@@ -2364,7 +2362,7 @@ JSValue JSObject::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveTy
 
 bool JSObject::getOwnStaticPropertySlot(VM& vm, PropertyName propertyName, PropertySlot& slot)
 {
-    for (auto* info = classInfo(vm); info; info = info->parentClass) {
+    for (auto* info = classInfo(); info; info = info->parentClass) {
         if (auto* table = info->staticPropHashTable) {
             if (getStaticPropertySlotFromTable(vm, table->classForThis, *table, this, propertyName, slot))
                 return true;
@@ -2373,9 +2371,9 @@ bool JSObject::getOwnStaticPropertySlot(VM& vm, PropertyName propertyName, Prope
     return false;
 }
 
-std::optional<Structure::PropertyHashEntry> JSObject::findPropertyHashEntry(VM& vm, PropertyName propertyName) const
+std::optional<Structure::PropertyHashEntry> JSObject::findPropertyHashEntry(PropertyName propertyName) const
 {
-    return structure(vm)->findPropertyHashEntry(propertyName);
+    return structure()->findPropertyHashEntry(propertyName);
 }
 
 bool JSObject::hasInstance(JSGlobalObject* globalObject, JSValue value, JSValue hasInstanceValue)
@@ -2384,7 +2382,7 @@ bool JSObject::hasInstance(JSGlobalObject* globalObject, JSValue value, JSValue 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!hasInstanceValue.isUndefinedOrNull() && hasInstanceValue != globalObject->functionProtoHasInstanceSymbolFunction()) {
-        auto callData = JSC::getCallData(vm, hasInstanceValue);
+        auto callData = JSC::getCallData(hasInstanceValue);
         if (callData.type == CallData::Type::None) {
             throwException(globalObject, scope, createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(globalObject, this));
             return false;
@@ -2398,7 +2396,7 @@ bool JSObject::hasInstance(JSGlobalObject* globalObject, JSValue value, JSValue 
         return result.toBoolean(globalObject);
     }
 
-    TypeInfo info = structure(vm)->typeInfo();
+    TypeInfo info = structure()->typeInfo();
     if (info.implementsDefaultHasInstance()) {
         JSValue prototype = get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, false);
@@ -2409,7 +2407,7 @@ bool JSObject::hasInstance(JSGlobalObject* globalObject, JSValue value, JSValue 
             throwStackOverflowError(globalObject, scope);
             return false;
         }
-        RELEASE_AND_RETURN(scope, methodTable(vm)->customHasInstance(this, globalObject, value));
+        RELEASE_AND_RETURN(scope, methodTable()->customHasInstance(this, globalObject, value));
     }
 
     throwException(globalObject, scope, createInvalidInstanceofParameterErrorNotFunction(globalObject, this));
@@ -2469,7 +2467,7 @@ void JSObject::getPropertyNames(JSGlobalObject* globalObject, PropertyNameArray&
     unsigned prototypeCount = 0;
 
     while (true) {
-        object->methodTable(vm)->getOwnPropertyNames(object, globalObject, propertyNames, mode);
+        object->methodTable()->getOwnPropertyNames(object, globalObject, propertyNames, mode);
         RETURN_IF_EXCEPTION(scope, void());
 
         JSValue prototype = object->getPrototype(vm, globalObject);
@@ -2572,11 +2570,11 @@ void JSObject::getOwnNonIndexPropertyNames(JSGlobalObject* globalObject, Propert
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    methodTable(vm)->getOwnSpecialPropertyNames(this, globalObject, propertyNames, mode);
+    methodTable()->getOwnSpecialPropertyNames(this, globalObject, propertyNames, mode);
     RETURN_IF_EXCEPTION(scope, void());
 
     getNonReifiedStaticPropertyNames(vm, propertyNames, mode);
-    structure(vm)->getPropertyNamesFromStructure(vm, propertyNames, mode);
+    structure()->getPropertyNamesFromStructure(vm, propertyNames, mode);
     scope.assertNoExceptionExceptTermination();
 }
 
@@ -2608,7 +2606,7 @@ void JSObject::seal(VM& vm)
     if (isSealed(vm))
         return;
     enterDictionaryIndexingMode(vm);
-    setStructure(vm, Structure::sealTransition(vm, structure(vm)));
+    setStructure(vm, Structure::sealTransition(vm, structure()));
 }
 
 void JSObject::freeze(VM& vm)
@@ -2616,13 +2614,13 @@ void JSObject::freeze(VM& vm)
     if (isFrozen(vm))
         return;
     enterDictionaryIndexingMode(vm);
-    setStructure(vm, Structure::freezeTransition(vm, structure(vm)));
+    setStructure(vm, Structure::freezeTransition(vm, structure()));
 }
 
 bool JSObject::preventExtensions(JSObject* object, JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    if (!object->isStructureExtensible(vm)) {
+    if (!object->isStructureExtensible()) {
         // We've already set the internal [[PreventExtensions]] field to false.
         // We don't call the methodTable isExtensible here because it's not defined
         // that way in the specification. We are just doing an optimization here.
@@ -2630,37 +2628,36 @@ bool JSObject::preventExtensions(JSObject* object, JSGlobalObject* globalObject)
     }
 
     object->enterDictionaryIndexingMode(vm);
-    object->setStructure(vm, Structure::preventExtensionsTransition(vm, object->structure(vm)));
+    object->setStructure(vm, Structure::preventExtensionsTransition(vm, object->structure()));
     return true;
 }
 
-bool JSObject::isExtensible(JSObject* obj, JSGlobalObject* globalObject)
+bool JSObject::isExtensible(JSObject* obj, JSGlobalObject*)
 {
-    return obj->isStructureExtensible(globalObject->vm());
+    return obj->isStructureExtensible();
 }
 
 bool JSObject::isExtensible(JSGlobalObject* globalObject)
 { 
-    VM& vm = globalObject->vm();
-    return methodTable(vm)->isExtensible(this, globalObject);
+    return methodTable()->isExtensible(this, globalObject);
 }
 
 void JSObject::reifyAllStaticProperties(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    ASSERT(!staticPropertiesReified(vm));
+    ASSERT(!staticPropertiesReified());
 
     // If this object's ClassInfo has no static properties, then nothing to reify!
     // We can safely set the flag to avoid the expensive check again in the future.
     if (!TypeInfo::hasStaticPropertyTable(inlineTypeFlags())) {
-        structure(vm)->setStaticPropertiesReified(true);
+        structure()->setStaticPropertiesReified(true);
         return;
     }
 
-    if (!structure(vm)->isDictionary())
-        setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure(vm)));
+    if (!structure()->isDictionary())
+        setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure()));
 
-    for (const ClassInfo* info = classInfo(vm); info; info = info->parentClass) {
+    for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
         const HashTable* hashTable = info->staticPropHashTable;
         if (!hashTable)
             continue;
@@ -2674,12 +2671,12 @@ void JSObject::reifyAllStaticProperties(JSGlobalObject* globalObject)
         }
     }
 
-    structure(vm)->setStaticPropertiesReified(true);
+    structure()->setStaticPropertiesReified(true);
 }
 
-NEVER_INLINE void JSObject::fillGetterPropertySlot(VM& vm, PropertySlot& slot, JSCell* getterSetter, unsigned attributes, PropertyOffset offset)
+NEVER_INLINE void JSObject::fillGetterPropertySlot(VM&, PropertySlot& slot, JSCell* getterSetter, unsigned attributes, PropertyOffset offset)
 {
-    if (structure(vm)->isUncacheableDictionary()) {
+    if (structure()->isUncacheableDictionary()) {
         slot.setGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter));
         return;
     }
@@ -2726,7 +2723,7 @@ static bool putIndexedDescriptor(JSGlobalObject* globalObject, SparseArrayValueM
     return true;
 }
 
-ALWAYS_INLINE static bool canDoFastPutDirectIndex(VM& vm, JSObject* object)
+ALWAYS_INLINE static bool canDoFastPutDirectIndex(JSObject* object)
 {
     if (TypeInfo::isArgumentsType(object->type()))
         return true;
@@ -2735,7 +2732,7 @@ ALWAYS_INLINE static bool canDoFastPutDirectIndex(VM& vm, JSObject* object)
         return false;
 
     return (isJSArray(object) && !isCopyOnWrite(object->indexingMode()))
-        || jsDynamicCast<JSFinalObject*>(vm, object);
+        || jsDynamicCast<JSFinalObject*>(object);
 }
 
 // https://tc39.es/ecma262/#sec-ordinarydefineownproperty
@@ -2753,7 +2750,7 @@ bool JSObject::defineOwnIndexedProperty(JSGlobalObject* globalObject, unsigned i
         ASSERT(emptyAttributesDescriptor.attributes() == static_cast<unsigned>(PropertyAttribute::None));
 
 #if ASSERT_ENABLED
-        if (canGetIndexQuickly(index) && canDoFastPutDirectIndex(vm, this)) {
+        if (canGetIndexQuickly(index) && canDoFastPutDirectIndex(this)) {
             DeferTermination deferScope(vm);
             PropertyDescriptor currentDescriptor;
             ASSERT(getOwnPropertyDescriptor(globalObject, Identifier::from(vm, index), currentDescriptor));
@@ -2764,7 +2761,7 @@ bool JSObject::defineOwnIndexedProperty(JSGlobalObject* globalObject, unsigned i
         // Fast case: we're putting a regular property to a regular array
         if (descriptor.value()
             && (!descriptor.attributes() || (canGetIndexQuickly(index) && !descriptor.attributesOverridingCurrent(emptyAttributesDescriptor)))
-            && canDoFastPutDirectIndex(vm, this)) {
+            && canDoFastPutDirectIndex(this)) {
             ASSERT(!descriptor.isAccessorDescriptor());
             RELEASE_AND_RETURN(scope, putDirectIndex(globalObject, index, descriptor.value(), 0, throwException ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow));
         }
@@ -2786,7 +2783,7 @@ bool JSObject::defineOwnIndexedProperty(JSGlobalObject* globalObject, unsigned i
     // 3. If current is undefined and extensible is false, then Reject.
     // 4. If current is undefined and extensible is true, then
     if (result.isNewEntry) {
-        if (!isStructureExtensible(vm)) {
+        if (!isStructureExtensible()) {
             map->remove(result.iterator);
             return typeError(globalObject, scope, throwException, NonExtensibleObjectPropertyDefineError);
         }
@@ -2950,7 +2947,7 @@ bool JSObject::putByIndexBeyondVectorLengthWithoutAttributes(JSGlobalObject* glo
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isCopyOnWrite(indexingMode()));
     ASSERT((indexingType() & IndexingShapeMask) == indexingShape);
-    ASSERT(!indexingShouldBeSparse(vm));
+    ASSERT(!indexingShouldBeSparse());
 
     Butterfly* butterfly = m_butterfly.get();
     
@@ -3022,7 +3019,7 @@ bool JSObject::putByIndexBeyondVectorLengthWithArrayStorage(JSGlobalObject* glob
     // First, handle cases where we don't currently have a sparse map.
     if (LIKELY(!map)) {
         // If the array is not extensible, we should have entered dictionary mode, and created the sparse map.
-        ASSERT(isStructureExtensible(vm));
+        ASSERT(isStructureExtensible());
     
         // Update m_length if necessary.
         if (i >= storage->length())
@@ -3047,7 +3044,7 @@ bool JSObject::putByIndexBeyondVectorLengthWithArrayStorage(JSGlobalObject* glob
     unsigned length = storage->length();
     if (i >= length) {
         // Prohibit growing the array if length is not writable.
-        if (map->lengthIsReadOnly() || !isStructureExtensible(vm))
+        if (map->lengthIsReadOnly() || !isStructureExtensible())
             return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
         length = i + 1;
         storage->setLength(length);
@@ -3090,7 +3087,7 @@ bool JSObject::putByIndexBeyondVectorLength(JSGlobalObject* globalObject, unsign
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES: {
-        if (indexingShouldBeSparse(vm)) {
+        if (indexingShouldBeSparse()) {
             RELEASE_AND_RETURN(scope, putByIndexBeyondVectorLengthWithArrayStorage(
                 globalObject, i, value, shouldThrow,
                 ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm)));
@@ -3098,9 +3095,9 @@ bool JSObject::putByIndexBeyondVectorLength(JSGlobalObject* globalObject, unsign
         if (indexIsSufficientlyBeyondLengthForSparseMap(i, 0) || i >= MIN_SPARSE_ARRAY_INDEX) {
             RELEASE_AND_RETURN(scope, putByIndexBeyondVectorLengthWithArrayStorage(globalObject, i, value, shouldThrow, createArrayStorage(vm, 0, 0)));
         }
-        if (needsSlowPutIndexing(vm)) {
+        if (needsSlowPutIndexing()) {
             // Convert the indexing type to the SlowPutArrayStorage and retry.
-            createArrayStorage(vm, i + 1, getNewVectorLength(vm, 0, 0, 0, i + 1));
+            createArrayStorage(vm, i + 1, getNewVectorLength(0, 0, 0, i + 1));
             RELEASE_AND_RETURN(scope, putByIndex(this, globalObject, i, value, shouldThrow));
         }
         
@@ -3162,7 +3159,7 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(JSGlobalObject* 
     // First, handle cases where we don't currently have a sparse map.
     if (LIKELY(!map)) {
         // If the array is not extensible, we should have entered dictionary mode, and created the spare map.
-        ASSERT(isStructureExtensible(vm));
+        ASSERT(isStructureExtensible());
     
         // Update m_length if necessary.
         if (i >= storage->length())
@@ -3192,7 +3189,7 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(JSGlobalObject* 
             // Prohibit growing the array if length is not writable.
             if (map->lengthIsReadOnly())
                 return typeError(globalObject, scope, mode == PutDirectIndexShouldThrow, ReadonlyPropertyWriteError);
-            if (!isStructureExtensible(vm))
+            if (!isStructureExtensible())
                 return typeError(globalObject, scope, mode == PutDirectIndexShouldThrow, NonExtensibleObjectPropertyDefineError);
         }
         length = i + 1;
@@ -3229,10 +3226,10 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(JSGlobalObject* globalObje
     VM& vm = globalObject->vm();
     ASSERT(!value.isCustomGetterSetter());
 
-    if (!canDoFastPutDirectIndex(vm, this)) {
+    if (!canDoFastPutDirectIndex(this)) {
         PropertyDescriptor descriptor;
         descriptor.setDescriptor(value, attributes);
-        return methodTable(vm)->defineOwnProperty(this, globalObject, Identifier::from(vm, i), descriptor, mode == PutDirectIndexShouldThrow);
+        return methodTable()->defineOwnProperty(this, globalObject, Identifier::from(vm, i), descriptor, mode == PutDirectIndexShouldThrow);
     }
 
     // i should be a valid array index that is outside of the current vector.
@@ -3243,7 +3240,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(JSGlobalObject* globalObje
     
     switch (indexingType()) {
     case ALL_BLANK_INDEXING_TYPES: {
-        if (indexingShouldBeSparse(vm) || attributes) {
+        if (indexingShouldBeSparse() || attributes) {
             return putDirectIndexBeyondVectorLengthWithArrayStorage(
                 globalObject, i, value, attributes, mode,
                 ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm));
@@ -3252,8 +3249,8 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(JSGlobalObject* globalObje
             return putDirectIndexBeyondVectorLengthWithArrayStorage(
                 globalObject, i, value, attributes, mode, createArrayStorage(vm, 0, 0));
         }
-        if (needsSlowPutIndexing(vm)) {
-            ArrayStorage* storage = createArrayStorage(vm, i + 1, getNewVectorLength(vm, 0, 0, 0, i + 1));
+        if (needsSlowPutIndexing()) {
+            ArrayStorage* storage = createArrayStorage(vm, i + 1, getNewVectorLength(0, 0, 0, i + 1));
             storage->m_vector[i].set(vm, this, value);
             storage->m_numValuesInVector++;
             return true;
@@ -3270,7 +3267,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(JSGlobalObject* globalObje
     }
         
     case ALL_INT32_INDEXING_TYPES: {
-        ASSERT(!indexingShouldBeSparse(vm));
+        ASSERT(!indexingShouldBeSparse());
         if (attributes)
             return putDirectIndexBeyondVectorLengthWithArrayStorage(globalObject, i, value, attributes, mode, ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm));
         if (!value.isInt32()) {
@@ -3282,7 +3279,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(JSGlobalObject* globalObje
     }
         
     case ALL_DOUBLE_INDEXING_TYPES: {
-        ASSERT(!indexingShouldBeSparse(vm));
+        ASSERT(!indexingShouldBeSparse());
         if (attributes)
             return putDirectIndexBeyondVectorLengthWithArrayStorage(globalObject, i, value, attributes, mode, ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm));
         if (!value.isNumber()) {
@@ -3299,7 +3296,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(JSGlobalObject* globalObje
     }
         
     case ALL_CONTIGUOUS_INDEXING_TYPES: {
-        ASSERT(!indexingShouldBeSparse(vm));
+        ASSERT(!indexingShouldBeSparse());
         if (attributes)
             return putDirectIndexBeyondVectorLengthWithArrayStorage(globalObject, i, value, attributes, mode, ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm));
         putByIndexBeyondVectorLengthWithoutAttributes<ContiguousShape>(globalObject, i, value);
@@ -3382,7 +3379,7 @@ JSFunction* JSObject::putDirectBuiltinFunctionWithoutTransition(VM& vm, JSGlobal
 }
 
 // NOTE: This method is for ArrayStorage vectors.
-ALWAYS_INLINE unsigned JSObject::getNewVectorLength(VM& vm, unsigned indexBias, unsigned currentVectorLength, unsigned currentLength, unsigned desiredLength)
+ALWAYS_INLINE unsigned JSObject::getNewVectorLength(unsigned indexBias, unsigned currentVectorLength, unsigned currentLength, unsigned desiredLength)
 {
     ASSERT(desiredLength <= MAX_STORAGE_VECTOR_LENGTH);
 
@@ -3402,11 +3399,11 @@ ALWAYS_INLINE unsigned JSObject::getNewVectorLength(VM& vm, unsigned indexBias, 
     lastArraySize = std::min(increasedLength, FIRST_ARRAY_STORAGE_VECTOR_GROW);
 
     return ArrayStorage::optimalVectorLength(
-        indexBias, structure(vm)->outOfLineCapacity(),
+        indexBias, structure()->outOfLineCapacity(),
         std::min(increasedLength, MAX_STORAGE_VECTOR_LENGTH));
 }
 
-ALWAYS_INLINE unsigned JSObject::getNewVectorLength(VM& vm, unsigned desiredLength)
+ALWAYS_INLINE unsigned JSObject::getNewVectorLength(unsigned desiredLength)
 {
     unsigned indexBias = 0;
     unsigned vectorLength = 0;
@@ -3419,7 +3416,7 @@ ALWAYS_INLINE unsigned JSObject::getNewVectorLength(VM& vm, unsigned desiredLeng
         length = m_butterfly->publicLength();
     }
 
-    return getNewVectorLength(vm, indexBias, vectorLength, length, desiredLength);
+    return getNewVectorLength(indexBias, vectorLength, length, desiredLength);
 }
 
 template<IndexingType indexingShape>
@@ -3475,7 +3472,7 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
     ArrayStorage* storage = arrayStorage();
     
     unsigned vectorLength = storage->vectorLength();
-    unsigned availableVectorLength = storage->availableVectorLength(structure(vm), vectorLength); 
+    unsigned availableVectorLength = storage->availableVectorLength(structure(), vectorLength); 
     if (availableVectorLength >= newLength) {
         // The cell was already big enough for the desired length!
         for (unsigned i = vectorLength; i < availableVectorLength; ++i)
@@ -3495,10 +3492,10 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
 
     unsigned indexBias = storage->m_indexBias;
     ASSERT(newLength > vectorLength);
-    unsigned newVectorLength = getNewVectorLength(vm, newLength);
+    unsigned newVectorLength = getNewVectorLength(newLength);
 
     // Fast case - there is no precapacity. In these cases a realloc makes sense.
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     if (LIKELY(!indexBias)) {
         DeferGC deferGC(vm);
         Butterfly* newButterfly = storage->butterfly()->growArrayRight(
@@ -3547,7 +3544,7 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
     unsigned oldVectorLength = butterfly->vectorLength();
     unsigned newVectorLength;
     
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     unsigned propertyCapacity = structure->outOfLineCapacity();
     
     GCDeferralContext deferralContext(vm);
@@ -3598,10 +3595,10 @@ void JSObject::reallocateAndShrinkButterfly(VM& vm, unsigned length)
     ASSERT(hasContiguous(indexingType()) || hasInt32(indexingType()) || hasDouble(indexingType()) || hasUndecided(indexingType()));
     ASSERT(m_butterfly->vectorLength() > length);
     ASSERT(m_butterfly->publicLength() >= length);
-    ASSERT(!m_butterfly->indexingHeader()->preCapacity(structure(vm)));
+    ASSERT(!m_butterfly->indexingHeader()->preCapacity(structure()));
 
     DeferGC deferGC(vm);
-    Butterfly* newButterfly = butterfly()->resizeArray(vm, this, structure(vm), 0, ArrayStorage::sizeFor(length));
+    Butterfly* newButterfly = butterfly()->resizeArray(vm, this, structure(), 0, ArrayStorage::sizeFor(length));
     newButterfly->setVectorLength(length);
     newButterfly->setPublicLength(length);
     WTF::storeStoreFence();
@@ -3616,7 +3613,7 @@ Butterfly* JSObject::allocateMoreOutOfLineStorage(VM& vm, size_t oldSize, size_t
     // It's important that this function not rely on structure(), for the property
     // capacity, since we might have already mutated the structure in-place.
 
-    return Butterfly::createOrGrowPropertyStorage(butterfly(), vm, this, structure(vm), oldSize, newSize);
+    return Butterfly::createOrGrowPropertyStorage(butterfly(), vm, this, structure(), oldSize, newSize);
 }
 
 template<typename T>
@@ -3671,7 +3668,7 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
     auto scope = DECLARE_THROW_SCOPE(vm);
     PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
 
-    bool result = methodTable(vm)->getOwnPropertySlot(this, globalObject, propertyName, slot);
+    bool result = methodTable()->getOwnPropertySlot(this, globalObject, propertyName, slot);
     EXCEPTION_ASSERT(!scope.exception() || !result);
     if (!result)
         return false;
@@ -3681,7 +3678,7 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
     else if (slot.attributes() & PropertyAttribute::CustomAccessor) {
         ASSERT_WITH_MESSAGE(slot.isCustom(), "PropertySlot::TypeCustom is required in case of PropertyAttribute::CustomAccessor");
         descriptor.setAccessorDescriptor((slot.attributes() | PropertyAttribute::Accessor) & ~PropertyAttribute::CustomAccessor);
-        JSGlobalObject* slotBaseGlobalObject = slot.slotBase()->globalObject(vm);
+        JSGlobalObject* slotBaseGlobalObject = slot.slotBase()->globalObject();
         if (slot.customGetter())
             descriptor.setGetter(createCustomGetterFunction(slotBaseGlobalObject, vm, propertyName, slot.customGetter(), slot.domAttribute()));
         if (slot.customSetter())
@@ -3834,18 +3831,18 @@ bool JSObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject,
 
 void JSObject::convertToDictionary(VM& vm)
 {
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure(vm));
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure());
     setStructure(
-        vm, Structure::toCacheableDictionaryTransition(vm, structure(vm), &deferredWatchpointFire));
+        vm, Structure::toCacheableDictionaryTransition(vm, structure(), &deferredWatchpointFire));
 }
 
 void JSObject::convertToUncacheableDictionary(VM& vm)
 {
-    if (structure(vm)->isUncacheableDictionary())
+    if (structure()->isUncacheableDictionary())
         return;
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure(vm));
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure());
     setStructure(
-        vm, Structure::toUncacheableDictionaryTransition(vm, structure(vm), &deferredWatchpointFire));
+        vm, Structure::toUncacheableDictionaryTransition(vm, structure(), &deferredWatchpointFire));
 }
 
 
@@ -3858,7 +3855,7 @@ void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM
     Butterfly* oldButterfly = this->butterfly();
     size_t preCapacity;
     size_t indexingPayloadSizeInBytes;
-    bool hasIndexingHeader = this->hasIndexingHeader(vm);
+    bool hasIndexingHeader = this->hasIndexingHeader();
     if (UNLIKELY(hasIndexingHeader)) {
         preCapacity = oldButterfly->indexingHeader()->preCapacity(structure);
         indexingPayloadSizeInBytes = oldButterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
@@ -3878,9 +3875,8 @@ void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM
     setButterfly(vm, newButterfly);
 }
 
-uint32_t JSObject::getEnumerableLength(JSGlobalObject* globalObject)
+uint32_t JSObject::getEnumerableLength()
 {
-    VM& vm = globalObject->vm();
     JSObject* object = this;
 
     switch (object->indexingType()) {
@@ -3895,7 +3891,7 @@ uint32_t JSObject::getEnumerableLength(JSGlobalObject* globalObject)
         unsigned enumerableLength = butterfly->publicLength();
         if (!enumerableLength)
             return 0;
-        if (object->structure(vm)->holesMustForwardToPrototype(vm, object))
+        if (object->structure()->holesMustForwardToPrototype(object))
             return 0;
         for (unsigned i = 0; i < enumerableLength; ++i) {
             if (!butterfly->contiguous().at(object, i))
@@ -3909,7 +3905,7 @@ uint32_t JSObject::getEnumerableLength(JSGlobalObject* globalObject)
         unsigned enumerableLength = butterfly->publicLength();
         if (!enumerableLength)
             return 0;
-        if (object->structure(vm)->holesMustForwardToPrototype(vm, object))
+        if (object->structure()->holesMustForwardToPrototype(object))
             return 0;
         for (unsigned i = 0; i < enumerableLength; ++i) {
             double value = butterfly->contiguousDouble().at(object, i);
@@ -3927,7 +3923,7 @@ uint32_t JSObject::getEnumerableLength(JSGlobalObject* globalObject)
         unsigned enumerableLength = std::min(storage->length(), storage->vectorLength());
         if (!enumerableLength)
             return 0;
-        if (object->structure(vm)->holesMustForwardToPrototype(vm, object))
+        if (object->structure()->holesMustForwardToPrototype(object))
             return 0;
         for (unsigned i = 0; i < enumerableLength; ++i) {
             if (!storage->m_vector[i])
@@ -3960,7 +3956,7 @@ JSValue JSObject::getMethod(JSGlobalObject* globalObject, CallData& callData, co
         return jsUndefined();
     }
 
-    callData = JSC::getCallData(vm, method);
+    callData = JSC::getCallData(method);
     if (callData.type == CallData::Type::None) {
         throwVMTypeError(globalObject, scope, errorMessage);
         return jsUndefined();
@@ -3969,13 +3965,13 @@ JSValue JSObject::getMethod(JSGlobalObject* globalObject, CallData& callData, co
     return method;
 }
 
-bool JSObject::anyObjectInChainMayInterceptIndexedAccesses(VM& vm) const
+bool JSObject::anyObjectInChainMayInterceptIndexedAccesses() const
 {
     for (const JSObject* current = this; ;) {
-        if (current->structure(vm)->mayInterceptIndexedAccesses())
+        if (current->structure()->mayInterceptIndexedAccesses())
             return true;
         
-        JSValue prototype = current->getPrototypeDirect(vm);
+        JSValue prototype = current->getPrototypeDirect();
         if (prototype.isNull())
             return false;
         
@@ -3983,14 +3979,14 @@ bool JSObject::anyObjectInChainMayInterceptIndexedAccesses(VM& vm) const
     }
 }
 
-bool JSObject::needsSlowPutIndexing(VM& vm) const
+bool JSObject::needsSlowPutIndexing() const
 {
-    return anyObjectInChainMayInterceptIndexedAccesses(vm) || globalObject(vm)->isHavingABadTime();
+    return anyObjectInChainMayInterceptIndexedAccesses() || globalObject()->isHavingABadTime();
 }
 
-TransitionKind JSObject::suggestedArrayStorageTransition(VM& vm) const
+TransitionKind JSObject::suggestedArrayStorageTransition() const
 {
-    if (needsSlowPutIndexing(vm))
+    if (needsSlowPutIndexing())
         return TransitionKind::AllocateSlowPutArrayStorage;
     
     return TransitionKind::AllocateArrayStorage;

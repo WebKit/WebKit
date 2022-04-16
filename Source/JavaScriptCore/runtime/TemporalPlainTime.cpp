@@ -61,12 +61,12 @@ TemporalPlainTime::TemporalPlainTime(VM& vm, Structure* structure, ISO8601::Plai
 void TemporalPlainTime::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
             auto* plainTime = jsCast<TemporalPlainTime*>(init.owner);
-            auto* globalObject = plainTime->globalObject(vm);
+            auto* globalObject = plainTime->globalObject();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
         });
@@ -379,7 +379,7 @@ static JSObject* getTemporalCalendarWithISODefault(JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (itemValue.inherits<TemporalPlainTime>(vm))
+    if (itemValue.inherits<TemporalPlainTime>())
         return jsCast<TemporalPlainTime*>(itemValue)->calendar();
 
     JSValue calendar = itemValue.get(globalObject, vm.propertyNames->calendar);
@@ -396,7 +396,7 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
     auto overflow = overflowValue.value_or(TemporalOverflow::Constrain);
 
     if (itemValue.isObject()) {
-        if (itemValue.inherits<TemporalPlainTime>(vm))
+        if (itemValue.inherits<TemporalPlainTime>())
             return jsCast<TemporalPlainTime*>(itemValue);
         JSObject* calendar = getTemporalCalendarWithISODefault(globalObject, itemValue);
         RETURN_IF_EXCEPTION(scope, { });
@@ -513,7 +513,7 @@ ISO8601::PlainTime TemporalPlainTime::with(JSGlobalObject* globalObject, JSObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (temporalTimeLike->inherits<TemporalPlainTime>(vm)) {
+    if (temporalTimeLike->inherits<TemporalPlainTime>()) {
         throwTypeError(globalObject, scope, "argument object must not carry calendar"_s);
         return { };
     }

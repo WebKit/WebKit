@@ -233,7 +233,7 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
         JSFunction::create(vm, globalObject, 0, "[Symbol.toPrimitive]"_s, convertObjCFallbackObjectToPrimitive),
         static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -262,7 +262,7 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    if (!thisValue.inherits<ObjCRuntimeObject>(vm))
+    if (!thisValue.inherits<ObjCRuntimeObject>())
         return throwVMTypeError(lexicalGlobalObject, scope);
 
     JSValue result = jsUndefined();
@@ -314,7 +314,7 @@ JSC_DEFINE_HOST_FUNCTION(convertObjCFallbackObjectToPrimitive, (JSGlobalObject* 
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<ObjcFallbackObjectImp*>(vm, callFrame->thisValue());
+    auto* thisObject = jsDynamicCast<ObjcFallbackObjectImp*>(callFrame->thisValue());
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope, "ObjcFallbackObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
 

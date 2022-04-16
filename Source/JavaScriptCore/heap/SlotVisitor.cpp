@@ -57,21 +57,20 @@ static void validate(JSCell* cell)
 
     // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
     // I hate this sentence.
-    VM& vm = cell->vm();
-    if (cell->structure()->structure()->JSCell::classInfo(vm) != cell->structure()->JSCell::classInfo(vm)) {
+    if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo()) {
         const char* parentClassName = 0;
         const char* ourClassName = 0;
-        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo(vm))
-            parentClassName = cell->structure()->structure()->JSCell::classInfo(vm)->className;
-        if (cell->structure()->JSCell::classInfo(vm))
-            ourClassName = cell->structure()->JSCell::classInfo(vm)->className;
+        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo())
+            parentClassName = cell->structure()->structure()->JSCell::classInfo()->className;
+        if (cell->structure()->JSCell::classInfo())
+            ourClassName = cell->structure()->JSCell::classInfo()->className;
         dataLogF("parent structure (%p <%s>) of cell at %p doesn't match cell's structure (%p <%s>)\n",
             cell->structure()->structure(), parentClassName, cell, cell->structure(), ourClassName);
         CRASH();
     }
 
     // Make sure we can walk the ClassInfo chain
-    const ClassInfo* info = cell->classInfo(vm);
+    const ClassInfo* info = cell->classInfo();
     do { } while ((info = info->parentClass));
 }
 #endif
@@ -383,16 +382,16 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
         // https://bugs.webkit.org/show_bug.cgi?id=162462
 #if CPU(X86_64)
         if (UNLIKELY(Options::dumpZappedCellCrashData())) {
-            Structure* structure = cell->structure(vm());
+            Structure* structure = cell->structure();
             if (LIKELY(structure)) {
-                const MethodTable* methodTable = &structure->classInfo()->methodTable;
+                const MethodTable* methodTable = &structure->classInfoForCells()->methodTable;
                 methodTable->visitChildren(const_cast<JSCell*>(cell), *this);
                 break;
             }
             reportZappedCellAndCrash(m_heap, const_cast<JSCell*>(cell));
         }
 #endif
-        cell->methodTable(vm())->visitChildren(const_cast<JSCell*>(cell), *this);
+        cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
         break;
     }
 

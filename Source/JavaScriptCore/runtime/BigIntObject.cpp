@@ -52,7 +52,7 @@ BigIntObject::BigIntObject(VM& vm, Structure* structure)
 void BigIntObject::finishCreation(VM& vm, JSValue bigInt)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     setInternalValue(vm, bigInt);
 }
 

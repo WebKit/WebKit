@@ -69,7 +69,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
     DeferTermination deferScope(vm);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(scope);
-    ASSERT(globalObject == scope->globalObject(vm));
+    ASSERT(globalObject == scope->globalObject());
     RELEASE_ASSERT(globalObject);
     ASSERT(&globalObject->vm() == &vm);
 
@@ -85,11 +85,11 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, JSGlobalObject* 
     if (error.isValid())
         return error.toErrorObject(globalObject, source());
 
-    JSValue nextPrototype = globalObject->getPrototypeDirect(vm);
+    JSValue nextPrototype = globalObject->getPrototypeDirect();
     while (nextPrototype && nextPrototype.isObject()) {
         if (UNLIKELY(asObject(nextPrototype)->type() == ProxyObjectType))
             return createTypeError(globalObject, "Proxy is not allowed in the global prototype chain."_s);
-        nextPrototype = asObject(nextPrototype)->getPrototypeDirect(vm);
+        nextPrototype = asObject(nextPrototype)->getPrototypeDirect();
     }
     
     JSGlobalLexicalEnvironment* globalLexicalEnvironment = globalObject->globalLexicalEnvironment();

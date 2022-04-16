@@ -957,52 +957,52 @@ inline JSObject* JSValue::toObject(JSGlobalObject* globalObject) const
     return isCell() ? asCell()->toObject(globalObject) : toObjectSlowCase(globalObject);
 }
 
-inline bool JSValue::isCallable(VM& vm) const
+inline bool JSValue::isCallable() const
 {
-    return isCell() && asCell()->isCallable(vm);
+    return isCell() && asCell()->isCallable();
 }
 
 template<Concurrency concurrency>
-inline TriState JSValue::isCallableWithConcurrency(VM& vm) const
+inline TriState JSValue::isCallableWithConcurrency() const
 {
     if (!isCell())
         return TriState::False;
-    return asCell()->isCallableWithConcurrency<concurrency>(vm);
+    return asCell()->isCallableWithConcurrency<concurrency>();
 }
 
-inline bool JSValue::isConstructor(VM& vm) const
+inline bool JSValue::isConstructor() const
 {
-    return isCell() && asCell()->isConstructor(vm);
+    return isCell() && asCell()->isConstructor();
 }
 
 template<Concurrency concurrency>
-inline TriState JSValue::isConstructorWithConcurrency(VM& vm) const
+inline TriState JSValue::isConstructorWithConcurrency() const
 {
     if (!isCell())
         return TriState::False;
-    return asCell()->isConstructorWithConcurrency<concurrency>(vm);
+    return asCell()->isConstructorWithConcurrency<concurrency>();
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits
-inline bool JSValue::inherits(VM& vm, const ClassInfo* classInfo) const
+inline bool JSValue::inherits(const ClassInfo* classInfo) const
 {
-    return isCell() && asCell()->inherits(vm, classInfo);
+    return isCell() && asCell()->inherits(classInfo);
 }
 
 template<typename Target>
-inline bool JSValue::inherits(VM& vm) const
+inline bool JSValue::inherits() const
 {
-    return isCell() && asCell()->inherits<Target>(vm);
+    return isCell() && asCell()->inherits<Target>();
 }
 
-inline const ClassInfo* JSValue::classInfoOrNull(VM& vm) const
+inline const ClassInfo* JSValue::classInfoOrNull() const
 {
-    return isCell() ? asCell()->classInfo(vm) : nullptr;
+    return isCell() ? asCell()->classInfo() : nullptr;
 }
 
 inline JSValue JSValue::toThis(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
 {
-    return isCell() ? asCell()->methodTable(getVM(globalObject))->toThis(asCell(), globalObject, ecmaMode) : toThisSlowCase(globalObject, ecmaMode);
+    return isCell() ? asCell()->methodTable()->toThis(asCell(), globalObject, ecmaMode) : toThisSlowCase(globalObject, ecmaMode);
 }
 
 ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName propertyName) const
@@ -1133,7 +1133,7 @@ inline bool JSValue::put(JSGlobalObject* globalObject, PropertyName propertyName
     if (UNLIKELY(!isCell()))
         return putToPrimitive(globalObject, propertyName, value, slot);
 
-    return asCell()->methodTable(getVM(globalObject))->put(asCell(), globalObject, propertyName, value, slot);
+    return asCell()->methodTable()->put(asCell(), globalObject, propertyName, value, slot);
 }
 
 ALWAYS_INLINE bool JSValue::putInline(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -1148,7 +1148,7 @@ inline bool JSValue::putByIndex(JSGlobalObject* globalObject, unsigned propertyN
     if (UNLIKELY(!isCell()))
         return putToPrimitiveByIndex(globalObject, propertyName, value, shouldThrow);
 
-    return asCell()->methodTable(getVM(globalObject))->putByIndex(asCell(), globalObject, propertyName, value, shouldThrow);
+    return asCell()->methodTable()->putByIndex(asCell(), globalObject, propertyName, value, shouldThrow);
 }
 
 ALWAYS_INLINE JSValue JSValue::getPrototype(JSGlobalObject* globalObject) const
@@ -1159,10 +1159,10 @@ ALWAYS_INLINE JSValue JSValue::getPrototype(JSGlobalObject* globalObject) const
     return synthesizePrototype(globalObject);
 }
 
-inline Structure* JSValue::structureOrNull(VM& vm) const
+inline Structure* JSValue::structureOrNull() const
 {
     if (isCell())
-        return asCell()->structure(vm);
+        return asCell()->structure();
     return nullptr;
 }
 
@@ -1197,13 +1197,13 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(JSGlobalObject* globalObject, JS
                 return true;
             if (!v2.isCell())
                 return false;
-            return v2.asCell()->structure(vm)->masqueradesAsUndefined(globalObject);
+            return v2.asCell()->structure()->masqueradesAsUndefined(globalObject);
         }
 
         if (v2.isUndefinedOrNull()) {
             if (!v1.isCell())
                 return false;
-            return v1.asCell()->structure(vm)->masqueradesAsUndefined(globalObject);
+            return v1.asCell()->structure()->masqueradesAsUndefined(globalObject);
         }
 
         if (v1.isObject()) {

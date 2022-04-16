@@ -64,7 +64,7 @@ void JSMicrotask::run(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    auto handlerCallData = getCallData(vm, m_job.get());
+    auto handlerCallData = JSC::getCallData(m_job.get());
     ASSERT(handlerCallData.type != CallData::Type::None);
 
     MarkedArgumentBuffer handlerArguments;

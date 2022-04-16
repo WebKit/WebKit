@@ -121,7 +121,7 @@ template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInter
 }
 
 JSTestCallbackInterface::JSTestCallbackInterface(VM& vm, JSObject* callback)
-    : TestCallbackInterface(jsCast<JSDOMGlobalObject*>(callback->globalObject(vm))->scriptExecutionContext())
+    : TestCallbackInterface(jsCast<JSDOMGlobalObject*>(callback->globalObject())->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(vm, callback, this))
 {
 }

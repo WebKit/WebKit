@@ -533,7 +533,7 @@ inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* ca
     ASSERT(targetReference.isObject());
     JSObject* referenceAsObject = jsCast<JSObject*>(targetReference);
 
-    ASSERT(referenceAsObject->inherits<WebAssemblyFunctionBase>(callerInstance->owner<JSObject>()->vm()));
+    ASSERT(referenceAsObject->inherits<WebAssemblyFunctionBase>());
     auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
     Wasm::WasmToWasmImportableFunction function = wasmFunction->importableFunction();
     Wasm::Instance* calleeInstance = &wasmFunction->instance()->instance();
@@ -693,7 +693,7 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
     };
 
     const auto& handleCatch = [&](const auto& instruction) {
-        JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(vm, thrownValue);
+        JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue);
         RELEASE_ASSERT(!!wasmException);
         payload = bitwise_cast<void*>(wasmException->payload().data());
         callFrame->uncheckedR(instruction.m_exception) = thrownValue;

@@ -46,7 +46,7 @@ JSJavaScriptCallFrame::JSJavaScriptCallFrame(VM& vm, Structure* structure, Ref<J
 void JSJavaScriptCallFrame::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 JSObject* JSJavaScriptCallFrame::createPrototype(VM& vm, JSGlobalObject* globalObject)
@@ -153,7 +153,7 @@ JSValue JSJavaScriptCallFrame::scopeDescriptions(JSGlobalObject* globalObject)
 
 JSValue JSJavaScriptCallFrame::caller(JSGlobalObject* lexicalGlobalObject) const
 {
-    return toJS(lexicalGlobalObject, this->globalObject(lexicalGlobalObject->vm()), impl().caller());
+    return toJS(lexicalGlobalObject, this->globalObject(), impl().caller());
 }
 
 JSValue JSJavaScriptCallFrame::sourceID(JSGlobalObject*) const
@@ -202,7 +202,7 @@ JSValue JSJavaScriptCallFrame::scopeChain(JSGlobalObject* globalObject) const
         return { };
     }
 
-    return constructArray(this->globalObject(vm), static_cast<ArrayAllocationProfile*>(nullptr), list);
+    return constructArray(this->globalObject(), static_cast<ArrayAllocationProfile*>(nullptr), list);
 }
 
 JSValue JSJavaScriptCallFrame::thisObject(JSGlobalObject* globalObject) const

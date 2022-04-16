@@ -56,7 +56,7 @@ JSValue GetterSetter::callGetter(JSGlobalObject* globalObject, JSValue thisValue
 
     JSObject* getter = this->getter();
 
-    auto callData = JSC::getCallData(vm, getter);
+    auto callData = JSC::getCallData(getter);
     RELEASE_AND_RETURN(scope, call(globalObject, getter, callData, thisValue, ArgList()));
 }
 
@@ -74,7 +74,7 @@ bool GetterSetter::callSetter(JSGlobalObject* globalObject, JSValue thisValue, J
     args.append(value);
     ASSERT(!args.hasOverflowed());
 
-    auto callData = JSC::getCallData(vm, setter);
+    auto callData = JSC::getCallData(setter);
     scope.release();
     call(globalObject, setter, callData, thisValue, args);
     return true;

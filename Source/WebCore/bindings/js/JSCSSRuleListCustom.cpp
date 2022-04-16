@@ -39,7 +39,7 @@ using namespace JSC;
 bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
     JSCSSRuleList* jsCSSRuleList = jsCast<JSCSSRuleList*>(handle.slot()->asCell());
-    if (!jsCSSRuleList->hasCustomProperties(jsCSSRuleList->vm()))
+    if (!jsCSSRuleList->hasCustomProperties())
         return false;
 
     if (CSSStyleSheet* styleSheet = jsCSSRuleList->wrapped().styleSheet()) {

@@ -41,7 +41,7 @@ AsyncFunctionPrototype::AsyncFunctionPrototype(VM& vm, Structure* structure)
 void AsyncFunctionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

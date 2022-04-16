@@ -160,10 +160,10 @@ JSTypedArrayType JSValueGetTypedArrayType(JSContextRef ctx, JSValueRef valueRef,
         return kJSTypedArrayTypeNone;
     JSObject* object = value.getObject();
 
-    if (jsDynamicCast<JSArrayBuffer*>(vm, object))
+    if (jsDynamicCast<JSArrayBuffer*>(object))
         return kJSTypedArrayTypeArrayBuffer;
 
-    return toJSTypedArrayType(object->classInfo(vm)->typedArrayStorageType);
+    return toJSTypedArrayType(object->classInfo()->typedArrayStorageType);
 }
 
 JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType, size_t length, JSValueRef* exception)
@@ -217,7 +217,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
 
-    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, toJS(jsBufferRef));
+    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(toJS(jsBufferRef));
     if (!jsBuffer) {
         setException(ctx, exception, createTypeError(globalObject, "JSObjectMakeTypedArrayWithArrayBuffer expects buffer to be an Array Buffer object"_s));
         return nullptr;
@@ -242,7 +242,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
 
-    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, toJS(jsBufferRef));
+    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(toJS(jsBufferRef));
     if (!jsBuffer) {
         setException(ctx, exception, createTypeError(globalObject, "JSObjectMakeTypedArrayWithArrayBuffer expects buffer to be an Array Buffer object"_s));
         return nullptr;
@@ -261,7 +261,7 @@ void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSV
     JSLockHolder locker(vm);
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object)) {
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object)) {
         if (ArrayBuffer* buffer = typedArray->possiblySharedBuffer()) {
             buffer->pinAndLock();
             return buffer->data();
@@ -272,37 +272,31 @@ void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSV
     return nullptr;
 }
 
-size_t JSObjectGetTypedArrayLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
+size_t JSObjectGetTypedArrayLength(JSContextRef, JSObjectRef objectRef, JSValueRef*)
 {
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
         return typedArray->length();
 
     return 0;
 }
 
-size_t JSObjectGetTypedArrayByteLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
+size_t JSObjectGetTypedArrayByteLength(JSContextRef, JSObjectRef objectRef, JSValueRef*)
 {
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
-        return typedArray->length() * elementSize(typedArray->classInfo(vm)->typedArrayStorageType);
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
+        return typedArray->length() * elementSize(typedArray->classInfo()->typedArrayStorageType);
 
     return 0;
 }
 
-size_t JSObjectGetTypedArrayByteOffset(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
+size_t JSObjectGetTypedArrayByteOffset(JSContextRef, JSObjectRef objectRef, JSValueRef*)
 {
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object))
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object))
         return typedArray->byteOffset();
 
     return 0;
@@ -316,9 +310,9 @@ JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef objectRef,
     JSObject* object = toJS(objectRef);
 
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(vm, object)) {
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object)) {
         if (ArrayBuffer* buffer = typedArray->possiblySharedBuffer())
-            return toRef(vm.m_typedArrayController->toJS(globalObject, typedArray->globalObject(vm), buffer));
+            return toRef(vm.m_typedArrayController->toJS(globalObject, typedArray->globalObject(), buffer));
 
         setException(ctx, exception, createOutOfMemoryError(globalObject));
     }
@@ -352,7 +346,7 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
     JSLockHolder locker(vm);
     JSObject* object = toJS(objectRef);
 
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, object)) {
+    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(object)) {
         ArrayBuffer* buffer = jsBuffer->impl();
         if (buffer->isWasmMemory()) {
             setException(ctx, exception, createTypeError(globalObject, "Cannot get the backing buffer for a WebAssembly.Memory"_s));
@@ -374,10 +368,8 @@ inline static bool isLinkedBeforeTypedArrayLengthQuirk()
 inline static bool isLinkedBeforeTypedArrayLengthQuirk() { return false; }
 #endif
 
-size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
+size_t JSObjectGetArrayBufferByteLength(JSContextRef, JSObjectRef objectRef, JSValueRef*)
 {
-    JSGlobalObject* globalObject = toJS(ctx);
-    VM& vm = globalObject->vm();
     JSObject* object = toJS(objectRef);
 
     if (!object) {
@@ -388,7 +380,7 @@ size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef objectRef,
         return 0;
     }
 
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, object))
+    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(object))
         return jsBuffer->impl()->byteLength();
     
     return 0;

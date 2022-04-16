@@ -154,7 +154,7 @@ JSTestSetLike::JSTestSetLike(Structure* structure, JSDOMGlobalObject& globalObje
 void JSTestSetLike::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestSetLike>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
@@ -185,7 +185,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestSetLikeConstructor, (JSGlobalObject* lexicalGloba
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestSetLikePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestSetLikePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestSetLike::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -405,9 +405,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-TestSetLike* JSTestSetLike::toWrapped(JSC::VM& vm, JSC::JSValue value)
+TestSetLike* JSTestSetLike::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestSetLike*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestSetLike*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

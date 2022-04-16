@@ -79,7 +79,7 @@ IntlListFormat::IntlListFormat(VM& vm, Structure* structure)
 void IntlListFormat::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat

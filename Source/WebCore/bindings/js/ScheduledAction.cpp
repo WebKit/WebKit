@@ -95,7 +95,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     JSLockHolder lock(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    auto callData = getCallData(vm, m_function.get());
+    auto callData = JSC::getCallData(m_function.get());
     if (callData.type == CallData::Type::None)
         return;
 

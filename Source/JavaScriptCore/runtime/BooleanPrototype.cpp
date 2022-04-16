@@ -56,7 +56,7 @@ void BooleanPrototype::finishCreation(VM& vm, JSGlobalObject*)
     Base::finishCreation(vm);
     setInternalValue(vm, jsBoolean(false));
 
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 // ------------------------------ Functions ---------------------------
@@ -72,7 +72,7 @@ JSC_DEFINE_HOST_FUNCTION(booleanProtoFuncToString, (JSGlobalObject* globalObject
     if (thisValue == jsBoolean(true))
         return JSValue::encode(vm.smallStrings.trueString());
 
-    auto* thisObject = jsDynamicCast<BooleanObject*>(vm, thisValue);
+    auto* thisObject = jsDynamicCast<BooleanObject*>(thisValue);
     if (UNLIKELY(!thisObject))
         return throwVMTypeError(globalObject, scope);
 
@@ -92,7 +92,7 @@ JSC_DEFINE_HOST_FUNCTION(booleanProtoFuncValueOf, (JSGlobalObject* globalObject,
     if (thisValue.isBoolean())
         return JSValue::encode(thisValue);
 
-    auto* thisObject = jsDynamicCast<BooleanObject*>(vm, thisValue);
+    auto* thisObject = jsDynamicCast<BooleanObject*>(thisValue);
     if (UNLIKELY(!thisObject))
         return throwVMTypeError(globalObject, scope);
 

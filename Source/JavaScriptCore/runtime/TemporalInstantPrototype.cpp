@@ -96,7 +96,7 @@ TemporalInstantPrototype::TemporalInstantPrototype(VM& vm, Structure* structure)
 void TemporalInstantPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -112,7 +112,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncAdd, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.add called on value that's not a Instant"_s);
 
@@ -133,7 +133,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncSubtract, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.subtract called on value that's not a Instant"_s);
 
@@ -154,7 +154,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncUntil, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.until called on value that's not a Instant"_s);
 
@@ -173,7 +173,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncSince, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.since called on value that's not a Instant"_s);
 
@@ -192,7 +192,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncRound, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.round called on value that's not a Instant"_s);
 
@@ -211,7 +211,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncEquals, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.equals called on value that's not a Instant"_s);
 
@@ -228,7 +228,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToString, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.toString called on value that's not a Instant"_s);
 
@@ -240,7 +240,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToJSON, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.toJSON called on value that's not a Instant"_s);
 
@@ -253,7 +253,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToLocaleString, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, callFrame->thisValue());
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.toLocaleString called on value that's not a Instant"_s);
 
@@ -280,7 +280,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochSeconds, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, JSValue::decode(thisValue));
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(JSValue::decode(thisValue));
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.epochSeconds called on value that's not a Instant"_s);
 
@@ -292,7 +292,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochMilliseconds, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, JSValue::decode(thisValue));
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(JSValue::decode(thisValue));
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.epochMilliseconds called on value that's not a Instant"_s);
 
@@ -304,7 +304,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochMicroseconds, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, JSValue::decode(thisValue));
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(JSValue::decode(thisValue));
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.epochMicroseconds called on value that's not a Instant"_s);
 
@@ -316,7 +316,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochNanoseconds, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(vm, JSValue::decode(thisValue));
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(JSValue::decode(thisValue));
     if (!instant)
         return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.epochNanoseconds called on value that's not a Instant"_s);
 

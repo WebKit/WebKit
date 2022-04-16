@@ -37,7 +37,7 @@ const ClassInfo JSStringIterator::s_info = { "String Iterator"_s, &Base::s_info,
 void JSStringIterator::finishCreation(VM& vm, JSString* iteratedString)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     internalField(Field::Index).set(vm, this, jsNumber(0));
     internalField(Field::IteratedString).set(vm, this, iteratedString);
 }

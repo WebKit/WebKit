@@ -1129,10 +1129,10 @@ void Frame::resetScript()
 Frame* Frame::fromJSContext(JSContextRef context)
 {
     JSC::JSGlobalObject* globalObjectObj = toJS(context);
-    if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj))
+    if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj))
         return window->wrapped().frame();
 #if ENABLE(SERVICE_WORKER)
-    if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj->vm(), globalObjectObj))
+    if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj))
         return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? &serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame() : nullptr;
 #endif
     return nullptr;
@@ -1150,7 +1150,7 @@ Frame* Frame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValue
     if (auto* window = JSDOMWindow::toWrapped(vm, value))
         return window->frame();
 
-    auto* jsNode = JSC::jsDynamicCast<JSNode*>(vm, value);
+    auto* jsNode = JSC::jsDynamicCast<JSNode*>(value);
     if (!jsNode || !is<HTMLFrameOwnerElement>(jsNode->wrapped()))
         return nullptr;
     return downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame();

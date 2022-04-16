@@ -88,7 +88,7 @@ void DeferredWorkTimer::doWork(VM& vm)
 
         // We shouldn't access the TicketData to get this globalObject until
         // after we confirm that the ticket is still valid (which we did above).
-        auto globalObject = ticket->target()->structure(vm)->globalObject();
+        auto globalObject = ticket->target()->structure()->globalObject();
         switch (globalObject->globalObjectMethodTable()->scriptExecutionStatus(globalObject, ticket->scriptExecutionOwner.get())) {
         case ScriptExecutionStatus::Suspended:
             suspendedTasks.append(std::make_tuple(ticket, WTFMove(task)));

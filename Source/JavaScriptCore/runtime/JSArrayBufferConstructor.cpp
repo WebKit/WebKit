@@ -136,9 +136,9 @@ JSC_DEFINE_HOST_FUNCTION(constructSharedArrayBuffer, (JSGlobalObject* globalObje
 // ------------------------------ Functions --------------------------------
 
 // ECMA 24.1.3.1
-JSC_DEFINE_HOST_FUNCTION(arrayBufferFuncIsView, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(arrayBufferFuncIsView, (JSGlobalObject*, CallFrame* callFrame))
 {
-    return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(globalObject->vm(), callFrame->argument(0))));
+    return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(callFrame->argument(0))));
 }
 
 // Instantiate JSGenericArrayBufferConstructors.

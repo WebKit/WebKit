@@ -57,7 +57,7 @@ static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncSize);
 void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->clear, mapProtoFuncClear, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, mapProtoFuncDelete, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
@@ -90,7 +90,7 @@ ALWAYS_INLINE static JSMap* getMap(JSGlobalObject* globalObject, JSValue thisVal
         return nullptr;
     }
 
-    auto* map = jsDynamicCast<JSMap*>(vm, thisValue.asCell());
+    auto* map = jsDynamicCast<JSMap*>(thisValue.asCell());
     if (LIKELY(map))
         return map;
     throwTypeError(globalObject, scope, "Map operation called on non-Map object"_s);

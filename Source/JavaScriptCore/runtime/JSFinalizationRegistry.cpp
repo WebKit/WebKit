@@ -50,7 +50,7 @@ JSFinalizationRegistry* JSFinalizationRegistry::create(VM& vm, Structure* struct
 void JSFinalizationRegistry::finishCreation(VM& vm, JSGlobalObject* globalObject, JSObject* callback)
 {
     Base::finishCreation(vm);
-    ASSERT(callback->isCallable(vm));
+    ASSERT(callback->isCallable());
     auto values = initialValues();
     for (unsigned index = 0; index < values.size(); ++index)
         Base::internalField(index).setWithoutWriteBarrier(values[index]);
@@ -207,7 +207,7 @@ void JSFinalizationRegistry::registerTarget(VM& vm, JSObject* target, JSValue ho
     if (token.isUndefined())
         m_noUnregistrationLive.append(WTFMove(registration));
     else {
-        auto result = m_liveRegistrations.add(jsSecureCast<JSObject*>(vm, token), LiveRegistrations());
+        auto result = m_liveRegistrations.add(jsSecureCast<JSObject*>(token), LiveRegistrations());
         result.iterator->value.append(WTFMove(registration));
     }
     vm.writeBarrier(this);

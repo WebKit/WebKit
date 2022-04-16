@@ -121,7 +121,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
 static RefPtr<Element> constructCustomElementSynchronously(Document& document, VM& vm, JSGlobalObject& lexicalGlobalObject, JSObject* constructor, const AtomString& localName)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto constructData = getConstructData(vm, constructor);
+    auto constructData = JSC::getConstructData(constructor);
     if (constructData.type == CallData::Type::None) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -194,7 +194,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    auto constructData = getConstructData(vm, m_constructor.get());
+    auto constructData = JSC::getConstructData(m_constructor.get());
     if (constructData.type == CallData::Type::None) {
         ASSERT_NOT_REACHED();
         return;
@@ -257,7 +257,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
 
     JSObject* jsElement = asObject(toJS(lexicalGlobalObject, globalObject, element));
 
-    auto callData = getCallData(vm, callback);
+    auto callData = JSC::getCallData(callback);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer args;

@@ -137,7 +137,7 @@ JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
 void JSArrayBufferView::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(jsDynamicCast<JSArrayBufferView*>(vm, this));
+    ASSERT(jsDynamicCast<JSArrayBufferView*>(this));
     switch (m_mode) {
     case FastTypedArray:
         return;
@@ -196,7 +196,7 @@ JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (ArrayBuffer* buffer = unsharedBuffer())
-        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(vm), buffer);
+        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(), buffer);
     scope.throwException(globalObject, createOutOfMemoryError(globalObject));
     return nullptr;
 }
@@ -206,7 +206,7 @@ JSArrayBuffer* JSArrayBufferView::possiblySharedJSBuffer(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (ArrayBuffer* buffer = possiblySharedBuffer())
-        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(vm), buffer);
+        return vm.m_typedArrayController->toJS(globalObject, this->globalObject(), buffer);
     scope.throwException(globalObject, createOutOfMemoryError(globalObject));
     return nullptr;
 }
@@ -270,8 +270,8 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     VM& vm = heap->vm();
     DeferGCForAWhile deferGC(vm);
 
-    RELEASE_ASSERT(!hasIndexingHeader(vm));
-    Structure* structure = this->structure(vm);
+    RELEASE_ASSERT(!hasIndexingHeader());
+    Structure* structure = this->structure();
 
     RefPtr<ArrayBuffer> buffer;
     size_t byteLength = this->byteLength();
@@ -349,7 +349,7 @@ JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSValue type
     }
 
     JSCell* typedArrayCell = typedArrayValue.asCell();
-    if (!isTypedView(typedArrayCell->classInfo(vm)->typedArrayStorageType)) {
+    if (!isTypedView(typedArrayCell->classInfo()->typedArrayStorageType)) {
         throwTypeError(globalObject, scope, "Argument needs to be a typed array."_s);
         return nullptr;
     }

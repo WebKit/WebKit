@@ -46,7 +46,7 @@ struct CellProfile {
         , m_timestamp(MonotonicTime::now())
     {
         if (isJSCellKind(m_kind) && m_liveness != Dead)
-            m_className = jsCell()->structure()->classInfo()->className;
+            m_className = jsCell()->structure()->classInfoForCells()->className;
     }
 
     CellProfile(CellProfile&& other)

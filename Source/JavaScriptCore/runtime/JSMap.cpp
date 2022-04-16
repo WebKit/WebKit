@@ -61,12 +61,12 @@ bool JSMap::isIteratorProtocolFastAndNonObservable()
         return false;
 
     VM& vm = globalObject->vm();
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     // This is the fast case. Many maps will be an original map.
     if (structure == globalObject->mapStructure())
         return true;
 
-    if (getPrototypeDirect(vm) != globalObject->mapPrototype())
+    if (getPrototypeDirect() != globalObject->mapPrototype())
         return false;
 
     if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)

@@ -44,7 +44,7 @@ JSC_DEFINE_HOST_FUNCTION(customGetterFunctionCall, (JSGlobalObject* globalObject
     auto getter = customGetterFunction->getter();
 
     if (auto domAttribute = customGetterFunction->domAttribute()) {
-        if (!thisValue.inherits(vm, domAttribute->classInfo))
+        if (!thisValue.inherits(domAttribute->classInfo))
             return throwVMDOMAttributeGetterTypeError(globalObject, scope, domAttribute->classInfo, customGetterFunction->propertyName());
     }
 

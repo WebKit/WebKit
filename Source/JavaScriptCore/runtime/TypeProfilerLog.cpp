@@ -102,7 +102,7 @@ void TypeProfilerLog::processLogEntries(VM& vm, const String& reason)
                 shape = iter->value;
         }
 
-        RuntimeType type = runtimeTypeForValue(m_vm, value);
+        RuntimeType type = runtimeTypeForValue(value);
         TypeLocation* location = entry->location;
         location->m_lastSeenType = type;
         if (location->m_globalTypeSet)

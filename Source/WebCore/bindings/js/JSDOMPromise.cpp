@@ -61,13 +61,13 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSOb
     if (scope.exception())
         return IsCallbackRegistered::No;
 
-    ASSERT(thenFunction.isCallable(vm));
+    ASSERT(thenFunction.isCallable());
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(handler);
     arguments.append(handler);
 
-    auto callData = JSC::getCallData(vm, thenFunction);
+    auto callData = JSC::getCallData(thenFunction);
     ASSERT(callData.type != JSC::CallData::Type::None);
     call(&lexicalGlobalObject, thenFunction, callData, promise, arguments);
 

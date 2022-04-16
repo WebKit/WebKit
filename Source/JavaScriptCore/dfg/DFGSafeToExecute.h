@@ -437,7 +437,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         // know anything about inferred types. But if we have a proof derived from watching a
         // structure that has a type proof, then the next case below will deal with it.
         if (state.structureClobberState() == StructuresAreWatched) {
-            if (JSObject* knownBase = node->child2()->dynamicCastConstant<JSObject*>(graph.m_vm)) {
+            if (JSObject* knownBase = node->child2()->dynamicCastConstant<JSObject*>()) {
                 if (graph.isSafeToLoad(knownBase, offset))
                     return true;
             }
@@ -493,7 +493,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         bool isSafe = true;
         const ClassInfo* classInfo = node->requiredDOMJITClassInfo();
         structures.forEach([&] (RegisteredStructure structure) {
-            isSafe &= structure->classInfo()->isSubClassOf(classInfo);
+            isSafe &= structure->classInfoForCells()->isSubClassOf(classInfo);
         });
         return isSafe;
     }

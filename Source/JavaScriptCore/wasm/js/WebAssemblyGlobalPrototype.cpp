@@ -58,7 +58,7 @@ const ClassInfo WebAssemblyGlobalPrototype::s_info = { "WebAssembly.Global"_s, &
 static ALWAYS_INLINE JSWebAssemblyGlobal* getGlobal(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSWebAssemblyGlobal* result = jsDynamicCast<JSWebAssemblyGlobal*>(vm, v);
+    JSWebAssemblyGlobal* result = jsDynamicCast<JSWebAssemblyGlobal*>(v);
     if (!result) {
         throwException(globalObject, throwScope,
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Global"_s));
@@ -134,7 +134,7 @@ Structure* WebAssemblyGlobalPrototype::createStructure(VM& vm, JSGlobalObject* g
 void WebAssemblyGlobalPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     JSFunction* valueGetterFunction = JSFunction::create(vm, globalObject, 0, "get value"_s, webAssemblyGlobalProtoGetterFuncValue, NoIntrinsic);
     JSFunction* valueSetterFunction = JSFunction::create(vm, globalObject, 1, "set value"_s, webAssemblyGlobalProtoSetterFuncValue, NoIntrinsic);

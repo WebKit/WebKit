@@ -60,7 +60,7 @@ TemporalDuration::TemporalDuration(VM& vm, Structure* structure, ISO8601::Durati
 void TemporalDuration::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 // CreateTemporalDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds [ , newTarget ] )
@@ -85,7 +85,7 @@ ISO8601::Duration TemporalDuration::fromDurationLike(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (durationLike->inherits<TemporalDuration>(vm))
+    if (durationLike->inherits<TemporalDuration>())
         return jsCast<TemporalDuration*>(durationLike)->m_duration;
 
     ISO8601::Duration result;
@@ -157,7 +157,7 @@ TemporalDuration* TemporalDuration::toTemporalDuration(JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (itemValue.inherits<TemporalDuration>(vm))
+    if (itemValue.inherits<TemporalDuration>())
         return jsCast<TemporalDuration*>(itemValue);
 
     auto result = toISO8601Duration(globalObject, itemValue);
@@ -195,7 +195,7 @@ TemporalDuration* TemporalDuration::from(JSGlobalObject* globalObject, JSValue i
 {
     VM& vm = globalObject->vm();
 
-    if (itemValue.inherits<TemporalDuration>(vm)) {
+    if (itemValue.inherits<TemporalDuration>()) {
         ISO8601::Duration cloned = jsCast<TemporalDuration*>(itemValue)->m_duration;
         return TemporalDuration::create(vm, globalObject->durationStructure(), WTFMove(cloned));
     }

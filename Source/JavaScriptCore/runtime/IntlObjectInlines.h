@@ -77,7 +77,7 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(JSGlobalObje
 
     if (thisValue.isObject()) {
         JSObject* thisObject = asObject(thisValue);
-        ASSERT(!callee->template inherits<JSBoundFunction>(vm));
+        ASSERT(!callee->template inherits<JSBoundFunction>());
         JSValue prototype = callee->getDirect(vm, vm.propertyNames->prototype); // Passed constructors always have `prototype` which cannot be deleted.
         ASSERT(prototype);
         bool hasInstance = JSObject::defaultHasInstance(globalObject, thisObject, prototype);
@@ -85,7 +85,7 @@ JSValue constructIntlInstanceWithWorkaroundForLegacyIntlConstructor(JSGlobalObje
         if (hasInstance) {
             PropertyDescriptor descriptor(instance, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
             scope.release();
-            thisObject->methodTable(vm)->defineOwnProperty(thisObject, globalObject, vm.propertyNames->builtinNames().intlLegacyConstructedSymbol(), descriptor, true);
+            thisObject->methodTable()->defineOwnProperty(thisObject, globalObject, vm.propertyNames->builtinNames().intlLegacyConstructedSymbol(), descriptor, true);
             return thisObject;
         }
     }
@@ -98,15 +98,15 @@ InstanceType* unwrapForLegacyIntlConstructor(JSGlobalObject* globalObject, JSVal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
+    JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue);
     if (UNLIKELY(!thisObject))
         return nullptr;
 
-    auto* instance = jsDynamicCast<InstanceType*>(vm, thisObject);
+    auto* instance = jsDynamicCast<InstanceType*>(thisObject);
     if (LIKELY(instance))
         return instance;
 
-    ASSERT(!constructor->template inherits<JSBoundFunction>(vm));
+    ASSERT(!constructor->template inherits<JSBoundFunction>());
     JSValue prototype = constructor->getDirect(vm, vm.propertyNames->prototype); // Passed constructors always have `prototype` which cannot be deleted.
     ASSERT(prototype);
     bool hasInstance = JSObject::defaultHasInstance(globalObject, thisObject, prototype);
@@ -116,7 +116,7 @@ InstanceType* unwrapForLegacyIntlConstructor(JSGlobalObject* globalObject, JSVal
 
     JSValue value = thisObject->get(globalObject, vm.propertyNames->builtinNames().intlLegacyConstructedSymbol());
     RETURN_IF_EXCEPTION(scope, nullptr);
-    return jsDynamicCast<InstanceType*>(vm, value);
+    return jsDynamicCast<InstanceType*>(value);
 }
 
 template<typename ResultType>

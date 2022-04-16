@@ -192,7 +192,7 @@ void PDFDocument::sendPDFArrayBuffer()
     auto& vm = globalObject->vm();
 
     JSLockHolder lock(vm);
-    auto callData = getCallData(vm, openFunction);
+    auto callData = JSC::getCallData(openFunction);
     ASSERT(callData.type != CallData::Type::None);
     MarkedArgumentBuffer arguments;
     auto arrayBuffer = loader()->mainResourceData()->tryCreateArrayBuffer();

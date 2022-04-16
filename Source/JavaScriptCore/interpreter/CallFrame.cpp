@@ -329,7 +329,7 @@ const char* CallFrame::describeFrame()
 void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound)
 {
     ASSERT(!isEmptyTopLevelCallFrameForDebugger());
-    ASSERT(codeBlockToKeepAliveUntilFrameIsUnwound->inherits<CodeBlock>(vm));
+    ASSERT(codeBlockToKeepAliveUntilFrameIsUnwound->inherits<CodeBlock>());
 
     EntryFrame* entryFrame = vm.topEntryFrame;
     CallFrame* throwOriginFrame = this;

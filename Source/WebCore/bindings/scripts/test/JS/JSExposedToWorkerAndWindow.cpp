@@ -195,7 +195,7 @@ JSExposedToWorkerAndWindow::JSExposedToWorkerAndWindow(Structure* structure, JSD
 void JSExposedToWorkerAndWindow::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, ExposedToWorkerAndWindow>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
@@ -226,7 +226,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsExposedToWorkerAndWindowConstructor, (JSGlobalObject*
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSExposedToWorkerAndWindowPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSExposedToWorkerAndWindowPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSExposedToWorkerAndWindow::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -317,9 +317,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-ExposedToWorkerAndWindow* JSExposedToWorkerAndWindow::toWrapped(JSC::VM& vm, JSC::JSValue value)
+ExposedToWorkerAndWindow* JSExposedToWorkerAndWindow::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSExposedToWorkerAndWindow*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSExposedToWorkerAndWindow*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

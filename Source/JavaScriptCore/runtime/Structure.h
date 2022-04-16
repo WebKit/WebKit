@@ -267,9 +267,12 @@ public:
     // Type accessors.
     TypeInfo typeInfo() const { return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
+    const ClassInfo* classInfoForCells() const { return m_classInfo; }
 protected:
     // You probably want typeInfo().type()
     JSType type() { return JSCell::type(); }
+    // You probably want classInfoForCell()
+    const ClassInfo* classInfo() const = delete;
 public:
 
     IndexingType indexingType() const { return m_blob.indexingModeIncludingHistory() & AllWritableArrayTypes; }
@@ -284,7 +287,7 @@ public:
         
     inline bool mayInterceptIndexedAccesses() const;
     
-    bool holesMustForwardToPrototype(VM&, JSObject*) const;
+    bool holesMustForwardToPrototype(JSObject*) const;
         
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }
 
@@ -370,7 +373,7 @@ public:
     
     Structure* previousID() const
     {
-        ASSERT(structure()->classInfo() == info());
+        ASSERT(structure()->classInfoForCells() == info());
         // This is so written because it's used concurrently. We only load from m_previousOrRareData
         // once, and this load is guaranteed atomic.
         JSCell* cell = m_previousOrRareData.get();
@@ -477,7 +480,7 @@ public:
     }
     unsigned totalStorageCapacity() const
     {
-        ASSERT(structure()->classInfo() == info());
+        ASSERT(structure()->classInfoForCells() == info());
         return outOfLineCapacity() + inlineCapacity();
     }
 
@@ -580,8 +583,6 @@ public:
         return rareData()->cachedSpecialProperty(key);
     }
     void cacheSpecialProperty(JSGlobalObject*, VM&, JSValue, CachedSpecialPropertyKey, const PropertySlot&);
-
-    const ClassInfo* classInfo() const { return m_classInfo; }
 
     static ptrdiff_t structureIDOffset()
     {

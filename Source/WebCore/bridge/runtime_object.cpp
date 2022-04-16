@@ -55,9 +55,9 @@ RuntimeObject::RuntimeObject(VM& vm, Structure* structure, RefPtr<Instance>&& in
 void RuntimeObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
-        JSFunction::create(vm, globalObject(vm), 1, "[Symbol.toPrimitive]"_s, convertRuntimeObjectToPrimitive),
+        JSFunction::create(vm, globalObject(), 1, "[Symbol.toPrimitive]"_s, convertRuntimeObjectToPrimitive),
         static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
@@ -225,7 +225,7 @@ JSC_DEFINE_HOST_FUNCTION(convertRuntimeObjectToPrimitive, (JSGlobalObject* lexic
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<RuntimeObject*>(vm, callFrame->thisValue());
+    auto* thisObject = jsDynamicCast<RuntimeObject*>(callFrame->thisValue());
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope, "RuntimeObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
     RefPtr instance = thisObject->getInternalInstance();
@@ -242,7 +242,7 @@ JSC_DEFINE_HOST_FUNCTION(convertRuntimeObjectToPrimitive, (JSGlobalObject* lexic
 
 JSC_DEFINE_HOST_FUNCTION(callRuntimeObject, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ASSERT_UNUSED(globalObject, callFrame->jsCallee()->inherits<RuntimeObject>(globalObject->vm()));
+    ASSERT_UNUSED(globalObject, callFrame->jsCallee()->inherits<RuntimeObject>());
     RefPtr<Instance> instance(static_cast<RuntimeObject*>(callFrame->jsCallee())->getInternalInstance());
     instance->begin();
     JSValue result = instance->invokeDefaultMethod(globalObject, callFrame);
@@ -266,7 +266,7 @@ CallData RuntimeObject::getCallData(JSCell* cell)
 JSC_DEFINE_HOST_FUNCTION(callRuntimeConstructor, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     JSObject* constructor = callFrame->jsCallee();
-    ASSERT_UNUSED(globalObject, constructor->inherits<RuntimeObject>(globalObject->vm()));
+    ASSERT_UNUSED(globalObject, constructor->inherits<RuntimeObject>());
     RefPtr<Instance> instance(static_cast<RuntimeObject*>(callFrame->jsCallee())->getInternalInstance());
     instance->begin();
     ArgList args(callFrame);

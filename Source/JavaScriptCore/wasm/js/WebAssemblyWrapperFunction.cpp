@@ -44,7 +44,7 @@ WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable*
 
 WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::TypeIndex typeIndex)
 {
-    ASSERT_WITH_MESSAGE(!function->inherits<WebAssemblyWrapperFunction>(vm), "We should never double wrap a wrapper function.");
+    ASSERT_WITH_MESSAGE(!function->inherits<WebAssemblyWrapperFunction>(), "We should never double wrap a wrapper function.");
     String name = emptyString();
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyWrapperFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
     WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->wasmToEmbedderStub } );
@@ -56,7 +56,7 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
 void WebAssemblyWrapperFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSObject* function, JSWebAssemblyInstance* instance)
 {
     Base::finishCreation(vm, executable, length, name, instance);
-    RELEASE_ASSERT(JSValue(function).isCallable(vm));
+    RELEASE_ASSERT(JSValue(function).isCallable());
     m_function.set(vm, this, function);
 }
 
@@ -84,7 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyWrapperFunction, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
     WebAssemblyWrapperFunction* wasmFunction = jsCast<WebAssemblyWrapperFunction*>(callFrame->jsCallee());
     JSObject* function = wasmFunction->function();
-    auto callData = getCallData(vm, function);
+    auto callData = JSC::getCallData(function);
     RELEASE_ASSERT(callData.type != CallData::Type::None);
     RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, function, callData, jsUndefined(), ArgList(callFrame))));
 }

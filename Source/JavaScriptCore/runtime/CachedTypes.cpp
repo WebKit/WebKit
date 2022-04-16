@@ -1350,40 +1350,39 @@ public:
         }
 
         JSCell* cell = v.asCell();
-        VM& vm = encoder.vm();
 
-        if (auto* symbolTable = jsDynamicCast<SymbolTable*>(vm, cell)) {
+        if (auto* symbolTable = jsDynamicCast<SymbolTable*>(cell)) {
             m_type = EncodedType::SymbolTable;
             this->allocate<CachedSymbolTable>(encoder)->encode(encoder, *symbolTable);
             return;
         }
 
-        if (auto* string = jsDynamicCast<JSString*>(vm, cell)) {
+        if (auto* string = jsDynamicCast<JSString*>(cell)) {
             m_type = EncodedType::String;
             StringImpl* impl = string->tryGetValue().impl();
             this->allocate<CachedUniquedStringImpl>(encoder)->encode(encoder, *impl);
             return;
         }
 
-        if (auto* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(vm, cell)) {
+        if (auto* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(cell)) {
             m_type = EncodedType::ImmutableButterfly;
             this->allocate<CachedImmutableButterfly>(encoder)->encode(encoder, *immutableButterfly);
             return;
         }
 
-        if (auto* regexp = jsDynamicCast<RegExp*>(vm, cell)) {
+        if (auto* regexp = jsDynamicCast<RegExp*>(cell)) {
             m_type = EncodedType::RegExp;
             this->allocate<CachedRegExp>(encoder)->encode(encoder, *regexp);
             return;
         }
 
-        if (auto* templateObjectDescriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
+        if (auto* templateObjectDescriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(cell)) {
             m_type = EncodedType::TemplateObjectDescriptor;
             this->allocate<CachedTemplateObjectDescriptor>(encoder)->encode(encoder, *templateObjectDescriptor);
             return;
         }
 
-        if (auto* bigInt = jsDynamicCast<JSBigInt*>(vm, cell)) {
+        if (auto* bigInt = jsDynamicCast<JSBigInt*>(cell)) {
             m_type = EncodedType::BigInt;
             this->allocate<CachedBigInt>(encoder)->encode(encoder, *bigInt);
             return;
@@ -2512,7 +2511,7 @@ void encodeCodeBlock(Encoder& encoder, const SourceCodeKey& key, const UnlinkedC
 
 RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)
 {
-    const ClassInfo* classInfo = codeBlock->classInfo(vm);
+    const ClassInfo* classInfo = codeBlock->classInfo();
 
     Encoder encoder(vm, fd);
     if (classInfo == UnlinkedProgramCodeBlock::info())

@@ -185,7 +185,7 @@ private:
     using MappedArguments = CagedBarrierPtr<Gigacage::Primitive, bool>;
     MappedArguments m_mappedArguments; // If non-null, it means that length, callee, and caller are fully materialized properties.
 
-    friend size_t cellSize(VM&, JSCell*);
+    friend size_t cellSize(JSCell*);
 };
 
 } // namespace JSC

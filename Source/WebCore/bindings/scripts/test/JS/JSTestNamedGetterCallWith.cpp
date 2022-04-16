@@ -128,7 +128,7 @@ JSTestNamedGetterCallWith::JSTestNamedGetterCallWith(Structure* structure, JSDOM
 void JSTestNamedGetterCallWith::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestNamedGetterCallWith>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
@@ -207,7 +207,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedGetterCallWithConstructor, (JSGlobalObject* 
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestNamedGetterCallWithPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestNamedGetterCallWithPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestNamedGetterCallWith::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -283,9 +283,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-TestNamedGetterCallWith* JSTestNamedGetterCallWith::toWrapped(JSC::VM& vm, JSC::JSValue value)
+TestNamedGetterCallWith* JSTestNamedGetterCallWith::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestNamedGetterCallWith*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestNamedGetterCallWith*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

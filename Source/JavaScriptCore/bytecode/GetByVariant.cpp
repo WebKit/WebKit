@@ -84,8 +84,8 @@ inline bool GetByVariant::canMergeIntrinsicStructures(const GetByVariant& other)
     switch (intrinsic()) {
     case TypedArrayByteLengthIntrinsic: {
         // We can merge these sets as long as the element size of the two sets is the same.
-        TypedArrayType thisType = (*m_structureSet.begin())->classInfo()->typedArrayStorageType;
-        TypedArrayType otherType = (*other.m_structureSet.begin())->classInfo()->typedArrayStorageType;
+        TypedArrayType thisType = (*m_structureSet.begin())->classInfoForCells()->typedArrayStorageType;
+        TypedArrayType otherType = (*other.m_structureSet.begin())->classInfoForCells()->typedArrayStorageType;
 
         ASSERT(isTypedView(thisType) && isTypedView(otherType));
 

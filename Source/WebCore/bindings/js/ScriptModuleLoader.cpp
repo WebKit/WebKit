@@ -171,7 +171,7 @@ static void rejectWithFetchError(DeferredPromise& deferred, ExceptionCode ec, co
 JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue parameters, JSC::JSValue scriptFetcher)
 {
     JSC::VM& vm = jsGlobalObject->vm();
-    ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(vm, scriptFetcher));
+    ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(scriptFetcher));
 
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
     auto* jsPromise = JSC::JSInternalPromise::create(vm, globalObject.internalPromiseStructure());
@@ -196,7 +196,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
     }
 
     RefPtr<ModuleFetchParameters> topLevelFetchParameters;
-    if (auto* scriptFetchParameters = JSC::jsDynamicCast<JSC::JSScriptFetchParameters*>(vm, parameters))
+    if (auto* scriptFetchParameters = JSC::jsDynamicCast<JSC::JSScriptFetchParameters*>(parameters))
         topLevelFetchParameters = static_cast<ModuleFetchParameters*>(&scriptFetchParameters->parameters());
 
     if (m_ownerType == OwnerType::Document) {
@@ -258,7 +258,7 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject* jsGlobalObject, J
     // FIXME: Currently, we only support JSModuleRecord and WebAssemblyModuleRecord.
     // Once the reflective part of the module loader is supported, we will handle arbitrary values.
     // https://whatwg.github.io/loader/#registry-prototype-provide
-    auto* moduleRecord = JSC::jsDynamicCast<JSC::AbstractModuleRecord*>(vm, moduleRecordValue);
+    auto* moduleRecord = JSC::jsDynamicCast<JSC::AbstractModuleRecord*>(moduleRecordValue);
     if (!moduleRecord)
         return JSC::jsUndefined();
 

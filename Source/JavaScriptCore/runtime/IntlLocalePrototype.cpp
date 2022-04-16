@@ -106,7 +106,7 @@ IntlLocalePrototype::IntlLocalePrototype(VM& vm, Structure* structure)
 void IntlLocalePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -116,7 +116,7 @@ JSC_DEFINE_HOST_FUNCTION(intlLocalePrototypeFuncMaximize, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(callFrame->thisValue());
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.maximize called on value that's not a Locale"_s);
 
@@ -132,7 +132,7 @@ JSC_DEFINE_HOST_FUNCTION(intlLocalePrototypeFuncMinimize, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(callFrame->thisValue());
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.minimize called on value that's not a Locale"_s);
 
@@ -148,7 +148,7 @@ JSC_DEFINE_HOST_FUNCTION(intlLocalePrototypeFuncToString, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, callFrame->thisValue());
+    auto* locale = jsDynamicCast<IntlLocale*>(callFrame->thisValue());
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.toString called on value that's not a Locale"_s);
 
@@ -162,7 +162,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterBaseName, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.baseName called on value that's not a Locale"_s);
 
@@ -176,7 +176,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCalendar, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.calendar called on value that's not a Locale"_s);
 
@@ -190,7 +190,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCalendars, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.calendars called on value that's not a Locale"_s);
 
@@ -203,7 +203,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCaseFirst, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.caseFirst called on value that's not a Locale"_s);
 
@@ -217,7 +217,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCollation, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.collation called on value that's not a Locale"_s);
 
@@ -231,7 +231,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCollations, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.collations called on value that's not a Locale"_s);
 
@@ -244,7 +244,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterHourCycle, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.hourCycle called on value that's not a Locale"_s);
 
@@ -258,7 +258,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterHourCycles, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.hourCycles called on value that's not a Locale"_s);
 
@@ -271,7 +271,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterNumeric, (JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.numeric called on value that's not a Locale"_s);
 
@@ -284,7 +284,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystem, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.numberingSystem called on value that's not a Locale"_s);
 
@@ -298,7 +298,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystems, (JSGlobalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.numberingSystems called on value that's not a Locale"_s);
 
@@ -311,7 +311,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterLanguage, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.language called on value that's not a Locale"_s);
 
@@ -325,7 +325,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterScript, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.script called on value that's not a Locale"_s);
 
@@ -339,7 +339,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterRegion, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.region called on value that's not a Locale"_s);
 
@@ -353,7 +353,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterTimeZones, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.timeZones called on value that's not a Locale"_s);
 
@@ -366,7 +366,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterTextInfo, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.textInfo called on value that's not a Locale"_s);
 
@@ -379,7 +379,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterWeekInfo, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* locale = jsDynamicCast<IntlLocale*>(vm, JSValue::decode(thisValue));
+    auto* locale = jsDynamicCast<IntlLocale*>(JSValue::decode(thisValue));
     if (!locale)
         return throwVMTypeError(globalObject, scope, "Intl.Locale.prototype.weekInfo called on value that's not a Locale"_s);
 

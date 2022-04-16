@@ -54,7 +54,7 @@ DEFINE_VISIT_CHILDREN(JSNativeStdFunction);
 void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name)
 {
     Base::finishCreation(vm, executable, length, name);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(runStdFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))

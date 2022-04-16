@@ -40,7 +40,7 @@ using namespace JSC;
 bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
     JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.slot()->asCell());
-    if (!jsNodeList->hasCustomProperties(jsNodeList->vm()))
+    if (!jsNodeList->hasCustomProperties())
         return false;
 
     if (jsNodeList->wrapped().isLiveNodeList()) {

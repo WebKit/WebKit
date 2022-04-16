@@ -58,7 +58,7 @@ inline IndexingType JSArray::mergeIndexingTypeForCopying(IndexingType other)
     return type;
 }
 
-inline bool JSArray::canFastCopy(VM& vm, JSArray* otherArray)
+inline bool JSArray::canFastCopy(JSArray* otherArray)
 {
     if (otherArray == this)
         return false;
@@ -66,19 +66,19 @@ inline bool JSArray::canFastCopy(VM& vm, JSArray* otherArray)
         return false;
     // FIXME: We should have a watchpoint for indexed properties on Array.prototype and Object.prototype
     // instead of walking the prototype chain. https://bugs.webkit.org/show_bug.cgi?id=155592
-    if (structure(vm)->holesMustForwardToPrototype(vm, this)
-        || otherArray->structure(vm)->holesMustForwardToPrototype(vm, otherArray))
+    if (structure()->holesMustForwardToPrototype(this)
+        || otherArray->structure()->holesMustForwardToPrototype(otherArray))
         return false;
     return true;
 }
 
-inline bool JSArray::canDoFastIndexedAccess(VM& vm)
+inline bool JSArray::canDoFastIndexedAccess()
 {
     JSGlobalObject* globalObject = this->globalObject();
     if (!globalObject->arrayPrototypeChainIsSane())
         return false;
 
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     // This is the fast case. Many arrays will be an original array.
     if (globalObject->isOriginalArrayStructure(structure))
         return true;
@@ -86,7 +86,7 @@ inline bool JSArray::canDoFastIndexedAccess(VM& vm)
     if (structure->mayInterceptIndexedAccesses())
         return false;
 
-    if (getPrototypeDirect(vm) != globalObject->arrayPrototype())
+    if (getPrototypeDirect() != globalObject->arrayPrototype())
         return false;
 
     return true;
@@ -143,7 +143,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
         }
 
         if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
-            methodTable(vm)->putByIndex(this, globalObject, length, value, true);
+            methodTable()->putByIndex(this, globalObject, length, value, true);
             if (!scope.exception())
                 throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
             return;
@@ -165,7 +165,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
         }
 
         if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
-            methodTable(vm)->putByIndex(this, globalObject, length, value, true);
+            methodTable()->putByIndex(this, globalObject, length, value, true);
             if (!scope.exception())
                 throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
             return;
@@ -200,7 +200,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
         }
 
         if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
-            methodTable(vm)->putByIndex(this, globalObject, length, value, true);
+            methodTable()->putByIndex(this, globalObject, length, value, true);
             if (!scope.exception())
                 throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
             return;
@@ -240,7 +240,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
 
         // Pushing to an array of invalid length (2^31-1) stores the property, but throws a range error.
         if (UNLIKELY(storage->length() > MAX_ARRAY_INDEX)) {
-            methodTable(vm)->putByIndex(this, globalObject, storage->length(), value, true);
+            methodTable()->putByIndex(this, globalObject, storage->length(), value, true);
             // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
             if (!scope.exception())
                 throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));

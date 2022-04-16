@@ -2962,8 +2962,8 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
 #endif
 
         JSGlobalObject* globalObject = m_jit.globalObjectFor(node->origin.semantic);
-        Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure(vm);
-        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm);
+        Structure* stringPrototypeStructure = globalObject->stringPrototype()->structure();
+        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
         WTF::dependentLoadLoadFence();
 
         if (globalObject->stringPrototypeChainIsSaneConcurrently(stringPrototypeStructure, objectPrototypeStructure)) {
@@ -13317,7 +13317,7 @@ void SpeculativeJIT::compileStringReplace(Node* node)
     if (node->child1().useKind() == StringUse
         && node->child2().useKind() == RegExpObjectUse
         && node->child3().useKind() == StringUse) {
-        if (JSString* replace = node->child3()->dynamicCastConstant<JSString*>(vm())) {
+        if (JSString* replace = node->child3()->dynamicCastConstant<JSString*>()) {
             if (!replace->length()) {
                 SpeculateCellOperand string(this, node->child1());
                 SpeculateCellOperand regExp(this, node->child2());
@@ -13451,7 +13451,7 @@ void SpeculativeJIT::compileLazyJSConstant(Node* node)
 void SpeculativeJIT::compileMaterializeNewObject(Node* node)
 {
     RegisteredStructure structure = node->structureSet().at(0);
-    ASSERT(m_graph.varArgChild(node, 0)->dynamicCastConstant<Structure*>(vm()) == structure.get());
+    ASSERT(m_graph.varArgChild(node, 0)->dynamicCastConstant<Structure*>() == structure.get());
 
     ObjectMaterializationData& data = node->objectMaterializationData();
         
@@ -15032,10 +15032,10 @@ void SpeculativeJIT::compileNewInternalFieldObject(Node* node)
         compileNewInternalFieldObjectImpl<JSSetIterator>(node, operationNewSetIterator);
         break;
     case JSPromiseType: {
-        if (node->structure()->classInfo() == JSInternalPromise::info())
+        if (node->structure()->classInfoForCells() == JSInternalPromise::info())
             compileNewInternalFieldObjectImpl<JSInternalPromise>(node, operationNewInternalPromise);
         else {
-            ASSERT(node->structure()->classInfo() == JSPromise::info());
+            ASSERT(node->structure()->classInfoForCells() == JSPromise::info());
             compileNewInternalFieldObjectImpl<JSPromise>(node, operationNewPromise);
         }
         break;
@@ -16072,7 +16072,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     m_jit.storePtr(TrustedImmPtr(JSString::isRopeInPointer), CCallHelpers::Address(resultGPR, JSRopeString::offsetOfFiber0()));
 
     {
-        if (JSString* string = edges[0]->dynamicCastConstant<JSString*>(vm())) {
+        if (JSString* string = edges[0]->dynamicCastConstant<JSString*>()) {
             m_jit.move(TrustedImm32(string->is8Bit() ? StringImpl::flagIs8Bit() : 0), scratchGPR);
             m_jit.move(TrustedImm32(string->length()), allocatorGPR);
         } else {
@@ -16104,7 +16104,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     }
 
     for (unsigned i = 1; i < numOpGPRs; ++i) {
-        if (JSString* string = edges[i]->dynamicCastConstant<JSString*>(vm())) {
+        if (JSString* string = edges[i]->dynamicCastConstant<JSString*>()) {
             m_jit.and32(TrustedImm32(string->is8Bit() ? StringImpl::flagIs8Bit() : 0), scratchGPR);
             speculationCheck(
                 Uncountable, JSValueSource(), nullptr,

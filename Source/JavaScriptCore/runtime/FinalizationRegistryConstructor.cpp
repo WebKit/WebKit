@@ -65,7 +65,7 @@ JSC_DEFINE_HOST_FUNCTION(constructFinalizationRegistry, (JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!callFrame->argument(0).isCallable(vm))
+    if (!callFrame->argument(0).isCallable())
         return throwVMTypeError(globalObject, scope, "First argument to FinalizationRegistry should be a function"_s);
 
     JSObject* newTarget = asObject(callFrame->newTarget());

@@ -53,7 +53,7 @@ const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance"_
 static ALWAYS_INLINE JSWebAssemblyInstance* getInstance(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSWebAssemblyInstance* result = jsDynamicCast<JSWebAssemblyInstance*>(vm, v);
+    JSWebAssemblyInstance* result = jsDynamicCast<JSWebAssemblyInstance*>(v);
     if (!result) {
         throwException(globalObject, throwScope, 
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Instance"_s));
@@ -87,7 +87,7 @@ Structure* WebAssemblyInstancePrototype::createStructure(VM& vm, JSGlobalObject*
 void WebAssemblyInstancePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

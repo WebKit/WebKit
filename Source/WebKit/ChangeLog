@@ -1,3 +1,20 @@
+2022-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove VM& parameter from structure related code including jsDyamicCast
+        https://bugs.webkit.org/show_bug.cgi?id=239362
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::setScriptObject):
+        (WebKit::WebAutomationSessionProxy::elementForNodeHandle):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::reportException):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::encodeArgument):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::counterValue):
+
 2022-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         Add new dyld support sandbox rules 

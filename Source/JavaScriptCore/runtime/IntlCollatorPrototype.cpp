@@ -72,7 +72,7 @@ IntlCollatorPrototype::IntlCollatorPrototype(VM& vm, Structure* structure)
 void IntlCollatorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -112,14 +112,14 @@ JSC_DEFINE_CUSTOM_GETTER(intlCollatorPrototypeGetterCompare, (JSGlobalObject* gl
 
     // 10.3.3 Intl.Collator.prototype.compare (ECMA-402 2.0)
     // 1. Let collator be this Collator object.
-    IntlCollator* collator = jsDynamicCast<IntlCollator*>(vm, JSValue::decode(thisValue));
+    IntlCollator* collator = jsDynamicCast<IntlCollator*>(JSValue::decode(thisValue));
     if (!collator)
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.Collator.prototype.compare called on value that's not a Collator"_s));
 
     JSBoundFunction* boundCompare = collator->boundCompare();
     // 2. If collator.[[boundCompare]] is undefined,
     if (!boundCompare) {
-        JSGlobalObject* globalObject = collator->globalObject(vm);
+        JSGlobalObject* globalObject = collator->globalObject();
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 2.
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 2, "compare"_s, intlCollatorFuncCompare, NoIntrinsic);
@@ -140,7 +140,7 @@ JSC_DEFINE_HOST_FUNCTION(intlCollatorPrototypeFuncResolvedOptions, (JSGlobalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // 10.3.5 Intl.Collator.prototype.resolvedOptions() (ECMA-402 2.0)
-    IntlCollator* collator = jsDynamicCast<IntlCollator*>(vm, callFrame->thisValue());
+    IntlCollator* collator = jsDynamicCast<IntlCollator*>(callFrame->thisValue());
     if (!collator)
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.Collator.prototype.resolvedOptions called on value that's not a Collator"_s));
 

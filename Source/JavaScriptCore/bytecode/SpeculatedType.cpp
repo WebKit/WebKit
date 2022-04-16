@@ -557,10 +557,10 @@ SpeculatedType speculationFromStructure(Structure* structure)
         filteredResult = SpecObjectOther;
         break;
     default:
-        return speculationFromClassInfoInheritance(structure->classInfo());
+        return speculationFromClassInfoInheritance(structure->classInfoForCells());
     }
     ASSERT(filteredResult);
-    ASSERT(isSubtypeSpeculation(filteredResult, speculationFromClassInfoInheritance(structure->classInfo())));
+    ASSERT(isSubtypeSpeculation(filteredResult, speculationFromClassInfoInheritance(structure->classInfoForCells())));
     return filteredResult;
 }
 

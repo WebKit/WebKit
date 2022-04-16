@@ -73,7 +73,7 @@ IntlPluralRulesPrototype::IntlPluralRulesPrototype(VM& vm, Structure* structure)
 void IntlPluralRulesPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     UNUSED_PARAM(globalObject);
 #if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
@@ -88,7 +88,7 @@ JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelect, (JSGlobalObject* gl
 
     // 13.4.3 Intl.PluralRules.prototype.select (value)
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.prototype.select
-    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, callFrame->thisValue());
+    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(callFrame->thisValue());
 
     if (!pluralRules)
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.select called on value that's not a PluralRules"_s));
@@ -106,7 +106,7 @@ JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelectRange, (JSGlobalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // https://tc39.es/proposal-intl-numberformat-v3/out/pluralrules/diff.html#sec-intl.pluralrules.prototype.selectrange
-    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, callFrame->thisValue());
+    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(callFrame->thisValue());
     if (!pluralRules)
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.selectRange called on value that's not a PluralRules"_s));
 
@@ -133,7 +133,7 @@ JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncResolvedOptions, (JSGlobalO
 
     // 13.4.4 Intl.PluralRules.prototype.resolvedOptions ()
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.prototype.resolvedoptions
-    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, callFrame->thisValue());
+    IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(callFrame->thisValue());
 
     if (!pluralRules)
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not a PluralRules"_s));

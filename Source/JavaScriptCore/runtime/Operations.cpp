@@ -92,15 +92,15 @@ JSString* jsTypeStringForValueWithConcurrency(VM& vm, JSGlobalObject* globalObje
         JSObject* object = asObject(v);
         // Return "undefined" for objects that should be treated
         // as null when doing comparisons.
-        if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+        if (object->structure()->masqueradesAsUndefined(globalObject))
             return vm.smallStrings.undefinedString();
         if (LIKELY(concurrency == Concurrency::MainThread)) {
-            if (object->isCallable(vm))
+            if (object->isCallable())
                 return vm.smallStrings.functionString();
             return vm.smallStrings.objectString();
         }
 
-        switch (object->isCallableWithConcurrency<Concurrency::ConcurrentThread>(vm)) {
+        switch (object->isCallableWithConcurrency<Concurrency::ConcurrentThread>()) {
         case TriState::True:
             return vm.smallStrings.functionString();
         case TriState::False:
@@ -119,7 +119,7 @@ size_t normalizePrototypeChain(JSGlobalObject* globalObject, JSCell* base, bool&
     sawPolyProto = false;
     JSCell* current = base;
     while (1) {
-        Structure* structure = current->structure(vm);
+        Structure* structure = current->structure();
         if (structure->isProxy())
             return InvalidPrototypeChain;
 
@@ -130,7 +130,7 @@ size_t normalizePrototypeChain(JSGlobalObject* globalObject, JSCell* base, bool&
             return count;
 
         current = prototype.asCell();
-        structure = current->structure(vm);
+        structure = current->structure();
         if (structure->isDictionary()) {
             if (structure->hasBeenFlattenedBefore())
                 return InvalidPrototypeChain;

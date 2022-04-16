@@ -385,7 +385,7 @@ bool Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& st
 
 PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable)
 {
-    ASSERT(structure(vm)->classInfo() == info());
+    ASSERT(structure()->classInfoForCells() == info());
     ASSERT(!protectPropertyTableWhileTransitioning());
     
     DeferGC deferGC(vm);
@@ -458,9 +458,9 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
     return table;
 }
 
-bool Structure::holesMustForwardToPrototype(VM& vm, JSObject* base) const
+bool Structure::holesMustForwardToPrototype(JSObject* base) const
 {
-    ASSERT(base->structure(vm) == this);
+    ASSERT(base->structure() == this);
 
     if (this->mayInterceptIndexedAccesses())
         return true;
@@ -471,7 +471,7 @@ bool Structure::holesMustForwardToPrototype(VM& vm, JSObject* base) const
     JSObject* object = asObject(prototype);
 
     while (true) {
-        Structure& structure = *object->structure(vm);
+        Structure& structure = *object->structure();
         if (hasIndexedProperties(object->indexingType()) || structure.mayInterceptIndexedAccesses())
             return true;
         prototype = structure.storedPrototype(object);
@@ -907,7 +907,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
 {
     checkOffsetConsistency();
     ASSERT(isDictionary());
-    ASSERT(object->structure(vm) == this);
+    ASSERT(object->structure() == this);
     
     GCSafeConcurrentJSLocker locker(m_lock, vm);
     
@@ -1353,7 +1353,7 @@ Ref<StructureShape> Structure::toStructureShape(JSValue value, bool& sawPolyProt
         if (JSObject* curObject = curValue.getObject())
             curShape->setConstructorName(JSObject::calculatedClassName(curObject));
         else
-            curShape->setConstructorName(curStructure->classInfo()->className);
+            curShape->setConstructorName(curStructure->classInfoForCells()->className);
 
         if (curStructure->isDictionary())
             curShape->enterDictionaryMode();
@@ -1383,7 +1383,7 @@ void Structure::dump(PrintStream& out) const
     auto* structureID = reinterpret_cast<void*>(id().bits());
     out.print(RawPointer(this), ":[", RawPointer(structureID),
         "/", (uint32_t)(reinterpret_cast<uintptr_t>(structureID)), ", ",
-        classInfo()->className, ", (", inlineSize(), "/", inlineCapacity(), ", ",
+        classInfoForCells()->className, ", (", inlineSize(), "/", inlineCapacity(), ", ",
         outOfLineSize(), "/", outOfLineCapacity(), "){");
 
     CommaPrinter comma;
@@ -1435,7 +1435,7 @@ void Structure::dumpInContext(PrintStream& out, DumpContext* context) const
 
 void Structure::dumpBrief(PrintStream& out, const CString& string) const
 {
-    out.print("%", string, ":", classInfo()->className);
+    out.print("%", string, ":", classInfoForCells()->className);
     if (indexingType() & IndexingShapeMask)
         out.print(",", IndexingTypeDump(indexingType()));
 }
@@ -1519,7 +1519,7 @@ bool Structure::canAccessPropertiesQuicklyForEnumeration() const
 
 auto Structure::findPropertyHashEntry(PropertyName propertyName) const -> std::optional<PropertyHashEntry>
 {
-    for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
+    for (const ClassInfo* info = classInfoForCells(); info; info = info->parentClass) {
         if (const HashTable* propHashTable = info->staticPropHashTable) {
             if (const HashTableValue* entry = propHashTable->entry(propertyName))
                 return PropertyHashEntry { propHashTable, entry };

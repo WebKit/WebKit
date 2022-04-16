@@ -1970,8 +1970,8 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
     // The global object is probably a proxy object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
     auto& vm = globalObjectObj->vm();
-    if (globalObjectObj->inherits<JSWindowProxy>(vm))
-        anyWorldGlobalObject = JSC::jsDynamicCast<JSDOMWindow*>(vm, static_cast<JSWindowProxy*>(globalObjectObj)->window());
+    if (globalObjectObj->inherits<JSWindowProxy>())
+        anyWorldGlobalObject = JSC::jsDynamicCast<JSDOMWindow*>(static_cast<JSWindowProxy*>(globalObjectObj)->window());
 
     if (!anyWorldGlobalObject)
         return E_INVALIDARG;

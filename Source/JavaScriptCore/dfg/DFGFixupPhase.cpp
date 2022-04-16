@@ -1673,8 +1673,8 @@ private:
             // When we go down the fast path, we don't consult the prototype chain, so we must prove
             // that it doesn't contain any indexed properties, and that any holes will result in
             // jsUndefined().
-            Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(vm());
-            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm());
+            Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
             if (node->child1()->shouldSpeculateArray()
                 && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
                 && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
@@ -3031,7 +3031,7 @@ private:
             if (!edge)
                 break;
             edge.setUseKind(KnownStringUse);
-            JSString* string = edge->dynamicCastConstant<JSString*>(vm());
+            JSString* string = edge->dynamicCastConstant<JSString*>();
             if (!string)
                 continue;
             if (string->length())
@@ -3782,8 +3782,8 @@ private:
     void setSaneChainIfPossible(Node* node, Array::Speculation speculation)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(vm());
-        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(vm());
+        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
         if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
             && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
             && globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure)) {

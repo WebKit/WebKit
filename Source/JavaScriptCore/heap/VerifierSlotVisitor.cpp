@@ -408,7 +408,7 @@ void VerifierSlotVisitor::visitAsConstraint(const JSCell* cell)
 void VerifierSlotVisitor::visitChildren(const JSCell* cell)
 {
     RELEASE_ASSERT(isMarked(cell));
-    cell->methodTable(vm())->visitChildren(const_cast<JSCell*>(cell), *this);
+    cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
 }
 
 } // namespace JSC

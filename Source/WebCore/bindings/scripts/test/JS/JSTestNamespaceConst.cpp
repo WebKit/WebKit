@@ -79,7 +79,7 @@ JSTestNamespaceConst::JSTestNamespaceConst(Structure* structure, JSDOMGlobalObje
 void JSTestNamespaceConst::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestNamespaceConst>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 

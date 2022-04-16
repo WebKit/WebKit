@@ -62,7 +62,7 @@ IntlSegments::IntlSegments(VM& vm, Structure* structure, std::unique_ptr<UBreakI
 void IntlSegments::finishCreation(VM& vm, JSString* string)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     m_string.set(vm, this, string);
 }
 

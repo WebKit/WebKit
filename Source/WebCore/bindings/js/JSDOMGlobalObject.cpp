@@ -165,13 +165,12 @@ JSC_DEFINE_HOST_FUNCTION(isReadableByteStreamAPIEnabled, (JSGlobalObject*, CallF
     return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().readableByteStreamAPIEnabled()));
 }
 
-JSC_DEFINE_HOST_FUNCTION(getInternalWritableStream, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(getInternalWritableStream, (JSGlobalObject*, CallFrame* callFrame))
 {
     ASSERT(callFrame);
     ASSERT(callFrame->argumentCount() == 1);
 
-    auto& vm = globalObject->vm();
-    auto* writableStream = jsDynamicCast<JSWritableStream*>(vm, callFrame->uncheckedArgument(0));
+    auto* writableStream = jsDynamicCast<JSWritableStream*>(callFrame->uncheckedArgument(0));
     if (UNLIKELY(!writableStream))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(writableStream->wrapped().internalWritableStream());
@@ -194,7 +193,7 @@ JSC_DEFINE_HOST_FUNCTION(whenSignalAborted, (JSGlobalObject* globalObject, CallF
     ASSERT(callFrame->argumentCount() == 2);
 
     auto& vm = globalObject->vm();
-    auto* abortSignal = jsDynamicCast<JSAbortSignal*>(vm, callFrame->uncheckedArgument(0));
+    auto* abortSignal = jsDynamicCast<JSAbortSignal*>(callFrame->uncheckedArgument(0));
     if (UNLIKELY(!abortSignal))
         return JSValue::encode(JSValue(JSC::JSValue::JSFalse));
 
@@ -204,10 +203,10 @@ JSC_DEFINE_HOST_FUNCTION(whenSignalAborted, (JSGlobalObject* globalObject, CallF
     return JSValue::encode(result ? JSValue(JSC::JSValue::JSTrue) : JSValue(JSC::JSValue::JSFalse));
 }
 
-JSC_DEFINE_HOST_FUNCTION(isAbortSignal, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(isAbortSignal, (JSGlobalObject*, CallFrame* callFrame))
 {
     ASSERT(callFrame->argumentCount() == 1);
-    return JSValue::encode(jsBoolean(callFrame->uncheckedArgument(0).inherits<JSAbortSignal>(globalObject->vm())));
+    return JSValue::encode(jsBoolean(callFrame->uncheckedArgument(0).inherits<JSAbortSignal>()));
 }
 
 SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
@@ -246,36 +245,36 @@ SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 void JSDOMGlobalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     addBuiltinGlobals(vm);
 
-    RELEASE_ASSERT(classInfo(vm));
+    RELEASE_ASSERT(classInfo());
 }
 
 void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
     Base::finishCreation(vm, thisValue);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     addBuiltinGlobals(vm);
 
-    RELEASE_ASSERT(classInfo(vm));
+    RELEASE_ASSERT(classInfo());
 }
 
 ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
 {
-    if (inherits<JSDOMWindowBase>(vm()))
+    if (inherits<JSDOMWindowBase>())
         return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
-    if (inherits<JSRemoteDOMWindowBase>(vm()))
+    if (inherits<JSRemoteDOMWindowBase>())
         return nullptr;
-    if (inherits<JSShadowRealmGlobalScopeBase>(vm()))
+    if (inherits<JSShadowRealmGlobalScopeBase>())
         return jsCast<const JSShadowRealmGlobalScopeBase*>(this)->scriptExecutionContext();
-    if (inherits<JSWorkerGlobalScopeBase>(vm()))
+    if (inherits<JSWorkerGlobalScopeBase>())
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
-    if (inherits<JSWorkletGlobalScopeBase>(vm()))
+    if (inherits<JSWorkletGlobalScopeBase>())
         return jsCast<const JSWorkletGlobalScopeBase*>(this)->scriptExecutionContext();
-    if (inherits<JSIDBSerializationGlobalObject>(vm()))
+    if (inherits<JSIDBSerializationGlobalObject>())
         return jsCast<const JSIDBSerializationGlobalObject*>(this)->scriptExecutionContext();
 
     dataLog("Unexpected global object: ", JSValue(this), "\n");
@@ -509,21 +508,20 @@ JSC::JSPromise* JSDOMGlobalObject::instantiateStreaming(JSC::JSGlobalObject* glo
 
 static ScriptModuleLoader* scriptModuleLoader(JSDOMGlobalObject* globalObject)
 {
-    VM& vm = globalObject->vm();
-    if (globalObject->inherits<JSDOMWindowBase>(vm)) {
+    if (globalObject->inherits<JSDOMWindowBase>()) {
         if (auto document = jsCast<const JSDOMWindowBase*>(globalObject)->wrapped().document())
             return &document->moduleLoader();
         return nullptr;
     }
-    if (globalObject->inherits<JSShadowRealmGlobalScopeBase>(vm))
+    if (globalObject->inherits<JSShadowRealmGlobalScopeBase>())
         return &jsCast<const JSShadowRealmGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
-    if (globalObject->inherits<JSRemoteDOMWindowBase>(vm))
+    if (globalObject->inherits<JSRemoteDOMWindowBase>())
         return nullptr;
-    if (globalObject->inherits<JSWorkerGlobalScopeBase>(vm))
+    if (globalObject->inherits<JSWorkerGlobalScopeBase>())
         return &jsCast<const JSWorkerGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
-    if (globalObject->inherits<JSWorkletGlobalScopeBase>(vm))
+    if (globalObject->inherits<JSWorkletGlobalScopeBase>())
         return &jsCast<const JSWorkletGlobalScopeBase*>(globalObject)->wrapped().moduleLoader();
-    if (globalObject->inherits<JSIDBSerializationGlobalObject>(vm))
+    if (globalObject->inherits<JSIDBSerializationGlobalObject>())
         return nullptr;
 
     dataLog("Unexpected global object: ", JSValue(globalObject), "\n");

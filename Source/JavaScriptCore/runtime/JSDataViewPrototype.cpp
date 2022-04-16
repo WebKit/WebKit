@@ -115,7 +115,7 @@ JSDataViewPrototype* JSDataViewPrototype::create(VM& vm, Structure* structure)
 void JSDataViewPrototype::finishCreation(JSC::VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -132,7 +132,7 @@ EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
+    JSDataView* dataView = jsDynamicCast<JSDataView*>(callFrame->thisValue());
     if (!dataView)
         return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
     
@@ -178,7 +178,7 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* dataView = jsDynamicCast<JSDataView*>(vm, callFrame->thisValue());
+    JSDataView* dataView = jsDynamicCast<JSDataView*>(callFrame->thisValue());
     if (!dataView)
         return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
     
@@ -228,7 +228,7 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterBuffer, (JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(vm, JSValue::decode(thisValue));
+    JSDataView* view = jsDynamicCast<JSDataView*>(JSValue::decode(thisValue));
     if (!view)
         return throwVMTypeError(globalObject, scope, "DataView.prototype.buffer expects |this| to be a DataView object"_s);
 
@@ -240,7 +240,7 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterByteLength, (JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(vm, JSValue::decode(thisValue));
+    JSDataView* view = jsDynamicCast<JSDataView*>(JSValue::decode(thisValue));
     if (!view)
         return throwVMTypeError(globalObject, scope, "DataView.prototype.byteLength expects |this| to be a DataView object"_s);
     if (view->isDetached())
@@ -254,7 +254,7 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterByteOffset, (JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSDataView* view = jsDynamicCast<JSDataView*>(vm, JSValue::decode(thisValue));
+    JSDataView* view = jsDynamicCast<JSDataView*>(JSValue::decode(thisValue));
     if (!view)
         return throwVMTypeError(globalObject, scope, "DataView.prototype.byteOffset expects |this| to be a DataView object"_s);
     if (view->isDetached())

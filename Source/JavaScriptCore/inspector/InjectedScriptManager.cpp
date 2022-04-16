@@ -155,7 +155,7 @@ Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedSc
     if (evaluationException)
         return makeUnexpected(evaluationException);
 
-    auto callData = getCallData(vm, functionValue);
+    auto callData = JSC::getCallData(functionValue);
     if (callData.type == CallData::Type::None)
         return nullptr;
 

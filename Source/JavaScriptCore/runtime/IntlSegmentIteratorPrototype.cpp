@@ -67,7 +67,7 @@ IntlSegmentIteratorPrototype::IntlSegmentIteratorPrototype(VM& vm, Structure* st
 void IntlSegmentIteratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -77,7 +77,7 @@ JSC_DEFINE_HOST_FUNCTION(intlSegmentIteratorPrototypeFuncNext, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* segmentIterator = jsDynamicCast<IntlSegmentIterator*>(vm, callFrame->thisValue());
+    auto* segmentIterator = jsDynamicCast<IntlSegmentIterator*>(callFrame->thisValue());
     if (!segmentIterator)
         return throwVMTypeError(globalObject, scope, "Intl.SegmentIterator.prototype.next called on value that's not a SegmentIterator"_s);
 

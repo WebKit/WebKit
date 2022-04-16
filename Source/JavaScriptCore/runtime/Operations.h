@@ -37,25 +37,23 @@ size_t normalizePrototypeChain(JSGlobalObject*, JSCell*, bool& sawPolyProto);
 template<Concurrency concurrency>
 ALWAYS_INLINE TriState jsTypeofIsObjectWithConcurrency(JSGlobalObject* globalObject, JSValue value)
 {
-    VM& vm = globalObject->vm();
     if (!value.isObject())
         return triState(value.isNull());
     JSObject* object = asObject(value);
-    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+    if (object->structure()->masqueradesAsUndefined(globalObject))
         return TriState::False;
-    return invert(object->isCallableWithConcurrency<concurrency>(vm));
+    return invert(object->isCallableWithConcurrency<concurrency>());
 }
 
 template<Concurrency concurrency>
 ALWAYS_INLINE TriState jsTypeofIsFunctionWithConcurrency(JSGlobalObject* globalObject, JSValue value)
 {
-    VM& vm = globalObject->vm();
     if (!value.isObject())
         return TriState::False;
     JSObject* object = asObject(value);
-    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+    if (object->structure()->masqueradesAsUndefined(globalObject))
         return TriState::False;
-    return object->isCallableWithConcurrency<concurrency>(vm);
+    return object->isCallableWithConcurrency<concurrency>();
 }
 
 inline JSString* jsTypeStringForValue(JSGlobalObject* globalObject, JSValue value)

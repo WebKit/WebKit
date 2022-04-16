@@ -103,8 +103,8 @@ bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject* 
 
     // We don't call through to JSObject because there's no way to give a 
     // lexical environment object getter properties or a prototype.
-    ASSERT(!thisObject->hasGetterSetterProperties(vm));
-    ASSERT(thisObject->getPrototypeDirect(vm).isNull());
+    ASSERT(!thisObject->hasGetterSetterProperties());
+    ASSERT(thisObject->getPrototypeDirect().isNull());
     return false;
 }
 
@@ -122,7 +122,7 @@ bool JSLexicalEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, Prope
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
     // expose in the lexicalEnvironment object.
-    ASSERT(!thisObject->hasGetterSetterProperties(globalObject->vm()));
+    ASSERT(!thisObject->hasGetterSetterProperties());
     return thisObject->putOwnDataProperty(globalObject->vm(), propertyName, value, slot);
 }
 

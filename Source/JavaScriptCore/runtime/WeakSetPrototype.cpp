@@ -43,7 +43,7 @@ static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetHas);
 void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, protoFuncWeakSetDelete, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, protoFuncWeakSetHas, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSWeakSetHasIntrinsic);
@@ -62,7 +62,7 @@ ALWAYS_INLINE static JSWeakSet* getWeakSet(JSGlobalObject* globalObject, JSValue
         return nullptr;
     }
 
-    auto* set = jsDynamicCast<JSWeakSet*>(vm, asObject(value));
+    auto* set = jsDynamicCast<JSWeakSet*>(asObject(value));
     if (LIKELY(set))
         return set;
 

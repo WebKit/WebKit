@@ -67,7 +67,7 @@ String errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
     if (v.isObject()) {
         VM& vm = globalObject->vm();
         JSObject* object = asObject(v);
-        if (object->isCallable(vm))
+        if (object->isCallable())
             return vm.smallStrings.functionString()->value(globalObject);
         return JSObject::calculatedClassName(object);
     }
@@ -271,7 +271,7 @@ JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String&
     if (!errorMessage)
         return createOutOfMemoryError(globalObject);
     scope.assertNoException();
-    JSObject* exception = createTypeError(globalObject, errorMessage, appender, runtimeTypeForValue(vm, value));
+    JSObject* exception = createTypeError(globalObject, errorMessage, appender, runtimeTypeForValue(value));
     ASSERT(exception->isErrorInstance());
 
     return exception;
@@ -279,7 +279,7 @@ JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String&
 
 JSObject* createInvalidFunctionApplyParameterError(JSGlobalObject* globalObject, JSValue value)
 {
-    return createTypeError(globalObject, "second argument to Function.prototype.apply must be an Array-like object"_s, defaultSourceAppender, runtimeTypeForValue(globalObject->vm(), value));
+    return createTypeError(globalObject, "second argument to Function.prototype.apply must be an Array-like object"_s, defaultSourceAppender, runtimeTypeForValue(value));
 }
 
 JSObject* createInvalidInParameterError(JSGlobalObject* globalObject, JSValue value)

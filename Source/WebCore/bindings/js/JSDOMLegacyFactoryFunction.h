@@ -66,7 +66,7 @@ template<typename JSClass> inline JSC::Structure* JSDOMLegacyFactoryFunction<JSC
 template<typename JSClass> inline void JSDOMLegacyFactoryFunction<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(globalObject);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     initializeProperties(vm, globalObject);
 }
 

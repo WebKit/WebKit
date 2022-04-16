@@ -318,12 +318,11 @@ String HeapSnapshotBuilder::descriptionForCell(JSCell *cell) const
     if (cell->isString())
         return emptyString(); // FIXME: get part of string.
 
-    VM& vm = m_profiler.vm();
-    Structure* structure = cell->structure(vm);
+    Structure* structure = cell->structure();
 
-    if (structure->classInfo()->isSubClassOf(Structure::info())) {
+    if (structure->classInfoForCells()->isSubClassOf(Structure::info())) {
         Structure* cellAsStructure = jsCast<Structure*>(cell);
-        return cellAsStructure->classInfo()->className;
+        return cellAsStructure->classInfoForCells()->className;
     }
 
     return emptyString();
@@ -362,7 +361,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
 
         allowedNodeIdentifiers.set(node.cell, node.identifier);
 
-        String className = node.cell->classInfo(vm)->className;
+        String className = node.cell->classInfo()->className;
         if (node.cell->isObject() && className == JSObject::info()->className) {
             flags |= static_cast<unsigned>(NodeFlags::ObjectSubtype);
 
@@ -370,7 +369,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             // These cases are typically F.prototype objects and we want to treat these as
             // "Object" in snapshots and not get the name of the prototype's parent.
             JSObject* object = asObject(node.cell);
-            if (JSGlobalObject* globalObject = object->globalObject(vm)) {
+            if (JSGlobalObject* globalObject = object->globalObject()) {
                 PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
                 if (!object->getOwnPropertySlot(object, globalObject, vm.propertyNames->constructor, slot))
                     className = JSObject::calculatedClassName(object);
@@ -385,7 +384,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         void* wrappedAddress = nullptr;
         unsigned labelIndex = 0;
         if (!node.cell->isString() && !node.cell->isHeapBigInt()) {
-            Structure* structure = node.cell->structure(vm);
+            Structure* structure = node.cell->structure();
             if (!structure || !structure->globalObject())
                 flags |= static_cast<unsigned>(NodeFlags::Internal);
 
@@ -396,8 +395,8 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                     nodeLabel.append(it->value);
 
                 if (nodeLabel.isEmpty()) {
-                    if (auto* object = jsDynamicCast<JSObject*>(vm, node.cell)) {
-                        if (auto* function = jsDynamicCast<JSFunction*>(vm, object))
+                    if (auto* object = jsDynamicCast<JSObject*>(node.cell)) {
+                        if (auto* function = jsDynamicCast<JSFunction*>(object))
                             nodeLabel.append(function->calculatedDisplayName(vm));
                     }
                 }

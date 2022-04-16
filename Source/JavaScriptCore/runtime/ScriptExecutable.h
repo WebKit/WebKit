@@ -123,7 +123,7 @@ private:
     friend class ExecutableBase;
     void prepareForExecutionImpl(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
 
-    bool hasClearableCode(VM&) const;
+    bool hasClearableCode() const;
 
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 

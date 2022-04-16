@@ -341,7 +341,7 @@ JSC_DEFINE_HOST_FUNCTION(hasOwnLengthProperty, (JSGlobalObject* globalObject, Ca
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* target = asObject(callFrame->uncheckedArgument(0));
-    JSFunction* function = jsDynamicCast<JSFunction*>(vm, target);
+    JSFunction* function = jsDynamicCast<JSFunction*>(target);
     if (function && function->canAssumeNameAndLengthAreOriginal(vm)) {
 #if ASSERT_ENABLED
         bool result = target->hasOwnProperty(globalObject, vm.propertyNames->length);
@@ -678,7 +678,7 @@ static ObjectPropertyCondition setupAdaptiveWatchpoint(JSGlobalObject* globalObj
     RELEASE_ASSERT(slot.isCacheableValue());
     JSValue functionValue = slot.getValue(globalObject, ident);
     catchScope.assertNoException();
-    ASSERT(jsDynamicCast<JSFunction*>(vm, functionValue));
+    ASSERT(jsDynamicCast<JSFunction*>(functionValue));
 
     ObjectPropertyCondition condition = generateConditionForSelfEquivalence(vm, nullptr, base, ident.impl());
     RELEASE_ASSERT(condition.requiredValue() == functionValue);
@@ -723,7 +723,7 @@ void JSGlobalObject::init(VM& vm)
     ASSERT(vm.currentThreadIsHoldingAPILock());
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    Base::setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure(vm)));
+    Base::setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure()));
 
     m_debugger = nullptr;
 
@@ -826,7 +826,7 @@ void JSGlobalObject::init(VM& vm)
         JSFunction::create(vm, this, 0, makeString("get ", vm.propertyNames->underscoreProto.string()), globalFuncProtoGetter, UnderscoreProtoIntrinsic),
         JSFunction::create(vm, this, 0, makeString("set ", vm.propertyNames->underscoreProto.string()), globalFuncProtoSetter));
     m_objectPrototype->putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->underscoreProto, protoAccessor, PropertyAttribute::Accessor | PropertyAttribute::DontEnum);
-    m_functionPrototype->structure(vm)->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
+    m_functionPrototype->structure()->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
     m_objectStructureForObjectConstructor.set(vm, this, m_structureCache.emptyObjectStructureForPrototype(this, m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity()));
     m_objectProtoValueOfFunction.set(vm, this, jsCast<JSFunction*>(objectPrototype()->getDirect(vm, vm.propertyNames->valueOf)));
 
@@ -1345,7 +1345,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     {
         JSValue hasOwnPropertyFunction = jsCast<JSFunction*>(objectPrototype()->get(this, vm.propertyNames->hasOwnProperty));
         catchScope.assertNoException();
-        RELEASE_ASSERT(!!jsDynamicCast<JSFunction*>(vm, hasOwnPropertyFunction));
+        RELEASE_ASSERT(!!jsDynamicCast<JSFunction*>(hasOwnPropertyFunction));
         m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hasOwnPropertyFunction)].set(vm, this, jsCast<JSFunction*>(hasOwnPropertyFunction));
     }
     {
@@ -1777,11 +1777,11 @@ void JSGlobalObject::clearGlobalScopeExtension()
     m_globalScopeExtension.clear();
 }
 
-static inline JSObject* lastInPrototypeChain(VM& vm, JSObject* object)
+static inline JSObject* lastInPrototypeChain(JSObject* object)
 {
     JSObject* o = object;
-    while (o->getPrototypeDirect(vm).isObject())
-        o = asObject(o->getPrototypeDirect(vm));
+    while (o->getPrototypeDirect().isObject())
+        o = asObject(o->getPrototypeDirect());
     return o;
 }
 
@@ -1790,9 +1790,7 @@ namespace {
 
 class GlobalObjectDependencyFinder : public MarkedBlock::VoidFunctor {
 public:
-    GlobalObjectDependencyFinder(VM& vm)
-        : m_vm(vm)
-    { }
+    GlobalObjectDependencyFinder() = default;
 
     IterationStatus operator()(HeapCell*, HeapCell::Kind) const;
 
@@ -1802,7 +1800,6 @@ public:
 private:
     void visit(JSObject*);
 
-    VM& m_vm;
     HashMap<JSGlobalObject*, HashSet<JSGlobalObject*>> m_dependencies;
 };
 
@@ -1822,20 +1819,18 @@ inline HashSet<JSGlobalObject*>* GlobalObjectDependencyFinder::dependentsFor(JSG
 
 inline void GlobalObjectDependencyFinder::visit(JSObject* object)
 {
-    VM& vm = m_vm;
-
     if (!object->mayBePrototype())
         return;
 
     JSObject* current = object;
-    JSGlobalObject* objectGlobalObject = object->globalObject(vm);
+    JSGlobalObject* objectGlobalObject = object->globalObject();
     do {
-        JSValue prototypeValue = current->getPrototypeDirect(vm);
+        JSValue prototypeValue = current->getPrototypeDirect();
         if (prototypeValue.isNull())
             return;
         current = asObject(prototypeValue);
 
-        JSGlobalObject* protoGlobalObject = current->globalObject(vm);
+        JSGlobalObject* protoGlobalObject = current->globalObject();
         if (protoGlobalObject != objectGlobalObject)
             addDependency(protoGlobalObject, objectGlobalObject);
     } while (true);
@@ -1859,8 +1854,8 @@ enum class BadTimeFinderMode {
 template<BadTimeFinderMode mode>
 class ObjectsWithBrokenIndexingFinder : public MarkedBlock::VoidFunctor {
 public:
-    ObjectsWithBrokenIndexingFinder(VM&, Vector<JSObject*>&, JSGlobalObject*);
-    ObjectsWithBrokenIndexingFinder(VM&, Vector<JSObject*>&, HashSet<JSGlobalObject*>&);
+    ObjectsWithBrokenIndexingFinder(Vector<JSObject*>&, JSGlobalObject*);
+    ObjectsWithBrokenIndexingFinder(Vector<JSObject*>&, HashSet<JSGlobalObject*>&);
 
     bool needsMultiGlobalsScan() const { return m_needsMultiGlobalsScan; }
     IterationStatus operator()(HeapCell*, HeapCell::Kind) const;
@@ -1868,7 +1863,6 @@ public:
 private:
     IterationStatus visit(JSObject*);
 
-    VM& m_vm;
     Vector<JSObject*>& m_foundObjects;
     JSGlobalObject* m_globalObject { nullptr }; // Only used for SingleBadTimeGlobal mode.
     HashSet<JSGlobalObject*>* m_globalObjects { nullptr }; // Only used for BadTimeGlobalGraph mode;
@@ -1876,19 +1870,15 @@ private:
 };
 
 template<>
-ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal>::ObjectsWithBrokenIndexingFinder(
-    VM& vm, Vector<JSObject*>& foundObjects, JSGlobalObject* globalObject)
-    : m_vm(vm)
-    , m_foundObjects(foundObjects)
+ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal>::ObjectsWithBrokenIndexingFinder(Vector<JSObject*>& foundObjects, JSGlobalObject* globalObject)
+    : m_foundObjects(foundObjects)
     , m_globalObject(globalObject)
 {
 }
 
 template<>
-ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::MultipleGlobals>::ObjectsWithBrokenIndexingFinder(
-    VM& vm, Vector<JSObject*>& foundObjects, HashSet<JSGlobalObject*>& globalObjects)
-    : m_vm(vm)
-    , m_foundObjects(foundObjects)
+ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::MultipleGlobals>::ObjectsWithBrokenIndexingFinder(Vector<JSObject*>& foundObjects, HashSet<JSGlobalObject*>& globalObjects)
+    : m_foundObjects(foundObjects)
     , m_globalObjects(&globalObjects)
 {
 }
@@ -1907,8 +1897,6 @@ inline bool hasBrokenIndexing(JSObject* object)
 template<BadTimeFinderMode mode>
 inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* object)
 {
-    VM& vm = m_vm;
-
     // We only want to have a bad time in the affected global object, not in the entire
     // VM. But we have to be careful, since there may be objects that claim to belong to
     // a different global object that have prototypes from our global object.
@@ -1917,7 +1905,7 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
         bool objectMayBePrototype { false };
 
         if (mode == BadTimeFinderMode::SingleGlobal) {
-            objectGlobalObject = object->globalObject(vm);
+            objectGlobalObject = object->globalObject();
             if (objectGlobalObject == m_globalObject)
                 return true;
 
@@ -1925,7 +1913,7 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
         }
 
         for (JSObject* current = object; ;) {
-            JSGlobalObject* currentGlobalObject = current->globalObject(vm);
+            JSGlobalObject* currentGlobalObject = current->globalObject();
             if (mode == BadTimeFinderMode::SingleGlobal) {
                 if (objectMayBePrototype && currentGlobalObject != objectGlobalObject)
                     m_needsMultiGlobalsScan = true;
@@ -1936,7 +1924,7 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
                     return true;
             }
 
-            JSValue prototypeValue = current->getPrototypeDirect(vm);
+            JSValue prototypeValue = current->getPrototypeDirect();
             if (prototypeValue.isNull())
                 return false;
             current = asObject(prototypeValue);
@@ -1944,7 +1932,7 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
         RELEASE_ASSERT_NOT_REACHED();
     };
 
-    if (JSFunction* function = jsDynamicCast<JSFunction*>(vm, object)) {
+    if (JSFunction* function = jsDynamicCast<JSFunction*>(object)) {
         if (FunctionRareData* rareData = function->rareData()) {
             // We only use this to cache JSFinalObjects. They do not start off with a broken indexing type.
             ASSERT(!(rareData->objectAllocationStructure() && hasBrokenIndexing(rareData->objectAllocationStructure()->indexingType())));
@@ -2102,7 +2090,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
     fireWatchpointAndMakeAllArrayStructuresSlowPut(vm); // Step 1 above.
     
     Vector<JSObject*> foundObjects;
-    ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal> finder(vm, foundObjects, this);
+    ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal> finder(foundObjects, this);
     {
         HeapIterationScope iterationScope(vm.heap);
         vm.heap.objectSpace().forEachLiveCell(iterationScope, finder); // Attempt step 2 above.
@@ -2113,7 +2101,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
 
         // Find all globals that will also have a bad time as a side effect of
         // this global having a bad time.
-        GlobalObjectDependencyFinder dependencies(vm);
+        GlobalObjectDependencyFinder dependencies;
         {
             HeapIterationScope iterationScope(vm.heap);
             vm.heap.objectSpace().forEachLiveCell(iterationScope, dependencies);
@@ -2135,7 +2123,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
             }
         }
 
-        ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::MultipleGlobals> finder(vm, foundObjects, globalsHavingABadTime);
+        ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::MultipleGlobals> finder(foundObjects, globalsHavingABadTime);
         {
             HeapIterationScope iterationScope(vm.heap);
             vm.heap.objectSpace().forEachLiveCell(iterationScope, finder); // Step 2 above.
@@ -2152,7 +2140,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
 
 void JSGlobalObject::fixupPrototypeChainWithObjectPrototype(VM& vm)
 {
-    JSObject* oldLastInPrototypeChain = lastInPrototypeChain(vm, this);
+    JSObject* oldLastInPrototypeChain = lastInPrototypeChain(this);
     JSObject* objectPrototype = m_objectPrototype.get();
     if (oldLastInPrototypeChain != objectPrototype)
         oldLastInPrototypeChain->setPrototypeDirect(vm, objectPrototype);
@@ -2161,7 +2149,7 @@ void JSGlobalObject::fixupPrototypeChainWithObjectPrototype(VM& vm)
 // Set prototype, and also insert the object prototype at the end of the chain.
 void JSGlobalObject::resetPrototype(VM& vm, JSValue prototype)
 {
-    if (getPrototypeDirect(vm) == prototype)
+    if (getPrototypeDirect() == prototype)
         return;
     setPrototypeDirect(vm, prototype);
     fixupPrototypeChainWithObjectPrototype(vm);
@@ -2425,7 +2413,7 @@ void JSGlobalObject::tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* 
     // and that %constructor%[Symbol.species] is the primordial GetterSetter.
 
     // We only initialize once so flattening the structures does not have any real cost.
-    Structure* prototypeStructure = prototype->structure(vm);
+    Structure* prototypeStructure = prototype->structure();
     if (prototypeStructure->isDictionary())
         prototypeStructure = prototypeStructure->flattenDictionaryStructure(vm, prototype);
     RELEASE_ASSERT(!prototypeStructure->isDictionary());
@@ -2444,7 +2432,7 @@ void JSGlobalObject::tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* 
         return;
     }
 
-    Structure* constructorStructure = constructor->structure(vm);
+    Structure* constructorStructure = constructor->structure();
     if (constructorStructure->isDictionary())
         constructorStructure = constructorStructure->flattenDictionaryStructure(vm, constructor);
 
@@ -2653,10 +2641,10 @@ void JSGlobalObject::finishCreation(VM& vm)
 {
     DeferTermination deferTermination(vm);
     Base::finishCreation(vm);
-    structure(vm)->setGlobalObject(vm, this);
+    structure()->setGlobalObject(vm, this);
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
     init(vm);
-    setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, getPrototypeDirect(vm)), this));
+    setGlobalThis(vm, JSProxy::create(vm, JSProxy::createStructure(vm, this, getPrototypeDirect()), this));
     ASSERT(type() == GlobalObjectType);
 }
 
@@ -2664,7 +2652,7 @@ void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
     DeferTermination deferTermination(vm);
     Base::finishCreation(vm);
-    structure(vm)->setGlobalObject(vm, this);
+    structure()->setGlobalObject(vm, this);
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
     init(vm);
     setGlobalThis(vm, thisValue);

@@ -74,7 +74,7 @@ std::optional<String> ScriptArguments::getArgumentAtIndexAsString(size_t argumen
     }
 
     auto value = argumentAt(argumentIndex);
-    if (JSC::jsDynamicCast<JSC::ProxyObject*>(globalObject->vm(), value))
+    if (JSC::jsDynamicCast<JSC::ProxyObject*>(value))
         return "[object Proxy]"_s;
 
     String result;

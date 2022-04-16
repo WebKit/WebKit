@@ -1954,7 +1954,7 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
 
         if (handlerObject && globalObject) {
             JSC::VM& vm = globalObject->vm();
-            JSC::JSFunction* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(vm, handlerObject);
+            JSC::JSFunction* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(handlerObject);
 
             if (!handlerFunction) {
                 auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -1966,7 +1966,7 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
                     scope.clearException();
 
                 if (handleEventValue)
-                    handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(vm, handleEventValue);
+                    handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(handleEventValue);
             }
 
             if (handlerFunction && !handlerFunction->isHostOrBuiltinFunction()) {

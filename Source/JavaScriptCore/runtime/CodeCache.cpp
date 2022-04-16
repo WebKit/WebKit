@@ -43,7 +43,7 @@ void CodeCacheMap::pruneSlowCase()
     while (m_size > m_capacity || !canPruneQuickly()) {
         MapType::iterator it = m_map.begin();
 
-        writeCodeBlock(it->value.cell->vm(), it->key, it->value);
+        writeCodeBlock(it->key, it->value);
 
         m_size -= it->key.length();
         m_map.remove(it);
@@ -265,15 +265,15 @@ void CodeCache::updateCache(const UnlinkedFunctionExecutable* executable, const 
     parentSource.provider()->updateCache(executable, parentSource, kind, codeBlock);
 }
 
-void CodeCache::write(VM& vm)
+void CodeCache::write()
 {
     for (auto& it : m_sourceCode)
-        writeCodeBlock(vm, it.key, it.value);
+        writeCodeBlock(it.key, it.value);
 }
 
-void writeCodeBlock(VM& vm, const SourceCodeKey& key, const SourceCodeValue& value)
+void writeCodeBlock(const SourceCodeKey& key, const SourceCodeValue& value)
 {
-    UnlinkedCodeBlock* codeBlock = jsDynamicCast<UnlinkedCodeBlock*>(vm, value.cell.get());
+    UnlinkedCodeBlock* codeBlock = jsDynamicCast<UnlinkedCodeBlock*>(value.cell.get());
     if (!codeBlock)
         return;
 

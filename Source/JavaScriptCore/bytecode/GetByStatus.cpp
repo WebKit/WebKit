@@ -215,7 +215,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
         return GetByStatus(NoInformation);
         
     case CacheType::GetByIdSelf: {
-        Structure* structure = stubInfo->inlineAccessBaseStructure(profiledBlock->vm());
+        Structure* structure = stubInfo->inlineAccessBaseStructure();
         if (structure->takesSlowPathInDFGForImpureProperty())
             return GetByStatus(JSC::slowVersion(summary), stubInfo);
         CacheableIdentifier identifier = stubInfo->identifier();

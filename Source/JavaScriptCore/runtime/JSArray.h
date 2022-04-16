@@ -106,8 +106,8 @@ public:
 
     static JSArray* fastSlice(JSGlobalObject*, JSObject* source, uint64_t startIndex, uint64_t count);
 
-    bool canFastCopy(VM&, JSArray* otherArray);
-    bool canDoFastIndexedAccess(VM&);
+    bool canFastCopy(JSArray* otherArray);
+    bool canDoFastIndexedAccess();
     // This function returns NonArray if the indexing types are not compatable for copying.
     IndexingType mergeIndexingTypeForCopying(IndexingType other);
     bool appendMemcpy(JSGlobalObject*, VM&, unsigned startIndex, JSArray* otherArray);
@@ -182,7 +182,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(jsDynamicCast<JSArray*>(vm, this));
+        ASSERT(jsDynamicCast<JSArray*>(this));
         ASSERT_WITH_MESSAGE(type() == ArrayType || type() == DerivedArrayType, "Instance inheriting JSArray should have either ArrayType or DerivedArrayType");
     }
 
@@ -295,7 +295,7 @@ JSArray* asArray(JSValue);
 
 inline JSArray* asArray(JSCell* cell)
 {
-    ASSERT(cell->inherits<JSArray>(cell->vm()));
+    ASSERT(cell->inherits<JSArray>());
     return jsCast<JSArray*>(cell);
 }
 
@@ -306,7 +306,7 @@ inline JSArray* asArray(JSValue value)
 
 inline bool isJSArray(JSCell* cell)
 {
-    ASSERT((cell->classInfo(cell->vm()) == JSArray::info()) == (cell->type() == ArrayType));
+    ASSERT((cell->classInfo() == JSArray::info()) == (cell->type() == ArrayType));
     return cell->type() == ArrayType;
 }
 

@@ -43,14 +43,14 @@ JSAsyncGeneratorFunction::JSAsyncGeneratorFunction(VM& vm, FunctionExecutable* e
 JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSAsyncGeneratorFunction* asyncGenerator = new (NotNull, allocateCell<JSAsyncGeneratorFunction>(vm)) JSAsyncGeneratorFunction(vm, executable, scope, structure);
-    ASSERT(asyncGenerator->structure(vm)->globalObject());
+    ASSERT(asyncGenerator->structure()->globalObject());
     asyncGenerator->finishCreation(vm);
     return asyncGenerator;
 }
 
 JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    JSAsyncGeneratorFunction* asyncGenerator = createImpl(vm, executable, scope, scope->globalObject(vm)->asyncGeneratorFunctionStructure());
+    JSAsyncGeneratorFunction* asyncGenerator = createImpl(vm, executable, scope, scope->globalObject()->asyncGeneratorFunctionStructure());
     executable->notifyCreation(vm, asyncGenerator, "Allocating an async generator");
     return asyncGenerator;
 }
@@ -64,7 +64,7 @@ JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::create(VM& vm, FunctionExecu
 
 JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    return createImpl(vm, executable, scope, scope->globalObject(vm)->asyncGeneratorFunctionStructure());
+    return createImpl(vm, executable, scope, scope->globalObject()->asyncGeneratorFunctionStructure());
 }
 
 }

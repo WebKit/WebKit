@@ -117,7 +117,7 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, { });
 
     URL base;
-    if (JSString* referrerString = jsDynamicCast<JSString*>(vm, referrer)) {
+    if (JSString* referrerString = jsDynamicCast<JSString*>(referrer)) {
         String value = referrerString->value(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         URL referrerURL({ }, value);

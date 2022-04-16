@@ -84,7 +84,7 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* globalObject, JSValueRef v)
     if (!result)
         return JSC::jsNull();
     if (result.isCell())
-        RELEASE_ASSERT(result.asCell()->methodTable(getVM(globalObject)));
+        RELEASE_ASSERT(result.asCell()->methodTable());
     return result;
 }
 
@@ -107,7 +107,7 @@ inline JSC::JSValue toJSForGC(JSC::JSGlobalObject* globalObject, JSValueRef v)
     JSC::JSValue result = bitwise_cast<JSC::JSValue>(v);
 #endif
     if (result && result.isCell())
-        RELEASE_ASSERT(result.asCell()->methodTable(getVM(globalObject)));
+        RELEASE_ASSERT(result.asCell()->methodTable());
     return result;
 }
 
@@ -121,7 +121,7 @@ inline JSC::JSObject* toJS(JSObjectRef o)
 {
     JSC::JSObject* object = uncheckedToJS(o);
     if (object)
-        RELEASE_ASSERT(object->methodTable(object->vm()));
+        RELEASE_ASSERT(object->methodTable());
     return object;
 }
 

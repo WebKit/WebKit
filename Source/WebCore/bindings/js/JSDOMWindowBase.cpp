@@ -121,7 +121,7 @@ SUPPRESS_ASAN inline void JSDOMWindowBase::initStaticGlobals(JSC::VM& vm)
 void JSDOMWindowBase::finishCreation(VM& vm, JSWindowProxy* proxy)
 {
     Base::finishCreation(vm, proxy);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     initStaticGlobals(vm);
 

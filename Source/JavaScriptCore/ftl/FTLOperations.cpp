@@ -71,7 +71,7 @@ JSC_DEFINE_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject* gl
     switch (materialization->type()) {
     case PhantomNewObject: {
         JSFinalObject* object = jsCast<JSFinalObject*>(JSValue::decode(*encodedValue));
-        Structure* structure = object->structure(vm);
+        Structure* structure = object->structure();
 
         // Figure out what the heck to populate the object with. Use
         // getPropertiesConcurrently() because that happens to be
@@ -147,10 +147,10 @@ JSC_DEFINE_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject* gl
             materialize(jsCast<JSSetIterator*>(target));
             break;
         case JSPromiseType:
-            if (target->classInfo(vm) == JSInternalPromise::info())
+            if (target->classInfo() == JSInternalPromise::info())
                 materialize(jsCast<JSInternalPromise*>(target));
             else {
-                ASSERT(target->classInfo(vm) == JSPromise::info());
+                ASSERT(target->classInfo() == JSPromise::info());
                 materialize(jsCast<JSPromise*>(target));
             }
             break;
@@ -206,7 +206,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
             if (property.location() != PromotedLocationDescriptor(StructurePLoc))
                 continue;
 
-            RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<Structure>(vm));
+            RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<Structure>());
             structure = jsCast<Structure*>(JSValue::decode(values[i]));
             break;
         }
@@ -240,11 +240,11 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(FunctionExecutablePLoc)) {
-                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<FunctionExecutable>(vm));
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<FunctionExecutable>());
                 executable = jsCast<FunctionExecutable*>(JSValue::decode(values[i]));
             }
             if (property.location() == PromotedLocationDescriptor(FunctionActivationPLoc)) {
-                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSScope>(vm));
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSScope>());
                 activation = jsCast<JSScope*>(JSValue::decode(values[i]));
             }
         }
@@ -267,10 +267,10 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(ActivationScopePLoc)) {
-                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSScope>(vm));
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSScope>());
                 scope = jsCast<JSScope*>(JSValue::decode(values[i]));
             } else if (property.location() == PromotedLocationDescriptor(ActivationSymbolTablePLoc)) {
-                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<SymbolTable>(vm));
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<SymbolTable>());
                 table = jsCast<SymbolTable*>(JSValue::decode(values[i]));
             }
         }
@@ -334,7 +334,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(StructurePLoc)) {
-                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<Structure>(vm));
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<Structure>());
                 structure = jsCast<Structure*>(JSValue::decode(values[i]));
             }
         }
@@ -360,12 +360,12 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
             return result;
         }
         case JSPromiseType: {
-            if (structure->classInfo() == JSInternalPromise::info()) {
+            if (structure->classInfoForCells() == JSInternalPromise::info()) {
                 JSInternalPromise* result = JSInternalPromise::createWithInitialValues(vm, structure);
                 RELEASE_ASSERT(materialization->properties().size() - 1 == JSInternalPromise::numberOfInternalFields);
                 return result;
             }
-            ASSERT(structure->classInfo() == JSPromise::info());
+            ASSERT(structure->classInfoForCells() == JSPromise::info());
             JSPromise* result = JSPromise::createWithInitialValues(vm, structure);
             RELEASE_ASSERT(materialization->properties().size() - 1 == JSPromise::numberOfInternalFields);
             return result;
@@ -624,7 +624,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
             if (property.location().kind() == NewArrayWithSpreadArgumentPLoc) {
                 ++numProperties;
                 JSValue value = JSValue::decode(values[i]);
-                if (JSImmutableButterfly* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(vm, value))
+                if (JSImmutableButterfly* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(value))
                     checkedArraySize += immutableButterfly->publicLength();
                 else
                     checkedArraySize += 1;
@@ -666,7 +666,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
 
         unsigned arrayIndex = 0;
         for (JSValue value : arguments) {
-            if (JSImmutableButterfly* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(vm, value)) {
+            if (JSImmutableButterfly* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(value)) {
                 for (unsigned i = 0; i < immutableButterfly->publicLength(); i++) {
                     ASSERT(immutableButterfly->get(i));
                     result->putDirectIndex(globalObject, arrayIndex, immutableButterfly->get(i));
@@ -687,7 +687,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(RegExpObjectRegExpPLoc)) {
-                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<RegExp>(vm));
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<RegExp>());
                 regExp = jsCast<RegExp*>(JSValue::decode(values[i]));
             }
         }
@@ -724,11 +724,11 @@ JSC_DEFINE_JIT_OPERATION(operationTypeOfObjectAsTypeofType, int32_t, (JSGlobalOb
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(jsDynamicCast<JSObject*>(vm, object));
+    ASSERT(jsDynamicCast<JSObject*>(object));
 
-    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+    if (object->structure()->masqueradesAsUndefined(globalObject))
         return static_cast<int32_t>(TypeofType::Undefined);
-    if (object->isCallable(vm))
+    if (object->isCallable())
         return static_cast<int32_t>(TypeofType::Function);
     return static_cast<int32_t>(TypeofType::Object);
 }

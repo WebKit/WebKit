@@ -90,7 +90,7 @@ public:
     static bool unusedVerifier(bool, const char*, ...) { return false; }
 
     template<VerifierAction, VerifyFunctor = unusedVerifier>
-    static bool verifyCellSize(VM&, JSCell*, size_t allocatorCellSize);
+    static bool verifyCellSize(JSCell*, size_t allocatorCellSize);
 
     template<VerifierAction, VerifyFunctor = unusedVerifier>
     static bool verifyCell(VM&, JSCell*);

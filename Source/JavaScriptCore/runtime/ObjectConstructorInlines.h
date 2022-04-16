@@ -76,7 +76,7 @@ ALWAYS_INLINE void objectAssignFast(VM& vm, JSObject* target, JSObject* source, 
     // Do not clear since Vector::clear shrinks the backing store.
     properties.resize(0);
     values.clear();
-    source->structure(vm)->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
+    source->structure()->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
         if (entry.attributes & PropertyAttribute::DontEnum)
             return true;
 

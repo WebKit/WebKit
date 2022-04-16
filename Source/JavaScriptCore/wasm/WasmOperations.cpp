@@ -568,7 +568,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
             break;
         default: {
             if (isFuncref(returnType) || isExternref(returnType)) {
-                if (isFuncref(returnType) && !value.isCallable(vm)) {
+                if (isFuncref(returnType) && !value.isCallable()) {
                     throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
                     return;
                 }
@@ -699,7 +699,7 @@ static bool setWasmTableElement(Instance* instance, unsigned tableIndex, uint32_
         WebAssemblyFunction* wasmFunction;
         WebAssemblyWrapperFunction* wasmWrapperFunction;
 
-        if (isWebAssemblyHostFunction(instance->owner<JSObject>()->vm(), value, wasmFunction, wasmWrapperFunction)) {
+        if (isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction)) {
             ASSERT(!!wasmFunction || !!wasmWrapperFunction);
             if (wasmFunction)
                 instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), &wasmFunction->instance()->instance());
@@ -817,7 +817,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableCopy, size_t, (Instance* instance, un
 JSC_DEFINE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance* instance, uint32_t index))
 {
     JSValue value = instance->getFunctionWrapper(index);
-    ASSERT(value.isCallable(instance->owner<JSObject>()->vm()));
+    ASSERT(value.isCallable());
     return JSValue::encode(value);
 }
 
@@ -1030,7 +1030,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, Poin
     throwScope.clearException();
 
     void* payload = nullptr;
-    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(vm, thrownValue))
+    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
         payload = bitwise_cast<void*>(wasmException->payload().data());
     return PointerPair { bitwise_cast<void*>(JSValue::encode(thrownValue)), payload };
 }

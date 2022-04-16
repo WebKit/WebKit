@@ -141,7 +141,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsWorkletGlobalScopeConstructor, (JSGlobalObject* lexic
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSWorkletGlobalScopePrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSWorkletGlobalScopePrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSWorkletGlobalScope::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -178,9 +178,9 @@ void JSWorkletGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
-WorkletGlobalScope* JSWorkletGlobalScope::toWrapped(JSC::VM& vm, JSC::JSValue value)
+WorkletGlobalScope* JSWorkletGlobalScope::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSWorkletGlobalScope*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSWorkletGlobalScope*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

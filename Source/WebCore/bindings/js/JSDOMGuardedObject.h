@@ -63,7 +63,7 @@ private:
 template <typename T> class DOMGuarded : public DOMGuardedObject {
 protected:
     DOMGuarded(JSDOMGlobalObject& globalObject, T& guarded) : DOMGuardedObject(globalObject, guarded) { }
-    T* guarded() const { return JSC::jsDynamicCast<T*>(globalObject()->vm(), guardedObject()); }
+    T* guarded() const { return JSC::jsDynamicCast<T*>(guardedObject()); }
 };
 
 } // namespace WebCore

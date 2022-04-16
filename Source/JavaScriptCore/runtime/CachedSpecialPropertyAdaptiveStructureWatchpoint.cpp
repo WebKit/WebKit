@@ -40,11 +40,11 @@ CachedSpecialPropertyAdaptiveStructureWatchpoint::CachedSpecialPropertyAdaptiveS
     RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
 }
 
-void CachedSpecialPropertyAdaptiveStructureWatchpoint::install(VM& vm)
+void CachedSpecialPropertyAdaptiveStructureWatchpoint::install(VM&)
 {
     RELEASE_ASSERT(m_key.isWatchable(PropertyCondition::MakeNoChanges));
 
-    m_key.object()->structure(vm)->addTransitionWatchpoint(this);
+    m_key.object()->structure()->addTransitionWatchpoint(this);
 }
 
 void CachedSpecialPropertyAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)

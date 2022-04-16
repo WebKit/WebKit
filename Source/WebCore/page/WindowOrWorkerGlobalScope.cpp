@@ -39,7 +39,7 @@ void WindowOrWorkerGlobalScope::reportError(JSDOMGlobalObject& globalObject, JSC
 {
     auto& vm = globalObject.vm();
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto* exception = JSC::jsDynamicCast<JSC::Exception*>(vm, error);
+    auto* exception = JSC::jsDynamicCast<JSC::Exception*>(error);
     if (!exception)
         exception = JSC::Exception::create(vm, error);
 

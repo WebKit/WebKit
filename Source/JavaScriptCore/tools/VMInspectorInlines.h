@@ -40,14 +40,14 @@ namespace JSC {
     } while (false)
 
 template<VMInspector::VerifierAction action, VMInspector::VerifyFunctor verifier>
-bool VMInspector::verifyCellSize(VM& vm, JSCell* cell, size_t allocatorCellSize)
+bool VMInspector::verifyCellSize(JSCell* cell, size_t allocatorCellSize)
 {
-    Structure* structure = cell->structure(vm);
-    const ClassInfo* classInfo = structure->classInfo();
+    Structure* structure = cell->structure();
+    const ClassInfo* classInfo = structure->classInfoForCells();
     JSType cellType = cell->type();
     AUDIT_VERIFY(action, verifier, cellType == structure->m_blob.type(), cell, cellType, structure->m_blob.type());
 
-    size_t size = cellSize(vm, cell);
+    size_t size = cellSize(cell);
     AUDIT_VERIFY(action, verifier, size <= allocatorCellSize, cell, cellType, size, allocatorCellSize, classInfo->staticClassSize);
     if (isDynamicallySizedType(cellType))
         AUDIT_VERIFY(action, verifier, size >= classInfo->staticClassSize, cell, cellType, size, classInfo->staticClassSize);
@@ -92,7 +92,7 @@ bool VMInspector::verifyCell(VM& vm, JSCell* cell)
     if (cell->type() != JSImmutableButterflyType)
         AUDIT_VERIFY(action, verifier, !Gigacage::contains(cell), cell, cellType);
 
-    if (!verifyCellSize<action, verifier>(vm, cell, allocatorCellSize))
+    if (!verifyCellSize<action, verifier>(cell, allocatorCellSize))
         return false;
 
     if (Gigacage::isEnabled(Gigacage::JSValue) && cell->isObject()) {

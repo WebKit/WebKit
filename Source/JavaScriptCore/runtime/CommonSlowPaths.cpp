@@ -225,7 +225,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_this)
     auto bytecode = pc->as<OpCreateThis>();
     JSObject* result;
     JSObject* constructorAsObject = asObject(GET(bytecode.m_callee).jsValue());
-    JSFunction* constructor = jsDynamicCast<JSFunction*>(vm, constructorAsObject);
+    JSFunction* constructor = jsDynamicCast<JSFunction*>(constructorAsObject);
     if (constructor && constructor->canUseAllocationProfile()) {
         WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(codeBlock).m_cachedCallee;
         if (!cachedCallee)
@@ -277,7 +277,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_promise)
         result = JSPromise::create(vm, structure);
     }
 
-    JSFunction* constructor = jsDynamicCast<JSFunction*>(vm, constructorAsObject);
+    JSFunction* constructor = jsDynamicCast<JSFunction*>(constructorAsObject);
     if (constructor && constructor->canUseAllocationProfile()) {
         WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(codeBlock).m_cachedCallee;
         if (!cachedCallee)
@@ -309,7 +309,7 @@ static JSClass* createInternalFieldObject(JSGlobalObject* globalObject, VM& vm, 
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSClass* result = JSClass::create(vm, structure);
 
-    JSFunction* constructor = jsDynamicCast<JSFunction*>(vm, constructorAsObject);
+    JSFunction* constructor = jsDynamicCast<JSFunction*>(constructorAsObject);
     if (constructor && constructor->canUseAllocationProfile()) {
         WriteBarrier<JSCell>& cachedCallee = bytecode.metadata(codeBlock).m_cachedCallee;
         if (!cachedCallee)
@@ -826,7 +826,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_instanceof_custom)
     auto hasInstanceValue = GET_C(bytecode.m_hasInstanceValue).jsValue();
 
     ASSERT(constructor.isObject());
-    ASSERT(hasInstanceValue != globalObject->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure(vm)->typeInfo().implementsDefaultHasInstance());
+    ASSERT(hasInstanceValue != globalObject->functionProtoHasInstanceSymbolFunction() || !constructor.getObject()->structure()->typeInfo().implementsDefaultHasInstance());
 
     RETURN(jsBoolean(constructor.getObject()->hasInstance(globalObject, value, hasInstanceValue)));
 }
@@ -835,14 +835,14 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_is_callable)
 {
     BEGIN();
     auto bytecode = pc->as<OpIsCallable>();
-    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isCallable(vm)));
+    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isCallable()));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_is_constructor)
 {
     BEGIN();
     auto bytecode = pc->as<OpIsConstructor>();
-    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isConstructor(vm)));
+    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isConstructor()));
 }
 
 template<OpcodeSize width>
@@ -900,8 +900,8 @@ ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(VM& vm, JSGlobalObject*
     ASSERT(!GET(bytecode.m_next).jsValue());
     JSObject* iterator = jsCast<JSObject*>(GET(bytecode.m_iterator).jsValue());;
     JSCell* iterable = GET(bytecode.m_iterable).jsValue().asCell();
-    if (auto arrayIterator = jsDynamicCast<JSArrayIterator*>(vm, iterator)) {
-        if (auto array = jsDynamicCast<JSArray*>(vm, iterable)) {
+    if (auto arrayIterator = jsDynamicCast<JSArrayIterator*>(iterator)) {
+        if (auto array = jsDynamicCast<JSArray*>(iterable)) {
             metadata.m_iterableProfile.observeStructureID(array->structureID());
 
             metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
@@ -1201,7 +1201,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_get_by_val_with_this)
     JSValue subscript = GET_C(bytecode.m_property).jsValue();
 
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        Structure& structure = *baseValue.asCell()->structure(vm);
+        Structure& structure = *baseValue.asCell()->structure();
         if (JSCell::canUseFastGetOwnProperty(structure)) {
             RefPtr<AtomStringImpl> existingAtomString = asString(subscript)->toExistingAtomString(globalObject);
             CHECK_EXCEPTION();
@@ -1279,7 +1279,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_define_data_property)
     CHECK_EXCEPTION();
     PropertyDescriptor descriptor = toPropertyDescriptor(value, jsUndefined(), jsUndefined(), DefinePropertyAttributes(attributes.asInt32()));
     ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
-    base->methodTable(vm)->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
+    base->methodTable()->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
     END();
 }
 
@@ -1298,7 +1298,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_define_accessor_property)
     CHECK_EXCEPTION();
     PropertyDescriptor descriptor = toPropertyDescriptor(jsUndefined(), getter, setter, DefinePropertyAttributes(attributes.asInt32()));
     ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
-    base->methodTable(vm)->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
+    base->methodTable()->defineOwnProperty(base, globalObject, propertyName, descriptor, true);
     END();
 }
 
@@ -1430,7 +1430,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_spread)
     JSArray* array;
     {
         JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
-        auto callData = getCallData(vm, iterationFunction);
+        auto callData = JSC::getCallData(iterationFunction);
         ASSERT(callData.type != CallData::Type::None);
 
         MarkedArgumentBuffer arguments;

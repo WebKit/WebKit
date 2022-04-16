@@ -115,7 +115,7 @@ EncodedJSValue APICallbackFunction::constructImpl(JSGlobalObject* globalObject, 
 
         JSObject* newObject = toJS(result);
         // This won't trigger proxy traps on newObject's prototype handler but that's probably desirable here anyway.
-        if (newTarget != constructor && newObject->getPrototypeDirect(vm) == constructor->get(globalObject, vm.propertyNames->prototype)) {
+        if (newTarget != constructor && newObject->getPrototypeDirect() == constructor->get(globalObject, vm.propertyNames->prototype)) {
             RETURN_IF_EXCEPTION(scope, { });
             newObject->setPrototype(vm, globalObject, prototype);
             RETURN_IF_EXCEPTION(scope, { });

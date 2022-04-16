@@ -57,16 +57,14 @@ Ref<Microtask> createJSDOMMicrotask(VM& vm, JSObject* job)
 
 void JSDOMMicrotask::run(JSGlobalObject* globalObject)
 {
-    auto& vm = globalObject->vm();
-
     JSObject* job = m_job.get();
 
-    auto* lexicalGlobalObject = job->globalObject(vm);
+    auto* lexicalGlobalObject = job->globalObject();
     auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
     if (!context || context->activeDOMObjectsAreSuspended() || context->activeDOMObjectsAreStopped())
         return;
 
-    auto callData = getCallData(vm, job);
+    auto callData = JSC::getCallData(job);
     ASSERT(callData.type != CallData::Type::None);
 
     if (UNLIKELY(globalObject->hasDebugger()))

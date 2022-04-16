@@ -123,7 +123,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         : callFrame->uncheckedArgument(1);
     WebAssemblyFunction* wasmFunction = nullptr;
     WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-    if (jsWebAssemblyTable->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(vm, defaultValue, wasmFunction, wasmWrapperFunction))
+    if (jsWebAssemblyTable->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(defaultValue, wasmFunction, wasmWrapperFunction))
         return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.constructor expects the second argument to be null or an instance of WebAssembly.Function"_s);
     for (uint32_t tableIndex = 0; tableIndex < initial; ++tableIndex) {
         if (jsWebAssemblyTable->table()->isFuncrefTable() && wasmFunction)

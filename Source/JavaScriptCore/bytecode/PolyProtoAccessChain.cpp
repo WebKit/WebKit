@@ -39,13 +39,12 @@ RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* glo
 RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* globalObject, JSCell* base, JSObject* target)
 {
     JSCell* current = base;
-    VM& vm = base->vm();
 
     bool found = false;
 
     Vector<StructureID> chain;
     for (unsigned iterationNumber = 0; true; ++iterationNumber) {
-        Structure* structure = current->structure(vm);
+        Structure* structure = current->structure();
 
         if (structure->isDictionary())
             return nullptr;

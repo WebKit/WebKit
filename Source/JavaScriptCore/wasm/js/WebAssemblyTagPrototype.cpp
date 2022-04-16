@@ -67,7 +67,7 @@ Structure* WebAssemblyTagPrototype::createStructure(VM& vm, JSGlobalObject* glob
 void WebAssemblyTagPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -85,7 +85,7 @@ ALWAYS_INLINE static JSWebAssemblyTag* getTag(JSGlobalObject* globalObject, JSVa
         throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
         return nullptr;
     }
-    auto* tag = jsDynamicCast<JSWebAssemblyTag*>(vm, thisValue.asCell());
+    auto* tag = jsDynamicCast<JSWebAssemblyTag*>(thisValue.asCell());
     if (LIKELY(tag))
         return tag;
     throwTypeError(globalObject, scope, "WebAssembly.Tag operation called on non-Tag object"_s);

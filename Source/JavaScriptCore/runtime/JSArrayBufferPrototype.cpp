@@ -42,16 +42,16 @@ std::optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool isValid = speciesWatchpointIsValid(vm, thisObject, mode);
+    bool isValid = speciesWatchpointIsValid(thisObject, mode);
     scope.assertNoException();
     if (LIKELY(isValid))
         return std::nullopt;
 
     JSValue constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
-    if (constructor.isConstructor(vm)) {
+    if (constructor.isConstructor()) {
         JSObject* constructorObject = jsCast<JSObject*>(constructor);
-        JSGlobalObject* globalObjectFromConstructor = constructorObject->globalObject(vm);
+        JSGlobalObject* globalObjectFromConstructor = constructorObject->globalObject();
         bool isAnyArrayBufferConstructor = constructorObject == globalObjectFromConstructor->arrayBufferConstructor(mode);
         if (isAnyArrayBufferConstructor)
             return std::nullopt;
@@ -102,7 +102,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesCo
     RETURN_IF_EXCEPTION(scope, errorResult);
 
     // 17. Perform ? RequireInternalSlot(new, [[ArrayBufferData]]).
-    JSArrayBuffer* result = jsDynamicCast<JSArrayBuffer*>(vm, newObject);
+    JSArrayBuffer* result = jsDynamicCast<JSArrayBuffer*>(newObject);
     if (UNLIKELY(!result)) {
         throwTypeError(globalObject, scope, "Species construction does not create ArrayBuffer"_s);
         return errorResult;
@@ -153,7 +153,7 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
 
     // 2. Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
     // 3. If IsSharedArrayBuffer(O) is true, throw a TypeError exception.
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, arrayBufferValue);
+    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
     if (!thisObject || (mode != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be "_s, mode == ArrayBufferSharingMode::Default ? "ArrayBuffer"_s : "SharedArrayBuffer"_s));
 
@@ -224,7 +224,7 @@ static EncodedJSValue arrayBufferByteLength(JSGlobalObject* globalObject, JSValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, arrayBufferValue);
+    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
     if (!thisObject || (mode != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be "_s, mode == ArrayBufferSharingMode::Default ? "ArrayBuffer"_s : "SharedArrayBuffer"_s));
 

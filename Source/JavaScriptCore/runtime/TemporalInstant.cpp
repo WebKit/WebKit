@@ -141,11 +141,11 @@ TemporalInstant* TemporalInstant::toInstant(JSGlobalObject* globalObject, JSValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (itemValue.inherits<TemporalInstant>(vm))
+    if (itemValue.inherits<TemporalInstant>())
         return jsCast<TemporalInstant*>(itemValue);
 
     // FIXME: when Temporal.ZonedDateTime lands
-    // if (itemValue.inherits<TemporalZonedDateTime>(vm))
+    // if (itemValue.inherits<TemporalZonedDateTime>())
     //    return TemporalInstant::create(vm, globalObject->instantStructure(), jsCast<TemporalZonedDateTime*>(itemValue)->epochTime());
 
     String string = itemValue.toWTFString(globalObject);
@@ -166,7 +166,7 @@ TemporalInstant* TemporalInstant::from(JSGlobalObject* globalObject, JSValue ite
 {
     VM& vm = globalObject->vm();
 
-    if (itemValue.inherits<TemporalInstant>(vm)) {
+    if (itemValue.inherits<TemporalInstant>()) {
         ISO8601::ExactTime exactTime = jsCast<TemporalInstant*>(itemValue)->exactTime();
         return TemporalInstant::create(vm, globalObject->instantStructure(), exactTime);
     }

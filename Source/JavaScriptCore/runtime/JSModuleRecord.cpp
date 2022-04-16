@@ -67,7 +67,7 @@ void JSModuleRecord::destroy(JSCell* cell)
 void JSModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 {
     Base::finishCreation(globalObject, vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 template<typename Visitor>

@@ -51,13 +51,13 @@ using namespace JSC;
 JSValue WebInjectedScriptHost::subtype(JSGlobalObject* exec, JSValue value)
 {
     VM& vm = exec->vm();
-    if (value.inherits<JSNode>(vm))
+    if (value.inherits<JSNode>())
         return jsNontrivialString(vm, "node"_s);
-    if (value.inherits<JSNodeList>(vm))
+    if (value.inherits<JSNodeList>())
         return jsNontrivialString(vm, "array"_s);
-    if (value.inherits<JSHTMLCollection>(vm))
+    if (value.inherits<JSHTMLCollection>())
         return jsNontrivialString(vm, "array"_s);
-    if (value.inherits<JSDOMException>(vm))
+    if (value.inherits<JSDOMException>())
         return jsNontrivialString(vm, "error"_s);
 
     return jsUndefined();
@@ -261,9 +261,9 @@ JSValue WebInjectedScriptHost::getInternalProperties(VM& vm, JSGlobalObject* exe
     return { };
 }
 
-bool WebInjectedScriptHost::isHTMLAllCollection(JSC::VM& vm, JSC::JSValue value)
+bool WebInjectedScriptHost::isHTMLAllCollection(JSC::VM&, JSC::JSValue value)
 {
-    return value.inherits<JSHTMLAllCollection>(vm);
+    return value.inherits<JSHTMLAllCollection>();
 }
 
 } // namespace WebCore

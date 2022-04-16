@@ -234,10 +234,10 @@ public:
 
     // Querying the type.
     bool isEmpty() const;
-    bool isCallable(VM&) const;
-    template<Concurrency> TriState isCallableWithConcurrency(VM&) const;
-    bool isConstructor(VM&) const;
-    template<Concurrency> TriState isConstructorWithConcurrency(VM&) const;
+    bool isCallable() const;
+    template<Concurrency> TriState isCallableWithConcurrency() const;
+    bool isConstructor() const;
+    template<Concurrency> TriState isConstructorWithConcurrency() const;
     bool isUndefined() const;
     bool isNull() const;
     bool isUndefinedOrNull() const;
@@ -255,9 +255,9 @@ public:
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;
     bool isObject() const;
-    bool inherits(VM&, const ClassInfo*) const;
-    template<typename Target> bool inherits(VM&) const;
-    const ClassInfo* classInfoOrNull(VM&) const;
+    bool inherits(const ClassInfo*) const;
+    template<typename Target> bool inherits() const;
+    const ClassInfo* classInfoOrNull() const;
 
     // Extracting the value.
     bool getString(JSGlobalObject*, WTF::String&) const;
@@ -345,7 +345,7 @@ public:
     bool isCell() const;
     JSCell* asCell() const;
 
-    Structure* structureOrNull(VM&) const;
+    Structure* structureOrNull() const;
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;

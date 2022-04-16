@@ -119,7 +119,7 @@ static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* ex
 void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     m_sourceAppender = appender;
     m_runtimeTypeForCause = type;
@@ -191,7 +191,7 @@ String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
             nameValue = nameSlot.getValue(globalObject, namePropertName);
             break;
         }
-        currentObj = obj->getPrototypeDirect(vm);
+        currentObj = obj->getPrototypeDirect();
     }
     RETURN_IF_EXCEPTION(scope, { });
 

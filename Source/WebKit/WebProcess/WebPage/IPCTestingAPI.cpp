@@ -1535,7 +1535,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
     }
 
     if (type == "Vector") {
-        if (!jsValue.isObject() || !jsValue.inherits<JSC::JSArray>(vm)) {
+        if (!jsValue.inherits<JSC::JSArray>()) {
             *exception = createTypeError(context, "Vector value must be an array"_s);
             return false;
         }

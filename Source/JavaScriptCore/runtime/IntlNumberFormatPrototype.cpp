@@ -83,7 +83,7 @@ IntlNumberFormatPrototype::IntlNumberFormatPrototype(VM& vm, Structure* structur
 void IntlNumberFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
     UNUSED_PARAM(globalObject);
 #if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
@@ -125,7 +125,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat, (JSGlobalObject*
     JSBoundFunction* boundFormat = nf->boundFormat();
     // 2. If nf.[[boundFormat]] is undefined,
     if (!boundFormat) {
-        JSGlobalObject* globalObject = nf->globalObject(vm);
+        JSGlobalObject* globalObject = nf->globalObject();
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 1.
         auto* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, intlNumberFormatFuncFormat, NoIntrinsic);
@@ -146,7 +146,7 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRange, (JSGlobalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Do not use unwrapForOldFunctions.
-    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
+    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(callFrame->thisValue());
     if (UNLIKELY(!numberFormat))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatRange called on value that's not a NumberFormat"_s));
 
@@ -180,7 +180,7 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts, (JSGlobalOb
     // https://tc39.github.io/ecma402/#sec-intl.numberformat.prototype.formattoparts
 
     // Do not use unwrapForOldFunctions.
-    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
+    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(callFrame->thisValue());
     if (UNLIKELY(!numberFormat))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not a NumberFormat"_s));
 
@@ -207,7 +207,7 @@ JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatRangeToParts, (JSGlo
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Do not use unwrapForOldFunctions.
-    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
+    auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(callFrame->thisValue());
     if (UNLIKELY(!numberFormat))
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatRangeToParts called on value that's not a NumberFormat"_s));
 

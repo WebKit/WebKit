@@ -78,7 +78,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Validate that paintConstructor is a VoidFunction
-    if (!paintConstructor->isCallable(vm))
+    if (!paintConstructor->isCallable())
         return Exception { TypeError, "paintConstructor must be callable"_s };
 
     if (name.isEmpty())
@@ -118,7 +118,7 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
 
         // FIXME: Convert to PaintRenderingContext2DSettings here (step 14).
 
-        if (!paintConstructor->isConstructor(vm))
+        if (!paintConstructor->isConstructor())
             return Exception { TypeError, "The second argument must be a constructor"_s };
 
         JSValue prototypeValue = paintConstructor->get(&globalObject, vm.propertyNames->prototype);

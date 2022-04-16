@@ -65,23 +65,23 @@ ALWAYS_INLINE std::pair<const uint8_t*, size_t> getWasmBufferFromValue(JSGlobalO
     VM& vm = getVM(globalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    if (auto* source = jsDynamicCast<JSSourceCode*>(vm, value)) {
+    if (auto* source = jsDynamicCast<JSSourceCode*>(value)) {
         auto* provider = static_cast<BaseWebAssemblySourceProvider*>(source->sourceCode().provider());
         return { provider->data(), provider->size() };
     }
 
     // If the given bytes argument is not a BufferSource, a TypeError exception is thrown.
-    JSArrayBuffer* arrayBuffer = value.getObject() ? jsDynamicCast<JSArrayBuffer*>(vm, value.getObject()) : nullptr;
-    JSArrayBufferView* arrayBufferView = value.getObject() ? jsDynamicCast<JSArrayBufferView*>(vm, value.getObject()) : nullptr;
+    JSArrayBuffer* arrayBuffer = value.getObject() ? jsDynamicCast<JSArrayBuffer*>(value.getObject()) : nullptr;
+    JSArrayBufferView* arrayBufferView = value.getObject() ? jsDynamicCast<JSArrayBufferView*>(value.getObject()) : nullptr;
     if (!(arrayBuffer || arrayBufferView)) {
         throwException(globalObject, throwScope, createTypeError(globalObject,
-            "first argument must be an ArrayBufferView or an ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(vm, value)));
+            "first argument must be an ArrayBufferView or an ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(value)));
         return { nullptr, 0 };
     }
 
     if (arrayBufferView ? arrayBufferView->isDetached() : arrayBuffer->impl()->isDetached()) {
         throwException(globalObject, throwScope, createTypeError(globalObject,
-            "underlying TypedArray has been detatched from the ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(vm, value)));
+            "underlying TypedArray has been detatched from the ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(value)));
         return { nullptr, 0 };
     }
 
@@ -95,7 +95,7 @@ ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, JSGlobalObject
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     BaseWebAssemblySourceProvider* provider = nullptr;
-    if (auto* source = jsDynamicCast<JSSourceCode*>(vm, value))
+    if (auto* source = jsDynamicCast<JSSourceCode*>(value))
         provider = static_cast<BaseWebAssemblySourceProvider*>(source->sourceCode().provider());
     WebAssemblySourceProviderBufferGuard bufferGuard(provider);
 
@@ -114,14 +114,14 @@ ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, JSGlobalObject
     return result;
 }
 
-ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSObject* object, WebAssemblyFunction*& wasmFunction, WebAssemblyWrapperFunction*& wasmWrapperFunction)
+ALWAYS_INLINE bool isWebAssemblyHostFunction(JSObject* object, WebAssemblyFunction*& wasmFunction, WebAssemblyWrapperFunction*& wasmWrapperFunction)
 {
-    if (object->inherits<WebAssemblyFunction>(vm)) {
+    if (object->inherits<WebAssemblyFunction>()) {
         wasmFunction = jsCast<WebAssemblyFunction*>(object);
         wasmWrapperFunction = nullptr;
         return true;
     }
-    if (object->inherits<WebAssemblyWrapperFunction>(vm)) {
+    if (object->inherits<WebAssemblyWrapperFunction>()) {
         wasmWrapperFunction = jsCast<WebAssemblyWrapperFunction*>(object);
         wasmFunction = nullptr;
         return true;
@@ -129,18 +129,18 @@ ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSObject* object, WebAssemb
     return false;
 }
 
-ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue value, WebAssemblyFunction*& wasmFunction, WebAssemblyWrapperFunction*& wasmWrapperFunction)
+ALWAYS_INLINE bool isWebAssemblyHostFunction(JSValue value, WebAssemblyFunction*& wasmFunction, WebAssemblyWrapperFunction*& wasmWrapperFunction)
 {
     if (!value.isObject())
         return false;
-    return isWebAssemblyHostFunction(vm, jsCast<JSObject*>(value), wasmFunction, wasmWrapperFunction);
+    return isWebAssemblyHostFunction(jsCast<JSObject*>(value), wasmFunction, wasmWrapperFunction);
 }
 
-ALWAYS_INLINE bool isWebAssemblyHostFunction(VM& vm, JSValue object)
+ALWAYS_INLINE bool isWebAssemblyHostFunction(JSValue object)
 {
     WebAssemblyFunction* unused;
     WebAssemblyWrapperFunction* unused2;
-    return isWebAssemblyHostFunction(vm, object, unused, unused2);
+    return isWebAssemblyHostFunction(object, unused, unused2);
 }
 
 ALWAYS_INLINE JSValue defaultValueForReferenceType(const Wasm::Type type)
@@ -195,7 +195,7 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
         } else if (Wasm::isFuncref(type) || isRefWithTypeIndex(type)) {
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-            if (!isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
+            if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
                 return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
             if (isRefWithTypeIndex(type) && !value.isNull()) {
                 Wasm::TypeIndex paramIndex = type.index;

@@ -34,10 +34,10 @@ inline To jsCast(From* from)
 {
     static_assert(std::is_base_of<JSCell, typename std::remove_pointer<To>::type>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
 #if (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)) && CPU(X86_64)
-    if (from && !from->JSCell::inherits(from->JSCell::vm(), std::remove_pointer<To>::type::info()))
+    if (from && !from->JSCell::inherits(std::remove_pointer<To>::type::info()))
         reportZappedCellAndCrash(*from->JSCell::heap(), from);
 #else
-    ASSERT_WITH_SECURITY_IMPLICATION(!from || from->JSCell::inherits(from->JSCell::vm(), std::remove_pointer<To>::type::info()));
+    ASSERT_WITH_SECURITY_IMPLICATION(!from || from->JSCell::inherits(std::remove_pointer<To>::type::info()));
 #endif
     return static_cast<To>(from);
 }
@@ -49,10 +49,10 @@ inline To jsCast(JSValue from)
 #if (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)) && CPU(X86_64)
     ASSERT_WITH_SECURITY_IMPLICATION(from.isCell());
     JSCell* cell = from.asCell();
-    if (!cell->JSCell::inherits(cell->vm(), std::remove_pointer<To>::type::info()))
+    if (!cell->JSCell::inherits(std::remove_pointer<To>::type::info()))
         reportZappedCellAndCrash(*cell->JSCell::heap(), cell);
 #else
-    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell() && from.asCell()->JSCell::inherits(from.asCell()->vm(), std::remove_pointer<To>::type::info()));
+    ASSERT_WITH_SECURITY_IMPLICATION(from.isCell() && from.asCell()->JSCell::inherits(std::remove_pointer<To>::type::info()));
 #endif
     return static_cast<To>(from.asCell());
 }
@@ -113,37 +113,37 @@ namespace JSCastingHelpers {
 template<bool isFinal>
 struct FinalTypeDispatcher {
     template<typename Target, typename From>
-    static inline bool inheritsGeneric(VM& vm, From* from)
+    static inline bool inheritsGeneric(From* from)
     {
         static_assert(!std::is_same<JSObject*, Target*>::value, "This ensures our overloads work");
         static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
-        // Do not use inherits<Target>(vm) since inherits<T> depends on this function.
-        return from->JSCell::inherits(vm, Target::info());
+        // Do not use inherits<Target>() since inherits<T> depends on this function.
+        return from->JSCell::inherits(Target::info());
     }
 };
 
 template<>
 struct FinalTypeDispatcher</* isFinal */ true> {
     template<typename Target, typename From>
-    static inline bool inheritsGeneric(VM& vm, From* from)
+    static inline bool inheritsGeneric(From* from)
     {
         static_assert(!std::is_same<JSObject*, Target*>::value, "This ensures our overloads work");
         static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
         static_assert(std::is_final<Target>::value, "Target is a final type");
-        bool canCast = from->JSCell::classInfo(vm) == Target::info();
-        // Do not use inherits<Target>(vm) since inherits<T> depends on this function.
-        ASSERT_UNUSED(vm, canCast == from->JSCell::inherits(vm, Target::info()));
+        bool canCast = from->JSCell::classInfo() == Target::info();
+        // Do not use inherits<Target>() since inherits<T> depends on this function.
+        ASSERT(canCast == from->JSCell::inherits(Target::info()));
         return canCast;
     }
 };
 
 template<typename Target, typename From>
-inline bool inheritsJSTypeImpl(VM& vm, From* from, JSTypeRange range)
+inline bool inheritsJSTypeImpl(From* from, JSTypeRange range)
 {
     static_assert(std::is_base_of<JSCell, Target>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
     bool canCast = range.contains(from->type());
-    // Do not use inherits<Target>(vm) since inherits<T> depends on this function.
-    ASSERT_UNUSED(vm, canCast == from->JSCell::inherits(vm, Target::info()));
+    // Do not use inherits<Target>() since inherits<T> depends on this function.
+    ASSERT(canCast == from->JSCell::inherits(Target::info()));
     return canCast;
 }
 
@@ -153,7 +153,7 @@ template<typename Target>
 struct InheritsTraits {
     static constexpr std::optional<JSTypeRange> typeRange { std::nullopt };
     template<typename From>
-    static inline bool inherits(VM& vm, From* from) { return FinalTypeDispatcher<std::is_final<Target>::value>::template inheritsGeneric<Target>(vm, from); }
+    static inline bool inherits(From* from) { return FinalTypeDispatcher<std::is_final<Target>::value>::template inheritsGeneric<Target>(from); }
 };
 
 #define DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD(className, firstJSType, lastJSType) \
@@ -161,7 +161,7 @@ struct InheritsTraits {
     struct InheritsTraits<className> { \
         static constexpr std::optional<JSTypeRange> typeRange { { static_cast<JSType>(firstJSType), static_cast<JSType>(lastJSType) } }; \
         template<typename From> \
-        static inline bool inherits(VM& vm, From* from) { return inheritsJSTypeImpl<className, From>(vm, from, *typeRange); } \
+        static inline bool inherits(From* from) { return inheritsJSTypeImpl<className, From>(from, *typeRange); } \
     }; \
 
 FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD)
@@ -170,35 +170,35 @@ FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD(DEFINE_TRAITS_FOR_JS_TYPE_OVERLOAD)
 
 
 template<typename Target, typename From>
-bool inherits(VM& vm, From* from)
+bool inherits(From* from)
 {
     using Dispatcher = InheritsTraits<Target>;
-    return Dispatcher::template inherits(vm, from);
+    return Dispatcher::template inherits(from);
 }
 
 } // namespace JSCastingHelpers
 
 template<typename To, typename From>
-To jsDynamicCast(VM& vm, From* from)
+To jsDynamicCast(From* from)
 {
     using Dispatcher = JSCastingHelpers::InheritsTraits<typename std::remove_cv<typename std::remove_pointer<To>::type>::type>;
-    if (LIKELY(Dispatcher::template inherits(vm, from)))
+    if (LIKELY(Dispatcher::template inherits(from)))
         return static_cast<To>(from);
     return nullptr;
 }
 
 template<typename To>
-To jsDynamicCast(VM& vm, JSValue from)
+To jsDynamicCast(JSValue from)
 {
     if (UNLIKELY(!from.isCell()))
         return nullptr;
-    return jsDynamicCast<To>(vm, from.asCell());
+    return jsDynamicCast<To>(from.asCell());
 }
 
 template<typename To, typename From>
-To jsSecureCast(VM& vm, From from)
+To jsSecureCast(From from)
 {
-    auto* result = jsDynamicCast<To>(vm, from);
+    auto* result = jsDynamicCast<To>(from);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result);
     return result;
 }

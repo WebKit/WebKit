@@ -121,9 +121,9 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    uint32_t indexedLength = base->getEnumerableLength(globalObject);
+    uint32_t indexedLength = base->getEnumerableLength();
 
-    Structure* structure = base->structure(vm);
+    Structure* structure = base->structure();
     if (!indexedLength) {
         uintptr_t enumeratorAndFlag = structure->cachedPropertyNameEnumeratorAndFlag();
         if (enumeratorAndFlag) {
@@ -145,7 +145,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
     bool sawPolyProto;
     bool successfullyNormalizedChain = normalizePrototypeChain(globalObject, base, sawPolyProto) != InvalidPrototypeChain;
 
-    Structure* structureAfterGettingPropertyNames = base->structure(vm);
+    Structure* structureAfterGettingPropertyNames = base->structure();
     if (!structureAfterGettingPropertyNames->canAccessPropertiesQuicklyForEnumeration()) {
         indexedLength = 0;
         numberStructureProperties = 0;

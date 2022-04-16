@@ -85,7 +85,7 @@ void resetInstanceOf(CodeBlock*, StructureStubInfo&);
 void resetCheckPrivateBrand(CodeBlock*, StructureStubInfo&);
 void resetSetPrivateBrand(CodeBlock*, StructureStubInfo&);
 void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall<JSInternalPtrTag>, FunctionPtr<CFunctionPtrTag> newCalleeFunction);
-MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(VM&, CodeSpecializationKind, JSObject* callee);
+MacroAssemblerCodePtr<JSEntryPtrTag> jsToWasmICCodePtr(CodeSpecializationKind, JSObject* callee);
 
 
 } // namespace JSC

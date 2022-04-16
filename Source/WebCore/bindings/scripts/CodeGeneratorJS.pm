@@ -1221,7 +1221,7 @@ sub GeneratePut
         my $legacyOverrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns");
         if (!$legacyOverrideBuiltins) {
             push(@$outputArray, "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };\n");
-            push(@$outputArray, "        JSValue prototype = thisObject->getPrototypeDirect(JSC::getVM(lexicalGlobalObject));\n");
+            push(@$outputArray, "        JSValue prototype = thisObject->getPrototypeDirect();\n");
             push(@$outputArray, "        bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
             push(@$outputArray, "        slot.disallowVMEntry.reset();\n");
             push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, false);\n");
@@ -1299,7 +1299,7 @@ sub GeneratePutByIndex
         my $additionalIndent = "";
         if (!$legacyOverrideBuiltins) {
             push(@$outputArray, "    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm };\n");
-            push(@$outputArray, "    JSValue prototype = thisObject->getPrototypeDirect(vm);\n");
+            push(@$outputArray, "    JSValue prototype = thisObject->getPrototypeDirect();\n");
             push(@$outputArray, "    bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
             push(@$outputArray, "    slot.disallowVMEntry.reset();\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
@@ -3760,25 +3760,25 @@ sub GenerateOverloadDispatcher
                     if ($codeGenerator->IsWrapperType($subtype) || $codeGenerator->IsBufferSourceType($subtype)) {
                         if ($subtype->name eq "DOMWindow") {
                             AddToImplIncludes("JSWindowProxy.h");
-                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSWindowProxy>(vm) || asObject(distinguishingArg)->inherits<JSDOMWindow>(vm))");
+                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSWindowProxy>() || asObject(distinguishingArg)->inherits<JSDOMWindow>())");
                         } elsif ($subtype->name eq "RemoteDOMWindow") {
                             AddToImplIncludes("JSWindowProxy.h");
-                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSWindowProxy>(vm) || asObject(distinguishingArg)->inherits<JSRemoteDOMWindow>(vm))");
+                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits<JSWindowProxy>() || asObject(distinguishingArg)->inherits<JSRemoteDOMWindow>())");
                         } else {
-                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JS" . $subtype->name . ">(vm)");
+                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JS" . $subtype->name . ">()");
                         }
                     }
                 }
             }
 
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrErrorOrDOMExceptionParameter);
-            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSDOMException>(vm)");
+            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits<JSDOMException>()");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrErrorParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->type() == ErrorInstanceType");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrCallbackFunctionParameter);
-            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isCallable(vm)");
+            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isCallable()");
 
             # FIXME: Avoid invoking GetMethod(object, Symbol.iterator) again in convert<IDLSequence<T>>(...).
             $overload = GetOverloadThatMatches($S, $d, \&$isSequenceOrFrozenArrayParameter);
@@ -4708,7 +4708,7 @@ sub GenerateImplementation
         push(@implContent, "void ${className}::finishCreation(VM& vm)\n");
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
-        push(@implContent, "    ASSERT(inherits(vm, info()));\n\n");
+        push(@implContent, "    ASSERT(inherits(info()));\n\n");
     }
 
     if (!$codeGenerator->InheritsExtendedAttribute($interface, "JSBuiltin")) {
@@ -4877,7 +4877,7 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
         push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-        push(@implContent, "    auto* prototype = jsDynamicCast<${className}Prototype*>(vm, JSValue::decode(thisValue));\n");
+        push(@implContent, "    auto* prototype = jsDynamicCast<${className}Prototype*>(JSValue::decode(thisValue));\n");
         push(@implContent, "    if (UNLIKELY(!prototype))\n");
         push(@implContent, "        return throwVMTypeError(lexicalGlobalObject, throwScope);\n");
         push(@implContent, "    return JSValue::encode(${className}::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));\n");
@@ -5183,9 +5183,9 @@ END
     }
 
     if (ShouldGenerateToWrapped($hasParent, $interface) and !$interface->extendedAttributes->{JSCustomToNativeObject}) {
-        push(@implContent, "${implType}* ${className}::toWrapped(JSC::VM& vm, JSC::JSValue value)\n");
+        push(@implContent, "${implType}* ${className}::toWrapped(JSC::VM&, JSC::JSValue value)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    if (auto* wrapper = " . GetCastingHelperForThisObject($interface) . "(vm, value))\n");
+        push(@implContent, "    if (auto* wrapper = " . GetCastingHelperForThisObject($interface) . "(value))\n");
         push(@implContent, "        return &wrapper->wrapped();\n");
         push(@implContent, "    return nullptr;\n");
         push(@implContent, "}\n");
@@ -5495,7 +5495,7 @@ sub GenerateAttributeSetterBodyDefinition
         
         # 3.5.9.4. Perform ? Set(Q, forwardId, V, false).
         push(@$outputArray, "    PutPropertySlot slot(valueToForwardTo, false);\n");
-        push(@$outputArray, "    asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);\n");
+        push(@$outputArray, "    asObject(valueToForwardTo)->methodTable()->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);\n");
         push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
         
         push(@$outputArray, "    return true;\n");
@@ -6494,7 +6494,7 @@ sub GenerateCallbackImplementationContent
 
     # Constructor
     push(@$contentRef, "${className}::${className}(VM& vm, JSObject* callback)\n");
-    push(@$contentRef, "    : ${name}(jsCast<JSDOMGlobalObject*>(callback->globalObject(vm))->scriptExecutionContext())\n");
+    push(@$contentRef, "    : ${name}(jsCast<JSDOMGlobalObject*>(callback->globalObject())->scriptExecutionContext())\n");
     push(@$contentRef, "    , m_data(new ${callbackDataType}(vm, callback, this))\n");
     push(@$contentRef, "{\n");
     push(@$contentRef, "}\n\n");
@@ -7883,7 +7883,7 @@ sub GenerateConstructorHelperMethods
         if ($interface->isCallback) {
             push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
         } else {
-            my $prototype = ShouldUseGlobalObjectPrototype($interface) ? "globalObject.getPrototypeDirect(vm)" : "${className}::prototype(vm, globalObject)";
+            my $prototype = ShouldUseGlobalObjectPrototype($interface) ? "globalObject.getPrototypeDirect()" : "${className}::prototype(vm, globalObject)";
             push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${prototype}, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);\n");
         }
     }

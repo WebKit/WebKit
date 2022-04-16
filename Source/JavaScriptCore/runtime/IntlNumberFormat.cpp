@@ -93,7 +93,7 @@ IntlNumberFormat::IntlNumberFormat(VM& vm, Structure* structure)
 void IntlNumberFormat::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 template<typename Visitor>

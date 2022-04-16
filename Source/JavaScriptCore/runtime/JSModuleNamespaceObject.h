@@ -88,7 +88,7 @@ private:
     FixedVector<Identifier> m_names;
     WriteBarrier<AbstractModuleRecord> m_moduleRecord;
 
-    friend size_t cellSize(VM&, JSCell*);
+    friend size_t cellSize(JSCell*);
 };
 
 } // namespace JSC

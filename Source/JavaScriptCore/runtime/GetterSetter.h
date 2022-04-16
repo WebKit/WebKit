@@ -93,8 +93,8 @@ public:
         return result;
     }
 
-    bool isGetterNull() const { return !!jsDynamicCast<NullGetterFunction*>(m_getter.get()->vm(), m_getter.get()); }
-    bool isSetterNull() const { return !!jsDynamicCast<NullSetterFunction*>(m_setter.get()->vm(), m_setter.get()); }
+    bool isGetterNull() const { return !!jsDynamicCast<NullGetterFunction*>(m_getter.get()); }
+    bool isSetterNull() const { return !!jsDynamicCast<NullSetterFunction*>(m_setter.get()); }
 
     JSObject* setter() const { return m_setter.get(); }
 

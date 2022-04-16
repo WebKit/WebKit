@@ -35,7 +35,7 @@ namespace WebCore {
 using namespace JSC;
 
 JSTestCallbackFunctionWithThisObject::JSTestCallbackFunctionWithThisObject(VM& vm, JSObject* callback)
-    : TestCallbackFunctionWithThisObject(jsCast<JSDOMGlobalObject*>(callback->globalObject(vm))->scriptExecutionContext())
+    : TestCallbackFunctionWithThisObject(jsCast<JSDOMGlobalObject*>(callback->globalObject())->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(vm, callback, this))
 {
 }

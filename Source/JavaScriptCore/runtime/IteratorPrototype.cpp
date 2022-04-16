@@ -36,7 +36,7 @@ const ClassInfo IteratorPrototype::s_info = { "Iterator"_s, &Base::s_info, nullp
 void IteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, iteratorPrototypeSymbolIteratorGetterCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

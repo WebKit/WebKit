@@ -57,7 +57,7 @@ Structure* WebAssemblyCompileErrorPrototype::createStructure(VM& vm, JSGlobalObj
 void WebAssemblyCompileErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     putDirectWithoutTransition(vm, vm.propertyNames->name, jsNontrivialString(vm, "CompileError"_s), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

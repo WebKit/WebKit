@@ -120,7 +120,7 @@ inline JSArrayBuffer* constructCustomArrayBufferIfNeeded(JSGlobalObject* globalO
     if (!species)
         return nullptr;
 
-    if (!species->isConstructor(vm)) {
+    if (!species->isConstructor()) {
         throwTypeError(globalObject, scope, "species is not a constructor"_s);
         return nullptr;
     }
@@ -150,7 +150,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
 
     JSValue firstValue = JSValue::decode(firstArgument);
 
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, firstValue)) {
+    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(firstValue)) {
         RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
         if (buffer->isDetached()) {
             throwTypeError(globalObject, scope, "Buffer is already detached"_s);
@@ -181,11 +181,11 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
     // - Another array. This creates a copy of the of that array.
     // - A primitive. This creates a new typed array of that length and zero-initializes it.
 
-    if (JSObject* object = jsDynamicCast<JSObject*>(vm, firstValue)) {
+    if (JSObject* object = jsDynamicCast<JSObject*>(firstValue)) {
         size_t length;
         JSArrayBuffer* customBuffer = nullptr;
 
-        if (isTypedView(object->classInfo(vm)->typedArrayStorageType)) {
+        if (isTypedView(object->classInfo()->typedArrayStorageType)) {
             auto* view = jsCast<JSArrayBufferView*>(object);
 
             customBuffer = constructCustomArrayBufferIfNeeded(globalObject, view);
@@ -195,7 +195,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
                 return nullptr;
             }
 
-            if (contentType(object->classInfo(vm)->typedArrayStorageType) != ViewClass::contentType) {
+            if (contentType(object->classInfo()->typedArrayStorageType) != ViewClass::contentType) {
                 throwTypeError(globalObject, scope, "Content types of source and new typed array are different"_s);
                 return nullptr;
             }
@@ -219,7 +219,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
             // it should not be observable that we do not use the iterator.
 
             if (!iteratorFunc.isUndefinedOrNull()
-                && (iteratorFunc != object->globalObject(vm)->arrayProtoValuesFunction()
+                && (iteratorFunc != object->globalObject()->arrayProtoValuesFunction()
                     || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
                     || hasAnyArrayStorage(object->indexingType()))) {
 
@@ -277,7 +277,7 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
     JSValue firstValue = callFrame->uncheckedArgument(0);
     size_t offset = 0;
     std::optional<size_t> length = std::nullopt;
-    if (jsDynamicCast<JSArrayBuffer*>(vm, firstValue) && argCount > 1) {
+    if (jsDynamicCast<JSArrayBuffer*>(firstValue) && argCount > 1) {
         offset = callFrame->uncheckedArgument(1).toTypedArrayIndex(globalObject, "byteOffset");
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 

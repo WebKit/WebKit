@@ -368,7 +368,7 @@ private:
             // We have to do some constant-folding here because this enables CreateThis folding. Note
             // that we don't have such watchpoint-based folding for inlined uses of Callee, since in that
             // case if the function is a singleton then we already know it.
-            if (FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(*m_vm, m_codeBlock->ownerExecutable())) {
+            if (FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())) {
                 if (JSFunction* function = executable->singleton().inferredValue()) {
                     m_graph.watchpoints().addLazily(executable);
                     return weakJSConstant(function);
@@ -2523,8 +2523,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             case Array::Contiguous: {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
 
-                Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(*m_vm);
-                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(*m_vm);
+                Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
 
                 // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
                 // https://bugs.webkit.org/show_bug.cgi?id=173171
@@ -2616,8 +2616,8 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             case Array::Contiguous: {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
 
-                Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(*m_vm);
-                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(*m_vm);
+                Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
 
                 // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
                 // https://bugs.webkit.org/show_bug.cgi?id=173171
@@ -2882,7 +2882,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
                 Structure* regExpStructure = globalObject->regExpStructure();
                 m_graph.registerStructure(regExpStructure);
                 ASSERT(regExpStructure->storedPrototype().isObject());
-                ASSERT(regExpStructure->storedPrototype().asCell()->classInfo(*m_vm) == RegExpPrototype::info());
+                ASSERT(regExpStructure->storedPrototype().asCell()->classInfo() == RegExpPrototype::info());
 
                 FrozenValue* regExpPrototypeObjectValue = m_graph.freeze(regExpStructure->storedPrototype());
                 Structure* regExpPrototypeStructure = regExpPrototypeObjectValue->structure();
@@ -3031,7 +3031,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             Structure* regExpStructure = globalObject->regExpStructure();
             m_graph.registerStructure(regExpStructure);
             ASSERT(regExpStructure->storedPrototype().isObject());
-            ASSERT(regExpStructure->storedPrototype().asCell()->classInfo(*m_vm) == RegExpPrototype::info());
+            ASSERT(regExpStructure->storedPrototype().asCell()->classInfo() == RegExpPrototype::info());
 
             FrozenValue* regExpPrototypeObjectValue = m_graph.freeze(regExpStructure->storedPrototype());
             Structure* regExpPrototypeStructure = regExpPrototypeObjectValue->structure();
@@ -3827,12 +3827,12 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 #endif
         insertChecks();
 
-        TypedArrayType type = (*variant.structureSet().begin())->classInfo()->typedArrayStorageType;
+        TypedArrayType type = (*variant.structureSet().begin())->classInfoForCells()->typedArrayStorageType;
         Array::Type arrayType = toArrayType(type);
         size_t logSize = logElementSize(type);
 
         variant.structureSet().forEach([&] (Structure* structure) {
-            TypedArrayType curType = structure->classInfo()->typedArrayStorageType;
+            TypedArrayType curType = structure->classInfoForCells()->typedArrayStorageType;
             ASSERT(logSize == logElementSize(curType));
             arrayType = refineTypedArrayType(arrayType, curType);
             ASSERT(arrayType != Array::Generic);
@@ -3864,11 +3864,11 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 #endif
         insertChecks();
 
-        TypedArrayType type = (*variant.structureSet().begin())->classInfo()->typedArrayStorageType;
+        TypedArrayType type = (*variant.structureSet().begin())->classInfoForCells()->typedArrayStorageType;
         Array::Type arrayType = toArrayType(type);
 
         variant.structureSet().forEach([&] (Structure* structure) {
-            TypedArrayType curType = structure->classInfo()->typedArrayStorageType;
+            TypedArrayType curType = structure->classInfoForCells()->typedArrayStorageType;
             arrayType = refineTypedArrayType(arrayType, curType);
             ASSERT(arrayType != Array::Generic);
         });
@@ -3888,11 +3888,11 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
 #endif
         insertChecks();
 
-        TypedArrayType type = (*variant.structureSet().begin())->classInfo()->typedArrayStorageType;
+        TypedArrayType type = (*variant.structureSet().begin())->classInfoForCells()->typedArrayStorageType;
         Array::Type arrayType = toArrayType(type);
 
         variant.structureSet().forEach([&] (Structure* structure) {
-            TypedArrayType curType = structure->classInfo()->typedArrayStorageType;
+            TypedArrayType curType = structure->classInfoForCells()->typedArrayStorageType;
             arrayType = refineTypedArrayType(arrayType, curType);
             ASSERT(arrayType != Array::Generic);
         });
@@ -4034,7 +4034,7 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     if (!isTypedView(type))
         return false;
     
-    if (function->classInfo(*m_vm) != constructorClassInfoForType(type))
+    if (function->classInfo() != constructorClassInfoForType(type))
         return false;
     
     if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
@@ -4104,7 +4104,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
             return false;
     }
 
-    if (function->classInfo(*m_vm) == ArrayConstructor::info()) {
+    if (function->classInfo() == ArrayConstructor::info()) {
         if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
             return false;
         
@@ -4122,7 +4122,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
 
-    if (function->classInfo(*m_vm) == NumberConstructor::info()) {
+    if (function->classInfo() == NumberConstructor::info()) {
         if (kind == CodeForConstruct)
             return false;
 
@@ -4135,7 +4135,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
 
-    if (function->classInfo(*m_vm) == BooleanConstructor::info()) {
+    if (function->classInfo() == BooleanConstructor::info()) {
         if (kind == CodeForConstruct)
             return false;
 
@@ -4151,7 +4151,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
     
-    if (function->classInfo(*m_vm) == StringConstructor::info()) {
+    if (function->classInfo() == StringConstructor::info()) {
         insertChecks();
         
         Node* resultNode;
@@ -4168,7 +4168,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
 
-    if (function->classInfo(*m_vm) == SymbolConstructor::info() && kind == CodeForCall) {
+    if (function->classInfo() == SymbolConstructor::info() && kind == CodeForCall) {
         insertChecks();
 
         Node* resultNode;
@@ -4182,7 +4182,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
 
-    if (function->classInfo(*m_vm) == ObjectConstructor::info()) {
+    if (function->classInfo() == ObjectConstructor::info()) {
         insertChecks();
 
         Node* resultNode;
@@ -4250,7 +4250,7 @@ bool ByteCodeParser::check(const ObjectPropertyCondition& condition)
     if (m_graph.watchCondition(condition))
         return true;
     
-    Structure* structure = condition.object()->structure(*m_vm);
+    Structure* structure = condition.object()->structure();
     if (!condition.structureEnsuresValidity(Concurrency::ConcurrentThread, structure))
         return false;
     
@@ -4368,7 +4368,7 @@ GetByOffsetMethod ByteCodeParser::planLoad(const ObjectPropertyCondition& condit
     // because it's the most profitable. Also, there are cases where the presence is watchable but
     // we don't want to watch it unless it became an equivalence (see the relationship between
     // (1), (2), and (3) above).
-    ObjectPropertyCondition equivalenceCondition = condition.attemptToMakeEquivalenceWithoutBarrier(*m_vm);
+    ObjectPropertyCondition equivalenceCondition = condition.attemptToMakeEquivalenceWithoutBarrier();
     if (m_graph.watchCondition(equivalenceCondition))
         return GetByOffsetMethod::constant(m_graph.freeze(equivalenceCondition.requiredValue()));
     
@@ -4506,10 +4506,10 @@ bool ByteCodeParser::checkPresence(
 void ByteCodeParser::checkPresenceForReplace(
     Node* base, UniquedStringImpl* uid, PropertyOffset offset, const StructureSet& set)
 {
-    if (JSObject* knownBase = base->dynamicCastConstant<JSObject*>(*m_vm)) {
+    if (JSObject* knownBase = base->dynamicCastConstant<JSObject*>()) {
         auto condition = presenceConditionIfConsistent(knownBase, uid, offset, set);
         if (check(condition)) {
-            auto* watchpointSet = knownBase->structure(*m_vm)->propertyReplacementWatchpointSet(condition.offset());
+            auto* watchpointSet = knownBase->structure()->propertyReplacementWatchpointSet(condition.offset());
             // This means that we probably have a stale cache and we should gather more information.
             if (!watchpointSet || watchpointSet->isStillValid())
                 addToGraph(ForceOSRExit);
@@ -4531,7 +4531,7 @@ Node* ByteCodeParser::load(
     
     UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
     
-    if (JSObject* knownBase = base->dynamicCastConstant<JSObject*>(*m_vm)) {
+    if (JSObject* knownBase = base->dynamicCastConstant<JSObject*>()) {
         // Try to optimize away the structure check. Note that it's not worth doing anything about this
         // if the base's structure is watched.
         Structure* structure = base->constant()->structure();
@@ -4570,7 +4570,7 @@ Node* ByteCodeParser::load(
                     presenceConditionIfConsistent(knownBase, uid, variant.offset(), variant.structureSet());
                 if (presenceCondition) {
                     ObjectPropertyCondition equivalenceCondition =
-                        presenceCondition.attemptToMakeEquivalenceWithoutBarrier(*m_vm);
+                        presenceCondition.attemptToMakeEquivalenceWithoutBarrier();
                     if (m_graph.watchCondition(equivalenceCondition))
                         return weakJSConstant(equivalenceCondition.requiredValue());
                     
@@ -5514,7 +5514,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 cachedStructure = cachedStructureID.decode();
             if (metadata.m_toThisStatus != ToThisOK
                 || !cachedStructure
-                || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
+                || cachedStructure->classInfoForCells()->methodTable.toThis != JSObject::info()->methodTable.toThis
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                 || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
                 setThis(addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));
@@ -5531,13 +5531,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpCreateThis>();
             Node* callee = get(VirtualRegister(bytecode.m_callee));
 
-            JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
+            JSFunction* function = callee->dynamicCastConstant<JSFunction*>();
             if (!function) {
                 JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                 if (cachedFunction
                     && cachedFunction != JSCell::seenMultipleCalleeObjects()
                     && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
-                    ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
+                    ASSERT(cachedFunction->inherits<JSFunction>());
 
                     FrozenValue* frozen = m_graph.freeze(cachedFunction);
                     addToGraph(CheckIsConstant, OpInfo(frozen), callee);
@@ -5590,7 +5590,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             {
                 // Attempt to convert to NewPromise first in easy case.
-                JSPromiseConstructor* promiseConstructor = callee->dynamicCastConstant<JSPromiseConstructor*>(*m_vm);
+                JSPromiseConstructor* promiseConstructor = callee->dynamicCastConstant<JSPromiseConstructor*>();
                 if (promiseConstructor == (bytecode.m_isInternalPromise ? globalObject->internalPromiseConstructor() : globalObject->promiseConstructor())) {
                     JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                     if (cachedFunction
@@ -5613,13 +5613,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             // Derived function case.
             if (!alreadyEmitted) {
-                JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
+                JSFunction* function = callee->dynamicCastConstant<JSFunction*>();
                 if (!function) {
                     JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
                     if (cachedFunction
                         && cachedFunction != JSCell::seenMultipleCalleeObjects()
                         && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
-                        ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
+                        ASSERT(cachedFunction->inherits<JSFunction>());
 
                         FrozenValue* frozen = m_graph.freeze(cachedFunction);
                         addToGraph(CheckIsConstant, OpInfo(frozen), callee);
@@ -5633,7 +5633,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                         if (rareData->allocationProfileWatchpointSet().isStillValid()) {
                             Structure* structure = rareData->internalFunctionAllocationStructure();
                             if (structure
-                                && structure->classInfo() == (bytecode.m_isInternalPromise ? JSInternalPromise::info() : JSPromise::info())
+                                && structure->classInfoForCells() == (bytecode.m_isInternalPromise ? JSInternalPromise::info() : JSPromise::info())
                                 && structure->globalObject() == globalObject) {
                                 m_graph.freeze(rareData);
                                 m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -6502,12 +6502,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     // Even though status is taking a slow path, it is possible that this node still has constant identifier and using PutById is always better in that case.
                     UniquedStringImpl* uid = nullptr;
                     JSCell* propertyCell = nullptr;
-                    if (auto* symbol = property->dynamicCastConstant<Symbol*>(*m_vm)) {
+                    if (auto* symbol = property->dynamicCastConstant<Symbol*>()) {
                         uid = &symbol->uid();
                         propertyCell = symbol;
                         FrozenValue* frozen = m_graph.freezeStrong(symbol);
                         addToGraph(CheckIsConstant, OpInfo(frozen), property);
-                    } else if (auto* string = property->dynamicCastConstant<JSString*>(*m_vm)) {
+                    } else if (auto* string = property->dynamicCastConstant<JSString*>()) {
                         auto* impl = string->tryGetValueImpl();
                         if (impl && impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
                             uid = bitwise_cast<UniquedStringImpl*>(impl);
@@ -7788,7 +7788,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                         break;
                     }
                 }
-                if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>(*m_vm)) {
+                if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>()) {
                     for (unsigned n = depth; n--;)
                         scope = scope->next();
                     set(bytecode.m_dst, weakJSConstant(scope));
@@ -8179,7 +8179,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpGetScope>();
             Node* callee = get(VirtualRegister(CallFrameSlot::callee));
             Node* result;
-            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm))
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>())
                 result = weakJSConstant(function->scope());
             else
                 result = addToGraph(GetScope, callee);
@@ -8898,12 +8898,12 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
             // Even though status is taking a slow path, it is possible that this node still has constant identifier and using PutById is always better in that case.
             UniquedStringImpl* uid = nullptr;
             JSCell* propertyCell = nullptr;
-            if (auto* symbol = property->dynamicCastConstant<Symbol*>(*m_vm)) {
+            if (auto* symbol = property->dynamicCastConstant<Symbol*>()) {
                 uid = &symbol->uid();
                 propertyCell = symbol;
                 FrozenValue* frozen = m_graph.freezeStrong(symbol);
                 addToGraph(CheckIsConstant, OpInfo(frozen), property);
-            } else if (auto* string = property->dynamicCastConstant<JSString*>(*m_vm)) {
+            } else if (auto* string = property->dynamicCastConstant<JSString*>()) {
                 auto* impl = string->tryGetValueImpl();
                 if (impl && impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
                     uid = bitwise_cast<UniquedStringImpl*>(impl);
@@ -8995,13 +8995,13 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
     JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
     Node* callee = get(VirtualRegister(bytecode.m_callee));
 
-    JSFunction* function = callee->dynamicCastConstant<JSFunction*>(*m_vm);
+    JSFunction* function = callee->dynamicCastConstant<JSFunction*>();
     if (!function) {
         JSCell* cachedFunction = bytecode.metadata(codeBlock).m_cachedCallee.unvalidatedGet();
         if (cachedFunction
             && cachedFunction != JSCell::seenMultipleCalleeObjects()
             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
-            ASSERT(cachedFunction->inherits<JSFunction>(*m_vm));
+            ASSERT(cachedFunction->inherits<JSFunction>());
 
             FrozenValue* frozen = m_graph.freeze(cachedFunction);
             addToGraph(CheckIsConstant, OpInfo(frozen), callee);
@@ -9015,7 +9015,7 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
             if (rareData->allocationProfileWatchpointSet().isStillValid()) {
                 Structure* structure = rareData->internalFunctionAllocationStructure();
                 if (structure
-                    && structure->classInfo() == classInfo
+                    && structure->classInfoForCells() == classInfo
                     && structure->globalObject() == globalObject) {
                     m_graph.freeze(rareData);
                     m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());

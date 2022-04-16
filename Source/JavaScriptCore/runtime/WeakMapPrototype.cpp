@@ -42,7 +42,7 @@ static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakMapHas);
 void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, protoFuncWeakMapDelete, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->get, protoFuncWeakMapGet, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, JSWeakMapGetIntrinsic);
@@ -62,7 +62,7 @@ ALWAYS_INLINE static JSWeakMap* getWeakMap(JSGlobalObject* globalObject, JSValue
         return nullptr;
     }
 
-    auto* map = jsDynamicCast<JSWeakMap*>(vm, asObject(value));
+    auto* map = jsDynamicCast<JSWeakMap*>(asObject(value));
     if (LIKELY(map))
         return map;
 

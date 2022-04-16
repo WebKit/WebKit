@@ -79,7 +79,7 @@ JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, Ref<Wasm:
 void JSWebAssemblyModule::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
     SymbolTable* exportSymbolTable = SymbolTable::create(vm);

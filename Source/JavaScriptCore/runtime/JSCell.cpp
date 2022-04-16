@@ -43,17 +43,17 @@ void JSCell::destroy(JSCell* cell)
 
 void JSCell::dump(PrintStream& out) const
 {
-    methodTable(vm())->dumpToStream(this, out);
+    methodTable()->dumpToStream(this, out);
 }
 
 void JSCell::dumpToStream(const JSCell* cell, PrintStream& out)
 {
-    out.printf("<%p, %s>", cell, cell->className(cell->vm()).characters());
+    out.printf("<%p, %s>", cell, cell->className().characters());
 }
 
 size_t JSCell::estimatedSizeInBytes(VM& vm) const
 {
-    return methodTable(vm)->estimatedSize(const_cast<JSCell*>(this), vm);
+    return methodTable()->estimatedSize(const_cast<JSCell*>(this), vm);
 }
 
 size_t JSCell::estimatedSize(JSCell* cell, VM&)
@@ -109,7 +109,7 @@ bool JSCell::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName identi
         return JSValue(cell).putToPrimitive(globalObject, identifier, value, slot);
 
     JSObject* thisObject = cell->toObject(globalObject);
-    return thisObject->methodTable(globalObject->vm())->put(thisObject, globalObject, identifier, value, slot);
+    return thisObject->methodTable()->put(thisObject, globalObject, identifier, value, slot);
 }
 
 bool JSCell::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned identifier, JSValue value, bool shouldThrow)
@@ -120,26 +120,26 @@ bool JSCell::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned ide
         return JSValue(cell).putToPrimitive(globalObject, Identifier::from(vm, identifier), value, slot);
     }
     JSObject* thisObject = cell->toObject(globalObject);
-    return thisObject->methodTable(vm)->putByIndex(thisObject, globalObject, identifier, value, shouldThrow);
+    return thisObject->methodTable()->putByIndex(thisObject, globalObject, identifier, value, shouldThrow);
 }
 
 bool JSCell::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier, DeletePropertySlot& slot)
 {
     JSObject* thisObject = cell->toObject(globalObject);
-    return thisObject->methodTable(globalObject->vm())->deleteProperty(thisObject, globalObject, identifier, slot);
+    return thisObject->methodTable()->deleteProperty(thisObject, globalObject, identifier, slot);
 }
 
 bool JSCell::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName identifier)
 {
     JSObject* thisObject = cell->toObject(globalObject);
     DeletePropertySlot slot;
-    return thisObject->methodTable(globalObject->vm())->deleteProperty(thisObject, globalObject, identifier, slot);
+    return thisObject->methodTable()->deleteProperty(thisObject, globalObject, identifier, slot);
 }
 
 bool JSCell::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned identifier)
 {
     JSObject* thisObject = cell->toObject(globalObject);
-    return thisObject->methodTable(globalObject->vm())->deletePropertyByIndex(thisObject, globalObject, identifier);
+    return thisObject->methodTable()->deletePropertyByIndex(thisObject, globalObject, identifier);
 }
 
 JSValue JSCell::toThis(JSCell* cell, JSGlobalObject* globalObject, ECMAMode ecmaMode)
@@ -210,9 +210,9 @@ void JSCell::getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyName
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-ASCIILiteral JSCell::className(VM& vm) const
+ASCIILiteral JSCell::className() const
 {
-    return classInfo(vm)->className;
+    return classInfo()->className;
 }
 
 bool JSCell::customHasInstance(JSObject*, JSGlobalObject*, JSValue)

@@ -124,7 +124,7 @@ StringPrototype::StringPrototype(VM& vm, Structure* structure)
 void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm, jsEmptyString(vm));
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, stringProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, StringPrototypeValueOfIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->valueOf, stringProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, StringPrototypeValueOfIntrinsic);
@@ -737,7 +737,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     String replacementString;
-    auto callData = getCallData(vm, replaceValue);
+    auto callData = JSC::getCallData(replaceValue);
     if (callData.type == CallData::Type::None) {
         replacementString = replaceValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
@@ -758,7 +758,7 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
     String searchString = searchValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto callData = getCallData(vm, replaceValue);
+    auto callData = JSC::getCallData(replaceValue);
     std::optional<CachedCall> cachedCall;
     String replaceString;
     if (callData.type == CallData::Type::None) {
@@ -882,7 +882,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeatCharacter, (JSGlobalObject* global
 ALWAYS_INLINE JSString* replace(
     VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, JSString* string, JSValue searchValue, JSValue replaceValue)
 {
-    if (searchValue.inherits<RegExpObject>(vm))
+    if (searchValue.inherits<RegExpObject>())
         return replaceUsingRegExpSearch(vm, globalObject, callFrame, string, searchValue, replaceValue);
     return replaceUsingStringSearch(vm, globalObject, callFrame, string, searchValue, replaceValue, ReplaceMode::Single);
 }
@@ -910,7 +910,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceUsingRegExp, (JSGlobalObject* glo
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue searchValue = callFrame->argument(0);
-    if (!searchValue.inherits<RegExpObject>(vm))
+    if (!searchValue.inherits<RegExpObject>())
         return JSValue::encode(jsUndefined());
 
     RELEASE_AND_RETURN(scope, JSValue::encode(replaceUsingRegExpSearch(vm, globalObject, callFrame, string, searchValue, callFrame->argument(1))));
@@ -964,7 +964,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject,
         return JSValue::encode(thisValue);
     }
 
-    auto* stringObject = jsDynamicCast<StringObject*>(vm, thisValue);
+    auto* stringObject = jsDynamicCast<StringObject*>(thisValue);
     if (!stringObject)
         return throwVMTypeError(globalObject, scope);
 

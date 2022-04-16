@@ -51,10 +51,10 @@ void StructureTransitionStructureStubClearingWatchpoint::fireInternal(VM& vm, co
     if (m_key.kind() == PropertyCondition::Presence) {
         // If this was a presence condition, let's watch the property for replacements. This is profitable
         // for the DFG, which will want the replacement set to be valid in order to do constant folding.
-        m_key.object()->structure(vm)->startWatchingPropertyForReplacements(vm, m_key.offset());
+        m_key.object()->structure()->startWatchingPropertyForReplacements(vm, m_key.offset());
     }
 
-    m_key.object()->structure(vm)->addTransitionWatchpoint(this);
+    m_key.object()->structure()->addTransitionWatchpoint(this);
 }
 
 inline bool WatchpointsOnStructureStubInfo::isValid() const

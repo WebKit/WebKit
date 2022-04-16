@@ -320,11 +320,11 @@ public:
     
     void validateReferences(const TrackedReferences&) const;
 
-    static bool isValidValueForAttributes(VM&, JSValue, unsigned attributes);
+    static bool isValidValueForAttributes(JSValue, unsigned attributes);
 
-    bool isValidValueForPresence(VM&, JSValue) const;
+    bool isValidValueForPresence(JSValue) const;
 
-    PropertyCondition attemptToMakeEquivalenceWithoutBarrier(VM&, JSObject* base) const;
+    PropertyCondition attemptToMakeEquivalenceWithoutBarrier(JSObject* base) const;
 
 private:
     bool isWatchableWhenValid(Structure*, WatchabilityEffort) const;

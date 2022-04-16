@@ -79,7 +79,7 @@ public:
         return std::nullopt;
     }
 
-    ALWAYS_INLINE void tryAdd(VM& vm, PropertySlot& slot, JSObject* object, PropertyName propName, bool result)
+    ALWAYS_INLINE void tryAdd(PropertySlot& slot, JSObject* object, PropertyName propName, bool result)
     {
         if (parseIndex(propName))
             return;
@@ -90,7 +90,7 @@ public:
         if (object->type() == PureForwardingProxyType)
             return;
 
-        Structure* structure = object->structure(vm);
+        Structure* structure = object->structure();
         if (!structure->typeInfo().prohibitsPropertyCaching()
             && structure->propertyAccessesAreCacheable()
             && (!slot.isUnset() || structure->propertyAccessesAreCacheableForAbsence())) {

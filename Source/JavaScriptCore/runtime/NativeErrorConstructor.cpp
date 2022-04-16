@@ -156,7 +156,7 @@ NativeErrorConstructor<errorType>::NativeErrorConstructor(VM& vm, Structure* str
 void NativeErrorConstructorBase::finishCreation(VM& vm, NativeErrorPrototype* prototype, ErrorType errorType)
 {
     Base::finishCreation(vm, 1, errorTypeName(errorType), PropertyAdditionMode::WithoutStructureTransition);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }

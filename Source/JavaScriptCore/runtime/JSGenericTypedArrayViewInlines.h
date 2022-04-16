@@ -264,12 +264,12 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         if (!success)
             return false;
 
-        RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->classInfo(vm)->typedArrayStorageType));
+        RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->classInfo()->typedArrayStorageType));
         memmove(typedVector() + offset, bitwise_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
         return true;
     };
 
-    const ClassInfo* ci = object->classInfo(vm);
+    const ClassInfo* ci = object->classInfo();
     if (ci->typedArrayStorageType == Adaptor::typeValue)
         return memmoveFastPath(jsCast<JSArrayBufferView*>(object));
 

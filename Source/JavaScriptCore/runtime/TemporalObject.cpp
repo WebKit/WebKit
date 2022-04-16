@@ -52,49 +52,49 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalObject);
 static JSValue createCalendarConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
+    JSGlobalObject* globalObject = temporalObject->globalObject();
     return TemporalCalendarConstructor::create(vm, TemporalCalendarConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalCalendarPrototype*>(globalObject->calendarStructure()->storedPrototypeObject()));
 }
 
 static JSValue createNowObject(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
+    JSGlobalObject* globalObject = temporalObject->globalObject();
     return TemporalNow::create(vm, TemporalNow::createStructure(vm, globalObject));
 }
 
 static JSValue createDurationConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
+    JSGlobalObject* globalObject = temporalObject->globalObject();
     return TemporalDurationConstructor::create(vm, TemporalDurationConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalDurationPrototype*>(globalObject->durationStructure()->storedPrototypeObject()));
 }
 
 static JSValue createInstantConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
+    JSGlobalObject* globalObject = temporalObject->globalObject();
     return TemporalInstantConstructor::create(vm, TemporalInstantConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalInstantPrototype*>(globalObject->instantStructure()->storedPrototypeObject()));
 }
 
 static JSValue createPlainDateConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    auto* globalObject = temporalObject->globalObject(vm);
+    auto* globalObject = temporalObject->globalObject();
     return TemporalPlainDateConstructor::create(vm, TemporalPlainDateConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainDatePrototype*>(globalObject->plainDateStructure()->storedPrototypeObject()));
 }
 
 static JSValue createPlainTimeConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    auto* globalObject = temporalObject->globalObject(vm);
+    auto* globalObject = temporalObject->globalObject();
     return TemporalPlainTimeConstructor::create(vm, TemporalPlainTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainTimePrototype*>(globalObject->plainTimeStructure()->storedPrototypeObject()));
 }
 
 static JSValue createTimeZoneConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
+    JSGlobalObject* globalObject = temporalObject->globalObject();
     return TemporalTimeZoneConstructor::create(vm, TemporalTimeZoneConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalTimeZonePrototype*>(globalObject->timeZoneStructure()->storedPrototypeObject()));
 }
 
@@ -138,7 +138,7 @@ Structure* TemporalObject::createStructure(VM& vm, JSGlobalObject* globalObject)
 void TemporalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

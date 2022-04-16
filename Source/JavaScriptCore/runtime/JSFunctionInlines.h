@@ -37,7 +37,7 @@ inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(
     VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
     ASSERT(executable->singleton().hasBeenInvalidated());
-    return createImpl(vm, executable, scope, selectStructureForNewFuncExp(scope->globalObject(vm), executable));
+    return createImpl(vm, executable, scope, selectStructureForNewFuncExp(scope->globalObject(), executable));
 }
 
 inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
@@ -79,9 +79,9 @@ inline bool JSFunction::isClassConstructorFunction() const
     return !isHostFunction() && jsExecutable()->isClassConstructorFunction();
 }
 
-inline bool JSFunction::isRemoteFunction(VM& vm) const
+inline bool JSFunction::isRemoteFunction() const
 {
-    return inherits<JSRemoteFunction>(vm);
+    return inherits<JSRemoteFunction>();
 }
 
 inline TaggedNativeFunction JSFunction::nativeFunction()
@@ -104,9 +104,9 @@ inline bool isHostFunction(JSValue value, TaggedNativeFunction nativeFunction)
     return function->nativeFunction() == nativeFunction;
 }
 
-inline bool isRemoteFunction(VM& vm, JSValue value)
+inline bool isRemoteFunction(JSValue value)
 {
-    return value.inherits<JSRemoteFunction>(vm);
+    return value.inherits<JSRemoteFunction>();
 }
 
 inline bool JSFunction::hasReifiedLength() const
@@ -170,9 +170,9 @@ inline FunctionRareData* JSFunction::ensureRareDataAndAllocationProfile(JSGlobal
     return rareData;
 }
 
-inline JSString* JSFunction::asStringConcurrently(VM& vm) const
+inline JSString* JSFunction::asStringConcurrently() const
 {
-    if (inherits<JSBoundFunction>(vm) || inherits<JSRemoteFunction>(vm))
+    if (inherits<JSBoundFunction>() || inherits<JSRemoteFunction>())
         return nullptr;
     if (isHostFunction())
         return static_cast<NativeExecutable*>(executable())->asStringConcurrently();

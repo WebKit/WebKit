@@ -77,7 +77,7 @@ static RefPtr<JSON::Value> jsToInspectorValue(JSGlobalObject* globalObject, JSVa
         auto inspectorObject = JSON::Object::create();
         auto& object = *value.getObject();
         PropertyNameArray propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-        object.methodTable(vm)->getOwnPropertyNames(&object, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
+        object.methodTable()->getOwnPropertyNames(&object, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
         for (auto& name : propertyNames) {
             auto inspectorValue = jsToInspectorValue(globalObject, object.get(globalObject, name), maxDepth);
             if (!inspectorValue)

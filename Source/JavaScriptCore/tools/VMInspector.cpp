@@ -490,9 +490,8 @@ private:
 
 void VMInspector::dumpCellMemoryToStream(JSCell* cell, PrintStream& out)
 {
-    VM& vm = cell->vm();
     StructureID structureID = cell->structureID();
-    Structure* structure = cell->structure(vm);
+    Structure* structure = cell->structure();
     IndexingType indexingTypeAndMisc = cell->indexingTypeAndMisc();
     IndexingType indexingType = structure->indexingType();
     IndexingType indexingMode = structure->indexingMode();
@@ -519,7 +518,7 @@ void VMInspector::dumpCellMemoryToStream(JSCell* cell, PrintStream& out)
         out.print("\n");
     };
 
-    out.printf("<%p, %s>\n", cell, cell->className(vm).characters());
+    out.printf("<%p, %s>\n", cell, cell->className().characters());
     IndentationScope scope(indentation);
 
     INDENT dumpSlot(slots, 0, "header");

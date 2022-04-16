@@ -774,21 +774,19 @@ GlobalObject::GlobalObject(VM& vm, Structure* structure)
 
 JSC_DEFINE_CUSTOM_SETTER(testCustomAccessorSetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
-    VM& vm = lexicalGlobalObject->vm();
     RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
     JSCell* thisCell = JSValue::decode(thisValue).asCell();
     RELEASE_ASSERT(thisCell->type() == PureForwardingProxyType);
-    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(vm, jsCast<JSProxy*>(thisCell)->target());
+    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(jsCast<JSProxy*>(thisCell)->target());
     RELEASE_ASSERT(thisObject);
     return GlobalObject::testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomAccessorSetter"_s);
 }
 
 JSC_DEFINE_CUSTOM_SETTER(testCustomValueSetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue, PropertyName))
 {
-    VM& vm = lexicalGlobalObject->vm();
     RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
     JSCell* thisCell = JSValue::decode(thisValue).asCell();
-    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(vm, thisCell);
+    GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(thisCell);
     RELEASE_ASSERT(thisObject);
     return GlobalObject::testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomValueSetter"_s);
 }
@@ -1350,7 +1348,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDescribeArray, (JSGlobalObject* globalObject, C
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(jsUndefined());
     VM& vm = globalObject->vm();
-    JSObject* object = jsDynamicCast<JSObject*>(vm, callFrame->argument(0));
+    JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(0));
     if (!object)
         return JSValue::encode(jsNontrivialString(vm, "<not object>"_s));
     return JSValue::encode(jsNontrivialString(vm, toString("<Butterfly: ", RawPointer(object->butterfly()), "; public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
@@ -1834,13 +1832,11 @@ JSC_DEFINE_HOST_FUNCTION(functionOpenFile, (JSGlobalObject* globalObject, CallFr
 
 JSC_DEFINE_HOST_FUNCTION(functionReadline, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    VM& vm = globalObject->vm();
-
     Vector<char, 256> line;
     int c;
     FILE* descriptor = stdin;
 
-    if (auto* file = jsDynamicCast<JSFileDescriptor*>(vm, callFrame->argument(0)))
+    if (auto* file = jsDynamicCast<JSFileDescriptor*>(callFrame->argument(0)))
         descriptor = file->descriptor();
 
     while ((c = getc(descriptor)) != EOF) {
@@ -2046,9 +2042,9 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarEvalScript, (JSGlobalObject* globalObject
     
     JSValue global = callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global"_s));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    while (global.inherits<JSProxy>(vm))
+    while (global.inherits<JSProxy>())
         global = jsCast<JSProxy*>(global)->target();
-    GlobalObject* realm = jsDynamicCast<GlobalObject*>(vm, global);
+    GlobalObject* realm = jsDynamicCast<GlobalObject*>(global);
     if (!realm)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected global to point to a global object"_s)));
 
@@ -2085,7 +2081,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarGlobalObjectFor, (JSGlobalObject* globalO
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
     JSValue arg = callFrame->argument(0);
     if (arg.isObject())
-        return JSValue::encode(asObject(arg)->globalObject(vm)->globalThis());
+        return JSValue::encode(asObject(arg)->globalObject()->globalThis());
 
     return JSValue::encode(jsUndefined());
 }
@@ -2099,7 +2095,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarIsRemoteFunction, (JSGlobalObject* global
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
 
     JSValue arg = callFrame->argument(0);
-    return JSValue::encode(jsBoolean(isRemoteFunction(vm, arg)));
+    return JSValue::encode(jsBoolean(isRemoteFunction(arg)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -2172,7 +2168,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue callback = callFrame->argument(0);
-    auto callData = getCallData(vm, callback);
+    auto callData = JSC::getCallData(callback);
     if (callData.type == CallData::Type::None)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected callback"_s)));
     
@@ -2246,7 +2242,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
     int32_t index = callFrame->argument(1).toInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, callFrame->argument(0));
+    JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(callFrame->argument(0));
     if (jsBuffer && jsBuffer->isShared()) {
         Workers::singleton().broadcast(
             [&] (const AbstractLocker& locker, Worker& worker) {
@@ -2260,7 +2256,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
     }
 
 #if ENABLE(WEBASSEMBLY)
-    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, callFrame->argument(0));
+    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(callFrame->argument(0));
     if (memory && memory->memory().sharingMode() == Wasm::MemorySharingMode::Shared) {
         Workers::singleton().broadcast(
             [&] (const AbstractLocker& locker, Worker& worker) {
@@ -2400,7 +2396,7 @@ JSC_DEFINE_HOST_FUNCTION(functionTransferArrayBuffer, (JSGlobalObject* globalObj
     if (callFrame->argumentCount() < 1)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not enough arguments"_s)));
     
-    JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(vm, callFrame->argument(0));
+    JSArrayBuffer* buffer = jsDynamicCast<JSArrayBuffer*>(callFrame->argument(0));
     if (!buffer)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected an array buffer"_s)));
     
@@ -2420,7 +2416,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFailNextNewCodeBlock, (JSGlobalObject* globalOb
 JSC_DEFINE_HOST_FUNCTION(functionQuit, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
-    vm.codeCache()->write(vm);
+    vm.codeCache()->write();
 
     jscExit(EXIT_SUCCESS);
 
@@ -2490,11 +2486,11 @@ JSC_DEFINE_HOST_FUNCTION(functionCallMasquerader, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsNull());
 }
 
-JSC_DEFINE_HOST_FUNCTION(functionHasCustomProperties, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(functionHasCustomProperties, (JSGlobalObject*, CallFrame* callFrame))
 {
     JSValue value = callFrame->argument(0);
     if (value.isObject())
-        return JSValue::encode(jsBoolean(asObject(value)->hasCustomProperties(globalObject->vm())));
+        return JSValue::encode(jsBoolean(asObject(value)->hasCustomProperties()));
     return JSValue::encode(jsBoolean(false));
 }
 
@@ -2518,7 +2514,7 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // FIXME: This means we can't pass any internal function but I don't think that's common for testing.
-    auto callback = jsDynamicCast<JSFunction*>(vm, callFrame->argument(0));
+    auto callback = jsDynamicCast<JSFunction*>(callFrame->argument(0));
     if (!callback)
         return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
 
@@ -2544,7 +2540,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryLiveCount, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(vm, callFrame->argument(0));
+    auto* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(callFrame->argument(0));
     if (!finalizationRegistry)
         return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
 
@@ -2557,7 +2553,7 @@ JSC_DEFINE_HOST_FUNCTION(functionFinalizationRegistryDeadCount, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(vm, callFrame->argument(0));
+    auto* finalizationRegistry = jsDynamicCast<JSFinalizationRegistry*>(callFrame->argument(0));
     if (!finalizationRegistry)
         return throwVMTypeError(globalObject, scope, "first argument is not a finalizationRegistry"_s);
 
@@ -2771,7 +2767,7 @@ JSC_DEFINE_HOST_FUNCTION(functionEnsureArrayStorage, (JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
-        if (JSObject* object = jsDynamicCast<JSObject*>(vm, callFrame->argument(i)))
+        if (JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(i)))
             object->ensureArrayStorage(vm);
     }
     return JSValue::encode(jsUndefined());
@@ -2838,9 +2834,9 @@ JSC_DEFINE_HOST_FUNCTION(functionWebAssemblyMemoryMode, (JSGlobalObject* globalO
         return throwVMTypeError(globalObject, scope, "WebAssemblyMemoryMode should only be called if the useWebAssembly option is set"_s);
 
     if (JSObject* object = callFrame->argument(0).getObject()) {
-        if (auto* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, object))
+        if (auto* memory = jsDynamicCast<JSWebAssemblyMemory*>(object))
             return JSValue::encode(jsString(vm, String::fromLatin1(makeString(memory->memory().mode()))));
-        if (auto* instance = jsDynamicCast<JSWebAssemblyInstance*>(vm, object))
+        if (auto* instance = jsDynamicCast<JSWebAssemblyInstance*>(object))
             return JSValue::encode(jsString(vm, String::fromLatin1(makeString(instance->memoryMode()))));
     }
 
@@ -2855,7 +2851,7 @@ JSC_DEFINE_HOST_FUNCTION(functionSetUnhandledRejectionCallback, (JSGlobalObject*
     JSObject* object = callFrame->argument(0).getObject();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!object || !object->isCallable(vm))
+    if (!object || !object->isCallable())
         return throwVMTypeError(globalObject, scope);
 
     globalObject->setUnhandledRejectionCallback(vm, object);
@@ -3158,7 +3154,7 @@ static void checkException(GlobalObject* globalObject, bool isLastFile, bool has
         JSCell* valueCell = value.asCell();
         vm.ensureTerminationException();
         Exception* terminationException = vm.terminationException();
-        Exception* exception = jsDynamicCast<Exception*>(vm, valueCell);
+        Exception* exception = jsDynamicCast<Exception*>(valueCell);
         if (exception)
             return vm.isTerminationException(exception);
         JSCell* terminationError = terminationException->value().asCell();
@@ -3721,7 +3717,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         dataLogLn(*vm.jitSizeStatistics);
 #endif
 
-    vm.codeCache()->write(vm);
+    vm.codeCache()->write();
 
     if (options.m_destroyVM || isWorker) {
         JSLockHolder locker(vm);

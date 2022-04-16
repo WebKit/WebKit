@@ -6383,7 +6383,7 @@ HRESULT WebView::reportException(_In_ JSContextRef context, _In_ JSValueRef exce
     JSC::JSLockHolder lock(globalObject);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a WebView.
-    if (!globalObject->inherits<JSDOMWindow>(globalObject->vm()))
+    if (!globalObject->inherits<JSDOMWindow>())
         return E_FAIL;
 
     WebCore::reportException(globalObject, toJS(globalObject, exception));

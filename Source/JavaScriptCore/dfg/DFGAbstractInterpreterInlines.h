@@ -185,7 +185,7 @@ enum class ToThisResult {
     GlobalThis,
     Dynamic,
 };
-inline ToThisResult isToThisAnIdentity(VM& vm, ECMAMode ecmaMode, AbstractValue& valueForNode)
+inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueForNode)
 {
     // We look at the type first since that will cover most cases and does not require iterating all the structures.
     if (ecmaMode.isStrict()) {
@@ -198,7 +198,7 @@ inline ToThisResult isToThisAnIdentity(VM& vm, ECMAMode ecmaMode, AbstractValue&
 
     if (JSValue value = valueForNode.value()) {
         if (value.isCell()) {
-            auto* toThisMethod = value.asCell()->classInfo(vm)->methodTable.toThis;
+            auto* toThisMethod = value.asCell()->classInfo()->methodTable.toThis;
             if (toThisMethod == &JSObject::toThis)
                 return ToThisResult::Identity;
             if (toThisMethod == &JSScope::toThis) {
@@ -224,7 +224,7 @@ inline ToThisResult isToThisAnIdentity(VM& vm, ECMAMode ecmaMode, AbstractValue&
                 overridesToThis = true;
 
             // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.
-            allStructuresAreJSScope &= structure->classInfo()->methodTable.toThis == JSScope::info()->methodTable.toThis;
+            allStructuresAreJSScope &= structure->classInfoForCells()->methodTable.toThis == JSScope::info()->methodTable.toThis;
         });
         if (!overridesToThis)
             return ToThisResult::Identity;
@@ -1480,7 +1480,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case TypeOfIsUndefined:
                 setConstant(node, jsBoolean(
                     child.value().isCell()
-                    ? child.value().asCell()->structure(m_vm)->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))
+                    ? child.value().asCell()->structure()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))
                     : child.value().isUndefined()));
                 break;
             case TypeOfIsObject: {
@@ -1518,7 +1518,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsBoolean(child.value().isObject()));
                 break;
             case IsCallable: {
-                TriState result = child.value().isCallableWithConcurrency<Concurrency::ConcurrentThread>(m_vm);
+                TriState result = child.value().isCallableWithConcurrency<Concurrency::ConcurrentThread>();
                 if (result != TriState::Indeterminate)
                     setConstant(node, jsBoolean(result == TriState::True));
                 else
@@ -1526,7 +1526,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             case IsConstructor: {
-                TriState result = child.value().isConstructorWithConcurrency<Concurrency::ConcurrentThread>(m_vm);
+                TriState result = child.value().isConstructorWithConcurrency<Concurrency::ConcurrentThread>();
                 if (result != TriState::Indeterminate)
                     setConstant(node, jsBoolean(result == TriState::True));
                 else
@@ -1537,7 +1537,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsBoolean(child.value().isEmpty()));
                 break;
             case IsTypedArrayView:
-                setConstant(node, jsBoolean(child.value().isObject() && isTypedView(child.value().getObject()->classInfo(m_vm)->typedArrayStorageType)));
+                setConstant(node, jsBoolean(child.value().isObject() && isTypedView(child.value().getObject()->classInfo()->typedArrayStorageType)));
                 break;
             default:
                 constantWasSet = false;
@@ -2192,7 +2192,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 if (!arrayConstant)
                     return false;
 
-                JSObject* array = jsDynamicCast<JSObject*>(m_vm, arrayConstant);
+                JSObject* array = jsDynamicCast<JSObject*>(arrayConstant);
                 if (!array)
                     return false;
 
@@ -2245,8 +2245,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
                     if (node->arrayMode().isOutOfBounds()) {
                         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(m_vm);
-                        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(m_vm);
+                        Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+                        Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
                         if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
                             && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                             && globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure)) {
@@ -2616,7 +2616,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
 
         if (JSValue globalObjectValue = forNode(node->child1()).m_value) {
-            if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(m_vm, globalObjectValue)) {
+            if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(globalObjectValue)) {
                 if (!globalObject->isHavingABadTime()) {
                     m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
                     RegisteredStructureSet structureSet;
@@ -2855,8 +2855,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case FunctionToString: {
         JSValue value = m_state.forNode(node->child1()).value();
         if (value) {
-            JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, value);
-            if (JSString* asString = function->asStringConcurrently(m_vm)) {
+            JSFunction* function = jsDynamicCast<JSFunction*>(value);
+            if (JSString* asString = function->asStringConcurrently()) {
                 setConstant(node, *m_graph.freeze(asString));
                 break;
             }
@@ -2887,7 +2887,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case NewStringObject: {
-        ASSERT(node->structure()->classInfo() == StringObject::info());
+        ASSERT(node->structure()->classInfoForCells() == StringObject::info());
         setForNode(node, node->structure());
         break;
     }
@@ -2988,7 +2988,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         AbstractValue& destination = forNode(node);
         ECMAMode ecmaMode = node->ecmaMode();
 
-        ToThisResult result = isToThisAnIdentity(m_vm, ecmaMode, source);
+        ToThisResult result = isToThisAnIdentity(ecmaMode, source);
         switch (result) {
         case ToThisResult::Identity:
             m_state.setShouldTryConstantFolding(true);
@@ -3015,7 +3015,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case CreateThis: {
         if (JSValue base = forNode(node->child1()).m_value) {
-            if (auto* function = jsDynamicCast<JSFunction*>(m_vm, base)) {
+            if (auto* function = jsDynamicCast<JSFunction*>(base)) {
                 if (FunctionRareData* rareData = function->rareData()) {
                     if (rareData->allocationProfileWatchpointSet().isStillValid()) {
                         if (Structure* structure = rareData->objectAllocationStructure()) {
@@ -3044,12 +3044,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setForNode(node, node->isInternalPromise() ? globalObject->internalPromiseStructure() : globalObject->promiseStructure());
                 break;
             }
-            if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
+            if (auto* function = jsDynamicCast<JSFunction*>(base)) {
                 if (FunctionRareData* rareData = function->rareData()) {
                     if (rareData->allocationProfileWatchpointSet().isStillValid()) {
                         Structure* structure = rareData->internalFunctionAllocationStructure();
                         if (structure
-                            && structure->classInfo() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
+                            && structure->classInfoForCells() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
                             && structure->globalObject() == globalObject) {
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -3072,12 +3072,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         auto tryToFold = [&] (const ClassInfo* classInfo) -> bool {
             JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
             if (JSValue base = forNode(node->child1()).m_value) {
-                if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
+                if (auto* function = jsDynamicCast<JSFunction*>(base)) {
                     if (FunctionRareData* rareData = function->rareData()) {
                         if (rareData->allocationProfileWatchpointSet().isStillValid()) {
                             Structure* structure = rareData->internalFunctionAllocationStructure();
                             if (structure
-                                && structure->classInfo() == classInfo
+                                && structure->classInfoForCells() == classInfo
                                 && structure->globalObject() == globalObject) {
                                 m_graph.freeze(rareData);
                                 m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -3282,7 +3282,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case GetCallee:
-        if (FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(m_vm, m_codeBlock->ownerExecutable())) {
+        if (FunctionExecutable* executable = jsDynamicCast<FunctionExecutable*>(m_codeBlock->ownerExecutable())) {
             if (JSFunction* function = executable->singleton().inferredValue()) {
                 m_graph.watchpoints().addLazily(executable);
                 setConstant(node, *m_graph.freeze(function));
@@ -3306,7 +3306,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case GetGetter: {
         if (JSValue base = forNode(node->child1()).m_value) {
-            GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(m_vm, base);
+            GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(base);
             if (getterSetter && !getterSetter->isGetterNull()) {
                 setConstant(node, *m_graph.freeze(getterSetter->getterConcurrently()));
                 break;
@@ -3319,7 +3319,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case GetSetter: {
         if (JSValue base = forNode(node->child1()).m_value) {
-            GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(m_vm, base);
+            GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(base);
             if (getterSetter && !getterSetter->isSetterNull()) {
                 setConstant(node, *m_graph.freeze(getterSetter->setterConcurrently()));
                 break;
@@ -3332,7 +3332,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case GetScope:
         if (JSValue base = forNode(node->child1()).m_value) {
-            if (JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, base)) {
+            if (JSFunction* function = jsDynamicCast<JSFunction*>(base)) {
                 setConstant(node, *m_graph.freeze(function->scope()));
                 break;
             }
@@ -3342,7 +3342,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case SkipScope: {
         if (JSValue child = forNode(node->child1()).value()) {
-            if (JSScope* scope = jsDynamicCast<JSScope*>(m_vm, child)) {
+            if (JSScope* scope = jsDynamicCast<JSScope*>(child)) {
                 if (JSScope* nextScope = scope->next()) {
                     setConstant(node, *m_graph.freeze(JSValue(nextScope)));
                     break;
@@ -3356,7 +3356,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetGlobalObject: {
         JSValue child = forNode(node->child1()).value();
         if (child) {
-            setConstant(node, *m_graph.freeze(JSValue(asObject(child)->globalObject(m_vm))));
+            setConstant(node, *m_graph.freeze(JSValue(asObject(child)->globalObject())));
             break;
         }
 
@@ -3561,7 +3561,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         const RegisteredStructureSet& set = node->structureSet();
         
         if (value.value()) {
-            if (Structure* structure = jsDynamicCast<Structure*>(m_vm, value.value())) {
+            if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
                 if (set.contains(m_graph.registerStructure(structure))) {
                     m_state.setShouldTryConstantFolding(true);
                     break;
@@ -3576,7 +3576,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_phiChildren->forAllTransitiveIncomingValues(
                 node,
                 [&] (Node* incoming) {
-                    if (Structure* structure = incoming->dynamicCastConstant<Structure*>(m_vm)) {
+                    if (Structure* structure = incoming->dynamicCastConstant<Structure*>()) {
                         if (set.contains(m_graph.registerStructure(structure)))
                             return;
                     }
@@ -3626,7 +3626,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         const ClassInfo* classInfo = node->classInfo();
         JSValue constant = forNode(node->child1()).value();
         if (constant) {
-            if (constant.isCell() && constant.asCell()->inherits(m_vm, classInfo)) {
+            if (constant.isCell() && constant.asCell()->inherits(classInfo)) {
                 ASSERT(!classInfo->inheritsJSTypeRange || classInfo->inheritsJSTypeRange->contains(constant.asCell()->type()));
                 m_state.setShouldTryConstantFolding(true);
                 ASSERT(constant);
@@ -3646,7 +3646,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         const ClassInfo* classInfo = node->classInfo();
         JSValue constant = forNode(node->child1()).value();
         if (constant) {
-            if (constant.isCell() && !constant.asCell()->inherits(m_vm, classInfo)) {
+            if (constant.isCell() && !constant.asCell()->inherits(classInfo)) {
                 ASSERT(!classInfo->inheritsJSTypeRange || !classInfo->inheritsJSTypeRange->contains(constant.asCell()->type()));
                 m_state.setShouldTryConstantFolding(true);
                 ASSERT(constant);
@@ -3937,7 +3937,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         StorageAccessData& data = node->storageAccessData();
         AbstractValue base = forNode(node->child2());
         JSValue result = m_graph.tryGetConstantProperty(base, data.offset);
-        if (result && jsDynamicCast<GetterSetter*>(m_vm, result)) {
+        if (result && jsDynamicCast<GetterSetter*>(result)) {
             setConstant(node, *m_graph.freeze(result));
             break;
         }
@@ -4089,7 +4089,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetExecutable: {
         JSValue value = forNode(node->child1()).value();
         if (value) {
-            JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, value);
+            JSFunction* function = jsDynamicCast<JSFunction*>(value);
             if (function) {
                 setConstant(node, *m_graph.freeze(function->executable()));
                 break;
@@ -4696,7 +4696,7 @@ void AbstractInterpreter<AbstractStateType>::filterICStatus(Node* node)
     switch (node->op()) {
     case FilterCallLinkStatus:
         if (JSValue value = forNode(node->child1()).m_value)
-            node->callLinkStatus()->filter(m_vm, value);
+            node->callLinkStatus()->filter(value);
         break;
         
     case FilterGetByStatus: {

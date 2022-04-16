@@ -553,7 +553,7 @@ JSValue JSDOMWindow::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFra
         return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
     JSValue functionValue = callFrame.uncheckedArgument(0);
-    if (UNLIKELY(!functionValue.isCallable(vm)))
+    if (UNLIKELY(!functionValue.isCallable()))
         return JSValue::decode(throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 0, "callback", "Window", "queueMicrotask"));
 
     scope.release();
@@ -561,15 +561,15 @@ JSValue JSDOMWindow::queueMicrotask(JSGlobalObject& lexicalGlobalObject, CallFra
     return jsUndefined();
 }
 
-DOMWindow* JSDOMWindow::toWrapped(VM& vm, JSValue value)
+DOMWindow* JSDOMWindow::toWrapped(VM&, JSValue value)
 {
     if (!value.isObject())
         return nullptr;
     JSObject* object = asObject(value);
-    if (object->inherits<JSDOMWindow>(vm))
+    if (object->inherits<JSDOMWindow>())
         return &jsCast<JSDOMWindow*>(object)->wrapped();
-    if (object->inherits<JSWindowProxy>(vm)) {
-        if (auto* jsDOMWindow = jsDynamicCast<JSDOMWindow*>(vm, jsCast<JSWindowProxy*>(object)->window()))
+    if (object->inherits<JSWindowProxy>()) {
+        if (auto* jsDOMWindow = jsDynamicCast<JSDOMWindow*>(jsCast<JSWindowProxy*>(object)->window()))
             return &jsDOMWindow->wrapped();
     }
     return nullptr;

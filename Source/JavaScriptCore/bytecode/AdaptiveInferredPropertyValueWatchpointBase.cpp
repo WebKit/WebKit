@@ -46,7 +46,7 @@ void AdaptiveInferredPropertyValueWatchpointBase::install(VM& vm)
 {
     RELEASE_ASSERT(m_key.isWatchable(PropertyCondition::MakeNoChanges));
 
-    Structure* structure = m_key.object()->structure(vm);
+    Structure* structure = m_key.object()->structure();
 
     structure->addTransitionWatchpoint(&m_structureWatchpoint);
 

@@ -37,7 +37,7 @@ const ClassInfo DebuggerScope::s_info = { "DebuggerScope"_s, &Base::s_info, null
 
 DebuggerScope* DebuggerScope::create(VM& vm, JSScope* scope)
 {
-    Structure* structure = scope->globalObject(vm)->debuggerScopeStructure();
+    Structure* structure = scope->globalObject()->debuggerScopeStructure();
     DebuggerScope* debuggerScope = new (NotNull, allocateCell<DebuggerScope>(vm)) DebuggerScope(vm, structure, scope);
     debuggerScope->finishCreation(vm);
     return debuggerScope;
@@ -106,7 +106,7 @@ bool DebuggerScope::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName
         return false;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
     slot.setThisValue(JSValue(thisObject));
-    return thisObject->methodTable(globalObject->vm())->put(thisObject, globalObject, propertyName, value, slot);
+    return thisObject->methodTable()->put(thisObject, globalObject, propertyName, value, slot);
 }
 
 bool DebuggerScope::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
@@ -116,7 +116,7 @@ bool DebuggerScope::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, P
     if (!scope->isValid())
         return false;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    return thisObject->methodTable(globalObject->vm())->deleteProperty(thisObject, globalObject, propertyName, slot);
+    return thisObject->methodTable()->deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
 void DebuggerScope::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArray& propertyNames, DontEnumPropertiesMode mode)
@@ -136,7 +136,7 @@ bool DebuggerScope::defineOwnProperty(JSObject* object, JSGlobalObject* globalOb
     if (!scope->isValid())
         return false;
     JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
-    return thisObject->methodTable(globalObject->vm())->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
+    return thisObject->methodTable()->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
 }
 
 DebuggerScope* DebuggerScope::next()
@@ -204,7 +204,7 @@ bool DebuggerScope::isNestedLexicalScope() const
 
 String DebuggerScope::name() const
 {
-    SymbolTable* symbolTable = m_scope->symbolTable(vm());
+    SymbolTable* symbolTable = m_scope->symbolTable();
     if (!symbolTable)
         return String();
 
@@ -217,7 +217,7 @@ String DebuggerScope::name() const
 
 DebuggerLocation DebuggerScope::location() const
 {
-    SymbolTable* symbolTable = m_scope->symbolTable(vm());
+    SymbolTable* symbolTable = m_scope->symbolTable();
     if (!symbolTable)
         return DebuggerLocation();
 

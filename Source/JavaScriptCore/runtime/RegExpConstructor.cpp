@@ -85,7 +85,7 @@ RegExpConstructor::RegExpConstructor(VM& vm, Structure* structure)
 void RegExpConstructor::finishCreation(VM& vm, RegExpPrototype* regExpPrototype, GetterSetter* speciesSymbol)
 {
     Base::finishCreation(vm, 2, vm.propertyNames->RegExp.string(), PropertyAdditionMode::WithoutStructureTransition);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, regExpPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
@@ -249,7 +249,7 @@ JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JS
     JSValue patternArg = args.at(0);
     JSValue flagsArg = args.at(1);
 
-    bool isPatternRegExp = patternArg.inherits<RegExpObject>(vm);
+    bool isPatternRegExp = patternArg.inherits<RegExpObject>();
     bool constructAsRegexp = isRegExp(vm, globalObject, patternArg);
     RETURN_IF_EXCEPTION(scope, nullptr);
 

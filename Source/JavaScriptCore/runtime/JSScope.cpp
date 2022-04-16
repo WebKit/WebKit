@@ -166,7 +166,7 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
             return true;
         }
 
-        Structure* structure = globalObject->structure(vm);
+        Structure* structure = globalObject->structure();
         if (!slot.isCacheableValue()
             || !structure->propertyAccessesAreCacheable()
             || (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && getOrPut == Put)) {
@@ -236,7 +236,7 @@ ALWAYS_INLINE JSObject* JSScope::resolve(JSGlobalObject* globalObject, JSScope* 
 
         // Global scope.
         if (++it == end) {
-            JSScope* globalScopeExtension = scope->globalObject(vm)->globalScopeExtension();
+            JSScope* globalScopeExtension = scope->globalObject()->globalScopeExtension();
             if (UNLIKELY(globalScopeExtension)) {
                 bool hasProperty = object->hasProperty(globalObject, ident);
                 RETURN_IF_EXCEPTION(throwScope, nullptr);
@@ -283,8 +283,8 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(JSGlobalObject* globalObj
     RETURN_IF_EXCEPTION(throwScope, { });
 
     bool result = false;
-    if (JSScope* scope = jsDynamicCast<JSScope*>(vm, object)) {
-        if (SymbolTable* scopeSymbolTable = scope->symbolTable(vm)) {
+    if (JSScope* scope = jsDynamicCast<JSScope*>(object)) {
+        if (SymbolTable* scopeSymbolTable = scope->symbolTable()) {
             result = scope->isGlobalObject()
                 ? JSObject::isExtensible(object, globalObject)
                 : scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
@@ -408,9 +408,9 @@ JSScope* JSScope::constantScopeForCodeBlock(ResolveType type, CodeBlock* codeBlo
     return nullptr;
 }
 
-SymbolTable* JSScope::symbolTable(VM& vm)
+SymbolTable* JSScope::symbolTable()
 {
-    if (JSSymbolTableObject* symbolTableObject = jsDynamicCast<JSSymbolTableObject*>(vm, this))
+    if (JSSymbolTableObject* symbolTableObject = jsDynamicCast<JSSymbolTableObject*>(this))
         return symbolTableObject->symbolTable();
 
     return nullptr;

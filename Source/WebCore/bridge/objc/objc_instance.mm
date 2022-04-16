@@ -201,7 +201,7 @@ private:
     void finishCreation(VM& vm, const String& name)
     {
         Base::finishCreation(vm, name);
-        ASSERT(inherits(vm, info()));
+        ASSERT(inherits(info()));
     }
 };
 
@@ -218,7 +218,7 @@ JSC::JSValue ObjcInstance::invokeMethod(JSGlobalObject* lexicalGlobalObject, Cal
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!asObject(runtimeMethod)->inherits<ObjCRuntimeMethod>(vm))
+    if (!asObject(runtimeMethod)->inherits<ObjCRuntimeMethod>())
         return throwTypeError(lexicalGlobalObject, scope, "Attempt to invoke non-plug-in method on plug-in object."_s);
 
     ObjcMethod *method = static_cast<ObjcMethod*>(runtimeMethod->method());

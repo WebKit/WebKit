@@ -1038,7 +1038,7 @@ public:
     }
     bool isOriginalTypedArrayStructure(Structure* structure)
     {
-        TypedArrayType type = structure->classInfo()->typedArrayStorageType;
+        TypedArrayType type = structure->classInfoForCells()->typedArrayStorageType;
         if (type == NotTypedArray)
             return false;
         return typedArrayStructureConcurrently(type) == structure;

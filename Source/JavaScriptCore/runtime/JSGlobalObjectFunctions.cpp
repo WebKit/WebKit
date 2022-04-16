@@ -723,7 +723,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncProtoSetter, (JSGlobalObject* globalObject, C
 
     JSValue value = callFrame->argument(0);
 
-    JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
+    JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue);
 
     // Setting __proto__ of a primitive should have no effect.
     if (!thisObject)
@@ -775,7 +775,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncHostPromiseRejectionTracker, (JSGlobalObject*
     JSPromise* promise = jsCast<JSPromise*>(callFrame->argument(0));
 
     // InternalPromises should not be exposed to user scripts.
-    if (jsDynamicCast<JSInternalPromise*>(vm, promise))
+    if (jsDynamicCast<JSInternalPromise*>(promise))
         return JSValue::encode(jsUndefined());
 
     JSValue operationValue = callFrame->argument(1);
@@ -872,7 +872,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSFinalObject* target = jsCast<JSFinalObject*>(callFrame->thisValue());
-    ASSERT(target->isStructureExtensible(vm));
+    ASSERT(target->isStructureExtensible());
 
     JSValue sourceValue = callFrame->uncheckedArgument(0);
     if (sourceValue.isUndefinedOrNull())
@@ -909,12 +909,12 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         return excludedSet->contains(propertyName.uid());
     };
 
-    if (!source->staticPropertiesReified(vm)) {
+    if (!source->staticPropertiesReified()) {
         source->reifyAllStaticProperties(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    if (canPerformFastPropertyEnumerationForCopyDataProperties(source->structure(vm))) {
+    if (canPerformFastPropertyEnumerationForCopyDataProperties(source->structure())) {
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
 
@@ -925,7 +925,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         // that ends up transitioning the structure underneath us.
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
-        source->structure(vm)->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
+        source->structure()->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
             PropertyName propertyName(entry.key);
             if (propertyName.isPrivateName())
                 return true;
@@ -950,7 +950,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         }
     } else {
         PropertyNameArray propertyNames(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Exclude);
-        source->methodTable(vm)->getOwnPropertyNames(source, globalObject, propertyNames, DontEnumPropertiesMode::Include);
+        source->methodTable()->getOwnPropertyNames(source, globalObject, propertyNames, DontEnumPropertiesMode::Include);
         RETURN_IF_EXCEPTION(scope, { });
 
         for (const auto& propertyName : propertyNames) {
@@ -958,7 +958,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
                 continue;
 
             PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
-            bool hasProperty = source->methodTable(vm)->getOwnPropertySlot(source, globalObject, propertyName, slot);
+            bool hasProperty = source->methodTable()->getOwnPropertySlot(source, globalObject, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, { });
             if (!hasProperty)
                 continue;

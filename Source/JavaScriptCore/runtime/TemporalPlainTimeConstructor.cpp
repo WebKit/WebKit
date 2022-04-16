@@ -123,7 +123,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimeConstructorFuncFrom, (JSGlobalObject* 
 
     JSValue itemValue = callFrame->argument(0);
 
-    if (itemValue.inherits<TemporalPlainTime>(vm))
+    if (itemValue.inherits<TemporalPlainTime>())
         RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainTime*>(itemValue)->plainTime())));
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::from(globalObject, itemValue, overflow)));

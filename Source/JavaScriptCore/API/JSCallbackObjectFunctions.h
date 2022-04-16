@@ -45,7 +45,7 @@ namespace JSC {
 template <class Parent>
 inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(value.getObject()->vm(), info()));
+    ASSERT(asObject(value)->inherits(info()));
     return jsCast<JSCallbackObject*>(asObject(value));
 }
 
@@ -53,7 +53,7 @@ template <class Parent>
 inline JSCallbackObject<Parent>* JSCallbackObject<Parent>::asCallbackObject(EncodedJSValue encodedValue)
 {
     JSValue value = JSValue::decode(encodedValue);
-    ASSERT(asObject(value)->inherits(value.getObject()->vm(), info()));
+    ASSERT(asObject(value)->inherits(info()));
     return jsCast<JSCallbackObject*>(asObject(value));
 }
 
@@ -94,7 +94,7 @@ void JSCallbackObject<Parent>::finishCreation(JSGlobalObject* globalObject)
 {
     VM& vm = getVM(globalObject);
     Base::finishCreation(vm);
-    ASSERT(Parent::inherits(vm, info()));
+    ASSERT(Parent::inherits(info()));
     init(globalObject);
 }
 
@@ -102,7 +102,7 @@ void JSCallbackObject<Parent>::finishCreation(JSGlobalObject* globalObject)
 template <class Parent>
 void JSCallbackObject<Parent>::finishCreation(VM& vm)
 {
-    ASSERT(Parent::inherits(vm, info()));
+    ASSERT(Parent::inherits(info()));
     ASSERT(Parent::isGlobalObject());
     Base::finishCreation(vm);
     init(jsCast<JSGlobalObject*>(this));
@@ -137,7 +137,7 @@ void JSCallbackObject<Parent>::init(JSGlobalObject* globalObject)
         initialize(toRef(globalObject), toRef(jsCast<JSObject*>(this)));
     }
     
-    m_classInfo = this->classInfo(getVM(globalObject));
+    m_classInfo = this->classInfo();
 }
 
 template <class Parent>
@@ -211,7 +211,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
     if (propertyName.uid() == vm.propertyNames->toStringTagSymbol.impl()) {
         String className = thisObject->classRef()->className();
         if (className.isEmpty())
-            className = thisObject->className(vm);
+            className = thisObject->className();
         slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), jsString(vm, WTFMove(className)));
         return true;
     }
@@ -223,7 +223,7 @@ template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot)
 {
     VM& vm = getVM(globalObject);
-    return object->methodTable(vm)->getOwnPropertySlot(object, globalObject, Identifier::from(vm, propertyName), slot);
+    return object->methodTable()->getOwnPropertySlot(object, globalObject, Identifier::from(vm, propertyName), slot);
 }
 
 template <class Parent>
@@ -232,7 +232,7 @@ EncodedJSValue JSCallbackObject<Parent>::customToPrimitive(JSGlobalObject* globa
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSCallbackObject* thisObject = jsDynamicCast<JSCallbackObject*>(vm, callFrame->thisValue());
+    JSCallbackObject* thisObject = jsDynamicCast<JSCallbackObject*>(callFrame->thisValue());
     if (!thisObject)
         return throwVMTypeError(globalObject, scope, "JSCallbackObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
     PreferredPrimitiveType hint = toPreferredPrimitiveType(globalObject, callFrame->argument(0));
@@ -696,7 +696,7 @@ EncodedJSValue JSCallbackObject<Parent>::staticFunctionGetterImpl(JSGlobalObject
             if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(globalObject)) {
                 if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
                     if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
-                        JSObject* o = JSCallbackFunction::create(vm, thisObj->globalObject(vm), callAsFunction, name);
+                        JSObject* o = JSCallbackFunction::create(vm, thisObj->globalObject(), callAsFunction, name);
                         thisObj->putDirect(vm, propertyName, o, entry->attributes);
                         return JSValue::encode(o);
                     }

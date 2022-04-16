@@ -137,20 +137,20 @@ static void copyDataFromJSArrayToBuses(JSGlobalObject& globalObject, const JSArr
     }
 }
 
-static bool copyDataFromBusesToJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<RefPtr<AudioBus>>& buses, JSArray* jsArray)
+static bool copyDataFromBusesToJSArray(JSGlobalObject& globalObject, const Vector<RefPtr<AudioBus>>& buses, JSArray* jsArray)
 {
     if (!jsArray)
         return false;
 
     for (size_t busIndex = 0; busIndex < buses.size(); ++busIndex) {
         auto& bus = buses[busIndex];
-        auto* jsChannelsArray = jsDynamicCast<JSArray*>(vm, jsArray->getIndex(&globalObject, busIndex));
+        auto* jsChannelsArray = jsDynamicCast<JSArray*>(jsArray->getIndex(&globalObject, busIndex));
         unsigned numberOfChannels = busChannelCount(bus.get());
         if (!jsChannelsArray || jsChannelsArray->length() != numberOfChannels)
             return false;
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
             auto* channel = bus->channel(channelIndex);
-            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(vm, jsChannelsArray->getIndex(&globalObject, channelIndex));
+            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(jsChannelsArray->getIndex(&globalObject, channelIndex));
             if (!jsChannelArray || jsChannelArray->length() != channel->length())
                 return false;
             memcpy(jsChannelArray->typedVector(), channel->mutableData(), sizeof(float) * jsChannelArray->length());
@@ -165,7 +165,7 @@ static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObj
         return false;
 
     for (auto& pair : paramValuesMap) {
-        auto* jsTypedArray = jsDynamicCast<JSFloat32Array*>(vm, jsObject->get(&globalObject, Identifier::fromString(vm, pair.key)));
+        auto* jsTypedArray = jsDynamicCast<JSFloat32Array*>(jsObject->get(&globalObject, Identifier::fromString(vm, pair.key)));
         if (!jsTypedArray)
             return false;
         unsigned expectedLength = pair.value->containsConstantValue() ? 1 : pair.value->size();
@@ -176,20 +176,20 @@ static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObj
     return true;
 }
 
-static bool zeroJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<Ref<AudioBus>>& outputs, JSArray* jsArray)
+static bool zeroJSArray(JSGlobalObject& globalObject, const Vector<Ref<AudioBus>>& outputs, JSArray* jsArray)
 {
     if (!jsArray)
         return false;
 
     for (size_t busIndex = 0; busIndex < outputs.size(); ++busIndex) {
         auto& bus = outputs[busIndex];
-        auto* jsChannelsArray = jsDynamicCast<JSArray*>(vm, jsArray->getIndex(&globalObject, busIndex));
+        auto* jsChannelsArray = jsDynamicCast<JSArray*>(jsArray->getIndex(&globalObject, busIndex));
         unsigned numberOfChannels = busChannelCount(bus.get());
         if (!jsChannelsArray || jsChannelsArray->length() != numberOfChannels)
             return false;
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
             auto* channel = bus->channel(channelIndex);
-            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(vm, jsChannelsArray->getIndex(&globalObject, channelIndex));
+            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(jsChannelsArray->getIndex(&globalObject, channelIndex));
             if (!jsChannelArray || jsChannelArray->length() != channel->length())
                 return false;
             memset(jsChannelArray->typedVector(), 0, sizeof(float) * jsChannelArray->length());
@@ -221,11 +221,11 @@ AudioWorkletProcessor::AudioWorkletProcessor(AudioWorkletGlobalScope& globalScop
 void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObject, MarkedArgumentBufferBase& args, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
 {
     // For performance reasons, we cache the arrays passed to JS and reconstruct them only when the topology changes.
-    if (!copyDataFromBusesToJSArray(vm, globalObject, inputs, toJSArray(m_jsInputs)))
+    if (!copyDataFromBusesToJSArray(globalObject, inputs, toJSArray(m_jsInputs)))
         m_jsInputs.setWeakly(constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes));
     args.append(m_jsInputs.getValue());
 
-    if (!zeroJSArray(vm, globalObject, outputs, toJSArray(m_jsOutputs)))
+    if (!zeroJSArray(globalObject, outputs, toJSArray(m_jsOutputs)))
         m_jsOutputs.setWeakly(constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No));
     args.append(m_jsOutputs.getValue());
 

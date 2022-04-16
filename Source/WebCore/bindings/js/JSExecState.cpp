@@ -55,7 +55,7 @@ JSC::JSValue evaluateHandlerFromAnyThread(JSC::JSGlobalObject* lexicalGlobalObje
 
 ScriptExecutionContext* executionContext(JSC::JSGlobalObject* globalObject)
 {
-    if (!globalObject || !globalObject->inherits<JSDOMGlobalObject>(globalObject->vm()))
+    if (!globalObject || !globalObject->inherits<JSDOMGlobalObject>())
         return nullptr;
     return JSC::jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
 }

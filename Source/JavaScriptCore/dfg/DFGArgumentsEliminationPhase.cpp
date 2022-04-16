@@ -250,7 +250,7 @@ private:
                 // If we're out-of-bounds then we proceed only if the prototype chain
                 // for the allocation is sane (i.e. doesn't have indexed properties).
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(edge->origin.semantic);
-                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(m_graph.m_vm);
+                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
                 if (objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                     && globalObject->objectPrototypeIsSaneConcurrently(objectPrototypeStructure)) {
                     m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
@@ -273,9 +273,9 @@ private:
                 // If we're out-of-bounds then we proceed only if the prototype chain
                 // for the allocation is sane (i.e. doesn't have indexed properties).
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(edge->origin.semantic);
-                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure(m_graph.m_vm);
+                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
                 if (edge->op() == CreateRest) {
-                    Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(m_graph.m_vm);
+                    Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
                     if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
                         && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                         && globalObject->arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure)) {

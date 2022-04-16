@@ -183,7 +183,7 @@ JSTestLegacyFactoryFunction::JSTestLegacyFactoryFunction(Structure* structure, J
 void JSTestLegacyFactoryFunction::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 
     static_assert(std::is_base_of<ActiveDOMObject, TestLegacyFactoryFunction>::value, "Interface is marked as [ActiveDOMObject] but implementation class does not subclass ActiveDOMObject.");
 
@@ -219,7 +219,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor, (JSGlobalObject
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestLegacyFactoryFunctionPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestLegacyFactoryFunctionPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestLegacyFactoryFunction::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -301,9 +301,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-TestLegacyFactoryFunction* JSTestLegacyFactoryFunction::toWrapped(JSC::VM& vm, JSC::JSValue value)
+TestLegacyFactoryFunction* JSTestLegacyFactoryFunction::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestLegacyFactoryFunction*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSTestLegacyFactoryFunction*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

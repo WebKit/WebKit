@@ -42,10 +42,10 @@ inline constexpr bool isDynamicallySizedType(JSType type)
     return false;
 }
 
-inline size_t cellSize(VM& vm, JSCell* cell)
+inline size_t cellSize(JSCell* cell)
 {
-    Structure* structure = cell->structure(vm);
-    const ClassInfo* classInfo = structure->classInfo();
+    Structure* structure = cell->structure();
+    const ClassInfo* classInfo = structure->classInfoForCells();
     JSType cellType = cell->type();
 
     if (isDynamicallySizedType(cellType)) {

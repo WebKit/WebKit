@@ -75,13 +75,13 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     setInternalValue(vm, jsNumber(0));
     putDirectWithoutTransition(vm, vm.propertyNames->toString, globalObject->numberProtoToStringFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     globalObject->installNumberPrototypeWatchpoint(this);
 }
 
 // ------------------------------ Functions ---------------------------
 
-static ALWAYS_INLINE bool toThisNumber(VM& vm, JSValue thisValue, double& x)
+static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double& x)
 {
     if (thisValue.isInt32()) {
         x = thisValue.asInt32();
@@ -93,7 +93,7 @@ static ALWAYS_INLINE bool toThisNumber(VM& vm, JSValue thisValue, double& x)
         return true;
     }
 
-    if (auto* numberObject = jsDynamicCast<NumberObject*>(vm, thisValue)) {
+    if (auto* numberObject = jsDynamicCast<NumberObject*>(thisValue)) {
         Integrity::auditStructureID(numberObject->structureID());
         x = numberObject->internalValue().asNumber();
         return true;
@@ -388,7 +388,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(vm, callFrame->thisValue(), x))
+    if (!toThisNumber(callFrame->thisValue(), x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
     JSValue arg = callFrame->argument(0);
@@ -425,7 +425,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToFixed, (JSGlobalObject* globalObject, 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(vm, callFrame->thisValue(), x))
+    if (!toThisNumber(callFrame->thisValue(), x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
     int decimalPlaces = static_cast<int>(callFrame->argument(0).toIntegerOrInfinity(globalObject));
@@ -459,7 +459,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(vm, callFrame->thisValue(), x))
+    if (!toThisNumber(callFrame->thisValue(), x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
     JSValue arg = callFrame->argument(0);
@@ -555,7 +555,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToString, (JSGlobalObject* globalObject,
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double doubleValue;
-    if (!toThisNumber(vm, callFrame->thisValue(), doubleValue))
+    if (!toThisNumber(callFrame->thisValue(), doubleValue))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
     auto radix = extractToStringRadixArgument(globalObject, callFrame->argument(0), scope);
@@ -570,7 +570,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToLocaleString, (JSGlobalObject* globalO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double x;
-    if (!toThisNumber(vm, callFrame->thisValue(), x))
+    if (!toThisNumber(callFrame->thisValue(), x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
 
     auto* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
@@ -586,7 +586,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncValueOf, (JSGlobalObject* globalObject, 
 
     double x;
     JSValue thisValue = callFrame->thisValue();
-    if (!toThisNumber(vm, thisValue, x))
+    if (!toThisNumber(thisValue, x))
         return throwVMToThisNumberError(globalObject, scope, callFrame->thisValue());
     return JSValue::encode(jsNumber(x));
 }

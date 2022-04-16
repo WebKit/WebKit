@@ -66,7 +66,7 @@ IntlLocale::IntlLocale(VM& vm, Structure* structure)
 void IntlLocale::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
 }
 
 template<typename Visitor>
@@ -230,7 +230,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String tag = tagValue.inherits<IntlLocale>(vm) ? jsCast<IntlLocale*>(tagValue)->toString() : tagValue.toWTFString(globalObject);
+    String tag = tagValue.inherits<IntlLocale>() ? jsCast<IntlLocale*>(tagValue)->toString() : tagValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
     initializeLocale(globalObject, tag, optionsValue);

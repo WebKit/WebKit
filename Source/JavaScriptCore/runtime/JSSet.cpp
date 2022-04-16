@@ -61,12 +61,12 @@ bool JSSet::isIteratorProtocolFastAndNonObservable()
         return false;
 
     VM& vm = globalObject->vm();
-    Structure* structure = this->structure(vm);
+    Structure* structure = this->structure();
     // This is the fast case. Many sets will be an original set.
     if (structure == globalObject->setStructure())
         return true;
 
-    if (getPrototypeDirect(vm) != globalObject->jsSetPrototype())
+    if (getPrototypeDirect() != globalObject->jsSetPrototype())
         return false;
 
     if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)

@@ -110,7 +110,7 @@ public:
     
     void merge(const CallLinkStatus&);
     
-    void filter(VM&, JSValue);
+    void filter(JSValue);
     
     void dump(PrintStream&) const;
     

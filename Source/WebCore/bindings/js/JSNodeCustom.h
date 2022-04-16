@@ -38,9 +38,9 @@ struct InheritsTraits<WebCore::JSNode> {
     static constexpr std::optional<JSTypeRange> typeRange { { static_cast<JSType>(WebCore::JSNodeType), static_cast<JSType>(WebCore::JSNodeType + WebCore::JSNodeTypeMask) } };
     static_assert(std::numeric_limits<uint8_t>::max() == typeRange->last);
     template<typename From>
-    static inline bool inherits(VM& vm, From* from)
+    static inline bool inherits(From* from)
     {
-        return inheritsJSTypeImpl<WebCore::JSNode>(vm, from, *typeRange);
+        return inheritsJSTypeImpl<WebCore::JSNode>(from, *typeRange);
     }
 };
 

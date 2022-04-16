@@ -141,7 +141,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         if (Wasm::isFuncref(type)) {
             if (argument.isUndefined())
                 argument = defaultValueForReferenceType(type);
-            if (!isWebAssemblyHostFunction(vm, argument) && !argument.isNull()) {
+            if (!isWebAssemblyHostFunction(argument) && !argument.isNull()) {
                 throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
                 return { };
             }

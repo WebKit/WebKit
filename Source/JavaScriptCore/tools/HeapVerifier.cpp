@@ -219,8 +219,6 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
     }
 
     if (expectedVM) {
-        VM& vm = *expectedVM;
-
         VM* cellVM = &cell->vm();
         if (cellVM != expectedVM) {
             printHeaderAndCell();
@@ -322,7 +320,7 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
             }
         }
         
-        CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(vm, cell);
+        CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(cell);
         if (UNLIKELY(codeBlock)) {
             bool success = true;
             codeBlock->forEachValueProfile([&](ValueProfile& valueProfile, bool) {
@@ -382,7 +380,7 @@ void HeapVerifier::reportCell(CellProfile& profile, int cycleIndex, HeapVerifier
 
     if (profile.isLive() && profile.isJSCell()) {
         JSCell* jsCell = profile.jsCell();
-        Structure* structure = jsCell->structure(vm);
+        Structure* structure = jsCell->structure();
         dataLog(" structure:", RawPointer(structure));
         if (jsCell->isObject()) {
             JSObject* obj = static_cast<JSObject*>(cell);

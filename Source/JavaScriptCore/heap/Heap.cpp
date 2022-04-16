@@ -144,16 +144,16 @@ size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
     return Options::largeHeapGrowthFactor() * heapSize;
 }
 
-void recordType(VM& vm, TypeCountSet& set, JSCell* cell)
+void recordType(TypeCountSet& set, JSCell* cell)
 {
     const char* typeName = "[unknown]";
-    const ClassInfo* info = cell->classInfo(vm);
+    const ClassInfo* info = cell->classInfo();
     if (info && info->className)
         typeName = info->className;
     set.add(typeName);
 }
 
-bool measurePhaseTiming()
+constexpr bool measurePhaseTiming()
 {
     return false;
 }
@@ -827,9 +827,8 @@ void Heap::removeDeadCompilerWorklistEntries()
 }
 
 struct GatherExtraHeapData : MarkedBlock::CountFunctor {
-    GatherExtraHeapData(VM& vm, HeapAnalyzer& analyzer)
-        : m_vm(vm)
-        , m_analyzer(analyzer)
+    GatherExtraHeapData(HeapAnalyzer& analyzer)
+        : m_analyzer(analyzer)
     {
     }
 
@@ -837,12 +836,11 @@ struct GatherExtraHeapData : MarkedBlock::CountFunctor {
     {
         if (isJSCellKind(kind)) {
             JSCell* cell = static_cast<JSCell*>(heapCell);
-            cell->methodTable(m_vm)->analyzeHeap(cell, m_analyzer);
+            cell->methodTable()->analyzeHeap(cell, m_analyzer);
         }
         return IterationStatus::Continue;
     }
 
-    VM& m_vm;
     HeapAnalyzer& m_analyzer;
 };
 
@@ -850,7 +848,7 @@ void Heap::gatherExtraHeapData(HeapProfiler& heapProfiler)
 {
     if (auto* analyzer = heapProfiler.activeHeapAnalyzer()) {
         HeapIterationScope heapIterationScope(*this);
-        GatherExtraHeapData functor(vm(), *analyzer);
+        GatherExtraHeapData functor(*analyzer);
         m_objectSpace.forEachLiveCell(heapIterationScope, functor);
     }
 }
@@ -977,7 +975,7 @@ std::unique_ptr<TypeCountSet> Heap::protectedObjectTypeCounts()
     std::unique_ptr<TypeCountSet> result = makeUnique<TypeCountSet>();
     forEachProtectedCell(
         [&] (JSCell* cell) {
-            recordType(vm(), *result, cell);
+            recordType(*result, cell);
         });
     return result;
 }
@@ -990,7 +988,7 @@ std::unique_ptr<TypeCountSet> Heap::objectTypeCounts()
         iterationScope,
         [&] (HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
             if (isJSCellKind(kind))
-                recordType(vm(), *result, static_cast<JSCell*>(cell));
+                recordType(*result, static_cast<JSCell*>(cell));
             return IterationStatus::Continue;
         });
     return result;
@@ -2916,9 +2914,8 @@ void Heap::addCoreConstraints()
             // arg here. Giving it a unique name works around this issue.
             auto callOutputConstraint = [] (auto& visitor2, HeapCell* heapCell, HeapCell::Kind) {
                 SetRootMarkReasonScope rootScope(visitor2, RootMarkReason::Output);
-                VM& vm = visitor2.vm();
                 JSCell* cell = static_cast<JSCell*>(heapCell);
-                cell->methodTable(vm)->visitOutputConstraints(cell, visitor2);
+                cell->methodTable()->visitOutputConstraints(cell, visitor2);
             };
             
             auto add = [&] (auto& set) {

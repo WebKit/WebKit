@@ -90,7 +90,7 @@ bool JSNodeOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, v
 
 JSScope* JSNode::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSScope* node) const
 {
-    if (inherits<JSHTMLElement>(lexicalGlobalObject->vm()))
+    if (inherits<JSHTMLElement>())
         return jsCast<const JSHTMLElement*>(this)->pushEventHandlerScope(lexicalGlobalObject, node);
     return node;
 }

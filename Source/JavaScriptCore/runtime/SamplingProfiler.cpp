@@ -543,7 +543,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             auto setFallbackFrameType = [&] {
                 ASSERT(!alreadyHasExecutable);
                 FrameType result = FrameType::Unknown;
-                auto callData = getCallData(m_vm, calleeCell);
+                auto callData = JSC::getCallData(calleeCell);
                 if (callData.type == CallData::Type::Native)
                     result = FrameType::Host;
 
@@ -557,7 +557,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             };
 
             if (calleeCell->type() != JSFunctionType) {
-                if (JSObject* object = jsDynamicCast<JSObject*>(calleeCell->vm(), calleeCell))
+                if (JSObject* object = jsDynamicCast<JSObject*>(calleeCell))
                     addCallee(object);
 
                 if (!alreadyHasExecutable)
@@ -779,7 +779,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
 
     DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSGlobalObject* globalObject = callee->globalObject(vm);
+    JSGlobalObject* globalObject = callee->globalObject();
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry, &vm);
         PropertyName propertyName(ident);
@@ -1259,7 +1259,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
                 }
 
                 if (frame.executable) {
-                    if (auto* executable = jsDynamicCast<FunctionExecutable*>(m_vm, frame.executable)) {
+                    if (auto* executable = jsDynamicCast<FunctionExecutable*>(frame.executable)) {
                         if (executable->isBuiltinFunction())
                             tierCounts.add(builtin, 0).iterator->value++;
                     }

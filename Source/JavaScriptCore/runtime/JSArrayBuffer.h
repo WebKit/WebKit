@@ -66,9 +66,9 @@ private:
     ArrayBuffer* m_impl;
 };
 
-inline ArrayBuffer* toPossiblySharedArrayBuffer(VM& vm, JSValue value)
+inline ArrayBuffer* toPossiblySharedArrayBuffer(VM&, JSValue value)
 {
-    JSArrayBuffer* wrapper = jsDynamicCast<JSArrayBuffer*>(vm, value);
+    JSArrayBuffer* wrapper = jsDynamicCast<JSArrayBuffer*>(value);
     if (!wrapper)
         return nullptr;
     return wrapper->impl();

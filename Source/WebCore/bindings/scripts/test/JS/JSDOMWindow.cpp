@@ -160,7 +160,7 @@ template<> void JSDOMWindowDOMConstructor::initializeProperties(VM& vm, JSDOMGlo
     JSString* nameString = jsNontrivialString(vm, "DOMWindow"_s);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
+    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
 }
 
 /* Hash table for prototype */
@@ -212,7 +212,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsDOMWindowConstructor, (JSGlobalObject* lexicalGlobalO
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSDOMWindowPrototype*>(vm, JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSDOMWindowPrototype*>(JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSDOMWindow::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
@@ -384,9 +384,9 @@ void JSDOMWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 }
 
-DOMWindow* JSDOMWindow::toWrapped(JSC::VM& vm, JSC::JSValue value)
+DOMWindow* JSDOMWindow::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSDOMWindow*>(vm, value))
+    if (auto* wrapper = jsDynamicCast<JSDOMWindow*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

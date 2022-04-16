@@ -43,7 +43,7 @@ namespace JSC {
             : m_valid(false)
             , m_vm(globalObject->vm())
             , m_interpreter(m_vm.interpreter)
-            , m_entryScope(m_vm, function->scope()->globalObject(m_vm))
+            , m_entryScope(m_vm, function->scope()->globalObject())
         {
             VM& vm = m_entryScope.vm();
             auto scope = DECLARE_THROW_SCOPE(vm);

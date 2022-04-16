@@ -143,12 +143,12 @@ inline bool opInByVal(JSGlobalObject* globalObject, JSValue baseVal, JSValue pro
 
     JSObject* baseObj = asObject(baseVal);
     if (arrayProfile)
-        arrayProfile->observeStructure(baseObj->structure(vm));
+        arrayProfile->observeStructure(baseObj->structure());
 
     uint32_t i;
     if (propName.getUInt32(i)) {
         if (arrayProfile)
-            arrayProfile->observeIndexedRead(vm, baseObj, i);
+            arrayProfile->observeIndexedRead(baseObj, i);
         RELEASE_AND_RETURN(scope, baseObj->hasProperty(globalObject, i));
     }
 
@@ -178,28 +178,28 @@ inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
     return false;
 }
 
-ALWAYS_INLINE Structure* originalStructureBeforePut(VM& vm, JSValue value)
+ALWAYS_INLINE Structure* originalStructureBeforePut(JSValue value)
 {
     if (!value.isCell())
         return nullptr;
     if (value.asCell()->type() == PureForwardingProxyType)
-        return jsCast<JSProxy*>(value)->target()->structure(vm);
-    return value.asCell()->structure(vm);
+        return jsCast<JSProxy*>(value)->target()->structure();
+    return value.asCell()->structure();
 }
 
 static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObject, JSObject* baseObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot, Structure** result = nullptr)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    bool isJSFunction = baseObject->inherits<JSFunction>(vm);
+    bool isJSFunction = baseObject->inherits<JSFunction>();
     if (isJSFunction) {
         jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
     if (result)
-        *result = originalStructureBeforePut(vm, baseObject);
+        *result = originalStructureBeforePut(baseObject);
 
-    Structure* structure = baseObject->structure(vm);
-    if (LIKELY(propertyName != vm.propertyNames->underscoreProto && !structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && (isJSFunction || structure->classInfo()->methodTable.defineOwnProperty == &JSObject::defineOwnProperty))) {
+    Structure* structure = baseObject->structure();
+    if (LIKELY(propertyName != vm.propertyNames->underscoreProto && !structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && (isJSFunction || structure->classInfoForCells()->methodTable.defineOwnProperty == &JSObject::defineOwnProperty))) {
         auto error = baseObject->putDirectRespectingExtensibility(vm, propertyName, value, 0, slot);
         if (!error.isNull())
             typeError(globalObject, scope, slot.isStrictMode(), error);
@@ -207,14 +207,14 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
         slot.disableCaching();
         scope.release();
         PropertyDescriptor descriptor(value, 0);
-        baseObject->methodTable(vm)->defineOwnProperty(baseObject, globalObject, propertyName, descriptor, slot.isStrictMode());
+        baseObject->methodTable()->defineOwnProperty(baseObject, globalObject, propertyName, descriptor, slot.isStrictMode());
     }
 }
 
 static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, JSGlobalObject* globalObject, JSObject* baseObject, PropertyName propertyName, GetterSetter* accessor, unsigned attribute)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (baseObject->inherits<JSFunction>(vm)) {
+    if (baseObject->inherits<JSFunction>()) {
         jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }

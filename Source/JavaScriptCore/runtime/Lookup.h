@@ -220,7 +220,7 @@ inline BuiltinGenerator HashTableValue::builtinAccessorSetterGenerator() const
 
 inline bool getStaticPropertySlotFromTable(VM& vm, const ClassInfo* classInfo, const HashTable& table, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
-    if (thisObject->staticPropertiesReified(vm))
+    if (thisObject->staticPropertiesReified())
         return false;
 
     auto* entry = table.entry(propertyName);
@@ -257,19 +257,19 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
         if (value.attributes() & PropertyAttribute::Accessor)
             reifyStaticAccessor(vm, value, thisObj, propertyName);
         else
-            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(vm), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
+            thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
         return;
     }
 
     if (value.attributes() & PropertyAttribute::Function) {
         if (value.attributes() & PropertyAttribute::DOMJITFunction) {
             thisObj.putDirectNativeFunction(
-                vm, thisObj.globalObject(vm), propertyName, value.functionLength(),
+                vm, thisObj.globalObject(), propertyName, value.functionLength(),
                 value.function(), value.intrinsic(), value.signature(), attributesForStructure(value.attributes()));
             return;
         }
         thisObj.putDirectNativeFunction(
-            vm, thisObj.globalObject(vm), propertyName, value.functionLength(),
+            vm, thisObj.globalObject(), propertyName, value.functionLength(),
             value.function(), value.intrinsic(), attributesForStructure(value.attributes()));
         return;
     }

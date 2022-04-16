@@ -106,7 +106,7 @@ Protocol::ErrorStringOr<std::tuple<double, Protocol::Heap::HeapSnapshotData>> In
 
     auto timestamp = m_environment.executionStopwatch().elapsedTime().seconds();
     auto snapshotData = snapshotBuilder.json([&] (const HeapSnapshotNode& node) {
-        if (Structure* structure = node.cell->structure(vm)) {
+        if (Structure* structure = node.cell->structure()) {
             if (JSGlobalObject* globalObject = structure->globalObject()) {
                 if (!m_environment.canAccessInspectedScriptState(globalObject))
                     return false;
@@ -200,7 +200,7 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
 
     // FIXME: Provide preview information for Internal Objects? CodeBlock, Executable, etc.
 
-    Structure* structure = cell->structure(vm);
+    Structure* structure = cell->structure();
     if (!structure)
         return makeUnexpected("Unable to get object details - Structure"_s);
 
@@ -213,7 +213,7 @@ Protocol::ErrorStringOr<std::tuple<String, RefPtr<Protocol::Debugger::FunctionDe
         return makeUnexpected("Unable to get object details - InjectedScript"_s);
 
     // Function preview.
-    if (cell->inherits<JSFunction>(vm)) {
+    if (cell->inherits<JSFunction>()) {
         RefPtr<Protocol::Debugger::FunctionDetails> functionDetails;
         injectedScript.functionDetails(errorString, cell, functionDetails);
         if (!functionDetails)
@@ -240,7 +240,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent
         return makeUnexpected(errorString);
 
     JSCell* cell = optionalNode->cell;
-    Structure* structure = cell->structure(vm);
+    Structure* structure = cell->structure();
     if (!structure)
         return makeUnexpected("Unable to get object details - Structure"_s);
 

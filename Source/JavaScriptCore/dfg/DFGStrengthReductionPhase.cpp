@@ -472,8 +472,8 @@ private:
         }
 
         case GetGlobalObject: {
-            if (JSObject* object = m_node->child1()->dynamicCastConstant<JSObject*>(vm())) {
-                m_graph.convertToConstant(m_node, object->globalObject(vm()));
+            if (JSObject* object = m_node->child1()->dynamicCastConstant<JSObject*>()) {
+                m_graph.convertToConstant(m_node, object->globalObject());
                 m_changed = true;
                 break;
             }
@@ -484,7 +484,7 @@ private:
         case RegExpTest:
         case RegExpMatchFast:
         case RegExpExecNonGlobalOrSticky: {
-            JSGlobalObject* globalObject = m_node->child1()->dynamicCastConstant<JSGlobalObject*>(vm());
+            JSGlobalObject* globalObject = m_node->child1()->dynamicCastConstant<JSGlobalObject*>();
             if (!globalObject) {
                 if (verbose)
                     dataLog("Giving up because no global object.\n");
@@ -502,8 +502,8 @@ private:
             bool regExpObjectNodeIsConstant = false;
             if (m_node->op() == RegExpExec || m_node->op() == RegExpTest || m_node->op() == RegExpMatchFast) {
                 regExpObjectNode = m_node->child2().node();
-                if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(vm())) {
-                    JSGlobalObject* globalObject = regExpObject->globalObject(vm());
+                if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>()) {
+                    JSGlobalObject* globalObject = regExpObject->globalObject();
                     if (globalObject->isRegExpRecompiled()) {
                         if (verbose)
                             dataLog("Giving up because RegExp recompile happens.\n");
@@ -894,8 +894,8 @@ private:
             
             Node* regExpObjectNode = m_node->child2().node();
             RegExp* regExp;
-            if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(vm())) {
-                JSGlobalObject* globalObject = regExpObject->globalObject(vm());
+            if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>()) {
+                JSGlobalObject* globalObject = regExpObject->globalObject();
                 if (globalObject->isRegExpRecompiled()) {
                     if (verbose)
                         dataLog("Giving up because RegExp recompile happens.\n");
@@ -1011,7 +1011,7 @@ private:
             ExecutableBase* executable = nullptr;
             Edge callee = m_graph.varArgChild(m_node, 0);
             CallVariant callVariant;
-            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>(vm())) {
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>()) {
                 executable = function->executable();
                 callVariant = CallVariant(function);
             } else if (callee->isFunctionAllocation()) {
@@ -1034,7 +1034,7 @@ private:
             if (executable->intrinsic() == WasmFunctionIntrinsic)
                 break;
             
-            if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(vm(), executable)) {
+            if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable)) {
                 if (m_node->op() == Construct && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
                     break;
 

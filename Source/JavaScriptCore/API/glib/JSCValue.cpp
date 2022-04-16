@@ -1068,7 +1068,7 @@ void jsc_value_object_define_property_data(JSCValue* value, const char* property
     descriptor.setEnumerable(flags & JSC_VALUE_PROPERTY_ENUMERABLE);
     descriptor.setConfigurable(flags & JSC_VALUE_PROPERTY_CONFIGURABLE);
     descriptor.setWritable(flags & JSC_VALUE_PROPERTY_WRITABLE);
-    object->methodTable(vm)->defineOwnProperty(object, globalObject, name->identifier(&vm), descriptor, true);
+    object->methodTable()->defineOwnProperty(object, globalObject, name->identifier(&vm), descriptor, true);
     if (handleExceptionIfNeeded(scope, jsContext, &exception) == ExceptionStatus::DidThrow) {
         jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
         return;
@@ -1113,7 +1113,7 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
         auto function = JSC::JSCCallbackFunction::create(vm, globalObject, "set"_s, functionType, nullptr, WTFMove(closure), G_TYPE_NONE, Vector<GType> { propertyType });
         descriptor.setSetter(function);
     }
-    object->methodTable(vm)->defineOwnProperty(object, globalObject, name->identifier(&vm), descriptor, true);
+    object->methodTable()->defineOwnProperty(object, globalObject, name->identifier(&vm), descriptor, true);
     if (handleExceptionIfNeeded(scope, jsContext, &exception) == ExceptionStatus::DidThrow) {
         jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
         return;
@@ -1558,7 +1558,7 @@ gboolean jsc_value_is_array_buffer(JSCValue* value)
     if (!jsValue.isObject())
         return FALSE;
 
-    return !!jsDynamicCast<JSArrayBuffer*>(vm, jsValue.getObject());
+    return !!jsDynamicCast<JSArrayBuffer*>(jsValue.getObject());
 }
 
 /**
@@ -1856,7 +1856,7 @@ JSCTypedArrayType jsc_value_typed_array_get_type(JSCValue *value)
     if (!jsValue.isObject())
         return JSC_TYPED_ARRAY_NONE;
 
-    switch (jsValue.getObject()->classInfo(vm)->typedArrayStorageType) {
+    switch (jsValue.getObject()->classInfo()->typedArrayStorageType) {
     case JSC::TypeDataView:
     case JSC::NotTypedArray:
         return JSC_TYPED_ARRAY_NONE;

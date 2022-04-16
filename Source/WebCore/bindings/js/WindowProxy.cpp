@@ -145,7 +145,7 @@ void WindowProxy::clearJSWindowProxiesNotMatchingDOMWindow(AbstractDOMWindow* ne
         // Clear the debugger and console from the current window before setting the new window.
         windowProxy->attachDebugger(nullptr);
         windowProxy->window()->setConsoleClient(nullptr);
-        if (auto* jsDOMWindow = jsDynamicCast<JSDOMWindowBase*>(windowProxy->vm(), windowProxy->window()))
+        if (auto* jsDOMWindow = jsDynamicCast<JSDOMWindowBase*>(windowProxy->window()))
             jsDOMWindow->willRemoveFromWindowProxy();
     }
 

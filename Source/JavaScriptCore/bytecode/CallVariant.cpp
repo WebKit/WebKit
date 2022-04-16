@@ -49,7 +49,7 @@ bool CallVariant::merge(const CallVariant& other)
     return false;
 }
 
-void CallVariant::filter(VM& vm, JSValue value)
+void CallVariant::filter(JSValue value)
 {
     if (!*this)
         return;
@@ -60,7 +60,7 @@ void CallVariant::filter(VM& vm, JSValue value)
         return;
     }
     
-    if (JSFunction* function = jsDynamicCast<JSFunction*>(vm, value)) {
+    if (JSFunction* function = jsDynamicCast<JSFunction*>(value)) {
         if (function->executable() == executable())
             *this = CallVariant(function);
         else

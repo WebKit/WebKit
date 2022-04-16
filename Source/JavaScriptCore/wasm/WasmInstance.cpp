@@ -126,7 +126,7 @@ JSValue Instance::getFunctionWrapper(unsigned i) const
 void Instance::setFunctionWrapper(unsigned i, JSValue value)
 {
     ASSERT(m_owner);
-    ASSERT(value.isCallable(owner<JSWebAssemblyInstance>()->vm()));
+    ASSERT(value.isCallable());
     ASSERT(!m_functionWrappers.contains(i));
     Locker locker { owner<JSWebAssemblyInstance>()->cellLock() };
     m_functionWrappers.set(i, WriteBarrier<Unknown>(owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value));
@@ -235,8 +235,8 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
         TypeIndex typeIndex = m_module->typeIndexFromFunctionIndexSpace(functionIndex);
         if (isImportFunction(functionIndex)) {
             JSObject* functionImport = importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
-            if (isWebAssemblyHostFunction(vm, functionImport)) {
-                WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, functionImport);
+            if (isWebAssemblyHostFunction(functionImport)) {
+                WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(functionImport);
                 // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
                 // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
                 // the only type this could be is WebAssemblyFunction.

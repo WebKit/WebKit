@@ -170,7 +170,7 @@ void JSWebAssemblyMemory::growSuccessCallback(VM& vm, Wasm::PageCount oldPageCou
 void JSWebAssemblyMemory::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(vm, info()));
+    ASSERT(inherits(info()));
     vm.heap.reportExtraMemoryAllocated(memory().size());
 }
 
