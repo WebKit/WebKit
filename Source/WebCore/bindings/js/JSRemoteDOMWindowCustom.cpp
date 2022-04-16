@@ -67,7 +67,7 @@ bool JSRemoteDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, P
     String errorMessage;
 
     // We only allow setting "location" attribute cross-origin.
-    if (propertyName == webCoreBuiltinNames(vm).locationPublicName()) {
+    if (propertyName == builtinNames(vm).locationPublicName()) {
         auto* setter = s_info.staticPropHashTable->entry(propertyName)->propertyPutter();
         scope.release();
         setter(lexicalGlobalObject, JSValue::encode(slot.thisValue()), JSValue::encode(value), propertyName);

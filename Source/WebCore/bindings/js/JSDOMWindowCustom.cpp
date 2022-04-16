@@ -113,7 +113,7 @@ bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisObject
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto& builtinNames = webCoreBuiltinNames(vm);
+    auto& builtinNames = WebCore::builtinNames(vm);
 
     // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
 
@@ -214,7 +214,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGl
         return false;
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-    if (propertyName == webCoreBuiltinNames(lexicalGlobalObject->vm()).webkitPublicName() && thisObject->wrapped().shouldHaveWebKitNamespaceForWorld(thisObject->world())) {
+    if (propertyName == builtinNames(lexicalGlobalObject->vm()).webkitPublicName() && thisObject->wrapped().shouldHaveWebKitNamespaceForWorld(thisObject->world())) {
         slot.setCacheableCustom(thisObject, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly, jsDOMWindow_webkit);
         return true;
     }
@@ -255,7 +255,7 @@ bool JSDOMWindow::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Propert
     String errorMessage;
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(*lexicalGlobalObject, thisObject->wrapped(), errorMessage)) {
         // We only allow setting "location" attribute cross-origin.
-        if (propertyName == webCoreBuiltinNames(vm).locationPublicName()) {
+        if (propertyName == builtinNames(vm).locationPublicName()) {
             auto* setter = s_info.staticPropHashTable->entry(propertyName)->propertyPutter();
             scope.release();
             setter(lexicalGlobalObject, JSValue::encode(slot.thisValue()), JSValue::encode(value), propertyName);
@@ -327,7 +327,7 @@ void JSDOMWindow::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 template <CrossOriginObject objectType>
 static void addCrossOriginPropertyNames(VM& vm, PropertyNameArray& propertyNames)
 {
-    auto& builtinNames = webCoreBuiltinNames(vm);
+    auto& builtinNames = WebCore::builtinNames(vm);
     switch (objectType) {
     case CrossOriginObject::Location: {
         static const Identifier* const properties[] = { &builtinNames.hrefPublicName(), &vm.propertyNames->replace };
@@ -413,7 +413,7 @@ bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::JSGlobalObject* 
         return typeError(lexicalGlobalObject, scope, shouldThrow, makeUnsupportedIndexedSetterErrorMessage("Window"));
     scope.release();
 
-    auto& builtinNames = webCoreBuiltinNames(vm);
+    auto& builtinNames = WebCore::builtinNames(vm);
     if (propertyName == builtinNames.documentPublicName() || propertyName == builtinNames.windowPublicName())
         return JSObject::defineOwnProperty(thisObject, lexicalGlobalObject, propertyName, descriptor, shouldThrow);
 
@@ -586,7 +586,7 @@ void JSDOMWindow::setOpener(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSVal
     }
 
     bool shouldThrow = true;
-    createDataProperty(&lexicalGlobalObject, webCoreBuiltinNames(lexicalGlobalObject.vm()).openerPublicName(), value, shouldThrow);
+    createDataProperty(&lexicalGlobalObject, builtinNames(lexicalGlobalObject.vm()).openerPublicName(), value, shouldThrow);
 }
 
 JSValue JSDOMWindow::self(JSC::JSGlobalObject&) const
@@ -644,7 +644,7 @@ JSC_DEFINE_HOST_FUNCTION(jsDOMWindowInstanceFunction_openDatabase, (JSGlobalObje
 JSValue JSDOMWindow::openDatabase(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
     VM& vm = lexicalGlobalObject.vm();
-    StringImpl* name = PropertyName(webCoreBuiltinNames(vm).openDatabasePublicName()).publicName();
+    StringImpl* name = PropertyName(builtinNames(vm).openDatabasePublicName()).publicName();
     if (RuntimeEnabledFeatures::sharedFeatures().webSQLEnabled())
         return JSFunction::create(vm, &lexicalGlobalObject, 4, name, jsDOMWindowInstanceFunction_openDatabase, NoIntrinsic);
 
@@ -657,7 +657,7 @@ void JSDOMWindow::setOpenDatabase(JSC::JSGlobalObject& lexicalGlobalObject, JSC:
         return;
 
     bool shouldThrow = true;
-    createDataProperty(&lexicalGlobalObject, webCoreBuiltinNames(lexicalGlobalObject.vm()).openDatabasePublicName(), value, shouldThrow);
+    createDataProperty(&lexicalGlobalObject, builtinNames(lexicalGlobalObject.vm()).openDatabasePublicName(), value, shouldThrow);
 }
 
 JSDOMWindow& mainWorldGlobalObject(Frame& frame)

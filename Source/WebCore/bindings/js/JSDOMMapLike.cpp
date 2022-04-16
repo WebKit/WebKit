@@ -36,7 +36,7 @@ namespace WebCore {
 std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& mapLike)
 {
     auto& vm = lexicalGlobalObject.vm();
-    auto backingMap = mapLike.get(&lexicalGlobalObject, webCoreBuiltinNames(vm).backingMapPrivateName());
+    auto backingMap = mapLike.get(&lexicalGlobalObject, builtinNames(vm).backingMapPrivateName());
     if (!backingMap.isUndefined())
         return { false, *JSC::asObject(backingMap) };
 
@@ -46,7 +46,7 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlob
     backingMap = JSC::JSMap::create(&lexicalGlobalObject, vm, lexicalGlobalObject.mapStructure());
     scope.releaseAssertNoException();
 
-    mapLike.putDirect(vm, webCoreBuiltinNames(vm).backingMapPrivateName(), backingMap, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    mapLike.putDirect(vm, builtinNames(vm).backingMapPrivateName(), backingMap, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     return { true, *JSC::asObject(backingMap) };
 }
 

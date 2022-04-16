@@ -336,7 +336,7 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
         auto scope = DECLARE_CATCH_SCOPE(vm);
         if (errorValue.isObject()) {
             auto* object = JSC::asObject(errorValue);
-            if (JSValue failureKindValue = object->getDirect(vm, webCoreBuiltinNames(vm).failureKindPrivateName())) {
+            if (JSValue failureKindValue = object->getDirect(vm, builtinNames(vm).failureKindPrivateName())) {
                 // This is host propagated error in the module loader pipeline.
                 switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
                 case ModuleFetchFailureKind::WasPropagatedError:

@@ -5072,7 +5072,7 @@ bool Internals::isReadableStreamDisturbed(JSC::JSGlobalObject& lexicalGlobalObje
 JSValue Internals::cloneArrayBuffer(JSC::JSGlobalObject& lexicalGlobalObject, JSValue buffer, JSValue srcByteOffset, JSValue srcLength)
 {
     auto& vm = lexicalGlobalObject.vm();
-    const Identifier& privateName = webCoreBuiltinNames(vm).cloneArrayBufferPrivateName();
+    const Identifier& privateName = builtinNames(vm).cloneArrayBufferPrivateName();
     JSValue value;
     PropertySlot propertySlot(value, PropertySlot::InternalMethodType::Get);
     lexicalGlobalObject.methodTable()->getOwnPropertySlot(&lexicalGlobalObject, &lexicalGlobalObject, privateName, propertySlot);

@@ -4609,7 +4609,7 @@ static JSC::JSValue controllerJSValue(JSC::JSGlobalObject& lexicalGlobalObject, 
     if (!controlsHostJSWrapperObject)
         return JSC::jsNull();
 
-    JSC::Identifier controllerID = webCoreBuiltinNames(vm).controllerPublicName();
+    JSC::Identifier controllerID = builtinNames(vm).controllerPublicName();
     JSC::JSValue controllerJSWrapper = controlsHostJSWrapperObject->get(&lexicalGlobalObject, controllerID);
     RETURN_IF_EXCEPTION(scope, JSC::jsNull());
 
@@ -7759,7 +7759,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
         if (!mediaControlsHostJSWrapperObject)
             return false;
 
-        auto controller = webCoreBuiltinNames(vm).controllerPublicName();
+        auto controller = builtinNames(vm).controllerPublicName();
 
         ASSERT(!controllerObject->hasProperty(&lexicalGlobalObject, controller));
 

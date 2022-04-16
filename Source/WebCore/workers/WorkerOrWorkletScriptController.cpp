@@ -305,7 +305,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
             auto scope = DECLARE_CATCH_SCOPE(vm);
             if (errorValue.isObject()) {
                 auto* object = JSC::asObject(errorValue);
-                if (JSValue failureKindValue = object->getDirect(vm, webCoreBuiltinNames(vm).failureKindPrivateName())) {
+                if (JSValue failureKindValue = object->getDirect(vm, builtinNames(vm).failureKindPrivateName())) {
                     // This is host propagated error in the module loader pipeline.
                     switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
                     case ModuleFetchFailureKind::WasPropagatedError:
@@ -480,7 +480,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
             JSValue errorValue = callFrame->argument(0);
             if (errorValue.isObject()) {
                 auto* object = JSC::asObject(errorValue);
-                if (JSValue failureKindValue = object->getDirect(vm, webCoreBuiltinNames(vm).failureKindPrivateName())) {
+                if (JSValue failureKindValue = object->getDirect(vm, builtinNames(vm).failureKindPrivateName())) {
                     auto catchScope = DECLARE_CATCH_SCOPE(vm);
                     String message = retrieveErrorMessageWithoutName(*globalObject, vm, object, catchScope);
                     switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {

@@ -151,7 +151,7 @@ static void rejectToPropagateNetworkError(DeferredPromise& deferred, ModuleFetch
         // https://bugs.webkit.org/show_bug.cgi?id=167553
         auto* error = JSC::createTypeError(&jsGlobalObject, message);
         ASSERT(error);
-        error->putDirect(vm, webCoreBuiltinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(failureKind)));
+        error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(failureKind)));
         return error;
     });
 }
@@ -163,7 +163,7 @@ static void rejectWithFetchError(DeferredPromise& deferred, ExceptionCode ec, co
         JSC::VM& vm = jsGlobalObject.vm();
         JSC::JSObject* error = jsCast<JSC::JSObject*>(createDOMException(&jsGlobalObject, ec, message));
         ASSERT(error);
-        error->putDirect(vm, webCoreBuiltinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(ModuleFetchFailureKind::WasFetchError)));
+        error->putDirect(vm, builtinNames(vm).failureKindPrivateName(), JSC::jsNumber(static_cast<int32_t>(ModuleFetchFailureKind::WasFetchError)));
         return error;
     });
 }
