@@ -117,12 +117,7 @@ public:
         return (*m_data)[i];
     }
 
-    static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char* value, unsigned length, bool shouldFoldCase);
-    template<size_t length>
-    static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char (&value)[length], bool shouldFoldCase)
-    {
-        return spaceSplitStringContainsValue(spaceSplitString, value, length - 1, shouldFoldCase);
-    }
+    static bool spaceSplitStringContainsValue(StringView spaceSplitString, StringView value);
 
 private:
     RefPtr<SpaceSplitStringData> m_data;

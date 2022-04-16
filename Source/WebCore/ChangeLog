@@ -1,5 +1,39 @@
 2022-04-16  Chris Dumez  <cdumez@apple.com>
 
+        Optimize id matching in AccessibilityObject::ariaElementsReferencedByAttribute()
+        https://bugs.webkit.org/show_bug.cgi?id=239406
+        <rdar://problem/91829358>
+
+        Reviewed by Darin Adler.
+
+        For every element in the DOM tree, the function would get the value of ones of its attributes,
+        then construct a SpaceSplitString (which would tokenize and atomize every space-separated
+        component in the value), and finally see if the SpaceSplitString contains the id we're looking
+        for. This was unnecessarily expensive.
+
+        This patch revives SpaceSplitString::spaceSplitStringContainsValue() which was unused and makes
+        it work with a StringView input instead of only a const char*/LChar*. We now use this function
+        inside AccessibilityObject::ariaElementsReferencedByAttribute() to avoid the construction of
+        a SpaceSplitString. spaceSplitStringContainsValue() simply iterates the string until it finds
+        an HTML space, then compare the chunk of characters with the provided StringView. If it matches,
+        it returns early, otherwise, it keeps searching till the end of the String.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::ariaElementsReferencedByAttribute const):
+        * dom/SpaceSplitString.cpp:
+        (WebCore::tokenizeSpaceSplitString):
+        (WebCore::TokenIsEqualToCharactersTokenProcessor::TokenIsEqualToCharactersTokenProcessor):
+        (WebCore::TokenIsEqualToCharactersTokenProcessor::processToken):
+        (WebCore::spaceSplitStringContainsValueInternal):
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+        (WebCore::TokenIsEqualToCStringTokenProcessor::TokenIsEqualToCStringTokenProcessor): Deleted.
+        (WebCore::TokenIsEqualToCStringTokenProcessor::processToken): Deleted.
+        (WebCore::TokenIsEqualToCStringTokenProcessor::referenceStringWasFound const): Deleted.
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue): Deleted.
+
+2022-04-16  Chris Dumez  <cdumez@apple.com>
+
         Replace complex String::insert() with a simplified makeStringByInserting() free function
         https://bugs.webkit.org/show_bug.cgi?id=239370
 

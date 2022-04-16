@@ -3914,22 +3914,24 @@ void AccessibilityObject::ariaElementsFromAttribute(AccessibilityChildrenVector&
     }
 }
 
+// FIXME: This function iterates the whole DOM tree and tries to match every Element in the tree, which is very expensive.
+// We should find a better way to achieve this.
 void AccessibilityObject::ariaElementsReferencedByAttribute(AccessibilityChildrenVector& elements, const QualifiedName& attribute) const
 {
     auto id = identifierAttribute();
     if (id.isEmpty())
         return;
 
-    AXObjectCache* cache = axObjectCache();
+    auto* cache = axObjectCache();
     if (!cache)
         return;
 
     for (auto& element : descendantsOfType<Element>(node()->treeScope().rootNode())) {
-        const AtomString& idList = element.attributeWithoutSynchronization(attribute);
-        if (!SpaceSplitString(idList, false).contains(id))
+        auto& idList = element.attributeWithoutSynchronization(attribute);
+        if (!SpaceSplitString::spaceSplitStringContainsValue(idList, id))
             continue;
 
-        if (AccessibilityObject* axObject = cache->getOrCreate(&element))
+        if (auto* axObject = cache->getOrCreate(&element))
             elements.append(axObject);
     }
 }
