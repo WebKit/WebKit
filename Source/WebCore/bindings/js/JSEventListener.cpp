@@ -187,7 +187,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         if (m_isAttribute)
             return;
 
-        handleEventFunction = jsFunction->get(lexicalGlobalObject, webCoreBuiltinNames(vm).handleEventPublicName());
+        handleEventFunction = jsFunction->get(lexicalGlobalObject, builtinNames(vm).handleEventPublicName());
         if (UNLIKELY(scope.exception())) {
             auto* exception = scope.exception();
             scope.clearException();
