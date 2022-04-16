@@ -1,3 +1,18 @@
+2022-04-15  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        IGNORE_WARNINGS_BEGIN should not warn about unrecognized warnings
+        https://bugs.webkit.org/show_bug.cgi?id=239344
+
+        Reviewed by Darin Adler.
+
+        If the compiler does not support __has_warning(), then let's also
+        suppress -Wpragmas to avoid warnings about unrecognized warnings.
+
+        Let's make a couple drive-by cleanups as well. Notably,
+        IGNORE_WARNINGS_BEGIN_IMPL_ is unused and can be removed.
+
+        * wtf/Compiler.h:
+
 2022-04-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Remove exclusive build guards around GPU process preferences, code
