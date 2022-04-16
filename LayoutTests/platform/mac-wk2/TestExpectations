@@ -1674,7 +1674,7 @@ webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Fai
 
 webkit.org/b/239307 [ Monterey+ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-inherits-from-initiator.sub.html [ Pass Crash ]
 
-# [ Monterey wk2 debug ] 18 WebGL conformance tests are a flaky time out
+# [ Monterey wk2 debug ] WebGL conformance tests are a flaky time out
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-eviction-with-garbage-collection.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/context/context-release-with-workers.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/1.0.3/conformance/textures/copy-tex-image-and-sub-image-2d.html [ Pass Timeout ]
@@ -1697,7 +1697,7 @@ webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/textures/image_bitmap_from
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/uniforms/uniform-values-per-program.html [ Pass Timeout ]
 webkit.org/b/239386 [ Debug ] webgl/2.0.0/conformance/textures/image_bitmap_from_canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
 
-# [ Monterey wk2 ] 10 WebGL conformance tests are a flaky time out
+# [ Monterey wk2 ] WebGL conformance tests are a flaky time out
 webkit.org/b/239388 webgl/1.0.3/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
@@ -1708,6 +1708,14 @@ webkit.org/b/239388 webgl/2.0.0/conformance/textures/canvas/tex-2d-rgba-rgba-uns
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_byte.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Pass Timeout ]
 webkit.org/b/239388 webgl/2.0.0/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas/tex-2d-r8ui-red_integer-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance2/textures/canvas/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/webgl_canvas/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239388 webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Timeout ]
 
 webkit.org/b/239407 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-046.html [ Pass ImageOnlyFailure ]
 webkit.org/b/239407 [ Monterey ] imported/w3c/web-platform-tests/css/css-transforms/transform-origin/svg-origin-length-006.html [ Pass ImageOnlyFailure ]
