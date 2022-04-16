@@ -1,3 +1,14 @@
+2022-04-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkit.org] Remove leading r from archive revisions (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=239322
+        <rdar://problem/91735590>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Websites/webkit.org/wp-content/themes/webkit/build-archives.php:
+        Identifiers are strings, not integers. Use new v3 endpoint.
+
 2022-04-13  Jonathan Bedard  <jbedard@apple.com>
 
         [webkit.org] Remove leading r from archive revisions

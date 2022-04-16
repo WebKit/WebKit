@@ -12,7 +12,6 @@ class WebKitBuildArchives {
     public static $platforms = array(
         'mac-monterey-x86_64%20arm64'     => 'Monterey',
         'mac-bigsur-x86_64%20arm64'     => 'Big Sur',
-        'mac-catalina-x86_64'     => 'Catalina',
     );
 
     public static function object() {
@@ -22,7 +21,7 @@ class WebKitBuildArchives {
     }
 
     private function call ($endpoint, $params = array()) {
-        $url = add_query_arg($params, 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v2_2/' . $endpoint);
+        $url = add_query_arg($params, 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v3/' . $endpoint);
         $api = wp_remote_get($url);
         $response = wp_remote_retrieve_body($api);
 
@@ -44,10 +43,10 @@ class WebKitBuildArchives {
         $latest[$platform_key] = array();
 
         foreach ($data->Items as &$entry) {
-            $revision = new stdClass();
-            $revision->url = $entry->s3_url->S;
-            $revision->creationTime = $entry->creationTime->N;
-            $latest[$platform_key][$entry->revision->N] = $revision;
+            $change = new stdClass();
+            $change->url = $entry->s3_url->S;
+            $change->creationTime = $entry->creationTime->N;
+            $latest[$platform_key][$entry->identifier->S] = $change;
         }
 
         set_transient($cachekey, serialize($latest), 600); // expire cache every 10 minutes
@@ -131,18 +130,18 @@ add_filter('the_content', function ($content) {
 
     $lists = '';
     ob_start();
-    foreach ($archives as $platform => $revisions):
+    foreach ($archives as $platform => $changes):
 
-        if (empty($revisions)) {
+        if (empty($changes)) {
             echo '<div class="platform-items ' . esc_attr($platform) . '">' . $error_markup . '</div>';
             continue;
         }
     ?>
 
     <ul class="platform-items <?php echo esc_attr($platform); ?>">
-        <?php foreach ($revisions as $revision => $entry): ?>
+        <?php foreach ($changes as $change => $entry): ?>
         <li>
-            <h6><a href="<?php echo esc_url($entry->url); ?>"><?php echo $revision; ?></a></h6>
+            <h6><a href="<?php echo esc_url($entry->url); ?>"><?php echo $change; ?></a></h6>
             <span class="date"><?php echo intval($entry->creationTime) * 1000; ?></span>
         </li>
         <?php endforeach?>
