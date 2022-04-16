@@ -1,3 +1,12 @@
+2022-04-15  Justin Michaud  <justin_michaud@apple.com>
+
+        Add GitHub info to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=239410
+
+        Reviewed by Yusuke Suzuki.
+
+        * metadata/contributors.json:
+
 2022-04-15  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Add my github into to contributors.json.

@@ -3860,6 +3860,8 @@
          "justin_michaud@apple.com",
          "justin@justinmichaud.com"
       ],
+      "expertise" : "JavaScriptCore",
+      "github" : "justinmichaud",
       "name" : "Justin Michaud",
       "status" : "committer"
    },
@@ -5854,11 +5856,11 @@
          "sbarati@apple.com",
          "saambarati1@gmail.com"
       ],
+      "github" : "saambarati",
       "name" : "Saam Barati",
       "nicks" : [
          "saamyjoon"
       ],
-      "github" : "saambarati",
       "status" : "reviewer"
    },
    {
