@@ -1,3 +1,14 @@
+2022-04-15  Matteo Flores  <matteo_flores@apple.com>
+
+        REBASLINE: [ Monterey wk2 ] 7 /paymentrequest/* tests are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=238908
+
+        Unreviewed rebasline & test gardening.
+
+        * http/tests/paymentrequest/updateWith-shippingOptions.https-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2022-04-15  Karl Rackler  <rackler@apple.com>
 
         [ Monterey wk2 ] WebGL conformance tests are a flaky time out

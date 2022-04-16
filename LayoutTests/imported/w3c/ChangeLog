@@ -1,3 +1,13 @@
+2022-04-15  Matteo Flores  <matteo_flores@apple.com>
+
+        REBASLINE: [ Monterey wk2 ] 7 /paymentrequest/* tests are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=238908
+
+        Unreviewed rebasline & test gardening.
+
+        * web-platform-tests/payment-request/payment-request-constructor.https.sub-expected.txt:
+        * web-platform-tests/payment-request/payment-request-shippingOption-attribute.https-expected.txt:
+
 2022-04-15  Youenn Fablet  <youenn@apple.com>
 
         Sandboxed iframe loads should match a service worker registration based on sandbox flags

@@ -76,13 +76,6 @@ imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstr
 imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects.https.html [ DumpJSConsoleLogInStdErr ]
 
-# webkit.org/b/238908 Global expectations for these until baselines are resolved
-http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html [ Pass Failure ]
-http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html [ Pass Failure ]
-http/tests/paymentrequest/payment-request-change-shipping-option.https.html [ Pass Failure ]
-http/tests/paymentrequest/payment-response-retry-method.https.html [ Pass Failure ]
-http/tests/paymentrequest/updateWith-shippingOptions.https.html [ Pass Failure ]
-
 # This test is failing due to lack of user activation.
 imported/w3c/web-platform-tests/payment-request/payment-is-showing.https.html [ Skip ]
 

@@ -1014,7 +1014,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 # webkit.org/b/238908 Global expectations for these until baselines are resolved
 http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html [ DumpJSConsoleLogInStdErr ]
 http/tests/paymentrequest/payment-request-change-shipping-option.https.html [ DumpJSConsoleLogInStdErr ]
 http/tests/paymentrequest/payment-response-retry-method.https.html [ DumpJSConsoleLogInStdErr ]
 http/tests/paymentrequest/updateWith-shippingOptions.https.html [ DumpJSConsoleLogInStdErr ]
