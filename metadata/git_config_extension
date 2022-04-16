@@ -4,3 +4,6 @@
         pull-request = append
         history = disabled
         update-fork = true
+[webkitscmpy "remotes"]
+        origin = git@github.com:WebKit/WebKit.git
+        apple = git@github.com:apple/WebKit.git

@@ -1,3 +1,27 @@
+2022-04-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Allow projects to declare alternate remotes
+        https://bugs.webkit.org/show_bug.cgi?id=239261
+        <rdar://problem/91654752>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump verison.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.remote): Move logic to remote.Scm.from_url.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.github): Allow user to specify trailing remote name.
+        (Setup._add_remote): Add a remote or modify exising remote.
+        (Setup._fork_remote): Determine a remote url based on origin url.
+        (Setup.git): If the project declares remotes, check if the user is using the righ origin. Warn them
+        if they are not. Check if the user has access to alternate remotes, if they do, add those remotes
+        and create forks for them. Fetch all fork remotes. Do not fork repository if origin does not match
+        declared origin.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/scm.py:
+        (Scm.from_url): Moved logic from local.Git.remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+
 2022-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove VM& parameter from structure related code including jsDyamicCast

@@ -76,7 +76,6 @@ Created a private fork of 'WebKit' belonging to 'username'!
         )
 
     def test_git(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, \
             mocks.local.Svn(), wkmocks.Environment(EMAIL_ADDRESS=''):
 
@@ -116,6 +115,7 @@ Using the default git editor for this repository
         )
 
     def test_github_checkout(self):
+        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
             MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'disabled', '1', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
@@ -180,7 +180,7 @@ Created a private fork of 'WebKit' belonging to 'username'!
 Adding forked remote as 'username' and 'fork'...
 Added remote 'username'
 Added remote 'fork'
-Fetching 'https://github.example.com/username/WebKit.git'
+Fetching 'fork'
 '''.format(repository=self.path),
         )
 

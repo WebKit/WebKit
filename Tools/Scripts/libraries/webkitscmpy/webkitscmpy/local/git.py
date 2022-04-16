@@ -482,18 +482,11 @@ class Git(Scm):
         elif http_match:
             url = '{}://{}/{}'.format(http_match.group('protocol'), http_match.group('host'), http_match.group('path'))
 
-        if remote.GitHub.is_webserver(url):
-            return remote.GitHub(url, contributors=self.contributors)
-        if 'bitbucket' in url or 'stash' in url:
-            match = re.match(r'(?P<protocol>https?)://(?P<host>.+)/(?P<project>.+)/(?P<repo>.+)', url)
-            return remote.BitBucket(
-                '{}://{}/projects/{}/repos/{}'.format(
-                    match.group('protocol'),
-                    match.group('host'),
-                    match.group('project').upper(),
-                    match.group('repo'),
-                ), contributors=self.contributors,
-            )
+        try:
+            return remote.Scm.from_url(url)
+        except OSError:
+            pass
+
         return None
 
     def _commit_count(self, native_parameter):

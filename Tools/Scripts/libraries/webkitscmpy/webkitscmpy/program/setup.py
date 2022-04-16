@@ -20,13 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import getpass
 import os
 import requests
 import sys
 
 from .command import Command
 from requests.auth import HTTPBasicAuth
-from webkitcorepy import arguments, run, Editor, Terminal
+from webkitcorepy import arguments, run, Editor, OutputCapture, Terminal
 from webkitscmpy import log, local, remote
 
 
@@ -35,7 +36,7 @@ class Setup(Command):
     help = 'Configure local settings for the current repository'
 
     @classmethod
-    def github(cls, args, repository, additional_setup=None, **kwargs):
+    def github(cls, args, repository, additional_setup=None, remote=None, **kwargs):
         log.info('Saving GitHub credentials in system credential store...')
         username, access_token = repository.credentials(required=True, validate=True, save_in_keyring=True)
         log.info('GitHub credentials saved via Keyring!')
@@ -45,22 +46,23 @@ class Setup(Command):
         if additional_setup:
             result += additional_setup(args, repository)
 
+        forked_name = '{}{}'.format(repository.name, '-{}'.format(remote) if remote else '')
         log.info('Verifying user owned fork...')
         auth = HTTPBasicAuth(username, access_token)
         response = requests.get('{}/repos/{}/{}'.format(
             repository.api_url,
             username,
-            repository.name,
+            forked_name,
         ), auth=auth, headers=dict(Accept='application/vnd.github.v3+json'))
         if response.status_code == 200:
             log.info("User already owns a fork of '{}'!".format(repository.name))
             return result
 
         if repository.owner == username or args.defaults or Terminal.choose(
-            "Create a private fork of '{}' belonging to '{}'".format(repository.name, username),
+            "Create a private fork of '{}' belonging to '{}'".format(forked_name, username),
             default='Yes',
         ) == 'No':
-            log.info("Continuing without forking '{}'".format(repository.name))
+            log.info("Continuing without forking '{}'".format(forked_name))
             return 1
 
         response = requests.post('{}/repos/{}/{}/forks'.format(
@@ -69,14 +71,54 @@ class Setup(Command):
             repository.name,
         ), json=dict(
             owner=username,
-            description="{}'s fork of {}".format(username, repository.name),
+            description="{}'s fork of {}{}".format(username, repository.name, ' ({})'.format(remote) if remote else ''),
             private=True,
         ), auth=auth, headers=dict(Accept='application/vnd.github.v3+json'))
         if response.status_code not in (200, 202):
-            sys.stderr.write("Failed to create a fork of '{}' belonging to '{}'\n".format(repository.name, username))
+            sys.stderr.write("Failed to create a fork of '{}' belonging to '{}'\n".format(forked_name, username))
             return 1
-        log.info("Created a private fork of '{}' belonging to '{}'!".format(repository.name, username))
+
+        set_name = response.json().get('name', '')
+        if set_name and set_name != forked_name:
+            response = requests.patch('{}/repos/{}/{}'.format(
+                repository.api_url,
+                username,
+                set_name,
+            ), json=dict(
+                name=forked_name
+            ), auth=auth, headers=dict(Accept='application/vnd.github.v3+json'))
+            if response.status_code not in (200, 202):
+                sys.stderr.write("Fork created with name '{}' belonging to '{}'\n Failed to change name to {}\n".format(set_name, username, forked_name))
+                return 1
+
+        log.info("Created a private fork of '{}' belonging to '{}'!".format(forked_name, username))
         return result
+
+    @classmethod
+    def _add_remote(cls, repository, name, url):
+        returncode = run(
+            [repository.executable(), 'remote', 'add', name, url],
+            capture_output=True, cwd=repository.root_path,
+        ).returncode
+        if returncode == 3:
+            returncode = run(
+                [repository.executable(), 'remote', 'set-url', name, url],
+                capture_output=True, cwd=repository.root_path,
+            ).returncode
+        if returncode:
+            sys.stderr.write("Failed to add remote '{}'\n".format(name))
+            return 1
+
+        log.info("Added remote '{}'".format(name))
+        return 0
+
+    @classmethod
+    def _fork_remote(cls, origin, username, name):
+        if '://' in origin:
+            return '{}://{}/{}/{}.git'.format(origin.split(':')[0], origin.split('/')[2], username, name)
+        elif ':' in origin:
+            return '{}:{}/{}.git'.format(origin.split(':')[0], username, name)
+        return None
 
     @classmethod
     def git(cls, args, repository, additional_setup=None, hooks=None, **kwargs):
@@ -268,50 +310,110 @@ class Setup(Command):
 
         # Only configure GitHub if the URL is a GitHub URL
         rmt = repository.remote()
-        if not isinstance(rmt, remote.GitHub):
-            return result
-
-        code = cls.github(args, rmt, **kwargs)
-        result += code
-        if code:
-            return result
-
-        username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
-        log.info("Adding forked remote as '{}' and 'fork'...".format(username))
-        url = repository.url()
-
-        if '://' in url:
-            fork_remote = '{}://{}/{}/{}.git'.format(url.split(':')[0], url.split('/')[2], username, rmt.name)
-        elif ':' in url:
-            fork_remote = '{}:{}/{}.git'.format(url.split(':')[0], username, rmt.name)
+        available_remotes = []
+        if isinstance(rmt, remote.GitHub):
+            forking = True
+            username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
         else:
+            forking = False
+            username = getpass.getuser()
+
+        # Check and configure alternate remotes
+        project_remotes = {}
+        for config_arg, url in repository.config().items():
+            if not config_arg.startswith('webkitscmpy.remotes'):
+                continue
+
+            for match in [repository.SSH_REMOTE.match(url), repository.HTTP_REMOTE.match(url)]:
+                if not match:
+                    continue
+                project_remotes[config_arg.split('.')[-1]] = [
+                    'https://{}/{}.git'.format(match.group('host'), match.group('path')),
+                    'http://{}/{}.git'.format(match.group('host'), match.group('path')),
+                    'git@{}:{}.git'.format(match.group('host'), match.group('path')),
+                    'ssh://{}:{}.git'.format(match.group('host'), match.group('path')),
+                ]
+                break
+            else:
+                project_remotes[config_arg.split('.')[-1]] = [url]
+
+        protocol = repository.url().split('://')[0] + '://'
+        if '@' in protocol:
+            protocol = protocol.split('@')[0] + '@'
+        if not project_remotes.get('origin') or repository.url() in project_remotes['origin']:
+            for name, urls in project_remotes.items():
+                if name == 'origin' or not urls:
+                    continue
+
+                # We can check via the remote if the current user has access
+                nw_rmt = None
+                if urls[0].startswith('http'):
+                    try:
+                        nw_rmt = remote.Scm.from_url(urls[0][:-4])
+                        with OutputCapture():
+                            nw_rmt.default_branch
+                    except RuntimeError:
+                        log.info('{} does not have access to {}'.format(username, urls[0]))
+                        continue
+                    except OSError:
+                        pass
+
+                remote_to_add = urls[0]
+                for url in urls:
+                    if url.startswith(protocol):
+                        remote_to_add = url
+                        break
+                if cls._add_remote(repository, name, remote_to_add):
+                    result += 1
+                else:
+                    available_remotes.append(name)
+                if not isinstance(nw_rmt, remote.GitHub):
+                    continue
+                if cls.github(args, nw_rmt, remote=name):
+                    result += 1
+                    continue
+                log.info("Adding forked {remote} remote as '{username}-{remote}' and '{remote}-fork'...".format(
+                    remote=name, username=username,
+                ))
+                for fork_name in ['{}-{}'.format(username, name), '{}-fork'.format(name)]:
+                    if cls._add_remote(repository, fork_name, cls._fork_remote(repository.url(), username, '{}-{}'.format(rmt.name, name))):
+                        result += 1
+                    else:
+                        available_remotes.append(fork_name)
+
+        else:
+            warning = '''Checkout using {actual} as origin remote
+Project defines {expected} as its origin remote
+Automation may create pull requests and forks in unexpected locations
+'''.format(actual=repository.url(), expected=project_remotes['origin'][0])
+
+            if forking:
+                forking = Terminal.choose('{}Are you sure you want to set up a fork?\n'.format(warning), default='No')
+            else:
+                sys.stderr.write(warning)
+
+        if not forking:
+            return result
+
+        if cls.github(args, rmt, **kwargs):
             return result + 1
 
-        available_remotes = []
+        log.info("Adding forked remote as '{}' and 'fork'...".format(username))
         for name in [username, 'fork']:
-            returncode = run(
-                [repository.executable(), 'remote', 'add', name, fork_remote],
-                capture_output=True, cwd=repository.root_path,
-            ).returncode
-            if returncode == 3:
-                returncode = run(
-                    [repository.executable(), 'remote', 'set-url', name, fork_remote],
-                    capture_output=True, cwd=repository.root_path,
-                ).returncode
-            if returncode:
-                sys.stderr.write("Failed to add remote '{}'\n".format(name))
+            if cls._add_remote(repository, name, cls._fork_remote(repository.url(), username, rmt.name)):
                 result += 1
             else:
                 available_remotes.append(name)
-                log.info("Added remote '{}'".format(name))
 
-        if 'fork' not in available_remotes:
-            return result
-        log.info("Fetching '{}'".format(fork_remote))
-        return run(
-            [repository.executable(), 'fetch', 'fork'],
-            capture_output=True, cwd=repository.root_path,
-        ).returncode
+        for rem in available_remotes:
+            if 'fork' not in rem:
+                continue
+            log.info("Fetching '{}'".format(rem))
+            result += run(
+                [repository.executable(), 'fetch', rem],
+                capture_output=True, cwd=repository.root_path,
+            ).returncode
+        return result
 
     @classmethod
     def parser(cls, parser, loggers=None):

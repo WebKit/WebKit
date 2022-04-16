@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import six
 
 from webkitscmpy.scm_base import ScmBase
@@ -57,6 +58,15 @@ class Scm(ScmBase):
     @classmethod
     def from_url(cls, url, contributors=None):
         from webkitscmpy import remote
+
+        if 'bitbucket' in url or 'stash' in url:
+            match = re.match(r'(?P<protocol>https?)://(?P<host>.+)/(?P<project>.+)/(?P<repo>.+)', url)
+            url = '{}://{}/projects/{}/repos/{}'.format(
+                match.group('protocol'),
+                match.group('host'),
+                match.group('project').upper(),
+                match.group('repo'),
+            )
 
         for candidate in [remote.Svn, remote.GitHub, remote.BitBucket]:
             if candidate.is_webserver(url):
