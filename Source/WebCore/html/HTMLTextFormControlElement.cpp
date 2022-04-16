@@ -259,7 +259,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
     if (start < end)
         text.replace(start, end - start, replacement);
     else
-        text.insert(replacement, start);
+        text = makeStringByInserting(text, replacement, start);
 
     setValue(text, TextFieldEventBehavior::DispatchNoEvent, TextControlSetValueSelection::DoNotSet);
 

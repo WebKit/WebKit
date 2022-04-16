@@ -190,8 +190,6 @@ public:
     bool endsWith(char character) const { return endsWith(static_cast<UChar>(character)); }
     bool hasInfixEndingAt(StringView suffix, unsigned end) const;
 
-    WTF_EXPORT_PRIVATE void insert(const String&, unsigned position);
-
     String& replace(UChar target, UChar replacement);
     String& replace(UChar target, StringView replacement);
     String& replace(StringView target, StringView replacement);
@@ -333,10 +331,6 @@ public:
 
 private:
     template<typename CharacterType> void removeInternal(const CharacterType*, unsigned, unsigned);
-
-    // FIXME: Only used by insert(), we should consider dropping them.
-    void append(const LChar*, unsigned length);
-    void append(const UChar*, unsigned length);
 
     template<bool allowEmptyEntries> void splitInternal(UChar separator, const SplitFunctor&) const;
     template<bool allowEmptyEntries> Vector<String> splitInternal(UChar separator) const;

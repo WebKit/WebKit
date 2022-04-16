@@ -478,11 +478,17 @@ String makeString(StringTypes... strings)
     return result;
 }
 
+inline String makeStringByInserting(StringView originalString, StringView stringToInsert, unsigned position)
+{
+    return makeString(originalString.left(position), stringToInsert, originalString.substring(position));
+}
+
 } // namespace WTF
 
 using WTF::Indentation;
 using WTF::IndentationScope;
 using WTF::makeString;
+using WTF::makeStringByInserting;
 using WTF::pad;
 using WTF::lowercase;
 using WTF::tryMakeString;

@@ -950,8 +950,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
         GlobalFree(memObj);
         return 0;
     }
-    extension.insert("."_s, 0);
-    fsPath = fileSystemPathFromURLOrTitle(url, preferredTitle, extension, false);
+    fsPath = fileSystemPathFromURLOrTitle(url, preferredTitle, makeString('.', extension), false);
 
     if (fsPath.length() <= 0) {
         GlobalUnlock(memObj);

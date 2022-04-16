@@ -1,3 +1,16 @@
+2022-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Replace complex String::insert() with a simplified makeStringByInserting() free function
+        https://bugs.webkit.org/show_bug.cgi?id=239370
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::makeStringByInserting):
+        (WTF::String::insert): Deleted.
+        (WTF::String::append): Deleted.
+        * wtf/text/WTFString.h:
+
 2022-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Implement hardware limits

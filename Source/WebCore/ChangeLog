@@ -1,3 +1,22 @@
+2022-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Replace complex String::insert() with a simplified makeStringByInserting() free function
+        https://bugs.webkit.org/show_bug.cgi?id=239370
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::addVP9FullRangeVideoFlagToContentType):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::insertData):
+        (WebCore::CharacterData::replaceData):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setRangeText):
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::DecodeTask::process):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::createGlobalImageFileDescriptor):
+
 2022-04-15  Chris Dumez  <cdumez@apple.com>
 
         Leverage StringView in more places to avoid some String allocations

@@ -650,8 +650,7 @@ static ContentType addVP9FullRangeVideoFlagToContentType(const ContentType& type
         if (position == notFound)
             continue;
 
-        rawType.insert(".00"_s, position + codec.length());
-        return ContentType(rawType);
+        return ContentType(makeStringByInserting(rawType, ".00"_s, position + codec.length()));
     }
     return type;
 }

@@ -138,9 +138,8 @@ ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
     if (offset > length())
         return Exception { IndexSizeError };
 
-    String newData = m_data;
-    newData.insert(data, offset);
-    setDataAndUpdate(newData, offset, 0, data.length());
+    auto newData = makeStringByInserting(m_data, data, offset);
+    setDataAndUpdate(WTFMove(newData), offset, 0, data.length());
 
     return { };
 }
@@ -154,7 +153,7 @@ ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
 
     String newData = m_data;
     newData.remove(offset, count);
-    setDataAndUpdate(newData, offset, count, 0);
+    setDataAndUpdate(WTFMove(newData), offset, count, 0);
 
     return { };
 }
@@ -166,10 +165,9 @@ ExceptionOr<void> CharacterData::replaceData(unsigned offset, unsigned count, co
 
     count = std::min(count, length() - offset);
 
-    String newData = m_data;
-    newData.remove(offset, count);
-    newData.insert(data, offset);
-    setDataAndUpdate(newData, offset, count, data.length());
+    StringView oldDataView { m_data };
+    auto newData = makeString(oldDataView.left(offset), data, oldDataView.substring(offset + count));
+    setDataAndUpdate(WTFMove(newData), offset, count, data.length());
 
     return { };
 }
