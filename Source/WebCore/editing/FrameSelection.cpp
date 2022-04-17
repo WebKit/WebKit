@@ -73,6 +73,7 @@
 #include "StyleProperties.h"
 #include "StyleTreeResolver.h"
 #include "TypingCommand.h"
+#include "UpToDateLayoutScope.h"
 #include "VisibleUnits.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
@@ -447,11 +448,8 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     m_selectionRevealIntent = intent;
     m_pendingSelectionUpdate = true;
 
-    if (protectedDocument->hasPendingStyleRecalc())
-        return;
-
-    auto frameView = protectedDocument->view();
-    if (frameView && frameView->layoutContext().isLayoutPending())
+    auto layoutScope = UpToDateLayoutScope::scopeIfLayoutIsUpToUpdate(*protectedDocument);
+    if (!layoutScope)
         return;
 
     updateAndRevealSelection(intent, options.contains(SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant, options.contains(RevealSelectionBounds) ? RevealExtentOption::DoNotRevealExtent : RevealExtentOption::RevealExtent);

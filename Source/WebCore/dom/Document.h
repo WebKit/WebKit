@@ -621,7 +621,11 @@ public:
     unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }
 
     WEBCORE_EXPORT void updateLayout();
-    
+
+    unsigned upToDateLayoutScopeCount() const { return m_upToDateLayoutScopeCount; }
+    void incrementUpToDateLayoutScopeCount() { ++m_upToDateLayoutScopeCount; }
+    void decrementUpToDateLayoutScopeCount() { ASSERT(m_upToDateLayoutScopeCount); --m_upToDateLayoutScopeCount; }
+
     // updateLayoutIgnorePendingStylesheets() forces layout even if we are waiting for pending stylesheet loads,
     // so calling this may cause a flash of unstyled content (FOUC).
     enum class RunPostLayoutTasks { Asynchronously, Synchronously };
@@ -2106,6 +2110,8 @@ private:
     unsigned m_styleRecalcCount { 0 };
 
     unsigned m_writeRecursionDepth { 0 };
+
+    unsigned m_upToDateLayoutScopeCount { 0 };
 
     InheritedBool m_designMode { inherit };
     MediaProducerMediaStateFlags m_mediaState;

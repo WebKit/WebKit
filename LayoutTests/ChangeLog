@@ -1,3 +1,23 @@
+2022-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make release assertion in Document::updateLayout more precise for FrameSelection::setSelection
+        https://bugs.webkit.org/show_bug.cgi?id=239431
+
+        Reviewed by Alan Bujtas.
+
+        Add a regression test, and fix existing accessibility tests which were mutating DOM inside setSelection
+        via should* functions. In production, this will never happen since accessibility notification will be sent
+        to UI process asynchronously and accesssibility code won't try to mutate DOM synchronously.
+
+        * accessibility/mac/focus-setting-selection-syncronizing-not-clearing-expected.txt: Rebaselined.
+        * accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html: Delay DOM mutations in should*
+        until the notification is over.
+        * accessibility/mac/selection-change-userinfo.html: Ditto.
+        * accessibility/mac/selection-sync.html: Ditto.
+        * accessibility/mac/selection-value-changes-for-aria-textbox.html: Ditto.
+        * fast/forms/textarea-selection-update-during-DOMNodeRemoved-crash-expected.txt: Added.
+        * fast/forms/textarea-selection-update-during-DOMNodeRemoved-crash.html: Added.
+
 2022-04-15  Matteo Flores  <matteo_flores@apple.com>
 
         REBASLINE: [ Monterey wk2 ] 7 /paymentrequest/* tests are constant text failures

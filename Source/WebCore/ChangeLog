@@ -1,3 +1,39 @@
+2022-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make release assertion in Document::updateLayout more precise for FrameSelection::setSelection
+        https://bugs.webkit.org/show_bug.cgi?id=239431
+
+        Reviewed by Alan Bujtas.
+
+        Avoid the assertion failure by allowing no-op layout updates within FrameSelection::setSelection.
+
+        To do this, this patch introduces a new RAII object, UpToDateLayoutScope, which denotes when when the layout
+        is up-to-date and therefore does not require a new layout update. When this scope exists in the stack frame,
+        we allow calls to Document::updateLayout even inside ScriptDisallowedScope. We also assert that nobody attempts
+        to schedule a new style resolution or layout when this object exists.
+
+        Test: fast/forms/textarea-selection-update-during-DOMNodeRemoved-crash.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::updateLayout):
+        * dom/Document.h:
+        (WebCore::Document::upToDateLayoutScopeCount const):
+        (WebCore::Document::incrementUpToDateLayoutScopeCount):
+        (WebCore::Document::decrementUpToDateLayoutScopeCount):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::scheduleLayout):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSetNeedsLayoutForbidden const):
+        * rendering/UpToDateLayoutScope.h: Added.
+        (WebCore::UpToDateLayoutScope::UpToDateLayoutScope):
+        (WebCore::UpToDateLayoutScope::~UpToDateLayoutScope):
+        (WebCore::UpToDateLayoutScope::scopeIfLayoutIsUpToUpdate):
+        (WebCore::UpToDateLayoutScope::needsLayout):
+
 2022-04-16  Chris Dumez  <cdumez@apple.com>
 
         Drop String::truncate() and use String::left() instead

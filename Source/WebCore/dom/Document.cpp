@@ -252,6 +252,7 @@
 #include "TransformSource.h"
 #include "TreeWalker.h"
 #include "UndoManager.h"
+#include "UpToDateLayoutScope.h"
 #include "UserGestureIndicator.h"
 #include "ValidationMessageClient.h"
 #include "VisibilityChangeClient.h"
@@ -1977,6 +1978,7 @@ void Document::scheduleStyleRecalc()
     if (m_styleRecalcTimer.isActive() || backForwardCacheState() != NotInBackForwardCache)
         return;
 
+    RELEASE_ASSERT(!m_upToDateLayoutScopeCount);
     ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
 
     m_styleRecalcTimer.startOneShot(0_s);
@@ -2224,7 +2226,9 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(*this));
+
+    bool safeToUpdateStyleOrLayout = isSafeToUpdateStyleOrLayout(*this);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(safeToUpdateStyleOrLayout || (m_upToDateLayoutScopeCount && !UpToDateLayoutScope::needsLayout(*this)));
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
@@ -2239,6 +2243,9 @@ void Document::updateLayout()
         return;
     if (!frameView->layoutContext().isLayoutPending() && !renderView()->needsLayout())
         return;
+
+    // needsLayout may have changed.
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(safeToUpdateStyleOrLayout);
 
     frameView->layoutContext().layout();
 

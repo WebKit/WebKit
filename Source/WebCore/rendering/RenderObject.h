@@ -1166,7 +1166,7 @@ inline auto RenderObject::visibleRectContextForSpatialNavigation() -> VisibleRec
 inline bool RenderObject::isSetNeedsLayoutForbidden() const
 {
 #if ASSERT_ENABLED
-    return m_setNeedsLayoutForbidden;
+    return m_setNeedsLayoutForbidden || document().upToDateLayoutScopeCount();
 #else
     return false;
 #endif

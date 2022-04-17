@@ -1,0 +1,33 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setTimeout(() => {
+    textarea1.selectionStart = 1;
+
+    span2.appendChild(textarea1);
+    document.documentElement.appendChild(canvas1);
+
+    textarea1.addEventListener("DOMNodeRemoved", () => {
+        other1.appendChild(span1);
+        textarea1.selectionStart = -1;
+        document.getSelection().collapse(span1);
+    });
+
+    textarea1.innerHTML = '';
+
+    document.body.innerHTML = '<p>This tests updating selection within DOMNodeRemoved. WebKit should not hit any release assertions.</p>PASS';
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+<textarea id="textarea1">hello</textarea>
+<canvas id="canvas1"><other-element id="other1"></other-element></canvas>
+<span id="span1">
+    <audio controls="controls" src="x">
+        <span id="span2">G&#x27;lzKsb6[Xava</span>
+    </audio>
+</span>

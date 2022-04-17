@@ -373,6 +373,8 @@ void FrameViewLayoutContext::scheduleLayout()
     // too many false assertions. See <rdar://problem/7218118>.
     ASSERT(frame().view() == &view());
 
+    RELEASE_ASSERT(!frame().document()->upToDateLayoutScopeCount());
+
     if (subtreeLayoutRoot())
         convertSubtreeLayoutToFullLayout();
     if (!isLayoutSchedulingEnabled())
