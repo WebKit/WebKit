@@ -30,9 +30,11 @@ div#image-controls {
     position: relative;
     overflow: hidden;
     color: transparent;
+    -webkit-user-select: none;
+    pointer-events: none;
 }
 
-div#image-controls button#image-controls-button {
+button#image-controls-button {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -45,10 +47,9 @@ div#image-controls button#image-controls-button {
     opacity: 0.0;
 }
 
-div#image-controls:hover button#image-controls-button {
+:host(:hover) button#image-controls-button {
     opacity: 1.0;
+    pointer-events: auto;
 }
 
 #endif
-
-

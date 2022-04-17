@@ -1,3 +1,16 @@
+2022-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Image controls are editable and prevent drops in editable web views
+        https://bugs.webkit.org/show_bug.cgi?id=239423
+        rdar://81027082
+
+        Reviewed by Darin Adler.
+
+        Add a new API test to exercise the change.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-12  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Allow projects to declare alternate remotes

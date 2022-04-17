@@ -1955,6 +1955,25 @@ TEST(WKAttachmentTestsMac, DragAttachmentWithNoTypeShouldNotCrash)
     EXPECT_EQ(0U, urls.count);
 }
 
+TEST(WKAttachmentTestsMac, DropImageOverImageWithControls)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+    [configuration _setImageControlsEnabled:YES];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+
+    platformCopyPNG();
+    [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+    [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
+
+    [simulator writePromisedFiles:@[ testImageFileURL() ]];
+    [simulator runFrom:NSMakePoint(400, 400) to:NSMakePoint(50, 50)];
+    [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
+    [webView expectElementCount:2 querySelector:@"IMG"];
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)

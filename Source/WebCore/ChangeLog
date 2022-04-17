@@ -1,3 +1,42 @@
+2022-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Image controls are editable and prevent drops in editable web views
+        https://bugs.webkit.org/show_bug.cgi?id=239423
+        rdar://81027082
+
+        Reviewed by Darin Adler.
+
+        Adjust the UA stylesheet for image controls (i.e., the services dropdown menu button) such that:
+
+        1. The container for image controls is non-editable, and:
+        2. The container above the button (which encompasses the bounds of the host image) ignores hit-testing.
+
+        This ensures that we're able to handle a drop over an image with image controls in an editable web view, by
+        inserting the dropped content before or after the image element (as opposed to either inserting it inside the
+        shadow root of the image, or not handling the drop via editing at all).
+
+        Test: WKAttachmentTestsMac.DropImageOverImageWithControls
+
+        * dom/mac/ImageControlsMac.cpp:
+        (WebCore::ImageControlsMac::createImageControls):
+        * html/shadow/mac/imageControlsMac.css:
+        (#if defined(ENABLE_SERVICE_CONTROLS) && ENABLE_SERVICE_CONTROLS):
+        (button#image-controls-button):
+
+        Make the contents of the image controls container non-selectable, and also avoid hit-testing over the container.
+
+        (:host(:hover) button#image-controls-button):
+        (div#image-controls button#image-controls-button): Deleted.
+
+        Ensure that the services menu button itself can still be activated by setting `pointer-events: auto;` when the
+        host element (i.e. the `img`) is hovered. It's important that we use the host element's `hover` state instead of
+        the containing `#image-controls`, since this container now has `pointer-events: none;`.
+
+        These changes make it still possible to reveal and interact with the services menu button, but allows
+        drag-and-drop to avoid hit-testing into shadow root content for an image with controls.
+
+        (div#image-controls:hover button#image-controls-button): Deleted.
+
 2022-04-16  Chris Dumez  <cdumez@apple.com>
 
         Optimize id matching in AccessibilityObject::ariaElementsReferencedByAttribute()
