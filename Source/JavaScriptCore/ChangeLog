@@ -1,3 +1,24 @@
+2022-04-16  Mark Lam  <mark.lam@apple.com>
+
+        Fix a deadlock in VMTraps.
+        https://bugs.webkit.org/show_bug.cgi?id=239421
+        <rdar://problem/91851592>
+
+        Reviewed by Michael Saboff.
+
+        The sampling profiler first acquires the codeBlockSet lock followed by the ThreadSuspendLocker.
+        VMTraps, on the other hand, first acquires the ThreadSuspendLocker followed by the
+        codeBlockSet lock.  As a result, VMTraps can deadlock with the Sampling Profiler
+        thread, and leave the mutator in a suspended state, or forever blocked on the
+        codeBlockSet lock.
+
+        This was discovered while running the stress/has-indexed-property-with-worsening-array-mode.js.ftl-no-cjit-validate-sampling-profiler
+        test on a Debug build of jsc on an M1 MBP.  Since it requires a race condition to
+        reproduce, reproducibility is not always reliable.
+
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+
 2022-04-15  Chris Dumez  <cdumez@apple.com>
 
         Leverage StringView in more places to avoid some String allocations

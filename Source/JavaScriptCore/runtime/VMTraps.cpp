@@ -102,7 +102,16 @@ void VMTraps::tryInstallTrapBreakpoints(VMTraps::SignalContext& context, StackBo
 
     CallFrame* callFrame = reinterpret_cast<CallFrame*>(context.framePointer);
 
-    Locker codeBlockSetLocker { vm.heap.codeBlockSet().getLock() };
+    // Even though we know the mutator thread is not in C++ code and therefore, not holding
+    // this lock, the sampling profiler may have acquired this lock before acquiring
+    // ThreadSuspendLocker and suspending the mutator. Since VMTraps acquires the
+    // ThreadSuspendLocker first, we can deadlock with the Sampling Profiler thread, and
+    // leave the mutator in a suspended state, or forever blocked on the codeBlockSet lock.
+    Lock& codeBlockSetLock = vm.heap.codeBlockSet().getLock();
+    if (!codeBlockSetLock.tryLock())
+        return;
+
+    Locker codeBlockSetLocker { AdoptLock, codeBlockSetLock };
 
     CodeBlock* foundCodeBlock = nullptr;
     EntryFrame* entryFrame = vm.topEntryFrame;
@@ -216,8 +225,17 @@ public:
                 ASSERT(currentCodeBlock->hasInstalledVMTrapBreakpoints());
                 VM& vm = currentCodeBlock->vm();
 
-                // We are in JIT code so it's safe to acquire this lock.
-                Locker codeBlockSetLocker { vm.heap.codeBlockSet().getLock() };
+                // Even though we know the mutator thread is not in C++ code and therefore, not holding
+                // this lock, the sampling profiler may have acquired this lock before acquiring
+                // ThreadSuspendLocker and suspending the mutator. Since VMTraps acquires the
+                // ThreadSuspendLocker first, we can deadlock with the Sampling Profiler thread, and
+                // leave the mutator in a suspended state, or forever blocked on the codeBlockSet lock.
+                Lock& codeBlockSetLock = vm.heap.codeBlockSet().getLock();
+                if (!codeBlockSetLock.tryLock())
+                    return SignalAction::NotHandled;
+
+                Locker codeBlockSetLocker { AdoptLock, codeBlockSetLock };
+
                 bool sawCurrentCodeBlock = false;
                 vm.heap.forEachCodeBlockIgnoringJITPlans(codeBlockSetLocker, [&] (CodeBlock* codeBlock) {
                     // We want to jettison all code blocks that have vm traps breakpoints, otherwise we could hit them later.
