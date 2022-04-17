@@ -203,8 +203,7 @@ static AppHighlightRangeData::NodePath makeNodePath(RefPtr<Node>&& node)
 
 static AppHighlightRangeData createAppHighlightRangeData(const StaticRange& range)
 {
-    auto text = plainText(range);
-    text.truncate(textPreviewLength);
+    auto text = plainText(range).left(textPreviewLength);
     auto identifier = createVersion4UUIDString();
 
     return {

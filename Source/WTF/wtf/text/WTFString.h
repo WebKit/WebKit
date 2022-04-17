@@ -196,9 +196,6 @@ public:
     String& replace(unsigned start, unsigned length, StringView replacement);
     template<unsigned characterCount> String& replaceWithLiteral(UChar target, const char (&replacement)[characterCount]);
 
-    // FIXME: This is identifical to left() and should probably be dropped.
-    WTF_EXPORT_PRIVATE void truncate(unsigned length);
-
     WTF_EXPORT_PRIVATE void remove(unsigned position, unsigned length = 1);
 
     WTF_EXPORT_PRIVATE String substring(unsigned position, unsigned length = MaxLength) const;

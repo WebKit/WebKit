@@ -1,3 +1,31 @@
+2022-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Drop String::truncate() and use String::left() instead
+        https://bugs.webkit.org/show_bug.cgi?id=239412
+
+        Reviewed by Darin Adler.
+
+        * Modules/highlight/AppHighlightStorage.cpp:
+        (WebCore::createAppHighlightRangeData):
+        * dom/FragmentDirectiveParser.cpp:
+        (WebCore::FragmentDirectiveParser::parseFragmentDirective):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent):
+        * loader/FTPDirectoryParser.h:
+        (WebCore::ListResult::clear):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::languageIdentifier):
+        * platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm:
+        (WebCore::contentTypesToCodecs):
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::scanDirectoryForDictionaries):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::extractURL):
+
 2022-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Image controls are editable and prevent drops in editable web views

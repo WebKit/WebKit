@@ -51,6 +51,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if USE(CF)
 #include <wtf/text/cf/StringConcatenateCF.h>
@@ -1339,9 +1340,7 @@ void InjectedBundlePage::willAddMessageToConsole(WKStringRef message)
         return;
 
     auto messageString = toWTFString(message);
-    size_t nullCharPos = messageString.find(UChar(0));
-    if (nullCharPos != WTF::notFound)
-        messageString.truncate(nullCharPos);
+    messageString = messageString.left(messageString.find(nullCharacter));
 
     size_t fileProtocolStart = messageString.find("file://");
     if (fileProtocolStart != WTF::notFound) {

@@ -100,9 +100,8 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
         ParsedTextDirective parsedTextDirective;
         
         if (tokens.first().endsWith('-') && tokens.first().length() > 1) {
-            tokens.first().truncate(tokens.first().length() - 2);
-            
-            if (auto prefix = WTF::URLParser::formURLDecode(tokens.takeFirst()))
+            auto takenFirstToken = tokens.takeFirst();
+            if (auto prefix = WTF::URLParser::formURLDecode(StringView(takenFirstToken).left(takenFirstToken.length() - 2)))
                 parsedTextDirective.prefix = WTFMove(*prefix);
             else
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode prefix ");

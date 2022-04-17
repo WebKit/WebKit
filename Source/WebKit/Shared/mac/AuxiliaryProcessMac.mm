@@ -636,10 +636,7 @@ static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParamet
     auto userDirectorySuffix = parameters.extraInitializationData.find<HashTranslatorASCIILiteral>("user-directory-suffix"_s);
     if (userDirectorySuffix != parameters.extraInitializationData.end()) {
         String suffix = userDirectorySuffix->value;
-        auto firstPathSeparator = suffix.find('/');
-        if (firstPathSeparator != notFound)
-            suffix.truncate(firstPathSeparator);
-        return suffix;
+        return suffix.left(suffix.find('/'));
     }
 
     String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());

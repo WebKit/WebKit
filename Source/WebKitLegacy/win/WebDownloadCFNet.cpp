@@ -192,8 +192,7 @@ HRESULT WebDownload::initToResumeWithBundle(_In_ BSTR bundlePath, _In_opt_ IWebD
     // Attempt to remove the ".download" extension from the bundle for the final file destination
     // Failing that, we clear m_destination and will ask the delegate later once the download starts
     if (m_bundlePath.endsWithIgnoringASCIICase(DownloadBundle::fileExtension())) {
-        m_destination = m_bundlePath.isolatedCopy();
-        m_destination.truncate(m_destination.length() - DownloadBundle::fileExtension().length());
+        m_destination = StringView(m_bundlePath).left(m_destination.length() - DownloadBundle::fileExtension().length()).toString().isolatedCopy();
     } else
         m_destination = String();
     

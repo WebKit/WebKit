@@ -715,6 +715,14 @@ void FrameLoader::setOutgoingReferrer(const URL& url)
     m_outgoingReferrer = url.strippedForUseAsReferrer();
 }
 
+static String extractContentLanguageFromHeader(const String& header)
+{
+    auto commaIndex = header.find(',');
+    if (commaIndex == notFound)
+        return stripLeadingAndTrailingHTMLSpaces(header);
+    return StringView(header).left(commaIndex).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString();
+}
+
 void FrameLoader::didBeginDocument(bool dispatch)
 {
     m_needsClear = true;
@@ -757,9 +765,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
 
         String headerContentLanguage = m_documentLoader->response().httpHeaderField(HTTPHeaderName::ContentLanguage);
         if (!headerContentLanguage.isEmpty()) {
-            size_t commaIndex = headerContentLanguage.find(',');
-            headerContentLanguage.truncate(commaIndex); // notFound == -1 == don't truncate
-            headerContentLanguage = stripLeadingAndTrailingHTMLSpaces(headerContentLanguage);
+            headerContentLanguage = extractContentLanguageFromHeader(headerContentLanguage);
             if (!headerContentLanguage.isEmpty())
                 m_frame.document()->setContentLanguage(headerContentLanguage);
         }

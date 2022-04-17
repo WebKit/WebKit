@@ -620,14 +620,12 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
     unsigned appendableLength = maxLength > baseLength ? maxLength - baseLength : 0;
 
     // Truncate the inserted text to avoid violating the maxLength and other constraints.
+    // FIXME: This may cause a lot of String allocations in the worst case scenario.
     String eventText = event.text();
     unsigned textLength = eventText.length();
     while (textLength > 0 && isHTMLLineBreak(eventText[textLength - 1]))
         textLength--;
-    eventText.truncate(textLength);
-    eventText.replace("\r\n", " ");
-    eventText.replace('\r', ' ');
-    eventText.replace('\n', ' ');
+    eventText = eventText.left(textLength).replace("\r\n", " ").replace('\r', ' ').replace('\n', ' ');
     event.setText(limitLength(eventText, appendableLength));
 }
 

@@ -662,7 +662,7 @@ static String languageIdentifier(const String& languageCode)
 
     // Need 2U here to disambiguate String::operator[] from operator(NSString*, int)[] in a production build.
     if (lowercaseLanguageCode.length() >= 3 && (lowercaseLanguageCode[2U] == '_' || lowercaseLanguageCode[2U] == '-'))
-        lowercaseLanguageCode.truncate(2);
+        lowercaseLanguageCode = lowercaseLanguageCode.left(2);
 
     return lowercaseLanguageCode;
 }

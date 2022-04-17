@@ -191,6 +191,14 @@ void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidat
         downcast<RenderImage>(*renderer()).setImageDevicePixelRatio(m_imageDevicePixelRatio);
 }
 
+static String extractMIMETypeFromTypeAttributeForLookup(const String& typeAttribute)
+{
+    auto semicolonIndex = typeAttribute.find(';');
+    if (semicolonIndex == notFound)
+        return stripLeadingAndTrailingHTMLSpaces(typeAttribute);
+    return StringView(typeAttribute).left(semicolonIndex).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toStringWithoutCopying();
+}
+
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 {
     RefPtr picture = pictureElement();
@@ -210,9 +218,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 
         auto& typeAttribute = source.attributeWithoutSynchronization(typeAttr);
         if (!typeAttribute.isNull()) {
-            String type = typeAttribute.string();
-            type.truncate(type.find(';'));
-            type = stripLeadingAndTrailingHTMLSpaces(type);
+            auto type = extractMIMETypeFromTypeAttributeForLookup(typeAttribute);
             if (!type.isEmpty() && !MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(type))
                 continue;
         }

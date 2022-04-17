@@ -45,12 +45,7 @@ static Vector<FourCC> contentTypesToCodecs(const Vector<ContentType>& contentTyp
         for (auto& codecString : codecStrings) {
             // https://tools.ietf.org/html/rfc6381
             // Within a 'codecs' parameter value, "." is reserved as a hierarchy delimiter
-            auto firstPeriod = codecString.find('.');
-            if (firstPeriod != notFound)
-                codecString.truncate(firstPeriod);
-
-            auto codecIdentifier = FourCC::fromString(StringView { codecString }.left(4));
-            if (codecIdentifier)
+            if (auto codecIdentifier = FourCC::fromString(StringView(codecString).left(codecString.find('.')).left(4)))
                 codecs.append(codecIdentifier.value());
         }
     }

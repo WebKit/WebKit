@@ -38,8 +38,7 @@ static String platformLanguage()
 
     String normalizedDefault = localeDefault;
     normalizedDefault.replace('_', '-');
-    normalizedDefault.truncate(normalizedDefault.find('.'));
-    return normalizedDefault;
+    return normalizedDefault.left(normalizedDefault.find('.'));
 }
 
 Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)

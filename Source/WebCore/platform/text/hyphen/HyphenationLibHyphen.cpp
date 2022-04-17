@@ -79,16 +79,14 @@ static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<Atom
         filePath = FileSystem::stringFromFileSystemRepresentation(normalizedPath);
         availableLocales.add(locale, Vector<String>()).iterator->value.append(filePath);
 
-        String localeReplacingUnderscores = String(locale);
+        String localeReplacingUnderscores = locale;
         localeReplacingUnderscores.replace('_', '-');
         if (locale != localeReplacingUnderscores)
             availableLocales.add(localeReplacingUnderscores, Vector<String>()).iterator->value.append(filePath);
 
         size_t dividerPosition = localeReplacingUnderscores.find('-');
-        if (dividerPosition != notFound) {
-            localeReplacingUnderscores.truncate(dividerPosition);
-            availableLocales.add(localeReplacingUnderscores, Vector<String>()).iterator->value.append(filePath);
-        }
+        if (dividerPosition != notFound)
+            availableLocales.add(localeReplacingUnderscores.left(dividerPosition), Vector<String>()).iterator->value.append(filePath);
     }
 }
 

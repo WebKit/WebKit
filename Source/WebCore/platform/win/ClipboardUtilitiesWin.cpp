@@ -119,15 +119,15 @@ static bool getWebLocData(const DragDataMap* dataObject, String& url, String* ti
     return true;
 }
 
-static String extractURL(const String &inURL, String* title)
+static String extractURL(const String& url, String* title)
 {
-    String url = inURL;
-    int splitLoc = url.find('\n');
-    if (splitLoc > 0) {
+    auto splitIndex = url.find('\n');
+    if (splitIndex != notFound) {
         if (title)
-            *title = url.substring(splitLoc+1);
-        url.truncate(splitLoc);
-    } else if (title)
+            *title = url.substring(splitIndex + 1);
+        return url.left(splitIndex);
+    }
+    if (title)
         *title = url;
     return url;
 }

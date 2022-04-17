@@ -85,12 +85,6 @@ UChar32 String::characterStartingAt(unsigned i) const
     return m_impl->characterStartingAt(i);
 }
 
-void String::truncate(unsigned position)
-{
-    if (m_impl)
-        m_impl = m_impl->substring(0, position);
-}
-
 template<typename CharacterType> inline void String::removeInternal(const CharacterType* characters, unsigned position, unsigned lengthToRemove)
 {
     CharacterType* data;

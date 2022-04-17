@@ -1,5 +1,24 @@
 2022-04-16  Chris Dumez  <cdumez@apple.com>
 
+        Drop String::truncate() and use String::left() instead
+        https://bugs.webkit.org/show_bug.cgi?id=239412
+
+        Reviewed by Darin Adler.
+
+        String::truncate() and String::left() have identical behavior. The only difference is that truncate()
+        modifies the String in place (which is a bit confusing), while left() returns a new String, without
+        modifying the original. To simplify our API, I am dropping String::truncate().
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::truncate): Deleted.
+        * wtf/text/WTFString.h:
+        * wtf/unix/LanguageUnix.cpp:
+        (WTF::platformLanguage):
+        * wtf/win/LanguageWin.cpp:
+        (WTF::localeInfo):
+
+2022-04-16  Chris Dumez  <cdumez@apple.com>
+
         Replace complex String::insert() with a simplified makeStringByInserting() free function
         https://bugs.webkit.org/show_bug.cgi?id=239370
 
