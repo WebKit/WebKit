@@ -1,3 +1,13 @@
+2022-04-17  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fixes after 249632@main
+        https://bugs.webkit.org/show_bug.cgi?id=239436
+
+        * workers/DedicatedWorkerThread.cpp:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerScriptLoader.cpp:
+        * workers/service/ServiceWorkerClientData.cpp:
+
 2022-04-17  Alan Bujtas  <zalan@apple.com>
 
         RenderDeprecatedFlexibleBox::applyLineClamp should use size_t

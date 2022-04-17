@@ -34,6 +34,7 @@
 
 #include "DedicatedWorkerGlobalScope.h"
 #include "SecurityOrigin.h"
+#include "ServiceWorker.h"
 #include "WorkerObjectProxy.h"
 
 namespace WebCore {
