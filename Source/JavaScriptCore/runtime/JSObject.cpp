@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -64,6 +64,7 @@ const ASCIILiteral UnconfigurablePropertyChangeAccessMechanismError { "Attemptin
 const ASCIILiteral UnconfigurablePropertyChangeConfigurabilityError { "Attempting to change configurable attribute of unconfigurable property."_s };
 const ASCIILiteral UnconfigurablePropertyChangeEnumerabilityError { "Attempting to change enumerable attribute of unconfigurable property."_s };
 const ASCIILiteral UnconfigurablePropertyChangeWritabilityError { "Attempting to change writable attribute of unconfigurable property."_s };
+const ASCIILiteral PrototypeValueCanOnlyBeAnObjectOrNullTypeError { "Prototype value can only be an object or null"_s };
 
 const ClassInfo JSObject::s_info = { "Object"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSObject) };
 
@@ -1873,9 +1874,11 @@ void JSObject::switchToSlowPutArrayStorage(VM& vm)
 
 void JSObject::setPrototypeDirect(VM& vm, JSValue prototype)
 {
-    ASSERT(prototype);
+    ASSERT(prototype.isObject() || prototype.isNull());
     if (prototype.isObject())
         asObject(prototype)->didBecomePrototype();
+    else if (UNLIKELY(!prototype.isNull())) // Conservative hardening.
+        return;
     
     if (structure()->hasMonoProto()) {
         DeferredStructureTransitionWatchpointFire deferred(vm, structure());
@@ -1925,6 +1928,12 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, JSGlobalObject* globalObject, 
 
     if (!isExtensible)
         return typeError(globalObject, scope, shouldThrowIfCantSet, ReadonlyPropertyWriteError);
+
+    // Some clients would have already done this check because of the order of the check
+    // specified in their respective specifications. However, we still do this check here
+    // to document and enforce this invariant about the nature of prototype.
+    if (UNLIKELY(!prototype.isObject() && !prototype.isNull()))
+        return typeError(globalObject, scope, shouldThrowIfCantSet, PrototypeValueCanOnlyBeAnObjectOrNullTypeError);
 
     JSValue nextPrototype = prototype;
     while (nextPrototype && nextPrototype.isObject()) {

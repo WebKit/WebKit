@@ -1,5 +1,19 @@
 2022-04-16  Mark Lam  <mark.lam@apple.com>
 
+        Harden JSObject::setPrototypeOf.
+        https://bugs.webkit.org/show_bug.cgi?id=239440
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::setPrototypeDirect):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        * runtime/JSObject.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+
+2022-04-16  Mark Lam  <mark.lam@apple.com>
+
         Fix a deadlock in VMTraps.
         https://bugs.webkit.org/show_bug.cgi?id=239421
         <rdar://problem/91851592>

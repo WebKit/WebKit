@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2022 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -160,7 +160,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorSetPrototypeOf, (JSGlobalObject* globa
 
     JSValue protoValue = callFrame->argument(1);
     if (!protoValue.isObject() && !protoValue.isNull())
-        return throwVMTypeError(globalObject, scope, "Prototype value can only be an object or null"_s);
+        return throwVMTypeError(globalObject, scope, PrototypeValueCanOnlyBeAnObjectOrNullTypeError);
 
     JSObject* object = objectValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
