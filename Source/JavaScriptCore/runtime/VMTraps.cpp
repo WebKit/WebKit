@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -225,16 +225,19 @@ public:
                 ASSERT(currentCodeBlock->hasInstalledVMTrapBreakpoints());
                 VM& vm = currentCodeBlock->vm();
 
-                // Even though we know the mutator thread is not in C++ code and therefore, not holding
-                // this lock, the sampling profiler may have acquired this lock before acquiring
-                // ThreadSuspendLocker and suspending the mutator. Since VMTraps acquires the
-                // ThreadSuspendLocker first, we can deadlock with the Sampling Profiler thread, and
-                // leave the mutator in a suspended state, or forever blocked on the codeBlockSet lock.
-                Lock& codeBlockSetLock = vm.heap.codeBlockSet().getLock();
-                if (!codeBlockSetLock.tryLock())
-                    return SignalAction::NotHandled;
-
-                Locker codeBlockSetLocker { AdoptLock, codeBlockSetLock };
+                // This signal handler is triggered by the mutator thread due to the installed halt instructions
+                // in JIT code (which we already confirmed above). Hence, the current thread (the mutator)
+                // cannot be in C++ code, and therefore, cannot be already holding the codeBlockSet lock.
+                // The only time the codeBlockSet lock could be in contention is if the Sampling Profiler thread
+                // is holding it. In that case, we'll simply wait till the Sampling Profiler is done with it.
+                // There are no lock ordering issues w.r.t. the Sampling Profiler on this code path.
+                //
+                // Note that it is not ok to return SignalAction::NotHandled here if we see contention. Doing
+                // so will cause the fault to be handled by the default handler, which will crash. It is also not
+                // productive to return SignalAction::Handled on contention. Doing so will simply trigger this
+                // fault handler over and over again. We might as well wait for the Sampling Profiler to release
+                // the lock, which is what we do here.
+                Locker codeBlockSetLocker { vm.heap.codeBlockSet().getLock() };
 
                 bool sawCurrentCodeBlock = false;
                 vm.heap.forEachCodeBlockIgnoringJITPlans(codeBlockSetLocker, [&] (CodeBlock* codeBlock) {

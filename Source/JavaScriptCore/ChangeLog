@@ -1,3 +1,29 @@
+2022-04-18  Mark Lam  <mark.lam@apple.com>
+
+        The VMTraps signal handler should no return SignalAction::NotHandled on codeBlockSet lock contention.
+        https://bugs.webkit.org/show_bug.cgi?id=239457
+
+        Reviewed by Yusuke Suzuki.
+
+        The signal handler is triggered by the mutator thread due to the installed halt
+        instructions in JIT code (which we already confirmed higher up in the signal handler).
+        Hence, the mutator cannot be in C++ code, and therefore, cannot be already holding
+        the codeBlockSet lock.  The only time the codeBlockSet lock could be in contention
+        is if the Sampling Profiler thread is holding it.  In that case, we'll simply wait
+        till the Sampling Profiler is done with it.  There are no lock ordering issues w.r.t.
+        the Sampling Profiler on this code path.
+
+        Note that it is not ok to return SignalAction::NotHandled here if we see contention.
+        Doing so will cause the fault to be handled by the default handler, which will crash.
+        It is also not productive to return SignalAction::Handled on contention.  Doing so
+        will simply trigger this fault handler over and over again.  We might as well wait
+        for the Sampling Profiler to release the lock, which is what we should do.
+
+        This issue was detected by the stress/get-array-length-concurrently-change-mode.js.ftl-no-cjit-validate-sampling-profiler
+        test, resulting in intermittent crashes.
+
+        * runtime/VMTraps.cpp:
+
 2022-04-18  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Use XCBuild for all command-line and project builds
