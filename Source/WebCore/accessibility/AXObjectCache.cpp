@@ -3563,7 +3563,7 @@ AXTreeData AXObjectCache::treeData()
 
     stream << "\nAXObjectTree:\n";
     if (auto* root = get(document().view())) {
-        constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID };
+        constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role };
         streamSubtree(stream, root, options);
     } else
         stream << "No root!";

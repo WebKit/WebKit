@@ -1,3 +1,81 @@
+2022-04-18  Tyler Wilcock  <tyler_w@apple.com>
+
+        Node changes created by AXIsolatedTree::updateNode are overwritten when performed during AXIsolatedTree::collectNodeChangesForSubtree
+        https://bugs.webkit.org/show_bug.cgi?id=239398
+
+        Reviewed by Andres Gonzalez.
+
+        We currently do the wrong thing in this scenario:
+
+          1. A dynamic page change causes an element to be included on the page, so we
+             create a node change for it and its subtree by calling collectNodeChangesForSubtree.
+             This causes a call to children() on the live object.
+
+          2. In the process of (or after) updating the children of the live object, we perform some
+             operation that triggers AXIsolatedTree::updateNode on said object. AccessibilityRenderObject::updateRoleAfterChildrenCreation
+             would be an example of this if it were properly coded to update the isolated tree if
+             the object's role changes (I'll address that in a separate patch). updateNode results
+             in a node change with the correct properties being added to m_pendingAppends.
+
+          3. collectNodeChangesForSubtree (started in step 1) finishes, and queues a node change
+             for the same object, but with the wrong properties (because it was created before step 2).
+             Because it comes after the node change added in step 2 to m_pendingAppends, it wins,
+             and we add an object with the wrong properties to the tree.
+
+        This patch fixes this with a new AXIsolatedTree::m_unresolvedPendingAppends member
+        variable. This is a HashMap with an AXID key, representing the object to create a node
+        change for. Now, both collectNodeChangesForSubtree and updateNode will add an entry
+        to this HashMap, allowing it to be resolved it (i.e. by creating the node change) at a later time.
+
+        This is both more correct (as it prevents any ordering bugs entirely), and more
+        efficient, because we now never create multiple node changes for the same object.
+
+        This patch also necessitated other code cleanup items:
+          - m_unresolvedPendingAppends allows us to remove the `idsBeingChanged` parameter
+            we passed to several functions since this member variable does the same thing.
+
+          - m_pendingNodeRemovals has been deleted. The only thing adding to this was
+            AXIsolatedTree::updateNode, and it did so unnecessarily, since we already handle
+            the case where we are replacing an existing object when proessing m_pendingAppends.
+
+        This patch also fixes an issue found by Andres Gonzalez in https://bugs.webkit.org/show_bug.cgi?id=239402.
+        AXIsolatedTree::updateNode should not immediately attach the wrapper to the new object on the main thread
+        since it could be in use on the AX thread. To make this more clear, the `attachWrapper` parameter has been
+        changed from a bool to an enum called AttachWrapper with values `OnMainThread` and `OnAXThread`.
+
+        Fixes six tests in isolated tree mode:
+          - accessibility/aria-labelledby-overrides-label.html
+          - accessibility/aria-role-on-label.html
+          - accessibility/mac/label-element-all-text-string-value.html
+          - accessibility/mac/label-element-with-hidden-control.html
+          - accessibility/mac/label-element-all-text-string-value.html
+          - accessibility/mac/slider-allows-title-ui-element.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::treeData):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::create):
+        (WebCore::AXIsolatedTree::generateSubtree):
+        (WebCore::AXIsolatedTree::nodeChangeForObject):
+        (WebCore::AXIsolatedTree::queueRemovals):
+        Added. Allows you to queue objects for removal from contexts where you
+        don't already hold a lock.
+        (WebCore::AXIsolatedTree::queueRemovalsLocked):
+        Added. Allows you to queue objects for removal from contexts where you
+        already hold a lock.
+        (WebCore::AXIsolatedTree::queueRemovalsAndUnresolvedChanges):
+        Added. Replaces AXIsolatedTree::queueChangesAndRemovals.
+        (WebCore::AXIsolatedTree::collectNodeChangesForSubtree):
+        (WebCore::AXIsolatedTree::updateNode):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::removeNode):
+        (WebCore::AXIsolatedTree::removeSubtreeFromNodeMap):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        Change local variable name from object to existingObject as this makes
+        the code much more clear.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        (WebCore::AXIsolatedTree::queueChangesAndRemovals): Deleted.
+
 2022-04-18  Chris Dumez  <cdumez@apple.com>
 
         Optimize nodeHasRole()
