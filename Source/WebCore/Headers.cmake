@@ -976,16 +976,16 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/InlineRect.h
 
-    layout/integration/InlineIteratorBox.h
-    layout/integration/InlineIteratorBoxLegacyPath.h
-    layout/integration/InlineIteratorBoxModernPath.h
-    layout/integration/InlineIteratorLineBox.h
-    layout/integration/InlineIteratorLineBoxLegacyPath.h
-    layout/integration/InlineIteratorLineBoxModernPath.h
-    layout/integration/InlineIteratorLogicalOrderTraversal.h
-    layout/integration/InlineIteratorTextBox.h
-    layout/integration/LayoutIntegrationInlineContent.h
-    layout/integration/LayoutIntegrationLine.h
+    layout/integration/inline/InlineIteratorBox.h
+    layout/integration/inline/InlineIteratorBoxLegacyPath.h
+    layout/integration/inline/InlineIteratorBoxModernPath.h
+    layout/integration/inline/InlineIteratorLineBox.h
+    layout/integration/inline/InlineIteratorLineBoxLegacyPath.h
+    layout/integration/inline/InlineIteratorLineBoxModernPath.h
+    layout/integration/inline/InlineIteratorLogicalOrderTraversal.h
+    layout/integration/inline/InlineIteratorTextBox.h
+    layout/integration/inline/LayoutIntegrationInlineContent.h
+    layout/integration/inline/LayoutIntegrationLine.h
 
     layout/layouttree/LayoutContainerBox.h
     layout/layouttree/LayoutBox.h

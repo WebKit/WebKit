@@ -1,3 +1,429 @@
+2022-04-18  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Move inline integration under layout/integration/inline
+        https://bugs.webkit.org/show_bug.cgi?id=239441
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for implementing additional integrated FCs.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/integration/inline/InlineIteratorBox.cpp: Renamed from Source/WebCore/layout/integration/InlineIteratorBox.cpp.
+        (WebCore::InlineIterator::BoxIterator::BoxIterator):
+        (WebCore::InlineIterator::BoxIterator::operator== const):
+        (WebCore::InlineIterator::BoxIterator::atEnd const):
+        (WebCore::InlineIterator::Box::nextOnLine const):
+        (WebCore::InlineIterator::Box::previousOnLine const):
+        (WebCore::InlineIterator::Box::nextOnLineIgnoringLineBreak const):
+        (WebCore::InlineIterator::Box::previousOnLineIgnoringLineBreak const):
+        (WebCore::InlineIterator::Box::lineBox const):
+        (WebCore::InlineIterator::Box::style const):
+        (WebCore::InlineIterator::Box::selectionState const):
+        (WebCore::InlineIterator::LeafBoxIterator::LeafBoxIterator):
+        (WebCore::InlineIterator::LeafBoxIterator::traverseNextOnLine):
+        (WebCore::InlineIterator::LeafBoxIterator::traversePreviousOnLine):
+        (WebCore::InlineIterator::LeafBoxIterator::traverseNextOnLineIgnoringLineBreak):
+        (WebCore::InlineIterator::LeafBoxIterator::traversePreviousOnLineIgnoringLineBreak):
+        (WebCore::InlineIterator::boxFor):
+        (WebCore::InlineIterator::Box::modernPath const):
+        (WebCore::InlineIterator::Box::legacyPath const):
+        * layout/integration/inline/InlineIteratorBox.h: Renamed from Source/WebCore/layout/integration/InlineIteratorBox.h.
+        (WebCore::InlineIterator::Box::logicalTop const):
+        (WebCore::InlineIterator::Box::logicalBottom const):
+        (WebCore::InlineIterator::Box::logicalLeft const):
+        (WebCore::InlineIterator::Box::logicalRight const):
+        (WebCore::InlineIterator::Box::logicalWidth const):
+        (WebCore::InlineIterator::Box::logicalHeight const):
+        (WebCore::InlineIterator::Box::leftmostCaretOffset const):
+        (WebCore::InlineIterator::Box::rightmostCaretOffset const):
+        (WebCore::InlineIterator::Box::direction const):
+        (WebCore::InlineIterator::Box::isLeftToRightDirection const):
+        (WebCore::InlineIterator::BoxIterator::operator bool const):
+        (WebCore::InlineIterator::BoxIterator::operator!= const):
+        (WebCore::InlineIterator::BoxIterator::operator== const):
+        (WebCore::InlineIterator::BoxIterator::operator* const):
+        (WebCore::InlineIterator::BoxIterator::operator-> const):
+        (WebCore::InlineIterator::BoxIterator::BoxIterator):
+        (WebCore::InlineIterator::Box::Box):
+        (WebCore::InlineIterator::Box::isText const):
+        (WebCore::InlineIterator::Box::isInlineBox const):
+        (WebCore::InlineIterator::Box::isRootInlineBox const):
+        (WebCore::InlineIterator::Box::visualRect const):
+        (WebCore::InlineIterator::Box::visualRectIgnoringBlockDirection const):
+        (WebCore::InlineIterator::Box::isHorizontal const):
+        (WebCore::InlineIterator::Box::isLineBreak const):
+        (WebCore::InlineIterator::Box::minimumCaretOffset const):
+        (WebCore::InlineIterator::Box::maximumCaretOffset const):
+        (WebCore::InlineIterator::Box::bidiLevel const):
+        (WebCore::InlineIterator::Box::renderer const):
+        (WebCore::InlineIterator::Box::legacyInlineBox const):
+        (WebCore::InlineIterator::Box::inlineBox const):
+        * layout/integration/inline/InlineIteratorBoxLegacyPath.h: Renamed from Source/WebCore/layout/integration/InlineIteratorBoxLegacyPath.h.
+        (WebCore::InlineIterator::BoxLegacyPath::BoxLegacyPath):
+        (WebCore::InlineIterator::BoxLegacyPath::isText const):
+        (WebCore::InlineIterator::BoxLegacyPath::isInlineBox const):
+        (WebCore::InlineIterator::BoxLegacyPath::isRootInlineBox const):
+        (WebCore::InlineIterator::BoxLegacyPath::visualRectIgnoringBlockDirection const):
+        (WebCore::InlineIterator::BoxLegacyPath::isHorizontal const):
+        (WebCore::InlineIterator::BoxLegacyPath::isLineBreak const):
+        (WebCore::InlineIterator::BoxLegacyPath::minimumCaretOffset const):
+        (WebCore::InlineIterator::BoxLegacyPath::maximumCaretOffset const):
+        (WebCore::InlineIterator::BoxLegacyPath::bidiLevel const):
+        (WebCore::InlineIterator::BoxLegacyPath::hasHyphen const):
+        (WebCore::InlineIterator::BoxLegacyPath::text const):
+        (WebCore::InlineIterator::BoxLegacyPath::start const):
+        (WebCore::InlineIterator::BoxLegacyPath::end const):
+        (WebCore::InlineIterator::BoxLegacyPath::length const):
+        (WebCore::InlineIterator::BoxLegacyPath::selectableRange const):
+        (WebCore::InlineIterator::BoxLegacyPath::createTextRun const):
+        (WebCore::InlineIterator::BoxLegacyPath::renderer const):
+        (WebCore::InlineIterator::BoxLegacyPath::traverseNextTextBox):
+        (WebCore::InlineIterator::BoxLegacyPath::traverseNextOnLine):
+        (WebCore::InlineIterator::BoxLegacyPath::traversePreviousOnLine):
+        (WebCore::InlineIterator::BoxLegacyPath::traverseNextInlineBox):
+        (WebCore::InlineIterator::BoxLegacyPath::traversePreviousInlineBox):
+        (WebCore::InlineIterator::BoxLegacyPath::firstLeafBoxForInlineBox const):
+        (WebCore::InlineIterator::BoxLegacyPath::lastLeafBoxForInlineBox const):
+        (WebCore::InlineIterator::BoxLegacyPath::operator== const):
+        (WebCore::InlineIterator::BoxLegacyPath::atEnd const):
+        (WebCore::InlineIterator::BoxLegacyPath::legacyInlineBox const):
+        (WebCore::InlineIterator::BoxLegacyPath::rootInlineBox const):
+        (WebCore::InlineIterator::BoxLegacyPath::inlineTextBox const):
+        (WebCore::InlineIterator::BoxLegacyPath::inlineFlowBox const):
+        * layout/integration/inline/InlineIteratorBoxModernPath.h: Renamed from Source/WebCore/layout/integration/InlineIteratorBoxModernPath.h.
+        (WebCore::InlineIterator::BoxModernPath::BoxModernPath):
+        (WebCore::InlineIterator::BoxModernPath::isText const):
+        (WebCore::InlineIterator::BoxModernPath::isInlineBox const):
+        (WebCore::InlineIterator::BoxModernPath::isRootInlineBox const):
+        (WebCore::InlineIterator::BoxModernPath::visualRectIgnoringBlockDirection const):
+        (WebCore::InlineIterator::BoxModernPath::isHorizontal const):
+        (WebCore::InlineIterator::BoxModernPath::isLineBreak const):
+        (WebCore::InlineIterator::BoxModernPath::minimumCaretOffset const):
+        (WebCore::InlineIterator::BoxModernPath::maximumCaretOffset const):
+        (WebCore::InlineIterator::BoxModernPath::bidiLevel const):
+        (WebCore::InlineIterator::BoxModernPath::hasHyphen const):
+        (WebCore::InlineIterator::BoxModernPath::text const):
+        (WebCore::InlineIterator::BoxModernPath::start const):
+        (WebCore::InlineIterator::BoxModernPath::end const):
+        (WebCore::InlineIterator::BoxModernPath::length const):
+        (WebCore::InlineIterator::BoxModernPath::selectableRange const):
+        (WebCore::InlineIterator::BoxModernPath::createTextRun const):
+        (WebCore::InlineIterator::BoxModernPath::renderer const):
+        (WebCore::InlineIterator::BoxModernPath::traverseNextTextBox):
+        (WebCore::InlineIterator::BoxModernPath::traverseNextOnLine):
+        (WebCore::InlineIterator::BoxModernPath::traversePreviousOnLine):
+        (WebCore::InlineIterator::BoxModernPath::traverseNextInlineBox):
+        (WebCore::InlineIterator::BoxModernPath::traversePreviousInlineBox):
+        (WebCore::InlineIterator::BoxModernPath::firstLeafBoxForInlineBox const):
+        (WebCore::InlineIterator::BoxModernPath::lastLeafBoxForInlineBox const):
+        (WebCore::InlineIterator::BoxModernPath::operator== const):
+        (WebCore::InlineIterator::BoxModernPath::atEnd const):
+        (WebCore::InlineIterator::BoxModernPath::box const):
+        (WebCore::InlineIterator::BoxModernPath::inlineContent const):
+        (WebCore::InlineIterator::BoxModernPath::isWithinInlineBox):
+        (WebCore::InlineIterator::BoxModernPath::traverseNextBox):
+        (WebCore::InlineIterator::BoxModernPath::traversePreviousBox):
+        (WebCore::InlineIterator::BoxModernPath::traverseNextLeaf):
+        (WebCore::InlineIterator::BoxModernPath::traversePreviousLeaf):
+        (WebCore::InlineIterator::BoxModernPath::traverseNextWithSameLayoutBox):
+        (WebCore::InlineIterator::BoxModernPath::traversePreviousWithSameLayoutBox):
+        (WebCore::InlineIterator::BoxModernPath::setAtEnd):
+        (WebCore::InlineIterator::BoxModernPath::boxes const):
+        (WebCore::InlineIterator::BoxModernPath::line const):
+        (WebCore::InlineIterator::BoxModernPath::renderText const):
+        (WebCore::InlineIterator::BoxModernPath::direction const):
+        * layout/integration/inline/InlineIteratorInlineBox.cpp: Renamed from Source/WebCore/layout/integration/InlineIteratorInlineBox.cpp.
+        (WebCore::InlineIterator::InlineBox::InlineBox):
+        (WebCore::InlineIterator::InlineBox::hasClosedLeftAndRightEdge const):
+        (WebCore::InlineIterator::InlineBox::nextInlineBox const):
+        (WebCore::InlineIterator::InlineBox::previousInlineBox const):
+        (WebCore::InlineIterator::InlineBox::firstLeafBox const):
+        (WebCore::InlineIterator::InlineBox::lastLeafBox const):
+        (WebCore::InlineIterator::InlineBox::endLeafBox const):
+        (WebCore::InlineIterator::InlineBoxIterator::InlineBoxIterator):
+        (WebCore::InlineIterator::InlineBoxIterator::traverseNextInlineBox):
+        (WebCore::InlineIterator::InlineBoxIterator::traversePreviousInlineBox):
+        (WebCore::InlineIterator::firstInlineBoxFor):
+        (WebCore::InlineIterator::firstRootInlineBoxFor):
+        (WebCore::InlineIterator::inlineBoxFor):
+        * layout/integration/inline/InlineIteratorInlineBox.h: Renamed from Source/WebCore/layout/integration/InlineIteratorInlineBox.h.
+        (WebCore::InlineIterator::InlineBox::renderer const):
+        (WebCore::InlineIterator::InlineBox::legacyInlineBox const):
+        (WebCore::InlineIterator::InlineBoxIterator::InlineBoxIterator):
+        (WebCore::InlineIterator::InlineBoxIterator::operator* const):
+        (WebCore::InlineIterator::InlineBoxIterator::operator-> const):
+        (WebCore::InlineIterator::InlineBoxIterator::get const):
+        (WebCore::InlineIterator::InlineBox::iterator const):
+        (isType):
+        * layout/integration/inline/InlineIteratorLineBox.cpp: Renamed from Source/WebCore/layout/integration/InlineIteratorLineBox.cpp.
+        (WebCore::InlineIterator::LineBoxIterator::LineBoxIterator):
+        (WebCore::InlineIterator::LineBoxIterator::atEnd const):
+        (WebCore::InlineIterator::LineBoxIterator::traverseNext):
+        (WebCore::InlineIterator::LineBoxIterator::traversePrevious):
+        (WebCore::InlineIterator::LineBoxIterator::operator== const):
+        (WebCore::InlineIterator::firstLineBoxFor):
+        (WebCore::InlineIterator::lastLineBoxFor):
+        (WebCore::InlineIterator::LineBox::next const):
+        (WebCore::InlineIterator::LineBox::previous const):
+        (WebCore::InlineIterator::LineBox::firstLeafBox const):
+        (WebCore::InlineIterator::LineBox::lastLeafBox const):
+        (WebCore::InlineIterator::closestBoxForHorizontalPosition):
+        * layout/integration/inline/InlineIteratorLineBox.h: Renamed from Source/WebCore/layout/integration/InlineIteratorLineBox.h.
+        (WebCore::InlineIterator::LineBox::height const):
+        (WebCore::InlineIterator::LineBoxIterator::LineBoxIterator):
+        (WebCore::InlineIterator::LineBoxIterator::operator++):
+        (WebCore::InlineIterator::LineBoxIterator::operator bool const):
+        (WebCore::InlineIterator::LineBoxIterator::operator!= const):
+        (WebCore::InlineIterator::LineBoxIterator::operator== const):
+        (WebCore::InlineIterator::LineBoxIterator::operator* const):
+        (WebCore::InlineIterator::LineBoxIterator::operator-> const):
+        (WebCore::InlineIterator::previousLineBoxContentBottomOrBorderAndPadding):
+        (WebCore::InlineIterator::contentStartInBlockDirection):
+        (WebCore::InlineIterator::LineBox::LineBox):
+        (WebCore::InlineIterator::LineBox::contentLogicalTop const):
+        (WebCore::InlineIterator::LineBox::contentLogicalBottom const):
+        (WebCore::InlineIterator::LineBox::contentLogicalTopAdjustedForPrecedingLineBox const):
+        (WebCore::InlineIterator::LineBox::contentLogicalBottomAdjustedForFollowingLineBox const):
+        (WebCore::InlineIterator::LineBox::top const):
+        (WebCore::InlineIterator::LineBox::bottom const):
+        (WebCore::InlineIterator::LineBox::inkOverflowTop const):
+        (WebCore::InlineIterator::LineBox::inkOverflowBottom const):
+        (WebCore::InlineIterator::LineBox::contentLogicalLeft const):
+        (WebCore::InlineIterator::LineBox::contentLogicalRight const):
+        (WebCore::InlineIterator::LineBox::contentLogicalWidth const):
+        (WebCore::InlineIterator::LineBox::isHorizontal const):
+        (WebCore::InlineIterator::LineBox::baselineType const):
+        (WebCore::InlineIterator::LineBox::containingBlock const):
+        (WebCore::InlineIterator::LineBox::containingFragment const):
+        (WebCore::InlineIterator::LineBox::isFirstAfterPageBreak const):
+        (WebCore::InlineIterator::LineBox::isFirst const):
+        * layout/integration/inline/InlineIteratorLineBoxLegacyPath.h: Renamed from Source/WebCore/layout/integration/InlineIteratorLineBoxLegacyPath.h.
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::LineBoxIteratorLegacyPath):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::contentLogicalTop const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::contentLogicalBottom const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::contentLogicalTopAdjustedForPrecedingLineBox const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::contentLogicalBottomAdjustedForFollowingLineBox const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::top const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::bottom const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::inkOverflowTop const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::inkOverflowBottom const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::contentLogicalLeft const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::contentLogicalRight const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::isHorizontal const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::baselineType const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::containingBlock const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::containingFragment const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::isFirstAfterPageBreak const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::traverseNext):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::traversePrevious):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::operator== const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::atEnd const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::firstLeafBox const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::lastLeafBox const):
+        * layout/integration/inline/InlineIteratorLineBoxModernPath.h: Renamed from Source/WebCore/layout/integration/InlineIteratorLineBoxModernPath.h.
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::LineBoxIteratorModernPath):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::contentLogicalTop const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::contentLogicalBottom const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::top const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::bottom const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::inkOverflowTop const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::inkOverflowBottom const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::contentLogicalTopAdjustedForPrecedingLineBox const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::contentLogicalBottomAdjustedForFollowingLineBox const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::contentLogicalLeft const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::contentLogicalRight const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::isHorizontal const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::baselineType const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::containingBlock const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::containingFragment const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::isFirstAfterPageBreak const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::traverseNext):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::traversePrevious):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::operator== const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::atEnd const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::firstLeafBox const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::lastLeafBox const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::setAtEnd):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::lines const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::line const):
+        * layout/integration/inline/InlineIteratorLogicalOrderTraversal.cpp: Renamed from Source/WebCore/layout/integration/InlineIteratorLogicalOrderTraversal.cpp.
+        (WebCore::InlineIterator::makeTextLogicalOrderCacheIfNeeded):
+        (WebCore::InlineIterator::updateTextLogicalOrderCacheIfNeeded):
+        (WebCore::InlineIterator::firstTextBoxInLogicalOrderFor):
+        (WebCore::InlineIterator::nextTextBoxInLogicalOrder):
+        (WebCore::InlineIterator::makeLineLogicalOrderCache):
+        (WebCore::InlineIterator::updateLineLogicalOrderCacheIfNeeded):
+        (WebCore::InlineIterator::firstLeafOnLineInLogicalOrder):
+        (WebCore::InlineIterator::lastLeafOnLineInLogicalOrder):
+        (WebCore::InlineIterator::nextLeafOnLineInLogicalOrder):
+        (WebCore::InlineIterator::previousLeafOnLineInLogicalOrder):
+        (WebCore::InlineIterator::firstLeafOnLineInLogicalOrderWithNode):
+        (WebCore::InlineIterator::lastLeafOnLineInLogicalOrderWithNode):
+        * layout/integration/inline/InlineIteratorLogicalOrderTraversal.h: Renamed from Source/WebCore/layout/integration/InlineIteratorLogicalOrderTraversal.h.
+        (WebCore::InlineIterator::leafBoxesInLogicalOrder):
+        * layout/integration/inline/InlineIteratorTextBox.cpp: Renamed from Source/WebCore/layout/integration/InlineIteratorTextBox.cpp.
+        (WebCore::InlineIterator::TextBox::nextTextBox const):
+        (WebCore::InlineIterator::TextBox::selectionRect const):
+        (WebCore::InlineIterator::TextBox::offsetForPosition const):
+        (WebCore::InlineIterator::TextBox::positionForOffset const):
+        (WebCore::InlineIterator::TextBox::isCombinedText const):
+        (WebCore::InlineIterator::TextBox::fontCascade const):
+        (WebCore::InlineIterator::TextBoxIterator::TextBoxIterator):
+        (WebCore::InlineIterator::TextBoxIterator::traverseNextTextBox):
+        (WebCore::InlineIterator::firstTextBoxFor):
+        (WebCore::InlineIterator::textBoxFor):
+        (WebCore::InlineIterator::textBoxesFor):
+        * layout/integration/inline/InlineIteratorTextBox.h: Renamed from Source/WebCore/layout/integration/InlineIteratorTextBox.h.
+        (WebCore::InlineIterator::TextBox::renderer const):
+        (WebCore::InlineIterator::TextBox::legacyInlineBox const):
+        (WebCore::InlineIterator::TextBoxIterator::TextBoxIterator):
+        (WebCore::InlineIterator::TextBoxIterator::operator++):
+        (WebCore::InlineIterator::TextBoxIterator::operator* const):
+        (WebCore::InlineIterator::TextBoxIterator::operator-> const):
+        (WebCore::InlineIterator::TextBoxIterator::get const):
+        (WebCore::InlineIterator::TextBoxRange::TextBoxRange):
+        (WebCore::InlineIterator::TextBoxRange::begin const):
+        (WebCore::InlineIterator::TextBoxRange::end const):
+        (WebCore::InlineIterator::TextBox::hasHyphen const):
+        (WebCore::InlineIterator::TextBox::TextBox):
+        (WebCore::InlineIterator::TextBox::text const):
+        (WebCore::InlineIterator::TextBox::start const):
+        (WebCore::InlineIterator::TextBox::end const):
+        (WebCore::InlineIterator::TextBox::length const):
+        (WebCore::InlineIterator::TextBox::selectableRange const):
+        (WebCore::InlineIterator::TextBox::createTextRun const):
+        (isType):
+        * layout/integration/inline/LayoutIntegrationInlineContent.cpp: Renamed from Source/WebCore/layout/integration/LayoutIntegrationInlineContent.cpp.
+        (WebCore::LayoutIntegration::InlineContent::InlineContent):
+        (WebCore::LayoutIntegration::InlineContent::hasContent const):
+        (WebCore::LayoutIntegration:: const):
+        (WebCore::LayoutIntegration::InlineContent::~InlineContent):
+        (WebCore::LayoutIntegration::InlineContent::rendererForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::containingBlock const):
+        (WebCore::LayoutIntegration::InlineContent::indexForBox const):
+        (WebCore::LayoutIntegration::InlineContent::firstBoxForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::firstBoxIndexForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::nonRootInlineBoxIndexesForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::clearAndDetach):
+        (WebCore::LayoutIntegration::InlineContent::releaseCaches):
+        (WebCore::LayoutIntegration::InlineContent::shrinkToFit):
+        * layout/integration/inline/LayoutIntegrationInlineContent.h: Renamed from Source/WebCore/layout/integration/LayoutIntegrationInlineContent.h.
+        (WebCore::LayoutIntegration::InlineContent::create):
+        (WebCore::LayoutIntegration::InlineContent::hasVisualOverflow const):
+        (WebCore::LayoutIntegration::InlineContent::setHasVisualOverflow):
+        (WebCore::LayoutIntegration::InlineContent::lineForBox const):
+        (WebCore::LayoutIntegration::InlineContent::lineLayout const):
+        (WebCore::LayoutIntegration::InlineContent::traverseNonRootInlineBoxes):
+        * layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp: Renamed from Source/WebCore/layout/integration/LayoutIntegrationInlineContentBuilder.cpp.
+        (WebCore::LayoutIntegration::operator+):
+        (WebCore::LayoutIntegration::lineOverflowLogicalWidth):
+        (WebCore::LayoutIntegration::InlineContentBuilder::InlineContentBuilder):
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        * layout/integration/inline/LayoutIntegrationInlineContentBuilder.h: Renamed from Source/WebCore/layout/integration/LayoutIntegrationInlineContentBuilder.h.
+        * layout/integration/inline/LayoutIntegrationLine.h: Renamed from Source/WebCore/layout/integration/LayoutIntegrationLine.h.
+        (WebCore::LayoutIntegration::Line::Line):
+        (WebCore::LayoutIntegration::Line::firstBoxIndex const):
+        (WebCore::LayoutIntegration::Line::boxCount const):
+        (WebCore::LayoutIntegration::Line::lineBoxTop const):
+        (WebCore::LayoutIntegration::Line::lineBoxBottom const):
+        (WebCore::LayoutIntegration::Line::lineBoxLeft const):
+        (WebCore::LayoutIntegration::Line::lineBoxRight const):
+        (WebCore::LayoutIntegration::Line::lineBoxHeight const):
+        (WebCore::LayoutIntegration::Line::lineBoxWidth const):
+        (WebCore::LayoutIntegration::Line::enclosingContentTop const):
+        (WebCore::LayoutIntegration::Line::enclosingContentBottom const):
+        (WebCore::LayoutIntegration::Line::scrollableOverflow const):
+        (WebCore::LayoutIntegration::Line::inkOverflow const):
+        (WebCore::LayoutIntegration::Line::baseline const):
+        (WebCore::LayoutIntegration::Line::baselineType const):
+        (WebCore::LayoutIntegration::Line::isHorizontal const):
+        (WebCore::LayoutIntegration::Line::contentLogicalOffset const):
+        (WebCore::LayoutIntegration::Line::contentLogicalWidth const):
+        * layout/integration/inline/LayoutIntegrationLineLayout.cpp: Renamed from Source/WebCore/layout/integration/LayoutIntegrationLineLayout.cpp.
+        (WebCore::LayoutIntegration::LineLayout::LineLayout):
+        (WebCore::LayoutIntegration::LineLayout::~LineLayout):
+        (WebCore::LayoutIntegration::LineLayout::blockContainer):
+        (WebCore::LayoutIntegration::LineLayout::containing):
+        (WebCore::LayoutIntegration::LineLayout::isEnabled):
+        (WebCore::LayoutIntegration::LineLayout::canUseFor):
+        (WebCore::LayoutIntegration::LineLayout::canUseForAfterStyleChange):
+        (WebCore::LayoutIntegration::LineLayout::canUseForAfterInlineBoxStyleChange):
+        (WebCore::LayoutIntegration::LineLayout::shouldSwitchToLegacyOnInvalidation const):
+        (WebCore::LayoutIntegration::LineLayout::updateReplacedDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateInlineBlockDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateInlineTableDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateListItemDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateListMarkerDimensions):
+        (WebCore::LayoutIntegration::contentLogicalWidthForRenderer):
+        (WebCore::LayoutIntegration::contentLogicalHeightForRenderer):
+        (WebCore::LayoutIntegration::horizontalLogicalMargin):
+        (WebCore::LayoutIntegration::verticalLogicalMargin):
+        (WebCore::LayoutIntegration::logicalBorder):
+        (WebCore::LayoutIntegration::logicalPadding):
+        (WebCore::LayoutIntegration::LineLayout::updateLayoutBoxDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateLineBreakBoxDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateInlineBoxDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateStyle):
+        (WebCore::LayoutIntegration::LineLayout::computeIntrinsicWidthConstraints):
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        (WebCore::LayoutIntegration::LineLayout::constructContent):
+        (WebCore::LayoutIntegration::LineLayout::updateFormattingRootGeometryAndInvalidate):
+        (WebCore::LayoutIntegration::LineLayout::prepareLayoutState):
+        (WebCore::LayoutIntegration::LineLayout::prepareFloatingState):
+        (WebCore::LayoutIntegration::LineLayout::contentLogicalHeight const):
+        (WebCore::LayoutIntegration::LineLayout::lineCount const):
+        (WebCore::LayoutIntegration::LineLayout::hasVisualOverflow const):
+        (WebCore::LayoutIntegration::LineLayout::firstLinePhysicalBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::lastLineLogicalBaseline const):
+        (WebCore::LayoutIntegration::LineLayout::adjustForPagination):
+        (WebCore::LayoutIntegration::LineLayout::collectOverflow):
+        (WebCore::LayoutIntegration::LineLayout::ensureInlineContent):
+        (WebCore::LayoutIntegration::LineLayout::textBoxesFor const):
+        (WebCore::LayoutIntegration::LineLayout::boxFor const):
+        (WebCore::LayoutIntegration::LineLayout::firstInlineBoxFor const):
+        (WebCore::LayoutIntegration::LineLayout::firstRootInlineBox const):
+        (WebCore::LayoutIntegration::LineLayout::firstLineBox const):
+        (WebCore::LayoutIntegration::LineLayout::lastLineBox const):
+        (WebCore::LayoutIntegration::LineLayout::firstInlineBoxRect const):
+        (WebCore::LayoutIntegration::LineLayout::enclosingBorderBoxRectFor const):
+        (WebCore::LayoutIntegration::LineLayout::visualOverflowBoundingBoxRectFor const):
+        (WebCore::LayoutIntegration::LineLayout::collectInlineBoxRects const):
+        (WebCore::LayoutIntegration::LineLayout::rendererForLayoutBox const):
+        (WebCore::LayoutIntegration::LineLayout::rootLayoutBox const):
+        (WebCore::LayoutIntegration::LineLayout::rootLayoutBox):
+        (WebCore::LayoutIntegration::flippedContentOffsetIfNeeded):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::flippedRectForWritingMode):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+        (WebCore::LayoutIntegration::LineLayout::releaseCaches):
+        (WebCore::LayoutIntegration::LineLayout::clearInlineContent):
+        (WebCore::LayoutIntegration::LineLayout::ensureLineDamage):
+        (WebCore::LayoutIntegration::LineLayout::outputLineTree const):
+        * layout/integration/inline/LayoutIntegrationLineLayout.h: Renamed from Source/WebCore/layout/integration/LayoutIntegrationLineLayout.h.
+        (WebCore::LayoutIntegration::LineLayout::isPaginated const):
+        (WebCore::LayoutIntegration::LineLayout::flow const):
+        (WebCore::LayoutIntegration::LineLayout::flow):
+        * layout/integration/inline/LayoutIntegrationPagination.cpp: Renamed from Source/WebCore/layout/integration/LayoutIntegrationPagination.cpp.
+        (WebCore::LayoutIntegration::computeLineTopAndBottomWithOverflow):
+        (WebCore::LayoutIntegration::computeLineBreakIndex):
+        (WebCore::LayoutIntegration::computeOffsetAfterLineBreak):
+        (WebCore::LayoutIntegration::setPageBreakForLine):
+        (WebCore::LayoutIntegration::updateMinimumPageHeight):
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        (WebCore::LayoutIntegration::adjustLinePositionsForPagination):
+        * layout/integration/inline/LayoutIntegrationPagination.h: Renamed from Source/WebCore/layout/integration/LayoutIntegrationPagination.h.
+        * layout/integration/inline/LineSelection.h: Renamed from Source/WebCore/layout/integration/LineSelection.h.
+        (WebCore::LineSelection::logicalTop):
+        (WebCore::LineSelection::logicalBottom):
+        (WebCore::LineSelection::logicalRect):
+        (WebCore::LineSelection::physicalRect):
+        (WebCore::LineSelection::logicalTopAdjustedForPrecedingBlock):
+        (WebCore::LineSelection::selectionState):
+
 2022-04-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Build fix after r292951
