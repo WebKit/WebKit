@@ -12,5 +12,5 @@ PASS <input type="email"> typing
 PASS <input type="password"> typing
 PASS <input type="number"> typing
 PASS <textarea></textarea> typing
-FAIL <select> pressing down arrow promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e.bubbles')"
+PASS <select> pressing down arrow
 

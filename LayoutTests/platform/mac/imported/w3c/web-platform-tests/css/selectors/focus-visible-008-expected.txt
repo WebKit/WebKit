@@ -6,7 +6,5 @@ If the element that says "I will be focused programmatically." has a red backgro
 Tab to me and press ENTER.
 I will be focused programmatically.
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Programmatic focus after keypress should match :focus-visible Test timed out
+PASS Programmatic focus after keypress should match :focus-visible
 

@@ -1033,6 +1033,13 @@ scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-
 scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Skip ]
 storage/domstorage/sessionstorage/set-item-synchronous-keydown.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-boundary.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/input-change-event-properties.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email-set-value.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength-number.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-double-activate-pseudo.html [ Skip ]
 
 # Tests that use EventSender's mouseMoveTo, mouseUp and mouseDown
 css3/viewport-percentage-lengths/vh-resize.html [ Skip ]

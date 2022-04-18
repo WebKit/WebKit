@@ -1,4 +1,4 @@
 
 
-PASS <input type=radio> shouldn't have the :active pseudo element after pressing the spacebar twice.
+FAIL <input type=radio> shouldn't have the :active pseudo element after pressing the spacebar twice. assert_equals: If the radio doesn't have the :active pseudo selector, nothing else should either. expected null but got Element node <input type="radio" id="radioinput"></input>
 

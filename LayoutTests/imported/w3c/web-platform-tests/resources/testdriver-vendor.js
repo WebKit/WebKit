@@ -153,6 +153,8 @@ window.test_driver_internal.send_keys = function(element, keys)
     if (!window.eventSender)
         return Promise.reject(new Error("window.eventSender is undefined."));
 
+    element.focus();
+
     // https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.keys.html
     // FIXME: Add more cases.
     const SeleniumCharCodeToEventSenderKey = {
