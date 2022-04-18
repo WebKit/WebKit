@@ -1299,8 +1299,6 @@
         SYS_getgid
         SYS_getxattr
         SYS_mkdirat
-        SYS_necp_client_action
-        SYS_necp_open
         SYS_openat_nocancel
         SYS_pread_nocancel
         SYS_rmdir
@@ -1311,7 +1309,6 @@
 #if PLATFORM(WATCHOS)
         SYS_sigreturn
 #endif
-        SYS_socket
         SYS_thread_selfusage
         SYS_unlink
         SYS_write
@@ -1324,8 +1321,11 @@
         SYS___semwait_signal
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
         SYS_iopolicysys
+        SYS_necp_client_action
+        SYS_necp_open
         SYS_open_dprotected_np
         SYS_psynch_rw_wrlock
+        SYS_socket
         SYS_umask
         SYS_work_interval_ctl))
 
