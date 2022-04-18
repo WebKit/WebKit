@@ -213,12 +213,12 @@ inline StringView trimToNextSeparator(StringView string)
     return string.left(string.find(isCacheHeaderSeparator));
 }
 
-static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
+static Vector<std::pair<StringView, StringView>> parseCacheHeader(StringView safeHeader)
 {
-    Vector<std::pair<String, String>> result;
+    ASSERT(safeHeader.find(isControlCharacterOrSpace) == notFound);
 
-    String safeHeaderString = header.removeCharacters(isControlCharacterOrSpace);
-    StringView safeHeader = safeHeaderString;
+    Vector<std::pair<StringView, StringView>> result;
+
     unsigned max = safeHeader.length();
     unsigned pos = 0;
     while (pos < max) {
@@ -226,30 +226,30 @@ static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
         size_t nextEqualSignPosition = safeHeader.find('=', pos);
         if (nextEqualSignPosition == notFound && nextCommaPosition == notFound) {
             // Add last directive to map with empty string as value
-            result.append({ trimToNextSeparator(safeHeader.substring(pos, max - pos)).toString(), emptyString() });
+            result.append({ trimToNextSeparator(safeHeader.substring(pos, max - pos)), emptyString() });
             return result;
         }
         if (nextCommaPosition != notFound && (nextCommaPosition < nextEqualSignPosition || nextEqualSignPosition == notFound)) {
             // Add directive to map with empty string as value
-            result.append({ trimToNextSeparator(safeHeader.substring(pos, nextCommaPosition - pos)).toString(), emptyString() });
+            result.append({ trimToNextSeparator(safeHeader.substring(pos, nextCommaPosition - pos)), emptyString() });
             pos += nextCommaPosition - pos + 1;
             continue;
         }
         // Get directive name, parse right hand side of equal sign, then add to map
-        String directive = trimToNextSeparator(safeHeader.substring(pos, nextEqualSignPosition - pos)).toString();
+        StringView directive = trimToNextSeparator(safeHeader.substring(pos, nextEqualSignPosition - pos));
         pos += nextEqualSignPosition - pos + 1;
 
         StringView value = safeHeader.substring(pos, max - pos);
-        if (value[0] == '"') {
+        if (value.startsWith('"')) {
             // The value is a quoted string
             size_t nextDoubleQuotePosition = value.find('"', 1);
             if (nextDoubleQuotePosition == notFound) {
                 // Parse error; just use the rest as the value
-                result.append({ directive, trimToNextSeparator(value.substring(1)).toString() });
+                result.append({ directive, trimToNextSeparator(value.substring(1)) });
                 return result;
             }
             // Store the value as a quoted string without quotes
-            result.append({ directive, value.substring(1, nextDoubleQuotePosition - 1).toString() });
+            result.append({ directive, value.substring(1, nextDoubleQuotePosition - 1) });
             pos += (safeHeader.find('"', pos) - pos) + nextDoubleQuotePosition + 1;
             // Move past next comma, if there is one
             size_t nextCommaPosition2 = safeHeader.find(',', pos);
@@ -262,11 +262,11 @@ static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
         size_t nextCommaPosition2 = value.find(',');
         if (nextCommaPosition2 == notFound) {
             // The rest is the value; no change to value needed
-            result.append({ directive, trimToNextSeparator(value).toString() });
+            result.append({ directive, trimToNextSeparator(value) });
             return result;
         }
         // The value is delimited by the next comma
-        result.append({ directive, trimToNextSeparator(value.left(nextCommaPosition2)).toString() });
+        result.append({ directive, trimToNextSeparator(value.left(nextCommaPosition2)) });
         pos += (safeHeader.find(',', pos) - pos) + 1;
     }
     return result;
@@ -278,7 +278,8 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
 
     String cacheControlValue = headers.get(HTTPHeaderName::CacheControl);
     if (!cacheControlValue.isEmpty()) {
-        auto directives = parseCacheHeader(cacheControlValue);
+        auto safeHeaderString = cacheControlValue.removeCharacters(isControlCharacterOrSpace);
+        auto directives = parseCacheHeader(safeHeaderString);
 
         size_t directivesSize = directives.size();
         for (size_t i = 0; i < directivesSize; ++i) {
@@ -297,7 +298,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                     continue;
                 }
                 bool ok;
-                double maxAge = directives[i].second.toDouble(&ok);
+                double maxAge = directives[i].second.toDouble(ok);
                 if (ok)
                     result.maxAge = Seconds { maxAge };
             } else if (equalLettersIgnoringASCIICase(directives[i].first, "max-stale")) {
@@ -312,7 +313,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                     continue;
                 }
                 bool ok;
-                double maxStale = directives[i].second.toDouble(&ok);
+                double maxStale = directives[i].second.toDouble(ok);
                 if (ok)
                     result.maxStale = Seconds { maxStale };
             } else if (equalLettersIgnoringASCIICase(directives[i].first, "immutable")) {
@@ -323,7 +324,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                     continue;
                 }
                 bool ok;
-                double staleWhileRevalidate = directives[i].second.toDouble(&ok);
+                double staleWhileRevalidate = directives[i].second.toDouble(ok);
                 if (ok)
                     result.staleWhileRevalidate = Seconds { staleWhileRevalidate };
             }

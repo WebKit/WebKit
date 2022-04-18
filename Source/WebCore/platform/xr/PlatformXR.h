@@ -115,9 +115,9 @@ inline SessionFeature sessionFeatureFromReferenceSpaceType(ReferenceSpaceType re
     return SessionFeature::ReferenceSpaceTypeViewer;
 }
 
-inline std::optional<SessionFeature> parseSessionFeatureDescriptor(const String& string)
+inline std::optional<SessionFeature> parseSessionFeatureDescriptor(StringView string)
 {
-    String feature = string.stripWhiteSpace().convertToASCIILowercase();
+    auto feature = string.stripWhiteSpace().convertToASCIILowercase();
 
     if (feature == "viewer"_s)
         return SessionFeature::ReferenceSpaceTypeViewer;

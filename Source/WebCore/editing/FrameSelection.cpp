@@ -1902,15 +1902,15 @@ void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
                 caret = pos;
             } else if (pos - mid < 0) {
                 // too few characters to left
-                show = text.left(max - 3) + "...";
+                show = makeString(StringView(text).left(max - 3), "...");
                 caret = pos;
             } else if (pos - mid >= 0 && pos + mid <= textLength) {
                 // enough characters on each side
-                show = "..." + text.substring(pos - mid + 3, max - 6) + "...";
+                show = makeString("...", StringView(text).substring(pos - mid + 3, max - 6), "...");
                 caret = mid;
             } else {
                 // too few characters on right
-                show = "..." + text.right(max - 3);
+                show = makeString("...", StringView(text).right(max - 3));
                 caret = pos - (textLength - show.length());
             }
             

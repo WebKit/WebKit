@@ -409,7 +409,7 @@ void SQLiteDatabase::setBusyHandler(int(*handler)(void*, int))
         LOG(SQLDatabase, "Busy handler set on non-open database");
 }
 
-bool SQLiteDatabase::executeCommandSlow(const String& query)
+bool SQLiteDatabase::executeCommandSlow(StringView query)
 {
     auto statement = prepareStatementSlow(query);
     return statement && statement->executeCommand();
@@ -461,7 +461,7 @@ void SQLiteDatabase::clearAllTables()
     while (statement->step() == SQLITE_ROW)
         tables.append(statement->columnText(0));
     for (auto& table : tables) {
-        if (!executeCommandSlow("DROP TABLE " + table))
+        if (!executeCommandSlow(makeString("DROP TABLE ", table)))
             LOG(SQLDatabase, "Unable to drop table %s", table.ascii().data());
     }
 }
@@ -723,7 +723,7 @@ static Expected<sqlite3_stmt*, int> constructAndPrepareStatement(SQLiteDatabase&
     return statement;
 }
 
-Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatementSlow(const String& queryString)
+Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatementSlow(StringView queryString)
 {
     CString query = queryString.stripWhiteSpace().utf8();
     auto sqlStatement = constructAndPrepareStatement(*this, query.data(), query.length());
@@ -744,7 +744,7 @@ Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatement(ASCIILiteral que
     return SQLiteStatement { *this, sqlStatement.value() };
 }
 
-Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatementSlow(const String& queryString)
+Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatementSlow(StringView queryString)
 {
     CString query = queryString.stripWhiteSpace().utf8();
     auto sqlStatement = constructAndPrepareStatement(*this, query.data(), query.length());

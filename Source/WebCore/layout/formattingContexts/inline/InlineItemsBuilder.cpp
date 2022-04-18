@@ -163,12 +163,12 @@ static void replaceNonPreservedNewLineCharactersAndAppend(const InlineTextBox& i
             continue;
 
         if (nonReplacedContentStartPosition < startPosition)
-            paragraphContentBuilder.append(textContent.substring(nonReplacedContentStartPosition, startPosition - nonReplacedContentStartPosition));
+            paragraphContentBuilder.append(StringView(textContent).substring(nonReplacedContentStartPosition, startPosition - nonReplacedContentStartPosition));
         paragraphContentBuilder.append(space);
         nonReplacedContentStartPosition = position;
     }
     if (nonReplacedContentStartPosition < contentLength)
-        paragraphContentBuilder.append(textContent.right(contentLength - nonReplacedContentStartPosition));
+        paragraphContentBuilder.append(StringView(textContent).right(contentLength - nonReplacedContentStartPosition));
 }
 
 struct BidiContext {

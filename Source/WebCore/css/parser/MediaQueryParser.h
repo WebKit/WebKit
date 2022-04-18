@@ -93,7 +93,7 @@ private:
         void addExpression(CSSParserTokenRange&);
         bool lastExpressionValid();
         void removeLastExpression();
-        void setMediaType(const String& mediaType) { m_mediaType = mediaType; }
+        void setMediaType(String&& mediaType) { m_mediaType = WTFMove(mediaType); }
 
         MediaQuery::Restrictor restrictor() const { return m_restrictor; }
         Vector<MediaQueryExpression>& expressions() { return m_expressions; }

@@ -1,3 +1,82 @@
+2022-04-17  Chris Dumez  <cdumez@apple.com>
+
+        Leverage StringView in more places
+        https://bugs.webkit.org/show_bug.cgi?id=239426
+
+        Reviewed by Sam Weinig.
+
+        Leverage StringView in more places, to reduce the number of String allocations.
+
+        * Modules/applicationmanifest/ApplicationManifestParser.cpp:
+        (WebCore::ApplicationManifestParser::parseDisplay):
+        (WebCore::ApplicationManifestParser::parseIcons):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::createSQLiteStatement):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::setTextValueInDatabase):
+        (WebCore::retrieveTextResultFromDatabase):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        (appendStringToResult): Deleted.
+        (accessibleElementsForObjects): Deleted.
+        (rendererForView): Deleted.
+        * css/parser/MediaQueryParser.h:
+        (WebCore::MediaQueryParser::MediaQueryData::setMediaType):
+        * editing/Editor.cpp:
+        (WebCore::Editor::transpose):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::debugRenderer const):
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::collectFraction):
+        (WebCore::MediaFragmentURIParser::parseNPTTime):
+        * html/StepRange.cpp:
+        (WebCore::StepRange::parseStep):
+        * html/StepRange.h:
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseToDecimalForNumberType):
+        (WebCore::parseToDoubleForNumberType):
+        * html/parser/HTMLParserIdioms.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        * layout/formattingContexts/inline/InlineItemsBuilder.cpp:
+        (WebCore::Layout::replaceNonPreservedNewLineCharactersAndAppend):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printTextForSubtree):
+        * page/TextIndicator.cpp:
+        (WebCore::containsOnlyWhiteSpaceText):
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::fromString):
+        * platform/Decimal.h:
+        * platform/network/CacheValidation.cpp:
+        (WebCore::parseCacheHeader):
+        (WebCore::parseCacheControlDirectives):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::filenameFromHTTPContentDisposition):
+        * platform/network/HTTPParsers.h:
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::retrieveKeyValuePairs):
+        (WebCore::MIMEHeader::parseContentTransferEncoding):
+        * platform/network/MIMEHeader.h:
+        * platform/network/ParsedContentType.cpp:
+        (WebCore::ParsedContentType::setContentType):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isAttachment const):
+        (WebCore::ResourceResponseBase::isAttachmentWithFilename const):
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::platformSuggestedFilename const):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::executeCommandSlow):
+        (WebCore::SQLiteDatabase::clearAllTables):
+        (WebCore::SQLiteDatabase::prepareStatementSlow):
+        (WebCore::SQLiteDatabase::prepareHeapStatementSlow):
+        * platform/sql/SQLiteDatabase.h:
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::parseSessionFeatureDescriptor):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeyTimes):
+        (WebCore::SVGAnimationElement::parseAttribute):
+
 2022-04-17  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified build fixes after 249632@main

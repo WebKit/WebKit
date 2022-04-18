@@ -517,7 +517,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
     // so bail out early to avoid that.
     WebCore::DictionaryPopupInfo popupInfo;
-    if (plainText(range).stripWhiteSpace().isEmpty()) {
+    if (plainText(range).find(isNotSpaceOrNewline) == notFound) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return popupInfo;
     }

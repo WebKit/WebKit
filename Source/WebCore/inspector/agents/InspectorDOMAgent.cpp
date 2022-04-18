@@ -758,7 +758,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(Protocol::D
             return makeUnexpected(errorString);
     }
 
-    if (!foundOriginalAttribute && !name.stripWhiteSpace().isEmpty()) {
+    if (!foundOriginalAttribute && name.find(isNotSpaceOrNewline) != notFound) {
         if (!m_domEditor->removeAttribute(*element, name, errorString))
             return makeUnexpected(errorString);
     }

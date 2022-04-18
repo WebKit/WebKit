@@ -63,7 +63,7 @@ public:
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 
-    WEBCORE_EXPORT bool executeCommandSlow(const String&);
+    WEBCORE_EXPORT bool executeCommandSlow(StringView);
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
     
     WEBCORE_EXPORT bool tableExists(StringView);
@@ -75,9 +75,9 @@ public:
     
     bool transactionInProgress() const { return m_transactionInProgress; }
 
-    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatementSlow(const String& query);
+    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatementSlow(StringView query);
     WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatement(ASCIILiteral query);
-    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatementSlow(const String& query);
+    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatementSlow(StringView query);
     WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatement(ASCIILiteral query);
 
     // Aborts the current database operation. This is thread safe.

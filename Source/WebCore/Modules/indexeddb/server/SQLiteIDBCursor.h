@@ -81,7 +81,7 @@ public:
 
 private:
     bool establishStatement();
-    bool createSQLiteStatement(const String& sql);
+    bool createSQLiteStatement(StringView sql);
     bool bindArguments();
 
     bool resetAndRebindPreIndexStatementIfNecessary();

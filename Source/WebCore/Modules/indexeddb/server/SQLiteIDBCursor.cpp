@@ -181,7 +181,7 @@ bool SQLiteIDBCursor::establishStatement()
     return createSQLiteStatement(sql);
 }
 
-bool SQLiteIDBCursor::createSQLiteStatement(const String& sql)
+bool SQLiteIDBCursor::createSQLiteStatement(StringView sql)
 {
     LOG(IndexedDB, "Creating cursor with SQL query: \"%s\"", sql.utf8().data());
 

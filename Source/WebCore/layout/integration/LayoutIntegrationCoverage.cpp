@@ -219,10 +219,10 @@ static void printTextForSubtree(const RenderElement& renderer, unsigned& charact
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
         if (is<RenderText>(child)) {
             String text = downcast<RenderText>(child).text();
-            text = text.stripWhiteSpace();
-            auto len = std::min(charactersLeft, text.length());
-            stream << text.left(len);
-            charactersLeft -= len;
+            auto textView = StringView(text).stripWhiteSpace();
+            auto length = std::min(charactersLeft, textView.length());
+            stream << textView.left(length);
+            charactersLeft -= length;
             continue;
         }
         printTextForSubtree(downcast<RenderElement>(child), charactersLeft, stream);

@@ -835,13 +835,6 @@ float StringImpl::toFloat(bool* ok)
     return charactersToFloat(characters16(), m_length, ok);
 }
 
-size_t StringImpl::find(CodeUnitMatchFunction matchFunction, unsigned start)
-{
-    if (is8Bit())
-        return WTF::find(characters8(), m_length, matchFunction, start);
-    return WTF::find(characters16(), m_length, matchFunction, start);
-}
-
 size_t StringImpl::find(const LChar* matchString, unsigned start)
 {
     // Check for null or empty string to match against

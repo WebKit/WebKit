@@ -430,7 +430,8 @@ public:
     size_t find(LChar character, unsigned start = 0);
     size_t find(char character, unsigned start = 0);
     size_t find(UChar character, unsigned start = 0);
-    WTF_EXPORT_PRIVATE size_t find(CodeUnitMatchFunction, unsigned start = 0);
+    template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
+    size_t find(CodeUnitMatchFunction, unsigned start = 0);
     WTF_EXPORT_PRIVATE size_t find(const LChar*, unsigned start = 0);
     WTF_EXPORT_PRIVATE size_t find(StringView);
     WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start);
@@ -600,6 +601,7 @@ int codePointCompare(const StringImpl*, const StringImpl*);
 // FIXME: Should rename this to make clear it uses the Unicode definition of whitespace.
 // Most WebKit callers don't want that would use isASCIISpace or isHTMLSpace instead.
 bool isSpaceOrNewline(UChar32);
+bool isNotSpaceOrNewline(UChar32);
 
 template<typename CharacterType> unsigned lengthOfNullTerminatedString(const CharacterType*);
 
@@ -704,6 +706,14 @@ inline size_t StringImpl::find(UChar character, unsigned start)
     return WTF::find(characters16(), m_length, character, start);
 }
 
+template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>*>
+size_t StringImpl::find(CodeUnitMatchFunction matchFunction, unsigned start)
+{
+    if (is8Bit())
+        return WTF::find(characters8(), m_length, matchFunction, start);
+    return WTF::find(characters16(), m_length, matchFunction, start);
+}
+
 template<size_t inlineCapacity> inline bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
 {
     return equalIgnoringNullity(a.data(), a.size(), b);
@@ -752,6 +762,11 @@ inline bool isSpaceOrNewline(UChar32 character)
 {
     // Use isASCIISpace() for all Latin-1 characters. This will include newlines, which aren't included in Unicode DirWS.
     return isLatin1(character) ? isASCIISpace(character) : u_charDirection(character) == U_WHITE_SPACE_NEUTRAL;
+}
+
+inline bool isNotSpaceOrNewline(UChar32 character)
+{
+    return !isSpaceOrNewline(character);
 }
 
 template<typename CharacterType> inline unsigned lengthOfNullTerminatedString(const CharacterType* string)
@@ -1314,3 +1329,5 @@ inline Ref<StringImpl> StringImpl::removeCharacters(const Predicate& findMatch)
 using WTF::StaticStringImpl;
 using WTF::StringImpl;
 using WTF::equal;
+using WTF::isNotSpaceOrNewline;
+using WTF::isSpaceOrNewline;

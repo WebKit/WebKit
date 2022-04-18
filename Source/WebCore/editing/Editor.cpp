@@ -3221,7 +3221,9 @@ void Editor::transpose()
     String text = plainText(*range);
     if (text.length() != 2)
         return;
-    String transposed = text.right(1) + text.left(1);
+
+    // FIXME: This likely won't work with graphemes.
+    String transposed = makeString(text[1], text[0]);
 
     // Select the two characters.
     if (newSelection != m_document.selection().selection()) {

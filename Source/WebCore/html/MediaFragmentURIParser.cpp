@@ -55,19 +55,17 @@ static String collectDigits(const LChar* input, unsigned length, unsigned& posit
     return digits.toString();
 }
 
-static String collectFraction(const LChar* input, unsigned length, unsigned& position)
+static StringView collectFraction(const LChar* input, unsigned length, unsigned& position)
 {
-    StringBuilder digits;
-
     // http://www.ietf.org/rfc/rfc2326.txt
     // [ "." *DIGIT ]
     if (input[position] != '.')
-        return String();
+        return { };
 
-    digits.append(input[position++]);
+    unsigned start = position++;
     while (position < length && isASCIIDigit(input[position]))
-        digits.append(input[position++]);
-    return digits.toString();
+        ++position;
+    return StringView { input + start, position - start };
 }
 
 MediaFragmentURIParser::MediaFragmentURIParser(const URL& url)
@@ -270,8 +268,9 @@ bool MediaFragmentURIParser::parseNPTTime(const LChar* timeString, unsigned leng
     if (timeString[offset] == '.') {
         if (offset == length)
             return true;
-        String digits = collectFraction(timeString, length, offset);
-        fraction = MediaTime::createWithDouble(digits.toDouble());
+        auto digits = collectFraction(timeString, length, offset);
+        bool isValid;
+        fraction = MediaTime::createWithDouble(digits.toDouble(isValid));
         time = MediaTime::createWithDouble(value1) + fraction;
         return true;
     }
@@ -308,8 +307,10 @@ bool MediaFragmentURIParser::parseNPTTime(const LChar* timeString, unsigned leng
         value1 = 0;
     }
 
-    if (offset < length && timeString[offset] == '.')
-        fraction = MediaTime::createWithDouble(collectFraction(timeString, length, offset).toDouble());
+    if (offset < length && timeString[offset] == '.') {
+        bool isValid;
+        fraction = MediaTime::createWithDouble(collectFraction(timeString, length, offset).toDouble(isValid));
+    }
     
     time = MediaTime::createWithDouble((value1 * secondsPerHour) + (value2 * secondsPerMinute) + value3) + fraction;
     return true;

@@ -149,7 +149,7 @@ public:
     //  exponent-marker ::= 'e' | 'E'
     //  digit ::= '0' | '1' | ... | '9'
     // Note: fromString doesn't support "infinity" and "nan".
-    static Decimal fromString(const String&);
+    static Decimal fromString(StringView);
     static Decimal infinity(Sign);
     static Decimal nan();
     static Decimal zero(Sign);

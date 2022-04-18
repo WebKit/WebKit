@@ -369,7 +369,7 @@ void ParsedContentType::setContentType(String&& contentRange, Mode mode)
 {
     m_mimeType = WTFMove(contentRange);
     if (mode == Mode::MimeSniff)
-        m_mimeType = stripLeadingAndTrailingHTTPSpaces(m_mimeType).convertToASCIILowercase();
+        m_mimeType = stripLeadingAndTrailingHTTPSpaces(StringView(m_mimeType)).convertToASCIILowercase();
     else
         m_mimeType = m_mimeType.stripWhiteSpace();
 }

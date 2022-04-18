@@ -228,7 +228,7 @@ static bool containsOnlyWhiteSpaceText(const SimpleRange& range)
         if (!is<RenderText>(node.renderer()))
             return false;
     }
-    return plainTextReplacingNoBreakSpace(range).stripWhiteSpace().isEmpty();
+    return plainTextReplacingNoBreakSpace(range).find(isNotSpaceOrNewline) == notFound;
 }
 
 static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const SimpleRange& range, FloatSize margin, bool indicatesCurrentSelection)

@@ -161,6 +161,7 @@ public:
     size_t findIgnoringASCIICase(StringView) const;
     size_t findIgnoringASCIICase(StringView, unsigned start) const;
 
+    template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
     size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
     size_t find(const LChar* string, unsigned start = 0) const { return m_impl ? m_impl->find(string, start) : notFound; }
 
@@ -640,7 +641,6 @@ using WTF::nullString;
 using WTF::equal;
 using WTF::find;
 using WTF::isAllSpecialCharacters;
-using WTF::isSpaceOrNewline;
 using WTF::reverseFind;
 
 #include <wtf/text/AtomString.h>

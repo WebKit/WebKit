@@ -72,7 +72,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
             // This is not a key value pair, ignore.
             continue;
         }
-        key = StringView(line).left(semicolonIndex).convertToASCIILowercase().stripWhiteSpace();
+        key = StringView(line).left(semicolonIndex).stripWhiteSpace().convertToASCIILowercase();
         value.append(StringView(line).substring(semicolonIndex + 1));
     }
     // Store the last property if there is one.
@@ -120,9 +120,9 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
     return mimeHeader;
 }
 
-MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(const String& text)
+MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(StringView text)
 {
-    String encoding = text.stripWhiteSpace();
+    auto encoding = text.stripWhiteSpace();
     if (equalLettersIgnoringASCIICase(encoding, "base64"))
         return Base64;
     if (equalLettersIgnoringASCIICase(encoding, "quoted-printable"))

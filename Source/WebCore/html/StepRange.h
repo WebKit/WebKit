@@ -74,7 +74,7 @@ public:
     Decimal maximum() const { return m_maximum; }
     Decimal minimum() const { return m_minimum; }
     Decimal stepSnappedMaximum() const;
-    static Decimal parseStep(AnyStepHandling, const StepDescription&, const String&);
+    static Decimal parseStep(AnyStepHandling, const StepDescription&, StringView);
     Decimal step() const { return m_step; }
     Decimal stepBase() const { return m_stepBase; }
     int stepScaleFactor() const { return m_stepDescription.stepScaleFactor; }

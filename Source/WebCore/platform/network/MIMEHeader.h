@@ -68,7 +68,7 @@ public:
 private:
     MIMEHeader();
 
-    static Encoding parseContentTransferEncoding(const String&);
+    static Encoding parseContentTransferEncoding(StringView);
 
     String m_contentType;
     String m_charset;

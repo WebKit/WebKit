@@ -164,8 +164,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
 
-    // FIXME: Inefficient to call stripWhiteSpace to detect whether a string has a non-whitespace character in it.
-    if (plainText(range).stripWhiteSpace().isEmpty()) {
+    if (plainText(range).find(isNotSpaceOrNewline) == notFound) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return { };
     }

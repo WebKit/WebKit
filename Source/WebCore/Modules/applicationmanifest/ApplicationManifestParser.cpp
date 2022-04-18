@@ -145,7 +145,7 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
         return ApplicationManifest::Display::Browser;
     }
 
-    stringValue = stringValue.stripWhiteSpace().convertToASCIILowercase();
+    stringValue = StringView(stringValue).stripWhiteSpace().convertToASCIILowercase();
 
     if (stringValue == "fullscreen")
         return ApplicationManifest::Display::Fullscreen;
@@ -230,19 +230,17 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
                 purposes.add(ApplicationManifest::Icon::Purpose::Any);
                 currentIcon.purposes = purposes;
             } else {
-                purposeStringValue = purposeStringValue.stripWhiteSpace().convertToASCIILowercase();
-                Vector<String> keywords = purposeStringValue.splitAllowingEmptyEntries(" ");
-
-                for (const auto& keyword : keywords) {
-                    if (keyword == "monochrome")
+                for (auto keyword : StringView(purposeStringValue).stripWhiteSpace().splitAllowingEmptyEntries(' ')) {
+                    if (equalLettersIgnoringASCIICase(keyword, "monochrome"))
                         purposes.add(ApplicationManifest::Icon::Purpose::Monochrome);
-                    else if (keyword == "maskable")
+                    else if (equalLettersIgnoringASCIICase(keyword, "maskable"))
                         purposes.add(ApplicationManifest::Icon::Purpose::Maskable);
-                    else if (keyword == "any")
+                    else if (equalLettersIgnoringASCIICase(keyword, "any"))
                         purposes.add(ApplicationManifest::Icon::Purpose::Any);
                     else
                         logDeveloperWarning(makeString("\""_s, purposeStringValue, "\" is not a valid purpose."_s));
                 }
+
                 if (purposes.isEmpty())
                     continue;
 

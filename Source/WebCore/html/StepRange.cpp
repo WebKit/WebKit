@@ -95,7 +95,7 @@ Decimal StepRange::clampValue(const Decimal& value) const
     return clampedValue;
 }
 
-Decimal StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
+Decimal StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, StringView stepString)
 {
     if (stepString.isEmpty())
         return stepDescription.defaultValue();
