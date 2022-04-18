@@ -366,6 +366,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             log.msg("PR #{} was labeled for merge-queue".format(pr_number))
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
+            time.sleep(10)
             return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'merge_queue')
 
         return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)

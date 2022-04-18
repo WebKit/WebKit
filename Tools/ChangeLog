@@ -1,3 +1,15 @@
+2022-04-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Handle label addition race condition
+        https://bugs.webkit.org/show_bug.cgi?id=238973
+        <rdar://problem/91452352>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/events.py:
+        (GitHubEventHandlerNoEdits.handle_pull_request): Wait for 10 seconds before processing
+        label additions.
+
 2022-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make the main video heuristic robust when video elements are added after entering fullscreen
