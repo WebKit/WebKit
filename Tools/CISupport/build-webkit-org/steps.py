@@ -268,6 +268,12 @@ class CompileWebKit(shell.Compile):
     descriptionDone = ["compiled"]
     warningPattern = ".*arning: .*"
 
+    def __init__(self, **kwargs):
+        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to
+        # work around log output delays on slower machines.
+        kwargs.setdefault('timeout', 60 * 30)
+        super().__init__(**kwargs)
+
     def start(self):
         platform = self.getProperty('platform')
         buildOnly = self.getProperty('buildOnly')

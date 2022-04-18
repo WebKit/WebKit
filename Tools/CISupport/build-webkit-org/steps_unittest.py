@@ -402,7 +402,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1200,
+                timeout=1800,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--release'],
             ) + 0,
@@ -418,7 +418,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1200,
+                timeout=1800,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
             ) + 0,
@@ -434,7 +434,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1200,
+                timeout=1800,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
             ) + 0,
@@ -449,7 +449,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1200,
+                timeout=1800,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
             ) + 2
@@ -474,7 +474,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1200,
+                timeout=1800,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-jsc', '--release'],
             ) + 0,
@@ -489,6 +489,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
+                timeout=1800,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
             ) + 2
