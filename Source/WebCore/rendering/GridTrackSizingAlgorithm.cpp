@@ -909,6 +909,13 @@ bool GridTrackSizingAlgorithm::canParticipateInBaselineAlignment(const RenderBox
     if (isParallelToBaselineAxis && child.firstLineBaseline())
         return true;
 
+    // FIXME: We don't currently allow items within subgrids that need to
+    // synthesize a baseline, since we need a layout to have been completed
+    // and performGridItemsPreLayout on the outer grid doesn't layout subgrid
+    // items.
+    if (child.parent() != renderGrid())
+        return false;
+
     // Baseline cyclic dependencies only happen in grid areas with
     // intrinsically-sized tracks. 
     if (!isIntrinsicSizedGridArea(child, baselineAxis))
@@ -926,7 +933,6 @@ void GridTrackSizingAlgorithm::updateBaselineAlignmentContext(const RenderBox& c
 {
     ASSERT(wasSetup());
     ASSERT(canParticipateInBaselineAlignment(child, baselineAxis));
-    ASSERT(!child.needsLayout());
 
     ItemPosition align = m_renderGrid->selfAlignmentForChild(baselineAxis, child).position();
     const auto& span = m_renderGrid->gridSpanForChild(child, gridDirectionForAxis(baselineAxis));
@@ -935,6 +941,11 @@ void GridTrackSizingAlgorithm::updateBaselineAlignmentContext(const RenderBox& c
 
 LayoutUnit GridTrackSizingAlgorithm::baselineOffsetForChild(const RenderBox& child, GridAxis baselineAxis) const
 {
+    // If we haven't yet initialized this axis (which can be the case if we're doing
+    // prelayout of a subgrid), then we can't know the baseline offset.
+    if (tracks(gridDirectionForAxis(baselineAxis)).isEmpty())
+        return LayoutUnit();
+
     if (!participateInBaselineAlignment(child, baselineAxis))
         return LayoutUnit();
 
@@ -951,7 +962,11 @@ void GridTrackSizingAlgorithm::clearBaselineItemsCache()
 
 void GridTrackSizingAlgorithm::cacheBaselineAlignedItem(const RenderBox& item, GridAxis axis)
 {
-    ASSERT(m_renderGrid->isBaselineAlignmentForChild(item, axis));
+    ASSERT(downcast<RenderGrid>(item.parent())->isBaselineAlignmentForChild(item, axis));
+
+    if (GridLayoutFunctions::isOrthogonalParent(*m_renderGrid, *item.parent()))
+        axis = axis == GridColumnAxis ? GridRowAxis : GridColumnAxis;
+
     if (axis == GridColumnAxis)
         m_columnBaselineItemsMap.add(&item, true);
     else

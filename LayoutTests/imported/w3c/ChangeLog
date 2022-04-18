@@ -1,3 +1,23 @@
+2022-04-18  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Implement support for aligning baselines through subgrids
+        https://bugs.webkit.org/show_bug.cgi?id=238643
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-grid/subgrid/baseline-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/baseline-002.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/baseline-003-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/baseline-003.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/baseline-004-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/baseline-004.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/baseline-005-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/baseline-005.html: Added.
+
+        Added new WPT variants of the baseline tests, for the case where the introspected subgrid
+        has padding that affects the baseline position, and for the case where the subgrid uses an
+        orthogonal writing mode.
+
 2022-04-18  Martin Robinson  <mrobinson@webkit.org>
 
         TestRunner testdriver does not properly focus elements before sending keys to them

@@ -1,3 +1,50 @@
+2022-04-18  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Implement support for aligning baselines through subgrids
+        https://bugs.webkit.org/show_bug.cgi?id=238643
+
+        Reviewed by Javier Fernandez.
+
+        Implement baseline sharing recursion into subgrids
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-002.html
+               imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-003.html
+               imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-004.html
+               imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-005.html
+
+        * rendering/GridBaselineAlignment.cpp:
+        (WebCore::GridBaselineAlignment::ascentForChild const):
+        (WebCore::GridBaselineAlignment::descentForChild const):
+        (WebCore::GridBaselineAlignment::updateBaselineAlignmentContext):
+        (WebCore::BaselineGroup::BaselineGroup):
+        (WebCore::BaselineGroup::update):
+        (WebCore::BaselineContext::BaselineContext):
+        (WebCore::BaselineContext::updateSharedGroup):
+        * rendering/GridBaselineAlignment.h:
+        (WebCore::BaselineGroup::maxAscent const):
+        (WebCore::BaselineGroup::maxDescent const): Deleted.
+        * rendering/GridLayoutFunctions.h:
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::canParticipateInBaselineAlignment const):
+        (WebCore::GridTrackSizingAlgorithm::updateBaselineAlignmentContext):
+        (WebCore::GridTrackSizingAlgorithm::baselineOffsetForChild const):
+        (WebCore::GridTrackSizingAlgorithm::cacheBaselineAlignedItem):
+        * rendering/GridTrackSizingAlgorithm.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::cacheBaselineAlignedChildren):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderGrid::performGridItemsPreLayout const):
+        (WebCore::RenderGrid::alignSelfForChild const):
+        (WebCore::RenderGrid::justifySelfForChild const):
+        (WebCore::RenderGrid::columnAxisBaselineOffsetForChild const):
+        (WebCore::RenderGrid::rowAxisBaselineOffsetForChild const):
+
+        Moves the code for collecting baseline aligned children into a shared helper function, and adds
+        support for recursing into subgrid children (restricted to the axes that subgrid was applied).
+
+        Fixes align/justifySelfForChild to check if the child is a subgrid and overrides the result to 'stretch', so
+        that we're correctly stretching subgrids, not the children of subgrids (covered by new tests).
+
 2022-04-18  Tyler Wilcock  <tyler_w@apple.com>
 
         Node changes created by AXIsolatedTree::updateNode are overwritten when performed during AXIsolatedTree::collectNodeChangesForSubtree

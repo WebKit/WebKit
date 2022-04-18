@@ -192,6 +192,40 @@ bool RenderGrid::canPerformSimplifiedLayout() const
     return RenderBlock::canPerformSimplifiedLayout();
 }
 
+template<typename F>
+static void cacheBaselineAlignedChildren(const RenderGrid& grid, GridTrackSizingAlgorithm& algorithm, uint32_t axes, F& callback)
+{
+    for (auto* child = grid.firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned() || child->isLegend())
+            continue;
+
+        callback(child);
+
+        // We keep a cache of items with baseline as alignment values so that we only compute the baseline shims for
+        // such items. This cache is needed for performance related reasons due to the cost of evaluating the item's
+        // participation in a baseline context during the track sizing algorithm.
+        uint32_t innerAxes = 0;
+        RenderGrid* inner = is<RenderGrid>(child) ? downcast<RenderGrid>(child) : nullptr;
+
+        if (axes & GridColumnAxis) {
+            if (inner && inner->isSubgridInParentDirection(ForRows))
+                innerAxes |= GridLayoutFunctions::isOrthogonalChild(grid, *child) ? GridRowAxis : GridColumnAxis;
+            else if (grid.isBaselineAlignmentForChild(*child, GridColumnAxis))
+                algorithm.cacheBaselineAlignedItem(*child, GridColumnAxis);
+        }
+
+        if (axes & GridRowAxis) {
+            if (inner && inner->isSubgridInParentDirection(ForColumns))
+                innerAxes |= GridLayoutFunctions::isOrthogonalChild(grid, *child) ? GridColumnAxis : GridRowAxis;
+            else if (grid.isBaselineAlignmentForChild(*child, GridRowAxis))
+                algorithm.cacheBaselineAlignedItem(*child, GridRowAxis);
+        }
+
+        if (innerAxes)
+            cacheBaselineAlignedChildren(*inner, algorithm, innerAxes, callback);
+    }
+}
+
 Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
 {
     Vector<RenderBox*> dependentGridItems;
@@ -200,15 +234,7 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
     m_hasAnyOrthogonalItem = false;
     m_hasAspectRatioBlockSizeDependentItem = false;
 
-    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned() || child->isLegend())
-            continue;
-
-        // Grid's layout logic controls the grid item's override height, hence we need to
-        // clear any override height set previously, so it doesn't interfere in current layout
-        // execution. Grid never uses the override width, that's why we don't need to clear  it.
-        child->clearOverridingLogicalHeight();
-
+    auto computeOrthogonalAndDependentItems = [&](RenderBox* child) {
         // Grid's layout logic controls the grid item's override height, hence we need to
         // clear any override height set previously, so it doesn't interfere in current layout
         // execution. Grid never uses the override width, that's why we don't need to clear  it.
@@ -224,16 +250,9 @@ Vector<RenderBox*> RenderGrid::computeAspectRatioDependentAndBaselineItems()
             dependentGridItems.append(child);
             m_hasAspectRatioBlockSizeDependentItem = true;
         }
+    };
 
-        // We keep a cache of items with baseline as aligcnment values so that we only compute the baseline shims for
-        // such items. This cache is needed for performance related reasons due to the cost of evaluating the item's
-        // participation in a baseline context during the track sizing algorithm.
-        if (isBaselineAlignmentForChild(*child, GridColumnAxis))
-            m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridColumnAxis);
-        if (isBaselineAlignmentForChild(*child, GridRowAxis))
-            m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridRowAxis);
-    }
-
+    cacheBaselineAlignedChildren(*this, m_trackSizingAlgorithm, GridRowAxis | GridColumnAxis, computeOrthogonalAndDependentItems);
     return dependentGridItems;
 }
 
@@ -477,12 +496,8 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         if (m_baselineItemsCached)
             algorithm.copyBaselineItemsCache(m_trackSizingAlgorithm, GridRowAxis);
         else {
-            for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-                if (child->isOutOfFlowPositioned())
-                    continue;
-                if (isBaselineAlignmentForChild(*child, GridRowAxis))
-                    algorithm.cacheBaselineAlignedItem(*child, GridRowAxis);
-            }
+            auto emptyCallback = [](RenderBox*) { };
+            cacheBaselineAlignedChildren(*this, algorithm, GridRowAxis, emptyCallback);
         }
 
         computeTrackSizesForIndefiniteSize(algorithm, ForColumns, &minLogicalWidth, &maxLogicalWidth);
@@ -783,6 +798,8 @@ void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algor
         // We need to layout the item to know whether it must synthesize its
         // baseline or not, which may imply a cyclic sizing dependency.
         // FIXME: Can we avoid it ?
+        // FIXME: We also want to layout baseline aligned items within subgrids, but
+        // we don't currently have a way to do that here.
         if (isBaselineAlignmentForChild(*child)) {
             updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child, ForColumns), algorithm.estimatedGridAreaBreadthForChild(*child, ForRows));
             child->layoutIfNeeded();
@@ -1226,7 +1243,7 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
 
 StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child, StretchingMode stretchingMode, const RenderStyle* gridStyle) const
 {
-    if (isSubgridInParentDirection(ForRows))
+    if (is<RenderGrid>(child) && downcast<RenderGrid>(child).isSubgridInParentDirection(ForRows))
         return { ItemPosition::Stretch, OverflowAlignment::Default };
     if (!gridStyle)
         gridStyle = &style();
@@ -1236,7 +1253,7 @@ StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child, Str
 
 StyleSelfAlignmentData RenderGrid::justifySelfForChild(const RenderBox& child, StretchingMode stretchingMode, const RenderStyle* gridStyle) const
 {
-    if (isSubgridInParentDirection(ForColumns))
+    if (is<RenderGrid>(child) && downcast<RenderGrid>(child).isSubgridInParentDirection(ForColumns))
         return { ItemPosition::Stretch, OverflowAlignment::Default };
     if (!gridStyle)
         gridStyle = &style();
@@ -1457,11 +1474,23 @@ std::optional<LayoutUnit> RenderGrid::inlineBlockBaseline(LineDirectionMode) con
 
 LayoutUnit RenderGrid::columnAxisBaselineOffsetForChild(const RenderBox& child) const
 {
+    if (isSubgridRows()) {
+        RenderGrid* outer = downcast<RenderGrid>(parent());
+        if (GridLayoutFunctions::isOrthogonalChild(*outer, *this))
+            return outer->rowAxisBaselineOffsetForChild(child);
+        return outer->columnAxisBaselineOffsetForChild(child);
+    }
     return m_trackSizingAlgorithm.baselineOffsetForChild(child, GridColumnAxis);
 }
 
 LayoutUnit RenderGrid::rowAxisBaselineOffsetForChild(const RenderBox& child) const
 {
+    if (isSubgridColumns()) {
+        RenderGrid* outer = downcast<RenderGrid>(parent());
+        if (GridLayoutFunctions::isOrthogonalChild(*outer, *this))
+            return outer->columnAxisBaselineOffsetForChild(child);
+        return outer->rowAxisBaselineOffsetForChild(child);
+    }
     return m_trackSizingAlgorithm.baselineOffsetForChild(child, GridRowAxis);
 }
 
