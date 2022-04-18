@@ -1082,7 +1082,7 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
             networkProcess->send(Messages::NetworkProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
     });
 
-    if (key == WKCaptivePortalModeEnabledKey || key == WebKitCaptivePortalModeChangedNotification_Legacy)
+    if (key == WKCaptivePortalModeEnabledKey)
         captivePortalModeStateChanged();
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)

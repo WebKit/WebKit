@@ -40,9 +40,6 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
     if (preferenceValue.get() == kCFBooleanTrue)
         return true;
 
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithUTF8String:WebKitCaptivePortalModeChangedNotification_Legacy]])
-        return true;
-
     key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, LDMEnabledKey, kCFStringEncodingUTF8));
     preferenceValue = adoptCF(CFPreferencesCopyValue(key.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     return preferenceValue.get() == kCFBooleanTrue;

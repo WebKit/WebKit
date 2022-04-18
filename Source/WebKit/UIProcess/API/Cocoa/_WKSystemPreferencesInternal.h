@@ -27,5 +27,4 @@
 
 constexpr auto LDMEnabledKey = "LDMGlobalEnabled";
 constexpr auto WKCaptivePortalModeEnabledKey = "WKCaptivePortalModeEnabled";
-constexpr auto WebKitCaptivePortalModeChangedNotification_Legacy = "WebKitCaptivePortalModeEnabled";
 constexpr auto WKCaptivePortalModeContainerConfigurationChangedNotification = @"WKCaptivePortalModeContainerConfigurationChanged";

@@ -1,3 +1,19 @@
+2022-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove the deprecated CaptivePortal enablement key
+        https://bugs.webkit.org/show_bug.cgi?id=239456
+
+        Reviewed by Wenson Hsieh.
+
+        This is a minor code cleanup to remove an old default key
+        we used in the early experiments with this behavior.
+
+        * UIProcess/API/Cocoa/_WKSystemPreferences.mm:
+        (+[_WKSystemPreferences isCaptivePortalModeEnabled]):
+        * UIProcess/API/Cocoa/_WKSystemPreferencesInternal.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::notifyPreferencesChanged):
+
 2022-04-18  Per Arne Vollan  <pvollan@apple.com>
 
         Fix incorrect syscall name in sandboxes
