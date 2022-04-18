@@ -29,12 +29,7 @@
 
 #include "QualifiedRenderingResourceIdentifier.h"
 #include "QualifiedResourceHeap.h"
-#include <WebCore/Font.h>
-#include <WebCore/ImageBuffer.h>
-#include <WebCore/NativeImage.h>
 #include <WebCore/ProcessIdentifier.h>
-#include <WebCore/RenderingResourceIdentifier.h>
-#include <wtf/HashMap.h>
 
 namespace WebKit {
 
@@ -53,10 +48,6 @@ public:
     WebCore::Font* cachedFont(QualifiedRenderingResourceIdentifier) const;
     void deleteAllFonts();
     bool releaseRemoteResource(QualifiedRenderingResourceIdentifier);
-
-    const WebCore::DisplayList::ResourceHeap& resourceHeap() const { return m_resourceHeap; }
-
-    bool hasActiveDrawables() const { return m_resourceHeap.hasImageBuffer() || m_resourceHeap.hasNativeImage(); }
 
 private:
     QualifiedResourceHeap m_resourceHeap;

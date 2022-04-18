@@ -62,6 +62,7 @@ public:
         , m_remoteRenderingBackend(remoteRenderingBackend)
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
         , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
+        , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
     {
         m_remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
     }
@@ -88,6 +89,7 @@ private:
     RemoteRenderingBackend& m_remoteRenderingBackend;
     QualifiedRenderingResourceIdentifier m_renderingResourceIdentifier;
     IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder> m_remoteDisplayList;
+    ScopedRenderingResourcesRequest m_renderingResourcesRequest;
 };
 
 } // namespace WebKit

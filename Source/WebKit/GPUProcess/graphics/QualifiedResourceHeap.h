@@ -108,24 +108,6 @@ public:
         return get<WebCore::Font>(renderingResourceIdentifier);
     }
 
-    bool hasImageBuffer() const
-    {
-        checkInvariants();
-        return m_imageBufferCount;
-    }
-
-    bool hasNativeImage() const
-    {
-        checkInvariants();
-        return m_nativeImageCount;
-    }
-
-    bool hasFont() const
-    {
-        checkInvariants();
-        return m_fontCount;
-    }
-
     bool removeImageBuffer(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
         return remove<WebCore::ImageBuffer>(renderingResourceIdentifier, m_imageBufferCount);

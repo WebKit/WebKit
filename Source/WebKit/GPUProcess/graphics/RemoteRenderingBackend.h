@@ -90,8 +90,6 @@ public:
     void didCreateImageBufferBackend(ImageBufferBackendHandle, QualifiedRenderingResourceIdentifier, RemoteDisplayListRecorder&);
     void didFlush(WebCore::GraphicsContextFlushIdentifier, QualifiedRenderingResourceIdentifier);
 
-    bool allowsExitUnderMemoryPressure() const;
-
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
 
@@ -110,7 +108,6 @@ private:
     void startListeningForIPC();
 
     std::optional<SharedMemory::IPCHandle> updateSharedMemoryForGetPixelBufferHelper(size_t byteCount);
-    void updateRenderingResourceRequest();
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;

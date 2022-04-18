@@ -1,3 +1,52 @@
+2022-04-18  Said Abou-Hallawa  <said@apple.com>
+
+        REGRESSION(r288847): GPU Process crash under GPUProcess::canExitUnderMemoryPressure()
+        https://bugs.webkit.org/show_bug.cgi?id=238558
+        rdar://91052033
+
+        Reviewed by Kimmo Kinnunen.
+
+        Use the rendering resources request count to keep the GPU process alive.
+
+        RemoteRenderingBackend updates it when active image buffers change.
+        RemoteGraphicsContextGL updates it on creation and destruction.
+        RemoteMediaPlayerProxy updates it on creation and destruction.
+
+        Remove RemoterRenderingBackend::updateRenderingResourceRequest(), the
+        count is now counted by RemoteImageBuffer creation, destruction.
+
+        Remove RemoterRenderingBackend::allowsExitUnderMemoryPressure(), it was
+        crashing due to race between the function and the work queue cleanup task.
+
+        Remove RemoteMediaPlayerManagerProxy::allowsExitUnderMemoryPressure(),
+        the count is already counted by RemoteMediaPlayerProxy creation, destruction.
+
+        Based on the initial patch by Kimmo Kinnunen.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::allowsExitUnderMemoryPressure const):
+        * GPUProcess/graphics/QualifiedResourceHeap.h:
+        (WebKit::QualifiedResourceHeap::hasImageBuffer const): Deleted.
+        (WebKit::QualifiedResourceHeap::hasNativeImage const): Deleted.
+        (WebKit::QualifiedResourceHeap::hasFont const): Deleted.
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        (WebKit::RemoteImageBuffer::m_renderingResourcesRequest):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::updateRenderingResourceRequest): Deleted.
+        (WebKit::RemoteRenderingBackend::allowsExitUnderMemoryPressure const): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteResourceCache.h:
+        (WebKit::RemoteResourceCache::resourceHeap const): Deleted.
+        (WebKit::RemoteResourceCache::hasActiveDrawables const): Deleted.
+        * GPUProcess/graphics/ScopedRenderingResourcesRequest.h:
+        (WebKit::hasOutstandingRenderingResourceUsage):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::deleteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::allowsExitUnderMemoryPressure const): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+
 2022-04-18  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Use XCBuild for all command-line and project builds

@@ -74,6 +74,12 @@ private:
     }
     static std::atomic<unsigned> s_requests;
     bool m_requested { false };
+    friend bool hasOutstandingRenderingResourceUsage();
 };
+
+inline bool hasOutstandingRenderingResourceUsage()
+{
+    return ScopedRenderingResourcesRequest::s_requests;
+}
 
 }

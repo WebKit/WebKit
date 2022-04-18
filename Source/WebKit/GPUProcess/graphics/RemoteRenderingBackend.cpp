@@ -210,7 +210,6 @@ void RemoteRenderingBackend::createImageBufferWithQualifiedIdentifier(const Floa
     }
 
     m_remoteResourceCache.cacheImageBuffer(*imageBuffer, imageBufferResourceIdentifier);
-    updateRenderingResourceRequest();
 }
 
 void RemoteRenderingBackend::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, PixelBufferFormat&& destinationFormat, IntRect&& srcRect, CompletionHandler<void()>&& completionHandler)
@@ -401,7 +400,6 @@ void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(Qualif
     }
     auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
-    updateRenderingResourceRequest();
 }
 
 static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)
@@ -525,22 +523,6 @@ void RemoteRenderingBackend::markSurfacesVolatile(const Vector<RenderingResource
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
 {
     send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
-}
-
-void RemoteRenderingBackend::updateRenderingResourceRequest()
-{
-    bool hasActiveDrawables = m_remoteResourceCache.hasActiveDrawables();
-    bool hasActiveRequest = m_renderingResourcesRequest.isRequested();
-    if (hasActiveDrawables && !hasActiveRequest)
-        m_renderingResourcesRequest = ScopedRenderingResourcesRequest::acquire();
-    else if (!hasActiveDrawables && hasActiveRequest)
-        m_renderingResourcesRequest = { };
-}
-
-bool RemoteRenderingBackend::allowsExitUnderMemoryPressure() const
-{
-    ASSERT(isMainRunLoop());
-    return !m_remoteResourceCache.hasActiveDrawables();
 }
 
 void RemoteRenderingBackend::performWithMediaPlayerOnMainThread(MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback)
