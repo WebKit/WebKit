@@ -1,5 +1,21 @@
 2022-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the internal watchOS engineering build
+
+        In the case where `HAVE(UIKIT_WITH_MOUSE_SUPPORT)` is off, internal watchOS engineering builds fail due to
+        `shouldEnableAlternativeMouseGestureRecognizers` being unused. Fix this, and do some minor cleanup in this code
+        while we're here:
+
+        - Remove extra space before `_alternateMouseGestureRecognizer.get()`.
+        - Move * to the correct side for Objective-C instances.
+        - Fix a typo: "alternativeMouseRecgnizer" => "alternativeMouseRecognizer".
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (shouldEnableAlternativeMouseGestureRecognizers):
+        (-[WKContentView _configureMouseGestureRecognizer]):
+
+2022-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Make the main video heuristic robust when video elements are added after entering fullscreen
         https://bugs.webkit.org/show_bug.cgi?id=239438
         rdar://91867187

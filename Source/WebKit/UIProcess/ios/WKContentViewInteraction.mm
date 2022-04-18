@@ -251,10 +251,10 @@ static bool canAttemptTextRecognitionForNonImageElements(const WebKit::Interacti
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
-static bool shouldEnableAlternativeMouseGestureRecognizers(WKMouseGestureRecognizer* mouseRecognizer, WKMouseGestureRecognizer* alternativeMouseRecgnizer)
+static bool shouldEnableAlternativeMouseGestureRecognizers(WKMouseGestureRecognizer *mouseRecognizer, WKMouseGestureRecognizer *alternativeMouseRecognizer)
 {
     UNUSED_PARAM(mouseRecognizer);
-    UNUSED_PARAM(alternativeMouseRecgnizer);
+    UNUSED_PARAM(alternativeMouseRecognizer);
     
     return false;
 }
@@ -10006,7 +10006,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 - (void)_configureMouseGestureRecognizer
 {
     [_mouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
-    if (shouldEnableAlternativeMouseGestureRecognizers(_mouseGestureRecognizer.get(),  _alternateMouseGestureRecognizer.get()))
+    if (shouldEnableAlternativeMouseGestureRecognizers(_mouseGestureRecognizer.get(), _alternateMouseGestureRecognizer.get()))
         [_alternateMouseGestureRecognizer setEnabled:[self shouldUseMouseGestureRecognizer]];
     else
         [_alternateMouseGestureRecognizer setEnabled:false];
