@@ -1,3 +1,13 @@
+2022-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Use convertToASCIILowercase() less and more SortedArrayMap / SortedArraySet
+        https://bugs.webkit.org/show_bug.cgi?id=239453
+
+        Reviewed by Darin Adler.
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::toCommandHTTPMethod):
+
 2022-04-13  Chris Dumez  <cdumez@apple.com>
 
         Replace calls to substring(0, x) with the more concise left(x)

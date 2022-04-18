@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "SecurityOrigin.h"
 #include <JavaScriptCore/ConsoleMessage.h>
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -145,16 +146,16 @@ ApplicationManifest::Display ApplicationManifestParser::parseDisplay(const JSON:
         return ApplicationManifest::Display::Browser;
     }
 
-    stringValue = StringView(stringValue).stripWhiteSpace().convertToASCIILowercase();
+    static constexpr std::pair<ComparableLettersLiteral, ApplicationManifest::Display> displayValueMappings[] = {
+        { "browser", ApplicationManifest::Display::Browser },
+        { "fullscreen", ApplicationManifest::Display::Fullscreen },
+        { "minimal-ui", ApplicationManifest::Display::MinimalUI },
+        { "standalone", ApplicationManifest::Display::Standalone },
+    };
+    static constexpr SortedArrayMap displayValues { displayValueMappings };
 
-    if (stringValue == "fullscreen")
-        return ApplicationManifest::Display::Fullscreen;
-    if (stringValue == "standalone")
-        return ApplicationManifest::Display::Standalone;
-    if (stringValue == "minimal-ui")
-        return ApplicationManifest::Display::MinimalUI;
-    if (stringValue == "browser")
-        return ApplicationManifest::Display::Browser;
+    if (auto* displayValue = displayValues.tryGet(StringView(stringValue).stripWhiteSpace()))
+        return *displayValue;
 
     logDeveloperWarning(makeString("\""_s, stringValue, "\" is not a valid display mode."_s));
     return ApplicationManifest::Display::Browser;

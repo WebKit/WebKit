@@ -1,3 +1,19 @@
+2022-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Use convertToASCIILowercase() less and more SortedArrayMap / SortedArraySet
+        https://bugs.webkit.org/show_bug.cgi?id=239453
+
+        Reviewed by Darin Adler.
+
+        * Modules/applicationmanifest/ApplicationManifestParser.cpp:
+        (WebCore::ApplicationManifestParser::parseDisplay):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsType):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::isUnsupportedMIMEType):
+        * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm:
+        (WebCore::AVAssetMIMETypeCache::isUnsupportedContainerType):
+
 2022-04-18  Matt Woodrow  <mattwoodrow@apple.com>
 
         Implement support for aligning baselines through subgrids
