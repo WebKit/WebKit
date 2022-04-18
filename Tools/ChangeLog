@@ -1,3 +1,17 @@
+2022-04-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [ews.webkit.org] Reduce status updates
+        https://bugs.webkit.org/show_bug.cgi?id=239414
+        <rdar://problem/91839873>
+
+        Reviewed by Aakash Jain.
+
+        We're starting to bump against our API limits, many very short steps report
+        their status, only to be imiediately overwritten. Skip step started updates.
+
+        * CISupport/ews-build/events.py:
+        (Events.stepStarted):
+
 2022-04-15  Justin Michaud  <justin_michaud@apple.com>
 
         [PGO] Fix build on intel machines

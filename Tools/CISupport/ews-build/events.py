@@ -81,6 +81,18 @@ class Events(service.BuildbotService):
 
     EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix).encode()
     MAX_GITHUB_DESCRIPTION = 140
+    SHORT_STEPS = (
+        'configure-build',
+        'validate-change',
+        'configuration',
+        'clean-up-git-repo',
+        'fetch-branch-references',
+        'show-identifier',
+        'update-working-directory',
+        'apply-patch',
+        'kill-old-processes',
+        'set-build-summary',
+    )
 
     def __init__(self, master_hostname, type_prefix='', name='Events'):
         """
@@ -260,7 +272,7 @@ class Events(service.BuildbotService):
             build['properties'] = yield self.master.db.builds.getBuildProperties(step.get('buildid'))
 
         # We need to force the defered properties to resolve
-        if build['properties'].get('github.number'):
+        if build['properties'].get('github.number') and build.get('step') not in self.SHORT_STEPS:
             self.stepStartedGitHub(build, state_string)
 
         data = {
