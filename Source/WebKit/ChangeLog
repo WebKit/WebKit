@@ -1,3 +1,17 @@
+2022-04-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix incorrect syscall name in sandboxes
+        https://bugs.webkit.org/show_bug.cgi?id=239454
+
+        Reviewed by Darin Adler.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-04-18  Simon Fraser  <simon.fraser@apple.com>
 
         Allow C API clients to get the WKProcessTerminationReason in processDidCrash functions, and use in WebKitTestRunner

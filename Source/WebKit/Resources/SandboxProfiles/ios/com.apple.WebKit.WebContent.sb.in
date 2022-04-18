@@ -1353,8 +1353,8 @@
         (syscall-unix-rarely-in-use-need-backtrace))
 )
 
-(when (defined? 'SYS__map_with_linking_np)
-    (allow syscall-unix (syscall-number SYS__map_with_linking_np)))
+(when (defined? 'SYS_map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
 (with-filter (system-attribute apple-internal)
     (when (defined? 'syscall-unix)

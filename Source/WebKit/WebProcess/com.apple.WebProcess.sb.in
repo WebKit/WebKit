@@ -2040,8 +2040,8 @@
     (if (defined? 'SYS_objc_bp_assist_cfg_np)
         (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
 #endif
-    (when (defined? 'SYS__map_with_linking_np)
-        (allow syscall-unix (syscall-number SYS__map_with_linking_np)))
+    (when (defined? 'SYS_map_with_linking_np)
+        (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 )
 
 (with-filter (uid 0)

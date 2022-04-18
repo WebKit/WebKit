@@ -623,8 +623,8 @@
         SYS_write
         SYS_write_nocancel)))
 
-(when (defined? 'SYS__map_with_linking_np)
-    (allow syscall-unix (syscall-number SYS__map_with_linking_np)))
+(when (defined? 'SYS_map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
 (when (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
