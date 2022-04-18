@@ -57,7 +57,7 @@ public:
     Vector<AtomString> supportedPropertyNames() const;
 
     String enctype() const { return m_attributes.encodingType(); }
-    WEBCORE_EXPORT void setEnctype(const String&);
+    WEBCORE_EXPORT void setEnctype(const AtomString&);
 
     bool shouldAutocomplete() const;
 
@@ -97,10 +97,10 @@ public:
     void setAcceptCharset(const String&);
 
     WEBCORE_EXPORT String action() const;
-    WEBCORE_EXPORT void setAction(const String&);
+    WEBCORE_EXPORT void setAction(const AtomString&);
 
     WEBCORE_EXPORT String method() const;
-    WEBCORE_EXPORT void setMethod(const String&);
+    WEBCORE_EXPORT void setMethod(const AtomString&);
 
     DOMTokenList& relList();
 

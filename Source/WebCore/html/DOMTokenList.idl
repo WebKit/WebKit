@@ -30,12 +30,12 @@
 ] interface DOMTokenList {
     readonly attribute unsigned long length;
     getter DOMString? item(unsigned long index);
-    boolean contains(DOMString token);
-    [CEReactions] undefined add(DOMString... tokens);
-    [CEReactions] undefined remove(DOMString... tokens);
-    [CEReactions] boolean toggle(DOMString token, optional boolean force);
-    [CEReactions] boolean replace(DOMString token, DOMString newToken);
+    boolean contains([AtomString] DOMString token);
+    [CEReactions] undefined add([AtomString] DOMString... tokens);
+    [CEReactions] undefined remove([AtomString] DOMString... tokens);
+    [CEReactions] boolean toggle([AtomString] DOMString token, optional boolean force);
+    [CEReactions] boolean replace([AtomString] DOMString token, [AtomString] DOMString newToken);
     boolean supports(DOMString token);
-    [CEReactions] stringifier attribute DOMString value;
+    [CEReactions] stringifier attribute [AtomString] DOMString value;
     iterable<DOMString>;
 };

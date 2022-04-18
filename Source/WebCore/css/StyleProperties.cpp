@@ -1396,6 +1396,16 @@ bool MutableStyleProperties::addParsedProperty(const CSSProperty& property)
 
 String StyleProperties::asText() const
 {
+    return asTextInternal().toString();
+}
+
+AtomString StyleProperties::asTextAtom() const
+{
+    return asTextInternal().toAtomString();
+}
+
+StringBuilder StyleProperties::asTextInternal() const
+{
     StringBuilder result;
 
     int positionXPropertyIndex = -1;
@@ -1743,7 +1753,7 @@ String StyleProperties::asText() const
     appendPositionOrProperty(repeatXPropertyIndex, repeatYPropertyIndex, "background-repeat", backgroundRepeatShorthand());
 
     ASSERT(!numDecls ^ !result.isEmpty());
-    return result.toString();
+    return result;
 }
 
 bool StyleProperties::hasCSSOMWrapper() const

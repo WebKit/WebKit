@@ -63,8 +63,8 @@ public:
     SVGAnimatedAngle& orientAngleAnimated() { return m_orientAngle; }
     Ref<SVGAnimatedEnumeration> orientTypeAnimated() { return m_orientType.copyRef(); }
 
-    String orient() const;
-    void setOrient(const String&);
+    AtomString orient() const;
+    void setOrient(const AtomString&);
 
     void setOrientToAuto();
     void setOrientToAngle(const SVGAngle&);

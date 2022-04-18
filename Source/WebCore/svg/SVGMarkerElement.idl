@@ -44,7 +44,7 @@
     [SameObject] readonly attribute SVGAnimatedEnumeration orientType;
     [SameObject] readonly attribute SVGAnimatedAngle       orientAngle;
 
-    attribute DOMString orient;
+    attribute [AtomString] DOMString orient;
 
     undefined setOrientToAuto();
     undefined setOrientToAngle(SVGAngle angle);

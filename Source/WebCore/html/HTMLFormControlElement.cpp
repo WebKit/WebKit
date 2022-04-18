@@ -90,7 +90,7 @@ String HTMLFormControlElement::formEnctype() const
     return FormSubmission::Attributes::parseEncodingType(formEnctypeAttr);
 }
 
-void HTMLFormControlElement::setFormEnctype(const String& value)
+void HTMLFormControlElement::setFormEnctype(const AtomString& value)
 {
     setAttributeWithoutSynchronization(formenctypeAttr, value);
 }
@@ -104,7 +104,7 @@ String HTMLFormControlElement::formMethod() const
     return FormSubmission::Attributes::methodString(FormSubmission::Attributes::parseMethodType(formMethodAttr, dialogElementEnabled), dialogElementEnabled);
 }
 
-void HTMLFormControlElement::setFormMethod(const String& value)
+void HTMLFormControlElement::setFormMethod(const AtomString& value)
 {
     setAttributeWithoutSynchronization(formmethodAttr, value);
 }
@@ -616,7 +616,7 @@ String HTMLFormControlElement::autocomplete() const
     return autofillData().idlExposedValue;
 }
 
-void HTMLFormControlElement::setAutocomplete(const String& value)
+void HTMLFormControlElement::setAutocomplete(const AtomString& value)
 {
     setAttributeWithoutSynchronization(autocompleteAttr, value);
 }

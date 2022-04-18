@@ -143,14 +143,14 @@ void SVGUseElement::transferSizeAttributesToTargetClone(SVGElement& shadowElemen
         // If attributes width and/or height are provided on the 'use' element, then these attributes
         // will be transferred to the generated 'svg'. If attributes width and/or height are not specified,
         // the generated 'svg' element will use values of 100% for these attributes.
-        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? AtomString(width().valueAsString()) : "100%"_s);
-        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? AtomString(height().valueAsString()) : "100%"_s);
+        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? width().valueAsAtomString() : "100%"_s);
+        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? height().valueAsAtomString() : "100%"_s);
     } else if (is<SVGSVGElement>(shadowElement)) {
         // Spec (<use> on <svg>): If attributes width and/or height are provided on the 'use' element, then these
         // values will override the corresponding attributes on the 'svg' in the generated tree.
         RefPtr correspondingElement = shadowElement.correspondingElement();
-        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? AtomString(width().valueAsString()) : (correspondingElement ? correspondingElement->getAttribute(SVGNames::widthAttr) : nullAtom()));
-        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? AtomString(height().valueAsString()) : (correspondingElement ? correspondingElement->getAttribute(SVGNames::heightAttr) : nullAtom()));
+        shadowElement.setAttribute(SVGNames::widthAttr, width().valueInSpecifiedUnits() ? width().valueAsAtomString() : (correspondingElement ? correspondingElement->getAttribute(SVGNames::widthAttr) : nullAtom()));
+        shadowElement.setAttribute(SVGNames::heightAttr, height().valueInSpecifiedUnits() ? height().valueAsAtomString() : (correspondingElement ? correspondingElement->getAttribute(SVGNames::heightAttr) : nullAtom()));
     }
 }
 

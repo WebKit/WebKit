@@ -1305,12 +1305,12 @@ ExceptionOr<void> HTMLInputElement::showPicker()
     return { };
 }
 
-String HTMLInputElement::defaultValue() const
+const AtomString& HTMLInputElement::defaultValue() const
 {
     return attributeWithoutSynchronization(valueAttr);
 }
 
-void HTMLInputElement::setDefaultValue(const String &value)
+void HTMLInputElement::setDefaultValue(const AtomString& value)
 {
     setAttributeWithoutSynchronization(valueAttr, value);
 }

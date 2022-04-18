@@ -86,10 +86,8 @@ const AtomString& HTMLButtonElement::formControlType() const
             static MainThreadNeverDestroyed<const AtomString> submit("submit", AtomString::ConstructFromLiteral);
             return submit;
         }
-        case BUTTON: {
-            static MainThreadNeverDestroyed<const AtomString> button("button", AtomString::ConstructFromLiteral);
-            return button;
-        }
+        case BUTTON:
+            return HTMLNames::buttonTag->localName();
         case RESET: {
             static MainThreadNeverDestroyed<const AtomString> reset("reset", AtomString::ConstructFromLiteral);
             return reset;

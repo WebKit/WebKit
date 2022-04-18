@@ -37,7 +37,7 @@ class HTMLOptionElement final : public HTMLElement {
 public:
     static Ref<HTMLOptionElement> create(Document&);
     static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);
-    static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, const String& text, const String& value, bool defaultSelected, bool selected);
+    static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, const String& text, const AtomString& value, bool defaultSelected, bool selected);
 
     WEBCORE_EXPORT String text() const;
     void setText(const String&);
@@ -45,7 +45,7 @@ public:
     WEBCORE_EXPORT int index() const;
 
     WEBCORE_EXPORT String value() const;
-    WEBCORE_EXPORT void setValue(const String&);
+    WEBCORE_EXPORT void setValue(const AtomString&);
 
     WEBCORE_EXPORT bool selected(AllowStyleInvalidation = AllowStyleInvalidation::Yes) const;
     WEBCORE_EXPORT void setSelected(bool);
@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT String label() const;
     String displayLabel() const;
-    WEBCORE_EXPORT void setLabel(const String&);
+    WEBCORE_EXPORT void setLabel(const AtomString&);
 
     bool ownElementDisabled() const { return m_disabled; }
 

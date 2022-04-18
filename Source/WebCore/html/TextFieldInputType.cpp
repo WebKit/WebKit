@@ -833,11 +833,10 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
     if (autoFillButtonType == AutoFillButtonType::None)
         return;
 
-    static MainThreadNeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
     ASSERT(element());
     m_autoFillButton = AutoFillButtonElement::create(element()->document(), *this);
     m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));
-    m_autoFillButton->setAttributeWithoutSynchronization(roleAttr, buttonName);
+    m_autoFillButton->setAttributeWithoutSynchronization(roleAttr, HTMLNames::buttonTag->localName());
     m_autoFillButton->setAttributeWithoutSynchronization(aria_labelAttr, autoFillButtonTypeToAccessibilityLabel(autoFillButtonType));
     m_autoFillButton->setTextContent(autoFillButtonTypeToAutoFillButtonText(autoFillButtonType));
     m_container->appendChild(*m_autoFillButton);

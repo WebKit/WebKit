@@ -732,12 +732,12 @@ String HTMLFormElement::action() const
     return document().completeURL(stripLeadingAndTrailingHTMLSpaces(value)).string();
 }
 
-void HTMLFormElement::setAction(const String& value)
+void HTMLFormElement::setAction(const AtomString& value)
 {
     setAttributeWithoutSynchronization(actionAttr, value);
 }
 
-void HTMLFormElement::setEnctype(const String& value)
+void HTMLFormElement::setEnctype(const AtomString& value)
 {
     setAttributeWithoutSynchronization(enctypeAttr, value);
 }
@@ -747,7 +747,7 @@ String HTMLFormElement::method() const
     return FormSubmission::Attributes::methodString(m_attributes.method(), document().settings().dialogElementEnabled());
 }
 
-void HTMLFormElement::setMethod(const String& value)
+void HTMLFormElement::setMethod(const AtomString& value)
 {
     setAttributeWithoutSynchronization(methodAttr, value);
 }

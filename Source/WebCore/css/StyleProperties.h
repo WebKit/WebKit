@@ -134,6 +134,7 @@ public:
     Ref<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
     
     String asText() const;
+    AtomString asTextAtom() const;
 
     bool hasCSSOMWrapper() const;
     bool isMutable() const { return type() == MutablePropertiesType; }
@@ -180,6 +181,7 @@ private:
     String offsetValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
     bool shorthandHasVariableReference(CSSPropertyID, String&) const;
+    StringBuilder asTextInternal() const;
 
     friend class PropertySetCSSStyleDeclaration;
 };

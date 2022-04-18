@@ -269,6 +269,13 @@ String SVGLengthValue::valueAsString() const
     return makeString(m_valueInSpecifiedUnits, lengthTypeToString(m_lengthType));
 }
 
+AtomString SVGLengthValue::valueAsAtomString() const
+{
+    StringBuilder builder;
+    builder.append(m_valueInSpecifiedUnits, lengthTypeToString(m_lengthType));
+    return builder.toAtomString();
+}
+
 ExceptionOr<float> SVGLengthValue::valueForBindings(const SVGLengthContext& context) const
 {
     return context.convertValueToUserUnits(m_valueInSpecifiedUnits, m_lengthType, m_lengthMode);

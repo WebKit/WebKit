@@ -184,7 +184,7 @@ ReplacementFragment::ReplacementFragment(DocumentFragment* fragment, const Visib
     ASSERT(stagingDocument->body());
 
     ComputedStyleExtractor computedStyleOfEditableRoot(editableRoot.get());
-    stagingDocument->body()->setAttributeWithoutSynchronization(styleAttr, computedStyleOfEditableRoot.copyProperties()->asText());
+    stagingDocument->body()->setAttributeWithoutSynchronization(styleAttr, computedStyleOfEditableRoot.copyProperties()->asTextAtom());
 
     RefPtr<StyledElement> holder = insertFragmentForTestRendering(stagingDocument->body());
     if (!holder) {
@@ -622,7 +622,7 @@ void ReplaceSelectionCommand::inverseTransformColor(InsertedNodes& insertedNodes
         if (editingStyle.ptr() == transformedStyle.ptr())
             continue;
 
-        setNodeAttribute(element, styleAttr, transformedStyle->style()->asText());
+        setNodeAttribute(element, styleAttr, transformedStyle->style()->asTextAtom());
     }
 }
 
@@ -685,7 +685,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             }
             removeNodeAttribute(*element, styleAttr);
         } else if (newInlineStyle->style()->propertyCount() != inlineStyle->propertyCount())
-            setNodeAttribute(*element, styleAttr, newInlineStyle->style()->asText());
+            setNodeAttribute(*element, styleAttr, newInlineStyle->style()->asTextAtom());
 
         // FIXME: Tolerate differences in id, class, and style attributes.
         if (element->parentNode() && isNonTableCellHTMLBlockElement(element) && areIdenticalElements(*element, *element->parentNode())
@@ -989,7 +989,7 @@ void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
         insertedNodes.willRemoveNodePreservingChildren(wrappingStyleSpan.get());
         removeNodePreservingChildren(*wrappingStyleSpan);
     } else
-        setNodeAttribute(*wrappingStyleSpan, styleAttr, style->style()->asText());
+        setNodeAttribute(*wrappingStyleSpan, styleAttr, style->style()->asTextAtom());
 }
 
 void ReplaceSelectionCommand::mergeEndIfNeeded()

@@ -29,8 +29,8 @@
     SkipVTableValidation,
     Exposed=Window
 ] interface DOMStringMap {
-    getter DOMString (DOMString name);
-    [CEReactions] setter undefined (DOMString name, DOMString value);
+    getter DOMString ([AtomString] DOMString name);
+    [CEReactions] setter undefined (DOMString name, [AtomString] DOMString value);
     [CEReactions] deleter undefined (DOMString name);
 };
 

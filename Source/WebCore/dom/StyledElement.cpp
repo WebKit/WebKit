@@ -65,7 +65,7 @@ void StyledElement::synchronizeStyleAttributeInternalImpl()
     ASSERT(elementData()->styleAttributeIsDirty());
     elementData()->setStyleAttributeIsDirty(false);
     if (const StyleProperties* inlineStyle = this->inlineStyle())
-        setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
+        setSynchronizedLazyAttribute(styleAttr, inlineStyle->asTextAtom());
 }
 
 StyledElement::~StyledElement()
@@ -253,7 +253,7 @@ void StyledElement::invalidateStyleAttribute()
     if (styleResolver().ruleSets().hasComplexSelectorsForStyleAttribute()) {
         if (auto* inlineStyle = this->inlineStyle()) {
             elementData()->setStyleAttributeIsDirty(false);
-            auto newValue = inlineStyle->asText();
+            auto newValue = inlineStyle->asTextAtom();
             Style::AttributeChangeInvalidation styleInvalidation(*this, styleAttr, attributeWithoutSynchronization(styleAttr), newValue);
             setSynchronizedLazyAttribute(styleAttr, newValue);
         }

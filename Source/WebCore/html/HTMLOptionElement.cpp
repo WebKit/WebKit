@@ -70,7 +70,7 @@ Ref<HTMLOptionElement> HTMLOptionElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLOptionElement(tagName, document));
 }
 
-ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForLegacyFactoryFunction(Document& document, const String& text, const String& value, bool defaultSelected, bool selected)
+ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForLegacyFactoryFunction(Document& document, const String& text, const AtomString& value, bool defaultSelected, bool selected)
 {
     auto element = create(document);
 
@@ -205,7 +205,7 @@ String HTMLOptionElement::value() const
     return stripLeadingAndTrailingHTMLSpaces(collectOptionInnerText()).simplifyWhiteSpace(isHTMLSpace);
 }
 
-void HTMLOptionElement::setValue(const String& value)
+void HTMLOptionElement::setValue(const AtomString& value)
 {
     setAttributeWithoutSynchronization(valueAttr, value);
 }
@@ -283,7 +283,7 @@ String HTMLOptionElement::displayLabel() const
     return label();
 }
 
-void HTMLOptionElement::setLabel(const String& label)
+void HTMLOptionElement::setLabel(const AtomString& label)
 {
     setAttributeWithoutSynchronization(labelAttr, label);
 }

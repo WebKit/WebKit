@@ -621,7 +621,7 @@ URL HTMLImageElement::src() const
     return document().completeURL(attributeWithoutSynchronization(srcAttr));
 }
 
-void HTMLImageElement::setSrc(const String& value)
+void HTMLImageElement::setSrc(const AtomString& value)
 {
     setAttributeWithoutSynchronization(srcAttr, value);
 }
@@ -658,7 +658,7 @@ bool HTMLImageElement::complete() const
     return m_imageLoader->imageComplete();
 }
 
-void HTMLImageElement::setDecoding(String&& decodingMode)
+void HTMLImageElement::setDecoding(AtomString&& decodingMode)
 {
     setAttributeWithoutSynchronization(decodingAttr, WTFMove(decodingMode));
 }

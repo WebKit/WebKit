@@ -120,12 +120,12 @@ void SVGMarkerElement::childrenChanged(const ChildChange& change)
     setSVGResourcesInAncestorChainAreDirty();
 }
 
-String SVGMarkerElement::orient() const
+AtomString SVGMarkerElement::orient() const
 {
     return getAttribute(SVGNames::orientAttr);
 }
 
-void SVGMarkerElement::setOrient(const String& orient)
+void SVGMarkerElement::setOrient(const AtomString& orient)
 {
     setAttribute(SVGNames::orientAttr, orient);
 }

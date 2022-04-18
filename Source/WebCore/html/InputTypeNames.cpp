@@ -33,8 +33,7 @@ namespace InputTypeNames {
 
 const AtomString& button()
 {
-    static MainThreadNeverDestroyed<const AtomString> name("button", AtomString::ConstructFromLiteral);
-    return name;
+    return HTMLNames::buttonTag->localName();
 }
 
 const AtomString& checkbox()

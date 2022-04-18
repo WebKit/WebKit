@@ -80,6 +80,7 @@ public:
     float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
     
     String valueAsString() const;
+    AtomString valueAsAtomString() const;
     ExceptionOr<float> valueForBindings(const SVGLengthContext&) const;
 
     void setValueInSpecifiedUnits(float value) { m_valueInSpecifiedUnits = value; }

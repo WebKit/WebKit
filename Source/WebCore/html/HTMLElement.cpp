@@ -1113,7 +1113,7 @@ String HTMLElement::enterKeyHint() const
     return attributeValueForEnterKeyHint(canonicalEnterKeyHint());
 }
 
-void HTMLElement::setEnterKeyHint(const String& value)
+void HTMLElement::setEnterKeyHint(const AtomString& value)
 {
     setAttributeWithoutSynchronization(enterkeyhintAttr, value);
 }

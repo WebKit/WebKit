@@ -6069,7 +6069,7 @@ ExceptionOr<Ref<Attr>> Document::createAttribute(const AtomString& localName)
 {
     if (!isValidName(localName))
         return Exception { InvalidCharacterError };
-    return Attr::create(*this, QualifiedName { nullAtom(), isHTMLDocument() ? localName.convertToASCIILowercase() : localName, nullAtom() }, emptyString());
+    return Attr::create(*this, QualifiedName { nullAtom(), isHTMLDocument() ? localName.convertToASCIILowercase() : localName, nullAtom() }, emptyAtom());
 }
 
 ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceURI, const String& qualifiedName, bool shouldIgnoreNamespaceChecks)
@@ -6080,7 +6080,7 @@ ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceUR
     QualifiedName parsedName { parseResult.releaseReturnValue() };
     if (!shouldIgnoreNamespaceChecks && !hasValidNamespaceForAttributes(parsedName))
         return Exception { NamespaceError };
-    return Attr::create(*this, parsedName, emptyString());
+    return Attr::create(*this, parsedName, emptyAtom());
 }
 
 const SVGDocumentExtensions* Document::svgExtensions()

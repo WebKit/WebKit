@@ -130,7 +130,7 @@ public:
 
     WEBCORE_EXPORT EnterKeyHint canonicalEnterKeyHint() const;
     String enterKeyHint() const;
-    void setEnterKeyHint(const String& value);
+    void setEnterKeyHint(const AtomString& value);
 
     WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
 

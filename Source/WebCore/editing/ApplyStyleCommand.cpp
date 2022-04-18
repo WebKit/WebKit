@@ -426,7 +426,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         }
         if (currentFontSize != desiredFontSize) {
             inlineStyle->setProperty(CSSPropertyFontSize, CSSValuePool::singleton().createValue(desiredFontSize, CSSUnitType::CSS_PX), false);
-            setNodeAttribute(*element, styleAttr, inlineStyle->asText());
+            setNodeAttribute(*element, styleAttr, inlineStyle->asTextAtom());
         }
         if (inlineStyle->isEmpty()) {
             removeNodeAttribute(*element, styleAttr);
@@ -545,7 +545,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             auto inlineStyle = copyStyleOrCreateEmpty(element.inlineStyle());
             inlineStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
             inlineStyle->removeProperty(CSSPropertyDirection);
-            setNodeAttribute(element, styleAttr, inlineStyle->asText());
+            setNodeAttribute(element, styleAttr, inlineStyle->asTextAtom());
             if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
                 removeNodePreservingChildren(element);
         }
@@ -791,7 +791,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
             RefPtr<MutableStyleProperties> inlineStyle = copyStyleOrCreateEmpty(element.inlineStyle());
             if (RefPtr otherStyle = style.style())
                 inlineStyle->mergeAndOverrideOnConflict(*otherStyle);
-            setNodeAttribute(element, styleAttr, inlineStyle->asText());
+            setNodeAttribute(element, styleAttr, inlineStyle->asTextAtom());
             next = NodeTraversal::nextSkippingChildren(*node);
             continue;
         }
@@ -971,7 +971,7 @@ bool ApplyStyleCommand::removeCSSStyle(EditingStyle& style, HTMLElement& element
     if (newInlineStyle->isEmpty())
         removeNodeAttribute(element, styleAttr);
     else
-        setNodeAttribute(element, styleAttr, newInlineStyle->asText());
+        setNodeAttribute(element, styleAttr, newInlineStyle->asTextAtom());
 
     if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
         removeNodePreservingChildren(element);
@@ -1015,7 +1015,7 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node& node, EditingStyle* sty
     // Since addInlineStyleIfNeeded can't add styles to block-flow render objects, add style attribute instead.
     // FIXME: applyInlineStyleToRange should be used here instead.
     if ((node.renderer()->isRenderBlockFlow() || node.hasChildNodes()) && is<HTMLElement>(node)) {
-        setNodeAttribute(downcast<HTMLElement>(node), styleAttr, newInlineStyle->style()->asText());
+        setNodeAttribute(downcast<HTMLElement>(node), styleAttr, newInlineStyle->style()->asTextAtom());
         return;
     }
 
@@ -1464,12 +1464,12 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
             if (auto existingStyle = styleContainer->inlineStyle()) {
                 auto inlineStyle = EditingStyle::create(existingStyle);
                 inlineStyle->overrideWithStyle(*styleToMerge);
-                setNodeAttribute(*styleContainer, styleAttr, inlineStyle->style()->asText());
+                setNodeAttribute(*styleContainer, styleAttr, inlineStyle->style()->asTextAtom());
             } else
-                setNodeAttribute(*styleContainer, styleAttr, styleToMerge->asText());
+                setNodeAttribute(*styleContainer, styleAttr, styleToMerge->asTextAtom());
         } else {
             auto styleElement = createStyleSpanElement(document());
-            styleElement->setAttribute(styleAttr, styleToMerge->asText());
+            styleElement->setAttribute(styleAttr, styleToMerge->asTextAtom());
             surroundNodeRangeWithElement(*startNode, *endNode, WTFMove(styleElement));
         }
     }

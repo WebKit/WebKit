@@ -124,7 +124,7 @@ public:
     WEBCORE_EXPORT void init();
 #if PLATFORM(IOS_FAMILY)
     // Creates <html><body style="..."></body></html> doing minimal amount of work.
-    WEBCORE_EXPORT void initWithSimpleHTMLDocument(const String& style, const URL&);
+    WEBCORE_EXPORT void initWithSimpleHTMLDocument(const AtomString& style, const URL&);
 #endif
     WEBCORE_EXPORT void setView(RefPtr<FrameView>&&);
     WEBCORE_EXPORT void createView(const IntSize&, const std::optional<Color>& backgroundColor,

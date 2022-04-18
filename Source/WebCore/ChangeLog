@@ -1,3 +1,104 @@
+2022-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Use AtomString as early as possible when string will eventually get atomized
+        https://bugs.webkit.org/show_bug.cgi?id=239427
+
+        Reviewed by Darin Adler.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::asText const):
+        (WebCore::StyleProperties::asTextAtom const):
+        (WebCore::StyleProperties::asTextInternal const):
+        * css/StyleProperties.h:
+        * dom/DOMStringMap.idl:
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::setNamedItem):
+        * dom/DatasetDOMStringMap.h:
+        * dom/Document.cpp:
+        (WebCore::Document::createAttribute):
+        (WebCore::Document::createAttributeNS):
+        * dom/ElementContentEditable.idl:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::synchronizeStyleAttributeInternalImpl):
+        (WebCore::StyledElement::invalidateStyleAttribute):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::removeCSSStyle):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown):
+        (WebCore::ApplyStyleCommand::applyInlineStyleChange):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplaceSelectionCommand::inverseTransformColor):
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        * html/DOMTokenList.cpp:
+        (WebCore::tokenContainsHTMLSpace):
+        (WebCore::DOMTokenList::validateToken):
+        (WebCore::DOMTokenList::validateTokens):
+        (WebCore::DOMTokenList::addInternal):
+        (WebCore::DOMTokenList::add):
+        (WebCore::DOMTokenList::removeInternal):
+        (WebCore::DOMTokenList::remove):
+        (WebCore::DOMTokenList::setValue):
+        * html/DOMTokenList.h:
+        * html/DOMTokenList.idl:
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::createInternal):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::formControlType const):
+        * html/HTMLButtonElement.idl:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setEnterKeyHint):
+        * html/HTMLElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::setFormEnctype):
+        (WebCore::HTMLFormControlElement::setFormMethod):
+        (WebCore::HTMLFormControlElement::setAutocomplete):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::setAction):
+        (WebCore::HTMLFormElement::setEnctype):
+        (WebCore::HTMLFormElement::setMethod):
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.idl:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::setSrc):
+        (WebCore::HTMLImageElement::setDecoding):
+        * html/HTMLImageElement.h:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultValue const):
+        (WebCore::HTMLInputElement::setDefaultValue):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::createForLegacyFactoryFunction):
+        (WebCore::HTMLOptionElement::setValue):
+        (WebCore::HTMLOptionElement::setLabel):
+        * html/HTMLOptionElement.h:
+        * html/HTMLOptionElement.idl:
+        * html/InputTypeNames.cpp:
+        (WebCore::InputTypeNames::button):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createAutoFillButton):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::create):
+        * page/Frame.h:
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::initWithSimpleHTMLDocument):
+        * svg/SVGLengthValue.cpp:
+        (WebCore::SVGLengthValue::valueAsAtomString const):
+        * svg/SVGLengthValue.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::orient const):
+        (WebCore::SVGMarkerElement::setOrient):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMarkerElement.idl:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::transferSizeAttributesToTargetClone const):
+
 2022-04-18  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Use XCBuild for all command-line and project builds

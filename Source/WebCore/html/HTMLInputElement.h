@@ -223,8 +223,8 @@ public:
 
     int maxResults() const { return m_maxResults; }
 
-    WEBCORE_EXPORT String defaultValue() const;
-    WEBCORE_EXPORT void setDefaultValue(const String&);
+    WEBCORE_EXPORT const AtomString& defaultValue() const;
+    WEBCORE_EXPORT void setDefaultValue(const AtomString&);
 
     Vector<String> acceptMIMETypes();
     Vector<String> acceptFileExtensions();

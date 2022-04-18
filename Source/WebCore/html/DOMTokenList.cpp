@@ -42,12 +42,12 @@ DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName,
 {
 }
 
-static inline bool tokenContainsHTMLSpace(const String& token)
+static inline bool tokenContainsHTMLSpace(StringView token)
 {
     return token.find(isHTMLSpace<UChar>) != notFound;
 }
 
-ExceptionOr<void> DOMTokenList::validateToken(const String& token)
+ExceptionOr<void> DOMTokenList::validateToken(StringView token)
 {
     if (token.isEmpty())
         return Exception { SyntaxError };
@@ -58,7 +58,7 @@ ExceptionOr<void> DOMTokenList::validateToken(const String& token)
     return { };
 }
 
-ExceptionOr<void> DOMTokenList::validateTokens(const String* tokens, size_t length)
+ExceptionOr<void> DOMTokenList::validateTokens(const AtomString* tokens, size_t length)
 {
     for (size_t i = 0; i < length; ++i) {
         auto result = validateToken(tokens[i]);
@@ -73,7 +73,7 @@ bool DOMTokenList::contains(const AtomString& token) const
     return tokens().contains(token);
 }
 
-inline ExceptionOr<void> DOMTokenList::addInternal(const String* newTokens, size_t length)
+inline ExceptionOr<void> DOMTokenList::addInternal(const AtomString* newTokens, size_t length)
 {
     // This is usually called with a single token.
     Vector<AtomString, 1> uniqueNewTokens;
@@ -97,17 +97,17 @@ inline ExceptionOr<void> DOMTokenList::addInternal(const String* newTokens, size
     return { };
 }
 
-ExceptionOr<void> DOMTokenList::add(const FixedVector<String>& tokens)
+ExceptionOr<void> DOMTokenList::add(const FixedVector<AtomString>& tokens)
 {
     return addInternal(tokens.data(), tokens.size());
 }
 
 ExceptionOr<void> DOMTokenList::add(const AtomString& token)
 {
-    return addInternal(&token.string(), 1);
+    return addInternal(&token, 1);
 }
 
-inline ExceptionOr<void> DOMTokenList::removeInternal(const String* tokensToRemove, size_t length)
+inline ExceptionOr<void> DOMTokenList::removeInternal(const AtomString* tokensToRemove, size_t length)
 {
     auto result = validateTokens(tokensToRemove, length);
     if (result.hasException())
@@ -122,14 +122,14 @@ inline ExceptionOr<void> DOMTokenList::removeInternal(const String* tokensToRemo
     return { };
 }
 
-ExceptionOr<void> DOMTokenList::remove(const FixedVector<String>& tokens)
+ExceptionOr<void> DOMTokenList::remove(const FixedVector<AtomString>& tokens)
 {
     return removeInternal(tokens.data(), tokens.size());
 }
 
 ExceptionOr<void> DOMTokenList::remove(const AtomString& token)
 {
-    return removeInternal(&token.string(), 1);
+    return removeInternal(&token, 1);
 }
 
 ExceptionOr<bool> DOMTokenList::toggle(const AtomString& token, std::optional<bool> force)
@@ -215,7 +215,7 @@ const AtomString& DOMTokenList::value() const
     return m_element.getAttribute(m_attributeName);
 }
 
-void DOMTokenList::setValue(const String& value)
+void DOMTokenList::setValue(const AtomString& value)
 {
     m_element.setAttribute(m_attributeName, value);
 }
