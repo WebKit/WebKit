@@ -9,6 +9,18 @@
 
         * platform/ios/TestExpectations:
 
+2022-04-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (249698@main): 4 payment request layout tests failing on Big Sur
+        https://bugs.webkit.org/show_bug.cgi?id=239461
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/http/tests/paymentrequest/payment-request-change-shipping-option.https-expected.txt: Added.
+        * platform/mac-bigsur/http/tests/paymentrequest/updateWith-shippingOptions.https-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/payment-request/payment-request-constructor.https.sub-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/payment-request/payment-request-shippingOption-attribute.https-expected.txt: Added.
+
 2022-04-18  Martin Robinson  <mrobinson@webkit.org>
 
         TestRunner testdriver does not properly focus elements before sending keys to them
