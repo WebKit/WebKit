@@ -32,6 +32,7 @@
 #include <WebKit/WKContextHistoryClient.h>
 #include <WebKit/WKContextInjectedBundleClient.h>
 #include <WebKit/WKDeprecated.h>
+#include <WebKit/WKProcessTerminationReason.h>
 
 #if defined(WIN32) || defined(_WIN32)
 typedef int WKProcessID;
@@ -60,6 +61,7 @@ typedef void (*WKContextChildProcessDidCrashCallback)(WKContextRef context, cons
 typedef WKContextChildProcessDidCrashCallback WKContextNetworkProcessDidCrashCallback;
 
 typedef void (*WKContextChildProcessWithPIDDidCrashCallback)(WKContextRef context, WKProcessID processID, const void *clientInfo);
+typedef void (*WKContextChildProcessDidCrashWithDetailsCallback)(WKContextRef context, WKProcessID processID, WKProcessTerminationReason reason, const void *clientInfo);
 
 typedef struct WKContextClientBase {
     int                                                                 version;
@@ -87,6 +89,7 @@ typedef struct WKContextClientV1 {
     void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
 } WKContextClientV1;
 
+// WKContextClientV1 and WKContextClientV2 are identical.
 typedef struct WKContextClientV2 {
     WKContextClientBase                                                 base;
 
@@ -97,7 +100,6 @@ typedef struct WKContextClientV2 {
 
     // Version 1.
     void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
-
 } WKContextClientV2;
 
 typedef struct WKContextClientV3 {
@@ -111,10 +113,32 @@ typedef struct WKContextClientV3 {
     // Version 1.
     void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
 
-    // Version2.
+    // Version 3.
     WKContextChildProcessWithPIDDidCrashCallback                        serviceWorkerProcessDidCrash;
     WKContextChildProcessWithPIDDidCrashCallback                        gpuProcessDidCrash;
 } WKContextClientV3;
+
+typedef struct WKContextClientV4 {
+    WKContextClientBase                                                 base;
+
+    // Version 0.
+    WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
+    WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
+    WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
+
+    // Version 1.
+    void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
+
+    // Version 3.
+    WKContextChildProcessWithPIDDidCrashCallback                        serviceWorkerProcessDidCrash;
+    WKContextChildProcessWithPIDDidCrashCallback                        gpuProcessDidCrash;
+    
+    // Version 4.
+    WKContextChildProcessDidCrashWithDetailsCallback                    networkProcessDidCrashWithDetails;
+    WKContextChildProcessDidCrashWithDetailsCallback                    serviceWorkerProcessDidCrashWithDetails;
+    WKContextChildProcessDidCrashWithDetailsCallback                    gpuProcessDidCrashWithDetails;
+} WKContextClientV4;
+
 
 // FIXME: Remove these once support for Mavericks has been dropped.
 enum {

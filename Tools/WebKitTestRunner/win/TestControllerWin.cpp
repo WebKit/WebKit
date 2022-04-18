@@ -154,9 +154,9 @@ void TestController::platformRunUntil(bool& condition, WTF::Seconds timeout)
 
     // First, let the test harness know this happened so it won't think we've hung. But
     // make sure we don't exit just yet!
-    m_shouldExitWhenWebProcessCrashes = false;
+    m_shouldExitWhenAuxiliaryProcessCrashes = false;
     webProcessDidTerminate(kWKProcessTerminationReasonCrash);
-    m_shouldExitWhenWebProcessCrashes = true;
+    m_shouldExitWhenAuxiliaryProcessCrashes = true;
 
     // Then spin a run loop until it finishes crashing to give time for a crash log to be saved. If
     // it takes too long for a crash log to be saved, we'll just give up.

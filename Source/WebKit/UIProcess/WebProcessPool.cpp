@@ -428,10 +428,30 @@ void WebProcessPool::screenPropertiesStateChanged()
 #endif
 }
 
+static bool shouldReportAuxiliaryProcessCrash(ProcessTerminationReason reason)
+{
+    switch (reason) {
+    case ProcessTerminationReason::ExceededMemoryLimit:
+    case ProcessTerminationReason::ExceededCPULimit:
+    case ProcessTerminationReason::Unresponsive:
+    case ProcessTerminationReason::Crash:
+        return true;
+    case ProcessTerminationReason::RequestedByClient:
+    case ProcessTerminationReason::IdleExit:
+    case ProcessTerminationReason::ExceededProcessCountLimit:
+    case ProcessTerminationReason::NavigationSwap:
+    case ProcessTerminationReason::RequestedByNetworkProcess:
+    case ProcessTerminationReason::RequestedByGPUProcess:
+        return false;
+    }
+
+    return false;
+}
+
 void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProcessProxy, ProcessTerminationReason reason)
 {
-    if (reason == ProcessTerminationReason::Crash)
-        m_client.networkProcessDidCrash(this);
+    if (shouldReportAuxiliaryProcessCrash(reason))
+        m_client.networkProcessDidCrash(this, networkProcessProxy.processIdentifier(), reason);
 
     if (m_automationSession)
         m_automationSession->terminate();
@@ -439,10 +459,10 @@ void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProc
     terminateServiceWorkers();
 }
 
-void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy)
+void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy, ProcessTerminationReason reason)
 {
 #if ENABLE(SERVICE_WORKER)
-    m_client.serviceWorkerProcessDidCrash(this, proxy.processIdentifier());
+    m_client.serviceWorkerProcessDidCrash(this, proxy.processIdentifier(), reason);
 #endif
 }
 
@@ -471,8 +491,8 @@ void WebProcessPool::gpuProcessExited(ProcessID identifier, ProcessTerminationRe
     WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=reason=%{public}s", identifier, processTerminationReasonToString(reason));
     m_gpuProcess = nullptr;
 
-    if (reason == ProcessTerminationReason::Crash || reason == ProcessTerminationReason::Unresponsive)
-        m_client.gpuProcessDidCrash(this, identifier);
+    if (shouldReportAuxiliaryProcessCrash(reason))
+        m_client.gpuProcessDidCrash(this, identifier, reason);
 
     Vector<Ref<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes)

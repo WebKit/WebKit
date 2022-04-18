@@ -379,7 +379,7 @@ public:
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
-    void serviceWorkerProcessCrashed(WebProcessProxy&);
+    void serviceWorkerProcessCrashed(WebProcessProxy&, ProcessTerminationReason);
 
     void updateRemoteWorkerUserAgent(const String& userAgent);
     UserContentControllerIdentifier userContentControllerIdentifierForRemoteWorkers();

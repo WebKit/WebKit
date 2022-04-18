@@ -916,11 +916,12 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
         callback(false);
 
     if (isStandaloneServiceWorkerProcess())
-        processPool().serviceWorkerProcessCrashed(*this);
+        processPool().serviceWorkerProcessCrashed(*this, reason);
 
     shutDown();
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
+    // FIXME: Perhaps this should consider ProcessTerminationReasons ExceededMemoryLimit, ExceededCPULimit, Unresponsive as well.
     if (pages.size() == 1 && reason == ProcessTerminationReason::Crash) {
         auto& page = *pages[0];
         String domain = topPrivatelyControlledDomain(URL({ }, page.currentURL()).host().toString());

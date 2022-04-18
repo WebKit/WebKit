@@ -1,3 +1,33 @@
+2022-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow C API clients to get the WKProcessTerminationReason in processDidCrash functions, and use in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=239400
+
+        Reviewed by Sam Weinig.
+
+        Introduce WKContextClientV4 with "did crash" functions that take a ProcessID and WKProcessTerminationReason.
+        WebContextClient will call the new functions if registered, otherwise the old ones.
+
+        Have WebProcessPool::networkProcessDidTerminate() and WebProcessPool::gpuProcessExited() call
+        the client for more types of reasons; ExceededMemoryLimit and ExceededCPULimit only apply
+        to the web process, so the behavior change here is to call m_client.networkProcessDidCrash()
+        for ProcessTerminationReason::Unresponsive.
+
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::networkProcessDidCrash):
+        (WebKit::WebContextClient::serviceWorkerProcessDidCrash):
+        (WebKit::WebContextClient::gpuProcessDidCrash):
+        * UIProcess/WebContextClient.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::shouldReportAuxiliaryProcessCrash):
+        (WebKit::WebProcessPool::networkProcessDidTerminate):
+        (WebKit::WebProcessPool::serviceWorkerProcessCrashed):
+        (WebKit::WebProcessPool::gpuProcessExited):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+
 2022-04-18  Said Abou-Hallawa  <said@apple.com>
 
         REGRESSION(r288847): GPU Process crash under GPUProcess::canExitUnderMemoryPressure()

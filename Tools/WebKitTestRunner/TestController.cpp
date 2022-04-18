@@ -685,14 +685,17 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient.base);
 
-    WKContextClientV3 contextClient = {
-        { 3, this },
+    WKContextClientV4 contextClient = {
+        { 4, this },
         0, // plugInAutoStartOriginHashesChanged
-        networkProcessDidCrash,
+        0, // networkProcessDidCrash,
         0, // plugInInformationBecameAvailable
         0, // copyWebCryptoMasterKey
-        serviceWorkerProcessDidCrash,
-        gpuProcessDidCrash
+        0, // serviceWorkerProcessDidCrash,
+        0, // gpuProcessDidCrash
+        networkProcessDidCrashWithDetails,
+        serviceWorkerProcessDidCrashWithDetails,
+        gpuProcessDidCrashWithDetails,
     };
     WKContextSetClient(m_context.get(), &contextClient.base);
 
@@ -1670,19 +1673,19 @@ void TestController::didReceiveSynchronousPageMessageFromInjectedBundleWithListe
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody, listener);
 }
 
-void TestController::networkProcessDidCrash(WKContextRef context, const void *clientInfo)
+void TestController::networkProcessDidCrashWithDetails(WKContextRef context, WKProcessID processID, WKProcessTerminationReason reason, const void *clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash();
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->networkProcessDidCrash(processID, reason);
 }
 
-void TestController::serviceWorkerProcessDidCrash(WKContextRef context, WKProcessID processID, const void *clientInfo)
+void TestController::serviceWorkerProcessDidCrashWithDetails(WKContextRef context, WKProcessID processID, WKProcessTerminationReason reason, const void *clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->serviceWorkerProcessDidCrash(processID);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->serviceWorkerProcessDidCrash(processID, reason);
 }
 
-void TestController::gpuProcessDidCrash(WKContextRef context, WKProcessID processID, const void *clientInfo)
+void TestController::gpuProcessDidCrashWithDetails(WKContextRef context, WKProcessID processID, WKProcessTerminationReason reason, const void *clientInfo)
 {
-    static_cast<TestController*>(const_cast<void*>(clientInfo))->gpuProcessDidCrash(processID);
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->gpuProcessDidCrash(processID, reason);
 }
 
 void TestController::didReceiveKeyDownMessageFromInjectedBundle(WKDictionaryRef dictionary, bool synchronous)
@@ -2001,24 +2004,46 @@ WKRetainPtr<WKTypeRef> TestController::getInjectedBundleInitializationUserData()
 
 // WKContextClient
 
-void TestController::networkProcessDidCrash()
+static const char* terminationReasonToString(WKProcessTerminationReason reason)
 {
-    pid_t pid = WKWebsiteDataStoreGetNetworkProcessIdentifier(websiteDataStore());
-    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(pid));
-    exit(1);
+    switch (reason) {
+    case kWKProcessTerminationReasonExceededMemoryLimit:
+        return "exceeded memory limit";
+    case kWKProcessTerminationReasonExceededCPULimit:
+        return "exceeded cpu limit";
+        break;
+    case kWKProcessTerminationReasonRequestedByClient:
+        return "requested by client";
+    case kWKProcessTerminationReasonCrash:
+        return "crash";
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return "unknown reason";
 }
 
-void TestController::serviceWorkerProcessDidCrash(WKProcessID processID)
+void TestController::networkProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
 {
-    fprintf(stderr, "#CRASHED - ServiceWorkerProcess (pid %ld)\n", static_cast<long>(processID));
-    if (m_shouldExitWhenWebProcessCrashes)
+    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", networkProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
+    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", networkProcessName(), static_cast<long>(processID));
+    if (m_shouldExitWhenAuxiliaryProcessCrashes)
         exit(1);
 }
 
-void TestController::gpuProcessDidCrash(WKProcessID processID)
+void TestController::serviceWorkerProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
 {
-    fprintf(stderr, "#CRASHED - GPUProcess (pid %ld)\n", static_cast<long>(processID));
-    if (m_shouldExitWhenWebProcessCrashes)
+    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", "ServiceWorkerProcess", static_cast<long>(processID), terminationReasonToString(reason));
+    fprintf(stderr, "#CRASHED - ServiceWorkerProcess (pid %ld)\n", static_cast<long>(processID));
+    if (m_shouldExitWhenAuxiliaryProcessCrashes)
+        exit(1);
+}
+
+void TestController::gpuProcessDidCrash(WKProcessID processID, WKProcessTerminationReason reason)
+{
+    fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", gpuProcessName(), static_cast<long>(processID), terminationReasonToString(reason));
+    fprintf(stderr, "#CRASHED - %s (pid %ld)\n", gpuProcessName(), static_cast<long>(processID));
+    if (m_shouldExitWhenAuxiliaryProcessCrashes)
         exit(1);
 }
 
@@ -2362,24 +2387,7 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
     // ensure we only print the crashed message once.
     if (!m_didPrintWebProcessCrashedMessage) {
         pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
-        fprintf(stderr, "%s terminated (pid %ld) ", webProcessName(), static_cast<long>(pid));
-        switch (reason) {
-        case kWKProcessTerminationReasonExceededMemoryLimit:
-            fprintf(stderr, "because the memory limit was exceeded\n");
-            break;
-        case kWKProcessTerminationReasonExceededCPULimit:
-            fprintf(stderr, "because the cpu limit was exceeded\n");
-            break;
-        case kWKProcessTerminationReasonRequestedByClient:
-            fprintf(stderr, "because the client requested\n");
-            break;
-        case kWKProcessTerminationReasonCrash:
-            fprintf(stderr, "because the process crashed\n");
-            break;
-        default:
-            fprintf(stderr, "for an unknown reason\n");
-        }
-
+        fprintf(stderr, "%s terminated (pid %ld) for reason: %s\n", webProcessName(), static_cast<long>(pid), terminationReasonToString(reason));
         if (reason == kWKProcessTerminationReasonRequestedByClient) {
             fflush(stderr);
             return;
@@ -2390,7 +2398,7 @@ void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
         m_didPrintWebProcessCrashedMessage = true;
     }
 
-    if (m_shouldExitWhenWebProcessCrashes)
+    if (m_shouldExitWhenAuxiliaryProcessCrashes)
         exit(1);
 }
 

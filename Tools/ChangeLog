@@ -1,3 +1,25 @@
+2022-04-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow C API clients to get the WKProcessTerminationReason in processDidCrash functions, and use in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=239400
+
+        Reviewed by Sam Weinig.
+
+        Standardize the "didCrash" callbacks to use the WKContextClientV4 "with details" versions,
+        and use them to print out crash reasons.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+        (WTR::TestController::networkProcessDidCrashWithDetails):
+        (WTR::TestController::serviceWorkerProcessDidCrashWithDetails):
+        (WTR::TestController::gpuProcessDidCrashWithDetails):
+        (WTR::terminationReasonToString):
+        (WTR::TestController::networkProcessDidCrash):
+        (WTR::TestController::serviceWorkerProcessDidCrash):
+        (WTR::TestController::gpuProcessDidCrash):
+        (WTR::TestController::webProcessDidTerminate):
+        * WebKitTestRunner/TestController.h:
+
 2022-04-15  Jonathan Bedard  <jbedard@apple.com>
 
         [ews.webkit.org] Reduce status updates
