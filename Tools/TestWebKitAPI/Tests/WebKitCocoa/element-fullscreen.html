@@ -39,6 +39,15 @@ async function loadSource(source)
     });
 }
 
+async function waitForVideoFrame()
+{
+    return new Promise(resolve => {
+        video.requestVideoFrameCallback((timestamp, metadata) => {
+            resolve(timestamp);
+        });
+    });
+}
+
 function performWithUserGestureIfPossible(callback)
 {
     if (window.internals)

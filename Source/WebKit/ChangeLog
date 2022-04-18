@@ -1,3 +1,37 @@
+2022-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make the main video heuristic robust when video elements are added after entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=239438
+        rdar://91867187
+
+        Reviewed by Eric Carlson.
+
+        Adjust the heuristic for identifying the most prominent video element in an element fullscreen container, such
+        that it can detect video elements that are inserted into the document after we've already entered fullscreen
+        mode. See below for more details.
+
+        Exercised by a new internal API test.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::setElement):
+
+        Listen for several events (play, pause, loadedmetadata) that are bubbled up to the fullscreen container element,
+        from any media element underneath the fullscreen container; in response to these events, we re-run the main
+        fullscreen video element heuristic to update `m_mainVideoElement` (and cancel and reschedule the video
+        extraction timer, if this main video element changed).
+
+        (WebKit::WebFullScreenManager::enterFullScreenForElement):
+        (WebKit::WebFullScreenManager::didEnterFullScreen):
+
+        Pull existing logic for walking through the element fullscreen DOM in search of video elements out into a new
+        helper method, `updateMainVideoElement`, that's invoked both when we finish entering fullscreen mode, and when
+        observing any of the new events that bubble up to the fullscreen container.
+
+        (WebKit::WebFullScreenManager::updateMainVideoElement):
+        (WebKit::WebFullScreenManager::handleEvent):
+        (WebKit::WebFullScreenManager::setMainVideoElement):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+
 2022-04-17  Chris Dumez  <cdumez@apple.com>
 
         Leverage StringView in more places

@@ -105,10 +105,13 @@ private:
 
     void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
 
+    void setElement(WebCore::Element&);
+
 #if ENABLE(VIDEO)
     void scheduleMainVideoElementExtraction();
     void endMainVideoElementExtractionIfNeeded();
     void mainVideoElementExtractionTimerFired();
+    void updateMainVideoElement();
     void setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>&&);
 
     WeakPtr<WebCore::HTMLVideoElement> m_mainVideoElement;

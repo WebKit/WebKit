@@ -137,6 +137,28 @@ bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)
     return m_page->injectedBundleFullScreenClient().supportsFullScreen(m_page.get(), withKeyboard);
 }
 
+void WebFullScreenManager::setElement(WebCore::Element& element)
+{
+    if (m_element == &element)
+        return;
+
+    static NeverDestroyed eventsToObserve = std::array {
+        WebCore::eventNames().playEvent,
+        WebCore::eventNames().pauseEvent,
+        WebCore::eventNames().loadedmetadataEvent,
+    };
+
+    if (m_element) {
+        for (auto& eventName : eventsToObserve.get())
+            m_element->removeEventListener(eventName, *this, { true });
+    }
+
+    m_element = &element;
+
+    for (auto& eventName : eventsToObserve.get())
+        m_element->addEventListener(eventName, *this, { true });
+}
+
 void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 {
     LOG(Fullscreen, "WebFullScreenManager %p enterFullScreenForElement(%p)", this, element);
@@ -144,7 +166,8 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
     ASSERT(element);
     if (!element)
         return;
-    m_element = element;
+
+    setElement(*element);
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement())
@@ -203,7 +226,18 @@ void WebFullScreenManager::didEnterFullScreen()
 #endif
 
 #if ENABLE(VIDEO)
+    updateMainVideoElement();
+#endif
+}
+
+#if ENABLE(VIDEO)
+
+void WebFullScreenManager::updateMainVideoElement()
+{
     setMainVideoElement([&]() -> RefPtr<WebCore::HTMLVideoElement> {
+        if (!m_element)
+            return nullptr;
+
         if (auto video = dynamicDowncast<WebCore::HTMLVideoElement>(*m_element))
             return video;
 
@@ -226,11 +260,9 @@ void WebFullScreenManager::didEnterFullScreen()
         }
         return mainVideo;
     }());
-
-    if (m_mainVideoElement && m_mainVideoElement->paused())
-        scheduleMainVideoElementExtraction();
-#endif // ENABLE(VIDEO)
 }
+
+#endif // ENABLE(VIDEO)
 
 void WebFullScreenManager::willExitFullScreen()
 {
@@ -341,13 +373,21 @@ void WebFullScreenManager::setFullscreenControlsHidden(bool hidden)
 void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context, WebCore::Event& event)
 {
 #if ENABLE(VIDEO)
-    if (!m_mainVideoElement || event.target() != m_mainVideoElement || &context != &m_mainVideoElement->document())
+    RefPtr targetElement = dynamicDowncast<Element>(event.currentTarget());
+    if (!m_element || &context != &m_element->document() || !targetElement)
         return;
 
-    if (m_mainVideoElement->paused())
-        scheduleMainVideoElementExtraction();
-    else
-        endMainVideoElementExtractionIfNeeded();
+    if (targetElement == m_element) {
+        updateMainVideoElement();
+        return;
+    }
+
+    if (targetElement == m_mainVideoElement.get()) {
+        if (m_mainVideoElement && m_mainVideoElement->paused())
+            scheduleMainVideoElementExtraction();
+        else
+            endMainVideoElementExtractionIfNeeded();
+    }
 #else
     UNUSED_PARAM(event);
     UNUSED_PARAM(context);
@@ -388,8 +428,6 @@ void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>
     if (element == m_mainVideoElement.get())
         return;
 
-    // FIXME: We should listen for additional events (such as 'load' and 'unload') that bubble up
-    // to the fullscreen element, and recompute the main video element.
     static NeverDestroyed eventsToObserve = std::array {
         WebCore::eventNames().seekingEvent,
         WebCore::eventNames().playingEvent,
@@ -408,6 +446,9 @@ void WebFullScreenManager::setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>
     if (m_mainVideoElement) {
         for (auto& eventName : eventsToObserve.get())
             m_mainVideoElement->addEventListener(eventName, *this, { });
+
+        if (m_mainVideoElement->paused())
+            scheduleMainVideoElementExtraction();
     }
 }
 

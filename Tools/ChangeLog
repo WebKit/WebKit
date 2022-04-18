@@ -1,3 +1,15 @@
+2022-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make the main video heuristic robust when video elements are added after entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=239438
+        rdar://91867187
+
+        Reviewed by Eric Carlson.
+
+        Add a helper method to a test page used in API tests; see the radar for more information.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/element-fullscreen.html:
+
 2022-04-16  Chris Dumez  <cdumez@apple.com>
 
         Drop String::truncate() and use String::left() instead
