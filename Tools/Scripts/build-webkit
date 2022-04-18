@@ -74,7 +74,6 @@ my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
 my $noExperimentalFeatures = 0;
 my $ltoMode = "default";
-my $xcbuild = undef;
 my $useWorkspace = undef;
 my $startTime = time();
 my $archs32bit = 0;
@@ -123,7 +122,6 @@ Usage: $programName [options] [options to pass to build system]
   --coverage                        Enable code coverage support (Mac only)
   --analyze                         Enable static anaylsis (Apple platforms only)
   --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
-  --[no-]xcbuild                    DEPRECATED use of XCBuild or not
   --[no-]use-workspace              Use WebKit.xcworkspace and XCBuild (Apple platforms only)
 
   --ftw                             Build the FTW Windows port
@@ -166,7 +164,6 @@ my %options = (
     'analyze' => \$shouldRunStaticAnalyzer,
     'no-experimental-features' => \$noExperimentalFeatures,
     'lto-mode=s' => \$ltoMode,
-    'xcbuild!' => \$xcbuild,
     'use-workspace!' => \$useWorkspace,
     'skip-library-update' => \$skipLibraryUpdate,
     'use-ccache!' => \$useCCache,
@@ -230,14 +227,6 @@ my @options = ();
 
 if (isAppleCocoaWebKit()) {
     push @options, XcodeOptions();
-    if ($xcbuild) {
-        # Deprecated: Eventually, all XCBuild invocations will build through the workspace.
-        push @options, "-UseNewBuildSystem=YES";
-    } elsif (!$useWorkspace) {
-        push @options, "-UseNewBuildSystem=NO";
-    } elsif (defined $xcbuild) {
-        die "Error: --use-workspace and --no-xcbuild are not compatible. Workspaces builds require XCBuild.\n";
-    }
 
     sub option($$)
     {

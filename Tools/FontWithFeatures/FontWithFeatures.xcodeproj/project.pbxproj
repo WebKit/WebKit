@@ -113,7 +113,6 @@
 		C286269A1BA902B9001961D6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				DefaultBuildSystemTypeForWorkspace = Original;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Litherum;
 				TargetAttributes = {

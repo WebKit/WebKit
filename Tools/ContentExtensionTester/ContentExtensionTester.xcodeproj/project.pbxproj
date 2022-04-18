@@ -107,7 +107,6 @@
 		7C4AB3991AF0276C003FC8D1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				DefaultBuildSystemTypeForWorkspace = Original;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Sam Weinig";
 				TargetAttributes = {

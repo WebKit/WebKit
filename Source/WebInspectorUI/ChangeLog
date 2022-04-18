@@ -1,3 +1,12 @@
+2022-04-18  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Use XCBuild for all command-line and project builds
+        https://bugs.webkit.org/show_bug.cgi?id=238916
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebInspectorUI.xcodeproj/project.pbxproj:
+
 2022-04-13  Elliott Williams  <emw@apple.com>
 
         [Xcode] Fix public watchOS workspace build by updating scheme and build settings

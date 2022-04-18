@@ -113,7 +113,6 @@
 		31A5D03A1EBBBB0400D3F11B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				DefaultBuildSystemTypeForWorkspace = Original;
 				LastUpgradeCheck = 0900;
 				TargetAttributes = {
 					31DF42CB1EBBBBFE0096ED44 = {

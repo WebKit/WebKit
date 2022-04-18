@@ -2642,7 +2642,6 @@
 		145F6837179DC45F00D65598 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1140;
 				TargetAttributes = {
