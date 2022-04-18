@@ -512,8 +512,7 @@ AccessibilityObject* AXObjectCache::get(Node* node)
 }
 
 // FIXME: This probably belongs on Node.
-// FIXME: This should take a const char*, but one caller passes nullAtom().
-bool nodeHasRole(Node* node, const String& role)
+bool nodeHasRole(Node* node, StringView role)
 {
     if (!node || !is<Element>(node))
         return false;
@@ -524,7 +523,7 @@ bool nodeHasRole(Node* node, const String& role)
     if (roleValue.isEmpty())
         return false;
 
-    return SpaceSplitString(roleValue, true).contains(role);
+    return SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes);
 }
 
 static bool isSimpleImage(const RenderObject& renderer)

@@ -53,7 +53,7 @@ private:
 
 inline ClassCollection::ClassCollection(ContainerNode& rootNode, CollectionType type, const AtomString& classNames)
     : CachedHTMLCollection(rootNode, type)
-    , m_classNames(classNames, rootNode.document().inQuirksMode())
+    , m_classNames(classNames, rootNode.document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No)
     , m_originalClassNames(classNames)
 {
 }

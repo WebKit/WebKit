@@ -2190,7 +2190,7 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
                     String ariaRelevantRemovals = Protocol::Helpers::getEnumConstantValue(Protocol::DOM::LiveRegionRelevant::Removals);
                     String ariaRelevantText = Protocol::Helpers::getEnumConstantValue(Protocol::DOM::LiveRegionRelevant::Text);
                     liveRegionRelevant = JSON::ArrayOf<String>::create();
-                    const SpaceSplitString& values = SpaceSplitString(ariaRelevantAttrValue, true);
+                    SpaceSplitString values(ariaRelevantAttrValue, SpaceSplitString::ShouldFoldCase::Yes);
                     // @aria-relevant="all" is exposed as ["additions","removals","text"], in order.
                     // This order is controlled in WebCore and expected in WebInspectorUI.
                     if (values.contains("all"_s)) {

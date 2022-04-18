@@ -91,13 +91,13 @@ static SpaceSplitStringTable& spaceSplitStringTable()
     return table;
 }
 
-void SpaceSplitString::set(const AtomString& inputString, bool shouldFoldCase)
+void SpaceSplitString::set(const AtomString& inputString, ShouldFoldCase shouldFoldCase)
 {
     if (inputString.isNull()) {
         clear();
         return;
     }
-    m_data = SpaceSplitStringData::create(shouldFoldCase ? inputString.convertToASCIILowercase() : inputString);
+    m_data = SpaceSplitStringData::create(shouldFoldCase == ShouldFoldCase::Yes ? inputString.convertToASCIILowercase() : inputString);
 }
 
 template<typename ReferenceCharacterType>
@@ -135,14 +135,14 @@ static bool spaceSplitStringContainsValueInternal(StringView spaceSplitString, S
     return tokenProcessor.referenceStringWasFound();
 }
 
-bool SpaceSplitString::spaceSplitStringContainsValue(StringView spaceSplitString, StringView value)
+bool SpaceSplitString::spaceSplitStringContainsValue(StringView spaceSplitString, StringView value, ShouldFoldCase shouldFoldCase)
 {
     if (spaceSplitString.isNull())
         return false;
 
     if (value.is8Bit())
-        return spaceSplitStringContainsValueInternal<LChar>(spaceSplitString, value);
-    return spaceSplitStringContainsValueInternal<UChar>(spaceSplitString, value);
+        return spaceSplitStringContainsValueInternal<LChar>(shouldFoldCase == ShouldFoldCase::Yes ? StringView { spaceSplitString.convertToASCIILowercase() } : spaceSplitString, value);
+    return spaceSplitStringContainsValueInternal<UChar>(shouldFoldCase == ShouldFoldCase::Yes ? StringView { spaceSplitString.convertToASCIILowercase() } : spaceSplitString, value);
 }
 
 class TokenCounter {

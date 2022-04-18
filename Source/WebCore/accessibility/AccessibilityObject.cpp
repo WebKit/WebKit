@@ -3754,7 +3754,7 @@ void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, cons
         return;
 
     auto& treeScope = node->treeScope();
-    auto spaceSplitString = SpaceSplitString(idsString, false);
+    SpaceSplitString spaceSplitString(idsString, SpaceSplitString::ShouldFoldCase::No);
     size_t length = spaceSplitString.size();
     for (size_t i = 0; i < length; ++i) {
         if (auto* element = treeScope.getElementById(spaceSplitString[i]))
@@ -3928,7 +3928,7 @@ void AccessibilityObject::ariaElementsReferencedByAttribute(AccessibilityChildre
 
     for (auto& element : descendantsOfType<Element>(node()->treeScope().rootNode())) {
         auto& idList = element.attributeWithoutSynchronization(attribute);
-        if (!SpaceSplitString::spaceSplitStringContainsValue(idList, id))
+        if (!SpaceSplitString::spaceSplitStringContainsValue(idList, id, SpaceSplitString::ShouldFoldCase::No))
             continue;
 
         if (auto* axObject = cache->getOrCreate(&element))

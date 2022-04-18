@@ -1997,7 +1997,7 @@ void Element::classAttributeChanged(const AtomString& newClassString)
     if (!elementData())
         ensureUniqueElementData();
 
-    bool shouldFoldCase = document().inQuirksMode();
+    auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
     bool newStringHasClasses = isNonEmptyTokenList(newClassString);
 
     auto oldClassNames = elementData()->classNames();
@@ -2017,7 +2017,7 @@ void Element::partAttributeChanged(const AtomString& newValue)
 {
     bool hasParts = isNonEmptyTokenList(newValue);
     if (hasParts || !partNames().isEmpty()) {
-        auto newParts = hasParts ? SpaceSplitString(newValue, false) : SpaceSplitString();
+        auto newParts = hasParts ? SpaceSplitString(newValue, SpaceSplitString::ShouldFoldCase::No) : SpaceSplitString();
         ensureElementRareData().setPartNames(WTFMove(newParts));
     }
 

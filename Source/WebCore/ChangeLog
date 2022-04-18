@@ -1,5 +1,47 @@
 2022-04-18  Chris Dumez  <cdumez@apple.com>
 
+        Optimize nodeHasRole()
+        https://bugs.webkit.org/show_bug.cgi?id=239430
+        <rdar://problem/91857547>
+
+        Reviewed by Darin Adler.
+
+        Optimize nodeHasRole() by calling spaceSplitStringContainsValue() instead of constructing a
+        SpaceSplitString (which is expensive simply for looking for a single value). Also take a
+        StringView in parameter to avoid constructing a String unnecessarily (most call sites pass
+        an ASCIILiteral).
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::nodeHasRole):
+        * accessibility/AXObjectCache.h:
+        (WebCore::nodeHasRole):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::elementsFromAttribute const):
+        (WebCore::AccessibilityObject::ariaElementsReferencedByAttribute const):
+        * dom/ClassCollection.h:
+        (WebCore::ClassCollection::ClassCollection):
+        * dom/Element.cpp:
+        (WebCore::Element::classAttributeChanged):
+        (WebCore::Element::partAttributeChanged):
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitString::set):
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitString::SpaceSplitString):
+        * html/Autofill.cpp:
+        (WebCore::AutofillData::createFromHTMLFormControlElement):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        (WebCore::HTMLAnchorElement::sendPings):
+        * inspector/InspectorAuditAccessibilityObject.cpp:
+        (WebCore::InspectorAuditAccessibilityObject::getComputedProperties):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        * page/EventHandler.cpp:
+        (WebCore::findDropZone):
+
+2022-04-18  Chris Dumez  <cdumez@apple.com>
+
         Use AtomString as early as possible when string will eventually get atomized
         https://bugs.webkit.org/show_bug.cgi?id=239427
 

@@ -162,7 +162,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
         return defaultLabel();
 
     // 2. Let tokens be the result of splitting the attribute's value on spaces.
-    SpaceSplitString tokens(attributeValue, true);
+    SpaceSplitString tokens(attributeValue, SpaceSplitString::ShouldFoldCase::Yes);
 
     // 3. If tokens is empty, then jump to the step labeled default.
     if (tokens.isEmpty())

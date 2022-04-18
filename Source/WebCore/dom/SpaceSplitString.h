@@ -99,11 +99,13 @@ private:
 class SpaceSplitString {
 public:
     SpaceSplitString() = default;
-    SpaceSplitString(const AtomString& string, bool shouldFoldCase) { set(string, shouldFoldCase); }
+
+    enum class ShouldFoldCase : bool { No, Yes };
+    SpaceSplitString(const AtomString& string, ShouldFoldCase shouldFoldCase) { set(string, shouldFoldCase); }
 
     bool operator!=(const SpaceSplitString& other) const { return m_data != other.m_data; }
 
-    void set(const AtomString&, bool shouldFoldCase);
+    void set(const AtomString&, ShouldFoldCase);
     void clear() { m_data = nullptr; }
 
     bool contains(const AtomString& string) const { return m_data && m_data->contains(string); }
@@ -117,7 +119,7 @@ public:
         return (*m_data)[i];
     }
 
-    static bool spaceSplitStringContainsValue(StringView spaceSplitString, StringView value);
+    static bool spaceSplitStringContainsValue(StringView spaceSplitString, StringView value, ShouldFoldCase);
 
 private:
     RefPtr<SpaceSplitStringData> m_data;

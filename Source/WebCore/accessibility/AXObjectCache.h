@@ -550,7 +550,7 @@ private:
 #endif
 };
 
-bool nodeHasRole(Node*, const String& role);
+bool nodeHasRole(Node*, StringView role);
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node*);
     
@@ -574,7 +574,7 @@ inline AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page*) { r
 inline void AXObjectCache::enableAccessibility() { }
 inline void AXObjectCache::disableAccessibility() { }
 inline void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool) { }
-inline bool nodeHasRole(Node*, const String&) { return false; }
+inline bool nodeHasRole(Node*, StringView) { return false; }
 inline void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates() { }
 inline void AXObjectCache::stopCachingComputedObjectAttributes() { }
 inline bool isNodeAriaVisible(Node*) { return true; }
