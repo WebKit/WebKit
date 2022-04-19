@@ -1,3 +1,18 @@
+2022-04-19  Chris Dumez  <cdumez@apple.com>
+
+        Introduce makeAtomString()
+        https://bugs.webkit.org/show_bug.cgi?id=239464
+
+        Reviewed by Sam Weinig.
+
+        Introduce makeAtomString() which is an optimized version of makeString() when the caller knows it wants an
+        AtomString. It may avoid a StringImpl allocation when the string is already in the AtomStringTable.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeAtomStringFromAdapters):
+        (WTF::tryMakeAtomString):
+        (WTF::makeAtomString):
+
 2022-04-18  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Use XCBuild for all command-line and project builds

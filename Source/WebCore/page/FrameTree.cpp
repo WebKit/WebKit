@@ -117,7 +117,7 @@ AtomString FrameTree::generateUniqueName() const
     if (&top.tree() != this)
         return top.tree().generateUniqueName();
 
-    return makeString("<!--frame", ++m_frameIDGenerator, "-->");
+    return makeAtomString("<!--frame", ++m_frameIDGenerator, "-->");
 }
 
 static bool inScope(Frame& frame, TreeScope& scope)

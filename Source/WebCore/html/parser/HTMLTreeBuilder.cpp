@@ -2200,7 +2200,7 @@ void HTMLTreeBuilder::processCharacter(AtomHTMLToken&& token)
 // From the string 4089961010, creates a link of the form <a href="tel:4089961010">4089961010</a> and inserts it.
 void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
 {
-    Attribute attribute(HTMLNames::hrefAttr, makeString("tel:"_s, string));
+    Attribute attribute(HTMLNames::hrefAttr, makeAtomString("tel:"_s, string));
 
     const AtomString& aTagLocalName = aTag->localName();
     AtomHTMLToken aStartToken(HTMLToken::StartTag, aTagLocalName, { WTFMove(attribute) });

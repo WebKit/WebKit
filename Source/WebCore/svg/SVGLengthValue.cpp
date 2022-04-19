@@ -271,9 +271,7 @@ String SVGLengthValue::valueAsString() const
 
 AtomString SVGLengthValue::valueAsAtomString() const
 {
-    StringBuilder builder;
-    builder.append(m_valueInSpecifiedUnits, lengthTypeToString(m_lengthType));
-    return builder.toAtomString();
+    return makeAtomString(m_valueInSpecifiedUnits, lengthTypeToString(m_lengthType));
 }
 
 ExceptionOr<float> SVGLengthValue::valueForBindings(const SVGLengthContext& context) const

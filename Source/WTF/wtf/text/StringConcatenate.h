@@ -431,20 +431,14 @@ inline void stringTypeAdapterAccumulator(ResultType* result, Adapter adapter, Ad
 }
 
 template<typename StringTypeAdapter, typename... StringTypeAdapters>
-String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters ...adapters)
+RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool areAllAdapters8Bit, StringTypeAdapter adapter, StringTypeAdapters ...adapters)
 {
-    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
-    auto sum = checkedSum<int32_t>(adapter.length(), adapters.length()...);
-    if (sum.hasOverflowed())
-        return String();
-
-    unsigned length = sum;
     ASSERT(length <= String::MaxLength);
-    if (are8Bit(adapter, adapters...)) {
+    if (areAllAdapters8Bit) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
         if (!resultImpl)
-            return String();
+            return nullptr;
 
         if (buffer)
             stringTypeAdapterAccumulator(buffer, adapter, adapters...);
@@ -455,12 +449,24 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
     UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
-        return String();
+        return nullptr;
 
     if (buffer)
         stringTypeAdapterAccumulator(buffer, adapter, adapters...);
 
     return resultImpl;
+}
+
+template<typename StringTypeAdapter, typename... StringTypeAdapters>
+String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters ...adapters)
+{
+    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
+    auto sum = checkedSum<int32_t>(adapter.length(), adapters.length()...);
+    if (sum.hasOverflowed())
+        return String();
+
+    bool areAllAdapters8Bit = are8Bit(adapter, adapters...);
+    return tryMakeStringImplFromAdaptersInternal(sum, areAllAdapters8Bit, adapter, adapters...);
 }
 
 template<typename... StringTypes>
@@ -478,6 +484,47 @@ String makeString(StringTypes... strings)
     return result;
 }
 
+template<typename StringTypeAdapter, typename... StringTypeAdapters>
+AtomString tryMakeAtomStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters ...adapters)
+{
+    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
+    auto sum = checkedSum<int32_t>(adapter.length(), adapters.length()...);
+    if (sum.hasOverflowed())
+        return String();
+
+    unsigned length = sum;
+    ASSERT(length <= String::MaxLength);
+
+    bool areAllAdapters8Bit = are8Bit(adapter, adapters...);
+    constexpr size_t maxLengthToUseStackVariable = 64;
+    if (length < maxLengthToUseStackVariable) {
+        if (areAllAdapters8Bit) {
+            LChar buffer[maxLengthToUseStackVariable];
+            stringTypeAdapterAccumulator(buffer, adapter, adapters...);
+            return AtomString { buffer, length };
+        }
+        UChar buffer[maxLengthToUseStackVariable];
+        stringTypeAdapterAccumulator(buffer, adapter, adapters...);
+        return AtomString { buffer, length };
+    }
+    return tryMakeStringImplFromAdaptersInternal(length, areAllAdapters8Bit, adapter, adapters...).get();
+}
+
+template<typename... StringTypes>
+AtomString tryMakeAtomString(StringTypes ...strings)
+{
+    return tryMakeAtomStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
+}
+
+template<typename... StringTypes>
+AtomString makeAtomString(StringTypes... strings)
+{
+    AtomString result = tryMakeAtomString(strings...);
+    if (result.isNull())
+        CRASH();
+    return result;
+}
+
 inline String makeStringByInserting(StringView originalString, StringView stringToInsert, unsigned position)
 {
     return makeString(originalString.left(position), stringToInsert, originalString.substring(position));
@@ -487,11 +534,13 @@ inline String makeStringByInserting(StringView originalString, StringView string
 
 using WTF::Indentation;
 using WTF::IndentationScope;
+using WTF::makeAtomString;
 using WTF::makeString;
 using WTF::makeStringByInserting;
 using WTF::pad;
 using WTF::lowercase;
 using WTF::tryMakeString;
+using WTF::tryMakeAtomString;
 using WTF::uppercase;
 
 #include <wtf/text/StringOperators.h>
