@@ -53,7 +53,7 @@ IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
     return instance.get();
 }
 
-#if !PLATFORM(COCOA) && !PLATFORM(WIN)
+#if !PLATFORM(COCOA) && !PLATFORM(WIN) && !USE(LIBGBM)
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
     ASSERT_NOT_REACHED();
@@ -162,7 +162,7 @@ void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
         forceContextLost();
 }
 
-#if !PLATFORM(COCOA) && !PLATFORM(WIN)
+#if !PLATFORM(COCOA) && !PLATFORM(WIN) && !USE(LIBGBM)
 void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
