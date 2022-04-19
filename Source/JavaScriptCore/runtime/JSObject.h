@@ -1406,6 +1406,7 @@ inline JSValue JSObject::getPrototype(VM&, JSGlobalObject* globalObject)
 // past structure then it should be valid for any new structure. However, we may sometimes
 // shrink the butterfly when we are holding the Structure's ConcurrentJSLock, such as when we
 // flatten an object.
+IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 ALWAYS_INLINE JSValue JSObject::getDirect(Concurrency concurrency, Structure* expectedStructure, PropertyOffset offset) const
 {
     switch (concurrency) {
@@ -1415,8 +1416,8 @@ ALWAYS_INLINE JSValue JSObject::getDirect(Concurrency concurrency, Structure* ex
     case Concurrency::ConcurrentThread:
         return getDirectConcurrently(expectedStructure, offset);
     }
-    RELEASE_ASSERT_NOT_REACHED();
 }
+IGNORE_RETURN_TYPE_WARNINGS_END
 
 inline JSValue JSObject::getDirectConcurrently(Structure* structure, PropertyOffset offset) const
 {

@@ -1,3 +1,15 @@
+2022-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, do not use RELEASE_ASSERT_NOT_REACHED in super hot path to suppress warnings
+        https://bugs.webkit.org/show_bug.cgi?id=239290
+
+        * bytecode/PropertyCondition.cpp:
+        (JSC::watchabilityToConcurrency):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect const):
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+
 2022-04-19  Martin Robinson  <mrobinson@webkit.org>
 
         Fix the address sanitizer build when building with gcc

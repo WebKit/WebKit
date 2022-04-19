@@ -518,6 +518,7 @@ public:
     template<typename Functor>
     void forEachProperty(VM&, const Functor&);
 
+    IGNORE_RETURN_TYPE_WARNINGS_BEGIN
     ALWAYS_INLINE PropertyOffset get(VM& vm, Concurrency concurrency, UniquedStringImpl* uid, unsigned& attributes)
     {
         switch (concurrency) {
@@ -527,9 +528,10 @@ public:
         case Concurrency::ConcurrentThread:
             return getConcurrently(uid, attributes);
         }
-        RELEASE_ASSERT_NOT_REACHED();
     }
+    IGNORE_RETURN_TYPE_WARNINGS_END
 
+    IGNORE_RETURN_TYPE_WARNINGS_BEGIN
     ALWAYS_INLINE PropertyOffset get(VM& vm, Concurrency concurrency, UniquedStringImpl* uid)
     {
         switch (concurrency) {
@@ -539,8 +541,8 @@ public:
         case Concurrency::ConcurrentThread:
             return getConcurrently(uid);
         }
-        RELEASE_ASSERT_NOT_REACHED();
     }
+    IGNORE_RETURN_TYPE_WARNINGS_END
     
     PropertyOffset getConcurrently(UniquedStringImpl* uid);
     PropertyOffset getConcurrently(UniquedStringImpl* uid, unsigned& attributes);

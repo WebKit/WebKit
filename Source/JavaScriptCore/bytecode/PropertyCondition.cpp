@@ -265,6 +265,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 static ALWAYS_INLINE Concurrency watchabilityToConcurrency(PropertyCondition::WatchabilityEffort effort)
 {
     switch (effort) {
@@ -273,8 +274,8 @@ static ALWAYS_INLINE Concurrency watchabilityToConcurrency(PropertyCondition::Wa
     case PropertyCondition::WatchabilityEffort::MakeNoChanges:
         return Concurrency::ConcurrentThread;
     }
-    RELEASE_ASSERT_NOT_REACHED();
 }
+IGNORE_RETURN_TYPE_WARNINGS_END
 
 bool PropertyCondition::validityRequiresImpurePropertyWatchpoint(Structure* structure) const
 {
