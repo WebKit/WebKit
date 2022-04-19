@@ -551,7 +551,7 @@ void LineLayout::adjustForPagination()
         return;
 
     auto paginedInlineContent = adjustLinePositionsForPagination(*m_inlineContent, flow());
-    if (paginedInlineContent.ptr() == m_inlineContent) {
+    if (!paginedInlineContent) {
         m_isPaginatedContent = false;
         return;
     }
@@ -574,7 +574,7 @@ void LineLayout::collectOverflow()
 InlineContent& LineLayout::ensureInlineContent()
 {
     if (!m_inlineContent)
-        m_inlineContent = InlineContent::create(*this);
+        m_inlineContent = makeUnique<InlineContent>(*this);
     return *m_inlineContent;
 }
 
@@ -887,7 +887,6 @@ void LineLayout::clearInlineContent()
 {
     if (!m_inlineContent)
         return;
-    m_inlineContent->clearAndDetach();
     m_inlineContent = nullptr;
 }
 

@@ -204,7 +204,7 @@ public:
 
     bool operator==(const BoxModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
 
-    bool atEnd() const { return m_boxIndex == boxes().size(); }
+    bool atEnd() const { return !m_inlineContent || m_boxIndex == boxes().size(); }
     const InlineDisplay::Box& box() const { return boxes()[m_boxIndex]; }
     auto& inlineContent() const { return *m_inlineContent; }
 
@@ -269,7 +269,7 @@ private:
     const RenderText& renderText() const { return downcast<RenderText>(renderer()); }
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
 
-    RefPtr<const LayoutIntegration::InlineContent> m_inlineContent;
+    WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_boxIndex { 0 };
 };
 

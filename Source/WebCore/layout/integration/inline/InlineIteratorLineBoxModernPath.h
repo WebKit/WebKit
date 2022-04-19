@@ -91,7 +91,7 @@ public:
 
     bool operator==(const LineBoxIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_lineIndex == other.m_lineIndex; }
 
-    bool atEnd() const { return m_lineIndex == lines().size(); }
+    bool atEnd() const { return !m_inlineContent || m_lineIndex == lines().size(); }
 
     BoxModernPath firstLeafBox() const
     {
@@ -120,7 +120,7 @@ private:
     const LayoutIntegration::InlineContent::Lines& lines() const { return m_inlineContent->lines; }
     const LayoutIntegration::Line& line() const { return lines()[m_lineIndex]; }
 
-    RefPtr<const LayoutIntegration::InlineContent> m_inlineContent;
+    WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_lineIndex { 0 };
 };
 

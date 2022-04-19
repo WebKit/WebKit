@@ -35,7 +35,7 @@ class RenderBlockFlow;
 
 namespace LayoutIntegration {
     
-Ref<InlineContent> adjustLinePositionsForPagination(InlineContent&, RenderBlockFlow&);
+std::unique_ptr<InlineContent> adjustLinePositionsForPagination(const InlineContent&, RenderBlockFlow&);
 
 }
 }

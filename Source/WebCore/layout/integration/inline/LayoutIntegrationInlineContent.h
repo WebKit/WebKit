@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -50,8 +51,10 @@ namespace LayoutIntegration {
 
 class LineLayout;
 
-struct InlineContent : public RefCounted<InlineContent> {
-    static Ref<InlineContent> create(const LineLayout& lineLayout) { return adoptRef(*new InlineContent(lineLayout)); }
+struct InlineContent : public CanMakeWeakPtr<InlineContent> {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    InlineContent(const LineLayout&);
     ~InlineContent();
 
     using Boxes = Vector<InlineDisplay::Box>;
@@ -86,12 +89,9 @@ struct InlineContent : public RefCounted<InlineContent> {
     std::optional<size_t> firstBoxIndexForLayoutBox(const Layout::Box&) const;
     const Vector<size_t>& nonRootInlineBoxIndexesForLayoutBox(const Layout::Box&) const;
 
-    void clearAndDetach();
     void releaseCaches();
 
 private:
-    InlineContent(const LineLayout&);
-
     CheckedPtr<const LineLayout> m_lineLayout;
 
     using FirstBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, size_t>;

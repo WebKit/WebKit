@@ -144,7 +144,7 @@ private:
     Layout::InlineFormattingState& m_inlineFormattingState;
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
-    RefPtr<InlineContent> m_inlineContent;
+    std::unique_ptr<InlineContent> m_inlineContent;
     bool m_isPaginatedContent { false };
 };
 

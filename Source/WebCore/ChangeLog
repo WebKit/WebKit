@@ -1,3 +1,40 @@
+2022-04-19  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Use WeakPtr for InlineContent in iterator
+        https://bugs.webkit.org/show_bug.cgi?id=239492
+
+        Reviewed by Alan Bujtas.
+
+        Simplify the logic and increase robustness.
+
+        * layout/integration/inline/InlineIteratorBoxModernPath.h:
+        (WebCore::InlineIterator::BoxModernPath::atEnd const):
+
+        If the layout goes away we are "at end", avoiding hitting null pointers.
+
+        * layout/integration/inline/InlineIteratorLineBoxModernPath.h:
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::atEnd const):
+        * layout/integration/inline/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::~InlineContent):
+        (WebCore::LayoutIntegration::InlineContent::clearAndDetach): Deleted.
+
+        No need for "detached" state, InlineContent is simply deleted.
+
+        * layout/integration/inline/LayoutIntegrationInlineContent.h:
+
+        RefCounted -> CanMakeWeakPtr
+
+        (WebCore::LayoutIntegration::InlineContent::create): Deleted.
+        * layout/integration/inline/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::adjustForPagination):
+        (WebCore::LayoutIntegration::LineLayout::ensureInlineContent):
+        (WebCore::LayoutIntegration::LineLayout::clearInlineContent):
+        * layout/integration/inline/LayoutIntegrationLineLayout.h:
+        * layout/integration/inline/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        (WebCore::LayoutIntegration::adjustLinePositionsForPagination):
+        * layout/integration/inline/LayoutIntegrationPagination.h:
+
 2022-04-19  Chris Dumez  <cdumez@apple.com>
 
         Introduce makeAtomString()

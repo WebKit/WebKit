@@ -45,7 +45,7 @@ struct PaginatedLine {
 };
 using PaginatedLines = Vector<PaginatedLine, 20>;
 
-static PaginatedLine computeLineTopAndBottomWithOverflow(const RenderBlockFlow&, InlineContent::Lines& lines, unsigned lineIndex, Vector<Strut>& struts)
+static PaginatedLine computeLineTopAndBottomWithOverflow(const RenderBlockFlow&, const InlineContent::Lines& lines, unsigned lineIndex, Vector<Strut>& struts)
 {
     LayoutUnit offset = 0;
     for (auto& strut : struts) {
@@ -117,7 +117,7 @@ static void updateMinimumPageHeight(RenderBlockFlow& flow, const InlineContent& 
     flow.updateMinimumPageHeight(0, LayoutUnit(inlineContent.lines[minimumLineCount - 1].lineBoxBottom()));
 }
 
-static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent, Vector<float> adjustments)
+static std::unique_ptr<InlineContent> makeAdjustedContent(const InlineContent& inlineContent, Vector<float> adjustments)
 {
     auto moveVertically = [](FloatRect rect, float offset) {
         rect.move(FloatSize(0, offset));
@@ -149,7 +149,7 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
         return adjustedBox;
     };
 
-    auto adjustedContent = InlineContent::create(inlineContent.lineLayout());
+    auto adjustedContent = makeUnique<InlineContent>(inlineContent.lineLayout());
 
     for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex)
         adjustedContent->lines.append(adjustedLine(inlineContent.lines[lineIndex], adjustments[lineIndex]));
@@ -160,14 +160,14 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
     return adjustedContent;
 }
 
-Ref<InlineContent> adjustLinePositionsForPagination(InlineContent& inlineContent, RenderBlockFlow& flow)
+std::unique_ptr<InlineContent> adjustLinePositionsForPagination(const InlineContent& inlineContent, RenderBlockFlow& flow)
 {
     Vector<Strut> struts;
     auto lineCount = inlineContent.lines.size();
     updateMinimumPageHeight(flow, inlineContent, lineCount);
     // First pass with no pagination offset?
     if (!flow.pageLogicalHeightForOffset(0))
-        return inlineContent;
+        return nullptr;
 
     auto widows = flow.style().hasAutoWidows() ? 1 : std::max<int>(flow.style().widows(), 1);
     auto orphans = flow.style().hasAutoOrphans() ? 1 : std::max<int>(flow.style().orphans(), 1);
@@ -190,7 +190,7 @@ Ref<InlineContent> adjustLinePositionsForPagination(InlineContent& inlineContent
     }
 
     if (struts.isEmpty())
-        return inlineContent;
+        return nullptr;
 
     auto adjustments = Vector<float>(lineCount, 0);
     for (auto& strut : struts) {

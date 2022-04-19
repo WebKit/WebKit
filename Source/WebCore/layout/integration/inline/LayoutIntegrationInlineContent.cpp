@@ -87,10 +87,8 @@ IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const Layou
 
 InlineContent::~InlineContent()
 {
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        for (auto& box : boxes)
-            TextPainter::removeGlyphDisplayList(box);
-    }
+    for (auto& box : boxes)
+        TextPainter::removeGlyphDisplayList(box);
 }
 
 const RenderObject& InlineContent::rendererForLayoutBox(const Layout::Box& layoutBox) const
@@ -171,17 +169,6 @@ const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const L
     }
 
     return it->value;
-}
-
-void InlineContent::clearAndDetach()
-{
-    for (auto& box : boxes)
-        TextPainter::removeGlyphDisplayList(box);
-
-    releaseCaches();
-    boxes.clear();
-    lines.clear();
-    m_lineLayout = nullptr;
 }
 
 void InlineContent::releaseCaches()
