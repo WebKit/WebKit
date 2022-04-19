@@ -2789,6 +2789,15 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     if (!element && isInsideScrollbar(platformMouseEvent.position()))
         return false;
 
+#if (!PLATFORM(GTK) && !PLATFORM(WPE))
+    // This is a workaround related to :focus-visible (see webkit.org/b/236782).
+    // Form control elements are not mouse focusable on some platforms (see HTMLFormControlElement::isMouseFocusable())
+    // which makes us behave differently than other browsers when a button is clicked,
+    // because the button is not actually focused so we don't set the latest FocusTrigger.
+    if (m_elementUnderMouse && !m_elementUnderMouse->isMouseFocusable() && is<HTMLFormControlElement>(m_elementUnderMouse))
+        m_frame.document()->setLatestFocusTrigger(FocusTrigger::Click);
+#endif
+
     // If focus shift is blocked, we eat the event.
     auto* page = m_frame.page();
     if (page && !CheckedRef(page->focusController())->setFocusedElement(element.get(), m_frame, { { }, { }, { }, FocusTrigger::Click, { } }))
