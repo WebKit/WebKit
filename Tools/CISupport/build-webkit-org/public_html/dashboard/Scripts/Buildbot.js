@@ -43,12 +43,9 @@ Buildbot = function(baseURL, queuesInfo, options)
     this._authenticationStatus = Buildbot.AuthenticationStatus.Unauthenticated;
 
     this.baseURLForResults = options ? options.baseURLForResults : null;
-    this.VERSION_LESS_THAN_09 = options && options.USE_BUILDBOT_VERSION_LESS_THAN_09;
 
-    if (!this.VERSION_LESS_THAN_09) {
-        this._builderNameToIDMap = {};
-        this._computeBuilderNameToIDMap();
-    }
+    this._builderNameToIDMap = {};
+    this._computeBuilderNameToIDMap();
 
     for (var id in queuesInfo) {
         if (queuesInfo[id].combinedQueues) {
@@ -168,9 +165,6 @@ Buildbot.prototype = {
 
     buildPageURLForIteration: function(iteration)
     {
-        if (this.VERSION_LESS_THAN_09)
-            return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id;
-
         // FIXME: Remove this._builderNameToIDMap lookup after <https://github.com/buildbot/buildbot/issues/3465> is fixed.
         return this.baseURL + "#/builders/" + encodeURIComponent(this._builderNameToIDMap[iteration.queue.id]) + "/builds/" + iteration.id;
     },

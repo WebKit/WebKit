@@ -108,7 +108,7 @@ WebKitBuildbot = function()
         "PlayStation-Debug-Build": {platform: Dashboard.Platform.PlayStation, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
     };
 
-    Buildbot.call(this, "https://build.webkit.org/", queueInfo, {"USE_BUILDBOT_VERSION_LESS_THAN_09" : false});
+    Buildbot.call(this, "https://build.webkit.org/", queueInfo, {});
 };
 
 BaseObject.addConstructorFunctions(WebKitBuildbot);
