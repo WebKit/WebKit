@@ -99,6 +99,7 @@ void MediaSessionManagerCocoa::updateSessionState()
     int videoAudioCount = 0;
     int audioCount = 0;
     int webAudioCount = 0;
+    int audioMediaStreamTrackCount = 0;
     int captureCount = countActiveAudioCaptureSources();
     bool hasAudibleAudioOrVideoMediaType = false;
     bool isPlayingAudio = false;
@@ -112,9 +113,13 @@ void MediaSessionManagerCocoa::updateSessionState()
             break;
         case PlatformMediaSession::MediaType::VideoAudio:
             ++videoAudioCount;
+            if (session.canProduceAudio() && session.hasMediaStreamSource())
+                ++audioMediaStreamTrackCount;
             break;
         case PlatformMediaSession::MediaType::Audio:
             ++audioCount;
+            if (session.canProduceAudio() && session.hasMediaStreamSource())
+                ++audioMediaStreamTrackCount;
             break;
         case PlatformMediaSession::MediaType::WebAudio:
             if (session.canProduceAudio()) {
@@ -138,6 +143,7 @@ void MediaSessionManagerCocoa::updateSessionState()
 
     ALWAYS_LOG(LOGIDENTIFIER, "types: "
         "AudioCapture(", captureCount, "), "
+        "AudioTrack(", audioMediaStreamTrackCount, "), "
         "Video(", videoCount, "), "
         "Audio(", audioCount, "), "
         "VideoAudio(", videoAudioCount, "), "
@@ -146,8 +152,8 @@ void MediaSessionManagerCocoa::updateSessionState()
     size_t bufferSize = m_defaultBufferSize;
     if (webAudioCount)
         bufferSize = AudioUtilities::renderQuantumSize;
-    else if (captureCount) {
-        // In case of audio capture, we want to grab 20 ms chunks to limit the latency so that it is not noticeable by users
+    else if (captureCount || audioMediaStreamTrackCount) {
+        // In case of audio capture or audio MediaStreamTrack playing, we want to grab 20 ms chunks to limit the latency so that it is not noticeable by users
         // while having a large enough buffer so that the audio rendering remains stable, hence a computation based on sample rate.
         bufferSize = AudioSession::sharedSession().sampleRate() / 50;
     } else if (m_supportedAudioHardwareBufferSizes && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled())
