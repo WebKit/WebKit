@@ -1,5 +1,31 @@
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r290622. rdar://problem/90454629
+
+    REBASELINE [ iOS15 ] fast/text/khmer-lao-font.html is a constant text failure
+    <rdar://88841324>
+    
+    Unreviewed test gardening. Rebaseline for iOS15.
+    
+    * platform/ios-wk2/TestExpectations:
+    * platform/ios-wk2/fast/text/khmer-lao-font-expected.txt:
+    * platform/ios/fast/text/khmer-lao-font-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290622 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-28  Robert Jenner  <Jenner@apple.com>
+
+            REBASELINE [ iOS15 ] fast/text/khmer-lao-font.html is a constant text failure
+            <rdar://88841324>
+
+            Unreviewed test gardening. Rebaseline for iOS15.
+
+            * platform/ios-wk2/TestExpectations:
+            * platform/ios-wk2/fast/text/khmer-lao-font-expected.txt:
+            * platform/ios/fast/text/khmer-lao-font-expected.txt:
+
+2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r289834. rdar://problem/90455347
 
     Rebaslining fonts/monospace.html for Monterey.
