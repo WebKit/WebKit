@@ -90,7 +90,6 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     , m_renderingBackendIdentifier(creationParameters.identifier)
 {
     ASSERT(RunLoop::isMain());
-    send(Messages::RemoteRenderingBackendProxy::DidCreateWakeUpSemaphoreForDisplayListStream(m_workQueue->wakeUpSemaphore()), m_renderingBackendIdentifier);
 }
 
 RemoteRenderingBackend::~RemoteRenderingBackend() = default;
@@ -103,6 +102,7 @@ void RemoteRenderingBackend::startListeningForIPC()
     }
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
     m_streamConnection->open();
+    send(Messages::RemoteRenderingBackendProxy::DidCreateWakeUpSemaphoreForDisplayListStream(m_workQueue->wakeUpSemaphore()), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()
