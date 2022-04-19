@@ -133,7 +133,7 @@ class GitHub(object):
         if not owners:
             return None, 'No owners defined, so email cannot be extracted'
         contributors, errors = Contributors.load(use_network=False)
-        return contributors.get(owners[0], {}).get('email'), errors
+        return contributors.get(owners[0].lower(), {}).get('email'), errors
 
 
 class GitHubMixin(object):
@@ -462,7 +462,7 @@ class Contributors(object):
                 bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
                 contributors[bugzilla_email] = {'name': name, 'status': value.get('status')}
             if github_username and name and emails:
-                contributors[github_username] = dict(
+                contributors[github_username.lower()] = dict(
                     name=name,
                     status=value.get('status'),
                     email=emails[0].lower(),
@@ -1534,15 +1534,15 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         self.descriptionDone = reason
 
     def is_reviewer(self, email):
-        contributor = self.contributors.get(email)
+        contributor = self.contributors.get(email.lower())
         return contributor and contributor['status'] == 'reviewer'
 
     def is_committer(self, email):
-        contributor = self.contributors.get(email)
+        contributor = self.contributors.get(email.lower())
         return contributor and contributor['status'] in ['reviewer', 'committer']
 
     def full_name_from_email(self, email):
-        contributor = self.contributors.get(email)
+        contributor = self.contributors.get(email.lower())
         if not contributor:
             return ''
         return contributor.get('name')
@@ -4771,8 +4771,8 @@ class AddReviewerMixin(object):
 
         contributors, _ = Contributors.load(use_network=False)
         return dict(
-            GIT_COMMITTER_NAME=contributors.get(owners[0], {}).get('name', 'EWS'),
-            GIT_COMMITTER_EMAIL=contributors.get(owners[0], {}).get('email', FROM_EMAIL),
+            GIT_COMMITTER_NAME=contributors.get(owners[0].lower(), {}).get('name', 'EWS'),
+            GIT_COMMITTER_EMAIL=contributors.get(owners[0].lower(), {}).get('email', FROM_EMAIL),
             FILTER_BRANCH_SQUELCH_WARNING='1',
         )
 
@@ -4839,8 +4839,8 @@ class AddAuthorToCommitMessage(shell.ShellCommand, AddReviewerMixin):
             if not candidate:
                 continue
 
-            name = contributors.get(candidate, {}).get('name', None)
-            email = contributors.get(candidate, {}).get('email', None)
+            name = contributors.get(candidate.lower(), {}).get('name', None)
+            email = contributors.get(candidate.lower(), {}).get('email', None)
             if name and email:
                 return name, email
 
