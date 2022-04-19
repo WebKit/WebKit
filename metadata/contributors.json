@@ -3920,6 +3920,7 @@
       "emails" : [
          "rackler@apple.com"
       ],
+      "github" : "KarlRackler",
       "name" : "Karl Rackler",
       "status" : "committer"
    },
@@ -6609,6 +6610,7 @@
       "emails" : [
          "tsavell@apple.com"
       ],
+      "github" : "Technose",
       "name" : "Truitt Savell",
       "status" : "committer"
    },
