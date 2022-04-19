@@ -16277,6 +16277,7 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->effects = Effects::none();
         patchpoint->effects.exitsSideways = true;
         patchpoint->effects.writesLocalState = true;
+        patchpoint->effects.reads = HeapRange::top();
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             auto restore = [&] {
                 jit.popToRestore(GPRInfo::regT2);

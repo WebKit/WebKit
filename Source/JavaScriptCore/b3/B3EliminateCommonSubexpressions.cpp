@@ -33,6 +33,7 @@
 #include "B3HeapRange.h"
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValue.h"
+#include "B3MemoryValueInlines.h"
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3PureCSE.h"
@@ -249,6 +250,7 @@ private:
         m_value->performSubstitution();
 
         if (m_pureCSE.process(m_value, m_dominators)) {
+            ASSERT(!m_value->effects().readsPinned || !m_data.writesPinned);
             ASSERT(!m_value->effects().writes);
             ASSERT(!m_value->effects().writesPinned);
             m_changed = true;
@@ -477,11 +479,13 @@ private:
         }
             
         case Store: {
+            auto clobberWidth = memory->accessWidth();
             handleStoreAfterClobber(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
                     return candidate->opcode() == Store
-                        && candidate->offset() == offset;
+                        && candidate->offset() == offset
+                        && candidate->accessWidth() >= clobberWidth;
                 });
             break;
         }
@@ -725,6 +729,8 @@ private:
         Value* ptr = wasmAddress->child(0);
 
         if (Value* replacement = m_data.m_candidateWasmAddressesAtTail.get(ptr)) {
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
+                dataLog("    Replacing WasmAddress: ", *wasmAddress, " with ", *replacement, "\n");
             wasmAddress->replaceWithIdentity(replacement);
             m_changed = true;
             return;
@@ -759,7 +765,7 @@ private:
         worklist.pushAll(m_block->predecessors());
         while (BasicBlock* block = worklist.pop()) {
             if (block == dominator)
-                break;
+                continue;
             if (m_impureBlockData[block].writesPinned) {
                 candidateReplacement = nullptr;
                 break;
@@ -768,6 +774,8 @@ private:
         }
 
         if (candidateReplacement) {
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
+                dataLog("    Replacing WasmAddress: ", *wasmAddress, " with ", *candidateReplacement, "\n");
             wasmAddress->replaceWithIdentity(candidateReplacement);
             m_changed = true;
         }

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "B3Validate.h"
+#include "B3HeapRange.h"
 
 #if ENABLE(B3_JIT)
 
@@ -567,6 +568,10 @@ public:
             }
 
             VALIDATE(!(value->effects().writes && value->key()), ("At ", *value));
+            // Conceptually, if you exit sideways, you will almost certainly read Top or (AbstractHeapRepository) root. 
+            // Since we can't easily find out what root is here, we settle for checking that you at least read *something*.
+            // This is technically overly strict, but in practice violating this is almost certainly a bug.
+            VALIDATE((!value->effects().exitsSideways || value->effects().reads != HeapRange()), ("At ", *value));
         }
 
         for (Variable* variable : m_procedure.variables())

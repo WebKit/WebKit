@@ -669,6 +669,7 @@ Effects Value::effects() const
             break;
         }
         result.exitsSideways = true;
+        result.reads = HeapRange::top();
         break;
     case Upsilon:
     case Set:

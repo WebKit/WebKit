@@ -1176,4 +1176,10 @@ void testStorePostIndex64();
 void testFloatMaxMin();
 void testDoubleMaxMin();
 
+void testWasmAddressDoesNotCSE();
+void testStoreAfterClobberExitsSideways();
+void testStoreAfterClobberDifferentWidth();
+void testStoreAfterClobberDifferentWidthSuccessor();
+void testStoreAfterClobberExitsSidewaysSuccessor();
+
 #endif // ENABLE(B3_JIT)
