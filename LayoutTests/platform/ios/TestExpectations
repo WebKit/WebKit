@@ -1040,6 +1040,7 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultVa
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email-set-value.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength-number.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-double-activate-pseudo.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-ui/user-select-none-on-input.html [ Skip ]
 
 # Tests that use EventSender's mouseMoveTo, mouseUp and mouseDown
 css3/viewport-percentage-lengths/vh-resize.html [ Skip ]

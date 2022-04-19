@@ -2912,5 +2912,16 @@ OptionSet<Containment> RenderStyle::effectiveContainment() const
     return containment;
 }
 
+UserSelect RenderStyle::effectiveUserSelect() const
+{
+    if (effectiveInert())
+        return UserSelect::None;
+
+    auto value = userSelect();
+    if (userModify() != UserModify::ReadOnly && userDrag() != UserDrag::Element)
+        return value == UserSelect::None ? UserSelect::Text : value;
+
+    return value;
+}
 
 } // namespace WebCore

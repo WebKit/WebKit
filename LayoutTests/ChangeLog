@@ -1,5 +1,29 @@
 2022-04-19  Tim Nguyen  <ntim@apple.com>
 
+        user-select: none shouldn't affect editability
+        https://bugs.webkit.org/show_bug.cgi?id=118009
+
+        Reviewed by Antti Koivisto.
+
+        - Removed tests that were testing old behavior
+        - Added new tests for new behavior (imported from the Blink codebase)
+
+        * editing/selection/4866671.html: Removed.
+        * editing/selection/5779984-1-expected.txt: Removed.
+        * editing/selection/5779984-1.html: Removed.
+        * editing/selection/user-select-js-property-expected.txt: Added.
+        * editing/selection/user-select-js-property.html: Added.
+        * platform/gtk/editing/selection/4866671-expected.png: Removed.
+        * platform/gtk/editing/selection/4866671-expected.txt: Removed.
+        * platform/ios/TestExpectations:
+        * platform/ios/editing/selection/4866671-expected.txt: Removed.
+        * platform/mac/editing/selection/4866671-expected.png: Removed.
+        * platform/mac/editing/selection/4866671-expected.txt: Removed.
+        * platform/win/editing/selection/4866671-expected.txt: Removed.
+        * platform/wincairo/editing/selection/4866671-expected.txt: Removed.
+
+2022-04-19  Tim Nguyen  <ntim@apple.com>
+
         [iOS] Also skip resize-orthogonal-containing-block.html
         https://bugs.webkit.org/show_bug.cgi?id=239459
 

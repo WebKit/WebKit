@@ -627,7 +627,7 @@ public:
     UserModify effectiveUserModify() const { return effectiveInert() ? UserModify::ReadOnly : userModify(); }
     UserModify userModify() const { return static_cast<UserModify>(m_rareInheritedData->userModify); }
     UserDrag userDrag() const { return static_cast<UserDrag>(m_rareNonInheritedData->userDrag); }
-    UserSelect effectiveUserSelect() const { return effectiveInert() ? UserSelect::None : userSelect(); }
+    WEBCORE_EXPORT UserSelect effectiveUserSelect() const;
     UserSelect userSelect() const { return static_cast<UserSelect>(m_rareInheritedData->userSelect); }
     TextOverflow textOverflow() const { return static_cast<TextOverflow>(m_rareNonInheritedData->textOverflow); }
     WordBreak wordBreak() const { return static_cast<WordBreak>(m_rareInheritedData->wordBreak); }
