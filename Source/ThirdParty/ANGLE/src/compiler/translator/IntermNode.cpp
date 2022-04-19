@@ -279,7 +279,7 @@ bool TIntermLoop::replaceChildNode(TIntermNode *original, TIntermNode *replaceme
 }
 
 TIntermBranch::TIntermBranch(const TIntermBranch &node)
-    : TIntermBranch(node.mFlowOp, node.mExpression->deepCopy())
+    : TIntermBranch(node.mFlowOp, node.mExpression ? node.mExpression->deepCopy() : nullptr)
 {}
 
 size_t TIntermBranch::getChildCount() const
@@ -1601,10 +1601,10 @@ TIntermLoop::TIntermLoop(TLoopType type,
 
 TIntermLoop::TIntermLoop(const TIntermLoop &node)
     : TIntermLoop(node.mType,
-                  node.mInit->deepCopy(),
-                  node.mCond->deepCopy(),
-                  node.mExpr->deepCopy(),
-                  node.mBody->deepCopy())
+                  node.mInit ? node.mInit->deepCopy() : nullptr,
+                  node.mCond ? node.mCond->deepCopy() : nullptr,
+                  node.mExpr ? node.mExpr->deepCopy() : nullptr,
+                  node.mBody ? node.mBody->deepCopy() : nullptr)
 {}
 
 TIntermIfElse::TIntermIfElse(TIntermTyped *cond, TIntermBlock *trueB, TIntermBlock *falseB)

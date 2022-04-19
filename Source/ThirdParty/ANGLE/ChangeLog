@@ -1,3 +1,36 @@
+2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r292743. rdar://problem/91437430
+
+    This WebGL example crashes
+    https://bugs.webkit.org/show_bug.cgi?id=238953
+    
+    Null-check subnodes while performing a deep copy for
+    loops, and branches. These nodes can be null in some cases
+    
+    Reviewed by Dean Jackson.
+    
+    * src/compiler/translator/IntermNode.cpp:
+    (sh::TIntermBranch::TIntermBranch):
+    (sh::TIntermLoop::TIntermLoop):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292743 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-11  Kyle Piddington  <kpiddington@apple.com>
+
+            This WebGL example crashes
+            https://bugs.webkit.org/show_bug.cgi?id=238953
+
+            Null-check subnodes while performing a deep copy for
+            loops, and branches. These nodes can be null in some cases
+
+            Reviewed by Dean Jackson.
+
+            * src/compiler/translator/IntermNode.cpp:
+            (sh::TIntermBranch::TIntermBranch):
+            (sh::TIntermLoop::TIntermLoop):
+
 2022-03-23  Kenneth Russell  <kbr@chromium.org>
 
         Roll ANGLE to 2022-03-22 (e7f29440f02514126f30350dcd7132b68f7954d7)
