@@ -1,3 +1,17 @@
+2022-04-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Unskip api/validation/createSampler.html 🎉
+        https://bugs.webkit.org/show_bug.cgi?id=239448
+
+        Reviewed by Darin Adler.
+
+        Turns out we were already passing it.
+
+        * http/tests/webgpu/webgpu/api/validation/createSampler-expected.txt:
+        * platform/ios-device-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2022-04-18  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Update the isolated tree in response to AXElementBusyChanged and AXTextChanged notifications
