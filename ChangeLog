@@ -1,3 +1,11 @@
+2022-04-19  Karl Rackler  <rackler@apple.com>
+
+        Coreection to botwatcher github username to contributors json
+
+        Reviewed by Jonathan Bedard.
+
+        * metadata/contributors.json:
+
 2022-04-19  Dean Jackson  <dino@apple.com>
 
         Adding GitHub username.
