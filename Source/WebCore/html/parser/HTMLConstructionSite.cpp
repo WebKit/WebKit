@@ -887,35 +887,26 @@ AtomString WhitespaceCache::lookup(const String& string, WhitespaceMode whitespa
         return whitespaceMode == AllWhitespace || isAllWhitespace(string) ? AtomString(string) : AtomString();
 
     uint64_t code;
-    if (whitespaceMode == AllWhitespace)
+    if (whitespaceMode == AllWhitespace) {
         code = codeForString<AllWhitespace>(string);
-    else
+        ASSERT(code);
+    } else {
         code = codeForString<WhitespaceUnknown>(string);
+        if (!code)
+            return AtomString();
+    }
 
-    if (!code)
-        return AtomString();
-
-    size_t lengthIndex = length - 1;
-    if (m_codes[lengthIndex] == code) {
-        ASSERT(m_atoms[m_indexes[lengthIndex]] == string);
-        return m_atoms[m_indexes[lengthIndex]];
+    auto& existingAtom = m_atoms[length - 1];
+    if (existingAtom.code == code) {
+        ASSERT(existingAtom.string == string);
+        return existingAtom.string;
     }
 
     if (code == overflowWhitespaceCode)
         return AtomString(string);
 
-    if (m_codes[lengthIndex]) {
-        AtomString whitespaceAtom(string);
-        m_codes[lengthIndex] = code;
-        m_atoms[m_indexes[lengthIndex]] = whitespaceAtom;
-        return whitespaceAtom;
-    }
-
-    AtomString whitespaceAtom(string);
-    m_codes[lengthIndex] = code;
-    m_indexes[lengthIndex] = m_atoms.size();
-    m_atoms.append(whitespaceAtom);
-    return whitespaceAtom;
+    existingAtom = { AtomString { string }, code };
+    return existingAtom.string;
 }
 
 }
