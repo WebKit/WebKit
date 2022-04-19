@@ -32,6 +32,7 @@
 #include "DOMURL.h"
 #include "Document.h"
 #include "ElementChildIterator.h"
+#include "ElementRareData.h"
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "FloatRect.h"

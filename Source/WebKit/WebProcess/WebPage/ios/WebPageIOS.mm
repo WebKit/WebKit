@@ -2794,7 +2794,7 @@ static void dataDetectorImageOverlayPositionInformation(const HTMLElement& overl
     if (!frame)
         return;
 
-    auto elementAndBounds = WebPage::findDataDetectionResultElementInImageOverlay(request.point, overlayHost);
+    auto elementAndBounds = DataDetection::findDataDetectionResultElementInImageOverlay(request.point, overlayHost);
     if (!elementAndBounds)
         return;
 

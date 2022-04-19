@@ -1,3 +1,48 @@
+2022-04-19  Chris Dumez  <cdumez@apple.com>
+
+        Inline Element::shadowRoot()
+        https://bugs.webkit.org/show_bug.cgi?id=239460
+
+        Reviewed by Darin Adler.
+
+        Inline Element::shadowRoot() given that it is small and shows up in Speedometer profiles.
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/SelectorChecker.cpp:
+        * dom/ComposedTreeAncestorIterator.h:
+        * dom/ComposedTreeIterator.cpp:
+        * dom/ComposedTreeIterator.h:
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNodeAlgorithms.cpp:
+        * dom/Document.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::elementRareData const): Deleted.
+        (WebCore::Element::shadowRoot const): Deleted.
+        * dom/Element.h:
+        * dom/ElementInlines.h:
+        * dom/ElementRareData.h:
+        (WebCore::Element::elementRareData const):
+        (WebCore::Element::shadowRoot const):
+        * dom/EventPath.cpp:
+        * dom/ImageOverlay.cpp:
+        * dom/mac/ImageControlsMac.cpp:
+        * editing/TextIterator.cpp:
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::findDataDetectionResultElementInImageOverlay):
+        * editing/cocoa/HTMLConverter.mm:
+        * editing/markup.cpp:
+        * html/HTMLDetailsElement.cpp:
+        * html/HTMLImageElement.cpp:
+        * page/ios/FrameIOS.mm:
+        * rendering/RenderFileUploadControl.cpp:
+        * style/PseudoClassChangeInvalidation.cpp:
+        * style/StyleInvalidator.cpp:
+        * style/StyleScope.cpp:
+        * svg/SVGTRefElement.cpp:
+        * testing/Internals.cpp:
+
 2022-04-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r292947.

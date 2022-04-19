@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "ContextMenuController.h"
 #include "ElementInlines.h"
+#include "ElementRareData.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"

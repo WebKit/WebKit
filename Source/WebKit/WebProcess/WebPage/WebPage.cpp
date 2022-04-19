@@ -4310,23 +4310,6 @@ void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDet
     completionHandler(WTFMove(mainFrameResult));
 }
 
-std::optional<std::pair<Ref<WebCore::HTMLElement>, WebCore::IntRect>> WebPage::findDataDetectionResultElementInImageOverlay(const FloatPoint& location, const HTMLElement& imageOverlayHost)
-{
-    Vector<Ref<HTMLElement>> dataDetectorElements;
-    for (auto& child : descendantsOfType<HTMLElement>(*imageOverlayHost.shadowRoot())) {
-        if (ImageOverlay::isDataDetectorResult(child))
-            dataDetectorElements.append(child);
-    }
-
-    for (auto& element : dataDetectorElements) {
-        auto elementBounds = element->boundsInRootViewSpace();
-        if (elementBounds.contains(roundedIntPoint(location)))
-            return {{ WTFMove(element), elementBounds }};
-    }
-
-    return std::nullopt;
-}
-
 #endif // ENABLE(DATA_DETECTION)
 
 #if PLATFORM(COCOA)
@@ -7864,7 +7847,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
             return TextRecognitionUpdateResult::NoText;
 
 #if ENABLE(DATA_DETECTION)
-        if (findDataDetectionResultElementInImageOverlay(location, downcast<HTMLElement>(*elementToUpdate)))
+        if (DataDetection::findDataDetectionResultElementInImageOverlay(location, downcast<HTMLElement>(*elementToUpdate)))
             return TextRecognitionUpdateResult::DataDetector;
 #endif
 

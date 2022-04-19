@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "Editor.h"
 #include "ElementIterator.h"
+#include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameView.h"

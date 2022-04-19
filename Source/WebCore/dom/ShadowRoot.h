@@ -149,13 +149,6 @@ inline Element* ShadowRoot::activeElement() const
     return treeScope().focusedElementInScope();
 }
 
-inline ShadowRoot* Node::shadowRoot() const
-{
-    if (!is<Element>(*this))
-        return nullptr;
-    return downcast<Element>(*this).shadowRoot();
-}
-
 inline bool Node::isUserAgentShadowRoot() const
 {
     return isShadowRoot() && downcast<ShadowRoot>(*this).mode() == ShadowRootMode::UserAgent;

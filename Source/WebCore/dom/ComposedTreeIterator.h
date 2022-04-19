@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ElementAndTextDescendantIterator.h"
+#include "ElementRareData.h"
 #include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
 

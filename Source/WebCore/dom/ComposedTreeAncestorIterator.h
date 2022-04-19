@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ElementRareData.h"
 #include "HTMLSlotElement.h"
 #include "PseudoElement.h"
 #include "ShadowRoot.h"

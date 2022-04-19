@@ -1198,7 +1198,6 @@ public:
     void detectDataInAllFrames(OptionSet<WebCore::DataDetectorType>, CompletionHandler<void(const DataDetectionResult&)>&&);
     void removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&&);
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
-    static std::optional<std::pair<Ref<WebCore::HTMLElement>, WebCore::IntRect>> findDataDetectionResultElementInImageOverlay(const WebCore::FloatPoint& locationInRootView, const WebCore::HTMLElement& host);
 #endif
 
     unsigned extendIncrementalRenderingSuppression();

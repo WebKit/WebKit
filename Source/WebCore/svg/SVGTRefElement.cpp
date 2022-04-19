@@ -24,6 +24,7 @@
 #include "SVGTRefElement.h"
 
 #include "AddEventListenerOptions.h"
+#include "ElementRareData.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "MutationEvent.h"

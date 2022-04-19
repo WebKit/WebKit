@@ -22,6 +22,7 @@
 #include "EventPath.h"
 
 #include "DOMWindow.h"
+#include "ElementRareData.h"
 #include "Event.h"
 #include "EventContext.h"
 #include "EventNames.h"

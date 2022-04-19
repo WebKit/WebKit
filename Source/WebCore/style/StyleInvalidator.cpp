@@ -29,6 +29,7 @@
 #include "CSSSelectorList.h"
 #include "Document.h"
 #include "ElementIterator.h"
+#include "ElementRareData.h"
 #include "ElementRuleCollector.h"
 #include "HTMLSlotElement.h"
 #include "RuleSetBuilder.h"

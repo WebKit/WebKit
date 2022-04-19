@@ -185,5 +185,4 @@ inline bool isInTopLayerOrBackdrop(const RenderStyle& style, const Element* elem
     return (element && element->isInTopLayer()) || style.styleType() == PseudoId::Backdrop;
 }
 
-
 }

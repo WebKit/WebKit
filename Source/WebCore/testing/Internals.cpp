@@ -72,6 +72,7 @@
 #include "DocumentTimelinesController.h"
 #include "Editor.h"
 #include "Element.h"
+#include "ElementRareData.h"
 #include "EventHandler.h"
 #include "EventListener.h"
 #include "EventLoop.h"

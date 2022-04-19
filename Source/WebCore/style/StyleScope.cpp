@@ -32,6 +32,7 @@
 #include "CSSStyleSheet.h"
 #include "Element.h"
 #include "ElementChildIterator.h"
+#include "ElementRareData.h"
 #include "ExtensionStyleSheets.h"
 #include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"

@@ -242,4 +242,22 @@ inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData(Pseudo
     return *m_animationRareData.last().get();
 }
 
+inline ElementRareData* Element::elementRareData() const
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(hasRareData());
+    return static_cast<ElementRareData*>(rareData());
+}
+
+inline ShadowRoot* Node::shadowRoot() const
+{
+    if (!is<Element>(*this))
+        return nullptr;
+    return downcast<Element>(*this).shadowRoot();
+}
+
+inline ShadowRoot* Element::shadowRoot() const
+{
+    return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
+}
+
 } // namespace WebCore

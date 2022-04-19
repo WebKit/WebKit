@@ -29,6 +29,7 @@
 #include "JSCustomElementInterface.h"
 
 #include "DOMWrapperWorld.h"
+#include "ElementRareData.h"
 #include "HTMLUnknownElement.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvertNullable.h"

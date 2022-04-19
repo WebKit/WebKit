@@ -31,6 +31,7 @@
 #include "CommonVM.h"
 #include "ContainerNodeAlgorithms.h"
 #include "Editor.h"
+#include "ElementRareData.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "FrameView.h"

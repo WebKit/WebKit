@@ -34,6 +34,7 @@
 #import "DocumentMarkerController.h"
 #import "Editor.h"
 #import "EditorClient.h"
+#import "ElementRareData.h"
 #import "EventHandler.h"
 #import "EventNames.h"
 #import "FormController.h"

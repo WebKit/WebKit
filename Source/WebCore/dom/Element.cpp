@@ -261,12 +261,6 @@ Element::~Element()
     }
 }
 
-inline ElementRareData* Element::elementRareData() const
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(hasRareData());
-    return static_cast<ElementRareData*>(rareData());
-}
-
 inline ElementRareData& Element::ensureElementRareData()
 {
     return static_cast<ElementRareData&>(ensureRareData());
@@ -2435,11 +2429,6 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         document().identifiedElementWasRemovedFromDocument(*this);
         clearNodeFlag(NodeFlag::HasElementIdentifier);
     }
-}
-
-ShadowRoot* Element::shadowRoot() const
-{
-    return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
 }
 
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)

@@ -45,6 +45,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "ElementIterator.h"
+#include "ElementRareData.h"
 #include "EmptyClients.h"
 #include "File.h"
 #include "Frame.h"

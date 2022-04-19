@@ -35,6 +35,7 @@
 #import "DataDetectionResultsStorage.h"
 #import "Editing.h"
 #import "ElementAncestorIterator.h"
+#import "ElementRareData.h"
 #import "ElementTraversal.h"
 #import "FrameView.h"
 #import "HTMLAnchorElement.h"
@@ -42,6 +43,7 @@
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
+#import "ImageOverlay.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
 #import "QualifiedName.h"
@@ -687,6 +689,23 @@ bool DataDetection::isDataDetectorAttribute(const QualifiedName& name)
 bool DataDetection::isDataDetectorElement(const Element& element)
 {
     return is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
+}
+
+std::optional<std::pair<Ref<HTMLElement>, IntRect>> DataDetection::findDataDetectionResultElementInImageOverlay(const FloatPoint& location, const HTMLElement& imageOverlayHost)
+{
+    Vector<Ref<HTMLElement>> dataDetectorElements;
+    for (auto& child : descendantsOfType<HTMLElement>(*imageOverlayHost.shadowRoot())) {
+        if (ImageOverlay::isDataDetectorResult(child))
+            dataDetectorElements.append(child);
+    }
+
+    for (auto& element : dataDetectorElements) {
+        auto elementBounds = element->boundsInRootViewSpace();
+        if (elementBounds.contains(roundedIntPoint(location)))
+            return { { WTFMove(element), elementBounds } };
+    }
+
+    return std::nullopt;
 }
 
 #if ENABLE(IMAGE_ANALYSIS)

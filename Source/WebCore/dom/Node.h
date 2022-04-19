@@ -235,7 +235,7 @@ public:
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
     ShadowRoot* containingShadowRoot() const;
-    ShadowRoot* shadowRoot() const; // Defined in ShadowRoot.h
+    inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
     bool isClosedShadowHidden(const Node&) const;
 
     HTMLSlotElement* assignedSlot() const;
