@@ -1,3 +1,37 @@
+2022-04-18  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Update the isolated tree in response to AXElementBusyChanged and AXTextChanged notifications
+        https://bugs.webkit.org/show_bug.cgi?id=239434
+
+        Reviewed by Chris Fleizach.
+
+        We need to update the isolated tree in response to these notifications.
+
+        This patch also makes AccessibilityNodeObjects (e.g. for display:contents elements)
+        properly report AXCoreObject::isBusy by moving AccessibilityRenderObject's implementation
+        to AccessibilityNodeObject. This also required AccessibilityRenderObject::elementAttributeValue
+        to move as well.
+
+        Tests: accessibility/text-updates-after-dynamic-change.html
+               accessibility/aria-busy-updates-after-dynamic-change.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::updateIsolatedTree):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isBusy const):
+        Moved from AccessibilityRenderObject.
+        (WebCore::AccessibilityNodeObject::elementAttributeValue const):
+        Moved from AccessibilityRenderObject.
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setElementAttributeValue):
+        Delete this method as it was unused.
+        (WebCore::AccessibilityRenderObject::elementAttributeValue const):
+        Moved to AccessibilityNodeObject.
+        (WebCore::AccessibilityRenderObject::isBusy const):
+        Moved to AccessibilityNodeObject.
+        * accessibility/AccessibilityRenderObject.h:
+
 2022-04-18  Alex Christensen  <achristensen@webkit.org>
 
         Implement CSSTransformValue.is2D

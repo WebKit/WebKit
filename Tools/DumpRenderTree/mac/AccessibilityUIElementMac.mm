@@ -852,6 +852,11 @@ bool AccessibilityUIElement::isDecrementActionSupported()
     return false;
 }
 
+bool AccessibilityUIElement::isBusy() const
+{
+    return boolAttributeValue(@"AXElementBusy");
+}
+
 bool AccessibilityUIElement::isEnabled()
 {
     return boolAttributeValue(NSAccessibilityEnabledAttribute);

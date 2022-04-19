@@ -82,6 +82,7 @@
     readonly attribute long minValue;
     readonly attribute long maxValue;
     
+    readonly attribute boolean isBusy;
     readonly attribute boolean isEnabled;
     readonly attribute boolean isRequired;
     readonly attribute boolean isFocused;

@@ -1777,26 +1777,6 @@ bool AccessibilityRenderObject::isVisited() const
     return m_renderer->style().isLink() && m_renderer->style().insideLink() == InsideLink::InsideVisited;
 }
 
-void AccessibilityRenderObject::setElementAttributeValue(const QualifiedName& attributeName, bool value)
-{
-    if (!m_renderer)
-        return;
-    
-    Node* node = m_renderer->node();
-    if (!is<Element>(node))
-        return;
-    
-    downcast<Element>(*node).setAttribute(attributeName, (value) ? "true"_s : "false"_s);
-}
-    
-bool AccessibilityRenderObject::elementAttributeValue(const QualifiedName& attributeName) const
-{
-    if (!m_renderer)
-        return false;
-    
-    return equalLettersIgnoringASCIICase(getAttribute(attributeName), "true");
-}
-    
 bool AccessibilityRenderObject::isSelected() const
 {
     if (!m_renderer)
@@ -3385,11 +3365,6 @@ bool AccessibilityRenderObject::liveRegionAtomic() const
     default:
         return false;
     }
-}
-
-bool AccessibilityRenderObject::isBusy() const
-{
-    return elementAttributeValue(aria_busyAttr);
 }
 
 bool AccessibilityRenderObject::canHaveSelectedChildren() const

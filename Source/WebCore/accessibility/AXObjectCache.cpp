@@ -3421,10 +3421,12 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:
+        case AXElementBusyChanged:
         case AXInvalidStatusChanged:
         case AXMenuListValueChanged:
         case AXPressedStateChanged:
         case AXSelectedChildrenChanged:
+        case AXTextChanged:
         case AXValueChanged: {
             bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {
                 return note.second == notification.second && note.first.get() == notification.first.get();

@@ -266,15 +266,11 @@ private:
     
     void ariaSelectedRows(AccessibilityChildrenVector&);
     
-    bool elementAttributeValue(const QualifiedName&) const;
-    void setElementAttributeValue(const QualifiedName&, bool);
-    
     OptionSet<SpeakAs> speakAsProperty() const override;
     
     const String liveRegionStatus() const override;
     const String liveRegionRelevant() const override;
     bool liveRegionAtomic() const override;
-    bool isBusy() const override;
 
     bool inheritsPresentationalRole() const override;
 

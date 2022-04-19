@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="clock" role="timer" aria-live="polite" aria-atomic="true">2:30pm</div>
+<div id="clock-display-contents" style="display: contents" role="timer" aria-live="polite" aria-atomic="true">4:30pm</div>
+
+<script>
+    var testOutput = "This test ensures that an element's busy state updates aria-busy changes.\n\n";
+
+    var axClock, axClockWithDisplayContents;
+    function verifyElements() {
+        testOutput += `#clock is busy: ${axClock.isBusy}\n`;
+        testOutput += `#clock-display-contents is busy: ${axClockWithDisplayContents.isBusy}\n\n`;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        axClock = accessibilityController.accessibleElementById("clock");
+        axClockWithDisplayContents = accessibilityController.accessibleElementById("clock-display-contents");
+
+        testOutput += "Verifying initial busy state:\n\n";
+        verifyElements();
+
+        const clock = document.getElementById("clock");
+        const clockWithDisplayContents = document.getElementById("clock-display-contents");
+
+        testOutput += "Setting aria-busy to true.\n\n";
+        clock.ariaBusy = "true";
+        clockWithDisplayContents.ariaBusy = "true";
+        setTimeout(async function() {
+            await waitFor(() => { return axClock.isBusy && axClockWithDisplayContents.isBusy });
+            verifyElements();
+
+            testOutput += "Setting aria-busy to false.\n\n";
+            clock.ariaBusy = "false";
+            clockWithDisplayContents.ariaBusy = "false";
+            await waitFor(() => { return !axClock.isBusy && !axClockWithDisplayContents.isBusy });
+            verifyElements();
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

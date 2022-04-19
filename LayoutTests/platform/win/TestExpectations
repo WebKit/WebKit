@@ -492,6 +492,8 @@ accessibility/ignore-modals-without-any-content.html [ Skip ]
 accessibility/aria-readonly-updates-after-dynamic-change.html [ Skip ]
 # Missing AccessibilityUIElement::isRequired implementation.
 accessibility/aria-required-updates-after-dynamic-change.html [ Skip ]
+# Missing AccessibilityUIElement::isBusy implementation.
+accessibility/aria-busy-updates-after-dynamic-change.html [ Skip ]
 
 # TODO Conic gradients
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]

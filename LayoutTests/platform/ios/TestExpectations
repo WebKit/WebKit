@@ -2107,12 +2107,14 @@ webkit.org/b/148806 imported/w3c/web-platform-tests/css/css-multicol/multicol-sp
 # Enable "phone number linkifying" test for iOS
 fast/dom/linkify-phone-numbers.html [ Pass ]
 
+accessibility/aria-busy-updates-after-dynamic-change.html [ Pass ]
 accessibility/aria-hidden-display-contents-element.html [ Pass ]
 accessibility/aria-readonly-updates-after-dynamic-change.html [ Pass ]
 accessibility/aria-required-updates-after-dynamic-change.html [ Pass ]
 accessibility/display-contents-element-roles.html [ Pass ]
 accessibility/list-with-dynamically-changing-content.html [ Pass ]
 accessibility/node-only-object-element-rect.html [ Pass ]
+accessibility/text-updates-after-dynamic-change.html [ Pass ]
 accessibility/video-element-url-attribute.html [ Pass ]
 accessibility/visible-character-range-basic.html [ Pass ]
 accessibility/visible-character-range-height-changes.html [ Pass ]

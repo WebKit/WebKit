@@ -74,6 +74,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIAColumnCount;
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
+- (BOOL)accessibilityARIAIsBusy;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
@@ -859,6 +860,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
 int AccessibilityUIElement::insertionPointLineNumber()
 {
     return -1;
+}
+
+bool AccessibilityUIElement::isBusy() const
+{
+    return [m_element accessibilityARIAIsBusy];
 }
 
 bool AccessibilityUIElement::isEnabled()

@@ -82,6 +82,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIAColumnCount;
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
+- (BOOL)accessibilityARIAIsBusy;
 - (NSString *)accessibilityInvalidStatus;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
@@ -629,6 +630,11 @@ bool AccessibilityUIElement::isIncrementActionSupported()
 bool AccessibilityUIElement::isDecrementActionSupported()
 {
     return false;
+}
+
+bool AccessibilityUIElement::isBusy() const
+{
+    return [m_element accessibilityARIAIsBusy];
 }
 
 bool AccessibilityUIElement::isEnabled()

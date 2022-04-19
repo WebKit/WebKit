@@ -1327,6 +1327,11 @@ static JSValueRef getSelectedTextRangeCallback(JSContextRef context, JSObjectRef
     return JSValueMakeString(context, selectedTextRange.get());
 }
 
+static JSValueRef getIsBusyCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isBusy());
+}
+
 static JSValueRef getIsEnabledCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isEnabled());
@@ -1924,6 +1929,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "columnCount", columnCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "insertionPointLineNumber", getInsertionPointLineNumberCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedTextRange", getSelectedTextRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isBusy", getIsBusyCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isEnabled", getIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isRequired", getIsRequiredCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isFocused", getIsFocusedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -53,6 +53,7 @@ public:
 
     bool canvasHasFallbackContent() const override;
 
+    bool isBusy() const override;
     bool isControl() const override;
     bool isFieldset() const override;
     bool isGroup() const override;
@@ -169,6 +170,8 @@ protected:
     void changeValueByStep(bool increase);
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
     bool isGenericFocusableElement() const;
+
+    bool elementAttributeValue(const QualifiedName&) const;
 
     bool isLabelable() const;
     AccessibilityObject* correspondingControlForLabelElement() const override;

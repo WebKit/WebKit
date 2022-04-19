@@ -166,6 +166,7 @@ public:
     JSRetainPtr<JSStringRef> valueDescription();
     int insertionPointLineNumber();
     JSRetainPtr<JSStringRef> selectedTextRange();
+    bool isBusy() const;
     bool isEnabled();
     bool isRequired() const;
 

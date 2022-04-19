@@ -1,0 +1,24 @@
+This test ensures that an element's busy state updates aria-busy changes.
+
+Verifying initial busy state:
+
+#clock is busy: false
+#clock-display-contents is busy: false
+
+Setting aria-busy to true.
+
+#clock is busy: true
+#clock-display-contents is busy: true
+
+Setting aria-busy to false.
+
+#clock is busy: false
+#clock-display-contents is busy: false
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+2:30pm
+4:30pm
+

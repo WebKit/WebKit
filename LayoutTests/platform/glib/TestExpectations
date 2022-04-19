@@ -341,6 +341,12 @@ accessibility/ancestor-computation.html [ Skip ]
 # Need to implement AccessibilityUIElement::domIdentifier() for this test to pass after webkit.org/b/234198.
 accessibility/focusable-div.html [ Skip ]
 
+# Missing AccessibilityUIElement::isBusy implementation.
+accessibility/aria-busy-updates-after-dynamic-change.html [ Skip ]
+
+# Timing out since it was added in https://bugs.webkit.org/show_bug.cgi?id=239434.
+accessibility/text-updates-after-dynamic-change.html [ Skip ]
+
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
 accessibility/display-contents-search-traversal.html [ Skip ]
 accessibility/search-traversal-after-role-change.html [ Skip ]

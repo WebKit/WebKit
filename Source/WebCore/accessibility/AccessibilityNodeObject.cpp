@@ -990,6 +990,11 @@ bool AccessibilityNodeObject::isLink() const
     return roleValue() == AccessibilityRole::WebCoreLink;
 }
 
+bool AccessibilityNodeObject::isBusy() const
+{
+    return elementAttributeValue(aria_busyAttr);
+}
+
 bool AccessibilityNodeObject::isControl() const
 {
     Node* node = this->node();
@@ -1292,6 +1297,11 @@ void AccessibilityNodeObject::changeValueByPercent(float percentChange)
 
     value += step;
     setNodeValue(percentChange > 0, value);
+}
+
+bool AccessibilityNodeObject::elementAttributeValue(const QualifiedName& attributeName) const
+{
+    return equalLettersIgnoringASCIICase(getAttribute(attributeName), "true");
 }
 
 bool AccessibilityNodeObject::isGenericFocusableElement() const

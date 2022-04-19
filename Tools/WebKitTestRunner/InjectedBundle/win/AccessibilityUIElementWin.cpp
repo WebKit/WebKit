@@ -400,6 +400,12 @@ bool AccessibilityUIElement::isDecrementActionSupported()
     return false;
 }
 
+bool AccessibilityUIElement::isBusy() const
+{
+    notImplemented();
+    return false;
+}
+
 bool AccessibilityUIElement::isEnabled()
 {
     notImplemented();
