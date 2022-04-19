@@ -366,15 +366,12 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
 }
 
 #if PLATFORM(IOS)
-inline static bool isBleecherReport()
+inline static bool isLinkedBeforeTypedArrayLengthQuirk()
 {
-    auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
-    return bundleID
-        && CFEqual(bundleID, CFSTR("com.bleacherreport.TeamStream"))
-        && !linkedOnOrAfter(SDKVersion::FirstWithoutBleecherReportQuirk);
+    return !linkedOnOrAfter(SDKVersion::FirstWithoutTypedArrayAPIQuirk);
 }
 #else
-inline static bool isBleecherReport() { return false; }
+inline static bool isLinkedBeforeTypedArrayLengthQuirk() { return false; }
 #endif
 
 size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
@@ -386,7 +383,7 @@ size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef objectRef,
     if (!object) {
         // For some reason prior to https://bugs.webkit.org/show_bug.cgi?id=235720 Clang would emit code
         // to early return if objectRef is 0 but not after. Passing 0 should be invalid API use.
-        static bool shouldntCrash = isBleecherReport();
+        static bool shouldntCrash = isLinkedBeforeTypedArrayLengthQuirk();
         RELEASE_ASSERT(shouldntCrash);
         return 0;
     }
