@@ -1,5 +1,57 @@
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r292522. rdar://problem/91130503
+
+    NBSP characters drawn in fonts that don't support the space character turn into boxes
+    https://bugs.webkit.org/show_bug.cgi?id=238836
+    <rdar://problem/91130503>
+    
+    Reviewed by Alan Bujtas.
+    
+    Source/WebCore:
+    
+    We have some historical code in WebKit where we swap out the non-breaking space glyph
+    for the space glyphs when rendering. This is not what the other browsers do; they will
+    faithfully render the non-breaking space glyph. This patch aligns with the other
+    browsers.
+    
+    This patch also fixes a similar problem with tab characters. Other browsers never
+    render any visible tab glyphs, even if the font has a visible glyph for the tab
+    character. This patch implements this.
+    
+    This patch also only clobbers the glyphs used for carriageReturn and newlineCharacter
+    if the replacement glyph exists.
+    
+    Test: fast/text/nbsp-no-space.html
+    
+    * platform/graphics/WidthIterator.cpp:
+    (WebCore::WidthIterator::applyCSSVisibilityRules):
+    
+    LayoutTests:
+    
+    * fast/text/nbsp-no-space-expected.html: Added.
+    * fast/text/nbsp-no-space.html: Added.
+    * fast/text/resources/Ahem-nbsp-no-space.ttf: Added. Supports NBSP but not space.
+    * fast/text/resources/Ahem-visible-tab-and-space.ttf: Added. Has visible glyphs for tab and space.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292522 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            NBSP characters drawn in fonts that don't support the space character turn into boxes
+            https://bugs.webkit.org/show_bug.cgi?id=238836
+            <rdar://problem/91130503>
+
+            Reviewed by Alan Bujtas.
+
+            * fast/text/nbsp-no-space-expected.html: Added.
+            * fast/text/nbsp-no-space.html: Added.
+            * fast/text/resources/Ahem-nbsp-no-space.ttf: Added. Supports NBSP but not space.
+            * fast/text/resources/Ahem-visible-tab-and-space.ttf: Added. Has visible glyphs for tab and space.
+
+2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r291852. rdar://problem/83235846
 
     Improve rebuilding of ruby subtrees

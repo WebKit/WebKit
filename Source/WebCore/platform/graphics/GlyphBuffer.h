@@ -119,10 +119,15 @@ public:
 
     void deleteGlyphWithoutAffectingSize(unsigned index)
     {
+        makeGlyphInvisible(index);
+        m_advances[index] = makeGlyphBufferAdvance();
+    }
+
+    void makeGlyphInvisible(unsigned index)
+    {
         // GlyphID 0xFFFF is the "deleted glyph" and is supposed to be invisible when rendered.
         static const constexpr GlyphBufferGlyph deletedGlyph = 0xFFFF;
         m_glyphs[index] = deletedGlyph;
-        m_advances[index] = makeGlyphBufferAdvance();
     }
 
     void makeHole(unsigned location, unsigned length, const Font* font)
