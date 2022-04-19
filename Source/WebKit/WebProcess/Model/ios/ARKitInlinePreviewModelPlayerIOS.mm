@@ -39,13 +39,51 @@ Ref<ARKitInlinePreviewModelPlayerIOS> ARKitInlinePreviewModelPlayerIOS::create(W
     return adoptRef(*new ARKitInlinePreviewModelPlayerIOS(page, client));
 }
 
+static HashSet<ARKitInlinePreviewModelPlayerIOS*>& instances()
+{
+    static NeverDestroyed<HashSet<ARKitInlinePreviewModelPlayerIOS*>> instances;
+    return instances;
+}
+
 ARKitInlinePreviewModelPlayerIOS::ARKitInlinePreviewModelPlayerIOS(WebPage& page, WebCore::ModelPlayerClient& client)
     : ARKitInlinePreviewModelPlayer(page, client)
 {
+    instances().add(this);
 }
 
 ARKitInlinePreviewModelPlayerIOS::~ARKitInlinePreviewModelPlayerIOS()
 {
+    instances().remove(this);
+}
+
+ARKitInlinePreviewModelPlayerIOS* ARKitInlinePreviewModelPlayerIOS::modelPlayerForPageAndLayerID(WebPage& page, GraphicsLayer::PlatformLayerID layerID)
+{
+    for (auto* modelPlayer : instances()) {
+        if (!modelPlayer || !modelPlayer->client())
+            continue;
+
+        if (&page != modelPlayer->page())
+            continue;
+
+        if (modelPlayer->client()->platformLayerID() != layerID)
+            continue;
+
+        return modelPlayer;
+    }
+
+    return nullptr;
+}
+
+void ARKitInlinePreviewModelPlayerIOS::pageLoadedModelInlinePreview(WebPage& page, GraphicsLayer::PlatformLayerID layerID)
+{
+    if (auto* modelPlayer = modelPlayerForPageAndLayerID(page, layerID))
+        modelPlayer->client()->didFinishLoading(*modelPlayer);
+}
+
+void ARKitInlinePreviewModelPlayerIOS::pageFailedToLoadModelInlinePreview(WebPage& page, WebCore::GraphicsLayer::PlatformLayerID layerID, const WebCore::ResourceError& error)
+{
+    if (auto* modelPlayer = modelPlayerForPageAndLayerID(page, layerID))
+        modelPlayer->client()->didFailLoading(*modelPlayer, error);
 }
 
 std::optional<ModelIdentifier> ARKitInlinePreviewModelPlayerIOS::modelIdentifier()

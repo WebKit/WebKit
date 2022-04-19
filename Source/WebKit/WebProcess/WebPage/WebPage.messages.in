@@ -678,4 +678,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     InteractionRegions(WebCore::FloatRect rectInContentCoordinates) -> (Vector<WebCore::InteractionRegion> regions)
 
     NavigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (bool result)
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+    ModelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
+    ModelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, WebCore::ResourceError error)
+#endif
 }

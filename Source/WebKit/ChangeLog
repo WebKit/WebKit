@@ -1,3 +1,42 @@
+2022-04-15  Antoine Quint  <graouts@apple.com>
+
+        [model] ready promise does not work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=239395
+        rdar://91761135
+
+        Reviewed by Dean Jackson.
+
+        We actually never communicated success or failure when creating the ASVInlinePreview
+        in the UI process on iOS in WKModelView. We now provide a reference to the WebPageProxy
+        and a GraphicsLayer::PlatformLayerID when creating a WKModelView so that we can message
+        the Web process and have WebPage look for the matching ARKitInlinePreviewModelPlayerIOS
+        to notify of load success or failure via the ModelPlayerClient protocol which is already
+        implemented by HTMLModelElement.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelInlinePreviewDidLoad):
+        (WebKit::WebPageProxy::modelInlinePreviewDidFailToLoad):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKModelView.h:
+        * UIProcess/ios/WKModelView.mm:
+        (-[WKModelView initWithModel:layerID:page:]):
+        (-[WKModelView createPreview]):
+        (-[WKModelView initWithModel:]): Deleted.
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.h:
+        * WebProcess/Model/ios/ARKitInlinePreviewModelPlayerIOS.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::ARKitInlinePreviewModelPlayerIOS):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::~ARKitInlinePreviewModelPlayerIOS):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::modelPlayerForPageAndLayerID):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::pageLoadedModelInlinePreview):
+        (WebKit::ARKitInlinePreviewModelPlayerIOS::pageFailedToLoadModelInlinePreview):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::modelInlinePreviewDidLoad):
+        (WebKit::WebPage::modelInlinePreviewDidFailToLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Text selection flickers when inserting text using dictation

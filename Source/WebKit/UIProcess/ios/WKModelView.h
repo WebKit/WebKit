@@ -31,11 +31,15 @@ namespace WebCore {
 class Model;
 }
 
+namespace WebKit {
+class WebPageProxy;
+}
+
 OBJC_CLASS ASVInlinePreview;
 
 @interface WKModelView : WKCompositingView <WKNativelyInteractible>
 
-- (instancetype)initWithModel:(WebCore::Model&)model NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithModel:(WebCore::Model&)model layerID:(WebCore::GraphicsLayer::PlatformLayerID)layerID page:(WebKit::WebPageProxy&)page NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;

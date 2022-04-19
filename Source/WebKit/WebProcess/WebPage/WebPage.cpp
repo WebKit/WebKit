@@ -384,6 +384,10 @@
 #include <WebCore/NavigatorMediaSession.h>
 #endif
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+#include "ARKitInlinePreviewModelPlayerIOS.h"
+#endif
+
 #if PLATFORM(IOS)
 #include "WebPreferencesDefaultValuesIOS.h"
 #endif
@@ -8089,6 +8093,18 @@ void WebPage::cancelVideoExtractionInElementFullScreen()
 {
     send(Messages::WebPageProxy::CancelVideoExtractionInElementFullScreen());
 }
+
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+void WebPage::modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
+{
+    ARKitInlinePreviewModelPlayerIOS::pageLoadedModelInlinePreview(*this, layerID);
+}
+
+void WebPage::modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, const WebCore::ResourceError& error)
+{
+    ARKitInlinePreviewModelPlayerIOS::pageFailedToLoadModelInlinePreview(*this, layerID, error);
+}
+#endif
 
 } // namespace WebKit
 

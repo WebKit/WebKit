@@ -1524,6 +1524,11 @@ public:
     bool useSceneKitForModel() const { return m_useSceneKitForModel; };
 #endif
 
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+    void modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID);
+    void modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID, const WebCore::ResourceError&);
+#endif
+
     void extractVideoInElementFullScreen(const WebCore::HTMLVideoElement&);
     void cancelVideoExtractionInElementFullScreen();
 

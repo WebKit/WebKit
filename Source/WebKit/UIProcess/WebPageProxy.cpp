@@ -11184,6 +11184,17 @@ void WebPageProxy::modelElementSetInteractionEnabled(ModelIdentifier modelIdenti
 {
     modelElementController()->setInteractionEnabledForModelElement(modelIdentifier, isInteractionEnabled);
 }
+
+void WebPageProxy::modelInlinePreviewDidLoad(WebCore::GraphicsLayer::PlatformLayerID layerID)
+{
+    send(Messages::WebPage::ModelInlinePreviewDidLoad(layerID));
+}
+
+void WebPageProxy::modelInlinePreviewDidFailToLoad(WebCore::GraphicsLayer::PlatformLayerID layerID, const WebCore::ResourceError& error)
+{
+    send(Messages::WebPage::ModelInlinePreviewDidFailToLoad(layerID, error));
+}
+
 #endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)

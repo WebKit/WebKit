@@ -101,7 +101,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #if ENABLE(SEPARATED_MODEL)
         return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*properties.model]));
 #elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-        return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*properties.model]));
+        return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*properties.model layerID:properties.layerID page:m_drawingArea->page()]));
 #else
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 #endif

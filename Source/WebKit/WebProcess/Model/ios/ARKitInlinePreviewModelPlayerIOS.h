@@ -38,10 +38,15 @@ public:
     static Ref<ARKitInlinePreviewModelPlayerIOS> create(WebPage&, WebCore::ModelPlayerClient&);
     virtual ~ARKitInlinePreviewModelPlayerIOS();
 
+    static void pageLoadedModelInlinePreview(WebPage&, WebCore::GraphicsLayer::PlatformLayerID);
+    static void pageFailedToLoadModelInlinePreview(WebPage&, WebCore::GraphicsLayer::PlatformLayerID, const WebCore::ResourceError&);
+
 private:
     ARKitInlinePreviewModelPlayerIOS(WebPage&, WebCore::ModelPlayerClient&);
 
     std::optional<ModelIdentifier> modelIdentifier() override;
+
+    static ARKitInlinePreviewModelPlayerIOS* modelPlayerForPageAndLayerID(WebPage&, WebCore::GraphicsLayer::PlatformLayerID);
 
     // WebCore::ModelPlayer overrides.
     void enterFullscreen() override;
