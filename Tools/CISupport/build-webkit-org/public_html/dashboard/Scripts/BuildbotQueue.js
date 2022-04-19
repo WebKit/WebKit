@@ -71,17 +71,11 @@ BuildbotQueue.prototype = {
 
     get baseURL()
     {
-        if (this.buildbot.VERSION_LESS_THAN_09)
-            return this.buildbot.baseURL + "json/builders/" + encodeURIComponent(this.id);
-
         return this.buildbot.baseURL + "api/v2/builders/" + encodeURIComponent(this.id);
     },
 
     get allIterationsURL()
     {
-        if (this.buildbot.VERSION_LESS_THAN_09)
-            return this.baseURL + "/builds/_all/?max=10000";
-
         return this.baseURL + "/builds?order=-number";
     },
 
@@ -95,9 +89,6 @@ BuildbotQueue.prototype = {
 
     get overviewURL()
     {
-        if (this.buildbot.VERSION_LESS_THAN_09)
-            return this.buildbot.baseURL + "builders/" + encodeURIComponent(this.id) + "?numbuilds=50";
-
         return this.buildbot.baseURL + "#/builders/" + encodeURIComponent(this.id) + "?numbuilds=50";
     },
 
@@ -210,38 +201,21 @@ BuildbotQueue.prototype = {
 
     get buildsInfoURL()
     {
-        if (this.buildbot.VERSION_LESS_THAN_09)
-            return this.baseURL;
-
         return this.buildsURL;
     },
 
     getBuilds: function(data)
     {
-        if (this.buildbot.VERSION_LESS_THAN_09)
-            return data.cachedBuilds.reverse();
-
         return data.builds;
     },
 
     isBuildComplete: function(data, index)
     {
-        if (this.buildbot.VERSION_LESS_THAN_09) {
-            var currentBuilds = {};
-            if (data.currentBuilds instanceof Array)
-                data.currentBuilds.forEach(function(id) { currentBuilds[id] = true; });
-
-            return (!(data.cachedBuilds[index] in currentBuilds));
-        }
-
         return data.builds[index].complete;
     },
 
     getIterationID: function(data, index)
     {
-        if (this.buildbot.VERSION_LESS_THAN_09)
-            return data.cachedBuilds[index];
-
         return data.builds[index].number;
     },
 

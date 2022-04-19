@@ -163,17 +163,7 @@ BuildbotIteration.prototype = {
         if (!this.failed)
             return undefined;
 
-        if (!this.queue.buildbot.VERSION_LESS_THAN_09)
-            return this.queue.buildbot.buildPageURLForIteration(this);
-
-        console.assert(this._firstFailedStep);
-
-        for (var i = 0; i < this._firstFailedStep.logs.length; ++i) {
-            if (this._firstFailedStep.logs[i][0] == kind)
-                return this._firstFailedStep.logs[i][1];
-        }
-
-        return undefined;
+        return this.queue.buildbot.buildPageURLForIteration(this);
     },
 
     get failureLogs()
@@ -202,7 +192,6 @@ BuildbotIteration.prototype = {
 
     _parseData: function(data)
     {
-        data = this._adjustBuildDataForBuildbot09(data)
         console.assert(!this.id || this.id === data.number);
         this.id = data.number;
 
@@ -246,8 +235,6 @@ BuildbotIteration.prototype = {
         // The changes array is generally meaningful for svn triggered queues (such as builders),
         // but not for internally triggered ones (such as testers), due to coalescing.
         this.changes = [];
-        if (this.queue.buildbot.VERSION_LESS_THAN_09)
-            console.assert(data.sourceStamp || data.sourceStamps)
         if (data.sourceStamp)
             this.changes = sourceStampChanges(data.sourceStamp);
         else if (data.sourceStamps)
@@ -316,59 +303,9 @@ BuildbotIteration.prototype = {
 
     _stdioURLForStep: function(step)
     {
-        if (this.queue.buildbot.VERSION_LESS_THAN_09) {
-            try {
-                return step.logs[0][1];
-            } catch (ex) {
-                return;
-            }
-        }
-
         // FIXME: Update this logic after <https://github.com/buildbot/buildbot/issues/3465> is fixed. Buildbot 0.9 does
         // not provide a URL to stdio for a build step in the REST API, so we are manually constructing the url here.
         return this.queue.buildbot.buildPageURLForIteration(this) + "/steps/" + step.number + "/logs/stdio";
-    },
-
-    // FIXME: Remove this method after https://bugs.webkit.org/show_bug.cgi?id=175056 is fixed.
-    _adjustBuildDataForBuildbot09: function(data)
-    {
-        if (!this.queue.buildbot.VERSION_LESS_THAN_09)
-            return data;
-
-        data.started_at = data.times[0];
-        data.complete_at = data.times[1];
-        delete data["times"];
-
-        let revisionProperty = data.properties.findFirst((property) => property[0] === "got_revision");
-
-        if (revisionProperty) {
-            // Removing first element from revision property to match with new data format.
-            // Old format: ["got_revision",{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
-            // New format: [{"Internal":"1357","WebKitOpenSource":"2468"},"Source"]
-            console.assert(revisionProperty[0] === "got_revision")
-            revisionProperty.splice(0, 1);
-        }
-        data.properties.got_revision = revisionProperty;
-
-        for (var i = 0; i < data.steps.length; i++) {
-            data.steps[i].complete = data.steps[i].isFinished;
-            delete data.steps[i]["isFinished"];
-            // Sample state_string: "Exiting early after 20 crashes and 30 timeouts. 31603 tests run. 147 failures 69 new passes".
-            data.steps[i].state_string = data.steps[i].results[1].join(' ');
-            data.steps[i].results = data.steps[i].results[0]; // See URL http://docs.buildbot.net/latest/developer/results.html
-        }
-
-        let masterShellCommandStep = data.steps.findFirst((step) => step.name === "MasterShellCommand");
-        if (masterShellCommandStep)
-            masterShellCommandStep.urls = [masterShellCommandStep.urls];
-
-        data.state_string = data.text.join(" ");
-        delete data["text"];
-
-        data.complete = !data.currentStep;
-        delete data["currentStep"];
-
-        return data;
     },
 
     _updateIfDataAvailable: function()
@@ -427,10 +364,7 @@ BuildbotIteration.prototype = {
             return;
 
         this.isLoading = true;
-        if (this.queue.buildbot.VERSION_LESS_THAN_09)
-            this.deprecatedUpdate();
-        else
-            this.actualUpdate();
+        this.actualUpdate();
     },
 
     actualUpdate: function()
@@ -460,18 +394,6 @@ BuildbotIteration.prototype = {
             // ]
             this._buildData = data.builds[0];
             this._updateIfDataAvailable();
-        }.bind(this), this.urlFailedToLoad, {withCredentials: this.queue.buildbot.needsAuthentication});
-    },
-
-    deprecatedUpdate: function()
-    {
-        JSON.load(this.queue.baseURL + "/builds/" + this.id, function(data) {
-            this.isLoading = false;
-            this.queue.buildbot.isAuthenticated = true;
-            if (!data || !data.properties)
-                return;
-
-            this._deprecatedUpdateWithData(data);
         }.bind(this), this.urlFailedToLoad, {withCredentials: this.queue.buildbot.needsAuthentication});
     },
 
