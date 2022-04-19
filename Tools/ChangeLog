@@ -1,3 +1,22 @@
+2022-04-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [ews-build.webkit.org] Resolve conflicting Mixin inheritance
+        https://bugs.webkit.org/show_bug.cgi?id=239504
+        <rdar://problem/91968024>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin.fetch_data_from_url_with_authentication_github): Renamed from fetch_data_from_url_with_authentication.
+        (GitHubMixin.get_pr_json): Invoke GitHub specific version.
+        (GitHubMixin.get_reviewers): Ditto.
+        (GitHubMixin.remove_labels): Ditto.
+        (BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla): Renamed from fetch_data_from_url_with_authentication.
+        (BugzillaMixin.get_patch_json): Invoke buildbot specific version.
+        (BugzillaMixin.get_bug_json): Ditto.
+        (GitHubMixin.fetch_data_from_url_with_authentication): Renamed to fetch_data_from_url_with_authentication_github.
+        (BugzillaMixin.fetch_data_from_url_with_authentication): Renamed to fetch_data_from_url_with_authentication_bugzilla.
+
 2022-04-18  Jonathan Bedard  <jbedard@apple.com>
 
         [build.webkit.org] Use identifier as version when uploading artifacts (Follow-up fix)

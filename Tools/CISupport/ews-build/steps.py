@@ -144,7 +144,7 @@ class GitHubMixin(object):
     MERGE_QUEUE_LABEL = 'merge-queue'
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
 
-    def fetch_data_from_url_with_authentication(self, url):
+    def fetch_data_from_url_with_authentication_github(self, url):
         response = None
         try:
             username, access_token = GitHub.credentials()
@@ -168,7 +168,7 @@ class GitHubMixin(object):
             return None
 
         pr_url = '{}/pulls/{}'.format(api_url, pr_number)
-        content = self.fetch_data_from_url_with_authentication(pr_url)
+        content = self.fetch_data_from_url_with_authentication_github(pr_url)
         if not content:
             return None
 
@@ -195,7 +195,7 @@ class GitHubMixin(object):
             return []
 
         reviews_url = f'{api_url}/pulls/{pr_number}/reviews'
-        content = self.fetch_data_from_url_with_authentication(reviews_url)
+        content = self.fetch_data_from_url_with_authentication_github(reviews_url)
         if not content:
             return []
 
@@ -281,7 +281,7 @@ class GitHubMixin(object):
             return False
 
         pr_label_url = f'{api_url}/issues/{pr_number}/labels'
-        content = self.fetch_data_from_url_with_authentication(pr_label_url)
+        content = self.fetch_data_from_url_with_authentication_github(pr_label_url)
         if not content:
             self._addToLog('stdio', "Failed to fetch existing labels, cannot remove labels\n")
             return True
@@ -1079,7 +1079,7 @@ class BugzillaMixin(AddToLogMixin):
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
     fast_cq_preambles = ('revert of r', 'fast-cq', '[fast-cq]')
 
-    def fetch_data_from_url_with_authentication(self, url):
+    def fetch_data_from_url_with_authentication_bugzilla(self, url):
         response = None
         try:
             response = requests.get(url, timeout=60, params={'Bugzilla_api_key': self.get_bugzilla_api_key()})
@@ -1109,7 +1109,7 @@ class BugzillaMixin(AddToLogMixin):
 
     def get_patch_json(self, patch_id):
         patch_url = '{}rest/bug/attachment/{}'.format(BUG_SERVER_URL, patch_id)
-        patch = self.fetch_data_from_url_with_authentication(patch_url)
+        patch = self.fetch_data_from_url_with_authentication_bugzilla(patch_url)
         if not patch:
             return None
         try:
@@ -1123,7 +1123,7 @@ class BugzillaMixin(AddToLogMixin):
 
     def get_bug_json(self, bug_id):
         bug_url = '{}rest/bug/{}'.format(BUG_SERVER_URL, bug_id)
-        bug = self.fetch_data_from_url_with_authentication(bug_url)
+        bug = self.fetch_data_from_url_with_authentication_bugzilla(bug_url)
         if not bug:
             return None
         try:
