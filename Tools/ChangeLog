@@ -1,3 +1,15 @@
+2022-04-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Use identifier as version when uploading artifacts (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=239321
+        <rdar://problem/91734798>
+
+        Reviewed by Aakash Jain and Ryan Haddad.
+
+        * CISupport/build-webkit-org/steps.py:
+        (UploadTestResults): Strip leading r.
+        (ExtractTestResults.__init__): Ditto.
+
 2022-04-19  Aakash Jain  <aakash_jain@apple.com>
 
         Delete old buildbot code from bot watchers dashboard

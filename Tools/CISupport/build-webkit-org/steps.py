@@ -1114,7 +1114,7 @@ class ArchiveTestResults(shell.ShellCommand):
 
 class UploadTestResults(transfer.FileUpload):
     workersrc = "layout-test-results.zip"
-    masterdest = WithProperties("public_html/results/%(buildername)s/r%(archive_revision)s (%(buildnumber)s).zip")
+    masterdest = WithProperties("public_html/results/%(buildername)s/%(archive_revision)s (%(buildnumber)s).zip")
 
     def __init__(self, **kwargs):
         kwargs['workersrc'] = self.workersrc
@@ -1158,8 +1158,8 @@ class ExtractTestResults(master.MasterShellCommand):
     def __init__(self, **kwargs):
         kwargs['command'] = ""
         kwargs['logEnviron'] = False
-        self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:archive_revision)s (%(prop:buildnumber)s).zip')
-        self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:archive_revision)s (%(prop:buildnumber)s)')
+        self.zipFile = Interpolate('public_html/results/%(prop:buildername)s/%(prop:archive_revision)s (%(prop:buildnumber)s).zip')
+        self.resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/%(prop:archive_revision)s (%(prop:buildnumber)s)')
         kwargs['command'] = ['unzip', '-q', '-o', self.zipFile, '-d', self.resultDirectory]
         master.MasterShellCommand.__init__(self, **kwargs)
 
