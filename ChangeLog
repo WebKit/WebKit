@@ -1,3 +1,9 @@
+2022-04-19  Mark Lam  <mark.lam@apple.com>
+
+        Adding my GitHub credentials.
+
+        * metadata/contributors.json:
+
 2022-04-19  Karl Rackler  <rackler@apple.com>
 
         Coreection to botwatcher github username to contributors json

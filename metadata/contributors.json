@@ -4566,8 +4566,10 @@
    },
    {
       "emails" : [
-         "mark.lam@apple.com"
+         "mark.lam@apple.com",
+         "menlodorian@outlook.com"
       ],
+      "github" : "menlodorian",
       "name" : "Mark Lam",
       "nicks" : [
          "mlam"
