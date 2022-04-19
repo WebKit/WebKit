@@ -1,3 +1,46 @@
+2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r292484. rdar://problem/89253391
+
+    [JSC] Substring resolving should check 8bit / 16bit again
+    https://bugs.webkit.org/show_bug.cgi?id=236775
+    <rdar://problem/89253391>
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/8bit-16bit-atomize-conversion.js: Added.
+    (main.v64):
+    (main):
+    
+    Source/JavaScriptCore:
+    
+    Substring JSString is wrapping JSString. Thus it is possible that underlying JSString's 8Bit / 16Bit status
+    becomes different from substring JSString wrapper's bit. We should not assume they are the same.
+    
+    * runtime/JSString.cpp:
+    (JSC::JSRopeString::resolveRopeInternal const):
+    (JSC::JSRopeString::resolveRopeToAtomString const):
+    (JSC::JSRopeString::resolveRopeToExistingAtomString const):
+    (JSC::JSRopeString::resolveRopeInternal8 const): Deleted.
+    (JSC::JSRopeString::resolveRopeInternal16 const): Deleted.
+    * runtime/JSString.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292484 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Substring resolving should check 8bit / 16bit again
+            https://bugs.webkit.org/show_bug.cgi?id=236775
+            <rdar://problem/89253391>
+
+            Reviewed by Saam Barati.
+
+            * stress/8bit-16bit-atomize-conversion.js: Added.
+            (main.v64):
+            (main):
+
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r290981. rdar://problem/83326232
