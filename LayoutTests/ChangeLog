@@ -1,3 +1,29 @@
+2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r289834. rdar://problem/90455347
+
+    Rebaslining fonts/monospace.html for Monterey.
+    https://bugs.webkit.org/show_bug.cgi?id=236619
+    
+    Unreviewed test gardening.
+    
+    Patch by Matteo Flores <matteo_flores@apple.com> on 2022-02-15
+    
+    * platform/mac-catalina/fonts/monospace-expected.txt: Copied from LayoutTests/platform/mac/fonts/monospace-expected.txt.
+    * platform/mac/fonts/monospace-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289834 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-15  Matteo Flores  <matteo_flores@apple.com>
+
+            Rebaslining fonts/monospace.html for Monterey.
+            https://bugs.webkit.org/show_bug.cgi?id=236619
+
+            Unreviewed test gardening.
+
+            * platform/mac-catalina/fonts/monospace-expected.txt: Copied from LayoutTests/platform/mac/fonts/monospace-expected.txt.
+            * platform/mac/fonts/monospace-expected.txt:
+
 2022-04-07  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r291629. rdar://problem/91446360
