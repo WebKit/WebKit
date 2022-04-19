@@ -3557,8 +3557,16 @@ bool Element::hasValidStyle() const
 
 bool Element::isFocusableWithoutResolvingFullStyle() const
 {
+    auto isFocusableStyle = [](const RenderStyle* style) {
+        return style
+            && style->display() != DisplayType::None
+            && style->display() != DisplayType::Contents
+            && style->visibility() == Visibility::Visible
+            && !style->effectiveInert();
+    };
+
     if (renderStyle() || hasValidStyle())
-        return renderStyle() && renderStyle()->visibility() == Visibility::Visible && !renderStyle()->effectiveInert();
+        return isFocusableStyle(renderStyle());
 
     auto computedStyleForElement = [](Element& element) -> const RenderStyle* {
         auto* style = element.hasNodeFlag(NodeFlag::IsComputedStyleInvalidFlag) ? nullptr : element.existingComputedStyle();
@@ -3567,13 +3575,7 @@ bool Element::isFocusableWithoutResolvingFullStyle() const
 
     // Compute style in yet unstyled subtree.
     auto* style = computedStyleForElement(const_cast<Element&>(*this));
-    if (!style)
-        return false;
-
-    if (style->display() == DisplayType::None || style->display() == DisplayType::Contents)
-        return false;
-
-    if (style->visibility() != Visibility::Visible || style->effectiveInert())
+    if (!isFocusableStyle(style))
         return false;
 
     for (auto& element : composedTreeAncestors(const_cast<Element&>(*this))) {

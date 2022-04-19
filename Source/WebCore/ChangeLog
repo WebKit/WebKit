@@ -1,3 +1,13 @@
+2022-04-19  Tim Nguyen  <ntim@apple.com>
+
+        Clean up Element::isFocusableWithoutResolvingFullStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=239028
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusableWithoutResolvingFullStyle const):
+
 2022-04-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the PlatformMediaEngineClassName macro
