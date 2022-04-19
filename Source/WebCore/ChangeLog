@@ -1,3 +1,44 @@
+2022-04-19  Joseph Griego  <jgriego@igalia.com>
+
+        Fix runtime expose scope check for shadow realms
+        https://bugs.webkit.org/show_bug.cgi?id=238381
+
+        Reviewed by Darin Adler.
+
+        Because shadow realms re-use their incubating realm's execution context
+        it doesn't make sense to check the `is${expose_scope}GlobalScope`
+        methods on `ScriptExecutionContext` anymore--instead, we'll use the type
+        information on the `JSGlobalScope` wrapper
+
+        This is at least justified in part by the fact that
+        `JSDOMGlobalObject#scriptExecutionContext` already does this internally
+        today to actually fetch the execution context, so, we can at least be
+        assured that this behaves the same way.
+
+        Some global scopes (notably, here, `AudioWorklet`) do not have distinct
+        wrapper types so we need to add a side condition to the generated code,
+        which we do after the type check.
+
+        Also removes `ScriptExecutionContext::isShadowRealmGlobalScope` as it's
+        now dead code and was never overridden anyways (a mistake left over
+        from the initial integration)
+
+        Tests: idlharness tests, including fixed visibility of
+        `AbortController.timeout`
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateRuntimeEnableConditionalStringForExposeScope):
+        * bindings/scripts/test/JS/JSExposedStar.cpp:
+        (WebCore::JSExposedStarPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONFilteredByExposed.cpp:
+        (WebCore::JSTestDefaultToJSONFilteredByExposedPrototype::finishCreation):
+        (WebCore::jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSONBody):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjPrototype::finishCreation):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::isServiceWorkerGlobalScope const):
+        (WebCore::ScriptExecutionContext::isShadowRealmGlobalScope const): Deleted.
+
 2022-04-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][WebRTC] Minor cleanup in IncomingSourceGStreamer

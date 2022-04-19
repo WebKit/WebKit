@@ -3991,18 +3991,30 @@ sub GenerateRuntimeEnableConditionalStringForExposeScope
 {
     my ($exposed, $context, $globalObjectPtr) = @_;
 
+    my $wrapperType;
+    my $sideCondition;
+
     if ($exposed eq "Window") {
-      return "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isDocument()";
+      $wrapperType = "JSDOMWindowBase";
     } elsif ($exposed eq "Worker") {
-      return "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isWorkerGlobalScope()";
+      $wrapperType = "JSWorkerGlobalScopeBase";
     } elsif ($exposed eq "ShadowRealm") {
-      return "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isShadowRealmGlobalScope()";
+      $wrapperType = "JSShadowRealmGlobalScopeBase";
     } elsif ($exposed eq "Worklet") {
-      return "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isWorkletGlobalScope()";
+      $wrapperType = "JSWorkletGlobalScopeBase";
     } elsif ($exposed eq "AudioWorklet") {
-      return "is<AudioWorkletGlobalScope>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())";
+      $wrapperType = "JSWorkletGlobalScopeBase";
+      $sideCondition = "global->scriptExecutionContext()->isAudioWorkletGlobalScope()";
     } else {
       assert("Unrecognized value '" . Dumper($context->extendedAttributes->{Exposed}) . "' for the Exposed extended attribute on '" . ref($context) . "'.");
+    }
+
+    AddToImplIncludes("$wrapperType.h", 0);
+
+    if (defined $sideCondition) {
+      return "([&] { auto* global = jsDynamicCast<$wrapperType>($globalObjectPtr); return global && $sideCondition; })()";
+    } else {
+      return "($globalObjectPtr)->inherits<$wrapperType>()"
     }
 }
 

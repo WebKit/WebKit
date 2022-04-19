@@ -1,3 +1,15 @@
+2022-04-19  Joseph Griego  <jgriego@igalia.com>
+
+        Fix runtime expose scope check for shadow realms
+        https://bugs.webkit.org/show_bug.cgi?id=238381
+
+        Reviewed Darin Adler.
+
+        Updated idlharness expectations to reflect the fix for
+        `AbortController.timeout` visibility
+
+        * web-platform-tests/dom/idlharness-shadowrealm.window-expected.txt:
+
 2022-04-18  Alex Christensen  <achristensen@webkit.org>
 
         Implement CSSTransformValue.is2D

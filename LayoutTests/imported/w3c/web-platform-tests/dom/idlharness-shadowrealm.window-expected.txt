@@ -95,7 +95,7 @@ PASS AbortSignal interface: existence and properties of interface prototype obje
 PASS AbortSignal interface: existence and properties of interface prototype object's "constructor" property
 PASS AbortSignal interface: existence and properties of interface prototype object's @@unscopables property
 PASS AbortSignal interface: operation abort(optional any)
-FAIL AbortSignal interface: member timeout assert_false: The interface object must not have a property "timeout" expected false got true
+PASS AbortSignal interface: member timeout
 PASS AbortSignal interface: attribute aborted
 PASS AbortSignal interface: attribute reason
 PASS AbortSignal interface: operation throwIfAborted()
