@@ -243,7 +243,9 @@ ConfigFile::ConfigFile(const char* filename)
     if (!filename)
         m_filename[0] = '\0';
     else {
+        IGNORE_GCC_WARNINGS_BEGIN("stringop-truncation")
         strncpy(m_filename, filename, s_maxPathLength);
+        IGNORE_GCC_WARNINGS_END
         m_filename[s_maxPathLength] = '\0';
     }
 

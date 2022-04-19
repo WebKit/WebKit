@@ -1,3 +1,13 @@
+2022-04-19  Martin Robinson  <mrobinson@webkit.org>
+
+        Fix the address sanitizer build when building with gcc
+        https://bugs.webkit.org/show_bug.cgi?id=238869
+
+        Reviewed by Philippe Normand.
+
+        * runtime/ConfigFile.cpp:
+        (JSC::ConfigFile::ConfigFile):
+
 2022-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use constants buffer in DFG
