@@ -272,7 +272,7 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
 }
 
-Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
+Structure::Structure(VM& vm, Structure* previous)
     : JSCell(vm, vm.structureStructure.get())
     , m_inlineCapacity(previous->m_inlineCapacity)
     , m_bitField(0)
@@ -307,7 +307,9 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     ASSERT(!previous->typeInfo().structureIsImmortal());
     setPreviousID(vm, previous);
 
-    previous->didTransitionFromThisStructure(deferred);
+    // Do not fire watchpoint inside Structure constructor since watchpoint can involve further heap allocations.
+    // We fire watchpoint separately in Structure::finishCreation.
+    previous->didTransitionFromThisStructureWithoutFiringWatchpoint();
     
     // Copy this bit now, in case previous was being watched.
     setTransitionWatchpointIsLikelyToBeFired(previous->transitionWatchpointIsLikelyToBeFired());
@@ -1244,19 +1246,28 @@ void DeferredStructureTransitionWatchpointFire::dump(PrintStream& out) const
     out.print("Structure transition from ", *m_structure);
 }
 
-void Structure::didTransitionFromThisStructure(DeferredStructureTransitionWatchpointFire* deferred) const
+void Structure::didTransitionFromThisStructureWithoutFiringWatchpoint() const
 {
     // If the structure is being watched, and this is the kind of structure that the DFG would
     // like to watch, then make sure to note for all future versions of this structure that it's
     // unwise to watch it.
     if (m_transitionWatchpointSet.isBeingWatched())
         const_cast<Structure*>(this)->setTransitionWatchpointIsLikelyToBeFired(true);
+}
 
+void Structure::fireStructureTransitionWatchpoint(DeferredStructureTransitionWatchpointFire* deferred) const
+{
     if (deferred) {
         ASSERT(deferred->structure() == this);
         m_transitionWatchpointSet.fireAll(vm(), deferred);
     } else
         m_transitionWatchpointSet.fireAll(vm(), StructureFireDetail(this));
+}
+
+void Structure::didTransitionFromThisStructure(DeferredStructureTransitionWatchpointFire* deferred) const
+{
+    didTransitionFromThisStructureWithoutFiringWatchpoint();
+    fireStructureTransitionWatchpoint(deferred);
 }
 
 template<typename Visitor>

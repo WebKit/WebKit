@@ -79,11 +79,10 @@ inline Structure* Structure::create(VM& vm, Structure* previous, DeferredStructu
     ASSERT(vm.structureStructure);
     Structure* newStructure;
     if (previous->isBrandedStructure())
-        newStructure = new (NotNull, allocateCell<BrandedStructure>(vm)) BrandedStructure(vm, jsCast<BrandedStructure*>(previous), deferred);
+        newStructure = new (NotNull, allocateCell<BrandedStructure>(vm)) BrandedStructure(vm, jsCast<BrandedStructure*>(previous));
     else
-        newStructure = new (NotNull, allocateCell<Structure>(vm)) Structure(vm, previous, deferred);
-
-    newStructure->finishCreation(vm, previous);
+        newStructure = new (NotNull, allocateCell<Structure>(vm)) Structure(vm, previous);
+    newStructure->finishCreation(vm, previous, deferred);
     return newStructure;
 }
 

@@ -1,5 +1,71 @@
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r292594. rdar://problem/91467003
+
+    [JSC] Fire structure transition watchpoint in Structure::finishCreation instead of Structure constructor
+    https://bugs.webkit.org/show_bug.cgi?id=238980
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/heap-allocation-in-did-structure-transition-watchpoint.js: Added.
+    (__isPropertyOfType):
+    (__getProperties):
+    (__getObjects):
+    (__getRandomObject):
+    (__getRandomProperty):
+    (__callGC):
+    (get var):
+    
+    Source/JavaScriptCore:
+    
+    After https://github.com/WebKit/WebKit/commit/dc3a347474a183891f8e07966dc09e684d7a1d13 change,
+    we start using Structure::get in the main thread. However one of the difference between Structure::get and
+    Structure::getConcurrently is that it can allocate GC memory: PropertyTable can be materialized.
+    
+    Structure constructor was firing structure transition watchpoint. And some of watchpoints were using
+    Structure::getConcurrently. That's fine before, but now, it becomes Structure::get. It is not OK since
+    we cannot allocate GC memory inside constructor of GC managed objects.
+    
+    This patch split didTransitionFromThisStructure into didTransitionFromThisStructureWithoutFiringWatchpoint and
+    fireStructureTransitionWatchpoint. And firing watchpoints in Structure::finishCreation instead of Structure
+    constructor so that we can allocate GC memory while firing watchpoints.
+    
+    * runtime/BrandedStructure.cpp:
+    (JSC::BrandedStructure::BrandedStructure):
+    (JSC::BrandedStructure::create):
+    * runtime/BrandedStructure.h:
+    * runtime/Structure.cpp:
+    (JSC::Structure::Structure):
+    (JSC::Structure::didTransitionFromThisStructureWithoutFiringWatchpoint const):
+    (JSC::Structure::fireStructureTransitionWatchpoint const):
+    (JSC::Structure::didTransitionFromThisStructure const):
+    * runtime/Structure.h:
+    (JSC::Structure::finishCreation):
+    * runtime/StructureInlines.h:
+    (JSC::Structure::create):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292594 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Fire structure transition watchpoint in Structure::finishCreation instead of Structure constructor
+            https://bugs.webkit.org/show_bug.cgi?id=238980
+
+            Reviewed by Saam Barati.
+
+            * stress/heap-allocation-in-did-structure-transition-watchpoint.js: Added.
+            (__isPropertyOfType):
+            (__getProperties):
+            (__getObjects):
+            (__getRandomObject):
+            (__getRandomProperty):
+            (__callGC):
+            (get var):
+
+2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r292484. rdar://problem/89253391
 
     [JSC] Substring resolving should check 8bit / 16bit again
