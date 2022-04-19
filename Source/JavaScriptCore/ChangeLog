@@ -1,3 +1,16 @@
+2022-04-19  Michael Saboff  <msaboff@apple.com>
+
+        Various WebKit tools need to be told about the system content path
+        https://bugs.webkit.org/show_bug.cgi?id=239516
+
+        Reviewed by Ryan Haddad.
+
+        Added the INSTALL_PATH_PREFIX to the INSTALL_PATH for TestAPI and the JSC tools.
+        This will contain the system content path prefix when enabled.
+
+        * Configurations/TestAPI.xcconfig:
+        * Configurations/ToolExecutable.xcconfig:
+
 2022-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION(r292372): cloop crashes on s390x
