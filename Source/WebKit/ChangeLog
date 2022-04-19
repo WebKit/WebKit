@@ -1,3 +1,20 @@
+2022-04-19  Sihui Liu  <sihui_liu@apple.com>
+
+        Add logging for WebsiteDataStore data fetch and removal
+        https://bugs.webkit.org/show_bug.cgi?id=239409
+
+        Reviewed by Chris Dumez.
+
+        This would help us debug issues like rdar://91422245.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+
 2022-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ASSERTION FAILED: !m_isInitializingSendSource crashes on the bots
