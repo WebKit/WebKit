@@ -420,7 +420,7 @@ public:
 class GPRInfo {
 public:
     typedef GPRReg RegisterType;
-    static constexpr unsigned numberOfRegisters = 10;
+    static constexpr unsigned numberOfRegisters = 11;
     static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
 
     // These registers match the baseline JIT.
@@ -498,9 +498,9 @@ public:
     {
         ASSERT(index < numberOfRegisters);
 #if !OS(WINDOWS)
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regCS0, regCS1 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7, regCS0, regCS1, regCS2 };
 #else
-        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regCS0, regCS1, regCS2, regCS3 };
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5, regCS0, regCS1, regCS2, regCS3, regCS4 };
 #endif
         return registerForIndex[index];
     }

@@ -1,5 +1,15 @@
 2022-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, disable UnlinkedDFG code in x64
+        https://bugs.webkit.org/show_bug.cgi?id=237863
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+
+2022-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, do not use RELEASE_ASSERT_NOT_REACHED in super hot path to suppress warnings
         https://bugs.webkit.org/show_bug.cgi?id=239290
 
