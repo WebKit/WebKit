@@ -22,7 +22,6 @@
 #if USE(GSTREAMER_WEBRTC)
 #include "RealtimeIncomingSourceGStreamer.h"
 
-#include "MediaSampleGStreamer.h"
 #include <gst/app/gstappsink.h>
 #include <wtf/text/WTFString.h>
 
@@ -85,8 +84,10 @@ void RealtimeIncomingSourceGStreamer::registerClient()
     gst_element_sync_state_with_parent(queue);
     gst_element_sync_state_with_parent(sink);
 
+#ifndef GST_DISABLE_GST_DEBUG
     auto dotFileName = makeString(GST_OBJECT_NAME(m_bin.get()), ".incoming");
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_bin.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
+#endif
 }
 
 } // namespace WebCore
