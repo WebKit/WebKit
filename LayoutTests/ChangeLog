@@ -1,3 +1,14 @@
+2022-04-19  Tim Nguyen  <ntim@apple.com>
+
+        [iOS] Also skip resize-orthogonal-containing-block.html
+        https://bugs.webkit.org/show_bug.cgi?id=239459
+
+        Unreviewed test gardening.
+
+        I should have done this with the other resize tests.
+
+        * platform/ios/TestExpectations:
+
 2022-04-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Unskip api/validation/createSampler.html 🎉
