@@ -169,6 +169,8 @@ RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnectio
 {
     ASSERT(isMainThread());
     auto& document = downcast<Document>(*m_scriptExecutionContext);
+    if (!document.page())
+        return nullptr;
     return document.page()->cacheStorageProvider().createCacheStorageConnection();
 }
 
