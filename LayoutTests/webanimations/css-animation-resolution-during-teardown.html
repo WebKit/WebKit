@@ -1,0 +1,41 @@
+<style>
+  @keyframes a0 {
+  }
+  div, span {
+    animation-name: a0;
+  }
+  slot {
+    animation-name: a0, a0;
+  }
+</style>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+
+  onload = () => {
+    document.body.append(document.createElement('input'));
+    document.body.append(document.createElement('slot'));
+    let br0 = document.createElement('br');
+    document.body.append(br0);
+    let div0 = document.createElement('div');
+    br0.append(div0);
+    document.body.offsetTop;
+    document.body.append(document.createElement('input'));
+    div0.append(document.createElement('span'));
+    document.execCommand('SelectAll');
+    onbeforeunload = () => {
+      document.styleSheets[0].insertRule(`slot { animation-delay: 25ms; }`);
+      document.designMode = 'on';
+      document.execCommand('Bold');
+    };
+
+    requestAnimationFrame(() => {
+        if (!window.location.search)
+            window.location.href = window.location.href + "?foo=1";
+        else {
+            document.body.textContent = "PASS";
+            window.testRunner?.notifyDone();
+        }
+    });
+  };
+</script>
