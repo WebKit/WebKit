@@ -1,3 +1,68 @@
+2022-04-18  Alex Christensen  <achristensen@webkit.org>
+
+        Implement CSSTransformValue.is2D
+        https://bugs.webkit.org/show_bug.cgi?id=239462
+
+        Reviewed by Simon Fraser.
+
+        This is an off-by-default feature.
+        Covered by WPT tests.
+
+        * bindings/js/JSCSSTransformComponentCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/typedom/CSSNumericValue.cpp:
+        (WebCore::CSSNumericValue::rectifyNumberish):
+        * css/typedom/CSSNumericValue.h:
+        * css/typedom/numeric/CSSNumericType.h:
+        (WebCore::CSSNumericType::valueForType const):
+        (WebCore::CSSNumericType::nonZeroEntryCount const):
+        (WebCore::CSSNumericType::matches const):
+        (WebCore::CSSNumericType::matchesNumber const):
+        * css/typedom/transform/CSSMatrixComponent.cpp:
+        (WebCore::CSSMatrixComponent::create):
+        (WebCore::CSSMatrixComponent::CSSMatrixComponent):
+        * css/typedom/transform/CSSMatrixComponent.h:
+        (WebCore::CSSMatrixComponent::create): Deleted.
+        * css/typedom/transform/CSSMatrixComponent.idl:
+        * css/typedom/transform/CSSRotate.cpp:
+        (WebCore::CSSRotate::create):
+        (WebCore::CSSRotate::CSSRotate):
+        (WebCore::CSSRotate::setX):
+        (WebCore::CSSRotate::setY):
+        (WebCore::CSSRotate::setZ):
+        (WebCore::CSSRotate::setAngle):
+        * css/typedom/transform/CSSRotate.h:
+        (WebCore::CSSRotate::x):
+        (WebCore::CSSRotate::y):
+        (WebCore::CSSRotate::z):
+        (WebCore::CSSRotate::setX): Deleted.
+        (WebCore::CSSRotate::setY): Deleted.
+        (WebCore::CSSRotate::setZ): Deleted.
+        (WebCore::CSSRotate::setAngle): Deleted.
+        * css/typedom/transform/CSSScale.cpp:
+        (WebCore::CSSScale::create):
+        (WebCore::CSSScale::CSSScale):
+        * css/typedom/transform/CSSScale.h:
+        (WebCore::CSSScale::x const):
+        (WebCore::CSSScale::y const):
+        (WebCore::CSSScale::z const):
+        (WebCore::CSSScale::x): Deleted.
+        (WebCore::CSSScale::y): Deleted.
+        (WebCore::CSSScale::z): Deleted.
+        * css/typedom/transform/CSSTransformComponent.cpp:
+        (WebCore::CSSTransformComponent::toString const):
+        (WebCore::CSSTransformComponent::toMatrix): Deleted.
+        * css/typedom/transform/CSSTransformComponent.h:
+        (WebCore::CSSTransformComponent::CSSTransformComponent):
+        (WebCore::CSSTransformComponent::getType const): Deleted.
+        * css/typedom/transform/CSSTransformValue.cpp:
+        (WebCore::CSSTransformValue::create):
+        (WebCore::CSSTransformValue::setItem):
+        (WebCore::CSSTransformValue::is2D const):
+        (WebCore::CSSTransformValue::setIs2D): Deleted.
+        * css/typedom/transform/CSSTransformValue.h:
+        * css/typedom/transform/CSSTranslate.h:
+
 2022-04-18  Chris Dumez  <cdumez@apple.com>
 
         Use convertToASCIILowercase() less and more SortedArrayMap / SortedArraySet

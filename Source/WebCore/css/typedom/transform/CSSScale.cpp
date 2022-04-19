@@ -32,6 +32,8 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSUnitValue.h"
+#include "CSSUnits.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -40,16 +42,42 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSScale);
 
-Ref<CSSScale> CSSScale::create(CSSNumberish&& x, CSSNumberish&& y, std::optional<CSSNumberish>&& z)
+ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish> z)
 {
-    return adoptRef(*new CSSScale(WTFMove(x), WTFMove(y), WTFMove(z)));
+    auto rectifiedX = CSSNumericValue::rectifyNumberish(WTFMove(x));
+    auto rectifiedY = CSSNumericValue::rectifyNumberish(WTFMove(y));
+    auto rectifiedZ = z ? CSSNumericValue::rectifyNumberish(WTFMove(*z)) : Ref<CSSNumericValue> { CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER) };
+
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssscale-cssscale
+    if (!rectifiedX->type().matchesNumber()
+        || !rectifiedY->type().matchesNumber()
+        || (!rectifiedZ->type().matchesNumber()))
+        return Exception { TypeError };
+
+    return adoptRef(*new CSSScale(z ? Is2D::No : Is2D::Yes, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ)));
 }
 
-CSSScale::CSSScale(CSSNumberish&& x, CSSNumberish&& y, std::optional<CSSNumberish>&& z)
-    : m_x(WTFMove(x))
+CSSScale::CSSScale(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, Ref<CSSNumericValue> z)
+    : CSSTransformComponent(is2D)
+    , m_x(WTFMove(x))
     , m_y(WTFMove(y))
     , m_z(WTFMove(z))
 {
+}
+
+void CSSScale::setX(CSSNumberish x)
+{
+    m_x = CSSNumericValue::rectifyNumberish(WTFMove(x));
+}
+
+void CSSScale::setY(CSSNumberish y)
+{
+    m_y = CSSNumericValue::rectifyNumberish(WTFMove(y));
+}
+
+void CSSScale::setZ(CSSNumberish z)
+{
+    m_z = CSSNumericValue::rectifyNumberish(WTFMove(z));
 }
 
 // FIXME: Fix all the following virtual functions

@@ -23,13 +23,16 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+typedef (DOMString or CSSKeywordValue) CSSKeywordish;
+typedef (CSSNumericValue or CSSKeywordish) CSSPerspectiveValue;
+
 // https://drafts.css-houdini.org/css-typed-om/#cssperspective
 [
     EnabledBySetting=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSPerspective : CSSTransformComponent {
-    constructor(CSSNumericValue length);
+    constructor(CSSPerspectiveValue length);
     
-    attribute CSSNumericValue length;
+    attribute CSSPerspectiveValue length;
 };

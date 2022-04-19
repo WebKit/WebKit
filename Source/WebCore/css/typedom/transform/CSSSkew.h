@@ -37,13 +37,13 @@ template<typename> class ExceptionOr;
 class CSSSkew : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSSkew);
 public:
-    static Ref<CSSSkew> create(Ref<CSSNumericValue>&&, Ref<CSSNumericValue>&&);
+    static ExceptionOr<Ref<CSSSkew>> create(Ref<CSSNumericValue>, Ref<CSSNumericValue>);
     
-    CSSNumericValue& ax() { return m_ax.get(); }
-    CSSNumericValue& ay() { return m_ay.get(); }
+    const CSSNumericValue& ax() const { return m_ax.get(); }
+    const CSSNumericValue& ay() const { return m_ay.get(); }
     
-    void setAx(Ref<CSSNumericValue>&& ax) { m_ax = WTFMove(ax); }
-    void setAy(Ref<CSSNumericValue>&& ay) { m_ay = WTFMove(ay); }
+    void setAx(Ref<CSSNumericValue> ax) { m_ax = WTFMove(ax); }
+    void setAy(Ref<CSSNumericValue> ay) { m_ay = WTFMove(ay); }
     
     String toString() const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
@@ -51,7 +51,7 @@ public:
     CSSTransformType getType() const final { return CSSTransformType::Skew; }
 
 private:
-    CSSSkew(Ref<CSSNumericValue>&& ax, Ref<CSSNumericValue>&& ay);
+    CSSSkew(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay);
     
     Ref<CSSNumericValue> m_ax;
     Ref<CSSNumericValue> m_ay;

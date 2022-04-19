@@ -1,10 +1,10 @@
 
-FAIL Constructing a CSSTransformValue with no components throws TypeError assert_throws_js: function "() => new CSSTransformValue([])" did not throw
+PASS Constructing a CSSTransformValue with no components throws TypeError
 PASS CSSTransformValue can be constructed with multiple transforms
 PASS CSSTransformValue.set correctly sets the CSSTransformComponent at the given index
-FAIL Setting a component in CSSTransformValue correctly appends the CSSTransformComponent if index specified is greater than length Index 3 exceeds the range of CSSTransformValue.
+PASS Setting a component in CSSTransformValue correctly appends the CSSTransformComponent if index specified is greater than length
 PASS CSSTransformValue.is2D is false when given mix of 2D and 3D transforms
-FAIL CSSTransformValue.is2D is true when given only 2D transforms assert_equals: expected true but got false
-FAIL CSSTransformValue.is2D is readonly assert_equals: expected true but got false
+PASS CSSTransformValue.is2D is true when given only 2D transforms
+PASS CSSTransformValue.is2D is readonly
 PASS Can iterate through CSSTransformValue components
 

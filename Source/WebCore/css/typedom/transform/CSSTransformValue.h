@@ -40,14 +40,13 @@ template<typename> class ExceptionOr;
 class CSSTransformValue final : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSTransformValue);
 public:
-    static Ref<CSSTransformValue> create(Vector<RefPtr<CSSTransformComponent>>&& transforms);
+    static ExceptionOr<Ref<CSSTransformValue>> create(Vector<RefPtr<CSSTransformComponent>>&&);
 
     size_t length() const { return m_components.size(); }
     ExceptionOr<RefPtr<CSSTransformComponent>> item(size_t);
     ExceptionOr<RefPtr<CSSTransformComponent>> setItem(size_t, Ref<CSSTransformComponent>&&);
     
     bool is2D() const;
-    void setIs2D(bool);
     
     ExceptionOr<Ref<DOMMatrix>> toMatrix();
     
@@ -55,7 +54,6 @@ public:
 private:
     CSSTransformValue(Vector<RefPtr<CSSTransformComponent>>&&);
 
-    bool m_is2D { false };
     Vector<RefPtr<CSSTransformComponent>> m_components;
 };
 

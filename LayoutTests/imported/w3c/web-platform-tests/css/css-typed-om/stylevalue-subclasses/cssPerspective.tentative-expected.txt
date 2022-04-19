@@ -3,19 +3,19 @@ PASS Constructing a CSSPerspective with a keyword throws a TypeError
 PASS Constructing a CSSPerspective with a double throws a TypeError
 PASS Constructing a CSSPerspective with a unitless zero throws a TypeError
 PASS Constructing a CSSPerspective with a string length throws a TypeError
-FAIL Constructing a CSSPerspective with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" did not throw
-FAIL Constructing a CSSPerspective with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" did not throw
-FAIL Constructing a CSSPerspective with a CSSMathValue of angle type throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" did not throw
+PASS Constructing a CSSPerspective with a number CSSUnitValue throws a TypeError
+PASS Constructing a CSSPerspective with a time dimension CSSUnitValue throws a TypeError
+PASS Constructing a CSSPerspective with a CSSMathValue of angle type throws a TypeError
 PASS Updating CSSPerspective.length with a keyword throws a TypeError
 PASS Updating CSSPerspective.length with a double throws a TypeError
 PASS Updating CSSPerspective.length with a unitless zero throws a TypeError
 PASS Updating CSSPerspective.length with a string length throws a TypeError
-FAIL Updating CSSPerspective.length with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => perspective.length = length" did not throw
-FAIL Updating CSSPerspective.length with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => perspective.length = length" did not throw
-FAIL Updating CSSPerspective.length with a CSSMathValue of angle type throws a TypeError assert_throws_js: function "() => perspective.length = length" did not throw
+PASS Updating CSSPerspective.length with a number CSSUnitValue throws a TypeError
+PASS Updating CSSPerspective.length with a time dimension CSSUnitValue throws a TypeError
+PASS Updating CSSPerspective.length with a CSSMathValue of angle type throws a TypeError
 PASS CSSPerspective can be constructed from a length CSSUnitValue
 PASS CSSPerspective.length can be updated to a length CSSUnitValue
 PASS CSSPerspective can be constructed from a CSSMathValue of length type
 PASS CSSPerspective.length can be updated to a CSSMathValue of length type
-FAIL Modifying CSSPerspective.is2D is a no-op assert_false: expected false got true
+PASS Modifying CSSPerspective.is2D is a no-op
 

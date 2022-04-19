@@ -35,6 +35,7 @@
 #include "CSSTransformComponent.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
+#include <wtf/Algorithms.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,8 +43,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransformValue);
 
-Ref<CSSTransformValue> CSSTransformValue::create(Vector<RefPtr<CSSTransformComponent>>&& transforms)
+ExceptionOr<Ref<CSSTransformValue>> CSSTransformValue::create(Vector<RefPtr<CSSTransformComponent>>&& transforms)
 {
+    // https://drafts.css-houdini.org/css-typed-om/#dom-csstransformvalue-csstransformvalue
+    if (transforms.isEmpty())
+        return Exception { TypeError };
     return adoptRef(*new CSSTransformValue(WTFMove(transforms)));
 }
 
@@ -57,22 +61,23 @@ ExceptionOr<RefPtr<CSSTransformComponent>> CSSTransformValue::item(size_t index)
 
 ExceptionOr<RefPtr<CSSTransformComponent>> CSSTransformValue::setItem(size_t index, Ref<CSSTransformComponent>&& value)
 {
-    if (index >= m_components.size())
+    if (index > m_components.size())
         return Exception { RangeError, makeString("Index ", index, " exceeds the range of CSSTransformValue.") };
-    
-    m_components[index] = WTFMove(value);
+
+    if (index == m_components.size())
+        m_components.append(WTFMove(value));
+    else
+        m_components[index] = WTFMove(value);
 
     return RefPtr<CSSTransformComponent> { m_components[index] };
 }
 
 bool CSSTransformValue::is2D() const
 {
-    return m_is2D;
-}
-
-void CSSTransformValue::setIs2D(bool is2D)
-{
-    m_is2D = is2D;
+    // https://drafts.css-houdini.org/css-typed-om/#dom-csstransformvalue-is2d
+    return WTF::allOf(m_components, [] (auto& component) {
+        return component && component->is2D();
+    });
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSTransformValue::toMatrix()

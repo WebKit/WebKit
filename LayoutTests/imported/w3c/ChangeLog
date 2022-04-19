@@ -1,3 +1,16 @@
+2022-04-18  Alex Christensen  <achristensen@webkit.org>
+
+        Implement CSSTransformValue.is2D
+        https://bugs.webkit.org/show_bug.cgi?id=239462
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssMatrixComponent.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssRotate.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssScale.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPerspective.tentative-expected.txt:
+
 2022-04-18  Matt Woodrow  <mattwoodrow@apple.com>
 
         Implement support for aligning baselines through subgrids

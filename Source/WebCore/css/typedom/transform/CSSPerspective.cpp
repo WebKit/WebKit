@@ -32,6 +32,7 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSKeywordValue.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -40,14 +41,51 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSPerspective);
 
-Ref<CSSPerspective> CSSPerspective::create(Ref<CSSNumericValue>&& length)
+static ExceptionOr<CSSPerspectiveValue> checkLength(CSSPerspectiveValue length)
 {
-    return adoptRef(*new CSSPerspective(WTFMove(length)));
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssperspective-cssperspective
+    auto checkKeywordValue = [] (RefPtr<CSSKeywordValue> value) -> ExceptionOr<CSSPerspectiveValue> {
+        RELEASE_ASSERT(value);
+        if (!equalIgnoringASCIICase(value->value(), "none"))
+            return Exception { TypeError };
+        return { WTFMove(value) };
+    };
+    return WTF::switchOn(WTFMove(length),
+        [] (RefPtr<CSSNumericValue> value) -> ExceptionOr<CSSPerspectiveValue> {
+            if (value && !value->type().matches<CSSNumericBaseType::Length>())
+                return Exception { TypeError };
+            return { WTFMove(value) };
+        }, [&] (String value) {
+            return checkKeywordValue(CSSKeywordValue::rectifyKeywordish(WTFMove(value)));
+        }, checkKeywordValue);
 }
 
-CSSPerspective::CSSPerspective(Ref<CSSNumericValue>&& length)
-    : m_length(WTFMove(length))
+ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSPerspectiveValue length)
 {
+    auto checkedLength = checkLength(WTFMove(length));
+    if (checkedLength.hasException())
+        return checkedLength.releaseException();
+    return adoptRef(*new CSSPerspective(checkedLength.releaseReturnValue()));
+}
+
+CSSPerspective::CSSPerspective(CSSPerspectiveValue length)
+    : CSSTransformComponent(Is2D::No)
+    , m_length(WTFMove(length))
+{
+}
+
+ExceptionOr<void> CSSPerspective::setLength(CSSPerspectiveValue length)
+{
+    auto checkedLength = checkLength(WTFMove(length));
+    if (checkedLength.hasException())
+        return checkedLength.releaseException();
+    m_length = checkedLength.releaseReturnValue();
+    return { };
+}
+
+void CSSPerspective::setIs2D(bool)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssperspective-is2d says to do nothing here.
 }
 
 // FIXME: Fix all the following virtual functions

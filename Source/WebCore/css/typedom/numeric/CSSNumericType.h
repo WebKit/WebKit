@@ -77,6 +77,11 @@ struct CSSNumericType {
         RELEASE_ASSERT_NOT_REACHED();
     }
 
+    const std::optional<long>& valueForType(CSSNumericBaseType type) const
+    {
+        return const_cast<CSSNumericType*>(this)->valueForType(type);
+    }
+
     void applyPercentHint(CSSNumericBaseType hint)
     {
         // https://drafts.css-houdini.org/css-typed-om/#apply-the-percent-hint
@@ -86,6 +91,41 @@ struct CSSNumericType {
         if (percent)
             *optional += *std::exchange(percent, 0);
         percentHint = hint;
+    }
+
+    size_t nonZeroEntryCount() const
+    {
+        size_t count { 0 };
+        count += length && *length;
+        count += angle && *angle;
+        count += time && *time;
+        count += frequency && *frequency;
+        count += resolution && *resolution;
+        count += flex && *flex;
+        count += percent && *percent;
+        return count;
+    }
+
+    template<CSSNumericBaseType type>
+    bool matches() const
+    {
+        // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-match
+        return (type == CSSNumericBaseType::Percent || !percentHint)
+            && nonZeroEntryCount() == 1
+            && valueForType(type)
+            && *valueForType(type);
+    }
+
+    bool matchesNumber() const
+    {
+        // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-match
+        return !nonZeroEntryCount() && !percentHint;
+    }
+
+    template<CSSNumericBaseType type>
+    bool matchesTypeOrPercentage() const
+    {
+        return matches<type>() || matches<CSSNumericBaseType::Percent>();
     }
 
     String debugString() const

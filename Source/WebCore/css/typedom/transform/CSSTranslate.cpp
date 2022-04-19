@@ -33,6 +33,8 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSNumericValue.h"
+#include "CSSUnitValue.h"
+#include "CSSUnits.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -41,13 +43,23 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTranslate);
 
-Ref<CSSTranslate> CSSTranslate::create(Ref<CSSNumericValue>&& x, Ref<CSSNumericValue>&& y, RefPtr<CSSNumericValue>&& z)
+ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, RefPtr<CSSNumericValue> z)
 {
-    return adoptRef(*new CSSTranslate(WTFMove(x), WTFMove(y), WTFMove(z)));
+    auto is2D = z ? CSSTransformComponent::Is2D::No : CSSTransformComponent::Is2D::Yes;
+    if (!z)
+        z = CSSUnitValue::create(0.0, CSSUnitType::CSS_PX);
+
+    if (!x->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
+        || !y->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
+        || !z->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>())
+        return Exception { TypeError };
+
+    return adoptRef(*new CSSTranslate(is2D, WTFMove(x), WTFMove(y), z.releaseNonNull()));
 }
 
-CSSTranslate::CSSTranslate(Ref<CSSNumericValue>&& x, Ref<CSSNumericValue>&& y, RefPtr<CSSNumericValue>&& z)
-    : m_x(WTFMove(x))
+CSSTranslate::CSSTranslate(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, Ref<CSSNumericValue> z)
+    : CSSTransformComponent(is2D)
+    , m_x(WTFMove(x))
     , m_y(WTFMove(y))
     , m_z(WTFMove(z))
 {

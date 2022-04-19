@@ -37,25 +37,27 @@ template<typename> class ExceptionOr;
 class CSSTranslate : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSTranslate);
 public:
-    static Ref<CSSTranslate> create(Ref<CSSNumericValue>&&, Ref<CSSNumericValue>&&, RefPtr<CSSNumericValue>&&);
+    static ExceptionOr<Ref<CSSTranslate>> create(Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, RefPtr<CSSNumericValue> z);
     
-    Ref<CSSNumericValue> x() { return m_x; }
-    Ref<CSSNumericValue> y() { return m_y; }
-    RefPtr<CSSNumericValue> z() { return m_z; }
+    const CSSNumericValue& x() const { return m_x.get(); }
+    const CSSNumericValue& y() const { return m_y.get(); }
+    const CSSNumericValue& z() const { return m_z.get(); }
 
-    void setX(Ref<CSSNumericValue>&& x) { m_x = WTFMove(x); }
-    void setY(Ref<CSSNumericValue>&& y) { m_y = WTFMove(y); }
-    void setZ(Ref<CSSNumericValue>&& z) { m_z = WTFMove(z); }
+    void setX(Ref<CSSNumericValue> x) { m_x = WTFMove(x); }
+    void setY(Ref<CSSNumericValue> y) { m_y = WTFMove(y); }
+    void setZ(Ref<CSSNumericValue> z) { m_z = WTFMove(z); }
     
     String toString() const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
 
 private:
-    CSSTranslate(Ref<CSSNumericValue>&&, Ref<CSSNumericValue>&&, RefPtr<CSSNumericValue>&&);
-    
+    CSSTranslate(CSSTransformComponent::Is2D, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>);
+
+    CSSTransformType getType() const final { return CSSTransformType::Translate; }
+
     Ref<CSSNumericValue> m_x;
     Ref<CSSNumericValue> m_y;
-    RefPtr<CSSNumericValue> m_z;
+    Ref<CSSNumericValue> m_z;
 };
     
 } // namespace WebCore

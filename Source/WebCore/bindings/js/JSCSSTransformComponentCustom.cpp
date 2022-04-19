@@ -44,8 +44,6 @@ using namespace JSC;
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<CSSTransformComponent>&& value)
 {
     switch (value->getType()) {
-    case CSSTransformType::Transform:
-        return createWrapper<CSSTransformComponent>(globalObject, WTFMove(value));
     case CSSTransformType::MatrixComponent:
         return createWrapper<CSSMatrixComponent>(globalObject, WTFMove(value));
     case CSSTransformType::Perspective:

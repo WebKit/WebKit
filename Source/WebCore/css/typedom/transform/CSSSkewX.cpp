@@ -40,13 +40,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSSkewX);
 
-Ref<CSSSkewX> CSSSkewX::create(Ref<CSSNumericValue>&& ax)
+ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<CSSNumericValue> ax)
 {
+    if (!ax->type().matches<CSSNumericBaseType::Angle>())
+        return Exception { TypeError };
     return adoptRef(*new CSSSkewX(WTFMove(ax)));
 }
 
-CSSSkewX::CSSSkewX(Ref<CSSNumericValue>&& ax)
-    : m_ax(WTFMove(ax))
+CSSSkewX::CSSSkewX(Ref<CSSNumericValue> ax)
+    : CSSTransformComponent(Is2D::Yes)
+    , m_ax(WTFMove(ax))
 {
 }
 

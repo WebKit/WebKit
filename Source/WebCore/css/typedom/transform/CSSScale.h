@@ -37,27 +37,27 @@ template<typename> class ExceptionOr;
 class CSSScale : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSScale);
 public:
-    static Ref<CSSScale> create(CSSNumberish&& x, CSSNumberish&& y, std::optional<CSSNumberish>&& z);
+    static ExceptionOr<Ref<CSSScale>> create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish> z);
 
     String toString() const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
-    
-    CSSNumberish x() { return m_x; }
-    CSSNumberish y() { return m_y; }
-    CSSNumberish z() { return m_z ? *m_z : 0.0; }
 
-    void setX(CSSNumberish&& x) { m_x = WTFMove(x); }
-    void setY(CSSNumberish&& y) { m_y = WTFMove(y); }
-    void setZ(CSSNumberish&& z) { m_z = WTFMove(z); }
+    CSSNumberish x() const { return m_x.ptr(); }
+    CSSNumberish y() const { return m_y.ptr(); }
+    CSSNumberish z() const { return m_z.ptr(); }
+
+    void setX(CSSNumberish);
+    void setY(CSSNumberish);
+    void setZ(CSSNumberish);
 
     CSSTransformType getType() const final { return CSSTransformType::Scale; }
 
 private:
-    CSSScale(CSSNumberish&& x, CSSNumberish&& y, std::optional<CSSNumberish>&& z);
-    
-    CSSNumberish m_x;
-    CSSNumberish m_y;
-    std::optional<CSSNumberish> m_z;
+    CSSScale(CSSTransformComponent::Is2D, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>);
+
+    Ref<CSSNumericValue> m_x;
+    Ref<CSSNumericValue> m_y;
+    Ref<CSSNumericValue> m_z;
 };
     
 } // namespace WebCore
