@@ -1,3 +1,151 @@
+2022-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use constants buffer in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=237863
+
+        Reviewed by Saam Barati.
+
+        This patch newly introduces LinkableConstant concept. We replace TrustedImmPtr::weakPointer with
+        that, and it can be switched between two modes: (1) just embedding a constant pointer in machine code
+        or (2) emitting a load from specific callee-save register. We use (2) for unlinked DFG code so that
+        we can start decoupling constants from machine code, which will be separately allocated as DFG constant buffer.
+        To introduce this mechanism, we introduce CCallHelpers::ConstantMaterializer concept, which can be used
+        to materialize constant in a specified way in CCallHelpers. And we use this to implement DFG LinkableConstant.
+
+        We also avoid embedding global object pointer in the tail call by modifying CallFrameShuffler to save it.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::transfer64):
+        (JSC::MacroAssemblerARM64::transferPtr):
+        (JSC::MacroAssemblerARM64::branch64):
+        (JSC::MacroAssemblerARM64::branchPtr):
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::transfer64):
+        (JSC::MacroAssemblerRISCV64::transferPtr):
+        (JSC::MacroAssemblerRISCV64::branch64):
+        (JSC::MacroAssemblerRISCV64::branchPtr):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::transfer64):
+        (JSC::MacroAssemblerX86_64::transferPtr):
+        (JSC::MacroAssemblerX86_64::branch64):
+        (JSC::MacroAssemblerX86_64::branchPtr):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setupWithUnlinkedBaselineCode):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeJITInlineCaches):
+        (JSC::CodeBlock::getICStatusMap):
+        (JSC::CodeBlock::findStubInfo):
+        (JSC::CodeBlock::resetBaselineJITData):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::findPC):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetOfJITData):
+        (JSC::CodeBlock::baselineJITData):
+        (JSC::CodeBlock::setDFGJITData):
+        (JSC::CodeBlock::dfgJITData):
+        (JSC::CodeBlock::offsetOfBaselineJITData): Deleted.
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileSetupRegistersForEntry):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::loadLinkableConstant):
+        (JSC::DFG::JITCompiler::storeLinkableConstant):
+        (JSC::DFG::JITCompiler::LinkableConstant::LinkableConstant):
+        (JSC::DFG::JITCompiler::LinkableConstant::materialize):
+        (JSC::DFG::JITCompiler::LinkableConstant::store):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::branchLinkableConstant):
+        (JSC::DFG::JITCompiler::branchWeakPtr): Deleted.
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::addLinkableConstant):
+        (JSC::DFG::Plan::finalizeJITData):
+        * dfg/DFGPlan.h:
+        * dfg/DFGSaneStringGetByValSlowPathGenerator.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitGetCallee):
+        (JSC::DFG::SpeculativeJIT::silentFill):
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        (JSC::DFG::SpeculativeJIT::compileInById):
+        (JSC::DFG::SpeculativeJIT::compileInByVal):
+        (JSC::DFG::SpeculativeJIT::compileHasPrivate):
+        (JSC::DFG::SpeculativeJIT::compilePushWithScope):
+        (JSC::DFG::SpeculativeJIT::compileStringSlice):
+        (JSC::DFG::SpeculativeJIT::compileToLowerCase):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileCheckTraps):
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        (JSC::DFG::SpeculativeJIT::compilePutByVal):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileFromCharCode):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::TrustedImmPtr):
+        (JSC::DFG::SpeculativeJIT::callOperationWithCallFrameRollbackOnException):
+        (JSC::DFG::SpeculativeJIT::branchLinkableConstant):
+        (JSC::DFG::SpeculativeJIT::TrustedImmPtr::weakPointer): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::genericJSValueNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileToBooleanObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileArithRandom):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::genericJSValueNonPeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileCompareEqPtr):
+        (JSC::DFG::SpeculativeJIT::compileToBooleanObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitUntypedBranch):
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compileRegExpTestInline):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::executableFor): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::globalObjectFor): Deleted.
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::pokeForArgument):
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::emitMaterializeMetadataAndConstantPoolRegisters):
+        (JSC::JIT::consistencyCheckGenerator):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        (JSC::RegisterSet::ftlCalleeSaveRegisters):
+        * llint/LLIntData.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::offsetOfGlobalThis):
+
 2022-04-18  Mark Lam  <mark.lam@apple.com>
 
         The VMTraps signal handler should no return SignalAction::NotHandled on codeBlockSet lock contention.

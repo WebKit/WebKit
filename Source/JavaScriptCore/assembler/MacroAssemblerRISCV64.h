@@ -1173,6 +1173,18 @@ public:
         m_assembler.sdInsn(temp.memory(), immRegister, Imm::S<0>());
     }
 
+    void transfer64(Address src, Address dest)
+    {
+        auto temp = temps<Data>();
+        load64(src, temp.data());
+        store64(temp.data(), dest);
+    }
+
+    void transferPtr(Address src, Address dest)
+    {
+        transfer64(src, dest);
+    }
+
     void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         storePair32(src1, src2, dest, TrustedImm32(0));
@@ -2156,6 +2168,16 @@ public:
         return makeBranch(cond, temp.data(), rhs);
     }
 
+    Jump branch64(RelationalCondition cond, Address left, Address right)
+    {
+        auto temp = temps<Data, Memory>();
+        auto leftResolution = resolveAddress(left, temp.memory());
+        m_assembler.ldInsn(temp.data(), leftResolution.base, Imm::I(leftResolution.offset));
+        auto rightResolution = resolveAddress(right, temp.memory());
+        m_assembler.ldInsn(temp.memory(), rightResolution.base, Imm::I(rightResolution.offset));
+        return makeBranch(cond, temp.data(), temp.memory());
+    }
+
     Jump branch32WithUnalignedHalfWords(RelationalCondition cond, BaseIndex address, TrustedImm32 imm)
     {
         return branch32(cond, address, imm);
@@ -2645,6 +2667,11 @@ public:
     Jump branchPtr(RelationalCondition cond, BaseIndex address, RegisterID rhs)
     {
         return branch64(cond, address, rhs);
+    }
+
+    Jump branchPtr(RelationalCondition cond, Address left, Address right)
+    {
+        return branch64(cond, left, right);
     }
 
     DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dest)

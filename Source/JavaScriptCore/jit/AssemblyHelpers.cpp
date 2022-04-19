@@ -45,14 +45,6 @@
 
 namespace JSC {
 
-ExecutableBase* AssemblyHelpers::executableFor(CodeBlock* codeBlock, const CodeOrigin& codeOrigin)
-{
-    auto* inlineCallFrame = codeOrigin.inlineCallFrame();
-    if (!inlineCallFrame)
-        return codeBlock->ownerExecutable();
-    return inlineCallFrame->baselineCodeBlock->ownerExecutable();
-}
-
 AssemblyHelpers::Jump AssemblyHelpers::branchIfFastTypedArray(GPRReg baseGPR)
 {
     return branch32(

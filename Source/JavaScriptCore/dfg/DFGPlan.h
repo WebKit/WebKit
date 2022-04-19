@@ -48,6 +48,7 @@ class CodeBlock;
 namespace DFG {
 
 class ThreadData;
+class JITData;
 
 #if ENABLE(DFG_JIT)
 
@@ -101,6 +102,9 @@ public:
     DeferredCompilationCallback* callback() const { return m_callback.get(); }
     void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTFMove(callback); }
 
+    unsigned addLinkableConstant(void*);
+    std::unique_ptr<JITData> finalizeJITData();
+
 private:
     CompilationPath compileInThreadImpl() override;
     
@@ -134,6 +138,7 @@ private:
     Vector<BytecodeIndex> m_tierUpAndOSREnterBytecodes;
 
     RefPtr<DeferredCompilationCallback> m_callback;
+    HashMap<void*, unsigned> m_constantPool;
 };
 
 #endif // ENABLE(DFG_JIT)

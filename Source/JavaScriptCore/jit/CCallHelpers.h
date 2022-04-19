@@ -69,6 +69,10 @@ public:
         GPRReg m_gpr;
     };
 
+    // Base class for constant materializers.
+    // It offers DerivedClass::materialize and poke functions.
+    class ConstantMaterializer { };
+
     // The most general helper for setting arguments that fit in a GPR, if you can compute each
     // argument without using any argument registers. You usually want one of the setupArguments*()
     // methods below instead of this. This thing is most useful if you have *a lot* of arguments.
@@ -365,7 +369,10 @@ private:
     ALWAYS_INLINE void pokeForArgument(ArgType arg, unsigned currentGPRArgument, unsigned currentFPRArgument, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke)
     {
         unsigned pokeOffset = calculatePokeOffset(currentGPRArgument, currentFPRArgument, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-        poke(arg, pokeOffset);
+        if constexpr (std::is_base_of_v<ConstantMaterializer, ArgType>)
+            arg.store(*this, addressForPoke(pokeOffset));
+        else
+            poke(arg, pokeOffset);
     }
 
     ALWAYS_INLINE bool stackAligned(unsigned currentGPRArgument, unsigned currentFPRArgument, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke)
@@ -644,6 +651,27 @@ private:
     setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, Arg arg, Args... args)
     {
         setupArgumentsImpl<OperationType>(argSourceRegs, TrustedImmPtr(arg.get()), args...);
+    }
+
+    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename Arg, typename... Args>
+    ALWAYS_INLINE std::enable_if_t<std::is_base_of_v<ConstantMaterializer, Arg>>
+    setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, Arg arg, Args... args)
+    {
+        static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
+        auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
+#if OS(WINDOWS) && CPU(X86_64)
+        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
+#else
+        auto currentArgCount = numGPRArgs + extraGPRArgs;
+#endif
+        if (currentArgCount < numArgRegisters) {
+            setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
+            arg.materialize(*this, GPRInfo::toArgumentRegister(currentArgCount));
+            return;
+        }
+
+        pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
+        setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
     }
 
 #undef CURRENT_ARGUMENT_TYPE

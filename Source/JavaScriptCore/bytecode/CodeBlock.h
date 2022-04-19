@@ -79,6 +79,7 @@ namespace JSC {
 
 #if ENABLE(DFG_JIT)
 namespace DFG {
+class JITData;
 struct OSRExitState;
 } // namespace DFG
 #endif
@@ -245,7 +246,7 @@ public:
 
     std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 
-    // Because we might throw out baseline JIT code and all its baseline JIT data (m_baselineJITData),
+    // Because we might throw out baseline JIT code and all its baseline JIT data (m_jitData),
     // you need to be careful about the lifetime of when you use the return value of this function.
     // The return value may have raw pointers into this data structure that gets thrown away.
     // Specifically, you need to ensure that no GC can be finalized (typically that means no
@@ -256,7 +257,7 @@ public:
 #if ENABLE(JIT)
     void setupWithUnlinkedBaselineCode(Ref<BaselineJITCode>);
 
-    static ptrdiff_t offsetOfBaselineJITData() { return OBJECT_OFFSETOF(CodeBlock, m_baselineJITData); }
+    static ptrdiff_t offsetOfJITData() { return OBJECT_OFFSETOF(CodeBlock, m_jitData); }
 
     StructureStubInfo* addOptimizingStubInfo(AccessType, CodeOrigin);
 
@@ -530,9 +531,25 @@ public:
     StringJumpTable& baselineStringSwitchJumpTable(int tableIndex);
     BaselineJITData* baselineJITData()
     {
-        RELEASE_ASSERT(jitType() == JITType::BaselineJIT);
-        return m_baselineJITData.get();
+        if (!JITCode::isOptimizingJIT(jitType()))
+            return bitwise_cast<BaselineJITData*>(m_jitData);
+        return nullptr;
     }
+
+#if ENABLE(DFG_JIT)
+    void setDFGJITData(std::unique_ptr<DFG::JITData>&& jitData)
+    {
+        ASSERT(!m_jitData);
+        m_jitData = jitData.release();
+    }
+
+    DFG::JITData* dfgJITData()
+    {
+        if (JITCode::isOptimizingJIT(jitType()))
+            return bitwise_cast<DFG::JITData*>(m_jitData);
+        return nullptr;
+    }
+#endif
 #endif
     size_t numberOfUnlinkedSwitchJumpTables() const { return m_unlinkedCode->numberOfUnlinkedSwitchJumpTables(); }
     const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(int tableIndex) { return m_unlinkedCode->unlinkedSwitchJumpTable(tableIndex); }
@@ -933,7 +950,7 @@ private:
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)
 public:
-    std::unique_ptr<BaselineJITData> m_baselineJITData;
+    void* m_jitData { nullptr };
 private:
 #endif
 #if ENABLE(DFG_JIT)

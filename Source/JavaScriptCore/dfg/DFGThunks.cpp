@@ -167,6 +167,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM& vm)
 
     jit.restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
     jit.emitMaterializeTagCheckRegisters();
+#if USE(JSVALUE64)
+    jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::constantsRegister);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::constantsRegister, CodeBlock::offsetOfJITData()), GPRInfo::constantsRegister);
+#endif
 
     jit.farJump(GPRInfo::regT1, GPRInfo::callFrameRegister);
 

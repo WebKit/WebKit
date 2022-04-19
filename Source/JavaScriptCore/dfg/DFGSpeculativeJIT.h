@@ -122,7 +122,7 @@ public:
         explicit TrustedImmPtr(T* value)
             : m_value(value)
         {
-            static_assert(!std::is_base_of<JSCell, T>::value, "To use a GC pointer, the graph must be aware of it. Use SpeculativeJIT::TrustedImmPtr::weakPointer instead.");
+            static_assert(!std::is_base_of<JSCell, T>::value, "To use a GC pointer, the graph must be aware of it. Use SpeculativeJIT::JITCompiler::LinkableConstant instead.");
         }
 
         explicit TrustedImmPtr(RegisteredStructure structure)
@@ -142,12 +142,6 @@ public:
         explicit TrustedImmPtr(size_t value)
             : m_value(bitwise_cast<void*>(value))
         {
-        }
-
-        static TrustedImmPtr weakPointer(Graph& graph, JSCell* cell)
-        {     
-            graph.m_plan.weakReferences().addLazily(cell);
-            return TrustedImmPtr(bitwise_cast<size_t>(cell));
         }
 
         operator MacroAssembler::TrustedImmPtr() const { return m_value; }
@@ -980,9 +974,9 @@ public:
         return appendCallWithCallFrameRollbackOnException(operation);
     }
 
-    JITCompiler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_G operation, GPRReg result, JSGlobalObject* globalObject)
+    JITCompiler::Call callOperationWithCallFrameRollbackOnException(Z_JITOperation_G operation, GPRReg result, GPRReg globalObjectGPR)
     {
-        m_jit.setupArguments<Z_JITOperation_G>(TrustedImmPtr::weakPointer(m_graph, globalObject));
+        m_jit.setupArguments<Z_JITOperation_G>(globalObjectGPR);
         return appendCallWithCallFrameRollbackOnExceptionSetResult(operation, result);
     }
     
@@ -1156,6 +1150,12 @@ public:
     void branchPtr(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
         return addBranch(m_jit.branchPtr(cond, left, right), destination);
+    }
+
+    template<typename T, typename U>
+    void branchLinkableConstant(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
+    {
+        return addBranch(m_jit.branchLinkableConstant(cond, left, right), destination);
     }
     
     template<typename T, typename U>

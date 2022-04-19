@@ -395,13 +395,13 @@ struct Registers {
 
 #if CPU(X86_64) && !OS(WINDOWS)
     static constexpr GPRReg metadataTableGPR = GPRInfo::regCS1;
-    static constexpr GPRReg pbGPR = GPRInfo::regCS2;
+    static constexpr GPRReg pbGPR = GPRInfo::constantsRegister;
 #elif CPU(X86_64) && OS(WINDOWS)
     static constexpr GPRReg metadataTableGPR = GPRInfo::regCS3;
-    static constexpr GPRReg pbGPR = GPRInfo::regCS4;
+    static constexpr GPRReg pbGPR = GPRInfo::constantsRegister;
 #elif CPU(ARM64) || CPU(RISCV64)
     static constexpr GPRReg metadataTableGPR = GPRInfo::regCS6;
-    static constexpr GPRReg pbGPR = GPRInfo::regCS7;
+    static constexpr GPRReg pbGPR = GPRInfo::constantsRegister;
 #elif CPU(MIPS) || CPU(ARM_THUMB2)
     static constexpr GPRReg metadataTableGPR = GPRInfo::regCS0;
     static constexpr GPRReg pbGPR = GPRInfo::regCS1;

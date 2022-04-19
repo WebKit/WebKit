@@ -75,7 +75,7 @@ class CallArrayAllocatorWithVariableSizeSlowPathGenerator final : public Jumping
 public:
     CallArrayAllocatorWithVariableSizeSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_GStZB function,
-        GPRReg resultGPR, CCallHelpers::TrustedImmPtr globalObject, RegisteredStructure contiguousStructure, RegisteredStructure arrayStorageStructure, GPRReg sizeGPR, GPRReg storageGPR)
+        GPRReg resultGPR, JITCompiler::LinkableConstant globalObject, RegisteredStructure contiguousStructure, RegisteredStructure arrayStorageStructure, GPRReg sizeGPR, GPRReg storageGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
         , m_contiguousStructure(contiguousStructure)
@@ -115,7 +115,7 @@ private:
     RegisteredStructure m_contiguousStructure;
     RegisteredStructure m_arrayStorageOrContiguousStructure;
     GPRReg m_resultGPR;
-    CCallHelpers::TrustedImmPtr m_globalObject;
+    JITCompiler::LinkableConstant m_globalObject;
     GPRReg m_sizeGPR;
     GPRReg m_storageGPR;
     Vector<SilentRegisterSavePlan, 2> m_plans;
@@ -125,7 +125,7 @@ class CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator final
 public:
     CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, P_JITOperation_GStZB function,
-        GPRReg resultGPR, CCallHelpers::TrustedImmPtr globalObject, GPRReg structureGPR, GPRReg sizeGPR, GPRReg storageGPR)
+        GPRReg resultGPR, JITCompiler::LinkableConstant globalObject, GPRReg structureGPR, GPRReg sizeGPR, GPRReg storageGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
         , m_resultGPR(resultGPR)
@@ -152,7 +152,7 @@ private:
 
     P_JITOperation_GStZB m_function;
     GPRReg m_resultGPR;
-    CCallHelpers::TrustedImmPtr m_globalObject;
+    JITCompiler::LinkableConstant m_globalObject;
     GPRReg m_structureGPR;
     GPRReg m_sizeGPR;
     GPRReg m_storageGPR;
