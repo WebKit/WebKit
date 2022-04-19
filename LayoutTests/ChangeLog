@@ -1,3 +1,12 @@
+2022-04-19  Karl Rackler  <rackler@apple.com>
+
+        fast/css/sticky/sticky-left.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=227467
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-04-19  Tim Nguyen  <ntim@apple.com>
 
         user-select: none shouldn't affect editability
