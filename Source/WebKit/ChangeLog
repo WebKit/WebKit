@@ -1,3 +1,36 @@
+2022-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ASSERTION FAILED: !m_isInitializingSendSource crashes on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=239399
+
+        Reviewed by Chris Dumez.
+
+        Avoid sending messages to IPC::Connection before the connection is open.
+        There's multiple logic problems as well as a race to toggle m_isInitializingSendSource.
+
+        Commit "RemoteRenderingBackend should have dedicated IPC::Connection for out-of-stream messages"
+        would make RRBProxy in WP create the "server" IPC::Connection and send that to RRB in GPUP.
+        This would cause RRB in GPUP to ASSERT(... || !m_isInitializingSendSource) fail in
+        the IPC work queue.
+
+        For "client" connection, IPC::Connection::open() will run in the calling queue, toggling
+        m_isInitializingSendSource = true. The m_isInitializingSendSource = false will be toggled
+        in the message send queue by the send source initialization callback.
+
+        If the caller has already enqueued messages before calling open(), the callbacks the
+        sendMessage() or open() schedules might run the functions which do not expect to be dispatched unless
+        m_isInitializingSendSource == false.
+
+        This commit just fixes the send vs open order, but does not fix the underlying problems.
+        They are tracked in bug 239494, which should also add tests for the case.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::startListeningForIPC):
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::sendOutgoingMessage):
+        Expand one ASSERT(!a && !b) to individual assertions in order to catch the exact problem easier.
+
 2022-04-19  Ada Chan  <adachan@apple.com>
 
         [WebXR] Update Device::initializeTrackingAndRendering() to take in more parameters regarding the session setup

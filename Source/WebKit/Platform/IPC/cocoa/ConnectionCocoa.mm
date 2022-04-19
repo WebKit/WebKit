@@ -286,7 +286,8 @@ bool Connection::platformCanSendOutgoingMessages() const
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
-    ASSERT(!m_pendingOutgoingMachMessage && !m_isInitializingSendSource);
+    ASSERT(!m_pendingOutgoingMachMessage);
+    ASSERT(!m_isInitializingSendSource);
 
     auto attachments = encoder->releaseAttachments();
     
