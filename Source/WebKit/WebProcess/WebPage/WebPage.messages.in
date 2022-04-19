@@ -83,6 +83,8 @@ messages -> WebPage LegacyReceiver {
     RequestRVItemInCurrentSelectedRange() -> (WebKit::RevealItem item)
     PrepareSelectionForContextMenuWithLocationInView(WebCore::IntPoint point) -> (bool shouldShowMenu, WebKit::RevealItem item)
 #endif
+    WillInsertFinalDictationResult()
+    DidInsertFinalDictationResult()
     ReplaceDictatedText(String oldText, String newText)
     ReplaceSelectedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection) -> (struct WebKit::WebAutocorrectionData data)

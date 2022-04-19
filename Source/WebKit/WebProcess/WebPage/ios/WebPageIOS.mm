@@ -2385,10 +2385,10 @@ void WebPage::replaceSelectedText(const String& oldText, const String& newText)
     auto wordRange = frame->selection().isCaret() ? wordRangeFromPosition(frame->selection().selection().start()) : frame->selection().selection().toNormalizedRange();
     if (plainTextForContext(wordRange) != oldText)
         return;
-    frame->editor().setIgnoreSelectionChanges(true);
+
+    IgnoreSelectionChangeForScope ignoreSelectionChanges { frame };
     frame->selection().setSelectedRange(wordRange, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
     frame->editor().insertText(newText, 0);
-    frame->editor().setIgnoreSelectionChanges(false);
 }
 
 void WebPage::replaceDictatedText(const String& oldText, const String& newText)
@@ -2412,10 +2412,24 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
         return;
 
     // We don't want to notify the client that the selection has changed until we are done inserting the new text.
-    frame->editor().setIgnoreSelectionChanges(true);
+    IgnoreSelectionChangeForScope ignoreSelectionChanges { frame };
     frame->selection().setSelectedRange(range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
     frame->editor().insertText(newText, 0);
-    frame->editor().setIgnoreSelectionChanges(false);
+}
+
+void WebPage::willInsertFinalDictationResult()
+{
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    if (frame->selection().isNone())
+        return;
+
+    m_ignoreSelectionChangeScopeForDictation = makeUnique<IgnoreSelectionChangeForScope>(frame);
+}
+
+void WebPage::didInsertFinalDictationResult()
+{
+    m_ignoreSelectionChangeScopeForDictation = nullptr;
+    scheduleFullEditorStateUpdate();
 }
 
 void WebPage::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply)

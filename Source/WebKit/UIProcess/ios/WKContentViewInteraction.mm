@@ -4928,6 +4928,16 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     return _autocorrectionData.textLastRect;
 }
 
+- (void)willInsertFinalDictationResult
+{
+    _page->willInsertFinalDictationResult();
+}
+
+- (void)didInsertFinalDictationResult
+{
+    _page->didInsertFinalDictationResult();
+}
+
 - (void)replaceDictatedText:(NSString*)oldText withText:(NSString *)newText
 {
     _autocorrectionContextNeedsUpdate = YES;

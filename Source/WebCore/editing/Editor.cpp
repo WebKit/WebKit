@@ -235,8 +235,17 @@ TemporarySelectionChange::TemporarySelectionChange(Document& document, std::opti
     }
 }
 
+void TemporarySelectionChange::invalidate()
+{
+    if (auto document = std::exchange(m_document, nullptr))
+        document->editor().setIgnoreSelectionChanges(false, Editor::RevealSelection::No);
+}
+
 TemporarySelectionChange::~TemporarySelectionChange()
 {
+    if (!m_document)
+        return;
+
     if (m_selectionToRestore)
         setSelection(m_selectionToRestore.value(), IsTemporarySelection::No);
 

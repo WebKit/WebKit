@@ -128,9 +128,12 @@ enum class TemporarySelectionOption : uint8_t {
 };
 
 class TemporarySelectionChange {
+    WTF_MAKE_NONCOPYABLE(TemporarySelectionChange); WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT TemporarySelectionChange(Document&, std::optional<VisibleSelection> = std::nullopt, OptionSet<TemporarySelectionOption> = { });
     WEBCORE_EXPORT ~TemporarySelectionChange();
+
+    WEBCORE_EXPORT void invalidate();
 
 private:
     enum class IsTemporarySelection { No, Yes };
@@ -147,11 +150,14 @@ private:
 };
 
 class IgnoreSelectionChangeForScope {
+    WTF_MAKE_NONCOPYABLE(IgnoreSelectionChangeForScope); WTF_MAKE_FAST_ALLOCATED;
 public:
     IgnoreSelectionChangeForScope(Frame& frame)
         : m_selectionChange(*frame.document(), std::nullopt, TemporarySelectionOption::IgnoreSelectionChanges)
     {
     }
+
+    void invalidate() { m_selectionChange.invalidate(); }
 
     ~IgnoreSelectionChangeForScope() = default;
 

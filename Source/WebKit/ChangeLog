@@ -1,3 +1,57 @@
+2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Text selection flickers when inserting text using dictation
+        https://bugs.webkit.org/show_bug.cgi?id=239467
+        rdar://91895659
+
+        Reviewed by Aditya Keerthi.
+
+        Implement two new SPI methods on UIWKInteractionViewProtocol (to be added in rdar://91919121), which UIKit uses
+        to encapsulate text input changes while inserting final dictation results (specifically, a call to
+        `-replaceDictatedText:withText:`, followed by one or more calls to `-insertText:`).
+
+        During this scope, we suppress all DOM selection changes from propagating to the client (thereby causing visible
+        text selection updates) by creating and holding on to a `IgnoreSelectionChangeForScope` RAII object. At the end
+        of this scope, we then schedule one final editor state update after resetting the scope, to ensure that the
+        final selection state propagates to the UI process.
+
+        Test: UIWKInteractionViewProtocol.SuppressSelectionChangesDuringDictation
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView willInsertFinalDictationResult]):
+        (-[WKContentView didInsertFinalDictationResult]):
+        (-[WKContentView _updateChangedSelection:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::willInsertFinalDictationResult):
+        (WebKit::WebPageProxy::didInsertFinalDictationResult):
+
+        Plumb these method calls into the web process, through `WebPageProxy` and `WebPage`.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+
+        If (for any reason) we're committing a load while holding on to `m_ignoreSelectionChangeScopeForDictation`,
+        forcibly call `Editor::setIgnoreSelectionChanges(false, RevealSelection::No)` and destroy the scoped object.
+
+        * WebProcess/WebPage/WebPage.h:
+
+        Add `m_ignoreSelectionChangeScopeForDictation`, which is set in `willInsertFinalDictationResult` and
+        unset in `didInsertFinalDictationResult` below.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::replaceSelectedText):
+        (WebKit::WebPage::replaceDictatedText):
+
+        Deploy `IgnoreSelectionChangeForScope` here, so that if we're already ignoring selection changes due to
+        `m_ignoreSelectionChangeScopeForDictation`, we won't prematurely revert "ignore selection change" state (this is
+        because this RAII helper object consults the preexisting state of `document.editor().ignoreSelectionChanges()`
+        before calling into `setIgnoreSelectionChanges`, and effectively becomes a no-op if the bit was already set).
+
+        (WebKit::WebPage::willInsertFinalDictationResult):
+        (WebKit::WebPage::didInsertFinalDictationResult):
+
 2022-04-19  Simon Fraser  <simon.fraser@apple.com>
 
         Use ProcessTerminationReason::Unresponsive for unresponsive network processes

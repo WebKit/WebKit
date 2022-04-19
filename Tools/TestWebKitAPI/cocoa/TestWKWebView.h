@@ -34,7 +34,7 @@
 @protocol UITextInputInternal;
 @protocol UITextInputMultiDocument;
 @protocol UITextInputPrivate;
-@protocol UIWKInteractionViewProtocol;
+@protocol UIWKInteractionViewProtocol_Staging_91919121;
 #endif
 
 @interface WKWebView (AdditionalDeclarations)
@@ -50,7 +50,7 @@
 
 @interface WKWebView (TestWebKitAPI)
 #if PLATFORM(IOS_FAMILY)
-@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol, UITextInputTokenizer> *textInputContentView;
+@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol_Staging_91919121, UITextInputTokenizer> *textInputContentView;
 - (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect;
 #endif
 @property (nonatomic, readonly) NSUInteger gpuToWebProcessConnectionCount;

@@ -1,3 +1,32 @@
+2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Text selection flickers when inserting text using dictation
+        https://bugs.webkit.org/show_bug.cgi?id=239467
+        rdar://91895659
+
+        Reviewed by Aditya Keerthi.
+
+        Add a method to invalidate `TemporarySelectionChange` and `IgnoreSelectionChangeForScope`, which immediately
+        reverts `Editor::ignoreSelectionChanges()` state to `false` without triggering an appearance update, and also
+        ensures that the RAII object's destructor is a noop.
+
+        See WebKit/ChangeLog for more details.
+
+        * editing/Editor.cpp:
+        (WebCore::TemporarySelectionChange::invalidate):
+        (WebCore::TemporarySelectionChange::~TemporarySelectionChange):
+
+        Make the destructor robust in the case where `m_document` has been cleared out already due to invalidating the
+        temporary selection change.
+
+        * editing/Editor.h:
+
+        Also mark these as non-copyable and fast-allocated, while we're here. Since these are RAII objects, we never
+        expect them to be copied, and the `WTF_MAKE_FAST_ALLOCATED` allows us to use `WTF::makeUnique` when creating
+        unique pointers to these helper objects.
+
+        (WebCore::IgnoreSelectionChangeForScope::invalidate):
+
 2022-04-19  Tim Nguyen  <ntim@apple.com>
 
         user-select: none shouldn't affect editability

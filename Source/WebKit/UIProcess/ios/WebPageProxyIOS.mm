@@ -392,6 +392,16 @@ void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, Sel
 
     sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart), WTFMove(callback));
 }
+
+void WebPageProxy::willInsertFinalDictationResult()
+{
+    m_process->send(Messages::WebPage::WillInsertFinalDictationResult(), m_webPageID);
+}
+
+void WebPageProxy::didInsertFinalDictationResult()
+{
+    m_process->send(Messages::WebPage::DidInsertFinalDictationResult(), m_webPageID);
+}
     
 void WebPageProxy::replaceDictatedText(const String& oldText, const String& newText)
 {

@@ -1,3 +1,22 @@
+2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Text selection flickers when inserting text using dictation
+        https://bugs.webkit.org/show_bug.cgi?id=239467
+        rdar://91895659
+
+        Reviewed by Aditya Keerthi.
+
+        Add an API test to verify that -willInsertFinalDictationResult and -didInsertFinalDictationResult correctly
+        suppresses intermediate editor UI updates.
+
+        * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm:
+        (-[EditorStateObserver initWithWebView:]):
+        (-[EditorStateObserver _webView:editorStateDidChange:]):
+        (TestWebKitAPI::setUpEditableWebViewAndWaitForInputSession):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2022-04-19  Jonathan Bedard  <jbedard@apple.com>
 
         [ews-build.webkit.org] Resolve conflicting Mixin inheritance
