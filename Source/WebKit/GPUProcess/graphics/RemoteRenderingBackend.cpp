@@ -405,12 +405,14 @@ void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier r
 void RemoteRenderingBackend::releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
+    {
+        Locker locker { m_remoteDisplayListsLock };
+        if (auto remoteDisplayList = m_remoteDisplayLists.take(renderingResourceIdentifier))
+            remoteDisplayList->clearImageBufferReference();
+    }
     auto success = m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
     updateRenderingResourceRequest();
-
-    Locker locker { m_remoteDisplayListsLock };
-    m_remoteDisplayLists.remove(renderingResourceIdentifier);
 }
 
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
