@@ -29,6 +29,7 @@
 #include "FontCascadeDescription.h"
 #include "FontCascadeFonts.h"
 #include "Path.h"
+#include <optional>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -91,7 +92,9 @@ struct GlyphOverflow {
 };
 
 #if USE(CORE_TEXT)
+AffineTransform computeBaseOverallTextMatrix(const std::optional<AffineTransform>& syntheticOblique);
 AffineTransform computeOverallTextMatrix(const Font&);
+AffineTransform computeBaseVerticalTextMatrix(const AffineTransform& previousTextMatrix);
 AffineTransform computeVerticalTextMatrix(const Font&, const AffineTransform& previousTextMatrix);
 #endif
 

@@ -1,3 +1,30 @@
+2022-04-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Add explanatory comments in fillVectorWithVerticalGlyphPositions() and simplify it somewhat
+        https://bugs.webkit.org/show_bug.cgi?id=239480
+
+        Reviewed by Alan Bujtas.
+
+        This adds a lot of explanatory text in fillVectorWithVerticalGlyphPositions(). It also rewrites some of it to
+        call shared functions (computeOverallTextMatrixInternal() and computeVerticalTextMatrixInternal()) instead of
+        reimplementing the contents of those functions.
+
+        The last thing this patch does is it stops adding in CTFontGetMatrix() to the text matrix, because:
+        1. It's always the identity, because we never create a font with one of these things
+        2. Even if it wasn't the identity, Core Text already applies it itself, so if we apply it, it would be double
+               applied.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/coretext/FontCascadeCoreText.cpp:
+        (WebCore::computeBaseOverallTextMatrix):
+        (WebCore::computeOverallTextMatrix):
+        (WebCore::computeBaseVerticalTextMatrix):
+        (WebCore::computeVerticalTextMatrix):
+        (WebCore::fillVectorWithVerticalGlyphPositions):
+        (WebCore::showGlyphsWithAdvances):
+
 2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Text selection flickers when inserting text using dictation
