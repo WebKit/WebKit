@@ -1,3 +1,17 @@
+2022-04-19  Ricky Mondello  <rmondello@apple.com>
+
+        Update in-field icons for credential fields
+        https://bugs.webkit.org/show_bug.cgi?id=239336
+
+        Reviewed by Wenson Hsieh.
+
+        This new styling is only appropriate for Cocoa platforms.
+
+        * css/html.css:
+        (input::-webkit-credentials-auto-fill-button):
+        (input::-webkit-credentials-auto-fill-button:hover):
+        (input::-webkit-credentials-auto-fill-button:active):
+
 2022-04-19  Ada Chan  <adachan@apple.com>
 
         [WebXR] Update Device::initializeTrackingAndRendering() to take in more parameters regarding the session setup
