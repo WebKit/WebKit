@@ -313,15 +313,19 @@ void JSDOMGlobalObject::promiseRejectionTracker(JSGlobalObject* jsGlobalObject, 
     if (!context)
         return;
 
+    auto rejectedPromiseTracker = context->ensureRejectedPromiseTracker();
+    if (!rejectedPromiseTracker)
+        return;
+
     // FIXME: If script has muted errors (cross origin), terminate these steps.
     // <https://webkit.org/b/171415> Implement the `muted-errors` property of Scripts to avoid onerror/onunhandledrejection for cross-origin scripts
 
     switch (operation) {
     case JSPromiseRejectionOperation::Reject:
-        context->ensureRejectedPromiseTracker().promiseRejected(globalObject, *promise);
+        rejectedPromiseTracker->promiseRejected(globalObject, *promise);
         break;
     case JSPromiseRejectionOperation::Handle:
-        context->ensureRejectedPromiseTracker().promiseHandled(globalObject, *promise);
+        rejectedPromiseTracker->promiseHandled(globalObject, *promise);
         break;
     }
 }

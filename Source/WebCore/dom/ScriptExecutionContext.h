@@ -254,10 +254,10 @@ public:
     int timerNestingLevel() const { return m_timerNestingLevel; }
     void setTimerNestingLevel(int timerNestingLevel) { m_timerNestingLevel = timerNestingLevel; }
 
-    RejectedPromiseTracker& ensureRejectedPromiseTracker()
+    RejectedPromiseTracker* ensureRejectedPromiseTracker()
     {
         if (m_rejectedPromiseTracker)
-            return *m_rejectedPromiseTracker.get();
+            return m_rejectedPromiseTracker.get();
         return ensureRejectedPromiseTrackerSlow();
     }
 
@@ -320,7 +320,7 @@ private:
     enum class ShouldContinue { No, Yes };
     void forEachActiveDOMObject(const Function<ShouldContinue(ActiveDOMObject&)>&) const;
 
-    RejectedPromiseTracker& ensureRejectedPromiseTrackerSlow();
+    RejectedPromiseTracker* ensureRejectedPromiseTrackerSlow();
 
     void checkConsistency() const;
 
