@@ -1259,13 +1259,13 @@ public:
 
     static Address calleeFrameCodeBlockBeforeCall()
     {
-        return calleeFramePayloadSlot(CallFrameSlot::codeBlock);
+        return calleeFrameSlot(CallFrameSlot::codeBlock);
     }
 
     static Address calleeFrameCodeBlockBeforeTailCall()
     {
         // The stackPointerRegister state is "after the call, but before the function prologue".
-        return calleeFramePayloadSlot(CallFrameSlot::codeBlock).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
+        return calleeFrameSlot(CallFrameSlot::codeBlock).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
     }
 
     static GPRReg selectScratchGPR(RegisterSet preserved)

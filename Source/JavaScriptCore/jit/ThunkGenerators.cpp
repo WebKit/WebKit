@@ -1405,7 +1405,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
         CCallHelpers::Address(
             GPRInfo::regT0, FunctionExecutable::offsetOfCodeBlockForCall()),
         GPRInfo::regT2);
-    jit.storeCell(GPRInfo::regT2, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+    jit.storePtr(GPRInfo::regT2, CCallHelpers::calleeFrameCodeBlockBeforeCall());
 
     isNative.link(&jit);
     
@@ -1566,7 +1566,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     exceptionChecks.append(jit.emitJumpIfException(vm));
-    jit.storeCell(GPRInfo::returnValueGPR2, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+    jit.storePtr(GPRInfo::returnValueGPR2, CCallHelpers::calleeFrameCodeBlockBeforeCall());
     jit.move(GPRInfo::returnValueGPR, GPRInfo::regT2);
     auto materialized = jit.jump();
 
@@ -1576,7 +1576,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
         CCallHelpers::Address(
             GPRInfo::regT1, FunctionExecutable::offsetOfCodeBlockForCall()),
         GPRInfo::regT3);
-    jit.storeCell(GPRInfo::regT3, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+    jit.storePtr(GPRInfo::regT3, CCallHelpers::calleeFrameCodeBlockBeforeCall());
 
     isNative.link(&jit);
     materialized.link(&jit);

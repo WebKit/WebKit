@@ -1195,7 +1195,7 @@ macro callTargetFunction(opcodeName, size, opcodeStruct, valueProfileName, dstVi
 end
 
 macro prepareForRegularCall(temp1, temp2, temp3, temp4, storeCodeBlock)
-    storeCodeBlock(CodeBlock + PayloadOffset - CallerFrameAndPCSize[sp])
+    storeCodeBlock(CodeBlock - CallerFrameAndPCSize[sp])
 end
 
 macro invokeForRegularCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
@@ -1267,7 +1267,7 @@ macro prepareForTailCall(temp1, temp2, temp3, temp4, storeCodeBlock)
 
     move temp1, sp
 
-    storeCodeBlock(CodeBlock + PayloadOffset - PrologueStackPointerDelta[sp])
+    storeCodeBlock(CodeBlock - PrologueStackPointerDelta[sp])
 end
 
 macro invokeForTailCall(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, callee, maybeOldCFR, callPtrTag)
@@ -2520,7 +2520,7 @@ macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internal
     loadp offsetOfCodeBlock[t5], t0
 .callCode:
     prepareCall(t5, t2, t3, t4)
-    storep t0, CodeBlock + PayloadOffset - PrologueStackPointerDelta[sp]
+    storep t0, CodeBlock - PrologueStackPointerDelta[sp]
     jmp t1, JSEntryPtrTag
 .notJSFunction:
     bbneq JSCell::m_type[t0], InternalFunctionType, slowCase
