@@ -31,12 +31,7 @@
             count++;
             if (userInfo)
                 results.push(userInfo);
-            if (count != 5)
-                return;
-
-            webArea.removeNotificationListener();
-
-            setTimeout(() => {
+            if (count == 5) {
                 shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
                 shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionDiscontiguous");
                 shouldBe("results[resultIndex][\"AXTextStateSync\"]", "true");
@@ -61,8 +56,9 @@
                 shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionDiscontiguous");
                 shouldBe("results[resultIndex][\"AXTextStateSync\"]", "true");
 
+                webArea.removeNotificationListener();
                 finishJSTest();
-            }, 0);
+            }
         }
     }
 

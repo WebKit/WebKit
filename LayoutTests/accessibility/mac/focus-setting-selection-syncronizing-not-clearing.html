@@ -26,7 +26,6 @@
 
     var webArea = 0;
     var axTextStateSyncOne = 0;
-    var accessibleElement1WasFocusable = false;
     var axTextStateSyncTwo = 0;
     var selectCount = 0;
     var focusCount = 0;
@@ -40,10 +39,13 @@
             selectCount++;
             if (selectCount == 1) {
                 axTextStateSyncOne = userInfo["AXTextStateSync"];
-                accessibleElement1WasFocusable = accessibilityController.accessibleElementById("1").isFocusable;
+                shouldBe("axTextStateSyncOne", "undefined");
+
+                shouldBe("accessibilityController.accessibleElementById(\"1\").isFocusable", "true");
                 accessibilityController.accessibleElementById("1").takeFocus();
             } else if (selectCount == 2) {
                 axTextStateSyncTwo = userInfo["AXTextStateSync"];
+                shouldBe("axTextStateSyncTwo", "undefined");
             }
         } else if (notification == "AXFocusChanged") {
             focusCount++;
@@ -53,12 +55,7 @@
         }
         if (selectCount == 2 && focusCount == 3) {
             webArea.removeNotificationListener();
-            setTimeout(() => {
-                shouldBe("axTextStateSyncOne", "undefined");
-                shouldBe("accessibleElement1WasFocusable", "true");
-                shouldBe("axTextStateSyncTwo", "undefined");
-                finishJSTest();
-            }, 0);
+            finishJSTest();
         }
     }
 

@@ -18,18 +18,14 @@ content inside
     description("This tests that ARIA removing an element from a live region sends the correct notification.");
 
     var axTextbox = 0;
-    var result = '';
     function notificationCallback(notification) {
         if (notification == "AXValueChanged") {
-           result += "Successfully received " + notification + "<br>";
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
            axTextbox.removeNotificationListener();
-           setTimeout(() => {
-               document.getElementById("notifications").innerHTML += result;
-              finishJSTest();
-           }, 0);
+           finishJSTest();
         }
         else if (notification == "AXSelectedTextChanged") {
-           result += "Successfully received " + notification + "<br>";
+           document.getElementById("notifications").innerHTML += "Successfully received " + notification + "<br>";
         }
     }
 

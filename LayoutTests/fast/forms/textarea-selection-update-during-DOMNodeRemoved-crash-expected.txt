@@ -1,3 +1,0 @@
-This tests updating selection within DOMNodeRemoved. WebKit should not hit any release assertions.
-
-PASS

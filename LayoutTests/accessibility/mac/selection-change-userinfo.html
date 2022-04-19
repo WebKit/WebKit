@@ -43,12 +43,7 @@
             count++;
             if (userInfo)
                 results.push(userInfo);
-            if (count != gran.length * 4)
-                return;
-
-            webArea.removeNotificationListener();
-
-            setTimeout(() => {
+            if (count == gran.length * 4) {
                 resultIndex++;
                 shouldBe("results[resultIndex][\"AXTextStateChangeType\"]", "AXTextStateChangeTypeSelectionMove");
                 shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityCharacter");
@@ -184,8 +179,9 @@
                 shouldBe("results[resultIndex][\"AXTextSelectionGranularity\"]", "AXTextSelectionGranularityDocument");
                 shouldBe("results[resultIndex][\"AXTextSelectionDirection\"]", "AXTextSelectionDirectionEnd");
 
+                webArea.removeNotificationListener();
                 finishJSTest();
-            }, 0);
+            }
         }
     }
 
