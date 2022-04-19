@@ -24,6 +24,8 @@
 GPUProcess/glib/GPUProcessGLib.cpp
 GPUProcess/glib/GPUProcessMainGLib.cpp
 
+GPUProcess/graphics/RemoteGraphicsContextGLGBM.cpp
+
 GPUProcess/media/RemoteAudioDestinationManager.cpp
 
 GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp
@@ -228,6 +230,8 @@ UIProcess/soup/WebCookieManagerProxySoup.cpp
 UIProcess/soup/WebProcessPoolSoup.cpp
 
 UIProcess/wpe/WebPageProxyWPE.cpp
+
+WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
 
 WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp
 
