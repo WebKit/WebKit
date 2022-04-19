@@ -1,3 +1,20 @@
+2022-04-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove the PlatformMediaEngineClassName macro
+        https://bugs.webkit.org/show_bug.cgi?id=239384
+
+        Reviewed by Philippe Normand.
+
+        Remove the PlatformMediaEngineClassName macro used in the MediaPlayer
+        implementation file. It's only used for two media engines.
+
+        For GStreamer, the code can be simplified and grouped under a single
+        if-block. For USE_MEDIA_FOUNDATION, the relevant call can similarly be
+        guarded by the corresponding build guards.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+
 2022-04-18  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Update the isolated tree in response to AXElementBusyChanged and AXTextChanged notifications
