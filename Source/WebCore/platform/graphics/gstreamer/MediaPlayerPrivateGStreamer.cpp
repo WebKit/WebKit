@@ -2824,7 +2824,8 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
         // Set the decoder maximum number of threads to a low, fixed value, not depending on the
         // platform. This also helps with processing metrics gathering. When using the default value
         // the decoder introduces artificial processing latency reflecting the maximum number of threads.
-        g_object_set(decoder, "max-threads", 2, nullptr);
+        if (g_object_class_find_property(G_OBJECT_GET_CLASS(decoder), "max-threads"))
+            g_object_set(decoder, "max-threads", 2, nullptr);
     }
 
 #if USE(TEXTURE_MAPPER_GL)
