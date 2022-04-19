@@ -1,5 +1,51 @@
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r292401. rdar://problem/83168970
+
+    5 Media API tests are flakily timing out on iOS14
+    https://bugs.webkit.org/show_bug.cgi?id=230321
+    <rdar://problem/83168970>
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebKit:
+    
+    Un-skipped API test WKWebViewPausePlayingAudioTests.OutOfWindow
+    
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::applicationWillEnterForegroundForMedia): Log the correct name.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::applicationDidEnterBackgroundForMedia): Call PlatformMediaSessionManager.
+    (WebKit::WebPage::applicationWillEnterForegroundForMedia): Ditto.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/ios/WKWebViewPausePlayingAudioTests.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292401 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-05  Eric Carlson  <eric.carlson@apple.com>
+
+            5 Media API tests are flakily timing out on iOS14
+            https://bugs.webkit.org/show_bug.cgi?id=230321
+            <rdar://problem/83168970>
+
+            Reviewed by Jer Noble.
+
+            Un-skipped API test WKWebViewPausePlayingAudioTests.OutOfWindow
+
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::applicationWillEnterForegroundForMedia): Log the correct name.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::applicationDidEnterBackgroundForMedia): Call PlatformMediaSessionManager.
+            (WebKit::WebPage::applicationWillEnterForegroundForMedia): Ditto.
+
+2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r292319. rdar://problem/89916360
 
     Remove display list map entry before remote resource

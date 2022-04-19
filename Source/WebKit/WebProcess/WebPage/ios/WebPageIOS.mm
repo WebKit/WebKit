@@ -3957,12 +3957,14 @@ void WebPage::applicationDidBecomeActive()
 
 void WebPage::applicationDidEnterBackgroundForMedia(bool isSuspendedUnderLock)
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidEnterBackgroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationDidEnterBackground(isSuspendedUnderLock);
 }
 
 void WebPage::applicationWillEnterForegroundForMedia(bool isSuspendedUnderLock)
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationWillEnterForeground(isSuspendedUnderLock);
 }
 
 static inline void adjustVelocityDataForBoundedScale(VelocityData& velocityData, double exposedRectScale, double minimumScale, double maximumScale)
