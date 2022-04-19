@@ -124,7 +124,10 @@ static RenderListItem* nextListItemHelper(const Element& list, const Element& el
 {
     auto* current = &element;
     auto advance = [&] {
-        current = ElementTraversal::nextIncludingPseudo(*current, &list);
+        if (!current->renderOrDisplayContentsStyle())
+            current = ElementTraversal::nextIncludingPseudoSkippingChildren(*current, &list);
+        else
+            current = ElementTraversal::nextIncludingPseudo(*current, &list);
     };
     advance();
     while (current) {
