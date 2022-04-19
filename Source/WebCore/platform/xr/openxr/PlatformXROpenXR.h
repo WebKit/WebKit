@@ -60,7 +60,7 @@ private:
 
     // PlatformXR::Device
     WebCore::IntSize recommendedResolution(SessionMode) final;
-    void initializeTrackingAndRendering(SessionMode) final;
+    void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, SessionMode, const Device::FeatureList&) final;
     void shutDownTrackingAndRendering() final;
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final;
     bool supportsSessionShutdownNotification() const final { return true; }

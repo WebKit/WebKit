@@ -75,9 +75,9 @@ void PlatformXRSystemProxy::requestPermissionOnSessionFeatures(const WebCore::Se
     m_page.sendWithAsyncReply(Messages::PlatformXRSystem::RequestPermissionOnSessionFeatures(securityOriginData, mode, granted, consentRequired, consentOptional), WTFMove(completionHandler));
 }
 
-void PlatformXRSystemProxy::initializeTrackingAndRendering()
+void PlatformXRSystemProxy::initializeTrackingAndRendering(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& requestedFeatures)
 {
-    m_page.send(Messages::PlatformXRSystem::InitializeTrackingAndRendering());
+    m_page.send(Messages::PlatformXRSystem::InitializeTrackingAndRendering(securityOriginData, mode, requestedFeatures));
 }
 
 void PlatformXRSystemProxy::shutDownTrackingAndRendering()

@@ -85,7 +85,7 @@ WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
     return Device::recommendedResolution(mode);
 }
 
-void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
+void OpenXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOriginData&, SessionMode mode, const Device::FeatureList&)
 {
     m_queue.dispatch([this, protectedThis = Ref { *this }, mode]() {
         ASSERT(m_instance != XR_NULL_HANDLE);

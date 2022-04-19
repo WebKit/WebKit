@@ -51,6 +51,7 @@ class DOMWindow;
 class Navigator;
 class ScriptExecutionContext;
 class WebXRSession;
+struct SecurityOriginData;
 struct XRSessionInit;
 
 class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTargetWithInlineData, public ActiveDOMObject {
@@ -112,7 +113,7 @@ private:
         explicit DummyInlineDevice(ScriptExecutionContext&);
 
     private:
-        void initializeTrackingAndRendering(PlatformXR::SessionMode) final { }
+        void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) final { }
         void shutDownTrackingAndRendering() final { }
         void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
 

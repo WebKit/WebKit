@@ -84,7 +84,7 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(const WebCore::Securit
     xrCoordinator->requestPermissionOnSessionFeatures(m_page, securityOriginData, mode, granted, consentRequired, consentOptional, WTFMove(completionHandler));
 }
 
-void PlatformXRSystem::initializeTrackingAndRendering()
+void PlatformXRSystem::initializeTrackingAndRendering(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& requestedFeatures)
 {
     auto* xrCoordinator = PlatformXRSystem::xrCoordinator();
     if (!xrCoordinator)
@@ -93,7 +93,7 @@ void PlatformXRSystem::initializeTrackingAndRendering()
     m_immersiveSessionActivity = m_page.process().throttler().foregroundActivity("XR immersive session"_s).moveToUniquePtr();
 
     WeakPtr weakThis { *this };
-    xrCoordinator->startSession(m_page, weakThis);
+    xrCoordinator->startSession(m_page, weakThis, securityOriginData, mode, requestedFeatures);
 }
 
 void PlatformXRSystem::shutDownTrackingAndRendering()

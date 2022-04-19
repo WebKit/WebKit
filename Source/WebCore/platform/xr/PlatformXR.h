@@ -37,6 +37,10 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 namespace PlatformXR {
 
 enum class SessionMode : uint8_t {
@@ -222,7 +226,7 @@ public:
     virtual double maxFramebufferScalingFactor() const { return nativeFramebufferScalingFactor(); }
 
 
-    virtual void initializeTrackingAndRendering(SessionMode) = 0;
+    virtual void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, SessionMode, const FeatureList&) = 0;
     virtual void shutDownTrackingAndRendering() = 0;
     TrackingAndRenderingClient* trackingAndRenderingClient() const { return m_trackingAndRenderingClient.get(); }
     void setTrackingAndRenderingClient(WeakPtr<TrackingAndRenderingClient>&& client) { m_trackingAndRenderingClient = WTFMove(client); }

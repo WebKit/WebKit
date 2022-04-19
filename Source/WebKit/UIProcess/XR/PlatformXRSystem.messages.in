@@ -28,7 +28,7 @@
 messages -> PlatformXRSystem NotRefCounted {
     EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos)
     RequestPermissionOnSessionFeatures(struct WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::SessionFeature> granted, Vector<PlatformXR::SessionFeature> consentRequired, Vector<PlatformXR::SessionFeature> consentOptional) -> (std::optional<Vector<PlatformXR::SessionFeature>> userGranted)
-    InitializeTrackingAndRendering()
+    InitializeTrackingAndRendering(struct WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::SessionFeature> requestedFeatures)
     ShutDownTrackingAndRendering()
     RequestFrame() -> (struct PlatformXR::Device::FrameData frameData)
     SubmitFrame()

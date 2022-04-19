@@ -1,3 +1,23 @@
+2022-04-19  Ada Chan  <adachan@apple.com>
+
+        [WebXR] Update Device::initializeTrackingAndRendering() to take in more parameters regarding the session setup
+        https://bugs.webkit.org/show_bug.cgi?id=239476
+
+        Reviewed by Dean Jackson.
+
+        Pass in document's origin and session features to Device::initializeTrackingAndRendering(). 
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::WebXRSession):
+        * Modules/webxr/WebXRSystem.h:
+        * platform/xr/PlatformXR.h:
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::OpenXRDevice::initializeTrackingAndRendering):
+        * platform/xr/openxr/PlatformXROpenXR.h:
+        * testing/WebFakeXRDevice.cpp:
+        (WebCore::SimulatedXRDevice::initializeTrackingAndRendering):
+        * testing/WebFakeXRDevice.h:
+
 2022-04-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Add explanatory comments in fillVectorWithVerticalGlyphPositions() and simplify it somewhat

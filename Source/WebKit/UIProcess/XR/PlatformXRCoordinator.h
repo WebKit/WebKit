@@ -62,7 +62,7 @@ public:
     };
 
     // Session creation/termination.
-    virtual void startSession(WebPageProxy&, WeakPtr<SessionEventClient>&&) = 0;
+    virtual void startSession(WebPageProxy&, WeakPtr<SessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) = 0;
     virtual void endSessionIfExists(WebPageProxy&) = 0;
 
     // Session display loop.

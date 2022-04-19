@@ -47,7 +47,7 @@ public:
 
     void enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&&);
     void requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList& /* granted */, const PlatformXR::Device::FeatureList& /* consentRequired */, const PlatformXR::Device::FeatureList& /* consentOptional */, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&&);
-    void initializeTrackingAndRendering();
+    void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&);
     void shutDownTrackingAndRendering();
     void requestFrame(PlatformXR::Device::RequestFrameCallback&&);
     std::optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool);

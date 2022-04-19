@@ -109,7 +109,7 @@ WebCore::IntSize SimulatedXRDevice::recommendedResolution(PlatformXR::SessionMod
     return IntSize(32, 32);
 }
 
-void SimulatedXRDevice::initializeTrackingAndRendering(PlatformXR::SessionMode)
+void SimulatedXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&)
 {
     GraphicsContextGLAttributes attributes;
     attributes.depth = false;

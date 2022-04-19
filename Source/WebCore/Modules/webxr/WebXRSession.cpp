@@ -66,7 +66,7 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_views(device.views(mode))
 {
     m_device->setTrackingAndRenderingClient(*this);
-    m_device->initializeTrackingAndRendering(mode);
+    m_device->initializeTrackingAndRendering(document.securityOrigin().data(), mode, m_requestedFeatures);
 
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
