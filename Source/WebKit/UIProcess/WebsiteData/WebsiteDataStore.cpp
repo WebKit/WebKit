@@ -1581,7 +1581,7 @@ void WebsiteDataStore::networkProcessDidTerminate(NetworkProcessProxy& networkPr
 void WebsiteDataStore::terminateNetworkProcess()
 {
     if (auto networkProcess = std::exchange(m_networkProcess, nullptr))
-        networkProcess->terminate();
+        networkProcess->requestTermination();
 }
 
 void WebsiteDataStore::sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&& completionHandler)

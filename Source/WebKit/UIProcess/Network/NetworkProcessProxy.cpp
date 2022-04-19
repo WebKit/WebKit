@@ -150,6 +150,11 @@ void NetworkProcessProxy::terminate()
     AuxiliaryProcessProxy::terminate();
     if (auto* connection = this->connection())
         connection->invalidate();
+}
+
+void NetworkProcessProxy::requestTermination()
+{
+    terminate();
     networkProcessDidTerminate(ProcessTerminationReason::RequestedByClient);
 }
 
@@ -163,13 +168,17 @@ void NetworkProcessProxy::didBecomeUnresponsive()
     if (shouldTerminateNetworkProcessBySendingMessage()) {
         sendMessage(makeUniqueRef<IPC::Encoder>(IPC::MessageName::Terminate, 0), { });
         RunLoop::main().dispatchAfter(1_s, [weakThis = WeakPtr { *this }] () mutable {
-            if (weakThis)
+            if (weakThis) {
                 weakThis->terminate();
+                weakThis->networkProcessDidTerminate(ProcessTerminationReason::Unresponsive);
+            }
+
         });
         return;
     }
 
     terminate();
+    networkProcessDidTerminate(ProcessTerminationReason::Unresponsive);
 }
 
 void NetworkProcessProxy::sendCreationParametersToNewProcess()
@@ -468,6 +477,7 @@ void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, 
 {
     logInvalidMessage(connection, messageName);
     terminate();
+    networkProcessDidTerminate(ProcessTerminationReason::Crash);
 }
 
 void NetworkProcessProxy::processAuthenticationChallenge(PAL::SessionID sessionID, Ref<AuthenticationChallengeProxy>&& authenticationChallenge)

@@ -832,10 +832,7 @@ void WebProcessProxy::gpuProcessDidFinishLaunching()
 
 void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 {
-    if (reason == ProcessTerminationReason::IdleExit)
-        WEBPROCESSPROXY_RELEASE_LOG(Process, "gpuProcessExited: reason=idle-exit");
-    else
-        WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessExited: reason=%u", static_cast<unsigned>(reason));
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessExited: reason=%{public}s", processTerminationReasonToString(reason));
 
     for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
         page->gpuProcessExited(reason);
@@ -893,7 +890,7 @@ void WebProcessProxy::didClose(IPC::Connection& connection)
 
 void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReason reason)
 {
-    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminateOrFailedToLaunch: reason=%u", static_cast<unsigned>(reason));
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminateOrFailedToLaunch: reason=%{public}s", processTerminationReasonToString(reason));
 
     // Protect ourselves, as the call to shutDown() below may otherwise cause us
     // to be deleted before we can finish our work.

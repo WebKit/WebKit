@@ -7906,7 +7906,7 @@ URL WebPageProxy::currentResourceDirectoryURL() const
 void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason reason)
 {
     if (reason != ProcessTerminationReason::NavigationSwap)
-        WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminate: (pid %d), reason %d", processIdentifier(), reason);
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminate: (pid %d), reason=%{public}s", processIdentifier(), processTerminationReasonToString(reason));
 
     ASSERT(m_hasRunningProcess);
 

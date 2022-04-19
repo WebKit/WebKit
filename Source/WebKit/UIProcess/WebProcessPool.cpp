@@ -488,7 +488,7 @@ void WebProcessPool::gpuProcessDidFinishLaunching(ProcessID)
 
 void WebProcessPool::gpuProcessExited(ProcessID identifier, ProcessTerminationReason reason)
 {
-    WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=reason=%{public}s", identifier, processTerminationReasonToString(reason));
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%{public}s", identifier, processTerminationReasonToString(reason));
     m_gpuProcess = nullptr;
 
     if (shouldReportAuxiliaryProcessCrash(reason))

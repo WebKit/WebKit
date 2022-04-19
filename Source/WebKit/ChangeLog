@@ -1,3 +1,31 @@
+2022-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Use ProcessTerminationReason::Unresponsive for unresponsive network processes
+        https://bugs.webkit.org/show_bug.cgi?id=239401
+
+        Reviewed by Chris Dumez.
+
+        NetworkProcessProxy used ProcessTerminationReason::RequestedByClient for all callers
+        of terminate(). Move the call to networkProcessDidTerminate() out to callers of
+        terminate() so they can pass the correct reasons.
+
+        Also use processTerminationReasonToString() in some more logs, and fix a log string
+        typo introduced in the previous commit.
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::gpuProcessExited):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::terminate):
+        (WebKit::NetworkProcessProxy::didBecomeUnresponsive):
+        (WebKit::NetworkProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gpuProcessExited):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::gpuProcessExited):
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+
 2022-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE][GPUProcess] Add RemoteGraphicsContextGLGBM, RemoteGraphicsContextGLProxyGBM

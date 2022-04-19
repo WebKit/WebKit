@@ -127,8 +127,6 @@ public:
 
     static Vector<Ref<NetworkProcessProxy>> allNetworkProcesses();
     
-    void terminate() final;
-
     void getNetworkProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
 
     DownloadProxy& createDownloadProxy(WebsiteDataStore&, WebProcessPool&, const WebCore::ResourceRequest&, const FrameInfoData&, WebPageProxy* originatingPage);
@@ -226,6 +224,8 @@ public:
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
     void terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier);
 
+    void requestTermination();
+
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();
 
@@ -317,6 +317,7 @@ private:
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
+    void terminate() final;
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
