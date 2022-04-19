@@ -5,5 +5,4 @@ twistd.log*
 twistd.pid
 state.sqlite
 passwords.json
-public_html/
 workers/
