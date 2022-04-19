@@ -1,5 +1,61 @@
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r291852. rdar://problem/83235846
+
+    Improve rebuilding of ruby subtrees
+    https://bugs.webkit.org/show_bug.cgi?id=238365
+    
+    Source/WebCore:
+    
+    Patch by Frédéric Wang <fwang@igalia.com> on 2022-03-25
+    Reviewed by Alan Bujtas.
+    
+    Don't collapse generated Ruby subtree when tearing down children and take into account the
+    fact that anonymous before/after node can belong to a display: content child.
+    
+    * rendering/updating/RenderTreeBuilder.cpp:
+    (WebCore::RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers): Don't collapse.
+    * rendering/updating/RenderTreeBuilderRuby.cpp:
+    (WebCore::lastRubyRun): Child can be also be an anonymous after content.
+    (WebCore::RenderTreeBuilder::Ruby::findOrCreateParentForChild): When beforeChild is
+    an anonymous before/after, just fallback to appending to the last ruby run.
+    
+    LayoutTests:
+    
+    Patch by Frederic Wang <fred.wang@free.fr> on 2022-03-25
+    Reviewed by Alan Bujtas.
+    
+    Expectation for rubyDOM-remove-text2.html is updated now that we don't collapse anonymous
+    RenderRubyBase nodes.
+    
+    * platform/gtk/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+    * platform/ios/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+    * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+    * platform/win/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+    * platform/wincairo/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+    * platform/wpe/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291852 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-25  Frederic Wang  <fred.wang@free.fr>
+
+            Improve rebuilding of ruby subtrees
+            https://bugs.webkit.org/show_bug.cgi?id=238365
+
+            Reviewed by Alan Bujtas.
+
+            Expectation for rubyDOM-remove-text2.html is updated now that we don't collapse anonymous
+            RenderRubyBase nodes.
+
+            * platform/gtk/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+            * platform/ios/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+            * platform/mac/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+            * platform/win/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+            * platform/wincairo/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+            * platform/wpe/fast/ruby/rubyDOM-remove-text2-expected.txt: Updated.
+
+2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r290622. rdar://problem/90454629
 
     REBASELINE [ iOS15 ] fast/text/khmer-lao-font.html is a constant text failure
