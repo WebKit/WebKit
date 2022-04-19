@@ -260,7 +260,7 @@ JSC_DECLARE_JIT_OPERATION(operationThrow, void, (JSGlobalObject*, EncodedJSValue
 JSC_DECLARE_JIT_OPERATION(operationDebug, void, (VM*, int32_t));
 #if ENABLE(DFG_JIT)
 JSC_DECLARE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM*, uint32_t));
-JSC_DECLARE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, char*, (VM*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, SlowPathReturnType, (VM*, uint32_t));
 #endif
 JSC_DECLARE_JIT_OPERATION(operationPutGetterById, void, (JSGlobalObject*, JSCell*, UniquedStringImpl*, int32_t options, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationPutSetterById, void, (JSGlobalObject*, JSCell*, UniquedStringImpl*, int32_t options, JSCell*));

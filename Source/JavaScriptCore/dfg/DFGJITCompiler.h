@@ -256,14 +256,6 @@ public:
     }
     
     template<typename T>
-    Jump branchWeakPtr(RelationalCondition cond, T left, JSCell* weakPtr)
-    {
-        Jump result = branchPtr(cond, left, TrustedImmPtr(weakPtr));
-        addWeakReference(weakPtr);
-        return result;
-    }
-
-    template<typename T>
     Jump branchWeakStructure(RelationalCondition cond, T left, RegisteredStructure weakStructure)
     {
         Structure* structure = weakStructure.get();
@@ -310,6 +302,66 @@ public:
     void emitSaveCalleeSaves()
     {
         emitSaveCalleeSavesFor(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
+    }
+
+    class LinkableConstant final : public CCallHelpers::ConstantMaterializer {
+    public:
+        enum NonCellTag { NonCell };
+        LinkableConstant(Graph&, JSCell*);
+
+        void materialize(CCallHelpers&, GPRReg);
+        void store(CCallHelpers&, CCallHelpers::Address);
+
+        template<typename T>
+        static LinkableConstant nonCellPointer(Graph& graph, T* pointer)
+        {
+            static_assert(!std::is_base_of_v<JSCell, T>);
+            return LinkableConstant(graph, pointer, NonCell);
+        }
+
+        static LinkableConstant structure(Graph& graph, RegisteredStructure structure)
+        {
+            return LinkableConstant(graph, structure.get());
+        }
+
+        bool isUnlinked() const { return m_index != UINT_MAX; }
+
+        void* pointer() const { return m_pointer; }
+
+#if USE(JSVALUE64)
+        Address unlinkedAddress()
+        {
+            ASSERT(isUnlinked());
+            return Address(GPRInfo::constantsRegister, JITData::offsetOfData() + sizeof(void*) * m_index);
+        }
+#endif
+
+    private:
+        LinkableConstant(Graph&, void*, NonCellTag);
+
+        unsigned m_index { UINT_MAX };
+        void* m_pointer { nullptr };
+    };
+
+    void loadLinkableConstant(LinkableConstant, GPRReg);
+    void storeLinkableConstant(LinkableConstant, Address);
+
+    Jump branchLinkableConstant(RelationalCondition cond, GPRReg left, LinkableConstant constant)
+    {
+#if USE(JSVALUE64)
+        if (constant.isUnlinked())
+            return CCallHelpers::branchPtr(cond, left, constant.unlinkedAddress());
+#endif
+        return CCallHelpers::branchPtr(cond, left, CCallHelpers::TrustedImmPtr(constant.pointer()));
+    }
+
+    Jump branchLinkableConstant(RelationalCondition cond, Address left, LinkableConstant constant)
+    {
+#if USE(JSVALUE64)
+        if (constant.isUnlinked())
+            return CCallHelpers::branchPtr(cond, left, constant.unlinkedAddress());
+#endif
+        return CCallHelpers::branchPtr(cond, left, CCallHelpers::TrustedImmPtr(constant.pointer()));
     }
 
 private:

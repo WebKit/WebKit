@@ -2570,7 +2570,7 @@ if JIT
     macro loadBaselineJITConstantPool()
         # Baseline uses LLInt's PB register for its JIT constant pool.
         loadp CodeBlock[cfr], PB
-        loadp CodeBlock::m_baselineJITData[PB], PB
+        loadp CodeBlock::m_jitData[PB], PB
     end
 
     macro setupReturnToBaselineAfterCheckpointExitIfNeeded()

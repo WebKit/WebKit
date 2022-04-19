@@ -118,6 +118,12 @@ void JITCompiler::compileSetupRegistersForEntry()
 {
     emitSaveCalleeSaves();
     emitMaterializeTagCheckRegisters();    
+#if USE(JSVALUE64)
+    if (m_graph.m_plan.isUnlinked()) {
+        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::constantsRegister);
+        loadPtr(Address(GPRInfo::constantsRegister, CodeBlock::offsetOfJITData()), GPRInfo::constantsRegister);
+    }
+#endif
 }
 
 void JITCompiler::compileEntryExecutionFlag()
@@ -435,7 +441,9 @@ void JITCompiler::compileFunction()
         emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-        m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0, m_codeBlock->globalObject());
+        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
+        loadPtr(Address(GPRInfo::argumentGPR0, CodeBlock::offsetOfGlobalObject()), GPRInfo::argumentGPR0);
+        m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->isConstructor() ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
         if (maxFrameExtentForSlowPathCall)
             addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
         branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);
@@ -644,6 +652,57 @@ void JITCompiler::makeCatchOSREntryBuffer()
         uint32_t numberOfLiveLocals = std::max(*m_graph.m_maxLocalsForCatchOSREntry, 1u); // Make sure we always allocate a non-null catchOSREntryBuffer.
         m_jitCode->common.catchOSREntryBuffer = vm().scratchBufferForSize(sizeof(JSValue) * numberOfLiveLocals);
     }
+}
+
+void JITCompiler::loadLinkableConstant(LinkableConstant constant, GPRReg dest)
+{
+    constant.materialize(*this, dest);
+}
+
+void JITCompiler::storeLinkableConstant(LinkableConstant constant, Address dest)
+{
+    constant.store(*this, dest);
+}
+
+JITCompiler::LinkableConstant::LinkableConstant(Graph& graph, JSCell* cell)
+{
+    graph.m_plan.weakReferences().addLazily(cell);
+    if (graph.m_plan.isUnlinked()) {
+        m_index = graph.m_plan.addLinkableConstant(cell);
+        return;
+    }
+    m_pointer = cell;
+}
+
+JITCompiler::LinkableConstant::LinkableConstant(Graph& graph, void* pointer, NonCellTag)
+{
+    if (graph.m_plan.isUnlinked()) {
+        m_index = graph.m_plan.addLinkableConstant(pointer);
+        return;
+    }
+    m_pointer = pointer;
+}
+
+void JITCompiler::LinkableConstant::materialize(CCallHelpers& jit, GPRReg resultGPR)
+{
+#if USE(JSVALUE64)
+    if (isUnlinked()) {
+        jit.loadPtr(unlinkedAddress(), resultGPR);
+        return;
+    }
+#endif
+    jit.move(TrustedImmPtr(m_pointer), resultGPR);
+}
+
+void JITCompiler::LinkableConstant::store(CCallHelpers& jit, CCallHelpers::Address address)
+{
+#if USE(JSVALUE64)
+    if (isUnlinked()) {
+        jit.transferPtr(unlinkedAddress(), address);
+        return;
+    }
+#endif
+    jit.storePtr(TrustedImmPtr(m_pointer), address);
 }
 
 } } // namespace JSC::DFG

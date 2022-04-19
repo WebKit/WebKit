@@ -237,8 +237,13 @@ void JIT::privateCompileMainPass()
         }
 
 #if ASSERT_ENABLED
-        if (opcodeID != op_catch)
+        if (opcodeID != op_catch) {
+            loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
+            loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), regT1);
+            loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT2);
+
             m_consistencyCheckCalls.append(nearCall());
+        }
 #endif
 
         if (UNLIKELY(m_compilation)) {
@@ -650,7 +655,7 @@ void JIT::emitMaterializeMetadataAndConstantPoolRegisters()
 {
     loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
     loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), s_metadataGPR);
-    loadPtr(Address(regT0, CodeBlock::offsetOfBaselineJITData()), s_constantsGPR);
+    loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR);
 }
 
 void JIT::emitSaveCalleeSaves()
@@ -683,7 +688,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
 
     jit.loadPtr(addressFor(CallFrameSlot::codeBlock), expectedConstantsGPR);
     jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfMetadataTable()), expectedMetadataGPR);
-    jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfBaselineJITData()), expectedConstantsGPR);
+    jit.loadPtr(Address(expectedConstantsGPR, CodeBlock::offsetOfJITData()), expectedConstantsGPR);
 
     auto stackPointerOK = jit.branchPtr(Equal, expectedStackPointerGPR, stackPointerRegister);
     jit.breakpoint();

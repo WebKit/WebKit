@@ -49,6 +49,23 @@ namespace DFG {
 
 class JITCompiler;
 
+class JITData final : public TrailingArray<JITData, void*> {
+    WTF_MAKE_FAST_ALLOCATED;
+    friend class LLIntOffsetsExtractor;
+public:
+    using Base = TrailingArray<JITData, void*>;
+
+    static std::unique_ptr<JITData> create(unsigned poolSize)
+    {
+        return std::unique_ptr<JITData> { new (NotNull, fastMalloc(Base::allocationSize(poolSize))) JITData(poolSize) };
+    }
+
+    explicit JITData(unsigned size)
+        : Base(size)
+    {
+    }
+};
+
 class JITCode final : public DirectJITCode {
 public:
     JITCode();

@@ -1015,7 +1015,7 @@ void JIT::emit_op_catch(const JSInstruction* currentInstruction)
     // So we replenish it here.
     {
         loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
-        loadPtr(Address(regT0, CodeBlock::offsetOfBaselineJITData()), s_constantsGPR);
+        loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), s_constantsGPR);
     }
 
     callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, TrustedImmPtr(&vm()));
@@ -1036,6 +1036,7 @@ void JIT::emit_op_catch(const JSInstruction* currentInstruction)
 
     callOperationNoExceptionCheck(operationTryOSREnterAtCatchAndValueProfile, TrustedImmPtr(&vm()), m_bytecodeIndex.asBits());
     auto skipOSREntry = branchTestPtr(Zero, returnValueGPR);
+    emitPutToCallFrameHeader(returnValueGPR2, CallFrameSlot::codeBlock);
     emitRestoreCalleeSaves();
     farJump(returnValueGPR, ExceptionHandlerPtrTag);
     skipOSREntry.link(this);
