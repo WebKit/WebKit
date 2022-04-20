@@ -677,14 +677,65 @@ private:
 #undef CURRENT_ARGUMENT_TYPE
 #undef RESULT_TYPE
 
+    template<typename OperationType, unsigned gprIndex>
+    constexpr void finalizeGPRArguments(std::index_sequence<>)
+    {
+    }
+
+    template<typename OperationType, unsigned gprIndex, size_t arityIndex, size_t... remainingArityIndices>
+    constexpr void finalizeGPRArguments(std::index_sequence<arityIndex, remainingArityIndices...>)
+    {
+        using NextIndexSequenceType = std::index_sequence<remainingArityIndices...>;
+        using ArgumentType = typename FunctionTraits<OperationType>::template ArgumentType<arityIndex>;
+
+        // Every non-double-typed argument should be passed in through GPRRegs, and inversely only double-typed
+        // arguments should be passed through FPRRegs. This is asserted in the invocation of the lastly-called
+        // setupArgumentsImpl(ArgCollection<>) overload, by matching the number of handled GPR and FPR arguments
+        // with the corresponding count of properly-typed arguments for this operation.
+        if (!std::is_same_v<ArgumentType, double>) {
+            // RV64 calling convention requires all 32-bit values to be sign-extended into the whole register.
+            // JSC JIT is tailored for other ISAs that pass these values in 32-bit-wide registers, which RISC-V
+            // doesn't support, so any 32-bit value passed in argument registers has to be manually sign-extended.
+            if (isRISCV64() && gprIndex < GPRInfo::numberOfArgumentRegisters
+                && std::is_integral_v<ArgumentType> && sizeof(ArgumentType) == 4) {
+                GPRReg argReg = GPRInfo::toArgumentRegister(gprIndex);
+                signExtend32ToPtr(argReg, argReg);
+            }
+
+            finalizeGPRArguments<OperationType, gprIndex + 1>(NextIndexSequenceType());
+        } else
+            finalizeGPRArguments<OperationType, gprIndex>(NextIndexSequenceType());
+    }
+
+    template<typename ArgType> using GPRArgCountValue = std::conditional_t<std::is_same_v<ArgType, double>,
+        std::integral_constant<unsigned, 0>, std::integral_constant<unsigned, 1>>;
+    template<typename ArgType> using FPRArgCountValue = std::conditional_t<std::is_same_v<ArgType, double>,
+        std::integral_constant<unsigned, 1>, std::integral_constant<unsigned, 0>>;
+
+    template<typename OperationTraitsType, size_t... argIndices>
+    static constexpr unsigned gprArgsCount(std::index_sequence<argIndices...>)
+    {
+        return (0 + ... + (GPRArgCountValue<typename OperationTraitsType::template ArgumentType<argIndices>>::value));
+    }
+
+    template<typename OperationTraitsType, size_t... argIndices>
+    static constexpr unsigned fprArgsCount(std::index_sequence<argIndices...>)
+    {
+        return (0 + ... + (FPRArgCountValue<typename OperationTraitsType::template ArgumentType<argIndices>>::value));
+    }
+
     // Base case; set up the argument registers.
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke>
     ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs)
     {
-        static_assert(FunctionTraits<OperationType>::arity == numGPRArgs + numFPRArgs, "One last sanity check");
+        using TraitsType = FunctionTraits<OperationType>;
+        static_assert(TraitsType::arity == numGPRArgs + numFPRArgs, "One last sanity check");
 #if USE(JSVALUE64)
-        static_assert(FunctionTraits<OperationType>::cCallArity() == numGPRArgs + numFPRArgs + extraPoke, "Check the CCall arity");
+        static_assert(TraitsType::cCallArity() == numGPRArgs + numFPRArgs + extraPoke, "Check the CCall arity");
 #endif
+        static_assert(gprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numGPRArgs);
+        static_assert(fprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numFPRArgs);
+
         setupStubArgs<numGPRSources, GPRReg>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
 #if CPU(MIPS) || (CPU(ARM_THUMB2) && !CPU(ARM_HARDFP))
         setupStubCrossArgs<numCrossSources>(argSourceRegs.crossDestinations, argSourceRegs.crossSources);
@@ -711,6 +762,8 @@ private:
 #endif
             setupArgumentsImpl<OperationType>(argSourceRegs, args...);
         }
+
+        finalizeGPRArguments<OperationType, 0>(std::make_index_sequence<FunctionTraits<OperationType>::arity>());
     }
 
 public:

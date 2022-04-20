@@ -1,3 +1,49 @@
+2022-04-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [JSC] Accommodate the RISCV64 C calling convention
+        https://bugs.webkit.org/show_bug.cgi?id=236367
+        <rdar://problem/89026012>
+
+        Reviewed by Yusuke Suzuki.
+
+        The 64-bit RISC-V (RV64) calling convention requires 32-bit arguments
+        to be sign-extended to fill out the whole 64-bit register, fitting
+        nicely with different instructions in this ISA that operate on 32-bit
+        values, and differring from other 64-bit ISAs that provide partial-sized
+        registers (which are aliased to the whole register).
+
+        JSC JIT is tailored to the other ISAs, often taking shortcuts to pack
+        non-sign-extended values into registers that are then accessed for those
+        32-bit values through the partial-sized aliases. This can trip up RISC-V
+        execution when constructing calls that pass 32-bit values to native code
+        using the C calling convention.
+
+        To avoid this, arguments setup done through the CCallHelpers class is
+        enhanced to, after packing up arguments either into argument registers
+        or onto the stack, another pass of the argument types for the desired
+        operation is done, detecting whether the argument was supposed to be
+        packed into an GPR or an FPR destination. On RV64, when packed into a
+        GPR argument register that matches a 32-bit argument in the operation,
+        the additional sign extension is performed on that argument register.
+
+        GPR and FPR distinction for a given argument's register type is based
+        on whether or not the double type is used as the argument's type. All
+        non-double-typed arguments are passed as GPRs. Additional compile-time
+        validation is provided to ensure that's the case for every operation
+        that's having its arguments set up. This is relied upon when traversing
+        the operation's arguments and indexing every GPR argument along the way.
+
+        This approach only accommodates the RV64 calling convention for the
+        Baseline JIT level. For higher levels, similar but probably different
+        solutions will have to be crafted.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::finalizeGPRArguments):
+        (JSC::CCallHelpers::gprArgsCount):
+        (JSC::CCallHelpers::fprArgsCount):
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        (JSC::CCallHelpers::setupArgumentsEntryImpl):
+
 2022-04-20  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Unify calls and checks for CellTag
