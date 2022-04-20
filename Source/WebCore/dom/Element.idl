@@ -40,18 +40,18 @@
     [DOMJIT=ReadDOM] boolean hasAttributes();
     [SameObject] readonly attribute NamedNodeMap attributes;
     sequence<DOMString> getAttributeNames();
-    [DOMJIT=ReadDOM] DOMString? getAttribute(DOMString qualifiedName);
-    DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
-    [CEReactions] undefined setAttribute(DOMString qualifiedName, DOMString value);
-    [CEReactions] undefined setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
-    [CEReactions, ImplementedAs=removeAttributeForBindings] undefined removeAttribute(DOMString qualifiedName);
-    [CEReactions, ImplementedAs=removeAttributeNSForBindings] undefined removeAttributeNS(DOMString? namespaceURI, DOMString localName);
-    [CEReactions] boolean toggleAttribute(DOMString qualifiedName, optional boolean force);
-    boolean hasAttribute(DOMString qualifiedName);
-    boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
+    [DOMJIT=ReadDOM] DOMString? getAttribute([AtomString] DOMString qualifiedName);
+    DOMString? getAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
+    [CEReactions] undefined setAttribute([AtomString] DOMString qualifiedName, [AtomString] DOMString value);
+    [CEReactions] undefined setAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName, [AtomString] DOMString value);
+    [CEReactions, ImplementedAs=removeAttributeForBindings] undefined removeAttribute([AtomString] DOMString qualifiedName);
+    [CEReactions, ImplementedAs=removeAttributeNSForBindings] undefined removeAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
+    [CEReactions] boolean toggleAttribute([AtomString] DOMString qualifiedName, optional boolean force);
+    boolean hasAttribute([AtomString] DOMString qualifiedName);
+    boolean hasAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
 
-    [DOMJIT=ReadDOM] Attr? getAttributeNode(DOMString qualifiedName);
-    Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
+    [DOMJIT=ReadDOM] Attr? getAttributeNode([AtomString] DOMString qualifiedName);
+    Attr? getAttributeNodeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
     [CEReactions] Attr? setAttributeNode(Attr attr);
     [CEReactions] Attr? setAttributeNodeNS(Attr attr);
     [CEReactions] Attr removeAttributeNode(Attr attr);
@@ -63,9 +63,9 @@
     boolean matches(DOMString selectors);
     [ImplementedAs=matches] boolean webkitMatchesSelector(DOMString selectors); // Historical alias of .matches.
 
-    [DOMJIT=ReadDOM] HTMLCollection getElementsByTagName(DOMString qualifiedName);
-    HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
-    HTMLCollection getElementsByClassName(DOMString name);
+    [DOMJIT=ReadDOM] HTMLCollection getElementsByTagName([AtomString] DOMString qualifiedName);
+    HTMLCollection getElementsByTagNameNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
+    HTMLCollection getElementsByClassName([AtomString] DOMString name);
 
     [CEReactions] Element? insertAdjacentElement(DOMString where, Element element); // Historical.
     undefined insertAdjacentText(DOMString where, DOMString data); // Historical.

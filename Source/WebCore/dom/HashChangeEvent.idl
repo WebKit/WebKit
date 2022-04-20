@@ -21,9 +21,9 @@
 [
     Exposed=Window
 ] interface HashChangeEvent : Event {
-    constructor(DOMString type, optional HashChangeEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional HashChangeEventInit eventInitDict);
 
-    undefined initHashChangeEvent(DOMString type,
+    undefined initHashChangeEvent([AtomString] DOMString type,
                              optional boolean canBubble = false,
                              optional boolean cancelable = false,
                              optional USVString oldURL = "undefined",

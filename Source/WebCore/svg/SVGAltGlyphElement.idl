@@ -26,8 +26,8 @@
 [
     Exposed=Window
 ] interface SVGAltGlyphElement : SVGTextPositioningElement {
-    attribute DOMString glyphRef;
-    attribute DOMString format;
+    attribute [AtomString] DOMString glyphRef;
+    attribute [AtomString] DOMString format;
 };
 
 SVGAltGlyphElement includes SVGURIReference;

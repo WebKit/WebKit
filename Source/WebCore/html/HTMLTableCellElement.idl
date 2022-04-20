@@ -39,6 +39,6 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString width;
 
     [CEReactions=NotNeeded, Reflect] attribute DOMString abbr;
-    [CEReactions=NotNeeded] attribute DOMString scope;
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString scope;
 };
 

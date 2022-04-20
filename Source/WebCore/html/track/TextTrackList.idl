@@ -32,7 +32,7 @@
 ] interface TextTrackList : EventTarget {
     readonly attribute unsigned long length;
     getter TextTrack item(unsigned long index);
-    TextTrack getTrackById(DOMString id);
+    TextTrack getTrackById([AtomString] DOMString id);
 
     attribute EventHandler onaddtrack;
     attribute EventHandler onchange;

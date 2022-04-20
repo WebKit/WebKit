@@ -40,5 +40,5 @@
     attribute double regionAnchorY;
     attribute double viewportAnchorX;
     attribute double viewportAnchorY;
-    attribute DOMString scroll;
+    attribute [AtomString] DOMString scroll;
 };

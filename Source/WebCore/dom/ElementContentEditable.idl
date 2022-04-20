@@ -28,5 +28,5 @@ interface mixin ElementContentEditable {
     [CEReactions] attribute DOMString contentEditable;
     [CEReactions, EnabledBySetting=EnterKeyHintEnabled] attribute DOMString enterKeyHint;
     readonly attribute boolean isContentEditable;
-    [CEReactions] attribute DOMString inputMode;
+    [CEReactions] attribute [AtomString] DOMString inputMode;
 };

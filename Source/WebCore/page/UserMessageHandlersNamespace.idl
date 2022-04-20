@@ -30,5 +30,5 @@
     Conditional=USER_MESSAGE_HANDLERS,
     Exposed=Window
 ] interface UserMessageHandlersNamespace {
-    [CallWith=World] getter UserMessageHandler (DOMString name);
+    [CallWith=World] getter UserMessageHandler ([AtomString] DOMString name);
 };

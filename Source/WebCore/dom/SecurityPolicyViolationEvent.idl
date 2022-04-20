@@ -32,8 +32,8 @@ enum SecurityPolicyViolationEventDisposition {
 [
     Exposed=(Window,Worker)
 ] interface SecurityPolicyViolationEvent : Event {
-    constructor(DOMString type);
-    constructor(DOMString type, SecurityPolicyViolationEventInit eventInitDict);
+    constructor([AtomString] DOMString type);
+    constructor([AtomString] DOMString type, SecurityPolicyViolationEventInit eventInitDict);
 
     readonly attribute USVString documentURI;
     readonly attribute USVString referrer;

@@ -31,7 +31,7 @@
     readonly attribute DOMString attrName;
     readonly attribute unsigned short attrChange;
 
-    undefined initMutationEvent(DOMString type, optional boolean canBubble = false, optional boolean cancelable = false,
+    undefined initMutationEvent([AtomString] DOMString type, optional boolean canBubble = false, optional boolean cancelable = false,
         optional Node? relatedNode = null, optional DOMString prevValue = "undefined", optional DOMString newValue = "undefined",
         optional DOMString attrName = "undefined", optional unsigned short attrChange = 0);
 };

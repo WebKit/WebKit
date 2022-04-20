@@ -32,7 +32,7 @@
     readonly attribute DOMString id;
     [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute DOMString kind;
     readonly attribute DOMString label;
-    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute DOMString language;
+    [SettingsConditionallyReadWrite=MediaSourceEnabled] attribute [AtomString] DOMString language;
     [EnabledBySetting=TrackConfigurationEnabled] readonly attribute AudioTrackConfiguration configuration;
 
     attribute boolean enabled;

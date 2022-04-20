@@ -27,7 +27,7 @@
     EnabledBySetting=InputEventsEnabled,
     Exposed=Window
 ] interface InputEvent : UIEvent {
-    constructor(DOMString type, optional InputEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional InputEventInit eventInitDict);
 
     readonly attribute DOMString inputType;
     readonly attribute DOMString? data;
