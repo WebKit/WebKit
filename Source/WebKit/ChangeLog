@@ -1,3 +1,38 @@
+2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dictation text that contains emojis is inserted twice upon finalization
+        https://bugs.webkit.org/show_bug.cgi?id=239508
+        rdar://91895524
+
+        Reviewed by Aditya Keerthi.
+
+        `WebPage::replaceDictatedText` contains logic to only proceed with text replacement in the case where the
+        dictated text still matches the text before the current selection. To ensure this, it marches backwards through
+        visible positions from the start of the selection, for a total number of times equal to the length of the
+        expected string (`oldText`). If the text within this found range (i.e. from the position before the start of the
+        selection, to the start of the selection) no longer matches the `oldText` provided by the client, we return
+        early and do nothing.
+
+        However, this logic fails in the case where `oldText` contains emojis (or more generally, multiple codepoints
+        that combine to form a single grapheme cluster), since the length of the string is more than the number of
+        visible position iterations needed to find the correct starting position for the range. As a result, we end up
+        not replacing any characters, and when UIKit dictation code later calls `-insertText:` with the final dictation
+        string, we end up duplicating the finalized dictation text.
+
+        To address this issue, simply advance backwards by grapheme count instead of the raw string length to keep the
+        starting visible position consistent with the start of the range that we're trying to replace.
+
+        Test: UIWKInteractionViewProtocol.ReplaceDictatedTextContainingEmojis
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::replaceDictatedText):
+        (WebKit::WebPage::applyAutocorrectionInternal):
+
+        Also add a FIXME here around similar code that might also be susceptible to the same bug. However, in this case,
+        we avoid the problem because of subsequent logic that adjusts the starting position to try and match the
+        expected string. We may be able to remove or further limit this extra adjustment by using grapheme cluster count
+        here instead of string length when finding the initial starting position.
+
 2022-04-19  Chris Dumez  <cdumez@apple.com>
 
         Inline Element::shadowRoot()

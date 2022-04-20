@@ -1,3 +1,16 @@
+2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Dictation text that contains emojis is inserted twice upon finalization
+        https://bugs.webkit.org/show_bug.cgi?id=239508
+        rdar://91895524
+
+        Reviewed by Aditya Keerthi.
+
+        Add an API test to exercise the change.
+
+        * TestWebKitAPI/Tests/ios/UIWKInteractionViewProtocol.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-19  Michael Saboff  <msaboff@apple.com>
 
         Various WebKit tools need to be told about the system content path

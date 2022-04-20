@@ -148,19 +148,20 @@
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebEvent.h>
-#import <pal/cocoa/RevealSoftLink.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/StringToIntegerConversion.h>
+#import <wtf/text/TextBreakIterator.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 #import <WebCore/PromisedAttachmentInfo.h>
 #endif
+
+#import <pal/cocoa/RevealSoftLink.h>
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebPage::" fmt, this, ##__VA_ARGS__)
 #define WEBPAGE_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - WebPage::" fmt, this, ##__VA_ARGS__)
@@ -2402,7 +2403,7 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
         return;
     }
     VisiblePosition position = frame->selection().selection().start();
-    for (size_t i = 0; i < oldText.length(); ++i)
+    for (auto i = numGraphemeClusters(oldText); i; --i)
         position = position.previous();
     if (position.isNull())
         position = startOfDocument(frame->document());
@@ -2519,6 +2520,9 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
         // forward such that it matches the original selection as much as possible.
         if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks) {
             // Search for the original text before the selection caret.
+            // FIXME: Does this do the right thing in the case where `originalText` contains one or more grapheme clusters
+            // that encompass multiple codepoints? Advancing backwards by grapheme cluster count here may also allow us to
+            // sidestep the position adjustment logic below in some cases.
             for (size_t i = 0; i < originalText.length(); ++i)
                 position = position.previous();
             if (position.isNull())

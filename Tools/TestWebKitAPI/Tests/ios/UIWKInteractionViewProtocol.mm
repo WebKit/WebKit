@@ -238,6 +238,19 @@ TEST(UIWKInteractionViewProtocol, TextInteractionCanBeginInExistingSelection)
     EXPECT_TRUE(allowsTextInteractionInsideSelection);
 }
 
+TEST(UIWKInteractionViewProtocol, ReplaceDictatedTextContainingEmojis)
+{
+    auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
+    auto contentView = [webView textInputContentView];
+    [contentView selectAll:nil];
+    [contentView insertText:@"Hello world. This 👉🏻 is a good boy"];
+    [webView waitForNextPresentationUpdate];
+
+    [contentView replaceDictatedText:@"This 👉🏻 is a good boy" withText:@"This 👉🏻 is a 🦮"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ(@"Hello world. This 👉🏻 is a 🦮", [webView contentsAsString]);
+}
+
 TEST(UIWKInteractionViewProtocol, SuppressSelectionChangesDuringDictation)
 {
     auto [webView, inputDelegate] = setUpEditableWebViewAndWaitForInputSession();
