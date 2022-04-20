@@ -136,7 +136,9 @@ TEST(WebKit, CaptureTextFromCamera)
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
     EXPECT_TRUE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:nil]);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     EXPECT_FALSE([webView canPerformAction:@selector(captureTextFromCamera:) withSender:UIMenuController.sharedMenuController]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     [webView collapseToEnd];
     [webView waitForNextPresentationUpdate];

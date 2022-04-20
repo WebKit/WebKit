@@ -637,7 +637,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 #if USE(UICONTEXTMENU)
 
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
     return [_view _createTargetedContextMenuHintPreviewIfPossible];
 }

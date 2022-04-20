@@ -41,6 +41,7 @@
 #import <UIKit/UIDevice_Private.h>
 #import <UIKit/UIDocumentPasswordView.h>
 #import <UIKit/UIDocumentPickerViewController_Private.h>
+#import <UIKit/UIEditMenuInteraction_Private.h>
 #import <UIKit/UIFont_Private.h>
 #import <UIKit/UIGeometry_Private.h>
 #import <UIKit/UIGestureRecognizer_Private.h>
@@ -1212,9 +1213,11 @@ WTF_EXTERN_C_END
 @property (nonatomic, readonly) UIKeyboardPreferencesController<TIPreferencesControllerActions> *preferencesActions;
 @end
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @interface UIMenuItem (UIMenuController_SPI)
 @property (nonatomic) BOOL dontDismiss;
 @end
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 @interface UICalloutBar : UIView
 + (UICalloutBar *)activeCalloutBar;

@@ -416,7 +416,8 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     return UIEdgeInsetsZero;
 }
 
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
     return [_view _createTargetedContextMenuHintPreviewForFocusedElement];
 }

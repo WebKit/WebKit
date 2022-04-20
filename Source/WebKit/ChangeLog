@@ -1,3 +1,37 @@
+2022-04-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Address recent deprecation warnings on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=239560
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]):
+        (-[WKActionSheetAssistant contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView pasteForWebView:]):
+        (-[WKContentView _handleDOMPasteRequestWithResult:]):
+        (-[WKContentView _requestDOMPasteAccessForCategory:elementRect:originIdentifier:completionHandler:]):
+        (-[WKContentView contextMenuInteraction:configuration:previewForHighlightingItemWithIdentifier:]):
+        (-[WKContentView contextMenuInteraction:configuration:dismissalPreviewForItemWithIdentifier:]):
+        (-[WKContentView contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]): Deleted.
+        (-[WKContentView contextMenuInteraction:previewForDismissingMenuWithConfiguration:]): Deleted.
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsDropdown contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]):
+        (-[WKDataListSuggestionsDropdown contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]): Deleted.
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]):
+        (-[WKDateTimePicker contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]): Deleted.
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]):
+        (-[WKFileUploadPanel contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]): Deleted.
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]):
+        (-[WKSelectPicker contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]): Deleted.
+
 2022-04-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Do not call WebPreferences::simpleLineLayoutEnabled in canUseForLineLayoutWithReason

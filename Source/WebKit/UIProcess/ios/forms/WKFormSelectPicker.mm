@@ -649,7 +649,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
     return nil;
 }
 
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
     return [_view _createTargetedContextMenuHintPreviewForFocusedElement];
 }

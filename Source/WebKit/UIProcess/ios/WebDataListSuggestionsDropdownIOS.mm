@@ -552,7 +552,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #pragma mark UIContextMenuInteractionDelegate
 
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
+- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
     return [self.view _createTargetedContextMenuHintPreviewForFocusedElement];
 }

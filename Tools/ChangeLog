@@ -1,3 +1,21 @@
+2022-04-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Address recent deprecation warnings on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=239560
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+        (TEST):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView initWithFrame:configuration:]):
+        (-[TestRunnerWKWebView _addCustomItemToMenuControllerIfNecessary]):
+        (-[TestRunnerWKWebView resetCustomMenuAction]):
+        (-[TestRunnerWKWebView canPerformAction:withSender:]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::platformDestroy):
+
 2022-04-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r292508.
