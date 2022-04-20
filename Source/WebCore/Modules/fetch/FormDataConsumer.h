@@ -53,7 +53,7 @@ private:
 
     void consume(Span<const uint8_t>);
     void read();
-    void didFail(auto &&exception);
+    void didFail(ExceptionOr<Span<const uint8_t>>&& exception);
     bool isCancelled() { return !m_context; }
 
     Ref<FormData> m_formData;
