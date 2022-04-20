@@ -827,9 +827,9 @@ static Ref<Element> createTabSpanElement(Document& document, Text& tabTextNode)
     return spanElement;
 }
 
-Ref<Element> createTabSpanElement(Document& document, const String& tabText)
+Ref<Element> createTabSpanElement(Document& document, String&& tabText)
 {
-    return createTabSpanElement(document, document.createTextNode(tabText));
+    return createTabSpanElement(document, document.createTextNode(WTFMove(tabText)));
 }
 
 Ref<Element> createTabSpanElement(Document& document)

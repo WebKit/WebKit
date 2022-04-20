@@ -452,20 +452,20 @@ void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
 void HTMLConstructionSite::insertComment(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
-    attachLater(currentNode(), Comment::create(ownerDocumentForCurrentNode(), token.comment()));
+    attachLater(currentNode(), Comment::create(ownerDocumentForCurrentNode(), WTFMove(token.comment())));
 }
 
 void HTMLConstructionSite::insertCommentOnDocument(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
-    attachLater(m_attachmentRoot, Comment::create(m_document, token.comment()));
+    attachLater(m_attachmentRoot, Comment::create(m_document, WTFMove(token.comment())));
 }
 
 void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Comment);
     ContainerNode& parent = m_openElements.rootNode();
-    attachLater(parent, Comment::create(parent.document(), token.comment()));
+    attachLater(parent, Comment::create(parent.document(), WTFMove(token.comment())));
 }
 
 void HTMLConstructionSite::insertHTMLHeadElement(AtomHTMLToken&& token)
@@ -600,7 +600,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
         if (!textNode->length()) {
             String substring = characters.substring(currentPosition);
             AtomString substringAtom = m_whitespaceCache.lookup(substring, whitespaceMode);
-            textNode = Text::create(task.parent->document(), substringAtom.isNull() ? substring : substringAtom.string());
+            textNode = Text::create(task.parent->document(), substringAtom.isNull() ? WTFMove(substring) : substringAtom.releaseString());
         }
 
         currentPosition += textNode->length();

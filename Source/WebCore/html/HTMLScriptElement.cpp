@@ -85,9 +85,9 @@ void HTMLScriptElement::didFinishInsertingNode()
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#dom-script-text
-void HTMLScriptElement::setText(const String& value)
+void HTMLScriptElement::setText(String&& value)
 {
-    setTextContent(value);
+    setTextContent(WTFMove(value));
 }
 
 void HTMLScriptElement::setAsync(bool async)

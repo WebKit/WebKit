@@ -268,8 +268,7 @@ void webkit_dom_html_script_element_set_text(WebKitDOMHTMLScriptElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_SCRIPT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLScriptElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setText(convertedValue);
+    item->setText(WTF::String::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_script_element_get_html_for(WebKitDOMHTMLScriptElement* self)

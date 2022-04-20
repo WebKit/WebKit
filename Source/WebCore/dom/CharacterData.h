@@ -45,9 +45,9 @@ public:
     unsigned parserAppendData(const String& string, unsigned offset, unsigned lengthLimit);
 
 protected:
-    CharacterData(Document& document, const String& text, ConstructionType type = CreateCharacterData)
+    CharacterData(Document& document, String&& text, ConstructionType type = CreateCharacterData)
         : Node(document, type)
-        , m_data(!text.isNull() ? text : emptyString())
+        , m_data(!text.isNull() ? WTFMove(text) : emptyString())
     {
         ASSERT(type == CreateCharacterData || type == CreateText || type == CreateEditingText);
     }

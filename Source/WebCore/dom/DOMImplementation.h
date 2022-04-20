@@ -40,7 +40,7 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<Ref<DocumentType>> createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId);
     WEBCORE_EXPORT ExceptionOr<Ref<XMLDocument>> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*);
-    WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(const String& title);
+    WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(String&& title);
     static bool hasFeature() { return true; }
     WEBCORE_EXPORT static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media);
 

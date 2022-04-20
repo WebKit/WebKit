@@ -1,5 +1,163 @@
 2022-04-19  Chris Dumez  <cdumez@apple.com>
 
+        Use more r-value references for Text / CharacterData classes
+        https://bugs.webkit.org/show_bug.cgi?id=239481
+
+        Reviewed by Sam Weinig.
+
+        Use more r-value references for Text / CharacterData classes, which infected
+        a lot of the surrounding code. This avoids some ref-counting churn.
+
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::CDATASection):
+        (WebCore::CDATASection::create):
+        (WebCore::CDATASection::cloneNodeInternal):
+        (WebCore::CDATASection::virtualCreate):
+        * dom/CDATASection.h:
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::CharacterData):
+        * dom/Comment.cpp:
+        (WebCore::Comment::Comment):
+        (WebCore::Comment::create):
+        (WebCore::Comment::cloneNodeInternal):
+        * dom/Comment.h:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::stringReplaceAll):
+        * dom/ContainerNode.h:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/DOMImplementation.h:
+        * dom/Document.cpp:
+        (WebCore::Document::createTextNode):
+        (WebCore::Document::createComment):
+        (WebCore::Document::createCDATASection):
+        (WebCore::Document::createProcessingInstruction):
+        (WebCore::Document::createEditingTextNode):
+        (WebCore::Document::setTitle):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::insertAdjacentText):
+        * dom/Element.h:
+        * dom/ImageOverlay.cpp:
+        (WebCore::ImageOverlay::installImageOverlayStyleSheet):
+        (WebCore::ImageOverlay::updateSubtree):
+        * dom/Node.cpp:
+        (WebCore::Node::convertNodesOrStringsIntoNode):
+        (WebCore::Node::setTextContent):
+        * dom/Node.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::ProcessingInstruction):
+        (WebCore::ProcessingInstruction::create):
+        (WebCore::ProcessingInstruction::cloneNodeInternal):
+        * dom/ProcessingInstruction.h:
+        * dom/Text.cpp:
+        (WebCore::Text::create):
+        (WebCore::Text::createEditingText):
+        (WebCore::Text::cloneNodeInternal):
+        (WebCore::Text::virtualCreate):
+        (WebCore::Text::createWithLengthLimit):
+        * dom/Text.h:
+        (WebCore::Text::Text):
+        * dom/mac/ImageControlsMac.cpp:
+        (WebCore::ImageControlsMac::createImageControls):
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply):
+        * editing/Editing.cpp:
+        (WebCore::createTabSpanElement):
+        * editing/Editing.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::styleForSelectionStart):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::positionInsideTextNode):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace):
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::replace):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText):
+        (WebCore::createFragmentForTransformToFragment):
+        * editing/markup.h:
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::updateInnerTextValue):
+        * html/BaseDateAndTimeInputType.h:
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::appendEntry):
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename):
+        (WebCore::FTPDirectoryDocumentParser::parseAndAppendOneLine):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::setText):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+        (WebCore::HTMLElement::setOuterText):
+        * html/HTMLElement.h:
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::didAddUserAgentShadowRoot):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::createForLegacyFactoryFunction):
+        (WebCore::HTMLOptionElement::setText):
+        * html/HTMLOptionElement.h:
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::setValue):
+        (WebCore::HTMLOutputElement::setDefaultValue):
+        * html/HTMLOutputElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::setText):
+        * html/HTMLScriptElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        (WebCore::HTMLTextAreaElement::setDefaultValue):
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+        * html/HTMLTextFormControlElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::setText):
+        * html/HTMLTitleElement.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        * html/parser/AtomHTMLToken.h:
+        (WebCore::AtomHTMLToken::comment):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertCommentOnDocument):
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitLiteral):
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::updateVisibleValue):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::rebuildDisplayTree):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::getDisplayTree):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTTreeBuilder::buildFromString):
+        (WebCore::WebVTTTreeBuilder::constructTreeFromToken):
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData):
+        * platform/text/DateTimeFormat.h:
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::DateTimeStringBuilder::visitLiteral):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        (WebCore::SVGTRefElement::detachTarget):
+        * xml/XMLErrors.cpp:
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLErrors::insertErrorMessageBlock):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::transformToFragment):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::createLeafTextNode):
+        (WebCore::XMLDocumentParser::parseDocumentFragment):
+
+2022-04-19  Chris Dumez  <cdumez@apple.com>
+
         Replace String::replaceWithLiteral() with a String::replace() overload that takes in an ASCIILiteral
         https://bugs.webkit.org/show_bug.cgi?id=239500
 

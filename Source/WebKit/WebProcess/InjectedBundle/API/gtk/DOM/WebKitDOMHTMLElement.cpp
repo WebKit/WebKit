@@ -559,7 +559,7 @@ void webkit_dom_html_element_set_inner_text(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    auto result = item->setInnerText(convertedValue);
+    auto result = item->setInnerText(WTFMove(convertedValue));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -583,7 +583,7 @@ void webkit_dom_html_element_set_outer_text(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    auto result = item->setOuterText(convertedValue);
+    auto result = item->setOuterText(WTFMove(convertedValue));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);

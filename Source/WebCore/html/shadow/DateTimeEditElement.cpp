@@ -60,7 +60,7 @@ public:
 private:
     // DateTimeFormat::TokenHandler functions:
     void visitField(DateTimeFormat::FieldType, int);
-    void visitLiteral(const String&);
+    void visitLiteral(String&&);
 
     DateTimeEditElement& m_editElement;
     const DateTimeEditElement::LayoutParameters& m_parameters;
@@ -167,7 +167,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 }
 
-void DateTimeEditBuilder::visitLiteral(const String& text)
+void DateTimeEditBuilder::visitLiteral(String&& text)
 {
     ASSERT(text.length());
 
@@ -184,7 +184,7 @@ void DateTimeEditBuilder::visitLiteral(const String& text)
     if (text.endsWith(' '))
         element->setInlineStyleProperty(CSSPropertyMarginInlineEnd, -1, CSSUnitType::CSS_PX);
 
-    element->appendChild(Text::create(m_editElement.document(), text));
+    element->appendChild(Text::create(m_editElement.document(), WTFMove(text)));
     m_editElement.fieldsWrapperElement().appendChild(element);
 }
 

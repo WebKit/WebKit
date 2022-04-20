@@ -435,36 +435,36 @@ void HTMLElement::setDir(const AtomString& value)
     setAttributeWithoutSynchronization(dirAttr, value);
 }
 
-ExceptionOr<void> HTMLElement::setInnerText(const String& text)
+ExceptionOr<void> HTMLElement::setInnerText(String&& text)
 {
     // FIXME: This doesn't take whitespace collapsing into account at all.
 
     if (!text.contains('\n') && !text.contains('\r')) {
-        stringReplaceAll(text);
+        stringReplaceAll(WTFMove(text));
         return { };
     }
 
     if (isConnected() && isTextControlInnerTextElement()) {
         if (!text.contains('\r')) {
-            stringReplaceAll(text);
+            stringReplaceAll(WTFMove(text));
             return { };
         }
-        String textWithConsistentLineBreaks = text;
+        String textWithConsistentLineBreaks = WTFMove(text);
         textWithConsistentLineBreaks.replace("\r\n", "\n");
         textWithConsistentLineBreaks.replace('\r', '\n');
-        stringReplaceAll(textWithConsistentLineBreaks);
+        stringReplaceAll(WTFMove(textWithConsistentLineBreaks));
         return { };
     }
 
     // FIXME: This should use replaceAll(), after we fix that to work properly for DocumentFragment.
     // Add text nodes and <br> elements.
-    auto fragment = textToFragment(document(), text);
+    auto fragment = textToFragment(document(), WTFMove(text));
     // It's safe to dispatch events on the new fragment since author scripts have no access to it yet.
     ScriptDisallowedScope::EventAllowedScope allowedScope(fragment.get());
     return replaceChildrenWithFragment(*this, WTFMove(fragment));
 }
 
-ExceptionOr<void> HTMLElement::setOuterText(const String& text)
+ExceptionOr<void> HTMLElement::setOuterText(String&& text)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
@@ -476,9 +476,9 @@ ExceptionOr<void> HTMLElement::setOuterText(const String& text)
 
     // Convert text to fragment with <br> tags instead of linebreaks if needed.
     if (text.contains('\r') || text.contains('\n'))
-        newChild = textToFragment(document(), text);
+        newChild = textToFragment(document(), WTFMove(text));
     else
-        newChild = Text::create(document(), text);
+        newChild = Text::create(document(), WTFMove(text));
 
     if (!parentNode())
         return Exception { HierarchyRequestError };

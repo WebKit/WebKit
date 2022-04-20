@@ -1001,16 +1001,16 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree(const IntSize& videoSize, int fon
     if (displayTree->document().page()) {
         auto cssString = displayTree->document().page()->captionUserPreferencesStyleSheet();
         auto style = HTMLStyleElement::create(HTMLNames::styleTag, displayTree->document(), false);
-        style->setTextContent(cssString);
-        displayTree->appendChild(style);
+        style->setTextContent(WTFMove(cssString));
+        displayTree->appendChild(WTFMove(style));
     }
 
     const auto& styleSheets = track()->styleSheets();
     if (styleSheets) {
         for (const auto& cssString : *styleSheets) {
             auto style = HTMLStyleElement::create(HTMLNames::styleTag, displayTree->document(), false);
-            style->setTextContent(cssString);
-            displayTree->appendChild(style);
+            style->setTextContent(String { cssString });
+            displayTree->appendChild(WTFMove(style));
         }
     }
 

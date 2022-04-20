@@ -552,7 +552,7 @@ ExceptionOr<RefPtr<Node>> Node::convertNodesOrStringsIntoNode(FixedVector<NodeOr
     for (auto& variant : nodeOrStringVector) {
         WTF::switchOn(variant,
             [&](RefPtr<Node>& node) { nodes.uncheckedAppend(*node.get()); },
-            [&](String& string) { nodes.uncheckedAppend(Text::create(document(), string)); }
+            [&](String& string) { nodes.uncheckedAppend(Text::create(document(), WTFMove(string))); }
         );
     }
 
@@ -1590,7 +1590,7 @@ String Node::textContent(bool convertBRsToNewlines) const
     return isNullString ? String() : content.toString();
 }
 
-void Node::setTextContent(const String& text)
+void Node::setTextContent(String&& text)
 {           
     switch (nodeType()) {
     case ATTRIBUTE_NODE:
@@ -1598,11 +1598,11 @@ void Node::setTextContent(const String& text)
     case CDATA_SECTION_NODE:
     case COMMENT_NODE:
     case PROCESSING_INSTRUCTION_NODE:
-        setNodeValue(text);
+        setNodeValue(WTFMove(text));
         return;
     case ELEMENT_NODE:
     case DOCUMENT_FRAGMENT_NODE:
-        downcast<ContainerNode>(*this).stringReplaceAll(text);
+        downcast<ContainerNode>(*this).stringReplaceAll(WTFMove(text));
         return;
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:

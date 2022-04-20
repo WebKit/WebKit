@@ -188,7 +188,7 @@ String DateTimeFieldElement::visibleValue() const
 void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 {
     if (!firstChild())
-        appendChild(Text::create(document(), emptyString()));
+        appendChild(Text::create(document(), String { emptyString() }));
 
     auto& textNode = downcast<Text>(*firstChild());
     String newVisibleValue = visibleValue();

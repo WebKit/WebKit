@@ -611,7 +611,7 @@ static String innerTextValueFrom(TextControlInnerTextElement& innerText)
     return result.toString();
 }
 
-void HTMLTextFormControlElement::setInnerTextValue(const String& value)
+void HTMLTextFormControlElement::setInnerTextValue(String&& value)
 {
     LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::PerformanceOptimization);
     auto innerText = innerTextElementCreatingShadowSubtreeIfNeeded();
@@ -643,9 +643,10 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
             // Events dispatched on the inner text element cannot execute arbitrary author scripts.
             ScriptDisallowedScope::EventAllowedScope allowedScope(*userAgentShadowRoot());
 
-            innerText->setInnerText(value);
+            bool endsWithNewLine = value.endsWith('\n') || value.endsWith('\r');
+            innerText->setInnerText(WTFMove(value));
 
-            if (value.endsWith('\n') || value.endsWith('\r'))
+            if (endsWithNewLine)
                 innerText->appendChild(HTMLBRElement::create(document()));
         }
 

@@ -93,6 +93,7 @@ public:
 
     operator const String&() const { return m_string; }
     const String& string() const { return m_string; };
+    String releaseString() { return WTFMove(m_string); }
 
     // FIXME: What guarantees this isn't a SymbolImpl rather than an AtomStringImpl?
     AtomStringImpl* impl() const { return static_cast<AtomStringImpl*>(m_string.impl()); }

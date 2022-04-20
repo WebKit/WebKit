@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT String origin() const;
 
     WEBCORE_EXPORT String text();
-    void setText(const String&);
+    void setText(String&&);
 
     bool isLiveLink() const;
 

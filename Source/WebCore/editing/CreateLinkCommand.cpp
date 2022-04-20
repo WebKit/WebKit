@@ -50,7 +50,7 @@ void CreateLinkCommand::doApply()
         applyStyledElement(WTFMove(anchorElement));
     else {
         insertNodeAt(anchorElement.copyRef(), endingSelection().start());
-        appendNode(Text::create(document(), m_url), anchorElement.copyRef());
+        appendNode(Text::create(document(), String { m_url }), anchorElement.copyRef());
         setEndingSelection(VisibleSelection(positionInParentBeforeNode(anchorElement.ptr()), positionInParentAfterNode(anchorElement.ptr()), Affinity::Downstream, endingSelection().isDirectional()));
     }
 }

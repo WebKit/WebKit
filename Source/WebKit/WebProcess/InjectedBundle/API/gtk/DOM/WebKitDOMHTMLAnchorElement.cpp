@@ -628,8 +628,7 @@ void webkit_dom_html_anchor_element_set_text(WebKitDOMHTMLAnchorElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ANCHOR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAnchorElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setText(convertedValue);
+    item->setText(WTF::String::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_anchor_element_get_href(WebKitDOMHTMLAnchorElement* self)

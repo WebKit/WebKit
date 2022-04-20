@@ -404,7 +404,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
         return;
 
     m_value = normalizedValue;
-    setInnerTextValue(m_value);
+    setInnerTextValue(String { m_value });
     setLastChangeWasNotUserEdit();
     updatePlaceholderVisibility();
     invalidateStyleForSubtree();
@@ -428,9 +428,9 @@ String HTMLTextAreaElement::defaultValue() const
     return TextNodeTraversal::childTextContent(*this);
 }
 
-void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
+void HTMLTextAreaElement::setDefaultValue(String&& defaultValue)
 {
-    setTextContent(defaultValue);
+    setTextContent(WTFMove(defaultValue));
 }
 
 String HTMLTextAreaElement::validationMessage() const
@@ -560,7 +560,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
         m_placeholder = TextControlPlaceholderElement::create(document());
         userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->nextSibling());
     }
-    m_placeholder->setInnerText(placeholderText);
+    m_placeholder->setInnerText(String { placeholderText });
 }
 
 bool HTMLTextAreaElement::willRespondToMouseClickEvents()

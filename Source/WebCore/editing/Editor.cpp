@@ -4362,7 +4362,7 @@ const RenderStyle* Editor::styleForSelectionStart(RefPtr<Node>& nodeToRemove)
     String styleText = typingStyle->style()->asText() + " display: inline";
     styleElement->setAttribute(HTMLNames::styleAttr, styleText);
 
-    styleElement->appendChild(document().createEditingTextNode(emptyString()));
+    styleElement->appendChild(document().createEditingTextNode(String { emptyString() }));
 
     auto positionNode = position.deprecatedNode();
     ASSERT(positionNode);

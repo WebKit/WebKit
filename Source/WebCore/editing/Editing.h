@@ -169,7 +169,7 @@ Node* enclosingListChild(Node*);
 // -------------------------------------------------------------------------
 
 Ref<Element> createTabSpanElement(Document&);
-Ref<Element> createTabSpanElement(Document&, const String& tabText);
+Ref<Element> createTabSpanElement(Document&, String&& tabText);
 Ref<Element> createBlockPlaceholderElement(Document&);
 
 Element* editableRootForPosition(const Position&, EditableType = ContentIsEditable);

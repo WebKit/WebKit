@@ -123,14 +123,14 @@ Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const S
     return sheet;
 }
 
-Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
+Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
 {
     auto document = HTMLDocument::create(nullptr, m_document.settings(), URL(), { });
     document->open();
     document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
         auto titleElement = HTMLTitleElement::create(titleTag, document);
-        titleElement->appendChild(document->createTextNode(title));
+        titleElement->appendChild(document->createTextNode(WTFMove(title)));
         ASSERT(document->head());
         document->head()->appendChild(titleElement);
     }

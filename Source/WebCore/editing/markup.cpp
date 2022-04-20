@@ -1180,8 +1180,9 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
     };
 
     if (contextPreservesNewline(context)) {
-        fragment->appendChild(document.createTextNode(string));
-        if (string.endsWith('\n')) {
+        bool endsWithNewLine = string.endsWith('\n');
+        fragment->appendChild(document.createTextNode(WTFMove(string)));
+        if (endsWithNewLine) {
             fragment->appendChild(createHTMLBRElement());
         }
         return fragment;
@@ -1273,7 +1274,7 @@ ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element& cont
     return createFragmentForMarkup(contextElement, markup, DocumentFragmentMode::ReuseForInnerOuterHTML, parserContentPolicy);
 }
 
-RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDoc, const String& sourceString, const String& sourceMIMEType)
+RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDoc, String&& sourceString, const String& sourceMIMEType)
 {
     RefPtr<DocumentFragment> fragment = outputDoc.createDocumentFragment();
     
@@ -1283,11 +1284,11 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
         auto fakeBody = HTMLBodyElement::create(outputDoc);
-        fragment->parseHTML(sourceString, fakeBody.ptr());
+        fragment->parseHTML(WTFMove(sourceString), fakeBody.ptr());
     } else if (sourceMIMEType == "text/plain")
-        fragment->parserAppendChild(Text::create(outputDoc, sourceString));
+        fragment->parserAppendChild(Text::create(outputDoc, WTFMove(sourceString)));
     else {
-        bool successfulParse = fragment->parseXML(sourceString, 0);
+        bool successfulParse = fragment->parseXML(WTFMove(sourceString), 0);
         if (!successfulParse)
             return nullptr;
     }

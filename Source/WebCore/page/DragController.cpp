@@ -170,7 +170,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
                     if (title.isEmpty())
                         title = url;
                 }
-                anchor->appendChild(document.createTextNode(title));
+                anchor->appendChild(document.createTextNode(WTFMove(title)));
                 auto fragment = document.createDocumentFragment();
                 fragment->appendChild(anchor);
                 return fragment;

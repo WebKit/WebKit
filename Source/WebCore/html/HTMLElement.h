@@ -53,8 +53,8 @@ public:
 
     WEBCORE_EXPORT String title() const final;
 
-    WEBCORE_EXPORT ExceptionOr<void> setInnerText(const String&);
-    WEBCORE_EXPORT ExceptionOr<void> setOuterText(const String&);
+    WEBCORE_EXPORT ExceptionOr<void> setInnerText(String&&);
+    WEBCORE_EXPORT ExceptionOr<void> setOuterText(String&&);
 
     virtual bool hasCustomFocusLogic() const;
     bool supportsFocus() const override;

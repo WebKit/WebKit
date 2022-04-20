@@ -435,10 +435,10 @@ public:
     
     WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementForBindings(const AtomString& tagName);
     WEBCORE_EXPORT Ref<DocumentFragment> createDocumentFragment();
-    WEBCORE_EXPORT Ref<Text> createTextNode(const String& data);
-    WEBCORE_EXPORT Ref<Comment> createComment(const String& data);
-    WEBCORE_EXPORT ExceptionOr<Ref<CDATASection>> createCDATASection(const String& data);
-    WEBCORE_EXPORT ExceptionOr<Ref<ProcessingInstruction>> createProcessingInstruction(const String& target, const String& data);
+    WEBCORE_EXPORT Ref<Text> createTextNode(String&& data);
+    WEBCORE_EXPORT Ref<Comment> createComment(String&& data);
+    WEBCORE_EXPORT ExceptionOr<Ref<CDATASection>> createCDATASection(String&& data);
+    WEBCORE_EXPORT ExceptionOr<Ref<ProcessingInstruction>> createProcessingInstruction(String&& target, String&& data);
     WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttribute(const AtomString& name);
     WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttributeNS(const AtomString& namespaceURI, const String& qualifiedName, bool shouldIgnoreNamespaceChecks = false);
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> importNode(Node& nodeToImport, bool deep);
@@ -612,7 +612,7 @@ public:
 
     // Special support for editing
     WEBCORE_EXPORT Ref<CSSStyleDeclaration> createCSSStyleDeclaration();
-    Ref<Text> createEditingTextNode(const String&);
+    Ref<Text> createEditingTextNode(String&&);
 
     enum class ResolveStyleType { Normal, Rebuild };
     void resolveStyle(ResolveStyleType = ResolveStyleType::Normal);
@@ -964,7 +964,7 @@ public:
 
     // Used by DOM bindings; no direction known.
     const String& title() const { return m_title.string; }
-    WEBCORE_EXPORT void setTitle(const String&);
+    WEBCORE_EXPORT void setTitle(String&&);
     const StringWithDirection& titleWithDirection() const { return m_title; }
 
     WEBCORE_EXPORT const AtomString& dir() const;

@@ -129,7 +129,7 @@ RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node& sourceNode, Do
 
     if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
         return nullptr;
-    return createFragmentForTransformToFragment(outputDocument, resultString, resultMIMEType);
+    return createFragmentForTransformToFragment(outputDocument, WTFMove(resultString), WTFMove(resultMIMEType));
 }
 
 void XSLTProcessor::setParameter(const String& /*namespaceURI*/, const String& localName, const String& value)

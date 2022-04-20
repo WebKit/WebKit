@@ -229,8 +229,8 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(meterElementShadowUserAgentStyleSheet, sizeof(meterElementShadowUserAgentStyleSheet)));
 
     auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
-    style->setTextContent(shadowStyle);
-    root.appendChild(style);
+    style->setTextContent(String { shadowStyle });
+    root.appendChild(WTFMove(style));
 
     // Pseudos are set to allow author styling.
     auto inner = HTMLDivElement::create(document());

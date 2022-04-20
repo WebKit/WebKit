@@ -179,7 +179,7 @@ WebKitDOMHTMLDocument* webkit_dom_dom_implementation_create_html_document(WebKit
     g_return_val_if_fail(title, 0);
     WebCore::DOMImplementation* item = WebKit::core(self);
     WTF::String convertedTitle = WTF::String::fromUTF8(title);
-    RefPtr<WebCore::HTMLDocument> gobjectResult = WTF::getPtr(item->createHTMLDocument(convertedTitle));
+    RefPtr<WebCore::HTMLDocument> gobjectResult = WTF::getPtr(item->createHTMLDocument(WTFMove(convertedTitle)));
     return WebKit::kit(gobjectResult.get());
 }
 

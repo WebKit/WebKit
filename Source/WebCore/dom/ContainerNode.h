@@ -57,7 +57,7 @@ public:
     ExceptionOr<void> replaceChild(Node& newChild, Node& oldChild);
     WEBCORE_EXPORT ExceptionOr<void> removeChild(Node& child);
     WEBCORE_EXPORT ExceptionOr<void> appendChild(Node& newChild);
-    void stringReplaceAll(const String&);
+    void stringReplaceAll(String&&);
     void replaceAll(Node*);
 
     ContainerNode& rootNode() const { return downcast<ContainerNode>(Node::rootNode()); }

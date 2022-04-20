@@ -33,7 +33,7 @@ public:
     static Ref<HTMLTitleElement> create(const QualifiedName&, Document&);
 
     WEBCORE_EXPORT String text() const;
-    WEBCORE_EXPORT void setText(const String&);
+    WEBCORE_EXPORT void setText(String&&);
 
     const StringWithDirection& textWithDirection() const { return m_title; }
 

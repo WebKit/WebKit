@@ -147,7 +147,7 @@ void XMLDocumentParser::createLeafTextNode()
 
     ASSERT(m_bufferedText.size() == 0);
     ASSERT(!m_leafTextNode);
-    m_leafTextNode = Text::create(m_currentNode->document(), emptyString());
+    m_leafTextNode = Text::create(m_currentNode->document(), String { emptyString() });
     m_currentNode->parserAppendChild(*m_leafTextNode);
 }
 
@@ -296,7 +296,7 @@ bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragm
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-parsing-algorithm
     // For now we have a hack for script/style innerHTML support:
     if (contextElement && (contextElement->hasLocalName(HTMLNames::scriptTag->localName()) || contextElement->hasLocalName(HTMLNames::styleTag->localName()))) {
-        fragment.parserAppendChild(fragment.document().createTextNode(chunk));
+        fragment.parserAppendChild(fragment.document().createTextNode(String { chunk }));
         return true;
     }
 

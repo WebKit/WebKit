@@ -943,9 +943,7 @@ void webkit_dom_element_insert_adjacent_text(WebKitDOMElement* self, const gchar
     g_return_if_fail(text);
     g_return_if_fail(!error || !*error);
     WebCore::Element* item = WebKit::core(self);
-    WTF::String convertedWhere = WTF::String::fromUTF8(where);
-    WTF::String convertedText = WTF::String::fromUTF8(text);
-    auto result = item->insertAdjacentText(convertedWhere, convertedText);
+    auto result = item->insertAdjacentText(WTF::String::fromUTF8(where), WTF::String::fromUTF8(text));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);

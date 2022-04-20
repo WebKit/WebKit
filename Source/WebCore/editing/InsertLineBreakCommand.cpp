@@ -133,7 +133,7 @@ void InsertLineBreakCommand::doApply()
             if (textNode.isConnected())
                 insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
             else {
-                auto nbspNode = document().createTextNode(nonBreakingSpaceString());
+                auto nbspNode = document().createTextNode(String { nonBreakingSpaceString() });
                 auto* nbspNodePtr = nbspNode.ptr();
                 insertNodeAt(WTFMove(nbspNode), positionBeforeTextNode);
                 endingPosition = firstPositionInNode(nbspNodePtr);

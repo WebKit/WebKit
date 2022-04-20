@@ -44,14 +44,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Text);
 
-Ref<Text> Text::create(Document& document, const String& data)
+Ref<Text> Text::create(Document& document, String&& data)
 {
-    return adoptRef(*new Text(document, data, CreateText));
+    return adoptRef(*new Text(document, WTFMove(data), CreateText));
 }
 
-Ref<Text> Text::createEditingText(Document& document, const String& data)
+Ref<Text> Text::createEditingText(Document& document, String&& data)
 {
-    return adoptRef(*new Text(document, data, CreateEditingText));
+    return adoptRef(*new Text(document, WTFMove(data), CreateEditingText));
 }
 
 Text::~Text() = default;
@@ -163,7 +163,7 @@ Node::NodeType Text::nodeType() const
 
 Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
-    return create(targetDocument, data());
+    return create(targetDocument, String { data() });
 }
 
 static bool isSVGShadowText(Text* text)
@@ -195,9 +195,9 @@ bool Text::childTypeAllowed(NodeType) const
     return false;
 }
 
-Ref<Text> Text::virtualCreate(const String& data)
+Ref<Text> Text::virtualCreate(String&& data)
 {
-    return create(document(), data);
+    return create(document(), WTFMove(data));
 }
 
 Ref<Text> Text::createWithLengthLimit(Document& document, const String& data, unsigned start, unsigned lengthLimit)
@@ -205,7 +205,7 @@ Ref<Text> Text::createWithLengthLimit(Document& document, const String& data, un
     unsigned dataLength = data.length();
 
     if (!start && dataLength <= lengthLimit)
-        return create(document, data);
+        return create(document, String { data });
 
     Ref<Text> result = Text::create(document, String());
     result->parserAppendData(data, start, lengthLimit);

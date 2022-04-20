@@ -351,9 +351,9 @@ String HTMLAnchorElement::text()
     return textContent();
 }
 
-void HTMLAnchorElement::setText(const String& text)
+void HTMLAnchorElement::setText(String&& text)
 {
-    setTextContent(text);
+    setTextContent(WTFMove(text));
 }
 
 bool HTMLAnchorElement::isLiveLink() const

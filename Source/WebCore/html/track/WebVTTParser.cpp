@@ -519,7 +519,7 @@ Ref<DocumentFragment> WebVTTTreeBuilder::buildFromString(const String& cueText)
     auto fragment = DocumentFragment::create(m_document);
 
     if (cueText.isEmpty()) {
-        fragment->parserAppendChild(Text::create(m_document, emptyString()));
+        fragment->parserAppendChild(Text::create(m_document, String { emptyString() }));
         return fragment;
     }
 
@@ -650,7 +650,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
-        m_currentNode->parserAppendChild(Text::create(document, m_token.characters()));
+        m_currentNode->parserAppendChild(Text::create(document, String { m_token.characters() }));
         break;
     }
     case WebVTTTokenTypes::StartTag: {
@@ -709,7 +709,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         String charactersString = m_token.characters();
         MediaTime parsedTimeStamp;
         if (WebVTTParser::collectTimeStamp(charactersString, parsedTimeStamp))
-            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, charactersString));
+            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, WTFMove(charactersString)));
         break;
     }
     default:

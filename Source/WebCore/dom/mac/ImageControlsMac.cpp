@@ -96,7 +96,7 @@ void createImageControls(HTMLElement& element)
     
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet)));
     auto style = HTMLStyleElement::create(HTMLNames::styleTag, document.get(), false);
-    style->setTextContent(shadowStyle);
+    style->setTextContent(String { shadowStyle });
     shadowRoot->appendChild(WTFMove(style));
     
     auto button = HTMLButtonElement::create(HTMLNames::buttonTag, element.document(), nullptr);

@@ -175,7 +175,7 @@ public:
     WEBCORE_EXPORT const AtomString& lookupNamespaceURI(const AtomString& prefix) const;
 
     WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
-    WEBCORE_EXPORT void setTextContent(const String&);
+    WEBCORE_EXPORT void setTextContent(String&&);
     
     Node* lastDescendant() const;
     Node* firstDescendant() const;

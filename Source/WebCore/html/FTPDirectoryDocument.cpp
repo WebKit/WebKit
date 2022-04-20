@@ -83,8 +83,8 @@ private:
     void createBasicDocument();
 
     void parseAndAppendOneLine(const String&);
-    void appendEntry(const String& name, const String& size, const String& date, bool isDirectory);    
-    Ref<Element> createTDForFilename(const String&);
+    void appendEntry(String&& name, String&& size, String&& date, bool isDirectory);
+    Ref<Element> createTDForFilename(String&&);
 
     RefPtr<HTMLTableElement> m_tableElement;
 
@@ -105,7 +105,7 @@ FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument& document)
 {
 }
 
-void FTPDirectoryDocumentParser::appendEntry(const String& filename, const String& size, const String& date, bool isDirectory)
+void FTPDirectoryDocumentParser::appendEntry(String&& filename, String&& size, String&& date, bool isDirectory)
 {
     auto& document = *this->document();
 
@@ -120,23 +120,23 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
         typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryIcon ftpDirectoryTypeFile", AtomString::ConstructFromLiteral));
     rowElement->appendChild(typeElement);
 
-    auto nameElement = createTDForFilename(filename);
+    auto nameElement = createTDForFilename(WTFMove(filename));
     nameElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileName", AtomString::ConstructFromLiteral));
     rowElement->appendChild(nameElement);
 
     auto dateElement = HTMLTableCellElement::create(tdTag, document);
-    dateElement->appendChild(Text::create(document, date));
+    dateElement->appendChild(Text::create(document, WTFMove(date)));
     dateElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileDate", AtomString::ConstructFromLiteral));
     rowElement->appendChild(dateElement);
 
     auto sizeElement = HTMLTableCellElement::create(tdTag, document);
-    sizeElement->appendChild(Text::create(document, size));
+    sizeElement->appendChild(Text::create(document, WTFMove(size)));
     sizeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileSize", AtomString::ConstructFromLiteral));
     rowElement->appendChild(sizeElement);
     document.setHasVisuallyNonEmptyCustomContent();
 }
 
-Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
+Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(String&& filename)
 {
     auto& document = *this->document();
 
@@ -148,7 +148,7 @@ Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filen
 
     auto anchorElement = HTMLAnchorElement::create(document);
     anchorElement->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, fullURL);
-    anchorElement->appendChild(Text::create(document, filename));
+    anchorElement->appendChild(Text::create(document, WTFMove(filename)));
 
     auto tdElement = HTMLTableCellElement::create(tdTag, document);
     tdElement->appendChild(anchorElement);
@@ -274,7 +274,7 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
 
     LOG(FTP, "Appending entry - %s, %s", filename.ascii().data(), result.fileSize.ascii().data());
 
-    appendEntry(filename, processFilesizeString(result.fileSize, result.type == FTPDirectoryEntry), processFileDateString(result.modifiedTime), result.type == FTPDirectoryEntry);
+    appendEntry(WTFMove(filename), processFilesizeString(result.fileSize, result.type == FTPDirectoryEntry), processFileDateString(result.modifiedTime), result.type == FTPDirectoryEntry);
 }
 
 static inline RefPtr<SharedBuffer> createTemplateDocumentData(const Settings& settings)

@@ -613,8 +613,7 @@ void webkit_dom_node_set_text_content(WebKitDOMNode* self, const gchar* value, G
     g_return_if_fail(value);
     g_return_if_fail(!error || !*error);
     WebCore::Node* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setTextContent(convertedValue);
+    item->setTextContent(WTF::String::fromUTF8(value));
 }
 
 WebKitDOMElement* webkit_dom_node_get_parent_element(WebKitDOMNode* self)

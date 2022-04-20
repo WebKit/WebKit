@@ -53,7 +53,7 @@ public:
 private:
     // DateTimeFormat::TokenHandler functions.
     void visitField(DateTimeFormat::FieldType, int) final;
-    void visitLiteral(const String&) final;
+    void visitLiteral(String&&) final;
 
     String zeroPadString(const String&, size_t width);
     void appendNumber(int number, size_t width);
@@ -168,10 +168,10 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
     }
 }
 
-void DateTimeStringBuilder::visitLiteral(const String& text)
+void DateTimeStringBuilder::visitLiteral(String&& text)
 {
     ASSERT(text.length());
-    m_builder.append(text);
+    m_builder.append(WTFMove(text));
 }
 
 String DateTimeStringBuilder::toString()

@@ -43,15 +43,15 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ProcessingInstruction);
 
-inline ProcessingInstruction::ProcessingInstruction(Document& document, const String& target, const String& data)
-    : CharacterData(document, data)
-    , m_target(target)
+inline ProcessingInstruction::ProcessingInstruction(Document& document, String&& target, String&& data)
+    : CharacterData(document, WTFMove(data))
+    , m_target(WTFMove(target))
 {
 }
 
-Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, const String& target, const String& data)
+Ref<ProcessingInstruction> ProcessingInstruction::create(Document& document, String&& target, String&& data)
 {
-    return adoptRef(*new ProcessingInstruction(document, target, data));
+    return adoptRef(*new ProcessingInstruction(document, WTFMove(target), WTFMove(data)));
 }
 
 ProcessingInstruction::~ProcessingInstruction()
@@ -80,7 +80,7 @@ Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& targetDocument, Clo
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
-    return create(targetDocument, m_target, data());
+    return create(targetDocument, String { m_target }, String { data() });
 }
 
 void ProcessingInstruction::checkStyleSheet()

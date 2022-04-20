@@ -725,9 +725,9 @@ void ContainerNode::replaceAll(Node* node)
 }
 
 // https://dom.spec.whatwg.org/#string-replace-all
-void ContainerNode::stringReplaceAll(const String& string)
+void ContainerNode::stringReplaceAll(String&& string)
 {
-    replaceAll(string.isEmpty() ? nullptr : document().createTextNode(string).ptr());
+    replaceAll(string.isEmpty() ? nullptr : document().createTextNode(WTFMove(string)).ptr());
 }
 
 inline void ContainerNode::rebuildSVGExtensionsElementsIfNecessary()

@@ -503,8 +503,7 @@ void webkit_dom_html_text_area_element_set_default_value(WebKitDOMHTMLTextAreaEl
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TEXT_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTextAreaElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setDefaultValue(convertedValue);
+    item->setDefaultValue(WTF::String::fromUTF8(value));
 }
 
 gchar* webkit_dom_html_text_area_element_get_value(WebKitDOMHTMLTextAreaElement* self)

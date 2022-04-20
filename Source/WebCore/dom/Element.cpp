@@ -4642,9 +4642,9 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     return insertAdjacentHTML(where, markup, nullptr);
 }
 
-ExceptionOr<void> Element::insertAdjacentText(const String& where, const String& text)
+ExceptionOr<void> Element::insertAdjacentText(const String& where, String&& text)
 {
-    auto result = insertAdjacent(where, document().createTextNode(text));
+    auto result = insertAdjacent(where, document().createTextNode(WTFMove(text)));
     if (result.hasException())
         return result.releaseException();
     return { };

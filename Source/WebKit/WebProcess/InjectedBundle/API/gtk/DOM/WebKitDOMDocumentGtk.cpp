@@ -905,7 +905,7 @@ WebKitDOMText* webkit_dom_document_create_text_node(WebKitDOMDocument* self, con
     g_return_val_if_fail(data, 0);
     WebCore::Document* item = WebKit::core(self);
     WTF::String convertedData = WTF::String::fromUTF8(data);
-    RefPtr<WebCore::Text> gobjectResult = WTF::getPtr(item->createTextNode(convertedData));
+    RefPtr<WebCore::Text> gobjectResult = WTF::getPtr(item->createTextNode(WTFMove(convertedData)));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -916,7 +916,7 @@ WebKitDOMComment* webkit_dom_document_create_comment(WebKitDOMDocument* self, co
     g_return_val_if_fail(data, 0);
     WebCore::Document* item = WebKit::core(self);
     WTF::String convertedData = WTF::String::fromUTF8(data);
-    RefPtr<WebCore::Comment> gobjectResult = WTF::getPtr(item->createComment(convertedData));
+    RefPtr<WebCore::Comment> gobjectResult = WTF::getPtr(item->createComment(WTFMove(convertedData)));
     return WebKit::kit(gobjectResult.get());
 }
 
@@ -927,8 +927,7 @@ WebKitDOMCDATASection* webkit_dom_document_create_cdata_section(WebKitDOMDocumen
     g_return_val_if_fail(data, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Document* item = WebKit::core(self);
-    WTF::String convertedData = WTF::String::fromUTF8(data);
-    auto result = item->createCDATASection(convertedData);
+    auto result = item->createCDATASection(WTF::String::fromUTF8(data));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -945,9 +944,7 @@ WebKitDOMProcessingInstruction* webkit_dom_document_create_processing_instructio
     g_return_val_if_fail(data, 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::Document* item = WebKit::core(self);
-    WTF::String convertedTarget = WTF::String::fromUTF8(target);
-    WTF::String convertedData = WTF::String::fromUTF8(data);
-    auto result = item->createProcessingInstruction(convertedTarget, convertedData);
+    auto result = item->createProcessingInstruction(WTF::String::fromUTF8(target), WTF::String::fromUTF8(data));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -1532,8 +1529,7 @@ void webkit_dom_document_set_title(WebKitDOMDocument* self, const gchar* value)
     g_return_if_fail(WEBKIT_DOM_IS_DOCUMENT(self));
     g_return_if_fail(value);
     WebCore::Document* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setTitle(convertedValue);
+    item->setTitle(WTF::String::fromUTF8(value));
 }
 
 gchar* webkit_dom_document_get_dir(WebKitDOMDocument* self)

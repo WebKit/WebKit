@@ -90,9 +90,9 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
     return { text(), direction };
 }
 
-void HTMLTitleElement::setText(const String& value)
+void HTMLTitleElement::setText(String&& value)
 {
-    setTextContent(value);
+    setTextContent(WTFMove(value));
 }
 
 }

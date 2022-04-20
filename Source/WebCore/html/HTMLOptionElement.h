@@ -37,10 +37,10 @@ class HTMLOptionElement final : public HTMLElement {
 public:
     static Ref<HTMLOptionElement> create(Document&);
     static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);
-    static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, const String& text, const AtomString& value, bool defaultSelected, bool selected);
+    static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, String&& text, const AtomString& value, bool defaultSelected, bool selected);
 
     WEBCORE_EXPORT String text() const;
-    void setText(const String&);
+    void setText(String&&);
 
     WEBCORE_EXPORT int index() const;
 

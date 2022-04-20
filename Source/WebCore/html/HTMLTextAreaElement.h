@@ -46,7 +46,7 @@ public:
     WEBCORE_EXPORT String value() const final;
     WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
     WEBCORE_EXPORT String defaultValue() const;
-    WEBCORE_EXPORT void setDefaultValue(const String&);
+    WEBCORE_EXPORT void setDefaultValue(String&&);
     int textLength() const { return value().length(); }
     int effectiveMaxLength() const { return maxLength(); }
     // For ValidityState

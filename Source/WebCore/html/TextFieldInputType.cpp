@@ -661,7 +661,7 @@ void TextFieldInputType::updatePlaceholderText()
         m_placeholder = TextControlPlaceholderElement::create(element()->document());
         element()->userAgentShadowRoot()->insertBefore(*m_placeholder, m_container ? m_container.get() : innerTextElement().get());
     }
-    m_placeholder->setInnerText(placeholderText);
+    m_placeholder->setInnerText(WTFMove(placeholderText));
 }
 
 bool TextFieldInputType::appendFormData(DOMFormData& formData) const

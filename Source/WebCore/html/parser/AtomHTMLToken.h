@@ -74,6 +74,7 @@ public:
     // Comment
 
     const String& comment() const;
+    String& comment();
 
     HasDuplicateAttribute hasDuplicateAttribute() const { return m_hasDuplicateAttribute; };
 
@@ -157,6 +158,12 @@ inline bool AtomHTMLToken::charactersIsAll8BitData() const
 }
 
 inline const String& AtomHTMLToken::comment() const
+{
+    ASSERT(m_type == HTMLToken::Comment);
+    return m_data;
+}
+
+inline String& AtomHTMLToken::comment()
 {
     ASSERT(m_type == HTMLToken::Comment);
     return m_data;

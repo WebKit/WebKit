@@ -97,7 +97,7 @@ public:
 
     void selectionChanged(bool shouldFireSelectEvent);
     WEBCORE_EXPORT bool lastChangeWasUserEdit() const;
-    void setInnerTextValue(const String&);
+    void setInnerTextValue(String&&);
     String innerTextValue() const;
 
     String directionForFormData() const;

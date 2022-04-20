@@ -232,7 +232,7 @@ static void installImageOverlayStyleSheet(ShadowRoot& shadowRoot)
 {
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
     auto style = HTMLStyleElement::create(HTMLNames::styleTag, shadowRoot.document(), false);
-    style->setTextContent(shadowStyle);
+    style->setTextContent(String { shadowStyle });
     shadowRoot.appendChild(WTFMove(style));
 }
 
@@ -398,7 +398,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                 auto textContainer = HTMLDivElement::create(document.get());
                 textContainer->classList().add(imageOverlayTextClass());
                 lineContainer->appendChild(textContainer);
-                textContainer->appendChild(Text::create(document.get(), child.hasLeadingWhitespace ? makeString('\n', child.text) : child.text));
+                textContainer->appendChild(Text::create(document.get(), child.hasLeadingWhitespace ? makeString('\n', child.text) : String { child.text }));
                 lineElements.children.uncheckedAppend(WTFMove(textContainer));
             }
 
@@ -425,10 +425,10 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             auto blockContainer = HTMLDivElement::create(document.get());
             blockContainer->classList().add(imageOverlayBlockClass());
             auto lines = block.text.split(newlineCharacter);
-            for (auto& textContent : lines) {
+            for (auto&& textContent : WTFMove(lines)) {
                 if (blockContainer->hasChildNodes())
                     blockContainer->appendChild(HTMLBRElement::create(document.get()));
-                blockContainer->appendChild(Text::create(document.get(), textContent));
+                blockContainer->appendChild(Text::create(document.get(), WTFMove(textContent)));
             }
 
             constexpr auto maxLineCountForCenterAlignedText = 2;

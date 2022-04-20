@@ -328,7 +328,7 @@ void Editor::confirmMarkedText()
         confirmComposition();
 }
 
-void Editor::setTextAsChildOfElement(const String& text, Element& element)
+void Editor::setTextAsChildOfElement(String&& text, Element& element)
 {
     // Clear the composition
     clear();
@@ -346,7 +346,7 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
     // What follows is more expensive if there is a selection, so clear it since it's going to change anyway.
     m_document.selection().clear();
 
-    element.stringReplaceAll(text);
+    element.stringReplaceAll(WTFMove(text));
 
     VisiblePosition afterContents = makeContainerOffsetPosition(&element, element.countChildNodes());
     if (afterContents.isNull())

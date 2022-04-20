@@ -165,8 +165,7 @@ void webkit_dom_html_title_element_set_text(WebKitDOMHTMLTitleElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TITLE_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTitleElement* item = WebKit::core(self);
-    WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setText(convertedValue);
+    item->setText(WTF::String::fromUTF8(value));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

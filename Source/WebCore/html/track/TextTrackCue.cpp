@@ -510,8 +510,8 @@ void TextTrackCue::rebuildDisplayTree()
         if (const auto& styleSheets = track()->styleSheets()) {
             for (const auto& cssString : *styleSheets) {
                 auto style = HTMLStyleElement::create(HTMLNames::styleTag, m_displayTree->document(), false);
-                style->setTextContent(cssString);
-                m_displayTree->appendChild(style);
+                style->setTextContent(String { cssString });
+                m_displayTree->appendChild(WTFMove(style));
             }
         }
     }
