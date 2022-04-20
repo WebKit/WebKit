@@ -1,3 +1,27 @@
+2022-04-18  Justin Michaud  <justin_michaud@apple.com>
+
+        [PGO] run-benchmark should allow pgo profiles to be collected during a benchmark run
+        https://bugs.webkit.org/show_bug.cgi?id=239313
+
+        Reviewed by Dewei Zhu.
+
+        Add a --profile-output-directory to run-benchmark.
+        Add helper scripts pgo-profile-merge and pgo-profile-summarize to simplify handling profile output.
+        Add a script called build-and-collect-pgo-profiles that automates everything.
+
+        * Scripts/build-and-collect-pgo-profiles: Added.
+        * Scripts/pgo-profile: Added.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (config_argument_parser):
+        (parse_args):
+        (run_benchmark_plan):
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py:
+        (WebServerBenchmarkRunner.__init__):
+        (WebServerBenchmarkRunner._get_result):
+        (WebServerBenchmarkRunner._run_one_test): Deleted.
+
 2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Update WebGPU CTS to revision 549d7c2f1637321a9247f0a3ab022f919e5ca5da

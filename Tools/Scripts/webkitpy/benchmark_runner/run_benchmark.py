@@ -55,6 +55,7 @@ def config_argument_parser():
     parser.add_argument('--diagnose-directory', dest='diagnose_dir', default=diagnose_directory, help='Directory for storing diagnose information on test failure. Defaults to {}.'.format(diagnose_directory))
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
     parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
+    parser.add_argument('--generate-profiles', dest='generate_profiles', action='store_true', help="Collect LLVM profiles for PGO, and copy them to the diagnose directory.")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--browser-path', help='Specify the path to a non-default copy of the target browser as a path to the .app.')
@@ -76,12 +77,24 @@ def parse_args(parser=None):
     _log.debug('\tbuild directory\t: %s' % args.build_dir)
     _log.debug('\tplan name\t: %s', args.plan)
 
+    if args.generate_profiles and not os.path.isdir(args.diagnose_dir):
+        _log.error("No diagnose directory to dump profiles to: {}".format(args.diagnose_dir))
+        exit()
+
+    if args.generate_profiles and args.platform is not 'osx':
+        _log.error("Profile generation is currently only supported on macOS.")
+        exit()
+
     return args
 
 
 def run_benchmark_plan(args, plan):
     benchmark_runner_class = benchmark_runner_subclasses[args.driver]
-    runner = benchmark_runner_class(plan, args.local_copy, args.count, args.build_dir, args.output_file, args.platform, args.browser, args.browser_path, args.scale_unit, args.show_iteration_values, args.device_id, args.diagnose_dir)
+    runner = benchmark_runner_class(plan,
+                                    args.local_copy, args.count, args.build_dir, args.output_file,
+                                    args.platform, args.browser, args.browser_path, args.scale_unit,
+                                    args.show_iteration_values, args.device_id, args.diagnose_dir,
+                                    args.diagnose_dir if args.generate_profiles else None)
     runner.execute()
 
 

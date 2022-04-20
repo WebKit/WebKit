@@ -22,7 +22,7 @@ _log = logging.getLogger(__name__)
 class BenchmarkRunner(object):
     name = 'benchmark_runner'
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path, scale_unit=True, show_iteration_values=False, device_id=None, diagnose_dir=None):
+    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path, scale_unit=True, show_iteration_values=False, device_id=None, diagnose_dir=None, profile_output_directory=None):
         try:
             plan_file = self._find_plan_file(plan_file)
             with open(plan_file, 'r') as fp:
