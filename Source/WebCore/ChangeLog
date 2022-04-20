@@ -1,5 +1,21 @@
 2022-04-20  Chris Dumez  <cdumez@apple.com>
 
+        Avoid call to convertToASCIILowercase() in SelectorFilter::collectElementIdentifierHashes() in the common case
+        https://bugs.webkit.org/show_bug.cgi?id=239545
+
+        Reviewed by Sam Weinig.
+
+        The call to convertToASCIILowercase() in SelectorFilter::collectElementIdentifierHashes() shows in Speedometer profiles
+        even though input tags are already lowercase, simply because the function needs to iterate over the string to determine
+        that it is all lowercase. In the common case though, we can leverage the fact that all known HTML element tags are
+        lowercase to avoid the call to convertToASCIILowercase(). This is because HTMLElement::localName() returns one of the
+        tags defined in HTMLNames.h (for known HTML elements), all of which are lowercase.
+
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::collectElementIdentifierHashes):
+
+2022-04-20  Chris Dumez  <cdumez@apple.com>
+
         Add missing WTFMove() in MIMETypeRegistryThreadGlobalData()
         https://bugs.webkit.org/show_bug.cgi?id=239565
 

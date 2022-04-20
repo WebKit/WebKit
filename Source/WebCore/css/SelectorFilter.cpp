@@ -47,7 +47,8 @@ static bool isExcludedAttribute(const AtomString& name)
 
 void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
 {
-    AtomString tagLowercaseLocalName = element.localName().convertToASCIILowercase();
+    AtomString tagLowercaseLocalName = LIKELY(element.isHTMLElement() && !element.isUnknownElement()) ? element.localName() : element.localName().convertToASCIILowercase();
+    ASSERT(tagLowercaseLocalName == tagLowercaseLocalName.convertToASCIILowercase());
     identifierHashes.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
 
     auto& id = element.idForStyleResolution();
