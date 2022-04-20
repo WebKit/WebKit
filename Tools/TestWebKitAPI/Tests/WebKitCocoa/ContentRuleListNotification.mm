@@ -277,11 +277,13 @@ TEST(ContentRuleList, ResourceTypes)
     });
     [webView loadRequest:beaconServer.request()];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "fetch done");
-    EXPECT_EQ(beaconServer.totalRequests(), 3u);
+    while (beaconServer.totalRequests() != 3)
+        Util::spinRunLoop();
     [userContentController addContentRuleList:listWithResourceType("other").get()];
     [webView reload];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "fetch done");
-    EXPECT_EQ(beaconServer.totalRequests(), 5u);
+    while (beaconServer.totalRequests() != 5)
+        Util::spinRunLoop();
 }
 
 TEST(ContentRuleList, ThirdParty)
