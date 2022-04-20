@@ -1,3 +1,117 @@
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r290201. rdar://problem/88672183
+
+    REGRESSION (r287524): hihello.me does not show sliding sheet at the bottom of the page
+    https://bugs.webkit.org/show_bug.cgi?id=236838
+    rdar://88672183
+    
+    Reviewed by Dean Jackson.
+    
+    LayoutTests/imported/w3c:
+    
+    Add new WPT tests to check we correctly compute implicit keyframes when a 0% and/or 100% keyframe
+    is defined but only specifies a timing function. One test checks the output of getKeyframes() and
+    the other that we correctly account for the implicit vaues when computing styles.
+    
+    * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+    * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html:
+    * web-platform-tests/css/css-animations/animation-multiple-from-to-keyframes-with-only-timing-function-expected.txt: Added.
+    * web-platform-tests/css/css-animations/animation-multiple-from-to-keyframes-with-only-timing-function.html: Added.
+    
+    Source/WebCore:
+    
+    When we fixed bug 234799 we fixed the behavior of keyframe deduplication in
+    Style::Resolver::keyframeRulesForName(). While this was a good fix, code that
+    relied on the KeyframeList that would eventually be yielded from that function
+    did not quite correctly add implicit keyframes for the 0% and 100% case in some
+    relatively obscure situation.
+    
+    The site hihello.me made this shortcoming apparent. This site has this odd keyframe rule:
+    
+        from, 60%, 75%, 90%, to {
+            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+    
+    It appears the intention of the author with this rule is to replicate the timing function
+    on multiple keyframes. However, this does not work. This timing function will not be used
+    for *anything* since if a rule is specified without an animation-timing-function value it
+    will use the value set on the element, not one on a different keyframe.
+    
+    This also means that while there are explicit 0% and 100% keyframes, they are not adequate
+    to then compute implicit properties since the timing function wouldn't match the default
+    timing function (unless the element that those keyframes are applied to would happen to
+    specify that exact same timing function).
+    
+    To correctly handle this, we need to do several things.
+    
+    First of all, we remove the implicit keyframe code found in KeyframeEffect::getKeyframes()
+    and let KeyframeList::fillImplicitKeyframes() do all the work to correctly fill-in values
+    for properties not eplicitly specified on a 0% or 100% keyframe.
+    
+    This means we need to improve that function to correctly do the task that it's supposed to
+    do. Now provided with a KeyframeEffect and an underlying style as parameters, for 0% and
+    100% it correctly:
+    
+        1. compiles a list of implicit properties for the given keyframe
+        2. find a compatible keyframe for the implicit properties or create one
+        3. set the implicit properties on that compatible keyframe to match the values found
+           in the underlying style
+    
+    This correctly takes cares of calls to getKeyframes() as well as the generation of keyframes
+    passed down to RenderLayerBacking when starting an accelerated animation.
+    
+    But RenderLayerBacking also had some outdated assumptions on the KeyframeList it receives.
+    Indeed, it would always assume that a 0% or 100% keyframe would *always* specify properties
+    for the animated property. That was incorrect since we correctly deduplicate keyframes and
+    having several 0% or 100% keyframes is perfectly valid. Now we don't give special treatment
+    to 0% or 100% keyframes in RenderLayerBacking::startAnimation() and always check that a keyframe
+    features values for the animated property before creating an animation value to send down
+    to GraphicsLayer.
+    
+    Finally, another place we make assumptions on implicit keyframes was when resolving styles
+    as effects are applied in KeyframeEffect::setAnimatedPropertiesInStyle(). There we assumed
+    that a 0% or 100% keyframe would always qualify as a keyframe containing the animated property,
+    whereas the steps for resolving styles as specified by the Web Animations specification has
+    logic to deal with the case where we don't find a 0% or 100% keyframe with an explicit value
+    for the animated property. So we simplified the checks there to only ever check for an
+    explicit value.
+    
+    This rather obscure way to specify keyframes was not previously tested by WPT, so this patch
+    improves the testing coverage in a way that would have caught this regression in the first place.
+    
+    Test: imported/w3c/web-platform-tests/css/css-animations/animation-multiple-from-to-keyframes-with-only-timing-function.html
+    
+    * animation/KeyframeEffect.cpp:
+    (WebCore::KeyframeEffect::getKeyframes):
+    (WebCore::KeyframeEffect::setAnimatedPropertiesInStyle):
+    (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+    * rendering/RenderLayerBacking.cpp:
+    (WebCore::RenderLayerBacking::startAnimation):
+    * rendering/style/KeyframeList.cpp:
+    (WebCore::KeyframeList::insert):
+    (WebCore::KeyframeList::fillImplicitKeyframes):
+    * rendering/style/KeyframeList.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290201 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-19  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION (r287524): hihello.me does not show sliding sheet at the bottom of the page
+            https://bugs.webkit.org/show_bug.cgi?id=236838
+            rdar://88672183
+
+            Reviewed by Dean Jackson.
+
+            Add new WPT tests to check we correctly compute implicit keyframes when a 0% and/or 100% keyframe
+            is defined but only specifies a timing function. One test checks the output of getKeyframes() and
+            the other that we correctly account for the implicit vaues when computing styles.
+
+            * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative-expected.txt:
+            * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html:
+            * web-platform-tests/css/css-animations/animation-multiple-from-to-keyframes-with-only-timing-function-expected.txt: Added.
+            * web-platform-tests/css/css-animations/animation-multiple-from-to-keyframes-with-only-timing-function.html: Added.
+
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r292400. rdar://problem/89382543
