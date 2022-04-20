@@ -1,5 +1,73 @@
 2022-04-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r292274. rdar://problem/80544133
+
+    [Cocoa] Automatically relayout the page when new fonts are installed
+    https://bugs.webkit.org/show_bug.cgi?id=238483
+    <rdar://problem/80544133>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    This patch simply calls setNeedsRecalcStyleInAllFrames on every Page when we receive a
+    kCTFontManagerRegisteredFontsChangedNotification.
+    
+    FontCache::invalidateAllFontCaches() can't do this directly because it's in platform/ and
+    therefore isn't allowed to know what Pages are. Instead, this patch takes a process-global
+    callback and calls that instead. This callback is set at initialization time.
+    
+    Test: fast/text/install-font-style-recalc.html
+    
+    * page/Page.cpp:
+    (WebCore::m_contentSecurityPolicyModeForExtension):
+    (WebCore::Page::firstTimeInitialization):
+    * page/Page.h:
+    * platform/graphics/FontCache.cpp:
+    (WebCore::Function<void):
+    (WebCore::FontCache::registerFontCacheInvalidationCallback):
+    (WebCore::FontCache::invalidateAllFontCaches):
+    * platform/graphics/FontCache.h:
+    
+    Tools:
+    
+    Make TestRunner::dumpResourceLoadStatistics() clear any currently-recorded statistics.
+    This avoids the problem where spurious layouts during the time when the page has been created but
+    before the test has begun record irrelevant statistics.
+    
+    * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+    (WTR::InjectedBundle::beginTesting):
+    (WTR::InjectedBundle::clearResourceLoadStatistics):
+    * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::dumpResourceLoadStatistics):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * fast/text/install-font-style-recalc-expected.txt: Added.
+    * fast/text/install-font-style-recalc.html: Added.
+    * platform/ios-wk2/TestExpectations:
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292274 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] Automatically relayout the page when new fonts are installed
+            https://bugs.webkit.org/show_bug.cgi?id=238483
+            <rdar://problem/80544133>
+
+            Reviewed by Chris Dumez.
+
+            * TestExpectations:
+            * fast/text/install-font-style-recalc-expected.txt: Added.
+            * fast/text/install-font-style-recalc.html: Added.
+            * platform/ios-wk2/TestExpectations:
+            * platform/mac-wk2/TestExpectations:
+
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r292079. rdar://problem/88512506
 
     Don't mutate children during RenderGrid::computeIntrinsicLogicalWidths unless we're about to re-layout.
