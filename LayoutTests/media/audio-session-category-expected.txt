@@ -34,7 +34,7 @@ EXPECTED (internals.audioSessionCategory() == 'None') OK
 ** Check category before creating AudioContext.
 EXPECTED (internals.audioSessionCategory() == 'None') OK
 
-** Check category after oscillator graph has been connected but not started.
+** Check category after AudioContext has been created but not started.
 EXPECTED (internals.audioSessionCategory() == 'None') OK
 
 ** Check category after starting oscillator.

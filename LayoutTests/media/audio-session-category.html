@@ -58,11 +58,12 @@
             consoleWrite('<br><br>** AudioContext test **');
             await waitForCategory('None', 10, '<br>** Check category before creating AudioContext.');
 
-            consoleWrite('<br>** Check category after oscillator graph has been connected but not started.');
+            consoleWrite('<br>** Check category after AudioContext has been created but not started.');
             let context = new AudioContext();
+            testExpected('internals.audioSessionCategory()', 'None');
+
             let oscillator = null;
             let gainNode = context.createGain();
-
             oscillator = context.createOscillator();
             oscillator.type = 'square';
             oscillator.frequency.setValueAtTime(440, context.currentTime);
@@ -70,9 +71,9 @@
             oscillator.connect(gainNode);
             gainNode.connect(context.destination);
             gainNode.gain.value = 0.1
-            testExpected('internals.audioSessionCategory()', 'None');
 
             consoleWrite('<br>** Check category after starting oscillator.');
+            context.resume();
             oscillator.start(0);
             await sleepFor(500);
             testExpected('internals.audioSessionCategory()', 'AmbientSound');

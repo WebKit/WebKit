@@ -105,6 +105,16 @@ enum TreeType {
     "Timeout"
 };
 
+enum AudioSessionCategory {
+    "None",
+    "AmbientSound",
+    "SoloAmbientSound",
+    "MediaPlayback",
+    "RecordAudio",
+    "PlayAndRecord",
+    "AudioProcessing"
+};
+
 enum AutoplayPolicy {
     "Default",
     "Allow",
@@ -950,7 +960,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setConsoleMessageListener(StringCallback callback);
 
     readonly attribute boolean supportsAudioSession;
-    DOMString audioSessionCategory();
+    AudioSessionCategory audioSessionCategory();
+    [Conditional=VIDEO] AudioSessionCategory categoryAtMostRecentPlayback(HTMLMediaElement element);
+
     double preferredAudioBufferSize();
     double currentAudioBufferSize();
     boolean audioSessionActive();

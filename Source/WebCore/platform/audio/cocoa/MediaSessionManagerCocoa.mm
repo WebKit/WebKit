@@ -196,6 +196,14 @@ void MediaSessionManagerCocoa::possiblyChangeAudioCategory()
     updateSessionState();
 }
 
+void MediaSessionManagerCocoa::resetSessionState()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_delayCategoryChangeTimer.stop();
+    m_previousCategory = AudioSession::CategoryType::None;
+    m_previousHadAudibleAudioOrVideoMediaType = false;
+}
+
 void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::InterruptionType type)
 {
     if (type == PlatformMediaSession::InterruptionType::SystemInterruption) {

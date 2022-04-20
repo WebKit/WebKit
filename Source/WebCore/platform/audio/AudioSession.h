@@ -46,6 +46,16 @@ enum class RouteSharingPolicy : uint8_t {
     LongFormVideo
 };
 
+enum class AudioSessionCategory : uint8_t {
+    None,
+    AmbientSound,
+    SoloAmbientSound,
+    MediaPlayback,
+    RecordAudio,
+    PlayAndRecord,
+    AudioProcessing,
+};
+
 class AudioSessionRoutingArbitrationClient;
 
 class WEBCORE_EXPORT AudioSession {
@@ -63,15 +73,7 @@ public:
 
     virtual ~AudioSession();
 
-    enum class CategoryType : uint8_t {
-        None,
-        AmbientSound,
-        SoloAmbientSound,
-        MediaPlayback,
-        RecordAudio,
-        PlayAndRecord,
-        AudioProcessing,
-    };
+    using CategoryType = AudioSessionCategory;
     virtual void setCategory(CategoryType, RouteSharingPolicy);
     virtual CategoryType category() const;
 

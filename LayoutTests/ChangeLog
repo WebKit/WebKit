@@ -1,5 +1,104 @@
 2022-04-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291759. rdar://problem/89589891
+
+    [iOS] WebKit app is sometimes not "Now Playing" during initial playback
+    https://bugs.webkit.org/show_bug.cgi?id=236993
+    <rdar://88827167>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: media/audio-session-category-at-most-recent-playback.html
+    
+    Recently, we have added the concept of "preparingToPlay" to PlatformMediaSession to allow
+    the correct category to be set if updateSessionState() is called after playback is allowed
+    by the MediaSessionManager, but before playback is actually started by the media element.
+    However, this depends on updateSessionState() being called synchronously during playback.
+    We disabled this synchronous update in r269077 due to the large runtime cost when a large
+    number of media elements are created (but not used) at once.
+    
+    Relax this asynchronous update in the case where the state is moving to "Playing", which
+    ensures that the correct AudioSessionCategory is set before playback starts, rather than
+    immediately afterward.
+    
+    To support testing that the category was correctly set before playback started, add an
+    ivar to HTMLMediaElement that is set to the current AudioSessionCategory immediately before
+    the media element instructs the MediaPlayer to start playback. Expose this ivar to Internals.
+    
+    Drive-by fixes: AudioSession::CategoryType cannot be forward declared, as it is a public
+    member of a class. Allow the enum to be forward declared by moving the declaration outside
+    the class, but allow current uses of the enum to continue by typedefing it inside the class
+    to the original enum name. Add an IDL enumeration matching the AudioSession one in Interals.idl
+    and convert the existing audioSessionCategory() call to use the new enumeration.
+    
+    (Unforunately in the case where USE_AUDIO_SESSION is not set, the enumeration must be re-
+    declared. This can be removed and the entire implementation wrapped in a USE() check, once
+    the bindings generator is extended to allow "Conditional="-style attributes for USE checks.)
+    
+    The added test is flakey due to a previous change which would keep the MediaSession category
+    in "MediaPlayback" for up to 2s after playback ends. To counteract this flakiness, reset the
+    state of the PlatformMediaSessionManager between tests.
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::m_categoryAtMostRecentPlayback):
+    (WebCore::HTMLMediaElement::playPlayer):
+    (WebCore::m_logIdentifier): Deleted.
+    * html/HTMLMediaElement.h:
+    (WebCore::HTMLMediaElement::categoryAtMostRecentPlayback const):
+    * platform/audio/AudioSession.h:
+    * platform/audio/PlatformMediaSessionManager.cpp:
+    (WebCore::PlatformMediaSessionManager::sessionStateChanged):
+    * platform/audio/PlatformMediaSessionManager.h:
+    (WebCore::PlatformMediaSessionManager::resetSessionState):
+    * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (WebCore::MediaSessionManagerCocoa::resetSessionState):
+    * testing/Internals.cpp:
+    (WebCore::Internals::resetToConsistentState):
+    * testing/Internals.cpp:
+    (WebCore::Internals::audioSessionCategory const):
+    (WebCore::Internals::categoryAtMostRecentPlayback const):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    LayoutTests:
+    
+    Fix the audio-session-category test. Creating the oscilator actually does change the
+    AudioSession category to "Ambient", but (previously) only in the next run loop, so a
+    synchronous test that the AudioSession category is "None" succeeds. Now that starting
+    playback (as happens when creating an audio node) changes the AudioSession synchronously,
+    the test begins failing.
+    
+    * media/audio-session-category-at-most-recent-playback-expected.txt: Added.
+    * media/audio-session-category-at-most-recent-playback.html: Added.
+    * media/audio-session-category-expected.txt:
+    * media/audio-session-category.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291759 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-23  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] WebKit app is sometimes not "Now Playing" during initial playback
+            https://bugs.webkit.org/show_bug.cgi?id=236993
+            <rdar://88827167>
+
+            Reviewed by Eric Carlson.
+
+            Fix the audio-session-category test. Creating the oscilator actually does change the
+            AudioSession category to "Ambient", but (previously) only in the next run loop, so a
+            synchronous test that the AudioSession category is "None" succeeds. Now that starting
+            playback (as happens when creating an audio node) changes the AudioSession synchronously,
+            the test begins failing.
+
+            * media/audio-session-category-at-most-recent-playback-expected.txt: Added.
+            * media/audio-session-category-at-most-recent-playback.html: Added.
+            * media/audio-session-category-expected.txt:
+            * media/audio-session-category.html:
+
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r292049. rdar://problem/89104216
 
     [macOS] Muted video is sometimes paused when entering fullscreen

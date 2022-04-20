@@ -168,6 +168,7 @@ public:
     WEBCORE_EXPORT void processSystemDidWake();
 
     virtual void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() { };
+    virtual void resetSessionState() { };
 
 protected:
     friend class PlatformMediaSession;
