@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class KeyframeEffect;
+class Element;
 class RenderStyle;
 class TimingFunction;
 
@@ -101,8 +101,7 @@ public:
 
     void copyKeyframes(KeyframeList&);
     bool hasImplicitKeyframes() const;
-    void fillImplicitKeyframes(const KeyframeEffect&, const RenderStyle& elementStyle);
-
+    void fillImplicitKeyframes(const Element&, Style::Resolver&, const RenderStyle* elementStyle, const RenderStyle* parentElementStyle);
 
 private:
     AtomString m_animationName;
