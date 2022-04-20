@@ -1,3 +1,32 @@
+2022-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Move true / false AtomStrings to a central location and reuse them
+        https://bugs.webkit.org/show_bug.cgi?id=239530
+
+        Reviewed by Sam Weinig.
+
+        * dom/mac/ImageControlsMac.cpp:
+        (WebCore::ImageControlsMac::createImageControls):
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectContentInRange):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::contentEditable const):
+        (WebCore::HTMLElement::setContentEditable):
+        (WebCore::trueName): Deleted.
+        (WebCore::falseName): Deleted.
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::updateInnerTextElementEditabilityImpl):
+        * mathml/MathMLPresentationElement.cpp:
+        (WebCore::MathMLPresentationElement::cachedBooleanAttribute):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseStructuredFieldValue):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        * svg/properties/SVGPropertyTraits.h:
+        (WebCore::SVGPropertyTraits<bool>::toString):
+        * xml/XPathValue.cpp:
+        (WebCore::XPath::Value::toString const):
+
 2022-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r281913): Map toolbar flickers when dragging the map on https://gis.ee/

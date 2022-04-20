@@ -574,25 +574,13 @@ String HTMLElement::contentEditable() const
     case ContentEditableType::Inherit:
         return "inherit"_s;
     case ContentEditableType::True:
-        return "true"_s;
+        return trueAtom();
     case ContentEditableType::False:
-        return "false"_s;
+        return falseAtom();
     case ContentEditableType::PlaintextOnly:
         return "plaintext-only"_s;
     }
     return "inherit"_s;
-}
-
-static const AtomString& trueName()
-{
-    static MainThreadNeverDestroyed<const AtomString> trueValue("true", AtomString::ConstructFromLiteral);
-    return trueValue.get();
-}
-
-static const AtomString& falseName()
-{
-    static MainThreadNeverDestroyed<const AtomString> falseValue("false", AtomString::ConstructFromLiteral);
-    return falseValue.get();
 }
 
 static const AtomString& plaintextOnlyName()
@@ -604,9 +592,9 @@ static const AtomString& plaintextOnlyName()
 ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
 {
     if (equalLettersIgnoringASCIICase(enabled, "true"))
-        setAttributeWithoutSynchronization(contenteditableAttr, trueName());
+        setAttributeWithoutSynchronization(contenteditableAttr, trueAtom());
     else if (equalLettersIgnoringASCIICase(enabled, "false"))
-        setAttributeWithoutSynchronization(contenteditableAttr, falseName());
+        setAttributeWithoutSynchronization(contenteditableAttr, falseAtom());
     else if (equalLettersIgnoringASCIICase(enabled, "plaintext-only"))
         setAttributeWithoutSynchronization(contenteditableAttr, plaintextOnlyName());
     else if (equalLettersIgnoringASCIICase(enabled, "inherit"))
@@ -627,7 +615,7 @@ bool HTMLElement::draggable() const
 
 void HTMLElement::setDraggable(bool value)
 {
-    setAttributeWithoutSynchronization(draggableAttr, value ? trueName() : falseName());
+    setAttributeWithoutSynchronization(draggableAttr, value ? trueAtom() : falseAtom());
 }
 
 bool HTMLElement::spellcheck() const
@@ -637,7 +625,7 @@ bool HTMLElement::spellcheck() const
 
 void HTMLElement::setSpellcheck(bool enable)
 {
-    setAttributeWithoutSynchronization(spellcheckAttr, enable ? trueName() : falseName());
+    setAttributeWithoutSynchronization(spellcheckAttr, enable ? trueAtom() : falseAtom());
 }
 
 void HTMLElement::click()

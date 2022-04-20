@@ -128,7 +128,7 @@ String Value::toString() const
                 return std::signbit(m_number) ? "-Infinity"_s : "Infinity"_s;
             return String::number(m_number);
         case BooleanValue:
-            return m_bool ? "true"_s : "false"_s;
+            return m_bool ? trueAtom() : falseAtom();
     }
 
     ASSERT_NOT_REACHED();

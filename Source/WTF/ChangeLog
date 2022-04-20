@@ -1,3 +1,16 @@
+2022-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Move true / false AtomStrings to a central location and reuse them
+        https://bugs.webkit.org/show_bug.cgi?id=239530
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/AtomString.cpp:
+        (WTF::AtomString::init):
+        * wtf/text/AtomString.h:
+        (WTF::trueAtom):
+        (WTF::falseAtom):
+
 2022-04-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Do not call WebPreferences::simpleLineLayoutEnabled in canUseForLineLayoutWithReason

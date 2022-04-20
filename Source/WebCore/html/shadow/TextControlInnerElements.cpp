@@ -151,8 +151,7 @@ Ref<TextControlInnerTextElement> TextControlInnerTextElement::create(Document& d
 void TextControlInnerTextElement::updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization)
 {
     static MainThreadNeverDestroyed<const AtomString> plainTextOnlyName("plaintext-only", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> falseName("false", AtomString::ConstructFromLiteral);
-    const auto& value = isEditable ? plainTextOnlyName.get() : falseName.get();
+    const auto& value = isEditable ? plainTextOnlyName.get() : falseAtom();
     if (initialization) {
         Vector<Attribute> attributes { Attribute(contenteditableAttr, value) };
         parserSetAttributes(attributes);

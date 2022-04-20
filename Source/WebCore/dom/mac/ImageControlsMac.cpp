@@ -91,7 +91,7 @@ void createImageControls(HTMLElement& element)
     Ref shadowRoot = element.ensureUserAgentShadowRoot();
     auto controlLayer = HTMLDivElement::create(document.get());
     controlLayer->setIdAttribute(imageControlsElementIdentifier());
-    controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, "false"_s);
+    controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
     shadowRoot->appendChild(controlLayer);
     
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet)));

@@ -626,7 +626,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
             anchorElement->appendChild(WTFMove(newTextNode));
 
             // Add a special attribute to mark this URLification as the result of data detectors.
-            anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectorsAttr, AtomString("true", AtomString::ConstructFromLiteral));
+            anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectorsAttr, trueAtom());
             anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_typeAttr, dataDetectorTypeForCategory(PAL::softLink_DataDetectorsCore_DDResultGetCategory(coreResult)));
             anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, identifier);
 

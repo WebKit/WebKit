@@ -193,9 +193,9 @@ const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttri
 
     // In MathML, attribute values are case-sensitive.
     const AtomString& value = attributeWithoutSynchronization(name);
-    if (value == "true")
+    if (value == trueAtom())
         attribute = BooleanValue::True;
-    else if (value == "false")
+    else if (value == falseAtom())
         attribute = BooleanValue::False;
     else
         attribute = BooleanValue::Default;

@@ -619,7 +619,7 @@ std::optional<std::pair<StringView, HashMap<String, String>>> parseStructuredFie
             ++index;
         }
         StringView key = header.substring(keyStart, index - keyStart);
-        String value = "true"_s;
+        String value = trueAtom();
         if (index < header.length() && header[index] == '=') {
             ++index; // Consume '='.
             if (isASCIIAlpha(header[index]) || header[index] == '*') {
