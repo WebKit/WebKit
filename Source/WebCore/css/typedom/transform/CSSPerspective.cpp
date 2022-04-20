@@ -33,6 +33,7 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSKeywordValue.h"
+#include "CSSUnitValue.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -88,15 +89,32 @@ void CSSPerspective::setIs2D(bool)
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssperspective-is2d says to do nothing here.
 }
 
-// FIXME: Fix all the following virtual functions
-
-String CSSPerspective::toString() const
+void CSSPerspective::serialize(StringBuilder& builder) const
 {
-    return emptyString();
+    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssperspective
+    builder.append("perspective(");
+    WTF::switchOn(m_length,
+        [&] (const RefPtr<CSSNumericValue>& value) {
+            if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get()); unitValue && unitValue->value() < 0.0) {
+                builder.append("calc(");
+                value->serialize(builder);
+                builder.append(')');
+                return;
+            }
+            if (value)
+                value->serialize(builder);
+        }, [&] (const String& value) {
+            builder.append(value);
+        }, [&] (const RefPtr<CSSKeywordValue>& value) {
+            if (CSSStyleValue* styleValue = value.get())
+                styleValue->serialize(builder);
+        });
+    builder.append(')');
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
 {
+    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

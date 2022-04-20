@@ -30,6 +30,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "ScriptWrappable.h"
+#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -99,10 +100,16 @@ inline bool isCSSMathValue(CSSStyleValueType type)
     return false;
 }
 
+enum class SerializationArguments : uint8_t {
+    Nested = 0x1,
+    WithoutParentheses = 0x2,
+};
+
 class CSSStyleValue : public RefCounted<CSSStyleValue>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(CSSStyleValue);
 public:
-    virtual String toString() const;
+    String toString() const;
+    virtual void serialize(StringBuilder&, OptionSet<SerializationArguments> = { }) const;
     virtual ~CSSStyleValue() = default;
 
     virtual CSSStyleValueType getType() const { return CSSStyleValueType::CSSStyleValue; }

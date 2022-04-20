@@ -114,15 +114,25 @@ ExceptionOr<void> CSSRotate::setAngle(Ref<CSSNumericValue> angle)
     return { };
 }
 
-// FIXME: Fix all the following virtual functions
-
-String CSSRotate::toString() const
+void CSSRotate::serialize(StringBuilder& builder) const
 {
-    return emptyString();
+    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssrotate
+    builder.append(is2D() ? "rotate(" : "rotate3d(");
+    if (!is2D()) {
+        m_x->serialize(builder);
+        builder.append(", ");
+        m_y->serialize(builder);
+        builder.append(", ");
+        m_z->serialize(builder);
+        builder.append(", ");
+    }
+    m_angle->serialize(builder);
+    builder.append(')');
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
 {
+    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

@@ -1,3 +1,103 @@
+2022-04-19  Alex Christensen  <achristensen@webkit.org>
+
+        Implement most of CSS typed OM object stringifiers
+        https://bugs.webkit.org/show_bug.cgi?id=239483
+
+        Reviewed by Simon Fraser.
+
+        This is an off-by-default experimental feature.
+        Covered by web platform tests.
+
+        * css/typedom/CSSKeywordValue.cpp:
+        (WebCore::CSSKeywordValue::serialize const):
+        * css/typedom/CSSKeywordValue.h:
+        * css/typedom/CSSOMVariableReferenceValue.cpp:
+        (WebCore::CSSOMVariableReferenceValue::toString const):
+        (WebCore::CSSOMVariableReferenceValue::serialize const):
+        * css/typedom/CSSOMVariableReferenceValue.h:
+        * css/typedom/CSSStyleImageValue.cpp:
+        (WebCore::CSSStyleImageValue::serialize const):
+        (WebCore::CSSStyleImageValue::document const):
+        * css/typedom/CSSStyleImageValue.h:
+        * css/typedom/CSSStyleValue.cpp:
+        (WebCore::CSSStyleValue::toString const):
+        (WebCore::CSSStyleValue::serialize const):
+        * css/typedom/CSSStyleValue.h:
+        * css/typedom/CSSUnitValue.cpp:
+        (WebCore::CSSUnitValue::serialize const):
+        * css/typedom/CSSUnitValue.h:
+        * css/typedom/CSSUnparsedValue.cpp:
+        (WebCore::CSSUnparsedValue::serialize const):
+        (WebCore::CSSUnparsedValue::toString const): Deleted.
+        * css/typedom/CSSUnparsedValue.h:
+        * css/typedom/numeric/CSSMathInvert.cpp:
+        (WebCore::CSSMathInvert::serialize const):
+        * css/typedom/numeric/CSSMathInvert.h:
+        * css/typedom/numeric/CSSMathMax.cpp:
+        (WebCore::CSSMathMax::serialize const):
+        * css/typedom/numeric/CSSMathMax.h:
+        * css/typedom/numeric/CSSMathMin.cpp:
+        (WebCore::CSSMathMin::serialize const):
+        * css/typedom/numeric/CSSMathMin.h:
+        * css/typedom/numeric/CSSMathNegate.cpp:
+        (WebCore::CSSMathNegate::serialize const):
+        * css/typedom/numeric/CSSMathNegate.h:
+        * css/typedom/numeric/CSSMathProduct.cpp:
+        (WebCore::CSSMathProduct::serialize const):
+        * css/typedom/numeric/CSSMathProduct.h:
+        * css/typedom/numeric/CSSMathSum.cpp:
+        (WebCore::CSSMathSum::serialize const):
+        * css/typedom/numeric/CSSMathSum.h:
+        * css/typedom/numeric/CSSNumericArray.cpp:
+        (WebCore::CSSNumericArray::forEach):
+        * css/typedom/numeric/CSSNumericArray.h:
+        * css/typedom/transform/CSSMatrixComponent.cpp:
+        (WebCore::CSSMatrixComponent::serialize const):
+        (WebCore::CSSMatrixComponent::toMatrix):
+        (WebCore::CSSMatrixComponent::toString const): Deleted.
+        * css/typedom/transform/CSSMatrixComponent.h:
+        * css/typedom/transform/CSSPerspective.cpp:
+        (WebCore::CSSPerspective::serialize const):
+        (WebCore::CSSPerspective::toMatrix):
+        (WebCore::CSSPerspective::toString const): Deleted.
+        * css/typedom/transform/CSSPerspective.h:
+        * css/typedom/transform/CSSRotate.cpp:
+        (WebCore::CSSRotate::serialize const):
+        (WebCore::CSSRotate::toMatrix):
+        (WebCore::CSSRotate::toString const): Deleted.
+        * css/typedom/transform/CSSRotate.h:
+        * css/typedom/transform/CSSScale.cpp:
+        (WebCore::CSSScale::serialize const):
+        (WebCore::CSSScale::toMatrix):
+        (WebCore::CSSScale::toString const): Deleted.
+        * css/typedom/transform/CSSScale.h:
+        * css/typedom/transform/CSSSkew.cpp:
+        (WebCore::CSSSkew::serialize const):
+        (WebCore::CSSSkew::toMatrix):
+        (WebCore::CSSSkew::toString const): Deleted.
+        * css/typedom/transform/CSSSkew.h:
+        * css/typedom/transform/CSSSkewX.cpp:
+        (WebCore::CSSSkewX::serialize const):
+        (WebCore::CSSSkewX::toMatrix):
+        (WebCore::CSSSkewX::toString const): Deleted.
+        * css/typedom/transform/CSSSkewX.h:
+        * css/typedom/transform/CSSSkewY.cpp:
+        (WebCore::CSSSkewY::serialize const):
+        (WebCore::CSSSkewY::toMatrix):
+        (WebCore::CSSSkewY::toString const): Deleted.
+        * css/typedom/transform/CSSSkewY.h:
+        * css/typedom/transform/CSSTransformComponent.cpp:
+        (WebCore::CSSTransformComponent::toString const):
+        * css/typedom/transform/CSSTransformComponent.h:
+        * css/typedom/transform/CSSTransformValue.cpp:
+        (WebCore::CSSTransformValue::serialize const):
+        * css/typedom/transform/CSSTransformValue.h:
+        * css/typedom/transform/CSSTranslate.cpp:
+        (WebCore::CSSTranslate::serialize const):
+        (WebCore::CSSTranslate::toMatrix):
+        (WebCore::CSSTranslate::toString const): Deleted.
+        * css/typedom/transform/CSSTranslate.h:
+
 2022-04-19  Chris Dumez  <cdumez@apple.com>
 
         Use SortedArrayMap in parseEnumeration<>() in the JS bindings

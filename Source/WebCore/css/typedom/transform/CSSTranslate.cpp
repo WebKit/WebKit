@@ -65,16 +65,23 @@ CSSTranslate::CSSTranslate(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue
 {
 }
 
-
-// FIXME: Fix all the following virtual functions
-
-String CSSTranslate::toString() const
+void CSSTranslate::serialize(StringBuilder& builder) const
 {
-    return emptyString();
+    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-csstranslate
+    builder.append(is2D() ? "translate(" : "translate3d(");
+    m_x->serialize(builder);
+    builder.append(", ");
+    m_y->serialize(builder);
+    if (!is2D()) {
+        builder.append(", ");
+        m_z->serialize(builder);
+    }
+    builder.append(')');
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
 {
+    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

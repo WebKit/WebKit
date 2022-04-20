@@ -119,21 +119,13 @@ CSSUnparsedValue::CSSUnparsedValue(Vector<CSSUnparsedSegment>&& segments)
 {
 }
 
-String CSSUnparsedValue::toString() const
-{
-    StringBuilder builder;
-    serialize(builder);
-    
-    return builder.toString();
-}
-
-void CSSUnparsedValue::serialize(StringBuilder& builder) const
+void CSSUnparsedValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
 {
     for (auto& segment : m_segments) {
         std::visit(WTF::makeVisitor([&] (const String& value) {
             builder.append(value);
         }, [&] (const RefPtr<CSSOMVariableReferenceValue>& value) {
-            value->serialize(builder);
+            value->serialize(builder, arguments);
         }), segment);
     }
 }

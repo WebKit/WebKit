@@ -61,18 +61,17 @@ ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(String&& variable)
 String CSSOMVariableReferenceValue::toString() const
 {
     StringBuilder builder;
-    serialize(builder);
-    
+    serialize(builder, { });
     return builder.toString();
 }
 
-void CSSOMVariableReferenceValue::serialize(StringBuilder& builder) const
+void CSSOMVariableReferenceValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
 {
     builder.append("var(");
     builder.append(m_variable);
     if (m_fallback) {
         builder.append(", ");
-        m_fallback->serialize(builder);
+        m_fallback->serialize(builder, arguments);
     }
     builder.append(')');
 }

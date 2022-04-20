@@ -36,10 +36,12 @@ class CSSMathInvert final : public CSSMathValue {
 public:
     static Ref<CSSMathInvert> create(CSSNumberish&&);
     CSSNumericValue& value() { return m_value.get(); }
-    
+    const CSSNumericValue& value() const { return m_value.get(); }
+
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Invert; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathInvert; }
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     CSSMathInvert(CSSNumberish&&);
     Ref<CSSNumericValue> m_value;

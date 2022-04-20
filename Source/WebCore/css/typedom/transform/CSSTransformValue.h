@@ -53,6 +53,7 @@ public:
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSTransformValue; }
 private:
     CSSTransformValue(Vector<RefPtr<CSSTransformComponent>>&&);
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     Vector<RefPtr<CSSTransformComponent>> m_components;
 };

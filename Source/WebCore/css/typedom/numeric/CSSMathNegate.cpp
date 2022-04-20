@@ -54,10 +54,15 @@ CSSMathNegate::CSSMathNegate(CSSNumberish&& numberish)
 {
 }
 
-CSSMathNegate::CSSMathNegate(Ref<CSSNumericValue>&& value)
-    : CSSMathValue(value->type())
-    , m_value(WTFMove(value))
+void CSSMathNegate::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
 {
+    // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append(arguments.contains(SerializationArguments::Nested) ? "(" : "calc(");
+    builder.append('-');
+    m_value->serialize(builder, arguments);
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append(')');
 }
 
 } // namespace WebCore

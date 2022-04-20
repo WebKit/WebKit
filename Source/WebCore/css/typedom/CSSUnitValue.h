@@ -42,7 +42,7 @@ public:
     static ExceptionOr<Ref<CSSUnitValue>> create(double value, const String& unit);
     static Ref<CSSUnitValue> create(double value, CSSUnitType unit) { return adoptRef(*new CSSUnitValue(value, unit)); }
 
-    String toString() const final { return makeString(FormattedCSSNumber::create(m_value), unitSerialization()); }
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     double value() const { return m_value; }
     void setValue(double value) { m_value = value; }

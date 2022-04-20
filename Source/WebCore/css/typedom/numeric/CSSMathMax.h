@@ -43,6 +43,7 @@ public:
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Max; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathMax; }
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     CSSMathMax(FixedVector<CSSNumberish>&&);
     CSSMathMax(Vector<Ref<CSSNumericValue>>&&);

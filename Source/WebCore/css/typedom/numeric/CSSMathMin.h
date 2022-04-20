@@ -43,6 +43,7 @@ public:
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Min; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathMin; }
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     CSSMathMin(FixedVector<CSSNumberish>&&);
     CSSMathMin(Vector<Ref<CSSNumericValue>>&&);

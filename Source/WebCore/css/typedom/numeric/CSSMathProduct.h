@@ -44,6 +44,7 @@ public:
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Product; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathProduct; }
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const;
 
     CSSMathProduct(Vector<Ref<CSSNumericValue>>, CSSNumericType);
     Ref<CSSNumericArray> m_values;

@@ -53,7 +53,8 @@ protected:
     CSSTransformComponent(Is2D is2D)
         : m_is2D(is2D) { }
 public:
-    virtual String toString() const;
+    String toString() const;
+    virtual void serialize(StringBuilder&) const = 0;
     bool is2D() const { return m_is2D == Is2D::Yes; }
     virtual void setIs2D(bool is2D) { m_is2D = is2D ? Is2D::Yes : Is2D::No; }
     virtual ExceptionOr<Ref<DOMMatrix>> toMatrix() = 0;

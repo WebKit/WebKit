@@ -45,6 +45,7 @@ public:
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Sum; }
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSMathSum; }
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     CSSMathSum(Vector<Ref<CSSNumericValue>>, CSSNumericType);
     Ref<CSSNumericArray> m_values;

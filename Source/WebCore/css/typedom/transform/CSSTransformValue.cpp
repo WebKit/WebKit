@@ -91,6 +91,15 @@ CSSTransformValue::CSSTransformValue(Vector<RefPtr<CSSTransformComponent>>&& tra
 {
 }
 
+void CSSTransformValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-csstransformvalue
+    for (size_t i = 0; i < m_components.size(); i++) {
+        if (i)
+            builder.append(' ');
+        m_components[i]->serialize(builder);
+    }
+}
 
 } // namespace WebCore
 

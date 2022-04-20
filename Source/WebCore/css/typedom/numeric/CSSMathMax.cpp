@@ -31,6 +31,7 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -49,6 +50,20 @@ CSSMathMax::CSSMathMax(Vector<Ref<CSSNumericValue>>&& values)
 const CSSNumericArray& CSSMathMax::values() const
 {
     return m_values.get();
+}
+
+void CSSMathMax::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append("max(");
+    m_values->forEach([&](auto& numericValue, bool first) {
+        if (!first)
+            builder.append(", ");
+        numericValue.serialize(builder, { SerializationArguments::Nested, SerializationArguments::WithoutParentheses });
+    });
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append(')');
 }
 
 } // namespace WebCore

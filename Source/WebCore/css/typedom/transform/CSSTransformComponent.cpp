@@ -32,16 +32,15 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "DOMMatrix.h"
-#include "ExceptionOr.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 String CSSTransformComponent::toString() const
 {
-    // FIXME: implement.
-    return emptyString();
+    StringBuilder builder;
+    serialize(builder);
+    return builder.toString();
 }
 
 } // namespace WebCore

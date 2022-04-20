@@ -51,6 +51,20 @@ const CSSNumericArray& CSSMathMin::values() const
     return m_values.get();
 }
 
+void CSSMathMin::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append("min(");
+    m_values->forEach([&](auto& numericValue, bool first) {
+        if (!first)
+            builder.append(", ");
+        numericValue.serialize(builder, { SerializationArguments::Nested, SerializationArguments::WithoutParentheses });
+    });
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append(')');
+}
+
 } // namespace WebCore
 
 #endif

@@ -39,7 +39,7 @@ class CSSScale : public CSSTransformComponent {
 public:
     static ExceptionOr<Ref<CSSScale>> create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish> z);
 
-    String toString() const final;
+    void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
 
     CSSNumberish x() const { return m_x.ptr(); }

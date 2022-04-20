@@ -80,15 +80,23 @@ void CSSScale::setZ(CSSNumberish z)
     m_z = CSSNumericValue::rectifyNumberish(WTFMove(z));
 }
 
-// FIXME: Fix all the following virtual functions
-
-String CSSScale::toString() const
+void CSSScale::serialize(StringBuilder& builder) const
 {
-    return emptyString();
+    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssscale
+    builder.append(is2D() ? "scale(" : "scale3d(");
+    m_x->serialize(builder);
+    builder.append(", ");
+    m_y->serialize(builder);
+    if (!is2D()) {
+        builder.append(", ");
+        m_z->serialize(builder);
+    }
+    builder.append(')');
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSScale::toMatrix()
 {
+    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

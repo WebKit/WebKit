@@ -67,6 +67,11 @@ ExceptionOr<void> CSSKeywordValue::setValue(const String& value)
     return { };
 }
 
+void CSSKeywordValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#keywordvalue-serialization
+    builder.append(m_value);
+}
 
 } // namespace WebCore
 

@@ -53,15 +53,17 @@ CSSSkewX::CSSSkewX(Ref<CSSNumericValue> ax)
 {
 }
 
-// FIXME: Fix all the following virtual functions
-
-String CSSSkewX::toString() const
+void CSSSkewX::serialize(StringBuilder& builder) const
 {
-    return emptyString();
+    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskewx
+    builder.append("skewX(");
+    m_ax->serialize(builder);
+    builder.append(')');
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSSkewX::toMatrix()
 {
+    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

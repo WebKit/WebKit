@@ -50,6 +50,8 @@ public:
     static Ref<CSSKeywordValue> rectifyKeywordish(CSSKeywordish&&);
 
 private:
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
+
     explicit CSSKeywordValue(const String& value)
         : m_value(value) { }
     String m_value;

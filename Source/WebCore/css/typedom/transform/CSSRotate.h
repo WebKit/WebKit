@@ -50,7 +50,7 @@ public:
     ExceptionOr<void> setZ(CSSNumberish);
     ExceptionOr<void> setAngle(Ref<CSSNumericValue>);
 
-    String toString() const final;
+    void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::Rotate; }

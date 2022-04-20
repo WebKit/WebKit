@@ -43,8 +43,8 @@ public:
     
     const CSSPerspectiveValue& length() const { return m_length; }
     ExceptionOr<void> setLength(CSSPerspectiveValue);
-    
-    String toString() const final;
+
+    void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::Perspective; }

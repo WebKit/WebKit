@@ -39,13 +39,14 @@ class CSSMathNegate final : public CSSMathValue {
 public:
     template<typename... Args> static Ref<CSSMathNegate> create(Args&&... args) { return adoptRef(*new CSSMathNegate(std::forward<Args>(args)...)); }
     CSSNumericValue& value() { return m_value.get(); }
-    
+    const CSSNumericValue& value() const { return m_value.get(); }
+
 private:
     CSSMathOperator getOperator() const final { return CSSMathOperator::Negate; }
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathNegate; }
+    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     CSSMathNegate(CSSNumberish&&);
-    CSSMathNegate(Ref<CSSNumericValue>&&);
     Ref<CSSNumericValue> m_value;
 };
 

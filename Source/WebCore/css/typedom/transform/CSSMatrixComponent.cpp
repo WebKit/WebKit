@@ -52,15 +52,14 @@ CSSMatrixComponent::CSSMatrixComponent(Ref<DOMMatrixReadOnly>&& matrix, std::opt
 {
 }
 
-// FIXME: Fix all the following virtual functions
-
-String CSSMatrixComponent::toString() const
+void CSSMatrixComponent::serialize(StringBuilder&) const
 {
-    return emptyString();
+    // FIXME: Implement.
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSMatrixComponent::toMatrix()
 {
+    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

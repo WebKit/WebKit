@@ -44,8 +44,8 @@ public:
     
     void setAx(Ref<CSSNumericValue> ax) { m_ax = WTFMove(ax); }
     void setAy(Ref<CSSNumericValue> ay) { m_ay = WTFMove(ay); }
-    
-    String toString() const final;
+
+    void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::Skew; }

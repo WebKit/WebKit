@@ -91,6 +91,28 @@ CSSMathSum::CSSMathSum(Vector<Ref<CSSNumericValue>> values, CSSNumericType type)
 {
 }
 
+void CSSMathSum::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append(arguments.contains(SerializationArguments::Nested) ? "(" : "calc(");
+    m_values->forEach([&](auto& numericValue, bool first) {
+        OptionSet<SerializationArguments> operandSerializationArguments { SerializationArguments::Nested };
+        operandSerializationArguments.set(SerializationArguments::WithoutParentheses, arguments.contains(SerializationArguments::WithoutParentheses));
+        if (!first) {
+            if (auto* mathNegate = dynamicDowncast<CSSMathNegate>(numericValue)) {
+                builder.append(" - ");
+                mathNegate->value().serialize(builder, operandSerializationArguments);
+                return;
+            }
+            builder.append(" + ");
+        }
+        numericValue.serialize(builder, operandSerializationArguments);
+    });
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append(')');
+}
+
 } // namespace WebCore
 
 #endif

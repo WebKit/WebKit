@@ -31,6 +31,7 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -70,6 +71,17 @@ CSSMathInvert::CSSMathInvert(CSSNumberish&& numberish)
     : CSSMathValue(negatedType(numberish))
     , m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
 {
+}
+
+void CSSMathInvert::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append(arguments.contains(SerializationArguments::Nested) ? "(" : "calc(");
+    builder.append("1 / ");
+    m_value->serialize(builder, arguments);
+    if (!arguments.contains(SerializationArguments::WithoutParentheses))
+        builder.append(')');
 }
 
 } // namespace WebCore

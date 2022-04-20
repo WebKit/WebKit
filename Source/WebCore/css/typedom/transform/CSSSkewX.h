@@ -41,8 +41,8 @@ public:
     
     const CSSNumericValue& ax() const { return m_ax.get(); }
     void setAx(Ref<CSSNumericValue> ax) { m_ax = WTFMove(ax); }
-    
-    String toString() const final;
+
+    void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::SkewX; }

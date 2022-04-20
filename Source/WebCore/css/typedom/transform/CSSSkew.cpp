@@ -55,15 +55,21 @@ CSSSkew::CSSSkew(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay)
 {
 }
 
-// FIXME: Fix all the following virtual functions
-
-String CSSSkew::toString() const
+void CSSSkew::serialize(StringBuilder& builder) const
 {
-    return emptyString();
+    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskew
+    builder.append("skew(");
+    m_ax->serialize(builder);
+    if (!is<CSSUnitValue>(m_ay) || downcast<CSSUnitValue>(m_ay.get()).value()) {
+        builder.append(", ");
+        m_ay->serialize(builder);
+    }
+    builder.append(')');
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSSkew::toMatrix()
 {
+    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

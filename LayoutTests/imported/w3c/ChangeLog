@@ -1,3 +1,14 @@
+2022-04-19  Alex Christensen  <achristensen@webkit.org>
+
+        Implement most of CSS typed OM object stringifiers
+        https://bugs.webkit.org/show_bug.cgi?id=239483
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssKeywordValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssMathValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssTransformValue.tentative-expected.txt:
+
 2022-04-19  Tim Nguyen  <ntim@apple.com>
 
         user-select: none shouldn't affect editability

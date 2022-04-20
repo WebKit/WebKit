@@ -111,6 +111,12 @@ String CSSUnitValue::unitSerialization() const
     return CSSPrimitiveValue::unitTypeString(m_unit);
 }
 
+void CSSUnitValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
+{
+    builder.append(FormattedCSSNumber::create(m_value));
+    builder.append(unitSerialization());
+}
+
 ExceptionOr<Ref<CSSUnitValue>> CSSUnitValue::create(double value, const String& unit)
 {
     auto parsedUnit = parseUnit(unit);
