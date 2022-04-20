@@ -1,10 +1,15 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ import { assert } from '../../common/util/util.js';
+ **/ import { assert, unreachable } from '../../common/util/util.js';
 import { multiplyMatrices } from './math.js';
 
 // These color space conversion function definitions are copied directly from
 // CSS Color Module Level 4 Sample Code: https://drafts.csswg.org/css-color/#color-conversion-code
+// *EXCEPT* the conversion matrices are replaced with exact rational forms computed here:
+// https://github.com/kainino0x/exact_css_xyz_matrices
+//   using this Rust crate: https://crates.io/crates/rgb_derivation
+//   as described for sRGB on this page: https://mina86.com/2019/srgb-xyz-matrix/
+//   but using the numbers from the CSS spec: https://www.w3.org/TR/css-color-4/#predefined
 
 // Sample code for color conversions
 // Conversion can also be done using ICC profiles and a Color Management System
@@ -61,9 +66,9 @@ function gam_sRGB(RGB) {
  */
 function lin_sRGB_to_XYZ(rgb) {
   const M = [
-    [0.41239079926595934, 0.357584339383878, 0.1804807884018343],
-    [0.21263900587151027, 0.715168678767756, 0.07219231536073371],
-    [0.01933081871559182, 0.11919477979462598, 0.9505321522496607],
+    [506752 / 1228815, 87881 / 245763, 12673 / 70218],
+    [87098 / 409605, 175762 / 245763, 12673 / 175545],
+    [7918 / 409605, 87881 / 737289, 1001167 / 1053270],
   ];
 
   return multiplyMatrices(M, rgb);
@@ -75,9 +80,9 @@ function lin_sRGB_to_XYZ(rgb) {
  */
 function XYZ_to_lin_sRGB(XYZ) {
   const M = [
-    [3.2409699419045226, -1.537383177570094, -0.4986107602930034],
-    [-0.9692436362808796, 1.8759675015077202, 0.04155505740717559],
-    [0.05563007969699366, -0.20397695888897652, 1.0569715142428786],
+    [12831 / 3959, -329 / 214, -1974 / 3959],
+    [-851781 / 878810, 1648619 / 878810, 36519 / 878810],
+    [705 / 12673, -2585 / 12673, 705 / 667],
   ];
 
   return multiplyMatrices(M, XYZ);
@@ -104,16 +109,13 @@ function gam_P3(RGB) {
 /**
  * convert an array of linear-light display-p3 values to CIE XYZ
  * using display-p3's D65 (no chromatic adaptation)
- * http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
  */
 function lin_P3_to_XYZ(rgb) {
   const M = [
-    [0.4865709486482162, 0.26566769316909306, 0.1982172852343625],
-    [0.2289745640697488, 0.6917385218365064, 0.079286914093745],
-    [0.0, 0.04511338185890264, 1.043944368900976],
+    [608311 / 1250200, 189793 / 714400, 198249 / 1000160],
+    [35783 / 156275, 247089 / 357200, 198249 / 2500400],
+    [0 / 1, 32229 / 714400, 5220557 / 5000800],
   ];
-
-  // 0 was computed as -3.972075516933488e-17
 
   return multiplyMatrices(M, rgb);
 }
@@ -124,9 +126,9 @@ function lin_P3_to_XYZ(rgb) {
  */
 function XYZ_to_lin_P3(XYZ) {
   const M = [
-    [2.493496911941425, -0.9313836179191239, -0.40271078445071684],
-    [-0.8294889695615747, 1.7626640603183463, 0.023624685841943577],
-    [0.03584583024378447, -0.07617238926804182, 0.9568845240076872],
+    [446124 / 178915, -333277 / 357830, -72051 / 178915],
+    [-14852 / 17905, 63121 / 35810, 423 / 17905],
+    [11844 / 330415, -50337 / 660830, 316169 / 330415],
   ];
 
   return multiplyMatrices(M, XYZ);
@@ -183,4 +185,57 @@ export function srgbToDisplayP3(pixel) {
   pixel.B = rgbVec[2];
 
   return pixel;
+}
+
+/**
+ * Returns a function which applies the specified colorspace/premultiplication conversion.
+ * Does not clamp, so may return values outside of the `dstColorSpace` gamut, due to either
+ * color space conversion or alpha premultiplication.
+ */
+export function makeInPlaceColorConversion({
+  srcPremultiplied,
+  dstPremultiplied,
+  srcColorSpace = 'srgb',
+  dstColorSpace = 'srgb',
+}) {
+  const requireColorSpaceConversion = srcColorSpace !== dstColorSpace;
+  const requireUnpremultiplyAlpha =
+    srcPremultiplied && (requireColorSpaceConversion || srcPremultiplied !== dstPremultiplied);
+  const requirePremultiplyAlpha =
+    dstPremultiplied && (requireColorSpaceConversion || srcPremultiplied !== dstPremultiplied);
+
+  return rgba => {
+    assert(rgba.A >= 0.0 && rgba.A <= 1.0, 'rgba.A out of bounds');
+
+    if (requireUnpremultiplyAlpha) {
+      if (rgba.A !== 0.0) {
+        rgba.R /= rgba.A;
+        rgba.G /= rgba.A;
+        rgba.B /= rgba.A;
+      } else {
+        assert(
+          rgba.R === 0.0 && rgba.G === 0.0 && rgba.B === 0.0 && rgba.A === 0.0,
+          'Unpremultiply ops with alpha value 0.0 requires all channels equals to 0.0'
+        );
+      }
+    }
+    // It's possible RGB are now > 1.
+    // This technically represents colors outside the src gamut, so no clamping yet.
+
+    if (requireColorSpaceConversion) {
+      // WebGPU currently only supports dstColorSpace = 'srgb'.
+      if (srcColorSpace === 'display-p3' && dstColorSpace === 'srgb') {
+        rgba = displayP3ToSrgb(rgba);
+      } else {
+        unreachable();
+      }
+    }
+    // Now RGB may also be negative if the src gamut is larger than the dst gamut.
+
+    if (requirePremultiplyAlpha) {
+      rgba.R *= rgba.A;
+      rgba.G *= rgba.A;
+      rgba.B *= rgba.A;
+    }
+  };
 }

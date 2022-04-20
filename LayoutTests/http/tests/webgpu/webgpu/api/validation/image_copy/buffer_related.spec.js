@@ -16,7 +16,7 @@ import { ImageCopyTest, formatCopyableWithMethod } from './image_copy.js';
 
 export const g = makeTestGroup(ImageCopyTest);
 
-g.test('valid')
+g.test('buffer_state')
   .desc(
     `
 Test that the buffer must be valid and not destroyed.
@@ -39,8 +39,9 @@ Test that the buffer must be valid and not destroyed.
       usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
     });
 
-    const success = state !== 'invalid';
-    const submit = state !== 'destroyed';
+    // Invalid buffer will fail finish, and destroyed buffer will fail submit
+    const submit = state !== 'invalid';
+    const success = state === 'valid';
 
     const texture = t.device.createTexture({
       size: { width: 2, height: 2, depthOrArrayLayers: 1 },
@@ -54,6 +55,45 @@ Test that the buffer must be valid and not destroyed.
       { bytesPerRow: 0 },
       { width: 0, height: 0, depthOrArrayLayers: 0 },
       { dataSize: 16, method, success, submit }
+    );
+  });
+
+g.test('buffer,device_mismatch')
+  .desc('Tests the image copies cannot be called with a buffer created from another device')
+  .paramsSubcasesOnly(u =>
+    u.combine('method', ['CopyB2T', 'CopyT2B']).combine('mismatched', [true, false])
+  )
+  .fn(async t => {
+    const { method, mismatched } = t.params;
+
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
+    }
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const buffer = device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    });
+
+    t.trackForCleanup(buffer);
+
+    const texture = t.device.createTexture({
+      size: { width: 2, height: 2, depthOrArrayLayers: 1 },
+      format: 'rgba8unorm',
+      usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
+    });
+
+    const success = !mismatched;
+
+    // Expect success in both finish and submit, or validation error in finish
+    t.testBuffer(
+      buffer,
+      texture,
+      { bytesPerRow: 0 },
+      { width: 0, height: 0, depthOrArrayLayers: 0 },
+      { dataSize: 16, method, success, submit: success }
     );
   });
 
@@ -96,12 +136,13 @@ TODO update such that it tests
       usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
     });
 
+    // Expect success in both finish and submit, or validation error in finish
     t.testBuffer(
       buffer,
       texture,
       { bytesPerRow: 0 },
       { width: 0, height: 0, depthOrArrayLayers: 0 },
-      { dataSize: 16, method, success }
+      { dataSize: 16, method, success, submit: success }
     );
   });
 
@@ -179,9 +220,11 @@ Test that bytesPerRow must be a multiple of 256 for CopyB2T and CopyT2B if it is
 
     const copySize = [info.blockWidth, copyHeightInBlocks * info.blockHeight, 1];
 
+    // Expect success in both finish and submit, or validation error in finish
     t.testBuffer(buffer, texture, { bytesPerRow }, copySize, {
       dataSize: 512 * 8 * 16,
       method,
       success,
+      submit: success,
     });
   });

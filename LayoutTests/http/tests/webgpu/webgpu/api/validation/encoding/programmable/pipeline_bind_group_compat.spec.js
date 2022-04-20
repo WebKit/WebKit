@@ -104,7 +104,7 @@ class F extends ValidationTest {
 
   createComputePipelineWithLayout(bindGroups) {
     const shader = `
-      [[stage(compute), workgroup_size(1, 1, 1)]]
+      @stage(compute) @workgroup_size(1)
         fn main(@builtin(global_invocation_id) GlobalInvocationID : vec3<u32>) {
       }
     `;

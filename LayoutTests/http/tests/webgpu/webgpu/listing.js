@@ -219,7 +219,7 @@ export const listing = [
       "operation",
       "memory_sync",
       "buffer",
-      "rw_and_wr"
+      "multiple_buffers"
     ]
   },
   {
@@ -228,7 +228,7 @@ export const listing = [
       "operation",
       "memory_sync",
       "buffer",
-      "ww"
+      "single_buffer"
     ]
   },
   {
@@ -461,6 +461,14 @@ export const listing = [
       "operation",
       "shader_module",
       "compilation_info"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "operation",
+      "texture_view",
+      "format_reinterpretation"
     ]
   },
   {
@@ -1000,15 +1008,6 @@ export const listing = [
       "validation",
       "queue",
       "destroyed",
-      "buffer"
-    ]
-  },
-  {
-    "file": [
-      "api",
-      "validation",
-      "queue",
-      "destroyed",
       "query_set"
     ]
   },
@@ -1108,6 +1107,15 @@ export const listing = [
     "file": [
       "api",
       "validation",
+      "state",
+      "device_lost",
+      "destroy"
+    ]
+  },
+  {
+    "file": [
+      "api",
+      "validation",
       "texture",
       "destroy"
     ]
@@ -1154,6 +1162,13 @@ export const listing = [
     "file": [
       "shader",
       "execution",
+      "evaluation_order"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
       "expression",
       "binary",
       "bitwise"
@@ -1166,6 +1181,15 @@ export const listing = [
       "expression",
       "binary",
       "f32_arithmetic"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "execution",
+      "expression",
+      "binary",
+      "f32_logical"
     ]
   },
   {
@@ -1602,6 +1626,13 @@ export const listing = [
     "file": [
       "shader",
       "validation",
+      "tokens"
+    ]
+  },
+  {
+    "file": [
+      "shader",
+      "validation",
       "variable_and_const"
     ]
   },
@@ -1618,6 +1649,13 @@ export const listing = [
       "util",
       "texture",
       "texel_data"
+    ]
+  },
+  {
+    "file": [
+      "util",
+      "texture",
+      "texture_ok"
     ]
   },
   {
@@ -1715,7 +1753,7 @@ export const listing = [
       "web_platform",
       "reftests"
     ],
-    "readme": "Reference tests (reftests) for WebGPU canvas presentation.\n\nThese render some contents to a canvas using WebGPU, and WPT compares the rendering result with\nthe \"reference\" versions (in `ref/`) which render with 2D canvas.\n\nThis tests things like:\n- The canvas has the correct orientation.\n- The canvas renders with the correct transfer function.\n- The canvas blends and interpolates in the correct color encoding.\n\nTODO(#915): canvas_complex: test rgba8unorm and rgba16float\nTODO(#916): canvas_complex: Test all ways to write into textures (currently only testing copy methods).\nTODO(#918): Test all possible color spaces (once we have more than 1)\n\nTODO(#921): Why is there sometimes a difference of 1 (e.g. 3f vs 40) in canvas_size_different_with_back_buffer_size?\nAnd why does chromium's image_diff show diffs on other pixels that don't seem to have diffs?"
+    "readme": "Reference tests (reftests) for WebGPU canvas presentation.\n\nThese render some contents to a canvas using WebGPU, and WPT compares the rendering result with\nthe \"reference\" versions (in `ref/`) which render with 2D canvas.\n\nThis tests things like:\n- The canvas has the correct orientation.\n- The canvas renders with the correct transfer function.\n- The canvas blends and interpolates in the correct color encoding.\n\nTODO(#918): Test all possible color spaces (once we have more than 1)\nTODO(#921): Why is there sometimes a difference of 1 (e.g. 3f vs 40) in canvas_size_different_with_back_buffer_size?\nAnd why does chromium's image_diff show diffs on other pixels that don't seem to have diffs?\nTODO(#1093): Test rgba16float values which are out of gamut of the canvas but under SDR luminance.\nTODO(#1093): Test rgba16float values which are above SDR luminance.\nTODO(#1116): Test canvas scaling."
   },
   {
     "file": [

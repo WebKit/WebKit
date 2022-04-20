@@ -67,11 +67,11 @@ g.test('inputs')
         break;
       case 'struct':
         structures = `struct Inputs {
-            @builtin(local_invocation_id) local_id : vec3<u32>;
-            @builtin(local_invocation_index) local_index : u32;
-            @builtin(global_invocation_id) global_id : vec3<u32>;
-            @builtin(workgroup_id) group_id : vec3<u32>;
-            @builtin(num_workgroups) num_groups : vec3<u32>;
+            @builtin(local_invocation_id) local_id : vec3<u32>,
+            @builtin(local_invocation_index) local_index : u32,
+            @builtin(global_invocation_id) global_id : vec3<u32>,
+            @builtin(workgroup_id) group_id : vec3<u32>,
+            @builtin(num_workgroups) num_groups : vec3<u32>,
           };`;
         params = `inputs : Inputs`;
         local_id = 'inputs.local_id';
@@ -82,11 +82,11 @@ g.test('inputs')
         break;
       case 'mixed':
         structures = `struct InputsA {
-          @builtin(local_invocation_index) local_index : u32;
-          @builtin(global_invocation_id) global_id : vec3<u32>;
+          @builtin(local_invocation_index) local_index : u32,
+          @builtin(global_invocation_id) global_id : vec3<u32>,
         };
         struct InputsB {
-          @builtin(workgroup_id) group_id : vec3<u32>;
+          @builtin(workgroup_id) group_id : vec3<u32>
         };`;
         params = `@builtin(local_invocation_id) local_id : vec3<u32>,
                   inputsA : InputsA,
@@ -103,10 +103,10 @@ g.test('inputs')
     // WGSL shader that stores every builtin value to a buffer, for every invocation in the grid.
     const wgsl = `
       struct S {
-        data : array<u32>;
+        data : array<u32>
       };
       struct V {
-        data : array<vec3<u32>>;
+        data : array<vec3<u32>>
       };
       @group(0) @binding(0) var<storage, write> local_id_out : V;
       @group(0) @binding(1) var<storage, write> local_index_out : S;

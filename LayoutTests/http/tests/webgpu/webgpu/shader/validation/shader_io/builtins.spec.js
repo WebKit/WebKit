@@ -113,7 +113,7 @@ g.test('type')
     if (t.params.target_type === 'MyStruct') {
       // Generate a struct that contains the correct built-in type.
       code += 'struct MyStruct {\n';
-      code += `  value : ${t.params.type};\n`;
+      code += `  value : ${t.params.type}\n`;
       code += '};\n\n';
     }
 
@@ -146,10 +146,10 @@ g.test('nesting')
     // Generate a struct that contains a sample_mask builtin, nested inside another struct.
     let code = `
     struct Inner {
-      @builtin(sample_mask) value : u32;
+      @builtin(sample_mask) value : u32
     };
     struct Outer {
-      inner : Inner;
+      inner : Inner
     };`;
 
     code += generateShader({
@@ -198,16 +198,16 @@ g.test('duplicates')
       t.params.second === 'rb' ? '@builtin(sample_mask)' : '@location(2) @interpolate(flat)';
     const code = `
     struct S1 {
-      ${s1a} a : u32;
-      ${s1b} b : u32;
+      ${s1a} a : u32,
+      ${s1b} b : u32,
     };
     struct S2 {
-      ${s2a} a : u32;
-      ${s2b} b : u32;
+      ${s2a} a : u32,
+      ${s2b} b : u32,
     };
     struct R {
-      ${ra} a : u32;
-      ${rb} b : u32;
+      ${ra} a : u32,
+      ${rb} b : u32,
     };
     @stage(fragment)
     fn main(${p1} p1 : u32,
@@ -238,7 +238,7 @@ g.test('missing_vertex_position')
   .fn(t => {
     const code = `
     struct S {
-      ${t.params.attribute} value : vec4<f32>;
+      ${t.params.attribute} value : vec4<f32>
     };
 
     @stage(vertex)

@@ -144,12 +144,12 @@ function runBatch(
   const source = `
 struct Input {
 ${parameterTypes
-  .map((ty, i) => `  @size(${kValueStride}) param${i} : ${storageType(ty)};`)
+  .map((ty, i) => `  @size(${kValueStride}) param${i} : ${storageType(ty)},`)
   .join('\n')}
 };
 
 struct Output {
-  @size(${kValueStride}) value : ${storageType(returnType)};
+  @size(${kValueStride}) value : ${storageType(returnType)}
 };
 
 @group(0) @binding(0)

@@ -3,7 +3,7 @@
  **/ import { SkipTestCase } from '../../common/framework/fixture.js';
 import { getGPU } from '../../common/util/navigator_gpu.js';
 import { assert, raceWithRejectOnTimeout, assertReject } from '../../common/util/util.js';
-import { DefaultLimits } from '../constants.js';
+import { kLimitInfo, kLimits } from '../capability_info.js';
 
 class TestFailedButDeviceReusable extends Error {}
 class FeaturesNotSupported extends Error {}
@@ -18,14 +18,21 @@ export class DevicePool {
   /** Request a device from the pool. */
   async reserve(descriptor) {
     // Always attempt to initialize default device, to see if it succeeds.
+    let errorMessage = '';
     if (this.defaultHolder === 'uninitialized') {
       try {
         this.defaultHolder = await DeviceHolder.create(undefined);
       } catch (ex) {
         this.defaultHolder = 'failed';
+        if (ex instanceof Error) {
+          errorMessage = ` with ${ex.name} "${ex.message}"`;
+        }
       }
     }
-    assert(this.defaultHolder !== 'failed', 'WebGPU device failed to initialize; not retrying');
+    assert(
+      this.defaultHolder !== 'failed',
+      `WebGPU device failed to initialize${errorMessage}; not retrying`
+    );
 
     let holder;
     if (descriptor === undefined) {
@@ -70,7 +77,17 @@ export class DevicePool {
           holder.device.destroy();
         }
       }
-      throw ex;
+      // In the try block, we may throw an error if the device is lost in order to force device
+      // reinitialization, however, if the device lost was expected we want to suppress the error
+      // The device lost is expected when `holder.expectedLostReason` is equal to
+      // `holder.lostInfo.reason`.
+      const expectedDeviceLost =
+        holder.expectedLostReason !== undefined &&
+        holder.lostInfo !== undefined &&
+        holder.expectedLostReason === holder.lostInfo.reason;
+      if (!expectedDeviceLost) {
+        throw ex;
+      }
     } finally {
       // Mark the holder as free. (This only has an effect if the pool still has the holder.)
       // This could be done at the top but is done here to guard against async-races during release.
@@ -169,11 +186,12 @@ function canonicalizeDescriptor(desc) {
    * specified _and_ non-default. */
   const limitsCanonicalized = {};
   if (desc.requiredLimits) {
-    for (const [k, defaultValue] of Object.entries(DefaultLimits)) {
-      const requestedValue = desc.requiredLimits[k];
+    for (const limit of kLimits) {
+      const requestedValue = desc.requiredLimits[limit];
+      const defaultValue = kLimitInfo[limit].default;
       // Skip adding a limit to limitsCanonicalized if it is the same as the default.
       if (requestedValue !== undefined && requestedValue !== defaultValue) {
-        limitsCanonicalized[k] = requestedValue;
+        limitsCanonicalized[limit] = requestedValue;
       }
     }
   }
@@ -182,6 +200,7 @@ function canonicalizeDescriptor(desc) {
   const descriptorCanonicalized = {
     requiredFeatures: featuresCanonicalized,
     requiredLimits: limitsCanonicalized,
+    defaultQueue: {},
   };
 
   return [descriptorCanonicalized, JSON.stringify(descriptorCanonicalized)];
@@ -243,6 +262,10 @@ class DeviceHolder {
     this.device.pushErrorScope('out-of-memory');
     this.device.pushErrorScope('validation');
     return this.device;
+  }
+
+  expectDeviceLost(reason) {
+    this.expectedLostReason = reason;
   }
 
   async ensureRelease() {

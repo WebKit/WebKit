@@ -71,10 +71,10 @@ g.test('render_pass_resolve')
         module: t.device.createShaderModule({
           code: `
             struct Output {
-              @location(0) fragColor0 : vec4<f32>;
-              @location(1) fragColor1 : vec4<f32>;
-              @location(2) fragColor2 : vec4<f32>;
-              @location(3) fragColor3 : vec4<f32>;
+              @location(0) fragColor0 : vec4<f32>,
+              @location(1) fragColor1 : vec4<f32>,
+              @location(2) fragColor2 : vec4<f32>,
+              @location(3) fragColor3 : vec4<f32>,
             };
 
             @stage(fragment) fn main() -> Output {

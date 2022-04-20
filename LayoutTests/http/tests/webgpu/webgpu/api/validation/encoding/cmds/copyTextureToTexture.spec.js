@@ -14,7 +14,7 @@ import {
   kTextureDimensions,
 } from '../../../../capability_info.js';
 import { kResourceStates } from '../../../../gpu_test.js';
-import { align } from '../../../../util/math.js';
+import { align, lcm } from '../../../../util/math.js';
 import { ValidationTest } from '../../validation_test.js';
 
 class F extends ValidationTest {
@@ -109,7 +109,41 @@ g.test('texture,device_mismatch')
     { srcMismatched: true, dstMismatched: false },
     { srcMismatched: false, dstMismatched: true },
   ])
-  .unimplemented();
+  .fn(async t => {
+    const { srcMismatched, dstMismatched } = t.params;
+    const mismatched = srcMismatched || dstMismatched;
+
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
+    }
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+    const size = { width: 4, height: 4, depthOrArrayLayers: 1 };
+    const format = 'rgba8unorm';
+
+    const srcTexture = device.createTexture({
+      size,
+      format,
+      usage: GPUTextureUsage.COPY_SRC,
+    });
+
+    t.trackForCleanup(srcTexture);
+
+    const dstTexture = device.createTexture({
+      size,
+      format,
+      usage: GPUTextureUsage.COPY_DST,
+    });
+
+    t.trackForCleanup(dstTexture);
+
+    t.TestCopyTextureToTexture(
+      { texture: srcTexture },
+      { texture: dstTexture },
+      { width: 1, height: 1, depthOrArrayLayers: 1 },
+      mismatched ? 'FinishError' : 'Success'
+    );
+  });
 
 g.test('mipmap_level')
   .desc(
@@ -319,16 +353,20 @@ Test the formats of textures in copyTextureToTexture must be copy-compatible.
     const dstFormatInfo = kTextureFormatInfo[dstFormat];
     await t.selectDeviceOrSkipTestCase([srcFormatInfo.feature, dstFormatInfo.feature]);
 
-    const kTextureSize = { width: 16, height: 16, depthOrArrayLayers: 1 };
+    const textureSize = {
+      width: lcm(srcFormatInfo.blockWidth, dstFormatInfo.blockWidth),
+      height: lcm(srcFormatInfo.blockHeight, dstFormatInfo.blockHeight),
+      depthOrArrayLayers: 1,
+    };
 
     const srcTexture = t.device.createTexture({
-      size: kTextureSize,
+      size: textureSize,
       format: srcFormat,
       usage: GPUTextureUsage.COPY_SRC,
     });
 
     const dstTexture = t.device.createTexture({
-      size: kTextureSize,
+      size: textureSize,
       format: dstFormat,
       usage: GPUTextureUsage.COPY_DST,
     });
@@ -341,7 +379,7 @@ Test the formats of textures in copyTextureToTexture must be copy-compatible.
     t.TestCopyTextureToTexture(
       { texture: srcTexture },
       { texture: dstTexture },
-      kTextureSize,
+      textureSize,
       isSuccess ? 'Success' : 'FinishError'
     );
   });

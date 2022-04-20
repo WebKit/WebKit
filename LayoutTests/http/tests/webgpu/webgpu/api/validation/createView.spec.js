@@ -10,6 +10,7 @@ import {
   kTextureFormatInfo,
   kTextureFormats,
   kTextureViewDimensions,
+  viewCompatible,
 } from '../../capability_info.js';
 import { kResourceStates } from '../../gpu_test.js';
 import {
@@ -27,27 +28,37 @@ const kLevels = 6;
 
 g.test('format')
   .desc(
-    `Views must have the same format as the base texture, for all {texture format}x{view format}.`
+    `Views must have the view format compatible with the base texture, for all {texture format}x{view format}.`
   )
   .params(u =>
     u
       .combine('textureFormat', kTextureFormats)
       .beginSubcases()
-      // If undefined, should default to textureFormat.
       .combine('viewFormat', [undefined, ...kTextureFormats])
+      .combine('useViewFormatList', [false, true])
   )
   .fn(async t => {
-    const { textureFormat, viewFormat } = t.params;
+    const { textureFormat, viewFormat, useViewFormatList } = t.params;
     await t.selectDeviceForTextureFormatOrSkipTestCase([textureFormat, viewFormat]);
     const { blockWidth, blockHeight } = kTextureFormatInfo[textureFormat];
+
+    const compatible = viewFormat === undefined || viewCompatible(textureFormat, viewFormat);
 
     const texture = t.device.createTexture({
       format: textureFormat,
       size: [blockWidth, blockHeight],
       usage: GPUTextureUsage.TEXTURE_BINDING,
+
+      // This is a test of createView, not createTexture. Don't pass viewFormats here that
+      // are not compatible, as that is tested in createTexture.spec.ts.
+      viewFormats:
+        useViewFormatList && compatible && viewFormat !== undefined ? [viewFormat] : undefined,
     });
 
-    const success = viewFormat === undefined || viewFormat === textureFormat;
+    // Successful if there is no view format, no reinterpretation was required, or the formats are compatible
+    // and is was specified in the viewFormats list.
+    const success =
+      viewFormat === undefined || viewFormat === textureFormat || (compatible && useViewFormatList);
     t.expectValidationError(() => {
       texture.createView({ format: viewFormat });
     }, !success);

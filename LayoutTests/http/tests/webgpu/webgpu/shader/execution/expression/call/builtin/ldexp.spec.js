@@ -44,28 +44,30 @@ T is f32 or vecN<f32> I is i32 or vecN<i32>, where I is a scalar if T is a scala
       return { input: [f32(e1), i32(e2)], expected: f32(result) };
     };
 
-    let e1_range = [];
-    //  -2^32 < x <= -1, biased towards -1
-    e1_range = e1_range.concat(biasedRange(-1, -(2 ** 32), 50));
-    // -1 <= x <= 0, linearly spread
-    e1_range = e1_range.concat(linearRange(-1, 0, 20));
-    // 0 <= x <= -1, linearly spread
-    e1_range = e1_range.concat(linearRange(0, 1, 20));
-    // 1 <= x < 2^32, biased towards 1
-    e1_range = e1_range.concat(biasedRange(1, 2 ** 32, 50));
+    const e1_range = [
+      //  -2^32 < x <= -1, biased towards -1
+      ...biasedRange(-1, -(2 ** 32), 50),
+      // -1 <= x <= 0, linearly spread
+      ...linearRange(-1, 0, 20),
+      // 0 <= x <= -1, linearly spread
+      ...linearRange(0, 1, 20),
+      // 1 <= x < 2^32, biased towards 1
+      ...biasedRange(1, 2 ** 32, 50),
+    ];
 
-    let e2_range = [];
-    //  -127 < x <= 0, biased towards 0
-    e2_range = e2_range.concat(biasedRange(0, -127, 20).map(x => Math.round(x)));
-    //  0 <= x < 128, biased towards 0
-    e2_range = e2_range.concat(biasedRange(0, 128, 20).map(x => Math.round(x)));
+    const e2_range = [
+      // -127 < x <= 0, biased towards 0
+      ...biasedRange(0, -127, 20).map(x => Math.round(x)),
+      // 0 <= x < 128, biased towards 0
+      ...biasedRange(0, 128, 20).map(x => Math.round(x)),
+    ];
 
-    let cases = [];
+    const cases = [];
     e1_range.forEach(e1 => {
       e2_range.forEach(e2 => {
         const c = truthFunc(e1, e2);
         if (c !== undefined) {
-          cases = cases.concat(c);
+          cases.push(c);
         }
       });
     });

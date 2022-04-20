@@ -1,7 +1,25 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ import { unreachable } from '../../common/util/util.js';
-export const allCanvasTypes = ['onscreen', 'offscreen'];
+export const kAllCanvasTypes = ['onscreen', 'offscreen'];
+
+/** Valid contextId for HTMLCanvasElement/OffscreenCanvas,
+ *  spec: https://html.spec.whatwg.org/multipage/canvas.html#dom-canvas-getcontext
+ */
+export const kValidCanvasContextIds = ['2d', 'bitmaprenderer', 'webgl', 'webgl2', 'webgpu'];
+
+/** Helper(s) to determine if context is copyable. */
+export function canCopyFromCanvasContext(contextName) {
+  switch (contextName) {
+    case '2d':
+    case 'webgl':
+    case 'webgl2':
+    case 'webgpu':
+      return true;
+    default:
+      return false;
+  }
+}
 
 /** Create HTMLCanvas/OffscreenCanvas. */
 export function createCanvas(test, canvasType, width, height) {
@@ -13,7 +31,11 @@ export function createCanvas(test, canvasType, width, height) {
       test.skip('Cannot create HTMLCanvasElement');
     }
   } else if (canvasType === 'offscreen') {
-    canvas = createOffscreenCanvas(test, width, height);
+    if (typeof OffscreenCanvas !== 'undefined') {
+      canvas = createOffscreenCanvas(test, width, height);
+    } else {
+      test.skip('Cannot create an OffscreenCanvas');
+    }
   } else {
     unreachable();
   }

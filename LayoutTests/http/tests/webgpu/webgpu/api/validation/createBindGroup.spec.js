@@ -511,7 +511,9 @@ g.test('bind_group_layout,device_mismatch')
       await t.selectMismatchedDeviceOrSkipTestCase(undefined);
     }
 
-    const descriptor = {
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const bgl = device.createBindGroupLayout({
       entries: [
         {
           binding: 0,
@@ -519,11 +521,7 @@ g.test('bind_group_layout,device_mismatch')
           buffer: {},
         },
       ],
-    };
-
-    const bgl = mismatched
-      ? t.mismatchedDevice.createBindGroupLayout(descriptor)
-      : t.device.createBindGroupLayout(descriptor);
+    });
 
     t.expectValidationError(() => {
       t.device.createBindGroup({

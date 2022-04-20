@@ -1,7 +1,7 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ import { assert, memcpy } from '../../../common/util/util.js';
-import { kTextureFormatInfo } from '../../capability_info.js';
+import { kTextureFormatInfo, resolvePerAspectFormat } from '../../capability_info.js';
 import { align } from '../math.js';
 import { reifyExtent3D } from '../unions.js';
 
@@ -16,7 +16,12 @@ export const kBufferCopyAlignment = 4;
  * Overridable layout options for {@link getTextureCopyLayout}.
  */
 
-const kDefaultLayoutOptions = { mipLevel: 0, bytesPerRow: undefined, rowsPerImage: undefined };
+const kDefaultLayoutOptions = {
+  mipLevel: 0,
+  bytesPerRow: undefined,
+  rowsPerImage: undefined,
+  aspect: 'all',
+};
 
 /** The info returned by {@link getTextureSubCopyLayout}. */
 
@@ -32,7 +37,7 @@ export function getTextureCopyLayout(
   format,
   dimension,
   baseSize,
-  { mipLevel, bytesPerRow, rowsPerImage } = kDefaultLayoutOptions
+  { mipLevel, bytesPerRow, rowsPerImage, aspect } = kDefaultLayoutOptions
 ) {
   const mipSize = physicalMipSize(
     { width: baseSize[0], height: baseSize[1], depthOrArrayLayers: baseSize[2] },
@@ -41,7 +46,7 @@ export function getTextureCopyLayout(
     mipLevel
   );
 
-  const layout = getTextureSubCopyLayout(format, mipSize, { bytesPerRow, rowsPerImage });
+  const layout = getTextureSubCopyLayout(format, mipSize, { bytesPerRow, rowsPerImage, aspect });
   return { ...layout, mipSize: [mipSize.width, mipSize.height, mipSize.depthOrArrayLayers] };
 }
 
@@ -51,8 +56,14 @@ export function getTextureCopyLayout(
  *
  * Computes default values for `bytesPerRow` and `rowsPerImage` if not specified.
  */
-export function getTextureSubCopyLayout(format, copySize, { bytesPerRow, rowsPerImage } = {}) {
+export function getTextureSubCopyLayout(
+  format,
+  copySize,
+  { bytesPerRow, rowsPerImage, aspect = 'all' } = {}
+) {
+  format = resolvePerAspectFormat(format, aspect);
   const { blockWidth, blockHeight, bytesPerBlock } = kTextureFormatInfo[format];
+  assert(bytesPerBlock !== undefined);
 
   const copySize_ = reifyExtent3D(copySize);
   assert(
@@ -92,7 +103,7 @@ export function getTextureSubCopyLayout(format, copySize, { bytesPerRow, rowsPer
   const byteLength = bytesPerSlice * (copySizeBlocks.depthOrArrayLayers - 1) + sliceSize;
 
   return {
-    bytesPerBlock,
+    bytesPerBlock: bytesPerBlock,
     byteLength: align(byteLength, kBufferCopyAlignment),
     minBytesPerRow,
     bytesPerRow,

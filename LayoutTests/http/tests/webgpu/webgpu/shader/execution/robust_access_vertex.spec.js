@@ -316,7 +316,7 @@ class F extends GPUTest {
       let currAttribute = 0;
       for (let i = 0; i < bufferCount; i++) {
         for (let j = 0; j < attributesPerBuffer; j++) {
-          layoutStr += `@location(${currAttribute}) a_${currAttribute} : ${typeInfo.wgslType};\n`;
+          layoutStr += `@location(${currAttribute}) a_${currAttribute} : ${typeInfo.wgslType},\n`;
           attributeNames.push(`a_${currAttribute}`);
           currAttribute++;
         }

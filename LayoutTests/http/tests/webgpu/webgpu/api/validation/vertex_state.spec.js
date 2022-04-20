@@ -113,7 +113,7 @@ class F extends ValidationTest {
 
     let count = 0;
     for (const input of inputs) {
-      interfaces += `@location(${input.location}) input${count} : ${input.type};\n`;
+      interfaces += `@location(${input.location}) input${count} : ${input.type},\n`;
       body += `var i${count} : ${input.type} = input.input${count};\n`;
       count++;
     }
@@ -362,11 +362,11 @@ g.test('vertex_attribute_shaderLocation_unique')
 g.test('vertex_shader_input_location_limit')
   .desc(
     `Test that vertex shader's input's location decoration must be less than maxVertexAttributes.
-   - Test for shaderLocation 0, 1, limit - 1, limit`
+   - Test for shaderLocation 0, 1, limit - 1, limit, MAX_I32 (the WGSL spec requires a non-negative i32)`
   )
   .paramsSubcasesOnly(u =>
     u //
-      .combine('testLocation', [0, 1, kMaxVertexAttributes - 1, kMaxVertexAttributes, -1, 2 ** 32])
+      .combine('testLocation', [0, 1, kMaxVertexAttributes - 1, kMaxVertexAttributes, 2 ** 31 - 1])
   )
   .fn(t => {
     const { testLocation } = t.params;

@@ -40,12 +40,12 @@ have unexpected values then get drawn to the color buffer, which is later checke
   )
   .fn(async t => {
     const { format, unclippedDepth, writeDepth, multisampled } = t.params;
+    const info = kTextureFormatInfo[format];
+
     await t.selectDeviceOrSkipTestCase([
       unclippedDepth ? 'depth-clip-control' : undefined,
-      kTextureFormatInfo[format].feature,
+      info.feature,
     ]);
-
-    const info = kTextureFormatInfo[format];
 
     /** Number of depth values to test for both vertex output and frag_depth output. */
     const kNumDepthValues = 8;
@@ -83,8 +83,8 @@ have unexpected values then get drawn to the color buffer, which is later checke
       //////// "Test" entry points
 
       struct VFTest {
-        @builtin(position) pos: vec4<f32>;
-        @location(0) @interpolate(flat) vertexIndex: u32;
+        @builtin(position) pos: vec4<f32>,
+        @location(0) @interpolate(flat) vertexIndex: u32,
       };
 
       @stage(vertex)
@@ -98,7 +98,7 @@ have unexpected values then get drawn to the color buffer, which is later checke
       struct Output {
         // Each fragment (that didn't get clipped) writes into one element of this output.
         // (Anything that doesn't get written is already zero.)
-        fragInputZDiff: array<f32, ${kNumTestPoints}>;
+        fragInputZDiff: array<f32, ${kNumTestPoints}>
       };
       @group(0) @binding(0) var <storage, read_write> output: Output;
 
@@ -120,8 +120,8 @@ have unexpected values then get drawn to the color buffer, which is later checke
       //////// "Check" entry points
 
       struct VFCheck {
-        @builtin(position) pos: vec4<f32>;
-        @location(0) @interpolate(flat) vertexIndex: u32;
+        @builtin(position) pos: vec4<f32>,
+        @location(0) @interpolate(flat) vertexIndex: u32,
       };
 
       @stage(vertex)
@@ -134,8 +134,8 @@ have unexpected values then get drawn to the color buffer, which is later checke
       }
 
       struct FCheck {
-        @builtin(frag_depth) depth: f32;
-        @location(0) color: f32;
+        @builtin(frag_depth) depth: f32,
+        @location(0) color: f32,
       };
 
       @stage(fragment)
@@ -254,9 +254,9 @@ have unexpected values then get drawn to the color buffer, which is later checke
           depthClearValue: 0.5, // Will see this depth value if the fragment was clipped.
           depthLoadOp: 'clear',
           depthStoreOp: 'store',
-          stencilClearValue: 0,
-          stencilLoadOp: 'clear',
-          stencilStoreOp: 'discard',
+          stencilClearValue: info.stencil ? 0 : undefined,
+          stencilLoadOp: info.stencil ? 'clear' : undefined,
+          stencilStoreOp: info.stencil ? 'discard' : undefined,
         },
       });
 
@@ -288,9 +288,9 @@ have unexpected values then get drawn to the color buffer, which is later checke
           view: dsTextureView,
           depthLoadOp: 'load',
           depthStoreOp: 'store',
-          stencilClearValue: 0,
-          stencilLoadOp: 'clear',
-          stencilStoreOp: 'discard',
+          stencilClearValue: info.stencil ? 0 : undefined,
+          stencilLoadOp: info.stencil ? 'clear' : undefined,
+          stencilStoreOp: info.stencil ? 'discard' : undefined,
         },
       });
 
@@ -359,9 +359,11 @@ to be empty.`
   )
   .fn(async t => {
     const { format, unclippedDepth, multisampled } = t.params;
+    const info = kTextureFormatInfo[format];
+
     await t.selectDeviceOrSkipTestCase([
       unclippedDepth ? 'depth-clip-control' : undefined,
-      kTextureFormatInfo[format].feature,
+      info.feature,
     ]);
 
     const kNumDepthValues = 8;
@@ -382,8 +384,8 @@ to be empty.`
       }
 
       struct VF {
-        @builtin(position) pos: vec4<f32>;
-        @location(0) @interpolate(flat) vertexIndex: u32;
+        @builtin(position) pos: vec4<f32>,
+        @location(0) @interpolate(flat) vertexIndex: u32,
       };
 
       @stage(vertex)
@@ -402,8 +404,8 @@ to be empty.`
       }
 
       struct FTest {
-        @builtin(frag_depth) depth: f32;
-        @location(0) color: f32;
+        @builtin(frag_depth) depth: f32,
+        @location(0) color: f32,
       };
 
       @stage(fragment)
@@ -504,9 +506,9 @@ to be empty.`
           view: dsTextureView,
           depthLoadOp: 'load',
           depthStoreOp: 'store',
-          stencilClearValue: 0,
-          stencilLoadOp: 'clear',
-          stencilStoreOp: 'discard',
+          stencilClearValue: info.stencil ? 0 : undefined,
+          stencilLoadOp: info.stencil ? 'clear' : undefined,
+          stencilStoreOp: info.stencil ? 'discard' : undefined,
         },
       });
 

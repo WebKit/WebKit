@@ -135,6 +135,7 @@ g.test('render_pass_store_op,color_attachment_with_depth_stencil_attachment')
     t.expectSingleColor(depthStencilAttachment, kDepthStencilFormat, {
       size: [kHeight, kWidth, 1],
       exp: expectedDepthValue,
+      layout: { mipLevel: 0, aspect: 'depth-only' },
     });
   });
 
@@ -328,19 +329,32 @@ TODO: Also test unsized depth/stencil formats [1]
     pass.end();
     t.device.queue.submit([encoder.finish()]);
 
-    let expectedValue = {};
+    let expectedDepthValue = {};
+    let expectedStencilValue = {};
     if (t.params.storeOperation === 'discard') {
-      // If depthStencilStoreOperation was clear, the texture's depth component should be 0.0,
-      expectedValue = { Depth: 0.0 };
+      // If depthStencilStoreOperation was clear, the texture's depth/stencil component should be 0,
+      expectedDepthValue = { Depth: 0.0 };
+      expectedStencilValue = { Stencil: 0 };
     } else if (t.params.storeOperation === 'store') {
-      // If depthStencilStoreOperation was store, the texture's depth component should be 1.0,
-      expectedValue = { Depth: 1.0 };
+      // If depthStencilStoreOperation was store, the texture's depth/stencil components should be 1,
+      expectedDepthValue = { Depth: 1.0 };
+      expectedStencilValue = { Stencil: 1 };
     }
 
-    t.expectSingleColor(depthStencilTexture, t.params.depthStencilFormat, {
-      size: [kHeight, kWidth, 1],
-      slice: t.params.arrayLayer,
-      exp: expectedValue,
-      layout: { mipLevel: t.params.mipLevel },
-    });
+    if (kTextureFormatInfo[t.params.depthStencilFormat].depth) {
+      t.expectSingleColor(depthStencilTexture, t.params.depthStencilFormat, {
+        size: [kHeight, kWidth, 1],
+        slice: t.params.arrayLayer,
+        exp: expectedDepthValue,
+        layout: { mipLevel: t.params.mipLevel, aspect: 'depth-only' },
+      });
+    }
+    if (kTextureFormatInfo[t.params.depthStencilFormat].stencil) {
+      t.expectSingleColor(depthStencilTexture, t.params.depthStencilFormat, {
+        size: [kHeight, kWidth, 1],
+        slice: t.params.arrayLayer,
+        exp: expectedStencilValue,
+        layout: { mipLevel: t.params.mipLevel, aspect: 'stencil-only' },
+      });
+    }
   });

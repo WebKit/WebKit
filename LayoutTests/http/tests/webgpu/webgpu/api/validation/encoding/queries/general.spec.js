@@ -126,4 +126,25 @@ Tests that write timestamp to a invalid query set that failed during creation:
 g.test('timestamp_query,device_mismatch')
   .desc('Tests writeTimestamp cannot be called with a query set created from another device')
   .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
-  .unimplemented();
+  .fn(async t => {
+    const { mismatched } = t.params;
+
+    await t.selectDeviceForQueryTypeOrSkipTestCase('timestamp');
+
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase('timestamp-query');
+    }
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const querySet = device.createQuerySet({
+      type: 'timestamp',
+      count: 2,
+    });
+
+    t.trackForCleanup(querySet);
+
+    const encoder = t.createEncoder('non-pass');
+    encoder.encoder.writeTimestamp(querySet, 0);
+    encoder.validateFinish(!mismatched);
+  });

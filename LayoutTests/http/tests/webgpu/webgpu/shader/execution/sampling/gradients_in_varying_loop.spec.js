@@ -43,8 +43,8 @@ class DerivativesTest extends GPUTest {
         module: this.device.createShaderModule({
           code: `
             struct Outputs {
-              @builtin(position) Position : vec4<f32>;
-              @location(0) fragUV : vec2<f32>;
+              @builtin(position) Position : vec4<f32>,
+              @location(0) fragUV : vec2<f32>,
             };
 
             @stage(vertex) fn main(
@@ -85,7 +85,7 @@ class DerivativesTest extends GPUTest {
         module: this.device.createShaderModule({
           code: `
             struct Uniforms {
-              numIterations : i32;
+              numIterations : i32
             };
             @binding(0) @group(0) var<uniform> uniforms : Uniforms;
 

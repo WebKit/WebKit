@@ -30,9 +30,9 @@ g.test('shared_with_buffer')
     // attributes, and also layout attributes for the storage buffer.
     const wgsl = `
       struct S {
-        /* byte offset:  0 */ @size(32)  @builtin(workgroup_id) group_id : vec3<u32>;
-        /* byte offset: 32 */            @builtin(local_invocation_index) local_index : u32;
-        /* byte offset: 64 */ @align(64) @builtin(num_workgroups) numGroups : vec3<u32>;
+        /* byte offset:  0 */ @size(32)  @builtin(workgroup_id) group_id : vec3<u32>,
+        /* byte offset: 32 */            @builtin(local_invocation_index) local_index : u32,
+        /* byte offset: 64 */ @align(64) @builtin(num_workgroups) numGroups : vec3<u32>,
       };
 
       @group(0) @binding(0)
@@ -120,8 +120,8 @@ g.test('shared_between_stages')
     const size = [31, 31];
     const wgsl = `
       struct Interface {
-        @builtin(position) position : vec4<f32>;
-        @location(0) color : f32;
+        @builtin(position) position : vec4<f32>,
+        @location(0) color : f32,
       };
 
       var<private> vertices : array<vec2<f32>, 3> = array<vec2<f32>, 3>(
@@ -239,12 +239,12 @@ g.test('shared_with_non_entry_point_function')
     // functions.
     const wgsl = `
       struct Inputs {
-        @builtin(vertex_index) index : u32;
-        @location(0) color : vec4<f32>;
+        @builtin(vertex_index) index : u32,
+        @location(0) color : vec4<f32>,
       };
       struct Outputs {
-        @builtin(position) position : vec4<f32>;
-        @location(0) color : vec4<f32>;
+        @builtin(position) position : vec4<f32>,
+        @location(0) color : vec4<f32>,
       };
 
       var<private> vertices : array<vec2<f32>, 3> = array<vec2<f32>, 3>(

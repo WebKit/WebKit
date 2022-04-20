@@ -47,19 +47,19 @@ g.test('missing_attribute_on_param_struct')
     const compute_attr = t.params.target_stage === 'compute' ? '' : '@builtin(workgroup_id)';
     const code = `
 struct VertexInputs {
-  @location(0) a : f32;
-  ${vertex_attr}  b : f32;
-@  location(2) c : f32;
+  @location(0) a : f32,
+  ${vertex_attr}  b : f32,
+@  location(2) c : f32,
 };
 struct FragmentInputs {
-  @location(0)  a : f32;
-  ${fragment_attr} b : f32;
-@  location(2)  c : f32;
+  @location(0)  a : f32,
+  ${fragment_attr} b : f32,
+@  location(2)  c : f32,
 };
 struct ComputeInputs {
-  @builtin(global_invocation_id) a : vec3<u32>;
-  ${compute_attr}                   b : vec3<u32>;
-  @builtin(local_invocation_id)  c : vec3<u32>;
+  @builtin(global_invocation_id) a : vec3<u32>,
+  ${compute_attr}                   b : vec3<u32>,
+  @builtin(local_invocation_id)  c : vec3<u32>,
 };
 
 @stage(vertex)
@@ -108,14 +108,14 @@ g.test('missing_attribute_on_return_type_struct')
     const fragment_attr = t.params.target_stage === 'fragment' ? '' : '@location(1)';
     const code = `
 struct VertexOutputs {
-  @location(0)       a : f32;
-  ${vertex_attr}        b : f32;
-  @builtin(position) c : vec4<f32>;
+  @location(0)       a : f32,
+  ${vertex_attr}        b : f32,
+  @builtin(position) c : vec4<f32>,
 };
 struct FragmentOutputs {
-  @location(0)  a : f32;
-  ${fragment_attr} b : f32;
-@  location(2)  c : f32;
+  @location(0)  a : f32,
+  ${fragment_attr} b : f32,
+@  location(2)  c : f32,
 };
 
 @stage(vertex)

@@ -233,8 +233,8 @@ g.test('large_draw')
         module: t.device.createShaderModule({
           code: `
           struct Params {
-            numVertices: u32;
-            numInstances: u32;
+            numVertices: u32,
+            numInstances: u32,
           };
 
           fn selectValue(index: u32, maxIndex: u32) -> f32 {

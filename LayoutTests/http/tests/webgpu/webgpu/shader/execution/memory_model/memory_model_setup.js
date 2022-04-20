@@ -490,35 +490,35 @@ export class MemoryModelTester {
 /** Defines common data structures used in memory model test shaders. */
 const shaderMemStructures = `
   struct Memory {
-    value: array<u32>;
+    value: array<u32>
   };
 
   struct AtomicMemory {
-    value: array<atomic<u32>>;
+    value: array<atomic<u32>>
   };
 
   struct ReadResult {
-    r0: atomic<u32>;
-    r1: atomic<u32>;
+    r0: atomic<u32>,
+    r1: atomic<u32>,
   };
 
   struct ReadResults {
-    value: array<ReadResult>;
+    value: array<ReadResult>
   };
 
   struct StressParamsMemory {
-    do_barrier: u32;
-    mem_stress: u32;
-    mem_stress_iterations: u32;
-    mem_stress_pattern: u32;
-    pre_stress: u32;
-    pre_stress_iterations: u32;
-    pre_stress_pattern: u32;
-    permute_first: u32;
-    permute_second: u32;
-    testing_workgroups: u32;
-    mem_stride: u32;
-    location_offset: u32;
+    do_barrier: u32,
+    mem_stress: u32,
+    mem_stress_iterations: u32,
+    mem_stress_pattern: u32,
+    pre_stress: u32,
+    pre_stress_iterations: u32,
+    pre_stress_pattern: u32,
+    permute_first: u32,
+    permute_second: u32,
+    testing_workgroups: u32,
+    mem_stride: u32,
+    location_offset: u32,
   };
 `;
 
@@ -531,10 +531,10 @@ const shaderMemStructures = `
  */
 const fourBehaviorTestResultStructure = `
   struct TestResults {
-    seq0: atomic<u32>;
-    seq1: atomic<u32>;
-    interleaved: atomic<u32>;
-    weak: atomic<u32>;
+    seq0: atomic<u32>,
+    seq1: atomic<u32>,
+    interleaved: atomic<u32>,
+    weak: atomic<u32>,
   };
 `;
 
@@ -546,8 +546,8 @@ const fourBehaviorTestResultStructure = `
  */
 const twoBehaviorTestResultStructure = `
   struct TestResults {
-    seq: atomic<u32>;
-    weak: atomic<u32>;
+    seq: atomic<u32>,
+    weak: atomic<u32>,
   };
 `;
 

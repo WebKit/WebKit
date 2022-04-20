@@ -78,9 +78,9 @@ Params:
     const vertexModule = t.device.createShaderModule({
       code: `
 struct Inputs {
-  @builtin(vertex_index) vertex_index : u32;
-  @builtin(instance_index) instance_id : u32;
-  @location(0) vertexPosition : vec2<f32>;
+  @builtin(vertex_index) vertex_index : u32,
+  @builtin(instance_index) instance_id : u32,
+  @location(0) vertexPosition : vec2<f32>,
 };
 
 @stage(vertex) fn vert_main(input : Inputs
@@ -103,7 +103,7 @@ struct Inputs {
     const fragmentModule = t.device.createShaderModule({
       code: `
 struct Output {
-  value : u32;
+  value : u32
 };
 
 @group(0) @binding(0) var<storage, read_write> output : Output;
@@ -529,17 +529,17 @@ g.test('vertex_attributes,basic')
         module: t.device.createShaderModule({
           code: `
 struct Inputs {
-  @builtin(vertex_index) vertexIndex : u32;
-  @builtin(instance_index) instanceIndex : u32;
-${vertexInputShaderLocations.map(i => `  @location(${i}) attrib${i} : ${wgslFormat};`).join('\n')}
+  @builtin(vertex_index) vertexIndex : u32,
+  @builtin(instance_index) instanceIndex : u32,
+${vertexInputShaderLocations.map(i => `  @location(${i}) attrib${i} : ${wgslFormat},`).join('\n')}
 };
 
 struct Outputs {
-  @builtin(position) Position : vec4<f32>;
+  @builtin(position) Position : vec4<f32>,
 ${interStageScalarShaderLocations
-  .map(i => `  @location(${i}) @interpolate(flat) outAttrib${i} : ${wgslFormat};`)
+  .map(i => `  @location(${i}) @interpolate(flat) outAttrib${i} : ${wgslFormat},`)
   .join('\n')}
-  @location(${interStageScalarShaderLocations.length}) @interpolate(flat) primitiveId : u32;
+  @location(${interStageScalarShaderLocations.length}) @interpolate(flat) primitiveId : u32,
 ${accumulateVariableDeclarationsInVertexShader}
 };
 
@@ -564,17 +564,17 @@ ${accumulateVariableAssignmentsInVertexShader}
           code: `
 struct Inputs {
 ${interStageScalarShaderLocations
-  .map(i => `  @location(${i}) @interpolate(flat) attrib${i} : ${wgslFormat};`)
+  .map(i => `  @location(${i}) @interpolate(flat) attrib${i} : ${wgslFormat},`)
   .join('\n')}
-  @location(${interStageScalarShaderLocations.length}) @interpolate(flat) primitiveId : u32;
+  @location(${interStageScalarShaderLocations.length}) @interpolate(flat) primitiveId : u32,
 ${accumulateVariableDeclarationsInFragmentShader}
 };
 
 struct OutPrimitive {
-${vertexInputShaderLocations.map(i => `  attrib${i} : ${wgslFormat};`).join('\n')}
+${vertexInputShaderLocations.map(i => `  attrib${i} : ${wgslFormat},`).join('\n')}
 };
 struct OutBuffer {
-  primitives : @stride(${vertexInputShaderLocations.length * 4}) array<OutPrimitive>;
+  primitives : array<OutPrimitive>
 };
 @group(0) @binding(0) var<storage, read_write> outBuffer : OutBuffer;
 

@@ -95,7 +95,6 @@ def generateTests(ctsCheckoutDir):
         reftestsPath = pathlib.Path(destinationPath, "webgpu", "web_platform", "reftests")
         if reftestsPath.is_dir():
             shutil.rmtree(reftestsPath)
-        print("Done!")
 
 def checkoutAndBuildInTemporaryDirectory(continuation):
     try:

@@ -16,12 +16,12 @@ class VertexAndIndexStateTrackingTest extends GPUTest {
         module: this.device.createShaderModule({
           code: `
         struct Inputs {
-          @location(0) vertexPosition : f32;
-          @location(1) vertexColor : vec4<f32>;
+          @location(0) vertexPosition : f32,
+          @location(1) vertexColor : vec4<f32>,
         };
         struct Outputs {
-          @builtin(position) position : vec4<f32>;
-          @location(0) color : vec4<f32>;
+          @builtin(position) position : vec4<f32>,
+          @location(0) color : vec4<f32>,
         };
         @stage(vertex)
         fn main(input : Inputs)-> Outputs {
@@ -58,7 +58,7 @@ class VertexAndIndexStateTrackingTest extends GPUTest {
         module: this.device.createShaderModule({
           code: `
         struct Input {
-          @location(0) color : vec4<f32>;
+          @location(0) color : vec4<f32>
         };
         @stage(fragment)
         fn main(input : Input) -> @location(0) vec4<f32> {
@@ -410,7 +410,7 @@ g.test('set_vertex_buffer_but_not_used_in_draw')
       module: t.device.createShaderModule({
         code: `
       struct Input {
-        @location(0) color : vec4<f32>;
+        @location(0) color : vec4<f32>
       };
       @stage(fragment)
       fn main(input : Input) -> @location(0) vec4<f32> {
@@ -428,12 +428,12 @@ g.test('set_vertex_buffer_but_not_used_in_draw')
         module: t.device.createShaderModule({
           code: `
         struct Inputs {
-          @location(0) vertexColor : vec4<f32>;
-          @location(1) vertexPosition : f32;
+          @location(0) vertexColor : vec4<f32>,
+          @location(1) vertexPosition : f32,
         };
         struct Outputs {
-          @builtin(position) position : vec4<f32>;
-          @location(0) color : vec4<f32>;
+          @builtin(position) position : vec4<f32>,
+          @location(0) color : vec4<f32>,
         };
         @stage(vertex)
         fn main(input : Inputs)-> Outputs {
@@ -482,12 +482,12 @@ g.test('set_vertex_buffer_but_not_used_in_draw')
         module: t.device.createShaderModule({
           code: `
         struct Inputs {
-          @builtin(vertex_index) vertexIndex : u32;
-          @location(0) vertexColor : vec4<f32>;
+          @builtin(vertex_index) vertexIndex : u32,
+          @location(0) vertexColor : vec4<f32>,
         };
         struct Outputs {
-          @builtin(position) position : vec4<f32>;
-          @location(0) color : vec4<f32>;
+          @builtin(position) position : vec4<f32>,
+          @location(0) color : vec4<f32>,
         };
         @stage(vertex)
         fn main(input : Inputs)-> Outputs {

@@ -23,7 +23,7 @@ class F extends ValidationTest {
 
 export const g = makeTestGroup(F);
 
-g.test('indirect_buffer')
+g.test('indirect_buffer_state')
   .desc(
     `
 Tests indirect buffer must be valid.
@@ -56,7 +56,33 @@ g.test('indirect_buffer,device_mismatch')
     'Tests draw(Indexed)Indirect cannot be called with an indirect buffer created from another device'
   )
   .paramsSubcasesOnly(kIndirectDrawTestParams.combine('mismatched', [true, false]))
-  .unimplemented();
+  .fn(async t => {
+    const { encoderType, indexed, mismatched } = t.params;
+
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
+    }
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const indirectBuffer = device.createBuffer({
+      size: 256,
+      usage: GPUBufferUsage.INDIRECT,
+    });
+
+    t.trackForCleanup(indirectBuffer);
+
+    const { encoder, validateFinish } = t.createEncoder(encoderType);
+    encoder.setPipeline(t.createNoOpRenderPipeline());
+
+    if (indexed) {
+      encoder.setIndexBuffer(t.makeIndexBuffer(), 'uint32');
+      encoder.drawIndexedIndirect(indirectBuffer, 0);
+    } else {
+      encoder.drawIndirect(indirectBuffer, 0);
+    }
+    validateFinish(!mismatched);
+  });
 
 g.test('indirect_buffer_usage')
   .desc(

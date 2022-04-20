@@ -36,12 +36,12 @@ function runShaderTest(t, stage, testSource, layout, testBindings, dynamicOffset
 
   const source = `
     struct Constants {
-      zero: u32;
+      zero: u32
     };
     @group(1) @binding(0) var<uniform> constants: Constants;
 
     struct Result {
-      value: u32;
+      value: u32
     };
     @group(1) @binding(1) var<storage, write> result: Result;
 
@@ -189,9 +189,9 @@ g.test('linear_memory')
     // in the global scope or inside the test function itself.
     const structDecl = `
       struct S {
-        startCanary: array<u32, 10>;
-        data: ${type};
-        endCanary: array<u32, 10>;
+        startCanary: array<u32, 10>,
+        data: ${type},
+        endCanary: array<u32, 10>,
       };`;
 
     const testGroupBGLEntires = [];
@@ -205,7 +205,7 @@ g.test('linear_memory')
           const qualifiers = storageClass === 'storage' ? `storage, ${storageMode}` : storageClass;
           globalSource += `
           struct TestData {
-            data: ${type};
+            data: ${type},
           };
           @group(0) @binding(0) var<${qualifiers}> s: TestData;`;
 
@@ -303,7 +303,13 @@ g.test('linear_memory')
           switch (access) {
             case 'read':
               {
-                const exprLoadElement = isAtomic ? `atomicLoad(&${exprElement})` : exprElement;
+                let exprLoadElement = isAtomic ? `atomicLoad(&${exprElement})` : exprElement;
+                if (storageClass === 'uniform' && containerType === 'array') {
+                  // Scalar types will be wrapped in a vec4 to satisfy array element size
+                  // requirements for the uniform address space, so we need an additional index
+                  // accessor expression.
+                  exprLoadElement += '[0]';
+                }
                 let condition = `${exprLoadElement} != ${exprZeroElement}`;
                 if (containerType === 'matrix') condition = `any(${condition})`;
                 testFunctionSource += `

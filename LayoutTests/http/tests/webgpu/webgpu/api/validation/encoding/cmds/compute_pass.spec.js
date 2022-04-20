@@ -6,7 +6,7 @@ API validation test for compute pass
 Does **not** test usage scopes (resource_usages/) or programmable pass stuff (programmable_pass).
 `;
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
-import { DefaultLimits } from '../../../../constants.js';
+import { kLimitInfo } from '../../../../capability_info.js';
 import { kResourceStates } from '../../../../gpu_test.js';
 import { ValidationTest } from '../../validation_test.js';
 
@@ -66,9 +66,31 @@ setPipeline should generate an error iff using an 'invalid' pipeline.
 g.test('pipeline,device_mismatch')
   .desc('Tests setPipeline cannot be called with a compute pipeline created from another device')
   .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
-  .unimplemented();
+  .fn(async t => {
+    const { mismatched } = t.params;
 
-const kMaxDispatch = DefaultLimits.maxComputeWorkgroupsPerDimension;
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
+    }
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const pipeline = device.createComputePipeline({
+      compute: {
+        module: device.createShaderModule({
+          code: '@stage(compute) @workgroup_size(1) fn main() {}',
+        }),
+
+        entryPoint: 'main',
+      },
+    });
+
+    const { encoder, validateFinish } = t.createEncoder('compute pass');
+    encoder.setPipeline(pipeline);
+    validateFinish(!mismatched);
+  });
+
+const kMaxDispatch = kLimitInfo.maxComputeWorkgroupsPerDimension.default;
 g.test('dispatch_sizes')
   .desc(
     `Test 'direct' and 'indirect' dispatch with various sizes.
@@ -114,7 +136,7 @@ g.test('dispatch_sizes')
   });
 
 const kBufferData = new Uint32Array(6).fill(1);
-g.test('indirect_dispatch_buffer')
+g.test('indirect_dispatch_buffer_state')
   .desc(
     `
 Test dispatchIndirect validation by submitting various dispatches with a no-op pipeline and an
@@ -161,4 +183,26 @@ g.test('indirect_dispatch_buffer,device_mismatch')
     'Tests dispatchIndirect cannot be called with an indirect buffer created from another device'
   )
   .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
-  .unimplemented();
+  .fn(async t => {
+    const { mismatched } = t.params;
+
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
+    }
+
+    const pipeline = t.createNoOpComputePipeline();
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const buffer = device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.INDIRECT,
+    });
+
+    t.trackForCleanup(buffer);
+
+    const { encoder, validateFinish } = t.createEncoder('compute pass');
+    encoder.setPipeline(pipeline);
+    encoder.dispatchIndirect(buffer, 0);
+    validateFinish(!mismatched);
+  });

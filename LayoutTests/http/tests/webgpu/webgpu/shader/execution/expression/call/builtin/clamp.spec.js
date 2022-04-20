@@ -25,28 +25,81 @@ import { builtin } from './builtin.js';
 
 export const g = makeTestGroup(GPUTest);
 
-/** Generate set of clamp test cases from an ascending list of values */
-function generateTestCases(test_values) {
+/**
+ * Calculates clamp using the min-max formula.
+ * clamp(e, f, g) = min(max(e, f), g)
+ *
+ * Operates on indices of an ascending sorted array, instead of the actual
+ * values to avoid rounding issues.
+ *
+ * @returns the index of the clamped value
+ */
+function calculateMinMaxClamp(ei, fi, gi) {
+  return Math.min(Math.max(ei, fi), gi);
+}
+
+/**
+ * Calculates clamp as the median of three numbers
+ *
+ * Operates on indices of an ascending sorted array, instead of the actual
+ * values to avoid rounding issues.
+ *
+ * @returns the index of the clamped value
+ */
+function calculateMedianClamp(ei, fi, gi) {
+  return [ei, fi, gi].sort((a, b) => {
+    return a - b;
+  })[1];
+}
+
+/** @returns a set of clamp test cases from an ascending list of integer values */
+function generateIntegerTestCases(test_values) {
   const cases = new Array();
   test_values.forEach((e, ei) => {
     test_values.forEach((f, fi) => {
       test_values.forEach((g, gi) => {
-        // This is enforcing that low <= high, since most backends languages
-        // have undefined behaviour for high < low, so implementations would
-        // need to polyfill, and it is unclear if this was intended.
-        //
-        // https://github.com/gpuweb/gpuweb/issues/2557 discusses changing the
-        // spec to explicitly require low <= high.
-        if (fi <= gi) {
-          // Intentionally not using clamp from math.ts or other TypeScript
-          // defined clamp to avoid rounding issues from going in/out of
-          // `number` type.
-          const precise_expected = ei <= fi ? f : ei <= gi ? e : g;
-          const expected = isSubnormalScalar(precise_expected)
-            ? anyOf(precise_expected, f32(0.0))
-            : precise_expected;
-          cases.push({ input: [e, f, g], expected });
+        const expected_idx = calculateMinMaxClamp(ei, fi, gi);
+        const precise_expected = test_values[expected_idx];
+        const expected = isSubnormalScalar(precise_expected)
+          ? anyOf(precise_expected, f32(0.0))
+          : precise_expected;
+        cases.push({ input: [e, f, g], expected });
+      });
+    });
+  });
+  return cases;
+}
+
+/** @returns a set of clamp test cases from an ascending list of floating point values */
+function generateFloatTestCases(test_values) {
+  const cases = new Array();
+  test_values.forEach((e, ei) => {
+    test_values.forEach((f, fi) => {
+      test_values.forEach((g, gi) => {
+        // Spec allows backends for floats to either return the min-max formula or median of 3 numbers
+        const expected_values = [];
+        {
+          const expected_idx = calculateMinMaxClamp(ei, fi, gi);
+          const precise_expected = test_values[expected_idx];
+          if (!expected_values.includes(precise_expected)) {
+            expected_values.push(precise_expected);
+          }
         }
+        {
+          const expected_idx = calculateMedianClamp(ei, fi, gi);
+          const precise_expected = test_values[expected_idx];
+          if (!expected_values.includes(precise_expected)) {
+            expected_values.push(precise_expected);
+          }
+        }
+        const contains_subnormals =
+          expected_values.filter(x => {
+            return isSubnormalScalar(x);
+          }).length > 0;
+        if (contains_subnormals) {
+          expected_values.push(f32(0.0));
+        }
+        cases.push({ input: [e, f, g], expected: anyOf(...expected_values) });
       });
     });
   });
@@ -71,9 +124,6 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
       .combine('vectorize', [undefined, 2, 3, 4])
   )
   .fn(async t => {
-    const cfg = t.params;
-    cfg.cmpFloats = correctlyRoundedThreshold();
-
     // This array must be strictly increasing, since that ordering determines
     // the expected values.
     const test_values = [
@@ -90,8 +140,8 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
       builtin('clamp'),
       [TypeU32, TypeU32, TypeU32],
       TypeU32,
-      cfg,
-      generateTestCases(test_values)
+      t.params,
+      generateIntegerTestCases(test_values)
     );
   });
 
@@ -113,9 +163,6 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
       .combine('vectorize', [undefined, 2, 3, 4])
   )
   .fn(async t => {
-    const cfg = t.params;
-    cfg.cmpFloats = correctlyRoundedThreshold();
-
     // This array must be strictly increasing, since that ordering determines
     // the expected values.
     const test_values = [
@@ -134,8 +181,8 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
       builtin('clamp'),
       [TypeI32, TypeI32, TypeI32],
       TypeI32,
-      cfg,
-      generateTestCases(test_values)
+      t.params,
+      generateIntegerTestCases(test_values)
     );
   });
 
@@ -145,10 +192,7 @@ g.test('f32')
   .desc(
     `
 clamp:
-T is f32 or vecN<f32> clamp(e: T , low: T, high: T) -> T Returns min(max(e, low), high). Component-wise when T is a vector. (GLSLstd450NClamp)
-
-Please read the following guidelines before contributing:
-https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
+T is f32 or vecN<f32> clamp(e: T , low: T, high: T) -> T Returns either min(max(e,low),high), or the median of the three values e, low, high. Component-wise when T is a vector.
 `
   )
   .params(u =>
@@ -186,6 +230,6 @@ https://github.com/gpuweb/cts/blob/main/docs/plan_autogen.md
       [TypeF32, TypeF32, TypeF32],
       TypeF32,
       cfg,
-      generateTestCases(test_values)
+      generateFloatTestCases(test_values)
     );
   });

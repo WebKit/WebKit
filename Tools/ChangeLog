@@ -1,3 +1,12 @@
+2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Update WebGPU CTS to revision 549d7c2f1637321a9247f0a3ab022f919e5ca5da
+        https://bugs.webkit.org/show_bug.cgi?id=239444
+
+        Reviewed by Kimmo Kinnunen.
+
+        * Scripts/import-webgpu-cts:
+
 2022-04-20  Alex Christensen  <achristensen@webkit.org>
 
         [ Monterey Release arm64 ] TestWebKitAPI.ContentRuleList.ResourceTypes is a flaky failure

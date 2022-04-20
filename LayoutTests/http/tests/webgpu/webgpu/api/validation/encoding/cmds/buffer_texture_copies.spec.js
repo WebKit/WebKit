@@ -86,17 +86,7 @@ g.test('depth_stencil_format,copy_usage_and_aspect')
     {
       const success = depthStencilBufferTextureCopySupported('WriteTexture', format, aspect);
       const uploadData = new Uint8Array(uploadBufferSize);
-      t.testWriteTexture(
-        { texture, aspect },
-        uploadData,
-        {
-          bytesPerRow: textureSize.width,
-          rowsPerImage: textureSize.height,
-        },
-
-        textureSize,
-        success
-      );
+      t.testWriteTexture({ texture, aspect }, uploadData, {}, textureSize, success);
     }
   });
 

@@ -43,7 +43,6 @@ import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { assert, memcpy, unreachable } from '../../../../common/util/util.js';
 import {
   kTextureFormatInfo,
-  kSizedTextureFormats,
   kDepthStencilFormats,
   kMinDynamicBufferOffsetAlignment,
   kBufferSizeAlignment,
@@ -51,6 +50,7 @@ import {
   depthStencilFormatAspectSize,
   kTextureDimensions,
   textureDimensionAndFormatCompatible,
+  kColorTextureFormats,
 } from '../../../capability_info.js';
 import { GPUTest } from '../../../gpu_test.js';
 import { makeBufferWithContents } from '../../../util/buffer.js';
@@ -85,7 +85,7 @@ const kExcludedFormats = new Set([
   'rgba32float',
 ]);
 
-const kWorkingTextureFormats = kSizedTextureFormats.filter(x => !kExcludedFormats.has(x));
+const kWorkingColorTextureFormats = kColorTextureFormats.filter(x => !kExcludedFormats.has(x));
 
 class ImageCopyTest extends GPUTest {
   /** Offset for a particular texel in the linear texture data */
@@ -702,7 +702,7 @@ class ImageCopyTest extends GPUTest {
     this.expectGPUBufferValuesEqual(outputBuffer, expectedData);
   }
 
-  // MAINTENANCE_TODO(crbug.com/dawn/868): Revisit this when consolidating texture helpers.
+  // MAINTENANCE_TODO(#881): Migrate this into the texture_ok helpers.
   async checkStencilTextureContent(
     stencilTexture,
     stencilTextureSize,
@@ -768,7 +768,7 @@ class ImageCopyTest extends GPUTest {
         module: this.device.createShaderModule({
           code: `
             struct Params {
-              stencilBitIndex: u32;
+              stencilBitIndex: u32
             };
             @group(0) @binding(0) var<uniform> param: Params;
             @stage(fragment)
@@ -825,11 +825,12 @@ class ImageCopyTest extends GPUTest {
     // will "Copy" one bit of the stencil value into the color attachment. The bit of the stencil
     // value is specified by setStencilReference().
     const copyFromOutputTextureLayout = getTextureCopyLayout(
-      'stencil8',
+      stencilTextureFormat,
       '2d',
       [stencilTextureSize[0], stencilTextureSize[1], 1],
       {
         mipLevel: stencilTextureMipLevel,
+        aspect: 'stencil-only',
       }
     );
 
@@ -935,7 +936,7 @@ class ImageCopyTest extends GPUTest {
     }
   }
 
-  // MAINTENANCE_TODO(crbug.com/dawn/868): Revisit this when consolidating texture helpers.
+  // MAINTENANCE_TODO(#881): Consider if this can be simplified/encapsulated using TexelView.
   initializeDepthAspectWithRendering(
     depthTexture,
     depthFormat,
@@ -1070,9 +1071,9 @@ class ImageCopyTest extends GPUTest {
     // [2]: need to convert the float32 values in initialData into the ones compatible
     // to the depth aspect of depthFormats when depth16unorm and depth24unorm-stencil8 are supported
     // by the browsers.
-    assert(format !== 'depth16unorm' && format !== 'depth24unorm-stencil8');
+    assert(format !== 'depth24unorm-stencil8');
 
-    // Generate the initial depth data
+    // Generate the initial depth data uploaded to the texture as float32.
     const initialData = new Float32Array(copySize[0] * copySize[1] * copySize[2]);
     for (let i = 0; i < initialData.length; ++i) {
       const baseValue = 0.05 * i;
@@ -1080,6 +1081,20 @@ class ImageCopyTest extends GPUTest {
       // We expect there are both 1's and 0's in initialData.
       initialData[i] = i % 40 === 0 ? 1 : baseValue - Math.floor(baseValue);
       assert(initialData[i] >= 0 && initialData[i] <= 1);
+    }
+
+    // The data uploaded to the texture, using the byte pattern of the format.
+    let formatInitialData = initialData;
+
+    // For unorm depth formats, replace the uploaded depth data with quantized data to avoid
+    // rounding issues when converting from 32float to 16unorm.
+    if (format === 'depth16unorm') {
+      const u16Data = new Uint16Array(initialData.length);
+      for (let i = 0; i < initialData.length; i++) {
+        u16Data[i] = initialData[i] * 65535;
+        initialData[i] = u16Data[i] / 65535.0;
+      }
+      formatInitialData = u16Data;
     }
 
     // Initialize the depth aspect of the source texture
@@ -1118,6 +1133,7 @@ class ImageCopyTest extends GPUTest {
       {
         texture: depthTexture,
         mipLevel,
+        aspect: 'depth-only',
       },
 
       {
@@ -1140,7 +1156,7 @@ class ImageCopyTest extends GPUTest {
       for (let y = 0; y < copySize[1]; ++y) {
         memcpy(
           {
-            src: initialData,
+            src: formatInitialData,
             start: baseInitialDataOffset + y * copySize[0],
             length: copySize[0],
           },
@@ -1224,7 +1240,7 @@ bytes in copy works for every format.
   .params(u =>
     u
       .combineWithParams(kMethodsToTest)
-      .combine('format', kWorkingTextureFormats)
+      .combine('format', kWorkingColorTextureFormats)
       .filter(formatCanBeTested)
       .combine('dimension', kTextureDimensions)
       .filter(({ dimension, format }) => textureDimensionAndFormatCompatible(dimension, format))
@@ -1316,12 +1332,13 @@ works for every format with 2d and 2d-array textures.
     offset > bytesInACompleteCopyImage
 
   TODO: Cover the special code paths for 3D textures in D3D12.
+  TODO: Make a variant for depth-stencil formats.
 `
   )
   .params(u =>
     u
       .combineWithParams(kMethodsToTest)
-      .combine('format', kWorkingTextureFormats)
+      .combine('format', kWorkingColorTextureFormats)
       .filter(formatCanBeTested)
       .combine('dimension', kTextureDimensions)
       .filter(({ dimension, format }) => textureDimensionAndFormatCompatible(dimension, format))
@@ -1392,7 +1409,7 @@ for all formats. We pass origin and copyExtent as [number, number, number].`
   .params(u =>
     u
       .combineWithParams(kMethodsToTest)
-      .combine('format', kWorkingTextureFormats)
+      .combine('format', kWorkingColorTextureFormats)
       .filter(formatCanBeTested)
       .combine('dimension', kTextureDimensions)
       .filter(({ dimension, format }) => textureDimensionAndFormatCompatible(dimension, format))
@@ -1539,12 +1556,14 @@ g.test('mip_levels')
   - For 3D textures test copying to a sub-range of the depth.
 
 Tests both 2D and 3D textures. 1D textures are skipped because they can only have one mip level.
+
+TODO: Make a variant for depth-stencil formats.
   `
   )
   .params(u =>
     u
       .combineWithParams(kMethodsToTest)
-      .combine('format', kWorkingTextureFormats)
+      .combine('format', kWorkingColorTextureFormats)
       .filter(formatCanBeTested)
       .combine('dimension', ['2d', '3d'])
       .filter(({ dimension, format }) => textureDimensionAndFormatCompatible(dimension, format))
@@ -1587,7 +1606,7 @@ Tests both 2D and 3D textures. 1D textures are skipped because they can only hav
           copySizeInBlocks: { width: 5, height: 4, depthOrArrayLayers: 2 },
           originInBlocks: { x: 3, y: 2, z: 1 },
           _mipSizeInBlocks: { width: 9, height: 7, depthOrArrayLayers: 3 },
-          mipLevel: 5,
+          mipLevel: 4,
         },
 
         // origin + copySize < texturePhysicalSizeAtMipLevel for all coordinates
@@ -1595,7 +1614,7 @@ Tests both 2D and 3D textures. 1D textures are skipped because they can only hav
           copySizeInBlocks: { width: 5, height: 4, depthOrArrayLayers: 2 },
           originInBlocks: { x: 3, y: 2, z: 1 },
           _mipSizeInBlocks: { width: 9, height: 7, depthOrArrayLayers: 4 },
-          mipLevel: 6,
+          mipLevel: 4,
         },
       ])
       .expand('textureSize', generateTestTextureSizes)

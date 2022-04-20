@@ -5,6 +5,7 @@ API validation tests for clearBuffer.
 `;
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { kBufferUsages } from '../../../../capability_info.js';
+import { kResourceStates } from '../../../../gpu_test.js';
 import { kMaxSafeMultipleOf8 } from '../../../../util/math.js';
 import { ValidationTest } from '../../validation_test.js';
 
@@ -23,16 +24,57 @@ class F extends ValidationTest {
 
 export const g = makeTestGroup(F);
 
-g.test('invalid_buffer')
-  .desc(`Test that clearing an error buffer fails.`)
+g.test('buffer_state')
+  .desc(`Test that clearing an invalid or destroyed buffer fails.`)
+  .params(u => u.combine('bufferState', kResourceStates))
   .fn(async t => {
-    const errorBuffer = t.getErrorBuffer();
+    const { bufferState } = t.params;
+
+    const buffer = t.createBufferWithState(bufferState, {
+      size: 8,
+      usage: GPUBufferUsage.COPY_DST,
+    });
+
+    const commandEncoder = t.device.createCommandEncoder();
+    commandEncoder.clearBuffer(buffer, 0, 8);
+
+    if (bufferState === 'invalid') {
+      t.expectValidationError(() => {
+        commandEncoder.finish();
+      });
+    } else {
+      const cmd = commandEncoder.finish();
+      t.expectValidationError(() => {
+        t.device.queue.submit([cmd]);
+      }, bufferState === 'destroyed');
+    }
+  });
+
+g.test('buffer,device_mismatch')
+  .desc(`Tests clearBuffer cannot be called with buffer created from another device.`)
+  .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
+  .fn(async t => {
+    const { mismatched } = t.params;
+
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
+    }
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+    const size = 8;
+
+    const buffer = device.createBuffer({
+      size,
+      usage: GPUBufferUsage.COPY_DST,
+    });
+
+    t.trackForCleanup(buffer);
 
     t.TestClearBuffer({
-      buffer: errorBuffer,
+      buffer,
       offset: 0,
-      size: 8,
-      isSuccess: false,
+      size,
+      isSuccess: !mismatched,
     });
   });
 

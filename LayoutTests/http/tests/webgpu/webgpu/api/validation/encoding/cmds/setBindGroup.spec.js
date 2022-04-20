@@ -132,7 +132,48 @@ g.test('bind_group,device_mismatch')
       .combine('useU32Array', [true, false])
       .combine('mismatched', [true, false])
   )
-  .unimplemented();
+  .fn(async t => {
+    const { encoderType, useU32Array, mismatched } = t.params;
+
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
+    }
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const buffer = device.createBuffer({
+      size: 4,
+      usage: GPUBufferUsage.STORAGE,
+    });
+
+    const layout = device.createBindGroupLayout({
+      entries: [
+        {
+          binding: 0,
+          visibility: t.encoderTypeToStageFlag(encoderType),
+          buffer: { type: 'storage', hasDynamicOffset: useU32Array },
+        },
+      ],
+    });
+
+    const bindGroup = device.createBindGroup({
+      layout,
+      entries: [
+        {
+          binding: 0,
+          resource: { buffer },
+        },
+      ],
+    });
+
+    const { encoder, validateFinish } = t.createEncoder(encoderType);
+    if (useU32Array) {
+      encoder.setBindGroup(0, bindGroup, new Uint32Array([0]), 0, 1);
+    } else {
+      encoder.setBindGroup(0, bindGroup);
+    }
+    validateFinish(!mismatched);
+  });
 
 g.test('dynamic_offsets_passed_but_not_expected')
   .desc('Tests that setBindGroup correctly errors on unexpected dynamicOffsets.')

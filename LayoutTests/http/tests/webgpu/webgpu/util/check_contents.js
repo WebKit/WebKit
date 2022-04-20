@@ -1,6 +1,11 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/ import { assert, ErrorWithExtra, iterRange, range } from '../../common/util/util.js';
+ **/ // MAINTENANCE_TODO: The "checkThingTrue" naming is confusing; these must be used with `expectOK`
+// or the result is dropped on the floor. Rename these to things like `typedArrayIsOK`(??) to
+// make it clearer.
+// MAINTENANCE_TODO: Also, audit to make sure we aren't dropping any on the floor. Consider a
+// no-ignored-return lint check if we can find one that we can use.
+import { assert, ErrorWithExtra, iterRange, range } from '../../common/util/util.js';
 
 import { float16BitsToFloat32 } from './conversion.js';
 import { generatePrettyTable } from './pretty_diff_tables.js';

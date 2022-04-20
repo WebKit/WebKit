@@ -8,7 +8,7 @@ import { assert, raceWithRejectOnTimeout, unreachable } from '../../../common/ut
 import { kCanvasTextureFormats } from '../../capability_info.js';
 import { GPUTest } from '../../gpu_test.js';
 import { checkElementsEqual } from '../../util/check_contents.js';
-import { allCanvasTypes, createCanvas, createOnscreenCanvas } from '../../util/create_elements.js';
+import { kAllCanvasTypes, createCanvas, createOnscreenCanvas } from '../../util/create_elements.js';
 
 export const g = makeTestGroup(GPUTest);
 
@@ -291,8 +291,8 @@ g.test('drawTo2DCanvas')
   .params(u =>
     u //
       .combine('format', kCanvasTextureFormats)
-      .combine('webgpuCanvasType', allCanvasTypes)
-      .combine('canvas2DType', allCanvasTypes)
+      .combine('webgpuCanvasType', kAllCanvasTypes)
+      .combine('canvas2DType', kAllCanvasTypes)
   )
   .fn(async t => {
     const { format, webgpuCanvasType, canvas2DType } = t.params;

@@ -672,10 +672,9 @@ g.test('pipeline_layout,device_mismatch')
       await t.selectMismatchedDeviceOrSkipTestCase(undefined);
     }
 
-    const layoutDescriptor = { bindGroupLayouts: [] };
-    const layout = mismatched
-      ? t.mismatchedDevice.createPipelineLayout(layoutDescriptor)
-      : t.device.createPipelineLayout(layoutDescriptor);
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const layout = device.createPipelineLayout({ bindGroupLayouts: [] });
 
     const descriptor = {
       layout,
@@ -746,3 +745,9 @@ g.test('shader_module,device_mismatch')
 
     t.doCreateRenderPipelineTest(isAsync, _success, descriptor);
   });
+
+g.test('entry_point_name_must_match')
+  .desc(
+    'TODO: Test the matching of entrypoint names for vertex and fragment (see the equivalent test for createComputePipeline).'
+  )
+  .unimplemented();

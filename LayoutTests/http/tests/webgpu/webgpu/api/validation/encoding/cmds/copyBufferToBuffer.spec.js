@@ -26,50 +26,67 @@ Test Plan:
 `;
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { kBufferUsages } from '../../../../capability_info.js';
+import { kResourceStates } from '../../../../gpu_test.js';
 import { kMaxSafeMultipleOf8 } from '../../../../util/math.js';
 import { ValidationTest } from '../../validation_test.js';
 
 class F extends ValidationTest {
   TestCopyBufferToBuffer(options) {
-    const { srcBuffer, srcOffset, dstBuffer, dstOffset, copySize, isSuccess } = options;
+    const { srcBuffer, srcOffset, dstBuffer, dstOffset, copySize, expectation } = options;
 
     const commandEncoder = this.device.createCommandEncoder();
     commandEncoder.copyBufferToBuffer(srcBuffer, srcOffset, dstBuffer, dstOffset, copySize);
 
-    this.expectValidationError(() => {
-      commandEncoder.finish();
-    }, !isSuccess);
+    if (expectation === 'FinishError') {
+      this.expectValidationError(() => {
+        commandEncoder.finish();
+      });
+    } else {
+      const cmd = commandEncoder.finish();
+      this.expectValidationError(() => {
+        this.device.queue.submit([cmd]);
+      }, expectation === 'SubmitError');
+    }
   }
 }
 
 export const g = makeTestGroup(F);
 
-g.test('copy_with_invalid_buffer').fn(async t => {
-  const validBuffer = t.device.createBuffer({
-    size: 16,
-    usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
-  });
+g.test('buffer_state')
+  .params(u =>
+    u //
+      .combine('srcBufferState', kResourceStates)
+      .combine('dstBufferState', kResourceStates)
+  )
+  .fn(async t => {
+    const { srcBufferState, dstBufferState } = t.params;
+    const srcBuffer = t.createBufferWithState(srcBufferState, {
+      size: 16,
+      usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    });
 
-  const errorBuffer = t.getErrorBuffer();
+    const dstBuffer = t.createBufferWithState(dstBufferState, {
+      size: 16,
+      usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    });
 
-  t.TestCopyBufferToBuffer({
-    srcBuffer: errorBuffer,
-    srcOffset: 0,
-    dstBuffer: validBuffer,
-    dstOffset: 0,
-    copySize: 8,
-    isSuccess: false,
-  });
+    const shouldFinishError = srcBufferState === 'invalid' || dstBufferState === 'invalid';
+    const shouldSubmitSuccess = srcBufferState === 'valid' && dstBufferState === 'valid';
+    const expectation = shouldSubmitSuccess
+      ? 'Success'
+      : shouldFinishError
+      ? 'FinishError'
+      : 'SubmitError';
 
-  t.TestCopyBufferToBuffer({
-    srcBuffer: validBuffer,
-    srcOffset: 0,
-    dstBuffer: errorBuffer,
-    dstOffset: 0,
-    copySize: 8,
-    isSuccess: false,
+    t.TestCopyBufferToBuffer({
+      srcBuffer,
+      srcOffset: 0,
+      dstBuffer,
+      dstOffset: 0,
+      copySize: 8,
+      expectation,
+    });
   });
-});
 
 g.test('buffer,device_mismatch')
   .desc(
@@ -80,7 +97,39 @@ g.test('buffer,device_mismatch')
     { srcMismatched: true, dstMismatched: false },
     { srcMismatched: false, dstMismatched: true },
   ])
-  .unimplemented();
+  .fn(async t => {
+    const { srcMismatched, dstMismatched } = t.params;
+    const mismatched = srcMismatched || dstMismatched;
+
+    if (mismatched) {
+      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
+    }
+
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const srcBuffer = device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.COPY_SRC,
+    });
+
+    t.trackForCleanup(srcBuffer);
+
+    const dstBuffer = device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.COPY_DST,
+    });
+
+    t.trackForCleanup(dstBuffer);
+
+    t.TestCopyBufferToBuffer({
+      srcBuffer,
+      srcOffset: 0,
+      dstBuffer,
+      dstOffset: 0,
+      copySize: 8,
+      expectation: mismatched ? 'FinishError' : 'Success',
+    });
+  });
 
 g.test('buffer_usage')
   .paramsSubcasesOnly(u =>
@@ -102,6 +151,7 @@ g.test('buffer_usage')
     });
 
     const isSuccess = srcUsage === GPUBufferUsage.COPY_SRC && dstUsage === GPUBufferUsage.COPY_DST;
+    const expectation = isSuccess ? 'Success' : 'FinishError';
 
     t.TestCopyBufferToBuffer({
       srcBuffer,
@@ -109,7 +159,7 @@ g.test('buffer_usage')
       dstBuffer,
       dstOffset: 0,
       copySize: 8,
-      isSuccess,
+      expectation,
     });
   });
 
@@ -140,7 +190,7 @@ g.test('copy_size_alignment')
       dstBuffer,
       dstOffset: 0,
       copySize,
-      isSuccess,
+      expectation: isSuccess ? 'Success' : 'FinishError',
     });
   });
 
@@ -176,7 +226,7 @@ g.test('copy_offset_alignment')
       dstBuffer,
       dstOffset,
       copySize: 8,
-      isSuccess,
+      expectation: isSuccess ? 'Success' : 'FinishError',
     });
   });
 
@@ -214,7 +264,7 @@ g.test('copy_overflow')
       dstBuffer,
       dstOffset,
       copySize,
-      isSuccess: false,
+      expectation: 'FinishError',
     });
   });
 
@@ -250,7 +300,7 @@ g.test('copy_out_of_bounds')
       dstBuffer,
       dstOffset,
       copySize,
-      isSuccess: _isSuccess,
+      expectation: _isSuccess ? 'Success' : 'FinishError',
     });
   });
 
@@ -275,6 +325,6 @@ g.test('copy_within_same_buffer')
       dstBuffer: buffer,
       dstOffset,
       copySize,
-      isSuccess: false,
+      expectation: 'FinishError',
     });
   });

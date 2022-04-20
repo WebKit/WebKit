@@ -132,6 +132,7 @@ The entryPoint assigned in descriptor include:
 - Empty string
 - Mistyping
 - Containing invalid char, including space and control codes (Null character)
+- Unicode entrypoints and their ASCIIfied version
 `
   )
   .params(u =>
@@ -151,6 +152,8 @@ The entryPoint assigned in descriptor include:
       { shaderModuleEntryPoint: 'main_t12V3', stageEntryPoint: 'main_t12V3' },
       { shaderModuleEntryPoint: 'main_t12V3', stageEntryPoint: 'main_t12V5' },
       { shaderModuleEntryPoint: 'main_t12V3', stageEntryPoint: '_main_t12V3' },
+      { shaderModuleEntryPoint: 'séquençage', stageEntryPoint: 'séquençage' },
+      { shaderModuleEntryPoint: 'séquençage', stageEntryPoint: 'sequencage' },
     ])
   )
   .fn(async t => {
@@ -178,10 +181,9 @@ g.test('pipeline_layout,device_mismatch')
       await t.selectMismatchedDeviceOrSkipTestCase(undefined);
     }
 
-    const layoutDescriptor = { bindGroupLayouts: [] };
-    const layout = mismatched
-      ? t.mismatchedDevice.createPipelineLayout(layoutDescriptor)
-      : t.device.createPipelineLayout(layoutDescriptor);
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const layout = device.createPipelineLayout({ bindGroupLayouts: [] });
 
     const descriptor = {
       layout,
@@ -206,10 +208,11 @@ g.test('shader_module,device_mismatch')
       await t.selectMismatchedDeviceOrSkipTestCase(undefined);
     }
 
-    const code = '@stage(compute) @workgroup_size(1) fn main() {}';
-    const module = mismatched
-      ? t.mismatchedDevice.createShaderModule({ code })
-      : t.device.createShaderModule({ code });
+    const device = mismatched ? t.mismatchedDevice : t.device;
+
+    const module = device.createShaderModule({
+      code: '@stage(compute) @workgroup_size(1) fn main() {}',
+    });
 
     const descriptor = {
       compute: {

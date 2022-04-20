@@ -8,7 +8,6 @@ TODO: make sure tests are complete.
 import { kUnitCaseParamsBuilder } from '../../../common/framework/params_builder.js';
 import { makeTestGroup } from '../../../common/framework/test_group.js';
 import {
-  kMaxBindingsPerBindGroup,
   kShaderStages,
   kShaderStageCombinations,
   kTextureViewDimensions,
@@ -200,6 +199,7 @@ g.test('max_resources_per_stage,in_bind_group_layout')
     const { maxedEntry, extraEntry, maxedVisibility, extraVisibility } = t.params;
     const maxedTypeInfo = bindingTypeInfo(maxedEntry);
     const maxedCount = maxedTypeInfo.perStageLimitClass.max;
+    const extraTypeInfo = bindingTypeInfo(extraEntry);
 
     const maxResourceBindings = [];
     for (let i = 0; i < maxedCount; i++) {
@@ -215,6 +215,7 @@ g.test('max_resources_per_stage,in_bind_group_layout')
     // Control
     t.device.createBindGroupLayout(goodDescriptor);
 
+    // Add an entry counting towards the same limit. It should produce a validation error.
     const newDescriptor = clone(goodDescriptor);
     newDescriptor.entries.push({
       binding: maxedCount,
@@ -222,11 +223,13 @@ g.test('max_resources_per_stage,in_bind_group_layout')
       ...extraEntry,
     });
 
-    const shouldError = maxedCount >= kMaxBindingsPerBindGroup;
+    const newBindingCountsTowardSamePerStageLimit =
+      (maxedVisibility & extraVisibility) !== 0 &&
+      maxedTypeInfo.perStageLimitClass.class === extraTypeInfo.perStageLimitClass.class;
 
     t.expectValidationError(() => {
       t.device.createBindGroupLayout(newDescriptor);
-    }, shouldError);
+    }, newBindingCountsTowardSamePerStageLimit);
   });
 
 // One pipeline layout can have a maximum number of each type of binding *per stage* (which is
@@ -277,9 +280,8 @@ g.test('max_resources_per_stage,in_pipeline_layout')
     const newBindingCountsTowardSamePerStageLimit =
       (maxedVisibility & extraVisibility) !== 0 &&
       maxedTypeInfo.perStageLimitClass.class === extraTypeInfo.perStageLimitClass.class;
-    const layoutExceedsPerStageLimit = newBindingCountsTowardSamePerStageLimit;
 
     t.expectValidationError(() => {
       t.device.createPipelineLayout({ bindGroupLayouts: [goodLayout, extraLayout] });
-    }, layoutExceedsPerStageLimit);
+    }, newBindingCountsTowardSamePerStageLimit);
   });

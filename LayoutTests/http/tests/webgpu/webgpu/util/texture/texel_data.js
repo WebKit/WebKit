@@ -10,7 +10,16 @@ import {
   gammaDecompress,
   normalizedIntegerAsFloat,
   packRGB9E5UFloat,
+  floatBitsToNumber,
+  float16BitsToFloat32,
+  floatBitsToNormalULPFromZero,
+  kFloat32Format,
+  kFloat16Format,
+  numberToFloat32Bits,
+  float32BitsToNumber,
+  numberToFloatBits,
 } from '../conversion.js';
+import { clamp, signExtend } from '../math.js';
 
 /** A component of a texture format: R, G, B, A, Depth, or Stencil. */
 export let TexelComponent;
@@ -85,6 +94,15 @@ const decodeSRGB = components => {
 
   return applyEach(gammaDecompress, kRGB)(components);
 };
+
+/**
+ * Makes a `ComponentMapFn` for clamping values to the specified range.
+ */
+export function makeClampToRange(format) {
+  const repr = kTexelRepresentationInfo[format];
+  assert(repr.numericRange !== null, 'Format has unknown numericRange');
+  return applyEach(x => clamp(x, repr.numericRange), repr.componentOrder);
+}
 
 /**
  * Helper function to pack components as an ArrayBuffer.
@@ -208,6 +226,62 @@ function packComponents(componentOrder, components, bitLengths, componentDataTyp
 }
 
 /**
+ * Unpack substrings of bits from a Uint8Array, e.g. [8,8,8,8] or [9,9,9,5].
+ *
+ * MAINTENANCE_TODO: Pretty slow. Could significantly optimize when `bitLengths` is 8, 16, or 32.
+ */
+function unpackComponentsBits(componentOrder, byteView, bitLengths) {
+  const bitLengthMap =
+    typeof bitLengths === 'number' ? makePerTexelComponent(componentOrder, bitLengths) : bitLengths;
+
+  const totalBitLength = Object.entries(bitLengthMap).reduce((acc, [, value]) => {
+    assert(value !== undefined);
+    return acc + value;
+  }, 0);
+  assert(totalBitLength % 8 === 0);
+
+  const components = makePerTexelComponent(componentOrder, 0);
+  let bitOffset = 0;
+  for (const c of componentOrder) {
+    const bitLength = bitLengthMap[c];
+    assert(bitLength !== undefined);
+
+    let value;
+
+    const byteOffset = Math.floor(bitOffset / 8);
+    const byteLength = Math.ceil(bitLength / 8);
+    if (byteOffset === bitOffset / 8 && byteLength === bitLength / 8) {
+      const dataView = new DataView(byteView.buffer, byteView.byteOffset + byteOffset, byteLength);
+      switch (byteLength) {
+        case 1:
+          value = dataView.getUint8(0);
+          break;
+        case 2:
+          value = dataView.getUint16(0, true);
+          break;
+        case 4:
+          value = dataView.getUint32(0, true);
+          break;
+        default:
+          unreachable();
+      }
+    } else {
+      // Packed representations are all 32-bit and use Uint as the data type.
+      // ex.) rg10b11float, rgb10a2unorm
+      const view = new DataView(byteView.buffer, byteView.byteOffset, byteView.byteLength);
+      assert(view.byteLength === 4);
+      const word = view.getUint32(0, true);
+      value = (word >>> bitOffset) & ((1 << bitLength) - 1);
+    }
+
+    bitOffset += bitLength;
+    components[c] = value;
+  }
+
+  return components;
+}
+
+/**
  * Create an entry in `kTexelRepresentationInfo` for normalized integer texel data with constant
  * bitlength.
  * @param {TexelComponent[]} componentOrder - The order of the component data.
@@ -225,14 +299,49 @@ function makeNormalizedInfo(componentOrder, bitLength, opt) {
     componentOrder
   );
 
+  const numberToBitsNonSRGB = applyEach(
+    n => floatAsNormalizedInteger(n, bitLength, opt.signed),
+    componentOrder
+  );
+
+  let bitsToNumberNonSRGB;
+  if (opt.signed) {
+    bitsToNumberNonSRGB = applyEach(
+      n => normalizedIntegerAsFloat(signExtend(n, bitLength), bitLength, opt.signed),
+      componentOrder
+    );
+  } else {
+    bitsToNumberNonSRGB = applyEach(
+      n => normalizedIntegerAsFloat(n, bitLength, opt.signed),
+      componentOrder
+    );
+  }
+
   let encode;
   let decode;
+  let numberToBits;
+  let bitsToNumber;
   if (opt.sRGB) {
     encode = components => encodeNonSRGB(encodeSRGB(components));
     decode = components => decodeSRGB(decodeNonSRGB(components));
+    numberToBits = components => numberToBitsNonSRGB(encodeSRGB(components));
+    bitsToNumber = components => decodeSRGB(bitsToNumberNonSRGB(components));
   } else {
     encode = encodeNonSRGB;
     decode = decodeNonSRGB;
+    numberToBits = numberToBitsNonSRGB;
+    bitsToNumber = bitsToNumberNonSRGB;
+  }
+
+  let bitsToULPFromZero;
+  if (opt.signed) {
+    const maxValue = (1 << (bitLength - 1)) - 1; // e.g. 127 for snorm8
+    bitsToULPFromZero = applyEach(
+      n => Math.max(-maxValue, signExtend(n, bitLength)),
+      componentOrder
+    );
+  } else {
+    bitsToULPFromZero = components => components;
   }
 
   const dataType = opt.signed ? 'snorm' : 'unorm';
@@ -246,6 +355,11 @@ function makeNormalizedInfo(componentOrder, bitLength, opt) {
     encode,
     decode,
     pack: components => packComponents(componentOrder, components, bitLength, dataType),
+    unpackBits: data => unpackComponentsBits(componentOrder, data, bitLength),
+    numberToBits,
+    bitsToNumber,
+    bitsToULPFromZero,
+    numericRange: { min: opt.signed ? -1 : 0, max: 1 },
   };
 }
 
@@ -256,6 +370,7 @@ function makeNormalizedInfo(componentOrder, bitLength, opt) {
  * @param {{signed: boolean}} opt - Boolean flag for `signed`.
  */
 function makeIntegerInfo(componentOrder, bitLength, opt) {
+  assert(bitLength <= 32);
   const encode = applyEach(
     n => (assertInIntegerRange(n, bitLength, opt.signed), n),
     componentOrder
@@ -266,7 +381,15 @@ function makeIntegerInfo(componentOrder, bitLength, opt) {
     componentOrder
   );
 
+  let bitsToULPFromZero;
+  if (opt.signed) {
+    bitsToULPFromZero = applyEach(n => signExtend(n, bitLength), componentOrder);
+  } else {
+    bitsToULPFromZero = components => components;
+  }
+
   const dataType = opt.signed ? 'sint' : 'uint';
+  const bitMask = (1 << bitLength) - 1;
   return {
     componentOrder,
     componentInfo: makePerTexelComponent(componentOrder, {
@@ -277,6 +400,13 @@ function makeIntegerInfo(componentOrder, bitLength, opt) {
     encode,
     decode,
     pack: components => packComponents(componentOrder, components, bitLength, dataType),
+    unpackBits: data => unpackComponentsBits(componentOrder, data, bitLength),
+    numberToBits: applyEach(v => v & bitMask, componentOrder),
+    bitsToNumber: decode,
+    bitsToULPFromZero,
+    numericRange: opt.signed
+      ? { min: -(2 ** (bitLength - 1)), max: 2 ** (bitLength - 1) - 1 }
+      : { min: 0, max: 2 ** bitLength - 1 },
   };
 }
 
@@ -286,9 +416,50 @@ function makeIntegerInfo(componentOrder, bitLength, opt) {
  * @param {TexelComponent[]} componentOrder - The order of the component data.
  * @param {number} bitLength - The number of bits in each component.
  */
-function makeFloatInfo(componentOrder, bitLength) {
-  // MAINTENANCE_TODO: Use |bitLength| to round float values based on precision.
-  const encode = applyEach(identity, componentOrder);
+function makeFloatInfo(componentOrder, bitLength, { restrictedDepth = false } = {}) {
+  let encode;
+  let numberToBits;
+  let bitsToNumber;
+  let bitsToULPFromZero;
+  switch (bitLength) {
+    case 32:
+      if (restrictedDepth) {
+        encode = applyEach(v => {
+          assert(v >= 0.0 && v <= 1.0, 'depth out of range');
+          return new Float32Array([v])[0];
+        }, componentOrder);
+      } else {
+        encode = applyEach(v => new Float32Array([v])[0], componentOrder);
+      }
+      numberToBits = applyEach(numberToFloat32Bits, componentOrder);
+      bitsToNumber = applyEach(float32BitsToNumber, componentOrder);
+      bitsToULPFromZero = applyEach(
+        v => floatBitsToNormalULPFromZero(v, kFloat32Format),
+        componentOrder
+      );
+
+      break;
+    case 16:
+      if (restrictedDepth) {
+        encode = applyEach(v => {
+          assert(v >= 0.0 && v <= 1.0, 'depth out of range');
+          return float16BitsToFloat32(float32ToFloat16Bits(v));
+        }, componentOrder);
+      } else {
+        encode = applyEach(v => float16BitsToFloat32(float32ToFloat16Bits(v)), componentOrder);
+      }
+      numberToBits = applyEach(float32ToFloat16Bits, componentOrder);
+      bitsToNumber = applyEach(float16BitsToFloat32, componentOrder);
+      bitsToULPFromZero = applyEach(
+        v => floatBitsToNormalULPFromZero(v, kFloat16Format),
+        componentOrder
+      );
+
+      break;
+    default:
+      unreachable();
+  }
+
   const decode = applyEach(identity, componentOrder);
 
   return {
@@ -303,7 +474,7 @@ function makeFloatInfo(componentOrder, bitLength) {
     pack: components => {
       switch (bitLength) {
         case 16:
-          components = applyEach(n => float32ToFloat16Bits(n), componentOrder)(components);
+          components = applyEach(float32ToFloat16Bits, componentOrder)(components);
           return packComponents(componentOrder, components, 16, 'uint');
         case 32:
           return packComponents(componentOrder, components, bitLength, 'float');
@@ -311,6 +482,13 @@ function makeFloatInfo(componentOrder, bitLength) {
           unreachable();
       }
     },
+    unpackBits: data => unpackComponentsBits(componentOrder, data, bitLength),
+    numberToBits,
+    bitsToNumber,
+    bitsToULPFromZero,
+    numericRange: restrictedDepth
+      ? { min: 0, max: 1 }
+      : { min: Number.NEGATIVE_INFINITY, max: Number.POSITIVE_INFINITY },
   };
 }
 
@@ -321,6 +499,10 @@ const kRGBA = [TexelComponent.R, TexelComponent.G, TexelComponent.B, TexelCompon
 const kBGRA = [TexelComponent.B, TexelComponent.G, TexelComponent.R, TexelComponent.A];
 
 const identity = n => n;
+
+const kFloat11Format = { signed: 0, exponentBits: 5, mantissaBits: 6, bias: 15 };
+const kFloat10Format = { signed: 0, exponentBits: 5, mantissaBits: 5, bias: 15 };
+const kFloat9e5Format = { signed: 0, exponentBits: 5, mantissaBits: 9, bias: 15 };
 
 export const kTexelRepresentationInfo = {
   ...{
@@ -398,6 +580,24 @@ export const kTexelRepresentationInfo = {
 
           'uint'
         ),
+
+      unpackBits: data => unpackComponentsBits(kRGBA, data, { R: 10, G: 10, B: 10, A: 2 }),
+      numberToBits: components => ({
+        R: floatAsNormalizedInteger(components.R ?? unreachable(), 10, false),
+        G: floatAsNormalizedInteger(components.G ?? unreachable(), 10, false),
+        B: floatAsNormalizedInteger(components.B ?? unreachable(), 10, false),
+        A: floatAsNormalizedInteger(components.A ?? unreachable(), 2, false),
+      }),
+
+      bitsToNumber: components => ({
+        R: normalizedIntegerAsFloat(components.R, 10, false),
+        G: normalizedIntegerAsFloat(components.G, 10, false),
+        B: normalizedIntegerAsFloat(components.B, 10, false),
+        A: normalizedIntegerAsFloat(components.A, 2, false),
+      }),
+
+      bitsToULPFromZero: components => components,
+      numericRange: { min: 0, max: 1 },
     },
 
     rg11b10ufloat: {
@@ -411,7 +611,7 @@ export const kTexelRepresentationInfo = {
       },
 
       pack: components => {
-        components = {
+        const componentsBits = {
           R: float32ToFloatBits(components.R ?? unreachable(), 0, 5, 6, 15),
           G: float32ToFloatBits(components.G ?? unreachable(), 0, 5, 6, 15),
           B: float32ToFloatBits(components.B ?? unreachable(), 0, 5, 5, 15),
@@ -419,7 +619,7 @@ export const kTexelRepresentationInfo = {
 
         return packComponents(
           kRGB,
-          components,
+          componentsBits,
           {
             R: 11,
             G: 11,
@@ -429,6 +629,26 @@ export const kTexelRepresentationInfo = {
           'uint'
         );
       },
+      unpackBits: data => unpackComponentsBits(kRGB, data, { R: 11, G: 11, B: 10 }),
+      numberToBits: components => ({
+        R: numberToFloatBits(components.R ?? unreachable(), kFloat11Format),
+        G: numberToFloatBits(components.G ?? unreachable(), kFloat11Format),
+        B: numberToFloatBits(components.B ?? unreachable(), kFloat10Format),
+      }),
+
+      bitsToNumber: components => ({
+        R: floatBitsToNumber(components.R, kFloat11Format),
+        G: floatBitsToNumber(components.G, kFloat11Format),
+        B: floatBitsToNumber(components.B, kFloat10Format),
+      }),
+
+      bitsToULPFromZero: components => ({
+        R: floatBitsToNormalULPFromZero(components.R, kFloat11Format),
+        G: floatBitsToNormalULPFromZero(components.G, kFloat11Format),
+        B: floatBitsToNormalULPFromZero(components.B, kFloat10Format),
+      }),
+
+      numericRange: { min: 0, max: Number.POSITIVE_INFINITY },
     },
 
     rgb9e5ufloat: {
@@ -447,16 +667,38 @@ export const kTexelRepresentationInfo = {
             components.B ?? unreachable()
           ),
         ]).buffer,
+      // For the purpose of unpacking, expand into three "ufloat14" values.
+      unpackBits: data => {
+        // Pretend the exponent part is A so we can use unpackComponentsBits.
+        const parts = unpackComponentsBits(kRGBA, data, { R: 9, G: 9, B: 9, A: 5 });
+        return {
+          R: (parts.A << 9) | parts.R,
+          G: (parts.A << 9) | parts.G,
+          B: (parts.A << 9) | parts.B,
+        };
+      },
+      numberToBits: components => ({
+        R: float32ToFloatBits(components.R ?? unreachable(), 0, 5, 9, 15),
+        G: float32ToFloatBits(components.G ?? unreachable(), 0, 5, 9, 15),
+        B: float32ToFloatBits(components.B ?? unreachable(), 0, 5, 9, 15),
+      }),
+
+      bitsToNumber: components => ({
+        R: floatBitsToNumber(components.R, kFloat9e5Format),
+        G: floatBitsToNumber(components.G, kFloat9e5Format),
+        B: floatBitsToNumber(components.B, kFloat9e5Format),
+      }),
+
+      bitsToULPFromZero: components => ({
+        R: floatBitsToNormalULPFromZero(components.R, kFloat9e5Format),
+        G: floatBitsToNormalULPFromZero(components.G, kFloat9e5Format),
+        B: floatBitsToNormalULPFromZero(components.B, kFloat9e5Format),
+      }),
+
+      numericRange: { min: 0, max: Number.POSITIVE_INFINITY },
     },
 
-    depth32float: {
-      componentOrder: [TexelComponent.Depth],
-      encode: applyEach(n => (assert(n >= 0 && n <= 1.0), n), [TexelComponent.Depth]),
-      decode: applyEach(n => (assert(n >= 0 && n <= 1.0), n), [TexelComponent.Depth]),
-      componentInfo: { Depth: { dataType: 'float', bitLength: 32 } },
-      pack: components => packComponents([TexelComponent.Depth], components, 32, 'float'),
-    },
-
+    depth32float: makeFloatInfo([TexelComponent.Depth], 32, { restrictedDepth: true }),
     depth16unorm: makeNormalizedInfo([TexelComponent.Depth], 16, { signed: false, sRGB: false }),
     depth24plus: {
       componentOrder: [TexelComponent.Depth],
@@ -464,24 +706,14 @@ export const kTexelRepresentationInfo = {
       encode: applyEach(() => unreachable('depth24plus cannot be encoded'), [TexelComponent.Depth]),
       decode: applyEach(() => unreachable('depth24plus cannot be decoded'), [TexelComponent.Depth]),
       pack: () => unreachable('depth24plus data cannot be packed'),
+      unpackBits: () => unreachable('depth24plus data cannot be unpacked'),
+      numberToBits: () => unreachable('depth24plus has no representation'),
+      bitsToNumber: () => unreachable('depth24plus has no representation'),
+      bitsToULPFromZero: () => unreachable('depth24plus has no representation'),
+      numericRange: { min: 0, max: 1 },
     },
 
-    stencil8: {
-      componentOrder: [TexelComponent.Stencil],
-      componentInfo: { Stencil: { dataType: 'uint', bitLength: 8 } },
-      encode: components => {
-        assert(components.Stencil !== undefined);
-        assertInIntegerRange(components.Stencil, 8, false);
-        return components;
-      },
-      decode: components => {
-        assert(components.Stencil !== undefined);
-        assertInIntegerRange(components.Stencil, 8, false);
-        return components;
-      },
-      pack: components => packComponents([TexelComponent.Stencil], components, 8, 'uint'),
-    },
-
+    stencil8: makeIntegerInfo([TexelComponent.Stencil], 8, { signed: false }),
     'depth24unorm-stencil8': {
       componentOrder: [TexelComponent.Depth, TexelComponent.Stencil],
       componentInfo: {
@@ -513,6 +745,11 @@ export const kTexelRepresentationInfo = {
         };
       },
       pack: () => unreachable('depth24unorm-stencil8 data cannot be packed'),
+      unpackBits: () => unreachable('depth24unorm-stencil8 data cannot be unpacked'),
+      numberToBits: () => unreachable('not implemented'),
+      bitsToNumber: () => unreachable('not implemented'),
+      bitsToULPFromZero: () => unreachable('not implemented'),
+      numericRange: null,
     },
 
     'depth32float-stencil8': {
@@ -540,6 +777,11 @@ export const kTexelRepresentationInfo = {
         return components;
       },
       pack: () => unreachable('depth32float-stencil8 data cannot be packed'),
+      unpackBits: () => unreachable('depth32float-stencil8 data cannot be unpacked'),
+      numberToBits: () => unreachable('not implemented'),
+      bitsToNumber: () => unreachable('not implemented'),
+      bitsToULPFromZero: () => unreachable('not implemented'),
+      numericRange: null,
     },
 
     'depth24plus-stencil8': {
@@ -569,6 +811,11 @@ export const kTexelRepresentationInfo = {
         return components;
       },
       pack: () => unreachable('depth24plus-stencil8 data cannot be packed'),
+      unpackBits: () => unreachable('depth24plus-stencil8 data cannot be unpacked'),
+      numberToBits: () => unreachable('depth24plus-stencil8 has no representation'),
+      bitsToNumber: () => unreachable('depth24plus-stencil8 has no representation'),
+      bitsToULPFromZero: () => unreachable('depth24plus-stencil8 has no representation'),
+      numericRange: null,
     },
   },
 };

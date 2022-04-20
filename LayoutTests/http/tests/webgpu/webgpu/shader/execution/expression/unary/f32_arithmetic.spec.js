@@ -5,10 +5,9 @@ Execution Tests for the f32 arithmetic unary expression operations
 `;
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { GPUTest } from '../../../../gpu_test.js';
-import { correctlyRoundedThreshold } from '../../../../util/compare.js';
-import { kValue } from '../../../../util/constants.js';
+import { anyOf, correctlyRoundedThreshold } from '../../../../util/compare.js';
 import { f32, TypeF32 } from '../../../../util/conversion.js';
-import { biasedRange, linearRange, quantizeToF32 } from '../../../../util/math.js';
+import { fullF32Range, isSubnormalNumber, quantizeToF32 } from '../../../../util/math.js';
 import { run } from '../expression.js';
 
 import { unary } from './unary.js';
@@ -35,25 +34,16 @@ Accuracy: Correctly rounded
 
     const makeCase = x => {
       const f32_x = quantizeToF32(x);
-      return { input: [f32(x)], expected: f32(-f32_x) };
+      if (isSubnormalNumber(f32_x)) {
+        return { input: [f32(x)], expected: anyOf(f32(-f32_x), f32(0.0)) };
+      } else {
+        return { input: [f32(x)], expected: f32(-f32_x) };
+      }
     };
 
-    let cases = [];
-    const numeric_range = Array();
-    numeric_range.concat(biasedRange(kValue.f32.negative.max, kValue.f32.negative.min, 100));
-    numeric_range.concat(
-      linearRange(kValue.f32.subnormal.negative.min, kValue.f32.subnormal.negative.max, 100)
+    const cases = fullF32Range({ neg_norm: 250, neg_sub: 20, pos_sub: 20, pos_norm: 250 }).map(x =>
+      makeCase(x)
     );
-
-    numeric_range.concat(0.0);
-    numeric_range.concat(
-      linearRange(kValue.f32.subnormal.positive.min, kValue.f32.subnormal.positive.max, 100)
-    );
-
-    numeric_range.concat(biasedRange(kValue.f32.positive.min, kValue.f32.positive.max, 100));
-    numeric_range.forEach(x => {
-      cases = cases.concat(makeCase(x));
-    });
 
     run(t, unary('-'), [TypeF32], TypeF32, cfg, cases);
   });
