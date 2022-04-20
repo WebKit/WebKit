@@ -1239,8 +1239,7 @@ NEVER_INLINE String CSSPrimitiveValue::formatIntegerValue(StringView suffix) con
     return makeString(m_value.num, suffix);
 }
 
-// FIXME: Should return const char*.
-String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
+ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
 {
     switch (unitType) {
         case CSSUnitType::CSS_PERCENTAGE: return "%"_s;
@@ -1326,10 +1325,10 @@ String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
         case CSSUnitType::CSS_PROPERTY_ID:
         case CSSUnitType::CSS_VALUE_ID:
         case CSSUnitType::CSS_QUIRKY_EMS:
-            return emptyString();
+            return ""_s;
     }
     ASSERT_NOT_REACHED();
-    return emptyString();
+    return ""_s;
 }
 
 ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const

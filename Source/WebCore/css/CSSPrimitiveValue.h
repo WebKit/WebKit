@@ -195,7 +195,7 @@ public:
     bool equals(const CSSPrimitiveValue&) const;
 
     static std::optional<double> conversionToCanonicalUnitsScaleFactor(CSSUnitType);
-    static String unitTypeString(CSSUnitType);
+    static ASCIILiteral unitTypeString(CSSUnitType);
 
     static double computeUnzoomedNonCalcLengthDouble(CSSUnitType, double value, CSSPropertyID, const FontMetrics* = nullptr, const FontCascadeDescription* = nullptr, const FontCascadeDescription* rootFontDescription = nullptr, const RenderView* = nullptr);
     static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, CSSUnitType, double value);

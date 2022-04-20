@@ -46,8 +46,8 @@ public:
 
     double value() const { return m_value; }
     void setValue(double value) { m_value = value; }
-    String unit() const;
-    String unitSerialization() const;
+    ASCIILiteral unit() const;
+    ASCIILiteral unitSerialization() const;
     CSSUnitType unitEnum() const { return m_unit; }
 
 private:
