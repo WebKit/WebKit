@@ -416,7 +416,7 @@ private:
     Ref<NetworkSchemeRegistry> m_schemeRegistry;
         
     HashSet<URL> m_blobURLs;
-    HashSet<URL> m_blobURLHandles;
+    HashCountedSet<URL> m_blobURLHandles;
 };
 
 } // namespace WebKit

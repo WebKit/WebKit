@@ -1,5 +1,75 @@
 2022-04-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291689. rdar://problem/88461772
+
+    REGRESSION (iOS 15.1 / r280824) QuickLook - model not loading when passing extra parameters
+    https://bugs.webkit.org/show_bug.cgi?id=236069
+    <rdar://problem/88461772>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    To extend the lifetime of Blob objects while loading/downloading is pending, we rely to
+    BlobURLHandle objects, which tell the NetworkProcess that we still need this blob data,
+    even if the corresponding Blob object gets GC'd by JS. The issue here is that the load
+    was not using the vanilla blob URL but was intead appending a fragment to the URL. As
+    a result, BlobRegistryImpl::registerBlobURLHandle() would fail to look up the
+    corresponding blob data and would fail to extend its lifetime.
+    
+    To address the issue, BlobRegistryImpl::registerBlobURLHandle() / unregisterBlobURLHandle()
+    now strip fragments from the blob URL, similarly to what was already done inside
+    BlobRegistryImpl::getBlobDataFromURL().
+    
+    Test: fast/files/blob-with-fragment-as-frame-url.html
+    
+    * platform/network/BlobRegistryImpl.cpp:
+    (WebCore::blobURLWithoutFragment):
+    (WebCore::BlobRegistryImpl::registerBlobURLHandle):
+    (WebCore::BlobRegistryImpl::unregisterBlobURLHandle):
+    
+    Source/WebKit:
+    
+    Fix theoretical blob data leak. A WebContent process could create several BlobURLHandles for
+    the same blob URL. This would result in several calls to NetworkConnectionToWebProcess::registerBlobURLHandle()
+    for the same URL and several calls to to BlobRegistryImpl::registerBlobURLHandle() for the
+    same URL as well. BlobRegistryImpl is using a HashCountedSet for m_blobReferences in order
+    to deal with this fact. However, NetworkConnectionToWebProcess was using a simple HashSet
+    for m_blobURLHandles. As a result, if the WebContent process would exit and didClose()
+    would get called, the NetworkConnectionToWebProcess may call BlobRegistryImpl::unregisterBlobURLHandle()
+    only once even though the WebContent process had several handles for this URL, which would
+    not fully remove the URL from BlobRegistryImpl's HashCountedSet. To address the issue,
+    NetworkConnectionToWebProcess::m_blobURLHandles is now a HashCountedSet too and we call
+    BlobRegistryImpl::unregisterBlobURLHandle() as many times as needed in didClose().
+    
+    * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+    (WebKit::NetworkConnectionToWebProcess::didClose):
+    * NetworkProcess/NetworkConnectionToWebProcess.h:
+    
+    LayoutTests:
+    
+    Add layout test coverage.
+    
+    * fast/files/blob-with-fragment-as-frame-url-expected.txt: Added.
+    * fast/files/blob-with-fragment-as-frame-url.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291689 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-22  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (iOS 15.1 / r280824) QuickLook - model not loading when passing extra parameters
+            https://bugs.webkit.org/show_bug.cgi?id=236069
+            <rdar://problem/88461772>
+
+            Reviewed by Darin Adler.
+
+            Add layout test coverage.
+
+            * fast/files/blob-with-fragment-as-frame-url-expected.txt: Added.
+            * fast/files/blob-with-fragment-as-frame-url.html: Added.
+
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291281. rdar://problem/90245637
 
     Crash in KeyframeList.cpp:183 in WebCore::KeyframeList::fillImplicitKeyframes
