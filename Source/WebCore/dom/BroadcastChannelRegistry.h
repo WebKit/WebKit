@@ -31,15 +31,15 @@
 
 namespace WebCore {
 
+struct PartitionedSecurityOrigin;
 class SerializedScriptValue;
-struct ClientOrigin;
 
 class BroadcastChannelRegistry : public RefCounted<BroadcastChannelRegistry> {
 public:
     virtual ~BroadcastChannelRegistry() { }
-    virtual void registerChannel(const ClientOrigin&, const String& name, BroadcastChannelIdentifier) = 0;
-    virtual void unregisterChannel(const ClientOrigin&, const String& name, BroadcastChannelIdentifier) = 0;
-    virtual void postMessage(const ClientOrigin&, const String& name, BroadcastChannelIdentifier source, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) = 0;
+    virtual void registerChannel(const PartitionedSecurityOrigin&, const String& name, BroadcastChannelIdentifier) = 0;
+    virtual void unregisterChannel(const PartitionedSecurityOrigin&, const String& name, BroadcastChannelIdentifier) = 0;
+    virtual void postMessage(const PartitionedSecurityOrigin&, const String& name, BroadcastChannelIdentifier source, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) = 0;
 };
 
 } // namespace WebCore
