@@ -618,11 +618,11 @@ std::optional<LayoutUnit> GridTrackSizingAlgorithm::gridAreaBreadthForChild(cons
     // To determine the column track's size based on an orthogonal grid item we need it's logical
     // height, which may depend on the row track's size. It's possible that the row tracks sizing
     // logic has not been performed yet, so we will need to do an estimation.
-    if (direction == ForRows && (m_sizingState == ColumnSizingFirstIteration || m_sizingState == ColumnSizingSecondIteration)) {
+    if (direction == ForRows && (m_sizingState == ColumnSizingFirstIteration || m_sizingState == ColumnSizingExtraIterationForSizeContainment || m_sizingState == ColumnSizingSecondIteration)) {
         ASSERT(GridLayoutFunctions::isOrthogonalChild(*m_renderGrid, child));
         // FIXME (jfernandez) Content Alignment should account for this heuristic.
         // https://github.com/w3c/csswg-drafts/issues/2697
-        if (m_sizingState == ColumnSizingFirstIteration)
+        if (m_sizingState == ColumnSizingFirstIteration || m_sizingState == ColumnSizingExtraIterationForSizeContainment)
             return estimatedGridAreaBreadthForChild(child, ForRows);
         addContentAlignmentOffset = true;
     }
@@ -1302,6 +1302,9 @@ void GridTrackSizingAlgorithm::advanceNextState()
 {
     switch (m_sizingState) {
     case ColumnSizingFirstIteration:
+        m_sizingState = m_strategy->isComputingSizeContainment() ? ColumnSizingExtraIterationForSizeContainment : RowSizingFirstIteration;
+        return;
+    case ColumnSizingExtraIterationForSizeContainment:
         m_sizingState = RowSizingFirstIteration;
         return;
     case RowSizingFirstIteration:
@@ -1325,6 +1328,7 @@ bool GridTrackSizingAlgorithm::isValidTransition() const
 {
     switch (m_sizingState) {
     case ColumnSizingFirstIteration:
+    case ColumnSizingExtraIterationForSizeContainment:
     case ColumnSizingSecondIteration:
         return m_direction == ForColumns;
     case RowSizingFirstIteration:
