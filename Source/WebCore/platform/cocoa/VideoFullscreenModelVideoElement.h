@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaPlayerEnums.h"
+#include "MediaPlayerIdentifier.h"
 #include "PlatformLayer.h"
 #include "VideoFullscreenModel.h"
 #include <wtf/Function.h>
@@ -81,6 +82,7 @@ protected:
 private:
     void setHasVideo(bool);
     void setVideoDimensions(const FloatSize&);
+    void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
 
     void willEnterPictureInPicture() override;
     void didEnterPictureInPicture() override;
@@ -100,6 +102,7 @@ private:
     FloatRect m_videoFrame;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
+    std::optional<MediaPlayerIdentifier> m_playerIdentifier;
 };
 
 }

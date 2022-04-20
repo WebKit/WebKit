@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaPlayerEnums.h"
+#include "MediaPlayerIdentifier.h"
 #include "PlaybackSessionModel.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
@@ -84,6 +85,7 @@ public:
     virtual void willExitPictureInPicture() { }
     virtual void didExitPictureInPicture() { }
     virtual void modelDestroyed() { }
+    virtual void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) { }
 };
     
 }

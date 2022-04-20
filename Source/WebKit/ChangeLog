@@ -1,3 +1,80 @@
+2022-04-20  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r289100. rdar://problem/79950080
+
+    Teach VideoFullscreenInterface to keep track of its corresponding MediaPlayer's MediaPlayerIdentifier
+    https://bugs.webkit.org/show_bug.cgi?id=236090
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Add plumbing for an optional MediaPlayerIdentifier through the video fullscreen model. This identifier is
+    invalidated upon `loadstart`, and updated once we observe `loadedmetadata`, which ensures that if the media
+    engine (and media player) changes out from underneath the video fullscreen model, we still keep the new player
+    ID up to date.
+    
+    See WebKit/ChangeLog for more details.
+    
+    * platform/cocoa/VideoFullscreenModel.h:
+    (WebCore::VideoFullscreenModelClient::setPlayerIdentifier):
+    * platform/cocoa/VideoFullscreenModelVideoElement.h:
+    * platform/cocoa/VideoFullscreenModelVideoElement.mm:
+    (WebCore::VideoFullscreenModelVideoElement::updateForEventName):
+    (WebCore::VideoFullscreenModelVideoElement::observedEventNames):
+    
+    Additionally listen for `loadstartEvent` and `loadedmetadataEvent` (see above).
+    
+    (WebCore::VideoFullscreenModelVideoElement::setPlayerIdentifier):
+    * platform/ios/VideoFullscreenInterfaceAVKit.h:
+    * platform/mac/VideoFullscreenInterfaceMac.h:
+    (WebCore::VideoFullscreenInterfaceMac::playerIdentifier const):
+    
+    Source/WebKit:
+    
+    Add an IPC message between VideoFullscreenManager and VideoFullscreenManagerProxy to update the media player ID
+    corresponding to a given PlaybackSessionContextIdentifier. This is sent if the underlying media player changes
+    (and subsequently fires `loadstart` and `loadedmetadata` events), and also sent upon entering fullscreen video.
+    
+    In a future patch, this mechanism will be used to teach VideoFullscreenManagerProxy to grab an image bitmap from
+    the GPU process for a given PlaybackSessionContextIdentifier.
+    
+    * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+    * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+    * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+    (WebKit::VideoFullscreenManagerProxy::setPlayerIdentifier):
+    * WebProcess/cocoa/VideoFullscreenManager.h:
+    * WebProcess/cocoa/VideoFullscreenManager.mm:
+    (WebKit::VideoFullscreenInterfaceContext::setPlayerIdentifier):
+    (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+    (WebKit::VideoFullscreenManager::setPlayerIdentifier):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289100 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Teach VideoFullscreenInterface to keep track of its corresponding MediaPlayer's MediaPlayerIdentifier
+            https://bugs.webkit.org/show_bug.cgi?id=236090
+
+            Reviewed by Eric Carlson.
+
+            Add an IPC message between VideoFullscreenManager and VideoFullscreenManagerProxy to update the media player ID
+            corresponding to a given PlaybackSessionContextIdentifier. This is sent if the underlying media player changes
+            (and subsequently fires `loadstart` and `loadedmetadata` events), and also sent upon entering fullscreen video.
+
+            In a future patch, this mechanism will be used to teach VideoFullscreenManagerProxy to grab an image bitmap from
+            the GPU process for a given PlaybackSessionContextIdentifier.
+
+            * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+            * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+            * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+            (WebKit::VideoFullscreenManagerProxy::setPlayerIdentifier):
+            * WebProcess/cocoa/VideoFullscreenManager.h:
+            * WebProcess/cocoa/VideoFullscreenManager.mm:
+            (WebKit::VideoFullscreenInterfaceContext::setPlayerIdentifier):
+            (WebKit::VideoFullscreenManager::enterVideoFullscreenForVideoElement):
+            (WebKit::VideoFullscreenManager::setPlayerIdentifier):
+
 2022-04-19  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r292049. rdar://problem/89104216

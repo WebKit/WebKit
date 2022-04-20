@@ -571,6 +571,15 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
 #endif
 }
 
+void VideoFullscreenManagerProxy::setPlayerIdentifier(PlaybackSessionContextIdentifier contextId, std::optional<MediaPlayerIdentifier> playerIdentifier)
+{
+    if (m_mockVideoPresentationModeEnabled)
+        return;
+
+    if (auto* interface = findInterface(contextId))
+        interface->setPlayerIdentifier(playerIdentifier);
+}
+
 void VideoFullscreenManagerProxy::setHasVideo(PlaybackSessionContextIdentifier contextId, bool hasVideo)
 {
     if (m_mockVideoPresentationModeEnabled)

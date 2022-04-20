@@ -103,6 +103,26 @@ void VideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomString&
         setHasVideo(m_videoElement);
         setVideoDimensions(m_videoElement ? FloatSize(m_videoElement->videoWidth(), m_videoElement->videoHeight()) : FloatSize());
     }
+
+    if (all
+        || eventName == eventNames().loadedmetadataEvent || eventName == eventNames().loadstartEvent) {
+        setPlayerIdentifier([&]() -> std::optional<MediaPlayerIdentifier> {
+            if (eventName == eventNames().loadstartEvent)
+                return std::nullopt;
+
+            if (!m_videoElement)
+                return std::nullopt;
+
+            auto player = m_videoElement->player();
+            if (!player)
+                return std::nullopt;
+
+            if (auto identifier = player->identifier())
+                return identifier;
+
+            return std::nullopt;
+        }());
+    }
 }
 
 void VideoFullscreenModelVideoElement::willExitFullscreen()
@@ -180,7 +200,7 @@ void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGr
 
 Span<const AtomString> VideoFullscreenModelVideoElement::observedEventNames()
 {
-    static NeverDestroyed names = std::array { eventNames().resizeEvent };
+    static NeverDestroyed names = std::array { eventNames().resizeEvent, eventNames().loadstartEvent, eventNames().loadedmetadataEvent };
     return names.get();
 }
 
@@ -236,6 +256,17 @@ void VideoFullscreenModelVideoElement::setVideoDimensions(const FloatSize& video
 
     for (auto& client : copyToVector(m_clients))
         client->videoDimensionsChanged(m_videoDimensions);
+}
+
+void VideoFullscreenModelVideoElement::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
+{
+    if (m_playerIdentifier == identifier)
+        return;
+
+    m_playerIdentifier = identifier;
+
+    for (auto* client : copyToVector(m_clients))
+        client->setPlayerIdentifier(identifier);
 }
 
 void VideoFullscreenModelVideoElement::willEnterPictureInPicture()

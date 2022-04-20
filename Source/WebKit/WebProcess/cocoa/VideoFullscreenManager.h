@@ -98,6 +98,7 @@ private:
     // VideoFullscreenModelClient
     void hasVideoChanged(bool) override;
     void videoDimensionsChanged(const WebCore::FloatSize&) override;
+    void setPlayerIdentifier(std::optional<WebCore::MediaPlayerIdentifier>) final;
 
     VideoFullscreenInterfaceContext(VideoFullscreenManager&, PlaybackSessionContextIdentifier);
 
@@ -146,6 +147,7 @@ protected:
     // Interface to VideoFullscreenInterfaceContext
     void hasVideoChanged(PlaybackSessionContextIdentifier, bool hasVideo);
     void videoDimensionsChanged(PlaybackSessionContextIdentifier, const WebCore::FloatSize&);
+    void setPlayerIdentifier(PlaybackSessionContextIdentifier, std::optional<WebCore::MediaPlayerIdentifier>);
 
     // Messages from VideoFullscreenManagerProxy
     void requestFullscreenMode(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia);

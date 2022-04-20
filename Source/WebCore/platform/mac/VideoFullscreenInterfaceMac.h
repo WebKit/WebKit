@@ -28,6 +28,7 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include "HTMLMediaElementEnums.h"
+#include "MediaPlayerIdentifier.h"
 #include "PlaybackSessionInterfaceMac.h"
 #include "PlaybackSessionModel.h"
 #include "VideoFullscreenModel.h"
@@ -70,6 +71,7 @@ public:
     // VideoFullscreenModelClient
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
+    void setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier) final { m_playerIdentifier = identifier; }
 
     WEBCORE_EXPORT void setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
     WEBCORE_EXPORT void enterFullscreen();
@@ -96,9 +98,12 @@ public:
 
     WEBCORE_EXPORT void requestHideAndExitPiP();
 
+    std::optional<MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
+
 private:
     WEBCORE_EXPORT VideoFullscreenInterfaceMac(PlaybackSessionInterfaceMac&);
     Ref<PlaybackSessionInterfaceMac> m_playbackSessionInterface;
+    std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     WeakPtr<VideoFullscreenModel> m_videoFullscreenModel;
     WeakPtr<VideoFullscreenChangeObserver> m_fullscreenChangeObserver;
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };

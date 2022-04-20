@@ -110,6 +110,12 @@ void VideoFullscreenInterfaceContext::videoDimensionsChanged(const FloatSize& vi
         m_manager->videoDimensionsChanged(m_contextId, videoDimensions);
 }
 
+void VideoFullscreenInterfaceContext::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
+{
+    if (m_manager)
+        m_manager->setPlayerIdentifier(m_contextId, identifier);
+}
+
 #pragma mark - VideoFullscreenManager
 
 Ref<VideoFullscreenManager> VideoFullscreenManager::create(WebPage& page, PlaybackSessionManager& playbackSessionManager)
@@ -309,6 +315,11 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     }
 
     m_page->send(Messages::VideoFullscreenManagerProxy::SetupFullscreenWithID(contextId, interface->layerHostingContext()->contextID(), videoRect, FloatSize(videoElement.videoWidth(), videoElement.videoHeight()), m_page->deviceScaleFactor(), interface->fullscreenMode(), allowsPictureInPicture, standby, videoElement.document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
+
+    if (auto player = videoElement.player()) {
+        if (auto identifier = player->identifier())
+            setPlayerIdentifier(contextId, identifier);
+    }
 }
 
 void VideoFullscreenManager::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, CompletionHandler<void(bool)>&& completionHandler)
@@ -375,6 +386,12 @@ void VideoFullscreenManager::videoDimensionsChanged(PlaybackSessionContextIdenti
 {
     if (m_page)
         m_page->send(Messages::VideoFullscreenManagerProxy::SetVideoDimensions(contextId, videoDimensions));
+}
+
+void VideoFullscreenManager::setPlayerIdentifier(PlaybackSessionContextIdentifier contextIdentifier, std::optional<MediaPlayerIdentifier> playerIdentifier)
+{
+    if (m_page)
+        m_page->send(Messages::VideoFullscreenManagerProxy::SetPlayerIdentifier(contextIdentifier, playerIdentifier));
 }
 
 #pragma mark Messages from VideoFullscreenManagerProxy:
