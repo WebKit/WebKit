@@ -641,7 +641,7 @@ Vector<Strong<JSObject>> KeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlo
 
         KeyframeList computedKeyframes(m_blendingKeyframes.animationName());
         computedKeyframes.copyKeyframes(m_blendingKeyframes);
-        computedKeyframeList.fillImplicitKeyframes(*this, elementStyle);
+        computedKeyframes.fillImplicitKeyframes(*this, elementStyle);
 
         auto keyframeRules = [&]() -> const Vector<Ref<StyleRuleKeyframe>> {
             if (!is<CSSAnimation>(animation()))
