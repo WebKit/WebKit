@@ -7264,14 +7264,23 @@
             ],
             "status": "non-standard"
         },
-        "-webkit-user-select": {
+        "user-select": {
+            "codegen-properties": {
+                "aliases": [
+                    "-webkit-user-select"
+                ]
+            },
             "inherited": true,
             "values": [
-                "element"
+                "none",
+                "auto",
+                "text",
+                "all",
+                {
+                    "value": "contain",
+                    "status": "unimplemented"
+                }
             ],
-            "status": {
-                "status": "experimental"
-        },
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-4/#propdef-user-select"

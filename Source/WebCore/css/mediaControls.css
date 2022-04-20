@@ -46,7 +46,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     direction: ltr;
     flex-direction: row;
     align-items: center;
-    -webkit-user-select: none;
+    user-select: none;
     position: relative;
     bottom: 0;
     width: 100%;
@@ -100,7 +100,7 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
     align-items: center;
     justify-content: flex-end;
     flex: 1 1;
-    -webkit-user-select: none;
+    user-select: none;
     height: 16px;
     min-width: 0;
 }
@@ -230,7 +230,7 @@ video::-webkit-media-text-track-container {
     text-indent: 0;
     text-decoration: none;
     pointer-events: none;
-    -webkit-user-select: none;
+    user-select: none;
     word-break: break-word;
 
     flex: 1 1;

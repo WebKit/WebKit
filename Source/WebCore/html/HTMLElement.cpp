@@ -214,7 +214,7 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
         if (equalLettersIgnoringASCIICase(value, "true")) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
             if (!isDraggableIgnoringAttributes())
-                addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyUserSelect, CSSValueNone);
         } else if (equalLettersIgnoringASCIICase(value, "false"))
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
     } else if (name == dirAttr) {

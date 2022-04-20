@@ -192,6 +192,7 @@ transition-duration: 0s
 transition-property: all
 transition-timing-function: ease
 unicode-bidi: normal
+user-select: text
 vector-effect: none
 vertical-align: baseline
 visibility: visible
@@ -255,7 +256,6 @@ zoom: 1
 -webkit-transform-style: flat
 -webkit-user-drag: auto
 -webkit-user-modify: read-only
--webkit-user-select: text
 background-position-x: 0%
 background-position-y: 0%
 border-spacing: 0px 0px

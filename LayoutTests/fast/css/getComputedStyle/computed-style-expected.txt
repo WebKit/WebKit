@@ -193,6 +193,7 @@ transition-duration: 0s;
 transition-property: all;
 transition-timing-function: ease;
 unicode-bidi: normal;
+user-select: text;
 vector-effect: none;
 vertical-align: baseline;
 visibility: visible;
@@ -256,7 +257,6 @@ zoom: 1;
 -webkit-transform-style: flat;
 -webkit-user-drag: auto;
 -webkit-user-modify: read-only;
--webkit-user-select: text;
 
 Other attributes that the computed style class supports:
 

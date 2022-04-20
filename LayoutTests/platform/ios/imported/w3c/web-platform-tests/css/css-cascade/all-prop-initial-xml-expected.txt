@@ -286,6 +286,7 @@ PASS transition-duration
 PASS transition-property
 PASS transition-timing-function
 PASS unicode-bidi
+PASS user-select
 PASS vector-effect
 PASS vertical-align
 PASS visibility
@@ -372,5 +373,4 @@ PASS -webkit-touch-callout
 PASS -webkit-transform-style
 PASS -webkit-user-drag
 PASS -webkit-user-modify
-PASS -webkit-user-select
 

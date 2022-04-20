@@ -1,3 +1,41 @@
+2022-04-20  Tim Nguyen  <ntim@apple.com>
+
+        Unprefix -webkit-user-select CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=208677
+
+        Reviewed by Simon Fraser.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/html.css:
+        (#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY):
+        (input::-webkit-inner-spin-button):
+        (input::-webkit-strong-password-auto-fill-button):
+        (input::-webkit-credentials-auto-fill-button):
+        (input::-webkit-contacts-auto-fill-button):
+        (input::-webkit-credit-card-auto-fill-button):
+        (input::-webkit-caps-lock-indicator):
+        (#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT):
+        (textarea):
+        (input:-webkit-autofill-strong-password):
+        * css/mediaControls.css:
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container):
+        (video::-webkit-media-text-track-container):
+        * css/plugIns.css:
+        (embed::-webkit-snapshotted-plugin-content > .snapshot-overlay > .snapshot-label,):
+        * dom/ImageOverlay.cpp:
+        (WebCore::ImageOverlay::updateSubtree):
+        (WebCore::ImageOverlay::updateWithTextRecognitionResult):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::collectPresentationalHintsForAttribute):
+
 2022-04-20  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, non-unified build fixes after r293052

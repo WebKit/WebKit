@@ -422,7 +422,7 @@ input {
     padding: 1px;
 #endif
     -webkit-rtl-ordering: logical;
-    -webkit-user-select: text;
+    user-select: text;
     cursor: auto;
 }
 
@@ -597,14 +597,14 @@ input::-webkit-inner-spin-button {
      * button in layout(). */
     height: 1.5em;
     flex: none;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-strong-password-auto-fill-button {
     flex-shrink: 1 !important;
     font-family: -apple-system !important;
     -webkit-text-security: none !important;
-    -webkit-user-select: none !important;
+    user-select: none !important;
     pointer-events: none !important;
     text-align: right !important;
     color: rgba(0, 0, 0, 0.8) !important;
@@ -630,7 +630,7 @@ input::-webkit-credentials-auto-fill-button {
     background-color: black;
 #endif
     flex: none;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-credentials-auto-fill-button:hover {
@@ -662,7 +662,7 @@ input::-webkit-contacts-auto-fill-button {
     margin-right: 2px;
     background-color: black;
     flex: none;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-contacts-auto-fill-button:hover {
@@ -682,7 +682,7 @@ input::-webkit-credit-card-auto-fill-button {
     margin-right: 2px;
     background-color: black;
     flex: none;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-credit-card-auto-fill-button:hover {
@@ -699,7 +699,7 @@ input::-webkit-caps-lock-indicator {
     max-width: 17px;
     align-self: stretch;
     flex: none;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 #if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
@@ -710,7 +710,7 @@ input::-webkit-list-button {
     cursor: default;
     align-self: stretch;
     flex: none;
-    -webkit-user-select: none;
+    user-select: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     width: 11px;
     /* Make it easier to hit the button on iOS */
@@ -738,7 +738,7 @@ textarea {
 #endif
     border: 1px solid;
     -webkit-rtl-ordering: logical;
-    -webkit-user-select: text;
+    user-select: text;
     padding: 2px;
 #else
     -webkit-nbsp-mode: space;
@@ -788,7 +788,7 @@ input:-webkit-autofill-and-obscured {
 }
 
 input:-webkit-autofill-strong-password {
-    -webkit-user-select: none !important;
+    user-select: none !important;
 }
 
 input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {

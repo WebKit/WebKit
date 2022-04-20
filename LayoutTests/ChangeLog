@@ -1,5 +1,22 @@
 2022-04-20  Tim Nguyen  <ntim@apple.com>
 
+        Unprefix -webkit-user-select CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=208677
+
+        Reviewed by Simon Fraser.
+
+        * editing/selection/user-select-js-property-expected.txt:
+        * editing/selection/user-select-js-property.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
+2022-04-20  Tim Nguyen  <ntim@apple.com>
+
         [Debug] Skip editing/inserting/insert-list-user-select-none-crash.html
 
         Unreviewed test gardening.
