@@ -50,6 +50,8 @@ public:
     void setNonWakingTopics(Vector<String>&&) override;
 
     void setTopicLists(TopicLists&&) override;
+
+    void setPublicTokenForTesting(Vector<uint8_t>&&) override;
 };
 
 } // namespace WebPushD

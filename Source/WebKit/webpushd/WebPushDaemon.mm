@@ -134,10 +134,20 @@ ARGUMENTS(WebCore::SecurityOriginData)
 REPLY(unsigned)
 END
 
+FUNCTION(setPublicTokenForTesting)
+ARGUMENTS(String)
+REPLY()
+END
+
+
 #undef FUNCTION
 #undef ARGUMENTS
 #undef REPLY
 #undef END
+
+#define EMPTY_REPLY(mf) WebPushD::EncodedMessage mf::encodeReply() { return { }; }
+EMPTY_REPLY(setPublicTokenForTesting);
+#undef EMPTY_REPLY
 
 WebPushD::EncodedMessage echoTwice::encodeReply(String reply)
 {
@@ -445,6 +455,9 @@ void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType mes
     case MessageType::RemovePushSubscriptionsForOrigin:
         handleWebPushDMessageWithReply<MessageInfo::removePushSubscriptionsForOrigin>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
+    case MessageType::SetPublicTokenForTesting:
+        handleWebPushDMessageWithReply<MessageInfo::setPublicTokenForTesting>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
     }
 }
 
@@ -719,6 +732,19 @@ void Daemon::removePushSubscriptionsForOrigin(ClientConnection* connection, cons
         }
 
         m_pushService->removeRecordsForBundleIdentifierAndOrigin(bundleIdentifier, securityOrigin, WTFMove(replySender));
+    });
+}
+
+void Daemon::setPublicTokenForTesting(ClientConnection*, const String& publicToken, CompletionHandler<void()>&& replySender)
+{
+    runAfterStartingPushService([this, publicToken, replySender = WTFMove(replySender)]() mutable {
+        if (!m_pushService) {
+            replySender();
+            return;
+        }
+
+        m_pushService->setPublicTokenForTesting(Vector<uint8_t> { publicToken.utf8().bytes() });
+        replySender();
     });
 }
 

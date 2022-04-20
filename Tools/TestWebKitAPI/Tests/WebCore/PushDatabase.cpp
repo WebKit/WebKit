@@ -27,6 +27,7 @@
 #include "Utilities.h"
 #include <WebCore/PushDatabase.h>
 #include <WebCore/SQLiteDatabase.h>
+#include <iterator>
 #include <wtf/FileSystem.h>
 
 #if ENABLE(SERVICE_WORKER)
@@ -41,6 +42,77 @@ static String makeTemporaryDatabasePath()
     auto path = FileSystem::openTemporaryFile("PushDatabase"_s, handle, ".db"_s);
     FileSystem::closeFile(handle);
     return path;
+}
+
+static std::unique_ptr<PushDatabase> createDatabaseSync(const String& path)
+{
+    std::unique_ptr<PushDatabase> result;
+    bool done = false;
+
+    PushDatabase::create(path, [&done, &result](std::unique_ptr<PushDatabase>&& database) {
+        result = WTFMove(database);
+        done = true;
+    });
+    Util::run(&done);
+
+    return result;
+}
+
+static Vector<uint8_t> getPublicTokenSync(PushDatabase& database)
+{
+    bool done = false;
+    Vector<uint8_t> getResult;
+
+    database.getPublicToken([&done, &getResult](auto&& result) {
+        getResult = WTFMove(result);
+        done = true;
+    });
+    Util::run(&done);
+
+    return getResult;
+}
+
+static PushDatabase::PublicTokenChanged updatePublicTokenSync(PushDatabase& database, Span<const uint8_t> token)
+{
+    bool done = false;
+    auto updateResult = PushDatabase::PublicTokenChanged::No;
+
+    database.updatePublicToken(token, [&done, &updateResult](auto&& result) {
+        updateResult = WTFMove(result);
+        done = true;
+    });
+    Util::run(&done);
+
+    return updateResult;
+}
+
+static std::optional<PushRecord> getRecordByBundleIdentifierAndScopeSync(PushDatabase& database, const String& bundleID, const String& scope)
+{
+    bool done = false;
+    std::optional<PushRecord> getResult;
+
+    database.getRecordByBundleIdentifierAndScope(bundleID, scope, [&done, &getResult](std::optional<PushRecord>&& result) {
+        getResult = WTFMove(result);
+        done = true;
+    });
+    Util::run(&done);
+
+    return getResult;
+}
+
+static HashSet<uint64_t> getRowIdentifiersSync(PushDatabase& database)
+{
+    bool done = false;
+    HashSet<uint64_t> rowIdentifiers;
+
+    database.getIdentifiers([&done, &rowIdentifiers](HashSet<PushSubscriptionIdentifier>&& identifiers) {
+        for (auto identifier : identifiers)
+            rowIdentifiers.add(identifier.toUInt64());
+        done = true;
+    });
+    Util::run(&done);
+
+    return rowIdentifiers;
 }
 
 static Vector<String> getTopicsSync(PushDatabase& database)
@@ -66,7 +138,7 @@ public:
         "com.apple.webapp"_s,
         "https://www.apple.com"_s,
         "https://www.apple.com/iphone"_s,
-        "https://pushEndpoint2"_s,
+        "https://pushEndpoint1"_s,
         "topic1"_s,
         { 5, 6 },
         { 6, 7 },
@@ -78,8 +150,8 @@ public:
         "com.apple.Safari"_s,
         "https://www.webkit.org"_s,
         "https://www.webkit.org/blog"_s,
-        "https://pushEndpoint4"_s,
-        "topic4"_s,
+        "https://pushEndpoint2"_s,
+        "topic2"_s,
         { 14, 15 },
         { 16, 17 },
         { 18, 19 },
@@ -90,8 +162,8 @@ public:
         "com.apple.Safari"_s,
         "https://www.apple.com"_s,
         "https://www.apple.com/mac"_s,
-        "https://pushEndpoint1"_s,
-        "topic2"_s,
+        "https://pushEndpoint3"_s,
+        "topic3"_s,
         { 0, 1 },
         { 1, 2 },
         { 2, 3 },
@@ -103,8 +175,8 @@ public:
         "com.apple.Safari"_s,
         "https://www.apple.com"_s,
         "https://www.apple.com/iphone"_s,
-        "https://pushEndpoint3"_s,
-        "topic3"_s,
+        "https://pushEndpoint4"_s,
+        "topic4"_s,
         { 9, 10 },
         { 10, 11 },
         { 11, 12 },
@@ -115,6 +187,16 @@ public:
     std::optional<PushRecord> insertResult2;
     std::optional<PushRecord> insertResult3;
     std::optional<PushRecord> insertResult4;
+
+    Vector<uint8_t> getPublicToken()
+    {
+        return getPublicTokenSync(*db);
+    }
+
+    PushDatabase::PublicTokenChanged updatePublicToken(Span<const uint8_t> token)
+    {
+        return updatePublicTokenSync(*db, token);
+    }
 
     std::optional<PushRecord> insertRecord(const PushRecord& record)
     {
@@ -160,31 +242,12 @@ public:
 
     std::optional<PushRecord> getRecordByBundleIdentifierAndScope(const String& bundleID, const String& scope)
     {
-        bool done = false;
-        std::optional<PushRecord> getResult;
-
-        db->getRecordByBundleIdentifierAndScope(bundleID, scope, [&done, &getResult](std::optional<PushRecord>&& result) {
-            getResult = WTFMove(result);
-            done = true;
-        });
-        Util::run(&done);
-
-        return getResult;
+        return getRecordByBundleIdentifierAndScopeSync(*db, bundleID, scope);
     }
 
     HashSet<uint64_t> getRowIdentifiers()
     {
-        bool done = false;
-        HashSet<uint64_t> rowIdentifiers;
-
-        db->getIdentifiers([&done, &rowIdentifiers](HashSet<PushSubscriptionIdentifier>&& identifiers) {
-            for (auto identifier : identifiers)
-                rowIdentifiers.add(identifier.toUInt64());
-            done = true;
-        });
-        Util::run(&done);
-
-        return rowIdentifiers;
+        return getRowIdentifiersSync(*db);
     }
 
     Vector<String> getTopics()
@@ -236,13 +299,7 @@ public:
 
     void SetUp() final
     {
-        bool done = false;
-        PushDatabase::create(makeTemporaryDatabasePath(), [this, &done](std::unique_ptr<PushDatabase>&& database) {
-            db = WTFMove(database);
-            done = true;
-        });
-        Util::run(&done);
-
+        db = createDatabaseSync(SQLiteDatabase::inMemoryPath());
         ASSERT_TRUE(db);
         ASSERT_TRUE(insertResult1 = insertRecord(record1));
         ASSERT_TRUE(insertResult2 = insertRecord(record2));
@@ -264,6 +321,36 @@ static bool operator==(const PushRecord& a, const PushRecord& b)
         && a.clientPrivateKey == b.clientPrivateKey
         && a.sharedAuthSecret == b.sharedAuthSecret
         && a.expirationTime == b.expirationTime;
+}
+
+TEST_F(PushDatabaseTest, UpdatePublicToken)
+{
+    Vector<uint8_t> initialToken = { 'a', 'b', 'c' };
+    Vector<uint8_t> modifiedToken = { 'd', 'e', 'f' };
+
+    // Setting the initial public token shouldn't delete anything.
+    auto updateResult1 = updatePublicToken(initialToken);
+    EXPECT_EQ(updateResult1, PushDatabase::PublicTokenChanged::No);
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4 }));
+
+    auto getResult1 = getPublicToken();
+    EXPECT_EQ(getResult1, initialToken);
+
+    // Setting the same token again should do nothing.
+    auto updateResult2 = updatePublicToken(initialToken);
+    EXPECT_EQ(updateResult2, PushDatabase::PublicTokenChanged::No);
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4 }));
+
+    auto getResult2 = getPublicToken();
+    EXPECT_EQ(getResult2, initialToken);
+
+    // Changing the public token afterwards should delete everything.
+    auto updateResult3 = updatePublicToken(modifiedToken);
+    EXPECT_EQ(updateResult3, PushDatabase::PublicTokenChanged::Yes);
+    EXPECT_TRUE(getRowIdentifiers().isEmpty());
+
+    auto getResult3 = getPublicToken();
+    EXPECT_EQ(getResult3, modifiedToken);
 }
 
 TEST_F(PushDatabaseTest, InsertRecord)
@@ -403,13 +490,7 @@ TEST(PushDatabase, ManyInFlightOps)
     constexpr unsigned recordCount = 256;
 
     {
-        std::unique_ptr<PushDatabase> createResult;
-        bool done = false;
-        PushDatabase::create(path, [&createResult, &done](std::unique_ptr<PushDatabase>&& database) {
-            createResult = WTFMove(database);
-            done = true;
-        });
-        Util::run(&done);
+        auto createResult = createDatabaseSync(path);
         ASSERT_TRUE(createResult);
 
         auto& database = *createResult;
@@ -442,13 +523,7 @@ TEST(PushDatabase, ManyInFlightOps)
     }
 
     {
-        std::unique_ptr<PushDatabase> createResult;
-        bool done = false;
-        PushDatabase::create(path, [&createResult, &done](std::unique_ptr<PushDatabase>&& database) {
-            createResult = WTFMove(database);
-            done = true;
-        });
-        Util::run(&done);
+        auto createResult = createDatabaseSync(path);
         ASSERT_TRUE(createResult);
 
         auto topics = getTopicsSync(*createResult);
@@ -467,13 +542,7 @@ TEST(PushDatabase, StartsFromScratchOnDowngrade)
     }
 
     {
-        std::unique_ptr<PushDatabase> createResult;
-        bool done = false;
-        PushDatabase::create(path, [&createResult, &done](std::unique_ptr<PushDatabase>&& database) {
-            createResult = WTFMove(database);
-            done = true;
-        });
-        Util::run(&done);
+        auto createResult = createDatabaseSync(path);
         ASSERT_TRUE(createResult);
     }
 
@@ -488,6 +557,74 @@ TEST(PushDatabase, StartsFromScratchOnDowngrade)
             EXPECT_GT(version, 0);
             EXPECT_LT(version, 100000);
         }
+    }
+}
+
+static bool createDatabaseFromStatements(String path, ASCIILiteral* statements, size_t count)
+{
+    SQLiteDatabase db;
+    db.open(path);
+
+    for (size_t i = 0; i < count; i++) {
+        if (!db.executeCommand(statements[i]))
+            return false;
+    }
+
+    return true;
+}
+
+// Acquired by running .dump from the sqlite3 shell on a V2 database.
+static ASCIILiteral pushDatabaseV2Statements[] = {
+    "CREATE TABLE SubscriptionSets(  rowID INTEGER PRIMARY KEY AUTOINCREMENT,  creationTime INT NOT NULL,  bundleID TEXT NOT NULL,  securityOrigin TEXT NOT NULL,  silentPushCount INT NOT NULL,  UNIQUE(bundleID, securityOrigin))"_s,
+    "INSERT INTO SubscriptionSets VALUES(1,1649541001,'com.apple.webapp','https://www.apple.com',0)"_s,
+    "INSERT INTO SubscriptionSets VALUES(2,1649541001,'com.apple.Safari','https://www.webkit.org',0)"_s,
+    "INSERT INTO SubscriptionSets VALUES(3,1649541001,'com.apple.Safari','https://www.apple.com',0)"_s,
+    "CREATE TABLE Subscriptions(  rowID INTEGER PRIMARY KEY AUTOINCREMENT,  creationTime INT NOT NULL,  subscriptionSetID INT NOT NULL,  scope TEXT NOT NULL,  endpoint TEXT NOT NULL,  topic TEXT NOT NULL UNIQUE,  serverVAPIDPublicKey BLOB NOT NULL,  clientPublicKey BLOB NOT NULL,  clientPrivateKey BLOB NOT NULL,  sharedAuthSecret BLOB NOT NULL,  expirationTime INT,  UNIQUE(scope, subscriptionSetID))"_s,
+    "INSERT INTO Subscriptions VALUES(1,1649541001,1,'https://www.apple.com/iphone','https://pushEndpoint1','topic1',X'0506',X'0607',X'0708',X'0809',NULL)"_s,
+    "INSERT INTO Subscriptions VALUES(2,1649541001,2,'https://www.webkit.org/blog','https://pushEndpoint2','topic2',X'0e0f',X'1011',X'1213',X'1415',NULL)"_s,
+    "INSERT INTO Subscriptions VALUES(3,1649541001,3,'https://www.apple.com/mac','https://pushEndpoint3','topic3',X'0001',X'0102',X'0203',X'0405',1643350000)"_s,
+    "INSERT INTO Subscriptions VALUES(4,1649541001,3,'https://www.apple.com/iphone','https://pushEndpoint4','topic4',X'090a',X'0a0b',X'0b0c',X'0c0d',NULL)"_s,
+    "DELETE FROM sqlite_sequence"_s,
+    "INSERT INTO sqlite_sequence VALUES('SubscriptionSets',3)"_s,
+    "INSERT INTO sqlite_sequence VALUES('Subscriptions',4)"_s,
+    "CREATE INDEX Subscriptions_SubscriptionSetID_Index ON Subscriptions(subscriptionSetID)"_s,
+    "PRAGMA user_version = 2"_s,
+};
+
+TEST(PushDatabase, CanMigrateV2DatabaseToCurrentSchema)
+{
+    auto path = makeTemporaryDatabasePath();
+    ASSERT_TRUE(createDatabaseFromStatements(path, pushDatabaseV2Statements, std::size(pushDatabaseV2Statements)));
+
+    // Make sure records are there after migrating.
+    {
+        auto databaseResult = createDatabaseSync(path);
+        ASSERT_TRUE(databaseResult);
+        auto& database = *databaseResult;
+
+        auto recordResult = getRecordByBundleIdentifierAndScopeSync(database, "com.apple.Safari"_s, "https://www.webkit.org/blog"_s);
+        ASSERT_TRUE(recordResult);
+        ASSERT_EQ(recordResult->topic, "topic2"_s);
+
+        auto rowIdentifiers = getRowIdentifiersSync(database);
+        ASSERT_EQ(rowIdentifiers, (HashSet<uint64_t> { 1, 2, 3, 4 }));
+
+        // Setting the initial token should return PublicTokenChanged::No.
+        auto updateResult = updatePublicTokenSync(database, Vector<uint8_t> { 'a', 'b' });
+        ASSERT_EQ(updateResult, PushDatabase::PublicTokenChanged::No);
+    }
+
+    // Make sure records are there after re-opening without migration.
+    {
+        auto databaseResult = createDatabaseSync(path);
+        ASSERT_TRUE(databaseResult);
+        auto& database = *databaseResult;
+
+        auto getResult = getPublicTokenSync(database);
+        ASSERT_EQ(getResult, (Vector<uint8_t> { 'a', 'b' }));
+
+        auto rowIdentifiers = getRowIdentifiersSync(database);
+        ASSERT_EQ(rowIdentifiers, (HashSet<uint64_t> { 1, 2, 3, 4 }));
     }
 }
 

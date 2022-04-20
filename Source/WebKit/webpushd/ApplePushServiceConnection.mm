@@ -48,13 +48,15 @@
 - (void)connection:(APSConnection *)connection didReceivePublicToken:(NSData *)publicToken
 {
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(publicToken);
+    ASSERT(isMainRunLoop());
+
+    if (_connection && publicToken.length)
+        _connection->didReceivePublicToken(Vector<uint8_t> { static_cast<const uint8_t*>(publicToken.bytes), publicToken.length });
 }
 
 - (void)connection:(APSConnection *)connection didReceiveIncomingMessage:(APSIncomingMessage *)message
 {
     UNUSED_PARAM(connection);
-
     ASSERT(isMainRunLoop());
 
     if (_connection)

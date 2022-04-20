@@ -116,6 +116,10 @@ PushService::PushService(UniqueRef<PushServiceConnection>&& pushServiceConnectio
 {
     RELEASE_ASSERT(m_incomingPushMessageHandler);
 
+    m_connection->startListeningForPublicToken([this](auto&& token) {
+        didReceivePublicToken(WTFMove(token));
+    });
+
     m_connection->startListeningForPushMessages([this](NSString *topic, NSDictionary *userInfo) {
         didReceivePushMessage(topic, userInfo);
     });
@@ -619,6 +623,24 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
     }
 
     return message;
+}
+
+void PushService::setPublicTokenForTesting(Vector<uint8_t>&& token)
+{
+    m_connection->setPublicTokenForTesting(WTFMove(token));
+}
+
+void PushService::didReceivePublicToken(Vector<uint8_t>&& token)
+{
+    m_database->updatePublicToken(token, [this](auto result) mutable {
+        if (result == PushDatabase::PublicTokenChanged::No) {
+            RELEASE_LOG(Push, "Received expected public token");
+            return;
+        }
+
+        RELEASE_LOG_ERROR(Push, "Public token changed; invalidated all existing push subscriptions");
+        updateTopicLists(m_connection, m_database, []() { });
+    });
 }
 
 void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo, CompletionHandler<void()>&& completionHandler)

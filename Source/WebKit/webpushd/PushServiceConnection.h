@@ -74,10 +74,16 @@ public:
     };
     virtual void setTopicLists(TopicLists&&) = 0;
 
+    void startListeningForPublicToken(Function<void(Vector<uint8_t>&&)>&&);
+    void didReceivePublicToken(Vector<uint8_t>&&);
+    virtual void setPublicTokenForTesting(Vector<uint8_t>&&);
+
     void startListeningForPushMessages(IncomingPushMessageHandler&&);
     void didReceivePushMessage(NSString *topic, NSDictionary *userInfo);
 
 private:
+    Function<void(Vector<uint8_t>&&)> m_publicTokenChangeHandler;
+    Vector<uint8_t> m_pendingPublicToken;
     IncomingPushMessageHandler m_incomingPushMessageHandler;
     Deque<std::pair<RetainPtr<NSString>, RetainPtr<NSDictionary>>> m_pendingPushes;
 };

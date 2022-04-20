@@ -1,3 +1,38 @@
+2022-04-19  Ben Nham  <nham@apple.com>
+
+        Handle public token updates in webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=239042
+
+        Reviewed by Brady Eidson.
+
+        When the public token associated with our push service changes, we have to invalidate all
+        push subscriptions, since they all derive from the public token. This is only expected to
+        happen in very rare cases, e.g. keychain corruption.
+
+        To implement this, we now listen for public token updates from our push service, and pass
+        that on to PushDatabase. PushDatabase persists the token and deletes all subscriptions on
+        token change if necessary.
+
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::messageTypeSendsReply):
+        * webpushd/ApplePushServiceConnection.mm:
+        (-[_WKAPSConnectionDelegate connection:didReceivePublicToken:]):
+        (-[_WKAPSConnectionDelegate connection:didReceiveIncomingMessage:]):
+        * webpushd/MockPushServiceConnection.mm:
+        (WebPushD::MockPushServiceConnection::MockPushServiceConnection):
+        (WebPushD::MockPushServiceConnection::setPublicTokenForTesting):
+        * webpushd/PushService.mm:
+        (WebPushD::PushService::PushService):
+        (WebPushD::PushService::setPublicTokenForTesting):
+        (WebPushD::PushService::didReceivePublicToken):
+        * webpushd/PushServiceConnection.mm:
+        (WebPushD::PushServiceConnection::startListeningForPublicToken):
+        (WebPushD::PushServiceConnection::didReceivePublicToken):
+        (WebPushD::PushServiceConnection::setPublicTokenForTesting):
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::setPublicTokenForTesting):
+
 2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Dictation text that contains emojis is inserted twice upon finalization

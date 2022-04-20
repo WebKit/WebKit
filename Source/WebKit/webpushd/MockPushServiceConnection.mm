@@ -34,6 +34,7 @@ namespace WebPushD {
 
 MockPushServiceConnection::MockPushServiceConnection()
 {
+    didReceivePublicToken(Vector<uint8_t> { 'a', 'b', 'c' });
 }
 
 MockPushServiceConnection::~MockPushServiceConnection() = default;
@@ -102,6 +103,11 @@ void MockPushServiceConnection::setNonWakingTopics(Vector<String>&& topics)
 
 void MockPushServiceConnection::setTopicLists(TopicLists&& topicLists)
 {
+}
+
+void MockPushServiceConnection::setPublicTokenForTesting(Vector<uint8_t>&& token)
+{
+    didReceivePublicToken(WTFMove(token));
 }
 
 } // namespace WebPushD

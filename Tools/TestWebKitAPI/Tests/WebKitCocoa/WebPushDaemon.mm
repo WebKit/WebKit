@@ -1090,6 +1090,75 @@ TEST_F(WebPushDTest, TooManySilentPushesCausesUnsubscribe)
     ASSERT_TRUE([message isEqualToString:@"Unsubscribed"]);
 }
 
+TEST_F(WebPushDTest, GetPushSubscriptionWithMismatchedPublicToken)
+{
+    static constexpr auto htmlSource = R"HTML(
+    <script src="/constants.js"></script>
+    <script>
+    let postNoteMessage = window.webkit.messageHandlers.note.postMessage.bind(window.webkit.messageHandlers.note);
+    let getPushManager =
+        navigator.serviceWorker.register('/sw.js')
+            .then(() => navigator.serviceWorker.ready)
+            .then(registration => registration.pushManager);
+
+    function subscribe()
+    {
+        getPushManager
+            .then(pushManager => pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VALID_SERVER_KEY }))
+            .then(subscription => subscription.toJSON())
+            .then(postNoteMessage)
+            .catch(e => postNoteMessage(e.toString()));
+    }
+
+    function getSubscription()
+    {
+        getPushManager
+            .then(pushManager => pushManager.getSubscription())
+            .then(subscription => subscription ? subscription.toJSON() : null)
+            .then(postNoteMessage)
+            .catch(e => postNoteMessage(e.toString()));
+    }
+
+    postNoteMessage('Ready');
+    </script>
+    )HTML"_s;
+
+    __block RetainPtr<id> message = nil;
+    __block bool gotMessage = false;
+    [m_notificationMessageHandler setMessageHandler:^(id receivedMessage) {
+        message = receivedMessage;
+        gotMessage = true;
+    }];
+
+    loadRequest(htmlSource, ""_s);
+    TestWebKitAPI::Util::run(&gotMessage);
+    ASSERT_TRUE([message isEqualToString:@"Ready"]);
+
+    message = nil;
+    gotMessage = false;
+    [m_webView evaluateJavaScript:@"subscribe()" completionHandler:^(id, NSError*) { }];
+    TestWebKitAPI::Util::run(&gotMessage);
+    RetainPtr<id> subscription = message;
+    ASSERT_FALSE([subscription isEqual:[NSNull null]]);
+    ASSERT_TRUE([subscription isKindOfClass:[NSDictionary class]] && [subscription objectForKey:@"endpoint"]);
+
+    message = nil;
+    gotMessage = false;
+    [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
+    TestWebKitAPI::Util::run(&gotMessage);
+    ASSERT_TRUE([message isEqual:subscription.get()]);
+
+    // If the public token changes, all subscriptions should be invalidated.
+    auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
+    sendMessageToDaemonWaitingForReply(utilityConnection.get(), MessageType::SetPublicTokenForTesting, encodeString("foobar"_s));
+
+    message = nil;
+    gotMessage = false;
+    [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
+    TestWebKitAPI::Util::run(&gotMessage);
+    ASSERT_TRUE([message isEqual:[NSNull null]]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS)

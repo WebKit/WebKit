@@ -87,6 +87,7 @@ public:
     void incrementSilentPushCount(ClientConnection*, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
     void removeAllPushSubscriptions(ClientConnection*, CompletionHandler<void(unsigned)>&&);
     void removePushSubscriptionsForOrigin(ClientConnection*, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
+    void setPublicTokenForTesting(ClientConnection*, const String& publicToken, CompletionHandler<void()>&&);
 
     void broadcastDebugMessage(StringView);
     void broadcastAllConnectionIdentities();

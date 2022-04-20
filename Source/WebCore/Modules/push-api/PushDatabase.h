@@ -36,6 +36,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Span.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
@@ -75,6 +76,10 @@ public:
 
     WEBCORE_EXPORT static void create(const String& path, CreationHandler&&);
     WEBCORE_EXPORT ~PushDatabase();
+
+    enum class PublicTokenChanged : bool { No, Yes };
+    WEBCORE_EXPORT void updatePublicToken(Span<const uint8_t>, CompletionHandler<void(PublicTokenChanged)>&&);
+    WEBCORE_EXPORT void getPublicToken(CompletionHandler<void(Vector<uint8_t>&&)>&&);
 
     WEBCORE_EXPORT void insertRecord(const PushRecord&, CompletionHandler<void(std::optional<PushRecord>&&)>&&);
     WEBCORE_EXPORT void removeRecordByIdentifier(PushSubscriptionIdentifier, CompletionHandler<void(bool)>&&);

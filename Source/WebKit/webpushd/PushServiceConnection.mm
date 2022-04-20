@@ -37,6 +37,30 @@ PushCrypto::ClientKeys PushServiceConnection::generateClientKeys()
     return PushCrypto::ClientKeys::generate();
 }
 
+void PushServiceConnection::startListeningForPublicToken(Function<void(Vector<uint8_t>&&)>&& handler)
+{
+    m_publicTokenChangeHandler = WTFMove(handler);
+
+    if (m_pendingPublicToken.isEmpty())
+        return;
+
+    m_publicTokenChangeHandler(std::exchange(m_pendingPublicToken, { }));
+}
+
+void PushServiceConnection::didReceivePublicToken(Vector<uint8_t>&& token)
+{
+    if (!m_publicTokenChangeHandler) {
+        m_pendingPublicToken = WTFMove(token);
+        return;
+    }
+
+    m_publicTokenChangeHandler(WTFMove(token));
+}
+
+void PushServiceConnection::setPublicTokenForTesting(Vector<uint8_t>&&)
+{
+}
+
 void PushServiceConnection::startListeningForPushMessages(IncomingPushMessageHandler&& handler)
 {
     m_incomingPushMessageHandler = WTFMove(handler);

@@ -70,6 +70,8 @@ public:
     void didCompleteSubscribeRequest(SubscribeRequest&);
     void didCompleteUnsubscribeRequest(UnsubscribeRequest&);
 
+    void setPublicTokenForTesting(Vector<uint8_t>&&);
+    void didReceivePublicToken(Vector<uint8_t>&&);
     void didReceivePushMessage(NSString *topic, NSDictionary *userInfo, CompletionHandler<void()>&& = [] { });
 
 private:

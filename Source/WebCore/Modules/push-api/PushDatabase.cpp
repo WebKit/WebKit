@@ -33,12 +33,14 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteTransaction.h"
 #include "SecurityOrigin.h"
+#include <iterator>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/Expected.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 #define PUSHDB_RELEASE_LOG(fmt, ...) RELEASE_LOG(Push, "%p - PushDatabase::" fmt, this, ##__VA_ARGS__)
 #define PUSHDB_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(Push, "%p - PushDatabase::" fmt, this, ##__VA_ARGS__)
@@ -48,11 +50,11 @@
 
 namespace WebCore {
 
-static constexpr int currentPushDatabaseVersion = 2;
-#define kCurrentPushDatabaseVersionString "2"
-
-static const ASCIILiteral pushDatabaseSchemaV1Statements[] = {
+static constexpr ASCIILiteral pushDatabaseSchemaV1Statements[] = {
     "PRAGMA auto_vacuum=INCREMENTAL"_s,
+};
+
+static constexpr ASCIILiteral pushDatabaseSchemaV2Statements[] = {
     "CREATE TABLE SubscriptionSets("
     "  rowID INTEGER PRIMARY KEY AUTOINCREMENT,"
     "  creationTime INT NOT NULL,"
@@ -74,8 +76,21 @@ static const ASCIILiteral pushDatabaseSchemaV1Statements[] = {
     "  expirationTime INT,"
     "  UNIQUE(scope, subscriptionSetID))"_s,
     "CREATE INDEX Subscriptions_SubscriptionSetID_Index ON Subscriptions(subscriptionSetID)"_s,
-    "PRAGMA user_version = " kCurrentPushDatabaseVersionString ""_s
 };
+
+static constexpr ASCIILiteral pushDatabaseSchemaV3Statements[] = {
+    "CREATE TABLE Metadata(key TEXT, value, UNIQUE(key))"_s,
+};
+
+static constexpr Span<const ASCIILiteral> pushDatabaseSchemaStatements[] = {
+    { pushDatabaseSchemaV1Statements },
+    { pushDatabaseSchemaV2Statements },
+    { pushDatabaseSchemaV3Statements },
+};
+
+static constexpr int currentPushDatabaseVersion = std::size(pushDatabaseSchemaStatements);
+
+static constexpr ASCIILiteral publicTokenKey = "publicToken"_s;
 
 PushRecord PushRecord::isolatedCopy() const &
 {
@@ -150,22 +165,26 @@ static Expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMigrateD
         version = sql->columnInt(0);
     }
 
-    if (version && version != currentPushDatabaseVersion) {
-        // FIXME: add migration when we need it.
+    if (version < 0 || version > currentPushDatabaseVersion) {
         RELEASE_LOG_ERROR(Push, "Found unexpected PushDatabase version: %d (expected: %d) at path: %s", version, currentPushDatabaseVersion, path.utf8().data());
         return makeUnexpected(ShouldDeleteAndRetry::Yes);
     }
 
-    if (!version) {
+    if (version < currentPushDatabaseVersion) {
         SQLiteTransaction transaction(db);
         transaction.begin();
 
-        for (auto& statement : pushDatabaseSchemaV1Statements) {
-            if (!db->executeCommand(statement)) {
-                RELEASE_LOG_ERROR(Push, "Error executing PushDatabase DDL statement %s at path %s", statement.characters(), path.utf8().data());
-                return makeUnexpected(ShouldDeleteAndRetry::Yes);
+        for (auto i = version; i < currentPushDatabaseVersion; i++) {
+            for (auto statement : pushDatabaseSchemaStatements[i]) {
+                if (!db->executeCommand(statement)) {
+                    RELEASE_LOG_ERROR(Push, "Error executing PushDatabase DDL statement %s at path %s: %d", statement.characters(), path.utf8().data(), db->lastError());
+                    return makeUnexpected(ShouldDeleteAndRetry::Yes);
+                }
             }
         }
+
+        if (!db->executeCommandSlow(makeString("PRAGMA user_version = ", currentPushDatabaseVersion)))
+            RELEASE_LOG_ERROR(Push, "Error setting user version for PushDatabase at path %s: %d", path.utf8().data(), db->lastError());
 
         transaction.commit();
     }
@@ -280,8 +299,97 @@ template <class T, class U>
 static void completeOnMainQueue(CompletionHandler<void(T)>&& completionHandler, U&& result)
 {
     ASSERT(!RunLoop::isMain());
-    WorkQueue::main().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(WTFMove(result))]() mutable {
+    WorkQueue::main().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(std::forward<U>(result))]() mutable {
         completionHandler(WTFMove(result));
+    });
+}
+
+void PushDatabase::updatePublicToken(Span<const uint8_t> publicToken, CompletionHandler<void(PublicTokenChanged)>&& completionHandler)
+{
+    dispatchOnWorkQueue([this, newPublicToken = Vector<uint8_t> { publicToken }, completionHandler = WTFMove(completionHandler)]() mutable {
+        SQLiteTransaction transaction(m_db);
+        transaction.begin();
+
+        auto result = PublicTokenChanged::No;
+        Vector<uint8_t> currentPublicToken;
+        auto scope = makeScopeExit([&completionHandler, &result] {
+            completeOnMainQueue(WTFMove(completionHandler), result);
+        });
+
+        {
+            auto sql = cachedStatementOnQueue("SELECT value FROM Metadata WHERE key = ?"_s);
+            if (!sql || sql->bindText(1, publicTokenKey) != SQLITE_OK) {
+                PUSHDB_RELEASE_LOG_BIND_ERROR();
+                return;
+            }
+
+            if (sql->step() == SQLITE_ROW)
+                currentPublicToken = sql->columnBlob(0);
+        }
+
+        if (currentPublicToken == newPublicToken)
+            return;
+
+        {
+            auto sql = cachedStatementOnQueue("REPLACE INTO Metadata(key, value) VALUES(?, ?)"_s);
+            if (!sql
+                || sql->bindText(1, publicTokenKey) != SQLITE_OK
+                || sql->bindBlob(2, newPublicToken) != SQLITE_OK) {
+                PUSHDB_RELEASE_LOG_BIND_ERROR();
+                return;
+            }
+
+            if (sql->step() != SQLITE_DONE) {
+                RELEASE_LOG_ERROR(Push, "Failed to save new public token: %d", m_db->lastError());
+                return;
+            }
+        }
+
+        // If we are updating an old version of the database where currentPublicToken doesn't exist, just
+        // save the initial publicToken without deleting all subscriptions and notifying the caller that
+        // the token changed.
+        if (!currentPublicToken.isEmpty()) {
+            auto deleteSubscriptionSets = cachedStatementOnQueue("DELETE FROM SubscriptionSets"_s);
+            auto deleteSubscriptions = cachedStatementOnQueue("DELETE FROM Subscriptions"_s);
+
+            if (!deleteSubscriptionSets || !deleteSubscriptions) {
+                PUSHDB_RELEASE_LOG_BIND_ERROR();
+                return;
+            }
+
+            if (deleteSubscriptionSets->step() != SQLITE_DONE || deleteSubscriptions->step() != SQLITE_DONE) {
+                RELEASE_LOG_ERROR(Push, "Failed to delete subscriptions: %d", m_db->lastError());
+                return;
+            }
+
+            result = PublicTokenChanged::Yes;
+        }
+
+        scope.release();
+        transaction.commit();
+        completeOnMainQueue(WTFMove(completionHandler), result);
+    });
+}
+
+void PushDatabase::getPublicToken(CompletionHandler<void(Vector<uint8_t>&&)>&& completionHandler)
+{
+    dispatchOnWorkQueue([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        SQLiteTransaction transaction(m_db);
+        transaction.begin();
+
+        auto sql = cachedStatementOnQueue("SELECT value FROM Metadata WHERE key = ?"_s);
+        if (!sql || sql->bindText(1, publicTokenKey) != SQLITE_OK) {
+            PUSHDB_RELEASE_LOG_BIND_ERROR();
+            completeOnMainQueue(WTFMove(completionHandler), Vector<uint8_t> { });
+            return;
+        }
+
+        Vector<uint8_t> result;
+        if (sql->step() == SQLITE_ROW)
+            result = sql->columnBlob(0);
+
+        transaction.commit();
+        completeOnMainQueue(WTFMove(completionHandler), WTFMove(result));
     });
 }
 
