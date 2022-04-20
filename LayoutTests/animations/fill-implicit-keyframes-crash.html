@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<style>
+  body {
+    animation-name: a0;
+    animation-duration: 100ms
+  }
+  @keyframes a0 {
+    10% {
+      scale: 1
+    }
+    11%, 12%, 13%, 14%, 15%, 16%, 17%, 18%, 19%, 20%, 21%, 22%, 23%, 24%, 100% {
+      background: blue
+    }
+
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    console.log("This test passes if it does not crash.");
+  }
+</script>
