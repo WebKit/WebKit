@@ -39,7 +39,7 @@
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-#import <pal/graphics/WebGPU/Impl/WebGPUImpl.h>
+#import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
 #endif
 
 namespace WebKit {
@@ -86,7 +86,7 @@ void RemoteGPU::workQueueInitialize()
     // The retain cycle is required because callbacks need to execute even if this is disowned
     // (because the callbacks handle resource cleanup, etc.).
     // The retain cycle is broken in workQueueUninitialize().
-    auto backing = PAL::WebGPU::GPUImpl::create([protectedThis = Ref { *this }](PAL::WebGPU::GPUImpl::WorkItem&& workItem) {
+    auto backing = PAL::WebGPU::create([protectedThis = Ref { *this }](PAL::WebGPU::WorkItem&& workItem) {
         protectedThis->workQueue().dispatch(WTFMove(workItem));
     });
 #else

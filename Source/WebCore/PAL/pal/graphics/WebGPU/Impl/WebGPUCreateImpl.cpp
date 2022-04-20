@@ -24,40 +24,46 @@
  */
 
 #include "config.h"
-#include "WebGPUImpl.h"
+#include "WebGPUCreateImpl.h"
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUAdapterImpl.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
+#include "WebGPUImpl.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/darwin/WeakLinking.h>
+
+WTF_WEAK_LINK_FORCE_IMPORT(wgpuCreateInstance);
+#endif
+
 namespace PAL::WebGPU {
 
-GPUImpl::GPUImpl(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(instance)
-    , m_convertToBackingContext(convertToBackingContext)
+RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction)
 {
-}
-
-GPUImpl::~GPUImpl()
-{
-    wgpuInstanceRelease(m_backing);
-}
-
-void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHandler<void(RefPtr<Adapter>&&)>&& callback)
-{
-    WGPURequestAdapterOptions backingOptions {
-        nullptr,
-        nullptr,
-        options.powerPreference ? m_convertToBackingContext->convertToBacking(*options.powerPreference) : static_cast<WGPUPowerPreference>(WGPUPowerPreference_Undefined),
-        options.forceFallbackAdapter,
+    auto scheduleWorkBlock = makeBlockPtr([scheduleWorkFunction = WTFMove(scheduleWorkFunction)](WGPUWorkItem workItem)
+    {
+        scheduleWorkFunction(makeBlockPtr(WTFMove(workItem)));
+    });
+    WGPUInstanceCocoaDescriptor cocoaDescriptor {
+        {
+            nullptr,
+            static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor),
+        },
+        scheduleWorkBlock.get(),
     };
+    WGPUInstanceDescriptor descriptor = { &cocoaDescriptor.chain };
 
-    wgpuInstanceRequestAdapterWithBlock(m_backing, &backingOptions, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus, WGPUAdapter adapter, const char*) mutable {
-        callback(AdapterImpl::create(adapter, convertToBackingContext));
-    }).get());
+    if (!&wgpuCreateInstance)
+        return nullptr;
+    auto instance = wgpuCreateInstance(&descriptor);
+    if (!instance)
+        return nullptr;
+    auto convertToBackingContext = DowncastConvertToBackingContext::create();
+    return GPUImpl::create(instance, convertToBackingContext);
 }
 
 } // namespace PAL::WebGPU

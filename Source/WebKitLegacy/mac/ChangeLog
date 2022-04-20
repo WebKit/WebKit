@@ -1,3 +1,14 @@
+2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] WebKit and WebKitLegacy shouldn't need to know about WebGPU.framework
+        https://bugs.webkit.org/show_bug.cgi?id=239528
+        <rdar://problem/91740931>
+
+        Unreviewed build fix.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createGPUForWebGPU const):
+
 2022-04-17  Chris Dumez  <cdumez@apple.com>
 
         Leverage StringView in more places

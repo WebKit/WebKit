@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUImpl.h"
+#pragma once
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include "WebGPUAdapterImpl.h"
-#include "WebGPUDowncastConvertToBackingContext.h"
-#include <WebGPU/WebGPUExt.h>
-#include <wtf/BlockPtr.h>
+#include "WebGPU.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
+#include <wtf/RefPtr.h>
 
 namespace PAL::WebGPU {
 
-GPUImpl::GPUImpl(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(instance)
-    , m_convertToBackingContext(convertToBackingContext)
-{
-}
-
-GPUImpl::~GPUImpl()
-{
-    wgpuInstanceRelease(m_backing);
-}
-
-void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHandler<void(RefPtr<Adapter>&&)>&& callback)
-{
-    WGPURequestAdapterOptions backingOptions {
-        nullptr,
-        nullptr,
-        options.powerPreference ? m_convertToBackingContext->convertToBacking(*options.powerPreference) : static_cast<WGPUPowerPreference>(WGPUPowerPreference_Undefined),
-        options.forceFallbackAdapter,
-    };
-
-    wgpuInstanceRequestAdapterWithBlock(m_backing, &backingOptions, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus, WGPUAdapter adapter, const char*) mutable {
-        callback(AdapterImpl::create(adapter, convertToBackingContext));
-    }).get());
-}
+using WorkItem = CompletionHandler<void(void)>;
+using ScheduleWorkFunction = Function<void(WorkItem&&)>;
+PAL_EXPORT RefPtr<GPU> create(ScheduleWorkFunction&&);
 
 } // namespace PAL::WebGPU
 

@@ -40,10 +40,6 @@ class ConvertToBackingContext;
 class GPUImpl final : public GPU {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using WorkItem = CompletionHandler<void(void)>;
-    using ScheduleWorkFunction = Function<void(WorkItem&&)>;
-    PAL_EXPORT static RefPtr<GPUImpl> create(ScheduleWorkFunction&&);
-
     static Ref<GPUImpl> create(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
     {
         return adoptRef(*new GPUImpl(instance, convertToBackingContext));
