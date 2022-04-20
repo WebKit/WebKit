@@ -42,7 +42,7 @@ struct MIMETypeRegistryThreadGlobalData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MIMETypeRegistryThreadGlobalData(HashSet<String, ASCIICaseInsensitiveHash>&& supportedImageMIMETypesForEncoding)
-        : m_supportedImageMIMETypesForEncoding(supportedImageMIMETypesForEncoding)
+        : m_supportedImageMIMETypesForEncoding(WTFMove(supportedImageMIMETypesForEncoding))
     { }
 
     const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypesForEncoding() const { return m_supportedImageMIMETypesForEncoding; }
