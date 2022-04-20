@@ -3792,11 +3792,28 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
     case GetIndexedPropertyStorage: {
+        ASSERT(node->arrayMode().type() != Array::String);
         JSArrayBufferView* view = m_graph.tryGetFoldableView(
             forNode(node->child1()).m_value, node->arrayMode());
         if (view)
             m_state.setShouldTryConstantFolding(true);
         clearForNode(node);
+        break;
+    }
+    case ResolveRope: {
+        JSValue childConst = forNode(node->child1()).value();
+        if (childConst && childConst.isString() && !asString(childConst)->isRope()) {
+            setConstant(node, *m_graph.freeze(childConst));
+            break;
+        }
+
+        if (!(forNode(node->child1()).m_type & ~SpecStringIdent)) {
+            m_state.setShouldTryConstantFolding(true);
+            setForNode(node, forNode(node->child1()));
+            break;
+        }
+
+        setTypeForNode(node, SpecString);
         break;
     }
     case ConstantStoragePointer: {

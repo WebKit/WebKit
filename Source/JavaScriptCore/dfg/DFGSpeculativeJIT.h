@@ -1438,6 +1438,7 @@ public:
     void compileArithMinMax(Node*);
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
+    void compileResolveRope(Node*);
     JITCompiler::Jump jumpForTypedArrayOutOfBounds(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR);
     JITCompiler::Jump jumpForTypedArrayIsDetachedIfOutOfBounds(Node*, GPRReg baseGPR, JITCompiler::Jump outOfBounds);
     void emitTypedArrayBoundsCheck(Node*, GPRReg baseGPR, GPRReg indexGPR, GPRReg scratchGPR);

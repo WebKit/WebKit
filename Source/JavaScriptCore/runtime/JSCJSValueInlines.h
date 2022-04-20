@@ -839,7 +839,7 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(JSGlobalObject* globalObj
         return NoPreference;
     }
 
-    StringImpl* hintString = asString(value)->value(globalObject).impl();
+    String hintString = asString(value)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, NoPreference);
 
     if (WTF::equal(hintString, "default"))

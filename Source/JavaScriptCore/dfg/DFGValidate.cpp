@@ -382,6 +382,9 @@ public:
                         VALIDATE((node), inlineCallFrame->isVarargs());
                     break;
                 }
+                case GetIndexedPropertyStorage:
+                    VALIDATE((node), node->arrayMode().type() != Array::String);
+                    break;
                 case NewArray:
                     VALIDATE((node), node->vectorLengthHint() >= node->numChildren());
                     break;

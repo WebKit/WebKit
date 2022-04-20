@@ -289,6 +289,7 @@ inline CapabilityLevel canCompile(Node* node)
     case BooleanToNumber:
     case HasIndexedProperty:
     case GetIndexedPropertyStorage:
+    case ResolveRope:
     case GetPropertyEnumerator:
     case EnumeratorNextUpdateIndexAndMode:
     case EnumeratorNextExtractMode:

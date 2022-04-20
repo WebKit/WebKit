@@ -709,7 +709,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceRegExpEmptyStr, JSCell*,
         RETURN_IF_EXCEPTION(scope, nullptr);
         String source = thisValue->value(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, globalObject, thisValue, source, regExp));
+        RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, globalObject, thisValue, WTFMove(source), regExp));
     }
 
     CallData callData;
@@ -1484,7 +1484,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToLowerCase, (JSGlobalObject* globalObje
     String lowercasedString = s.convertToLowercaseWithoutLocale();
     if (lowercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, lowercasedString)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(lowercasedString))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToUpperCase, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1502,7 +1502,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToUpperCase, (JSGlobalObject* globalObje
     String uppercasedString = s.convertToUppercaseWithoutLocale();
     if (uppercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, uppercasedString)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(uppercasedString))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLocaleCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))

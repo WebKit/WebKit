@@ -567,6 +567,10 @@ public:
         return newString;
     }
 
+    // If nullOrExecForOOM is null, resolveRope() will be do nothing in the event of an OOM error.
+    // The rope value will remain a null string in that case.
+    JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
+
 private:
     static JSRopeString* create(VM& vm, JSString* s1, JSString* s2)
     {
@@ -596,9 +600,6 @@ private:
 
     friend JSValue jsStringFromRegisterArray(JSGlobalObject*, Register*, unsigned);
 
-    // If nullOrExecForOOM is null, resolveRope() will be do nothing in the event of an OOM error.
-    // The rope value will remain a null string in that case.
-    JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
     template<typename Function> const String& resolveRopeWithFunction(JSGlobalObject* nullOrGlobalObjectForOOM, Function&&) const;
     JS_EXPORT_PRIVATE AtomString resolveRopeToAtomString(JSGlobalObject*) const;
     JS_EXPORT_PRIVATE RefPtr<AtomStringImpl> resolveRopeToExistingAtomString(JSGlobalObject*) const;

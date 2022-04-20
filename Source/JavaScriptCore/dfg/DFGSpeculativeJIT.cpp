@@ -2852,11 +2852,9 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
 {
     SpeculateCellOperand string(this, node->child1());
     SpeculateStrictInt32Operand index(this, node->child2());
-    StorageOperand storage(this, node->child3());
 
     GPRReg stringReg = string.gpr();
     GPRReg indexReg = index.gpr();
-    GPRReg storageReg = storage.gpr();
     
     ASSERT(speculationChecked(m_state.forNode(node->child1()).m_type, SpecString));
 
@@ -2871,12 +2869,14 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
     // Load the character into scratchReg
     JITCompiler::Jump is16Bit = m_jit.branchTest32(MacroAssembler::Zero, MacroAssembler::Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
-    m_jit.load8(MacroAssembler::BaseIndex(storageReg, indexReg, MacroAssembler::TimesOne, 0), scratchReg);
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    m_jit.load8(MacroAssembler::BaseIndex(scratchReg, indexReg, MacroAssembler::TimesOne, 0), scratchReg);
     JITCompiler::Jump cont8Bit = m_jit.jump();
 
     is16Bit.link(&m_jit);
 
-    m_jit.load16(MacroAssembler::BaseIndex(storageReg, indexReg, MacroAssembler::TimesTwo, 0), scratchReg);
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    m_jit.load16(MacroAssembler::BaseIndex(scratchReg, indexReg, MacroAssembler::TimesTwo, 0), scratchReg);
 
     cont8Bit.link(&m_jit);
 
@@ -2887,10 +2887,8 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
 {
     SpeculateCellOperand base(this, m_graph.child(node, 0));
     SpeculateStrictInt32Operand property(this, m_graph.child(node, 1));
-    StorageOperand storage(this, m_graph.child(node, 2));
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
-    GPRReg storageReg = storage.gpr();
 
     JSValueRegs resultRegs;
     DataFormat format;
@@ -2908,12 +2906,14 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     // Load the character into scratchReg
     JITCompiler::Jump is16Bit = m_jit.branchTest32(MacroAssembler::Zero, MacroAssembler::Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
-    m_jit.load8(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesOne, 0), scratchReg);
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    m_jit.load8(MacroAssembler::BaseIndex(scratchReg, propertyReg, MacroAssembler::TimesOne, 0), scratchReg);
     JITCompiler::Jump cont8Bit = m_jit.jump();
 
     is16Bit.link(&m_jit);
 
-    m_jit.load16(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesTwo, 0), scratchReg);
+    m_jit.loadPtr(MacroAssembler::Address(scratchReg, StringImpl::dataOffset()), scratchReg);
+    m_jit.load16(MacroAssembler::BaseIndex(scratchReg, propertyReg, MacroAssembler::TimesTwo, 0), scratchReg);
 
     JITCompiler::Jump bigCharacter =
         m_jit.branch32(MacroAssembler::Above, scratchReg, TrustedImm32(maxSingleCharacterString));
@@ -8318,29 +8318,35 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
     GPRTemporary storage(this);
     GPRReg storageReg = storage.gpr();
     
-    switch (node->arrayMode().type()) {
-    case Array::String:
-        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSString::offsetOfValue()), storageReg);
-        
-        addSlowPathGenerator(
-            slowPathCall(
-                m_jit.branchIfRopeStringImpl(storageReg),
-                this, operationResolveRope, storageReg, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg));
+    ASSERT(node->arrayMode().type() != Array::String);
 
-        m_jit.loadPtr(MacroAssembler::Address(storageReg, StringImpl::dataOffset()), storageReg);
-        break;
+    auto typedArrayType = node->arrayMode().typedArrayType();
+    ASSERT_UNUSED(typedArrayType, isTypedView(typedArrayType));
 
-    default: {
-        auto typedArrayType = node->arrayMode().typedArrayType();
-        ASSERT_UNUSED(typedArrayType, isTypedView(typedArrayType));
-
-        m_jit.loadPtr(JITCompiler::Address(baseReg, JSArrayBufferView::offsetOfVector()), storageReg);
-        cageTypedArrayStorage(baseReg, storageReg);
-        break;
-    }
-    }
-
+    m_jit.loadPtr(JITCompiler::Address(baseReg, JSArrayBufferView::offsetOfVector()), storageReg);
+    cageTypedArrayStorage(baseReg, storageReg);
     storageResult(storageReg, node);
+}
+
+void SpeculativeJIT::compileResolveRope(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary result(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSString::offsetOfValue()), resultGPR);
+
+    CCallHelpers::JumpList slowCases;
+    slowCases.append(m_jit.branchIfRopeStringImpl(resultGPR));
+    m_jit.move(baseGPR, resultGPR);
+
+    addSlowPathGenerator(
+        slowPathCall(
+            slowCases,
+            this, operationResolveRopeString, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR));
+    cellResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)

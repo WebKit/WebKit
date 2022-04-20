@@ -93,7 +93,7 @@ ALWAYS_INLINE uint32_t jsMapHashImpl(JSGlobalObject* globalObject, VM& vm, JSVal
 
     if (value.isString()) {
         auto scope = DECLARE_THROW_SCOPE(vm);
-        const String& wtfString = asString(value)->value(globalObject);
+        String wtfString = asString(value)->value(globalObject);
         if constexpr (expection == ExceptionExpectation::CanThrow)
             RETURN_IF_EXCEPTION(scope, UINT_MAX);
         else

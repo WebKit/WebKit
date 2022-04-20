@@ -48,9 +48,9 @@ public:
 
     DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
 
-    JS_EXPORT_PRIVATE const String& name();
-    const String displayName(VM&);
-    const String calculatedDisplayName(VM&);
+    JS_EXPORT_PRIVATE String name();
+    String displayName(VM&);
+    String calculatedDisplayName(VM&);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     { 

@@ -1,3 +1,111 @@
+2022-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG / FTL should be aware of JSString's String replacement
+        https://bugs.webkit.org/show_bug.cgi?id=238918
+
+        Reviewed by Saam Barati.
+
+        After r289359, String in JSString* can be replaced even after it is resolved. When atomizing String inside JSString*,
+        we may replace the existing one to new AtomStringImpl if different AtomStringImpl is already registered in the
+        AtomStringTable. However, DFG / FTL GetIndexedPropertyStorage assumes that StringImpl* in JSString* never changes after
+        resolving. And this is wrong.
+
+        This patch decouples String handling in GetIndexedPropertyStorage as ResolveRope DFG node. GetIndexedPropertyStorage no
+        longer handles JSString and it is now tailored to object cases. ResolveRope does not expose StringImpl::m_data pointer,
+        and instead it keeps resolved JSString*. After this change,
+
+            GetByVal(String:@0, Untyped:@1, GetIndexedProperty(String:@0))
+
+        is changed to
+
+            GetByVal(ResolveRope(String:@0), Untyped:@1)
+
+        Also, we revisit all the value(...) callsites (by changing function name) and ensure that we have no code assuming String
+        cannot be changed after resolving.
+
+        A/B test ensured that this is perf-neutral.
+
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOpImpl):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasStorageChild const):
+        (JSC::DFG::Node::storageChildIndex):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileStringCodePointAt):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileResolveRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAtImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharCodeAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCodePointAt):
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+        * runtime/HashMapImplInlines.h:
+        (JSC::jsMapHashImpl):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::name):
+        (JSC::InternalFunction::displayName):
+        (JSC::InternalFunction::calculatedDisplayName):
+        * runtime/InternalFunction.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::toPreferredPrimitiveType):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::importModule):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::computeNext):
+        * runtime/JSRemoteFunction.h:
+        * runtime/Operations.h:
+        (JSC::jsString):
+        (JSC::compareBigIntToOtherPrimitive):
+        (JSC::compareBigInt32ToOtherPrimitive):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/StringPrototype.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r292609. rdar://problem/90882766

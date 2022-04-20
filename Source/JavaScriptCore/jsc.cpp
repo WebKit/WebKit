@@ -276,6 +276,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionCreateBigInt32);
 static JSC_DECLARE_HOST_FUNCTION(functionUseBigInt32);
 static JSC_DECLARE_HOST_FUNCTION(functionIsBigInt32);
 static JSC_DECLARE_HOST_FUNCTION(functionIsHeapBigInt);
+static JSC_DECLARE_HOST_FUNCTION(functionCreateNonRopeNonAtomString);
 
 static JSC_DECLARE_HOST_FUNCTION(functionPrintStdOut);
 static JSC_DECLARE_HOST_FUNCTION(functionPrintStdErr);
@@ -589,6 +590,8 @@ private:
         addFunction(vm, "useBigInt32", functionUseBigInt32, 0);
         addFunction(vm, "isBigInt32", functionIsBigInt32, 1);
         addFunction(vm, "isHeapBigInt", functionIsHeapBigInt, 1);
+
+        addFunction(vm, "createNonRopeNonAtomString", functionCreateNonRopeNonAtomString, 1);
 
         addFunction(vm, "dumpTypesForAllVariables", functionDumpTypesForAllVariables , 0);
 
@@ -2630,6 +2633,29 @@ JSC_DEFINE_HOST_FUNCTION(functionIsBigInt32, (JSGlobalObject*, CallFrame* callFr
 JSC_DEFINE_HOST_FUNCTION(functionIsHeapBigInt, (JSGlobalObject*, CallFrame* callFrame))
 {
     return JSValue::encode(jsBoolean(callFrame->argument(0).isHeapBigInt()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionCreateNonRopeNonAtomString, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String source = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (source.isEmpty() || source.length() == 1)
+        return throwVMTypeError(globalObject, scope, "empty / one-length string can be always atom string"_s);
+
+    if (source.impl()->isAtom()) {
+        if (source.is8Bit())
+            source = StringImpl::create(source.characters8(), source.length());
+        else
+            source = StringImpl::create(source.characters16(), source.length());
+    }
+
+    RELEASE_ASSERT(!source.impl()->isAtom());
+
+    return JSValue::encode(jsString(vm, WTFMove(source)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionCheckModuleSyntax, (JSGlobalObject* globalObject, CallFrame* callFrame))

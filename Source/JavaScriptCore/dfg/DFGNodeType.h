@@ -251,6 +251,7 @@ namespace JSC { namespace DFG {
     macro(Arrayify, NodeMustGenerate) \
     macro(ArrayifyToStructure, NodeMustGenerate) \
     macro(GetIndexedPropertyStorage, NodeResultStorage) \
+    macro(ResolveRope, NodeResultJS) \
     macro(ConstantStoragePointer, NodeResultStorage) \
     macro(GetGetter, NodeResultJS) \
     macro(GetSetter, NodeResultJS) \

@@ -2515,6 +2515,16 @@ JSC_DEFINE_JIT_OPERATION(operationResolveRope, StringImpl*, (JSGlobalObject* glo
     return string->value(globalObject).impl();
 }
 
+JSC_DEFINE_JIT_OPERATION(operationResolveRopeString, JSString*, (JSGlobalObject* globalObject, JSRopeString* string))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    string->resolveRope(globalObject);
+    return string;
+}
+
 JSC_DEFINE_JIT_OPERATION(operationStringValueOf, JSString*, (JSGlobalObject* globalObject, EncodedJSValue encodedArgument))
 {
     VM& vm = globalObject->vm();
@@ -2685,7 +2695,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithStringDescription, Symbol*, (JSGl
     String string = description->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    return Symbol::createWithDescription(vm, string);
+    return Symbol::createWithDescription(vm, WTFMove(string));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewSymbolWithDescription, Symbol*, (JSGlobalObject* globalObject, EncodedJSValue encodedDescription))

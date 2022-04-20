@@ -36,6 +36,7 @@ namespace JSC {
 class DateInstance;
 class JSBigInt;
 class JSPropertyNameEnumerator;
+class JSRopeString;
 class OptimizingCallLinkInfo;
 struct UnlinkedStringJumpTable;
 
@@ -234,6 +235,7 @@ JSC_DECLARE_JIT_OPERATION(operationEnsureDouble, char*, (VM*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationEnsureContiguous, char*, (VM*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationEnsureArrayStorage, char*, (VM*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationResolveRope, StringImpl*, (JSGlobalObject*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationResolveRopeString, JSString*, (JSGlobalObject*, JSRopeString*));
 JSC_DECLARE_JIT_OPERATION(operationSingleCharacterString, JSString*, (VM*, int32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationStringSubstr, JSCell*, (JSGlobalObject*, JSCell*, int32_t, int32_t));

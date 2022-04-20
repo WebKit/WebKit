@@ -270,7 +270,10 @@ void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, JSStr
     if (!contentSecurityPolicy)
         return;
 
-    contentSecurityPolicy->allowEval(object, LogToConsole::No, source ? source->tryGetValue() : StringView());
+    String sourceString;
+    if (source)
+        sourceString = source->tryGetValue();
+    contentSecurityPolicy->allowEval(object, LogToConsole::No, sourceString);
 }
 
 void JSDOMWindowBase::willRemoveFromWindowProxy()

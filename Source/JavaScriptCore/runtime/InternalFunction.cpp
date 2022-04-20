@@ -82,14 +82,14 @@ void InternalFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, InternalFunction);
 
-const String& InternalFunction::name()
+String InternalFunction::name()
 {
     const String& name = m_originalName->tryGetValue();
     ASSERT(name); // m_originalName was built from a String, and hence, there is no rope to resolve.
     return name;
 }
 
-const String InternalFunction::displayName(VM& vm)
+String InternalFunction::displayName(VM& vm)
 {
     JSValue displayName = getDirect(vm, vm.propertyNames->displayName);
     
@@ -123,9 +123,9 @@ CallData InternalFunction::getConstructData(JSCell* cell)
     return constructData;
 }
 
-const String InternalFunction::calculatedDisplayName(VM& vm)
+String InternalFunction::calculatedDisplayName(VM& vm)
 {
-    const String explicitName = displayName(vm);
+    String explicitName = displayName(vm);
     
     if (!explicitName.isEmpty())
         return explicitName;
