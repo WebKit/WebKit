@@ -139,17 +139,42 @@ public:
 #endif
     }
 
-    template<typename T>
-    void storeCell(T cell, Address address)
+    template<typename T, typename U>
+    void storeCell(T cell, U address)
     {
 #if USE(JSVALUE64)
         store64(cell, address);
 #else
-        store32(cell, address.withOffset(PayloadOffset));
-        store32(TrustedImm32(JSValue::CellTag), address.withOffset(TagOffset));
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
+        storePair32(cell, TrustedImm32(JSValue::CellTag), address);
 #endif
     }
-    
+
+    template<typename U>
+    void storeCell(JSValueRegs regs, U address)
+    {
+#if USE(JSVALUE64)
+        store64(regs.gpr(), address);
+#else
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
+        move(AssemblyHelpers::TrustedImm32(JSValue::CellTag), regs.tagGPR());
+        storePair32(regs.payloadGPR(), regs.tagGPR(), address);
+#endif
+    }
+
+#if USE(JSVALUE32_64)
+    void storeCell(const void* address)
+    {
+#if ENABLE(CONCURRENT_JS)
+        if (Options::useConcurrentJIT()) {
+            store32Concurrently(AssemblyHelpers::TrustedImm32(JSValue::CellTag), address);
+            return;
+        }
+#endif
+        store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), address);
+    }
+#endif
+
     void loadCell(Address address, GPRReg gpr)
     {
 #if USE(JSVALUE64)
@@ -158,7 +183,7 @@ public:
         load32(address.withOffset(PayloadOffset), gpr);
 #endif
     }
-    
+
     void storeValue(JSValueRegs regs, Address address)
     {
 #if USE(JSVALUE64)
@@ -287,8 +312,7 @@ public:
 #if USE(JSVALUE64)
         store64(TrustedImm64(JSValue::encode(value)), address);
 #else
-        store32(TrustedImm32(value.tag()), address.withOffset(TagOffset));
-        store32(TrustedImm32(value.payload()), address.withOffset(PayloadOffset));
+        storePair32(TrustedImm32(value.payload()), TrustedImm32(value.tag()), address);
 #endif
     }
 
@@ -297,8 +321,7 @@ public:
 #if USE(JSVALUE64)
         store64(TrustedImm64(JSValue::encode(value)), address);
 #else
-        store32(TrustedImm32(value.tag()), address.withOffset(TagOffset));
-        store32(TrustedImm32(value.payload()), address.withOffset(PayloadOffset));
+        storePair32(TrustedImm32(value.payload()), TrustedImm32(value.tag()), address);
 #endif
     }
 
@@ -637,15 +660,16 @@ public:
 #endif
     }
 
-    Jump branchIfNotCell(GPRReg reg, TagRegistersMode mode = HaveTagRegisters)
+    template<typename T>
+    Jump branchIfNotCell(T maybeCell, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
         if (mode == HaveTagRegisters)
-            return branchTest64(NonZero, reg, GPRInfo::notCellMaskRegister);
-        return branchTest64(NonZero, reg, TrustedImm64(JSValue::NotCellMask));
+            return branchTest64(NonZero, maybeCell, GPRInfo::notCellMaskRegister);
+        return branchTest64(NonZero, maybeCell, TrustedImm64(JSValue::NotCellMask));
 #else
         UNUSED_PARAM(mode);
-        return branch32(MacroAssembler::NotEqual, reg, TrustedImm32(JSValue::CellTag));
+        return branch32(MacroAssembler::NotEqual, maybeCell, TrustedImm32(JSValue::CellTag));
 #endif
     }
 
@@ -657,18 +681,20 @@ public:
         return branchIfNotCell(regs.tagGPR(), mode);
 #endif
     }
-    
-    Jump branchIfCell(GPRReg reg, TagRegistersMode mode = HaveTagRegisters)
+
+    template<typename T>
+    Jump branchIfCell(T maybeCell, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
         if (mode == HaveTagRegisters)
-            return branchTest64(Zero, reg, GPRInfo::notCellMaskRegister);
-        return branchTest64(Zero, reg, TrustedImm64(JSValue::NotCellMask));
+            return branchTest64(Zero, maybeCell, GPRInfo::notCellMaskRegister);
+        return branchTest64(Zero, maybeCell, TrustedImm64(JSValue::NotCellMask));
 #else
         UNUSED_PARAM(mode);
-        return branch32(MacroAssembler::Equal, reg, TrustedImm32(JSValue::CellTag));
+        return branch32(MacroAssembler::Equal, maybeCell, TrustedImm32(JSValue::CellTag));
 #endif
     }
+
     Jump branchIfCell(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
@@ -1192,11 +1218,13 @@ public:
         ASSERT(virtualRegister.isValid());
         return Address(baseGPR, virtualRegister.offset() * sizeof(Register) + TagOffset);
     }
+
     static Address tagFor(VirtualRegister virtualRegister)
     {
         ASSERT(virtualRegister.isValid());
         return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + TagOffset);
     }
+
     static Address tagFor(Operand operand)
     {
         ASSERT(!operand.isTmp());
@@ -1208,11 +1236,13 @@ public:
         ASSERT(virtualRegister.isValid());
         return Address(baseGPR, virtualRegister.offset() * sizeof(Register) + PayloadOffset);
     }
+
     static Address payloadFor(VirtualRegister virtualRegister)
     {
         ASSERT(virtualRegister.isValid());
         return Address(GPRInfo::callFrameRegister, virtualRegister.offset() * sizeof(Register) + PayloadOffset);
     }
+
     static Address payloadFor(Operand operand)
     {
         ASSERT(!operand.isTmp());

@@ -1021,6 +1021,12 @@ public:
         store64(scratchRegister(), address);
     }
 
+    void store64(TrustedImmPtr imm, Address address)
+    {
+        move(imm, scratchRegister());
+        store64(scratchRegister(), address);
+    }
+
     void store64(TrustedImm64 imm, BaseIndex address)
     {
         move(imm, scratchRegister());
@@ -1037,7 +1043,7 @@ public:
     {
         transfer64(src, dest);
     }
-    
+
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
     {
         padBeforePatch();

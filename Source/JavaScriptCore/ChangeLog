@@ -1,3 +1,44 @@
+2022-04-20  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unify calls and checks for CellTag
+        https://bugs.webkit.org/show_bug.cgi?id=238025
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch moves all the places where cell tags are written and checked
+        when branching: this will be needed when implementing the concurrency on
+        32 bits archs, so we can focus on changing storeCell, branchIfNotCell and
+        branchIfCell to implement the mutex locks/unlocks.
+
+        It also reduces the code size in JetStream2 by ~1% on average on 32
+        bits platforms.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::store8):
+        (JSC::MacroAssemblerARMv7::storePair32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::storePair32):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectStrictEquality):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitAssertIsCell):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::storeCell):
+        (JSC::AssemblyHelpers::storeTrustedValue):
+        (JSC::AssemblyHelpers::branchIfNotCell):
+        (JSC::AssemblyHelpers::branchIfCell):
+        * jit/CallFrameShuffler32_64.cpp:
+        (JSC::CallFrameShuffler::emitStore):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitLoadJSCell):
+
 2022-04-19  Michael Saboff  <msaboff@apple.com>
 
         Various WebKit tools need to be told about the system content path

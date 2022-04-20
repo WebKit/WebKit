@@ -936,6 +936,7 @@ public:
         case NearCallMode::Regular:
             return CodeLocationLabel<destTag>(tagCodePtr<destTag>(AssemblerType::prepareForAtomicRelinkCallConcurrently(nearCall.dataLocation(), destination.untaggedExecutableAddress())));
         }
+        RELEASE_ASSERT_NOT_REACHED();
 #else
         UNUSED_PARAM(nearCall);
         return destination;

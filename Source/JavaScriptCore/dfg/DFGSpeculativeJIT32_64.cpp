@@ -1109,10 +1109,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
                 BadType,
                 JSValueSource(JITCompiler::addressFor(virtualRegister)),
                 edge,
-                m_jit.branch32(
-                    MacroAssembler::NotEqual,
-                    JITCompiler::tagFor(virtualRegister),
-                    TrustedImm32(JSValue::CellTag)));
+                m_jit.branchIfNotCell(JITCompiler::tagFor(virtualRegister)));
         }
         GPRReg gpr = allocate();
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
@@ -1277,7 +1274,8 @@ void SpeculativeJIT::compilePeepHoleObjectStrictEquality(Edge objectChild, Edge 
 
     DFG_TYPE_CHECK(JSValueSource::unboxedCell(op1GPR), objectChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
 
-    branch32(MacroAssembler::NotEqual, op2.tagGPR(), TrustedImm32(JSValue::CellTag), notTaken);
+    MacroAssembler::Jump notCell = m_jit.branchIfNotCell(op2.tagGPR());
+    addBranch(notCell, notTaken);
     
     if (taken == nextBlock()) {
         branch32(MacroAssembler::NotEqual, op1GPR, op2GPR, notTaken);

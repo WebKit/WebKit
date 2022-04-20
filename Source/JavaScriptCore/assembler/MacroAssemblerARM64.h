@@ -1522,6 +1522,7 @@ public:
         case Extend::None:
             return Assembler::UXTX;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     void load64(Address address, RegisterID dest)
@@ -1941,6 +1942,17 @@ public:
     }
 
     void store64(TrustedImm64 imm, Address address)
+    {
+        if (!imm.m_value) {
+            store64(ARM64Registers::zr, address);
+            return;
+        }
+
+        moveToCachedReg(imm, dataMemoryTempRegister());
+        store64(dataTempRegister, address);
+    }
+
+    void store64(TrustedImmPtr imm, Address address)
     {
         if (!imm.m_value) {
             store64(ARM64Registers::zr, address);

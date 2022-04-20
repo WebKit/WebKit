@@ -638,8 +638,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             break;
 
         case UnboxedCellInGPR:
-            jit.store32(
-                AssemblyHelpers::TrustedImm32(JSValue::CellTag),
+            jit.storeCell(
                 &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
             break;
 
@@ -647,8 +646,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             jit.load32(
                 AssemblyHelpers::payloadFor(recovery.virtualRegister()),
                 JSRInfo::jsRegT10.payloadGPR());
-            jit.move(AssemblyHelpers::TrustedImm32(JSValue::CellTag), JSRInfo::jsRegT10.tagGPR());
-            jit.storeValue(JSRInfo::jsRegT10, scratch + index);
+            jit.storeCell(JSRInfo::jsRegT10, scratch + index);
             break;
 #endif
 

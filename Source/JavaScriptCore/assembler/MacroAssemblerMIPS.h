@@ -1651,6 +1651,30 @@ public:
         }
     }
 
+    void storePair32(RegisterID src1, TrustedImm32 imm, Address address)
+    {
+        move(imm, addrTempRegister);
+        storePair32(src1, addrTempRegister, address);
+    }
+
+    void storePair32(TrustedImmPtr immPtr, TrustedImm32 imm32, Address address)
+    {
+        move(immPtr, addrTempRegister);
+        move(imm32, dataTempRegister);
+        storePair32(addrTempRegister, dataTempRegister, address);
+    }
+
+    void storePair32(TrustedImm32 imm1, TrustedImm32 imm2, Address address)
+    {
+        move(imm1, addrTempRegister);
+        RegisterID scratch = addrTempRegister;
+        if (imm1.m_value != imm2.m_value) {
+            scratch = dataTempRegister;
+            move(imm2, scratch);
+        }
+        storePair32(addrTempRegister, scratch, address);
+    }
+
     void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         storePair32(src1, src2, dest, TrustedImm32(0));
@@ -1671,6 +1695,19 @@ public:
     {
         store32(src1, address);
         store32(src2, address.withOffset(4));
+    }
+
+    void storePair32(TrustedImm32 imm1, TrustedImm32 imm2, BaseIndex address)
+    {
+        store32(imm1, address);
+        store32(imm2, address.withOffset(4));
+    }
+
+    void storePair32(RegisterID src1, TrustedImm32 imm, const void* address)
+    {
+        move(TrustedImmPtr(address), addrTempRegister);
+        move(imm, dataTempRegister);
+        storePair32(src1, dataTempRegister, addrTempRegister);
     }
 
     void storePair32(RegisterID src1, RegisterID src2, const void* address)

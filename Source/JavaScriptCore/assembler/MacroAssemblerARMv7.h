@@ -1058,12 +1058,12 @@ public:
         store8(src, setupArmAddress(address));
     }
     
-    void store8(RegisterID src, const void *address)
+    void store8(RegisterID src, const void* address)
     {
         store8(src, setupArmAddress(AbsoluteAddress(address)));
     }
     
-    void store8(TrustedImm32 imm, const void *address)
+    void store8(TrustedImm32 imm, const void* address)
     {
         TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         move(imm8, dataTempRegister);
@@ -1103,6 +1103,34 @@ public:
         store16(dataTempRegister, address);
     }
 
+    void storePair32(RegisterID src1, TrustedImm32 imm, Address address)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        move(imm, scratch);
+        storePair32(src1, scratch, address);
+    }
+
+    void storePair32(TrustedImmPtr immPtr, TrustedImm32 imm32, Address address)
+    {
+        RegisterID scratch1 = getCachedAddressTempRegisterIDAndInvalidate();
+        move(immPtr, scratch1);
+        RegisterID scratch2 = getCachedDataTempRegisterIDAndInvalidate();
+        move(imm32, scratch2);
+        storePair32(scratch1, scratch2, address);
+    }
+
+    void storePair32(TrustedImm32 imm1, TrustedImm32 imm2, Address address)
+    {
+        RegisterID scratch1 = getCachedAddressTempRegisterIDAndInvalidate();
+        move(imm1, scratch1);
+        RegisterID scratch2 = scratch1;
+        if (imm1.m_value != imm2.m_value) {
+            scratch2 = getCachedDataTempRegisterIDAndInvalidate();
+            move(imm2, scratch2);
+        }
+        storePair32(scratch1, scratch2, address);
+    }
+
     void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         storePair32(src1, src2, dest, TrustedImm32(0));
@@ -1138,6 +1166,22 @@ public:
             m_assembler.add(scratch, address.base, address.index, shift);
         }
         storePair32(src1, src2, Address(scratch, address.offset));
+    }
+
+    void storePair32(TrustedImm32 imm1, TrustedImm32 imm2, BaseIndex address)
+    {
+        // We don't have enough temp registers to move both imm and calculate the address
+        store32(imm1, address);
+        store32(imm2, address.withOffset(4));
+    }
+
+    void storePair32(RegisterID src1, TrustedImm32 imm, const void* address)
+    {
+        ArmAddress armAddress = setupArmAddress(AbsoluteAddress(address));
+        ASSERT(armAddress.type == ArmAddress::HasOffset);
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        move(imm, scratch);
+        storePair32(src1, scratch, Address(armAddress.base, armAddress.u.offset));
     }
 
     void storePair32(RegisterID src1, RegisterID src2, const void* address)

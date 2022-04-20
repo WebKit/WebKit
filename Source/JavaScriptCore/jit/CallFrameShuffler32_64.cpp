@@ -45,9 +45,7 @@ DataFormat CallFrameShuffler::emitStore(CachedRecovery& location, MacroAssembler
         m_jit.store32(location.recovery().gpr(), address.withOffset(PayloadOffset));
         return DataFormatInt32;
     case UnboxedCellInGPR:
-        m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag),
-            address.withOffset(TagOffset));
-        m_jit.store32(location.recovery().gpr(), address.withOffset(PayloadOffset));
+        m_jit.storeCell(location.recovery().gpr(), address);
         return DataFormatCell;
     case Constant:
         m_jit.storeTrustedValue(location.recovery().constant(), address);

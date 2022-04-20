@@ -2412,7 +2412,7 @@ void SpeculativeJIT::checkArgumentTypes()
             break;
         }
         case FlushedCell: {
-            speculationCheck(BadType, valueSource, node, m_jit.branch32(MacroAssembler::NotEqual, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::CellTag)));
+            speculationCheck(BadType, valueSource, node, m_jit.branchIfNotCell(JITCompiler::tagFor(virtualRegister)));
             break;
         }
         default:
@@ -9793,13 +9793,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
         if (bitVector->get(i)) {
             SpeculateCellOperand immutableButterfly(this, use);
             GPRReg immutableButterflyGPR = immutableButterfly.gpr();
-#if USE(JSVALUE64)
-            m_jit.store64(immutableButterflyGPR, &buffer[i]);
-#else
-            char* pointer = static_cast<char*>(static_cast<void*>(&buffer[i]));
-            m_jit.store32(immutableButterflyGPR, pointer + PayloadOffset);
-            m_jit.store32(TrustedImm32(JSValue::CellTag), pointer + TagOffset);
-#endif
+            m_jit.storeCell(immutableButterflyGPR, &buffer[i]);
         } else {
             JSValueOperand input(this, use);
             JSValueRegs inputRegs = input.jsValueRegs();
@@ -10162,7 +10156,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
 #if USE(JSVALUE64)
             auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementGPR);
 #else
-            auto skip = m_jit.branch32(CCallHelpers::NotEqual, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset), TrustedImm32(JSValue::CellTag));
+            auto skip = m_jit.branchIfNotCell(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset));
             m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, PayloadOffset), tempGPR);
             auto found = m_jit.branch32(CCallHelpers::Equal, tempGPR, searchElementGPR);
             skip.link(&m_jit);
@@ -11427,18 +11421,8 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
         resultGPR, TrustedImmPtr(node->structure()), butterfly, scratch1GPR, scratch2GPR,
         slowPath);
     
-#if USE(JSVALUE64)
-    m_jit.store64(
-        operandGPR, JITCompiler::Address(resultGPR, JSWrapperObject::internalValueOffset()));
-#else
-    m_jit.store32(
-        TrustedImm32(JSValue::CellTag),
-        JITCompiler::Address(resultGPR, JSWrapperObject::internalValueOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-    m_jit.store32(
-        operandGPR,
-        JITCompiler::Address(resultGPR, JSWrapperObject::internalValueOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-#endif
-    
+    m_jit.storeCell(operandGPR, JITCompiler::Address(resultGPR, JSWrapperObject::internalValueOffset()));
+
     m_jit.mutatorFence(vm());
     
     addSlowPathGenerator(slowPathCall(
