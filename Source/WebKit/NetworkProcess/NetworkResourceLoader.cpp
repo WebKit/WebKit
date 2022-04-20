@@ -1592,7 +1592,7 @@ bool NetworkResourceLoader::shouldLogCookieInformation(NetworkConnectionToWebPro
 
 static String escapeForJSON(String s)
 {
-    return s.replace('\\', "\\\\").replace('"', "\\\"");
+    return s.replace('\\', "\\\\"_s).replace('"', "\\\""_s);
 }
 
 template<typename IdentifierType>

@@ -70,13 +70,13 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
 
     if (equalLettersIgnoringASCIICase(encodingType, "text/plain")) {
         // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
-        body = PAL::decodeURLEscapeSequences(body.replaceWithLiteral('&', "\r\n").replace('+', ' '));
+        body = PAL::decodeURLEscapeSequences(body.replace('&', "\r\n"_s).replace('+', ' '));
     }
 
     Vector<char> bodyData;
     bodyData.append("body=", 5);
     FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
-    body = String(bodyData.data(), bodyData.size()).replaceWithLiteral('+', "%20");
+    body = String(bodyData.data(), bodyData.size()).replace('+', "%20"_s);
 
     auto query = url.query();
     if (query.isEmpty())

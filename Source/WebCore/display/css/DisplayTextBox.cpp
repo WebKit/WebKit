@@ -54,8 +54,8 @@ String TextBox::debugDescription() const
 
     stream << boxName() << " " << absoluteBoxRect() << " (" << this << ")";
     auto textContent = text().originalContent().substring(text().start(), text().length()).toString();
-    textContent.replaceWithLiteral('\\', "\\\\");
-    textContent.replaceWithLiteral('\n', "\\n");
+    textContent.replace('\\', "\\\\"_s);
+    textContent.replace('\n', "\\n"_s);
     const size_t maxPrintedLength = 80;
     if (textContent.length() > maxPrintedLength) {
         auto substring = StringView(textContent).left(maxPrintedLength);

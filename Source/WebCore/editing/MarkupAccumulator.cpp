@@ -289,7 +289,7 @@ void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, con
         // minimal escaping for javascript urls
         if (resolvedURLString.contains('"')) {
             if (resolvedURLString.contains('\''))
-                resolvedURLString.replaceWithLiteral('"', "&quot;");
+                resolvedURLString.replace('"', "&quot;"_s);
             else
                 quoteChar = '\'';
         }

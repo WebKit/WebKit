@@ -81,19 +81,19 @@ static Expected<Vector<String>, std::error_code> getDomainList(const JSON::Array
             domain = domain.substring(1);
         }
 
-        std::array<std::pair<UChar, const char*>, 9> escapeTable { {
-            { '\\', "\\\\" },
-            { '{', "\\{" },
-            { '}', "\\}" },
-            { '[', "\\[" },
-            { '[', "\\[" },
-            { '.', "\\." },
-            { '?', "\\?" },
-            { '*', "\\*" },
-            { '$', "\\$" }
+        std::array<std::pair<UChar, ASCIILiteral>, 9> escapeTable { {
+            { '\\', "\\\\"_s },
+            { '{', "\\{"_s },
+            { '}', "\\}"_s },
+            { '[', "\\["_s },
+            { '[', "\\["_s },
+            { '.', "\\."_s },
+            { '?', "\\?"_s },
+            { '*', "\\*"_s },
+            { '$', "\\$"_s }
         } };
         for (auto& pair : escapeTable)
-            domain = domain.replace(pair.first, StringView { pair.second });
+            domain = domain.replace(pair.first, pair.second);
 
         const char* protocolRegex = "[a-z][a-z+.-]*:\\/\\/";
         const char* allowSubdomainsRegex = "(.*\\.)*";

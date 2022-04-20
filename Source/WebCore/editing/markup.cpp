@@ -421,7 +421,7 @@ String StyledMarkupAccumulator::takeResults()
         result.append(string);
     result.append(takeMarkup());
     // Remove '\0' characters because they are not visibly rendered to the user.
-    return result.toString().replaceWithLiteral('\0', "");
+    return result.toString().replace('\0', ""_s);
 }
 
 void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)

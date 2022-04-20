@@ -384,7 +384,7 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
         RELEASE_LOG(ResourceLoadStatistics, "ResourceLoadObserver::logUserInteraction: counter=%" PRIu64 ": " str, counter, ##__VA_ARGS__)
 
         auto escapeForJSON = [](String s) {
-            s.replace('\\', "\\\\").replace('"', "\\\"");
+            s.replace('\\', "\\\\"_s).replace('"', "\\\""_s);
             return s;
         };
         auto escapedURL = escapeForJSON(url.string());

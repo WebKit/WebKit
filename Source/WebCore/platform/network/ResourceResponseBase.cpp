@@ -309,7 +309,7 @@ String ResourceResponseBase::sanitizeSuggestedFilename(const String& suggestedFi
 
     ResourceResponse response { { { }, "http://example.com/"_s }, { }, -1, { } };
     response.setHTTPStatusCode(200);
-    String escapedSuggestedFilename = String(suggestedFilename).replace('\\', "\\\\").replace('"', "\\\"");
+    String escapedSuggestedFilename = String(suggestedFilename).replace('\\', "\\\\"_s).replace('"', "\\\""_s);
     response.setHTTPHeaderField(HTTPHeaderName::ContentDisposition, makeString("attachment; filename=\"", escapedSuggestedFilename, '"'));
     return response.suggestedFilename();
 }

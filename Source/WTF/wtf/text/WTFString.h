@@ -193,9 +193,10 @@ public:
 
     String& replace(UChar target, UChar replacement);
     String& replace(UChar target, StringView replacement);
+    String& replace(UChar target, ASCIILiteral);
+    String& replace(UChar target, const char*) = delete;
     String& replace(StringView target, StringView replacement);
     String& replace(unsigned start, unsigned length, StringView replacement);
-    template<unsigned characterCount> String& replaceWithLiteral(UChar target, const char (&replacement)[characterCount]);
 
     WTF_EXPORT_PRIVATE void remove(unsigned position, unsigned length = 1);
 
@@ -490,10 +491,10 @@ inline String& String::replace(UChar target, UChar replacement)
     return *this;
 }
 
-template<unsigned characterCount> ALWAYS_INLINE String& String::replaceWithLiteral(UChar target, const char (&characters)[characterCount])
+ALWAYS_INLINE String& String::replace(UChar target, ASCIILiteral literal)
 {
     if (m_impl)
-        m_impl = m_impl->replace(target, characters, characterCount - 1);
+        m_impl = m_impl->replace(target, literal.characters(), literal.length());
     return *this;
 }
 

@@ -917,7 +917,7 @@ String SQLiteIDBBackingStore::encodeDatabaseName(const String& databaseName)
         return "%00"_s;
 
     String filename = FileSystem::encodeForFileName(databaseName);
-    filename.replaceWithLiteral('.', "%2E");
+    filename.replace('.', "%2E"_s);
 
     return filename;
 }
