@@ -1147,6 +1147,15 @@ public:
         m_assembler.sdInsn(resolution.base, immRegister, Imm::S(resolution.offset));
     }
 
+    void store64(TrustedImmPtr imm, Address address)
+    {
+        intptr_t value = imm.asIntptr();
+        if constexpr (sizeof(intptr_t) == sizeof(int64_t))
+            store64(TrustedImm64(int64_t(value)), address);
+        else
+            store64(TrustedImm32(int32_t(value)), address);
+    }
+
     void store64(TrustedImm64 imm, BaseIndex address)
     {
         auto temp = temps<Data, Memory>();

@@ -1,5 +1,15 @@
 2022-04-20  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed, RISC-V build fix.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::store64):
+        Add the store64(TrustedImmPtr, Address) overload required after 249798@main.
+        It constructs a 32-bit or 64-bit TrustedImm value, based on the detected
+        pointer size, and relays it to the appropriate store64() method.
+
+2022-04-20  Zan Dobersek  <zdobersek@igalia.com>
+
         [JSC] Accommodate the RISCV64 C calling convention
         https://bugs.webkit.org/show_bug.cgi?id=236367
         <rdar://problem/89026012>
