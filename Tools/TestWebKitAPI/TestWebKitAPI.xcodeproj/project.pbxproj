@@ -1969,6 +1969,7 @@
 		463F4722255B49B600D9E0CC /* VisibilityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VisibilityState.mm; sourceTree = "<group>"; };
 		4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessDidTerminate.cpp; sourceTree = "<group>"; };
 		464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "BadServiceWorkerRegistrations-4.sqlite3"; sourceTree = "<group>"; };
+		465A08FD280096F80028FD0E /* YoutubeReplacementPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = YoutubeReplacementPlugin.mm; sourceTree = "<group>"; };
 		465C23AE2640C3C500F2FC7F /* postMessage-regularly.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "postMessage-regularly.html"; sourceTree = "<group>"; };
 		465E2806255B2A690063A787 /* GPUProcess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUProcess.mm; sourceTree = "<group>"; };
 		466AF38826FE393200CE2EB8 /* ServiceWorkerPagePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerPagePlugIn.mm; sourceTree = "<group>"; };
@@ -3671,6 +3672,7 @@
 				9984FACA1CFFAEEE008D198C /* WKWebViewTextInput.mm */,
 				95A524942581A10D00461FE9 /* WKWebViewThemeColor.mm */,
 				953ABB3425C0D681004C8B73 /* WKWebViewUnderPageBackgroundColor.mm */,
+				465A08FD280096F80028FD0E /* YoutubeReplacementPlugin.mm */,
 			);
 			name = "WebKit Cocoa";
 			path = WebKitCocoa;

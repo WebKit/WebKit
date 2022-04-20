@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "PlatformUtilities.h"
 #include <WebCore/YouTubePluginReplacement.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
@@ -40,48 +41,50 @@ public:
     }
 };
 
-static bool test(const String& inputURLString, const String& expectedURLString)
+static void test(ASCIILiteral inputURLString, ASCIILiteral expectedURLString)
 {
     URL inputURL(URL(), inputURLString);
     String actualURLString = YouTubePluginReplacement::youTubeURLFromAbsoluteURL(inputURL, inputURLString);
-    return actualURLString.utf8() == expectedURLString.utf8();
+    EXPECT_WK_STREQ(expectedURLString.characters(), actualURLString.utf8().data());
 }
 
 TEST_F(YouTubePluginReplacementTest, YouTubeURLFromAbsoluteURL)
 {
     // YouTube non-video URL, not expected to be transformed.
-    EXPECT_TRUE(test("https://www.youtube.com", "https://www.youtube.com"));
+    test("https://www.youtube.com"_s, "https://www.youtube.com"_s);
 
     // Basic YouTube video links, expected to be transformed.
-    EXPECT_TRUE(test("https://www.youtube.com/v/dQw4w9WgXcQ", "https://www.youtube.com/embed/dQw4w9WgXcQ"));
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ", "http://www.youtube.com/embed/dQw4w9WgXcQ"));
-    EXPECT_TRUE(test("https://youtube.com/v/dQw4w9WgXcQ", "https://youtube.com/embed/dQw4w9WgXcQ"));
-    EXPECT_TRUE(test("http://youtube.com/v/dQw4w9WgXcQ", "http://youtube.com/embed/dQw4w9WgXcQ"));
+    test("https://www.youtube.com/v/dQw4w9WgXcQ"_s, "https://www.youtube.com/embed/dQw4w9WgXcQ"_s);
+    test("http://www.youtube.com/v/dQw4w9WgXcQ"_s, "http://www.youtube.com/embed/dQw4w9WgXcQ"_s);
+    test("https://youtube.com/v/dQw4w9WgXcQ"_s, "https://youtube.com/embed/dQw4w9WgXcQ"_s);
+    test("http://youtube.com/v/dQw4w9WgXcQ"_s, "http://youtube.com/embed/dQw4w9WgXcQ"_s);
 
     // With start time, preserved.
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4"));
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4&fs=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1"));
+    test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4"_s, "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4"_s);
+    test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4&fs=1"_s, "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1"_s);
 
     // With an invalid query (see & instead of ?), we preserve and fix the query.
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4"));
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4&fs=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1"));
+    test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4"_s, "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4"_s);
+    test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4&fs=1"_s, "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1"_s);
 
     // Non-Flash URL is untouched.
-    EXPECT_TRUE(test("https://www.youtube.com/embed/dQw4w9WgXcQ", "https://www.youtube.com/embed/dQw4w9WgXcQ"));
-    EXPECT_TRUE(test("http://www.youtube.com/embed/dQw4w9WgXcQ", "http://www.youtube.com/embed/dQw4w9WgXcQ"));
-    EXPECT_TRUE(test("https://youtube.com/embed/dQw4w9WgXcQ", "https://youtube.com/embed/dQw4w9WgXcQ"));
-    EXPECT_TRUE(test("http://youtube.com/embed/dQw4w9WgXcQ", "http://youtube.com/embed/dQw4w9WgXcQ"));
+    test("https://www.youtube.com/embed/dQw4w9WgXcQ"_s, "https://www.youtube.com/embed/dQw4w9WgXcQ"_s);
+    test("http://www.youtube.com/embed/dQw4w9WgXcQ"_s, "http://www.youtube.com/embed/dQw4w9WgXcQ"_s);
+    test("https://youtube.com/embed/dQw4w9WgXcQ"_s, "https://youtube.com/embed/dQw4w9WgXcQ"_s);
+    test("http://youtube.com/embed/dQw4w9WgXcQ"_s, "http://youtube.com/embed/dQw4w9WgXcQ"_s);
     // Even with extra parameters.
-    EXPECT_TRUE(test("https://www.youtube.com/embed/dQw4w9WgXcQ?start=4", "https://www.youtube.com/embed/dQw4w9WgXcQ?start=4"));
-    EXPECT_TRUE(test("http://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1"));
+    test("https://www.youtube.com/embed/dQw4w9WgXcQ?start=4"_s, "https://www.youtube.com/embed/dQw4w9WgXcQ?start=4"_s);
+    test("http://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1"_s, "http://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1"_s);
     // Even with an invalid "query".
-    EXPECT_TRUE(test("https://www.youtube.com/embed/dQw4w9WgXcQ&start=4", "https://www.youtube.com/embed/dQw4w9WgXcQ&start=4"));
+    test("https://www.youtube.com/embed/dQw4w9WgXcQ&start=4"_s, "https://www.youtube.com/embed/dQw4w9WgXcQ&start=4"_s);
 
     // Don't transform anything with a non "/v/" path component immediately following the domain.
-    EXPECT_TRUE(test("https://www.youtube.com/something/v/dQw4w9WgXcQ", "https://www.youtube.com/something/v/dQw4w9WgXcQ"));
+    test("https://www.youtube.com/something/v/dQw4w9WgXcQ"_s, "https://www.youtube.com/something/v/dQw4w9WgXcQ"_s);
 
-    // Non-YouTube domain whose path looks like a Flash video shouldn't be transformed.
-    EXPECT_TRUE(test("https://www.notyoutube.com/v/dQw4w9WgXcQ", "https://www.notyoutube.com/v/dQw4w9WgXcQ"));
+    // Non-valid Youtube URLs should be dropped.
+    test("https://www.notyoutube.com/v/dQw4w9WgXcQ"_s, ""_s);
+    test("data:,Hello%2C%20World%21"_s, ""_s);
+    test("javascript:foo()"_s, ""_s);
 }
 
 } // namespace TestWebKitAPI

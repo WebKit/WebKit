@@ -1,5 +1,61 @@
 2022-04-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r292680. rdar://problem/91323230
+
+    The Youtube plugin replacement should only work for actual Youtube URLs
+    https://bugs.webkit.org/show_bug.cgi?id=239003
+    <rdar://91323230>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    The Youtube plugin replacement was too permissive and was falling back to using
+    the original URL in cases there the original URL wasn't an expected Youtube
+    URL. This patch hardens the plugin replacement and drops the URL if it is not
+    a valid youtube URL instead.
+    
+    Covered by new API test.
+    
+    * Modules/plugins/YouTubePluginReplacement.cpp:
+    (WebCore::isYouTubeURL):
+    (WebCore::processAndCreateYouTubeURL):
+    (WebCore::YouTubePluginReplacement::youTubeURLFromAbsoluteURL):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/SourcesCocoa.txt:
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebCore/YouTubePluginReplacement.cpp:
+    (TestWebKitAPI::test):
+    (TestWebKitAPI::TEST_F):
+    * TestWebKitAPI/Tests/WebKitCocoa/YoutubeReplacementPlugin.mm: Added.
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292680 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-09  Chris Dumez  <cdumez@apple.com>
+
+            The Youtube plugin replacement should only work for actual Youtube URLs
+            https://bugs.webkit.org/show_bug.cgi?id=239003
+            <rdar://91323230>
+
+            Reviewed by Brent Fulgham.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/SourcesCocoa.txt:
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebCore/YouTubePluginReplacement.cpp:
+            (TestWebKitAPI::test):
+            (TestWebKitAPI::TEST_F):
+            * TestWebKitAPI/Tests/WebKitCocoa/YoutubeReplacementPlugin.mm: Added.
+            (TEST):
+
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291606. rdar://problem/91446317
 
     Website policies are not respected when doing COOP based process swap
