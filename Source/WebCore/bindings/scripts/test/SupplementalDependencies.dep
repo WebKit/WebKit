@@ -302,6 +302,7 @@ WebDOMTestStringifierReadOnlyAttribute.h:
 JSTestStringifierReadWriteAttribute.h: 
 DOMTestStringifierReadWriteAttribute.h: 
 WebDOMTestStringifierReadWriteAttribute.h: 
+JSTestTaggedWrapper.h: 
 JSTestTypedefs.h: 
 DOMTestTypedefs.h: 
 WebDOMTestTypedefs.h: 

@@ -62,6 +62,7 @@ static Ref<JSC::DOMJIT::CallDOMGetterSnippet> createCallDOMGetterForOffsetAccess
         CCallHelpers::JumpList nullCases;
         // Load a wrapped object. "node" should be already type checked by CheckDOM.
         jit.loadPtr(CCallHelpers::Address(node, JSNode::offsetOfWrapped()), scratch);
+        static_assert(!JSNode::hasCustomPtrTraits(), "Optimized JSNode wrapper access should not be using RawPtrTraits");
 
         if (isContainerGuardRequirement == IsContainerGuardRequirement::Required)
             nullCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch, Node::nodeFlagsMemoryOffset()), CCallHelpers::TrustedImm32(Node::flagIsContainer())));
@@ -144,6 +145,8 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileNodeOwnerDocumentAttribute()
         GPRReg document = params.gpScratch(1);
 
         jit.loadPtr(CCallHelpers::Address(node, JSNode::offsetOfWrapped()), wrapped);
+        static_assert(!JSNode::hasCustomPtrTraits(), "Optimized JSNode wrapper access should not be using RawPtrTraits");
+        
         DOMJIT::loadDocument(jit, wrapped, document);
         RELEASE_ASSERT(!CAST_OFFSET(EventTarget*, Node*));
         RELEASE_ASSERT(!CAST_OFFSET(Node*, Document*));

@@ -60,6 +60,8 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentDocumentElementAttribute()
         GPRReg scratch = params.gpScratch(0);
 
         jit.loadPtr(CCallHelpers::Address(document, JSDocument::offsetOfWrapped()), scratch);
+        static_assert(!JSDocument::hasCustomPtrTraits(), "Optimized JSDocument wrapper access should not be using RawPtrTraits");
+
         DOMJIT::loadDocumentElement(jit, scratch, scratch);
         auto nullCase = jit.branchTestPtr(CCallHelpers::Zero, scratch);
         DOMJIT::toWrapper<Element>(jit, params, scratch, globalObject, result, DOMJIT::operationToJSElement, globalObjectValue);
@@ -94,6 +96,8 @@ Ref<JSC::DOMJIT::CallDOMGetterSnippet> compileDocumentBodyAttribute()
         GPRReg scratch2 = params.gpScratch(1);
 
         jit.loadPtr(CCallHelpers::Address(document, JSDocument::offsetOfWrapped()), scratch1);
+        static_assert(!JSDocument::hasCustomPtrTraits(), "Optimized JSDocument wrapper access should not be using RawPtrTraits");
+
         DOMJIT::loadDocumentElement(jit, scratch1, scratch1);
 
         CCallHelpers::JumpList nullCases;

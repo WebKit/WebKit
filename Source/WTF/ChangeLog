@@ -1,3 +1,133 @@
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r289531. rdar://problem/88023949
+
+    Introduce SignedPtrTraits which enables Ref pointers to be protected with PtrTags.
+    https://bugs.webkit.org/show_bug.cgi?id=235588
+    rdar://88023849
+    
+    Patch by Gavin Phillips <gavin.p@apple.com> on 2022-02-10
+    Reviewed by Mark Lam.
+    
+    Create and adopt SignedPtrTraits which can be used to apply and verify PtrTag signatures
+    to pointers stored in and tracked by WTF:Ref.
+    
+    Source/WebCore:
+    
+    * bindings/js/JSDOMWrapper.h:
+    (WebCore::JSDOMWrapper::wrapped const):
+    (WebCore::JSDOMWrapper::offsetOfWrapped):
+    (WebCore::JSDOMWrapper::hasCustomPtrTraits):
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GetParentClassName):
+    (GetImplClassPtrTag):
+    (GenerateHeader):
+    (GetTaggedWrapperForInterface):
+    * bindings/scripts/IDLAttributes.json:
+    * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+    * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+    (WebCore::jsTestGlobalObject_TestTaggedWrapperConstructorGetter):
+    (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+    * bindings/scripts/test/JS/JSTestTaggedWrapper.cpp: Added.
+    (WebCore::JSTestTaggedWrapperDOMConstructor::prototypeForStructure):
+    (WebCore::JSTestTaggedWrapperDOMConstructor::initializeProperties):
+    (WebCore::JSTestTaggedWrapperPrototype::finishCreation):
+    (WebCore::JSTestTaggedWrapper::JSTestTaggedWrapper):
+    (WebCore::JSTestTaggedWrapper::finishCreation):
+    (WebCore::JSTestTaggedWrapper::createPrototype):
+    (WebCore::JSTestTaggedWrapper::prototype):
+    (WebCore::JSTestTaggedWrapper::getConstructor):
+    (WebCore::JSTestTaggedWrapper::destroy):
+    (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+    (WebCore::JSTestTaggedWrapper::subspaceForImpl):
+    (WebCore::JSTestTaggedWrapper::analyzeHeap):
+    (WebCore::JSTestTaggedWrapperOwner::isReachableFromOpaqueRoots):
+    (WebCore::JSTestTaggedWrapperOwner::finalize):
+    (WebCore::toJSNewlyCreated):
+    (WebCore::toJS):
+    (WebCore::JSTestTaggedWrapper::toWrapped):
+    * bindings/scripts/test/JS/JSTestTaggedWrapper.h: Added.
+    (WebCore::JSTestTaggedWrapper::create):
+    (WebCore::JSTestTaggedWrapper::createStructure):
+    (WebCore::JSTestTaggedWrapper::subspaceFor):
+    (WebCore::wrapperOwner):
+    (WebCore::wrapperKey):
+    (WebCore::toJS):
+    (WebCore::toJSNewlyCreated):
+    * bindings/scripts/test/SupplementalDependencies.dep:
+    * bindings/scripts/test/TestTaggedWrapper.idl: Added.
+    * css/DOMMatrixReadOnly.idl:
+    * dom/DOMPointReadOnly.idl:
+    * dom/DOMQuad.idl:
+    * dom/DOMRectReadOnly.idl:
+    * domjit/JSDocumentDOMJIT.cpp:
+    (WebCore::compileDocumentDocumentElementAttribute):
+    (WebCore::compileDocumentBodyAttribute):
+    * domjit/JSNodeDOMJIT.cpp:
+    (WebCore::createCallDOMGetterForOffsetAccess):
+    (WebCore::compileNodeOwnerDocumentAttribute):
+    * html/TimeRanges.idl:
+    * html/canvas/OffscreenCanvasRenderingContext2D.idl:
+    * html/canvas/PaintRenderingContext2D.idl:
+    * svg/SVGMatrix.idl:
+    
+    Source/WTF:
+    
+    * WTF.xcodeproj/project.pbxproj:
+    * wtf/CMakeLists.txt:
+    * wtf/SignedPtr.h: Added.
+    (WTF::SignedPtr::SignedPtr):
+    (WTF::SignedPtr::get const):
+    (WTF::SignedPtr::set):
+    (WTF::SignedPtr::clear):
+    (WTF::SignedPtr::operator-> const):
+    (WTF::SignedPtr::operator* const):
+    (WTF::SignedPtr::operator! const):
+    (WTF::SignedPtr::operator UnspecifiedBoolType const):
+    (WTF::SignedPtr::operator bool const):
+    (WTF::SignedPtr::operator=):
+    (WTF::SignedPtr::exchange):
+    (WTF::SignedPtr::swap):
+    (WTF::SignedPtrTraits::exchange):
+    (WTF::SignedPtrTraits::swap):
+    (WTF::SignedPtrTraits::unwrap):
+    (WTF::SignedPtrTraits::hashTableDeletedValue):
+    (WTF::SignedPtrTraits::isHashTableDeletedValue):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289531 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-10  Gavin Phillips  <gavin.p@apple.com>
+
+            Introduce SignedPtrTraits which enables Ref pointers to be protected with PtrTags.
+            https://bugs.webkit.org/show_bug.cgi?id=235588
+            rdar://88023849
+
+            Reviewed by Mark Lam.
+
+            Create and adopt SignedPtrTraits which can be used to apply and verify PtrTag signatures
+            to pointers stored in and tracked by WTF:Ref.
+
+            * WTF.xcodeproj/project.pbxproj:
+            * wtf/CMakeLists.txt:
+            * wtf/SignedPtr.h: Added.
+            (WTF::SignedPtr::SignedPtr):
+            (WTF::SignedPtr::get const):
+            (WTF::SignedPtr::set):
+            (WTF::SignedPtr::clear):
+            (WTF::SignedPtr::operator-> const):
+            (WTF::SignedPtr::operator* const):
+            (WTF::SignedPtr::operator! const):
+            (WTF::SignedPtr::operator UnspecifiedBoolType const):
+            (WTF::SignedPtr::operator bool const):
+            (WTF::SignedPtr::operator=):
+            (WTF::SignedPtr::exchange):
+            (WTF::SignedPtr::swap):
+            (WTF::SignedPtrTraits::exchange):
+            (WTF::SignedPtrTraits::swap):
+            (WTF::SignedPtrTraits::unwrap):
+            (WTF::SignedPtrTraits::hashTableDeletedValue):
+            (WTF::SignedPtrTraits::isHashTableDeletedValue):
+
 2022-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Reduce use of unnecessary cryptographicallyRandom numbers

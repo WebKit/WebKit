@@ -62,5 +62,6 @@ partial interface TestGlobalObject {
     attribute TestStringifierOperationNamedToStringConstructor TestStringifierOperationNamedToString;
     attribute TestStringifierReadOnlyAttributeConstructor TestStringifierReadOnlyAttribute;
     attribute TestStringifierReadWriteAttributeConstructor TestStringifierReadWriteAttribute;
+    attribute TestTaggedWrapperConstructor TestTaggedWrapper;
     attribute TestTypedefsConstructor TestTypedefs;
 };
