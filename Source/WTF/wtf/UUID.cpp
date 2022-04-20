@@ -35,12 +35,29 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
+#include <wtf/Lock.h>
+#include <wtf/WeakRandom.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if OS(DARWIN)
 #include <sys/sysctl.h>
 #endif
 
 namespace WTF {
+
+static UInt128 generateWeakRandomUUIDVersion4()
+{
+    static Lock lock;
+    UInt128 buffer { 0 };
+    {
+        Locker locker { lock };
+        static std::optional<WeakRandom> weakRandom;
+        if (!weakRandom)
+            weakRandom.emplace();
+        buffer = static_cast<UInt128>(weakRandom->getUint64()) << 64 | weakRandom->getUint64();
+    }
+    return buffer;
+}
 
 UUID::UUID()
 {
@@ -57,6 +74,28 @@ String createCanonicalUUIDString()
 {
     unsigned randomData[4];
     cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(randomData), sizeof(randomData));
+
+    // Format as Version 4 UUID.
+    return makeString(
+        hex(randomData[0], 8, Lowercase),
+        '-',
+        hex(randomData[1] >> 16, 4, Lowercase),
+        "-4",
+        hex(randomData[1] & 0x00000fff, 3, Lowercase),
+        '-',
+        hex((randomData[2] >> 30) | 0x8, 1, Lowercase),
+        hex((randomData[2] >> 16) & 0x00000fff, 3, Lowercase),
+        '-',
+        hex(randomData[2] & 0x0000ffff, 4, Lowercase),
+        hex(randomData[3], 8, Lowercase)
+    );
+}
+
+String createVersion4UUIDStringWeak()
+{
+    UInt128 data = generateWeakRandomUUIDVersion4();
+    unsigned* randomData = reinterpret_cast<unsigned*>(&data);
+    static_assert(sizeof(data) == sizeof(unsigned) * 4);
 
     // Format as Version 4 UUID.
     return makeString(

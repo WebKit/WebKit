@@ -74,6 +74,19 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
         return Success;
     }
+
+protected:
+    uint32_t random()
+    {
+        if (!m_randomSource)
+            initializeRandom();
+        return m_randomSource->getUint32();
+    }
+
+private:
+    JS_EXPORT_PRIVATE void initializeRandom();
+
+    std::optional<WeakRandom> m_randomSource;
 };
 
 template <class AssemblerType>
@@ -1013,23 +1026,11 @@ public:
 
 protected:
     AbstractMacroAssembler()
-        : m_randomSource(0)
-        , m_assembler()
+        : m_assembler()
     {
         invalidateAllTempRegisters();
     }
 
-    uint32_t random()
-    {
-        if (!m_randomSourceIsInitialized) {
-            m_randomSourceIsInitialized = true;
-            m_randomSource.setSeed(cryptographicallyRandomNumber());
-        }
-        return m_randomSource.getUint32();
-    }
-
-    bool m_randomSourceIsInitialized { false };
-    WeakRandom m_randomSource;
 public:
     AssemblerType m_assembler;
 protected:

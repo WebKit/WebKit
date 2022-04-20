@@ -308,8 +308,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     // order of the free list.
     FreeCell* head = nullptr;
     size_t count = 0;
-    uintptr_t secret;
-    cryptographicallyRandomValues(&secret, sizeof(uintptr_t));
+    uintptr_t secret = static_cast<uintptr_t>(vm.heapRandom().getUint64());
     bool isEmpty = true;
     Vector<size_t> deadCells;
     auto handleDeadCell = [&] (size_t i) {

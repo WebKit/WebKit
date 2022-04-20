@@ -61,8 +61,11 @@ Code::Code(Procedure& proc)
     , m_defaultPrologueGenerator(createSharedTask<PrologueGeneratorFunction>(&defaultPrologueGenerator))
 {
     // Come up with initial orderings of registers. The user may replace this with something else.
+    std::optional<WeakRandom> weakRandom;
+    if (Options::airRandomizeRegs())
+        weakRandom.emplace();
     forEachBank(
-        [&] (Bank bank) {
+        [&](Bank bank) {
             Vector<Reg> volatileRegs;
             Vector<Reg> calleeSaveRegs;
             RegisterSet all = bank == GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
@@ -80,7 +83,7 @@ Code::Code(Procedure& proc)
                         calleeSaveRegs.append(reg);
                 });
             if (Options::airRandomizeRegs()) {
-                WeakRandom random(Options::airRandomizeRegsSeed() ? Options::airRandomizeRegsSeed() : m_weakRandom.getUint32());
+                WeakRandom random(Options::airRandomizeRegsSeed() ? Options::airRandomizeRegsSeed() : weakRandom->getUint32());
                 shuffleVector(volatileRegs, [&] (unsigned limit) { return random.getUint32(limit); });
                 shuffleVector(calleeSaveRegs, [&] (unsigned limit) { return random.getUint32(limit); });
             }
