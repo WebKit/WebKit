@@ -1,3 +1,13 @@
+2022-04-19  Robert Jenner  <Jenner@apple.com>
+
+        Bring up new iOS builders
+        https://bugs.webkit.org/show_bug.cgi?id=239470
+
+        Reviewed by NOBODY (OOPS!).
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/ews-build/config.json:
+
 2022-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Dictation text that contains emojis is inserted twice upon finalization

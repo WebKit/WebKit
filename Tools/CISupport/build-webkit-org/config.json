@@ -57,6 +57,12 @@
                     { "name": "bot688", "platform": "*" },
 
                     { "name": "bot210", "platform": "ios-simulator-15" },
+                    { "name": "bot303", "platform": "ios-simulator-15" },
+                    { "name": "bot304", "platform": "ios-15" },
+                    { "name": "bot305", "platform": "ios-simulator-15" },
+                    { "name": "bot306", "platform": "ios-simulator-15" },
+                    { "name": "bot307", "platform": "ios-simulator-15" },
+                    { "name": "bot308", "platform": "ios-simulator-15" },
                     { "name": "bot600", "platform": "ios-simulator-15" },
                     { "name": "bot673", "platform": "ios-15" },
                     { "name": "bot614", "platform": "ios-simulator-15" },
@@ -300,19 +306,19 @@
                     {
                       "name": "Apple-iOS-15-Release-Build", "factory": "BuildFactory", "builddir": "ios-15-release",
                       "platform": "ios-15", "configuration": "release", "architectures": ["arm64"],
-                      "workernames": ["bot673"]
+                      "workernames": ["bot673", "bot304"]
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Release-Build", "factory": "BuildFactory", "builddir": "ios-simulator-15-release",
                       "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": ["ios-simulator-15-release-gpuprocess-arm64-tests-wk2", "ios-simulator-15-release-gpuprocess-tests-wk2", "ios-simulator-15-release-tests-wk2", "ipados-simulator-15-release-tests-wk2"],
-                      "workernames": ["bot614", "bot641", "bot682", "bot685"]
+                      "workernames": ["bot614", "bot641", "bot682", "bot685", "bot303", "bot305", "bot306"]
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Debug-Build", "factory": "BuildFactory", "builddir": "ios-simulator-15-debug",
                       "platform": "ios-simulator-15", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["ios-simulator-15-debug-tests-wk2", "ipados-simulator-15-debug-tests-wk2"],
-                      "workernames": ["bot694", "bot695"]
+                      "workernames": ["bot694", "bot695", "bot307", "bot308"]
                     },
                     {
                       "name": "Apple-iOS-15-Simulator-Release-GPUProcess-arm64-WK2-Tests", "factory": "TestAllButJSCFactory", "builddir": "ios-simulator-15-release-gpuprocess-arm64-tests-wk2",
