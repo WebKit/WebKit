@@ -56,8 +56,9 @@ void CachedSVGDocument::finishLoading(const FragmentedSharedBuffer* data, const 
 {
     if (data) {
         // We don't need to create a new frame because the new document belongs to the parent UseElement.
-        m_document = SVGDocument::create(nullptr, m_settings, response().url());
-        m_document->setContent(m_decoder->decodeAndFlush(data->makeContiguous()->data(), data->size()));
+        auto document = SVGDocument::create(nullptr, m_settings, response().url());
+        document->setContent(m_decoder->decodeAndFlush(data->makeContiguous()->data(), data->size()));
+        m_document = WTFMove(document);
     }
     CachedResource::finishLoading(data, metrics);
 }

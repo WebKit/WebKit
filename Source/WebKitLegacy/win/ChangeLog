@@ -1,3 +1,21 @@
+2022-04-19  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/90968659
+
+    2022-04-04  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+            Cherry-pick r292361. rdar://90968659
+
+            Use Ref and RefPtr pattern when handling document close calls
+            https://bugs.webkit.org/show_bug.cgi?id=238747
+
+            Reviewed by Sam Weinig.
+
+            Ensure document object remains for the scope of the call.
+
+            * DOMHTMLClasses.cpp:
+            (DOMHTMLDocument::close):
+
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288590. rdar://problem/87984277

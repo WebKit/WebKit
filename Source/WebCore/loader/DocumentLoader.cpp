@@ -388,7 +388,7 @@ void DocumentLoader::stopLoading()
     // We always need to explicitly cancel the Document's parser when stopping the load.
     // Otherwise cancelling the parser while starting the next page load might result
     // in unexpected side effects such as erroneous event dispatch. ( http://webkit.org/b/117112 )
-    if (Document* document = this->document())
+    if (RefPtr document = this->document())
         document->cancelParsing();
     
     stopLoadingSubresources();

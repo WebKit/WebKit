@@ -102,9 +102,10 @@ void DOMPatchSupport::patchDocument(const String& markup)
     std::unique_ptr<Digest> newInfo = createDigest(*newDocument->documentElement(), &m_unusedNodesMap);
 
     if (innerPatchNode(*oldInfo, *newInfo).hasException()) {
+        Ref document { m_document };
         // Fall back to rewrite.
-        m_document.write(nullptr, markup);
-        m_document.close();
+        document->write(nullptr, markup);
+        document->close();
     }
 }
 

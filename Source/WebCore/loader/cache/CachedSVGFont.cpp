@@ -75,13 +75,14 @@ bool CachedSVGFont::ensureCustomFontData(const AtomString& remoteURI)
         {
             // We may get here during render tree updates when events are forbidden.
             // Frameless document can't run scripts or call back to the client so this is safe.
-            m_externalSVGDocument = SVGDocument::create(nullptr, m_settings, URL());
+            auto externalSVGDocument = SVGDocument::create(nullptr, m_settings, URL());
             auto decoder = TextResourceDecoder::create("application/xml");
 
             ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
 
-            m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->makeContiguous()->data(), m_data->size()));
+            externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->makeContiguous()->data(), m_data->size()));
             sawError = decoder->sawError();
+            m_externalSVGDocument = WTFMove(externalSVGDocument);
         }
 
         if (sawError)

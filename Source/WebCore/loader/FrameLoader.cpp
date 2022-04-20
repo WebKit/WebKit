@@ -345,7 +345,8 @@ void FrameLoader::init()
     m_provisionalDocumentLoader->startLoadingMainResource();
 
     Ref<Frame> protect(m_frame);
-    m_frame.document()->cancelParsing();
+    Ref document { *m_frame.document() };
+    document->cancelParsing();
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
 
     m_networkingContext = m_client->createNetworkingContext();
@@ -626,12 +627,13 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     m_needsClear = false;
 
     if (neededClear && m_frame.document()->backForwardCacheState() != Document::InBackForwardCache) {
-        m_frame.document()->cancelParsing();
-        m_frame.document()->stopActiveDOMObjects();
-        bool hadLivingRenderTree = m_frame.document()->hasLivingRenderTree();
-        m_frame.document()->willBeRemovedFromFrame();
+        Ref document { *m_frame.document() };
+        document->cancelParsing();
+        document->stopActiveDOMObjects();
+        bool hadLivingRenderTree = document->hasLivingRenderTree();
+        document->willBeRemovedFromFrame();
         if (hadLivingRenderTree)
-            m_frame.document()->adjustFocusedNodeOnNodeRemoval(*m_frame.document());
+            document->adjustFocusedNodeOnNodeRemoval(document);
     }
 
     if (handleDOMWindowCreation)
