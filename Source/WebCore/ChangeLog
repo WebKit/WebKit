@@ -1,3 +1,48 @@
+2022-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r281913): Map toolbar flickers when dragging the map on https://gis.ee/
+        https://bugs.webkit.org/show_bug.cgi?id=238589
+        <rdar://90483049>
+
+        Reviewed by Alan Bujtas.
+        
+        If a layer has negative z-order descendants, and one of those descendants becomes
+        composited, then that layer also has to composite, because its foreground needs to render in
+        front of those descendants. But this is tricky, because the compositing toggle is
+        out-of-order; we only know that the layer has to get composited after processing
+        descendants.
+
+        In particular, this created a problem with the overlap map, which tracks sets of rectangles
+        in "compositing scopes" via LayerOverlapMap. The delayed compositing toggle of the layer
+        with negative z-order descendants meant that any layers processed up to that point had their
+        bounds added in the wrong overlap scope. This resulted in subsequent bad overlap testing,
+        and a failure to make later layers composited.
+
+        The previous fix in this area (r281913) was incorrect. Revert it, and do a better fix, which
+        is to speculatively push an overlap map entry for the layer with negative z-order
+        descendants, if necessary. If this layer ends up not getting composited, we unwind the
+        speculative push, which will merge that scope with its parent scope.
+
+        In addition give OverlapMapContainer (an "overlap scope") a RenderLayer& which we can use
+        for logging, and to assert on correct behavior; it is not otherwise used in release builds.
+
+        Tests: compositing/layer-creation/overlap-with-negative-z-layers.html
+               compositing/layer-creation/subtree-div-overlaps-multiple-negative-z-divs.html
+
+        * rendering/LayerOverlapMap.cpp:
+        (WebCore::OverlapMapContainer::OverlapMapContainer):
+        (WebCore::OverlapMapContainer::scopeLayer const):
+        (WebCore::OverlapMapContainer::dump const):
+        (WebCore::LayerOverlapMap::LayerOverlapMap):
+        (WebCore::LayerOverlapMap::add):
+        (WebCore::LayerOverlapMap::pushCompositingContainer):
+        (WebCore::LayerOverlapMap::popCompositingContainer):
+        * rendering/LayerOverlapMap.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::traverseUnchangedSubtree):
+        (WebCore::RenderLayerCompositor::updateOverlapMap const):
+
 2022-04-20  Chris Dumez  <cdumez@apple.com>
 
         Simplify type checking / casting in JSEventListener::handleEvent()

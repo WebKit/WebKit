@@ -14,5 +14,5 @@ layer at (0,0) size 800x600 (composited [root], bounds=at (0,0) size 800x600, dr
             RenderSVGRect {rect} at (18,278) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=20.00] [width=100.00] [height=100.00]
           RenderText {#text} at (0,0) size 0x0
    positive z-order list (1)
-    layer at (8,8) size 200x400
+    layer at (8,8) size 200x400 (composited [overlap], bounds=at (0,0) size 200x400, drawsContent=0, paints into ancestor=0)
       RenderBlock (relative positioned) zI: 1 {DIV} at (0,0) size 200x400

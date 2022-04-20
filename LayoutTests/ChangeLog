@@ -1,3 +1,20 @@
+2022-04-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r281913): Map toolbar flickers when dragging the map on https://gis.ee/
+        https://bugs.webkit.org/show_bug.cgi?id=238589
+        <rdar://90483049>
+
+        Reviewed by Alan Bujtas.
+
+        Move subtree-div-overlaps-multiple-negative-z-divs.html into the layer-creation directory.
+        Add a new test.
+
+        * compositing/layer-creation/overlap-with-negative-z-layers-expected.html: Added.
+        * compositing/layer-creation/overlap-with-negative-z-layers.html: Added.
+        * compositing/layer-creation/subtree-div-overlaps-multiple-negative-z-divs-expected.html: Renamed from LayoutTests/compositing/subtree-div-overlaps-multiple-negative-z-divs-expected.html.
+        * compositing/layer-creation/subtree-div-overlaps-multiple-negative-z-divs.html: Renamed from LayoutTests/compositing/subtree-div-overlaps-multiple-negative-z-divs.html.
+        * fast/harness/render-tree-as-text-options-expected.txt: Test progressed; update results.
+
 2022-04-20  Karl Rackler  <rackler@apple.com>
 
         [ macOS wk2 ] media/audio-session-category-at-most-recent-playback.html is a flaky failure
