@@ -368,12 +368,12 @@
                     },
                     {
                       "name": "Apple-watchOS-8-Release-Build", "factory": "BuildFactory", "builddir": "watchos-8-release",
-                      "platform": "watchos-8", "configuration": "release", "architectures": ["arm64_32", "armv7k"],
+                      "platform": "watchos-8", "configuration": "release", "architectures": ["arm64_32", "arm64"],
                       "workernames": ["bot609"]
                     },
                     {
                       "name": "Apple-watchOS-Simulator-8-Release-Build", "factory": "BuildFactory", "builddir": "watchos-simulator-8-release",
-                      "platform": "watchos-simulator-8", "configuration": "release", "architectures": ["i386"],
+                      "platform": "watchos-simulator-8", "configuration": "release", "architectures": ["arm64"],
                       "workernames": ["bot672"]
                     },
                     {
