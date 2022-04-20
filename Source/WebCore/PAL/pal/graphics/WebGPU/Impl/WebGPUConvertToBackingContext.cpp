@@ -573,7 +573,7 @@ WGPUTextureFormat ConvertToBackingContext::convertToBacking(TextureFormat textur
     case TextureFormat::Astc12x12UnormSRGB:
         return static_cast<WGPUTextureFormat>(WGPUTextureFormat_ASTC12x12UnormSrgb);
     case TextureFormat::Depth24unormStencil8:
-        return WGPUTextureFormat_Depth24PlusStencil8;
+        return WGPUTextureFormat_Depth24UnormStencil8;
     case TextureFormat::Depth32floatStencil8:
         return static_cast<WGPUTextureFormat>(WGPUTextureFormat_Depth32FloatStencil8);
     }

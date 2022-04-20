@@ -1,3 +1,15 @@
+2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Fix texture conversion format typo
+        https://bugs.webkit.org/show_bug.cgi?id=239446
+
+        Reviewed by Kimmo Kinnunen.
+
+        I mixed up "plus" and "unorm".
+
+        * pal/graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp:
+        (PAL::WebGPU::ConvertToBackingContext::convertToBacking):
+
 2022-04-19  Antoine Quint  <graouts@apple.com>
 
         [model] set canonicalWebPageURL and urlFragment on ASVInlinePreview on iOS
