@@ -363,49 +363,6 @@
             * fast/files/blob-with-fragment-as-frame-url-expected.txt: Added.
             * fast/files/blob-with-fragment-as-frame-url.html: Added.
 
-2022-04-19  Alan Coon  <alancoon@apple.com>
-
-        Cherry-pick r291281. rdar://problem/90245637
-
-    Crash in KeyframeList.cpp:183 in WebCore::KeyframeList::fillImplicitKeyframes
-    https://bugs.webkit.org/show_bug.cgi?id=237858
-    
-    Reviewed by Antoine Quint.
-    
-    Source/WebCore:
-    
-    When filling implicit key frames, we iterate through the current keyframes (m_keyframes),
-    and cache the address of the implicitZeroKeyframe and implicitOneKeyframe.
-    
-    However, if we're not provided with an existing implicit zero keyframe, we will create a new one
-    and insert it to the list of current keyframes.
-    
-    This mutates m_keyframes and the old address for the implicitOneKeyframe would no longer be valid.
-    Thus we should iterate through the current keyframes, after the insertion, to get the latest address.
-    
-    Test: animations/fill-implicit-keyframes-crash.html
-    
-    * rendering/style/KeyframeList.cpp:
-    (WebCore::KeyframeList::fillImplicitKeyframes):
-    
-    LayoutTests:
-    
-    * animations/fill-implicit-keyframes-crash-expected.txt: Added.
-    * animations/fill-implicit-keyframes-crash.html: Added.
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291281 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2022-03-15  Gabriel Nava Marino  <gnavamarino@apple.com>
-
-            Crash in KeyframeList.cpp:183 in WebCore::KeyframeList::fillImplicitKeyframes
-            https://bugs.webkit.org/show_bug.cgi?id=237858
-
-            Reviewed by Antoine Quint.
-
-            * animations/fill-implicit-keyframes-crash-expected.txt: Added.
-            * animations/fill-implicit-keyframes-crash.html: Added.
-
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r292858. rdar://problem/90699078
