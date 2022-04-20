@@ -1,9 +1,7 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <body>
 <script>
-// Force line box path.
-if (window.internals)
-    internals.settings.setSimpleLineLayoutEnabled(false);
 var docToAppendTo;
 function addTextarea(properties, opt_innerHTML) {
     var title = docToAppendTo.createTextNode();

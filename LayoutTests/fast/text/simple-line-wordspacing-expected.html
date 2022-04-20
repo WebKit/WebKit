@@ -1,10 +1,9 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>This tests that simple line layout renders word-spacing properly.</title>
 <body>
 <script>
-if (window.internals)
-	internals.settings.setSimpleLineLayoutEnabled(false);
 for (var i = -6; i < 15; ++i) {
     var element = document.createElement("div");
     element.innerHTML = "a b	c d	e f	g";

@@ -330,16 +330,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setVisibleDebugOverlayRegions(regionFlags);
 }
 
-- (BOOL)_simpleLineLayoutEnabled
-{
-    return _preferences->simpleLineLayoutEnabled();
-}
-
-- (void)_setSimpleLineLayoutEnabled:(BOOL)simpleLineLayoutEnabled
-{
-    _preferences->setSimpleLineLayoutEnabled(simpleLineLayoutEnabled);
-}
-
 - (BOOL)_legacyLineLayoutVisualCoverageEnabled
 {
     return _preferences->legacyLineLayoutVisualCoverageEnabled();

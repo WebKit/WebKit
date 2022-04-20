@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>This tests that leading whitespace followed by soft/hard linebreaks.</title>
@@ -8,10 +8,6 @@ div {
   font-size: 13px;
 }
 </style>
-<script>
-if (window.internals)
-    internals.settings.setSimpleLineLayoutEnabled(false);
-</script>
 </head>
 <body>
 <div>foobarfoobar foobi <br>foobar</div>

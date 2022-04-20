@@ -1,3 +1,42 @@
+2022-04-20  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Do not call WebPreferences::simpleLineLayoutEnabled in canUseForLineLayoutWithReason
+        https://bugs.webkit.org/show_bug.cgi?id=239540
+
+        Reviewed by Antti Koivisto.
+
+        1. Use RuntimeEnabledFeatures::sharedFeatures() instead of Page::Settings.
+        2. Remove simpleLineLayoutEnabled setting.
+        3. Rename LayoutFormattingContextIntegrationEnabled -> InlineFormattingContextIntegrationEnabled (in preparation for adding more of these FCs).
+
+        * display/DisplayView.cpp:
+        (WebCore::Display::View::prepareForDisplay):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::formattingStateForFormattingContext const):
+        (WebCore::Layout::LayoutState::formattingStateForInlineFormattingContext const):
+        (WebCore::Layout::LayoutState::ensureInlineFormattingState):
+        (WebCore::Layout::LayoutState::setViewportSize):
+        (WebCore::Layout::LayoutState::viewportSize const):
+        (WebCore::Layout::LayoutState::setIsIntegratedRootBoxFirstChild):
+        (WebCore::Layout::LayoutState::shouldIgnoreTrailingLetterSpacing const):
+        (WebCore::Layout::LayoutState::shouldNotSynthesizeInlineBlockBaseline const):
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::close):
+        * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::appendTextDisplayBox):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForLineLayoutWithReason):
+        * layout/integration/inline/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::isEnabled):
+        (WebCore::LayoutIntegration::LineLayout::releaseCaches):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setInlineFormattingContextIntegrationEnabled):
+        (WebCore::RuntimeEnabledFeatures::inlineFormattingContextIntegrationEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setLayoutFormattingContextIntegrationEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::layoutFormattingContextIntegrationEnabled const): Deleted.
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::clearGlyphDisplayLists):
+
 2022-04-20  Chris Dumez  <cdumez@apple.com>
 
         Avoid repeated calls to eventNames() in a few more places

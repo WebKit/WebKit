@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>This test that we don't crash on a null text node with marker on it.</title>
@@ -15,14 +16,10 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 if (window.internals) {
-	internals.settings.setSimpleLineLayoutEnabled(false);	
 	var findOptions = ['CaseInsensitive', 'AtWordStarts', 'TreatMedialCapitalAsWordStart', 'WrapAround'];
 	internals.countMatchesForText('assert', findOptions, 'mark');
 }
 
-document.body.offsetHeight;
-if (window.internals)
-	internals.settings.setSimpleLineLayoutEnabled(true);
 document.body.offsetHeight;
 </script>
 </body>

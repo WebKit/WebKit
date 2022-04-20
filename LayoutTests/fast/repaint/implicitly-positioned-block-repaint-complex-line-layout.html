@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <script>jsTestIsAsync = true;</script>
@@ -6,7 +7,6 @@
 <script>
 window.onload = function() {
     if (window.internals) {
-        internals.settings.setSimpleLineLayoutEnabled(false)
         window.internals.startTrackingRepaints();
     }
     setTimeout(function() {

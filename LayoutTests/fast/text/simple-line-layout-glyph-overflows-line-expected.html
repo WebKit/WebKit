@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html><!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>This tests that we bail out of simple line layout when glyph overflows the line</title>
@@ -8,10 +8,6 @@ div {
 	font-size: 18px;
 }
 </style>
-<script>
-if (window.internals)
-   internals.settings.setSimpleLineLayoutEnabled(false);
-</script>
 </head>
 <body>
 <div style="line-height: 13px">f<br>overflows this line.</div>

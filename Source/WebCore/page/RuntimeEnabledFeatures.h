@@ -111,8 +111,8 @@ public:
     void setLayoutFormattingContextEnabled(bool isEnabled) { m_layoutFormattingContextEnabled = isEnabled; }
     bool layoutFormattingContextEnabled() const { return m_layoutFormattingContextEnabled; }
 
-    void setLayoutFormattingContextIntegrationEnabled(bool isEnabled) { m_layoutFormattingContextIntegrationEnabled = isEnabled; }
-    bool layoutFormattingContextIntegrationEnabled() const { return m_layoutFormattingContextIntegrationEnabled; }
+    void setInlineFormattingContextIntegrationEnabled(bool isEnabled) { m_inlineFormattingContextIntegrationEnabled = isEnabled; }
+    bool inlineFormattingContextIntegrationEnabled() const { return m_inlineFormattingContextIntegrationEnabled; }
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
@@ -296,7 +296,7 @@ private:
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool m_layoutFormattingContextEnabled { false };
-    bool m_layoutFormattingContextIntegrationEnabled { true };
+    bool m_inlineFormattingContextIntegrationEnabled { true };
 #endif
 
 #if ENABLE(CSS_PAINTING_API)

@@ -116,7 +116,7 @@ const LineLayout* LineLayout::containing(const RenderObject& renderer)
 
 bool LineLayout::isEnabled()
 {
-    return RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled();
+    return RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled();
 }
 
 bool LineLayout::canUseFor(const RenderBlockFlow& flow)
@@ -867,7 +867,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
 void LineLayout::releaseCaches(RenderView& view)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled())
         return;
 
     for (auto& renderer : descendantsOfType<RenderBlockFlow>(view)) {

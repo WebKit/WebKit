@@ -100,7 +100,7 @@ bool LayoutState::hasFormattingState(const ContainerBox& formattingContextRoot) 
 FormattingState& LayoutState::formattingStateForFormattingContext(const ContainerBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+    if (RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled()) {
         ASSERT(&formattingContextRoot == m_rootContainer.ptr());
         return *m_rootInlineFormattingStateForIntegration;
     }
@@ -124,7 +124,7 @@ InlineFormattingState& LayoutState::formattingStateForInlineFormattingContext(co
 {
     ASSERT(inlineFormattingContextRoot.establishesInlineFormattingContext());
 
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+    if (RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled()) {
         ASSERT(&inlineFormattingContextRoot == m_rootContainer.ptr());
         return *m_rootInlineFormattingStateForIntegration;
     }
@@ -169,7 +169,7 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerB
         return makeUnique<InlineFormattingState>(parentFloatingState, *this);
     };
 
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
+    if (RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled()) {
         if (!m_rootInlineFormattingStateForIntegration) {
             ASSERT(&formattingContextRoot == m_rootContainer.ptr());
             m_rootInlineFormattingStateForIntegration = create();
@@ -217,30 +217,30 @@ FlexFormattingState& LayoutState::ensureFlexFormattingState(const ContainerBox& 
 
 void LayoutState::setViewportSize(const LayoutSize& viewportSize)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled());
     m_viewportSize = viewportSize;
 }
 
 LayoutSize LayoutState::viewportSize() const
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled());
     return m_viewportSize;
 }
 
 void LayoutState::setIsIntegratedRootBoxFirstChild(bool value)
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled());
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled());
     m_isIntegratedRootBoxFirstChild = value ? IsIntegratedRootBoxFirstChild::Yes : IsIntegratedRootBoxFirstChild::No;
 }
 
 bool LayoutState::shouldIgnoreTrailingLetterSpacing() const
 {
-    return RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled();
+    return RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled();
 }
 
 bool LayoutState::shouldNotSynthesizeInlineBlockBaseline() const
 {
-    return RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled();
+    return RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled();
 }
 
 }

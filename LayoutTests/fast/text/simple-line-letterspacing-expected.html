@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>This tests that simple line layout renders letter-spacing properly.</title>
@@ -9,8 +10,6 @@
 </head>
 <body>
 <script>
-if (window.internals)
-	internals.settings.setSimpleLineLayoutEnabled(false);
 for (var i = -10; i < 10; ++i) {
     var element = document.createElement("div");
     element.innerText = "foobar";

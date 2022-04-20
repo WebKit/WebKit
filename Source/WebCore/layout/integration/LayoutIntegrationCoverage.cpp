@@ -559,7 +559,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
 #endif
     OptionSet<AvoidanceReason> reasons;
     // FIXME: For tests that disable SLL and expect to get CLL.
-    if (!flow.settings().simpleLineLayoutEnabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled())
         SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
     auto establishesInlineFormattingContext = [&] {
         if (flow.isRenderView()) {

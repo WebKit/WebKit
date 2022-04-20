@@ -1,3 +1,15 @@
+2022-04-20  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Do not call WebPreferences::simpleLineLayoutEnabled in canUseForLineLayoutWithReason
+        https://bugs.webkit.org/show_bug.cgi?id=239540
+
+        Reviewed by Antti Koivisto.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences simpleLineLayoutEnabled]): Deleted.
+        (-[WebPreferences setSimpleLineLayoutEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
 2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] WebKit and WebKitLegacy shouldn't need to know about WebGPU.framework

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>This tests that simple and normal line layout produce the same lines with webkit-hyphenate-limit-lines</title>
@@ -12,10 +12,6 @@ div {
   font-size: 30px;
 }
 </style>
-<script>
-if (window.internals)
-	internals.settings.setSimpleLineLayoutEnabled(false);
-</script>
 </head>
 <body>
 <div style="-webkit-hyphenate-limit-lines: 0">some text here foobar some text foobar some text foobar some text foobar</div>

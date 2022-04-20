@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>Test that segments across multiple renderers work fine with simple line layout.</title>
@@ -24,8 +24,6 @@ function injectTextNodes(container, style)
 	document.body.appendChild(container);
 }
 
-if (window.internals)
-	internals.settings.setSimpleLineLayoutEnabled(false)
 injectTextNodes(document.createElement("div"));
 injectTextNodes(document.createElement("div"), "width: 0px");
 injectTextNodes(document.createElement("div"), "width: 10px");

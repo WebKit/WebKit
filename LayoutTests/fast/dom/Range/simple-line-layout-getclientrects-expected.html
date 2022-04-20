@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <head>
 <title>This tests that simple and normal line layout produce the same getClientRects result.</title>
 <style>
@@ -33,9 +33,6 @@
 <div class="box" id="test9">9 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
 <div class="box" id="test10">10 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
 <script>
-    if (window.internals)
-        internals.settings.setSimpleLineLayoutEnabled(false);
-
     function visualizeClientRects(range) {
     	var rects = range.getClientRects();
         for (var i = 0; i < rects.length; ++i) {

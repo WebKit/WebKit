@@ -221,7 +221,7 @@ void TextPainter::clearGlyphDisplayLists()
 {
     GlyphDisplayListCache<LegacyInlineTextBox>::singleton().clear();
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled())
         GlyphDisplayListCache<InlineDisplay::Box>::singleton().clear();
 #endif
 }

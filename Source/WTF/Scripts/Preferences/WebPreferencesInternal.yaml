@@ -408,6 +408,18 @@ ImageAnalysisQueueEnabled:
     WebKit:
       default: defaultImageAnalysisQueueEnabled()
 
+InlineFormattingContextIntegrationEnabled:
+  type: bool
+  humanReadableName: "Next-generation inline layout integration (IFC)"
+  humanReadableDescription: "Enable next-generation inline layout integration (IFC)"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
 InputTypeColorEnabled:
   type: bool
   humanReadableName: "Color Inputs"
@@ -547,18 +559,6 @@ LayoutFormattingContextEnabled:
       default: false
     WebKit:
       default: false
-
-LayoutFormattingContextIntegrationEnabled:
-  type: bool
-  humanReadableName: "Next-generation line layout integration (LFC)"
-  humanReadableDescription: "Enable next-generation line layout integration (LFC)"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
 
 LegacyOverflowScrollingTouchEnabled:
   type: bool
@@ -851,19 +851,6 @@ ServiceWorkersUserGestureEnabled:
   defaultValue:
     WebKitLegacy:
       default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-SimpleLineLayoutEnabled:
-  type: bool
-  webcoreOnChange: setNeedsRecalcStyleInAllFrames
-  humanReadableName: "Simple line layout"
-  humanReadableDescription: "Enable simple line layout path (SLL)"
-  defaultValue:
-    WebKitLegacy:
-      default: true
     WebKit:
       default: true
     WebCore:

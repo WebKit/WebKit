@@ -5204,3 +5204,8 @@ http/tests/webgpu [ Failure ImageOnlyFailure Pass Timeout ]
 fast/text/install-font-style-recalc.html [ Failure ]
 
 webkit.org/b/239533 [ Debug ] editing/inserting/insert-list-user-select-none-crash.html [ Skip ]
+
+# Mismatching line wrapping when -webkit-hyphen is auto.
+webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ ImageOnlyFailure ]
+webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ ImageOnlyFailure ]
+webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ ImageOnlyFailure ]

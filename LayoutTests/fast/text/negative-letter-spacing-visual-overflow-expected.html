@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>This tests that we compute the visual overflow rect for negative letter spacing properly.</title>
@@ -13,8 +13,6 @@ div {
 </head>
 <body>
 <script>
-if (window.internals)
-    internals.settings.setSimpleLineLayoutEnabled(false);
 var letterSpacing = 0;
 var topPosition = 0;
 for (var i = 0; i < 20; ++i, topPosition += 25, letterSpacing -= 1) {

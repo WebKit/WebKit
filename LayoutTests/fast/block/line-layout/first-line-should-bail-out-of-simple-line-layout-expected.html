@@ -1,10 +1,7 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <html>
 <head>
 <title>This tests that we properly bail out of simple line layout when first-line pseudo class is present.</title>
-<script>
-  if (window.internals)
-    internals.settings.setSimpleLineLayoutEnabled(false);
-</script>
 <style>
   .outer::first-line{
     color: red;
