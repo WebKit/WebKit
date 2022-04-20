@@ -2362,6 +2362,7 @@ sub GenerateEnumerationImplementationContent
     AddToImplIncludes("<JavaScriptCore/JSString.h>");
     AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
     AddToImplIncludes("JSDOMConvertEnumeration.h");
+    AddToImplIncludes("<wtf/SortedArrayMap.h>");
 
     my $result = "";
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
@@ -2402,15 +2403,21 @@ sub GenerateEnumerationImplementationContent
     $result .= "template<> std::optional<$className> parseEnumeration<$className>(JSGlobalObject& lexicalGlobalObject, JSValue value)\n";
     $result .= "{\n";
     $result .= "    auto stringValue = value.toWTFString(&lexicalGlobalObject);\n";
-    foreach my $value (@{$enumeration->values}) {
-        my $enumerationValueName = GetEnumerationValueName($value);
-        if ($value eq "") {
-            $result .= "    if (stringValue.isEmpty())\n";
-        } else {
-            $result .= "    if (stringValue == \"$value\")\n";
-        }
-        $result .= "        return ${className}::${enumerationValueName};\n";
+    my @sortedEnumerationValues = sort @{$enumeration->values};
+    if ($sortedEnumerationValues[0] eq "") {
+        $result .= "    if (stringValue.isEmpty())\n";
+        my $enumerationValueName = GetEnumerationValueName(shift(@sortedEnumerationValues));
+        $result .= "        return ${className}::$enumerationValueName;\n";
     }
+    $result .= "    static constexpr std::pair<ComparableASCIILiteral, $className> mappings[] = {\n";
+    for my $value (@sortedEnumerationValues) {
+        my $enumerationValueName = GetEnumerationValueName($value);
+        $result .= "        { \"$value\", ${className}::$enumerationValueName },\n";
+    }
+    $result .= "    };\n";
+    $result .= "    static constexpr SortedArrayMap enumerationMapping { mappings };\n";
+    $result .= "    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))\n";
+    $result .= "        return *enumerationValue;\n";
     $result .= "    return std::nullopt;\n";
     $result .= "}\n\n";
 

@@ -1,3 +1,35 @@
+2022-04-19  Chris Dumez  <cdumez@apple.com>
+
+        Use SortedArrayMap in parseEnumeration<>() in the JS bindings
+        https://bugs.webkit.org/show_bug.cgi?id=239503
+
+        Reviewed by Darin Adler.
+
+        Use SortedArrayMap in parseEnumeration<>() in the JS bindings, which should be slightly
+        better for performance.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationImplementationContent):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::parseEnumeration<TestCallbackInterface::Enum>):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONEnum.cpp:
+        (WebCore::parseEnumeration<TestDefaultToJSONEnum>):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::parseEnumeration<TestObj::EnumType>):
+        (WebCore::parseEnumeration<TestObj::EnumTrailingComma>):
+        (WebCore::parseEnumeration<TestObj::Optional>):
+        (WebCore::parseEnumeration<AlternateEnumName>):
+        (WebCore::parseEnumeration<TestObj::EnumA>):
+        (WebCore::parseEnumeration<TestObj::EnumB>):
+        (WebCore::parseEnumeration<TestObj::EnumC>):
+        (WebCore::parseEnumeration<TestObj::Kind>):
+        (WebCore::parseEnumeration<TestObj::Size>):
+        (WebCore::parseEnumeration<TestObj::Confidence>):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::parseEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>):
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.cpp:
+        (WebCore::parseEnumeration<TestStandaloneEnumeration>):
+
 2022-04-19  Tim Nguyen  <ntim@apple.com>
 
         Clean up SVGs added by r293038

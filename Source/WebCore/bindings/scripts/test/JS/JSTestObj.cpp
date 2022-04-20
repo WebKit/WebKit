@@ -103,6 +103,7 @@
 #include <variant>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 
@@ -152,12 +153,14 @@ template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
     if (stringValue.isEmpty())
         return TestObj::EnumType::EmptyString;
-    if (stringValue == "enumValue1")
-        return TestObj::EnumType::EnumValue1;
-    if (stringValue == "EnumValue2")
-        return TestObj::EnumType::EnumValue2;
-    if (stringValue == "EnumValue3")
-        return TestObj::EnumType::EnumValue3;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumType> mappings[] = {
+        { "EnumValue2", TestObj::EnumType::EnumValue2 },
+        { "EnumValue3", TestObj::EnumType::EnumValue3 },
+        { "enumValue1", TestObj::EnumType::EnumValue1 },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -186,10 +189,13 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    if (stringValue == "enumValue1")
-        return TestObj::EnumTrailingComma::EnumValue1;
-    if (stringValue == "enumValue2")
-        return TestObj::EnumTrailingComma::EnumValue2;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumTrailingComma> mappings[] = {
+        { "enumValue1", TestObj::EnumTrailingComma::EnumValue1 },
+        { "enumValue2", TestObj::EnumTrailingComma::EnumValue2 },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -224,12 +230,14 @@ template<> std::optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
     if (stringValue.isEmpty())
         return TestObj::Optional::EmptyString;
-    if (stringValue == "OptionalValue1")
-        return TestObj::Optional::OptionalValue1;
-    if (stringValue == "OptionalValue2")
-        return TestObj::Optional::OptionalValue2;
-    if (stringValue == "OptionalValue3")
-        return TestObj::Optional::OptionalValue3;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::Optional> mappings[] = {
+        { "OptionalValue1", TestObj::Optional::OptionalValue1 },
+        { "OptionalValue2", TestObj::Optional::OptionalValue2 },
+        { "OptionalValue3", TestObj::Optional::OptionalValue3 },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -258,10 +266,13 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    if (stringValue == "enumValue1")
-        return AlternateEnumName::EnumValue1;
-    if (stringValue == "EnumValue2")
-        return AlternateEnumName::EnumValue2;
+    static constexpr std::pair<ComparableASCIILiteral, AlternateEnumName> mappings[] = {
+        { "EnumValue2", AlternateEnumName::EnumValue2 },
+        { "enumValue1", AlternateEnumName::EnumValue1 },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -290,8 +301,12 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    if (stringValue == "A")
-        return TestObj::EnumA::A;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumA> mappings[] = {
+        { "A", TestObj::EnumA::A },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -322,8 +337,12 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    if (stringValue == "B")
-        return TestObj::EnumB::B;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumB> mappings[] = {
+        { "B", TestObj::EnumB::B },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -354,8 +373,12 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    if (stringValue == "C")
-        return TestObj::EnumC::C;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::EnumC> mappings[] = {
+        { "C", TestObj::EnumC::C },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -386,10 +409,13 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    if (stringValue == "quick")
-        return TestObj::Kind::Quick;
-    if (stringValue == "dead")
-        return TestObj::Kind::Dead;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::Kind> mappings[] = {
+        { "dead", TestObj::Kind::Dead },
+        { "quick", TestObj::Kind::Quick },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -418,10 +444,13 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    if (stringValue == "small")
-        return TestObj::Size::Small;
-    if (stringValue == "much-much-larger")
-        return TestObj::Size::MuchMuchLarger;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::Size> mappings[] = {
+        { "much-much-larger", TestObj::Size::MuchMuchLarger },
+        { "small", TestObj::Size::Small },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
@@ -450,10 +479,13 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    if (stringValue == "high")
-        return TestObj::Confidence::High;
-    if (stringValue == "kinda-low")
-        return TestObj::Confidence::KindaLow;
+    static constexpr std::pair<ComparableASCIILiteral, TestObj::Confidence> mappings[] = {
+        { "high", TestObj::Confidence::High },
+        { "kinda-low", TestObj::Confidence::KindaLow },
+    };
+    static constexpr SortedArrayMap enumerationMapping { mappings };
+    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
+        return *enumerationValue;
     return std::nullopt;
 }
 
