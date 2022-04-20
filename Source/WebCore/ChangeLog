@@ -1,3 +1,22 @@
+2022-04-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, non-unified build fixes after r293052
+
+        * css/typedom/numeric/CSSMathMin.cpp:
+        * css/typedom/numeric/CSSMathNegate.cpp:
+        * css/typedom/numeric/CSSMathProduct.cpp:
+        * css/typedom/numeric/CSSMathSum.cpp:
+        * css/typedom/transform/CSSSkew.cpp:
+        * dom/CustomElementRegistry.cpp:
+        * html/InputTypeNames.cpp:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        * page/FocusController.cpp:
+        * style/AttributeChangeInvalidation.cpp:
+        * style/ClassChangeInvalidation.cpp:
+        * style/ElementRuleCollector.cpp:
+        * style/IdChangeInvalidation.cpp:
+        * style/StyleSharingResolver.cpp:
+
 2022-04-20  Tim Nguyen  <ntim@apple.com>
 
         REGRESSION(r293044): Extraneous border around AutoFill buttons in `active` and `hover` states

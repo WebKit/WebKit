@@ -42,6 +42,7 @@
 #include "DOMWindow.h"
 #include "ElementAncestorIterator.h"
 #include "ElementChildIterator.h"
+#include "ElementRareData.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascade.h"

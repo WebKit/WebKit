@@ -1,3 +1,10 @@
+2022-04-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, non-unified build fixes after r293052
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::handleEvent):
+
 2022-04-19  Ben Nham  <nham@apple.com>
 
         Handle public token updates in webpushd

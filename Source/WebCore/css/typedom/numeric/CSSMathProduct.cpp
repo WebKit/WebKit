@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSMathInvert.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>

@@ -32,6 +32,7 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSUnitValue.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>

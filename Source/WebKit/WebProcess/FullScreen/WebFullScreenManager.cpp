@@ -373,7 +373,7 @@ void WebFullScreenManager::setFullscreenControlsHidden(bool hidden)
 void WebFullScreenManager::handleEvent(WebCore::ScriptExecutionContext& context, WebCore::Event& event)
 {
 #if ENABLE(VIDEO)
-    RefPtr targetElement = dynamicDowncast<Element>(event.currentTarget());
+    RefPtr targetElement = dynamicDowncast<WebCore::Element>(event.currentTarget());
     if (!m_element || &context != &m_element->document() || !targetElement)
         return;
 

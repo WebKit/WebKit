@@ -35,6 +35,7 @@
 #include "CSSValueKeywords.h"
 #include "ContainerQueryEvaluator.h"
 #include "ElementInlines.h"
+#include "ElementRareData.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
 #include "SVGElement.h"

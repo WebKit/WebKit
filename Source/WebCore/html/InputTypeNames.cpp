@@ -22,6 +22,7 @@
 #include "config.h"
 #include "InputTypeNames.h"
 
+#include "HTMLNames.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

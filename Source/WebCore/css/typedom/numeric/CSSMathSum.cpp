@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSMathNegate.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>

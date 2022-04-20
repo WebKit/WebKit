@@ -27,6 +27,7 @@
 #include "ClassChangeInvalidation.h"
 
 #include "ElementChildIterator.h"
+#include "ElementRareData.h"
 #include "SpaceSplitString.h"
 #include "StyleInvalidationFunctions.h"
 #include <wtf/BitVector.h>

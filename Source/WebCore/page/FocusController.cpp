@@ -35,6 +35,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
+#include "ElementRareData.h"
 #include "ElementTraversal.h"
 #include "Event.h"
 #include "EventHandler.h"
