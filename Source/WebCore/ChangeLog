@@ -1,3 +1,16 @@
+2022-04-20  Tim Nguyen  <ntim@apple.com>
+
+        REGRESSION(r293044): Extraneous border around AutoFill buttons in `active` and `hover` states
+        https://bugs.webkit.org/show_bug.cgi?id=239531
+
+        Unreviewed fix.
+
+        Used "Convert to Outlines" tool in Sketch for outlines, then cleaned up SVGs, instead of stroke atttributes.
+
+        * css/html.css:
+        (input::-webkit-credentials-auto-fill-button:hover):
+        (input::-webkit-credentials-auto-fill-button:active):
+
 2022-04-19  Alex Christensen  <achristensen@webkit.org>
 
         Remove unnecessary String allocations in CSSPrimitiveValue::unitTypeString
