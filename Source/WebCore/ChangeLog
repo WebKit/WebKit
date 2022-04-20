@@ -1,3 +1,69 @@
+2022-04-20  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Optimize code for deferred properties
+        https://bugs.webkit.org/show_bug.cgi?id=238260
+
+        Reviewed by Darin Adler.
+
+        CSS declarations for deferred properties were just appended to a vector,
+        which could grow huge. Then StyleBuilder would apply them one by one,
+        doing useless work if a property appeared multiple times.
+
+        The point of deferred properties is that they should be applied in
+        relative order. But if a property appears multiple times, we should only
+        care about the last occurrence.
+
+        So this patch removes the vector and instead stores the Property in the
+        same array as non-deferred properties. To track the indices, it uses an
+        array instead of a HashMap.
+
+        When applying the properties, the property IDs are placed in a vector,
+        which is then sorted according to the corresponding indices. This can
+        have some overhead, but the size of the vector will be limited by the
+        number of deferred properties. Currently there are only 8 of these (in
+        bug 236199 I plan to add 96 more, but 104 is still not that big).
+
+        No new tests since there should be no change in behavior.
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::buildCascade):
+        Call sortDeferredPropertyIDs().
+
+        (WebCore::Style::initializeCSSValue):
+        Move a low-level idiom into its own function.
+
+        (WebCore::Style::PropertyCascade::set):
+        Use the new initializeCSSValue().
+
+        (WebCore::Style::PropertyCascade::setDeferred):
+        Use the new data structures for deferred properties.
+
+        (WebCore::Style::PropertyCascade::sortDeferredPropertyIDs):
+        New private method to sort the deferred property IDs according to their
+        index.
+
+        * style/PropertyCascade.h:
+        (WebCore::Style::PropertyCascade::deferredPropertyIndex const):
+        New private method to get the index of the deferred property.
+
+        (WebCore::Style::PropertyCascade::setDeferredPropertyIndex):
+        New private method to set the index of a deferred property.
+
+        (WebCore::Style::PropertyCascade::hasDeferredProperty const):
+        Use the new data structures for deferred properties.
+
+        (WebCore::Style::PropertyCascade::deferredProperty const):
+        Use the new data structures for deferred properties.
+
+        (WebCore::Style::PropertyCascade::deferredPropertyIDs const):
+        New method to get the deferred property IDs sorted by their index.
+
+        (WebCore::Style::PropertyCascade::deferredProperties const): Deleted.
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyDeferredProperties):
+        Use the new data structures for deferred properties.
+
 2022-04-20  Simon Fraser  <simon.fraser@apple.com>
 
         Some AutoscrollController cleanup

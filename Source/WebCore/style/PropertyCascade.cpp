@@ -77,6 +77,8 @@ void PropertyCascade::buildCascade()
             continue;
         addImportantMatches(cascadeLevel);
     }
+
+    sortDeferredPropertyIDs();
 }
 
 void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
@@ -94,6 +96,11 @@ void PropertyCascade::setPropertyInternal(Property& property, CSSPropertyID id, 
         property.cssValue[SelectorChecker::MatchVisited] = &cssValue;
     } else
         property.cssValue[matchedProperties.linkMatchType] = &cssValue;
+}
+
+static void initializeCSSValue(PropertyCascade::Property& property)
+{
+    property.cssValue = { };
 }
 
 void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
@@ -114,7 +121,7 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
         if (!hasValue) {
             Property property;
             property.id = id;
-            memset(property.cssValue, 0, sizeof(property.cssValue));
+            initializeCSSValue(property);
             setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
             m_customProperties.set(customValue.name(), property);
         } else {
@@ -126,7 +133,7 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
     }
 
     if (!m_propertyIsPresent[id])
-        memset(property.cssValue, 0, sizeof(property.cssValue));
+        initializeCSSValue(property);
     m_propertyIsPresent.set(id);
     setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
 }
@@ -135,12 +142,16 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const Ma
 {
     ASSERT(!CSSProperty::isDirectionAwareProperty(id));
     ASSERT(id >= firstDeferredProperty);
+    ASSERT(id <= lastDeferredProperty);
 
-    Property property;
-    memset(property.cssValue, 0, sizeof(property.cssValue));
+    auto& property = m_properties[id];
+    if (!hasDeferredProperty(id)) {
+        initializeCSSValue(property);
+        m_lowestSeenDeferredProperty = std::min(m_lowestSeenDeferredProperty, id);
+        m_highestSeenDeferredProperty = std::max(m_highestSeenDeferredProperty, id);
+    }
+    setDeferredPropertyIndex(id, ++m_lastIndexForDeferred);
     setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
-    m_deferredPropertiesIndices.set(id, m_deferredProperties.size());
-    m_deferredProperties.append(property);
 }
 
 
@@ -313,6 +324,21 @@ PropertyCascade::Direction PropertyCascade::direction() const
         m_directionIsUnresolved = false;
     }
     return m_direction;
+}
+
+void PropertyCascade::sortDeferredPropertyIDs()
+{
+    auto begin = m_deferredPropertyIDs.begin();
+    auto end = begin;
+    for (uint16_t id = m_lowestSeenDeferredProperty; id <= m_highestSeenDeferredProperty; ++id) {
+        auto propertyID = static_cast<CSSPropertyID>(id);
+        if (hasDeferredProperty(propertyID))
+            *end++ = propertyID;
+    }
+    m_seenDeferredPropertyCount = end - begin;
+    std::sort(begin, end, [&](auto id1, auto id2) {
+        return deferredPropertyIndex(id1) < deferredPropertyIndex(id2);
+    });
 }
 
 }

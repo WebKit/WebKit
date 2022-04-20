@@ -123,8 +123,8 @@ void Builder::applyNonHighPriorityProperties()
 
 void Builder::applyDeferredProperties()
 {
-    for (auto& property : m_cascade.deferredProperties())
-        applyCascadeProperty(property);
+    for (auto id : m_cascade.deferredPropertyIDs())
+        applyCascadeProperty(m_cascade.deferredProperty(id));
 }
 
 void Builder::applyProperties(int firstProperty, int lastProperty)
