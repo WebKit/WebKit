@@ -642,6 +642,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setPageIsVisible(bool isVisible)
     if (m_isPageVisible == isVisible)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, isVisible);
     m_isPageVisible = isVisible;
     flushRenderers();
     reenqueueCurrentVideoSampleIfNeeded();

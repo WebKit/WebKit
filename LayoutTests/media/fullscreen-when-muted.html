@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>Test that muted video is not paused when entering fullscreen</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        video.src = findMediaFile('video', 'content/test');
+        await waitFor(video, 'canplaythrough');
+        failTestIn(12000);
+
+        runWithKeyDown(() => video.play());
+        await waitFor(video, 'playing');
+
+        testExpected('video.muted', true);
+        testExpected('video.paused', false);
+
+        runWithKeyDown(() => document.documentElement.webkitRequestFullscreen() );
+
+        await waitFor(document.documentElement, 'webkitfullscreenchange');
+        await sleepFor(250);
+
+        testExpected('document.webkitFullscreenElement', document.documentElement);
+        testExpected('video.muted', true);
+        testExpected('video.paused', false);
+
+        runWithKeyDown(() => document.webkitExitFullscreen() );
+        await waitFor(document.documentElement, 'webkitfullscreenchange');
+
+        endTest();
+    });
+
+    </script>
+</head>
+<body >
+    Muted video should not pause when entering fullscreen.<br>
+    <div id="parent">
+        <video controls muted></video>
+    </div>
+</body>
+</html>
+

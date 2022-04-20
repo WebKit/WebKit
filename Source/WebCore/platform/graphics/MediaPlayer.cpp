@@ -1035,6 +1035,9 @@ void MediaPlayer::setVisibleForCanvas(bool visible)
 
 void MediaPlayer::setVisibleInViewport(bool visible)
 {
+    if (visible == m_visibleInViewport)
+        return;
+
     m_visibleInViewport = visible;
     m_private->setVisibleInViewport(visible);
 }
