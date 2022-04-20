@@ -1,3 +1,93 @@
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r290874. rdar://problem/84869202
+
+    Push HTMLMediaElement renderer's contentBox rect to GPU process
+    https://bugs.webkit.org/show_bug.cgi?id=237444
+    rdar://84869202
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    No new tests. This is a speculative fix, with new logging, for an issue I haven't
+    been able to reproduce.
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::updateRenderer): Push mediaPlayerContentBoxRect to the
+    media player.
+    * platform/graphics/MediaPlayer.cpp:
+    (WebCore::MediaPlayer::playerContentBoxRectChanged): Pass rect to platform player.
+    * platform/graphics/MediaPlayer.h:
+    * platform/graphics/MediaPlayerPrivate.h:
+    (WebCore::MediaPlayerPrivateInterface::playerContentBoxRectChanged):
+    
+    Source/WebKit:
+    
+    * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+    (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy): Configuration now has
+    playerContentBoxRect.
+    (WebKit::RemoteMediaPlayerProxy::mediaPlayerContentBoxRect const):
+    (WebKit::RemoteMediaPlayerProxy::playerContentBoxRectChanged): Update playerContentBoxRect.
+    * GPUProcess/media/RemoteMediaPlayerProxy.h:
+    * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+    
+    * GPUProcess/media/RemoteMediaPlayerProxyConfiguration.h:
+    (WebKit::RemoteMediaPlayerProxyConfiguration::encode const):
+    (WebKit::RemoteMediaPlayerProxyConfiguration::decode):
+    
+    * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+    (WebKit::RemoteMediaPlayerProxy::setVideoInlineSizeIfPossible): Convert from static
+    function so we can log.
+    (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable): Add logging.
+    (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged): Ditto.
+    (WebKit::RemoteMediaPlayerProxy::setVideoInlineSizeFenced): Ditto.
+    (WebKit::setVideoInlineSizeIfPossible): Deleted.
+    
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::playerContentBoxRectChanged):
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+    
+    * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+    (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290874 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-06  Eric Carlson  <eric.carlson@apple.com>
+
+            Push HTMLMediaElement renderer's contentBox rect to GPU process
+            https://bugs.webkit.org/show_bug.cgi?id=237444
+            rdar://84869202
+
+            Reviewed by Jer Noble.
+
+            * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+            (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy): Configuration now has
+            playerContentBoxRect.
+            (WebKit::RemoteMediaPlayerProxy::mediaPlayerContentBoxRect const):
+            (WebKit::RemoteMediaPlayerProxy::playerContentBoxRectChanged): Update playerContentBoxRect.
+            * GPUProcess/media/RemoteMediaPlayerProxy.h:
+            * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+
+            * GPUProcess/media/RemoteMediaPlayerProxyConfiguration.h:
+            (WebKit::RemoteMediaPlayerProxyConfiguration::encode const):
+            (WebKit::RemoteMediaPlayerProxyConfiguration::decode):
+
+            * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+            (WebKit::RemoteMediaPlayerProxy::setVideoInlineSizeIfPossible): Convert from static
+            function so we can log.
+            (WebKit::RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable): Add logging.
+            (WebKit::RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged): Ditto.
+            (WebKit::RemoteMediaPlayerProxy::setVideoInlineSizeFenced): Ditto.
+            (WebKit::setVideoInlineSizeIfPossible): Deleted.
+
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+            (WebKit::MediaPlayerPrivateRemote::playerContentBoxRectChanged):
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
+            * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+            (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r292846. rdar://problem/88965550

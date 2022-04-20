@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/ContentType.h>
+#include <WebCore/LayoutRect.h>
 #include <WebCore/PlatformTextTrack.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/WTFString.h>
@@ -40,6 +41,7 @@ struct RemoteMediaPlayerProxyConfiguration {
     String sourceApplicationIdentifier;
     String networkInterfaceName;
     Vector<WebCore::ContentType> mediaContentTypesRequiringHardwareSupport;
+    WebCore::LayoutRect playerContentBoxRect;
     Vector<String> preferredAudioCharacteristics;
 #if ENABLE(AVF_CAPTIONS)
     Vector<WebCore::PlatformTextTrackData> outOfBandTrackData;
