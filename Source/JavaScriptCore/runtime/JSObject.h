@@ -835,6 +835,7 @@ public:
 
     // Fast access to known property offsets.
     ALWAYS_INLINE JSValue getDirect(PropertyOffset offset) const { return locationForOffset(offset)->get(); }
+    JSValue getDirect(Concurrency, Structure* expectedStructure, PropertyOffset) const;
     JSValue getDirectConcurrently(Structure* expectedStructure, PropertyOffset) const;
     void putDirect(VM& vm, PropertyOffset offset, JSValue value) { locationForOffset(offset)->set(vm, this, value); }
     void putDirectWithoutBarrier(PropertyOffset offset, JSValue value) { locationForOffset(offset)->setWithoutWriteBarrier(value); }
@@ -1411,6 +1412,17 @@ inline JSValue JSObject::getPrototype(VM& vm, JSGlobalObject* globalObject)
 // past structure then it should be valid for any new structure. However, we may sometimes
 // shrink the butterfly when we are holding the Structure's ConcurrentJSLock, such as when we
 // flatten an object.
+ALWAYS_INLINE JSValue JSObject::getDirect(Concurrency concurrency, Structure* expectedStructure, PropertyOffset offset) const
+{
+    switch (concurrency) {
+    case Concurrency::MainThread:
+        ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
+        return getDirect(offset);
+    case Concurrency::ConcurrentThread:
+        return getDirectConcurrently(expectedStructure, offset);
+    }
+
+}
 inline JSValue JSObject::getDirectConcurrently(Structure* structure, PropertyOffset offset) const
 {
     ConcurrentJSLocker locker(structure->lock());

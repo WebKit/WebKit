@@ -1061,7 +1061,7 @@ void Graph::clearFlagsOnAllNodes(NodeFlags flags)
 
 bool Graph::watchCondition(const ObjectPropertyCondition& key)
 {
-    if (!key.isWatchable())
+    if (!key.isWatchable(PropertyCondition::MakeNoChanges))
         return false;
 
     DesiredWeakReferences& weakReferences = m_plan.weakReferences();

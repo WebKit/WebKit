@@ -249,7 +249,7 @@ public:
     }
     
     // Checks if the object's structure claims that the property won't be intercepted.
-    bool isStillValidAssumingImpurePropertyWatchpoint(Structure*, JSObject* base = nullptr) const;
+    bool isStillValidAssumingImpurePropertyWatchpoint(Concurrency, Structure*, JSObject* base = nullptr) const;
     
     // Returns true if we need an impure property watchpoint to ensure validity even if
     // isStillValidAccordingToStructure() returned true.
@@ -262,7 +262,7 @@ public:
     // an object has the given structure guarantees the condition still holds. If an object is
     // supplied, then you may need to use some other watchpoints on the object to guarantee the
     // condition in addition to the structure check.
-    bool isStillValid(Structure*, JSObject* base = nullptr) const;
+    bool isStillValid(Concurrency, Structure*, JSObject* base = nullptr) const;
     
     // In some cases, the condition is not watchable, but could be made watchable by enabling the
     // appropriate watchpoint. For example, replacement watchpoints are enabled only when some
@@ -291,12 +291,12 @@ public:
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure and possibly an impure property watchpoint.
     bool isWatchableAssumingImpurePropertyWatchpoint(
-        Structure*, JSObject* base, WatchabilityEffort = MakeNoChanges) const;
+        Structure*, JSObject* base, WatchabilityEffort) const;
     
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure.
     bool isWatchable(
-        Structure*, JSObject*, WatchabilityEffort = MakeNoChanges) const;
+        Structure*, JSObject*, WatchabilityEffort) const;
     
     bool watchingRequiresStructureTransitionWatchpoint() const
     {

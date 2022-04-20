@@ -164,7 +164,7 @@ struct AdaptiveStructureWatchpointAdaptor {
     static void add(CodeBlock*, const ObjectPropertyCondition&, WatchpointCollector&);
     static bool hasBeenInvalidated(const ObjectPropertyCondition& key)
     {
-        return !key.isWatchable();
+        return !key.isWatchable(PropertyCondition::MakeNoChanges);
     }
     static void dumpInContext(
         PrintStream& out, const ObjectPropertyCondition& key, DumpContext* context)

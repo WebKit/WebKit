@@ -44,13 +44,13 @@ void AdaptiveInferredPropertyValueWatchpointBase::initialize(const ObjectPropert
 
 void AdaptiveInferredPropertyValueWatchpointBase::install(VM& vm)
 {
-    RELEASE_ASSERT(m_key.isWatchable());
+    RELEASE_ASSERT(m_key.isWatchable(PropertyCondition::MakeNoChanges));
 
     Structure* structure = m_key.object()->structure(vm);
 
     structure->addTransitionWatchpoint(&m_structureWatchpoint);
 
-    PropertyOffset offset = structure->getConcurrently(m_key.uid());
+    PropertyOffset offset = structure->get(vm, m_key.uid());
     WatchpointSet* set = structure->propertyReplacementWatchpointSet(offset);
     set->add(&m_propertyWatchpoint);
 }

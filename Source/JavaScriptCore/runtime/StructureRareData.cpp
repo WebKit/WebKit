@@ -190,11 +190,11 @@ void StructureRareData::cacheSpecialPropertySlow(JSGlobalObject* globalObject, V
             equivCondition = condition.attemptToMakeEquivalenceWithoutBarrier(vm);
 
             // The equivalence condition won't be watchable if we have already seen a replacement.
-            if (!equivCondition.isWatchable()) {
+            if (!equivCondition.isWatchable(PropertyCondition::MakeNoChanges)) {
                 giveUpOnSpecialPropertyCache(key);
                 return;
             }
-        } else if (!condition.isWatchable()) {
+        } else if (!condition.isWatchable(PropertyCondition::MakeNoChanges)) {
             giveUpOnSpecialPropertyCache(key);
             return;
         }

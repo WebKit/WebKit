@@ -71,8 +71,6 @@ public:
         return !m_data || !m_data->isEmpty();
     }
 
-    bool isValidAndWatchable() const;
-
     size_t size() const { return m_data ? m_data->size() : 0; }
     bool isEmpty() const
     {
@@ -139,7 +137,6 @@ public:
     ObjectPropertyConditionSet mergedWith(const ObjectPropertyConditionSet& other) const;
     
     bool structuresEnsureValidity() const;
-    bool structuresEnsureValidityAssumingImpurePropertyWatchpoint() const;
     
     bool needImpurePropertyWatchpoint() const;
 

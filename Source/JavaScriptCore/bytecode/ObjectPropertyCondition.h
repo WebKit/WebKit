@@ -204,7 +204,7 @@ public:
     
     // Checks if the object's structure claims that the property won't be intercepted. Validity
     // does not require watchpoints on the object.
-    bool structureEnsuresValidityAssumingImpurePropertyWatchpoint() const;
+    bool structureEnsuresValidityAssumingImpurePropertyWatchpoint(Concurrency) const;
     
     // Returns true if we need an impure property watchpoint to ensure validity even if
     // isStillValidAccordingToStructure() returned true.
@@ -213,36 +213,36 @@ public:
 
     // Checks if the condition still holds setting aside the need for an impure property watchpoint.
     // Validity might still require watchpoints on the object.
-    bool isStillValidAssumingImpurePropertyWatchpoint(Structure*) const;
-    bool isStillValidAssumingImpurePropertyWatchpoint() const;
+    bool isStillValidAssumingImpurePropertyWatchpoint(Concurrency, Structure*) const;
+    bool isStillValidAssumingImpurePropertyWatchpoint(Concurrency) const;
 
     // Checks if the condition still holds. May conservatively return false, if the object and
     // structure alone don't guarantee the condition. Note that this may return true if the
     // condition still requires some watchpoints on the object in addition to checking the
     // structure. If you want to check if the condition holds by using the structure alone,
     // use structureEnsuresValidity().
-    bool isStillValid(Structure*) const;
-    bool isStillValid() const;
+    bool isStillValid(Concurrency, Structure*) const;
+    bool isStillValid(Concurrency) const;
     
     // Shorthand for condition().isStillValid(structure).
-    bool structureEnsuresValidity(Structure*) const;
-    bool structureEnsuresValidity() const;
+    bool structureEnsuresValidity(Concurrency, Structure*) const;
+    bool structureEnsuresValidity(Concurrency) const;
     
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure and possibly an impure property watchpoint.
     bool isWatchableAssumingImpurePropertyWatchpoint(
         Structure*,
-        PropertyCondition::WatchabilityEffort = PropertyCondition::MakeNoChanges) const;
+        PropertyCondition::WatchabilityEffort) const;
     bool isWatchableAssumingImpurePropertyWatchpoint(
-        PropertyCondition::WatchabilityEffort = PropertyCondition::MakeNoChanges) const;
+        PropertyCondition::WatchabilityEffort) const;
 
     // This means that it's still valid and we could enforce validity by setting a transition
     // watchpoint on the structure, and a value change watchpoint if we're Equivalence.
     bool isWatchable(
         Structure*,
-        PropertyCondition::WatchabilityEffort = PropertyCondition::MakeNoChanges) const;
+        PropertyCondition::WatchabilityEffort) const;
     bool isWatchable(
-        PropertyCondition::WatchabilityEffort = PropertyCondition::MakeNoChanges) const;
+        PropertyCondition::WatchabilityEffort) const;
     
     bool watchingRequiresStructureTransitionWatchpoint() const
     {
