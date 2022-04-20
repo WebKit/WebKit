@@ -1,3 +1,35 @@
+2022-04-20  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r292760. rdar://problem/91351306
+
+    [WebGPU] Fix the tvOS build (again)
+    https://bugs.webkit.org/show_bug.cgi?id=239106
+    <rdar://problem/91351306>
+    
+    Unreviewed.
+    
+    Turns out PLATFORM(APPLETV) and PLATFORM(TVOS) are different things.
+    
+    * WebGPU/Texture.mm:
+    (WebGPU::Device::createTexture):
+    (WebGPU::Texture::createView):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292760 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [WebGPU] Fix the tvOS build (again)
+            https://bugs.webkit.org/show_bug.cgi?id=239106
+            <rdar://problem/91351306>
+
+            Unreviewed.
+
+            Turns out PLATFORM(APPLETV) and PLATFORM(TVOS) are different things.
+
+            * WebGPU/Texture.mm:
+            (WebGPU::Device::createTexture):
+            (WebGPU::Texture::createView):
+
 2022-04-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix the release build
