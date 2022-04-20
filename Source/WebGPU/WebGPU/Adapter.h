@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "HardwareCapabilities.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
@@ -42,9 +43,9 @@ class Instance;
 class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, const WGPULimits& limits)
+    static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, HardwareCapabilities&& capabilities)
     {
-        return adoptRef(*new Adapter(device, instance, limits));
+        return adoptRef(*new Adapter(device, instance, WTFMove(capabilities)));
     }
     static Ref<Adapter> createInvalid(Instance& instance)
     {
@@ -67,13 +68,13 @@ public:
 
 
 private:
-    Adapter(id<MTLDevice>, Instance&, const WGPULimits&);
+    Adapter(id<MTLDevice>, Instance&, HardwareCapabilities&&);
     Adapter(Instance&);
 
     id<MTLDevice> m_device { nil };
     const Ref<Instance> m_instance;
 
-    WGPULimits m_limits { };
+    HardwareCapabilities m_capabilities { };
 };
 
 } // namespace WebGPU

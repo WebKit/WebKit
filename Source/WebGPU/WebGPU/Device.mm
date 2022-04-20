@@ -42,12 +42,13 @@
 #import "Surface.h"
 #import "SwapChain.h"
 #import "Texture.h"
+#import <algorithm>
 #import <wtf/StdLibExtras.h>
 #import <wtf/WeakPtr.h>
 
 namespace WebGPU {
 
-Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, const WGPULimits& limits, Adapter& adapter)
+Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
 {
     id<MTLCommandQueue> commandQueue = [device newCommandQueue];
     if (!commandQueue)
@@ -59,13 +60,13 @@ Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, const WGP
     if (!deviceLabel.isEmpty())
         commandQueue.label = [NSString stringWithFormat:@"Default queue for device %s", deviceLabel.utf8().data()];
 
-    return adoptRef(*new Device(device, commandQueue, limits, adapter));
+    return adoptRef(*new Device(device, commandQueue, WTFMove(capabilities), adapter));
 }
 
-Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, const WGPULimits& limits, Adapter& adapter)
+Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&& capabilities, Adapter& adapter)
     : m_device(device)
     , m_defaultQueue(Queue::create(defaultQueue, *this))
-    , m_limits(limits)
+    , m_capabilities(WTFMove(capabilities))
     , m_adapter(adapter)
 {
 #if PLATFORM(MAC)
@@ -137,10 +138,13 @@ void Device::destroy()
     loseTheDevice(WGPUDeviceLostReason_Destroyed);
 }
 
-size_t Device::enumerateFeatures(WGPUFeatureName*)
+size_t Device::enumerateFeatures(WGPUFeatureName* features)
 {
-    // We support no optional features right now.
-    return 0;
+    // The API contract for this requires that sufficient space has already been allocated for the output.
+    // This requires the caller calling us twice: once to get the amount of space to allocate, and once to fill the space.
+    if (features)
+        std::copy(m_capabilities.features.begin(), m_capabilities.features.end(), features);
+    return m_capabilities.features.size();
 }
 
 bool Device::getLimits(WGPUSupportedLimits& limits)
@@ -148,8 +152,7 @@ bool Device::getLimits(WGPUSupportedLimits& limits)
     if (limits.nextInChain != nullptr)
         return false;
 
-    // FIXME: Implement this.
-    limits.limits = { };
+    limits.limits = m_capabilities.limits;
     return true;
 }
 
@@ -158,10 +161,9 @@ Queue& Device::getQueue()
     return m_defaultQueue;
 }
 
-bool Device::hasFeature(WGPUFeatureName)
+bool Device::hasFeature(WGPUFeatureName feature)
 {
-    // We support no optional features right now.
-    return false;
+    return std::find(m_capabilities.features.begin(), m_capabilities.features.end(), feature);
 }
 
 auto Device::currentErrorScope(WGPUErrorFilter type) -> ErrorScope*

@@ -28,16 +28,16 @@
 
 #import "APIConversions.h"
 #import "Device.h"
-#import "HardwareLimits.h"
 #import "Instance.h"
+#import <algorithm>
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {
 
-Adapter::Adapter(id<MTLDevice> device, Instance& instance, const WGPULimits& limits)
+Adapter::Adapter(id<MTLDevice> device, Instance& instance, HardwareCapabilities&& capabilities)
     : m_device(device)
     , m_instance(instance)
-    , m_limits(limits)
+    , m_capabilities(WTFMove(capabilities))
 {
 }
 
@@ -48,10 +48,13 @@ Adapter::Adapter(Instance& instance)
 
 Adapter::~Adapter() = default;
 
-size_t Adapter::enumerateFeatures(WGPUFeatureName*)
+size_t Adapter::enumerateFeatures(WGPUFeatureName* features)
 {
-    // We support no optional features right now.
-    return 0;
+    // The API contract for this requires that sufficient space has already been allocated for the output.
+    // This requires the caller calling us twice: once to get the amount of space to allocate, and once to fill the space.
+    if (features)
+        std::copy(m_capabilities.features.begin(), m_capabilities.features.end(), features);
+    return m_capabilities.features.size();
 }
 
 bool Adapter::getLimits(WGPUSupportedLimits& limits)
@@ -59,8 +62,7 @@ bool Adapter::getLimits(WGPUSupportedLimits& limits)
     if (limits.nextInChain != nullptr)
         return false;
 
-    // FIXME: Implement this.
-    limits.limits = { };
+    limits.limits = m_capabilities.limits;
     return true;
 }
 
@@ -75,10 +77,9 @@ void Adapter::getProperties(WGPUAdapterProperties& properties)
     properties.backendType = WGPUBackendType_Metal;
 }
 
-bool Adapter::hasFeature(WGPUFeatureName)
+bool Adapter::hasFeature(WGPUFeatureName feature)
 {
-    // We support no optional features right now.
-    return false;
+    return std::find(m_capabilities.features.begin(), m_capabilities.features.end(), feature);
 }
 
 void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback)
@@ -97,7 +98,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         return;
     }
 
-    auto limits = m_limits;
+    WGPULimits limits { };
 
     if (descriptor.requiredLimits) {
         if (descriptor.requiredLimits->nextInChain) {
@@ -114,7 +115,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
             return;
         }
 
-        if (anyLimitIsBetterThan(descriptor.requiredLimits->limits, m_limits)) {
+        if (anyLimitIsBetterThan(descriptor.requiredLimits->limits, m_capabilities.limits)) {
             instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
                 callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Device does not support requested limits"_s);
             });
@@ -122,11 +123,26 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         }
 
         limits = descriptor.requiredLimits->limits;
+    } else
+        limits = defaultLimits();
+
+    auto features = Vector { descriptor.requiredFeatures, descriptor.requiredFeaturesCount };
+    if (includesUnsupportedFeatures(features, m_capabilities.features)) {
+        instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
+            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Device does not support requested features"_s);
+        });
+        return;
     }
 
+    HardwareCapabilities capabilities {
+        limits,
+        WTFMove(features),
+        m_capabilities.baseCapabilities,
+    };
+
     auto label = fromAPI(descriptor.label);
-    instance().scheduleWork([strongThis = Ref { *this }, label = WTFMove(label), limits = WTFMove(limits), callback = WTFMove(callback)]() mutable {
-        callback(WGPURequestDeviceStatus_Success, Device::create(strongThis->m_device, WTFMove(label), WTFMove(limits), strongThis), { });
+    instance().scheduleWork([strongThis = Ref { *this }, label = WTFMove(label), capabilities = WTFMove(capabilities), callback = WTFMove(callback)]() mutable {
+        callback(WGPURequestDeviceStatus_Success, Device::create(strongThis->m_device, WTFMove(label), WTFMove(capabilities), strongThis), { });
     });
 }
 

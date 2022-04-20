@@ -37,7 +37,7 @@ namespace WebGPU {
 static std::optional<WGPUFeatureName> featureRequirementForFormat(WGPUTextureFormat format)
 {
     switch (format) {
-    case WGPUTextureFormat_Depth24UnormStencil8: // FIXME: This has to be guarded by MTLDevice.depth24Stencil8PixelFormatSupported
+    case WGPUTextureFormat_Depth24UnormStencil8:
         return WGPUFeatureName_Depth24UnormStencil8;
     case WGPUTextureFormat_Depth32FloatStencil8:
         return WGPUFeatureName_Depth32FloatStencil8;
@@ -1246,7 +1246,7 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
 
     switch (descriptor.dimension) {
     case WGPUTextureDimension_1D:
-        if (descriptor.size.width > m_limits.maxTextureDimension1D)
+        if (descriptor.size.width > limits().maxTextureDimension1D)
             return false;
 
         if (descriptor.size.height != 1)
@@ -1262,23 +1262,23 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
             return false;
         break;
     case WGPUTextureDimension_2D:
-        if (descriptor.size.width > m_limits.maxTextureDimension2D)
+        if (descriptor.size.width > limits().maxTextureDimension2D)
             return false;
 
-        if (descriptor.size.height > m_limits.maxTextureDimension2D)
+        if (descriptor.size.height > limits().maxTextureDimension2D)
             return false;
 
-        if (descriptor.size.depthOrArrayLayers > m_limits.maxTextureArrayLayers)
+        if (descriptor.size.depthOrArrayLayers > limits().maxTextureArrayLayers)
             return false;
         break;
     case WGPUTextureDimension_3D:
-        if (descriptor.size.width > m_limits.maxTextureDimension3D)
+        if (descriptor.size.width > limits().maxTextureDimension3D)
             return false;
 
-        if (descriptor.size.height > m_limits.maxTextureDimension3D)
+        if (descriptor.size.height > limits().maxTextureDimension3D)
             return false;
 
-        if (descriptor.size.depthOrArrayLayers > m_limits.maxTextureDimension3D)
+        if (descriptor.size.depthOrArrayLayers > limits().maxTextureDimension3D)
             return false;
 
         if (descriptor.sampleCount != 1)
@@ -1961,8 +1961,10 @@ static std::optional<MTLPixelFormat> stencilOnlyAspectMetalFormat(WGPUTextureFor
     }
 }
 
-static MTLStorageMode storageMode(bool deviceHasUnifiedMemory)
+static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures)
 {
+    if (!supportsNonPrivateDepthStencilTextures)
+        return MTLStorageModePrivate;
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -1987,9 +1989,11 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createtexture
 
-    if (featureRequirementForFormat(descriptor.format)) {
-        // FIXME: "but this.[[device]].[[features]] does not contain the feature, throw a TypeError."
-        return Texture::createInvalid(*this);
+    if (auto requirement = featureRequirementForFormat(descriptor.format)) {
+        if (!hasFeature(*requirement)) {
+            // FIXME: "throw a TypeError."
+            return Texture::createInvalid(*this);
+        }
     }
 
     if (!validateCreateTexture(descriptor, viewFormats)) {
@@ -2047,7 +2051,7 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     textureDescriptor.sampleCount = descriptor.sampleCount;
 
-    textureDescriptor.storageMode = storageMode(hasUnifiedMemory());
+    textureDescriptor.storageMode = storageMode(hasUnifiedMemory(), baseCapabilities().supportsNonPrivateDepthStencilTextures);
 
     // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.

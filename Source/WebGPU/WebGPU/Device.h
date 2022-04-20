@@ -26,6 +26,7 @@
 #pragma once
 
 #import "Adapter.h"
+#import "HardwareCapabilities.h"
 #import "Queue.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
@@ -61,7 +62,7 @@ class Texture;
 class Device : public WGPUDeviceImpl, public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, const WGPULimits&, Adapter&);
+    static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, HardwareCapabilities&&, Adapter&);
     static Ref<Device> createInvalid(Adapter& adapter)
     {
         return adoptRef(*new Device(adapter));
@@ -97,6 +98,9 @@ public:
 
     bool isValid() const { return m_device; }
     bool isLost() const { return m_isLost; }
+    const WGPULimits& limits() const { return m_capabilities.limits; }
+    const Vector<WGPUFeatureName>& features() const { return m_capabilities.features; }
+    const HardwareCapabilities::BaseCapabilities& baseCapabilities() const { return m_capabilities.baseCapabilities; }
 
     id<MTLDevice> device() const { return m_device; }
 
@@ -106,7 +110,7 @@ public:
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
 private:
-    Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, const WGPULimits&, Adapter&);
+    Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
     Device(Adapter&);
 
     struct ErrorScope;
@@ -138,7 +142,7 @@ private:
     bool m_isLost { false };
     id<NSObject> m_deviceObserver { nil };
 
-    WGPULimits m_limits { };
+    HardwareCapabilities m_capabilities { };
 
     const Ref<Adapter> m_adapter;
 };

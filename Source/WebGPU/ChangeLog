@@ -1,5 +1,73 @@
 2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Expand hardware capabilities to include features (beyond just limits)
+        https://bugs.webkit.org/show_bug.cgi?id=239443
+
+        Reviewed by Kimmo Kinnunen.
+
+        Only MTLGPUFamilyApple devices support depth/stencil textures in the managed/shared address space.
+        So, we have to expand the hardware capabilities infrastructure to be able to hold this kind
+        of information (so the texture creation function can consult with this state to know what storage
+        mode to use for the created texture). This patch replaces the stored WGPULimits struct with a new
+        struct, HardwareCapabilities, which holds a WGPULimits iniside it.
+
+        While I was here, I also included a Vector<WGPUFeature> inside the HardwareCapabilities struct,
+        and hooked it up to the various places which need to be guarded by the presence of features.
+        This is needed for compressed textures to work (among other things). Because there are only
+        a handful of possible features, I elected to use a sorted Vector instead of using the big HashSet
+        hammer.
+
+        * WebGPU.xcodeproj/project.pbxproj:
+        * WebGPU/Adapter.h:
+        (WebGPU::Adapter::create):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::Adapter):
+        (WebGPU::Adapter::enumerateFeatures):
+        (WebGPU::Adapter::getLimits):
+        (WebGPU::Adapter::hasFeature):
+        (WebGPU::Adapter::requestDevice):
+        * WebGPU/Device.h:
+        (WebGPU::Device::limits const):
+        (WebGPU::Device::features const):
+        (WebGPU::Device::baseCapabilities const):
+        * WebGPU/Device.mm:
+        (WebGPU::Device::create):
+        (WebGPU::Device::Device):
+        (WebGPU::Device::enumerateFeatures):
+        (WebGPU::Device::getLimits):
+        (WebGPU::Device::hasFeature):
+        * WebGPU/HardwareCapabilities.h: Renamed from Source/WebGPU/WebGPU/HardwareLimits.h.
+        * WebGPU/HardwareCapabilities.mm: Added.
+        (WebGPU::baseCapabilities):
+        (WebGPU::baseFeatures):
+        (WebGPU::apple3):
+        (WebGPU::apple4):
+        (WebGPU::apple5):
+        (WebGPU::apple6):
+        (WebGPU::apple7):
+        (WebGPU::mac2):
+        (WebGPU::mergeMaximum):
+        (WebGPU::mergeAlignment):
+        (WebGPU::mergeLimits):
+        (WebGPU::mergeFeatures):
+        (WebGPU::mergeBaseCapabilities):
+        (WebGPU::rawHardwareCapabilities):
+        (WebGPU::anyLimitIsBetterThan):
+        (WebGPU::includesUnsupportedFeatures):
+        (WebGPU::checkLimits):
+        (WebGPU::hardwareCapabilities):
+        (WebGPU::isValid):
+        * WebGPU/HardwareLimits.mm: Removed.
+        * WebGPU/Instance.mm:
+        (WebGPU::Instance::requestAdapter):
+        * WebGPU/Texture.mm:
+        (WebGPU::featureRequirementForFormat):
+        (WebGPU::Device::validateCreateTexture):
+        (WebGPU::storageMode):
+        (WebGPU::Device::createTexture):
+
+2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] RGB9E5Ufloat textures are not renderable
         https://bugs.webkit.org/show_bug.cgi?id=239445
 

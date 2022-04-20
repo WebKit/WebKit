@@ -26,11 +26,26 @@
 #pragma once
 
 #include <optional>
+#include <wtf/Vector.h>
 
 namespace WebGPU {
 
-std::optional<WGPULimits> limits(id<MTLDevice>);
+struct HardwareCapabilities {
+    WGPULimits limits { };
+    Vector<WGPUFeatureName> features;
+
+    struct BaseCapabilities {
+        MTLArgumentBuffersTier argumentBuffersTier { MTLArgumentBuffersTier1 };
+        bool supportsNonPrivateDepthStencilTextures { false };
+        id<MTLCounterSet> timestampCounterSet { nil };
+        id<MTLCounterSet> statisticCounterSet { nil };
+    } baseCapabilities;
+};
+
+std::optional<HardwareCapabilities> hardwareCapabilities(id<MTLDevice>);
 bool isValid(const WGPULimits&);
+WGPULimits defaultLimits();
 bool anyLimitIsBetterThan(const WGPULimits& target, const WGPULimits& reference);
+bool includesUnsupportedFeatures(const Vector<WGPUFeatureName>& target, const Vector<WGPUFeatureName>& reference);
 
 } // namespace WebGPU
