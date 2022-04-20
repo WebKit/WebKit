@@ -59,6 +59,9 @@ void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadat
 
 RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 {
+    if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
+        return { };
+
     if (m_pixelBufferGatheredWithVideoFrameMetadata) {
         if (!m_pixelBufferConformer)
             m_pixelBufferConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
@@ -90,6 +93,9 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
 {
     auto colorSpace = DestinationColorSpace::SRGB();
+    if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
+        return colorSpace;
+
     connection().sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), Messages::RemoteMediaPlayerProxy::ColorSpace::Reply(colorSpace), m_id);
     return colorSpace;
 }

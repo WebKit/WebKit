@@ -1011,6 +1011,9 @@ bool MediaPlayerPrivateRemote::copyVideoTextureToPlatformTexture(WebCore::Graphi
 
 std::optional<WebCore::MediaSampleVideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
 {
+    if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
+        return { };
+
     std::optional<WebCore::MediaSampleVideoFrame> result;
     bool changed = false;
     if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(), Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged::Reply(result, changed), m_id))

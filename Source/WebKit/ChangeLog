@@ -1,5 +1,41 @@
 2022-04-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r292044. rdar://problem/86662565
+
+    Don't send sync RemoteMediaPlayerProxy messages that we know will fail
+    https://bugs.webkit.org/show_bug.cgi?id=238467
+    rdar://86662565
+    
+    Reviewed by Jer Noble.
+    
+    * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+    (WebKit::MediaPlayerPrivateRemote::videoFrameForCurrentTime): Return early if
+    readyState is less than HaveCurrentData, or if the first frame is not available.
+    
+    * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+    (WebKit::MediaPlayerPrivateRemote::nativeImageForCurrentTime): Ditto.
+    (WebKit::MediaPlayerPrivateRemote::colorSpace): Ditto.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292044 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+            Don't send sync RemoteMediaPlayerProxy messages that we know will fail
+            https://bugs.webkit.org/show_bug.cgi?id=238467
+            rdar://86662565
+
+            Reviewed by Jer Noble.
+
+            * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+            (WebKit::MediaPlayerPrivateRemote::videoFrameForCurrentTime): Return early if
+            readyState is less than HaveCurrentData, or if the first frame is not available.
+
+            * WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm:
+            (WebKit::MediaPlayerPrivateRemote::nativeImageForCurrentTime): Ditto.
+            (WebKit::MediaPlayerPrivateRemote::colorSpace): Ditto.
+
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291606. rdar://problem/91446317
 
     Website policies are not respected when doing COOP based process swap
