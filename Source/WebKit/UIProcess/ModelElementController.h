@@ -69,7 +69,7 @@ public:
     void setIsMutedForModelElement(ModelIdentifier, bool, CompletionHandler<void(bool)>&&);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    void takeModelElementFullscreen(ModelIdentifier);
+    void takeModelElementFullscreen(ModelIdentifier, const URL&);
     void setInteractionEnabledForModelElement(ModelIdentifier, bool);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)

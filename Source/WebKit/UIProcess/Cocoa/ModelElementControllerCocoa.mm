@@ -81,7 +81,7 @@ ASVInlinePreview * ModelElementController::previewForModelIdentifier(ModelIdenti
     return [modelViewForModelIdentifier(modelIdentifier) preview];
 }
 
-void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIdentifier)
+void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIdentifier, const URL& originatingPageURL)
 {
     auto *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
     if (!presentingViewController)
@@ -94,6 +94,8 @@ void ModelElementController::takeModelElementFullscreen(ModelIdentifier modelIde
     CGRect initialFrame = [modelView convertRect:modelView.frame toView:nil];
 
     ASVInlinePreview *preview = [modelView preview];
+    [preview setCanonicalWebPageURL:originatingPageURL];
+    [preview setUrlFragment:originatingPageURL.fragmentIdentifier().createNSString().get()];
     NSDictionary *previewOptions = @{@"WebKit": @"Model element fullscreen"};
     [preview createFullscreenInstanceWithInitialFrame:initialFrame previewOptions:previewOptions completionHandler:^(UIViewController *remoteViewController, CAFenceHandle *fenceHandle, NSError *creationError) {
         if (creationError) {

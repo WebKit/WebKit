@@ -278,6 +278,23 @@
         (WebKit::WebProcessProxy::gpuProcessExited):
         (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
 
+2022-04-19  Antoine Quint  <graouts@apple.com>
+
+        [model] set canonicalWebPageURL and urlFragment on ASVInlinePreview on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=239502
+        rdar://87352281
+
+        Reviewed by Dean Jackson.
+
+        Set the `canonicalWebPageURL` and `urlFragment` properties on the ASVInlinePreview prior to
+        entering fullscreen.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::takeModelElementFullscreen):
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::takeModelElementFullscreen):
+
 2022-04-19  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE][GPUProcess] Add RemoteGraphicsContextGLGBM, RemoteGraphicsContextGLProxyGBM

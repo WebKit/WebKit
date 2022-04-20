@@ -119,6 +119,9 @@ typedef void (^ASVSetIsPlayingReplyBlock) (BOOL isPlaying, NSError * _Nullable e
 @property (nonatomic, readonly) BOOL hasAudio;
 @property (nonatomic, readwrite) BOOL isMuted;
 
+@property (nonatomic, retain, nullable) NSURL *canonicalWebPageURL;
+@property (nonatomic, retain, nullable) NSString *urlFragment;
+
 @end
 
 NS_ASSUME_NONNULL_END

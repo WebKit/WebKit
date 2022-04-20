@@ -11177,7 +11177,7 @@ void WebPageProxy::modelElementSetIsMuted(ModelIdentifier modelIdentifier, bool 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 void WebPageProxy::takeModelElementFullscreen(ModelIdentifier modelIdentifier)
 {
-    modelElementController()->takeModelElementFullscreen(modelIdentifier);
+    modelElementController()->takeModelElementFullscreen(modelIdentifier, URL { currentURL() });
 }
 
 void WebPageProxy::modelElementSetInteractionEnabled(ModelIdentifier modelIdentifier, bool isInteractionEnabled)
