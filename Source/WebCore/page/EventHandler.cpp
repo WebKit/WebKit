@@ -1784,7 +1784,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     auto localPoint = roundedIntPoint(mouseEvent.hitTestResult().localPoint());
     if (layer && layer->isPointInResizeControl(localPoint)) {
         layer->setInResizeMode(true);
-        m_resizeLayer = layer;
+        m_resizeLayer = WeakPtr { layer };
         m_offsetFromResizeCorner = layer->offsetFromResizeCorner(localPoint);
         invalidateClick();
         return true;

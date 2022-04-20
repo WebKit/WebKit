@@ -1,3 +1,16 @@
+2022-04-19  Simon Fraser  <simon.fraser@apple.com>
+
+        EventHandler should use a WeakPtr for m_resizeLayer
+        https://bugs.webkit.org/show_bug.cgi?id=239515
+
+        Reviewed by Wenson Hsieh.
+
+        Use a WeakPtr for m_resizeLayer.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/EventHandler.h:
+
 2022-04-19  Alex Christensen  <achristensen@webkit.org>
 
         Implement most of CSS typed OM object stringifiers
