@@ -1,5 +1,14 @@
 2022-04-20  Karl Rackler  <rackler@apple.com>
 
+        [ macOS Release wk2 ] webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=239574
+
+        Unreviewed test gardening. 
+
+        * platform/mac-wk2/TestExpectations:
+
+2022-04-20  Karl Rackler  <rackler@apple.com>
+
         [ Monterey Release wk2 ] imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=239568
 
