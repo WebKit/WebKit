@@ -1,3 +1,25 @@
+2022-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Avoid repeated calls to eventNames() in a few more places
+        https://bugs.webkit.org/show_bug.cgi?id=239548
+
+        Reviewed by Yusuke Suzuki.
+
+        Avoid repeated calls to eventNames() in a few more places given that it accesses threadGlobalData().
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        * dom/SimulatedClick.cpp:
+        (WebCore::simulateClick):
+        * dom/ios/PointerEventIOS.cpp:
+        (WebCore::buttonsForType):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::eventListenersDidChange):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::cancelPointer):
+
 2022-04-20  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Optimize code for deferred properties

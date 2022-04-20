@@ -493,10 +493,11 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     // After firing the pointercancel event, a user agent MUST also fire a pointer event named pointerout
     // followed by firing a pointer event named pointerleave.
     auto isPrimary = capturingData->isPrimary ? PointerEvent::IsPrimary::Yes : PointerEvent::IsPrimary::No;
-    auto cancelEvent = PointerEvent::create(eventNames().pointercancelEvent, pointerId, capturingData->pointerType, isPrimary);
+    auto& eventNames = WebCore::eventNames();
+    auto cancelEvent = PointerEvent::create(eventNames.pointercancelEvent, pointerId, capturingData->pointerType, isPrimary);
     target->dispatchEvent(cancelEvent);
-    target->dispatchEvent(PointerEvent::create(eventNames().pointeroutEvent, pointerId, capturingData->pointerType, isPrimary));
-    target->dispatchEvent(PointerEvent::create(eventNames().pointerleaveEvent, pointerId, capturingData->pointerType, isPrimary));
+    target->dispatchEvent(PointerEvent::create(eventNames.pointeroutEvent, pointerId, capturingData->pointerType, isPrimary));
+    target->dispatchEvent(PointerEvent::create(eventNames.pointerleaveEvent, pointerId, capturingData->pointerType, isPrimary));
     processPendingPointerCapture(pointerId);
 }
 

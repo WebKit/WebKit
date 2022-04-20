@@ -86,22 +86,23 @@ bool simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouse
     if (element.isDisabledFormControl())
         return false;
 
-    static NeverDestroyed<HashSet<Element*>> elementsDispatchingSimulatedClicks;
+    static MainThreadNeverDestroyed<HashSet<Element*>> elementsDispatchingSimulatedClicks;
     if (!elementsDispatchingSimulatedClicks.get().add(&element).isNewEntry)
         return false;
 
+    auto& eventNames = WebCore::eventNames();
     if (mouseEventOptions == SendMouseOverUpDownEvents)
-        simulateMouseEvent(eventNames().mouseoverEvent, element, underlyingEvent, creationOptions);
+        simulateMouseEvent(eventNames.mouseoverEvent, element, underlyingEvent, creationOptions);
 
     if (mouseEventOptions != SendNoEvents)
-        simulateMouseEvent(eventNames().mousedownEvent, element, underlyingEvent, creationOptions);
+        simulateMouseEvent(eventNames.mousedownEvent, element, underlyingEvent, creationOptions);
     if (mouseEventOptions != SendNoEvents || visualOptions == ShowPressedLook)
         element.setActive(true, true);
     if (mouseEventOptions != SendNoEvents)
-        simulateMouseEvent(eventNames().mouseupEvent, element, underlyingEvent, creationOptions);
+        simulateMouseEvent(eventNames.mouseupEvent, element, underlyingEvent, creationOptions);
     element.setActive(false);
 
-    simulateMouseEvent(eventNames().clickEvent, element, underlyingEvent, creationOptions);
+    simulateMouseEvent(eventNames.clickEvent, element, underlyingEvent, creationOptions);
 
     elementsDispatchingSimulatedClicks.get().remove(&element);
     return true;
