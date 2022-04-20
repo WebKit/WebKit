@@ -43,6 +43,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     : opacity(RenderStyle::initialOpacity())
     , aspectRatioWidth(RenderStyle::initialAspectRatioWidth())
     , aspectRatioHeight(RenderStyle::initialAspectRatioHeight())
+    , containIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth())
+    , containIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight())
     , contain(RenderStyle::initialContainment())
     , perspective(RenderStyle::initialPerspective())
     , perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
@@ -111,6 +113,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , inputSecurity(static_cast<unsigned>(RenderStyle::initialInputSecurity()))
     , hasAttrContent(false)
     , isNotFinal(false)
+    , containIntrinsicWidthType(static_cast<unsigned>(RenderStyle::initialContainIntrinsicWidthType()))
+    , containIntrinsicHeightType(static_cast<unsigned>(RenderStyle::initialContainIntrinsicHeightType()))
     , containerType(static_cast<unsigned>(RenderStyle::initialContainerType()))
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
@@ -126,6 +130,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , opacity(o.opacity)
     , aspectRatioWidth(o.aspectRatioWidth)
     , aspectRatioHeight(o.aspectRatioHeight)
+    , containIntrinsicWidth(o.containIntrinsicWidth)
+    , containIntrinsicHeight(o.containIntrinsicHeight)
     , contain(o.contain)
     , perspective(o.perspective)
     , perspectiveOriginX(o.perspectiveOriginX)
@@ -215,6 +221,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , inputSecurity(o.inputSecurity)
     , hasAttrContent(o.hasAttrContent)
     , isNotFinal(o.isNotFinal)
+    , containIntrinsicWidthType(o.containIntrinsicWidthType)
+    , containIntrinsicHeightType(o.containIntrinsicHeightType)
     , containerType(o.containerType)
     , containerNames(o.containerNames)
     , columnGap(o.columnGap)
@@ -238,6 +246,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
     return opacity == o.opacity
         && aspectRatioWidth == o.aspectRatioWidth
         && aspectRatioHeight == o.aspectRatioHeight
+        && containIntrinsicWidth == o.containIntrinsicWidth
+        && containIntrinsicHeight == o.containIntrinsicHeight
         && contain == o.contain
         && perspective == o.perspective
         && perspectiveOriginX == o.perspectiveOriginX
@@ -328,6 +338,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && inputSecurity == o.inputSecurity
         && hasAttrContent == o.hasAttrContent
         && isNotFinal == o.isNotFinal
+        && containIntrinsicWidthType == o.containIntrinsicWidthType
+        && containIntrinsicHeightType == o.containIntrinsicHeightType
         && containerType == o.containerType
         && containerNames == o.containerNames
         && columnGap == o.columnGap

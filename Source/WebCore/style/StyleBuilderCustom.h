@@ -114,6 +114,10 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicWidth);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicHeight);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicBlockSize);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicInlineSize);
 
     // Custom handling of initial + inherit value setting only.
     static void applyInitialWebkitMaskImage(BuilderState&) { }
@@ -2075,6 +2079,138 @@ inline void BuilderCustom::applyValueCustomProperty(BuilderState& builderState, 
         builderState.style().setInheritedCustomPropertyValue(name, value);
     else
         builderState.style().setNonInheritedCustomPropertyValue(name, value);
+}
+
+inline void BuilderCustom::applyInitialContainIntrinsicWidth(BuilderState& builderState)
+{
+    builderState.style().setContainIntrinsicWidthType(RenderStyle::initialContainIntrinsicWidthType());
+    builderState.style().setContainIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth());
+}
+
+inline void BuilderCustom::applyInheritContainIntrinsicWidth(BuilderState&)
+{
+}
+
+inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builderState, CSSValue& value)
+{
+    auto& style = builderState.style();
+    if (is<CSSPrimitiveValue>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+        if (primitiveValue.valueID() == CSSValueNone) {
+            style.setContainIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth());
+            return style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::None);
+        }
+
+        if (primitiveValue.isLength()) {
+            style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::Length);
+            auto width = primitiveValue.computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            style.setContainIntrinsicWidth(width);
+        }
+        return;
+    }
+
+    if (!is<CSSValueList>(value))
+        return;
+
+    auto& list = downcast<CSSValueList>(value);
+    ASSERT(list.length() == 2);
+    ASSERT(downcast<CSSPrimitiveValue>(list.item(0))->valueID() == CSSValueAuto);
+    ASSERT(downcast<CSSPrimitiveValue>(list.item(1))->isLength());
+    style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
+    auto lengthValue = downcast<CSSPrimitiveValue>(list.item(1))->computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+    style.setContainIntrinsicWidth(lengthValue);
+}
+
+inline void BuilderCustom::applyInitialContainIntrinsicHeight(BuilderState& builderState)
+{
+    builderState.style().setContainIntrinsicHeightType(RenderStyle::initialContainIntrinsicHeightType());
+    builderState.style().setContainIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight());
+}
+
+inline void BuilderCustom::applyInheritContainIntrinsicHeight(BuilderState&)
+{
+}
+
+inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builderState, CSSValue& value)
+{
+    auto& style = builderState.style();
+    if (is<CSSPrimitiveValue>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+        if (primitiveValue.valueID() == CSSValueNone) {
+            style.setContainIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight());
+            return style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::None);
+        }
+
+        if (primitiveValue.isLength()) {
+            style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::Length);
+            auto height = primitiveValue.computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+            style.setContainIntrinsicHeight(height);
+        }
+        return;
+    }
+
+    if (!is<CSSValueList>(value))
+        return;
+
+    auto& list = downcast<CSSValueList>(value);
+    ASSERT(list.length() == 2);
+    ASSERT(downcast<CSSPrimitiveValue>(list.item(0))->valueID() == CSSValueAuto);
+    ASSERT(downcast<CSSPrimitiveValue>(list.item(1))->isLength());
+    style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
+    auto lengthValue = downcast<CSSPrimitiveValue>(list.item(1))->computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+    style.setContainIntrinsicHeight(lengthValue);
+}
+
+inline void BuilderCustom::applyInitialContainIntrinsicBlockSize(BuilderState& builderState)
+{
+    auto& style = builderState.style();
+    auto resolvedID = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
+
+    if (resolvedID == CSSPropertyContainIntrinsicHeight)
+        applyInitialContainIntrinsicHeight(builderState);
+    else
+        applyInitialContainIntrinsicWidth(builderState);
+}
+
+inline void BuilderCustom::applyInheritContainIntrinsicBlockSize(BuilderState&)
+{
+}
+
+inline void BuilderCustom::applyValueContainIntrinsicBlockSize(BuilderState& builderState, CSSValue& value)
+{
+    auto& style = builderState.style();
+    CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
+
+    if (newId == CSSPropertyContainIntrinsicHeight)
+        applyValueContainIntrinsicHeight(builderState, value);
+    else
+        applyValueContainIntrinsicWidth(builderState, value);
+}
+
+inline void BuilderCustom::applyInitialContainIntrinsicInlineSize(BuilderState& builderState)
+{
+    auto& style = builderState.style();
+    CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
+
+    if (newId == CSSPropertyContainIntrinsicWidth)
+        applyInitialContainIntrinsicWidth(builderState);
+    else
+        applyInitialContainIntrinsicHeight(builderState);
+}
+
+inline void BuilderCustom::applyInheritContainIntrinsicInlineSize(BuilderState&)
+{
+}
+
+inline void BuilderCustom::applyValueContainIntrinsicInlineSize(BuilderState& builderState, CSSValue& value)
+{
+    auto& style = builderState.style();
+    CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
+
+    if (newId == CSSPropertyContainIntrinsicWidth)
+        applyValueContainIntrinsicWidth(builderState, value);
+    else
+        applyValueContainIntrinsicHeight(builderState, value);
 }
 
 }

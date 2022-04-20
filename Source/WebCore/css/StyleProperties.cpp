@@ -377,6 +377,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return get2Values(scrollPaddingInlineShorthand());
     case CSSPropertyWebkitTextOrientation:
         return getPropertyValue(CSSPropertyTextOrientation);
+    case CSSPropertyContainIntrinsicSize:
+        return get2Values(containIntrinsicSizeShorthand());
     default:
         return String();
     }
@@ -1678,6 +1680,10 @@ StringBuilder StyleProperties::asTextInternal() const
             case CSSPropertyTransformOriginY:
             case CSSPropertyTransformOriginZ:
                 shorthandPropertyID = CSSPropertyTransformOrigin;
+                break;
+            case CSSPropertyContainIntrinsicHeight:
+            case CSSPropertyContainIntrinsicWidth:
+                shorthandPropertyID = CSSPropertyContainIntrinsicSize;
                 break;
             default:
                 break;

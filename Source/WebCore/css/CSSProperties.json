@@ -5270,6 +5270,90 @@
                 "url": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio"
             }
         },
+        "contain-intrinsic-size": {
+            "codegen-properties": {
+                "longhands": [
+                    "contain-intrinsic-width",
+                    "contain-intrinsic-height"
+                ],
+                "settings-flag": "cssContainIntrinsicSizeEnabled"
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
+            }
+        },
+        "contain-intrinsic-height": {
+            "codegen-properties": {
+                "custom": "All",
+                "settings-flag": "cssContainIntrinsicSizeEnabled",
+                "logical-property-group": {
+                    "name": "contain-intrinsic-size",
+                    "resolver": "vertical"
+                }
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
+            }
+        },
+        "contain-intrinsic-width": {
+            "codegen-properties": {
+                "custom": "All",
+                "settings-flag": "cssContainIntrinsicSizeEnabled",
+                "logical-property-group": {
+                    "name": "contain-intrinsic-size",
+                    "resolver": "horizontal"
+                }
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
+            }
+        },
+        "contain-intrinsic-block-size": {
+            "codegen-properties": {
+                "custom": "All",
+                "settings-flag": "cssContainIntrinsicSizeEnabled",
+                "logical-property-group": {
+                    "name": "contain-intrinsic-size",
+                    "resolver": "block"
+                }
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
+            }
+        },
+        "contain-intrinsic-inline-size": {
+            "codegen-properties": {
+                "custom": "All",
+                "settings-flag": "cssContainIntrinsicSizeEnabled",
+                "logical-property-group": {
+                    "name": "contain-intrinsic-size",
+                    "resolver": "inline"
+                }
+            },
+            "status": {
+                "status": "in development"
+            },
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
+            }
+        },
         "contain": {
             "codegen-properties": {
                 "custom": "All",

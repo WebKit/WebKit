@@ -1247,6 +1247,22 @@ TextStream& operator<<(TextStream& ts, MathStyle mathStyle)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ContainIntrinsicSizeType containIntrinsicSizeType)
+{
+    switch (containIntrinsicSizeType) {
+    case ContainIntrinsicSizeType::None:
+        ts << "none";
+        break;
+    case ContainIntrinsicSizeType::Length:
+        ts << "length";
+        break;
+    case ContainIntrinsicSizeType::AutoAndLength:
+        ts << "autoandlength";
+        break;
+    }
+    return ts;
+}
+
 bool alwaysPageBreak(BreakBetween between)
 {
     return between >= BreakBetween::Page;

@@ -1212,6 +1212,12 @@ enum class ContainerType : uint8_t {
     InlineSize,
 };
 
+enum class ContainIntrinsicSizeType : uint8_t {
+    None,
+    Length,
+    AutoAndLength
+};
+
 CSSBoxType transformBoxToCSSBoxType(TransformBox);
 
 extern const float defaultMiterLimit;
@@ -1323,6 +1329,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, Visibility);
 WTF::TextStream& operator<<(WTF::TextStream&, WhiteSpace);
 WTF::TextStream& operator<<(WTF::TextStream&, WordBreak);
 WTF::TextStream& operator<<(WTF::TextStream&, MathStyle);
+WTF::TextStream& operator<<(WTF::TextStream&, ContainIntrinsicSizeType);
 
 } // namespace WebCore
 

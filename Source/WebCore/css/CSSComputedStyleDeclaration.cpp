@@ -1669,6 +1669,30 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
     return cssValuePool.createIdentifierValue(CSSValueNone);
 }
 
+static Ref<CSSValue> valueForContainIntrinsicSize(const RenderStyle& style, const ContainIntrinsicSizeType& type, const std::optional<Length> containIntrinsicLength)
+{
+    auto& cssValuePool = CSSValuePool::singleton();
+
+    switch (type) {
+    case ContainIntrinsicSizeType::None:
+        return cssValuePool.createIdentifierValue(CSSValueNone);
+    case ContainIntrinsicSizeType::Length: {
+        ASSERT(containIntrinsicLength.has_value());
+        return zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style);
+    }
+    case ContainIntrinsicSizeType::AutoAndLength: {
+        auto autoValue = cssValuePool.createIdentifierValue(CSSValueAuto);
+        auto list = CSSValueList::createSpaceSeparated();
+        list->append(autoValue);
+        ASSERT(containIntrinsicLength.has_value());
+        list->append(zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style));
+        return list;
+    }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return cssValuePool.createIdentifierValue(CSSValueNone);
+}
+
 ComputedStyleExtractor::ComputedStyleExtractor(Node* node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
     : m_element(styleElementForNode(node))
     , m_pseudoElementSpecifier(pseudoElementSpecifier)
@@ -3762,6 +3786,21 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 list->append(cssValuePool.createCustomIdent(name));
             return list;
         }
+        case CSSPropertyContainIntrinsicSize: {
+            if (!m_element->document().settings().cssContainIntrinsicSizeEnabled())
+                return nullptr;
+            return getCSSPropertyValuesFor2SidesShorthand(containIntrinsicSizeShorthand());
+        }
+        case CSSPropertyContainIntrinsicWidth: {
+            if (!m_element->document().settings().cssContainIntrinsicSizeEnabled())
+                return nullptr;
+            return valueForContainIntrinsicSize(style, style.containIntrinsicWidthType(), style.containIntrinsicWidth());
+        }
+        case CSSPropertyContainIntrinsicHeight: {
+            if (!m_element->document().settings().cssContainIntrinsicSizeEnabled())
+                return nullptr;
+            return valueForContainIntrinsicSize(style, style.containIntrinsicHeightType(), style.containIntrinsicHeight());
+        }
         case CSSPropertyBackfaceVisibility:
             return cssValuePool.createIdentifierValue((style.backfaceVisibility() == BackfaceVisibility::Hidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyBorderImage:
@@ -4221,6 +4260,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyScrollPaddingBlockStart:
         case CSSPropertyScrollPaddingInlineEnd:
         case CSSPropertyScrollPaddingInlineStart:
+        case CSSPropertyContainIntrinsicBlockSize:
+        case CSSPropertyContainIntrinsicInlineSize:
             ASSERT_NOT_REACHED();
             break;
 

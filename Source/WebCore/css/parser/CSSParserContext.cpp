@@ -113,6 +113,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
     , inputSecurityEnabled { document.settings().cssInputSecurityEnabled() }
     , subgridEnabled { document.settings().subgridEnabled() }
+    , containIntrinsicSizeEnabled { document.settings().cssContainIntrinsicSizeEnabled() }
 #if ENABLE(ATTACHMENT_ELEMENT)
     , attachmentEnabled { RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() }
 #endif
@@ -167,6 +168,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.attachmentEnabled == b.attachmentEnabled
 #endif
         && a.subgridEnabled == b.subgridEnabled
+        && a.containIntrinsicSizeEnabled == b.containIntrinsicSizeEnabled
     ;
 }
 
@@ -212,7 +214,9 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.accentColorEnabled                        << 29
         | context.inputSecurityEnabled                      << 30
         | context.subgridEnabled                            << 31
-        | (unsigned long long)context.mode                  << 32; // This is multiple bits, so keep it last.
+        | (uint64_t)context.containIntrinsicSizeEnabled     << 32
+        | (uint64_t)context.mode                            << 33; // This is multiple bits, so keep it last.
+
     add(hasher, context.baseURL, context.charset, bits);
 }
 
@@ -259,6 +263,12 @@ bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
     case CSSPropertyWebkitOverflowScrolling:
         return !legacyOverflowScrollingTouchEnabled;
 #endif
+    case CSSPropertyContainIntrinsicSize:
+    case CSSPropertyContainIntrinsicHeight:
+    case CSSPropertyContainIntrinsicWidth:
+    case CSSPropertyContainIntrinsicBlockSize:
+    case CSSPropertyContainIntrinsicInlineSize:
+        return !containIntrinsicSizeEnabled;
     default:
         return false;
     }

@@ -109,6 +109,9 @@ public:
     double aspectRatioWidth;
     double aspectRatioHeight;
 
+    std::optional<Length> containIntrinsicWidth;
+    std::optional<Length> containIntrinsicHeight;
+
     OptionSet<Containment> contain;
 
     float perspective;
@@ -232,6 +235,9 @@ public:
     unsigned hasAttrContent : 1;
 
     unsigned isNotFinal : 1;
+
+    unsigned containIntrinsicWidthType : 2; // ContainIntrinsicSizeType
+    unsigned containIntrinsicHeightType : 2; // ContainIntrinsicSizeType
 
     unsigned containerType : 2; // ContainerType
 

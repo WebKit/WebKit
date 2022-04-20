@@ -1,3 +1,72 @@
+2022-04-20  Cathie Chen  <cathiechen@igalia.com>
+
+        Parsing of contain-intrinsic-size and adding a runtime flag for it
+        https://bugs.webkit.org/show_bug.cgi?id=238181
+
+        Reviewed by Simon Fraser.
+
+        Parsing of contain-intrinsic-size according to [1]. In order to parse the shorthand properly,
+        the latest draft has been updated to "none | <length> | auto <length>". ContainIntrinsicSizeType
+        in RenderStyle, indicates the type of value. containIntrinsicWidth/Height indicates the length
+        value for Length and AutoAndLength type.
+        Thanks to Rob Buis for helping with this patch.
+
+        [1] https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForContainIntrinsicSize):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        (WebCore::StyleProperties::asTextInternal const):
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::operator==):
+        (WebCore::add):
+        (WebCore::CSSParserContext::isPropertyRuntimeDisabled const):
+        * css/parser/CSSParserContext.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeContainIntrinsicSize):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::consumeContainIntrinsicSizeShorthand):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * css/parser/CSSPropertyParser.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::containIntrinsicWidthType const):
+        (WebCore::RenderStyle::containIntrinsicHeightType const):
+        (WebCore::RenderStyle::containIntrinsicWidth const):
+        (WebCore::RenderStyle::containIntrinsicHeight const):
+        (WebCore::RenderStyle::setContainIntrinsicWidthType):
+        (WebCore::RenderStyle::setContainIntrinsicHeightType):
+        (WebCore::RenderStyle::setContainIntrinsicWidth):
+        (WebCore::RenderStyle::setContainIntrinsicHeight):
+        (WebCore::RenderStyle::initialContainIntrinsicWidthType):
+        (WebCore::RenderStyle::initialContainIntrinsicHeightType):
+        (WebCore::RenderStyle::initialContainIntrinsicWidth):
+        (WebCore::RenderStyle::initialContainIntrinsicHeight):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInitialContainIntrinsicWidth):
+        (WebCore::Style::BuilderCustom::applyInheritContainIntrinsicWidth):
+        (WebCore::Style::BuilderCustom::applyValueContainIntrinsicWidth):
+        (WebCore::Style::BuilderCustom::applyInitialContainIntrinsicHeight):
+        (WebCore::Style::BuilderCustom::applyInheritContainIntrinsicHeight):
+        (WebCore::Style::BuilderCustom::applyValueContainIntrinsicHeight):
+        (WebCore::Style::BuilderCustom::applyInitialContainIntrinsicBlockSize):
+        (WebCore::Style::BuilderCustom::applyInheritContainIntrinsicBlockSize):
+        (WebCore::Style::BuilderCustom::applyValueContainIntrinsicBlockSize):
+        (WebCore::Style::BuilderCustom::applyInitialContainIntrinsicInlineSize):
+        (WebCore::Style::BuilderCustom::applyInheritContainIntrinsicInlineSize):
+        (WebCore::Style::BuilderCustom::applyValueContainIntrinsicInlineSize):
+
 2022-04-20  Tim Nguyen  <ntim@apple.com>
 
         Unprefix -webkit-user-select CSS property

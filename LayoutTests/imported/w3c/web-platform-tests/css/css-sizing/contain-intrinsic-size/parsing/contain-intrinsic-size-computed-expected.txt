@@ -1,20 +1,20 @@
 
-FAIL Property contain-intrinsic-size value 'none' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-size value '1px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-size value 'auto 1px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-size value 'auto 1px auto 1px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-size value '1px auto 1px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-size value '2vw 3px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-size value '2px 3vh' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-size value '5px 5px' assert_true: contain-intrinsic-size doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-width value 'none' assert_true: contain-intrinsic-width doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-width value '1px' assert_true: contain-intrinsic-width doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-width value 'auto 1px' assert_true: contain-intrinsic-width doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-width value '2vw' assert_true: contain-intrinsic-width doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-width value '3vh' assert_true: contain-intrinsic-width doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-height value 'none' assert_true: contain-intrinsic-height doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-height value '1px' assert_true: contain-intrinsic-height doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-height value 'auto 1px' assert_true: contain-intrinsic-height doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-height value '2vw' assert_true: contain-intrinsic-height doesn't seem to be supported in the computed style expected true got false
-FAIL Property contain-intrinsic-height value '3vh' assert_true: contain-intrinsic-height doesn't seem to be supported in the computed style expected true got false
+PASS Property contain-intrinsic-size value 'none'
+PASS Property contain-intrinsic-size value '1px'
+PASS Property contain-intrinsic-size value 'auto 1px'
+PASS Property contain-intrinsic-size value 'auto 1px auto 1px'
+PASS Property contain-intrinsic-size value '1px auto 1px'
+PASS Property contain-intrinsic-size value '2vw 3px'
+PASS Property contain-intrinsic-size value '2px 3vh'
+PASS Property contain-intrinsic-size value '5px 5px'
+PASS Property contain-intrinsic-width value 'none'
+PASS Property contain-intrinsic-width value '1px'
+PASS Property contain-intrinsic-width value 'auto 1px'
+PASS Property contain-intrinsic-width value '2vw'
+PASS Property contain-intrinsic-width value '3vh'
+PASS Property contain-intrinsic-height value 'none'
+PASS Property contain-intrinsic-height value '1px'
+PASS Property contain-intrinsic-height value 'auto 1px'
+PASS Property contain-intrinsic-height value '2vw'
+PASS Property contain-intrinsic-height value '3vh'
 

@@ -4083,6 +4083,38 @@ static RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
     return RefPtr<CSSValue>(WTFMove(list));
 }
 
+static RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range)
+{
+    RefPtr<CSSPrimitiveValue> autoValue;
+    if (range.peek().type() == IdentToken) {
+        switch (range.peek().id()) {
+        case CSSValueNone:
+            return consumeIdent<CSSValueNone>(range);
+        case CSSValueAuto:
+            autoValue = consumeIdent<CSSValueAuto>(range);
+            break;
+        default:
+            return nullptr;
+        }
+    }
+
+    if (range.atEnd())
+        return nullptr;
+
+    auto lengthValue = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative);
+    if (!lengthValue)
+        return nullptr;
+
+    if (!autoValue)
+        return lengthValue;
+
+    auto list = CSSValueList::createSpaceSeparated();
+    list->append(autoValue.releaseNonNull());
+    list->append(lengthValue.releaseNonNull());
+
+    return list;
+}
+
 static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 {
     bool foundOverOrUnder = false;
@@ -4722,6 +4754,11 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeString(m_range);
     case CSSPropertyContainerName:
         return consumeContainerName(m_range);
+    case CSSPropertyContainIntrinsicHeight:
+    case CSSPropertyContainIntrinsicWidth:
+    case CSSPropertyContainIntrinsicBlockSize:
+    case CSSPropertyContainIntrinsicInlineSize:
+        return consumeContainIntrinsicSize(m_range);
     default:
         return nullptr;
     }
@@ -6236,6 +6273,35 @@ bool CSSPropertyParser::consumeContainerShorthand(bool important)
     return true;
 }
 
+bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(bool important)
+{
+    ASSERT(shorthandForProperty(CSSPropertyContainIntrinsicSize).length() == 2);
+    if (!m_context.containIntrinsicSizeEnabled)
+        return false;
+
+    if (m_range.atEnd())
+        return false;
+
+    RefPtr<CSSValue> containIntrinsicWidth = consumeContainIntrinsicSize(m_range);
+    if (!containIntrinsicWidth)
+        return false;
+
+    RefPtr<CSSValue> containIntrinsicHeight;
+    m_range.consumeWhitespace();
+    if (m_range.atEnd())
+        containIntrinsicHeight = containIntrinsicWidth;
+    else {
+        containIntrinsicHeight = consumeContainIntrinsicSize(m_range);
+        m_range.consumeWhitespace();
+        if (!m_range.atEnd() || !containIntrinsicHeight)
+            return false;
+    }
+
+    addProperty(CSSPropertyContainIntrinsicWidth, CSSPropertyContainIntrinsicSize, *containIntrinsicWidth, important);
+    addProperty(CSSPropertyContainIntrinsicHeight, CSSPropertyContainIntrinsicSize, *containIntrinsicHeight, important);
+    return true;
+}
+
 bool CSSPropertyParser::consumeOffset(bool important)
 {
     auto& valuePool = CSSValuePool::singleton();
@@ -6542,6 +6608,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeTextDecorationSkip(important);
     case CSSPropertyContainer:
         return consumeContainerShorthand(important);
+    case CSSPropertyContainIntrinsicSize:
+        return consumeContainIntrinsicSizeShorthand(important);
     default:
         return false;
     }

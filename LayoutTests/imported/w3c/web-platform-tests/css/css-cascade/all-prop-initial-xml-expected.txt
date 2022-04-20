@@ -97,6 +97,10 @@ PASS column-rule-width
 PASS column-span
 PASS column-width
 PASS contain
+PASS contain-intrinsic-block-size
+PASS contain-intrinsic-height
+PASS contain-intrinsic-inline-size
+PASS contain-intrinsic-width
 PASS container-name
 PASS container-type
 PASS content

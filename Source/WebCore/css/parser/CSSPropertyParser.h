@@ -126,6 +126,7 @@ private:
     bool consumeOverscrollBehaviorShorthand(bool important);
 
     bool consumeContainerShorthand(bool important);
+    bool consumeContainIntrinsicSizeShorthand(bool important);
 
 private:
     // Inputs:

@@ -90,6 +90,7 @@ struct CSSParserContext {
     bool gradientInterpolationColorSpacesEnabled { false };
     bool inputSecurityEnabled { false };
     bool subgridEnabled { false };
+    bool containIntrinsicSizeEnabled { false };
 
     // RuntimeEnabledFeatures.
 #if ENABLE(ATTACHMENT_ELEMENT)

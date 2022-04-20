@@ -224,6 +224,18 @@ CSSColorMixEnabled:
     WebCore:
       default: false
 
+CSSContainIntrinsicSizeEnabled:
+  type: bool
+  humanReadableName: "CSS Contain Intrinsic Size"
+  humanReadableDescription: "Enable contain-intrinsic-size CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSContainerQueriesEnabled:
   type: bool
   humanReadableName: "CSS Container Queries"
