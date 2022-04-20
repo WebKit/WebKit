@@ -1,3 +1,14 @@
+2022-04-20  Tim Nguyen  <ntim@apple.com>
+
+        [Debug] Skip editing/inserting/insert-list-user-select-none-crash.html
+
+        Unreviewed test gardening.
+
+        This started crashing after r293028, but it's not a direct cause of that bug. You can also
+        reproduce before r293028 by replacing `user-select: none;` in the test with `user-select: text`.
+
+        * TestExpectations:
+
 2022-04-19  Karl Rackler  <rackler@apple.com>
 
         [Release wk2 arm64] fast/selectors/selection-window-inactive-stroke-color.html is a flaky image-only failure
