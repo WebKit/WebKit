@@ -1719,3 +1719,5 @@ webkit.org/b/239554 fast/scrolling/overflow-scroll-past-max.html [ Pass Failure 
 
 webkit.org/b/179853 imported/blink/fast/text/international-iteration-simple-text.html [ Pass Failure ]
 
+webkit.org/b/239566 media/audio-session-category-at-most-recent-playback.html [ Pass Failure ]
+
