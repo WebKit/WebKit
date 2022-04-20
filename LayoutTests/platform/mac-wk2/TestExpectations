@@ -1721,3 +1721,4 @@ webkit.org/b/179853 imported/blink/fast/text/international-iteration-simple-text
 
 webkit.org/b/239566 media/audio-session-category-at-most-recent-playback.html [ Pass Failure ]
 
+webkit.org/b/239568 [ Monterey Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-in-main-window-self-navigate-inherits.sub.html [ Pass Failure ]
