@@ -1113,6 +1113,20 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
     injectedBundle->setBundleParameters(value);
 }
 
+NO_RETURN inline void failedToSendSyncMessage()
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // GTK and WPE ports don't exit on send sync message failure.
+    // In this particular case, the network process can be terminated by the UI process while the
+    // Web process is still initializing, so we always want to exit instead of crashing. This can
+    // happen when the WebView is created and then destroyed quickly.
+    // See https://bugs.webkit.org/show_bug.cgi?id=183348.
+    exit(0);
+#else
+    CRASH();
+#endif
+}
+
 static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection& connection)
 {
     NetworkProcessConnectionInfo connectionInfo;
@@ -1132,7 +1146,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
     unsigned failedAttempts = 0;
     while (!requestConnection()) {
         if (++failedAttempts >= maxFailedAttempts)
-            CRASH();
+            failedToSendSyncMessage();
 
         RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will retry...");
 
@@ -1285,7 +1299,7 @@ GPUProcessConnectionInfo WebProcess::getGPUProcessConnection(IPC::Connection& co
         // If we failed the first time, retry once. The attachment may have become invalid
         // before it was received by the web process if the network process crashed.
         if (!connection.sendSync(Messages::WebProcessProxy::GetGPUProcessConnection(parameters), Messages::WebProcessProxy::GetGPUProcessConnection::Reply(connectionInfo), 0))
-            CRASH();
+            failedToSendSyncMessage();
     }
 
     return connectionInfo;
@@ -1370,7 +1384,7 @@ static WebAuthnProcessConnectionInfo getWebAuthnProcessConnection(IPC::Connectio
         // before it was received by the web process if the network process crashed.
         if (!connection.sendSync(Messages::WebProcessProxy::GetWebAuthnProcessConnection(), Messages::WebProcessProxy::GetWebAuthnProcessConnection::Reply(connectionInfo), 0)) {
             RELEASE_LOG_ERROR(WebAuthn, "getWebAuthnProcessConnection: Unable to connect to WebAuthn process (Terminating)");
-            CRASH();
+            failedToSendSyncMessage();
         }
     }
 

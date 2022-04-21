@@ -1,3 +1,25 @@
+2022-03-30  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] Exit cleanly if Connection to UIProcess severed. Regression (r214307)
+        https://bugs.webkit.org/show_bug.cgi?id=235224
+
+        This patch reverts the WPE and GTK specific code removed in '[WK2] Make
+        establishing a connection between the WebProcess and the Network process more
+        robust' (r12345):
+
+        GTK+ and WPE ports don't exit on send sync message failure. In those particular
+        cases, the network process can be terminated by the UI process while the
+        Web process is still initializing, so we always want to exit instead of crashing. This can
+        happen when the WebView is created and then destroyed quickly.
+        See https://bugs.webkit.org/show_bug.cgi?id=183348.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::getNetworkProcessConnection):
+        (WebKit::WebProcess::getGPUProcessConnection):
+        (WebKit::getWebAuthnProcessConnection):
+
 2022-03-22  Miguel Gomez  <magomez@igalia.com>
 
         Ensure that proxies are invalidated before destroying them.
