@@ -1,3 +1,13 @@
+2022-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Build is broken on shipping macOS due to TBA annotations replacement in API headers
+        https://bugs.webkit.org/show_bug.cgi?id=239623
+
+        Unreviewed, bump versions in WebKit.xcconfig too to disable TBA annotation replacement on shipping OS
+        so that we don't get warnings about API not yet being available.
+
+        * Configurations/WebKit.xcconfig:
+
 2022-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         <body> with overflow:hidden CSS is scrollable on iOS standalone web app
