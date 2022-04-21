@@ -96,24 +96,13 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
     if (gtk_init_check(nullptr, nullptr)) {
         GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
 #if PLATFORM(X11)
-        if (GDK_IS_X11_DISPLAY(display)) {
-            auto platformDisplay = PlatformDisplayX11::create(GDK_DISPLAY_XDISPLAY(display));
-#if USE(ATSPI) && USE(GTK4)
-            if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(display), "-gtk-atspi-bus-address")))
-                platformDisplay->m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
+        if (GDK_IS_X11_DISPLAY(display))
+            return PlatformDisplayX11::create(display);
 #endif
-            return platformDisplay;
-        }
-#endif
+
 #if PLATFORM(WAYLAND)
-        if (GDK_IS_WAYLAND_DISPLAY(display)) {
-            auto platformDisplay = PlatformDisplayWayland::create(gdk_wayland_display_get_wl_display(display));
-#if USE(ATSPI) && USE(GTK4)
-            if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(display), "-gtk-atspi-bus-address")))
-                platformDisplay->m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
-#endif
-            return platformDisplay;
-        }
+        if (GDK_IS_WAYLAND_DISPLAY(display))
+            return PlatformDisplayWayland::create(display);
 #endif
     }
 #endif // PLATFORM(GTK)
@@ -174,18 +163,44 @@ void PlatformDisplay::setSharedDisplayForCompositing(PlatformDisplay& display)
     s_sharedDisplayForCompositing = &display;
 }
 
-PlatformDisplay::PlatformDisplay(NativeDisplayOwned displayOwned)
-    : m_nativeDisplayOwned(displayOwned)
+PlatformDisplay::PlatformDisplay()
 #if USE(EGL)
-    , m_eglDisplay(EGL_NO_DISPLAY)
+    : m_eglDisplay(EGL_NO_DISPLAY)
 #endif
 {
 }
+
+#if PLATFORM(GTK)
+PlatformDisplay::PlatformDisplay(GdkDisplay* display)
+    : m_sharedDisplay(display)
+{
+#if USE(ATSPI) && USE(GTK4)
+    if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(display), "-gtk-atspi-bus-address")))
+        m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
+#endif
+
+    g_signal_connect(m_sharedDisplay.get(), "closed", G_CALLBACK(+[](GdkDisplay*, gboolean, gpointer userData) {
+        auto& platformDisplay = *static_cast<PlatformDisplay*>(userData);
+        platformDisplay.sharedDisplayDidClose();
+    }), this);
+}
+
+void PlatformDisplay::sharedDisplayDidClose()
+{
+#if USE(EGL) || USE(GLX)
+    clearSharingGLContext();
+#endif
+}
+#endif
 
 PlatformDisplay::~PlatformDisplay()
 {
 #if USE(EGL) && !PLATFORM(WIN)
     ASSERT(m_eglDisplay == EGL_NO_DISPLAY);
+#endif
+#if PLATFORM(GTK)
+    if (m_sharedDisplay)
+        g_signal_handlers_disconnect_by_data(m_sharedDisplay.get(), this);
 #endif
     if (s_sharedDisplayForCompositing == this)
         s_sharedDisplayForCompositing = nullptr;
@@ -197,6 +212,11 @@ GLContext* PlatformDisplay::sharingGLContext()
     if (!m_sharingGLContext)
         m_sharingGLContext = GLContext::createSharingContext(*this);
     return m_sharingGLContext.get();
+}
+
+void PlatformDisplay::clearSharingGLContext()
+{
+    m_sharingGLContext = nullptr;
 }
 #endif
 
@@ -274,7 +294,7 @@ void PlatformDisplay::terminateEGLDisplay()
     m_gstGLDisplay = nullptr;
     m_gstGLContext = nullptr;
 #endif
-    m_sharingGLContext = nullptr;
+    clearSharingGLContext();
     ASSERT(m_eglDisplayInitialized);
     if (m_eglDisplay == EGL_NO_DISPLAY)
         return;

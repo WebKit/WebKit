@@ -37,6 +37,14 @@
 #include <EGL/eglext.h>
 #include <wtf/Assertions.h>
 
+#if PLATFORM(GTK)
+#if USE(GTK4)
+#include <gdk/wayland/gdkwayland.h>
+#else
+#include <gdk/gdkwayland.h>
+#endif
+#endif
+
 namespace WebCore {
 
 const struct wl_registry_listener PlatformDisplayWayland::s_registryListener = {
@@ -56,32 +64,55 @@ std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create()
     if (!display)
         return nullptr;
 
-    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display, NativeDisplayOwned::Yes));
+    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display));
     platformDisplay->initialize();
     return platformDisplay;
 }
 
-std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create(struct wl_display* display)
+#if PLATFORM(GTK)
+std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create(GdkDisplay* display)
 {
-    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display, NativeDisplayOwned::No));
+    auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display));
     platformDisplay->initialize();
     return platformDisplay;
 }
+#endif
 
-PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display, NativeDisplayOwned displayOwned)
-    : PlatformDisplay(displayOwned)
-    , m_display(display)
+PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display)
+    : m_display(display)
 {
 }
+
+#if PLATFORM(GTK)
+PlatformDisplayWayland::PlatformDisplayWayland(GdkDisplay* display)
+    : PlatformDisplay(display)
+    , m_display(gdk_wayland_display_get_wl_display(display))
+{
+}
+#endif
 
 PlatformDisplayWayland::~PlatformDisplayWayland()
 {
-    if (m_nativeDisplayOwned == NativeDisplayOwned::Yes) {
+#if PLATFORM(GTK)
+    bool nativeDisplayOwned = !m_sharedDisplay;
+#else
+    bool nativeDisplayOwned = true;
+#endif
+
+    if (nativeDisplayOwned) {
         m_compositor = nullptr;
         m_registry = nullptr;
         wl_display_disconnect(m_display);
     }
 }
+
+#if PLATFORM(GTK)
+void PlatformDisplayWayland::sharedDisplayDidClose()
+{
+    PlatformDisplay::sharedDisplayDidClose();
+    m_display = nullptr;
+}
+#endif
 
 void PlatformDisplayWayland::initialize()
 {

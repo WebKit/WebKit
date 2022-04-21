@@ -1,3 +1,43 @@
+2022-04-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r290360): [GLX] Crash on process exit
+        https://bugs.webkit.org/show_bug.cgi?id=238494
+
+        Reviewed by Michael Catanzaro.
+
+        When creating a PlatformDisplay from a shared GdkDisplay, we need to keep a reference to the display and connect
+        to closed signal to release our display dependent resources. Closed signal is emitted right before the native
+        display is actually closed by GDK. We also need to make sure that the sharing GL context is released before the
+        PlatformDisplay is destroyed. This is always happening for EGL because the sharing GL context is cleared before
+        terminating the EGL display in the atexit handler, but that's not the case of GLX. Since X11 only allows one
+        PlatformDisplay, which is always the shared one, we can just install an atexit handler in the constructor to
+        clear the sharing context before the destructor is called.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::createPlatformDisplay):
+        (WebCore::PlatformDisplay::PlatformDisplay):
+        (WebCore::PlatformDisplay::sharedDisplayDidClose):
+        (WebCore::PlatformDisplay::~PlatformDisplay):
+        (WebCore::PlatformDisplay::clearSharingGLContext):
+        (WebCore::PlatformDisplay::terminateEGLDisplay):
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/libwpe/PlatformDisplayLibWPE.cpp:
+        (WebCore::PlatformDisplayLibWPE::PlatformDisplayLibWPE):
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::create):
+        (WebCore::PlatformDisplayWayland::PlatformDisplayWayland):
+        (WebCore::PlatformDisplayWayland::~PlatformDisplayWayland):
+        (WebCore::PlatformDisplayWayland::sharedDisplayDidClose):
+        * platform/graphics/wayland/PlatformDisplayWayland.h:
+        * platform/graphics/win/PlatformDisplayWin.h:
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::create):
+        (WebCore::clearSharingGLContextAtExit):
+        (WebCore::PlatformDisplayX11::PlatformDisplayX11):
+        (WebCore::PlatformDisplayX11::~PlatformDisplayX11):
+        (WebCore::PlatformDisplayX11::sharedDisplayDidClose):
+        * platform/graphics/x11/PlatformDisplayX11.h:
+
 2022-04-09  Khem Raj  <raj.khem@gmail.com>
 
         Include locale.h for LC_MESSAGES definition.

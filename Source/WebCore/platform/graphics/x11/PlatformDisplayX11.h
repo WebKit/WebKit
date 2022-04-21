@@ -41,7 +41,9 @@ namespace WebCore {
 class PlatformDisplayX11 final : public PlatformDisplay {
 public:
     static std::unique_ptr<PlatformDisplay> create();
-    static std::unique_ptr<PlatformDisplay> create(::Display*);
+#if PLATFORM(GTK)
+    static std::unique_ptr<PlatformDisplay> create(GdkDisplay*);
+#endif
 
     virtual ~PlatformDisplayX11();
 
@@ -52,7 +54,12 @@ public:
     bool supportsGLX(std::optional<int>& glxErrorBase) const;
 
 private:
-    PlatformDisplayX11(::Display*, NativeDisplayOwned);
+    explicit PlatformDisplayX11(::Display*);
+#if PLATFORM(GTK)
+    explicit PlatformDisplayX11(GdkDisplay*);
+
+    void sharedDisplayDidClose() override;
+#endif
 
     Type type() const override { return PlatformDisplay::Type::X11; }
 

@@ -59,7 +59,6 @@ std::unique_ptr<PlatformDisplayLibWPE> PlatformDisplayLibWPE::create()
 }
 
 PlatformDisplayLibWPE::PlatformDisplayLibWPE()
-    : PlatformDisplay(NativeDisplayOwned::No)
 {
 #if PLATFORM(GTK)
     PlatformDisplay::setSharedDisplayForCompositing(*this);
