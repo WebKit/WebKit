@@ -58,6 +58,10 @@ public:
     Length y() const { return m_y; }
     Length z() const { return m_z; }
 
+    void setX(Length newX) { m_x = newX; }
+    void setY(Length newY) { m_y = newY; }
+    void setZ(Length newZ) { m_z = newZ; }
+
     OperationType primitiveType() const final { return isRepresentableIn2D() ? TRANSLATE : TRANSLATE_3D; }
 
     bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const final
