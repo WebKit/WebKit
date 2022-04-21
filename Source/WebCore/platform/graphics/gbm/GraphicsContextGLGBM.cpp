@@ -30,6 +30,7 @@
 #if ENABLE(WEBGL) && USE(LIBGBM) && USE(ANGLE)
 
 #include "ANGLEHeaders.h"
+#include "Logging.h"
 #include "PixelBuffer.h"
 
 #if ENABLE(MEDIA_STREAM)
