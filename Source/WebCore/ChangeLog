@@ -1,3 +1,18 @@
+2022-04-21  Rob Buis  <rbuis@igalia.com>
+
+        Skip release assert during container query resolution
+        https://bugs.webkit.org/show_bug.cgi?id=239537
+
+        Reviewed by Antti Koivisto.
+
+        Skip release assert during container query resolution
+        since resolveStyle will be a no-op as the container
+        query resolution was started in resolveStyle, so calling
+        resolveStyle the second time will bail right away.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateStyleIfNeeded):
+
 2022-04-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed follow-up to r293123 to address review feedback from Sam & Darin
