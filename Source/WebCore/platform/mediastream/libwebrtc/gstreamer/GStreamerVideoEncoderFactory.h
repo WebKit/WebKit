@@ -28,18 +28,13 @@ namespace WebCore {
 
 class GStreamerVideoEncoderFactory final : public webrtc::VideoEncoderFactory {
     WTF_MAKE_FAST_ALLOCATED;
+
 public:
     GStreamerVideoEncoderFactory(bool isSupportingVP9Profile0, bool isSupportingVP9Profile2);
 
 private:
     std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const override;
     std::unique_ptr<webrtc::VideoEncoder> CreateVideoEncoder(const webrtc::SdpVideoFormat&) final;
-    CodecInfo QueryVideoEncoder(const webrtc::SdpVideoFormat&) const override
-    {
-        // FIXME: Detect whether the decoder is HW accelerated.
-
-        return { false };
-    }
 
     bool m_isSupportingVP9Profile0;
     bool m_isSupportingVP9Profile2;

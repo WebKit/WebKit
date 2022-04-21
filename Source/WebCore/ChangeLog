@@ -1,3 +1,25 @@
+2022-04-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK][WPE] Update libwebrtc API usage for video encoder factory
+        https://bugs.webkit.org/show_bug.cgi?id=239558
+
+        Reviewed by Philippe Normand.
+
+        Update GstreamerVideoEncoderFactory with current libwebrtc API.
+
+        No new tests required.
+
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::GStreamerVideoEncoder): Chain main constructor rather to
+        copy its initializations.
+        Update InitEncode method signature.
+        Remove deprecated attributes of EncoderInfo.
+        Fix code-style.
+        (WebCore::GStreamerH264Encoder::GStreamerH264Encoder): Remove unused class attribute and fix
+        a memleak.
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoEncoderFactory.h: Remove deprecated
+        method.
+
 2022-04-21  Rob Buis  <rbuis@igalia.com>
 
         Skip release assert during container query resolution

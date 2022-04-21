@@ -87,10 +87,10 @@ class GStreamerVideoEncoder : public webrtc::VideoEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GStreamerVideoEncoder(const webrtc::SdpVideoFormat&)
-        : m_firstFramePts(GST_CLOCK_TIME_NONE)
-        , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
+        : GStreamerVideoEncoder()
     {
     }
+
     GStreamerVideoEncoder()
         : m_firstFramePts(GST_CLOCK_TIME_NONE)
         , m_restrictionCaps(adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
@@ -123,7 +123,7 @@ public:
         return elem;
     }
 
-    int32_t InitEncode(const webrtc::VideoCodec* codecSettings, int32_t, size_t) override
+    int32_t InitEncode(const webrtc::VideoCodec* codecSettings, const webrtc::VideoEncoder::Settings&) override
     {
         g_return_val_if_fail(codecSettings, WEBRTC_VIDEO_CODEC_ERR_PARAMETER);
         g_return_val_if_fail(codecSettings->codecType == CodecType(), WEBRTC_VIDEO_CODEC_ERR_PARAMETER);
@@ -201,17 +201,13 @@ public:
 
     VideoEncoder::EncoderInfo GetEncoderInfo() const override
     {
-        EncoderInfo info;
-        info.supports_native_handle = false;
+        VideoEncoder::EncoderInfo info;
         info.implementation_name = "GStreamer";
         info.has_trusted_rate_controller = true;
-        info.is_hardware_accelerated = true;
-        info.has_internal_source = false;
         return info;
     }
 
-    int32_t Encode(const webrtc::VideoFrame& frame,
-        const std::vector<webrtc::VideoFrameType>* frameTypes) final
+    int32_t Encode(const webrtc::VideoFrame& frame, const std::vector<webrtc::VideoFrameType>* frameTypes) final
     {
         int32_t res;
 
@@ -274,8 +270,7 @@ public:
         m_encodedFrame.capture_time_ms_ = frame.render_time_ms();
         m_encodedFrame.SetTimestamp(frame.timestamp());
 
-        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %" G_GINT64_FORMAT " _timestamp: %u",
-            m_encodedFrame.capture_time_ms_, m_encodedFrame.Timestamp());
+        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %" G_GINT64_FORMAT " _timestamp: %u", m_encodedFrame.capture_time_ms_, m_encodedFrame.Timestamp());
 
         webrtc::CodecSpecificInfo codecInfo;
         PopulateCodecSpecific(&codecInfo, encodedBuffer);
@@ -351,8 +346,7 @@ public:
     GStreamerH264Encoder() { }
 
     GStreamerH264Encoder(const webrtc::SdpVideoFormat& format)
-        : m_parser(gst_h264_nal_parser_new())
-        , packetizationMode(webrtc::H264PacketizationMode::NonInterleaved)
+        : packetizationMode(webrtc::H264PacketizationMode::NonInterleaved)
     {
         auto it = format.parameters.find(cricket::kH264FmtpPacketizationMode);
 
@@ -372,7 +366,6 @@ public:
 
     const gchar* Caps() final { return "video/x-h264"; }
     const gchar* Name() final { return cricket::kH264CodecName; }
-    GstH264NalParser* m_parser;
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecH264; }
 
     void PopulateCodecSpecific(webrtc::CodecSpecificInfo* codecSpecificInfos, const GstBuffer*) final
