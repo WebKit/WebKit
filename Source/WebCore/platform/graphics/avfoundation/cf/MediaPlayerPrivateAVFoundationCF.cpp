@@ -69,6 +69,7 @@
 #endif
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
@@ -206,7 +207,7 @@ private:
     InbandTextTrackPrivateAVF* m_currentTextTrack;
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
-    HashMap<String, Vector<RetainPtr<AVCFAssetResourceLoadingRequestRef>>> m_keyURIToRequestMap;
+    MemoryCompactRobinHoodHashMap<String, Vector<RetainPtr<AVCFAssetResourceLoadingRequestRef>>> m_keyURIToRequestMap;
     AVCFAssetResourceLoaderCallbacks m_resourceLoaderCallbacks;
 #endif
 };

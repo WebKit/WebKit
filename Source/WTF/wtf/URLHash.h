@@ -44,6 +44,7 @@ struct URLHash {
     }
 
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
+    static constexpr bool hasHashInValue = true;
 };
 
 // URLHash is the default hash for String

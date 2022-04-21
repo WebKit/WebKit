@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
 
 namespace JSC {
@@ -73,7 +74,7 @@ private:
     URL responseURLFromRequestURL(JSC::JSGlobalObject&, JSC::JSValue);
 
     ScriptExecutionContext& m_context;
-    HashMap<String, URL> m_requestURLToResponseURLMap;
+    MemoryCompactRobinHoodHashMap<String, URL> m_requestURLToResponseURLMap;
     HashSet<Ref<ModuleScriptLoader>> m_loaders;
     OwnerType m_ownerType;
     JSC::JSGlobalObject* m_shadowRealmGlobal { nullptr };

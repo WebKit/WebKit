@@ -128,7 +128,7 @@ void RegistrationStore::addRegistrationFromDatabase(ServiceWorkerContextData&& d
     m_server.addRegistrationFromStore(WTFMove(data));
 }
 
-void RegistrationStore::didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, ScriptBuffer&& mainScript, HashMap<URL, ScriptBuffer>&& importedScripts)
+void RegistrationStore::didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts)
 {
     m_server.didSaveWorkerScriptsToDisk(serviceWorkerIdentifier, WTFMove(mainScript), WTFMove(importedScripts));
 }

@@ -289,7 +289,7 @@ Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::cascadeList(c
     return cascadeList(systemFontParameters(description, cssFamily, systemFontKind, allowUserInstalledFonts), systemFontKind);
 }
 
-static String genericFamily(const String& locale, HashMap<String, String>& map, CFStringRef ctKey)
+static String genericFamily(const String& locale, MemoryCompactRobinHoodHashMap<String, String>& map, CFStringRef ctKey)
 {
     return map.ensure(locale, [&] {
         auto descriptor = adoptCF(CTFontDescriptorCreateForCSSFamily(ctKey, locale.createCFString().get()));

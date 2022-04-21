@@ -46,6 +46,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RobinHoodHashSet.h>
 #import <wtf/URLParser.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -982,7 +983,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setLoadsFromNetwork:(BOOL)loads
 {
-    _pageConfiguration->setAllowedNetworkHosts(loads ? std::nullopt : std::optional<HashSet<String>> { HashSet<String> { } });
+    _pageConfiguration->setAllowedNetworkHosts(loads ? std::nullopt : std::optional { MemoryCompactLookupOnlyRobinHoodHashSet<String> { } });
 }
 
 - (BOOL)_loadsFromNetwork
@@ -994,7 +995,7 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 {
     if (!hosts)
         return _pageConfiguration->setAllowedNetworkHosts(std::nullopt);
-    HashSet<String> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<String> set;
     for (NSString *host in hosts)
         set.add(host);
     _pageConfiguration->setAllowedNetworkHosts(WTFMove(set));

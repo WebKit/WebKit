@@ -40,6 +40,7 @@
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/Forward.h>
 #include <wtf/JSONValues.h>
+#include <wtf/RobinHoodHashMap.h>
 
 namespace Inspector {
 class InjectedScriptManager;
@@ -225,7 +226,7 @@ private:
 
     std::unique_ptr<NetworkResourcesData> m_resourcesData;
 
-    HashMap<String, String> m_extraRequestHeaders;
+    MemoryCompactRobinHoodHashMap<String, String> m_extraRequestHeaders;
     HashSet<ResourceLoaderIdentifier> m_hiddenRequestIdentifiers;
 
     struct Intercept {
@@ -243,8 +244,8 @@ private:
         }
     };
     Vector<Intercept> m_intercepts;
-    HashMap<String, std::unique_ptr<PendingInterceptRequest>> m_pendingInterceptRequests;
-    HashMap<String, std::unique_ptr<PendingInterceptResponse>> m_pendingInterceptResponses;
+    MemoryCompactRobinHoodHashMap<String, std::unique_ptr<PendingInterceptRequest>> m_pendingInterceptRequests;
+    MemoryCompactRobinHoodHashMap<String, std::unique_ptr<PendingInterceptResponse>> m_pendingInterceptResponses;
 
     // FIXME: InspectorNetworkAgent should not be aware of style recalculation.
     RefPtr<Inspector::Protocol::Network::Initiator> m_styleRecalculationInitiator;

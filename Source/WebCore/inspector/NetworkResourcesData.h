@@ -32,7 +32,7 @@
 #include "InspectorPageAgent.h"
 #include "SharedBuffer.h"
 #include <wtf/Deque.h>
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -157,7 +157,7 @@ private:
     bool ensureFreeSpace(size_t);
 
     Deque<String> m_requestIdsDeque;
-    HashMap<String, std::unique_ptr<ResourceData>> m_requestIdToResourceDataMap;
+    MemoryCompactRobinHoodHashMap<String, std::unique_ptr<ResourceData>> m_requestIdToResourceDataMap;
     size_t m_contentSize { 0 };
     size_t m_maximumResourcesContentSize;
     size_t m_maximumSingleResourceContentSize;

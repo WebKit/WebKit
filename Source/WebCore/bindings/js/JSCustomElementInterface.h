@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace JSC {
@@ -107,7 +108,7 @@ private:
     JSC::Weak<JSC::JSObject> m_attributeChangedCallback;
     Ref<DOMWrapperWorld> m_isolatedWorld;
     Vector<RefPtr<Element>, 1> m_constructionStack;
-    HashSet<AtomString> m_observedAttributes;
+    MemoryCompactRobinHoodHashSet<AtomString> m_observedAttributes;
     bool m_isShadowDisabled : 1;
 };
 

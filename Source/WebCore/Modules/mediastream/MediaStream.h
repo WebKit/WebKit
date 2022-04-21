@@ -38,9 +38,9 @@
 #include "ScriptWrappable.h"
 #include "Timer.h"
 #include "URLRegistry.h"
-#include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RobinHoodHashMap.h>
 
 namespace WebCore {
 
@@ -141,7 +141,7 @@ private:
 
     Ref<MediaStreamPrivate> m_private;
 
-    HashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
+    MemoryCompactRobinHoodHashMap<String, RefPtr<MediaStreamTrack>> m_trackSet;
 
     MediaProducerMediaStateFlags m_state;
 

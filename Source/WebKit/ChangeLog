@@ -1,5 +1,32 @@
 2022-04-21  Chris Dumez  <cdumez@apple.com>
 
+        Adopt RobinHoodHashMap / RobinHoodHashSet more broadly in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=239576
+
+        Reviewed by Yusuke Suzuki.
+
+        Adopt RobinHoodHashMap / RobinHoodHashSet more broadly in WebKit to avoid wasting memory in hash tables.
+        RobinHoodHashMap / RobinHoodHashSet have more restrictions on what key types they work with and may result
+        in slightly lower performance but they have a much higher load factor that the regular HashMap / HashSet,
+        thus reducing memory usage. This patch adopts RobinHoodHashMap / RobinHoodHashSet on non performance
+        sensitive maps / sets in WebCore that have compatible keys (String / AtomString / URL because they cache
+        their hash).
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::didSaveScriptsToDisk):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::allowedNetworkHosts const):
+        (API::PageConfiguration::setAllowedNetworkHosts):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _setLoadsFromNetwork:]):
+        (-[WKWebViewConfiguration _setAllowedNetworkHosts:]):
+
+2022-04-21  Chris Dumez  <cdumez@apple.com>
+
         Build is broken on shipping macOS due to TBA annotations replacement in API headers
         https://bugs.webkit.org/show_bug.cgi?id=239623
 

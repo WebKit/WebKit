@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC)
 
-#import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RobinHoodHashSet.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/StringHash.h>
 
@@ -101,7 +101,7 @@ void WebCoreReportThreadViolation(const char* function, WebCore::ThreadViolation
     if (round >= MaximumThreadViolationRound)
         return;
 
-    static NeverDestroyed<HashSet<String>> loggedFunctions;
+    static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> loggedFunctions;
     switch (threadViolationBehavior[round]) {
         case NoThreadCheck:
             break;

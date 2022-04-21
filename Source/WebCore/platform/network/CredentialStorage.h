@@ -29,7 +29,7 @@
 #include "ProtectionSpaceHash.h"
 #include "SecurityOriginData.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -62,7 +62,7 @@ public:
 
 private:
     HashMap<std::pair<String /* partitionName */, ProtectionSpace>, Credential> m_protectionSpaceToCredentialMap;
-    HashSet<String> m_originsWithCredentials;
+    MemoryCompactRobinHoodHashSet<String> m_originsWithCredentials;
 
     typedef HashMap<String, ProtectionSpace> PathToDefaultProtectionSpaceMap;
     PathToDefaultProtectionSpaceMap m_pathToDefaultProtectionSpaceMap;

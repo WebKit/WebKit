@@ -26,7 +26,7 @@
 #pragma once
 
 #include "LegacyCDMSession.h"
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -50,7 +50,7 @@ public:
 private:
     WeakPtr<LegacyCDMSessionClient> m_client;
     RefPtr<Uint8Array> m_initData;
-    HashMap<String, Vector<uint8_t>> m_cachedKeys;
+    MemoryCompactRobinHoodHashMap<String, Vector<uint8_t>> m_cachedKeys;
     String m_sessionId;
 };
 

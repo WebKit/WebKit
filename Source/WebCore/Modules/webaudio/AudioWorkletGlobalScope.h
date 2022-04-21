@@ -32,6 +32,7 @@
 #include "AudioWorkletThread.h"
 #include "MessagePort.h"
 #include "WorkletGlobalScope.h"
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/WeakHashSet.h>
 
 namespace JSC {
@@ -81,7 +82,7 @@ private:
 
     size_t m_currentFrame { 0 };
     const float m_sampleRate;
-    HashMap<String, RefPtr<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
+    MemoryCompactRobinHoodHashMap<String, RefPtr<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
     Lock m_processorsLock;
     WeakHashSet<AudioWorkletProcessor, WTF::EmptyCounter, EnableWeakPtrThreadingAssertions::No> m_processors WTF_GUARDED_BY_LOCK(m_processorsLock);
     std::unique_ptr<AudioWorkletProcessorConstructionData> m_pendingProcessorConstructionData;

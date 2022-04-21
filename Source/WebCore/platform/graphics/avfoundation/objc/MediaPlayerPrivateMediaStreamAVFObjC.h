@@ -35,6 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/RobinHoodHashMap.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS WebRootSampleBufferBoundsChangeListener;
@@ -243,8 +244,8 @@ private:
     };
     CurrentFramePainter m_imagePainter;
 
-    HashMap<String, Ref<AudioTrackPrivateMediaStream>> m_audioTrackMap;
-    HashMap<String, Ref<VideoTrackPrivateMediaStream>> m_videoTrackMap;
+    MemoryCompactRobinHoodHashMap<String, Ref<AudioTrackPrivateMediaStream>> m_audioTrackMap;
+    MemoryCompactRobinHoodHashMap<String, Ref<VideoTrackPrivateMediaStream>> m_videoTrackMap;
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };

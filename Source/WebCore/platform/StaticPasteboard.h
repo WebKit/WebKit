@@ -26,7 +26,7 @@
 #pragma once
 
 #include "Pasteboard.h"
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
@@ -77,7 +77,7 @@ public:
 
 private:
     PasteboardCustomData m_customData;
-    HashSet<String> m_nonDefaultDataTypes;
+    MemoryCompactRobinHoodHashSet<String> m_nonDefaultDataTypes;
     Pasteboard::FileContentState m_fileContentState { Pasteboard::FileContentState::NoFileOrImageData };
 };
 

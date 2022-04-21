@@ -44,6 +44,7 @@
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Ref.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -190,7 +191,7 @@ private:
     bool m_hasAudio { false };
     bool m_hasVideo { false };
 
-    HashMap<AtomString, UniqueRef<TrackBuffer>> m_trackBufferMap;
+    MemoryCompactRobinHoodHashMap<AtomString, UniqueRef<TrackBuffer>> m_trackBufferMap;
 
     SourceBufferAppendMode m_appendMode { SourceBufferAppendMode::Segments };
 

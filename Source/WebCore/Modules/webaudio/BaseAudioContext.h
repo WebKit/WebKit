@@ -39,6 +39,7 @@
 #include <wtf/LoggerHelper.h>
 #include <wtf/MainThread.h>
 #include <wtf/RecursiveLockAdapter.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
@@ -223,7 +224,7 @@ public:
     PeriodicWave& periodicWave(OscillatorType);
 
     void addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&&);
-    const HashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
+    const MemoryCompactRobinHoodHashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
 
 protected:
     explicit BaseAudioContext(Document&);
@@ -345,7 +346,7 @@ private:
 
     AudioIOPosition m_outputPosition;
 
-    HashMap<String, Vector<AudioParamDescriptor>> m_parameterDescriptorMap;
+    MemoryCompactRobinHoodHashMap<String, Vector<AudioParamDescriptor>> m_parameterDescriptorMap;
 
     // These are cached per audio context for performance reasons. They cannot be
     // static because they rely on the sample rate.

@@ -35,8 +35,8 @@
 #include "SecurityOriginHash.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 
@@ -177,7 +177,7 @@ private:
     DatabaseManagerClient* m_client { nullptr };
 
     HashMap<SecurityOriginData, std::unique_ptr<HashCountedSet<String>>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
-    HashMap<SecurityOriginData, std::unique_ptr<HashSet<String>>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    HashMap<SecurityOriginData, std::unique_ptr<MemoryCompactRobinHoodHashSet<String>>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
     HashSet<SecurityOriginData> m_originsBeingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
     bool isDeletingDatabaseOrOriginFor(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
     void recordCreatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);

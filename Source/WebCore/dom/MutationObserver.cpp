@@ -45,6 +45,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashSet.h>
 
 namespace WebCore {
 
@@ -90,7 +91,7 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
     if (init.characterDataOldValue.value_or(false))
         options.add(OptionType::CharacterDataOldValue);
 
-    HashSet<AtomString> attributeFilter;
+    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> attributeFilter;
     if (init.attributeFilter) {
         for (auto& value : init.attributeFilter.value())
             attributeFilter.add(value);

@@ -32,6 +32,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Forward.h>
+#include <wtf/RobinHoodHashMap.h>
 
 namespace WebCore {
 
@@ -91,7 +92,7 @@ private:
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     Page& m_inspectedPage;
 
-    HashMap<String, WebAnimation*> m_animationIdMap;
+    MemoryCompactRobinHoodHashMap<String, WebAnimation*> m_animationIdMap;
     Vector<String> m_removedAnimationIds;
     Timer m_animationDestroyedTimer;
 

@@ -26,8 +26,8 @@
 #pragma once
 
 #include <wtf/FastMalloc.h>
-#include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -65,7 +65,7 @@ private:
     void removeClientForTarget(Document&, const AtomString&);
 
     RenderElement& m_renderer;
-    HashMap<AtomString, std::unique_ptr<CSSSVGResourceElementClient>> m_elementClients;
+    MemoryCompactRobinHoodHashMap<AtomString, std::unique_ptr<CSSSVGResourceElementClient>> m_elementClients;
 };
 
 } // namespace WebCore

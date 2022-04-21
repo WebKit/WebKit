@@ -506,7 +506,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     parameters.loadsSubresources = *loadsSubresources;
 
-    std::optional<std::optional<HashSet<String>>> allowedNetworkHosts;
+    std::optional<std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>>> allowedNetworkHosts;
     decoder >> allowedNetworkHosts;
     if (!allowedNetworkHosts)
         return std::nullopt;

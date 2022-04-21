@@ -1,3 +1,15 @@
+2022-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Adopt RobinHoodHashMap / RobinHoodHashSet more broadly in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=239576
+
+        Reviewed by Yusuke Suzuki.
+
+        Allow using RobinHoodHashMap / RobinHoodHashSet with URL keys since a URL wraps a String
+        and uses its internal String's cached hash as hash.
+
+        * wtf/URLHash.h:
+
 2022-04-21  Diego Pino Garcia  <dpino@igalia.com>
 
         REGRESSION(r292863): std::remove_cvref_t not defined in GCC9<

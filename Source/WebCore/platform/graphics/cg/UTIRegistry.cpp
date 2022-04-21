@@ -80,9 +80,9 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
     return defaultSupportedImageTypes;
 }
 
-HashSet<String>& additionalSupportedImageTypes()
+MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes()
 {
-    static NeverDestroyed<HashSet<String>> additionalSupportedImageTypes;
+    static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> additionalSupportedImageTypes;
     return additionalSupportedImageTypes;
 }
 

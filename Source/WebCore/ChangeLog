@@ -1,3 +1,124 @@
+2022-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Adopt RobinHoodHashMap / RobinHoodHashSet more broadly in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=239576
+
+        Reviewed by Yusuke Suzuki.
+
+        Adopt RobinHoodHashMap / RobinHoodHashSet more broadly in WebCore to avoid wasting memory in hash tables.
+        RobinHoodHashMap / RobinHoodHashSet have more restrictions on what key types they work with and may result
+        in slightly lower performance but they have a much higher load factor that the regular HashMap / HashSet,
+        thus reducing memory usage. This patch adopts RobinHoodHashMap / RobinHoodHashSet on non performance
+        sensitive maps / sets in WebCore that have compatible keys (String / AtomString / URL because they cache
+        their hash).
+
+        This is perf-neutral on all our benchmarks according to A/B testing.
+
+        * Modules/encryptedmedia/InitDataRegistry.h:
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.h:
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+        * Modules/mediasource/MediaSourceRegistry.h:
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/web-locks/WebLockRegistry.cpp:
+        * Modules/webaudio/AudioWorkletGlobalScope.h:
+        * Modules/webaudio/AudioWorkletNode.h:
+        * Modules/webaudio/AudioWorkletProcessor.cpp:
+        (WebCore::constructFrozenKeyValueObject):
+        (WebCore::copyDataFromParameterMapToJSObject):
+        (WebCore::AudioWorkletProcessor::buildJSArguments):
+        (WebCore::AudioWorkletProcessor::process):
+        * Modules/webaudio/AudioWorkletProcessor.h:
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::parameterDescriptorMap const):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::recordDeletingDatabase):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * bindings/js/JSCustomElementInterface.h:
+        * bindings/js/ScriptModuleLoader.h:
+        * dom/CustomElementRegistry.h:
+        (WebCore::CustomElementRegistry::promiseMap):
+        * dom/ExtensionStyleSheets.h:
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::observe):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::MutationObserverRegistration):
+        (WebCore::MutationObserverRegistration::resetObservation):
+        * dom/MutationObserverRegistration.h:
+        * dom/Node.cpp:
+        (WebCore::Node::registerMutationObserver):
+        * dom/Node.h:
+        * dom/WindowEventLoop.cpp:
+        * editing/Editor.h:
+        * inspector/InspectorAuditResourcesObject.h:
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::clear):
+        * inspector/NetworkResourcesData.h:
+        * inspector/agents/InspectorAnimationAgent.h:
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDatabaseAgent.h:
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorWorkerAgent.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setActiveContentRuleListActionPatterns):
+        * loader/DocumentLoader.h:
+        * loader/cache/CachedResourceLoader.h:
+        * page/Page.h:
+        * page/PageConfiguration.h:
+        * page/csp/ContentSecurityPolicyMediaListDirective.h:
+        * page/csp/ContentSecurityPolicySourceList.h:
+        * platform/LegacySchemeRegistry.cpp:
+        (WebCore::WTF_REQUIRES_LOCK):
+        * platform/StaticPasteboard.h:
+        * platform/graphics/SourceBufferPrivate.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::updateTracksOfKind):
+        * platform/graphics/cg/UTIRegistry.cpp:
+        (WebCore::additionalSupportedImageTypes):
+        * platform/graphics/cg/UTIRegistry.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.cpp:
+        (WebCore::genericFamily):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.h:
+        * platform/mac/ThreadCheck.mm:
+        (WebCoreReportThreadViolation):
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/CredentialStorage.h:
+        * platform/network/NetworkStorageSession.h:
+        * rendering/ReferencedSVGResources.h:
+        * svg/SVGDocumentExtensions.h:
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.h:
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::stripScriptSources):
+        (WebCore::populateScriptSourcesFromDisk):
+        (WebCore::RegistrationDatabase::doPushChanges):
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/RegistrationStore.cpp:
+        (WebCore::RegistrationStore::didSaveWorkerScriptsToDisk):
+        * workers/service/server/RegistrationStore.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::didSaveWorkerScriptsToDisk):
+        (WebCore::SWServer::updateWorker):
+        (WebCore::SWServer::installContextData):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+        (WebCore::SWServerWorker::didSaveScriptsToDisk):
+        * workers/service/server/SWServerWorker.h:
+
 2022-04-21  Tyler Wilcock  <tyler_w@apple.com>
 
         Only AXIsolatedTree::update{Children,Node} once when processing notifications in AXObjectCache::updateIsolatedTree

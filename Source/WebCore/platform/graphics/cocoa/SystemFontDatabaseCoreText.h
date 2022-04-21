@@ -29,6 +29,7 @@
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -113,11 +114,11 @@ private:
 
     HashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::Hash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
 
-    HashMap<String, String> m_serifFamilies;
-    HashMap<String, String> m_sansSeriferifFamilies;
-    HashMap<String, String> m_cursiveFamilies;
-    HashMap<String, String> m_fantasyFamilies;
-    HashMap<String, String> m_monospaceFamilies;
+    MemoryCompactRobinHoodHashMap<String, String> m_serifFamilies;
+    MemoryCompactRobinHoodHashMap<String, String> m_sansSeriferifFamilies;
+    MemoryCompactRobinHoodHashMap<String, String> m_cursiveFamilies;
+    MemoryCompactRobinHoodHashMap<String, String> m_fantasyFamilies;
+    MemoryCompactRobinHoodHashMap<String, String> m_monospaceFamilies;
 };
 
 inline void add(Hasher& hasher, const SystemFontDatabaseCoreText::CascadeListParameters& parameters)

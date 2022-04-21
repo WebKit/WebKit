@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "PasteboardWriterData.h"
+#include <wtf/RobinHoodHashSet.h>
 #include "ScrollView.h"
 #include "TextChecking.h"
 #include "TextEventInputType.h"
@@ -667,8 +668,8 @@ private:
     bool m_overwriteModeEnabled { false };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    HashSet<String> m_insertedAttachmentIdentifiers;
-    HashSet<String> m_removedAttachmentIdentifiers;
+    MemoryCompactRobinHoodHashSet<String> m_insertedAttachmentIdentifiers;
+    MemoryCompactRobinHoodHashSet<String> m_removedAttachmentIdentifiers;
 #endif
 
     VisibleSelection m_mark;

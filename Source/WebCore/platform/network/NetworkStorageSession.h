@@ -34,7 +34,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -266,7 +266,7 @@ private:
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     bool m_didRegisterCookieListeners { false };
     RetainPtr<NSMutableSet> m_subscribedDomainsForCookieChanges;
-    HashMap<String, HashSet<CookieChangeObserver*>> m_cookieChangeObservers;
+    MemoryCompactRobinHoodHashMap<String, HashSet<CookieChangeObserver*>> m_cookieChangeObservers;
 #endif
 
     CredentialStorage m_credentialStorage;

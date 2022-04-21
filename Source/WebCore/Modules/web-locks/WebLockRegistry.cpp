@@ -30,6 +30,7 @@
 #include "WebLockManagerSnapshot.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -66,8 +67,8 @@ private:
 
     WeakPtr<LocalWebLockRegistry> m_globalRegistry;
     ClientOrigin m_clientOrigin;
-    HashMap<String, Deque<LockRequest>> m_lockRequestQueueMap;
-    HashMap<String, Vector<LockInfo>> m_heldLocks;
+    FastRobinHoodHashMap<String, Deque<LockRequest>> m_lockRequestQueueMap;
+    FastRobinHoodHashMap<String, Vector<LockInfo>> m_heldLocks;
 };
 
 LocalWebLockRegistry::LocalWebLockRegistry() = default;

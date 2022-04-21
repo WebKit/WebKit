@@ -39,6 +39,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -98,13 +99,13 @@ private:
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
 
-    HashMap<String, Ref<JSC::Breakpoint>> m_listenerBreakpoints;
+    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_listenerBreakpoints;
     RefPtr<JSC::Breakpoint> m_pauseOnAllIntervalsBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllListenersBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllTimeoutsBreakpoint;
 
-    HashMap<String, Ref<JSC::Breakpoint>> m_urlTextBreakpoints;
-    HashMap<String, Ref<JSC::Breakpoint>> m_urlRegexBreakpoints;
+    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_urlTextBreakpoints;
+    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_urlRegexBreakpoints;
     RefPtr<JSC::Breakpoint> m_pauseOnAllURLsBreakpoint;
 };
 

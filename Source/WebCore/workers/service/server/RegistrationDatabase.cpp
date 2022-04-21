@@ -129,7 +129,7 @@ struct ImportedScriptAttributes {
     }
 };
 
-static HashMap<URL, ImportedScriptAttributes> stripScriptSources(const HashMap<URL, ServiceWorkerContextData::ImportedScript>& map)
+static HashMap<URL, ImportedScriptAttributes> stripScriptSources(const MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>& map)
 {
     HashMap<URL, ImportedScriptAttributes> mapWithoutScripts;
     for (auto& pair : map)
@@ -137,9 +137,9 @@ static HashMap<URL, ImportedScriptAttributes> stripScriptSources(const HashMap<U
     return mapWithoutScripts;
 }
 
-static HashMap<URL, ServiceWorkerContextData::ImportedScript> populateScriptSourcesFromDisk(SWScriptStorage& scriptStorage, const ServiceWorkerRegistrationKey& registrationKey, HashMap<URL, ImportedScriptAttributes>&& map)
+static MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> populateScriptSourcesFromDisk(SWScriptStorage& scriptStorage, const ServiceWorkerRegistrationKey& registrationKey, HashMap<URL, ImportedScriptAttributes>&& map)
 {
-    HashMap<URL, ServiceWorkerContextData::ImportedScript> importedScripts;
+    MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> importedScripts;
     for (auto& pair : map) {
         auto importedScript = scriptStorage.retrieve(registrationKey, pair.key);
         if (!importedScript) {
@@ -481,7 +481,7 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
         ASSERT(mainScript);
         if (!mainScript)
             return false;
-        HashMap<URL, ScriptBuffer> importedScripts;
+        MemoryCompactRobinHoodHashMap<URL, ScriptBuffer> importedScripts;
         for (auto& [scriptURL, script] : data.scriptResourceMap) {
             auto importedScript = scriptStorage.store(data.registration.key, scriptURL, script.script);
             ASSERT(importedScript);
@@ -546,7 +546,7 @@ String RegistrationDatabase::importRecords()
 
         auto referrerPolicy = sql->columnText(10);
 
-        HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
+        MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
         auto scriptResourceMapDataSpan = sql->columnBlobAsSpan(11);
         if (scriptResourceMapDataSpan.size()) {
             WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataSpan);

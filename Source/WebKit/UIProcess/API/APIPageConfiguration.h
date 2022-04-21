@@ -31,7 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -157,8 +157,8 @@ public:
     bool loadsSubresources() const { return m_loadsSubresources; }
     void setLoadsSubresources(bool loads) { m_loadsSubresources = loads; }
 
-    const std::optional<HashSet<WTF::String>>& allowedNetworkHosts() const { return m_allowedNetworkHosts; }
-    void setAllowedNetworkHosts(std::optional<HashSet<WTF::String>>&& hosts) { m_allowedNetworkHosts = WTFMove(hosts); }
+    const std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>& allowedNetworkHosts() const { return m_allowedNetworkHosts; }
+    void setAllowedNetworkHosts(std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>&& hosts) { m_allowedNetworkHosts = WTFMove(hosts); }
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool ignoresAppBoundDomains() const { return m_ignoresAppBoundDomains; }
@@ -235,7 +235,7 @@ private:
     bool m_crossOriginAccessControlCheckEnabled { true };
     WTF::String m_processDisplayName;
     bool m_loadsSubresources { true };
-    std::optional<HashSet<WTF::String>> m_allowedNetworkHosts;
+    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> m_allowedNetworkHosts;
     
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_ignoresAppBoundDomains { false };

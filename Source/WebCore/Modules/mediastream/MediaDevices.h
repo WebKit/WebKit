@@ -42,6 +42,7 @@
 #include "RealtimeMediaSourceCenter.h"
 #include "Timer.h"
 #include "UserMediaClient.h"
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -133,7 +134,7 @@ private:
     OptionSet<GestureAllowedRequest> m_requestTypesForCurrentGesture;
     WeakPtr<UserGestureToken> m_currentGestureToken;
 
-    HashMap<String, String> m_audioOutputDeviceIdToPersistentId;
+    MemoryCompactRobinHoodHashMap<String, String> m_audioOutputDeviceIdToPersistentId;
     String m_audioOutputDeviceId;
 };
 

@@ -39,8 +39,8 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
 #include <wtf/FixedVector.h>
-#include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakHashSet.h>
@@ -217,7 +217,7 @@ private:
     mutable RefPtr<Crypto> m_crypto;
 
     WeakPtr<ScriptBufferSourceProvider> m_mainScriptSourceProvider;
-    HashMap<URL, WeakHashSet<ScriptBufferSourceProvider>> m_importedScriptsSourceProviders;
+    MemoryCompactRobinHoodHashMap<URL, WeakHashSet<ScriptBufferSourceProvider>> m_importedScriptsSourceProviders;
 
     RefPtr<WorkerCacheStorageConnection> m_cacheStorageConnection;
     std::unique_ptr<WorkerMessagePortChannelProvider> m_messagePortChannelProvider;

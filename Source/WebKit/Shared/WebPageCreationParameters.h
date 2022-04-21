@@ -50,7 +50,7 @@
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewportArguments.h>
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -224,7 +224,7 @@ struct WebPageCreationParameters {
     Vector<String> corsDisablingPatterns;
     bool userScriptsShouldWaitUntilNotification { true };
     bool loadsSubresources { true };
-    std::optional<HashSet<String>> allowedNetworkHosts;
+    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedNetworkHosts;
 
     bool crossOriginAccessControlCheckEnabled { true };
     String processDisplayName;

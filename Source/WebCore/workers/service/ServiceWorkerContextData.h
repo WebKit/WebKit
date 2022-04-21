@@ -35,7 +35,7 @@
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "WorkerType.h"
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
 
 #if ENABLE(SERVICE_WORKER)
@@ -95,7 +95,7 @@ struct ServiceWorkerContextData {
     WorkerType workerType;
     bool loadedFromDisk;
     std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
-    HashMap<URL, ImportedScript> scriptResourceMap;
+    MemoryCompactRobinHoodHashMap<URL, ImportedScript> scriptResourceMap;
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
     NavigationPreloadState navigationPreloadState;
 
@@ -164,7 +164,7 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!decoder.decode(lastNavigationWasAppInitiated))
         return std::nullopt;
 
-    HashMap<URL, ImportedScript> scriptResourceMap;
+    MemoryCompactRobinHoodHashMap<URL, ImportedScript> scriptResourceMap;
     if (!decoder.decode(scriptResourceMap))
         return std::nullopt;
 
