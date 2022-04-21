@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -562,30 +562,14 @@ void WebPageProxy::stopInteraction()
     m_process->send(Messages::WebPage::StopInteraction(), m_webPageID);
 }
 
-bool WebPageProxy::isValidPerformActionOnElementAuthorizationToken(const String& authorizationToken) const
-{
-    return !authorizationToken.isNull() && m_performActionOnElementAuthTokens.contains(authorizationToken);
-}
-
 void WebPageProxy::performActionOnElement(uint32_t action)
 {
-    auto authorizationToken = createVersion4UUIDString();
-
-    m_performActionOnElementAuthTokens.add(authorizationToken);
-    
-    sendWithAsyncReply(Messages::WebPage::PerformActionOnElement(action, authorizationToken), [weakThis = WeakPtr { *this }, authorizationToken] () mutable {
-        if (!weakThis)
-            return;
-
-        ASSERT(weakThis->isValidPerformActionOnElementAuthorizationToken(authorizationToken));
-        weakThis->m_performActionOnElementAuthTokens.remove(authorizationToken);
-    });
+    m_process->send(Messages::WebPage::PerformActionOnElement(action), m_webPageID);
 }
 
-void WebPageProxy::saveImageToLibrary(const SharedMemory::IPCHandle& imageHandle, const String& authorizationToken)
+void WebPageProxy::saveImageToLibrary(const SharedMemory::IPCHandle& imageHandle)
 {
     MESSAGE_CHECK(!imageHandle.handle.isNull());
-    MESSAGE_CHECK(isValidPerformActionOnElementAuthorizationToken(authorizationToken));
 
     auto sharedMemoryBuffer = SharedMemory::map(imageHandle.handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
