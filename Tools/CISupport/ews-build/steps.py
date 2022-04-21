@@ -4940,6 +4940,12 @@ class ValidateCommitMessage(shell.ShellCommand):
     haltOnFailure = False
     flunkOnFailure = True
     OOPS_RE = re.compile(r'\(OO*PP*S!\)')
+    REVIEWED_STRINGS = (
+        'Reviewed by',
+        'Unreviewed',
+        'Rubber-stamped by',
+        'Rubber stamped by',
+    )
 
     def __init__(self, **kwargs):
         super(ValidateCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
@@ -4971,9 +4977,10 @@ class ValidateCommitMessage(shell.ShellCommand):
             if self.OOPS_RE.search(log_text):
                 self.summary = 'Commit message contains (OOPS!)'
                 rc = FAILURE
-            elif 'Reviewed by' not in log_text and 'Unreviewed' not in log_text:
+            elif all([candidate not in log_text for candidate in self.REVIEWED_STRINGS]):
                 self.summary = 'No reviewer information in commit message'
                 rc = FAILURE
+
         else:
             self.summary = 'Error parsing commit message'
             rc = FAILURE

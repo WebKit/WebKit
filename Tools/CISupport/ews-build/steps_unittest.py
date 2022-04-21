@@ -6189,6 +6189,26 @@ Unreviewed follow-up fix.'''),
         self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
         return self.runStep()
 
+    def test_success_rubber_stamped(self):
+        self.setupStep(ValidateCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''[build.webkit.org] Support identifiers on dashboard
+https://bugs.webkit.org/show_bug.cgi?id=239473
+<rdar://problem/76852365>
+
+Rubber-stamped by Aakash Jain.'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
+        return self.runStep()
+
     def test_failure_oops(self):
         self.setupStep(ValidateCommitMessage())
         self.setProperty('github.number', '1234')
