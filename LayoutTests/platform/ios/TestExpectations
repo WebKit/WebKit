@@ -3587,5 +3587,7 @@ webkit.org/b/239564 http/tests/app-privacy-report/user-attribution-cors-prefligh
 
 webkit.org/b/239625 imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html [ ImageOnlyFailure ]
 
+webkit.org/b/239630 http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html [ Failure ]
+
 # iOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
