@@ -1,3 +1,9 @@
+2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, add github accounts of Apple JSC reviewers
+
+        * metadata/contributors.json:
+
 2022-04-19  Mark Lam  <mark.lam@apple.com>
 
         Update my GitHub login.

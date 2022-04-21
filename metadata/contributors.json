@@ -3970,6 +3970,7 @@
          "keith_miller@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript",
+      "github" : "kmiller68",
       "name" : "Keith Miller",
       "nicks" : [
          "keith_miller",
@@ -4839,6 +4840,7 @@
          "msaboff@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript",
+      "github": "msaboff",
       "name" : "Michael Saboff",
       "nicks" : [
          "msaboff"
