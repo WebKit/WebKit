@@ -2211,5 +2211,3 @@ imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-
 # See webkit.org/b/233498 for context on this pointerevents tests
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 pointerevents/mouse [ Failure ]
-
-fast/text/install-font-style-recalc.html [ Pass ]

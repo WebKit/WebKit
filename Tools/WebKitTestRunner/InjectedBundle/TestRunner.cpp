@@ -1333,7 +1333,6 @@ void TestRunner::statisticsCallDidSetVeryPrevalentResourceCallback()
     
 void TestRunner::dumpResourceLoadStatistics()
 {
-    InjectedBundle::singleton().clearResourceLoadStatistics();
     postSynchronousPageMessage("dumpResourceLoadStatistics");
 }
 
