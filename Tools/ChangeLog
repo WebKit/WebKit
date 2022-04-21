@@ -1,5 +1,20 @@
 2022-04-21  Jonathan Bedard  <jbedard@apple.com>
 
+        [Merge-Queue] Don't close bugs associated with test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=239604
+        <rdar://problem/92093456>
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/ews-build/steps.py:
+        (CloseBug.doStepIf): Skip step if we're a test gardening change.
+        (UpdatePullRequest):
+        (UpdatePullRequest.is_test_gardening): Check for "Unreviewed test gardening" in the commit message.
+        (UpdatePullRequest.evaluateCommand):
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-04-21  Jonathan Bedard  <jbedard@apple.com>
+
         [commits.webkit.org] Disable CORS
         https://bugs.webkit.org/show_bug.cgi?id=239607
 

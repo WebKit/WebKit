@@ -1779,7 +1779,7 @@ class CloseBug(buildstep.BuildStep, BugzillaMixin):
         return {'step': 'Failed to close bug {}'.format(self.bug_id)}
 
     def doStepIf(self, step):
-        return self.getProperty('bug_id')
+        return self.getProperty('bug_id') and not self.getProperty('is_test_gardening')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -5125,6 +5125,13 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
                         return match.group('id')
         return None
 
+    @classmethod
+    def is_test_gardening(cls, lines):
+        for line in lines:
+            if line.lstrip().startswith('Unreviewed test gardening'):
+                return True
+        return False
+
     def evaluateCommand(self, cmd):
         rc = super(UpdatePullRequest, self).evaluateCommand(cmd)
 
@@ -5139,6 +5146,7 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
         bug_id = self.bug_id_from_log(loglines)
         if bug_id:
             self.setProperty('bug_id', bug_id)
+        self.setProperty('is_test_gardening', self.is_test_gardening(loglines))
 
         user = self.getProperty('github.head.user.login', '')
         head = self.getProperty('github.head.ref', '')

@@ -6420,7 +6420,7 @@ class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):
             self.assertEqual(pr_number, '1234')
             self.assertEqual(title, '[Merge-Queue] Add http credential helper')
             self.assertEqual(base, 'main')
-            self.assertEqual(head, 'HEAD:eng/pull-request-branch')
+            self.assertEqual(head, 'JonWBedard:eng/pull-request-branch')
 
             self.assertEqual(
                 description,
@@ -6476,9 +6476,70 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
         )
         self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
         with current_hostname(EWS_BUILD_HOSTNAME):
-            return self.runStep()
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('bug_id'), '238553')
+            self.assertEqual(self.getProperty('is_test_gardening'), False)
+            return rc
 
-    def test_success(self):
+    def test_success_gardening(self):
+        def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
+            self.assertEqual(pr_number, '1234')
+            self.assertEqual(title, '[ macOS wk2 ] some/test/path.html a flaky failure')
+            self.assertEqual(base, 'main')
+            self.assertEqual(head, 'karlrackler:eng/pull-request-branch')
+
+            self.assertEqual(
+                description,
+                '''#### 6a50b47fd71d922f753c06f46917086c839520b
+<pre>
+[ macOS wk2 ] some/test/path.html a flaky failure
+<a href="https://bugs.webkit.org/show_bug.cgi?id=239577">https://bugs.webkit.org/show_bug.cgi?id=239577</a>
+
+Unreviewed test gardening.
+
+* LayoutTests/platform/mac-wk2/TestExpectations:
+
+Canonical link: <a href="https://commits.webkit.org/249833@main">https://commits.webkit.org/249833@main</a>
+</pre>
+''',
+            )
+
+            return True
+
+        UpdatePullRequest.update_pr = update_pr
+        self.setupStep(UpdatePullRequest())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.head.user.login', 'karlrackler')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('github.base.ref', 'main')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=300,
+                        command=['git', 'log', '-1', '--no-decorate'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''commit 6a50b47fd71d922f753c06f46917086c839520b
+Author: Karl Rackler <rackler@apple.com>
+Date:   Thu Apr 21 00:25:03 2022 +0000
+
+    [ macOS wk2 ] some/test/path.html a flaky failure
+    https://bugs.webkit.org/show_bug.cgi?id=239577
+
+    Unreviewed test gardening.
+
+    * LayoutTests/platform/mac-wk2/TestExpectations:
+
+    Canonical link: https://commits.webkit.org/249833@main
+'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('bug_id'), '239577')
+            self.assertEqual(self.getProperty('is_test_gardening'), True)
+            return rc
+
+    def test_failure(self):
         def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
             return False
 
@@ -6516,6 +6577,7 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
         with current_hostname(EWS_BUILD_HOSTNAME):
             rc = self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '238553')
+            self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
 
 
