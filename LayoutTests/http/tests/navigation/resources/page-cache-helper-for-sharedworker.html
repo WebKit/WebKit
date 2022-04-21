@@ -10,7 +10,7 @@ async function doTest(counter)
         return;
 
     channel.postMessage('ping');
-    return new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
          let myTimer = setTimeout(resolve, 1000);
          channel.onmessage = async () => {
              clearTimeout(myTimer);
@@ -19,6 +19,10 @@ async function doTest(counter)
              doTest(++counter).then(resolve, reject);
          };
     });
+
+    const sw2 = new SharedWorker('shared-worker-script.js?2');
+    sw2.port.postMessage({ action: 'setState', state: 'hungry' });
+    await new Promise(resolve => sw2.port.onmessage = resolve);
 }
 
 window.addEventListener("load", async () => {

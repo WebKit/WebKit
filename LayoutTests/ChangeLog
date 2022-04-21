@@ -1,3 +1,15 @@
+2022-04-21  Youenn Fablet  <youenn@apple.com>
+
+        A suspended remote shared worker should resume when a new SharedWorker is added
+        https://bugs.webkit.org/show_bug.cgi?id=239325
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/navigation/page-cache-shared-worker-expected.txt:
+        * http/tests/navigation/page-cache-shared-worker.html:
+        * http/tests/navigation/resources/page-cache-helper-for-sharedworker.html:
+        * http/tests/navigation/resources/shared-worker-script.js:
+
 2022-04-21  Karl Rackler  <rackler@apple.com>
 
         [ macOS Release ] webanimations/css-transition-retargeting-during-ready-promise.html is a flaky failure

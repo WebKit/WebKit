@@ -72,7 +72,7 @@ public:
     void markAsRunning() { m_isRunning = true; }
 
     const WebCore::WorkerFetchResult& fetchResult() const { return m_fetchResult; }
-    void setFetchResult(WebCore::WorkerFetchResult&& fetchResult) { m_fetchResult = WTFMove(fetchResult); }
+    void setFetchResult(WebCore::WorkerFetchResult&&, WebSharedWorkerServerToContextConnection*);
     bool didFinishFetching() const { return !!m_fetchResult.script; }
 
 private:
@@ -80,6 +80,10 @@ private:
     WebSharedWorker& operator=(WebSharedWorker&&) = delete;
     WebSharedWorker(const WebSharedWorker&) = delete;
     WebSharedWorker& operator=(const WebSharedWorker&) = delete;
+
+    void suspendIfNeeded();
+    void resumeIfNeeded();
+    void launch(WebSharedWorkerServerToContextConnection&);
 
     struct SharedWorkerObjectState {
         bool isSuspended { false };

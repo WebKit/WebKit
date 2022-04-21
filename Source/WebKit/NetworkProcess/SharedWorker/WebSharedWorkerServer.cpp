@@ -107,13 +107,11 @@ void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker&
         return;
     }
 
-    sharedWorker.setFetchResult(WTFMove(fetchResult));
+    auto* connection = m_contextConnections.get(sharedWorker.registrableDomain());
+    sharedWorker.setFetchResult(WTFMove(fetchResult), connection);
 
-    if (auto* contextConnection = sharedWorker.contextConnection()) {
-        contextConnection->launchSharedWorker(sharedWorker);
-        return;
-    }
-    createContextConnection(sharedWorker.registrableDomain(), sharedWorker.firstSharedWorkerObjectProcess());
+    if (!connection)
+        createContextConnection(sharedWorker.registrableDomain(), sharedWorker.firstSharedWorkerObjectProcess());
 }
 
 bool WebSharedWorkerServer::needsContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain& registrableDomain) const
@@ -186,8 +184,6 @@ void WebSharedWorkerServer::contextConnectionCreated(WebSharedWorkerServerToCont
             continue;
 
         sharedWorker->didCreateContextConnection(contextConnection);
-        if (sharedWorker->didFinishFetching())
-            contextConnection.launchSharedWorker(*sharedWorker);
     }
 }
 

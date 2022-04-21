@@ -1,3 +1,19 @@
+2022-04-21  Youenn Fablet  <youenn@apple.com>
+
+        A suspended remote shared worker should resume when a new SharedWorker is added
+        https://bugs.webkit.org/show_bug.cgi?id=239325
+
+        Reviewed by Chris Dumez.
+
+        Check whether resuming/suspending remote shared worker in case of added/removed SharedWorker object.
+        Make sure to suspend the remote shared worker at launch time if needed.
+
+        Covered by updated test.
+
+        * NetworkProcess/SharedWorker/WebSharedWorker.cpp:
+        * NetworkProcess/SharedWorker/WebSharedWorker.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp:
+
 2022-04-21  Eric Carlson  <eric.carlson@apple.com>
 
         AVSampleBufferRenderSynchronizer timeline sometimes goes backwards when playback begins

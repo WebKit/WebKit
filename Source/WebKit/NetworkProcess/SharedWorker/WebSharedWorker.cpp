@@ -72,10 +72,26 @@ WebCore::RegistrableDomain WebSharedWorker::registrableDomain() const
     return WebCore::RegistrableDomain { url() };
 }
 
+void WebSharedWorker::setFetchResult(WebCore::WorkerFetchResult&& fetchResult, WebSharedWorkerServerToContextConnection* contextConnection)
+{
+    m_fetchResult = WTFMove(fetchResult);
+    if (contextConnection)
+        launch(*contextConnection);
+}
+
 void WebSharedWorker::didCreateContextConnection(WebSharedWorkerServerToContextConnection& contextConnection)
 {
     for (auto& sharedWorkerObjectIdentifier : m_sharedWorkerObjects.keys())
         contextConnection.addSharedWorkerObject(sharedWorkerObjectIdentifier);
+    if (didFinishFetching())
+        launch(contextConnection);
+}
+
+void WebSharedWorker::launch(WebSharedWorkerServerToContextConnection& connection)
+{
+    connection.launchSharedWorker(*this);
+    if (m_isSuspended)
+        connection.suspendSharedWorker(identifier());
 }
 
 void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort& port)
@@ -83,6 +99,8 @@ void WebSharedWorker::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifie
     m_sharedWorkerObjects.add(sharedWorkerObjectIdentifier, SharedWorkerObjectState { false, port });
     if (auto* connection = contextConnection())
         connection->addSharedWorkerObject(sharedWorkerObjectIdentifier);
+
+    resumeIfNeeded();
 }
 
 void WebSharedWorker::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
@@ -90,6 +108,8 @@ void WebSharedWorker::removeSharedWorkerObject(WebCore::SharedWorkerObjectIdenti
     m_sharedWorkerObjects.remove(sharedWorkerObjectIdentifier);
     if (auto* connection = contextConnection())
         connection->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
+
+    suspendIfNeeded();
 }
 
 void WebSharedWorker::suspend(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
@@ -100,6 +120,12 @@ void WebSharedWorker::suspend(WebCore::SharedWorkerObjectIdentifier sharedWorker
 
     iterator->value.isSuspended = true;
     ASSERT(!m_isSuspended);
+
+    suspendIfNeeded();
+}
+
+void WebSharedWorker::suspendIfNeeded()
+{
     if (m_isSuspended)
         return;
 
@@ -120,6 +146,12 @@ void WebSharedWorker::resume(WebCore::SharedWorkerObjectIdentifier sharedWorkerO
         return;
 
     iterator->value.isSuspended = false;
+
+    resumeIfNeeded();
+}
+
+void WebSharedWorker::resumeIfNeeded()
+{
     if (!m_isSuspended)
         return;
 

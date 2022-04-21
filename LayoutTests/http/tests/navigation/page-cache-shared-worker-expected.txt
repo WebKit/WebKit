@@ -8,6 +8,7 @@ pagehide - entering cache
 pageshow - from cache
 PASS Page did enter and was restored from the page cache
 PASS counter is below 100
+PASS state is "hungry"
 PASS successfullyParsed is true
 
 TEST COMPLETE
