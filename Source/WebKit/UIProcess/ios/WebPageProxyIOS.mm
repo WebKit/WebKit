@@ -569,7 +569,7 @@ bool WebPageProxy::isValidPerformActionOnElementAuthorizationToken(const String&
 
 void WebPageProxy::performActionOnElement(uint32_t action)
 {
-    auto authorizationToken = createVersion4UUIDString();
+    auto authorizationToken = createCanonicalUUIDString();
 
     m_performActionOnElementAuthTokens.add(authorizationToken);
     
