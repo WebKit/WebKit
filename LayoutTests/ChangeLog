@@ -1,3 +1,15 @@
+2022-04-21  Tim Nguyen  <ntim@apple.com>
+
+        [iOS] Rebaseline fast/attachment/attachment-disabled-rendering.html expectations
+        https://bugs.webkit.org/show_bug.cgi?id=238960
+
+        Unreviewed test gardening.
+
+        The page dimensions are slightly different, but the <attachment> has 0 size as expected.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/fast/attachment/attachment-disabled-rendering-expected.txt: Added.
+
 2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [ iOS ] platform/ios/ios/fast/text/opticalFont.html is a constant failure

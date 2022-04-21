@@ -2180,9 +2180,6 @@ webkit.org/b/232310 [ Release ] fast/flexbox/aspect-ratio-intrinsic-adjust.html 
 # This test is currently failing on EWS
 webkit.org/b/238954 imported/w3c/web-platform-tests/css/selectors/invalidation/user-action-pseudo-classes-in-has.html [ Pass Failure ]
 
-# This test is currently failing on EWS
-webkit.org/b/238960 fast/attachment/attachment-disabled-rendering.html [ Pass Failure ]
-
 # This failure is only happening on EWS
 webkit.org/b/238965 css3/background/background-repeat-round-auto2.html [ Pass ImageOnlyFailure ]
 
