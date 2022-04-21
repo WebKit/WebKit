@@ -3585,5 +3585,7 @@ webkit.org/b/239564 storage/indexeddb/modern/index-get-count-failures.html [ Fai
 webkit.org/b/239564 storage/indexeddb/modern/deleteobjectstore-1.html [ Failure ]
 webkit.org/b/239564 http/tests/app-privacy-report/user-attribution-cors-preflight-redirect.html [ Failure ]
 
+webkit.org/b/239625 imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html [ ImageOnlyFailure ]
+
 # iOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
