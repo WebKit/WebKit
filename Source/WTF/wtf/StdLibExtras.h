@@ -605,6 +605,18 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
 
+#if defined(__GLIBCXX__) && !defined(__cpp_lib_remove_cvref)
+namespace std {
+template <typename T>
+struct remove_cvref {
+    using type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
+};
+
+template <typename T>
+using remove_cvref_t = typename remove_cvref<T>::type;
+}
+#endif
+
 using WTF::GB;
 using WTF::KB;
 using WTF::MB;

@@ -1,3 +1,15 @@
+2022-04-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        REGRESSION(r292863): std::remove_cvref_t not defined in GCC9<
+        https://bugs.webkit.org/show_bug.cgi?id=239482
+
+        Reviewed by Žan Doberšek.
+
+        std::remove_cvref_t is only available since GCC9 onwards:
+          https://en.cppreference.com/w/cpp/compiler_support/20
+
+        * wtf/StdLibExtras.h: add remove_cvref_t to std namespace if not defined.
+
 2022-04-20  Chris Dumez  <cdumez@apple.com>
 
         Move true / false AtomStrings to a central location and reuse them
