@@ -90,7 +90,7 @@ messages -> WebPage LegacyReceiver {
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     StartInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext> elementContext, WebCore::IntPoint point)
     StopInteraction()
-    PerformActionOnElement(uint32_t action, String authenticationToken) -> ()
+    PerformActionOnElement(uint32_t action, String authenticationToken) -> () Async
     FocusNextFocusedElement(bool isForward) -> () Async
     AutofillLoginCredentials(String username, String password)
     SetFocusedElementValue(struct WebCore::ElementContext context, String value)
