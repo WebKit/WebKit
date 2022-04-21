@@ -1,3 +1,27 @@
+2022-04-21  Tyler Wilcock  <tyler_w@apple.com>
+
+        Only AXIsolatedTree::update{Children,Node} once when processing notifications in AXObjectCache::updateIsolatedTree
+        https://bugs.webkit.org/show_bug.cgi?id=239499
+
+        Reviewed by Andres Gonzalez.
+
+        Currently, we do try to prevent performing duplicate updates, but we do so only
+        if we have an exact match for a previous notification for any given object. 
+        However, multiple notifications trigger AXIsolatedTree::updateNode and children,
+        so we'll still duplicate work if we get multiple notifications in the same group.
+        For example, before this patch, if the same object got both an AXValueChanged and
+        AXTextChanged notification, we'd call AXIsolatedTree::updateNode twice.
+
+        With this patch, we instead keep track of whether or not we've
+        performed a node or children update for each object to prevent
+        duplicate work.
+
+        No new tests because there is no behavior change.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::updateIsolatedTree):
+        (WebCore::appendIfNotContainsMatching): Deleted.
+
 2022-04-21  Philippe Normand  <philn@igalia.com>
 
         [GBM] Debug build broken
