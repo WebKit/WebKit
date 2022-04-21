@@ -72,6 +72,11 @@ class BuilderCustom {
 public:
     // Custom handling of inherit, initial and value setting.
     DECLARE_PROPERTY_CUSTOM_HANDLERS(AspectRatio);
+    // FIXME: <https://webkit.org/b/212506> Teach makeprop.pl to generate setters for hasExplicitlySet* flags
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderBottomLeftRadius);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderBottomRightRadius);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopLeftRadius);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopRightRadius);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageSlice);
@@ -80,6 +85,10 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CaretColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Contain);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicWidth);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicHeight);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicBlockSize);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicInlineSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
@@ -88,6 +97,12 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontStyle);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantLigatures);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantNumeric);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantEastAsian);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateAreas);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateColumns);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateRows);
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ImageResolution);
 #endif
@@ -103,54 +118,33 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextIndent);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitBoxShadow);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantLigatures);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantNumeric);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontVariantEastAsian);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateAreas);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateColumns);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(GridTemplateRows);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicWidth);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicHeight);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicBlockSize);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicInlineSize);
 
     // Custom handling of initial + inherit value setting only.
-    static void applyInitialWebkitMaskImage(BuilderState&) { }
-    static void applyInheritWebkitMaskImage(BuilderState&) { }
     static void applyInitialFontFeatureSettings(BuilderState&) { }
     static void applyInheritFontFeatureSettings(BuilderState&) { }
     static void applyInitialFontVariationSettings(BuilderState&);
     static void applyInheritFontVariationSettings(BuilderState&);
+    static void applyInitialWebkitMaskImage(BuilderState&) { }
+    static void applyInheritWebkitMaskImage(BuilderState&) { }
 
     // Custom handling of inherit + value setting only.
     static void applyInheritDisplay(BuilderState&);
     static void applyValueDisplay(BuilderState&, CSSValue&);
-    // FIXME: <https://webkit.org/b/212506> Teach makeprop.pl to generate setters for hasExplicitlySet* flags
-    static void applyInitialBorderBottomLeftRadius(BuilderState&);
-    static void applyInheritBorderBottomLeftRadius(BuilderState&);
-    static void applyValueBorderBottomLeftRadius(BuilderState&, CSSValue&);
-    static void applyInitialBorderBottomRightRadius(BuilderState&);
-    static void applyInheritBorderBottomRightRadius(BuilderState&);
-    static void applyValueBorderBottomRightRadius(BuilderState&, CSSValue&);
-    static void applyInitialBorderTopLeftRadius(BuilderState&);
-    static void applyInheritBorderTopLeftRadius(BuilderState&);
-    static void applyValueBorderTopLeftRadius(BuilderState&, CSSValue&);
-    static void applyInitialBorderTopRightRadius(BuilderState&);
-    static void applyInheritBorderTopRightRadius(BuilderState&);
-    static void applyValueBorderTopRightRadius(BuilderState&, CSSValue&);
+    static void applyInheritVerticalAlign(BuilderState&);
+    static void applyValueVerticalAlign(BuilderState&, CSSValue&);
+
+    // Custom handling of initial + value only.
+    static void applyInitialTextAlign(BuilderState&);
+    static void applyValueTextAlign(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
     static void applyValueBaselineShift(BuilderState&, CSSValue&);
     static void applyValueDirection(BuilderState&, CSSValue&);
-    static void applyInheritVerticalAlign(BuilderState&);
-    static void applyValueVerticalAlign(BuilderState&, CSSValue&);
-    static void applyInitialTextAlign(BuilderState&);
-    static void applyValueTextAlign(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
 #if ENABLE(TEXT_AUTOSIZING)
@@ -2179,9 +2173,9 @@ inline void BuilderCustom::applyInheritContainIntrinsicBlockSize(BuilderState&)
 inline void BuilderCustom::applyValueContainIntrinsicBlockSize(BuilderState& builderState, CSSValue& value)
 {
     auto& style = builderState.style();
-    CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
+    auto resolvedID = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
 
-    if (newId == CSSPropertyContainIntrinsicHeight)
+    if (resolvedID == CSSPropertyContainIntrinsicHeight)
         applyValueContainIntrinsicHeight(builderState, value);
     else
         applyValueContainIntrinsicWidth(builderState, value);
@@ -2190,9 +2184,9 @@ inline void BuilderCustom::applyValueContainIntrinsicBlockSize(BuilderState& bui
 inline void BuilderCustom::applyInitialContainIntrinsicInlineSize(BuilderState& builderState)
 {
     auto& style = builderState.style();
-    CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
+    auto resolvedID = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
 
-    if (newId == CSSPropertyContainIntrinsicWidth)
+    if (resolvedID == CSSPropertyContainIntrinsicWidth)
         applyInitialContainIntrinsicWidth(builderState);
     else
         applyInitialContainIntrinsicHeight(builderState);
@@ -2205,9 +2199,9 @@ inline void BuilderCustom::applyInheritContainIntrinsicInlineSize(BuilderState&)
 inline void BuilderCustom::applyValueContainIntrinsicInlineSize(BuilderState& builderState, CSSValue& value)
 {
     auto& style = builderState.style();
-    CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
+    auto resolvedID = CSSProperty::resolveDirectionAwareProperty(CSSPropertyContainIntrinsicBlockSize, style.direction(), style.writingMode());
 
-    if (newId == CSSPropertyContainIntrinsicWidth)
+    if (resolvedID == CSSPropertyContainIntrinsicWidth)
         applyValueContainIntrinsicWidth(builderState, value);
     else
         applyValueContainIntrinsicHeight(builderState, value);

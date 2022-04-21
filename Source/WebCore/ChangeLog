@@ -1,3 +1,20 @@
+2022-04-21  Tim Nguyen  <ntim@apple.com>
+
+        Small cleanups to StyleBuilderCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=239595
+
+        Reviewed by Antti Koivisto.
+
+        - Make use of DECLARE_PROPERTY_CUSTOM_HANDLERS more often
+        - Make code style for the containIntrinsic*Size methods consistent with
+        applyInitialContainIntrinsicBlockSize (use auto and better variable name)
+        - A bit of extra sorting
+
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueContainIntrinsicBlockSize):
+        (WebCore::Style::BuilderCustom::applyInitialContainIntrinsicInlineSize):
+        (WebCore::Style::BuilderCustom::applyValueContainIntrinsicInlineSize):
+
 2022-04-21  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK][WPE] Update libwebrtc API usage for video encoder factory
