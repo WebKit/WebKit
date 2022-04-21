@@ -1,3 +1,14 @@
+2022-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Make make-dist script python3 only
+        https://bugs.webkit.org/show_bug.cgi?id=239596
+
+        Reviewed by Adrian Perez de Castro.
+
+        It fails with python2 since r291934.
+
+        * Scripts/make-dist:
+
 2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Generate well-formed JSON for compile_commands.json

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (C) 2014 Igalia S.L.
 #
 # This library is free software; you can redistribute it and/or
@@ -297,7 +297,7 @@ if __name__ == "__main__":
 
         pkgconfig_file = os.path.join(arguments.build_dir, "Source/WebKit/webkit2gtk-4.1.pc")
         if os.path.isfile(pkgconfig_file):
-            p = subprocess.Popen(['pkg-config', '--modversion', pkgconfig_file], stdout=subprocess.PIPE)
+            p = subprocess.Popen(['pkg-config', '--modversion', pkgconfig_file], stdout=subprocess.PIPE, text="ascii")
             version = p.communicate()[0]
             if version:
                 arguments.version = version.rstrip('\n')
