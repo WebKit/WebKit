@@ -1,3 +1,11 @@
+2022-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed follow-up to r293123 to address review feedback from Sam & Darin
+
+        * css/SelectorFilter.cpp:
+        (WebCore::localNameIsKnownToBeLowercase):
+        (WebCore::SelectorFilter::collectElementIdentifierHashes):
+
 2022-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid falling back to snapshots for transparent images when triggering batch text recognition
