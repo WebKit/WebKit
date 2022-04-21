@@ -76,6 +76,11 @@ public:
         return m_inlineBox->renderer();
     }
 
+    const RenderStyle& style() const
+    {
+        return m_inlineBox->lineStyle();
+    }
+
     void traverseNextTextBox() { m_inlineBox = inlineTextBox()->nextTextBox(); }
 
     void traverseNextOnLine()

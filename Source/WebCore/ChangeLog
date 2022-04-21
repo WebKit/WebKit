@@ -1,3 +1,21 @@
+2022-04-21  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Add direct style accessor to inline iterator
+        https://bugs.webkit.org/show_bug.cgi?id=239593
+
+        Reviewed by Alan Bujtas.
+
+        The current implementation fetches the line and the renderer and is pretty expensive.
+
+        * layout/integration/inline/InlineIteratorBox.cpp:
+        (WebCore::InlineIterator::Box::style const): Deleted.
+        * layout/integration/inline/InlineIteratorBox.h:
+        (WebCore::InlineIterator::Box::style const):
+        * layout/integration/inline/InlineIteratorBoxLegacyPath.h:
+        (WebCore::InlineIterator::BoxLegacyPath::style const):
+        * layout/integration/inline/InlineIteratorBoxModernPath.h:
+        (WebCore::InlineIterator::BoxModernPath::style const):
+
 2022-04-21  Tim Nguyen  <ntim@apple.com>
 
         Small cleanups to StyleBuilderCustom.cpp

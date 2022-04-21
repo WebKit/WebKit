@@ -246,6 +246,13 @@ inline const RenderObject& Box::renderer() const
     });
 }
 
+inline const RenderStyle& Box::style() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> const RenderStyle& {
+        return path.style();
+    });
+}
+
 inline const LegacyInlineBox* Box::legacyInlineBox() const
 {
     if (!std::holds_alternative<BoxLegacyPath>(m_pathVariant))

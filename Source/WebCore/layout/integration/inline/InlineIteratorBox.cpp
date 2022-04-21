@@ -94,11 +94,6 @@ LineBoxIterator Box::lineBox() const
     );
 }
 
-const RenderStyle& Box::style() const
-{
-    return lineBox()->isFirst() ? renderer().firstLineStyle() : renderer().style();
-}
-
 RenderObject::HighlightState Box::selectionState() const
 {
     if (isText()) {

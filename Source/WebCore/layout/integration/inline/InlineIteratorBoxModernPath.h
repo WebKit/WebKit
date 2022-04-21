@@ -103,6 +103,11 @@ public:
         return m_inlineContent->rendererForLayoutBox(box().layoutBox());
     }
 
+    const RenderStyle& style() const
+    {
+        return box().style();
+    }
+
     void traverseNextTextBox()
     {
         ASSERT(!atEnd());
