@@ -23,6 +23,8 @@
 import json
 import os
 
+from flask_cors import CORS
+
 autoinstall_path = os.environ.get('AUTOINSTALL_PATH')
 if autoinstall_path:
     from webkitcorepy import AutoInstall
@@ -32,6 +34,7 @@ from flask import Flask, current_app, json as fjson
 from reporelaypy import Checkout, CheckoutRoute, Database, Redirector, HookReceiver
 
 app = Flask(__name__)
+CORS(app)
 
 database = Database()
 checkout = Checkout.from_json(os.environ.get('CHECKOUT', '{}'))

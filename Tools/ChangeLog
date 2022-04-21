@@ -1,5 +1,16 @@
 2022-04-21  Jonathan Bedard  <jbedard@apple.com>
 
+        [commits.webkit.org] Disable CORS
+        https://bugs.webkit.org/show_bug.cgi?id=239607
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Bump version.
+        * Scripts/libraries/reporelaypy/reporelaypy/webserver.py: Disable CORS.
+        * Scripts/libraries/reporelaypy/setup.py: Bump version.
+
+2022-04-21  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Allow "Rubber-stamped" as review message
         https://bugs.webkit.org/show_bug.cgi?id=239601
         <rdar://problem/92091819>
