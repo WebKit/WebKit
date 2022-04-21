@@ -474,7 +474,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 
         computeTrackSizesForIndefiniteSize(algorithm, ForColumns, &minLogicalWidth, &maxLogicalWidth);
     } else {
-        LayoutUnit totalGuttersSize = guttersSize(m_grid, ForColumns, 0, numTracks(ForColumns, grid), std::nullopt);
+        LayoutUnit totalGuttersSize = guttersSize(m_grid, ForColumns, 0, numTracks(ForColumns, m_grid), std::nullopt);
         minLogicalWidth = *m_minContentSize + totalGuttersSize;
         maxLogicalWidth = *m_maxContentSize + totalGuttersSize;
     }
