@@ -75,6 +75,7 @@ class WinPort(ApplePort):
         WOW64_POST_MORTEM_DEBUGGER_KEY = r'SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\AeDebug'
         WINDOWS_ERROR_REPORTING_KEY = r'SOFTWARE\Microsoft\Windows\Windows Error Reporting'
         WOW64_WINDOWS_ERROR_REPORTING_KEY = r'SOFTWARE\Wow6432Node\Microsoft\Windows\Windows Error Reporting'
+        FILE_SYSTEM_KEY = r'SYSTEM\CurrentControlSet\Control\FileSystem'
         _HKLM = _winreg.HKEY_LOCAL_MACHINE
         _HKCU = _winreg.HKEY_CURRENT_USER
         _REG_DWORD = _winreg.REG_DWORD
@@ -84,6 +85,7 @@ class WinPort(ApplePort):
         WOW64_POST_MORTEM_DEBUGGER_KEY = "/%s/SOFTWARE/Wow6432Node/Microsoft/Windows NT/CurrentVersion/AeDebug/%s"
         WINDOWS_ERROR_REPORTING_KEY = "/%s/SOFTWARE/Microsoft/Windows/Windows Error Reporting/%s"
         WOW64_WINDOWS_ERROR_REPORTING_KEY = "/%s/SOFTWARE/Wow6432Node/Microsoft/Windows/Windows Error Reporting/%s"
+        FILE_SYSTEM_KEY = "/%s/SYSTEM/CurrentControlSet/Control/FileSystem/%s"
         _HKLM = "HKLM"
         _HKCU = "HKCU"
         _REG_DWORD = "-d"
@@ -94,6 +96,8 @@ class WinPort(ApplePort):
 
     previous_error_reporting_values = {}
     previous_wow64_error_reporting_values = {}
+
+    previous_file_system_values = {}
 
     def __init__(self, host, port_name, **kwargs):
         ApplePort.__init__(self, host, port_name, **kwargs)
@@ -373,6 +377,17 @@ class WinPort(ApplePort):
         for key, value in self.previous_wow64_error_reporting_values.items():
             self.write_registry_value(self.WOW64_WINDOWS_ERROR_REPORTING_KEY, key[0], key[1], key[2], value[1], value[0])
 
+    def set_long_paths_enabled(self):
+        key = 'LongPathsEnabled'
+        value = [1, self._REG_DWORD]
+        self.previous_file_system_values[key] = self.read_registry_value(self.FILE_SYSTEM_KEY, '--wow64', self._HKLM, key)
+        self.write_registry_value(self.FILE_SYSTEM_KEY, '--wow64', self._HKLM, key, value[1], value[0])
+
+    def restore_long_paths_enabled(self):
+        key = 'LongPathsEnabled'
+        value = self.previous_file_system_values[key]
+        self.write_registry_value(self.FILE_SYSTEM_KEY, '--wow64', self._HKLM, key, value[1], value[0])
+
     def delete_sem_locks(self):
         if self.is_cygwin():
             os.system("rm -rf /dev/shm/sem.*")
@@ -390,11 +405,13 @@ class WinPort(ApplePort):
         atexit.register(self.restore_crash_log_saving)
         self.setup_crash_log_saving()
         self.prevent_error_dialogs()
+        self.set_long_paths_enabled()
         self.delete_sem_locks()
         self.delete_preference_files()
         super(WinPort, self).setup_test_run(device_type)
 
     def clean_up_test_run(self):
+        self.restore_long_paths_enabled()
         self.allow_error_dialogs()
         self.restore_crash_log_saving()
         super(WinPort, self).clean_up_test_run()

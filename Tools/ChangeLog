@@ -1,3 +1,20 @@
+2022-04-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [LayoutTests][Win] Tests can fail if long paths are not enabled in registry.
+        https://bugs.webkit.org/show_bug.cgi?id=188092
+
+        Reviewed by Basuke Suzuki.
+
+        Python 3.6 supports long file paths on Windows by default so long as LongPathsEnabled is set in
+        HKLM\System\CurrentControlSet\Control\FileSystem. This patch adds that key to webkitpy's registry editing.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort):
+        (WinPort.set_long_paths_enabled): Added.
+        (WinPort.restore_long_paths_enabled): Added.
+        (WinPort.setup_test_run):
+        (WinPort.clean_up_test_run):
+
 2022-04-20  Megan Gardner  <megan_gardner@apple.com>
 
         Address recent deprecation warnings on iOS.
