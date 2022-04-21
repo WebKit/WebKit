@@ -30,6 +30,7 @@
 #include "FrameView.h"
 #include "Page.h"
 #include <glib/gi18n-lib.h>
+#include <locale.h>
 
 namespace WebCore {
 
