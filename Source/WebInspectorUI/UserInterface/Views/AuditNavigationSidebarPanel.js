@@ -102,7 +102,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             version = Math.min(version, InspectorBackend.getVersion("Audit"));
         versionContainer.textContent = WI.UIString("Audit version: %s").format(version);
 
-        versionContainer.appendChild(WI.createReferencePageLink("audit-tab"));
+        versionContainer.appendChild(WI.auditManager.editing ? WI.ReferencePage.AuditTab.EditingAudits.createLinkElement() : WI.ReferencePage.AuditTab.createLinkElement());
 
         this.contentBrowser.showContentView(contentView);
     }

@@ -523,3 +523,5 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         this._updateUnseenRecordsBannerView();
     }
 };
+
+WI.HeapAllocationsTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.JavaScriptAllocationsTimeline;

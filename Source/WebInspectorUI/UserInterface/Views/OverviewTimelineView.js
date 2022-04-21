@@ -443,3 +443,5 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
         this._timelineRuler.addMarker(this._currentTimeMarker);
     }
 };
+
+WI.OverviewTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.EventsView;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ReferencePage = {
-    DOMBreakpoints: "dom-breakpoints",
-    EventBreakpoints: "event-breakpoints",
-    JavaScriptBreakpoints: "javascript-breakpoints",
-    LocalOverrides: "local-overrides",
-    URLBreakpoints: "url-breakpoints",
+WI.ReferencePage = class ReferencePage {
+    constructor(page, {topic} = {})
+    {
+        console.assert(page instanceof WI.ReferencePage || typeof page === "string", page);
+        console.assert(!(page instanceof WI.ReferencePage && page._page instanceof WI.ReferencePage), page);
+        console.assert(!(page instanceof WI.ReferencePage && page.topic), page);
+        console.assert(!topic || typeof topic === "string", topic);
+
+        if (page instanceof WI.ReferencePage)
+            page = page.page;
+        this._page = page;
+
+        this._topic = topic || "";
+    }
+
+    // Public
+
+    get page() { return this._page; }
+    get topic() { return this._topic; }
+
+    createLinkElement()
+    {
+        let url = "https://webkit.org/web-inspector/" + this._page + "/";
+        if (this._topic)
+            url += "#" + this._topic;
+
+        let wrapper = document.createElement("span");
+        wrapper.className = "reference-page-link-container";
+
+        let link = wrapper.appendChild(document.createElement("a"));
+        link.className = "reference-page-link";
+        link.href = link.title = url;
+        link.textContent = "?";
+
+        return wrapper;
+    }
 };
+
+WI.ReferencePage.AuditTab = new WI.ReferencePage("audit-tab");
+WI.ReferencePage.AuditTab.AuditResults = new WI.ReferencePage(WI.ReferencePage.AuditTab, {topic: "audit-results"});
+WI.ReferencePage.AuditTab.CreatingAudits = new WI.ReferencePage(WI.ReferencePage.AuditTab, {topic: "creating-audits"});
+WI.ReferencePage.AuditTab.EditingAudits = new WI.ReferencePage(WI.ReferencePage.AuditTab, {topic: "editing-audits"});
+WI.ReferencePage.AuditTab.RunningAudits = new WI.ReferencePage(WI.ReferencePage.AuditTab, {topic: "running-audits"});
+
+WI.ReferencePage.DOMBreakpoints = new WI.ReferencePage("dom-breakpoints");
+WI.ReferencePage.DOMBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.DOMBreakpoints, {topic: "configuration"});
+
+WI.ReferencePage.DeviceSettings = new WI.ReferencePage("device-settings");
+WI.ReferencePage.DeviceSettings.Configuration = new WI.ReferencePage(WI.ReferencePage.DeviceSettings, {topic: "configuration"});
+
+WI.ReferencePage.EventBreakpoints = new WI.ReferencePage("event-breakpoints");
+WI.ReferencePage.EventBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.EventBreakpoints, {topic: "configuration"});
+
+WI.ReferencePage.JavaScriptBreakpoints = new WI.ReferencePage("javascript-breakpoints");
+WI.ReferencePage.JavaScriptBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.JavaScriptBreakpoints, {topic: "configuration"});
+
+WI.ReferencePage.LayersTab = new WI.ReferencePage("layers-tab");
+
+WI.ReferencePage.LocalOverrides = new WI.ReferencePage("local-overrides");
+WI.ReferencePage.LocalOverrides.ConfiguringLocalOverrides = new WI.ReferencePage(WI.ReferencePage.LocalOverrides, {topic: "configuring-local-overrides"});
+
+WI.ReferencePage.TimelinesTab = new WI.ReferencePage("timelines-tab");
+WI.ReferencePage.TimelinesTab.CPUTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "cpu-timeline"});
+WI.ReferencePage.TimelinesTab.EventsView = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "events-view"});
+WI.ReferencePage.TimelinesTab.FramesView = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "frames-view"});
+WI.ReferencePage.TimelinesTab.JavaScriptAllocationsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "javascript-allocations-timeline"});
+WI.ReferencePage.TimelinesTab.JavaScriptAndEventsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "javascript-events-timeline"});
+WI.ReferencePage.TimelinesTab.LayoutAndRenderingTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "layout-rendering-timeline"});
+WI.ReferencePage.TimelinesTab.MediaAndAnimationsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "media-animations-timeline"});
+WI.ReferencePage.TimelinesTab.MemoryTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "memory-timeline"});
+WI.ReferencePage.TimelinesTab.NetworkRequestsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "network-timeline"});
+
+WI.ReferencePage.URLBreakpoints = new WI.ReferencePage("url-breakpoints");
+WI.ReferencePage.URLBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.URLBreakpoints, {topic: "configuration"});

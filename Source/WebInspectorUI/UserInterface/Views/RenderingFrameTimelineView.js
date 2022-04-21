@@ -299,3 +299,4 @@ WI.RenderingFrameTimelineView.DurationFilter = {
     OverFifteenMilliseconds: "rendering-frame-timeline-view-duration-filter-over-15-ms"
 };
 
+WI.RenderingFrameTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.FramesView;

@@ -411,7 +411,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             skipNetworkLabel.appendChild(document.createTextNode(WI.UIString("Skip Network", "Skip Network @ Local Override Popover Options", "Label for checkbox that controls whether the local override will actually perform a network request or skip it to immediately serve the response.")));
         }
 
-        popoverContentElement.appendChild(WI.createReferencePageLink(WI.ReferencePage.LocalOverrides, "configuring-local-overrides"));
+        popoverContentElement.appendChild(WI.ReferencePage.LocalOverrides.ConfiguringLocalOverrides.createLinkElement());
 
         let incrementStatusCode = () => {
             let x = parseInt(this._statusCodeCodeMirror.getValue());

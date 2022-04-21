@@ -267,7 +267,7 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
             let stopAuditHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to stop running."), stopAuditNavigationItem);
             this.placeholderElement.appendChild(stopAuditHelpElement);
 
-            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
+            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.RunningAudits.createLinkElement());
         }
 
         super.showRunningPlaceholder();

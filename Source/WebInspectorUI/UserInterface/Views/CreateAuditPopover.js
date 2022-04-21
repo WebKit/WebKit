@@ -77,7 +77,7 @@ WI.CreateAuditPopover = class CreateAuditPopover extends WI.Popover
             }
         });
 
-        editorWrapper.appendChild(WI.createReferencePageLink("audit-tab", "creating-audits"));
+        editorWrapper.appendChild(WI.ReferencePage.AuditTab.CreatingAudits.createLinkElement());
 
         this.content = contentElement;
 

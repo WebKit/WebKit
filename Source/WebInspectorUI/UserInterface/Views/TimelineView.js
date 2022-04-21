@@ -32,6 +32,7 @@ WI.TimelineView = class TimelineView extends WI.ContentView
 
         // This class should not be instantiated directly. Create a concrete subclass instead.
         console.assert(this.constructor !== WI.TimelineView && this instanceof WI.TimelineView);
+        console.assert(this.constructor.ReferencePage, this);
 
         this.element.classList.add("timeline-view");
 
@@ -291,6 +292,14 @@ WI.TimelineView = class TimelineView extends WI.ContentView
     }
 
     // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        if (this.constructor.ReferencePage)
+            this.element.appendChild(this.constructor.ReferencePage.createLinkElement());
+    }
 
     filterDidChange()
     {

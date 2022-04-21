@@ -339,7 +339,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             let spinner = new WI.IndeterminateProgressSpinner;
             this.placeholderElement.appendChild(spinner.element);
 
-            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
+            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.RunningAudits.createLinkElement());
         }
 
         this._showPlaceholder();
@@ -360,7 +360,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to start running the audit."), startNavigationItem);
             this.placeholderElement.appendChild(importHelpElement);
 
-            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
+            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.RunningAudits.createLinkElement());
         }
 
         this._showPlaceholder();
@@ -394,7 +394,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             this.placeholderElement = WI.createMessageTextView(message.format(this.representedObject.name), result.didError);
             this.placeholderElement.__placeholderNoResultData = true;
 
-            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
+            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.AuditResults.createLinkElement());
         }
 
         this._showPlaceholder();
@@ -413,7 +413,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
                 this.needsLayout();
             });
 
-            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
+            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.createLinkElement());
         }
 
         this._showPlaceholder();

@@ -247,7 +247,10 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             });
         }
 
-        this._contentElement.appendChild(WI.createReferencePageLink(this._breakpoint?.constructor.ReferencePage || this.constructor.ReferencePage, this._breakpoint ? "configuration" : ""));
+        let referencePage = this._breakpoint?.constructor.ReferencePage || this.constructor.ReferencePage;
+        if (this._breakpoint)
+            referencePage = referencePage.Configuration;
+        this._contentElement.appendChild(referencePage.createLinkElement());
 
         this.content = this._contentElement;
 

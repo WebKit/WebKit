@@ -156,6 +156,8 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
     initialLayout()
     {
+        super.initialLayout();
+
         this.element.style.setProperty("--cpu-usage-combined-view-height", CPUTimelineView.cpuUsageViewHeight + "px");
         this.element.style.setProperty("--cpu-usage-view-height", CPUTimelineView.threadCPUUsageViewHeight + "px");
         this.element.style.setProperty("--cpu-usage-indicator-view-height", CPUTimelineView.indicatorViewHeight + "px");
@@ -1821,3 +1823,5 @@ WI.CPUTimelineView.SampleType = {
     Paint: "sample-type-paint",
     Style: "sample-type-style",
 };
+
+WI.CPUTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.CPUTimeline;

@@ -467,3 +467,5 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         this._maxSize = Math.max(this._maxSize, memoryTimelineRecord.totalSize);
     }
 };
+
+WI.MemoryTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.MemoryTimeline;

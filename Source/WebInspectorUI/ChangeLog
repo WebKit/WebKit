@@ -1,3 +1,59 @@
+2022-04-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add reference page links for the Timelines Tab
+        https://bugs.webkit.org/show_bug.cgi?id=239580
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Views/TimelineView.js:
+        (WI.TimelineView.prototype.initialLayout): Added.
+        * UserInterface/Views/TimelineView.css:
+        (.timeline-view > .reference-page-link-container): Added.
+        Add a reference page link to the bottom-right of each timeline view.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.initialLayout):
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        * UserInterface/Views/LayoutTimelineView.js:
+        * UserInterface/Views/MediaTimelineView.js:
+        * UserInterface/Views/MemoryTimelineView.js:
+        * UserInterface/Views/NetworkTimelineView.js:
+        * UserInterface/Views/OverviewTimelineView.js:
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        * UserInterface/Views/ScriptProfileTimelineView.js:
+        Add `WI.*.ReferencePage = WI.ReferencePage.*` relationships for each timeline view.
+
+        * UserInterface/Base/ReferencePage.js:
+        (WI.ReferencePage): Added.
+        (WI.ReferencePage.prototype.get page): Added.
+        (WI.ReferencePage.prototype.get topic): Added.
+        (WI.ReferencePage.prototype.createLinkElement): Added.
+        * UserInterface/Base/Main.js:
+        (WI.createReferencePageLink): Moved to `WI.ReferencePage.prototype.createLinkElement`.
+        Create a `WI.ReferencePage` class that knows how to generate a `<a>`.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.showDefaultContentView):
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView.prototype.showRunningPlaceholder):
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView.prototype.showStoppingPlaceholder):
+        (WI.AuditTestContentView.prototype.showNoResultPlaceholder):
+        (WI.AuditTestContentView.prototype.showNoResultDataPlaceholder):
+        (WI.AuditTestContentView.prototype.showFilteredPlaceholder):
+        * UserInterface/Views/AuditTestGroupContentView.js:
+        (WI.AuditTestGroupContentView.prototype.showRunningPlaceholder):
+        * UserInterface/Views/BreakpointPopover.js:
+        (WI.BreakpointPopover.prototype.show):
+        * UserInterface/Views/CreateAuditPopover.js:
+        (WI.CreateAuditPopover.prototype.show):
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView.prototype.initialLayout):
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover.prototype.show):
+        Replace `WI.createReferencePageLink` with `WI.ReferencePage.*.createLinkElement`
+
 2022-04-18  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Use XCBuild for all command-line and project builds
