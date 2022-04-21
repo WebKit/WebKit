@@ -1296,15 +1296,17 @@ void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* call
     spooler.finalizeFPR();
 }
 
-void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const TempRegisterSet& usedRegisters)
+void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const RegisterSet& usedRegisters)
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     // Copy saved calleeSaves on stack or unsaved calleeSaves in register to vm calleeSave buffer
-    GPRReg destBufferGPR = usedRegisters.getFreeGPR(0);
-    GPRReg temp1 = usedRegisters.getFreeGPR(1);
-    FPRReg fpTemp1 = usedRegisters.getFreeFPR(0);
-    GPRReg temp2 = usedRegisters.getFreeGPR(2);
-    FPRReg fpTemp2 = usedRegisters.getFreeFPR(1);
+    ScratchRegisterAllocator allocator(usedRegisters);
+    GPRReg destBufferGPR = allocator.allocateScratchGPR();
+    GPRReg temp1 = allocator.allocateScratchGPR();
+    FPRReg fpTemp1 = allocator.allocateScratchFPR();
+    GPRReg temp2 = allocator.allocateScratchGPR();
+    FPRReg fpTemp2 = allocator.allocateScratchFPR();
+    RELEASE_ASSERT(!allocator.didReuseRegisters());
 
     loadPtr(&topEntryFrame, destBufferGPR);
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), destBufferGPR);

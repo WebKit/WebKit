@@ -186,7 +186,6 @@
 		0F24E54317EA9F5900ABB217 /* FPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53E17EA9F5900ABB217 /* FPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54417EA9F5900ABB217 /* GPRInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E53F17EA9F5900ABB217 /* GPRInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54617EE274900ABB217 /* JITOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54817EE274900ABB217 /* TempRegisterSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F256C341627B0AA007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h */; };
@@ -2602,7 +2601,6 @@
 		0F24E53F17EA9F5900ABB217 /* GPRInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPRInfo.h; sourceTree = "<group>"; };
 		0F24E54517EE274900ABB217 /* JITOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOperations.cpp; sourceTree = "<group>"; };
 		0F24E54617EE274900ABB217 /* JITOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITOperations.h; sourceTree = "<group>"; };
-		0F24E54817EE274900ABB217 /* TempRegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TempRegisterSet.h; sourceTree = "<group>"; };
 		0F24E54B17EE274900ABB217 /* ScratchRegisterAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScratchRegisterAllocator.h; sourceTree = "<group>"; };
 		0F24E55317F0B71C00ABB217 /* InlineCallFrameSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineCallFrameSet.cpp; sourceTree = "<group>"; };
 		0F24E55417F0B71C00ABB217 /* InlineCallFrameSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineCallFrameSet.h; sourceTree = "<group>"; };
@@ -3191,7 +3189,6 @@
 		0FC20CB718556A3500C9E954 /* DFGSSALoweringPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSSALoweringPhase.cpp; path = dfg/DFGSSALoweringPhase.cpp; sourceTree = "<group>"; };
 		0FC20CB818556A3500C9E954 /* DFGSSALoweringPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSSALoweringPhase.h; path = dfg/DFGSSALoweringPhase.h; sourceTree = "<group>"; };
 		0FC314101814559100033232 /* RegisterSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterSet.h; sourceTree = "<group>"; };
-		0FC314111814559100033232 /* TempRegisterSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TempRegisterSet.cpp; sourceTree = "<group>"; };
 		0FC3141418146D7000033232 /* RegisterSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegisterSet.cpp; sourceTree = "<group>"; };
 		0FC3CCF519ADA410006AC72A /* DFGBlockMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBlockMap.h; path = dfg/DFGBlockMap.h; sourceTree = "<group>"; };
 		0FC3CCF619ADA410006AC72A /* DFGBlockMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBlockMapInlines.h; path = dfg/DFGBlockMapInlines.h; sourceTree = "<group>"; };
@@ -6672,8 +6669,6 @@
 				A7FF647A18C52E8500B55307 /* SpillRegistersMode.h */,
 				DC7997811CDE9F9E004D4A09 /* TagRegistersMode.cpp */,
 				DC7997821CDE9F9E004D4A09 /* TagRegistersMode.h */,
-				0FC314111814559100033232 /* TempRegisterSet.cpp */,
-				0F24E54817EE274900ABB217 /* TempRegisterSet.h */,
 				0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */,
 				A7386552118697B400540279 /* ThunkGenerators.cpp */,
 				A7386553118697B400540279 /* ThunkGenerators.h */,
@@ -11162,7 +11157,6 @@
 				E30E8A5626DE2E4800DA4915 /* TemporalTimeZone.h in Headers */,
 				E30E8A5726DE2E4800DA4915 /* TemporalTimeZoneConstructor.h in Headers */,
 				E30E8A5426DE2E4800DA4915 /* TemporalTimeZonePrototype.h in Headers */,
-				0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */,
 				0F44A7B420BF68D90022B171 /* TerminatedCodeOrigin.h in Headers */,
 				0FA2C17C17D7CF84009D015F /* TestRunnerUtils.h in Headers */,
 				FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */,

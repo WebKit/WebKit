@@ -40,6 +40,7 @@
 #include "MarkedSpace.h"
 #include "RegisterAtOffsetList.h"
 #include "RegisterSet.h"
+#include "ScratchRegisterAllocator.h"
 #include "StackAlignment.h"
 #include "TagRegistersMode.h"
 #include "TypeofType.h"
@@ -396,8 +397,9 @@ public:
     void copyCalleeSavesToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame)
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-        const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() };
-        GPRReg temp1 = usedRegisters.getFreeGPR(0);
+        ScratchRegisterAllocator allocator(RegisterSet::stubUnavailableRegisters());
+        GPRReg temp1 = allocator.allocateScratchGPR();
+        RELEASE_ASSERT(!allocator.didReuseRegisters());
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(topEntryFrame, temp1);
 #else
         UNUSED_PARAM(topEntryFrame);
@@ -418,7 +420,7 @@ public:
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR, GPRReg scratchGPR);
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrame, const RegisterSet& skipList);
 
-    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() });
+    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const RegisterSet& usedRegisters = RegisterSet::stubUnavailableRegisters());
 
     void emitMaterializeTagCheckRegisters()
     {
