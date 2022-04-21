@@ -1,3 +1,16 @@
+2022-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        <body> with overflow:hidden CSS is scrollable on iOS standalone web app
+        https://bugs.webkit.org/show_bug.cgi?id=220908
+        <rdar://73574797>
+
+        Reviewed by Devin Rousso.
+
+        New API tests for various configurations of insets and size overrides.
+
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-21  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Allow caller to specify remote for PR

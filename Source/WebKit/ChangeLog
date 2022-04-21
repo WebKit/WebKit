@@ -1,3 +1,24 @@
+2022-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        <body> with overflow:hidden CSS is scrollable on iOS standalone web app
+        https://bugs.webkit.org/show_bug.cgi?id=220908
+        <rdar://73574797>
+
+        Reviewed by Devin Rousso.
+
+        `overflow:hidden` failed to make the primary scroll view unscrollable in a home screen web
+        app because of logic in _updateScrollViewForTransaction: that was intended to ensure that if
+        the current unobscured rect is equal to the max unobscured rect (i.e. testing for collapsed
+        UI in MobileSafari), the user could scroll to expand the UI.
+
+        This failed in Web.app because there is no collapsible UI there, i.e.
+        minUnobscuredSize == maxUnobscuredSize. So test for that scenario.
+
+        Tested by new API tests.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _updateScrollViewForTransaction:]):
+
 2022-04-21  Youenn Fablet  <youenn@apple.com>
 
         A suspended remote shared worker should resume when a new SharedWorker is added

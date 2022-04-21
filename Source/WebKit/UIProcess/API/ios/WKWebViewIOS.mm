@@ -880,7 +880,8 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     if (_maximumUnobscuredSizeOverride) {
         auto unobscuredContentRect = _page->unobscuredContentRect();
         auto maxUnobscuredSize = _page->maximumUnobscuredSize();
-        scrollingNeededToRevealUI = maxUnobscuredSize.width() == unobscuredContentRect.width() && maxUnobscuredSize.height() == unobscuredContentRect.height();
+        auto minUnobscuredSize = _page->minimumUnobscuredSize();
+        scrollingNeededToRevealUI = minUnobscuredSize != maxUnobscuredSize && maxUnobscuredSize == unobscuredContentRect.size();
     }
 
     bool scrollingEnabled = _page->scrollingCoordinatorProxy()->hasScrollableOrZoomedMainFrame() || hasDockedInputView || isZoomed || scrollingNeededToRevealUI;
