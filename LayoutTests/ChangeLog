@@ -1,3 +1,14 @@
+2022-04-21  Eric Carlson  <eric.carlson@apple.com>
+
+        AVSampleBufferRenderSynchronizer timeline sometimes goes backwards when playback begins
+        https://bugs.webkit.org/show_bug.cgi?id=239471
+        rdar://91117803
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/media-source-current-time-expected.txt: Added.
+        * media/media-source/media-source-current-time.html: Added.
+
 2022-04-21  Tim Nguyen  <ntim@apple.com>
 
         [iOS] Rebaseline fast/attachment/attachment-disabled-rendering.html expectations

@@ -282,6 +282,7 @@ private:
     void setResourceOwner(const ProcessIdentity& resourceOwner) final { m_resourceOwner = resourceOwner; }
 
     void checkNewVideoFrameMetadata(CMTime);
+    MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
 
     friend class MediaSourcePrivateAVFObjC;
 
