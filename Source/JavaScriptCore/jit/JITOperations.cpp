@@ -160,6 +160,34 @@ JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSR
     RELEASE_AND_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, globalObject, JSValue::decode(encodedValue))));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, void*, (JSRemoteFunction* callee))
+{
+    JSGlobalObject* globalObject = callee->globalObject();
+    VM& vm = globalObject->vm();
+
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(isRemoteFunction(vm, callee));
+
+    auto* targetFunction = jsCast<JSFunction*>(callee->targetFunction()); // We call this function only when JSRemoteFunction's target is JSFunction.
+    ExecutableBase* executable = targetFunction->executable();
+
+    // Force the executable to cache its arity entrypoint.
+    {
+        DeferTraps deferTraps(vm); // We can't jettison any code until after we link the call.
+        if (!executable->isHostFunction()) {
+            JSScope* scope = targetFunction->scopeUnchecked();
+            FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+            CodeBlock* codeBlockSlot = nullptr;
+            functionExecutable->prepareForExecution<FunctionExecutable>(vm, targetFunction, scope, CodeForCall, codeBlockSlot);
+            RETURN_IF_EXCEPTION(throwScope, nullptr);
+        }
+        return executable->entrypointFor(CodeForCall, MustCheckArity).executableAddress();
+    }
+}
+
 JSC_DEFINE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction* callee))
 {
     JSGlobalObject* globalObject = callee->globalObject();
