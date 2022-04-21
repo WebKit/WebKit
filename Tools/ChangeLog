@@ -1,5 +1,31 @@
 2022-04-21  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Allow caller to specify remote for PR
+        https://bugs.webkit.org/show_bug.cgi?id=239452
+        <rdar://problem/91897384>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): Allow caller to define remotes.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.parser): Add '--remote' option.
+        (PullRequest.main): Allow options to specify the remote we're making a PR against.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/revert.py:
+        (Revert.add_comment_to_reverted_commit_bug_tracker): Derive remote from argument.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.find): Support finding PRs if label doesn't contain username.
+        (GitHub.PRGenerator.create): Error 422 is a validation error, usually caused by another PR pointing to the same branch.
+        (GitHub.PRGenerator.update): Extract error message for more actionable errors.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/clean_unittest.py:
+        (TestClean.test_clean_pr): Add fork remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/revert_unittest.py:
+
+2022-04-21  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Don't close bugs associated with test gardening
         https://bugs.webkit.org/show_bug.cgi?id=239604
         <rdar://problem/92093456>

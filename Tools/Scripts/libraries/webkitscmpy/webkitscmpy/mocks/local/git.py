@@ -50,7 +50,7 @@ class Git(mocks.Subprocess):
         self, path='/.invalid-git', datafile=None,
         remote=None, tags=None,
         detached=None, default_branch='main',
-        git_svn=False,
+        git_svn=False, remotes=None,
     ):
         self.path = path
         self.default_branch = default_branch
@@ -74,6 +74,10 @@ class Git(mocks.Subprocess):
 
         self.head = self.commits[self.default_branch][-1]
         self.remotes = {'origin/{}'.format(branch): commits[-1] for branch, commits in self.commits.items()}
+        for name in (remotes or {}).keys():
+            for branch, commits in self.commits.items():
+                self.remotes['{}/{}'.format(name, branch)] = commits[-1]
+
         self.tags = {}
 
         self.staged = {}
@@ -106,6 +110,14 @@ class Git(mocks.Subprocess):
                         remote=self.remote,
                         branch=self.default_branch,
                     ))
+                for name, url in (remotes or {}).items():
+                    config.write(
+                        '[remote "{name}"]\n'
+                        '\turl = {url}\n'
+                        '\tfetch = +refs/heads/*:refs/remotes/{name}/*\n'.format(
+                            name=name, url=url,
+                        )
+                    )
                 if git_svn:
                     domain = 'webkit.org'
                     if self.remote.startswith('https://'):

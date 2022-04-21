@@ -101,8 +101,7 @@ class Revert(Command):
 
     @classmethod
     def add_comment_to_reverted_commit_bug_tracker(cls, repository, args):
-        # FIXME: Source remote will not always be origin
-        source_remote = 'origin'
+        source_remote = args.remote or 'origin'
         rmt = repository.remote(name=source_remote)
         if not rmt:
             sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))

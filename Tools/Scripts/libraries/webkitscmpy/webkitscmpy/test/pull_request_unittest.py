@@ -328,8 +328,10 @@ Rebased 'eng/pr-branch' on 'main!'
     Found 1 commit...""")
 
     def test_github(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
-                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
@@ -361,8 +363,10 @@ Rebased 'eng/pr-branch' on 'main!'
         )
 
     def test_github_draft(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
-                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
 
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
@@ -396,7 +400,10 @@ Rebased 'eng/pr-branch' on 'main!'
     def test_github_update(self):
         with mocks.remote.GitHub(labels={
             'merging-blocked': dict(color='c005E5', description='Applied to prevent a change from being merged'),
-        }) as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        }) as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -440,7 +447,10 @@ Rebased 'eng/pr-branch' on 'main!'
         )
 
     def test_github_append(self):
-        with mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -478,7 +488,10 @@ Rebased 'eng/pr-branch' on 'main!'
         )
 
     def test_github_reopen(self):
-        with mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
             with OutputCapture():
                 repo.staged['added.txt'] = 'added'
                 self.assertEqual(0, program.main(
@@ -530,7 +543,10 @@ Rebased 'eng/pr-branch' on 'main!'
                 BUGS_EXAMPLE_COM_PASSWORD='password',
             )), patch(
                 'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
-        ), mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
 
             repo.commits['eng/pr-branch'] = [Commit(
                 hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
@@ -589,7 +605,10 @@ Rebased 'eng/pr-branch' on 'main!'
                 BUGS_EXAMPLE_COM_PASSWORD='password',
             )), patch(
                 'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
-        ), mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
 
             Tracker.instance().issue(1).close(why='Looks like we will not get to this')
             repo.commits['eng/pr-branch'] = [Commit(

@@ -41,8 +41,10 @@ class TestRevert(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.svn'))
 
     def test_github(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
-                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
 
             result = program.main(
                 args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v', '--no-history'),
@@ -102,8 +104,10 @@ index 05e8751..0bf3c85 100644
         self.assertEqual(captured.stderr.getvalue(), 'Please commit your changes or stash them before you revert commit: d8bce26fa65c6fc8f39c17927abb77f69fab82fc')
 
     def test_update(self):
-        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
-                mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
 
             result = program.main(
                 args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v'),

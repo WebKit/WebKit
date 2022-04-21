@@ -70,7 +70,10 @@ class TestClean(testing.PathTestCase):
             self.assertNotIn('branch-a', repo.commits)
 
     def test_clean_pr(self):
-        with OutputCapture(), mocks.remote.GitHub() as remote, mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo, mocks.local.Svn():
+        with OutputCapture(), mocks.remote.GitHub() as remote, mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
                 args=('pull-request', '-i', 'pr-branch'),
