@@ -84,10 +84,12 @@ for j_file_name in glob.glob(compile_commands_dir + "/*.json"):
     if third_party_regex.search(json_contents):
         continue
 
+    # -2 gets rid of the comma at the end of the file.
+    json_contents = json_contents[:-2]
+
     # Try to load JSON File
-    try: 
-        # -2 gets rid of the comma at the end of the file.
-        json.loads(json_contents[:-2])
+    try:
+        json.loads(json_contents)
     except Exception:
         print("Invalid JSON File: " + j_file_name)
         continue
@@ -106,14 +108,16 @@ except Exception:
 
 # Write the new compile_commands.json file
 new_compile_commands_file = open("compile_commands.json", 'w')
-new_compile_commands_file.write("[\n")
+new_compile_commands_file.write("[")
 
-# We should probably remove the trailing comma in the last entry, but
-# clangd does not seem to mind.
-for key in files.keys():
+for index, key in enumerate(files.keys()):
+    if index != 0:
+        new_compile_commands_file.write(",\n")
+    else:
+        new_compile_commands_file.write("\n")
     new_compile_commands_file.write(key)
 
-new_compile_commands_file.write("]\n")
+new_compile_commands_file.write("\n]\n")
 new_compile_commands_file.close()
 
 print("Generated Compile Commands!")

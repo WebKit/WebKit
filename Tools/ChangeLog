@@ -1,3 +1,16 @@
+2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Generate well-formed JSON for compile_commands.json
+        https://bugs.webkit.org/show_bug.cgi?id=239584
+
+        Reviewed by Mark Lam.
+
+        Currently, compile_commands.json always has one trailing comma in the main array. While clangd does not care this,
+        it is ill-formed JSON, and some other tools consuming compile_commands.json can fail.
+        This patch makes it so that generated compile_commands.json has well-formed JSON.
+
+        * Scripts/generate-compile-commands:
+
 2022-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid falling back to snapshots for transparent images when triggering batch text recognition
