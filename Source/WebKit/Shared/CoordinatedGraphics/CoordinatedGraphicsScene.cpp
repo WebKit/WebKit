@@ -230,10 +230,11 @@ void CoordinatedGraphicsScene::updateSceneState()
         };
         Vector<ImageBacking> imageBacking;
     } layersByBacking;
+    HashSet<Ref<WebCore::TextureMapperPlatformLayerProxy>> replacedProxiesToInvalidate;
 
     // Access the scene state and perform state update for each layer.
     m_nicosia.scene->accessState(
-        [this, &layersByBacking](Nicosia::Scene::State& state)
+        [this, &layersByBacking, &replacedProxiesToInvalidate](Nicosia::Scene::State& state)
         {
             // FIXME: try to minimize the amount of work in case the Scene::State object
             // didn't change (i.e. no layer flush was done), but don't forget to properly
@@ -250,12 +251,24 @@ void CoordinatedGraphicsScene::updateSceneState()
                 }
             }
 
-            // Gather all the to-be-removed layers so that composition-side state
-            // can be properly purged after the current state's set of layers is adopted.
             HashSet<RefPtr<Nicosia::CompositionLayer>> removedLayers;
             for (auto& layer : m_nicosia.state.layers) {
+                // Gather all the to-be-removed layers so that composition-side state
+                // can be properly purged after the current state's set of layers is adopted.
                 if (!state.layers.contains(layer))
                     removedLayers.add(layer);
+                else {
+                    // Store references to all the proxies that are being used by the layers that are kept in the tree.
+                    // When adopting the new state, the existent proxies may be replaced or detached from their layers, causing the
+                    // reference to be lost without having a chance to invalidate them. After the call to commitState, we will
+                    // invalidate all the proxies that are not being used anymore.
+                    layer->accessCommitted(
+                        [&replacedProxiesToInvalidate](const Nicosia::CompositionLayer::LayerState& committed)
+                        {
+                            if (committed.contentLayer)
+                                replacedProxiesToInvalidate.add(Ref { contentLayerImpl(*committed.contentLayer).proxy() });
+                        });
+                }
             }
 
             m_nicosia.state = state;
@@ -270,7 +283,7 @@ void CoordinatedGraphicsScene::updateSceneState()
             for (auto& compositionLayer : m_nicosia.state.layers) {
                 auto& layer = texmapLayer(*compositionLayer);
                 compositionLayer->commitState(
-                    [&layer, &layersByBacking]
+                    [&layer, &layersByBacking, &replacedProxiesToInvalidate]
                     (const Nicosia::CompositionLayer::LayerState& layerState)
                     {
                         if (layerState.delta.positionChanged)
@@ -346,6 +359,7 @@ void CoordinatedGraphicsScene::updateSceneState()
                             auto& impl = contentLayerImpl(*layerState.contentLayer);
                             layersByBacking.contentLayer.append(
                                 { std::ref(layer), std::ref(impl.proxy()), layerState.delta.contentLayerChanged });
+                            replacedProxiesToInvalidate.remove(Ref { impl.proxy() });
                         } else if (layerState.imageBacking) {
                             auto& impl = imageBackingImpl(*layerState.imageBacking);
                             layersByBacking.imageBacking.append(
@@ -407,6 +421,10 @@ void CoordinatedGraphicsScene::updateSceneState()
 
     for (auto& proxy : proxiesForSwapping)
         proxy->swapBuffer();
+
+    for (auto& proxy : replacedProxiesToInvalidate)
+        proxy->invalidate();
+    replacedProxiesToInvalidate = { };
 }
 
 void CoordinatedGraphicsScene::ensureRootLayer()
