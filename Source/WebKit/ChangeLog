@@ -333,6 +333,64 @@
 
 2022-04-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291371. rdar://problem/72058321
+
+    CoreIPC Hardening: Add user gesture check when saving images
+    https://bugs.webkit.org/show_bug.cgi?id=237839
+    <rdar://72058321>
+    
+    Reviewed by Chris Dumez.
+    
+    Add check to confirm that attempts to store images in the user's Photo
+    Library and attempts to store data in the pasteboard were triggered by
+    a user gesture.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::writePromisedAttachmentToPasteboard): Message check the authorization token before
+    performing the write.
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::isValidPerformActionOnElementAuthorizationToken const): Added.
+    (WebKit::WebPageProxy::performActionOnElement): Added.
+    (WebKit::WebPageProxy::saveImageToLibrary): Message check the authorization token before
+    performing the save.
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::performActionOnElement):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291371 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-16  Brent Fulgham  <bfulgham@apple.com>
+
+            CoreIPC Hardening: Add user gesture check when saving images
+            https://bugs.webkit.org/show_bug.cgi?id=237839
+            <rdar://72058321>
+
+            Reviewed by Chris Dumez.
+
+            Add check to confirm that attempts to store images in the user's Photo
+            Library and attempts to store data in the pasteboard were triggered by
+            a user gesture.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::writePromisedAttachmentToPasteboard): Message check the authorization token before
+            performing the write.
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::isValidPerformActionOnElementAuthorizationToken const): Added.
+            (WebKit::WebPageProxy::performActionOnElement): Added.
+            (WebKit::WebPageProxy::saveImageToLibrary): Message check the authorization token before
+            performing the save.
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::performActionOnElement):
+
+2022-04-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290874. rdar://problem/84869202
 
     Push HTMLMediaElement renderer's contentBox rect to GPU process
