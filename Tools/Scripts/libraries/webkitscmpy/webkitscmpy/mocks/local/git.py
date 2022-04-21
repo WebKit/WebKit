@@ -78,6 +78,7 @@ class Git(mocks.Subprocess):
 
         self.staged = {}
         self.modified = {}
+        self.revert_message = None
 
         self.has_git_lfs = False
 
@@ -473,6 +474,22 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=True),
             ), mocks.Subprocess.Route(
+                self.executable, 'revert', '--no-commit', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.revert(commit_hashes=[args[3]], no_commit=True),
+            ), mocks.Subprocess.Route(
+                self.executable, 'revert', '--continue', '--no-edit',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.revert(revert_continue=True),
+            ), mocks.Subprocess.Route(
+                self.executable, 'revert', '--abort',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.revert(revert_abort=True),
+            ), mocks.Subprocess.Route(
+                self.executable, 'restore', '--staged', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.restore(args[3], staged=True),
+            ), mocks.Subprocess.Route(
                 self.executable, 'add', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.add(args[2]),
@@ -496,6 +513,10 @@ nothing to commit, working tree clean
                 self.executable, 'branch', '-D', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.delete_branch(args[3]),
+            ), mocks.Subprocess.Route(
+                self.executable, 'branch', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.move_branch(args[2], args[3]),
             ), mocks.Subprocess.Route(
                 self.executable, 'push', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
@@ -640,6 +661,9 @@ nothing to commit, working tree clean
         return result
 
     def checkout(self, something, create=False, force=False):
+        if something in self.modified:
+            del self.modified[something]
+            return mocks.ProcessCompletion(returncode=0, stdout='Updated 1 path from the index')
         commit = self.find(something)
         if create:
             if commit:
@@ -889,6 +913,69 @@ nothing to commit, working tree clean
         self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]
         self.staged = {}
         return mocks.ProcessCompletion(returncode=0)
+
+    def revert(self, commit_hashes=[], no_commit=False, revert_continue=False, revert_abort=False):
+        if revert_continue:
+            if not self.staged:
+                return mocks.ProcessCompletion(returncode=1, stdout='error: no cherry-pick or revert in progress\nfatal: revert failed')
+            self.staged = {}
+            self.head = Commit(
+                branch=self.branch, repository_id=self.head.repository_id,
+                timestamp=int(time.time()),
+                identifier=self.head.identifier + 1 if self.head.branch_point else 1,
+                branch_point=self.head.branch_point or self.head.identifier,
+                message=self.revert_message
+            )
+            self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
+            self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]
+            self.commits[self.branch].append(self.head)
+            self.revert_message = None
+            return mocks.ProcessCompletion(returncode=0)
+
+        if revert_abort:
+            if not self.staged:
+                return mocks.ProcessCompletion(returncode=1, stdout='error: no cherry-pick or revert in progress\nfatal: revert failed')
+            self.staged = {}
+            self.revert_message = None
+            return mocks.ProcessCompletion(returncode=0)
+
+        if self.modified:
+            return mocks.ProcessCompletion(returncode=1, stdout='error: your local changes would be overwritten by revert.')
+
+        is_reverted_something = False
+        for hash in commit_hashes:
+            commit_revert = self.find(hash)
+            if not no_commit:
+                self.head = Commit(
+                    branch=self.branch, repository_id=self.head.repository_id,
+                    timestamp=int(time.time()),
+                    identifier=self.head.identifier + 1 if self.head.branch_point else 1,
+                    branch_point=self.head.branch_point or self.head.identifier,
+                    message='Revert "{}"\n\nThis reverts commit {}'.format(commit_revert.message.splitlines()[0], hash)
+                )
+                self.head.author = Contributor(self.config()['user.name'], [self.config()['user.email']])
+                self.head.hash = hashlib.sha256(string_utils.encode(self.head.message)).hexdigest()[:40]
+                self.commits[self.branch].append(self.head)
+            else:
+                self.staged['{}/some_file'.format(hash)] = 'modified'
+                self.staged['{}/ChangeLog'.format(hash)] = 'modified'
+                # git revert only generate one commit message
+                self.revert_message = 'Revert "{}"\n\nThis reverts commit {}'.format(commit_revert.message.splitlines()[0], hash)
+
+            is_reverted_something = True
+        if not is_reverted_something:
+            return mocks.ProcessCompletion(returncode=1, stdout='On branch {}\nnothing to commit, working tree clean'.format(self.branch))
+
+        return mocks.ProcessCompletion(returncode=0)
+
+    def restore(self, file, staged=False):
+        if staged:
+            if file in self.staged:
+                self.modified[file] = self.staged[file]
+                del self.staged[file]
+                return mocks.ProcessCompletion(returncode=0)
+            return mocks.ProcessCompletion(returncode=0)
+        return mocks.ProcessCompletion(returncode=1)
 
     def add(self, file):
         if file not in self.modified:

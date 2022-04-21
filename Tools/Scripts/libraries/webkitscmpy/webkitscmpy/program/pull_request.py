@@ -119,11 +119,7 @@ class PullRequest(Command):
         return title[:-5].rstrip() if title.endswith('(Part') else title
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
-        if not isinstance(repository, local.Git):
-            sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
-            return 1
-
+    def check_pull_request_args(cls, repository, args):
         if not args.technique:
             args.technique = repository.config()['webkitscmpy.pull-request']
         if args.history is None:
@@ -134,15 +130,18 @@ class PullRequest(Command):
             ).get(repository.config()['webkitscmpy.history'])
         if args.history and repository.config()['webkitscmpy.history'] == 'never':
             sys.stderr.write('History retention was requested, but repository configuration forbids it\n')
-            return 1
+            return False
+        return True
 
+    @classmethod
+    def pull_request_branch_point(cls, repository, args, **kwargs):
         if repository.branch in repository.DEFAULT_BRANCHES or repository.PROD_BRANCHES.match(repository.branch):
             if Branch.main(args, repository, why="'{}' is not a pull request branch".format(repository.branch), **kwargs):
                 sys.stderr.write("Abandoning pushing pull-request because '{}' could not be created\n".format(args.issue))
-                return 1
+                return None
         elif args.issue and repository.branch != args.issue:
             sys.stderr.write("Creating a pull-request for '{}' but we're on '{}'\n".format(args.issue, repository.branch))
-            return 1
+            return None
 
         # FIXME: Source remote will not always be origin
         source_remote = 'origin'
@@ -153,12 +152,22 @@ class PullRequest(Command):
             'remotes/{}/{}'.format(source_remote, branch_point.branch),
         ], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to match '{}' to it's remote '{}'\n".format(branch_point.branch, source_remote))
-            return 1
+            return None
+        return branch_point
 
-        result = cls.create_commit(args, repository, **kwargs)
-        if result:
-            return result
+    @classmethod
+    def find_existing_pull_request(cls, repository, remote):
+        existing_pr = None
+        for pr in remote.pull_requests.find(opened=None, head=repository.branch):
+            existing_pr = pr
+            if existing_pr.opened:
+                break
+        return existing_pr
 
+    @classmethod
+    def create_pull_request(cls, repository, args, branch_point):
+        # FIXME: Source remote will not always be origin
+        source_remote = 'origin'
         rebasing = args.rebase or (args.rebase is None and repository.config().get('pull.rebase'))
         if rebasing:
             log.info("Rebasing '{}' on '{}'...".format(repository.branch, branch_point.branch))
@@ -177,10 +186,7 @@ class PullRequest(Command):
 
         existing_pr = None
         if remote_repo.pull_requests:
-            for pr in remote_repo.pull_requests.find(opened=None, head=repository.branch):
-                existing_pr = pr
-                if existing_pr.opened:
-                    break
+            existing_pr = cls.find_existing_pull_request(repository, remote_repo)
             if existing_pr and not existing_pr.opened and not args.defaults and (args.defaults is False or Terminal.choose(
                     "'{}' is already associated with '{}', which is closed.\nWould you like to create a new pull-request?".format(
                         repository.branch, existing_pr,
@@ -304,3 +310,21 @@ class PullRequest(Command):
             print(pr.url)
 
         return 0
+
+    @classmethod
+    def main(cls, args, repository, **kwargs):
+        if not isinstance(repository, local.Git):
+            sys.stderr.write("Can only '{}' on a native Git repository\n".format(cls.name))
+            return 1
+        if not cls.check_pull_request_args(repository, args):
+            return 1
+
+        branch_point = cls.pull_request_branch_point(repository, args, **kwargs)
+        if not branch_point:
+            return 1
+
+        result = cls.create_commit(args, repository, **kwargs)
+        if result:
+            return result
+
+        return cls.create_pull_request(repository, args, branch_point)

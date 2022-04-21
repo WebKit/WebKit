@@ -38,6 +38,7 @@ from .land import Land
 from .log import Log
 from .pull import Pull
 from .pull_request import PullRequest
+from .revert import Revert
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
 
@@ -73,7 +74,7 @@ def main(
     )
 
     subparsers = parser.add_subparsers(help='sub-command help')
-    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Land, Log, Pull, PullRequest, Setup, InstallGitLFS, Credentials]
+    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Land, Log, Pull, PullRequest, Revert, Setup, InstallGitLFS, Credentials]
     if subversion:
         programs.append(SetupGitSvn)
 
