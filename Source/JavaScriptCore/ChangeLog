@@ -1,3 +1,16 @@
+2022-03-23  Geza Lore  <glore@igalia.com>
+
+        [JSC] Fix remoteFunctionCallGenerator on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=238274
+
+        Reviewed by Yusuke Suzuki.
+
+        Eliminate register conflict (nonArgGPR0 == regT4, which is used in
+        valueRegs)
+
+        * jit/ThunkGenerators.cpp:
+        (JSC::remoteFunctionCallGenerator):
+
 2022-03-03  Saam Barati  <sbarati@apple.com>
 
         Add a DeferTraps scope
