@@ -1,3 +1,16 @@
+2022-03-24  Jean-Yves Avenard  <jya@apple.com>
+
+        Safari can't play video completely at bilibili.com
+        https://bugs.webkit.org/show_bug.cgi?id=236440
+        rdar://88761053
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/content/test-bframes-hevc-manifest.json: Added.
+        * media/media-source/content/test-bframes-hevc.mp4: Added.
+        * media/media-source/media-mp4-hevc-bframes-expected.txt: Added.
+        * media/media-source/media-mp4-hevc-bframes.html: Added.
+
 2022-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r286955): Rendering Links during search: highlighting fails
