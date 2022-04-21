@@ -83,7 +83,7 @@ WI.linkifyNodeReferenceElement = function(node, element, options = {})
     element.title = options.displayName || node.displayName;
 
     let nodeType = node.nodeType();
-    if ((nodeType !== Node.DOCUMENT_NODE || node.parentNode) && nodeType !== Node.TEXT_NODE)
+    if (!options.ignoreClick && (nodeType !== Node.DOCUMENT_NODE || node.parentNode) && nodeType !== Node.TEXT_NODE)
         element.classList.add("node-link");
 
     WI.bindInteractionsForNodeToElement(node, element, options);

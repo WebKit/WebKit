@@ -100,9 +100,8 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
             itemContainerElement.classList.add("node-overlay-list-item-container");
 
             let labelElement = itemContainerElement.appendChild(document.createElement("label"));
-            let nodeDisplayName = labelElement.appendChild(document.createElement("span"));
+            let nodeDisplayName = labelElement.appendChild(WI.linkifyNodeReference(domNode, {ignoreClick: true}));
             nodeDisplayName.classList.add("node-display-name");
-            nodeDisplayName.textContent = domNode.displayName;
 
             let checkboxElement = labelElement.appendChild(document.createElement("input"));
             labelElement.insertBefore(checkboxElement, nodeDisplayName);
