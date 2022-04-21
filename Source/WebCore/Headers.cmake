@@ -1355,6 +1355,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SuddenTermination.h
     platform/Supplementable.h
     platform/SystemSoundDelegate.h
+    platform/TextRecognitionOptions.h
     platform/ThemeTypes.h
     platform/ThreadCheck.h
     platform/ThreadGlobalData.h

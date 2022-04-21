@@ -36,6 +36,7 @@
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebCore/Color.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -103,6 +104,45 @@ static CGPoint swizzledLocationInView(id, SEL, UIView *)
 
 namespace TestWebKitAPI {
 
+// FIXME: We can unify most of this helper class with the logic in `TestPDFPage::colorAtPoint`, and deploy this
+// helper class in several other tests that read pixel data from CGImages.
+class CGImagePixelReader {
+    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(CGImagePixelReader);
+public:
+    CGImagePixelReader(CGImageRef image)
+        : m_width(CGImageGetWidth(image))
+        , m_height(CGImageGetHeight(image))
+    {
+        auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto bytesPerPixel = 4;
+        auto bytesPerRow = bytesPerPixel * CGImageGetWidth(image);
+        auto bitsPerComponent = 8;
+        auto bitmapInfo = kCGImageAlphaPremultipliedLast | kCGImageByteOrder32Big;
+        m_context = adoptCF(CGBitmapContextCreateWithData(nullptr, m_width, m_height, bitsPerComponent, bytesPerRow, colorSpace.get(), bitmapInfo, nullptr, nullptr));
+        CGContextDrawImage(m_context.get(), CGRectMake(0, 0, m_width, m_height), image);
+    }
+
+    bool isTransparentBlack(unsigned x, unsigned y) const
+    {
+        return at(x, y) == WebCore::Color::transparentBlack;
+    }
+
+    WebCore::Color at(unsigned x, unsigned y) const
+    {
+        auto* data = reinterpret_cast<uint8_t*>(CGBitmapContextGetData(m_context.get()));
+        auto offset = 4 * (width() * y + x);
+        return WebCore::makeFromComponentsClampingExceptAlpha<WebCore::SRGBA<uint8_t>>(data[offset], data[offset + 1], data[offset + 2], data[offset + 3]);
+    }
+
+    unsigned width() const { return m_width; }
+    unsigned height() const { return m_height; }
+
+private:
+    unsigned m_width { 0 };
+    unsigned m_height { 0 };
+    RetainPtr<CGContextRef> m_context;
+};
+
 static Vector<RetainPtr<VKImageAnalyzerRequest>>& processedRequests()
 {
     static NeverDestroyed requests = Vector<RetainPtr<VKImageAnalyzerRequest>> { };
@@ -118,6 +158,13 @@ static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
             [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
     }
     return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
+}
+
+static void processRequestWithError(id, SEL, VKImageAnalyzerRequest *request, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
+{
+    gDidProcessRequestCount++;
+    processedRequests().append({ request });
+    completion(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:nil]);
 }
 
 static void processRequestWithResults(id, SEL, VKImageAnalyzerRequest *request, void (^)(double progress), void (^completion)(VKImageAnalysis *, NSError *))
@@ -142,13 +189,6 @@ std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMetho
 }
 
 #if PLATFORM(IOS_FAMILY)
-
-static void processRequestWithError(id, SEL, VKImageAnalyzerRequest *request, void (^)(double progress), void (^completion)(VKImageAnalysis *analysis, NSError *error))
-{
-    gDidProcessRequestCount++;
-    processedRequests().append({ request });
-    completion(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:1 userInfo:nil]);
-}
 
 TEST(ImageAnalysisTests, DoNotAnalyzeImagesInEditableContent)
 {
@@ -264,6 +304,22 @@ TEST(ImageAnalysisTests, ImageAnalysisPrioritizesVisibleImages)
     EXPECT_EQ(150U, CGImageGetHeight(firstRequestedImage));
     EXPECT_EQ(600U, CGImageGetWidth(lastRequestedImage));
     EXPECT_EQ(450U, CGImageGetHeight(lastRequestedImage));
+}
+
+TEST(ImageAnalysisTests, ImageAnalysisWithTransparentImages)
+{
+    auto requestSwizzler = makeImageAnalysisRequestSwizzler(processRequestWithError);
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView synchronouslyLoadTestPageNamed:@"fade-in-image"];
+    [webView _startImageAnalysis:@"foo"];
+    [webView waitForImageAnalysisRequests:1];
+
+    CGImagePixelReader reader { [processedRequests().first() image] };
+    EXPECT_TRUE(reader.isTransparentBlack(1, 1));
+    EXPECT_TRUE(reader.isTransparentBlack(reader.width() - 1, 1));
+    EXPECT_TRUE(reader.isTransparentBlack(reader.width() - 1, reader.height() - 1));
+    EXPECT_TRUE(reader.isTransparentBlack(1, reader.height() - 1));
+    EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
 }
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)

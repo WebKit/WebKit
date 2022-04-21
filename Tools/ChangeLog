@@ -1,3 +1,30 @@
+2022-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid falling back to snapshots for transparent images when triggering batch text recognition
+        https://bugs.webkit.org/show_bug.cgi?id=239555
+        rdar://91622151
+
+        Reviewed by Aditya Keerthi.
+
+        Add an API test to exercise the bug, by triggering batch image analysis on an image with `opacity: 0;` that
+        fades in on a timer.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::CGImagePixelReader::CGImagePixelReader):
+        (TestWebKitAPI::CGImagePixelReader::isTransparentBlack const):
+        (TestWebKitAPI::CGImagePixelReader::at const):
+        (TestWebKitAPI::CGImagePixelReader::width const):
+        (TestWebKitAPI::CGImagePixelReader::height const):
+
+        Add a simple helper class to read pixel values at a given location in a given CGImage; this helper class works
+        by first rendering the given image into a plain SRGB bitmap context, which we then use to read back pixel data
+        in RGBA format.
+
+        (TestWebKitAPI::processRequestWithError):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/fade-in-image.html: Added.
+
 2022-04-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         [LayoutTests][Win] Tests can fail if long paths are not enabled in registry.

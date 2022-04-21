@@ -92,6 +92,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
 #include <WebCore/TextIndicator.h>
+#include <WebCore/TextRecognitionOptions.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
@@ -1514,9 +1515,9 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebChromeClient::requestTextRecognition(Element& element, const String& identifier, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
+void WebChromeClient::requestTextRecognition(Element& element, TextRecognitionOptions&& options, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
 {
-    m_page.requestTextRecognition(element, identifier, WTFMove(completion));
+    m_page.requestTextRecognition(element, WTFMove(options), WTFMove(completion));
 }
 
 #endif

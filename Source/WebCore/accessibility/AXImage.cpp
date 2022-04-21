@@ -33,6 +33,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DocumentInlines.h"
+#include "TextRecognitionOptions.h"
 
 namespace WebCore {
 

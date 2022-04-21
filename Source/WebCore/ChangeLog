@@ -1,3 +1,38 @@
+2022-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid falling back to snapshots for transparent images when triggering batch text recognition
+        https://bugs.webkit.org/show_bug.cgi?id=239555
+        rdar://91622151
+
+        Reviewed by Aditya Keerthi.
+
+        For normal Live Text, our existing heuristics fall back to analyzing a snapshot rather than the image data
+        itself for transparent image elements (e.g. on Twitter). However, when installing block-style image overlay
+        content using `ImageAnalysisQueue`, it doesn't make sense to use this compatibility hack, since this flavor of
+        image overlay content is directly visible to the user, and would still show up underneath fully transparent
+        image elements, as long as we're able to analyze the other (non-fully-transparent) image element underneath.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXImage.cpp:
+        * page/ChromeClient.h:
+
+        Plumb the new `TextRecognitionOptions` struct through this client method.
+
+        (WebCore::ChromeClient::requestTextRecognition):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::textRecognitionHoverTimerFired):
+        * page/ImageAnalysisQueue.cpp:
+        (WebCore::ImageAnalysisQueue::resumeProcessing):
+
+        Use the presence of an identifier as a cue to determine whether or not we should opt into the snapshotting
+        fallback behavior, for the time being. I also considered just keying this behavior off of the `identifier` in
+        `WebPage::requestTextRecognition`, but chose this approach because it seems fragile to couple those two
+        behaviors.
+
+        * platform/TextRecognitionOptions.h: Added.
+        * testing/Internals.cpp:
+
 2022-04-20  Chris Dumez  <cdumez@apple.com>
 
         Move true / false AtomStrings to a central location and reuse them

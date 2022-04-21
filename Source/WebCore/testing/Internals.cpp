@@ -215,6 +215,7 @@
 #include "SystemSoundManager.h"
 #include "TextIterator.h"
 #include "TextPlaceholderElement.h"
+#include "TextRecognitionOptions.h"
 #include "ThreadableBlobRegistry.h"
 #include "TreeScope.h"
 #include "TypeConversions.h"

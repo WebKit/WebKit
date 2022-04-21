@@ -141,6 +141,7 @@ struct MockWebAuthenticationConfiguration;
 struct SecurityOriginData;
 struct ShareDataWithParsedURL;
 struct TextIndicatorData;
+struct TextRecognitionOptions;
 struct ViewportArguments;
 struct WindowFeatures;
 
@@ -600,7 +601,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    virtual void requestTextRecognition(Element&, const String& = { }, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
+    virtual void requestTextRecognition(Element&, TextRecognitionOptions&&, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
     {
         if (completion)
             completion({ });

@@ -113,6 +113,7 @@
 #include "StyleCachedImage.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
+#include "TextRecognitionOptions.h"
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
 #include "ValidationMessageClient.h"
@@ -3491,7 +3492,7 @@ void EventHandler::textRecognitionHoverTimerFired()
         return;
 
     if (auto* page = m_frame.page())
-        page->chrome().client().requestTextRecognition(*element);
+        page->chrome().client().requestTextRecognition(*element, { });
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

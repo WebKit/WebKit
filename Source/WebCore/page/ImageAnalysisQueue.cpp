@@ -36,6 +36,7 @@
 #include "ImageOverlay.h"
 #include "RenderImage.h"
 #include "RenderView.h"
+#include "TextRecognitionOptions.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -112,7 +113,8 @@ void ImageAnalysisQueue::resumeProcessing()
 
         m_pendingRequestCount++;
         m_page->resetTextRecognitionResult(*element);
-        m_page->chrome().client().requestTextRecognition(*element, m_identifier, [this, page = m_page] (auto&&) {
+        auto allowSnapshots = m_identifier.isEmpty() ? TextRecognitionOptions::AllowSnapshots::Yes : TextRecognitionOptions::AllowSnapshots::No;
+        m_page->chrome().client().requestTextRecognition(*element, { m_identifier, allowSnapshots }, [this, page = m_page] (auto&&) {
             if (!page || page->imageAnalysisQueueIfExists() != this)
                 return;
 
