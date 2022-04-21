@@ -36,12 +36,10 @@ struct MessageWithMessagePorts;
 
 namespace WebKit {
 
-class NetworkProcess;
-
 class NetworkBroadcastChannelRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit NetworkBroadcastChannelRegistry(NetworkProcess&);
+    NetworkBroadcastChannelRegistry();
 
     void removeConnection(IPC::Connection&);
 
@@ -52,7 +50,6 @@ public:
     void postMessage(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
 
 private:
-    Ref<NetworkProcess> m_networkProcess;
     using NameToConnectionIdentifiersMap = HashMap<String, Vector<IPC::Connection::UniqueID>>;
     HashMap<WebCore::ClientOrigin, NameToConnectionIdentifiersMap> m_broadcastChannels;
 };

@@ -40,30 +40,17 @@ static inline IPC::Connection& networkProcessConnection()
     return WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-// Unique origins are only stored in process in m_channelsPerOrigin and never sent to the NetworkProcess as a ClientOrigin.
-// The identity of unique origins wouldn't be preserved when serializing them as a SecurityOriginData (via ClientOrigin).
-// Since BroadcastChannels from a unique origin can only communicate with other BroadcastChannels from the same unique origin,
-// the destination channels have to be within the same WebProcess anyway.
-static std::optional<WebCore::ClientOrigin> toClientOrigin(const WebCore::PartitionedSecurityOrigin& origin)
-{
-    if (origin.topOrigin->isUnique() || origin.clientOrigin->isUnique())
-        return std::nullopt;
-    return WebCore::ClientOrigin { origin.topOrigin->data(), origin.clientOrigin->data() };
-}
-
-void WebBroadcastChannelRegistry::registerChannel(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
+void WebBroadcastChannelRegistry::registerChannel(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
 {
     auto& channelsForOrigin = m_channelsPerOrigin.ensure(origin, [] { return HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>> { }; }).iterator->value;
     auto& channelsForName = channelsForOrigin.ensure(name, [] { return Vector<WebCore::BroadcastChannelIdentifier> { }; }).iterator->value;
     channelsForName.append(identifier);
 
-    if (channelsForName.size() == 1) {
-        if (auto clientOrigin = toClientOrigin(origin))
-            networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { *clientOrigin, name }, 0);
-    }
+    if (channelsForName.size() == 1)
+        networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { origin, name }, 0);
 }
 
-void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
+void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
 {
     auto channelsPerOriginIterator = m_channelsPerOrigin.find(origin);
     if (channelsPerOriginIterator == m_channelsPerOrigin.end())
@@ -81,22 +68,20 @@ void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::PartitionedSe
         return;
 
     channelsForOrigin.remove(channelsForOriginIterator);
-    if (auto clientOrigin = toClientOrigin(origin))
-        networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::UnregisterChannel { *clientOrigin, name }, 0);
+    networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::UnregisterChannel { origin, name }, 0);
 
     if (channelsForOrigin.isEmpty())
         m_channelsPerOrigin.remove(channelsPerOriginIterator);
 }
 
-void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
+void WebBroadcastChannelRegistry::postMessage(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     postMessageLocally(origin, name, source, message.copyRef(), callbackAggregator.copyRef());
-    if (auto clientOrigin = toClientOrigin(origin))
-        networkProcessConnection().sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { WTFMove(message), { } } }, [callbackAggregator] { }, 0);
+    networkProcessConnection().sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { origin, name, WebCore::MessageWithMessagePorts { WTFMove(message), { } } }, [callbackAggregator] { }, 0);
 }
 
-void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedSecurityOrigin& origin, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&& message, Ref<WTF::CallbackAggregator>&& callbackAggregator)
+void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::ClientOrigin& origin, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&& message, Ref<WTF::CallbackAggregator>&& callbackAggregator)
 {
     auto channelsPerOriginIterator = m_channelsPerOrigin.find(origin);
     if (channelsPerOriginIterator == m_channelsPerOrigin.end())
@@ -115,21 +100,17 @@ void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedS
     }
 }
 
-void WebBroadcastChannelRegistry::postMessageToRemote(const WebCore::ClientOrigin& clientOrigin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+void WebBroadcastChannelRegistry::postMessageToRemote(const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    WebCore::PartitionedSecurityOrigin origin { clientOrigin.topOrigin.securityOrigin(), clientOrigin.clientOrigin.securityOrigin() };
     postMessageLocally(origin, name, std::nullopt, *message.message, callbackAggregator.copyRef());
 }
 
 void WebBroadcastChannelRegistry::networkProcessCrashed()
 {
     for (auto& [origin, channelsForOrigin] : m_channelsPerOrigin) {
-        auto clientOrigin = toClientOrigin(origin);
-        if (!clientOrigin)
-            continue;
         for (auto& name : channelsForOrigin.keys())
-            networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { *clientOrigin, name }, 0);
+            networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { origin, name }, 0);
     }
 }
 
