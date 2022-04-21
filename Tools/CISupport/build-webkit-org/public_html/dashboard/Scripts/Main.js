@@ -334,6 +334,9 @@ for (var i = 0; i < sortedRepositories.length; ++i) {
     var trac = sortedRepositories[i].trac;
     if (typeof trac !== "undefined")
         trac.startPeriodicUpdates();
+    var commits = sortedRepositories[i].commits;
+    if (typeof commits !== "undefined")
+        commits.startPeriodicUpdates();
 }
 
 document.addEventListener("DOMContentLoaded", documentReady);

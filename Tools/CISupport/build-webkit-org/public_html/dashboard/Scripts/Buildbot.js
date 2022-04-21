@@ -181,19 +181,19 @@ Buildbot.prototype = {
 
     layoutTestResultsDirectoryURLForIteration: function(iteration)
     {
-        var underscoreSeparatedRevisions = "r";
+        var underscoreSeparatedCommits = "";
         sortDictionariesByOrder(Dashboard.Repository).forEach(function(repository) {
             if (iteration.revision[repository.name]) {
-                if (underscoreSeparatedRevisions.length > 1)
-                    underscoreSeparatedRevisions += "_";
-                underscoreSeparatedRevisions += iteration.revision[repository.name];
+                if (underscoreSeparatedCommits.length > 1)
+                    underscoreSeparatedCommits += "_";
+                underscoreSeparatedCommits += iteration.revision[repository.name];
             }
         });
         var url = this.baseURL + "results/";
         if (this.baseURLForResults) {
             url = this.baseURLForResults;
         }
-        return url + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent(underscoreSeparatedRevisions + " (" + iteration.id + ")");
+        return url + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent(underscoreSeparatedCommits + " (" + iteration.id + ")");
     },
 
     layoutTestResultsURLForIteration: function(iteration)

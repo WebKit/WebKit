@@ -118,27 +118,29 @@ QueueView.prototype = {
         var branches = queue.branches;
         for (var i = 0; i < branches.length; ++i) {
             var branch = branches[i];
+            if (branch.name === 'trunk')
+                branch.name = 'main';
             var repository = branch.repository;
             var repositoryName = repository.name;
-            var trac = repository.trac;
-            var latestProductiveRevisionNumber = latestProductiveIteration.revision[repositoryName];
-            if (!latestProductiveRevisionNumber)
+            var commits = repository.commits;
+            var latestProductiveIdentifier = latestProductiveIteration.revision[repositoryName];
+            if (!latestProductiveIdentifier)
                 continue;
-            if (!trac)
+            if (!commits)
                 continue;
-            if (!trac.latestRecordedRevisionNumber || trac.indexOfRevision(trac.oldestRecordedRevisionNumber) > trac.indexOfRevision(latestProductiveRevisionNumber)) {
-                trac.loadMoreHistoricalData();
-                return;
+            var head = commits.heads[branch.name];
+            if (!head) {
+                commits.heads[branch.name] = null;
+                continue;
             }
-
-            totalRevisionsBehind += trac.commitsOnBranchLaterThanRevision(branch.name, latestProductiveRevisionNumber).length;
+            totalRevisionsBehind = commits.branchPosition(commits.heads[branch.name].identifier) - commits.branchPosition(latestProductiveIdentifier);
         }
 
         if (!totalRevisionsBehind)
             return;
 
         var messageElement = document.createElement("span"); // We can't just pass text to StatusLineView here, because we need an element that perfectly fits the text for popover positioning.
-        messageElement.textContent = totalRevisionsBehind + " " + (totalRevisionsBehind === 1 ? "revision behind" : "revisions behind");
+        messageElement.textContent = totalRevisionsBehind + " " + (totalRevisionsBehind === 1 ? "commit behind" : "commits behind");
         var status = new StatusLineView(messageElement, StatusLineView.Status.NoBubble);
         this.element.appendChild(status.element);
 
@@ -225,6 +227,8 @@ QueueView.prototype = {
         console.assert(repository.isSVN || repository.isGit, "Should not get here; " + repository.name + " did not specify a known VCS type.");
         if (repository.isSVN)
             return "r" + revision;
+        if (revision.includes('@'))
+            return revision;
         // Truncating for display. Git traditionally uses seven characters for a short hash.
         return revision.substr(0, 7);
     },

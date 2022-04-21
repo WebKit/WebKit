@@ -1,3 +1,29 @@
+2022-04-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Support identifiers on dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=239473
+        <rdar://problem/76852365>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype.layoutTestResultsDirectoryURLForIteration): Remove leading r.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.get buildURL): Request identifier.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Dashboard.js: OpenSource should be considered a git checkout.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Initialization.js: Add Commit interface.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/Main.js: Kick off periodic commits.webkit.org refresh.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/QueueView.js:
+        (QueueView.prototype._appendPendingRevisionCount): Use commit.webkit.org interface instead of trac.
+        (QueueView.prototype._formatRevisionForDisplay): Don't truncate identifiers.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/tests/index.html: Import Commits.js.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/tests/resources/MockCommits.js:
+        (MockCommits): Add mock commits.webkit.org interface.
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/tests/resources/tests.js:
+        (setup): Add commits.webkit.org interface.
+        (this.view._latestProductiveIteration):
+        * CISupport/build-webkit-org/public_html/dashboard/index.html:
+
 2022-04-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Make make-dist script python3 only

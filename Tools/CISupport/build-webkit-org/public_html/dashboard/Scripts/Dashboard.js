@@ -48,7 +48,7 @@ Dashboard = {
     },
     Branch: {},
     Repository: {
-        OpenSource: { name: "openSource", isSVN: true, order: 0 },
+        OpenSource: { name: "openSource", isGit: true, order: 0 },
     },
     get sortedPlatforms()
     {

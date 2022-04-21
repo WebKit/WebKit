@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var settings = new Settings;
-var buildbots = [ new WebKitBuildbot ];
-Dashboard.Repository.OpenSource.commits = new Commits("https://commits.webkit.org/");
-Dashboard.Repository.OpenSource.trac = new Trac("https://trac.webkit.org/");
-if (typeof Bugzilla !== "undefined")
-    var bugzilla = new Bugzilla;
-if (typeof BubbleQueueServer !== "undefined")
-    var bubbleQueueServer = new BubbleQueueServer;
-if (typeof TestHistory !== "undefined")
-    var testHistory = new TestHistory;
+Commits = function(url)
+{
+    BaseObject.call(this);
+
+    console.assert(url);
+    this.url = url;
+    this.heads = {'main': null};
+};
+
+BaseObject.addConstructorFunctions(Commits);
+
+Commits.UpdateInterval = 45000; // 45 seconds
+
+Commits.prototype = {
+    constructor: Commits,
+    __proto__: BaseObject.prototype,
+
+    _update: function() {
+        var self = this
+        Object.entries(self.heads).forEach(function(branch){
+            JSON.load(self.url + '/' + branch[0] + '/json', function(data) {
+                self.heads[branch[0]] = data;
+            });
+        });
+    },
+    startPeriodicUpdates: function() {
+        this._update()
+        this.updateTimer = setInterval(this._update.bind(this), Commits.UpdateInterval);
+    },
+    branchPosition: function(identifier) {
+        var split = identifier.split(/\.|@/);
+        if (split.length === 2)
+            return parseFloat(split[0]);
+        if (split.length === 3)
+            return parseFloat(split[1]);
+        return null
+    },
+};

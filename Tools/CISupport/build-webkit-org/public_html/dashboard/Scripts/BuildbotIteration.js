@@ -196,7 +196,6 @@ BuildbotIteration.prototype = {
         this.id = data.number;
 
         this.revision = {};
-        var revisionProperty = data.properties.got_revision;
         var branches = this.queue.branches;
 
         for (var i = 0; i < branches.length; ++i) {
@@ -213,8 +212,10 @@ BuildbotIteration.prototype = {
                 fallbackKey = null;
             }
 
-            var revision = parseRevisionProperty(revisionProperty, key, fallbackKey);
-            this.revision[repositoryName] = revision;
+            if (repository.isSVN || !data.properties.identifier || !fallbackKey)
+                this.revision[repositoryName] = parseRevisionProperty(data.properties.got_revision, key, fallbackKey);
+            else
+                this.revision[repositoryName] = parseRevisionProperty(data.properties.identifier, key, fallbackKey);
         }
 
         function sourceStampChanges(sourceStamp) {
@@ -335,7 +336,7 @@ BuildbotIteration.prototype = {
 
     get buildURL()
     {
-        return this.queue.baseURL + "/builds/" + this.id + "?property=got_revision";
+        return this.queue.baseURL + "/builds/" + this.id + "?property=got_revision&property=identifier";
     },
 
     get buildStepsURL()

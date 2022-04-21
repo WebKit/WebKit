@@ -41,6 +41,7 @@ QUnit.done = function(details) {
 module("Trac", {
     setup: function() {
         this.trac = new MockTrac();
+        this.commits = new MockCommits();
         this.tracWithIdentifier = new MockTrac("webkit");
     }
 });
@@ -160,6 +161,7 @@ test("_xmlTimelineURL with Trac Identifier", function()
 module("BuildBotQueueView", {
     setup: function() {
         this.trac = new MockTrac();
+        this.commits = new MockCommits();
         this.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
         this.trac.recordedCommitIndicesByRevisionNumber = MockTrac.recordedCommitIndicesByRevisionNumber;
         this.queue = new MockBuildbotQueue();
@@ -168,6 +170,7 @@ module("BuildBotQueueView", {
             repository: {
                 name: "openSource",
                 trac: this.trac,
+                commits: this.commits,
                 isSVN: true,
             }
         };
@@ -176,7 +179,7 @@ module("BuildBotQueueView", {
         this.view._latestProductiveIteration = function(queue)
         {
             var iteration = {
-                revision: { "openSource": "33021" },
+                revision: { "openSource": "33021@main" },
             };
             return iteration;
         }
@@ -187,8 +190,8 @@ var settings = new Settings;
 test("_appendPendingRevisionCount", function()
 {
     this.view._appendPendingRevisionCount(this.queue, this.view._latestProductiveIteration);
-    var revisionsBehind = this.view.element.getElementsByClassName("message")[0].innerHTML.match(/.*(\d+) revision(|s) behind/)[1];
-    strictEqual(revisionsBehind, "1", "assert revisions behind");
+    var revisionsBehind = this.view.element.getElementsByClassName("message")[0].innerHTML.match(/.*(\d+) commit(|s) behind/)[1];
+    strictEqual(revisionsBehind, "1", "assert commits behind");
 });
 
 test("_popoverLinesForCommitRange", function()
@@ -213,6 +216,7 @@ test("_presentPopoverForPendingCommits no pending commits", function()
         repository: {
             name: "openSource",
             trac: this.trac,
+            commits: this.commits,
             isSVN: true,
         }
     };
@@ -230,6 +234,7 @@ test("_presentPopoverForRevisionRange", function()
     var popover = new Dashboard.Popover();
     var context = {
         trac: this.trac,
+        commits: this.commits,
         branch: this.trunkBranch,
         firstRevision: "33018",
         lastRevision: "33020"
@@ -245,6 +250,7 @@ test("_presentPopoverForRevisionRange no commits", function()
     var popover = new Dashboard.Popover();
     var context = {
         trac: this.trac,
+        commits: this.commits,
         branch: this.trunkBranch,
         firstRevision: "33020",
         lastRevision: "33018"
@@ -387,6 +393,7 @@ test("_presentPopoverForJavaScriptCoreTestRegressions already loaded", function(
 module("BuildBotQueue", {
     setup: function() {
         Dashboard.Repository.OpenSource.trac = new MockTrac();
+        Dashboard.Repository.OpenSource.commits = new MockCommits();
         Dashboard.Repository.OpenSource.trac.recordedCommits = MockTrac.EXAMPLE_TRAC_COMMITS;
         Dashboard.Repository.OpenSource.trac.recordedCommitIndicesByRevisionNumber = MockTrac.recordedCommitIndicesByRevisionNumber;
         this.queue = new MockBuildbotQueue();
