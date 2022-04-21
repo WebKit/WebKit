@@ -46,14 +46,20 @@ void ScratchRegisterAllocator::lock(GPRReg reg)
 {
     if (reg == InvalidGPRReg)
         return;
-    m_lockedRegisters.set(reg);
+    unsigned index = GPRInfo::toIndex(reg);
+    if (index == GPRInfo::InvalidIndex)
+        return;
+    m_lockedRegisters.setGPRByIndex(index);
 }
 
 void ScratchRegisterAllocator::lock(FPRReg reg)
 {
     if (reg == InvalidFPRReg)
         return;
-    m_lockedRegisters.set(reg);
+    unsigned index = FPRInfo::toIndex(reg);
+    if (index == FPRInfo::InvalidIndex)
+        return;
+    m_lockedRegisters.setFPRByIndex(index);
 }
 
 void ScratchRegisterAllocator::lock(JSValueRegs regs)
@@ -67,7 +73,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
 {
     // First try to allocate a register that is totally free.
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
-        auto reg = BankInfo::toRegister(i);
+        typename BankInfo::RegisterType reg = BankInfo::toRegister(i);
         if (!m_lockedRegisters.get(reg)
             && !m_usedRegisters.get(reg)
             && !m_scratchRegisters.get(reg)) {
@@ -79,7 +85,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
     // Since that failed, try to allocate a register that is not yet
     // locked or used for scratch.
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
-        auto reg = BankInfo::toRegister(i);
+        typename BankInfo::RegisterType reg = BankInfo::toRegister(i);
         if (!m_lockedRegisters.get(reg) && !m_scratchRegisters.get(reg)) {
             m_scratchRegisters.set(reg);
             m_numberOfReusedRegisters++;
@@ -104,14 +110,12 @@ ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReuse
     RegisterSet registersToSpill;
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg reg = FPRInfo::toRegister(i);
-        ASSERT(reg != InvalidFPRReg);
-        if (m_scratchRegisters.get(reg) && m_usedRegisters.get(reg))
+        if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.get(reg))
             registersToSpill.set(reg);
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg reg = GPRInfo::toRegister(i);
-        ASSERT(reg != InvalidGPRReg);
-        if (m_scratchRegisters.get(reg) && m_usedRegisters.get(reg))
+        if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.get(reg))
             registersToSpill.set(reg);
     }
 
@@ -130,14 +134,12 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(AssemblyHelpers& 
     RegisterSet registersToFill;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        ASSERT(reg != InvalidGPRReg);
-        if (m_scratchRegisters.get(reg) && m_usedRegisters.get(reg))
+        if (m_scratchRegisters.getGPRByIndex(i) && m_usedRegisters.get(reg))
             registersToFill.set(reg);
     }
     for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
         FPRReg reg = FPRInfo::toRegister(i);
-        ASSERT(reg != InvalidFPRReg);
-        if (m_scratchRegisters.get(reg) && m_usedRegisters.get(reg))
+        if (m_scratchRegisters.getFPRByIndex(i) && m_usedRegisters.get(reg))
             registersToFill.set(reg);
     }
 

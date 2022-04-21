@@ -30,6 +30,7 @@
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "Reg.h"
+#include "TempRegisterSet.h"
 #include <wtf/Bitmap.h>
 
 namespace JSC {

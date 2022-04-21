@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "RegisterSet.h"
+#include "TempRegisterSet.h"
 
 namespace JSC {
 
@@ -95,8 +96,8 @@ public:
 
 private:
     RegisterSet m_usedRegisters;
-    RegisterSet m_lockedRegisters;
-    RegisterSet m_scratchRegisters;
+    TempRegisterSet m_lockedRegisters;
+    TempRegisterSet m_scratchRegisters;
     unsigned m_numberOfReusedRegisters;
 };
 
