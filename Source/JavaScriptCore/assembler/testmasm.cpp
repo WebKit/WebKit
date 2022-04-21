@@ -5675,6 +5675,24 @@ static void testBranchIfNotType()
     CHECK_EQ(invoke<bool>(isNotType, &cell), true);
 }
 
+static void testGPRInfoConsistency()
+{
+    for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
+        GPRReg reg = GPRInfo::toRegister(index);
+        CHECK_EQ(GPRInfo::toIndex(reg), index);
+    }
+    for (auto reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = nextID(reg)) {
+        if (isSpecialGPR(reg))
+            continue;
+        unsigned index = GPRInfo::toIndex(reg);
+        if (index == GPRInfo::InvalidIndex) {
+            CHECK_EQ(index >= GPRInfo::numberOfRegisters, true);
+            continue;
+        }
+        CHECK_EQ(index < GPRInfo::numberOfRegisters, true);
+    }
+}
+
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -5911,6 +5929,8 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testOrImmMem());
 
     RUN(testAndOrDouble());
+
+    RUN(testGPRInfoConsistency());
 
     if (tasks.isEmpty())
         usage();

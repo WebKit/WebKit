@@ -316,10 +316,6 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         dfg.ensureCPSNaturalLoops();
     }
 
-    // Currently, due to GPRInfo::numberOfRegisters issue, we cannot enable it on x64.
-    if (isX86_64())
-        RELEASE_ASSERT(m_mode != JITCompilationMode::UnlinkedDFG);
-
     switch (m_mode) {
     case JITCompilationMode::DFG:
     case JITCompilationMode::UnlinkedDFG: {

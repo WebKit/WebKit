@@ -1,3 +1,23 @@
+2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix GPRInfo inconsistency in unlinked DFG bringup
+        https://bugs.webkit.org/show_bug.cgi?id=239573
+
+        Reviewed by Mark Lam.
+
+        Previously, we forgot changing GPRInfo::toIndex of x64 so that we got assertion in ScratchRegisterAllocator.
+        This patch fixes it and test this consistency in testmasm.
+        It allows unlinked DFG style register usage in x64, so we reenabled it again.
+
+        * assembler/testmasm.cpp:
+        (JSC::testGPRInfoConsistency):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toArgumentRegister):
+        (JSC::GPRInfo::toIndex):
+
 2022-04-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, RISC-V build fix.
