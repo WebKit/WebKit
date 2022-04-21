@@ -1,3 +1,16 @@
+2022-04-08  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][2.36] Build with a11y disabled fails
+        https://bugs.webkit.org/show_bug.cgi?id=239004
+
+        Reviewed by Michael Catanzaro.
+
+        Add accessibility build guards.
+
+        * UIProcess/Launcher/glib/XDGDBusProxy.cpp:
+        (WebKit::XDGDBusProxy::XDGDBusProxy):
+        (WebKit::XDGDBusProxy::launch const):
+
 2022-04-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r290360): [GLX] Crash on process exit

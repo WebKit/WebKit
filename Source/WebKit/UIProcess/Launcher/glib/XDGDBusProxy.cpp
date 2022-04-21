@@ -49,7 +49,9 @@ XDGDBusProxy::XDGDBusProxy(Type type, bool allowPortals)
         m_dbusAddress = g_getenv("DBUS_SESSION_BUS_ADDRESS");
         break;
     case Type::AccessibilityBus:
+#if ENABLE(ACCESSIBILITY)
         m_dbusAddress = WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress().utf8();
+#endif
         break;
     }
 
@@ -156,6 +158,7 @@ int XDGDBusProxy::launch(bool allowPortals) const
         break;
     }
     case Type::AccessibilityBus:
+#if ENABLE(ACCESSIBILITY)
         proxyArgs.appendVector(Vector<CString> {
             "--sloppy-names",
             "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Embed@/org/a11y/atspi/accessible/root",
@@ -166,6 +169,7 @@ int XDGDBusProxy::launch(bool allowPortals) const
             "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersSync@/org/a11y/atspi/registry/deviceeventcontroller",
             "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
         });
+#endif
         break;
     }
 
@@ -197,8 +201,10 @@ int XDGDBusProxy::launch(bool allowPortals) const
 
     ProcessLauncher::LaunchOptions launchOptions;
     launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
+#if ENABLE(ACCESSIBILITY)
     if (m_type == Type::AccessibilityBus && !m_path.isNull())
         launchOptions.extraSandboxPaths.add(m_path, SandboxPermission::ReadOnly);
+#endif
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> process = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
     if (!process)
