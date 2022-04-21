@@ -1,5 +1,14 @@
 2022-04-20  Karl Rackler  <rackler@apple.com>
 
+        [ macOS wk2 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=239577
+
+        Unreviewed test gardening. 
+
+        * platform/mac-wk2/TestExpectations:
+
+2022-04-20  Karl Rackler  <rackler@apple.com>
+
         [ macOS Release wk2 ] webanimations/frame-rate/animation-frame-rate-alignment-started-with-one-frame-separation.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=239574
 
