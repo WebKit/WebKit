@@ -31,7 +31,9 @@
 #include "DataReference.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
-#include <wtf/Lock.h>
+#include <WebCore/ProcessIdentity.h>
+#include <atomic>
+#include <wtf/ThreadAssertions.h>
 
 namespace IPC {
 class Connection;
@@ -51,18 +53,19 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 
-class LibWebRTCCodecsProxy : public IPC::Connection::ThreadMessageReceiverRefCounted {
+class LibWebRTCCodecsProxy final : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess& process) { return adoptRef(*new LibWebRTCCodecsProxy(process)); }
+    static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess&);
     ~LibWebRTCCodecsProxy();
-
-    void close();
-
+    void stopListeningForIPC(Ref<LibWebRTCCodecsProxy>&& refFromConnection);
     bool allowsExitUnderMemoryPressure() const;
 
 private:
     explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
+    void initialize();
+    auto createDecoderCallback(RTCDecoderIdentifier);
+    WorkQueue& workQueue() const { return m_queue; }
 
     // IPC::Connection::ThreadMessageReceiver
     void dispatchToThread(Function<void()>&&) final;
@@ -85,13 +88,13 @@ private:
 
     CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
 
-    GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
-
-    mutable Lock m_lock;
-    HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
-    HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
-
+    Ref<IPC::Connection> m_connection;
     Ref<WorkQueue> m_queue;
+    const WebCore::ProcessIdentity m_resourceOwner;
+
+    HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders WTF_GUARDED_BY_LOCK(workQueue());
+    HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders WTF_GUARDED_BY_LOCK(workQueue());
+    std::atomic<bool> m_hasEncodersOrDecoders { false };
 };
 
 }
