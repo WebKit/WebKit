@@ -30,6 +30,7 @@
 #include "EventNames.h"
 #include "MessageEvent.h"
 #include "Page.h"
+#include "PartitionedSecurityOrigin.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
 #include "WorkerGlobalScope.h"
@@ -86,7 +87,7 @@ private:
     WeakPtr<BroadcastChannel> m_broadcastChannel;
     const BroadcastChannelIdentifier m_identifier;
     const String m_name; // Main thread only.
-    ClientOrigin m_origin; // Main thread only.
+    std::optional<PartitionedSecurityOrigin> m_origin; // Main thread only.
 };
 
 BroadcastChannel::MainThreadBridge::MainThreadBridge(BroadcastChannel& channel, const String& name)
@@ -120,9 +121,9 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Docume
 void BroadcastChannel::MainThreadBridge::registerChannel()
 {
     ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier()](auto& document) {
-        m_origin = { shouldPartitionOrigin(document) ? document.topOrigin().data() : document.securityOrigin().data(), document.securityOrigin().data() };
+        m_origin = PartitionedSecurityOrigin { shouldPartitionOrigin(document) ? document.topOrigin() : document.securityOrigin(), document.securityOrigin() };
         if (auto* page = document.page())
-            page->broadcastChannelRegistry().registerChannel(m_origin, m_name, m_identifier);
+            page->broadcastChannelRegistry().registerChannel(*m_origin, m_name, m_identifier);
         channelToContextIdentifier().add(m_identifier, contextIdentifier);
     });
 }
@@ -131,7 +132,7 @@ void BroadcastChannel::MainThreadBridge::unregisterChannel()
 {
     ensureOnMainThread([this](auto& document) {
         if (auto* page = document.page())
-            page->broadcastChannelRegistry().unregisterChannel(m_origin, m_name, m_identifier);
+            page->broadcastChannelRegistry().unregisterChannel(*m_origin, m_name, m_identifier);
         channelToContextIdentifier().remove(m_identifier);
     });
 }
@@ -144,7 +145,7 @@ void BroadcastChannel::MainThreadBridge::postMessage(Ref<SerializedScriptValue>&
             return;
 
         auto blobHandles = message->blobHandles();
-        page->broadcastChannelRegistry().postMessage(m_origin, m_name, m_identifier, WTFMove(message), [blobHandles = WTFMove(blobHandles)] {
+        page->broadcastChannelRegistry().postMessage(*m_origin, m_name, m_identifier, WTFMove(message), [blobHandles = WTFMove(blobHandles)] {
             // Keeps Blob data inside messageData alive until the message has been delivered.
         });
     });

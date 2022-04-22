@@ -1,0 +1,4 @@
+
+PASS Opaque origin should be serialized to "null"
+PASS BroadcastChannel messages from opaque origins should be self-contained
+

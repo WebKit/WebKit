@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/detached-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/interface.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/origin.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webmessaging/broadcastchannel/sandbox.html
