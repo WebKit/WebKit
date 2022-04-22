@@ -36,7 +36,7 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal, bool isFirstAfterPageBreak = false)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
@@ -49,6 +49,7 @@ public:
         , m_contentLogicalWidth(contentLogicalWidth)
         , m_baselineType(baselineType)
         , m_isHorizontal(isHorizontal)
+        , m_isFirstAfterPageBreak(isFirstAfterPageBreak)
     {
     }
 
@@ -76,6 +77,8 @@ public:
     float contentLogicalOffset() const { return m_contentLogicalOffset; }
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
+    bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
+
 private:
     size_t m_firstBoxIndex { 0 };
     size_t m_boxCount { 0 };
@@ -93,6 +96,8 @@ private:
     float m_contentLogicalWidth { 0 };
     FontBaseline m_baselineType { AlphabeticBaseline };
     bool m_isHorizontal { true };
+    // FIXME: This is to match paginated legacy lines. Move it to some other, paginated related structure.
+    bool m_isFirstAfterPageBreak { false };
 };
 
 }

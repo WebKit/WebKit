@@ -1,3 +1,30 @@
+2022-04-22  Alan Bujtas  <zalan@apple.com>
+
+        Book content is clipped at page boundary when displaying list with bullet points
+        https://bugs.webkit.org/show_bug.cgi?id=239638
+        <rdar://89257768>
+
+        Reviewed by Antti Koivisto.
+
+        Table cell content needs special handling when does not fit the page.
+
+        When a table cell's first line does not fit the page, instead of the normal, "let's add a flow level pagination strut"
+        we have to handle it as a line level strut (not sure why it is implemted this way but this is the expected behavior).
+        -also implment LineBoxIteratorModernPath::isFirstAfterPageBreak.
+
+        Test: fast/multicol/pagination/table-cell-one-line-pagination.html
+
+        * layout/integration/inline/InlineIteratorLineBoxModernPath.h:
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::isFirstAfterPageBreak const):
+        * layout/integration/inline/LayoutIntegrationLine.h:
+        (WebCore::LayoutIntegration::Line::Line):
+        (WebCore::LayoutIntegration::Line::isFirstAfterPageBreak const):
+        * layout/integration/inline/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::setPageBreakForLine): According to RenderBlockFlow::adjustLinePositionForPagination, we
+        have to call setPageBreak, even when the first line does not fit.
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        (WebCore::LayoutIntegration::adjustLinePositionsForPagination):
+
 2022-04-22  Antti Koivisto  <antti@apple.com>
 
         Bail out from text decoration computation if none is requested

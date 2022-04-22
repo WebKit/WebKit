@@ -1,3 +1,14 @@
+2022-04-22  Alan Bujtas  <zalan@apple.com>
+
+        Book content is clipped at page boundary when displaying list with bullet points
+        https://bugs.webkit.org/show_bug.cgi?id=239638
+        <rdar://89257768>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/pagination/table-cell-one-line-pagination-expected.html: Added.
+        * fast/multicol/pagination/table-cell-one-line-pagination.html: Added.
+
 2022-04-22  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: The isolated tree is not updated after role changes in AccessibilityRenderObject::updateRoleAfterChildrenCreation()

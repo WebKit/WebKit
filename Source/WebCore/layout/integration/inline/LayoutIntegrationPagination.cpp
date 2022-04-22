@@ -30,6 +30,7 @@
 
 #include "FontCascade.h"
 #include "RenderBlockFlow.h"
+#include "RenderTableCell.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -87,24 +88,28 @@ static LayoutUnit computeOffsetAfterLineBreak(LayoutUnit lineBreakPosition, bool
     return offset + flow.pageRemainingLogicalHeightForOffset(lineBreakPosition, RenderBlockFlow::ExcludePageBoundary);
 }
 
-static void setPageBreakForLine(unsigned lineBreakIndex, PaginatedLines& lines, RenderBlockFlow& flow, Vector<Strut>& struts,
-    bool atTheTopOfColumnOrPage, bool lineDoesNotFit)
+static void setPageBreakForLine(unsigned lineBreakIndex, PaginatedLines& lines, RenderBlockFlow& flow, Vector<Strut>& struts, bool atTheTopOfColumnOrPage, bool lineDoesNotFit, bool& isPageBreakWithLineStrut)
 {
     auto line = lines.at(lineBreakIndex);
     auto remainingLogicalHeight = flow.pageRemainingLogicalHeightForOffset(line.top, RenderBlockFlow::ExcludePageBoundary);
-    auto& style = flow.style();
-    auto firstLineDoesNotFit = !lineBreakIndex && line.height < flow.pageLogicalHeightForOffset(line.top);
-    auto moveOrphanToNextColumn = lineDoesNotFit && !style.hasAutoOrphans() && style.orphans() > (short)lineBreakIndex;
-    if (firstLineDoesNotFit || moveOrphanToNextColumn) {
-        auto firstLine = lines.first();
-        auto firstLineUpperOverhang = std::max(LayoutUnit(-firstLine.top), 0_lu);
-        flow.setPaginationStrut(line.top + remainingLogicalHeight + firstLineUpperOverhang);
-        return;
-    }
+
     if (atTheTopOfColumnOrPage)
         flow.setPageBreak(line.top, line.height);
     else
         flow.setPageBreak(line.top, line.height - remainingLogicalHeight);
+
+    auto& style = flow.style();
+    auto firstLineDoesNotFit = !lineBreakIndex && line.height < flow.pageLogicalHeightForOffset(line.top);
+    auto moveOrphanToNextColumn = lineDoesNotFit && !style.hasAutoOrphans() && style.orphans() > (short)lineBreakIndex;
+    // Special table cell handling. See RenderBlockFlow::adjustLinePositionForPagination for details.
+    if ((firstLineDoesNotFit || moveOrphanToNextColumn) && !is<RenderTableCell>(flow)) {
+        auto firstLine = lines.first();
+        auto firstLineUpperOverhang = std::max(LayoutUnit(-firstLine.top), 0_lu);
+        flow.setPaginationStrut(line.top + remainingLogicalHeight + firstLineUpperOverhang);
+        isPageBreakWithLineStrut = false;
+        return;
+    }
+    isPageBreakWithLineStrut = true;
     struts.append({ lineBreakIndex, computeOffsetAfterLineBreak(lines[lineBreakIndex].top, !lineBreakIndex, atTheTopOfColumnOrPage, flow) });
 }
 
@@ -117,15 +122,14 @@ static void updateMinimumPageHeight(RenderBlockFlow& flow, const InlineContent& 
     flow.updateMinimumPageHeight(0, LayoutUnit(inlineContent.lines[minimumLineCount - 1].lineBoxBottom()));
 }
 
-static std::unique_ptr<InlineContent> makeAdjustedContent(const InlineContent& inlineContent, Vector<float> adjustments)
+static std::unique_ptr<InlineContent> makeAdjustedContent(const InlineContent& inlineContent, Vector<float> adjustments, Vector<bool> isFirstLineAfterPageBreakList)
 {
     auto moveVertically = [](FloatRect rect, float offset) {
         rect.move(FloatSize(0, offset));
         return rect;
     };
 
-    auto adjustedLine = [&](const Line& line, float offset)
-    {
+    auto adjustedLine = [&] (auto& line, auto offset, auto isFirstAfterPageBreak) {
         return Line {
             line.firstBoxIndex(),
             line.boxCount(),
@@ -138,12 +142,12 @@ static std::unique_ptr<InlineContent> makeAdjustedContent(const InlineContent& i
             line.baselineType(),
             line.contentLogicalOffset(),
             line.contentLogicalWidth(),
-            line.isHorizontal()
+            line.isHorizontal(),
+            isFirstAfterPageBreak
         };
     };
 
-    auto adjustedBox = [&](const InlineDisplay::Box& box, float offset)
-    {
+    auto adjustedBox = [&](auto& box, auto offset) {
         auto adjustedBox = box;
         adjustedBox.moveVertically(offset);
         return adjustedBox;
@@ -152,7 +156,7 @@ static std::unique_ptr<InlineContent> makeAdjustedContent(const InlineContent& i
     auto adjustedContent = makeUnique<InlineContent>(inlineContent.lineLayout());
 
     for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex)
-        adjustedContent->lines.append(adjustedLine(inlineContent.lines[lineIndex], adjustments[lineIndex]));
+        adjustedContent->lines.append(adjustedLine(inlineContent.lines[lineIndex], adjustments[lineIndex], isFirstLineAfterPageBreakList[lineIndex]));
 
     for (auto& box : inlineContent.boxes)
         adjustedContent->boxes.append(adjustedBox(box, adjustments[box.lineIndex()]));
@@ -172,7 +176,8 @@ std::unique_ptr<InlineContent> adjustLinePositionsForPagination(const InlineCont
     auto widows = flow.style().hasAutoWidows() ? 1 : std::max<int>(flow.style().widows(), 1);
     auto orphans = flow.style().hasAutoOrphans() ? 1 : std::max<int>(flow.style().orphans(), 1);
     PaginatedLines lines;
-    for (unsigned lineIndex = 0; lineIndex < lineCount; ++lineIndex) {
+    auto isFirstLineAfterPageBreakList = Vector<bool>(lineCount, false);
+    for (size_t lineIndex = 0; lineIndex < lineCount; ++lineIndex) {
         auto line = computeLineTopAndBottomWithOverflow(flow, inlineContent.lines, lineIndex, struts);
         lines.append(line);
         auto remainingHeight = flow.pageRemainingLogicalHeightForOffset(line.top, RenderBlockFlow::ExcludePageBoundary);
@@ -182,7 +187,9 @@ std::unique_ptr<InlineContent> adjustLinePositionsForPagination(const InlineCont
             auto lineBreakIndex = computeLineBreakIndex(lineIndex, lineCount, orphans, widows, struts);
             // Are we still at the top of the column/page?
             atTheTopOfColumnOrPage = atTheTopOfColumnOrPage ? lineIndex == lineBreakIndex : false;
-            setPageBreakForLine(lineBreakIndex, lines, flow, struts, atTheTopOfColumnOrPage, lineDoesNotFit);
+            auto isPageBreakWithLineStrut = false;
+            setPageBreakForLine(lineBreakIndex, lines, flow, struts, atTheTopOfColumnOrPage, lineDoesNotFit, isPageBreakWithLineStrut);
+            isFirstLineAfterPageBreakList[lineIndex] = isPageBreakWithLineStrut;
             // Recompute line positions that we already visited but widow break pushed them to a new page.
             for (auto i = lineBreakIndex; i < lines.size(); ++i)
                 lines.at(i) = computeLineTopAndBottomWithOverflow(flow, inlineContent.lines, i, struts);
@@ -198,7 +205,7 @@ std::unique_ptr<InlineContent> adjustLinePositionsForPagination(const InlineCont
             adjustments[lineIndex] += strut.offset;
     }
 
-    return makeAdjustedContent(inlineContent, adjustments);
+    return makeAdjustedContent(inlineContent, adjustments, isFirstLineAfterPageBreakList);
 }
 
 }

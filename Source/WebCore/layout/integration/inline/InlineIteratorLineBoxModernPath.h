@@ -68,7 +68,7 @@ public:
     const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }
 
     RenderFragmentContainer* containingFragment() const { return nullptr; }
-    bool isFirstAfterPageBreak() const { return false; }
+    bool isFirstAfterPageBreak() const { return line().isFirstAfterPageBreak(); }
 
     void traverseNext()
     {
