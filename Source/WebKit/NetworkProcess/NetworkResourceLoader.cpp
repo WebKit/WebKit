@@ -537,13 +537,21 @@ void NetworkResourceLoader::abort()
     cleanup(LoadResult::Cancel);
 }
 
-void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProcess& newConnection, WebCore::ResourceLoaderIdentifier newCoreIdentifier)
+void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProcess& newConnection, const NetworkResourceLoadParameters& parameters)
 {
     m_connection = newConnection;
-    m_parameters.identifier = newCoreIdentifier;
+    m_parameters.identifier = parameters.identifier;
+    m_parameters.webPageProxyID = parameters.webPageProxyID;
+    m_parameters.webPageID = parameters.webPageID;
+    m_parameters.webFrameID = parameters.webFrameID;
+    m_parameters.options.clientIdentifier = parameters.options.clientIdentifier;
 
 #if ENABLE(SERVICE_WORKER)
     ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse || m_serviceWorkerFetchTask);
+    if (m_serviceWorkerRegistration) {
+        if (auto* swConnection = newConnection.swConnection())
+            swConnection->transferServiceWorkerLoadToNewWebProcess(*this, *m_serviceWorkerRegistration);
+    }
 #else
     ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse);
 #endif
@@ -1140,6 +1148,7 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 
 #if ENABLE(SERVICE_WORKER)
     if (parameters().options.mode == FetchOptions::Mode::Navigate) {
+        m_serviceWorkerRegistration = { };
         if (auto serviceWorkerFetchTask = m_connection->createFetchTask(*this, newRequest)) {
             LOADER_RELEASE_LOG("continueWillSendRequest: Created a ServiceWorkerFetchTask to handle the redirect (fetchIdentifier=%" PRIu64 ")", serviceWorkerFetchTask->fetchIdentifier().toUInt64());
             m_networkLoad = nullptr;

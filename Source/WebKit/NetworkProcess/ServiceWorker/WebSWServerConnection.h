@@ -83,6 +83,8 @@ public:
     std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
     void fetchTaskTimedOut(WebCore::ServiceWorkerIdentifier);
 
+    void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&);
+
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)
     void rejectJobInClient(WebCore::ServiceWorkerJobIdentifier, const WebCore::ExceptionData&) final;
