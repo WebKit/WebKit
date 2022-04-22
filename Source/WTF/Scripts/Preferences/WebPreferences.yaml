@@ -2633,13 +2633,3 @@ WindowFocusRestricted:
       default: true
     WebCore:
       default: true
-
-XSSAuditorEnabled:
-  type: bool
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false

@@ -1,3 +1,15 @@
+2022-04-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove XSS Auditor: Part 4 (Settings)
+        https://bugs.webkit.org/show_bug.cgi?id=239628
+
+        Reviewed by Alex Christensen.
+
+        This change is a follow-up to Bug 230661 that removes the unused
+        WebPreferences.yaml content.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2022-04-21  Chris Dumez  <cdumez@apple.com>
 
         Adopt RobinHoodHashMap / RobinHoodHashSet more broadly in WebCore
