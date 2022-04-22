@@ -1,4 +1,13 @@
 =================
+WPE WebKit 2.36.1
+=================
+
+What's new in WPE WebKit 2.36.1?
+
+  - Fix the build with accessibility disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.36.0
 =================
 
