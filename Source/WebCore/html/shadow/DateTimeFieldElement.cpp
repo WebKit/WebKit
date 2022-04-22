@@ -190,10 +190,10 @@ void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
     if (!firstChild())
         appendChild(Text::create(document(), String { emptyString() }));
 
-    auto& textNode = downcast<Text>(*firstChild());
+    Ref textNode = downcast<Text>(*firstChild());
     String newVisibleValue = visibleValue();
-    if (textNode.wholeText() != newVisibleValue)
-        textNode.replaceWholeText(newVisibleValue);
+    if (textNode->wholeText() != newVisibleValue)
+        textNode->replaceWholeText(newVisibleValue);
 
     if (eventBehavior == DispatchInputAndChangeEvents && m_fieldOwner)
         m_fieldOwner->fieldValueChanged();
