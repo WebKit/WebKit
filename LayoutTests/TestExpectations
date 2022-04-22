@@ -5206,3 +5206,6 @@ security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.h
 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
 userscripts/user-script-plugin-document.html [ Skip ]
+
+# Only some ports automatically relayout if a font is installed while the page is open
+fast/text/install-font-style-recalc.html [ Failure ]
