@@ -56,7 +56,7 @@ public:
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     mutable Seconds maximumBufferingTime;
-    WebCore::FetchOptions options;
+    mutable WebCore::FetchOptions options;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy;
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;

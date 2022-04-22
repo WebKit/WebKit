@@ -1,5 +1,29 @@
 2022-04-22  Russell Epstein  <repstein@apple.com>
 
+        Apply patch. rdar://problem/91288849
+
+    2022-04-21  Youenn Fablet  <youenn@apple.com>
+
+            In case of COOP-based process swap, we need to make sure the document gets controlled by its matching service worker registration
+            https://bugs.webkit.org/show_bug.cgi?id=238800
+            <rdar://problem/91288849>
+
+            Reviewed by Chris Dumez.
+
+            Make sure in case loader is transferred to call controlClient in the new WebProcess.
+            To do so, we also update page and frame IDs.
+            Covered by API test.
+
+            * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+            * NetworkProcess/NetworkLoadParameters.h:
+            * NetworkProcess/NetworkResourceLoadParameters.h:
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            * NetworkProcess/NetworkResourceLoader.h:
+            * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+            * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+
+2022-04-22  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r291724. rdar://problem/91975589
 
     Expose the AX tree of PDFs loaded via iframes on the Mac
