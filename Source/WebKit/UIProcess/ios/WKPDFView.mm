@@ -109,7 +109,7 @@
 
 @interface WKPDFView () <PDFHostViewControllerDelegate, WKActionSheetAssistantDelegate
 #if HAVE(UIFINDINTERACTION)
-    , _UITextSearching
+    , UITextSearching
 #endif
 >
 @end
@@ -135,7 +135,7 @@
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
     RetainPtr<WKShareSheet> _shareSheet;
 #if HAVE(UIFINDINTERACTION)
-    RetainPtr<id<_UITextSearchAggregator>> _searchAggregator;
+    RetainPtr<id<UITextSearchAggregator>> _searchAggregator;
     RetainPtr<NSString> _searchString;
 #endif
 }
@@ -688,7 +688,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [uiDelegate _dataDetectionContextForWebView:webView];
 }
 
-#pragma mark _UITextSearching
+#pragma mark UITextSearching
 
 #if HAVE(UIFINDINTERACTION)
 
@@ -697,7 +697,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return nil;
 }
 
-- (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(_UITextSearchDocumentIdentifier)document
+- (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(UITextSearchDocumentIdentifier)document
 {
     auto from = dynamic_objc_cast<WKPDFFoundTextPosition>(fromRange.start);
     if (!from)
@@ -716,7 +716,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return NSOrderedSame;
 }
 
-- (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(_UITextSearchOptions *)options resultAggregator:(id<_UITextSearchAggregator>)aggregator
+- (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(UITextSearchOptions *)options resultAggregator:(id<UITextSearchAggregator>)aggregator
 {
     [_hostViewController cancelFindString];
     _searchAggregator = aggregator;
@@ -724,9 +724,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_hostViewController findString:string withOptions:options.stringCompareOptions];
 }
 
-- (void)decorateFoundTextRange:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document usingStyle:(_UIFoundTextStyle)style
+- (void)decorateFoundTextRange:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document usingStyle:(UITextSearchFoundTextStyle)style
 {
-    if (style != _UIFoundTextStyleHighlighted)
+    if (style != UITextSearchFoundTextStyleHighlighted)
         return;
 
     auto foundTextRange = dynamic_objc_cast<WKPDFFoundTextRange>(range);

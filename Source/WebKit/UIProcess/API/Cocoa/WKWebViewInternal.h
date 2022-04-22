@@ -162,9 +162,9 @@ class ViewGestureController;
     RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
 #endif
 
-#if HAVE(UIFINDINTERACTION)
-    RetainPtr<_UIFindInteraction> _findInteraction;
     BOOL _findInteractionEnabled;
+#if HAVE(UIFINDINTERACTION)
+    RetainPtr<UIFindInteraction> _findInteraction;
 #endif
 
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;

@@ -135,7 +135,7 @@ enum class TapHandlingResult : uint8_t;
 - (void)findPrevious:(id)sender;
 - (void)findAndReplace:(id)sender;
 
-- (id<_UITextSearching>)_searchableObject;
+- (id<UITextSearching>)_searchableObject;
 #endif
 
 - (void)_nextAccessoryTab:(id)sender;

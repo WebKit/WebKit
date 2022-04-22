@@ -530,13 +530,13 @@ TEST(WebKit, FindAndReplace)
 
     [webView _setEditable:NO];
     for (UITextRange *range in [ranges reverseObjectEnumerator])
-        [[[webView _findInteraction] searchableObject] replaceFoundTextInRange:range inDocument:nil withText:replacementString];
+        [webView replaceFoundTextInRange:range inDocument:nil withText:replacementString];
 
     EXPECT_WK_STREQ(originalContent, [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
 
     [webView _setEditable:YES];
     for (UITextRange *range in [ranges reverseObjectEnumerator])
-        [[[webView _findInteraction] searchableObject] replaceFoundTextInRange:range inDocument:nil withText:replacementString];
+        [webView replaceFoundTextInRange:range inDocument:nil withText:replacementString];
 
     EXPECT_WK_STREQ(replacedContent, [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
 }
@@ -552,6 +552,14 @@ TEST(WebKit, FindInteraction)
 
     [webView _setFindInteractionEnabled:NO];
     EXPECT_NULL([webView _findInteraction]);
+
+    EXPECT_NULL([webView findInteraction]);
+
+    [webView setFindInteractionEnabled:YES];
+    EXPECT_NOT_NULL([webView findInteraction]);
+
+    [webView setFindInteractionEnabled:NO];
+    EXPECT_NULL([webView findInteraction]);
 }
 
 TEST(WebKit, RequestRectForFoundTextRange)

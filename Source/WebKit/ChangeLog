@@ -1,3 +1,81 @@
+2022-04-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add find interaction API to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=239612
+        rdar://88442918
+
+        Reviewed by Alex Christensen.
+
+        Promote the `_findInteraction` and `_findInteractionEnabled` SPI to
+        `findInteraction` and `findInteractionEnabled` API.
+
+        In order to make this change, new UIKit objects and protocols must be
+        adopted. Existing (deprecated) protocol conformance is kept around to
+        avoid breaking internal clients.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView findInteractionEnabled]):
+        (-[WKWebView setFindInteractionEnabled:]):
+        (-[WKWebView findInteraction]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Declare conformance to three protocols: _UITextSearching, UITextSearching, UIFindInteractionDelegate.
+
+        _UITextSearching: Conformance is kept around to avoid breaking internal clients.
+        UITextSearching: Conformance is declared for clients to migrate off of _UITextSearching.
+        UIFindInteractionDelegate: Conformance is necessary to begin a UIFindSession.
+
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _didCommitLoadForMainFrame]):
+
+        The "searchable object" does not need to be reset anymore, as UIKit
+        will do that in `-[WKWebView findInteraction:sessionForView:]` the next
+        time a find session begins.
+
+        (-[WKWebView _searchableObject]):
+        (-[WKWebView _setFindInteractionEnabled:]):
+        (-[WKWebView _findInteraction]):
+
+        It is safe to cast between the SPI and API version of this object. UIKit
+        has guaranteed compatibility.
+
+        (-[WKWebView offsetFromPosition:toPosition:inDocument:]):
+        (-[WKWebView compareFoundRange:toRange:inDocument:]):
+        (-[WKWebView performTextSearchWithQueryString:usingOptions:resultAggregator:]):
+        (-[WKWebView replaceFoundTextInRange:inDocument:withText:]):
+        (-[WKWebView decorateFoundTextRange:inDocument:usingStyle:]):
+        (-[WKWebView scrollRangeToVisible:inDocument:]):
+        (-[WKWebView findInteraction:sessionForView:]):
+        (-[WKWebView findInteraction:didBeginFindSession:]):
+
+        Custom content views do not need to be aware that a find session has
+        begun, as they do not draw an overlay.
+
+        (-[WKWebView findInteraction:didEndFindSession:]):
+
+        Custom content views do not need to be aware that a find session has
+        begun, as they do not draw an overlay.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Declare the old _UITextSearching methods explicitly, as we need to
+        maintain support for internal clients.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView performTextSearchWithQueryString:usingOptions:resultAggregator:]):
+        (-[WKContentView replaceFoundTextInRange:inDocument:withText:]):
+        (-[WKContentView decorateFoundTextRange:inDocument:usingStyle:]):
+        (-[WKContentView scrollRangeToVisible:inDocument:]):
+        (-[WKContentView offsetFromPosition:toPosition:inDocument:]):
+        (-[WKContentView compareFoundRange:toRange:inDocument:]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView compareFoundRange:toRange:inDocument:]):
+        (-[WKPDFView performTextSearchWithQueryString:usingOptions:resultAggregator:]):
+        (-[WKPDFView decorateFoundTextRange:inDocument:usingStyle:]):
+
 2022-04-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] `-selectWordForReplacement` should select dictation alternatives that span multiple words

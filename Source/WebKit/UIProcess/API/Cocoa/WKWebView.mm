@@ -369,10 +369,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _initialScaleFactor = 1;
     _allowsViewportShrinkToFit = defaultAllowsViewportShrinkToFit;
     _allowsLinkPreview = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LinkPreviewEnabledByDefault);
-
-#if HAVE(UIFINDINTERACTION)
     _findInteractionEnabled = NO;
-#endif
 
     auto fastClickingEnabled = []() {
         if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
@@ -1428,10 +1425,48 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 #pragma mark - iOS API
 
 #if PLATFORM(IOS_FAMILY)
+
 - (UIScrollView *)scrollView
 {
     return _scrollView.get();
 }
+
+- (BOOL)findInteractionEnabled
+{
+    return _findInteractionEnabled;
+}
+
+- (void)setFindInteractionEnabled:(BOOL)enabled
+{
+#if HAVE(UIFINDINTERACTION)
+    if (_findInteractionEnabled != enabled) {
+        _findInteractionEnabled = enabled;
+
+        if (enabled) {
+            if (!_findInteraction)
+                _findInteraction = adoptNS([[UIFindInteraction alloc] initWithSessionDelegate:self]);
+
+            [self addInteraction:_findInteraction.get()];
+        } else {
+            [self removeInteraction:_findInteraction.get()];
+            _findInteraction = nil;
+        }
+    }
+#else
+    UNUSED_PARAM(enabled);
+    UNUSED_VARIABLE(_findInteractionEnabled);
+#endif
+}
+
+- (UIFindInteraction *)findInteraction
+{
+#if HAVE(UIFINDINTERACTION)
+    return _findInteraction.get();
+#else
+    return nil;
+#endif
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #pragma mark - macOS API

@@ -33,6 +33,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#if TARGET_OS_IPHONE
+@class UIFindInteraction;
+#endif
+
 @class WKBackForwardList;
 @class WKBackForwardListItem;
 @class WKContentWorld;
@@ -644,6 +648,16 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 @property (nonatomic, readonly) NSEdgeInsets minimumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
 @property (nonatomic, readonly) NSEdgeInsets maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
 - (void)setMinimumViewportInset:(NSEdgeInsets)minimumViewportInset maximumViewportInset:(NSEdgeInsets)maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
+
+#if TARGET_OS_IPHONE
+
+/*! @abstract Enables the web view's built-in find interaction. */
+@property (nonatomic, readwrite, getter=isFindInteractionEnabled) BOOL findInteractionEnabled WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+/*! @abstract If  @link findInteractionEnabled @/link is set to true, returns this web view's built-in find interaction. Otherwise, nil. */
+@property (nonatomic, nullable, readonly) UIFindInteraction *findInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 #endif
 
 @end
