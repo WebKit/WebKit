@@ -1,3 +1,19 @@
+2022-04-22  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: The isolated tree is not updated after role changes in AccessibilityRenderObject::updateRoleAfterChildrenCreation()
+        https://bugs.webkit.org/show_bug.cgi?id=239549
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        In AccessibilityRenderObject::updateRoleAfterChildrenCreation(), if the objects role changes,
+        we need to inform the cache via AXObjectCache::handleRoleChange which in turn will
+        update the isolated tree.
+
+        Fixes accessibility/mac/invalid-menu-role-does-not-send-notification.html in isolated tree mode.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::updateRoleAfterChildrenCreation):
+
 2022-04-21  John Cunningham  <johncunningham@apple.com>
 
         Use GCGLSpanTuple to pass buffer parameters to multidraw calls.

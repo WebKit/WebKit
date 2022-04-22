@@ -3278,6 +3278,11 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
     }
     if (role == AccessibilityRole::SVGRoot && !children().size())
         m_role = AccessibilityRole::Image;
+
+    if (role != m_role) {
+        if (auto* cache = axObjectCache())
+            cache->handleRoleChange(this);
+    }
 }
     
 void AccessibilityRenderObject::addChildren()
