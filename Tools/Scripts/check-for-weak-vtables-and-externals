@@ -60,7 +60,10 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
     }
     my @weakVTableClasses = ();
     my @weakExternalSymbols = ();
-    my $skipProfileSymbols = coverageIsEnabled() || $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} eq "ON" || $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} eq "ENABLE_LLVM_PROFILE_GENERATION";
+    my $skipProfileSymbols = coverageIsEnabled();
+    if (defined $ENV{'ENABLE_LLVM_PROFILE_GENERATION'}) {
+        $skipProfileSymbols ||= $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} eq "ON" || $ENV{'ENABLE_LLVM_PROFILE_GENERATION'} eq "ENABLE_LLVM_PROFILE_GENERATION";
+    }
     while (<NM>) {
         if (/^STDOUT:/) {
             # Ignore undefined, RTTI and typeinfo symbols.
