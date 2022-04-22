@@ -939,6 +939,8 @@ private:
     };
     void logNavigation(const Navigation&);
 
+    static void firstTimeInitialization();
+
     WEBCORE_EXPORT void initGroup();
 
     void setIsInWindowInternal(bool);
