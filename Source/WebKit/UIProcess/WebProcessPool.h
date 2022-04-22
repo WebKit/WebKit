@@ -368,6 +368,11 @@ public:
     GPUProcessProxy& ensureGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
 #endif
+
+#if ENABLE(WEB_AUTHN)
+    void getWebAuthnProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetWebAuthnProcessConnectionDelayedReply&&);
+#endif
+
     // Network Process Management
     void networkProcessDidTerminate(NetworkProcessProxy&, ProcessTerminationReason);
 

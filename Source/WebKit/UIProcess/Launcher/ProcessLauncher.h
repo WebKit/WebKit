@@ -74,6 +74,9 @@ public:
 #if ENABLE(GPU_PROCESS)
         GPU,
 #endif
+#if ENABLE(WEB_AUTHN)
+        WebAuthn,
+#endif
 #if ENABLE(BUBBLEWRAP_SANDBOX)
         DBusProxy,
 #endif

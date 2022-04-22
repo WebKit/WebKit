@@ -86,6 +86,11 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
         varname = "GPU_PROCESS_CMD_PREFIX";
         break;
 #endif
+#if ENABLE(WEB_AUTHN)
+    case ProcessLauncher::ProcessType::WebAuthn:
+        varname = "WEBAUTHN_PROCESS_CMD_PREFIX";
+        break;
+#endif
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     case ProcessLauncher::ProcessType::DBusProxy:
         ASSERT_NOT_REACHED();

@@ -119,6 +119,8 @@
 #endif
 
 #if ENABLE(WEB_AUTHN)
+#include "WebAuthnConnectionToWebProcessMessages.h"
+#include "WebAuthnProcessConnection.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
 #endif
 
@@ -1497,7 +1499,12 @@ void WebChromeClient::setUserIsInteracting(bool userIsInteracting)
 #if ENABLE(WEB_AUTHN)
 void WebChromeClient::setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration& configuration)
 {
-    m_page.send(Messages::WebPageProxy::SetMockWebAuthenticationConfiguration(configuration));
+    if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled()) {
+        m_page.send(Messages::WebPageProxy::SetMockWebAuthenticationConfiguration(configuration));
+        return;
+    }
+
+    WebProcess::singleton().ensureWebAuthnProcessConnection().connection().send(Messages::WebAuthnConnectionToWebProcess::SetMockWebAuthenticationConfiguration(configuration), { });
 }
 #endif
 

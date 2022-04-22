@@ -234,6 +234,11 @@ void AuthenticatorManager::cancel()
     cancelRequest();
 }
 
+void AuthenticatorManager::enableModernWebAuthentication()
+{
+    m_mode = Mode::Modern;
+}
+
 void AuthenticatorManager::enableNativeSupport()
 {
     m_mode = Mode::Native;
@@ -263,6 +268,7 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
     ASSERT(RunLoop::isMain());
     authenticator->setObserver(*this);
     authenticator->handleRequest(m_pendingRequestData);
+    authenticator->setWebAuthenticationModernEnabled(m_mode != Mode::Compatible);
     auto addResult = m_authenticators.add(WTFMove(authenticator));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }

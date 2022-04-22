@@ -72,6 +72,7 @@
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL bundleIdentifierIfNotInContainer:(NSString *)bundleIdentifier;
++ (pid_t)_webAuthnProcessIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 + (void)_setWebProcessCountLimit:(unsigned)limit WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 

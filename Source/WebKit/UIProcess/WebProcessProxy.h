@@ -481,6 +481,10 @@ private:
     void getGPUProcessConnection(GPUProcessConnectionParameters&&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 #endif
 
+#if ENABLE(WEB_AUTHN)
+    void getWebAuthnProcessConnection(Messages::WebProcessProxy::GetWebAuthnProcessConnectionDelayedReply&&);
+#endif
+
     bool shouldAllowNonValidInjectedCode() const;
 
     static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& platformPathsWithAssumedReadAccess();

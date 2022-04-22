@@ -73,6 +73,10 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
     case ProcessLauncher::ProcessType::GPU:
         return "com.apple.WebKit.GPU";
 #endif
+#if ENABLE(WEB_AUTHN)
+    case ProcessLauncher::ProcessType::WebAuthn:
+        return "com.apple.WebKit.WebAuthn";
+#endif
     }
 }
 
@@ -84,9 +88,13 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
     // right priorities.
     return false;
 #else
-    // On Mac, leak a boost onto the NetworkProcess and GPUProcess.
+    // On Mac, leak a boost onto the NetworkProcess, GPUProcess, and WebAuthnProcess.
 #if ENABLE(GPU_PROCESS)
     if (launchOptions.processType == ProcessLauncher::ProcessType::GPU)
+        return true;
+#endif
+#if ENABLE(WEB_AUTHN)
+    if (launchOptions.processType == ProcessLauncher::ProcessType::WebAuthn)
         return true;
 #endif
     return launchOptions.processType == ProcessLauncher::ProcessType::Network;

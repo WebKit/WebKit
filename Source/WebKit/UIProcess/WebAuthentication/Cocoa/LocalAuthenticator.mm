@@ -254,7 +254,7 @@ void LocalAuthenticator::makeCredential()
         })) {
             // Obtain consent per Step 3.1
             auto callback = [weakThis = WeakPtr { *this }] (LocalAuthenticatorPolicy policy) {
-                RELEASE_ASSERT(RunLoop::isMain());
+                ASSERT(RunLoop::isMain());
                 if (!weakThis)
                     return;
 
@@ -264,20 +264,40 @@ void LocalAuthenticator::makeCredential()
                     weakThis->receiveException({ NotAllowedError, "This request has been cancelled by the user."_s });
             };
             // Similar to below, consent has already been given.
-            observer()->decidePolicyForLocalAuthenticator(WTFMove(callback));
+            if (webAuthenticationModernEnabled())
+                callback(LocalAuthenticatorPolicy::Allow);
+            else
+                observer()->decidePolicyForLocalAuthenticator(WTFMove(callback));
             return;
         }
     }
 
+    // Step 6.
+    // Get user consent.
+    if (webAuthenticationModernEnabled()) {
+        if (auto* observer = this->observer()) {
+            auto callback = [weakThis = WeakPtr { *this }] (LAContext *context) {
+                ASSERT(RunLoop::isMain());
+                if (!weakThis)
+                    return;
+
+                weakThis->continueMakeCredentialAfterReceivingLAContext(context);
+            };
+            observer->requestLAContextForUserVerification(WTFMove(callback));
+        }
+
+        return;
+    }
+
     if (auto* observer = this->observer()) {
-        auto callback = [weakThis = WeakPtr { *this }] (LAContext *context) {
+        auto callback = [weakThis = WeakPtr { *this }] (LocalAuthenticatorPolicy policy) {
             ASSERT(RunLoop::isMain());
             if (!weakThis)
                 return;
 
-            weakThis->continueMakeCredentialAfterReceivingLAContext(context);
+            weakThis->continueMakeCredentialAfterDecidePolicy(policy);
         };
-        observer->requestLAContextForUserVerification(WTFMove(callback));
+        observer->decidePolicyForLocalAuthenticator(WTFMove(callback));
     }
 }
 
@@ -557,20 +577,38 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
     ASSERT(m_state == State::RequestReceived);
     m_state = State::ResponseSelected;
 
+    if (webAuthenticationModernEnabled()) {
+        auto accessControlRef = response->accessControl();
+        LAContext *context = response->laContext();
+        auto callback = [
+            weakThis = WeakPtr { *this },
+            response = WTFMove(response)
+        ] (LocalConnection::UserVerification verification) mutable {
+            ASSERT(RunLoop::isMain());
+            if (!weakThis)
+                return;
+
+            weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, response->laContext());
+        };
+
+        m_connection->verifyUser(accessControlRef, context, WTFMove(callback));
+        return;
+    }
+
+    auto& requestOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
+
     auto accessControlRef = response->accessControl();
-    LAContext *context = response->laContext();
     auto callback = [
         weakThis = WeakPtr { *this },
         response = WTFMove(response)
-    ] (LocalConnection::UserVerification verification) mutable {
+    ] (LocalConnection::UserVerification verification, LAContext *context) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
 
-        weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, response->laContext());
+        weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, context);
     };
-
-    m_connection->verifyUser(accessControlRef, context, WTFMove(callback));
+    m_connection->verifyUser(requestOptions.rpId, getClientDataType(requestData().options), accessControlRef, getUserVerificationRequirement(requestData().options), WTFMove(callback));
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::AuthenticatorAssertionResponse>&& response, LocalConnection::UserVerification verification, LAContext *context)
