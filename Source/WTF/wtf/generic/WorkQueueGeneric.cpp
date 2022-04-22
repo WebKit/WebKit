@@ -43,6 +43,9 @@ void WorkQueueBase::platformInitialize(const char* name, Type, QOS qos)
 {
     BinarySemaphore semaphore;
     Thread::create(name, [&] {
+#if ASSERT_ENABLED
+        m_threadID = Thread::current().uid();
+#endif
         m_runLoop = &RunLoop::current();
         semaphore.signal();
         m_runLoop->run();
@@ -84,5 +87,12 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
 {
     return adoptRef(*new WorkQueue(RunLoop::main()));
 }
+
+#if ASSERT_ENABLED
+void WorkQueue::assertIsCurrent()
+{
+    ASSERT(m_threadID == Thread::current().uid());
+}
+#endif
 
 }
