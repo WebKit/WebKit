@@ -130,6 +130,8 @@ public:
     MediaTime highestPresentationTimestamp() const;
     void readyStateChanged();
 
+    size_t memoryCost() const;
+
     void setMediaSourceEnded(bool isEnded);
 
 #if !RELEASE_LOG_DISABLED
@@ -245,7 +247,10 @@ private:
     double m_averageBufferRate { 0 };
     bool m_bufferedDirty { true };
 
+    // Can only grow.
     uint64_t m_reportedExtraMemoryCost { 0 };
+    // Can grow and shrink.
+    uint64_t m_extraMemoryCost { 0 };
 
     MediaTime m_pendingRemoveStart;
     MediaTime m_pendingRemoveEnd;

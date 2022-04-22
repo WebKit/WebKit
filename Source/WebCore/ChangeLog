@@ -1,3 +1,27 @@
+2022-04-22  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE] Improve SourceBuffer memory cost reporting
+        https://bugs.webkit.org/show_bug.cgi?id=238948
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Properly implementing the memoryCost() API in SourceBuffer would improve memory
+        awareness when garbage collecting.
+
+        This patch extends the SourceBuffer interface with the ReportExtraMemoryCost
+        attribute, implements memoryCost() method for the interface and fixes
+        calculations for removed buffers. It distinguishes the amount of memory
+        increases reported (extraMemoryCostDelta, what was reported until now, can
+        only grow) from the total amount of memory reported (can grow and shrink).
+
+        This patch is co-authored by Andrzej Surdej (https://github.com/asurdej-comcast)
+        See: https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/827
+
+        * Modules/mediasource/SourceBuffer.cpp: Implement memoryCost() interface and hold the absolute memory consumed as m_extraMemoryCost, keeping the original m_reportedExtraMemoryCost behaviour.
+        * Modules/mediasource/SourceBuffer.h: Added memoryCost() and m_extraMemoryCost.
+        * Modules/mediasource/SourceBuffer.idl: Require the ReportExtraMemoryCost feature.
+        * platform/graphics/SourceBufferPrivate.cpp: Also report the memory change to SourceBuffer when evicting frames (memory reduction).
+
 2022-04-22  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: The isolated tree is not updated after role changes in AccessibilityRenderObject::updateRoleAfterChildrenCreation()

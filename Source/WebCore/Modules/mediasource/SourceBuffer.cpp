@@ -1246,6 +1246,8 @@ void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
     if (m_pendingAppendData)
         extraMemoryCost += m_pendingAppendData->size();
 
+    m_extraMemoryCost = extraMemoryCost;
+
     if (extraMemoryCost <= m_reportedExtraMemoryCost)
         return;
 
@@ -1353,6 +1355,11 @@ void SourceBuffer::setBufferedDirty(bool flag)
 void SourceBuffer::setMediaSourceEnded(bool isEnded)
 {
     m_private->setMediaSourceEnded(isEnded);
+}
+
+size_t SourceBuffer::memoryCost() const
+{
+    return sizeof(SourceBuffer) + m_extraMemoryCost;
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -640,6 +640,8 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
 
     LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
 
+    m_client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
+
     completionHandler();
 }
 
