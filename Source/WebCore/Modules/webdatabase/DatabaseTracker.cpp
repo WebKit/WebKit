@@ -300,7 +300,7 @@ String DatabaseTracker::originPath(const SecurityOriginData& origin) const
 
 static String generateDatabaseFileName()
 {
-    return makeString(createVersion4UUIDString(), ".db");
+    return makeString(UUID::createVersion4(), ".db"_s);
 }
 
 String DatabaseTracker::fullPathForDatabaseNoLock(const SecurityOriginData& origin, const String& name, bool createIfNotExists)

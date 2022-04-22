@@ -1,3 +1,25 @@
+2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add string concatenate adapter for UUID
+        https://bugs.webkit.org/show_bug.cgi?id=239590
+
+        Reviewed by Chris Dumez and Darin Adler.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::generateDatabaseFileName):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::copyPropertiesFromSource):
+        (WebCore::KeyframeEffect::updateBlendingKeyframes):
+        (WebCore::KeyframeEffect::computeCSSTransitionBlendingKeyframes):
+        * dom/Document.cpp:
+        (WebCore::Document::originIdentifierForPasteboard const):
+        * fileapi/BlobURL.cpp:
+        (WebCore::BlobURL::createBlobURL):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::writeDataToUniqueFileInDirectory):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateAnimations):
+
 2022-04-21  Chris Dumez  <cdumez@apple.com>
 
         Simplify FrameSelection::textWasReplaced() and callers

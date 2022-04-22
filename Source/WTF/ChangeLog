@@ -1,3 +1,37 @@
+2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add string concatenate adapter for UUID
+        https://bugs.webkit.org/show_bug.cgi?id=239590
+
+        Reviewed by Chris Dumez and Darin Adler.
+
+        This patch adds string concatenate adapter for UUID.
+        UUID's stringifier consists of multiple string concatenate adapters.
+        This patch adds WTF::handleWithAdapters so that we can define adapters
+        once, and we can semi-automatically define length() and writeTo method for UUID.
+
+        And we use UUID + makeString instead of createVersion4UUIDString. This is more
+        efficient since we do not need to allocate string twice.
+
+        * wtf/URL.cpp:
+        (WTF::URL::fakeURLWithRelativePart):
+        * wtf/UUID.cpp:
+        (WTF::UUID::generateWeakRandomUUIDVersion4):
+        (WTF::UUID::toString const):
+        (WTF::createVersion4UUIDString):
+        (WTF::generateWeakRandomUUIDVersion4): Deleted.
+        (WTF::createVersion4UUIDStringWeak): Deleted.
+        * wtf/UUID.h:
+        (WTF::UUID::createVersion4Weak):
+        (WTF::UUID::data const):
+        (WTF::StringTypeAdapter<UUID>::StringTypeAdapter):
+        (WTF::StringTypeAdapter<UUID>::handle const):
+        (WTF::StringTypeAdapter<UUID>::length const):
+        (WTF::StringTypeAdapter<UUID>::is8Bit const):
+        (WTF::StringTypeAdapter<UUID>::writeTo const):
+        * wtf/text/StringConcatenate.h:
+        (WTF::handleWithAdapters):
+
 2022-04-21  Brent Fulgham  <bfulgham@apple.com>
 
         Remove XSS Auditor: Part 4 (Settings)

@@ -84,3 +84,14 @@ TEST(WTF, TestUUIDVersion4Parsing)
     String testAd12 = "6ef944c1-5cb8-48aa-Ad12-C5f823f005c3"_s;
     EXPECT_EQ(parseAndStringifyUUID(testAd12), testAd12.convertToASCIILowercase());
 }
+
+TEST(WTF, TestUUIDVersion4MakeString)
+{
+    String testNormal = "12345678-9abc-4de0-89ab-0123456789ab"_s;
+    auto uuid = UUID::parseVersion4(testNormal);
+    EXPECT_TRUE(!!uuid);
+    EXPECT_EQ(makeString(uuid.value()), testNormal);
+    EXPECT_EQ(makeString("keyframe-", uuid.value()), String("keyframe-" + testNormal));
+
+    EXPECT_EQ(WTF::StringTypeAdapter<UUID>(uuid.value()).length(), 36U);
+}

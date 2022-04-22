@@ -89,10 +89,10 @@ bool BlobURL::isSecureBlobURL(const URL& url)
     return SecurityOrigin::isSecure(url);
 }
 
-URL BlobURL::createBlobURL(const String& originString)
+URL BlobURL::createBlobURL(StringView originString)
 {
     ASSERT(!originString.isEmpty());
-    String urlString = "blob:" + originString + '/' + createVersion4UUIDString();
+    String urlString = makeString("blob:"_s, originString, '/', UUID::createVersion4());
     return URL({ }, urlString);
 }
 

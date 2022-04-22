@@ -1048,13 +1048,13 @@ String URL::stringCenterEllipsizedToLength(unsigned length) const
 
 URL URL::fakeURLWithRelativePart(StringView relativePart)
 {
-    return URL(makeString("webkit-fake-url://", createVersion4UUIDString(), '/', relativePart));
+    return URL(makeString("webkit-fake-url://"_s, UUID::createVersion4(), '/', relativePart));
 }
 
 URL URL::fileURLWithFileSystemPath(StringView path)
 {
     return URL(makeString(
-        "file://",
+        "file://"_s,
         path.startsWith('/') ? "" : "/",
         escapePathWithoutCopying(path)
     ));

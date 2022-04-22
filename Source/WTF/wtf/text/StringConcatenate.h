@@ -457,6 +457,12 @@ RefPtr<StringImpl> tryMakeStringImplFromAdaptersInternal(unsigned length, bool a
     return resultImpl;
 }
 
+template<typename Func, typename... StringTypes>
+auto handleWithAdapters(Func&& func, StringTypes&& ...strings) -> decltype(auto)
+{
+    return func(StringTypeAdapter<StringTypes>(std::forward<StringTypes>(strings))...);
+}
+
 template<typename StringTypeAdapter, typename... StringTypeAdapters>
 String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters ...adapters)
 {

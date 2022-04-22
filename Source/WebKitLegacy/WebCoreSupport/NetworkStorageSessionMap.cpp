@@ -64,7 +64,7 @@ void NetworkStorageSessionMap::switchToNewTestingSession()
 {
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     // Session name should be short enough for shared memory region name to be under the limit, otherwise sandbox rules won't work (see <rdar://problem/13642852>).
-    auto session = WebCore::createPrivateStorageSession(makeString("WebKit Test-", getCurrentProcessID()).createCFString().get());
+    auto session = WebCore::createPrivateStorageSession(makeString("WebKit Test-"_s, getCurrentProcessID()).createCFString().get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
@@ -84,7 +84,7 @@ void NetworkStorageSessionMap::ensureSession(PAL::SessionID sessionID, const Str
     if (!addResult.isNewEntry)
         return;
 
-    auto identifier = makeString(identifierBase, ".PrivateBrowsing.", createVersion4UUIDString()).createCFString();
+    auto identifier = makeString(identifierBase, ".PrivateBrowsing."_s, UUID::createVersion4()).createCFString();
 
     RetainPtr<CFURLStorageSessionRef> storageSession;
     if (sessionID.isEphemeral())

@@ -501,7 +501,7 @@ WaylandCompositor::WaylandCompositor()
         return;
     }
 
-    String displayName = "webkitgtk-wayland-compositor-" + createVersion4UUIDString();
+    String displayName = makeString("webkitgtk-wayland-compositor-"_s, UUID::createVersion4());
     if (wl_display_add_socket(display.get(), displayName.utf8().data()) == -1) {
         WTFLogAlways("Nested Wayland compositor could not create display socket");
         return;

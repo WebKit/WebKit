@@ -62,7 +62,7 @@ static UInt128 generateCryptographicallyRandomUUIDVersion4()
     return convertRandomUInt128ToUUIDVersion4(buffer);
 }
 
-static UInt128 generateWeakRandomUUIDVersion4()
+UInt128 UUID::generateWeakRandomUUIDVersion4()
 {
     static Lock lock;
     UInt128 buffer { 0 };
@@ -83,21 +83,7 @@ UUID::UUID()
 
 String UUID::toString() const
 {
-    auto high = static_cast<uint64_t>(m_data >> 64);
-    auto low = static_cast<uint64_t>(m_data & 0xffffffffffffffff);
-
-    // Format as Version 4 UUID.
-    return makeString(
-        hex(high >> 32, 8, Lowercase),
-        '-',
-        hex((high >> 16) & 0xffff, 4, Lowercase),
-        '-',
-        hex(high & 0xffff, 4, Lowercase),
-        '-',
-        hex(low >> 48, 4, Lowercase),
-        '-',
-        hex(low & 0xffffffffffff, 12, Lowercase)
-    );
+    return makeString(*this);
 }
 
 std::optional<UUID> UUID::parse(StringView value)
@@ -163,12 +149,7 @@ std::optional<UUID> UUID::parseVersion4(StringView value)
 
 String createVersion4UUIDString()
 {
-    return UUID::createVersion4().toString();
-}
-
-String createVersion4UUIDStringWeak()
-{
-    return UUID(generateWeakRandomUUIDVersion4()).toString();
+    return makeString(UUID::createVersion4());
 }
 
 String bootSessionUUIDString()
