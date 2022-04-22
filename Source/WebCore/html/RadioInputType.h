@@ -42,9 +42,10 @@ public:
 
     static void forEachButtonInDetachedGroup(ContainerNode& rootName, const String& groupName, const Function<bool(HTMLInputElement&)>&);
 
+    bool valueMissing(const String&) const final;
+
 private:
     const AtomString& formControlType() const final;
-    bool valueMissing(const String&) const final;
     String valueMissingText() const final;
     void handleClickEvent(MouseEvent&) final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;

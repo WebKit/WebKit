@@ -265,20 +265,14 @@ bool HTMLInputElement::shouldAutocomplete() const
     return HTMLTextFormControlElement::shouldAutocomplete();
 }
 
+
+
 bool HTMLInputElement::isValidValue(const String& value) const
 {
-    if (!m_inputType->canSetStringValue()) {
-        ASSERT_NOT_REACHED();
+    if (!m_inputType->isValidValue(value))
         return false;
-    }
-    return !m_inputType->typeMismatchFor(value)
-        && !m_inputType->stepMismatch(value)
-        && !m_inputType->rangeUnderflow(value)
-        && !m_inputType->rangeOverflow(value)
-        && !tooShort(value, IgnoreDirtyFlag)
-        && !tooLong(value, IgnoreDirtyFlag)
-        && !m_inputType->patternMismatch(value)
-        && !m_inputType->valueMissing(value);
+
+    return !tooShort(value, IgnoreDirtyFlag) && !tooLong(value, IgnoreDirtyFlag);
 }
 
 bool HTMLInputElement::tooShort() const

@@ -48,6 +48,10 @@ struct DateTimeChooserParameters;
 
 // A super class of date, datetime, datetime-local, month, time, and week types.
 class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElement::EditControlOwner {
+public:
+    bool typeMismatchFor(const String&) const final;
+    bool valueMissing(const String&) const final;
+
 protected:
     enum class DateTimeFormatValidationResults : uint8_t {
         HasYear = 1 << 0,
@@ -74,9 +78,8 @@ protected:
 
     bool shouldHaveSecondField(const DateComponents&) const;
     bool shouldHaveMillisecondField(const DateComponents&) const;
-    bool typeMismatchFor(const String&) const final;
+
     bool typeMismatch() const final;
-    bool valueMissing(const String&) const final;
 
 private:
     class DateTimeFormatValidator final : public DateTimeFormat::TokenHandler {

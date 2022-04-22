@@ -51,17 +51,17 @@ public:
     virtual ~FileInputType();
 
     static Vector<FileChooserFileInfo> filesFromFormControlState(const FormControlState&);
+    bool canSetStringValue() const final;
+    bool valueMissing(const String&) const final;
 
 private:
     const AtomString& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
     bool appendFormData(DOMFormData&) const final;
-    bool valueMissing(const String&) const final;
     String valueMissingText() const final;
     void handleDOMActivateEvent(Event&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
-    bool canSetStringValue() const final;
     FileList* files() final;
     void setFiles(RefPtr<FileList>&&, WasSetByJavaScript) final;
     enum class RequestIcon { Yes, No };

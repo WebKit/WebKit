@@ -169,6 +169,72 @@ bool InputType::themeSupportsDataListUI(InputType* type)
     return RenderTheme::singleton().supportsDataListUI(type->formControlType());
 }
 
+template<typename T> static bool validateInputType(const T& inputType, const String& value)
+{
+    if (!inputType.canSetStringValue()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    return !inputType.typeMismatchFor(value)
+        && !inputType.stepMismatch(value)
+        && !inputType.rangeUnderflow(value)
+        && !inputType.rangeOverflow(value)
+        && !inputType.patternMismatch(value)
+        && !inputType.valueMissing(value);
+}
+
+bool InputType::isValidValue(const String& value) const
+{
+    switch (m_type) {
+    case Type::Button:
+        return validateInputType(static_cast<const ButtonInputType&>(*this), value);
+    case Type::Checkbox:
+        return validateInputType(static_cast<const CheckboxInputType&>(*this), value);
+    case Type::Color:
+        return validateInputType(static_cast<const ColorInputType&>(*this), value);
+    case Type::Date:
+        return validateInputType(static_cast<const DateInputType&>(*this), value);
+    case Type::DateTimeLocal:
+        return validateInputType(static_cast<const DateTimeLocalInputType&>(*this), value);
+    case Type::Email:
+        return validateInputType(static_cast<const EmailInputType&>(*this), value);
+    case Type::File:
+        return validateInputType(static_cast<const FileInputType&>(*this), value);
+    case Type::Hidden:
+        return validateInputType(static_cast<const HiddenInputType&>(*this), value);
+    case Type::Image:
+        return validateInputType(static_cast<const ImageInputType&>(*this), value);
+    case Type::Month:
+        return validateInputType(static_cast<const MonthInputType&>(*this), value);
+    case Type::Number:
+        return validateInputType(static_cast<const NumberInputType&>(*this), value);
+    case Type::Password:
+        return validateInputType(static_cast<const PasswordInputType&>(*this), value);
+    case Type::Radio:
+        return validateInputType(static_cast<const RadioInputType&>(*this), value);
+    case Type::Range:
+        return validateInputType(static_cast<const RangeInputType&>(*this), value);
+    case Type::Reset:
+        return validateInputType(static_cast<const ResetInputType&>(*this), value);
+    case Type::Search:
+        return validateInputType(static_cast<const SearchInputType&>(*this), value);
+    case Type::Submit:
+        return validateInputType(static_cast<const SubmitInputType&>(*this), value);
+    case Type::Telephone:
+        return validateInputType(static_cast<const TelephoneInputType&>(*this), value);
+    case Type::Time:
+        return validateInputType(static_cast<const TimeInputType&>(*this), value);
+    case Type::URL:
+        return validateInputType(static_cast<const URLInputType&>(*this), value);
+    case Type::Week:
+        return validateInputType(static_cast<const WeekInputType&>(*this), value);
+    case Type::Text:
+        return validateInputType(static_cast<const TextInputType&>(*this), value);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool InputType::shouldSaveAndRestoreFormControlState() const
 {
     return true;

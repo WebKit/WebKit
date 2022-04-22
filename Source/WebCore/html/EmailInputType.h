@@ -38,10 +38,10 @@ class EmailInputType final : public BaseTextInputType {
     template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit EmailInputType(HTMLInputElement& element) : BaseTextInputType(Type::Email, element) { }
+    bool typeMismatchFor(const String&) const override;
 
 private:
     const AtomString& formControlType() const override;
-    bool typeMismatchFor(const String&) const override;
     bool typeMismatch() const override;
     String typeMismatchText() const override;
     bool supportsSelectionAPI() const override;

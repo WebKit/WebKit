@@ -37,10 +37,12 @@ namespace WebCore {
 // Base of email, password, search, tel, text, and URL types.
 // They support maxlength, selection functions, and so on.
 class BaseTextInputType : public TextFieldInputType {
+public:
+    bool patternMismatch(const String&) const override;
+
 protected:
     explicit BaseTextInputType(Type type, HTMLInputElement& element) : TextFieldInputType(type, element) { }
 
-    bool patternMismatch(const String&) const override;
     bool supportsPlaceholder() const override;
     bool supportsSelectionAPI() const override;
 };

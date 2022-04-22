@@ -164,6 +164,8 @@ public:
 
     virtual const AtomString& formControlType() const = 0;
 
+    bool isValidValue(const String&) const;
+
     // Type query functions.
 
     // Any time we are using one of these functions it's best to refactor

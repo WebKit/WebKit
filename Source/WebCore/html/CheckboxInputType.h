@@ -39,9 +39,10 @@ class CheckboxInputType final : public BaseCheckableInputType {
 public:
     explicit CheckboxInputType(HTMLInputElement& element) : BaseCheckableInputType(Type::Checkbox, element) { }
 
+    bool valueMissing(const String&) const final;
+
 private:
     const AtomString& formControlType() const final;
-    bool valueMissing(const String&) const final;
     String valueMissingText() const final;
     void handleKeyupEvent(KeyboardEvent&) final;
     void willDispatchClick(InputElementClickState&) final;

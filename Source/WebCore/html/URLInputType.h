@@ -38,10 +38,10 @@ class URLInputType final : public BaseTextInputType {
     template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit URLInputType(HTMLInputElement& element) : BaseTextInputType(Type::URL, element) { }
+    bool typeMismatchFor(const String&) const override;
 
 private:
     const AtomString& formControlType() const override;
-    bool typeMismatchFor(const String&) const override;
     bool typeMismatch() const override;
     String typeMismatchText() const override;
     String sanitizeValue(const String&) const override;
