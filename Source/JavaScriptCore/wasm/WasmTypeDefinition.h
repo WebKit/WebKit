@@ -60,6 +60,14 @@ public:
     bool returnsVoid() const { return !returnCount(); }
     Type argumentType(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->getArgumentType(i); }
 
+    bool operator==(const FunctionSignature& other) const
+    {
+        // Function signatures are unique because it is just an view class over TypeDefinition and
+        // so, we can compare two signatures with just payload pointers comparision.
+        // Other checks probably aren't necessary but it's good to be paranoid.
+        return m_payload == other.m_payload && m_argCount == other.m_argCount && m_retCount == other.m_retCount;
+    }
+
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
 
@@ -217,7 +225,6 @@ public:
     static const TypeDefinition& get(TypeIndex);
     static TypeIndex get(const TypeDefinition&);
 
-    static TypeIndex get(const FunctionSignature&);
     static const FunctionSignature& getFunctionSignature(TypeIndex);
 
     static void tryCleanup();

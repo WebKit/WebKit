@@ -1,3 +1,23 @@
+2022-04-22  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [Refactoring] Reduce number of const and reinterpret casts
+        https://bugs.webkit.org/show_bug.cgi?id=239648
+
+        Reviewed by Yusuke Suzuki.
+        
+        The statement
+        "reinterpret_cast<TypeDefinition*>(const_cast<char*>(functionType.m_payload)
+        - sizeof(TypeDefinition))"
+        is dangerous and it produces warning on some platfroms.
+        There is way to avoid it and this patch is doint that.
+
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::doWasmCallIndirect):
+        (JSC::LLInt::doWasmCallRef):
+        * wasm/WasmTypeDefinition.h:
+        (JSC::Wasm::FunctionSignature::operator== const):
+        * wasm/WasmTypeDefinitionInlines.h:
+
 2022-04-22  Geza Lore  <glore@igalia.com>
 
         [JSC]Throw consistent exceptions for memory.init and memory.copy

@@ -64,11 +64,6 @@ inline TypeIndex TypeInformation::get(const TypeDefinition& type)
     return bitwise_cast<TypeIndex>(&type);
 }
 
-inline TypeIndex TypeInformation::get(const FunctionSignature& functionType)
-{
-    return get(*reinterpret_cast<TypeDefinition*>(const_cast<char*>(functionType.m_payload) - sizeof(TypeDefinition)));
-}
-
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)
