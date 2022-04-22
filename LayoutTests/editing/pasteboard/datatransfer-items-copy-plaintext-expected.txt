@@ -30,7 +30,7 @@ PASS clipboardData.items[0].kind is "string"
 PASS clipboardData.items[0].type is "text/plain"
 PASS clipboardData.items[0].getAsFile() is null
 PASS clipboardData.items[0].getAsString(checkContent(3, "WebKit")) is undefined
-PASS clipboardData.items.remove(1) threw exception IndexSizeError: The index is not in the allowed range..
+PASS clipboardData.items.remove(1) did not throw exception.
 PASS clipboardData.items.length is 1
 PASS clipboardData.items.remove(0); clipboardData.items.length is 0
 PASS clipboardData.getData("text/plain") is ""

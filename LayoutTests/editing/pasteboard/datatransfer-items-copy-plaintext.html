@@ -49,7 +49,7 @@ function copy(event)
     shouldBe('clipboardData.items[0].getAsFile()', 'null');
     shouldBe('clipboardData.items[0].getAsString(checkContent(3, "WebKit"))', 'undefined');
 
-    shouldThrowErrorName('clipboardData.items.remove(1)', 'IndexSizeError');
+    shouldNotThrow('clipboardData.items.remove(1)');
     shouldBe('clipboardData.items.length', '1');
     shouldBe('clipboardData.items.remove(0); clipboardData.items.length', '0');
     shouldBeEqualToString('clipboardData.getData("text/plain")', '');

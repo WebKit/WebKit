@@ -1,3 +1,21 @@
+2022-04-21  Chris Dumez  <cdumez@apple.com>
+
+        No-op, instead of throwing, on dataTransfer.items.remove()
+        https://bugs.webkit.org/show_bug.cgi?id=239618
+
+        Reviewed by Wenson Hsieh.
+
+        Calling dataTransfer.items.remove() with an out-of-range index should be a no-op instead of
+        throwing as per the latest HTML specification:
+        - https://github.com/whatwg/html/pull/7844
+
+        We were the only browser behaving this way so this was a compatibility risk.
+
+        Test: imported/w3c/web-platform-tests/html/editing/dnd/datastore/datatransferitemlist-remove.html
+
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::remove):
+
 2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add string concatenate adapter for UUID

@@ -103,7 +103,7 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
 
     auto& items = ensureItems();
     if (items.size() <= index)
-        return Exception { IndexSizeError }; // Matches Gecko. See https://github.com/whatwg/html/issues/2925
+        return { };
 
     // FIXME: Remove the file from the pasteboard object once we add support for it.
     Ref<DataTransferItem> removedItem = items[index].copyRef();
