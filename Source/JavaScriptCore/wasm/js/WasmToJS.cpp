@@ -405,7 +405,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     if (!exceptionChecks.empty()) {
         exceptionChecks.link(&jit);
-        jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+        jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
         jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         auto call = jit.call(OperationPtrTag);
         jit.jumpToExceptionHandler(vm);

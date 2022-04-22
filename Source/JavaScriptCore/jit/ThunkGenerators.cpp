@@ -46,7 +46,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
 {
     CCallHelpers jit;
 
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
 
     jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
     jit.prepareCallOperation(vm);
@@ -62,7 +62,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenera
 {
     CCallHelpers jit;
 
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
 
     jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
     jit.prepareCallOperation(vm);
@@ -153,7 +153,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM
     // even though we won't use it.
     jit.preserveReturnAddressAfterCall(GPRInfo::nonPreservedNonReturnGPR);
 
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
 
     jit.setupArguments<decltype(operationLookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&vm));
     jit.prepareCallOperation(vm);
@@ -465,7 +465,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     // Handle an exception
     exceptionHandler.link(&jit);
 
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm.topCallFrame);
 #if OS(WINDOWS)
     // Allocate space on stack for the 4 parameter registers.
@@ -1339,7 +1339,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     CCallHelpers::Jump haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), GPRInfo::regT2);
 
     // Throw Stack Overflow exception
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::regT3);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSBoundFunction::offsetOfScopeChain()), GPRInfo::regT3);
     jit.setupArguments<decltype(operationThrowStackOverflowErrorFromThunk)>(GPRInfo::regT3);
     jit.prepareCallOperation(vm);
@@ -1468,7 +1468,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     CCallHelpers::Jump haveStackSpace = jit.branchPtr(CCallHelpers::BelowOrEqual, CCallHelpers::AbsoluteAddress(vm.addressOfSoftStackLimit()), GPRInfo::regT2);
 
     // Throw Stack Overflow exception
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::regT3);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSBoundFunction::offsetOfScopeChain()), GPRInfo::regT3);
     jit.setupArguments<decltype(operationThrowStackOverflowErrorFromThunk)>(GPRInfo::regT3);
     jit.prepareCallOperation(vm);
@@ -1616,7 +1616,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     jit.ret();
 
     exceptionChecks.link(&jit);
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
     jit.setupArguments<decltype(operationLookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&vm));
     jit.prepareCallOperation(vm);
     jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationLookupExceptionHandler)), GPRInfo::nonArgGPR0);

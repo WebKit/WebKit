@@ -312,7 +312,7 @@ public:
                     jit.store32(
                         MacroAssembler::TrustedImm32(callSiteIndex.bits()),
                         CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
-                    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm->topEntryFrame);
+                    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm->topEntryFrame, GPRInfo::argumentGPR0);
 
                     jit.move(CCallHelpers::TrustedImmPtr(jit.codeBlock()), GPRInfo::argumentGPR0);
                     jit.prepareCallOperation(*vm);
