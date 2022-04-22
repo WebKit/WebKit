@@ -1,3 +1,23 @@
+2022-04-22  Geza Lore  <glore@igalia.com>
+
+        [JSC]Throw consistent exceptions for memory.init and memory.copy
+        https://bugs.webkit.org/show_bug.cgi?id=239592
+
+        Reviewed by Yusuke Suzuki.
+
+        For a trapping Wasm memory.init and memory.copy instruction, the LLInt
+        used to throw OutOfBoundsMemoryAccess, but BBQ/OMG used to throw
+        OutOfBoundsTableAccess.
+
+        Changed BBQ/OMG to throw OutOfBoundsMemoryAccess as well.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addMemoryCopy):
+        (JSC::Wasm::AirIRGenerator::addMemoryInit):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addMemoryInit):
+        (JSC::Wasm::B3IRGenerator::addMemoryCopy):
+
 2022-04-22  Mark Lam  <mark.lam@apple.com>
 
         Apply purifyNaN in more places.

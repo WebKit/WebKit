@@ -1554,7 +1554,7 @@ auto AirIRGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType src
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
     }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
     });
 
     return { };
@@ -1580,7 +1580,7 @@ auto AirIRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dst
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
     }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
     });
 
     return { };

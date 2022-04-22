@@ -1249,7 +1249,7 @@ auto B3IRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dstA
             m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
 
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTableAccess);
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
     }
 
@@ -1269,7 +1269,7 @@ auto B3IRGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType srcA
             m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
 
         check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTableAccess);
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
     }
 
