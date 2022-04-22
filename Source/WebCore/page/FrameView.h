@@ -266,6 +266,7 @@ public:
     WEBCORE_EXPORT void setScrollPosition(const ScrollPosition&, const ScrollPositionChangeOptions& = ScrollPositionChangeOptions::createProgrammatic()) final;
     void restoreScrollbar();
     void scheduleScrollToFocusedElement(SelectionRevealMode);
+    void cancelScheduledScrollToFocusedElement();
     void scrollToFocusedElementImmediatelyIfNeeded();
     void updateLayerPositionsAfterScrolling() final;
     void updateCompositingLayersAfterScrolling() final;

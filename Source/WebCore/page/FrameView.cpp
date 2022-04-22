@@ -2329,8 +2329,8 @@ void FrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
     m_maintainScrollPositionAnchor = anchorNode;
     if (!m_maintainScrollPositionAnchor)
         return;
-    m_shouldScrollToFocusedElement = false;
-    m_delayedScrollToFocusedElementTimer.stop();
+
+    cancelScheduledScrollToFocusedElement();
 
     // We need to update the layout before scrolling, otherwise we could
     // really mess things up if an anchor scroll comes at a bad moment.
@@ -2363,8 +2363,8 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition, const Sc
     setCurrentScrollType(options.type);
 
     m_maintainScrollPositionAnchor = nullptr;
-    m_shouldScrollToFocusedElement = false;
-    m_delayedScrollToFocusedElementTimer.stop();
+    cancelScheduledScrollToFocusedElement();
+
     Page* page = frame().page();
     if (page && page->isMonitoringWheelEvents())
         scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
@@ -2410,6 +2410,12 @@ void FrameView::scheduleScrollToFocusedElement(SelectionRevealMode selectionReve
         return;
     m_shouldScrollToFocusedElement = true;
     m_delayedScrollToFocusedElementTimer.startOneShot(0_s);
+}
+
+void FrameView::cancelScheduledScrollToFocusedElement()
+{
+    m_shouldScrollToFocusedElement = false;
+    m_delayedScrollToFocusedElementTimer.stop();
 }
 
 void FrameView::scrollToFocusedElementImmediatelyIfNeeded()
@@ -3288,8 +3294,7 @@ void FrameView::scrollToAnchor()
     if (!anchorNode->renderer())
         return;
 
-    m_shouldScrollToFocusedElement = false;
-    m_delayedScrollToFocusedElementTimer.stop();
+    cancelScheduledScrollToFocusedElement();
 
     LayoutRect rect;
     bool insideFixed = false;
@@ -3313,8 +3318,7 @@ void FrameView::scrollToAnchor()
     // scrollRectToVisible can call into setScrollPosition(), which resets m_maintainScrollPositionAnchor.
     LOG_WITH_STREAM(Scrolling, stream << " restoring anchor node to " << anchorNode.get());
     m_maintainScrollPositionAnchor = anchorNode;
-    m_shouldScrollToFocusedElement = false;
-    m_delayedScrollToFocusedElementTimer.stop();
+    cancelScheduledScrollToFocusedElement();
 }
 
 void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
@@ -4322,8 +4326,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
 {
     LOG(Scrolling, "FrameView::setWasScrolledByUser at %d", wasScrolledByUser);
 
-    m_shouldScrollToFocusedElement = false;
-    m_delayedScrollToFocusedElementTimer.stop();
+    cancelScheduledScrollToFocusedElement();
     if (currentScrollType() == ScrollType::Programmatic)
         return;
     m_maintainScrollPositionAnchor = nullptr;

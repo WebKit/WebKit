@@ -534,6 +534,9 @@ webkit.org/b/208559 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip 
 webkit.org/b/208559 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 
+# waitForScrollCompletion() not supported
+fast/scrolling/programmatic-smooth-scroll-after-focus.html [ Skip ]
+
 # TODO Needs testRunner.enableAutoResizeMode()
 fast/autoresize/ [ Skip ]
 

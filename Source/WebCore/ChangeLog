@@ -1,3 +1,31 @@
+2022-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Focusing scroll container before scrolling breaks smooth scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=239605
+
+        Reviewed by Wenson Hsieh.
+
+        If script calls focus() and then scrollTo({ behavior: smooth }) in the same runloop, the
+        scrollToFocusedElementInternal() that happens on a zero-delay timer in FrameView will stop
+        the animated scroll.
+
+        Fix by having programmatic scrolls on Element and DOMWindow cancel any pending focus-related
+        scroll.
+
+        Test: fast/scrolling/programmatic-smooth-scroll-after-focus.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollTo):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollTo const):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::maintainScrollPositionAtAnchor):
+        (WebCore::FrameView::setScrollPosition):
+        (WebCore::FrameView::cancelScheduledScrollToFocusedElement):
+        (WebCore::FrameView::scrollToAnchor):
+        (WebCore::FrameView::setWasScrolledByUser):
+        * page/FrameView.h:
+
 2022-04-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Add blank LayoutIntegration::FlexLayout

@@ -1738,6 +1738,7 @@ void DOMWindow::scrollTo(const ScrollToOptions& options, ScrollClamping clamping
         return;
     }
 
+    view->cancelScheduledScrollToFocusedElement();
     document()->updateLayoutIgnorePendingStylesheets();
 
     IntPoint layoutPos(view->mapFromCSSToLayoutUnits(scrollToOptions.left.value()), view->mapFromCSSToLayoutUnits(scrollToOptions.top.value()));
