@@ -1539,7 +1539,6 @@ webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/har/har-page-a
 webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Pass Timeout ]
 
 #webkit.org/b/229474
-[ BigSur+ ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Timeout ]
 [ BigSur+ ] media/modern-media-controls/tracks-support/auto-text-track.html [ Pass Timeout ]
 [ BigSur+ ] media/modern-media-controls/tracks-support/hidden-tracks.html [ Pass Timeout ]
 [ BigSur+ ] media/modern-media-controls/tracks-support/off-text-track.html [ Pass Failure Timeout ]
@@ -1730,3 +1729,6 @@ webkit.org/b/239574 [ Monterey Release ] webanimations/frame-rate/animation-fram
 webkit.org/b/195635 [ arm64 ] scrollingcoordinator/mac/multiple-fixed.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/239627 [ arm64 ] fast/scrolling/mac/adjust-scroll-snap-during-gesture.html [ Pass Failure ]
+
+webkit.org/b/239634 [ arm64 ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Pass Failure ]
+
