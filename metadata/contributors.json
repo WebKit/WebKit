@@ -2643,6 +2643,7 @@
       ],
       "expertise" : "JavaScript/ECMAScript, Performance, Memory Use / Leaks, Memory Cache, Core DOM, HTML DOM, JavaScript DOM Bindings, Web Compatibility (General), JavaScriptCore C API, FastMalloc",
       "name" : "Geoffrey Garen",
+      "github" : "geoffreygaren",
       "nicks" : [
          "ggaren"
       ],

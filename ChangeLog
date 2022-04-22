@@ -1,3 +1,9 @@
+2022-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add Geoff's github username to contributors.json so he can review patches
+
+        * metadata/contributors.json:
+
 2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, add github accounts of Apple JSC reviewers
