@@ -1006,7 +1006,6 @@ TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 TextStream& operator<<(TextStream& ts, TextDecorationLine line)
 {
     switch (line) {
-    case TextDecorationLine::None: ts << "none"; break;
     case TextDecorationLine::Underline: ts << "underline"; break;
     case TextDecorationLine::Overline: ts << "overline"; break;
     case TextDecorationLine::LineThrough: ts << "line-through"; break;

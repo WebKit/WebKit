@@ -1,3 +1,22 @@
+2022-04-22  Antti Koivisto  <antti@apple.com>
+
+        Bail out from text decoration computation if none is requested
+        https://bugs.webkit.org/show_bug.cgi?id=239641
+
+        Reviewed by Tim Nguyen.
+
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::collectStylesForRenderer):
+
+        Also avoid resolving colors unnecessarily.
+
+        (WebCore::TextDecorationPainter::stylesForRenderer):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+
+        Remove unused 'None' value.
+
 2022-04-22  Enrique Ocaña González  <eocanha@igalia.com>
 
         [MSE] Improve SourceBuffer memory cost reporting

@@ -336,6 +336,9 @@ void TextDecorationPainter::paintLineThrough(const Color& color, float thickness
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecorationLine> remainingDecorations, bool firstLineStyle, PseudoId pseudoId)
 {
     auto extractDecorations = [&] (const RenderStyle& style, OptionSet<TextDecorationLine> decorations) {
+        if (decorations.isEmpty())
+            return;
+
         auto color = TextDecorationPainter::decorationColor(style);
         auto decorationStyle = style.textDecorationStyle();
 
@@ -354,7 +357,6 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
             result.linethroughColor = color;
             result.linethroughStyle = decorationStyle;
         }
-
     };
 
     auto styleForRenderer = [&] (const RenderObject& renderer) -> const RenderStyle& {
@@ -407,6 +409,9 @@ OptionSet<TextDecorationLine> TextDecorationPainter::textDecorationsInEffectForS
 
 auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle, PseudoId pseudoId) -> Styles
 {
+    if (requestedDecorations.isEmpty())
+        return { };
+
     Styles result;
     collectStylesForRenderer(result, renderer, requestedDecorations, false, pseudoId);
     if (firstLineStyle)
