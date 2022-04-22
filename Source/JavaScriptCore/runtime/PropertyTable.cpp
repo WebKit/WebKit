@@ -59,28 +59,32 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
-    , m_index(static_cast<unsigned*>(PropertyTableMalloc::zeroedMalloc(dataSize())))
+    , m_indexVector()
     , m_keyCount(0)
     , m_deletedCount(0)
 {
     ASSERT(isPowerOf2(m_indexSize));
+    bool isCompact = tableCapacity() < UINT8_MAX;
+    m_indexVector = allocateZeroedIndexVector(isCompact, m_indexSize);
+    ASSERT(isCompact == this->isCompact());
 }
 
 PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(other.m_indexSize)
     , m_indexMask(other.m_indexMask)
-    , m_index(static_cast<unsigned*>(PropertyTableMalloc::malloc(dataSize())))
+    , m_indexVector(allocateIndexVector(other.isCompact(), other.m_indexSize))
     , m_keyCount(other.m_keyCount)
     , m_deletedCount(other.m_deletedCount)
 {
     ASSERT(isPowerOf2(m_indexSize));
+    ASSERT(isCompact() == other.isCompact());
+    memcpy(bitwise_cast<void*>(m_indexVector & indexVectorMask), bitwise_cast<void*>(other.m_indexVector & indexVectorMask), dataSize(isCompact()));
 
-    memcpy(m_index, other.m_index, dataSize());
-
-    iterator end = this->end();
-    for (iterator iter = begin(); iter != end; ++iter)
-        iter->key->ref();
+    forEachProperty([&](auto& entry) {
+        entry.key()->ref();
+        return IterationStatus::Continue;
+    });
 
     // Copy the m_deletedOffsets vector.
     Vector<PropertyOffset>* otherDeletedOffsets = other.m_deletedOffsets.get();
@@ -92,19 +96,25 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTab
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
-    , m_index(static_cast<unsigned*>(PropertyTableMalloc::zeroedMalloc(dataSize())))
+    , m_indexVector()
     , m_keyCount(0)
     , m_deletedCount(0)
 {
     ASSERT(isPowerOf2(m_indexSize));
     ASSERT(initialCapacity >= other.m_keyCount);
+    bool isCompact = other.isCompact() && tableCapacity() < UINT8_MAX;
+    m_indexVector = allocateZeroedIndexVector(isCompact, m_indexSize);
+    ASSERT(this->isCompact() == isCompact);
 
-    const_iterator end = other.end();
-    for (const_iterator iter = other.begin(); iter != end; ++iter) {
-        ASSERT(canInsert());
-        reinsert(*iter);
-        iter->key->ref();
-    }
+    withIndexVector([&](auto* vector) {
+        auto* table = tableFromIndexVector(vector);
+        other.forEachProperty([&](auto& entry) {
+            ASSERT(canInsert(entry));
+            reinsert(vector, table, entry);
+            entry.key()->ref();
+            return IterationStatus::Continue;
+        });
+    });
 
     // Copy the m_deletedOffsets vector.
     Vector<PropertyOffset>* otherDeletedOffsets = other.m_deletedOffsets.get();
@@ -115,7 +125,7 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTab
 void PropertyTable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    vm.heap.reportExtraMemoryAllocated(dataSize());
+    vm.heap.reportExtraMemoryAllocated(dataSize(isCompact()));
 }
 
 template<typename Visitor>
@@ -124,7 +134,7 @@ void PropertyTable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     auto* thisObject = jsCast<PropertyTable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
-    visitor.reportExtraMemoryVisited(thisObject->dataSize());
+    visitor.reportExtraMemoryVisited(thisObject->dataSize(thisObject->isCompact()));
 }
 
 DEFINE_VISIT_CHILDREN(PropertyTable);
@@ -136,12 +146,91 @@ void PropertyTable::destroy(JSCell* cell)
 
 PropertyTable::~PropertyTable()
 {
-    iterator end = this->end();
-    for (iterator iter = begin(); iter != end; ++iter)
-        iter->key->deref();
+    forEachProperty([&](auto& entry) {
+        entry.key()->deref();
+        return IterationStatus::Continue;
+    });
+    destroyIndexVector(m_indexVector);
+}
 
-    PropertyTableMalloc::free(m_index);
+void PropertyTable::seal()
+{
+    forEachPropertyMutable([&](auto& entry) {
+        entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete));
+        return IterationStatus::Continue;
+    });
+}
 
+void PropertyTable::freeze()
+{
+    forEachPropertyMutable([&](auto& entry) {
+        if (!(entry.attributes() & PropertyAttribute::Accessor))
+            entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly));
+        else
+            entry.setAttributes(entry.attributes() | static_cast<unsigned>(PropertyAttribute::DontDelete));
+        return IterationStatus::Continue;
+    });
+}
+
+bool PropertyTable::isSealed() const
+{
+    bool result = true;
+    forEachProperty([&](const auto& entry) {
+        if ((entry.attributes() & PropertyAttribute::DontDelete) != static_cast<unsigned>(PropertyAttribute::DontDelete)) {
+            result = false;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+    return result;
+}
+
+bool PropertyTable::isFrozen() const
+{
+    bool result = true;
+    forEachProperty([&](const auto& entry) {
+        if (!(entry.attributes() & PropertyAttribute::DontDelete)) {
+            result = false;
+            return IterationStatus::Done;
+        }
+        if (!(entry.attributes() & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor))) {
+            result = false;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+    return result;
+}
+
+PropertyOffset PropertyTable::renumberPropertyOffsets(JSObject* object, unsigned inlineCapacity, Vector<JSValue>& values)
+{
+    ASSERT(values.size() == size());
+    unsigned i = 0;
+    PropertyOffset offset = invalidOffset;
+    forEachPropertyMutable([&](auto& entry) {
+        values[i] = object->getDirect(entry.offset());
+        offset = offsetForPropertyNumber(i, inlineCapacity);
+        entry.setOffset(offset);
+        ++i;
+        return IterationStatus::Continue;
+    });
+    clearDeletedOffsets();
+    return offset;
+}
+
+template<typename Functor>
+inline void PropertyTable::forEachPropertyMutable(const Functor& functor)
+{
+    withIndexVector([&](auto* vector) {
+        auto* cursor = tableFromIndexVector(vector);
+        auto* end = tableEndFromIndexVector(vector);
+        for (; cursor != end; ++cursor) {
+            if (cursor->key() == PROPERTY_MAP_DELETED_ENTRY_KEY)
+                continue;
+            if (functor(*cursor) == IterationStatus::Done)
+                return;
+        }
+    });
 }
 
 } // namespace JSC

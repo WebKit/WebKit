@@ -430,10 +430,10 @@ void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     Base::analyzeHeap(cell, analyzer);
 
     Structure* structure = thisObject->structure();
-    for (auto& entry : structure->getPropertiesConcurrently()) {
-        JSValue toValue = thisObject->getDirect(entry.offset);
+    for (const auto& entry : structure->getPropertiesConcurrently()) {
+        JSValue toValue = thisObject->getDirect(entry.offset());
         if (toValue && toValue.isCell())
-            analyzer.analyzePropertyNameEdge(thisObject, toValue.asCell(), entry.key);
+            analyzer.analyzePropertyNameEdge(thisObject, toValue.asCell(), entry.key());
     }
 
     Butterfly* butterfly = thisObject->butterfly();

@@ -30,11 +30,11 @@
 
 namespace JSC {
 
-static const PropertyOffset RegExpMatchesArrayIndexPropertyOffset = 100;
-static const PropertyOffset RegExpMatchesArrayInputPropertyOffset = 101;
-static const PropertyOffset RegExpMatchesArrayGroupsPropertyOffset = 102;
-static const PropertyOffset RegExpMatchesArrayIndicesPropertyOffset = 103;
-static const PropertyOffset RegExpMatchesIndicesGroupsPropertyOffset = 100;
+static constexpr PropertyOffset RegExpMatchesArrayIndexPropertyOffset = firstOutOfLineOffset;
+static constexpr PropertyOffset RegExpMatchesArrayInputPropertyOffset = firstOutOfLineOffset + 1;
+static constexpr PropertyOffset RegExpMatchesArrayGroupsPropertyOffset = firstOutOfLineOffset + 2;
+static constexpr PropertyOffset RegExpMatchesArrayIndicesPropertyOffset = firstOutOfLineOffset + 3;
+static constexpr PropertyOffset RegExpMatchesIndicesGroupsPropertyOffset = firstOutOfLineOffset;
 
 ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {

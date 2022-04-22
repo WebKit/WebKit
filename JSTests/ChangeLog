@@ -1,3 +1,17 @@
+2022-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] PropertyTable should have compact mode
+        https://bugs.webkit.org/show_bug.cgi?id=239451
+
+        Reviewed by Saam Barati.
+
+        * stress/change-attribute-structure-transition.js:
+        (shouldBe.JSON.stringify.sd):
+        * stress/compact-to-non-compact-with-delete.js: Added.
+        (shouldBe):
+        * stress/compact-to-non-compact.js: Added.
+        (shouldBe):
+
 2022-04-14  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] ShadowRealm global object has a mutable prototype

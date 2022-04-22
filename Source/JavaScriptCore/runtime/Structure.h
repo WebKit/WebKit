@@ -45,6 +45,7 @@
 #include "Watchpoint.h"
 #include "WriteBarrierInlines.h"
 #include <wtf/Atomics.h>
+#include <wtf/CompactPointerTuple.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {
@@ -77,26 +78,79 @@ static constexpr unsigned initialOutOfLineCapacity = 4;
 // initial allocation.
 static constexpr unsigned outOfLineGrowthFactor = 2;
 
-struct PropertyMapEntry {
-    UniquedStringImpl* key;
-    PropertyOffset offset;
-    uint8_t attributes;
+class PropertyTableEntry;
+class CompactPropertyTableEntry {
+public:
+    CompactPropertyTableEntry()
+        : m_data(nullptr, 0)
+    {
+    }
 
-    PropertyMapEntry()
-        : key(nullptr)
-        , offset(invalidOffset)
-        , attributes(0)
+    CompactPropertyTableEntry(UniquedStringImpl* key, PropertyOffset offset, unsigned attributes)
+        : m_data(key, ((offset << 8) | attributes))
     {
+        ASSERT(this->attributes() == attributes);
+        ASSERT(this->offset() == offset);
     }
-    
-    PropertyMapEntry(UniquedStringImpl* key, PropertyOffset offset, unsigned attributes)
-        : key(key)
-        , offset(offset)
-        , attributes(attributes)
+
+    CompactPropertyTableEntry(const PropertyTableEntry&);
+
+    UniquedStringImpl* key() const { return m_data.pointer(); }
+    void setKey(UniquedStringImpl* key) { m_data.setPointer(key); }
+    PropertyOffset offset() const { return m_data.type() >> 8; }
+    void setOffset(PropertyOffset offset)
     {
-        ASSERT(this->attributes == attributes);
+        m_data.setType((m_data.type() & 0x00ffU) | (offset << 8));
+        ASSERT(this->offset() == offset);
     }
+    uint8_t attributes() const { return m_data.type(); }
+    void setAttributes(uint8_t attributes)
+    {
+        m_data.setType((m_data.type() & 0xff00U) | attributes);
+        ASSERT(this->attributes() == attributes);
+    }
+
+private:
+    CompactPointerTuple<UniquedStringImpl*, uint16_t> m_data;
 };
+
+class PropertyTableEntry {
+public:
+    PropertyTableEntry() = default;
+
+    PropertyTableEntry(UniquedStringImpl* key, PropertyOffset offset, unsigned attributes)
+        : m_key(key)
+        , m_offset(offset)
+        , m_attributes(attributes)
+    {
+        ASSERT(this->attributes() == attributes);
+    }
+
+    PropertyTableEntry(const CompactPropertyTableEntry& entry)
+        : m_key(entry.key())
+        , m_offset(entry.offset())
+        , m_attributes(entry.attributes())
+    {
+    }
+
+    UniquedStringImpl* key() const { return m_key; }
+    void setKey(UniquedStringImpl* key) { m_key = key; }
+    PropertyOffset offset() const { return m_offset; }
+    void setOffset(PropertyOffset offset) { m_offset = offset; }
+    uint8_t attributes() const { return m_attributes; }
+    void setAttributes(uint8_t attributes) { m_attributes = attributes; }
+
+private:
+    UniquedStringImpl* m_key { nullptr };
+    PropertyOffset m_offset { 0 };
+    uint8_t m_attributes { 0 };
+};
+
+
+inline CompactPropertyTableEntry::CompactPropertyTableEntry(const PropertyTableEntry& entry)
+    : m_data(entry.key(), ((entry.offset() << 8) | entry.attributes()))
+{
+}
 
 class StructureFireDetail final : public FireDetail {
 public:
@@ -547,7 +601,7 @@ public:
     PropertyOffset getConcurrently(UniquedStringImpl* uid);
     PropertyOffset getConcurrently(UniquedStringImpl* uid, unsigned& attributes);
     
-    Vector<PropertyMapEntry> getPropertiesConcurrently();
+    Vector<PropertyTableEntry> getPropertiesConcurrently();
     
     void setHasGetterSetterPropertiesWithProtoCheck(bool is__proto__)
     {

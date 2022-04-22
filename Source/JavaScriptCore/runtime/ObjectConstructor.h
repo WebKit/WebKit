@@ -73,7 +73,7 @@ inline JSFinalObject* constructEmptyObject(JSGlobalObject* globalObject, JSObjec
 
 inline JSFinalObject* constructEmptyObject(JSGlobalObject* globalObject, JSObject* prototype)
 {
-    return constructEmptyObject(globalObject, prototype, JSFinalObject::defaultInlineCapacity());
+    return constructEmptyObject(globalObject, prototype, JSFinalObject::defaultInlineCapacity);
 }
 
 inline JSFinalObject* constructEmptyObject(JSGlobalObject* globalObject)
@@ -102,7 +102,7 @@ static constexpr PropertyOffset accessorPropertyDescriptorConfigurablePropertyOf
 
 inline Structure* createDataPropertyDescriptorObjectStructure(VM& vm, JSGlobalObject& globalObject)
 {
-    Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity());
+    Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity);
     PropertyOffset offset;
     structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == dataPropertyDescriptorValuePropertyOffset);
@@ -117,7 +117,7 @@ inline Structure* createDataPropertyDescriptorObjectStructure(VM& vm, JSGlobalOb
 
 inline Structure* createAccessorPropertyDescriptorObjectStructure(VM& vm, JSGlobalObject& globalObject)
 {
-    Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity());
+    Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity);
     PropertyOffset offset;
     structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->get, 0, offset);
     RELEASE_ASSERT(offset == accessorPropertyDescriptorGetPropertyOffset);

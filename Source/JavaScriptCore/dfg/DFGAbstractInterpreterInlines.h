@@ -3141,7 +3141,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 WTF::loadLoadFence();
                 if (!isHavingABadTime)
                     m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
-                structure = globalObject->structureCache().emptyObjectStructureConcurrently(base.getObject(), JSFinalObject::defaultInlineCapacity());
+                structure = globalObject->structureCache().emptyObjectStructureConcurrently(base.getObject(), JSFinalObject::defaultInlineCapacity);
             }
 
             if (structure) {

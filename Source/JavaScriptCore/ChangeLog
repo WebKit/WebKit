@@ -1,5 +1,146 @@
 2022-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] PropertyTable should have compact mode
+        https://bugs.webkit.org/show_bug.cgi?id=239451
+
+        Reviewed by Saam Barati.
+
+        This patch introduces "compact" version of PropertyTable. PropertyTable needs to hold two kind of integers: index and property offset.
+        But for most of objects, both are pretty small and they can fit in uint8_t. If we can use uint8_t for both, we can significantly reduce
+        size of allocated memory for PropertyTable (only 40% of memory is required!). This is good for memory, but also good for performance.
+        Now each CompactPropertyTableEntry is 8bytes while original PropertyMapEntry was 16bytes, so CompactPropertyTableEntry can fit in CPU cache well.
+        Also, not allocating large amount of memory can reduce memory allocation / deallocation cost. One of costly destruction of GC-managed objects is
+        PropertyTable (and CodeBlock), and we can reduce that cost by not allocating much memory.
+
+        The approach is following.
+
+        1. For index vector, we use uint8_t if index can fit within uint8_t.
+        2. For proprety offset, we use uint8_t and CompactPropertyTableEntry if it is suitable.
+        3. Once the table gets non-compact, we keep it non-compact since we could have deleted index which has larger than uint8_t. We could improve this
+           strategy when deleted indexes are cleared, but for now, we are taking simple approach.
+        4. We store isCompactFlag 1 bit in the pointer to the table.
+        5. We encapsulate functions modifying property table entry in PropertyTable itself, so we do not leak internal compact / non-compact mode to the user
+           of PropertyTable. We remove begin() / end() iterators and instead use forEachproperty, which can implement iteration for each mode more efficiently.
+
+        We have a further opportunity to improve this further: we can deploy 75% load factor only for compact table. Then we can increase threshold of
+        compact table further and keep more and more tables compact mode. Plus, for small sized tables, small backing memory is better in terms of
+        CPU cache hit (and that's measured in WTF::HashTable, and that's why WTF::Hashtable deploys 75% load factor only for small tables). This is left
+        for the subsequent change.
+
+        This change is neutral in JetStream2, 0.3% improvement in Speedometer2 with 80% confidence, and 0.41% improvement in RAMification with 95% confidence.
+
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfileBase<Derived>::initializeProfile):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * runtime/ClonedArguments.h:
+        * runtime/IteratorOperations.cpp:
+        (JSC::createIteratorResultObjectStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::analyzeHeap):
+        * runtime/JSObject.h:
+        * runtime/ObjectConstructor.h:
+        (JSC::constructEmptyObject):
+        (JSC::createDataPropertyDescriptorObjectStructure):
+        (JSC::createAccessorPropertyDescriptorObjectStructure):
+        * runtime/ObjectConstructorInlines.h:
+        (JSC::objectAssignFast):
+        * runtime/PropertyOffset.h:
+        * runtime/PropertySlot.h:
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::PropertyTable):
+        (JSC::PropertyTable::finishCreation):
+        (JSC::PropertyTable::visitChildrenImpl):
+        (JSC::PropertyTable::~PropertyTable):
+        (JSC::PropertyTable::seal):
+        (JSC::PropertyTable::freeze):
+        (JSC::PropertyTable::isSealed const):
+        (JSC::PropertyTable::isFrozen const):
+        (JSC::PropertyTable::renumberPropertyOffsets):
+        (JSC::PropertyTable::forEachPropertyMutable):
+        * runtime/PropertyTable.h:
+        (JSC::isPowerOf2):
+        (JSC::nextPowerOf2):
+        (JSC::PropertyTable::findImpl):
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::get):
+        (JSC::PropertyTable::add):
+        (JSC::PropertyTable::remove):
+        (JSC::PropertyTable::take):
+        (JSC::PropertyTable::updateAttributeIfExists):
+        (JSC::PropertyTable::sizeInMemory):
+        (JSC::PropertyTable::reinsert):
+        (JSC::PropertyTable::rehash):
+        (JSC::PropertyTable::skipDeletedEntries):
+        (JSC::PropertyTable::usedCount const):
+        (JSC::PropertyTable::dataSize):
+        (JSC::PropertyTable::allocateIndexVector):
+        (JSC::PropertyTable::allocateZeroedIndexVector):
+        (JSC::PropertyTable::destroyIndexVector):
+        (JSC::PropertyTable::canInsert):
+        (JSC::PropertyTable::forEachProperty const):
+        (JSC::PropertyTable::begin): Deleted.
+        (JSC::PropertyTable::end): Deleted.
+        (JSC::PropertyTable::begin const): Deleted.
+        (JSC::PropertyTable::end const): Deleted.
+        (JSC::PropertyTable::table): Deleted.
+        (JSC::PropertyTable::table const): Deleted.
+        * runtime/RegExpMatchesArray.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        (JSC::Structure::isSealed):
+        (JSC::Structure::isFrozen):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::PropertyTableStatisticsExitLogger::~PropertyTableStatisticsExitLogger):
+        (JSC::Structure::getConcurrently):
+        (JSC::Structure::getPropertiesConcurrently):
+        (JSC::Structure::getPropertyNamesFromStructure):
+        (JSC::Structure::toStructureShape):
+        (JSC::Structure::dump const):
+        * runtime/Structure.h:
+        (JSC::CompactPropertyTableEntry::CompactPropertyTableEntry):
+        (JSC::CompactPropertyTableEntry::key const):
+        (JSC::CompactPropertyTableEntry::setKey):
+        (JSC::CompactPropertyTableEntry::offset const):
+        (JSC::CompactPropertyTableEntry::setOffset):
+        (JSC::CompactPropertyTableEntry::attributes const):
+        (JSC::CompactPropertyTableEntry::setAttributes):
+        (JSC::PropertyTableEntry::PropertyTableEntry):
+        (JSC::PropertyTableEntry::key const):
+        (JSC::PropertyTableEntry::setKey):
+        (JSC::PropertyTableEntry::offset const):
+        (JSC::PropertyTableEntry::setOffset):
+        (JSC::PropertyTableEntry::attributes const):
+        (JSC::PropertyTableEntry::setAttributes):
+        (JSC::PropertyMapEntry::PropertyMapEntry): Deleted.
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+        (JSC::Structure::forEachPropertyConcurrently):
+        (JSC::Structure::forEachProperty):
+        (JSC::Structure::add):
+        (JSC::Structure::remove):
+        (JSC::Structure::attributeChange):
+
+2022-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Remove TempRegisterSet
         https://bugs.webkit.org/show_bug.cgi?id=239578
 

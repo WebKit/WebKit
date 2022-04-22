@@ -925,19 +925,19 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
         // that ends up transitioning the structure underneath us.
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
-        source->structure()->forEachProperty(vm, [&] (const PropertyMapEntry& entry) -> bool {
-            PropertyName propertyName(entry.key);
+        source->structure()->forEachProperty(vm, [&] (const PropertyTableEntry& entry) -> bool {
+            PropertyName propertyName(entry.key());
             if (propertyName.isPrivateName())
                 return true;
 
-            if (entry.attributes & PropertyAttribute::DontEnum)
+            if (entry.attributes() & PropertyAttribute::DontEnum)
                 return true;
 
             if (isPropertyNameExcluded(propertyName))
                 return true;
 
-            properties.append(entry.key);
-            values.appendWithCrashOnOverflow(source->getDirect(entry.offset));
+            properties.append(entry.key());
+            values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
             return true;
         });
 

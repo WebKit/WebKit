@@ -13479,15 +13479,15 @@ void SpeculativeJIT::compileMaterializeNewObject(Node* node)
 
         case NamedPropertyPLoc: {
             StringImpl* uid = m_graph.identifiers()[descriptor.info()];
-            for (PropertyMapEntry entry : structure->getPropertiesConcurrently()) {
-                if (uid != entry.key)
+            for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
+                if (uid != entry.key())
                     continue;
 
                 JSValueOperand value(this, edge);
-                GPRReg baseGPR = isInlineOffset(entry.offset) ? resultGPR : storageGPR;
+                GPRReg baseGPR = isInlineOffset(entry.offset()) ? resultGPR : storageGPR;
                 m_jit.storeValue(
                     value.jsValueRegs(),
-                    JITCompiler::Address(baseGPR, offsetRelativeToBase(entry.offset)));
+                    JITCompiler::Address(baseGPR, offsetRelativeToBase(entry.offset())));
             }
             break;
         }

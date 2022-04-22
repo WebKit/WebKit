@@ -74,4 +74,4 @@ Object.defineProperty(object, "test001", {
     enumerable: false
 });
 shouldBe(JSON.stringify(Object.getOwnPropertyDescriptor(object, "test001")), `{"value":42,"writable":false,"enumerable":false,"configurable":true}`);
-shouldBe(JSON.stringify(sd(object)), `[{"offset":-1,"max":1098,"property":null,"type":"unknown"},{"offset":0,"max":1098,"property":"test001","type":"attribute"}]`);
+shouldBe(JSON.stringify(sd(object)), `[{"offset":-1,"max":1062,"property":null,"type":"unknown"},{"offset":0,"max":1062,"property":"test001","type":"attribute"}]`);

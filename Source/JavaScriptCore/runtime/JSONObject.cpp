@@ -511,14 +511,14 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
                 m_size = m_propertyNames->propertyNameVector().size();
             } else if (m_structure && m_object->structureID() == m_structure->id() && canPerformFastPropertyEnumerationForJSONStringify(m_structure)) {
-                m_structure->forEachProperty(vm, [&](const PropertyMapEntry& entry) -> bool {
-                    if (entry.attributes & PropertyAttribute::DontEnum)
+                m_structure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                    if (entry.attributes() & PropertyAttribute::DontEnum)
                         return true;
 
-                    PropertyName propertyName(entry.key);
+                    PropertyName propertyName(entry.key());
                     if (propertyName.isSymbol())
                         return true;
-                    m_propertiesAndOffsets.constructAndAppend(Identifier::fromUid(vm, entry.key), entry.offset);
+                    m_propertiesAndOffsets.constructAndAppend(Identifier::fromUid(vm, entry.key()), entry.offset());
                     return true;
                 });
                 m_hasFastObjectProperties = true;

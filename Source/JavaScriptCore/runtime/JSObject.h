@@ -1241,17 +1241,13 @@ public:
     static inline const TypeInfo typeInfo() { return TypeInfo(FinalObjectType, StructureFlags); }
     static constexpr IndexingType defaultIndexingType = NonArray;
         
-    static constexpr unsigned defaultSize = 64;
-    static inline unsigned defaultInlineCapacity()
-    {
-        return (defaultSize - allocationSize(0)) / sizeof(WriteBarrier<Unknown>);
-    }
+    static constexpr unsigned defaultSizeInBytes = 64;
+    static constexpr unsigned defaultInlineCapacity = (defaultSizeInBytes - sizeof(JSObject)) / sizeof(WriteBarrier<Unknown>);
+    static_assert(defaultInlineCapacity < firstOutOfLineOffset);
 
-    static constexpr unsigned maxSize = 512;
-    static inline unsigned maxInlineCapacity()
-    {
-        return (maxSize - allocationSize(0)) / sizeof(WriteBarrier<Unknown>);
-    }
+    static constexpr unsigned maxSizeInBytes = 512;
+    static constexpr unsigned maxInlineCapacity = (maxSizeInBytes - sizeof(JSObject)) / sizeof(WriteBarrier<Unknown>);
+    static_assert(maxInlineCapacity < firstOutOfLineOffset);
 
     static JSFinalObject* create(VM&, Structure*);
     static JSFinalObject* createWithButterfly(VM&, Structure*, Butterfly*);

@@ -14119,21 +14119,21 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             BitVector setInlineOffsets;
-            for (PropertyMapEntry entry : structure->getPropertiesConcurrently()) {
+            for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
                 for (unsigned i = data.m_properties.size(); i--;) {
                     PromotedLocationDescriptor descriptor = data.m_properties[i];
                     if (descriptor.kind() != NamedPropertyPLoc)
                         continue;
-                    if (m_graph.identifiers()[descriptor.info()] != entry.key)
+                    if (m_graph.identifiers()[descriptor.info()] != entry.key())
                         continue;
                     
                     LValue base;
-                    if (isInlineOffset(entry.offset)) {
-                        setInlineOffsets.set(entry.offset);
+                    if (isInlineOffset(entry.offset())) {
+                        setInlineOffsets.set(entry.offset());
                         base = object;
                     } else
                         base = butterfly;
-                    storeProperty(values[i], base, descriptor.info(), entry.offset);
+                    storeProperty(values[i], base, descriptor.info(), entry.offset());
                     break;
                 }
             }

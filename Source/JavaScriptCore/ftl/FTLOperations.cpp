@@ -80,15 +80,15 @@ JSC_DEFINE_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject* gl
         // minimal visible effects on the system. Also, don't mind
         // that this is O(n^2). It doesn't matter. We only get here
         // from OSR exit.
-        for (PropertyMapEntry entry : structure->getPropertiesConcurrently()) {
+        for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
             for (unsigned i = materialization->properties().size(); i--;) {
                 const ExitPropertyValue& property = materialization->properties()[i];
                 if (property.location().kind() != NamedPropertyPLoc)
                     continue;
-                if (codeBlock->identifier(property.location().info()).impl() != entry.key)
+                if (codeBlock->identifier(property.location().info()).impl() != entry.key())
                     continue;
 
-                object->putDirect(vm, entry.offset, JSValue::decode(values[i]));
+                object->putDirect(vm, entry.offset(), JSValue::decode(values[i]));
             }
         }
         break;
@@ -224,8 +224,8 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         // field is, for any reason, not filled later.
         // We use a random-ish number instead of a sensible value like
         // undefined to make possible bugs easier to track.
-        for (PropertyMapEntry entry : structure->getPropertiesConcurrently())
-            result->putDirect(vm, entry.offset, jsNumber(19723));
+        for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently())
+            result->putDirect(vm, entry.offset(), jsNumber(19723));
 
         return result;
     }

@@ -171,12 +171,10 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, u
     if (!propertyTable)
         return invalidOffset;
 
-    PropertyMapEntry* entry = propertyTable->get(propertyName.uid());
-    if (!entry)
-        return invalidOffset;
-
-    attributes = entry->attributes;
-    return entry->offset;
+    auto [offset, entryAttributes] = propertyTable->get(propertyName.uid());
+    if (offset != invalidOffset)
+        attributes = entryAttributes;
+    return offset;
 }
 
 template<typename Functor>
@@ -208,7 +206,7 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
             break;
         }
 
-        if (!functor(PropertyMapEntry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes()))) {
+        if (!functor(PropertyTableEntry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes()))) {
             if (didFindStructure) {
                 assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
                 tableStructure->m_lock.unlock();
@@ -219,15 +217,15 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
     
     if (didFindStructure) {
         assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
-        for (auto& entry : *table) {
-            if (seenProperties.contains(entry.key))
-                continue;
+        table->forEachProperty([&](const auto& entry) {
+            if (seenProperties.contains(entry.key()))
+                return IterationStatus::Continue;
 
-            if (!functor(entry)) {
-                tableStructure->m_lock.unlock();
-                return;
-            }
-        }
+            if (!functor(entry))
+                return IterationStatus::Done;
+
+            return IterationStatus::Continue;
+        });
         tableStructure->m_lock.unlock();
     }
 }
@@ -236,10 +234,11 @@ template<typename Functor>
 void Structure::forEachProperty(VM& vm, const Functor& functor)
 {
     if (PropertyTable* table = ensurePropertyTableIfNotEmpty(vm)) {
-        for (auto& entry : *table) {
+        table->forEachProperty([&](const auto& entry) {
             if (!functor(entry))
-                return;
-        }
+                return IterationStatus::Done;
+            return IterationStatus::Continue;
+        });
         ensureStillAliveHere(table);
     }
 }
@@ -492,9 +491,10 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
     m_seenProperties.add(bitwise_cast<uintptr_t>(rep));
 
-    auto result = table->add(vm, PropertyMapEntry(rep, newOffset, attributes));
-    ASSERT_UNUSED(result, result.second);
-    ASSERT_UNUSED(result, result.first.first->offset == newOffset);
+    auto [offset, attribute, result] = table->add(vm, PropertyTableEntry(rep, newOffset, attributes));
+    ASSERT_UNUSED(result, result);
+    ASSERT_UNUSED(offset, offset == newOffset);
+    UNUSED_VARIABLE(attribute);
     auto newMaxOffset = std::max(newOffset, maxOffset());
     
     func(locker, newOffset, newMaxOffset);
@@ -526,15 +526,13 @@ inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const
 
     auto rep = propertyName.uid();
 
-    PropertyTable::find_iterator position = table->find(rep);
-    if (!position.first)
+    auto [offset, attributes] = table->take(vm, rep);
+    UNUSED_VARIABLE(attributes);
+    if (offset == invalidOffset)
         return invalidOffset;
 
     setIsQuickPropertyAccessAllowedForEnumeration(false);
-    
-    PropertyOffset offset = position.first->offset;
 
-    table->remove(vm, position);
     table->addDeletedOffset(offset);
 
     PropertyOffset newMaxOffset = maxOffset();
@@ -567,18 +565,14 @@ inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyNa
     ASSERT(JSC::isValidOffset(get(vm, propertyName)));
 
     checkConsistency();
-    PropertyMapEntry* entry = table->get(propertyName.uid());
-    if (!entry)
-        return invalidOffset;
-
-    PropertyOffset offset = entry->offset;
+    PropertyOffset offset = table->updateAttributeIfExists(propertyName.uid(), attributes);
+    if (offset == invalidOffset)
+        return offset;
 
     if (attributes & PropertyAttribute::DontEnum)
         setIsQuickPropertyAccessAllowedForEnumeration(false);
     if (attributes & PropertyAttribute::ReadOnly)
         setContainsReadOnlyProperties();
-
-    entry->attributes = attributes;
 
     PropertyOffset newMaxOffset = maxOffset();
 
