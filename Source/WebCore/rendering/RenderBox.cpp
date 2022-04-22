@@ -2320,10 +2320,10 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
     bool isFixedPos = isFixedPositioned();
     // If this box has a transform, it acts as a fixed position container for fixed descendants,
     // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
-    if (hasTransform() && !isFixedPos)
-        mode.remove(IsFixed);
-    else if (isFixedPos)
+    if (isFixedPos)
         mode.add(IsFixed);
+    else if (canContainFixedPositionObjects())
+        mode.remove(IsFixed);
 
     if (wasFixed)
         *wasFixed = mode.contains(IsFixed);
@@ -2394,12 +2394,13 @@ const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObje
 void RenderBox::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const
 {
     bool isFixedPos = isFixedPositioned();
-    if (hasTransform() && !isFixedPos) {
+    if (isFixedPos)
+        mode.add(IsFixed);
+    else if (canContainFixedPositionObjects()) {
         // If this box has a transform, it acts as a fixed position container for fixed descendants,
         // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
         mode.remove(IsFixed);
-    } else if (isFixedPos)
-        mode.add(IsFixed);
+    }
 
     RenderBoxModelObject::mapAbsoluteToLocalPoint(mode, transformState);
 }

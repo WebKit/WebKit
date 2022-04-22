@@ -1,3 +1,14 @@
+2022-04-21  Rob Buis  <rbuis@igalia.com>
+
+        `contain: layout` on the html element should change position:fixed behavior
+        https://bugs.webkit.org/show_bug.cgi?id=238560
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-contain/contain-layout-021-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-layout-021.html: Added.
+        * web-platform-tests/css/css-contain/reference/contain-layout-021-ref.html: Added.
+
 2022-04-21  Chris Dumez  <cdumez@apple.com>
 
         No-op, instead of throwing, on dataTransfer.items.remove()

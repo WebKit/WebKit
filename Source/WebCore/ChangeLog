@@ -1,3 +1,23 @@
+2022-04-21  Rob Buis  <rbuis@igalia.com>
+
+        `contain: layout` on the html element should change position:fixed behavior
+        https://bugs.webkit.org/show_bug.cgi?id=238560
+
+        Reviewed by Simon Fraser.
+
+        The mapLocalToContainer/mapAbsoluteToLocalPoint methods need to not only consider boxes
+        having transforms but need to include all checks in canContainFixedPositionObjects to
+        determine if the box acts as a fixed position containing block.
+
+        Tests: imported/w3c/web-platform-tests/css/css-contain/contain-layout-021.html
+               imported/w3c/web-platform-tests/css/css-contain/reference/contain-layout-021-ref.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer const):
+        (WebCore::RenderBox::mapAbsoluteToLocalPoint const):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer const):
+
 2022-04-21  Chris Dumez  <cdumez@apple.com>
 
         No-op, instead of throwing, on dataTransfer.items.remove()
