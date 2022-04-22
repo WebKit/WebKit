@@ -349,7 +349,7 @@ public:
 #endif
     };
 
-    void generateSubtree(AXCoreObject&, AXCoreObject*);
+    void generateSubtree(AXCoreObject&);
     void updateNode(AXCoreObject&);
     void updateChildren(AXCoreObject&);
     void updateNodeProperty(AXCoreObject&, AXPropertyName);
@@ -385,12 +385,9 @@ private:
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache() WTF_REQUIRES_LOCK(s_cacheLock);
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_cacheLock);
 
-    // Methods in this block are called on the main thread.
-    // Computes the parent ID of the given object, which is generally the "assumed" parent ID (but not always, like in the case of tables).
-    AXID parentIDForObject(AXCoreObject&, AXID assumedParentID);
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
-    NodeChange nodeChangeForObject(AXCoreObject&, AXID parentID, AttachWrapper = AttachWrapper::OnMainThread);
-    void collectNodeChangesForSubtree(AXCoreObject&, AXID parentID);
+    NodeChange nodeChangeForObject(AXCoreObject&, AttachWrapper = AttachWrapper::OnMainThread);
+    void collectNodeChangesForSubtree(AXCoreObject&);
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovals(const Vector<AXID>&);
     void queueRemovalsLocked(const Vector<AXID>&) WTF_REQUIRES_LOCK(m_changeLogLock);
@@ -413,8 +410,8 @@ private:
 
     // Only accessed on the main thread.
     // The key is the ID of the object that will be resolved into an m_pendingAppends NodeChange.
-    // The value represents the parent ID of the object, and whether the wrapper should be attached on the main thread or the AX thread.
-    HashMap<AXID, std::pair<AXID, AttachWrapper>> m_unresolvedPendingAppends;
+    // The value is whether the wrapper should be attached on the main thread or the AX thread.
+    HashMap<AXID, AttachWrapper> m_unresolvedPendingAppends;
     // Only accessed on the main thread.
     bool m_isCollectingNodeChanges { false };
 

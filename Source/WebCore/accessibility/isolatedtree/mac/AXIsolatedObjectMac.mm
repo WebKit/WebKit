@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-void AXIsolatedObject::initializePlatformProperties(const AXCoreObject& object, bool isRoot)
+void AXIsolatedObject::initializePlatformProperties(const AXCoreObject& object, IsRoot isRoot)
 {
     setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object.hasApplePDFAnnotationAttribute());
     setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::CaretBrowsingEnabled, object.caretBrowsingEnabled());
 
-    if (isRoot)
+    if (isRoot == IsRoot::Yes)
         setProperty(AXPropertyName::PreventKeyboardDOMEventDispatch, object.preventKeyboardDOMEventDispatch());
 
     if (object.isScrollView()) {

@@ -1,3 +1,14 @@
+2022-04-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/aria-grid-with-aria-owns-rows.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=239498
+        <rdar://problem/91961398>
+
+        Reviewed by Chris Fleizach and Tyler Wilcock.
+
+        * accessibility/aria-grid-with-aria-owns-rows-expected.txt:
+        * accessibility/aria-grid-with-aria-owns-rows.html:
+
 2022-04-22  Alan Bujtas  <zalan@apple.com>
 
         Book content is clipped at page boundary when displaying list with bullet points

@@ -1,3 +1,46 @@
+2022-04-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/aria-grid-with-aria-owns-rows.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=239498
+        <rdar://problem/91961398>
+
+        Reviewed by Chris Fleizach and Tyler Wilcock.
+
+        Test: accessibility/aria-grid-with-aria-owns-rows.html.
+
+        When creating AXIsolatedObjects, we were passing the object ID of the
+        parent to the constructor in a parent to child traversal, and storing
+        that parent ID in the object. This assumed that all AX objects have a
+        parent-child reflexive relationship, i.e., if A is a child of B, B is
+        the parent of A. But that is not true in several cases in the
+        accessibility hierarchy.
+        One example where the parent-child relationship is not reflexive is for table cells, where a cell can be the child of an object with role column, but its parent is an object with role row.
+        Another case is when aria-owns is used.
+        This patch fixes the problem by letting the live object determine its
+        own parent, instead of having the traversal algorithm pass the parent ID
+        to the AXIsolatedObject constructor.
+        A previous attempt to fix this problem was made in
+        https://bugs.webkit.org/show_bug.cgi?id=236156.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::AXIsolatedObject):
+        (WebCore::AXIsolatedObject::create):
+        (WebCore::AXIsolatedObject::initializeProperties):
+        (WebCore::AXIsolatedObject::initializeAttributeData): Renamed.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::create):
+        (WebCore::AXIsolatedTree::generateSubtree):
+        (WebCore::AXIsolatedTree::nodeChangeForObject):
+        (WebCore::AXIsolatedTree::queueRemovalsAndUnresolvedChanges):
+        (WebCore::AXIsolatedTree::collectNodeChangesForSubtree):
+        (WebCore::AXIsolatedTree::updateNode):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::parentIDForObject): Deleted.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm:
+        (WebCore::AXIsolatedObject::initializePlatformProperties):
+
 2022-04-22  Alan Bujtas  <zalan@apple.com>
 
         Book content is clipped at page boundary when displaying list with bullet points

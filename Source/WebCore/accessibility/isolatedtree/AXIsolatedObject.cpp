@@ -38,23 +38,28 @@
 
 namespace WebCore {
 
-AXIsolatedObject::AXIsolatedObject(AXCoreObject& object, AXIsolatedTree* tree, AXID parentID)
+AXIsolatedObject::AXIsolatedObject(AXCoreObject& axObject, AXIsolatedTree* tree)
     : m_cachedTree(tree)
-    , m_parentID(parentID)
-    , m_id(object.objectID())
+    , m_id(axObject.objectID())
 {
     ASSERT(isMainThread());
-    if (m_id.isValid())
-        initializeAttributeData(object, !parentID.isValid());
-    else {
+    ASSERT(is<AccessibilityObject>(axObject));
+
+    auto* axParent = axObject.parentObjectUnignored();
+    m_parentID = axParent ? axParent->objectID() : AXID();
+
+    if (m_id.isValid()) {
+        auto isRoot = !axParent && axObject.isScrollView() ? IsRoot::Yes : IsRoot::No;
+        initializeProperties(axObject, isRoot);
+    } else {
         // Should never happen under normal circumstances.
         ASSERT_NOT_REACHED();
     }
 }
 
-Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, AXIsolatedTree* tree, AXID parentID)
+Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, AXIsolatedTree* tree)
 {
-    return adoptRef(*new AXIsolatedObject(object, tree, parentID));
+    return adoptRef(*new AXIsolatedObject(object, tree));
 }
 
 AXIsolatedObject::~AXIsolatedObject()
@@ -67,7 +72,7 @@ void AXIsolatedObject::init()
     ASSERT_NOT_REACHED();
 }
 
-void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool isRoot)
+void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isRoot)
 {
     ASSERT(is<AccessibilityObject>(coreObject));
     auto& object = downcast<AccessibilityObject>(coreObject);
@@ -408,7 +413,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
         setMathscripts(AXPropertyName::MathPostscripts, object);
     }
 
-    if (isRoot) {
+    if (isRoot == IsRoot::Yes) {
         setObjectProperty(AXPropertyName::WebArea, object.webAreaObject());
         setProperty(AXPropertyName::SessionID, object.sessionID().isolatedCopy());
         setProperty(AXPropertyName::DocumentURI, object.documentURI().isolatedCopy());
