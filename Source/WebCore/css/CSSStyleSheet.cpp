@@ -92,6 +92,9 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, CSSImportRule* 
     : m_contents(WTFMove(contents))
     , m_ownerRule(ownerRule)
 {
+    if (auto* parent = parentStyleSheet())
+        m_styleScope = parent->styleScope();
+
     m_contents->registerClient(this);
 }
 
@@ -99,6 +102,7 @@ CSSStyleSheet::CSSStyleSheet(Ref<StyleSheetContents>&& contents, Node& ownerNode
     : m_contents(WTFMove(contents))
     , m_isInlineStylesheet(isInlineStylesheet)
     , m_isOriginClean(isOriginClean)
+    , m_styleScope(Style::Scope::forNode(ownerNode))
     , m_ownerNode(&ownerNode)
     , m_startPosition(startPosition)
 {
@@ -379,10 +383,7 @@ Document* CSSStyleSheet::ownerDocument() const
 
 Style::Scope* CSSStyleSheet::styleScope()
 {
-    auto* ownerNode = rootStyleSheet().ownerNode();
-    if (!ownerNode)
-        return nullptr;
-    return &Style::Scope::forNode(*ownerNode);
+    return m_styleScope.get();
 }
 
 void CSSStyleSheet::clearChildRuleCSSOMWrappers()

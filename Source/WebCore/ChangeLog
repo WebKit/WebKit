@@ -1,3 +1,23 @@
+2022-04-22  Brandon Stewart  <brandonstewart@apple.com>
+
+        Store StyleScope during CSSStyleSheet Creation
+        https://bugs.webkit.org/show_bug.cgi?id=239659
+
+        Reviewed by Antti Koivisto.
+
+        To ensure that we can always access the style scope, we shall ensure we store the style scope
+        at CSSStyleSheet creation time. It was possible before that a style sheet could become disconnected
+        and then a rule would later be mutated. This resulted in the unfortunate side effect of being unable to find
+        the style scope.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::CSSStyleSheet):
+        (WebCore::CSSStyleSheet::styleScope):
+        * css/CSSStyleSheet.h:
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::collectResolverScopes):
+        * style/StyleScope.h:
+
 2022-04-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] BoxTree should be able to build non-inline content tree

@@ -26,6 +26,7 @@
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/TextPosition.h>
 
@@ -147,6 +148,7 @@ private:
     std::optional<bool> m_isOriginClean;
     String m_title;
     RefPtr<MediaQuerySet> m_mediaQueries;
+    WeakPtr<Style::Scope> m_styleScope;
 
     Node* m_ownerNode { nullptr };
     CSSImportRule* m_ownerRule { nullptr };
