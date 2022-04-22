@@ -1,39 +1,36 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
+<body>
 
-<a id="button1" tabindex="0" class="button" href="#" aria-haspopup="true" role="button">Options</a>
-<span id="button2" class="button" tabindex="0" role="button" aria-haspopup="true">Options</span>
+<div id="content">
+<a id="button1" class="button" href="#" aria-haspopup="true" role="button">Options</a>
+<span id="button2" class="button" role="button" aria-haspopup="true">Options</span>
 
-<button id="button3" type="button" aria-haspopup="true">Options</button>
-<input id="button4" type="button" aria-haspopup="true" value="Options">
-
-
-<p id="description"></p>
-<div id="console"></div>
+<button id="button3" type="button" class="button" aria-haspopup="true">Options</button>
+<input id="button4" type="button" class="button" aria-haspopup="true" value="Options">
+</div>
 
 <script>
-    description("This tests that native style buttons with aria-haspopup appear as popup buttons.");
-    
     if (window.accessibilityController) {
+        let output = "This tests that native style buttons with aria-haspopup appear as popup buttons.\n";
 
-        for (var k = 1; k < 5; k++) {
-
-           document.getElementById("button" + k).focus();
-           var button = accessibilityController.focusedElement;
-           shouldBe("button.role", "'AXRole: AXPopUpButton'");        
-           shouldBe("button.title", "'AXTitle: Options'");        
+        var button;
+        document.querySelectorAll(".button").forEach(element => {
+           button = accessibilityController.accessibleElementById(element.id);
+           output += expect("button.role", "'AXRole: AXPopUpButton'");
+           output += expect("button.title", "'AXTitle: Options'");
 
            // Verify that the title is not duplicated as the AXValue
-           shouldBe("button.stringValue", "'AXValue: '");        
-        }
-    }
-    
-</script>
+           output += expect("button.stringValue", "'AXValue: '");
+        });
 
-<script src="../../resources/js-test-post.js"></script>
+        debug(output);
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
 </body>
 </html>

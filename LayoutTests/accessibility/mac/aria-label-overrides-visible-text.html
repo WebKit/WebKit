@@ -1,27 +1,31 @@
 <!DOCTYPE HTML>
 <html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
 
-<a tabindex="0" id="link1" href="#">test1</a>
-<a tabindex="0" id="link2" href="#" aria-label="LINK">test1</a>
+<div id="content">
+<a id="link1" href="#">test1</a>
+<a id="link2" href="#" aria-label="LINK">test1</a>
+</div>
 
-<div id="console"></div>
 <script>
-description("This tests ensures that if aria-label is used, the AXTitle will not expose its children on Mac.")
+    if (window.testRunner && window.accessibilityController) {
+        let output = "This tests ensures that if aria-label is used, the AXTitle will not expose its children on Mac.\n";
 
-if (window.testRunner && window.accessibilityController) {
-   var link1 = accessibilityController.accessibleElementById("link1");
-   shouldBe("link1.description", "'AXDescription: '");
-   shouldBe("link1.title", "'AXTitle: test1'");
+        var link1 = accessibilityController.accessibleElementById("link1");
+        output += expect("link1.description", "'AXDescription: '");
+        output += expect("link1.title", "'AXTitle: test1'");
 
-   var link2 = accessibilityController.accessibleElementById("link2");
-   shouldBe("link2.description", "'AXDescription: LINK'");
-   shouldBe("link2.title", "'AXTitle: '");
-}
+        var link2 = accessibilityController.accessibleElementById("link2");
+        output += expect("link2.description", "'AXDescription: LINK'");
+        output += expect("link2.title", "'AXTitle: '");
 
+        debug(output);
+        document.getElementById("content").style.visibility = "hidden";
+    }
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
