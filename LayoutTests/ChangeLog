@@ -1,3 +1,19 @@
+2022-04-22  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Regression(r287684) Resources from the memory cache show empty content in Network, Sources, and Search tabs
+        https://bugs.webkit.org/show_bug.cgi?id=239667
+
+        Reviewed by Devin Rousso.
+
+        Add test steps to ensure that the resource has content, and that the base64Encoded value matches our
+        expectations. While only the memory cache was affected by this regression, add the test steps to both
+        the memory and disk caches to defend this functionality.
+
+        * http/tests/inspector/network/resource-response-source-memory-cache-expected.txt:
+        * http/tests/inspector/network/resource-response-source-memory-cache.html:
+        * http/tests/inspector/network/resource-response-source-disk-cache-expected.txt:
+        * http/tests/inspector/network/resource-response-source-disk-cache.html:
+
 2022-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Focusing scroll container before scrolling breaks smooth scrolling

@@ -1,3 +1,33 @@
+2022-04-22  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Regression(r287684) Resources from the memory cache show empty content in Network, Sources, and Search tabs
+        https://bugs.webkit.org/show_bug.cgi?id=239667
+
+        Reviewed by Devin Rousso.
+
+        Updated tests:
+        - http/tests/inspector/network/resource-response-source-disk-cache.html
+        - http/tests/inspector/network/resource-response-source-memory-cache.html
+
+        r287684 introduced a subtle bug when calling InspectorInstrumentation::didReceiveData. We rely
+        on there being a difference between real, but empty, data buffer and not having a data buffer,
+        but after r287684 an empty SharedBuffer would be passed in the later case. Instead, we should
+        continue to pass nullptr if there is no buffer so that InspectorNetworkAgent::didReceiveData
+        can distiguish between the two.
+
+        The bug is the result of having a non-nullptr `data` in `InspectorNetworkAgent::didReceiveData`,
+        which causes us to call `maybeAddResourceData`, which means by the time
+        `InspectorNetworkAgent::getResponseBody` is called, the ResourceData for the request will have
+        an empty, not non-existant, `content()`, which means we will return the empty content instead,
+        since we believe the response had actual content.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveDataImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveData):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveData):
+
 2022-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Focusing scroll container before scrolling breaks smooth scrolling
