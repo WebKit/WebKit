@@ -3496,7 +3496,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         auto item = navigation->reloadItem() ? navigation->reloadItem() : navigation->targetItem();
         std::optional<SandboxExtension::Handle> optionalHandle;
         if (policyAction == PolicyAction::Use && item) {
-            URL fullURL { URL(), item->url() };
+            URL fullURL { item->url() };
             if (fullURL.protocolIs("file"_s)) {
                 SandboxExtension::Handle sandboxExtensionHandle;
                 maybeInitializeSandboxExtensionHandle(processForNavigation.get(), fullURL, item->resourceDirectoryURL(), sandboxExtensionHandle);
