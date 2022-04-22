@@ -976,6 +976,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/InlineRect.h
 
+    layout/integration/flex/LayoutIntegrationFlexLayout.h
+
     layout/integration/inline/InlineIteratorBox.h
     layout/integration/inline/InlineIteratorBoxLegacyPath.h
     layout/integration/inline/InlineIteratorBoxModernPath.h

@@ -1,5 +1,31 @@
 2022-04-22  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][Integration] Add blank LayoutIntegration::FlexLayout
+        https://bugs.webkit.org/show_bug.cgi?id=239663
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for adding flex formatting context integration.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/integration/flex/LayoutIntegrationFlexLayout.cpp: Added.
+        (WebCore::LayoutIntegration::FlexLayout::FlexLayout):
+        (WebCore::LayoutIntegration::FlexLayout::updateFormattingRootGeometryAndInvalidate):
+        (WebCore::LayoutIntegration::FlexLayout::updateFlexItemDimensions):
+        (WebCore::LayoutIntegration::FlexLayout::updateStyle):
+        (WebCore::LayoutIntegration::FlexLayout::computeIntrinsicWidthConstraints):
+        (WebCore::LayoutIntegration::FlexLayout::layout):
+        (WebCore::LayoutIntegration::FlexLayout::paint):
+        (WebCore::LayoutIntegration::FlexLayout::hitTest):
+        (WebCore::LayoutIntegration::FlexLayout::collectOverflow):
+        (WebCore::LayoutIntegration::FlexLayout::contentLogicalHeight const):
+        * layout/integration/flex/LayoutIntegrationFlexLayout.h: Added.
+
+2022-04-22  Alan Bujtas  <zalan@apple.com>
+
         [LFC][Integration] Add FlexFormattingContextIntegrationEnabled setting
         https://bugs.webkit.org/show_bug.cgi?id=239654
 
