@@ -1,5 +1,16 @@
 2022-04-22  Karl Rackler  <rackler@apple.com>
 
+        [ macOS wk2 arm64 ] imported/w3c/web-platform-tests/infrastructure/reftest-wait.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=230488
+
+        Unreviewed test gardening. 
+
+        Updated text expectation in include Monterey wk2 arm64
+
+        * platform/mac-wk2/TestExpectations:
+
+2022-04-22  Karl Rackler  <rackler@apple.com>
+
         [ macOS Release arm64 ] imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html is a flakey text failure
         https://bugs.webkit.org/show_bug.cgi?id=223472
 
