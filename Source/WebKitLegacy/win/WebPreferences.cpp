@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -257,7 +257,6 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAllowUniversalAccessFromFileURLsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitAllowFileAccessFromFileURLsPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaScriptCanAccessClipboardPreferenceKey), kCFBooleanFalse);
-    CFDictionaryAddValue(defaults.get(), CFSTR(WebKitXSSAuditorEnabledPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitFrameFlatteningEnabledPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey), kCFBooleanTrue);
     CFDictionaryAddValue(defaults.get(), CFSTR(WebKitPluginsEnabledPreferenceKey), kCFBooleanTrue);
@@ -1027,13 +1026,13 @@ HRESULT WebPreferences::isXSSAuditorEnabled(_Out_ BOOL* enabled)
 {
     if (!enabled)
         return E_POINTER;
-    *enabled = boolValueForKey(WebKitXSSAuditorEnabledPreferenceKey);
+    *enabled = FALSE;
     return S_OK;
 }
 
 HRESULT WebPreferences::setXSSAuditorEnabled(BOOL enabled)
 {
-    setBoolValue(WebKitXSSAuditorEnabledPreferenceKey, enabled);
+    UNUSED_PARAM(enabled);
     return S_OK;
 }
 
