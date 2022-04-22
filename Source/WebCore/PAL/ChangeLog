@@ -1,3 +1,13 @@
+2022-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        Adjust SPI headers to fix build with non-internal SDK
+        https://bugs.webkit.org/show_bug.cgi?id=239626
+
+        Reviewed by Chris Dumez.
+
+        * pal/spi/cocoa/PassKitSPI.h:
+        * pal/spi/mac/ScreenCaptureKitSPI.h:
+
 2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] WebKit and WebKitLegacy shouldn't need to know about WebGPU.framework

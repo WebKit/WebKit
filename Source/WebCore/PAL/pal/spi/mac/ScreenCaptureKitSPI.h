@@ -45,18 +45,20 @@ typedef NS_ENUM(NSInteger, SCContentFilterType) {
     SCContentFilterTypeClientShouldImplementDefault
 };
 
-@interface SCContentFilter ()
-@property (nonatomic, strong) SCWindow *window;
-@property (nonatomic, strong) SCDisplay *display;
-@property (nonatomic, assign) SCContentFilterType type;
+@interface SCContentFilterDesktopIndependentWindowInformation : NSObject
+@property (nonatomic, readonly) SCWindow *window;
 @end
 
 @interface SCContentFilterDisplayInformation : NSObject
 @property (nonatomic, readonly) SCDisplay *display;
 @end
 
-@interface SCContentFilterDesktopIndependentWindowInformation : NSObject
-@property (nonatomic, readonly) SCWindow *window;
+@interface SCContentFilter ()
+@property (nonatomic, strong) SCWindow *window;
+@property (nonatomic, strong) SCDisplay *display;
+@property (nonatomic, assign) SCContentFilterType type;
+@property (nullable, nonatomic, readonly) SCContentFilterDesktopIndependentWindowInformation *desktopIndependentWindowInfo;
+@property (nullable, nonatomic, readonly) SCContentFilterDisplayInformation *displayInfo;
 @end
 
 @class SCContentSharingSession;
