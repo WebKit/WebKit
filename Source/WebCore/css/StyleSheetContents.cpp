@@ -81,6 +81,7 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     , m_ownerRule(nullptr)
     , m_originalURL(o.m_originalURL)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
+    , m_layerRulesBeforeImportRules(o.m_layerRulesBeforeImportRules.size())
     , m_importRules(o.m_importRules.size())
     , m_namespaceRules(o.m_namespaceRules.size())
     , m_childRules(o.m_childRules.size())
@@ -97,7 +98,10 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     // FIXME: Copy import rules.
     ASSERT(o.m_importRules.isEmpty());
 
-    for (unsigned i = 0; i < m_childRules.size(); ++i)
+    for (size_t i = 0; i < m_layerRulesBeforeImportRules.size(); ++i)
+        m_layerRulesBeforeImportRules[i] = o.m_layerRulesBeforeImportRules[i]->copy();
+
+    for (size_t i = 0; i < m_childRules.size(); ++i)
         m_childRules[i] = o.m_childRules[i]->copy();
 }
 
