@@ -1,3 +1,16 @@
+2022-04-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] `-selectWordForReplacement` should select dictation alternatives that span multiple words
+        https://bugs.webkit.org/show_bug.cgi?id=239622
+        rdar://91416535
+
+        Reviewed by Aditya Keerthi.
+
+        Add an API test to exercise the change.
+
+        * TestWebKitAPI/Tests/ios/SelectionByWord.mm:
+        (TEST):
+
 2022-04-21  John Cunningham  <johncunningham@apple.com>
 
         Use GCGLSpanTuple to pass buffer parameters to multidraw calls.

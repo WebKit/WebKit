@@ -1,3 +1,51 @@
+2022-04-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] `-selectWordForReplacement` should select dictation alternatives that span multiple words
+        https://bugs.webkit.org/show_bug.cgi?id=239622
+        rdar://91416535
+
+        Reviewed by Aditya Keerthi.
+
+        Currently, `-selectWordForReplacement` (which is invoked by UIKit when the tapping on spelling corrections and
+        dictation alternatives to reveal the callout bar with text suggestions) handles multi-word dictation ranges by
+        only selecting one of the words (i.e., whichever word is closest to the tapped location). This makes it
+        impossible to handle dictation ranges that span multiple words, since only part of the range is replaced with
+        the chosen alternative.
+
+        To address this, instead of using the existing `extendSelection` method (which is still exercised when tapping
+        the "Select" action in the callout bar with a caret selection), we add `extendSelectionForReplacement`, which
+        extends the selection to include any dictation alternative range that encompasses the selection (and otherwise
+        falls back to selecting the current word).
+
+        Test: SelectionTests.SelectWordForReplacementWithDictationAlternative
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectWordForReplacement]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::extendSelectionForReplacement):
+
+        Add a new IPC message, `WebPage::ExtendSelectionForReplacement`, and use it to implement `-[WKContentView
+        selectWordForReplacement]`.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::extendSelectionForReplacement):
+
+        Add logic to select the enclosing dictation alternative marker range (if it exists), or the current word at the
+        start of the selection if there is no enclosing marker range. Note that we first grab a Vector of all the marker
+        ranges instead of creating them as we iterate through the list of `RenderedDocumentMarker*`, since creating
+        visible position ranges from each marker range triggers layout, and each `RenderedDocumentMarker*` is not
+        ref-counted, so it's possible that a reentrant call to update the document marker controller during layout could
+        destroy the next `RenderedDocumentMarker*` during iteration.
+
+        (WebKit::WebPage::extendSelection):
+        (WebKit::WebPage::setSelectedRangeDispatchingSyntheticMouseEventsIfNeeded):
+
+        Pull out logic for dispatching synthetic mouse events when selecting text into a separate helper method, which
+        is now called from both `extendSelection` and `extendSelectionForReplacement`.
+
 2022-04-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] Make WebKitSettings XSS auditor functions no-op

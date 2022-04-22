@@ -55,6 +55,24 @@ TEST(SelectionTests, ByWordAtEndOfDocument)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().toString()"], "Three");
 }
 
+TEST(SelectionTests, SelectWordForReplacementWithDictationAlternative)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)]);
+    [webView synchronouslyLoadTestPageNamed:@"editable-responsive-body"];
+
+    auto contentView = [webView textInputContentView];
+    [contentView selectAll:nil];
+    [contentView insertText:@"foo bar"];
+    [webView waitForNextPresentationUpdate];
+
+    auto alternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:@"foo bar" alternativeStrings:@[ @"baz" ]]);
+    [[webView textInputContentView] addTextAlternatives:alternatives.get()];
+    [[webView textInputContentView] selectWordForReplacement];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("foo bar", [webView selectedText]);
+}
+
 @interface SelectionChangeListener : NSObject <UITextInputDelegate>
 @property (nonatomic) dispatch_block_t selectionWillChangeHandler;
 @property (nonatomic) dispatch_block_t selectionDidChangeHandler;
