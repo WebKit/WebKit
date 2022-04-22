@@ -33,6 +33,7 @@
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
 #include "LayoutReplacedBox.h"
+#include "RenderBlock.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderDetailsMarker.h"
@@ -62,32 +63,35 @@ static RenderStyle rootBoxStyle(const RenderStyle& style)
     return clonedStyle;
 }
 
-static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlockFlow& root)
+static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlock& rootRenderer)
 {
 #if CAN_USE_FIRST_LINE_STYLE_RESOLVE
-    auto& firstLineStyle = root.firstLineStyle();
-    if (root.style() == firstLineStyle)
+    auto& firstLineStyle = rootRenderer.firstLineStyle();
+    if (rootRenderer.style() == firstLineStyle)
         return { };
     auto clonedStyle = RenderStyle::clonePtr(firstLineStyle);
     clonedStyle->setEffectiveDisplay(DisplayType::Block);
     return clonedStyle;
 #else
-    UNUSED_PARAM(root);
+    UNUSED_PARAM(rootRenderer);
     return { };
 #endif
 }
 
-BoxTree::BoxTree(RenderBlockFlow& flow)
-    : m_flow(flow)
-    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, rootBoxStyle(flow.style()), rootBoxFirstLineStyle(flow))
+BoxTree::BoxTree(RenderBlock& rootRenderer)
+    : m_rootRenderer(rootRenderer)
+    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, rootBoxStyle(rootRenderer.style()), rootBoxFirstLineStyle(rootRenderer))
 {
-    if (flow.isAnonymous())
+    if (rootRenderer.isAnonymous())
         m_root.setIsAnonymous();
 
-    buildTree();
+    if (is<RenderBlockFlow>(rootRenderer))
+        buildTreeForInlineContent();
+    else
+        ASSERT_NOT_IMPLEMENTED_YET();
 }
 
-void BoxTree::buildTree()
+void BoxTree::buildTreeForInlineContent()
 {
     auto createChildBox = [&](RenderObject& childRenderer) -> std::unique_ptr<Layout::Box> {
         std::unique_ptr<RenderStyle> firstLineStyle;
@@ -162,7 +166,7 @@ void BoxTree::buildTree()
         return nullptr;
     };
 
-    for (auto walker = InlineWalker(m_flow); !walker.atEnd(); walker.advance()) {
+    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(m_rootRenderer)); !walker.atEnd(); walker.advance()) {
         auto& childRenderer = *walker.current();
         auto childBox = createChildBox(childRenderer);
         appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(childBox)), childRenderer);
@@ -215,7 +219,7 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
 
 Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer)
 {
-    if (&renderer == &m_flow)
+    if (&renderer == &m_rootRenderer)
         return m_root;
 
     if (m_boxes.size() <= smallTreeThreshold) {
@@ -237,7 +241,7 @@ const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) c
 RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
 {
     if (&box == &m_root)
-        return m_flow;
+        return m_rootRenderer;
 
     if (m_boxes.size() <= smallTreeThreshold) {
         auto index = m_boxes.findIf([&](auto& entry) {

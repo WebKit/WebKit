@@ -116,8 +116,8 @@ public:
     InlineIterator::LineBoxIterator lastLineBox() const;
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
-    const RenderBlockFlow& flow() const { return m_boxTree.flow(); }
-    RenderBlockFlow& flow() { return m_boxTree.flow(); }
+    const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
+    RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
 
     static void releaseCaches(RenderView&);
 
