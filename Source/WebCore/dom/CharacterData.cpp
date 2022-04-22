@@ -56,13 +56,12 @@ void CharacterData::setData(const String& data)
 
     if (m_data == nonNullData && canUseSetDataOptimization(*this)) {
         document().textRemoved(*this, 0, oldLength);
-        if (document().frame())
-            document().frame()->selection().textWasReplaced(this, 0, oldLength, oldLength);
+        if (auto* frame = document().frame())
+            frame->selection().textWasReplaced(*this, 0, oldLength, oldLength);
         return;
     }
 
-    Ref<CharacterData> protectedThis(*this);
-
+    Ref protectedThis { *this };
     setDataAndUpdate(nonNullData, 0, oldLength, nonNullData.length());
 }
 
@@ -186,7 +185,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 {
     auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::API);
 
-    String oldData = m_data;
+    String oldData = WTFMove(m_data);
     {
         std::optional<Style::ChildChangeInvalidation> styleInvalidation;
         if (auto* parent = parentNode())
@@ -203,12 +202,11 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     ASSERT(!renderer() || is<Text>(*this));
     if (auto text = dynamicDowncast<Text>(*this))
         text->updateRendererAfterContentChange(offsetOfReplacedData, oldLength);
-
-    if (auto processingIntruction = dynamicDowncast<ProcessingInstruction>(*this))
+    else if (auto processingIntruction = dynamicDowncast<ProcessingInstruction>(*this))
         processingIntruction->checkStyleSheet();
 
-    if (document().frame())
-        document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
+    if (auto* frame = document().frame())
+        frame->selection().textWasReplaced(*this, offsetOfReplacedData, oldLength, newLength);
 
     notifyParentAfterChange(childChange);
 

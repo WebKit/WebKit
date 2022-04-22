@@ -631,9 +631,9 @@ void FrameSelection::respondToNodeModification(Node& node, bool anchorRemoved, b
         setSelection(VisibleSelection(), DoNotSetFocus);
 }
 
-static void updatePositionAfterAdoptingTextReplacement(Position& position, CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
+static void updatePositionAfterAdoptingTextReplacement(Position& position, CharacterData& node, unsigned offset, unsigned oldLength, unsigned newLength)
 {
-    if (!position.anchorNode() || position.anchorNode() != node || position.anchorType() != Position::PositionIsOffsetInAnchor)
+    if (position.anchorNode() != &node || position.anchorType() != Position::PositionIsOffsetInAnchor)
         return;
 
     // See: http://www.w3.org/TR/DOM-Level-2-Traversal-Range/ranges.html#Level-2-Range-Mutation
@@ -648,13 +648,12 @@ static void updatePositionAfterAdoptingTextReplacement(Position& position, Chara
     if (positionOffset > offset + oldLength)
         position.moveToOffset(positionOffset - oldLength + newLength);
 
-    ASSERT(static_cast<unsigned>(position.offsetInContainerNode()) <= node->length());
+    ASSERT(static_cast<unsigned>(position.offsetInContainerNode()) <= node.length());
 }
 
-void FrameSelection::textWasReplaced(CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
+void FrameSelection::textWasReplaced(CharacterData& node, unsigned offset, unsigned oldLength, unsigned newLength)
 {
-    // The fragment check is a performance optimization. See http://trac.webkit.org/changeset/30062.
-    if (isNone() || !node || !node->isConnected())
+    if (isNone() || !node.isConnected())
         return;
 
     Position base = m_selection.base();

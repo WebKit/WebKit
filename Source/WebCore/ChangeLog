@@ -1,5 +1,40 @@
 2022-04-21  Chris Dumez  <cdumez@apple.com>
 
+        Simplify FrameSelection::textWasReplaced() and callers
+        https://bugs.webkit.org/show_bug.cgi?id=239620
+
+        Reviewed by Geoffrey Garen.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData):
+        - Cache document().frame()
+        - Call textWasReplaced() with *this instead of this
+        - Use modern template deduction for Ref<>.
+
+        (WebCore::CharacterData::setDataAndUpdate):
+        - Use WTFMove() for m_data to avoid ref-counting churn. We're about to overwrite
+          m_data anyway.
+        - Use `else if` for the ProcessingInstruction branch instead of `if` to avoid this
+          check in the common case where |this| is a Text node. A Text node cannot be a
+          ProcessingInstruction node.
+        - Cache document().frame()
+        - Call textWasReplaced() with *this instead of this
+
+        * editing/FrameSelection.cpp:
+        (WebCore::updatePositionAfterAdoptingTextReplacement):
+        - Pass node by reference now that the caller now has a reference instead of a pointer
+        - Drop !position.anchorNode() check. It is not necessary as the position.anchorNode() != &node
+          check would already be true if the anchorNode were null.
+
+        (WebCore::FrameSelection::textWasReplaced):
+        - Drop outdated comment about a fragment check since there is no such check anymore
+        - Pass node by reference instead of pointer as all call sites have a non-null pointer
+        - Drop null check for node that is no longer necessary
+
+        * editing/FrameSelection.h:
+
+2022-04-21  Chris Dumez  <cdumez@apple.com>
+
         Adopt RobinHoodHashMap / RobinHoodHashSet more broadly in WebCore
         https://bugs.webkit.org/show_bug.cgi?id=239576
 
