@@ -1,3 +1,14 @@
+2022-04-22  Mark Lam  <mark.lam@apple.com>
+
+        Apply purifyNaN in more places.
+        https://bugs.webkit.org/show_bug.cgi?id=239619
+        <rdar://problem/91924480>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::toJSValue):
+
 2022-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] PropertyTable should have compact mode

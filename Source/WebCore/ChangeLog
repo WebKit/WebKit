@@ -1,3 +1,20 @@
+2022-04-22  Mark Lam  <mark.lam@apple.com>
+
+        Apply purifyNaN in more places.
+        https://bugs.webkit.org/show_bug.cgi?id=239619
+        <rdar://problem/91924480>
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal):
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertObjcValueToValue):
+
 2022-04-22  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/aria-grid-with-aria-owns-rows.html in isolated tree mode.
