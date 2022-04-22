@@ -1,3 +1,19 @@
+2022-04-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Make WebKitSettings XSS auditor functions no-op
+        https://bugs.webkit.org/show_bug.cgi?id=239651
+
+        Reviewed by Adrian Perez de Castro.
+
+        With the XSS auditor feature being deprecated and removed, and the
+        preference entries removed in r293199, the GLib API for this feature
+        has to be adjusted as well. In both getter and setter, a warning is
+        printed out when invoked.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_get_enable_xss_auditor):
+        (webkit_settings_set_enable_xss_auditor):
+
 2022-04-21  John Cunningham  <johncunningham@apple.com>
 
         Use GCGLSpanTuple to pass buffer parameters to multidraw calls.

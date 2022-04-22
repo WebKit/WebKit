@@ -1821,7 +1821,9 @@ gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->xssAuditorEnabled();
+    g_warning("webkit_settings_get_enable_xss_auditor is deprecated and always returns FALSE. XSS auditor is no longer supported.");
+
+    return FALSE;
 }
 
 /**
@@ -1835,13 +1837,8 @@ void webkit_settings_set_enable_xss_auditor(WebKitSettings* settings, gboolean e
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->xssAuditorEnabled();
-    if (currentValue == enabled)
-        return;
-
-    priv->preferences->setXSSAuditorEnabled(enabled);
-    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_XSS_AUDITOR]);
+    if (enabled)
+        g_warning("webkit_settings_set_enable_xss_auditor is deprecated and does nothing. XSS auditor is no longer supported.");
 }
 
 /**
