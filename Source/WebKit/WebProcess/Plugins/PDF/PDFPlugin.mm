@@ -673,9 +673,9 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame, HTMLPlugInElement* pluginElement)
 
     m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:pluginElement]);
     [m_accessibilityObject setPdfLayerController:m_pdfLayerController.get()];
-    if (isFullFrame)
+    if (isFullFrame && frame.isMainFrame())
         [m_accessibilityObject setParent:frame.page()->accessibilityRemoteObject()];
-    // If the plugin is not full-frame, we'll need to set the parent later after the AXObjectCache for the document has been initialized.
+    // If this is not a main-frame (e.g. it originated from an iframe) full-frame plugin, we'll need to set the parent later after the AXObjectCache has been initialized.
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
