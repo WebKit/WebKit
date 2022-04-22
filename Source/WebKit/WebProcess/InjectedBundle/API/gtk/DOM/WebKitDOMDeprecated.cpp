@@ -156,7 +156,8 @@ WebKitDOMText* webkit_dom_text_replace_whole_text(WebKitDOMText* self, const gch
     g_return_val_if_fail(!error || !*error, nullptr);
 
     WebCore::JSMainThreadNullState state;
-    return WebKit::kit(WebKit::core(self)->replaceWholeText(WTF::String::fromUTF8(content)).get());
+    RefPtr { WebKit::core(self) }->replaceWholeText(WTF::String::fromUTF8(content));
+    return self;
 }
 
 gboolean webkit_dom_html_input_element_get_capture(WebKitDOMHTMLInputElement* self)

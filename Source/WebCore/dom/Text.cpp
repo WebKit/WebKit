@@ -116,27 +116,24 @@ String Text::wholeText() const
     return result.toString();
 }
 
-RefPtr<Text> Text::replaceWholeText(const String& newText)
+void Text::replaceWholeText(const String& newText)
 {
-    // Remove all adjacent text nodes, and replace the contents of this one.
-
     // Protect startText and endText against mutation event handlers removing the last ref
-    RefPtr<Text> startText = const_cast<Text*>(earliestLogicallyAdjacentTextNode(this));
-    RefPtr<Text> endText = const_cast<Text*>(latestLogicallyAdjacentTextNode(this));
+    RefPtr startText = const_cast<Text*>(earliestLogicallyAdjacentTextNode(this));
+    RefPtr endText = const_cast<Text*>(latestLogicallyAdjacentTextNode(this));
 
-    RefPtr<Text> protectedThis(this); // Mutation event handlers could cause our last ref to go away
-    RefPtr<ContainerNode> parent = parentNode(); // Protect against mutation handlers moving this node during traversal
-    for (RefPtr<Node> n = startText; n && n != this && n->isTextNode() && n->parentNode() == parent;) {
-        Ref<Node> nodeToRemove(n.releaseNonNull());
-        n = nodeToRemove->nextSibling();
+    RefPtr parent = parentNode(); // Protect against mutation handlers moving this node during traversal
+    for (RefPtr<Node> node = WTFMove(startText); is<Text>(node) && node != this && node->parentNode() == parent;) {
+        auto nodeToRemove = node.releaseNonNull();
+        node = nodeToRemove->nextSibling();
         parent->removeChild(nodeToRemove);
     }
 
     if (this != endText) {
-        Node* onePastEndText = endText->nextSibling();
-        for (RefPtr<Node> n = nextSibling(); n && n != onePastEndText && n->isTextNode() && n->parentNode() == parent;) {
-            Ref<Node> nodeToRemove(n.releaseNonNull());
-            n = nodeToRemove->nextSibling();
+        RefPtr nodePastEndText = endText->nextSibling();
+        for (RefPtr node = nextSibling(); is<Text>(node) && node != nodePastEndText && node->parentNode() == parent;) {
+            auto nodeToRemove = node.releaseNonNull();
+            node = nodeToRemove->nextSibling();
             parent->removeChild(nodeToRemove);
         }
     }
@@ -144,11 +141,10 @@ RefPtr<Text> Text::replaceWholeText(const String& newText)
     if (newText.isEmpty()) {
         if (parent && parentNode() == parent)
             parent->removeChild(*this);
-        return nullptr;
+        return;
     }
 
     setData(newText);
-    return protectedThis;
 }
 
 String Text::nodeName() const

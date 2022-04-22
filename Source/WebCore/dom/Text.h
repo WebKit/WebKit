@@ -45,7 +45,7 @@ public:
     // DOM Level 3: http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1312295772
 
     WEBCORE_EXPORT String wholeText() const;
-    WEBCORE_EXPORT RefPtr<Text> replaceWholeText(const String&);
+    WEBCORE_EXPORT void replaceWholeText(const String&);
     
     RenderPtr<RenderText> createTextRenderer(const RenderStyle&);
     
