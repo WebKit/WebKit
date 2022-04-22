@@ -27,6 +27,7 @@
 
 #include "ArgumentCoder.h"
 #include "ArrayReference.h"
+#include "ArrayReferenceTuple.h"
 #include <utility>
 #include <variant>
 #include <wtf/Box.h>
@@ -88,6 +89,85 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
         if (!data)
             return std::nullopt;
         return Span<T, Extent>(reinterpret_cast<const T*>(data), static_cast<size_t>(*size));
+    }
+};
+
+template<typename T0, typename T1> struct ArgumentCoder<ArrayReferenceTuple<T0, T1>> {
+    using ArrayReferenceTupleType = ArrayReferenceTuple<T0, T1>;
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const ArrayReferenceTupleType& arrayReference)
+    {
+        encoder << static_cast<uint64_t>(arrayReference.size());
+        auto size = arrayReference.size();
+        if (UNLIKELY(!size))
+            return;
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<0>()), size * sizeof(T0), alignof(T0));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<1>()), size * sizeof(T1), alignof(T1));
+    }
+    static std::optional<ArrayReferenceTupleType> decode(Decoder& decoder)
+    {
+        uint64_t size;
+        if (UNLIKELY(!decoder.decode(size)))
+            return std::nullopt;
+        if (UNLIKELY(!size))
+            return ArrayReferenceTupleType { };
+
+        auto dataSize = CheckedSize { size } * sizeof(T0);
+        if (UNLIKELY(dataSize.hasOverflowed()))
+            return std::nullopt;
+        const uint8_t* data0 = decoder.decodeFixedLengthReference(dataSize, alignof(T0));
+        if (UNLIKELY(!data0))
+            return std::nullopt;
+        dataSize = CheckedSize { size } * sizeof(T1);
+        if (UNLIKELY(dataSize.hasOverflowed()))
+            return std::nullopt;
+        const uint8_t* data1 = decoder.decodeFixedLengthReference(dataSize, alignof(T1));
+        if (UNLIKELY(!data1))
+            return std::nullopt;
+        return ArrayReferenceTupleType { reinterpret_cast<const T0*>(data0), reinterpret_cast<const T1*>(data1), static_cast<size_t>(size) };
+    }
+};
+
+template<typename T0, typename T1, typename T2> struct ArgumentCoder<ArrayReferenceTuple<T0, T1, T2>> {
+    using ArrayReferenceTupleType = ArrayReferenceTuple<T0, T1, T2>;
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const ArrayReferenceTupleType& arrayReference)
+    {
+        encoder << static_cast<uint64_t>(arrayReference.size());
+        auto size = arrayReference.size();
+        if (UNLIKELY(!size))
+            return;
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<0>()), size * sizeof(T0), alignof(T0));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<1>()), size * sizeof(T1), alignof(T1));
+        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(arrayReference.template data<2>()), size * sizeof(T2), alignof(T2));
+    }
+    static std::optional<ArrayReferenceTupleType> decode(Decoder& decoder)
+    {
+        uint64_t size;
+        if (UNLIKELY(!decoder.decode(size)))
+            return std::nullopt;
+        if (UNLIKELY(!size))
+            return ArrayReferenceTupleType { };
+
+        auto dataSize = CheckedSize { size } * sizeof(T0);
+        if (UNLIKELY(dataSize.hasOverflowed()))
+            return std::nullopt;
+        const uint8_t* data0 = decoder.decodeFixedLengthReference(dataSize, alignof(T0));
+        if (UNLIKELY(!data0))
+            return std::nullopt;
+        dataSize = CheckedSize { size } * sizeof(T1);
+        if (UNLIKELY(dataSize.hasOverflowed()))
+            return std::nullopt;
+        const uint8_t* data1 = decoder.decodeFixedLengthReference(dataSize, alignof(T1));
+        if (UNLIKELY(!data1))
+            return std::nullopt;
+        dataSize = CheckedSize { size } * sizeof(T2);
+        if (UNLIKELY(dataSize.hasOverflowed()))
+            return std::nullopt;
+        const uint8_t* data2 = decoder.decodeFixedLengthReference(dataSize, alignof(T2));
+        if (UNLIKELY(!data2))
+            return std::nullopt;
+        return ArrayReferenceTupleType { reinterpret_cast<const T0*>(data0), reinterpret_cast<const T1*>(data1), reinterpret_cast<const T2*>(data2), static_cast<size_t>(size) };
     }
 };
 

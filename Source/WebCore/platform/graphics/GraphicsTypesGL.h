@@ -193,3 +193,56 @@ GCGLSpan<T, Extent> makeGCGLSpan(T* data)
 {
     return GCGLSpan<T, Extent> { data };
 }
+
+template<typename... Types>
+struct GCGLSpanTuple;
+
+template<typename T0, typename T1>
+struct GCGLSpanTuple<T0, T1> {
+    GCGLSpanTuple(T0* data0_, T1* data1_, size_t bufSize_)
+        : bufSize(bufSize_)
+        , data0(data0_)
+        , data1(data1_)
+    {
+    }
+    template<typename U0, typename U1>
+    GCGLSpanTuple(const Vector<U0>& data0_, const Vector<U1>& data1_)
+        : bufSize(data0_.size())
+        , data0(data0_.data())
+        , data1(data1_.data())
+    {
+        ASSERT(data0_.size() == data1_.size());
+    }
+    const size_t bufSize;
+    T0* const data0;
+    T1* const data1;
+};
+
+template<typename T0, typename T1, typename T2>
+struct GCGLSpanTuple<T0, T1, T2> : public GCGLSpanTuple<T0, T1> {
+    GCGLSpanTuple(T0* data0_, T1* data1_, T2* data2_, size_t bufSize_)
+        : GCGLSpanTuple<T0, T1>(data0_, data1_, bufSize_)
+        , data2(data2_)
+    {
+    }
+    template<typename U0, typename U1, typename U2>
+    GCGLSpanTuple(const Vector<U0>& data0_, const Vector<U1>& data1_, const Vector<U2>& data2_)
+        : GCGLSpanTuple<T0, T1>(data0_, data1_)
+        , data2(data2_.data())
+    {
+        ASSERT(data2_.size() == data0_.size());
+    }
+    T2* const data2;
+};
+
+template<typename T0, typename T1>
+GCGLSpanTuple(T0*, T1*, size_t) -> GCGLSpanTuple<T0, T1>;
+
+template<typename T0, typename T1>
+GCGLSpanTuple(const Vector<T0>&, const Vector<T1>&) -> GCGLSpanTuple<const T0, const T1>;
+
+template<typename T0, typename T1, typename T2>
+GCGLSpanTuple(T0*, T1*, T2*, size_t) -> GCGLSpanTuple<T0, T1, T2>;
+
+template<typename T0, typename T1, typename T2>
+GCGLSpanTuple(const Vector<T0>&, const Vector<T1>&, const Vector<T2>&) -> GCGLSpanTuple<const T0, const T1, const T2>;

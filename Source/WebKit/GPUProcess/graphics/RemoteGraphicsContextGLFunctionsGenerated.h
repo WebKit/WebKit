@@ -1340,26 +1340,6 @@
         m_context->getInternalformativ(target, internalformat, pname, params);
         completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(params.data()), params.size()));
     }
-    void multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& firsts, IPC::ArrayReference<int32_t>&& counts, int32_t drawcount)
-    {
-        assertIsCurrent(workQueue());
-        m_context->multiDrawArraysANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLint*>(firsts.data()), firsts.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), drawcount);
-    }
-    void multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& firsts, IPC::ArrayReference<int32_t>&& counts, IPC::ArrayReference<int32_t>&& instanceCounts, int32_t drawcount)
-    {
-        assertIsCurrent(workQueue());
-        m_context->multiDrawArraysInstancedANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLint*>(firsts.data()), firsts.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(instanceCounts.data()), instanceCounts.size()), drawcount);
-    }
-    void multiDrawElementsANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& counts, uint32_t type, IPC::ArrayReference<int32_t>&& offsets, int32_t drawcount)
-    {
-        assertIsCurrent(workQueue());
-        m_context->multiDrawElementsANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), type, makeGCGLSpan(reinterpret_cast<const GCGLint*>(offsets.data()), offsets.size()), drawcount);
-    }
-    void multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReference<int32_t>&& counts, uint32_t type, IPC::ArrayReference<int32_t>&& offsets, IPC::ArrayReference<int32_t>&& instanceCounts, int32_t drawcount)
-    {
-        assertIsCurrent(workQueue());
-        m_context->multiDrawElementsInstancedANGLE(mode, makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(counts.data()), counts.size()), type, makeGCGLSpan(reinterpret_cast<const GCGLint*>(offsets.data()), offsets.size()), makeGCGLSpan(reinterpret_cast<const GCGLsizei*>(instanceCounts.data()), instanceCounts.size()), drawcount);
-    }
     void paintRenderingResultsToPixelBuffer(CompletionHandler<void(std::optional<WebCore::PixelBuffer>&&)>&& completionHandler)
     {
         std::optional<WebCore::PixelBuffer> returnValue = { };

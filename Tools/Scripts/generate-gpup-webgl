@@ -114,6 +114,10 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
     void ReadnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t> data) -> (IPC::ArrayReference<uint8_t> data) Synchronous
     void ReadnPixels1(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)
+    void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
+    void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
+    void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)
+    void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
 {}
 }}
 
@@ -224,7 +228,7 @@ class cpp_type_container(cpp_type):
     def is_span(self) -> bool:
         return self.container_name == "GCGLSpan"
     def is_dynamic_span(self) -> bool:
-        return self.container_name == "GCGLSpan" and self.arity is None
+        return (self.container_name == "GCGLSpan" and self.arity is None) or self.container_name == "GCGLSpanTuple"
     def get_container_name(self):
         return self.container_name
     def get_arity(self) -> Optional[int]:

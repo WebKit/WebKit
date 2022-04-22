@@ -1,3 +1,41 @@
+2022-04-21  John Cunningham  <johncunningham@apple.com>
+
+        Use GCGLSpanTuple to pass buffer parameters to multidraw calls.
+        https://bugs.webkit.org/show_bug.cgi?id=239154
+
+        Reviewed by Kimmo Kinnunen.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::WebCore::vectorCopyCast):
+        (WebKit::RemoteGraphicsContextGL::multiDrawArraysANGLE):
+        (WebKit::RemoteGraphicsContextGL::multiDrawArraysInstancedANGLE):
+        (WebKit::RemoteGraphicsContextGL::multiDrawElementsANGLE):
+        (WebKit::RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+        (getInternalformativ):
+        (multiDrawArraysANGLE): Deleted.
+        (multiDrawArraysInstancedANGLE): Deleted.
+        (multiDrawElementsANGLE): Deleted.
+        (multiDrawElementsInstancedANGLE): Deleted.
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/ArrayReferenceTuple.h: Added.
+        * Scripts/webkit/messages.py:
+        (class_template_headers):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::multiDrawArraysANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::multiDrawArraysInstancedANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::multiDrawElementsANGLE):
+        (WebKit::RemoteGraphicsContextGLProxy::multiDrawElementsInstancedANGLE):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::multiDrawArraysANGLE): Deleted.
+        (WebKit::RemoteGraphicsContextGLProxy::multiDrawArraysInstancedANGLE): Deleted.
+        (WebKit::RemoteGraphicsContextGLProxy::multiDrawElementsANGLE): Deleted.
+        (WebKit::RemoteGraphicsContextGLProxy::multiDrawElementsInstancedANGLE): Deleted.
+
 2022-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add string concatenate adapter for UUID

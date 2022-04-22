@@ -34,11 +34,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLMultiDraw);
 
-static GCGLSpan<const int> makeSpanWithOffset(WebGLMultiDraw::Int32List& list, GCGLuint offset)
-{
-    return makeGCGLSpan(list.data() + offset, list.length() - offset);
-}
-
 WebGLMultiDraw::WebGLMultiDraw(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
@@ -70,7 +65,7 @@ void WebGLMultiDraw::multiDrawArraysWEBGL(GCGLenum mode, Int32List firstsList, G
         return;
     }
 
-    m_context->graphicsContextGL()->multiDrawArraysANGLE(mode, makeSpanWithOffset(firstsList, firstsOffset), makeSpanWithOffset(countsList, countsOffset), drawcount);
+    m_context->graphicsContextGL()->multiDrawArraysANGLE(mode, GCGLSpanTuple { firstsList.data() + firstsOffset, countsList.data() + countsOffset, static_cast<size_t>(drawcount) });
 }
 
 void WebGLMultiDraw::multiDrawArraysInstancedWEBGL(GCGLenum mode, Int32List firstsList, GCGLuint firstsOffset, Int32List countsList, GCGLuint countsOffset, Int32List instanceCountsList, GCGLuint instanceCountsOffset, GCGLsizei drawcount)
@@ -85,7 +80,7 @@ void WebGLMultiDraw::multiDrawArraysInstancedWEBGL(GCGLenum mode, Int32List firs
         return;
     }
 
-    m_context->graphicsContextGL()->multiDrawArraysInstancedANGLE(mode, makeSpanWithOffset(firstsList, firstsOffset), makeSpanWithOffset(countsList, countsOffset), makeSpanWithOffset(instanceCountsList, instanceCountsOffset), drawcount);
+    m_context->graphicsContextGL()->multiDrawArraysInstancedANGLE(mode, GCGLSpanTuple { firstsList.data() +  firstsOffset, countsList.data() + countsOffset, instanceCountsList.data() + instanceCountsOffset, static_cast<size_t>(drawcount) });
 }
 
 void WebGLMultiDraw::multiDrawElementsWEBGL(GCGLenum mode, Int32List countsList, GCGLuint countsOffset, GCGLenum type, Int32List offsetsList, GCGLuint offsetsOffset, GCGLsizei drawcount)
@@ -99,7 +94,7 @@ void WebGLMultiDraw::multiDrawElementsWEBGL(GCGLenum mode, Int32List countsList,
         return;
     }
 
-    m_context->graphicsContextGL()->multiDrawElementsANGLE(mode, makeSpanWithOffset(countsList, countsOffset), type, makeSpanWithOffset(offsetsList, offsetsOffset), drawcount);
+    m_context->graphicsContextGL()->multiDrawElementsANGLE(mode, GCGLSpanTuple { countsList.data() + countsOffset, offsetsList.data() + offsetsOffset, static_cast<size_t>(drawcount) }, type);
 }
 
 void WebGLMultiDraw::multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List countsList, GCGLuint countsOffset, GCGLenum type, Int32List offsetsList, GCGLuint offsetsOffset, Int32List instanceCountsList, GCGLuint instanceCountsOffset, GCGLsizei drawcount)
@@ -114,7 +109,7 @@ void WebGLMultiDraw::multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List co
         return;
     }
 
-    m_context->graphicsContextGL()->multiDrawElementsInstancedANGLE(mode, makeSpanWithOffset(countsList, countsOffset), type, makeSpanWithOffset(offsetsList, offsetsOffset), makeSpanWithOffset(instanceCountsList, instanceCountsOffset), drawcount);
+    m_context->graphicsContextGL()->multiDrawElementsInstancedANGLE(mode, GCGLSpanTuple { countsList.data() + countsOffset, offsetsList.data() + offsetsOffset, instanceCountsList.data() + instanceCountsOffset, static_cast<size_t>(drawcount) }, type);
 }
 
 bool WebGLMultiDraw::validateDrawcount(const char* functionName, GCGLsizei drawcount)

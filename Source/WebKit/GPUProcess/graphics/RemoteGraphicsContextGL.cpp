@@ -46,6 +46,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
+namespace {
+template<typename S, int I, typename T>
+Vector<S> vectorCopyCast(const T& arrayReference)
+{
+    return { reinterpret_cast<const S*>(arrayReference.template data<I>()), arrayReference.size() };
+}
+}
+
 // Currently we have one global WebGL processing instance.
 IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
 {
@@ -313,6 +321,46 @@ void RemoteGraphicsContextGL::readnPixels1(int32_t x, int32_t y, int32_t width, 
 {
     assertIsCurrent(workQueue());
     m_context->readnPixels(x, y, width, height, format, type, static_cast<GCGLintptr>(offset));
+}
+
+void RemoteGraphicsContextGL::multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& firstsAndCounts)
+{
+    assertIsCurrent(workQueue());
+    // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
+    Vector<GCGLint> firsts = vectorCopyCast<GCGLint, 0>(firstsAndCounts);
+    Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 1>(firstsAndCounts);
+    m_context->multiDrawArraysANGLE(mode, GCGLSpanTuple { firsts, counts });
+}
+
+void RemoteGraphicsContextGL::multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts)
+{
+    assertIsCurrent(workQueue());
+    // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
+    Vector<GCGLint> firsts = vectorCopyCast<GCGLint, 0>(firstsCountsAndInstanceCounts);
+    Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 1>(firstsCountsAndInstanceCounts);
+    Vector<GCGLsizei> instanceCounts = vectorCopyCast<GCGLsizei, 2>(firstsCountsAndInstanceCounts);
+    m_context->multiDrawArraysInstancedANGLE(mode, GCGLSpanTuple { firsts, counts, instanceCounts });
+}
+
+void RemoteGraphicsContextGL::multiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& countsAndOffsets, uint32_t type)
+{
+    assertIsCurrent(workQueue());
+    // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
+    const Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 0>(countsAndOffsets);
+    // Currently offsets are copied in the m_context.
+    const GCGLint* offsets = reinterpret_cast<const GCGLint*>(countsAndOffsets.data<1>());
+    m_context->multiDrawElementsANGLE(mode, GCGLSpanTuple { counts.data(), offsets, counts.size() }, type);
+}
+
+void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& countsOffsetsAndInstanceCounts, uint32_t type)
+{
+    assertIsCurrent(workQueue());
+    // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
+    const Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 0>(countsOffsetsAndInstanceCounts);
+    // Currently offsets are copied in the m_context.
+    const GCGLint* offsets = reinterpret_cast<const GCGLint*>(countsOffsetsAndInstanceCounts.data<1>());
+    const Vector<GCGLsizei> instanceCounts = vectorCopyCast<GCGLsizei, 2>(countsOffsetsAndInstanceCounts);
+    m_context->multiDrawElementsInstancedANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), counts.size() }, type);
 }
 
 } // namespace WebKit

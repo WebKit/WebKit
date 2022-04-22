@@ -1,3 +1,26 @@
+2022-04-21  John Cunningham  <johncunningham@apple.com>
+
+        Use GCGLSpanTuple to pass buffer parameters to multidraw calls.
+        https://bugs.webkit.org/show_bug.cgi?id=239154
+
+        Reviewed by Kimmo Kinnunen.
+
+        * html/canvas/WebGLMultiDraw.cpp:
+        (WebCore::WebGLMultiDraw::multiDrawArraysWEBGL):
+        (WebCore::WebGLMultiDraw::multiDrawArraysInstancedWEBGL):
+        (WebCore::WebGLMultiDraw::multiDrawElementsWEBGL):
+        (WebCore::WebGLMultiDraw::multiDrawElementsInstancedWEBGL):
+        (WebCore::makeSpanWithOffset): Deleted.
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/GraphicsTypesGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::multiDrawArraysANGLE):
+        (WebCore::GraphicsContextGLANGLE::multiDrawArraysInstancedANGLE):
+        (WebCore::GraphicsContextGLANGLE::multiDrawElementsANGLE):
+        (WebCore::GraphicsContextGLANGLE::multiDrawElementsInstancedANGLE):
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2022-04-21  Rob Buis  <rbuis@igalia.com>
 
         `contain: layout` on the html element should change position:fixed behavior

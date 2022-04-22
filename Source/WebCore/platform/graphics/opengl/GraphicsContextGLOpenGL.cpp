@@ -3036,22 +3036,22 @@ void GraphicsContextGLOpenGL::compressedTexSubImage3D(GCGLenum, GCGLint, GCGLint
 {
 }
 
-void GraphicsContextGLOpenGL::multiDrawArraysANGLE(GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLsizei)
+void GraphicsContextGLOpenGL::multiDrawArraysANGLE(GCGLenum, GCGLSpanTuple<const GCGLint, const GCGLsizei>)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
-void GraphicsContextGLOpenGL::multiDrawArraysInstancedANGLE(GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLSpan<const GCGLsizei>, GCGLsizei)
+void GraphicsContextGLOpenGL::multiDrawArraysInstancedANGLE(GCGLenum, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei>)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
-void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpan<const GCGLsizei>, GCGLenum, GCGLSpan<const GCGLint>, GCGLsizei)
+void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLint>, GCGLenum)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
-void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpan<const GCGLsizei>, GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLsizei)
+void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLint, const GCGLsizei>, GCGLenum)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
