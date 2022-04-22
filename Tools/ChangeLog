@@ -1,5 +1,19 @@
 2022-04-22  Russell Epstein  <repstein@apple.com>
 
+        Apply patch. rdar://problem/91446317
+
+    2022-04-21  Youenn Fablet  <youenn@apple.com>
+
+            Website policies are not respected when doing COOP based process swap
+            https://bugs.webkit.org/show_bug.cgi?id=238036
+            <rdar://89616625>
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2022-04-22  Russell Epstein  <repstein@apple.com>
+
         Apply patch. rdar://problem/91288849
 
     2022-04-21  Youenn Fablet  <youenn@apple.com>
