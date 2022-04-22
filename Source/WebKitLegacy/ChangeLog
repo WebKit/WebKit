@@ -1,12 +1,134 @@
-2022-01-24  Alan Coon  <alancoon@apple.com>
+2022-04-22  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r288389. rdar://problem/85405320
+        Cherry-pick r291589. rdar://problem/90511155
 
-    Disable CFURLCache in WebKit2
-    https://bugs.webkit.org/show_bug.cgi?id=234988
-    <rdar://problem/87619196>
+    LayoutTests/imported/w3c:
+    BroadcastChannel instances in distinct opaque origins can communicate
+    https://bugs.webkit.org/show_bug.cgi?id=238090
+    <rdar://problem/90511155>
     
-    Reviewed by Geoffrey Garen.
+    Reviewed by Alex Christensen.
+    
+    Import web-platform-tests test coverage.
+    
+    * web-platform-tests/webmessaging/broadcastchannel/opaque-origin-expected.txt: Added.
+    * web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html: Added.
+    * web-platform-tests/webmessaging/broadcastchannel/w3c-import.log:
+    
+    Source/WebCore:
+    BroadcastChannel instances in distinct opaque origins can communicate
+    https://bugs.webkit.org/show_bug.cgi?id=238090
+    <rdar://problem/90511155>
+    
+    Reviewed by Alex Christensen.
+    
+    The issue is that we would use a ClientOrigin to distinguish origins for BroadcastChannel,
+    which relies on SecurityOriginData internally. A unique/opaque SecurityOrigin becomes an empty
+    SecurityOriginData upon conversion. As a result, when comparing ClientOrigin objects from
+    unique SecurityOrigins, they would compare as equal.
+    
+    To address the issue, I introduced a new PartitionedSecurityOrigin type which is similar
+    to ClientOrigin but stores SecurityOrigin objects internally, instead of SecurityOriginData
+    objects. PartitionedSecurityOrigin's operator==() is such that different SecurityOrigins
+    would not be equal but the same unique SecurityOrigin would be. I then used this new
+    PartitionedSecurityOrigin type as key in our HashMap on the WebProcess side instead of
+    ClientOrigin. This allows communication between several BroadcastChannels from the same
+    unique origin, while preventing communication between distinct opaque origins.
+    
+    When the PartitionedSecurityOrigin contains an opaque security origin, we don't involve
+    the Network Process at all since the destination can only be in the same WebProcess.
+    
+    Test: imported/w3c/web-platform-tests/webmessaging/broadcastchannel/opaque-origin.html
+    
+    * Headers.cmake:
+    * WebCore.xcodeproj/project.pbxproj:
+    * dom/BroadcastChannel.cpp:
+    (WebCore::shouldPartitionOrigin):
+    (WebCore::BroadcastChannel::MainThreadBridge::registerChannel):
+    (WebCore::BroadcastChannel::MainThreadBridge::unregisterChannel):
+    (WebCore::BroadcastChannel::MainThreadBridge::postMessage):
+    * dom/BroadcastChannelRegistry.h:
+    * loader/EmptyClients.cpp:
+    * page/PartitionedSecurityOrigin.h: Added.
+    (WebCore::PartitionedSecurityOrigin::PartitionedSecurityOrigin):
+    (WebCore::PartitionedSecurityOrigin::isHashTableDeletedValue const):
+    (WebCore::PartitionedSecurityOrigin::isHashTableEmptyValue const):
+    (WebCore::operator==):
+    (WTF::add):
+    (WTF::PartitionedSecurityOriginHash::hash):
+    (WTF::PartitionedSecurityOriginHash::equal):
+    (WTF::HashTraits<WebCore::PartitionedSecurityOrigin>::emptyValue):
+    (WTF::HashTraits<WebCore::PartitionedSecurityOrigin>::constructEmptyValue):
+    (WTF::HashTraits<WebCore::PartitionedSecurityOrigin>::isEmptyValue):
+    (WTF::HashTraits<WebCore::PartitionedSecurityOrigin>::peek):
+    (WTF::HashTraits<WebCore::PartitionedSecurityOrigin>::take):
+    
+    Source/WebKit:
+    BroadcastChannel instances in distinct opaque origins can communicate
+    https://bugs.webkit.org/show_bug.cgi?id=238090
+    <rdar://problem/90511155>
+    
+    Reviewed by Alex Christensen.
+    
+    The issue is that we would use a ClientOrigin to distinguish origins for BroadcastChannel,
+    which relies on SecurityOriginData internally. A unique/opaque SecurityOrigin becomes an empty
+    SecurityOriginData upon conversion. As a result, when comparing ClientOrigin objects from
+    unique SecurityOrigins, they would compare as equal.
+    
+    To address the issue, I introduced a new PartitionedSecurityOrigin type which is similar
+    to ClientOrigin but stores SecurityOrigin objects internally, instead of SecurityOriginData
+    objects. PartitionedSecurityOrigin's operator==() is such that different SecurityOrigins
+    would not be equal but the same unique SecurityOrigin would be. I then used this new
+    PartitionedSecurityOrigin type as key in our HashMap on the WebProcess side instead of
+    ClientOrigin. This allows communication between several BroadcastChannels from the same
+    unique origin, while preventing communication between distinct opaque origins.
+    
+    When the PartitionedSecurityOrigin contains an opaque security origin, we don't involve
+    the Network Process at all since the destination can only be in the same WebProcess.
+    
+    * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp:
+    (WebKit::toClientOrigin):
+    (WebKit::WebBroadcastChannelRegistry::registerChannel):
+    (WebKit::WebBroadcastChannelRegistry::unregisterChannel):
+    (WebKit::WebBroadcastChannelRegistry::postMessage):
+    (WebKit::WebBroadcastChannelRegistry::postMessageLocally):
+    (WebKit::WebBroadcastChannelRegistry::postMessageToRemote):
+    (WebKit::WebBroadcastChannelRegistry::networkProcessCrashed):
+    * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.h:
+    
+    Source/WebKitLegacy:
+    Dust off Mac CMake build
+    https://bugs.webkit.org/show_bug.cgi?id=238121
+    
+    Reviewed by Yusuke Suzuki.
+    
+    * PlatformMac.cmake:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291589 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-24  Alan Coon  <alancoon@apple.com>
+
+            Cherry-pick r288389. rdar://problem/85405320
+
+        Disable CFURLCache in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=234988
+        <rdar://problem/87619196>
+
+        Reviewed by Geoffrey Garen.
+2022-03-21  Chris Dumez  <cdumez@apple.com>
+
+        BroadcastChannel instances in distinct opaque origins can communicate
+        https://bugs.webkit.org/show_bug.cgi?id=238090
+        <rdar://problem/90511155>
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebBroadcastChannelRegistry.cpp:
+        (WebBroadcastChannelRegistry::registerChannel):
+        (WebBroadcastChannelRegistry::unregisterChannel):
+        (WebBroadcastChannelRegistry::postMessage):
+        * WebCoreSupport/WebBroadcastChannelRegistry.h:
+
     
     Source/WebCore:
     

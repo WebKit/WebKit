@@ -306,4 +306,9 @@ template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Dec
     return origin;
 }
 
+inline void add(Hasher& hasher, const SecurityOrigin& origin)
+{
+    add(hasher, origin.protocol(), origin.host(), origin.port());
+}
+
 } // namespace WebCore

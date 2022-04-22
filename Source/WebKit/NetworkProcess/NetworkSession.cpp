@@ -125,7 +125,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 #endif
     , m_privateClickMeasurement(managerOrProxy(*this, networkProcess, parameters))
     , m_privateClickMeasurementDebugModeEnabled(parameters.enablePrivateClickMeasurementDebugMode)
-    , m_broadcastChannelRegistry(makeUniqueRef<NetworkBroadcastChannelRegistry>())
+    , m_broadcastChannelRegistry(makeUniqueRef<NetworkBroadcastChannelRegistry>(networkProcess))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
     , m_shouldRunServiceWorkersOnMainThreadForTesting(parameters.shouldRunServiceWorkersOnMainThreadForTesting)
