@@ -34,6 +34,7 @@
 #include "FlexibleBoxAlgorithm.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
+#include "LayoutIntegrationCoverage.h"
 #include "LayoutRepainter.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
@@ -1122,6 +1123,10 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForChild(RenderBox& child, Layo
 
 void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (LayoutIntegration::canUseForFlexLayout(*this))
+        return layoutUsingFlexFormattingContext();
+#endif
     Vector<LineContext> lineContexts;
     LayoutUnit sumFlexBaseSize;
     double totalFlexGrow;
@@ -2335,4 +2340,11 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
     auto availableSize = usesRowGap ? availableLogicalHeightForPercentageComputation().value_or(0_lu) : contentLogicalWidth();
     return minimumValueForLength(gapLength.length(), availableSize);
 }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+void RenderFlexibleBox::layoutUsingFlexFormattingContext()
+{
+}
+#endif
+
 }

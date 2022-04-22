@@ -303,6 +303,19 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
+FlexFormattingContextIntegrationEnabled:
+  type: bool
+  humanReadableName: "Next-generation flex layout integration (FFC)"
+  humanReadableDescription: "Enable next-generation flex layout integration (FFC)"
+  condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This should be reconciled with 'FrameFlattening' in WebPreferences.yaml .
 FrameFlatteningEnabled:
   type: bool

@@ -1,3 +1,20 @@
+2022-04-22  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Add FlexFormattingContextIntegrationEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=239654
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting flex formatting context through integration.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForFlexLayout):
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::RenderFlexibleBox::layoutUsingFlexFormattingContext):
+        * rendering/RenderFlexibleBox.h:
+
 2022-04-22  Brandon Stewart  <brandonstewart@apple.com>
 
         Store StyleScope during CSSStyleSheet Creation

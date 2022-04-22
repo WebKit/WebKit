@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderBlockFlow;
+class RenderFlexibleBox;
 class RenderInline;
 
 namespace LayoutIntegration {
@@ -106,6 +107,8 @@ enum class AvoidanceReason : uint64_t {
 bool canUseForLineLayout(const RenderBlockFlow&);
 bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
+
+bool canUseForFlexLayout(const RenderFlexibleBox&);
 
 enum class IncludeReasons { First , All };
 OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow&, IncludeReasons);

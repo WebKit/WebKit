@@ -208,6 +208,10 @@ private:
 
     void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    void layoutUsingFlexFormattingContext();
+#endif
+
     // This is used to cache the preferred size for orthogonal flow children so we
     // don't have to relayout to get it
     HashMap<const RenderBox*, LayoutUnit> m_intrinsicSizeAlongMainAxis;

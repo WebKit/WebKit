@@ -674,6 +674,14 @@ bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline& renderer, 
     return canUseForRenderInlineChild(renderer, IncludeReasons::First).isEmpty();
 }
 
+bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
+{
+    if (!flexBox.document().settings().flexFormattingContextIntegrationEnabled())
+        return false;
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return false;
+}
+
 }
 }
 
