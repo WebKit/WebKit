@@ -1,3 +1,12 @@
+2022-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add my github account name
+        https://bugs.webkit.org/show_bug.cgi?id=239671
+
+        Reviewed by Chris Dumez.
+
+        * metadata/contributors.json:
+
 2022-04-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, add Geoff's github username to contributors.json so he can review patches
