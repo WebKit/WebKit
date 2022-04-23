@@ -104,6 +104,8 @@ public:
 
     bool hasOpacity() const { return opacity < 1; }
 
+    OptionSet<Containment> effectiveContainment() const;
+
     float opacity;
 
     double aspectRatioWidth;

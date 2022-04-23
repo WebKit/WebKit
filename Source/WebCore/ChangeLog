@@ -1,3 +1,25 @@
+2022-04-22  Cathie Chen  <cathiechen@igalia.com>
+
+        The layout is not updated when style.contain is changed from "size"/"inline-size" to empty string
+        https://bugs.webkit.org/show_bug.cgi?id=239489
+
+        Reviewed by Rob Buis.
+
+        Unlike "layout", "paint" and "style" containment, being a "size" and "inline-size" containment or not affects the layout size of the element.
+        So it should require layout when a normal element becomes a "size"/"inline-size" containment, vice versa.
+
+        Tests: imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-removed.html
+               imported/w3c/web-platform-tests/css/css-contain/contain-size-removed.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareNonInheritedDataChangeRequiresLayout):
+        (WebCore::RenderStyle::effectiveContainment const): Deleted. Moved to StyleRareNonInheritedData.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::effectiveContainment const):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::effectiveContainment const):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2022-04-22  Rob Buis  <rbuis@igalia.com>
 
         Should never be reached failure in WebCore::RenderElement::visibleInViewportStateChanged

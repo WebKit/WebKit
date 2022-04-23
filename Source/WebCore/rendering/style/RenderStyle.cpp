@@ -776,6 +776,10 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
     if (first.inputSecurity != second.inputSecurity)
         return true;
 
+    if (first.effectiveContainment().contains(Containment::Size) != second.effectiveContainment().contains(Containment::Size)
+        || first.effectiveContainment().contains(Containment::InlineSize) != second.effectiveContainment().contains(Containment::InlineSize))
+        return true;
+
     return false;
 }
 
@@ -2892,24 +2896,6 @@ UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-OptionSet<Containment> RenderStyle::effectiveContainment() const
-{
-    auto containment = contain();
-
-    switch (containerType()) {
-    case ContainerType::None:
-        break;
-    case ContainerType::Size:
-        containment.add({ Containment::Layout, Containment::Style, Containment::Size });
-        break;
-    case ContainerType::InlineSize:
-        containment.add({ Containment::Layout, Containment::Style, Containment::InlineSize });
-        break;
-    };
-
-    return containment;
 }
 
 UserSelect RenderStyle::effectiveUserSelect() const

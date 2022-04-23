@@ -536,7 +536,7 @@ public:
     }
     bool hasAspectRatio() const { return aspectRatioType() == AspectRatioType::Ratio || aspectRatioType() == AspectRatioType::AutoAndRatio; }
     OptionSet<Containment> contain() const { return m_rareNonInheritedData->contain; }
-    OptionSet<Containment> effectiveContainment() const;
+    OptionSet<Containment> effectiveContainment() const { return m_rareNonInheritedData->effectiveContainment(); }
     bool containsLayout() const { return effectiveContainment().contains(Containment::Layout); }
     bool containsSize() const { return effectiveContainment().contains(Containment::Size); }
     bool containsStyle() const { return effectiveContainment().contains(Containment::Style); }

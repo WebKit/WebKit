@@ -1,3 +1,17 @@
+2022-04-22  Cathie Chen  <cathiechen@igalia.com>
+
+        The layout is not updated when style.contain is changed from "size"/"inline-size" to empty string
+        https://bugs.webkit.org/show_bug.cgi?id=239489
+
+        Reviewed by Rob Buis.
+
+        * web-platform-tests/css/css-contain/contain-inline-size-removed-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-inline-size-removed.html: Added.
+        * web-platform-tests/css/css-contain/contain-size-removed-expected.html: Added.
+        * web-platform-tests/css/css-contain/contain-size-removed.html: Added.
+        * web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-004-expected.txt:
+        * web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-005-expected.txt:
+
 2022-04-21  Rob Buis  <rbuis@igalia.com>
 
         `contain: layout` on the html element should change position:fixed behavior

@@ -366,6 +366,24 @@ bool StyleRareNonInheritedData::hasFilters() const
     return !filter->operations.isEmpty();
 }
 
+OptionSet<Containment> StyleRareNonInheritedData::effectiveContainment() const
+{
+    auto containment = contain;
+
+    switch (static_cast<ContainerType>(containerType)) {
+    case ContainerType::None:
+        break;
+    case ContainerType::Size:
+        containment.add({ Containment::Layout, Containment::Style, Containment::Size });
+        break;
+    case ContainerType::InlineSize:
+        containment.add({ Containment::Layout, Containment::Style, Containment::InlineSize });
+        break;
+    };
+
+    return containment;
+}
+
 #if ENABLE(FILTERS_LEVEL_2)
 
 bool StyleRareNonInheritedData::hasBackdropFilters() const
