@@ -67,13 +67,13 @@ RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebPro
 
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    assertIsCurrent(m_streamThread);
+    assertIsCurrent(workQueue());
     m_context = GraphicsContextGLCocoa::create(WTFMove(attributes), ProcessIdentity { m_resourceOwner });
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
 {
-    assertIsCurrent(m_streamThread);
+    assertIsCurrent(workQueue());
     m_context->prepareForDisplay();
     MachSendRight sendRight;
     IOSurface* displayBuffer = m_context->displayBuffer();
