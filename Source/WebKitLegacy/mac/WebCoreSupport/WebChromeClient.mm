@@ -96,7 +96,7 @@
 #import <wtf/text/WTFString.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-#import <pal/graphics/WebGPU/Impl/WebGPUImpl.h>
+#import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(GEOLOCATION)
@@ -1164,7 +1164,7 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 {
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    return PAL::WebGPU::GPUImpl::create([](PAL::WebGPU::GPUImpl::WorkItem&& workItem) {
+    return PAL::WebGPU::create([](PAL::WebGPU::WorkItem&& workItem) {
         callOnMainRunLoop(WTFMove(workItem));
     });
 #else

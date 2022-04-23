@@ -1,3 +1,61 @@
+2022-04-22  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r293106. rdar://problem/91740931
+
+    [WebGPU] WebKit and WebKitLegacy shouldn't need to know about WebGPU.framework
+    https://bugs.webkit.org/show_bug.cgi?id=239528
+    <rdar://problem/91740931>
+    
+    Unreviewed build fix.
+    
+    Source/WebCore/PAL:
+    
+    WebKit and WebKitLegacy create a WebGPU implementation from pal/graphics/WebGPU/Impl. This implementation
+    knows about WebGPU.framework. However, the create() function doesn't need to know about WebGPU.framework,
+    and its header doesn't need to include <WebGPU/WebGPU.h>. Only the .cpp files need to know about
+    <WebGPU/WebGPU.h>, and those .cpp files are invisible from WebKit and WebKitLegacy's points of view. So,
+    this patch splits the PAL header into:
+    1. A header which includes a creation function, but doesn't know about WebGPU.framework, and
+    2. A header which knows about WebGPU.framework, but doesn't hold the creation function used by WebKit or
+           WebKitLegacy.
+    
+    This fixes one of Apple's internal builds.
+    
+    * PAL.xcodeproj/project.pbxproj:
+    * pal/graphics/WebGPU/Impl/WebGPUCreateImpl.cpp: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUImpl.cpp.
+    (PAL::WebGPU::create):
+    * pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h: Copied from Source/WebCore/PAL/pal/graphics/WebGPU/Impl/WebGPUImpl.h.
+    * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp:
+    (PAL::WebGPU::GPUImpl::create): Deleted.
+    * pal/graphics/WebGPU/Impl/WebGPUImpl.h:
+    
+    Source/WebKit:
+    
+    * GPUProcess/graphics/WebGPU/RemoteGPU.cpp:
+    (WebKit::RemoteGPU::workQueueInitialize):
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::createGPUForWebGPU const):
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebCoreSupport/WebChromeClient.mm:
+    (WebChromeClient::createGPUForWebGPU const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293106 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [WebGPU] WebKit and WebKitLegacy shouldn't need to know about WebGPU.framework
+            https://bugs.webkit.org/show_bug.cgi?id=239528
+            <rdar://problem/91740931>
+
+            Unreviewed build fix.
+
+            * GPUProcess/graphics/WebGPU/RemoteGPU.cpp:
+            (WebKit::RemoteGPU::workQueueInitialize):
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::createGPUForWebGPU const):
+
 2022-04-08  Chris Dumez  <cdumez@apple.com>
 
         Drop unused pluginReplacementScriptObject
