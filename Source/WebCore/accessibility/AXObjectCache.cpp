@@ -438,7 +438,7 @@ AccessibilityObject* AXObjectCache::focusedObjectForPage(const Page* page)
 
     // the HTML element, for example, is focusable but has an AX object that is ignored
     if (focus->accessibilityIsIgnored())
-        focus = downcast<AccessibilityObject>(focus->parentObjectUnignored());
+        focus = focus->parentObjectUnignored();
 
     return focus;
 }
@@ -1529,9 +1529,7 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 #elif USE(ATSPI)
         // ATSPI doesn't expose text nodes, so we need the parent
         // object which is the one implementing the text interface.
-        auto* parent = object->parentObjectUnignored();
-        if (is<AccessibilityObject>(parent))
-            object = downcast<AccessibilityObject>(parent);
+        object = object->parentObjectUnignored();
 #endif
     }
 

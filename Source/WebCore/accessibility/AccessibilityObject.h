@@ -370,7 +370,7 @@ public:
     virtual AccessibilityObject* previousSiblingUnignored(int limit) const;
     AccessibilityObject* parentObject() const override { return nullptr; }
     AccessibilityObject* displayContentsParent() const;
-    AXCoreObject* parentObjectUnignored() const override;
+    AccessibilityObject* parentObjectUnignored() const override;
     AccessibilityObject* parentObjectIfExists() const override { return nullptr; }
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
     void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) override;

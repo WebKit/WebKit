@@ -441,7 +441,7 @@ unsigned AccessibilityObject::blockquoteLevel() const
     return level;
 }
 
-AXCoreObject* AccessibilityObject::parentObjectUnignored() const
+AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
 {
     return Accessibility::findAncestor<AccessibilityObject>(*this, false, [] (const AccessibilityObject& object) {
         return !object.accessibilityIsIgnored();

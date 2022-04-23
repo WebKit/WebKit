@@ -1,3 +1,16 @@
+2022-04-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX ITM: Table row objects should return a non-null unignored parent even when a table object is not found in its ancestry.
+        https://bugs.webkit.org/show_bug.cgi?id=239606
+        <rdar://problem/92094205>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-expanded-supported-roles.html:
+        * accessibility/mac/heading-clickpoint-expected.txt:
+        * accessibility/mac/heading-clickpoint.html:
+        * platform/mac/accessibility/aria-expanded-supported-roles-expected.txt:
+
 2022-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATSPI] WTR: add implementation for AccessibilityUIElement::domIdentifier

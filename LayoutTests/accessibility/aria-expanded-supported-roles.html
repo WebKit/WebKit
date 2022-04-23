@@ -1,7 +1,10 @@
 <!DOCTYPE HTML>
 <html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
 <body>
-<script src="../resources/js-test-pre.js"></script>
+
 <div id="content">
 <div id="alert" role="alert" aria-expanded="true"></div>
 <div id="alertdialog" role="alertdialog" aria-expanded="true"></div>
@@ -87,19 +90,20 @@
 <div id="treegrid" role="treegrid" aria-expanded="true"></div>
 <div id="treeitem" role="treeitem" aria-expanded="true"></div>
 </div>
-<p id="description"></p>
-<div id="console"></div>
+
 <script>
-description("Verify which roles support aria-expanded.");
-if (window.accessibilityController) {
-    Array.from(document.getElementById("content").children).forEach(element => {
-        var axElement = accessibilityController.accessibleElementById(element.id);
-        if (axElement && axElement.isExpanded)
-            debug(axElement.role + " is expanded");
-    });
-    document.getElementById("content").style.visibility = "hidden";
-}
+    if (window.accessibilityController) {
+        let output = "Verify which roles support aria-expanded.\n";
+
+        Array.from(document.getElementById("content").children).forEach((element) => {
+            let axElement = accessibilityController.accessibleElementById(element.id);
+            if (axElement && axElement.isExpanded)
+                output += `${axElement.role} is expanded\n`;
+        });
+
+        debug(output);
+        document.getElementById("content").style.visibility = "hidden";
+    }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

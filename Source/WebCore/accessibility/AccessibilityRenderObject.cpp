@@ -535,7 +535,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
     return nullptr;
 }
 
-AXCoreObject* AccessibilityRenderObject::parentObjectUnignored() const
+AccessibilityObject* AccessibilityRenderObject::parentObjectUnignored() const
 {
 #if USE(ATSPI)
     // Expose markers that are not direct children of a list item too.

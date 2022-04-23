@@ -304,7 +304,7 @@ AccessibilityTableRow* AccessibilityTableCell::ariaOwnedByParent() const
     return nullptr;
 }
 
-AXCoreObject* AccessibilityTableCell::parentObjectUnignored() const
+AccessibilityObject* AccessibilityTableCell::parentObjectUnignored() const
 {
     if (auto ownerParent = ariaOwnedByParent())
         return ownerParent;

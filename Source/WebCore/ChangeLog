@@ -1,3 +1,39 @@
+2022-04-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX ITM: Table row objects should return a non-null unignored parent even when a table object is not found in its ancestry.
+        https://bugs.webkit.org/show_bug.cgi?id=239606
+        <rdar://problem/92094205>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/aria-expanded-supported-roles.html.
+        In addition, fixed test accessibility/mac/heading-clickpoint.html.
+
+        AccessibilityARIAGridRow::parentObjectUnignored was returning nullptr
+        if there was no table ancestor. This caused problems in isolated tree
+        mode where only the root object should have a null parent. With this
+        patch this method will return the table ancestor if one exists, its
+        parent in the AX tree otherwise.
+        Changed all classes in the AXObject hierarchy to return an AXObject for
+        the parentObjectUnignored method instead of an AXCoreObject.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedObjectForPage):
+        Removed unnecessary downcast.
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::parentObjectUnignored const):
+        (WebCore::AccessibilityARIAGridRow::parentTable const):
+        Rewrote this method using Accessibility::findAncestor.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::parentObjectUnignored const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObjectUnignored const):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::parentObjectUnignored const):
+        * accessibility/AccessibilityTableCell.h:
+
 2022-04-23  Devin Rousso  <drousso@apple.com>
 
         fix a few ObjC memory management issues after r291361

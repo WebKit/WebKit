@@ -1,8 +1,4 @@
 Verify which roles support aria-expanded.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
 AXRole: AXGroup is expanded
 AXRole: AXButton is expanded
 AXRole: AXCheckBox is expanded
@@ -17,6 +13,7 @@ AXRole: AXRow is expanded
 AXRole: AXCell is expanded
 AXRole: AXCheckBox is expanded
 AXRole: AXRadioButton is expanded
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

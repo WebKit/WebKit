@@ -89,7 +89,7 @@ public:
     AccessibilityObject* nextSibling() const override;
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
-    AXCoreObject* parentObjectUnignored() const override;
+    AccessibilityObject* parentObjectUnignored() const override;
     AccessibilityObject* observableObject() const override;
     void linkedUIElements(AccessibilityChildrenVector&) const override;
     AccessibilityObject* titleUIElement() const override;
