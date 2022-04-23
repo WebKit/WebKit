@@ -1,3 +1,17 @@
+2022-04-22  Rob Buis  <rbuis@igalia.com>
+
+        Should never be reached failure in WebCore::RenderElement::visibleInViewportStateChanged
+        https://bugs.webkit.org/show_bug.cgi?id=191824
+
+        Reviewed by Eric Carlson.
+
+        Provide an empty visibleInViewportStateChanged implementation
+        for RenderMedia to prevent hitting the ASSERT.
+
+        Test: media/audio-viewport-state-change-crash.html
+
+        * rendering/RenderMedia.h:
+
 2022-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Crash under AsyncScrollingCoordinator::scrollingThreadAddedPendingUpdate()

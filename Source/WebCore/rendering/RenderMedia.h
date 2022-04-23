@@ -46,6 +46,8 @@ public:
 protected:
     void layout() override;
 
+    void visibleInViewportStateChanged() override { }
+
 private:
     void element() const = delete;
 

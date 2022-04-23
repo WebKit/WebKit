@@ -1,3 +1,13 @@
+2022-04-22  Rob Buis  <rbuis@igalia.com>
+
+        Should never be reached failure in WebCore::RenderElement::visibleInViewportStateChanged
+        https://bugs.webkit.org/show_bug.cgi?id=191824
+
+        Reviewed by Eric Carlson.
+
+        * media/audio-viewport-state-change-crash-expected.txt: Added.
+        * media/audio-viewport-state-change-crash.html: Added.
+
 2022-04-22  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Regression(r287684) Resources from the memory cache show empty content in Network, Sources, and Search tabs
