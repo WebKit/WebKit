@@ -446,6 +446,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
     return OpaqueJSString::tryCreate(!value.isNull() ? value : "false"_s).leakRef();
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+{
+    m_element->updateBackingStore();
+    return OpaqueJSString::tryCreate(m_element->attributes().get("id"_s)).leakRef();
+}
+
 JSValueRef AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute) const
 {
     return nullptr;

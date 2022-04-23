@@ -1015,6 +1015,12 @@ bool AccessibilityUIElement::insertText(JSStringRef)
     return false;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
+{
+    notImplemented();
+    return nullptr;
+}
+
 } // namespace  WTF
 
 #endif // ENABLE(ACCESSIBILITY)

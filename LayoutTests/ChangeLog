@@ -1,3 +1,12 @@
+2022-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATSPI] WTR: add implementation for AccessibilityUIElement::domIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=239598
+
+        Reviewed by Andres Gonzalez.
+
+        * platform/glib/accessibility/table-add-remove-row-expected.txt: Removed.
+
 2022-04-22  Rob Buis  <rbuis@igalia.com>
 
         Should never be reached failure in WebCore::RenderElement::visibleInViewportStateChanged

@@ -1,3 +1,17 @@
+2022-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATSPI] WTR: add implementation for AccessibilityUIElement::domIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=239598
+
+        Reviewed by Andres Gonzalez.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::domIdentifier const): Deleted.
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp:
+        (WTR::AccessibilityUIElement::domIdentifier const):
+        * WebKitTestRunner/InjectedBundle/win/AccessibilityUIElementWin.cpp:
+        (WTR::AccessibilityUIElement::domIdentifier const):
+
 2022-04-22  Chris Dumez  <cdumez@apple.com>
 
         Move global AtomStrings to a common header to promote reuse
