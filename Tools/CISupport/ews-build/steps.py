@@ -2295,6 +2295,9 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
 
     def __init__(self, skipUpload=False, **kwargs):
         self.skipUpload = skipUpload
+        # https://bugs.webkit.org/show_bug.cgi?id=239455: The timeout needs to be >20 min to work
+        # around log output delays on slower machines.
+        kwargs.setdefault('timeout', 60 * 30)
         super(CompileWebKit, self).__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
