@@ -1,3 +1,18 @@
+2022-04-23  Justin Michaud  <justin_michaud@apple.com>
+
+        Fix build error caused by LTO + Unified Sources
+        https://bugs.webkit.org/show_bug.cgi?id=239679
+
+        Reviewed by Alex Christensen.
+
+        This hopefully fixes the following build error:
+        Undefined symbols for architecture x86_64:
+          "JSC::GenericTypedArrayView<JSC::Uint8ClampedAdaptor>::tryCreateUninitialized(unsigned long)", referenced from:
+              WebCore::FEGaussianBlurSoftwareApplier::apply(WebCore::Filter const&, WTF::Vector<WTF::Ref<WebCore::FilterImage, WTF::RawPtrTraits<WebCore::FilterImage> >, 0ul, WTF::CrashOnOverflow, 16ul, WTF::FastMalloc> const&, WebCore::FilterImage&) const in lto.o
+        ld: symbol(s) not found for architecture x86_64
+
+        * platform/graphics/filters/software/FEGaussianBlurSoftwareApplier.cpp:
+
 2022-04-23  Alan Bujtas  <zalan@apple.com>
 
         [FFC][Integration] Construct and update the layout tree for the flex items

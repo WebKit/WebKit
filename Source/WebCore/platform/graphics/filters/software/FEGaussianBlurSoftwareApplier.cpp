@@ -33,12 +33,12 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
+#include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/MathExtras.h>
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
 #else
-#include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/ParallelJobs.h>
 #endif
 
