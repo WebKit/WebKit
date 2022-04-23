@@ -1,3 +1,18 @@
+2022-04-23  Devin Rousso  <drousso@apple.com>
+
+        fix a few ObjC memory management issues after r291361
+        https://bugs.webkit.org/show_bug.cgi?id=239686
+        <rdar://problem/91008058>
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::mediaSelectionOptions):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVMediaSelectionOption localizedDisplayName]): Added.
+        (-[WebAVMediaSelectionOption dealloc]): Deleted.
+
 2022-04-22  Cathie Chen  <cathiechen@igalia.com>
 
         The layout is not updated when style.contain is changed from "size"/"inline-size" to empty string

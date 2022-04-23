@@ -188,7 +188,7 @@ static AVMediaType toAVMediaType(MediaSelectionOption::MediaType type)
 static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
     return createNSArray(options, [] (auto& option) {
-        return [[WebAVMediaSelectionOption alloc] initWithMediaType:toAVMediaType(option.mediaType) displayName:option.displayName];
+        return adoptNS([[WebAVMediaSelectionOption alloc] initWithMediaType:toAVMediaType(option.mediaType) displayName:option.displayName]);
     });
 }
 

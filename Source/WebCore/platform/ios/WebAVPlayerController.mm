@@ -776,7 +776,9 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 @end
 
-@implementation WebAVMediaSelectionOption
+@implementation WebAVMediaSelectionOption {
+    RetainPtr<NSString> _localizedDisplayName;
+}
 
 - (instancetype)initWithMediaType:(AVMediaType)mediaType displayName:(NSString *)displayName
 {
@@ -790,10 +792,9 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     return self;
 }
 
-- (void)dealloc
+- (NSString *)localizedDisplayName
 {
-    [_localizedDisplayName release];
-    [super dealloc];
+    return _localizedDisplayName.get();
 }
 
 - (NSArray<NSNumber *> *)mediaSubTypes
