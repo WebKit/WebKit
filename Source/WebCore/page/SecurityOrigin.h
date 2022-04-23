@@ -31,6 +31,7 @@
 #include "SecurityOriginData.h"
 #include "StorageBlockingPolicy.h"
 #include <wtf/EnumTraits.h>
+#include <wtf/Hasher.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
