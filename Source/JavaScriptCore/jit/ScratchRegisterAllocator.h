@@ -27,6 +27,7 @@
 
 #if ENABLE(JIT)
 
+#include "FPRInfo.h"
 #include "RegisterSet.h"
 
 namespace JSC {

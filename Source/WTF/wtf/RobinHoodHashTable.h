@@ -52,6 +52,7 @@
 #pragma once
 
 #include <wtf/HashTable.h>
+#include <wtf/text/StringHash.h>
 
 namespace WTF {
 

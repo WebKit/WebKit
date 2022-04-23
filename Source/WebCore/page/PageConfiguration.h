@@ -32,6 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
