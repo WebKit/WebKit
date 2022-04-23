@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "CommonAtomStrings.h"
 #include "SVGNames.h"
 #include "SVGTextContentElement.h"
 #include "SVGURIReference.h"
@@ -77,7 +78,7 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
         case SVGTextPathSpacingUnknown:
             return emptyString();
         case SVGTextPathSpacingAuto:
-            return "auto"_s;
+            return autoAtom();
         case SVGTextPathSpacingExact:
             return "exact"_s;
         }
@@ -88,7 +89,7 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
 
     static SVGTextPathSpacingType fromString(const String& value)
     {
-        if (value == "auto")
+        if (value == autoAtom())
             return SVGTextPathSpacingAuto;
         if (value == "exact")
             return SVGTextPathSpacingExact;

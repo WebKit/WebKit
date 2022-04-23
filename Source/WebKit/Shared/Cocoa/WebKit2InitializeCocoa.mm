@@ -27,6 +27,7 @@
 #import "WebKit2Initialize.h"
 
 #import <JavaScriptCore/InitializeThreading.h>
+#import <WebCore/CommonAtomStrings.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <mutex>
 #import <wtf/GenerateProfiles.h>
@@ -49,7 +50,7 @@ static void runInitializationCode(void* = nullptr)
 {
     RELEASE_ASSERT_WITH_MESSAGE([NSThread isMainThread], "InitializeWebKit2 should be called on the main thread");
 
-    AtomString::init();
+    WebCore::initializeCommonAtomStrings();
 #if PLATFORM(IOS_FAMILY)
     InitWebCoreThreadSystemInterface();
 #endif

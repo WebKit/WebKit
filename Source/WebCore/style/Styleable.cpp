@@ -33,6 +33,7 @@
 #include "CSSAnimation.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
+#include "CommonAtomStrings.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "DocumentTimeline.h"
@@ -257,7 +258,7 @@ bool Styleable::animationListContainsNewlyValidAnimation(const AnimationList& an
 
     for (auto& animation : animations) {
         auto& name = animation->name().string;
-        if (name != "none" && !name.isEmpty() && keyframeEffectStack.containsInvalidCSSAnimationName(name) && keyframesRuleExistsForAnimation(element, animation.get(), name))
+        if (name != noneAtom() && !name.isEmpty() && keyframeEffectStack.containsInvalidCSSAnimationName(name) && keyframesRuleExistsForAnimation(element, animation.get(), name))
             return true;
     }
 
@@ -302,7 +303,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
                 continue;
 
             auto& animationName = currentAnimation->name().string;
-            if (animationName == "none" || animationName.isEmpty())
+            if (animationName == noneAtom() || animationName.isEmpty())
                 continue;
 
             if (!keyframesRuleExistsForAnimation(element, currentAnimation.get(), animationName)) {

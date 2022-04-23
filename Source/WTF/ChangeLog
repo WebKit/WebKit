@@ -1,3 +1,17 @@
+2022-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Move global AtomStrings to a common header to promote reuse
+        https://bugs.webkit.org/show_bug.cgi?id=239585
+
+        Reviewed by Geoff Garen and Darin Adler.
+
+        * wtf/text/AtomString.cpp:
+        (WTF::AtomString::init):
+        * wtf/text/AtomString.h:
+        (WTF::xmlnsAtom):
+        (WTF::trueAtom): Deleted.
+        (WTF::falseAtom): Deleted.
+
 2022-04-22  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, non-unified build fixes after r293203

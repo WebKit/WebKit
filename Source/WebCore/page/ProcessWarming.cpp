@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProcessWarming.h"
 
+#include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "Font.h"
 #include "FontCache.h"
@@ -50,7 +51,7 @@ namespace WebCore {
 
 void ProcessWarming::initializeNames()
 {
-    AtomString::init();
+    initializeCommonAtomStrings();
     HTMLNames::init();
     QualifiedName::init();
     MediaFeatureNames::init();

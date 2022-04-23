@@ -53,7 +53,6 @@ public:
     static TextTrack& captionMenuOffItem();
     static TextTrack& captionMenuAutomaticItem();
 
-    static const AtomString& subtitlesKeyword();
     static bool isValidKindKeyword(const AtomString&);
 
     TextTrackList* textTrackList() const;

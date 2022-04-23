@@ -319,18 +319,22 @@ String SVGAnimationElement::fromValue() const
     return attributeWithoutSynchronization(SVGNames::fromAttr);
 }
 
-bool SVGAnimationElement::isAdditive() const
+static const AtomString& sumAtom()
 {
     static MainThreadNeverDestroyed<const AtomString> sum("sum", AtomString::ConstructFromLiteral);
+    return sum;
+}
+
+bool SVGAnimationElement::isAdditive() const
+{
     const AtomString& value = attributeWithoutSynchronization(SVGNames::additiveAttr);
-    return value == sum || animationMode() == AnimationMode::By;
+    return value == sumAtom() || animationMode() == AnimationMode::By;
 }
 
 bool SVGAnimationElement::isAccumulated() const
 {
-    static MainThreadNeverDestroyed<const AtomString> sum("sum", AtomString::ConstructFromLiteral);
     const AtomString& value = attributeWithoutSynchronization(SVGNames::accumulateAttr);
-    return value == sum && animationMode() != AnimationMode::To;
+    return value == sumAtom() && animationMode() != AnimationMode::To;
 }
 
 bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* targetElement, const QualifiedName& attributeName)

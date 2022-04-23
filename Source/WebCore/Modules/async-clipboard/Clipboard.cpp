@@ -28,6 +28,7 @@
 
 #include "ClipboardImageReader.h"
 #include "ClipboardItem.h"
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "Editor.h"
 #include "Frame.h"
@@ -234,7 +235,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         resultAsString = activePasteboard().readURL(itemIndex, title).string();
     }
 
-    if (type == "text/plain"_s) {
+    if (type == textPlainContentTypeAtom()) {
         PasteboardPlainText plainTextReader;
         activePasteboard().read(plainTextReader, PlainTextURLReadingPolicy::IgnoreURL, itemIndex);
         resultAsString = WTFMove(plainTextReader.text);

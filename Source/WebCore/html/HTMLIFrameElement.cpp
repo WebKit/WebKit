@@ -26,6 +26,7 @@
 #include "HTMLIFrameElement.h"
 
 #include "CSSPropertyNames.h"
+#include "CommonAtomStrings.h"
 #include "DOMTokenList.h"
 #include "ElementInlines.h"
 #include "Frame.h"
@@ -157,9 +158,7 @@ const FeaturePolicy& HTMLIFrameElement::featurePolicy() const
 
 const AtomString& HTMLIFrameElement::loadingForBindings() const
 {
-    static MainThreadNeverDestroyed<const AtomString> eager("eager", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> lazy("lazy", AtomString::ConstructFromLiteral);
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy") ? lazy : eager;
+    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy") ? lazyAtom() : eagerAtom();
 }
 
 void HTMLIFrameElement::setLoadingForBindings(const AtomString& value)

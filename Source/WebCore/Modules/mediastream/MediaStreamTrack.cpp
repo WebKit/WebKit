@@ -30,6 +30,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -136,7 +137,6 @@ const AtomString& MediaStreamTrack::contentHint() const
     static MainThreadNeverDestroyed<const AtomString> speechHint("speech", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> musicHint("music", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> detailHint("detail", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> textHint("text", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> motionHint("motion", AtomString::ConstructFromLiteral);
 
     switch (m_private->contentHint()) {
@@ -151,7 +151,7 @@ const AtomString& MediaStreamTrack::contentHint() const
     case MediaStreamTrackPrivate::HintValue::Detail:
         return detailHint;
     case MediaStreamTrackPrivate::HintValue::Text:
-        return textHint;
+        return textAtom();
     default:
         return emptyAtom();
     }
@@ -176,7 +176,7 @@ void MediaStreamTrack::setContentHint(const String& hintValue)
             value = MediaStreamTrackPrivate::HintValue::Detail;
         else if (hintValue == "motion")
             value = MediaStreamTrackPrivate::HintValue::Motion;
-        else if (hintValue == "text")
+        else if (hintValue == textAtom())
             value = MediaStreamTrackPrivate::HintValue::Text;
         else
             return;

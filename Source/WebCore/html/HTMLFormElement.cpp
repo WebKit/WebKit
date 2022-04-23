@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLFormElement.h"
 
+#include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "DOMTokenList.h"
 #include "DOMWindow.h"
@@ -1012,10 +1013,7 @@ void HTMLFormElement::setAutocomplete(const AtomString& value)
 
 const AtomString& HTMLFormElement::autocomplete() const
 {
-    static MainThreadNeverDestroyed<const AtomString> on("on", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> off("off", AtomString::ConstructFromLiteral);
-
-    return equalIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? off : on;
+    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? offAtom() : onAtom();
 }
 
 RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFormData, StringPairVector* formValues)

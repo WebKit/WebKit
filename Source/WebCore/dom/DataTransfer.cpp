@@ -28,6 +28,7 @@
 
 #include "CachedImage.h"
 #include "CachedImageClient.h"
+#include "CommonAtomStrings.h"
 #include "DataTransferItem.h"
 #include "DataTransferItemList.h"
 #include "DocumentFragment.h"
@@ -127,7 +128,7 @@ static String normalizeType(const String& type)
 
     String lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
     if (lowercaseType == "text" || lowercaseType.startsWith("text/plain;"))
-        return "text/plain"_s;
+        return textPlainContentTypeAtom();
     if (lowercaseType == "url" || lowercaseType.startsWith("text/uri-list;"))
         return "text/uri-list"_s;
     if (lowercaseType.startsWith("text/html;"))
@@ -265,7 +266,7 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
         auto url = URL({ }, data);
         if (url.isValid())
             sanitizedData = url.string();
-    } else if (type == "text/plain")
+    } else if (type == textPlainContentTypeAtom())
         sanitizedData = data; // Nothing to sanitize.
 
     if (sanitizedData != data)
@@ -428,7 +429,7 @@ bool DataTransfer::hasStringOfType(const String& type)
 Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, const String& htmlText)
 {
     auto pasteboard = makeUnique<StaticPasteboard>();
-    pasteboard->writeString("text/plain"_s, plainText);
+    pasteboard->writeString(textPlainContentTypeAtom(), plainText);
     pasteboard->writeString("text/html"_s, htmlText);
     return adoptRef(*new DataTransfer(StoreMode::Readonly, WTFMove(pasteboard), Type::InputEvent));
 }
@@ -467,7 +468,7 @@ void DataTransfer::commitToPasteboard(Pasteboard& nativePasteboard)
 
 String DataTransfer::dropEffect() const
 {
-    return "none"_s;
+    return noneAtom();
 }
 
 void DataTransfer::setDropEffect(const String&)

@@ -30,6 +30,7 @@
 
 #if ENABLE(MATHML)
 
+#include "CommonAtomStrings.h"
 #include "ElementIterator.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLMapElement.h"

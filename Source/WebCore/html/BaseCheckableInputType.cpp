@@ -32,6 +32,7 @@
 #include "config.h"
 #include "BaseCheckableInputType.h"
 
+#include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "FormController.h"
 #include "HTMLInputElement.h"
@@ -46,13 +47,13 @@ using namespace HTMLNames;
 FormControlState BaseCheckableInputType::saveFormControlState() const
 {
     ASSERT(element());
-    return { element()->checked() ? "on"_s : "off"_s };
+    return { element()->checked() ? onAtom() : offAtom() };
 }
 
 void BaseCheckableInputType::restoreFormControlState(const FormControlState& state)
 {
     ASSERT(element());
-    element()->setChecked(state[0] == "on");
+    element()->setChecked(state[0] == onAtom());
 }
 
 bool BaseCheckableInputType::appendFormData(DOMFormData& formData) const
@@ -99,8 +100,7 @@ bool BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 
 String BaseCheckableInputType::fallbackValue() const
 {
-    static MainThreadNeverDestroyed<const AtomString> on("on", AtomString::ConstructFromLiteral);
-    return on.get();
+    return onAtom();
 }
 
 bool BaseCheckableInputType::storesValueSeparateFromAttribute()

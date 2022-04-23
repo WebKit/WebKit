@@ -37,6 +37,7 @@
 #include "CacheStorageProvider.h"
 #include "ChildListMutationScope.h"
 #include "Comment.h"
+#include "CommonAtomStrings.h"
 #include "ComposedTreeIterator.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -1285,7 +1286,7 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
         // We achieve that effect here by passing in a fake body element as context for the fragment.
         auto fakeBody = HTMLBodyElement::create(outputDoc);
         fragment->parseHTML(WTFMove(sourceString), fakeBody.ptr());
-    } else if (sourceMIMEType == "text/plain")
+    } else if (sourceMIMEType == textPlainContentTypeAtom())
         fragment->parserAppendChild(Text::create(outputDoc, WTFMove(sourceString)));
     else {
         bool successfulParse = fragment->parseXML(WTFMove(sourceString), 0);

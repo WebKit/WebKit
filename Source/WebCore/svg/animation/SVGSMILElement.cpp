@@ -68,6 +68,12 @@ static SMILEventSender& smilEndEventSender()
     return sender;
 }
 
+static const AtomString& indefiniteAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> indefiniteValue("indefinite", AtomString::ConstructFromLiteral);
+    return indefiniteValue;
+}
+
 // This is used for duration type time values that can't be negative.
 static const double invalidCachedTime = -1.;
     
@@ -338,9 +344,7 @@ SMILTime SVGSMILElement::parseClockValue(StringView data)
         return SMILTime::unresolved();
 
     auto parse = data.stripWhiteSpace();
-
-    static MainThreadNeverDestroyed<const AtomString> indefiniteValue("indefinite", AtomString::ConstructFromLiteral);
-    if (parse == indefiniteValue.get())
+    if (parse == indefiniteAtom())
         return SMILTime::indefinite();
 
     double result = 0;
@@ -698,8 +702,7 @@ SMILTime SVGSMILElement::repeatCount() const
     if (value.isNull())
         return SMILTime::unresolved();
 
-    static MainThreadNeverDestroyed<const AtomString> indefiniteValue("indefinite", AtomString::ConstructFromLiteral);
-    if (value == indefiniteValue)
+    if (value == indefiniteAtom())
         return SMILTime::indefinite();
     bool ok;
     double result = value.string().toDouble(&ok);

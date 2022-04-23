@@ -21,6 +21,7 @@
 #include "config.h"
 #include "PrintContext.h"
 
+#include "CommonAtomStrings.h"
 #include "ElementTraversal.h"
 #include "GraphicsContext.h"
 #include "Frame.h"
@@ -362,7 +363,7 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     // Implement formatters for properties we care about.
     if (!strcmp(propertyName, "margin-left")) {
         if (style->marginLeft().isAuto())
-            return "auto"_s;
+            return autoAtom();
         return String::number(style->marginLeft().value());
     }
     if (!strcmp(propertyName, "line-height"))

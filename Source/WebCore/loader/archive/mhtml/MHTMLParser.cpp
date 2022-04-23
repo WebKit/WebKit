@@ -33,6 +33,7 @@
 #if ENABLE(MHTML)
 #include "MHTMLParser.h"
 
+#include "CommonAtomStrings.h"
 #include "MHTMLArchive.h"
 #include "MIMEHeader.h"
 #include "MIMETypeRegistry.h"
@@ -119,7 +120,7 @@ RefPtr<MHTMLArchive> MHTMLParser::parseArchiveWithHeader(MIMEHeader* header)
 void MHTMLParser::addResourceToArchive(ArchiveResource* resource, MHTMLArchive* archive)
 {
     const String& mimeType = resource->mimeType();
-    if (!MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType) || mimeType == "text/css") {
+    if (!MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType) || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType) || mimeType == cssContentTypeAtom()) {
         m_resources.append(resource);
         return;
     }

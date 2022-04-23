@@ -29,6 +29,7 @@
 
 #include "HTMLAudioElement.h"
 
+#include "CommonAtomStrings.h"
 #include "HTMLNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -54,7 +55,7 @@ Ref<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Doc
 Ref<HTMLAudioElement> HTMLAudioElement::createForLegacyFactoryFunction(Document& document, const AtomString& src)
 {
     auto element = create(audioTag, document, false);
-    element->setAttributeWithoutSynchronization(preloadAttr, "auto"_s);
+    element->setAttributeWithoutSynchronization(preloadAttr, autoAtom());
     element->setAttributeWithoutSynchronization(srcAttr, src);
     return element;
 }

@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "CacheStorageProvider.h"
+#include "CommonAtomStrings.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -113,7 +114,7 @@ ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData,
     , m_notificationClient(WTFMove(notificationClient))
 {
     ASSERT(isMainThread());
-    AtomString::init();
+    initializeCommonAtomStrings();
 }
 
 ServiceWorkerThread::~ServiceWorkerThread() = default;

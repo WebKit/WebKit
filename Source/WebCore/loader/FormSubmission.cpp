@@ -32,6 +32,7 @@
 #include "config.h"
 #include "FormSubmission.h"
 
+#include "CommonAtomStrings.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMFormData.h"
 #include "DocumentInlines.h"
@@ -103,7 +104,7 @@ String FormSubmission::Attributes::parseEncodingType(const String& type)
     if (equalLettersIgnoringASCIICase(type, "multipart/form-data"))
         return "multipart/form-data"_s;
     if (equalLettersIgnoringASCIICase(type, "text/plain"))
-        return "text/plain"_s;
+        return textPlainContentTypeAtom();
     return "application/x-www-form-urlencoded"_s;
 }
 

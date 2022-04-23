@@ -33,6 +33,7 @@
 #include "NetworkCacheFileSystem.h"
 #include "SharedMemory.h"
 #include "WebCompiledContentRuleList.h"
+#include <WebCore/CommonAtomStrings.h>
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
 #include <WebCore/ContentExtensionParser.h>
@@ -545,7 +546,7 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHand
 void ContentRuleListStore::compileContentRuleList(WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    AtomString::init();
+    WebCore::initializeCommonAtomStrings();
     WebCore::QualifiedName::init();
     
     auto parsedRules = WebCore::ContentExtensions::parseRuleList(json);

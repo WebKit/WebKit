@@ -27,6 +27,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedXSLStyleSheet.h"
+#include "CommonAtomStrings.h"
 #include "DocumentInlines.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -94,7 +95,7 @@ void ProcessingInstruction::checkStyleSheet()
             return;
         String type = attributes->get<HashTranslatorASCIILiteral>("type"_s);
 
-        m_isCSS = type.isEmpty() || type == "text/css";
+        m_isCSS = type.isEmpty() || type == cssContentTypeAtom();
 #if ENABLE(XSLT)
         m_isXSL = type == "text/xml" || type == "text/xsl" || type == "application/xml" || type == "application/xhtml+xml" || type == "application/rss+xml" || type == "application/atom+xml";
         if (!m_isCSS && !m_isXSL)

@@ -24,6 +24,7 @@
 #include "CSSParser.h"
 #include "Color.h"
 #include "ColorSerialization.h"
+#include "CommonAtomStrings.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "QualifiedName.h"

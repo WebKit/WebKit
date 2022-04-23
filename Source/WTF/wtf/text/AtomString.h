@@ -293,16 +293,12 @@ extern WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> emptyAtomData;
 extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> starAtomData;
 extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlAtomData;
 extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlnsAtomData;
-extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> trueAtomData;
-extern WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> falseAtomData;
 
 inline const AtomString& nullAtom() { return nullAtomData.get(); }
 inline const AtomString& emptyAtom() { return emptyAtomData.get(); }
 inline const AtomString& starAtom() { return starAtomData.get(); }
 inline const AtomString& xmlAtom() { return xmlAtomData.get(); }
 inline const AtomString& xmlnsAtom() { return xmlnsAtomData.get(); }
-inline const AtomString& trueAtom() { return trueAtomData.get(); }
-inline const AtomString& falseAtom() { return falseAtomData.get(); }
 
 inline AtomString AtomString::fromUTF8(const char* characters, size_t length)
 {
@@ -362,9 +358,7 @@ template<> struct IntegerToStringConversionTrait<AtomString> {
 using WTF::AtomString;
 using WTF::nullAtom;
 using WTF::emptyAtom;
-using WTF::falseAtom;
 using WTF::starAtom;
-using WTF::trueAtom;
 using WTF::xmlAtom;
 using WTF::xmlnsAtom;
 

@@ -35,6 +35,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "HTMLParserIdioms.h"
 #include "ISOVTTCue.h"
@@ -92,7 +93,7 @@ bool WebVTTParser::parseFloatPercentageValuePair(VTTScanner& valueScanner, char 
 
 WebVTTParser::WebVTTParser(WebVTTParserClient& client, Document& document)
     : m_document(document)
-    , m_decoder(TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding()))
+    , m_decoder(TextResourceDecoder::create(textPlainContentTypeAtom(), PAL::UTF8Encoding()))
     , m_client(client)
 {
 }

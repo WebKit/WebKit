@@ -30,6 +30,7 @@
 
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
+#include "CommonAtomStrings.h"
 #include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsBackend.h"
@@ -203,7 +204,7 @@ static Expected<Trigger, std::error_code> loadTrigger(const JSON::Object& ruleOb
 bool isValidCSSSelector(const String& selector)
 {
     ASSERT(isMainThread());
-    AtomString::init();
+    initializeCommonAtomStrings();
     QualifiedName::init();
     CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);

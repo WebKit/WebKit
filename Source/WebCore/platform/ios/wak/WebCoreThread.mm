@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "CommonAtomStrings.h"
 #import "CommonVM.h"
 #import "FloatingPointEnvironment.h"
 #import "GraphicsContextGLANGLE.h"
@@ -691,7 +692,7 @@ static void StartWebThread()
     WTF::initializeMainThread();
 
     // Initialize AtomString on the main thread.
-    WTF::AtomString::init();
+    WebCore::initializeCommonAtomStrings();
 
     // Initialize ThreadGlobalData on the main UI thread so that the WebCore thread
     // can later set it's thread-specific data to point to the same objects.

@@ -28,6 +28,7 @@
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceRequest.h"
 #include "CachedStyleSheetClient.h"
+#include "CommonAtomStrings.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MemoryCache.h"
@@ -40,7 +41,7 @@ namespace WebCore {
 
 CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTFMove(request), Type::CSSStyleSheet, sessionID, cookieJar)
-    , m_decoder(TextResourceDecoder::create("text/css"_s, request.charset()))
+    , m_decoder(TextResourceDecoder::create(cssContentTypeAtom(), request.charset()))
 {
 }
 

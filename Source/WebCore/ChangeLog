@@ -1,3 +1,226 @@
+2022-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Move global AtomStrings to a common header to promote reuse
+        https://bugs.webkit.org/show_bug.cgi?id=239585
+
+        Reviewed by Geoff Garen and Darin Adler.
+
+        * Headers.cmake:
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::getType):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::contentHint const):
+        (WebCore::MediaStreamTrack::setContentHint):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::getTiming const):
+        (WebCore::AnimationEffect::updateTiming):
+        * animation/EffectTiming.h:
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::isValidCSSSelector):
+        * css/CSSStyleSheet.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::display const):
+        * css/MediaFeatureNames.cpp:
+        (WebCore::MediaFeatureNames::init):
+        * dom/DataTransfer.cpp:
+        (WebCore::normalizeType):
+        (WebCore::DataTransfer::setDataFromItemList):
+        (WebCore::DataTransfer::createForInputEvent):
+        (WebCore::DataTransfer::dropEffect const):
+        * dom/Document.cpp:
+        (WebCore::Document::designMode const):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::isValidCSSContentType):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * dom/mac/ImageControlsMac.cpp:
+        * editing/FontShadow.cpp:
+        (WebCore::serializationForCSS):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        * editing/cocoa/DataDetection.mm:
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::propertyValueForNode):
+        (HTMLConverter::computedAttributesForElement):
+        (HTMLConverter::_enterElement):
+        (HTMLConverter::_processElement):
+        * editing/markup.cpp:
+        (WebCore::createFragmentForTransformToFragment):
+        * html/Autocapitalize.cpp:
+        (WebCore::stringForAutocapitalizeType):
+        * html/Autofill.cpp:
+        (WebCore::AutofillData::createFromHTMLFormControlElement):
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::saveFormControlState const):
+        (WebCore::BaseCheckableInputType::restoreFormControlState):
+        (WebCore::BaseCheckableInputType::fallbackValue const):
+        * html/EnterKeyHint.cpp:
+        (WebCore::attributeValueForEnterKeyHint):
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::createForLegacyFactoryFunction):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::formControlType const):
+        * html/HTMLElement.cpp:
+        (WebCore::toValidDirValue):
+        (WebCore::HTMLElement::contentEditable const):
+        (WebCore::HTMLElement::setContentEditable):
+        (WebCore::HTMLElement::setAutocorrect):
+        (WebCore::plaintextOnlyName): Deleted.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::autocomplete const):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::loadingForBindings const):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::decoding const):
+        (WebCore::HTMLImageElement::loadingForBindings const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::preload const):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::directionString):
+        * html/InputMode.cpp:
+        (WebCore::InputModeNames::none):
+        (WebCore::InputModeNames::text):
+        (WebCore::InputModeNames::tel):
+        (WebCore::InputModeNames::url):
+        (WebCore::InputModeNames::email):
+        (WebCore::InputModeNames::search):
+        * html/InputTypeNames.cpp:
+        (WebCore::InputTypeNames::email):
+        (WebCore::InputTypeNames::reset):
+        (WebCore::InputTypeNames::search):
+        (WebCore::InputTypeNames::submit):
+        (WebCore::InputTypeNames::telephone):
+        (WebCore::InputTypeNames::text):
+        (WebCore::InputTypeNames::url):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::updateInnerTextElementEditabilityImpl):
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::isValidKind const):
+        (WebCore::AudioTrack::updateKindFromPrivate):
+        (WebCore::AudioTrack::alternativeKeyword): Deleted.
+        (WebCore::AudioTrack::mainKeyword): Deleted.
+        (WebCore::AudioTrack::commentaryKeyword): Deleted.
+        * html/track/AudioTrack.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::isValidKindKeyword):
+        (WebCore::TextTrack::kindKeyword const):
+        (WebCore::TextTrack::subtitlesKeyword): Deleted.
+        (WebCore::captionsKeyword): Deleted.
+        * html/track/TextTrack.h:
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::positionAlign const):
+        (WebCore::VTTCue::setPositionAlign):
+        (WebCore::VTTCue::toJSON const):
+        (WebCore::autoKeyword): Deleted.
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::isValidKind const):
+        (WebCore::VideoTrack::updateKindFromPrivate):
+        (WebCore::VideoTrack::alternativeKeyword): Deleted.
+        (WebCore::VideoTrack::captionsKeyword): Deleted.
+        (WebCore::VideoTrack::mainKeyword): Deleted.
+        (WebCore::VideoTrack::subtitlesKeyword): Deleted.
+        (WebCore::VideoTrack::commentaryKeyword): Deleted.
+        * html/track/VideoTrack.h:
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::WebVTTParser):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::createInspectorStyleSheetForDocument):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::Attributes::parseEncodingType):
+        * loader/NavigationScheduler.cpp:
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::textFromUTF8):
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::MHTMLParser::addResourceToArchive):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * mathml/MathMLPresentationElement.cpp:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::addAudioTrackKindDisplayNameIfNeeded):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::EventSource):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheet const):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty):
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::initializeNames):
+        * platform/CommonAtomStrings.cpp: Added.
+        (WebCore::initializeCommonAtomStrings):
+        * platform/CommonAtomStrings.h: Added.
+        (WebCore::alternativeAtom):
+        (WebCore::autoAtom):
+        (WebCore::captionsAtom):
+        (WebCore::commentaryAtom):
+        (WebCore::cssContentTypeAtom):
+        (WebCore::eagerAtom):
+        (WebCore::emailAtom):
+        (WebCore::falseAtom):
+        (WebCore::lazyAtom):
+        (WebCore::mainAtom):
+        (WebCore::noneAtom):
+        (WebCore::offAtom):
+        (WebCore::onAtom):
+        (WebCore::plaintextOnlyAtom):
+        (WebCore::resetAtom):
+        (WebCore::searchAtom):
+        (WebCore::submitAtom):
+        (WebCore::subtitlesAtom):
+        (WebCore::telAtom):
+        (WebCore::textAtom):
+        (WebCore::textPlainContentTypeAtom):
+        (WebCore::trueAtom):
+        (WebCore::urlAtom):
+        * platform/Pasteboard.cpp:
+        (WebCore::Pasteboard::isSafeTypeForDOMToReadAndWrite):
+        * platform/StaticPasteboard.cpp:
+        (WebCore::StaticPasteboard::writePlainText):
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::initialName const):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+        (WebCore::textPlain): Deleted.
+        * platform/ios/wak/WebCoreThread.mm:
+        (StartWebThread):
+        * platform/network/HTTPParsers.cpp:
+        * platform/network/ios/WebCoreURLResponseIOS.h:
+        (WebCore::shouldUseQuickLookForMIMEType):
+        * style/Styleable.cpp:
+        (WebCore::Styleable::animationListContainsNewlyValidAnimation const):
+        (WebCore::Styleable::updateCSSAnimations const):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::rotateMode const):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::sumAtom):
+        (WebCore::SVGAnimationElement::isAdditive const):
+        (WebCore::SVGAnimationElement::isAccumulated const):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        * svg/SVGFEConvolveMatrixElement.h:
+        (WebCore::SVGPropertyTraits<EdgeModeType>::toString):
+        (WebCore::SVGPropertyTraits<EdgeModeType>::fromString):
+        * svg/SVGMarkerTypes.h:
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::fromString):
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::toString):
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::autoString): Deleted.
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::type const):
+        * svg/SVGTextPathElement.h:
+        (WebCore::SVGPropertyTraits<SVGTextPathSpacingType>::toString):
+        (WebCore::SVGPropertyTraits<SVGTextPathSpacingType>::fromString):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::indefiniteAtom):
+        (WebCore::SVGSMILElement::parseClockValue):
+        (WebCore::SVGSMILElement::repeatCount const):
+        * svg/properties/SVGPropertyTraits.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::m_notificationClient):
+        * xml/XPathValue.cpp:
+
 2022-04-22  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, non-unified build fixes after r293203

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGFEConvolveMatrixElement.h"
 
+#include "CommonAtomStrings.h"
 #include "FEConvolveMatrix.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"

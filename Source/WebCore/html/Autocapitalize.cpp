@@ -28,6 +28,7 @@
 
 #if ENABLE(AUTOCAPITALIZE)
 
+#include "CommonAtomStrings.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -56,10 +57,8 @@ const AtomString& stringForAutocapitalizeType(AutocapitalizeType type)
     switch (type) {
     case AutocapitalizeType::Default:
         return nullAtom();
-    case AutocapitalizeType::None: {
-        static MainThreadNeverDestroyed<const AtomString> valueNone("none", AtomString::ConstructFromLiteral);
-        return valueNone;
-    }
+    case AutocapitalizeType::None:
+        return noneAtom();
     case AutocapitalizeType::Sentences: {
         static MainThreadNeverDestroyed<const AtomString> valueSentences("sentences", AtomString::ConstructFromLiteral);
         return valueSentences;

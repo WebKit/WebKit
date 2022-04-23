@@ -137,8 +137,6 @@ WTF_EXPORT_PRIVATE LazyNeverDestroyed<const AtomString> emptyAtomData;
 WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> starAtomData;
 WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlAtomData;
 WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> xmlnsAtomData;
-WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> trueAtomData;
-WTF_EXPORT_PRIVATE MainThreadLazyNeverDestroyed<const AtomString> falseAtomData;
 
 void AtomString::init()
 {
@@ -159,8 +157,6 @@ void AtomString::init()
         starAtomData.constructWithoutAccessCheck("*", AtomString::ConstructFromLiteral);
         xmlAtomData.constructWithoutAccessCheck("xml", AtomString::ConstructFromLiteral);
         xmlnsAtomData.constructWithoutAccessCheck("xmlns", AtomString::ConstructFromLiteral);
-        trueAtomData.constructWithoutAccessCheck("true", AtomString::ConstructFromLiteral);
-        falseAtomData.constructWithoutAccessCheck("false", AtomString::ConstructFromLiteral);
     });
 }
 

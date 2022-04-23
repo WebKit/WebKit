@@ -1,3 +1,13 @@
+2022-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Move global AtomStrings to a common header to promote reuse
+        https://bugs.webkit.org/show_bug.cgi?id=239585
+
+        Reviewed by Geoff Garen and Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::makeBackend):
+
 2022-04-22  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add find interaction API to WKWebView

@@ -49,12 +49,7 @@ public:
     }
     virtual ~VideoTrack();
 
-    static const AtomString& alternativeKeyword();
-    static const AtomString& captionsKeyword();
-    static const AtomString& mainKeyword();
     static const AtomString& signKeyword();
-    static const AtomString& subtitlesKeyword();
-    static const AtomString& commentaryKeyword();
 
     bool selected() const { return m_selected; }
     virtual void setSelected(const bool);

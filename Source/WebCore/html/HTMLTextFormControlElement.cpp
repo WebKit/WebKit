@@ -28,6 +28,7 @@
 #include "AXObjectCache.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "ChromeClient.h"
+#include "CommonAtomStrings.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -434,13 +435,12 @@ unsigned HTMLTextFormControlElement::computeSelectionEnd() const
 
 static const AtomString& directionString(TextFieldSelectionDirection direction)
 {
-    static MainThreadNeverDestroyed<const AtomString> none("none", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> forward("forward", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> backward("backward", AtomString::ConstructFromLiteral);
 
     switch (direction) {
     case SelectionHasNoDirection:
-        return none;
+        return noneAtom();
     case SelectionHasForwardDirection:
         return forward;
     case SelectionHasBackwardDirection:
@@ -448,7 +448,7 @@ static const AtomString& directionString(TextFieldSelectionDirection direction)
     }
 
     ASSERT_NOT_REACHED();
-    return none;
+    return noneAtom();
 }
 
 const AtomString& HTMLTextFormControlElement::selectionDirection() const

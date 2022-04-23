@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "CommonAtomStrings.h"
 #include "ContentType.h"
 #include "DeprecatedGlobalSettings.h"
 #include "FourCC.h"
@@ -331,12 +332,6 @@ static const AtomString& applicationOctetStream()
     return applicationOctetStream;
 }
 
-static const AtomString& textPlain()
-{
-    static MainThreadNeverDestroyed<const AtomString> textPlain("text/plain", AtomString::ConstructFromLiteral);
-    return textPlain;
-}
-
 const MediaPlayerPrivateInterface* MediaPlayer::playerPrivate() const
 {
     return m_private.get();
@@ -485,7 +480,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
 
     // If the MIME type is missing or is not meaningful, try to figure it out from the URL.
     AtomString containerType = m_contentType.containerType();
-    if (containerType.isEmpty() || containerType == applicationOctetStream() || containerType == textPlain()) {
+    if (containerType.isEmpty() || containerType == applicationOctetStream() || containerType == textPlainContentTypeAtom()) {
         if (m_url.protocolIsData())
             m_contentType = ContentType(mimeTypeFromDataURL(m_url.string()));
         else {

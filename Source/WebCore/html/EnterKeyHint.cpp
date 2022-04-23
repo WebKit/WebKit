@@ -26,6 +26,8 @@
 #include "config.h"
 #include "EnterKeyHint.h"
 
+#include "CommonAtomStrings.h"
+
 namespace WebCore {
 
 EnterKeyHint enterKeyHintForAttributeValue(const String& value)
@@ -63,7 +65,7 @@ String attributeValueForEnterKeyHint(EnterKeyHint hint)
     case EnterKeyHint::Previous:
         return "previous"_s;
     case EnterKeyHint::Search:
-        return "search"_s;
+        return searchAtom();
     case EnterKeyHint::Send:
         return "send"_s;
     }

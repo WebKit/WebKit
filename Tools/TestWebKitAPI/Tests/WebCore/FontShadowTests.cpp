@@ -26,13 +26,23 @@
 #include "config.h"
 
 #include "Test.h"
+#include <WebCore/CommonAtomStrings.h>
 #include <WebCore/FontShadow.h>
+#include <wtf/text/AtomString.h>
 
 using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-TEST(FontShadow, InvalidColor)
+class FontShadowTest : public testing::Test {
+public:
+    void SetUp() override
+    {
+        WebCore::initializeCommonAtomStrings();
+    }
+};
+
+TEST_F(FontShadowTest, InvalidColor)
 {
     FontShadow fontShadow;
     fontShadow.offset = { 1.1, 2.2 };
@@ -42,7 +52,7 @@ TEST(FontShadow, InvalidColor)
     EXPECT_EQ(serializationForCSS(fontShadow), "none");
 }
 
-TEST(FontShadow, NoOffsetOrBlurRadius)
+TEST_F(FontShadowTest, NoOffsetOrBlurRadius)
 {
     FontShadow fontShadow;
     fontShadow.color = Color::red;
@@ -53,7 +63,7 @@ TEST(FontShadow, NoOffsetOrBlurRadius)
     EXPECT_EQ(serializationForCSS(fontShadow), "none");
 }
 
-TEST(FontShadow, NoOffset)
+TEST_F(FontShadowTest, NoOffset)
 {
     FontShadow fontShadow;
     fontShadow.color = Color::red;
@@ -63,7 +73,7 @@ TEST(FontShadow, NoOffset)
     EXPECT_EQ(serializationForCSS(fontShadow), "0px 0px rgb(255, 0, 0) 3.3px");
 }
 
-TEST(FontShadow, NegativeOffset)
+TEST_F(FontShadowTest, NegativeOffset)
 {
     FontShadow fontShadow;
     fontShadow.color = Color::red;
@@ -72,7 +82,7 @@ TEST(FontShadow, NegativeOffset)
     EXPECT_EQ(serializationForCSS(fontShadow), "-1.1px -2.2px rgb(255, 0, 0) 3.3px");
 }
 
-TEST(FontShadow, NoBlurRadius)
+TEST_F(FontShadowTest, NoBlurRadius)
 {
     FontShadow fontShadow;
     fontShadow.color = Color::red;
@@ -82,7 +92,7 @@ TEST(FontShadow, NoBlurRadius)
     EXPECT_EQ(serializationForCSS(fontShadow), "1.1px 2.2px rgb(255, 0, 0)");
 }
 
-TEST(FontShadow, NegativeBlurRadius)
+TEST_F(FontShadowTest, NegativeBlurRadius)
 {
     FontShadow fontShadow;
     fontShadow.color = Color::red;
@@ -91,7 +101,7 @@ TEST(FontShadow, NegativeBlurRadius)
     EXPECT_EQ(serializationForCSS(fontShadow), "1.1px 2.2px rgb(255, 0, 0) -3.3px");
 }
 
-TEST(FontShadow, AllNegative)
+TEST_F(FontShadowTest, AllNegative)
 {
     FontShadow fontShadow;
     fontShadow.color = Color::red;

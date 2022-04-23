@@ -30,6 +30,7 @@
 #include "Utilities.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/CombinedURLFilters.h>
+#include <WebCore/CommonAtomStrings.h>
 #include <WebCore/ContentExtensionActions.h>
 #include <WebCore/ContentExtensionCompiler.h>
 #include <WebCore/ContentExtensionError.h>
@@ -212,7 +213,7 @@ static ResourceLoadInfo requestInTopAndFrameURLs(ASCIILiteral url, ASCIILiteral 
 
 ContentExtensions::ContentExtensionsBackend makeBackend(String&& json)
 {
-    AtomString::init();
+    WebCore::initializeCommonAtomStrings();
     auto extension = InMemoryCompiledContentExtension::create(WTFMove(json));
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("testFilter"_s, WTFMove(extension), { });

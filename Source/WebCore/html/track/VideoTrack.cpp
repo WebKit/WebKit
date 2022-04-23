@@ -34,6 +34,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "CommonAtomStrings.h"
 #include "VideoTrackClient.h"
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
@@ -46,40 +47,10 @@
 
 namespace WebCore {
 
-const AtomString& VideoTrack::alternativeKeyword()
-{
-    static MainThreadNeverDestroyed<const AtomString> alternative("alternative", AtomString::ConstructFromLiteral);
-    return alternative;
-}
-
-const AtomString& VideoTrack::captionsKeyword()
-{
-    static MainThreadNeverDestroyed<const AtomString> captions("captions", AtomString::ConstructFromLiteral);
-    return captions;
-}
-
-const AtomString& VideoTrack::mainKeyword()
-{
-    static MainThreadNeverDestroyed<const AtomString> captions("main", AtomString::ConstructFromLiteral);
-    return captions;
-}
-
 const AtomString& VideoTrack::signKeyword()
 {
     static MainThreadNeverDestroyed<const AtomString> sign("sign", AtomString::ConstructFromLiteral);
     return sign;
-}
-
-const AtomString& VideoTrack::subtitlesKeyword()
-{
-    static MainThreadNeverDestroyed<const AtomString> subtitles("subtitles", AtomString::ConstructFromLiteral);
-    return subtitles;
-}
-
-const AtomString& VideoTrack::commentaryKeyword()
-{
-    static MainThreadNeverDestroyed<const AtomString> commentary("commentary", AtomString::ConstructFromLiteral);
-    return commentary;
 }
 
 VideoTrack::VideoTrack(ScriptExecutionContext* context, VideoTrackPrivate& trackPrivate)
@@ -118,12 +89,12 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
 
 bool VideoTrack::isValidKind(const AtomString& value) const
 {
-    return value == alternativeKeyword()
-        || value == commentaryKeyword()
-        || value == captionsKeyword()
-        || value == mainKeyword()
+    return value == alternativeAtom()
+        || value == commentaryAtom()
+        || value == captionsAtom()
+        || value == mainAtom()
         || value == signKeyword()
-        || value == subtitlesKeyword();
+        || value == subtitlesAtom();
 }
 
 void VideoTrack::setSelected(const bool selected)
@@ -241,22 +212,22 @@ void VideoTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {
     case VideoTrackPrivate::Alternative:
-        setKind(VideoTrack::alternativeKeyword());
+        setKind(alternativeAtom());
         return;
     case VideoTrackPrivate::Captions:
-        setKind(VideoTrack::captionsKeyword());
+        setKind(captionsAtom());
         return;
     case VideoTrackPrivate::Main:
-        setKind(VideoTrack::mainKeyword());
+        setKind(mainAtom());
         return;
     case VideoTrackPrivate::Sign:
         setKind(VideoTrack::signKeyword());
         return;
     case VideoTrackPrivate::Subtitles:
-        setKind(VideoTrack::subtitlesKeyword());
+        setKind(subtitlesAtom());
         return;
     case VideoTrackPrivate::Commentary:
-        setKind(VideoTrack::commentaryKeyword());
+        setKind(commentaryAtom());
         return;
     case VideoTrackPrivate::None:
         setKind(emptyString());

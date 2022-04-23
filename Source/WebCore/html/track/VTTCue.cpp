@@ -36,6 +36,7 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CommonAtomStrings.h"
 #include "DocumentFragment.h"
 #include "ElementInlines.h"
 #include "Event.h"
@@ -135,12 +136,6 @@ static const String& lineRightKeyword()
 {
     static NeverDestroyed<const String> lineRight(MAKE_STATIC_STRING_IMPL("line-right"));
     return lineRight;
-}
-
-static const String& autoKeyword()
-{
-    static NeverDestroyed<const String> autoX(MAKE_STATIC_STRING_IMPL("auto"));
-    return autoX;
 }
 
 // ----------------------------
@@ -477,7 +472,7 @@ const String& VTTCue::positionAlign() const
     case PositionAlignmentLignRight:
         return lineRightKeyword();
     case PositionAlignmentLignAuto:
-        return autoKeyword();
+        return autoAtom();
     default:
         ASSERT_NOT_REACHED();
         return emptyString();
@@ -493,7 +488,7 @@ ExceptionOr<void> VTTCue::setPositionAlign(const String& value)
         positionAlignment = PositionAlignmentLignCenter;
     else if (value == lineRightKeyword())
         positionAlignment = PositionAlignmentLignRight;
-    else if (value == autoKeyword())
+    else if (value == autoAtom())
         positionAlignment = PositionAlignmentLignAuto;
     else
         return { };
@@ -1329,13 +1324,13 @@ void VTTCue::toJSON(JSON::Object& object) const
     object.setString("vertical"_s, vertical());
     object.setBoolean("snapToLines"_s, snapToLines());
     if (m_linePosition)
-        object.setString("line"_s, "auto"_s);
+        object.setString("line"_s, autoAtom());
     else
         object.setDouble("line"_s, *m_linePosition);
     if (m_textPosition)
         object.setDouble("position"_s, *m_textPosition);
     else
-        object.setString("position"_s, "auto"_s);
+        object.setString("position"_s, autoAtom());
     object.setInteger("size"_s, m_cueSize);
     object.setString("align"_s, align());
 }

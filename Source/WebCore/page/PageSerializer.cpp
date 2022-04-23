@@ -36,6 +36,7 @@
 #include "CSSImportRule.h"
 #include "CSSStyleRule.h"
 #include "CachedImage.h"
+#include "CommonAtomStrings.h"
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "Frame.h"
@@ -260,7 +261,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const URL
         // FIXME: We should check whether a charset has been specified and if none was found add one.
         PAL::TextEncoding textEncoding(styleSheet->contents().charset());
         ASSERT(textEncoding.isValid());
-        m_resources.append({ url, "text/css"_s, SharedBuffer::create(textEncoding.encode(cssText.toString(), PAL::UnencodableHandling::Entities)) });
+        m_resources.append({ url, cssContentTypeAtom(), SharedBuffer::create(textEncoding.encode(cssText.toString(), PAL::UnencodableHandling::Entities)) });
         m_resourceURLs.add(url);
     }
 }

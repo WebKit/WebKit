@@ -33,6 +33,7 @@
 #include "NavigationScheduler.h"
 
 #include "BackForwardController.h"
+#include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
@@ -377,7 +378,7 @@ public:
     {
         UserGestureIndicator gestureIndicator { userGestureToForward() };
 
-        ResourceResponse replacementResponse { m_originDocument.url(), "text/plain"_s, 0, "UTF-8"_s };
+        ResourceResponse replacementResponse { m_originDocument.url(), textPlainContentTypeAtom(), 0, "UTF-8"_s };
         SubstituteData replacementData { SharedBuffer::create(), m_originDocument.url(), replacementResponse, SubstituteData::SessionHistoryVisibility::Hidden };
 
         ResourceRequest resourceRequest { m_originDocument.url(), emptyString(), ResourceRequestCachePolicy::ReloadIgnoringCacheData };

@@ -24,6 +24,7 @@
 #include "SVGStyleElement.h"
 
 #include "CSSStyleSheet.h"
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
@@ -65,9 +66,8 @@ void SVGStyleElement::setDisabled(bool setDisabled)
 
 const AtomString& SVGStyleElement::type() const
 {
-    static MainThreadNeverDestroyed<const AtomString> defaultValue("text/css", AtomString::ConstructFromLiteral);
-    const AtomString& n = getAttribute(SVGNames::typeAttr);
-    return n.isNull() ? defaultValue.get() : n;
+    auto& typeValue = getAttribute(SVGNames::typeAttr);
+    return typeValue.isNull() ? cssContentTypeAtom() : typeValue;
 }
 
 void SVGStyleElement::setType(const AtomString& type)

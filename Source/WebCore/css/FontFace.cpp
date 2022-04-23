@@ -405,7 +405,7 @@ String FontFace::display(ScriptExecutionContext& context) const
     m_backing->updateStyleIfNeeded();
     const auto& loadingBehaviorWrapped = m_backing->loadingBehavior();
     if (!loadingBehaviorWrapped)
-        return "auto"_s;
+        return autoAtom();
     return context.cssValuePool().createValue(loadingBehaviorWrapped.value())->cssText();
 }
 

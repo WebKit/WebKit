@@ -46,12 +46,9 @@ public:
     }
     virtual ~AudioTrack();
 
-    static const AtomString& alternativeKeyword();
     static const AtomString& descriptionKeyword();
-    static const AtomString& mainKeyword();
     static const AtomString& mainDescKeyword();
     static const AtomString& translationKeyword();
-    static const AtomString& commentaryKeyword();
 
     bool enabled() const final { return m_enabled; }
     void setEnabled(const bool);

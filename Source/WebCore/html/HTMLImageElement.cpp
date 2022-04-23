@@ -28,6 +28,7 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CommonAtomStrings.h"
 #include "Editor.h"
 #include "ElementIterator.h"
 #include "ElementRareData.h"
@@ -674,7 +675,7 @@ String HTMLImageElement::decoding() const
     case DecodingMode::Auto:
         break;
     }
-    return "auto"_s;
+    return autoAtom();
 }
 
 DecodingMode HTMLImageElement::decodingMode() const
@@ -896,10 +897,8 @@ size_t HTMLImageElement::pendingDecodePromisesCountForTesting() const
 
 const AtomString& HTMLImageElement::loadingForBindings() const
 {
-    static MainThreadNeverDestroyed<const AtomString> eager("eager", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> lazy("lazy", AtomString::ConstructFromLiteral);
     auto& attributeValue = attributeWithoutSynchronization(HTMLNames::loadingAttr);
-    return hasLazyLoadableAttributeValue(attributeValue) ? lazy : eager;
+    return hasLazyLoadableAttributeValue(attributeValue) ? lazyAtom() : eagerAtom();
 }
 
 void HTMLImageElement::setLoadingForBindings(const AtomString& value)

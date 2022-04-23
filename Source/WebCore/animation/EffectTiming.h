@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CommonAtomStrings.h"
 #include "FillMode.h"
 #include "PlaybackDirection.h"
 #include <variant>
@@ -33,7 +34,7 @@
 namespace WebCore {
 
 struct EffectTiming {
-    std::variant<double, String> duration { "auto"_s };
+    std::variant<double, String> duration { autoAtom() };
     double delay { 0 };
     double endDelay { 0 };
     double iterationStart { 0 };

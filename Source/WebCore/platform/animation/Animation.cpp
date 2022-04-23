@@ -22,6 +22,7 @@
 #include "config.h"
 #include "Animation.h"
 
+#include "CommonAtomStrings.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
 
@@ -129,7 +130,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
 
 auto Animation::initialName() -> const Name&
 {
-    static NeverDestroyed<Name> initialValue { Name { MAKE_STATIC_STRING_IMPL("none"), true } };
+    static NeverDestroyed<Name> initialValue { Name { noneAtom(), true } };
     return initialValue;
 }
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Autofill.h"
 
+#include "CommonAtomStrings.h"
 #include "ElementInlines.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
@@ -136,9 +137,6 @@ static unsigned maxTokensForAutofillFieldCategory(AutofillCategory category)
 // https://html.spec.whatwg.org/multipage/forms.html#processing-model-3
 AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormControlElement& element)
 {
-    static MainThreadNeverDestroyed<const AtomString> on("on", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> off("off", AtomString::ConstructFromLiteral);
-
     // Label: Default
     // 26. Let the element's IDL-exposed autofill value be the empty string, and its autofill hint set and autofill scope be empty.
     // 27. If the element's autocomplete attribute is wearing the autofill anchor mantle, then let the element's autofill field name be the empty string and abort these steps.
@@ -149,9 +147,9 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
             return { emptyString(), emptyString() };
         
         auto form = element.form();
-        if (form && form->autocomplete() == off)
-            return { off, emptyString() };
-        return { on, emptyString() };
+        if (form && form->autocomplete() == offAtom())
+            return { offAtom(), emptyString() };
+        return { onAtom(), emptyString() };
     };
 
 
@@ -199,13 +197,13 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // autofill hint set be empty, and let its IDL-exposed autofill value be the string "off".
     // Then, abort these steps.
     if (category == AutofillCategory::Off)
-        return { off, off.get().string() };
+        return { offAtom(), offAtom().string() };
 
     // 8. If category is Automatic, let the element's autofill field name be the string "on",
     // let its autofill hint set be empty, and let its IDL-exposed autofill value be the string
     // "on". Then, abort these steps.
     if (category == AutofillCategory::Automatic)
-        return { on, on.get().string() };
+        return { onAtom(), onAtom().string() };
 
     // 9. Let scope tokens be an empty list.
     // 10. Let hint tokens be an empty set.

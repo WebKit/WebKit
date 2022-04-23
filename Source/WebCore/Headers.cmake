@@ -1242,6 +1242,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/CPUMonitor.h
     platform/ColorChooser.h
     platform/ColorChooserClient.h
+    platform/CommonAtomStrings.h
     platform/ContentFilterUnblockHandler.h
     platform/ContentType.h
     platform/ContextMenu.h
