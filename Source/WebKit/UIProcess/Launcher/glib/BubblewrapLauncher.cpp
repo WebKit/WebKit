@@ -302,6 +302,28 @@ static void bindSndio(Vector<CString>& args)
     bindIfExists(args, sndioHomeDir.get(), BindFlags::ReadWrite);
 }
 
+static void bindPipewire(Vector<CString>& args)
+{
+    const char* xdgRuntimeDir = g_get_user_runtime_dir();
+    const char* pwRuntimeDir = g_getenv("PIPEWIRE_RUNTIME_DIR");
+    const char* pwRemote = g_getenv("PIPEWIRE_REMOTE");
+
+    if (!pwRemote)
+        pwRemote = "pipewire-0";
+
+    if (pwRuntimeDir) {
+        GUniquePtr<char> pwRuntimeFile(g_build_filename(pwRuntimeDir, pwRemote, nullptr));
+        bindIfExists(args, pwRuntimeFile.get(), BindFlags::ReadWrite);
+    } else {
+        GUniquePtr<char> xdgRuntimeFile(g_build_filename(xdgRuntimeDir, pwRemote, nullptr));
+        bindIfExists(args, xdgRuntimeFile.get(), BindFlags::ReadWrite);
+    }
+
+    // System-wide pipewire
+    GUniquePtr<char> sysRuntimeFile(g_build_filename("/run/pipewire", pwRemote, nullptr));
+    bindIfExists(args, sysRuntimeFile.get(), BindFlags::ReadWrite);
+}
+
 static void bindFonts(Vector<CString>& args)
 {
     const char* configDir = g_get_user_config_dir();
@@ -797,9 +819,10 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         static std::unique_ptr<XDGDBusProxy> dbusProxy = makeUnique<XDGDBusProxy>();
         if (dbusProxy)
             bindDBusSession(sandboxArgs, *dbusProxy, flatpakInfoFd != -1);
-        // FIXME: We should move to Pipewire as soon as viable, Pulse doesn't restrict clients atm.
+        // FIXME: Disable PulseAudio access when Pipewire is available.
         bindPulse(sandboxArgs);
         bindSndio(sandboxArgs);
+        bindPipewire(sandboxArgs);
         bindFonts(sandboxArgs);
         bindGStreamerData(sandboxArgs);
         bindOpenGL(sandboxArgs);
