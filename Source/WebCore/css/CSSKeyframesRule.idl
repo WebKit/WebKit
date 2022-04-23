@@ -29,7 +29,7 @@
 [
     Exposed=Window
 ] interface CSSKeyframesRule : CSSRule {
-    attribute DOMString name;
+    attribute [AtomString] DOMString name;
     readonly attribute CSSRuleList cssRules;
     
     undefined insertRule(DOMString rule);

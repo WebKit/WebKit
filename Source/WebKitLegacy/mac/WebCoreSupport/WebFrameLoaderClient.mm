@@ -1653,7 +1653,7 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
     return WebCore::ObjectContentType::None;
 }
 
-static String parameterValue(const Vector<String>& paramNames, const Vector<String>& paramValues, const char* name)
+static AtomString parameterValue(const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, const char* name)
 {
     size_t size = paramNames.size();
     ASSERT(size == paramValues.size());
@@ -1661,7 +1661,7 @@ static String parameterValue(const Vector<String>& paramNames, const Vector<Stri
         if (equalIgnoringASCIICase(paramNames[i], name))
             return paramValues[i];
     }
-    return String();
+    return nullAtom();
 }
 
 static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
@@ -1777,7 +1777,7 @@ static bool shouldBlockPlugin(WebBasePluginPackage *pluginPackage)
 }
 
 RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSize& size, WebCore::HTMLPlugInElement& element, const URL& url,
-    const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+    const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, const String& mimeType, bool loadManually)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 

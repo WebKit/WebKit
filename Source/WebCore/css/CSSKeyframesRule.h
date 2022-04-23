@@ -85,8 +85,8 @@ public:
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 
-    String name() const { return m_keyframesRule->name(); }
-    void setName(const String&);
+    const AtomString& name() const { return m_keyframesRule->name(); }
+    void setName(const AtomString&);
 
     CSSRuleList& cssRules();
 

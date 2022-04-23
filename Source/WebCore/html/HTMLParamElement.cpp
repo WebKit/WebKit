@@ -45,14 +45,14 @@ Ref<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLParamElement(tagName, document));
 }
 
-String HTMLParamElement::name() const
+AtomString HTMLParamElement::name() const
 {
     if (hasName())
         return getNameAttribute();
     return document().isHTMLDocument() ? emptyAtom() : getIdAttribute();
 }
 
-String HTMLParamElement::value() const
+AtomString HTMLParamElement::value() const
 {
     return attributeWithoutSynchronization(valueAttr);
 }

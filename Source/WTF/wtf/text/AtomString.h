@@ -52,6 +52,7 @@ public:
 
     AtomString(AtomStringImpl*);
     AtomString(RefPtr<AtomStringImpl>&&);
+    AtomString(Ref<AtomStringImpl>&&);
     AtomString(const StaticStringImpl*);
     AtomString(StringImpl*);
     AtomString(const String&);
@@ -237,6 +238,11 @@ inline AtomString::AtomString(AtomStringImpl* string)
 }
 
 inline AtomString::AtomString(RefPtr<AtomStringImpl>&& string)
+    : m_string(WTFMove(string))
+{
+}
+
+inline AtomString::AtomString(Ref<AtomStringImpl>&& string)
     : m_string(WTFMove(string))
 {
 }

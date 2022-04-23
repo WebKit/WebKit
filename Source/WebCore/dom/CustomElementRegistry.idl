@@ -29,7 +29,7 @@
     Exposed=Window
 ] interface CustomElementRegistry {
     [CEReactions, Custom] undefined define(DOMString name, Function constructor);
-    any get(DOMString name);
+    any get([AtomString] DOMString name);
     [Custom, ReturnsOwnPromise] Promise<undefined> whenDefined(DOMString name);
     [CEReactions] undefined upgrade(Node root);
 };

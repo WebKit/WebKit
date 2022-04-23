@@ -149,7 +149,7 @@ std::optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(c
     // 3. If the initDataTypes member of candidate configuration is non-empty, run the following steps:
     if (!candidateConfiguration.initDataTypes.isEmpty()) {
         // 3.1. Let supported types be an empty sequence of DOMStrings.
-        Vector<String> supportedTypes;
+        Vector<AtomString> supportedTypes;
 
         // 3.2. For each value in candidate configuration's initDataTypes member:
         for (auto initDataType : candidateConfiguration.initDataTypes) {

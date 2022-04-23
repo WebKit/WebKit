@@ -342,7 +342,7 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
     return nullptr;
 }
 
-bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
+bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
 {
     if (m_pluginReplacement)
         return true;

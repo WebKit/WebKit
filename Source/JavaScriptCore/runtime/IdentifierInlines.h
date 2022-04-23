@@ -44,7 +44,7 @@ inline Identifier::Identifier(VM& vm, AtomStringImpl* string)
 }
 
 inline Identifier::Identifier(VM& vm, const AtomString& string)
-    : m_string(string.string())
+    : m_string(string)
 {
 #ifndef NDEBUG
     checkCurrentAtomStringTable(vm);

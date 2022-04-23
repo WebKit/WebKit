@@ -138,7 +138,7 @@ CSSKeyframesRule::~CSSKeyframesRule()
     }
 }
 
-void CSSKeyframesRule::setName(const String& name)
+void CSSKeyframesRule::setName(const AtomString& name)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 

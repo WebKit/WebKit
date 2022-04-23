@@ -99,7 +99,7 @@ void Attr::setValue(const AtomString& value)
 
 void Attr::setNodeValue(const String& value)
 {
-    setValue(value);
+    setValue(AtomString { value });
 }
 
 Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)

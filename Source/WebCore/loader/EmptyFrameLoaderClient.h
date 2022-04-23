@@ -172,7 +172,7 @@ private:
     void didRunInsecureContent(SecurityOrigin&, const URL&) final;
     void didDetectXSS(const URL&, bool) final;
     RefPtr<Frame> createFrame(const String&, HTMLFrameOwnerElement&) final;
-    RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool) final;
+    RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
 
     ObjectContentType objectContentType(const URL&, const String&) final;
     String overrideMediaType() const final;

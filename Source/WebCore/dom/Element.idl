@@ -31,10 +31,10 @@
     readonly attribute DOMString localName;
     readonly attribute DOMString tagName;
 
-    [CEReactions, Reflect] attribute DOMString id;
-    [CEReactions, Reflect=class] attribute DOMString className;
+    [CEReactions, Reflect] attribute [AtomString] DOMString id;
+    [CEReactions, Reflect=class] attribute [AtomString] DOMString className;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList classList;
-    [CEReactions, Reflect, Unscopable] attribute DOMString slot;
+    [CEReactions, Reflect, Unscopable] attribute [AtomString] DOMString slot;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList part;
 
     [DOMJIT=ReadDOM] boolean hasAttributes();

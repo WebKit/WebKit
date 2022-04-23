@@ -2175,7 +2175,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [self windowElement:attributeName];
 
     if ([attributeName isEqualToString:NSAccessibilityAccessKeyAttribute]) {
-        AtomString accessKey = backingObject->accessKey();
+        auto accessKey = backingObject->accessKey();
         if (accessKey.isNull())
             return nil;
         return accessKey;

@@ -72,7 +72,7 @@ private:
 
     Vector<ChapterData> m_processedChapters;
     RetainPtr<NSLocale> m_locale;
-    mutable String m_language;
+    mutable AtomString m_language;
     int m_index { 0 };
 };
 

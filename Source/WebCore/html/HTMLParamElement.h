@@ -31,8 +31,8 @@ class HTMLParamElement final : public HTMLElement {
 public:
     static Ref<HTMLParamElement> create(const QualifiedName&, Document&);
 
-    String name() const;
-    String value() const;
+    AtomString name() const;
+    AtomString value() const;
 
     static bool isURLParameter(const String&);
 

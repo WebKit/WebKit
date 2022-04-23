@@ -178,7 +178,7 @@ struct FontStyleRaw {
 using FontWeightRaw = std::variant<CSSValueID, double>;
 using FontSizeRaw = std::variant<CSSValueID, CSSPropertyParserHelpers::LengthOrPercentRaw>;
 using LineHeightRaw = std::variant<CSSValueID, double, CSSPropertyParserHelpers::LengthOrPercentRaw>;
-using FontFamilyRaw = std::variant<CSSValueID, String>;
+using FontFamilyRaw = std::variant<CSSValueID, AtomString>;
 
 struct FontRaw {
     std::optional<FontStyleRaw> style;
@@ -201,8 +201,8 @@ std::optional<FontWeightRaw> consumeFontWeightRaw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontStyleKeywordValueRaw(CSSParserTokenRange&);
 std::optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange&, CSSParserMode);
-String concatenateFamilyName(CSSParserTokenRange&);
-String consumeFamilyNameRaw(CSSParserTokenRange&);
+AtomString concatenateFamilyName(CSSParserTokenRange&);
+AtomString consumeFamilyNameRaw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange&);
 std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange&);
 std::optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);

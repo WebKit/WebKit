@@ -75,7 +75,7 @@ public:
     bool hasAdoptedCallback() const { return !!m_adoptedCallback; }
     void invokeAdoptedCallback(Element&, Document& oldDocument, Document& newDocument);
 
-    void setAttributeChangedCallback(JSC::JSObject* callback, const Vector<String>& observedAttributes);
+    void setAttributeChangedCallback(JSC::JSObject* callback, Vector<AtomString>&& observedAttributes);
     bool observesAttribute(const AtomString& name) const { return m_observedAttributes.contains(name); }
     void invokeAttributeChangedCallback(Element&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
 

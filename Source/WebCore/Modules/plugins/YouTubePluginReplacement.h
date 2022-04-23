@@ -28,6 +28,7 @@
 #include "PluginReplacement.h"
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -37,13 +38,11 @@ class YouTubePluginReplacement final : public PluginReplacement {
 public:
     static void registerPluginReplacement(PluginReplacementRegistrar);
 
-    typedef HashMap<String, String> KeyValueMap;
-
-    WEBCORE_EXPORT static String youTubeURLFromAbsoluteURL(const URL& srcURL, const String& srcString);
+    WEBCORE_EXPORT static AtomString youTubeURLFromAbsoluteURL(const URL& srcURL, const AtomString& srcString);
 
 private:
-    YouTubePluginReplacement(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
-    static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
+    YouTubePluginReplacement(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+    static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
     static bool supportsMIMEType(const String&);
     static bool supportsFileExtension(StringView);
     static bool supportsURL(const URL&);
@@ -51,14 +50,14 @@ private:
 
     void installReplacement(ShadowRoot&) final;
 
-    String youTubeURL(const String& rawURL);
+    AtomString youTubeURL(const AtomString& rawURL);
 
     bool willCreateRenderer() final { return m_embedShadowElement; }
     RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, RenderStyle&&, const RenderTreePosition&) final;
 
     WeakPtr<HTMLPlugInElement> m_parentElement;
     RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;
-    KeyValueMap m_attributes;
+    HashMap<AtomString, AtomString> m_attributes;
 };
 
 }

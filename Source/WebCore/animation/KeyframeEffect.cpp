@@ -92,7 +92,7 @@ String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID cssProperty
     return getJSPropertyName(cssPropertyId);
 }
 
-static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const String& idlAttributeName)
+static inline CSSPropertyID IDLAttributeNameToAnimationPropertyName(const AtomString& idlAttributeName)
 {
     // https://drafts.csswg.org/web-animations-1/#idl-attribute-name-to-animation-property-name
     // 1. If attribute conforms to the <custom-property-name> production, return attribute.
@@ -230,7 +230,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
     //    properties, or which are in input properties and conform to the <custom-property-name> production.
     Vector<JSC::Identifier> animationProperties;
     for (auto& inputProperty : inputProperties) {
-        auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.string());
+        auto cssProperty = IDLAttributeNameToAnimationPropertyName(inputProperty.atomString());
         auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(cssProperty, RenderStyle::initialDirection(), RenderStyle::initialWritingMode());
         if (CSSPropertyAnimation::isPropertyAnimatable(resolvedCSSProperty))
             animationProperties.append(inputProperty);
@@ -271,7 +271,7 @@ static inline ExceptionOr<KeyframeEffect::KeyframeLikeObject> processKeyframeLik
         RETURN_IF_EXCEPTION(scope, Exception { TypeError });
 
         // 4. Calculate the normalized property name as the result of applying the IDL attribute name to animation property name algorithm to property name.
-        auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(animationProperties[i].string());
+        auto cssPropertyID = IDLAttributeNameToAnimationPropertyName(animationProperties[i].atomString());
 
         // 5. Add a property to to keyframe output with normalized property name as the property name, and property values as the property value.
         keyframeOuput.propertiesAndValues.append({ cssPropertyID, propertyValues });
@@ -585,7 +585,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
     setIterationDuration(source->iterationDuration());
     updateStaticTimingProperties();
 
-    KeyframeList keyframeList(makeString("keyframe-effect-"_s, UUID::createVersion4Weak()));
+    KeyframeList keyframeList(makeAtomString("keyframe-effect-"_s, UUID::createVersion4Weak()));
     keyframeList.copyKeyframes(source->m_blendingKeyframes);
     setBlendingKeyframes(keyframeList);
 }
@@ -811,7 +811,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     if (!m_blendingKeyframes.isEmpty() || !m_target)
         return;
 
-    KeyframeList keyframeList(makeString("keyframe-effect-"_s, UUID::createVersion4Weak()));
+    KeyframeList keyframeList(makeAtomString("keyframe-effect-"_s, UUID::createVersion4Weak()));
     auto& styleResolver = m_target->styleResolver();
 
     for (auto& keyframe : m_parsedKeyframes) {
@@ -1009,7 +1009,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
     auto cssAnimation = downcast<CSSAnimation>(animation());
     auto& backingAnimation = cssAnimation->backingAnimation();
 
-    KeyframeList keyframeList(backingAnimation.name().string);
+    KeyframeList keyframeList(AtomString { backingAnimation.name().string });
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
         styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList);
 
@@ -1037,7 +1037,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle* ol
     if (m_target)
         Style::loadPendingResources(*toStyle, *document(), m_target.get());
 
-    KeyframeList keyframeList(makeString("keyframe-effect-"_s, UUID::createVersion4Weak()));
+    KeyframeList keyframeList(makeAtomString("keyframe-effect-"_s, UUID::createVersion4Weak()));
     keyframeList.addProperty(property);
 
     KeyframeValue fromKeyframeValue(0, RenderStyle::clonePtr(*oldStyle));

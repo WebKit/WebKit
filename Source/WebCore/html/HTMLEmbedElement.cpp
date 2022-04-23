@@ -118,14 +118,14 @@ void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomStrin
         HTMLPlugInImageElement::parseAttribute(name, value);
 }
 
-void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues)
+void HTMLEmbedElement::parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues)
 {
     if (!hasAttributes())
         return;
 
     for (const Attribute& attribute : attributesIterator()) {
-        paramNames.append(attribute.localName().string());
-        paramValues.append(attribute.value().string());
+        paramNames.append(attribute.localName());
+        paramValues.append(attribute.value());
     }
 }
 
@@ -156,8 +156,8 @@ void HTMLEmbedElement::updateWidget(CreatePlugins createPlugins)
     setNeedsWidgetUpdate(false);
 
     // FIXME: These should be joined into a PluginParameters class.
-    Vector<String> paramNames;
-    Vector<String> paramValues;
+    Vector<AtomString> paramNames;
+    Vector<AtomString> paramValues;
     parametersForPlugin(paramNames, paramValues);
 
     Ref<HTMLEmbedElement> protectedThis(*this); // Loading the plugin might remove us from the document.

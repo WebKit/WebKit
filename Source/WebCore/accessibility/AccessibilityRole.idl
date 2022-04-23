@@ -27,5 +27,5 @@
 [
     EnabledAtRuntime=AriaReflectionEnabled
 ] interface mixin AccessibilityRole {
-    [Reflect] attribute DOMString? role;
+    [Reflect] attribute [AtomString] DOMString? role;
 };

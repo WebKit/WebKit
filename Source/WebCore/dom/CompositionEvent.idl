@@ -26,11 +26,11 @@
 [
     Exposed=Window
 ] interface CompositionEvent : UIEvent {
-    constructor(DOMString type, optional CompositionEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional CompositionEventInit eventInitDict);
 
     readonly attribute DOMString data;
 
-    undefined initCompositionEvent(DOMString typeArg,
+    undefined initCompositionEvent([AtomString] DOMString typeArg,
                               optional boolean canBubbleArg = false,
                               optional boolean cancelableArg = false,
                               optional WindowProxy? viewArg = null,

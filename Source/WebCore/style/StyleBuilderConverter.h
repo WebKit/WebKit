@@ -1607,7 +1607,7 @@ inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSS
         return { FontPalette::Type::Dark, nullAtom() };
     case CSSValueInvalid:
         ASSERT(primitiveValue.isCustomIdent());
-        return { FontPalette::Type::Custom, primitiveValue.stringValue() };
+        return { FontPalette::Type::Custom, AtomString { primitiveValue.stringValue() } };
     default:
         ASSERT_NOT_REACHED();
         return { FontPalette::Type::Normal, nullAtom() };
@@ -1675,8 +1675,8 @@ inline Vector<AtomString> BuilderConverter::convertContainerName(BuilderState&, 
     if (!is<CSSValueList>(value))
         return { };
 
-    return WTF::map(downcast<CSSValueList>(value), [](auto& item) -> AtomString {
-        return downcast<CSSPrimitiveValue>(item.get()).stringValue();
+    return WTF::map(downcast<CSSValueList>(value), [](auto& item) {
+        return AtomString { downcast<CSSPrimitiveValue>(item.get()).stringValue() };
     });
 }
 

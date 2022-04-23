@@ -1741,7 +1741,7 @@ yyreduce:
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(2) - (2)].expressionVector));
 
         String localName;
-        String namespaceURI;
+        AtomString namespaceURI;
         if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
             (yyval.step) = nullptr;
             YYABORT;
@@ -1774,7 +1774,7 @@ yyreduce:
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(3) - (3)].expressionVector));
 
         String localName;
-        String namespaceURI;
+        AtomString namespaceURI;
         if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
             (yyval.step) = nullptr;
             YYABORT;

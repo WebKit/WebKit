@@ -43,7 +43,7 @@ void YouTubePluginReplacement::registerPluginReplacement(PluginReplacementRegist
     registrar(ReplacementPlugin(create, supportsMIMEType, supportsFileExtension, supportsURL, isEnabledBySettings));
 }
 
-Ref<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
+Ref<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
 {
     return adoptRef(*new YouTubePluginReplacement(plugin, paramNames, paramValues));
 }
@@ -59,7 +59,7 @@ bool YouTubePluginReplacement::supportsFileExtension(StringView extension)
     return equalLettersIgnoringASCIICase(extension, "spl") || equalLettersIgnoringASCIICase(extension, "swf");
 }
 
-YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
+YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
     : m_parentElement(plugin)
 {
     ASSERT(paramNames.size() == paramValues.size());
@@ -108,9 +108,9 @@ static URL createYouTubeURL(StringView videoID, StringView timeID)
     return URL(URL(), makeString("youtube:", videoID, timeID.isEmpty() ? "" : "t=", timeID));
 }
 
-static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(StringView queryString)
+static HashMap<String, String> queryKeysAndValues(StringView queryString)
 {
-    YouTubePluginReplacement::KeyValueMap queryDictionary;
+    HashMap<String, String> queryDictionary;
     
     size_t queryLength = queryString.length();
     if (!queryLength)
@@ -181,7 +181,7 @@ static bool isYouTubeURL(const URL& url)
         || equalLettersIgnoringASCIICase(hostName, "youtube-nocookie.com");
 }
 
-static const String& valueForKey(const YouTubePluginReplacement::KeyValueMap& dictionary, const String& key)
+static const String& valueForKey(const HashMap<String, String>& dictionary, const String& key)
 {
     const auto& value = dictionary.find(key);
     if (value == dictionary.end())
@@ -276,17 +276,17 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
     return URL();
 }
 
-String YouTubePluginReplacement::youTubeURL(const String& srcString)
+AtomString YouTubePluginReplacement::youTubeURL(const AtomString& srcString)
 {
     URL srcURL = m_parentElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(srcString));
     return youTubeURLFromAbsoluteURL(srcURL, srcString);
 }
 
-String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, const String& srcString)
+AtomString YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, const AtomString& srcString)
 {
     // Validate URL to make sure it is a Youtube URL.
     if (!isYouTubeURL(srcURL))
-        return emptyString();
+        return emptyAtom();
 
     bool isYouTubeShortenedURL = false;
     String possiblyMalformedQuery;
@@ -322,7 +322,7 @@ String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, co
         query = possiblyMalformedQuery;
 
     // Append the query string if it is valid.
-    return makeString(
+    return makeAtomString(
         isYouTubeShortenedURL ? "http://www.youtube.com" : srcURLPrefix,
         "/embed/",
         videoID,

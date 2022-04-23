@@ -65,8 +65,8 @@ public:
     bool hasDeferredProperty(CSSPropertyID) const;
     const Property& deferredProperty(CSSPropertyID) const;
 
-    bool hasCustomProperty(const String&) const;
-    Property customProperty(const String&) const;
+    bool hasCustomProperty(const AtomString&) const;
+    Property customProperty(const AtomString&) const;
 
     Span<const CSSPropertyID> deferredPropertyIDs() const;
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
@@ -160,12 +160,12 @@ inline Span<const CSSPropertyID> PropertyCascade::deferredPropertyIDs() const
     return { m_deferredPropertyIDs.data(), m_seenDeferredPropertyCount };
 }
 
-inline bool PropertyCascade::hasCustomProperty(const String& name) const
+inline bool PropertyCascade::hasCustomProperty(const AtomString& name) const
 {
     return m_customProperties.contains(name);
 }
 
-inline PropertyCascade::Property PropertyCascade::customProperty(const String& name) const
+inline PropertyCascade::Property PropertyCascade::customProperty(const AtomString& name) const
 {
     return m_customProperties.get(name);
 }

@@ -59,7 +59,7 @@ partial interface Document {
     // that the caller document matches those semantics. It is possible we should replace it with
     // the existing 'incumbent document' concept.
     [CEReactions, CallWith=EntryDocument, ImplementedAs=openForBindings] Document open(optional DOMString unused1, optional DOMString unused2); // both arguments are ignored.
-    [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings] WindowProxy open(USVString url, DOMString name, DOMString features);
+    [CallWith=ActiveWindow&FirstWindow, ImplementedAs=openForBindings] WindowProxy open(USVString url, [AtomString] DOMString name, DOMString features);
     [CEReactions, ImplementedAs=closeForBindings] undefined close();
     [CEReactions, CallWith=EntryDocument] undefined write(DOMString... text);
     [CEReactions, CallWith=EntryDocument] undefined writeln(DOMString... text);

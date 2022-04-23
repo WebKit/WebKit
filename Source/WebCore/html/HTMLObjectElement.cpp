@@ -129,11 +129,11 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomStri
     invalidateStyleAndRenderersForSubtree();
 }
 
-static void mapDataParamToSrc(Vector<String>& paramNames, Vector<String>& paramValues)
+static void mapDataParamToSrc(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues)
 {
     // Some plugins don't understand the "data" attribute of the OBJECT tag (i.e. Real and WMP require "src" attribute).
     bool foundSrcParam = false;
-    String dataParamValue;
+    AtomString dataParamValue;
     for (unsigned i = 0; i < paramNames.size(); ++i) {
         if (equalLettersIgnoringASCIICase(paramNames[i], "src"))
             foundSrcParam = true;
@@ -141,13 +141,13 @@ static void mapDataParamToSrc(Vector<String>& paramNames, Vector<String>& paramV
             dataParamValue = paramValues[i];
     }
     if (!foundSrcParam && !dataParamValue.isNull()) {
-        paramNames.append("src"_s);
+        paramNames.append(AtomString { "src"_s });
         paramValues.append(WTFMove(dataParamValue));
     }
 }
 
 // FIXME: This function should not deal with url or serviceType!
-void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType)
+void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues, String& url, String& serviceType)
 {
     HashSet<StringImpl*, ASCIICaseInsensitiveHash> uniqueParamNames;
     String urlParameter;
@@ -191,8 +191,8 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
         for (const Attribute& attribute : attributesIterator()) {
             const AtomString& name = attribute.name().localName();
             if (!uniqueParamNames.contains(name.impl())) {
-                paramNames.append(name.string());
-                paramValues.append(attribute.value().string());
+                paramNames.append(name);
+                paramValues.append(attribute.value());
             }
         }
     }
@@ -259,8 +259,8 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     String serviceType = this->serviceType();
 
     // FIXME: These should be joined into a PluginParameters class.
-    Vector<String> paramNames;
-    Vector<String> paramValues;
+    Vector<AtomString> paramNames;
+    Vector<AtomString> paramValues;
     parametersForPlugin(paramNames, paramValues, url, serviceType);
 
     // Note: url is modified above by parametersForPlugin.

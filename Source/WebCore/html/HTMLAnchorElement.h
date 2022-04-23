@@ -123,7 +123,7 @@ private:
     void clearRootEditableElementForSelectionOnMouseDown();
 
     URL fullURL() const final { return href(); }
-    void setFullURL(const URL& fullURL) final { setHref(fullURL.string()); }
+    void setFullURL(const URL& fullURL) final { setHref(AtomString { fullURL.string() }); }
 
     bool m_hasRootEditableElementForSelectionOnMouseDown { false };
     bool m_wasShiftKeyDownOnMouseDown { false };

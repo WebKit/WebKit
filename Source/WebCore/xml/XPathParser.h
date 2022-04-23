@@ -43,7 +43,7 @@ public:
     static ExceptionOr<std::unique_ptr<Expression>> parseStatement(const String& statement, RefPtr<XPathNSResolver>&&);
 
     int lex(YYSTYPE&);
-    bool expandQualifiedName(const String& qualifiedName, String& localName, String& namespaceURI);
+    bool expandQualifiedName(const String& qualifiedName, String& localName, AtomString& namespaceURI);
     void setParseResult(std::unique_ptr<Expression>&& expression) { m_result = WTFMove(expression); }
 
 private:

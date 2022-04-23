@@ -78,8 +78,8 @@ class Plugin : public ThreadSafeRefCounted<Plugin> {
 public:
     struct Parameters {
         URL url;
-        Vector<String> names;
-        Vector<String> values;
+        Vector<AtomString> names;
+        Vector<AtomString> values;
         String mimeType;
         bool isFullFramePlugin;
         bool shouldUseManualLoader;

@@ -698,7 +698,7 @@ static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
         AtomString namespaceQName = xmlnsAtom();
         AtomString namespaceURI = toAtomString(namespaces[i].uri);
         if (namespaces[i].prefix)
-            namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
+            namespaceQName = makeAtomString("xmlns:", toString(namespaces[i].prefix));
 
         auto result = Element::parseAttributeName(XMLNSNames::xmlnsNamespaceURI, namespaceQName);
         if (result.hasException())
@@ -726,7 +726,7 @@ static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes
         AtomString attrValue = toAtomString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
         AtomString attrURI = attrPrefix.isEmpty() ? nullAtom() : toAtomString(attributes[i].uri);
-        AtomString attrQName = attrPrefix.isEmpty() ? toAtomString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
+        AtomString attrQName = attrPrefix.isEmpty() ? toAtomString(attributes[i].localname) : makeAtomString(attrPrefix, ':', toString(attributes[i].localname));
 
         auto result = Element::parseAttributeName(attrURI, attrQName);
         if (result.hasException())

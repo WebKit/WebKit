@@ -49,7 +49,7 @@ private:
     void didFinishInsertingNode() final;
     void childrenChanged(const ChildChange&) final;
 
-    bool isURLAttribute(const Attribute& attribute) const final { return attribute.name() == sourceAttributeValue(); }
+    bool isURLAttribute(const Attribute& attribute) const final { return attribute.name() == AtomString { sourceAttributeValue() }; }
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;

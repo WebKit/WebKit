@@ -305,7 +305,7 @@ bool HTMLPlugInImageElement::canLoadPlugInContent(const String& relativeURL, con
     return contentSecurityPolicy.allowPluginType(mimeType, declaredMimeType, completedURL);
 }
 
-bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
+bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
 {
     ASSERT(document().frame());
 

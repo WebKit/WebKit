@@ -1273,7 +1273,7 @@ public:
 
     virtual std::optional<String> attributeValue(const String&) const = 0;
     virtual bool hasTagName(const QualifiedName&) const = 0;
-    virtual String tagName() const = 0;
+    virtual AtomString tagName() const = 0;
 
     virtual VisiblePositionRange visiblePositionRange() const = 0;
     virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const = 0;

@@ -218,9 +218,9 @@ AtomString AVTrackPrivateAVFObjCImpl::label() const
 AtomString AVTrackPrivateAVFObjCImpl::language() const
 {
     if (m_assetTrack)
-        return languageForAVAssetTrack(m_assetTrack.get());
+        return AtomString { languageForAVAssetTrack(m_assetTrack.get()) };
     if (m_mediaSelectionOption)
-        return languageForAVMediaSelectionOption(m_mediaSelectionOption->avMediaSelectionOption());
+        return AtomString { languageForAVMediaSelectionOption(m_mediaSelectionOption->avMediaSelectionOption()) };
 
     ASSERT_NOT_REACHED();
     return emptyAtom();

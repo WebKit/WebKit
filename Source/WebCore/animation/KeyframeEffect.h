@@ -233,7 +233,7 @@ private:
     bool ticksContinouslyWhileActive() const final;
     std::optional<double> progressUntilNextStep(double) const final;
 
-    KeyframeList m_blendingKeyframes { emptyString() };
+    KeyframeList m_blendingKeyframes { emptyAtom() };
     HashSet<CSSPropertyID> m_animatedProperties;
     HashSet<CSSPropertyID> m_inheritedProperties;
     Vector<ParsedKeyframe> m_parsedKeyframes;

@@ -1508,7 +1508,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
             inlineStyle->setPropertyInternal(property, cssValue->cssText(), false);
     }
 
-    styledElement.setAttribute(HTMLNames::styleAttr, inlineStyle->cssText());
+    styledElement.setAttribute(HTMLNames::styleAttr, AtomString { inlineStyle->cssText() });
 
     return { };
 }

@@ -209,7 +209,7 @@ private:
 
     RefPtr<WebCore::Frame> createFrame(const WTF::String& name, WebCore::HTMLFrameOwnerElement&) final;
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&,
-    const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool) final;
+    const Vector<WTF::AtomString>&, const Vector<WTF::AtomString>&, const WTF::String&, bool) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
 
 #if ENABLE(WEBGL)

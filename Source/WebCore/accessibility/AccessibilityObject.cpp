@@ -2876,8 +2876,8 @@ bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomString& liveRegion
     
 bool AccessibilityObject::supportsLiveRegion(bool excludeIfOff) const
 {
-    const AtomString& liveRegionStatusValue = liveRegionStatus();
-    return excludeIfOff ? liveRegionStatusIsEnabled(liveRegionStatusValue) : !liveRegionStatusValue.isEmpty();
+    auto liveRegionStatusValue = liveRegionStatus();
+    return excludeIfOff ? liveRegionStatusIsEnabled(AtomString { liveRegionStatusValue }) : !liveRegionStatusValue.isEmpty();
 }
 
 AXCoreObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
@@ -3840,12 +3840,12 @@ PAL::SessionID AccessibilityObject::sessionID() const
     return PAL::SessionID(PAL::SessionID::SessionConstants::HashTableEmptyValueID);
 }
 
-String AccessibilityObject::tagName() const
+AtomString AccessibilityObject::tagName() const
 {
     if (Element* element = this->element())
         return element->localName();
 
-    return String();
+    return nullAtom();
 }
 
 bool AccessibilityObject::isStyleFormatGroup() const

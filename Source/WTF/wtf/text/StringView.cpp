@@ -259,7 +259,9 @@ static AtomString convertASCIILowercaseAtom(const CharacterType* input, unsigned
             StringImpl::copyCharacters(characters, input, i);
             for (; i < length; ++i)
                 characters[i] = toASCIILower(input[i]);
-            return result;
+            // FIXME: This is inefficient. Ideally, we wouldn't have to allocate a String/StringImpl if the
+            // string is already in the AtomStringTable.
+            return AtomString(result);
         }
     }
     // Fast path when the StringView is already all lowercase.

@@ -496,7 +496,7 @@ AtomString tryMakeAtomStringFromAdapters(StringTypeAdapter adapter, StringTypeAd
     static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
     auto sum = checkedSum<int32_t>(adapter.length(), adapters.length()...);
     if (sum.hasOverflowed())
-        return String();
+        return AtomString();
 
     unsigned length = sum;
     ASSERT(length <= String::MaxLength);

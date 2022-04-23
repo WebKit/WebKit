@@ -53,17 +53,17 @@ public:
 
     bool requestFrame(HTMLFrameOwnerElement&, const String& url, const AtomString& frameName, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
     bool requestObject(HTMLPlugInImageElement&, const String& url, const AtomString& frameName,
-        const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues);
+        const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
 
     bool containsPlugins() const { return m_containsPlugins; }
     
     bool resourceWillUsePlugin(const String& url, const String& mimeType);
 
 private:
-    bool requestPlugin(HTMLPlugInImageElement&, const URL&, const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
+    bool requestPlugin(HTMLPlugInImageElement&, const URL&, const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
     Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement&, const URL&, const AtomString& frameName, LockHistory, LockBackForwardList);
     RefPtr<Frame> loadSubframe(HTMLFrameOwnerElement&, const URL&, const String& name, const String& referrer);
-    bool loadPlugin(HTMLPlugInImageElement&, const URL&, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
+    bool loadPlugin(HTMLPlugInImageElement&, const URL&, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, bool useFallback);
 
     bool shouldUsePlugin(const URL&, const String& mimeType, bool hasFallback, bool& useFallback);
     bool pluginIsLoadable(const URL&, const String& mimeType);

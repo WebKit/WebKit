@@ -716,7 +716,7 @@ Ref<HTMLDivElement> DataDetection::createElementForImageOverlay(Document& docume
     auto container = HTMLDivElement::create(document);
     if (RefPtr frame = document.frame()) {
         auto resultIdentifier = frame->dataDetectionResults().addImageOverlayDataDetectionResult(info.result.get());
-        container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, String::number(resultIdentifier.toUInt64()));
+        container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, AtomString::number(resultIdentifier.toUInt64()));
     }
     return container;
 }

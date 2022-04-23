@@ -43,7 +43,7 @@ private:
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=237702 - provide svgAttribute implementation for SVGFEComponentTransferElement.
     void parseAttribute(const QualifiedName&, const AtomString&) override;
 
-    Vector<AtomString> filterEffectInputsNames() const override { return { in1() }; }
+    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
     RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     PropertyRegistry m_propertyRegistry { *this };

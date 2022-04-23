@@ -37,7 +37,7 @@ DOMCustomXPathNSResolver::~DOMCustomXPathNSResolver()
 {
 }
 
-String DOMCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
+AtomString DOMCustomXPathNSResolver::lookupNamespaceURI(const AtomString& prefix)
 {
     NSString *namespaceURI = nil;
     

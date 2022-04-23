@@ -247,7 +247,7 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     else
         settings.setFacingMode(RealtimeMediaSourceSettings::Unknown);
 
-    settings.setLabel(name());
+    settings.setLabel(AtomString { name() });
     settings.setFrameRate(frameRate());
 
     auto size = this->size();
@@ -256,7 +256,7 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     
     settings.setWidth(size.width());
     settings.setHeight(size.height());
-    settings.setDeviceId(hashedId());
+    settings.setDeviceId(AtomString { hashedId() });
 
     RealtimeMediaSourceSupportedConstraints supportedConstraints;
     supportedConstraints.setSupportsDeviceId(true);
@@ -279,7 +279,7 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
         return *m_capabilities;
 
     RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
-    capabilities.setDeviceId(hashedId());
+    capabilities.setDeviceId(AtomString { hashedId() });
 
     AVCaptureDevice *videoDevice = device();
     if ([videoDevice position] == AVCaptureDevicePositionFront)

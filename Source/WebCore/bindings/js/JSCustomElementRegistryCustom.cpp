@@ -150,9 +150,9 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
         auto observedAttributesValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "observedAttributes"_s));
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (!observedAttributesValue.isUndefined()) {
-            auto observedAttributes = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, observedAttributesValue);
+            auto observedAttributes = convert<IDLSequence<IDLAtomStringAdaptor<IDLDOMString>>>(lexicalGlobalObject, observedAttributesValue);
             RETURN_IF_EXCEPTION(scope, JSValue());
-            elementInterface->setAttributeChangedCallback(attributeChangedCallback, observedAttributes);
+            elementInterface->setAttributeChangedCallback(attributeChangedCallback, WTFMove(observedAttributes));
         }
     }
 

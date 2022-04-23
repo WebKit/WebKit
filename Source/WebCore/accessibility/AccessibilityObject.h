@@ -543,7 +543,7 @@ public:
     std::optional<String> attributeValue(const String&) const override;
     int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const override;
-    String tagName() const override;
+    AtomString tagName() const override;
     bool hasDisplayContents() const;
 
     VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }

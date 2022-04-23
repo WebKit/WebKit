@@ -358,7 +358,7 @@ private:
     void tabChildren(AccessibilityChildrenVector& children) override { fillChildrenVectorForProperty(AXPropertyName::TabChildren, children); }
     AccessibilityChildrenVector contents() override;
     bool hasARIAValueNow() const override { return boolAttributeValue(AXPropertyName::HasARIAValueNow); }
-    String tagName() const override { return stringAttributeValue(AXPropertyName::TagName); }
+    AtomString tagName() const override { return AtomString { stringAttributeValue(AXPropertyName::TagName) }; }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void updateChildrenIfNecessary() override;
     bool isDetachedFromParent() override;

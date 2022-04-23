@@ -309,12 +309,12 @@ void JSCustomElementInterface::invokeAdoptedCallback(Element& element, Document&
     });
 }
 
-void JSCustomElementInterface::setAttributeChangedCallback(JSC::JSObject* callback, const Vector<String>& observedAttributes)
+void JSCustomElementInterface::setAttributeChangedCallback(JSC::JSObject* callback, Vector<AtomString>&& observedAttributes)
 {
     m_attributeChangedCallback = callback;
     m_observedAttributes.clear();
-    for (auto& name : observedAttributes)
-        m_observedAttributes.add(name);
+    for (auto&& name : WTFMove(observedAttributes))
+        m_observedAttributes.add(WTFMove(name));
 }
 
 void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, const QualifiedName& attributeName, const AtomString& oldValue, const AtomString& newValue)

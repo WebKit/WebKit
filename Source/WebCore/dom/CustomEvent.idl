@@ -28,11 +28,11 @@
     Exposed=*,
     JSCustomMarkFunction,
 ] interface CustomEvent : Event {
-    constructor(DOMString type, optional CustomEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional CustomEventInit eventInitDict);
 
     [CustomGetter] readonly attribute any detail;
 
-    undefined initCustomEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any detail = null);
+    undefined initCustomEvent([AtomString] DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any detail = null);
 };
 
 dictionary CustomEventInit : EventInit {

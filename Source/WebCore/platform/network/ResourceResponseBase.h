@@ -338,7 +338,7 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         return false;
     response.m_url = WTFMove(*url);
 
-    std::optional<String> mimeType;
+    std::optional<AtomString> mimeType;
     decoder >> mimeType;
     if (!mimeType)
         return false;

@@ -34,7 +34,7 @@ public:
     static Ref<DOMCustomXPathNSResolver> create(id <DOMXPathNSResolver> customResolver) { return adoptRef(*new DOMCustomXPathNSResolver(customResolver)); }
     virtual ~DOMCustomXPathNSResolver();
 
-    virtual String lookupNamespaceURI(const String& prefix);
+    virtual AtomString lookupNamespaceURI(const AtomString& prefix);
 
 private:
     DOMCustomXPathNSResolver(id <DOMXPathNSResolver>);

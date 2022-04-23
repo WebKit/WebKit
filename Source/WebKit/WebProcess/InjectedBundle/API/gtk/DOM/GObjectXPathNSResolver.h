@@ -33,7 +33,7 @@ public:
     }
 
     virtual ~GObjectXPathNSResolver();
-    String lookupNamespaceURI(const String& prefix) override;
+    AtomString lookupNamespaceURI(const AtomString& prefix) override;
 
 private:
     GObjectXPathNSResolver(WebKitDOMXPathNSResolver* resolver)

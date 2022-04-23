@@ -273,7 +273,7 @@ inline AtomString StringBuilder::toAtomString() const
         return StringView { *this }.toAtomString();
 
     if (!m_string.isNull())
-        return m_string;
+        return AtomString { m_string };
 
     // Use the length function here so we crash on overflow without explicit overflow checks.
     ASSERT(m_buffer);

@@ -119,7 +119,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
     if (!m_owningFontSelector->scriptExecutionContext())
         return;
     AllowUserInstalledFonts allowUserInstalledFonts = m_owningFontSelector->scriptExecutionContext()->settingsValues().shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
-    Vector<FontSelectionCapabilities> capabilities = FontCache::forCurrentThread().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
+    Vector<FontSelectionCapabilities> capabilities = FontCache::forCurrentThread().getFontSelectionCapabilitiesInFamily(AtomString { familyName }, allowUserInstalledFonts);
     if (capabilities.isEmpty())
         return;
 
@@ -396,9 +396,9 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
                 familyAtom = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(familyKeyword));
             else {
                 ASSERT(m_owningFontSelector && m_owningFontSelector->scriptExecutionContext());
-                familyAtom = m_owningFontSelector->scriptExecutionContext()->settingsValues().fontGenericFamilies.standardFontFamily();
+                familyAtom = AtomString { m_owningFontSelector->scriptExecutionContext()->settingsValues().fontGenericFamilies.standardFontFamily() };
             }
-        }, [&] (const String& familyString) {
+        }, [&] (const AtomString& familyString) {
             familyAtom = familyString;
         });
 

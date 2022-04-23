@@ -124,7 +124,7 @@ static inline AtomString stripLeadingAndTrailingDoubleQuote(const String& value)
 {
     unsigned length = value.length();
     if (length < 2 || value[0u] != '"' || value[length - 1] != '"')
-        return value;
+        return AtomString { value };
 
     return StringView(value).substring(1, length - 2).toAtomString();
 }
@@ -174,7 +174,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         }
         if (messageRef && initLevel == AllFields) {
             m_httpStatusText = extractHTTPStatusText(messageRef);
-            m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase();
+            m_httpVersion = AtomString { String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase() };
         }
     }
 

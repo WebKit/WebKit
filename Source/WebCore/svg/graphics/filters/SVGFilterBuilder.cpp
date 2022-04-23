@@ -147,7 +147,7 @@ std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFi
         if (auto renderer = effectElement.renderer())
             m_effectRenderer.add(renderer, effect.get());
 
-        graph.addNamedNode(effectElement.result(), { *effect });
+        graph.addNamedNode(AtomString { effectElement.result() }, { *effect });
         graph.setNodeInputs(*effect, WTFMove(*inputs));
     }
 

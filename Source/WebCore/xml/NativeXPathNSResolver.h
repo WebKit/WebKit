@@ -37,7 +37,7 @@ public:
     static Ref<NativeXPathNSResolver> create(Ref<Node>&& node) { return adoptRef(*new NativeXPathNSResolver(WTFMove(node))); }
     virtual ~NativeXPathNSResolver();
 
-    String lookupNamespaceURI(const String& prefix) override;
+    AtomString lookupNamespaceURI(const AtomString& prefix) override;
 
 private:
     explicit NativeXPathNSResolver(Ref<Node>&&);

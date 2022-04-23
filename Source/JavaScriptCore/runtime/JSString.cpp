@@ -196,11 +196,16 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto convertToAtomString = [](const String& string) -> AtomString {
+        ASSERT(!string.impl() || string.impl()->isAtom());
+        return static_cast<AtomStringImpl*>(string.impl());
+    };
+
     if (length() > maxLengthForOnStackResolve) {
         scope.release();
-        return resolveRopeWithFunction(globalObject, [&] (Ref<StringImpl>&& newImpl) {
+        return convertToAtomString(resolveRopeWithFunction(globalObject, [&] (Ref<StringImpl>&& newImpl) {
             return AtomStringImpl::add(newImpl.ptr());
-        });
+        }));
     }
 
     if (is8Bit()) {
@@ -216,7 +221,7 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
     // If we resolved a string that didn't previously exist, notify the heap that we've grown.
     if (valueInternal().impl()->hasOneRef())
         vm.heap.reportExtraMemoryAllocated(valueInternal().impl()->cost());
-    return valueInternal();
+    return convertToAtomString(valueInternal());
 }
 
 inline void JSRopeString::convertToNonRope(String&& string) const

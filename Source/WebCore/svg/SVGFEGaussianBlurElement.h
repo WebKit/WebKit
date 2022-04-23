@@ -53,7 +53,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    Vector<AtomString> filterEffectInputsNames() const override { return { in1() }; }
+    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
     IntOutsets outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const override;
     RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 

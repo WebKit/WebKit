@@ -84,7 +84,7 @@ private:
 
     // FIXME: This function should not deal with url or serviceType
     // so that we can better share code between <object> and <embed>.
-    void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType);
+    void parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues, String& url, String& serviceType);
 
     bool hasValidClassId();
 

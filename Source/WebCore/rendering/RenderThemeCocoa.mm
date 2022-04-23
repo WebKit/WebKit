@@ -115,7 +115,7 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
         floatValueForLength(style.borderBottomRightRadius().height, paintRect.height()),
         floatValueForLength(style.borderBottomRightRadius().width, paintRect.width())
     });
-    auto locale = style.computedLocale();
+    String locale = style.computedLocale();
     if (locale.isEmpty())
         locale = defaultLanguage(ShouldMinimizeLanguages::No);
     paintInfo.context().drawSystemImage(ApplePayButtonSystemImage::create(style.applePayButtonType(), style.applePayButtonStyle(), locale, largestCornerRadius), paintRect);
