@@ -43,7 +43,7 @@ static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType& a, cons
     if (a.percentHint && b.percentHint && *a.percentHint != *b.percentHint)
         return std::nullopt;
 
-    auto add = [] (auto left, auto right) -> std::optional<unsigned> {
+    auto add = [] (auto left, auto right) -> CSSNumericType::BaseTypeStorage {
         if (!left)
             return right;
         if (!right)

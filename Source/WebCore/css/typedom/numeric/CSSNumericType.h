@@ -29,20 +29,22 @@
 
 #include "CSSNumericBaseType.h"
 #include <optional>
+#include <wtf/Markable.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
 // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
 struct CSSNumericType {
-    std::optional<long> length;
-    std::optional<long> angle;
-    std::optional<long> time;
-    std::optional<long> frequency;
-    std::optional<long> resolution;
-    std::optional<long> flex;
-    std::optional<long> percent;
-    std::optional<CSSNumericBaseType> percentHint;
+    using BaseTypeStorage = Markable<int, IntegralMarkableTraits<int, std::numeric_limits<int>::min()>>;
+    BaseTypeStorage length;
+    BaseTypeStorage angle;
+    BaseTypeStorage time;
+    BaseTypeStorage frequency;
+    BaseTypeStorage resolution;
+    BaseTypeStorage flex;
+    BaseTypeStorage percent;
+    Markable<CSSNumericBaseType, EnumMarkableTraits<CSSNumericBaseType>> percentHint;
 
     bool operator==(const CSSNumericType& other) const
     {
@@ -56,7 +58,7 @@ struct CSSNumericType {
             && percentHint == other.percentHint;
     }
 
-    std::optional<long>& valueForType(CSSNumericBaseType type)
+    BaseTypeStorage& valueForType(CSSNumericBaseType type)
     {
         switch (type) {
         case CSSNumericBaseType::Length:
@@ -77,7 +79,7 @@ struct CSSNumericType {
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    const std::optional<long>& valueForType(CSSNumericBaseType type) const
+    const BaseTypeStorage& valueForType(CSSNumericBaseType type) const
     {
         return const_cast<CSSNumericType*>(this)->valueForType(type);
     }

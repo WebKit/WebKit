@@ -1,3 +1,20 @@
+2022-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce sizeof(CSSNumericType)
+        https://bugs.webkit.org/show_bug.cgi?id=239680
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/IDLTypes.h:
+        (WebCore::IDLType::nullValue):
+        (WebCore::IDLType::isNullType):
+        (WebCore::IDLType::extractValueFromNullable):
+        * css/typedom/numeric/CSSMathProduct.cpp:
+        (WebCore::multiplyTypes):
+        * css/typedom/numeric/CSSNumericType.h:
+        (WebCore::CSSNumericType::valueForType):
+        (WebCore::CSSNumericType::valueForType const):
+
 2022-04-22  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Regression(r287684) Resources from the memory cache show empty content in Network, Sources, and Search tabs

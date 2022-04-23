@@ -30,6 +30,7 @@
 #include <JavaScriptCore/Strong.h>
 #include <variant>
 #include <wtf/Brigand.h>
+#include <wtf/Markable.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -75,6 +76,14 @@ struct IDLType {
     static NullableType nullValue() { return std::nullopt; }
     static bool isNullValue(const NullableType& value) { return !value; }
     static ImplementationType extractValueFromNullable(const NullableType& value) { return value.value(); }
+
+    template<typename Traits> using NullableTypeWithLessPadding = Markable<ImplementationType, Traits>;
+    template<typename Traits>
+    static NullableTypeWithLessPadding<Traits> nullValue() { return std::nullopt; }
+    template<typename Traits>
+    static bool isNullType(const NullableTypeWithLessPadding<Traits>& value) { return !value; }
+    template<typename Traits>
+    static ImplementationType extractValueFromNullable(const NullableTypeWithLessPadding<Traits>& value) { return value.value(); }
 };
 
 // IDLUnsupportedType is a special type that serves as a base class for currently unsupported types.
