@@ -37,6 +37,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderDetailsMarker.h"
+#include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
@@ -87,6 +88,8 @@ BoxTree::BoxTree(RenderBlock& rootRenderer)
 
     if (is<RenderBlockFlow>(rootRenderer))
         buildTreeForInlineContent();
+    else if (is<RenderFlexibleBox>(rootRenderer))
+        buildTreeForFlexContent();
     else
         ASSERT_NOT_IMPLEMENTED_YET();
 }
@@ -170,6 +173,15 @@ void BoxTree::buildTreeForInlineContent()
         auto& childRenderer = *walker.current();
         auto childBox = createChildBox(childRenderer);
         appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(childBox)), childRenderer);
+    }
+}
+
+void BoxTree::buildTreeForFlexContent()
+{
+    for (auto& flexItemRenderer : childrenOfType<RenderObject>(m_rootRenderer)) {
+        auto style = RenderStyle::clone(flexItemRenderer.style());
+        auto flexItem = makeUnique<Layout::ContainerBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, WTFMove(style));
+        appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(flexItem)), flexItemRenderer);
     }
 }
 

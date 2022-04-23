@@ -71,6 +71,7 @@ public:
 
 private:
     void buildTreeForInlineContent();
+    void buildTreeForFlexContent();
     void appendChild(UniqueRef<Layout::Box>, RenderObject&);
 
     RenderBlock& m_rootRenderer;

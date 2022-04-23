@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "LayoutIntegrationFlexLayout.h"
 #include "OrderIterator.h"
 #include "RenderBlock.h"
 
@@ -234,6 +235,9 @@ private:
     SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };
     bool m_inLayout { false };
     bool m_shouldResetChildLogicalHeightBeforeLayout { false };
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    std::unique_ptr<LayoutIntegration::FlexLayout> m_flexLayout;
+#endif
 };
 
 } // namespace WebCore

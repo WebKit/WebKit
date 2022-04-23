@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutIntegrationBoxTree.h"
+#include "LayoutState.h"
 #include "RenderObjectEnums.h"
 #include <wtf/CheckedPtr.h>
 
@@ -63,6 +64,7 @@ public:
 
 private:
     BoxTree m_boxTree;
+    Layout::LayoutState m_layoutState;
 };
 
 }

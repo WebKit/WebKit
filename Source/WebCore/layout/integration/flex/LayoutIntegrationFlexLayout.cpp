@@ -31,6 +31,7 @@
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "LayoutBoxGeometry.h"
 #include "RenderFlexibleBox.h"
 
 namespace WebCore {
@@ -38,6 +39,7 @@ namespace LayoutIntegration {
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
     : m_boxTree(flexBoxRenderer)
+    , m_layoutState(flexBoxRenderer.document(), m_boxTree.rootLayoutBox())
 {
 }
 
@@ -45,8 +47,16 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
 {
 }
 
-void FlexLayout::updateFlexItemDimensions(const RenderBlock&)
+void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem)
 {
+    auto& boxGeometry = m_layoutState.ensureGeometryForBox(m_boxTree.layoutBoxForRenderer(flexItem));
+
+    boxGeometry.setContentBoxWidth(flexItem.contentWidth());
+    boxGeometry.setContentBoxHeight(flexItem.contentHeight());
+    boxGeometry.setVerticalMargin({ flexItem.marginTop(), flexItem.marginBottom() });
+    boxGeometry.setHorizontalMargin({ flexItem.marginLeft(), flexItem.marginRight() });
+    boxGeometry.setBorder({ { flexItem.borderLeft(), flexItem.borderRight() }, { flexItem.borderTop(), flexItem.borderBottom() } });
+    boxGeometry.setPadding(Layout::Edges { { flexItem.paddingLeft(), flexItem.paddingRight() }, { flexItem.paddingTop(), flexItem.paddingBottom() } });
 }
 
 void FlexLayout::updateStyle(const RenderBlock&, const RenderStyle&)

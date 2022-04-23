@@ -2344,6 +2344,14 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 void RenderFlexibleBox::layoutUsingFlexFormattingContext()
 {
+    if (!m_flexLayout)
+        m_flexLayout = makeUnique<LayoutIntegration::FlexLayout>(*this);
+
+    for (auto& flexItem : childrenOfType<RenderBlock>(*this)) {
+        flexItem.layoutIfNeeded();
+        m_flexLayout->updateFlexItemDimensions(flexItem);
+    }
+    m_flexLayout->layout();
 }
 #endif
 

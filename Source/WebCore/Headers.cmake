@@ -970,11 +970,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     inspector/agents/InspectorPageAgent.h
 
+    layout/LayoutState.h
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
     layout/formattingContexts/inline/display/InlineDisplayBox.h
     layout/formattingContexts/inline/InlineRect.h
+
+    layout/integration/LayoutIntegrationBoxTree.h
 
     layout/integration/flex/LayoutIntegrationFlexLayout.h
 
@@ -991,6 +994,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     layout/layouttree/LayoutContainerBox.h
     layout/layouttree/LayoutBox.h
+    layout/layouttree/LayoutInitialContainingBlock.h
 
     loader/CanvasActivityRecord.h
     loader/ContentFilterClient.h
