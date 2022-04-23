@@ -38,6 +38,7 @@
 #import "WKSecurityOriginInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataRecordInternal.h"
+#import "WebNotification.h"
 #import "WebNotificationManagerProxy.h"
 #import "WebPageProxy.h"
 #import "WebPushMessage.h"
@@ -57,7 +58,7 @@
 
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
 public:
-    explicit WebsiteDataStoreClient(WKWebsiteDataStore *dataStore, id<_WKWebsiteDataStoreDelegate> delegate)
+    WebsiteDataStoreClient(WKWebsiteDataStore *dataStore, id<_WKWebsiteDataStoreDelegate> delegate)
         : m_dataStore(dataStore)
         , m_delegate(delegate)
         , m_hasRequestStorageSpaceSelector([m_delegate.get() respondsToSelector:@selector(requestStorageSpace: frameOrigin: quota: currentSize: spaceRequired: decisionHandler:)])
@@ -826,6 +827,45 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     RELEASE_LOG(Push, "Sending push message for scope %" PRIVATE_LOG_STRING " to network process to handle", pushMessage->registrationURL.string().utf8().data());
     _websiteDataStore->networkProcess().processPushMessage(_websiteDataStore->sessionID(), *pushMessage, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
         RELEASE_LOG(Push, "Push message processing complete. Callback result: %d", wasProcessed);
+        completionHandler(wasProcessed);
+    });
+#endif
+}
+
+-(void)_processPersistentNotificationClick:(NSDictionary *)notificationDictionaryRepresentation completionHandler:(void(^)(bool))completionHandler
+{
+#if ENABLE(SERVICE_WORKER)
+    auto notificationData = WebCore::NotificationData::fromDictionary(notificationDictionaryRepresentation);
+    if (!notificationData) {
+        RELEASE_LOG_ERROR(Push, "Asked to handle a persistent notification click with an invalid notification dictionary representation");
+        completionHandler(false);
+        return;
+    }
+
+    RELEASE_LOG(Push, "Sending persistent notification click from origin %" PRIVATE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
+
+    notificationData->sourceSession = _websiteDataStore->sessionID();
+    _websiteDataStore->networkProcess().processNotificationEvent(*notificationData, WebCore::NotificationEventType::Click, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+        RELEASE_LOG(Push, "Notification click event processing complete. Callback result: %d", wasProcessed);
+        completionHandler(wasProcessed);
+    });
+#endif
+}
+
+-(void)_processPersistentNotificationClose:(NSDictionary *)notificationDictionaryRepresentation completionHandler:(void(^)(bool))completionHandler
+{
+#if ENABLE(SERVICE_WORKER)
+    auto notificationData = WebCore::NotificationData::fromDictionary(notificationDictionaryRepresentation);
+    if (!notificationData) {
+        RELEASE_LOG_ERROR(Push, "Asked to handle a persistent notification click with an invalid notification dictionary representation");
+        completionHandler(false);
+        return;
+    }
+
+    RELEASE_LOG(Push, "Sending persistent notification close from origin %" PRIVATE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
+
+    _websiteDataStore->networkProcess().processNotificationEvent(*notificationData, WebCore::NotificationEventType::Close, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
+        RELEASE_LOG(Push, "Notification close event processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });
 #endif

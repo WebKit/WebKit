@@ -32,6 +32,8 @@
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS NSDictionary;
+
 namespace WebCore {
 
 enum class NotificationDirection : uint8_t;
@@ -42,6 +44,11 @@ struct NotificationData {
 
     NotificationData isolatedCopy() const &;
     NotificationData isolatedCopy() &&;
+
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT static std::optional<NotificationData> fromDictionary(NSDictionary *dictionaryRepresentation);
+    WEBCORE_EXPORT NSDictionary *dictionaryRepresentation() const;
+#endif
 
     String title;
     String body;

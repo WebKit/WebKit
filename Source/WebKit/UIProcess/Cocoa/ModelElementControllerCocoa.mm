@@ -142,7 +142,7 @@ void ModelElementController::setInteractionEnabledForModelElement(ModelIdentifie
         modelView.userInteractionEnabled = isInteractionEnabled;
 }
 
-#endif
+#endif // ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
@@ -312,7 +312,7 @@ void ModelElementController::inlinePreviewUUIDs(CompletionHandler<void(Vector<St
         return entry.key;
     }));
 }
-#endif
+#endif // ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 
@@ -545,8 +545,8 @@ void ModelElementController::setIsMutedForModelElement(ModelIdentifier modelIden
 #endif
 }
 
-#endif
+#endif // ENABLE(ARKIT_INLINE_PREVIEW)
 
-}
+} // namespace WebKit
 
-#endif
+#endif // ENABLE(ARKIT_INLINE_PREVIEW)

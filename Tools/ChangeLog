@@ -1,3 +1,23 @@
+2022-04-23  Brady Eidson  <beidson@apple.com>
+    
+        Add WKNotification and WKWebsiteDataStore SPI for handling click/close of persistent notifications
+        https://bugs.webkit.org/show_bug.cgi
+
+        Reviewed by Chris Dumez.
+
+        Teach WKTR to use the new SPI by keeping a set of notifications that are persistent.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::showWebNotification):
+        (WTR::WebNotificationProvider::closeWebNotification):
+        (WTR::WebNotificationProvider::reset):
+        * WebKitTestRunner/WebNotificationProvider.h:
+
+        * WebKitTestRunner/cocoa/WebNotificationProviderCocoa.mm:
+        (WTR::WebNotificationProvider::simulateWebNotificationClickForServiceWorkerNotifications):
+
 2022-04-23  Elliott Williams  <emw@apple.com>
 
         [buildbot] Increase the EWS compile timeout to account for delayed output from clang/XCBuild

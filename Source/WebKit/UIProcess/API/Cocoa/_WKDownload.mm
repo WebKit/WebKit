@@ -33,6 +33,8 @@
 #import "WKNSData.h"
 #import "WKWebViewInternal.h"
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/VectorCocoa.h>
+
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static NSMapTable<WKDownload *, _WKDownload *> *downloadWrapperMap()

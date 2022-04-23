@@ -1365,25 +1365,35 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
     });
 }
 
-void SWServer::processNotificationEvent(NotificationData&& data, NotificationEventType type)
+void SWServer::processNotificationEvent(NotificationData&& data, NotificationEventType type, CompletionHandler<void(bool)>&& callback)
 {
-    whenImportIsCompletedIfNeeded([this, weakThis = WeakPtr { *this }, data = WTFMove(data), type]() mutable {
-        if (!weakThis)
+    whenImportIsCompletedIfNeeded([this, weakThis = WeakPtr { *this }, data = WTFMove(data), type, callback = WTFMove(callback)]() mutable {
+        if (!weakThis) {
+            callback(false);
             return;
+        }
 
         auto origin = SecurityOriginData::fromURL(data.serviceWorkerRegistrationURL);
         ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), URL { data.serviceWorkerRegistrationURL } };
         auto registration = m_scopeToRegistrationMap.get(registrationKey);
-        if (!registration)
+        if (!registration) {
+            RELEASE_LOG_ERROR(Push, "Cannot process notification event: Failed to find SW registration for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
+            callback(true);
             return;
+        }
 
         auto* worker = registration->activeWorker();
-        if (!worker)
+        if (!worker) {
+            RELEASE_LOG_ERROR(Push, "Cannot process notification event: No active worker for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
+            callback(true);
             return;
+        }
 
-        fireFunctionalEvent(*registration, [worker = Ref { *worker }, weakThis = WTFMove(weakThis), data = WTFMove(data), type](auto&& connectionOrStatus) mutable {
-            if (!connectionOrStatus.has_value())
+        fireFunctionalEvent(*registration, [worker = Ref { *worker }, weakThis = WTFMove(weakThis), data = WTFMove(data), type, callback = WTFMove(callback)](auto&& connectionOrStatus) mutable {
+            if (!connectionOrStatus.has_value()) {
+                callback(connectionOrStatus.error() == ShouldSkipEvent::Yes);
                 return;
+            }
 
             auto serviceWorkerIdentifier = worker->identifier();
 
@@ -1393,13 +1403,16 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
                 worker->decrementFunctionalEventCounter();
             });
             terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
-            connectionOrStatus.value()->fireNotificationEvent(serviceWorkerIdentifier, data, type, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
+            connectionOrStatus.value()->fireNotificationEvent(serviceWorkerIdentifier, data, type, [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)] (bool succeeded) mutable {
                 RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Service Worker notification event handler did not succeed");
+
                 // FIXME: if succeeded is false, should we implement a default action like opening a new page?
                 if (terminateWorkerTimer->isActive()) {
                     worker->decrementFunctionalEventCounter();
                     terminateWorkerTimer->stop();
                 }
+
+                callback(succeeded);
             });
         });
     });

@@ -1,3 +1,50 @@
+2022-04-23  Brady Eidson  <beidson@apple.com>
+
+        Add WKNotification and WKWebsiteDataStore SPI for handling click/close of persistent notifications
+        https://bugs.webkit.org/show_bug.cgi
+
+        Reviewed by Chris Dumez.
+
+        For notifications that are persistent, add WKWebsiteDataStore SPI to handle click/close operations,
+        as the WKNotificationManager's runtime record of such notifications might be gone.
+        
+        WebKitTestRunner exercises this new SPI in existing tests.
+        
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processNotificationEvent):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        
+        * SourcesCocoa.txt:
+        
+        * UIProcess/API/C/WKNotification.cpp:
+        (WKNotificationGetIsPersistent):
+        * UIProcess/API/C/WKNotification.h:
+        
+        * UIProcess/API/C/mac/WKNotificationPrivateMac.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKDownloadInternal.h.
+        * UIProcess/API/C/mac/WKNotificationPrivateMac.mm: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKDownloadInternal.h.
+        (WKNotificationCopyDictionaryRepresentation):
+        
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _processPersistentNotificationClick:completionHandler:]):
+        (-[WKWebsiteDataStore _processPersistentNotificationClose:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        * UIProcess/API/Cocoa/_WKDownloadInternal.h:
+        
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::processNotificationEvent):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        
+        * UIProcess/Notifications/WebNotification.cpp:
+        * UIProcess/Notifications/WebNotification.h:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::dispatchDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-04-22  Chris Dumez  <cdumez@apple.com>
 
         Move global AtomStrings to a common header to promote reuse

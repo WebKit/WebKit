@@ -1,3 +1,27 @@
+2022-04-23  Brady Eidson  <beidson@apple.com>
+
+        Add WKNotification and WKWebsiteDataStore SPI for handling click/close of persistent notifications
+        https://bugs.webkit.org/show_bug.cgi
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests with WKTR changes.
+
+        In Cocoa, expose the dictionary representation of a notification as an NSDictionary,
+        as it is meant to be used as an NSUserNotification userInfo value.
+
+        * Modules/notifications/NotificationData.h:
+        * Modules/notifications/NotificationDataCocoa.mm: Added.
+        (WebCore::NotificationData::fromDictionary):
+        (WebCore::NotificationData::dictionaryRepresentation const):
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::processNotificationEvent):
+        * workers/service/server/SWServer.h:
+
 2022-04-23  Justin Michaud  <justin_michaud@apple.com>
 
         Fix build error caused by LTO + Unified Sources

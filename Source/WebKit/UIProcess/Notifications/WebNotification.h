@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "APIObject.h"
+#include "APIDictionary.h"
 #include "APISecurityOrigin.h"
 #include "Connection.h"
 #include "WebPageProxyIdentifier.h"

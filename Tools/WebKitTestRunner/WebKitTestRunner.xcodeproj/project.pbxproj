@@ -105,6 +105,7 @@
 		4430AE191F82C4FD0099915A /* GeneratedTouchesDebugWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4430AE171F82C4EE0099915A /* GeneratedTouchesDebugWindow.mm */; };
 		51058AD51D678820009A538C /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */; };
 		51058AD61D678825009A538C /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5169CA1445222D00E0A9D7 /* WebKit.framework */; };
+		51998A082810FBD1009D68EB /* WebNotificationProviderCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51998A072810FBD1009D68EB /* WebNotificationProviderCocoa.mm */; };
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
 		5664A49A14326384008881BE /* TextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5664A49814326384008881BE /* TextInputController.cpp */; };
 		5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5670B8271386FCA5002EB355 /* EventSenderProxy.mm */; };
@@ -330,6 +331,7 @@
 		4430AE181F82C4EF0099915A /* GeneratedTouchesDebugWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedTouchesDebugWindow.h; sourceTree = "<group>"; };
 		49AEEF692407278200C87E4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		510E2F3827741F8300809333 /* DataFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataFunctions.h; sourceTree = "<group>"; };
+		51998A072810FBD1009D68EB /* WebNotificationProviderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNotificationProviderCocoa.mm; sourceTree = "<group>"; };
 		5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
 		5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
 		5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
@@ -645,6 +647,7 @@
 				41C5378D21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.mm */,
 				2D058E0822E2EE2200E4C145 /* UIScriptControllerCocoa.h */,
 				F46240AF2170128300917B16 /* UIScriptControllerCocoa.mm */,
+				51998A072810FBD1009D68EB /* WebNotificationProviderCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -1281,6 +1284,7 @@
 				41C5378E21F13414008B1FAD /* TestWebsiteDataStoreDelegate.mm in Sources */,
 				0F18E6E51D6B9B9E0027E547 /* UIScriptContext.cpp in Sources */,
 				F46240B1217013E500917B16 /* UIScriptControllerCocoa.mm in Sources */,
+				51998A082810FBD1009D68EB /* WebNotificationProviderCocoa.mm in Sources */,
 				277CCEDD250F300A0050C572 /* UIScriptControllerCommon.cpp in Sources */,
 				0F73B55C1BA89042004B3EF4 /* UIScriptControllerIOS.mm in Sources */,
 				0F18E6E61D6B9BA20027E547 /* UIScriptControllerShared.cpp in Sources */,

@@ -43,6 +43,7 @@ WK_EXPORT WKStringRef WKNotificationCopyDir(WKNotificationRef notification);
 WK_EXPORT WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notification);
 WK_EXPORT uint64_t WKNotificationGetID(WKNotificationRef notification);
 WK_EXPORT WKDataRef WKNotificationCopyCoreIDForTesting(WKNotificationRef notification);
+WK_EXPORT bool WKNotificationGetIsPersistent(WKNotificationRef notification);
 
 #ifdef __cplusplus
 }

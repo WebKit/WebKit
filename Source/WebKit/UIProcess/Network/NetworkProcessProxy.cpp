@@ -1779,9 +1779,10 @@ void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const Web
     sendWithAsyncReply(Messages::NetworkProcess::ProcessPushMessage { sessionID, pushMessage, permission }, WTFMove(callback));
 }
 
-void NetworkProcessProxy::processNotificationEvent(const NotificationData& data, NotificationEventType eventType)
+void NetworkProcessProxy::processNotificationEvent(const NotificationData& data, NotificationEventType eventType, CompletionHandler<void(bool wasProcessed)>&& callback)
 {
-    send(Messages::NetworkProcess::ProcessNotificationEvent { data, eventType }, 0);
+    RELEASE_ASSERT(!!callback);
+    sendWithAsyncReply(Messages::NetworkProcess::ProcessNotificationEvent { data, eventType }, WTFMove(callback));
 }
 #endif // ENABLE(SERVICE_WORKER)
 

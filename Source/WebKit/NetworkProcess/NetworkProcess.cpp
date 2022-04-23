@@ -2301,10 +2301,10 @@ void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID session
 }
 
 #if ENABLE(SERVICE_WORKER)
-void NetworkProcess::processNotificationEvent(NotificationData&& data, NotificationEventType eventType)
+void NetworkProcess::processNotificationEvent(NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
 {
     if (auto* session = networkSession(data.sourceSession))
-        session->ensureSWServer().processNotificationEvent(WTFMove(data), eventType);
+        session->ensureSWServer().processNotificationEvent(WTFMove(data), eventType, WTFMove(callback));
 }
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
