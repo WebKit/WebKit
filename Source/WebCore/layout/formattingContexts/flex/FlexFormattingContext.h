@@ -42,12 +42,14 @@ class FlexFormattingContext final : public FormattingContext {
 public:
     FlexFormattingContext(const ContainerBox& formattingContextRoot, FlexFormattingState&);
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
-    LayoutUnit usedContentHeight() const override;
-
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
+    LayoutUnit usedContentHeight() const override;
 
     const FlexFormattingGeometry& formattingGeometry() const final { return m_flexFormattingGeometry; }
     const FormattingQuirks& formattingQuirks() const final { return m_flexFormattingQuirks; }
+
+    void layoutInFlowContentForIntergration(const ConstraintsForInFlowContent&);
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
     void sizeAndPlaceFlexItems(const ConstraintsForInFlowContent&);

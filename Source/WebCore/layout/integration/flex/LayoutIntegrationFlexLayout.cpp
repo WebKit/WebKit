@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FlexFormattingContext.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -39,7 +40,8 @@ namespace LayoutIntegration {
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
     : m_boxTree(flexBoxRenderer)
-    , m_layoutState(flexBoxRenderer.document(), m_boxTree.rootLayoutBox())
+    , m_layoutState(flexBoxRenderer.document(), rootLayoutBox())
+    , m_flexFormattingState(m_layoutState.ensureFlexFormattingState(rootLayoutBox()))
 {
 }
 
@@ -65,11 +67,19 @@ void FlexLayout::updateStyle(const RenderBlock&, const RenderStyle&)
 
 std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicWidthConstraints()
 {
-    return { };
+    auto flexFormattingContext = Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState };
+    auto constraints = flexFormattingContext.computedIntrinsicWidthConstraintsForIntegration();
+
+    return { constraints.minimum, constraints.maximum };
 }
 
 void FlexLayout::layout()
 {
+    auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox());
+    auto flexFormattingContext = Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState };
+    auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
+
+    flexFormattingContext.layoutInFlowContentForIntergration({ horizontalConstraints, rootGeometry.contentBoxTop() });
 }
 
 void FlexLayout::paint(PaintInfo&, const LayoutPoint&)

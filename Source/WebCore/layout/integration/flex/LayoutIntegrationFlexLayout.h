@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FlexFormattingState.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
@@ -63,8 +64,12 @@ public:
     LayoutUnit contentLogicalHeight() const;
 
 private:
+    const Layout::ContainerBox& rootLayoutBox() const { return m_boxTree.rootLayoutBox(); }
+    Layout::ContainerBox& rootLayoutBox() { return m_boxTree.rootLayoutBox(); }
+
     BoxTree m_boxTree;
     Layout::LayoutState m_layoutState;
+    Layout::FlexFormattingState& m_flexFormattingState;
 };
 
 }

@@ -1,3 +1,31 @@
+2022-04-23  Alan Bujtas  <zalan@apple.com>
+
+        [FFC][Integration] Add integration API to FlexFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=239692
+
+        Reviewed by Antti Koivisto.
+
+        The integration codepath needs dedicated (and temporary)APIs on the formatting contexts.
+        (This is exactly how inline layout has been integrated.)
+
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContentForIntergration):
+        (WebCore::Layout::FlexFormattingContext::computedIntrinsicWidthConstraintsForIntegration):
+        * layout/formattingContexts/flex/FlexFormattingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContentForIntergration):
+        (WebCore::Layout::InlineFormattingContext::lineLayoutForIntergration): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/integration/flex/LayoutIntegrationFlexLayout.cpp:
+        (WebCore::LayoutIntegration::FlexLayout::FlexLayout):
+        (WebCore::LayoutIntegration::FlexLayout::computeIntrinsicWidthConstraints):
+        (WebCore::LayoutIntegration::FlexLayout::layout):
+        * layout/integration/flex/LayoutIntegrationFlexLayout.h:
+        (WebCore::LayoutIntegration::FlexLayout::rootLayoutBox const):
+        (WebCore::LayoutIntegration::FlexLayout::rootLayoutBox):
+        * layout/integration/inline/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+
 2022-04-23  Brady Eidson  <beidson@apple.com>
 
         Add WKNotification and WKWebsiteDataStore SPI for handling click/close of persistent notifications

@@ -380,7 +380,7 @@ void LineLayout::layout()
 
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
 
-    inlineFormattingContext.lineLayoutForIntergration({ horizontalConstraints, rootGeometry.contentBoxTop() });
+    inlineFormattingContext.layoutInFlowContentForIntergration({ horizontalConstraints, rootGeometry.contentBoxTop() });
 
     constructContent();
 

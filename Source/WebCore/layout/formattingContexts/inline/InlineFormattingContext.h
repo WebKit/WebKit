@@ -47,19 +47,18 @@ class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
     InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&, const InlineDamage* = nullptr);
+
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     LayoutUnit usedContentHeight() const override;
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
-
-    void lineLayoutForIntergration(const ConstraintsForInFlowContent&);
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
-
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
 
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
+    void layoutInFlowContentForIntergration(const ConstraintsForInFlowContent&);
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
     void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
