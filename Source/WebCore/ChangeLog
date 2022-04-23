@@ -1,3 +1,19 @@
+2022-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash under AsyncScrollingCoordinator::scrollingThreadAddedPendingUpdate()
+        https://bugs.webkit.org/show_bug.cgi?id=239683
+        <rdar://92198272>
+
+        Reviewed by Alan Bujtas.
+
+        Crash data suggest that m_page can be null in
+        AsyncScrollingCoordinator::scheduleRenderingUpdate(), which does seem possible because
+        scheduleRenderingUpdate() is a dispatch from the scrolling thread, and
+        ScrollingCoordinator::pageDestroyed() may have run before it runs.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scheduleRenderingUpdate):
+
 2022-04-22  Chris Dumez  <cdumez@apple.com>
 
         Move global AtomStrings to a common header to promote reuse
