@@ -75,7 +75,7 @@ def main(args):
     output = args[1]
     utils = os.path.join(os.path.dirname(input), "utils.js")
 
-    with open(input, "r") as fd:
+    with open(input, "r", encoding="utf-8") as fd:
         input_data = fd.read()
 
     util_functions = collect_utils(input_data)
@@ -87,7 +87,7 @@ def main(args):
         append_functions(utils_data, util_functions, util_functions_impl, functions_written)
         input_data = input_data.replace('"use strict";\n', '"use strict";\n\n' + "\n".join(utils_data))
 
-    with open(output, "w") as fd:
+    with open(output, "w", encoding="utf-8") as fd:
         fd.write(input_data)
 
     return 0

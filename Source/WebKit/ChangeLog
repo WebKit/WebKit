@@ -1,3 +1,17 @@
+2022-04-24  Daniel Kolesa  <dkolesa@igalia.com>
+
+        Use utf-8 for text mode files in generate-automation-atom.py
+        https://bugs.webkit.org/show_bug.cgi?id=239542
+
+        Reviewed by Adrian Perez de Castro.
+
+        At least with older versions of python (3.6), this will otherwise
+        be ascii, which will break input files that contain non-ascii
+        characters, e.g. Source/WebKit/UIProcess/Automation/atoms/FindNodes.js
+
+        * Scripts/generate-automation-atom.py:
+        (main):
+
 2022-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the `PreferInlineTextSelectionInImages` internal feature flag
