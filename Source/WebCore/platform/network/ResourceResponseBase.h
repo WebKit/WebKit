@@ -106,8 +106,8 @@ public:
     WEBCORE_EXPORT void setHTTPStatusCode(int);
     WEBCORE_EXPORT bool isRedirection() const;
 
-    WEBCORE_EXPORT const String& httpStatusText() const;
-    WEBCORE_EXPORT void setHTTPStatusText(const String&);
+    WEBCORE_EXPORT const AtomString& httpStatusText() const;
+    WEBCORE_EXPORT void setHTTPStatusText(const AtomString&);
 
     WEBCORE_EXPORT const String& httpVersion() const;
     WEBCORE_EXPORT void setHTTPVersion(const String&);

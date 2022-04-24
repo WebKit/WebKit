@@ -97,7 +97,7 @@ ResourceResponseBase::CrossThreadData ResourceResponseBase::crossThreadData() co
     data.textEncodingName = textEncodingName().isolatedCopy();
 
     data.httpStatusCode = httpStatusCode();
-    data.httpStatusText = httpStatusText().isolatedCopy();
+    data.httpStatusText = httpStatusText().string().isolatedCopy();
     data.httpVersion = httpVersion().isolatedCopy();
 
     data.httpHeaderFields = httpHeaderFields().isolatedCopy();
@@ -121,7 +121,7 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.setTextEncodingName(WTFMove(data.textEncodingName));
 
     response.setHTTPStatusCode(data.httpStatusCode);
-    response.setHTTPStatusText(data.httpStatusText);
+    response.setHTTPStatusText(AtomString { data.httpStatusText });
     response.setHTTPVersion(data.httpVersion);
 
     response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
@@ -342,14 +342,14 @@ bool ResourceResponseBase::isRedirection() const
     return isRedirectionStatusCode(m_httpStatusCode);
 }
 
-const String& ResourceResponseBase::httpStatusText() const 
+const AtomString& ResourceResponseBase::httpStatusText() const
 {
     lazyInit(AllFields);
 
     return m_httpStatusText; 
 }
 
-void ResourceResponseBase::setHTTPStatusText(const String& statusText) 
+void ResourceResponseBase::setHTTPStatusText(const AtomString& statusText)
 {
     lazyInit(AllFields);
 

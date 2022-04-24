@@ -29,7 +29,7 @@
     [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledBySetting=DownloadAttributeEnabled, Reflect] attribute [AtomString] DOMString download;
     [CEReactions=NotNeeded, Reflect] attribute [AtomString] DOMString hreflang;
     [CEReactions=NotNeeded, Reflect] attribute [AtomString] DOMString name;
-    [CEReactions=NotNeeded, Reflect] attribute USVString ping;
+    [CEReactions=NotNeeded, Reflect] attribute [AtomString] USVString ping;
     [CEReactions=NotNeeded, Reflect] attribute [AtomString] DOMString rel;
     [CEReactions=NotNeeded, Reflect] attribute [AtomString] DOMString rev;
     [CEReactions=NotNeeded, Reflect] attribute [AtomString] DOMString shape;

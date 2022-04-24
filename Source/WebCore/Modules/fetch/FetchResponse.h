@@ -53,7 +53,7 @@ public:
 
     struct Init {
         unsigned short status { 200 };
-        String statusText;
+        AtomString statusText;
         std::optional<FetchHeaders::Init> headers;
     };
 

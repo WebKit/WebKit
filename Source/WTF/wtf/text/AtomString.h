@@ -208,6 +208,9 @@ bool equalIgnoringASCIICase(const AtomString&, const char*);
 
 template<unsigned length> bool equalLettersIgnoringASCIICase(const AtomString&, const char (&lowercaseLetters)[length]);
 
+WTF_EXPORT_PRIVATE AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&&);
+WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacter(String&&);
+
 inline AtomString::AtomString()
 {
 }

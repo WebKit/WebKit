@@ -24,7 +24,7 @@
     [CEReactions=NotNeeded, Reflect] attribute [AtomString] DOMString alt;
     [CEReactions=NotNeeded, Reflect] attribute [AtomString] DOMString coords;
     [CEReactions=NotNeeded, Reflect] attribute boolean noHref;
-    [CEReactions=NotNeeded, Reflect] attribute USVString ping;
+    [CEReactions=NotNeeded, Reflect] attribute [AtomString] USVString ping;
     [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
     [CEReactions=NotNeeded, Reflect] attribute DOMString shape;
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
