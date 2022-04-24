@@ -3743,16 +3743,17 @@ bool AccessibilityObject::accessibilityIsIgnored() const
     return ignored;
 }
 
-void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& attribute) const
+Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName& attribute) const
 {
     Node* node = this->node();
     if (!node || !node->isElementNode())
-        return;
+        return { };
 
     auto& idsString = getAttribute(attribute);
     if (idsString.isEmpty())
-        return;
+        return { };
 
+    Vector<Element*> elements;
     auto& treeScope = node->treeScope();
     SpaceSplitString spaceSplitString(idsString, SpaceSplitString::ShouldFoldCase::No);
     size_t length = spaceSplitString.size();
@@ -3760,6 +3761,7 @@ void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, cons
         if (auto* element = treeScope.getElementById(spaceSplitString[i]))
             elements.append(element);
     }
+    return elements;
 }
 
 #if PLATFORM(COCOA)
@@ -3905,11 +3907,10 @@ AXCoreObject* AccessibilityObject::selectedListItem()
 
 void AccessibilityObject::ariaElementsFromAttribute(AccessibilityChildrenVector& children, const QualifiedName& attributeName) const
 {
-    Vector<Element*> elements;
-    elementsFromAttribute(elements, attributeName);
+    auto elements = elementsFromAttribute(attributeName);
     AXObjectCache* cache = axObjectCache();
     for (const auto& element : elements) {
-        if (AccessibilityObject* axObject = cache->getOrCreate(element))
+        if (auto* axObject = cache->getOrCreate(element))
             children.append(axObject);
     }
 }

@@ -582,7 +582,6 @@ private:
     String ariaLabeledByAttribute() const override;
     String ariaDescribedByAttribute() const override;
     bool accessibleNameDerivesFromContent() const override;
-    void elementsFromAttribute(Vector<Element*>&, const QualifiedName&) const override;
     AXObjectCache* axObjectCache() const override;
     Element* anchorElement() const override;
     Element* actionElement() const override;

@@ -51,7 +51,7 @@ InspectorAuditAccessibilityObject::InspectorAuditAccessibilityObject(InspectorAu
 {
 }
 
-static AXCoreObject* accessiblityObjectForNode(Node& node)
+static AccessibilityObject* accessiblityObjectForNode(Node& node)
 {
     if (!AXObjectCache::accessibilityEnabled())
         AXObjectCache::enableAccessibility();
@@ -245,11 +245,10 @@ ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObje
 
     std::optional<Vector<RefPtr<Node>>> result;
 
-    if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
+    if (auto* axObject = accessiblityObjectForNode(node)) {
         Vector<RefPtr<Node>> controlledNodes;
 
-        Vector<Element*> controlledElements;
-        axObject->elementsFromAttribute(controlledElements, HTMLNames::aria_controlsAttr);
+        auto controlledElements = axObject->elementsFromAttribute(HTMLNames::aria_controlsAttr);
         for (Element* controlledElement : controlledElements) {
             if (controlledElement)
                 controlledNodes.append(controlledElement);
@@ -267,11 +266,10 @@ ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObje
 
     std::optional<Vector<RefPtr<Node>>> result;
 
-    if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
+    if (auto* axObject = accessiblityObjectForNode(node)) {
         Vector<RefPtr<Node>> flowedNodes;
 
-        Vector<Element*> flowedElements;
-        axObject->elementsFromAttribute(flowedElements, HTMLNames::aria_flowtoAttr);
+        auto flowedElements = axObject->elementsFromAttribute(HTMLNames::aria_flowtoAttr);
         for (Element* flowedElement : flowedElements) {
             if (flowedElement)
                 flowedNodes.append(flowedElement);
@@ -287,7 +285,7 @@ ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getMouseEventNode(N
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
+    if (auto* axObject = accessiblityObjectForNode(node)) {
         if (is<AccessibilityNodeObject>(axObject))
             return downcast<AccessibilityNodeObject>(axObject)->mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
     }
@@ -301,12 +299,11 @@ ExceptionOr<std::optional<Vector<RefPtr<Node>>>> InspectorAuditAccessibilityObje
 
     std::optional<Vector<RefPtr<Node>>> result;
 
-    if (AXCoreObject* axObject = accessiblityObjectForNode(node)) {
+    if (auto* axObject = accessiblityObjectForNode(node)) {
         if (axObject->supportsARIAOwns()) {
             Vector<RefPtr<Node>> ownedNodes;
 
-            Vector<Element*> ownedElements;
-            axObject->elementsFromAttribute(ownedElements, HTMLNames::aria_ownsAttr);
+            auto ownedElements = axObject->elementsFromAttribute(HTMLNames::aria_ownsAttr);
             for (Element* ownedElement : ownedElements) {
                 if (ownedElement)
                     ownedNodes.append(ownedElement);

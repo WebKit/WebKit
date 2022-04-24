@@ -181,8 +181,8 @@ protected:
     HTMLLabelElement* labelElementContainer() const;
 
     String ariaAccessibilityDescription() const;
-    void ariaLabeledByElements(Vector<Element*>& elements) const;
-    String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
+    Vector<Element*> ariaLabeledByElements() const;
+    String descriptionForElements(Vector<Element*>&&) const;
     LayoutRect boundingBoxRect() const override;
     String ariaDescribedByAttribute() const override;
     

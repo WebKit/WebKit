@@ -2067,11 +2067,6 @@ bool AXIsolatedObject::accessibleNameDerivesFromContent() const
     return false;
 }
 
-void AXIsolatedObject::elementsFromAttribute(Vector<Element*>&, const QualifiedName&) const
-{
-    ASSERT_NOT_REACHED();
-}
-
 AXObjectCache* AXIsolatedObject::axObjectCache() const
 {
     ASSERT(isMainThread());

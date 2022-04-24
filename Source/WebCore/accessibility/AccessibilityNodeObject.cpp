@@ -1775,8 +1775,7 @@ void AccessibilityNodeObject::ariaLabeledByText(Vector<AccessibilityText>& textO
         if (!objectCache)
             return;
 
-        Vector<Element*> elements;
-        ariaLabeledByElements(elements);
+        auto elements = ariaLabeledByElements();
 
         Vector<AXCoreObject*> axElements;
         for (const auto& element : elements)
@@ -2078,8 +2077,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             // We should ignore the child if it's labeled by this node.
             // This could happen when this node labels multiple child nodes and we didn't
             // skip in the above ignoredChildNode check.
-            Vector<Element*> labeledByElements;
-            downcast<AccessibilityNodeObject>(*child).ariaLabeledByElements(labeledByElements);
+            auto labeledByElements = downcast<AccessibilityNodeObject>(*child).ariaLabeledByElements();
             if (labeledByElements.contains(node))
                 continue;
             
@@ -2333,37 +2331,32 @@ String AccessibilityNodeObject::accessibilityDescriptionForChildren() const
     return builder.toString();
 }
 
-String AccessibilityNodeObject::accessibilityDescriptionForElements(Vector<Element*> &elements) const
+String AccessibilityNodeObject::descriptionForElements(Vector<Element*>&& elements) const
 {
     StringBuilder builder;
-    unsigned size = elements.size();
-    for (unsigned i = 0; i < size; ++i)
-        appendNameToStringBuilder(builder, accessibleNameForNode(elements[i], node()));
+    for (auto* element : elements)
+        appendNameToStringBuilder(builder, accessibleNameForNode(element, node()));
     return builder.toString();
 }
 
 String AccessibilityNodeObject::ariaDescribedByAttribute() const
 {
-    Vector<Element*> elements;
-    elementsFromAttribute(elements, aria_describedbyAttr);
-    
-    return accessibilityDescriptionForElements(elements);
+    return descriptionForElements(elementsFromAttribute(aria_describedbyAttr));
 }
 
-void AccessibilityNodeObject::ariaLabeledByElements(Vector<Element*>& elements) const
+Vector<Element*> AccessibilityNodeObject::ariaLabeledByElements() const
 {
-    elementsFromAttribute(elements, aria_labelledbyAttr);
-    if (!elements.size())
-        elementsFromAttribute(elements, aria_labeledbyAttr);
+    // FIXME: should walk the DOM elements only once.
+    auto elements = elementsFromAttribute(aria_labelledbyAttr);
+    if (elements.size())
+        return elements;
+    return elementsFromAttribute(aria_labeledbyAttr);
 }
 
 
 String AccessibilityNodeObject::ariaLabeledByAttribute() const
 {
-    Vector<Element*> elements;
-    ariaLabeledByElements(elements);
-
-    return accessibilityDescriptionForElements(elements);
+    return descriptionForElements(ariaLabeledByElements());
 }
 
 bool AccessibilityNodeObject::hasAttributesRequiredForInclusion() const

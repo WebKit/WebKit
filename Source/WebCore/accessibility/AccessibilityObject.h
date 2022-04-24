@@ -297,7 +297,7 @@ public:
     double loadingProgress() const override { return 0; }
     WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
     bool supportsCheckedState() const override;
-    
+
     bool supportsARIAOwns() const override { return false; }
     bool isActiveDescendantOfFocusedContainer() const override;
     void ariaActiveDescendantReferencingElements(AccessibilityChildrenVector&) const override;
@@ -427,7 +427,7 @@ public:
     String expandedTextValue() const override { return String(); }
     bool supportsExpandedTextValue() const override { return false; }
 
-    void elementsFromAttribute(Vector<Element*>&, const QualifiedName&) const override;
+    Vector<Element*> elementsFromAttribute(const QualifiedName&) const;
 
     // Only if isColorWell()
     SRGBA<uint8_t> colorValue() const override { return Color::transparentBlack; }
@@ -809,6 +809,7 @@ protected:
     bool dispatchTouchEvent();
 
     static bool isARIAInput(AccessibilityRole);
+
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     void ariaElementsReferencedByAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     virtual bool exposesTitleUIElement() const { return true; }

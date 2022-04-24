@@ -1171,8 +1171,6 @@ public:
     virtual String expandedTextValue() const = 0;
     virtual bool supportsExpandedTextValue() const = 0;
 
-    virtual void elementsFromAttribute(Vector<Element*>&, const QualifiedName&) const = 0;
-
     // Only if isColorWell()
     virtual SRGBA<uint8_t> colorValue() const = 0;
 

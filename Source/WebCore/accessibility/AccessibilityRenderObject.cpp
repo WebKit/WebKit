@@ -1802,33 +1802,31 @@ bool AccessibilityRenderObject::isTabItemSelected() const
 {
     if (!isTabItem() || !m_renderer)
         return false;
-    
+
     Node* node = m_renderer->node();
     if (!node || !node->isElementNode())
         return false;
-    
+
     // The ARIA spec says a tab item can also be selected if it is aria-labeled by a tabpanel
     // that has keyboard focus inside of it, or if a tabpanel in its aria-controls list has KB
     // focus inside of it.
-    AccessibilityObject* focusedElement = static_cast<AccessibilityObject*>(focusedUIElement());
+    auto* focusedElement = static_cast<AccessibilityObject*>(focusedUIElement());
     if (!focusedElement)
         return false;
-    
-    Vector<Element*> elements;
-    elementsFromAttribute(elements, aria_controlsAttr);
-    
-    AXObjectCache* cache = axObjectCache();
+
+    auto* cache = axObjectCache();
     if (!cache)
         return false;
-    
+
+    auto elements = elementsFromAttribute(aria_controlsAttr);
     for (const auto& element : elements) {
-        AccessibilityObject* tabPanel = cache->getOrCreate(element);
+        auto* tabPanel = cache->getOrCreate(element);
 
         // A tab item should only control tab panels.
         if (!tabPanel || tabPanel->roleValue() != AccessibilityRole::TabPanel)
             continue;
-        
-        AccessibilityObject* checkFocusElement = focusedElement;
+
+        auto* checkFocusElement = focusedElement;
         // Check if the focused element is a descendant of the element controlled by the tab item.
         while (checkFocusElement) {
             if (tabPanel == checkFocusElement)
@@ -1836,7 +1834,7 @@ bool AccessibilityRenderObject::isTabItemSelected() const
             checkFocusElement = checkFocusElement->parentObject();
         }
     }
-    
+
     return false;
 }
     
