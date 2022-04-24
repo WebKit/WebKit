@@ -1,3 +1,9 @@
+2022-04-23  Alan Bujtas  <zalan@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * Headers.cmake:
+
 2022-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the `PreferInlineTextSelectionInImages` internal feature flag
