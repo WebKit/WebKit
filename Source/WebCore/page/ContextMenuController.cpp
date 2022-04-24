@@ -527,7 +527,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().applyDictationAlternative(title);
         break;
     case ContextMenuItemTagCopyCroppedImage:
-    case ContextMenuItemTagQuickLookImage:
+    case ContextMenuItemTagLookUpImage:
         // These should be handled at the client layer.
         ASSERT_NOT_REACHED();
         break;
@@ -836,6 +836,9 @@ void ContextMenuController::populate()
     ContextMenuItem SelectAllItem(ActionType, ContextMenuItemTagSelectAll, contextMenuItemTagSelectAll());
     ContextMenuItem InsertEmojiItem(ActionType, ContextMenuItemTagInsertEmoji, contextMenuItemTagInsertEmoji());
 #endif
+#if ENABLE(IMAGE_ANALYSIS)
+    ContextMenuItem LookUpImageItem(ActionType, ContextMenuItemTagLookUpImage, contextMenuItemTagLookUpImage());
+#endif
 
 #if PLATFORM(GTK) || PLATFORM(WIN)
     ContextMenuItem ShareMenuItem;
@@ -862,12 +865,6 @@ void ContextMenuController::populate()
     // The default image control menu gets populated solely by the platform.
     if (m_context.controlledImage())
         return;
-#endif
-
-#if ENABLE(IMAGE_ANALYSIS)
-    bool shouldAppendQuickLookImageItem = false;
-    auto quickLookItemTitle = frame->settings().preferInlineTextSelectionInImages() ? contextMenuItemTagLookUpImage() : contextMenuItemTagQuickLookImage();
-    ContextMenuItem QuickLookImageItem { ActionType, ContextMenuItemTagQuickLookImage, quickLookItemTitle };
 #endif
 
     auto addSelectedTextActionsIfNeeded = [&] (const String& selectedText) {
@@ -923,7 +920,8 @@ void ContextMenuController::populate()
                         appendItem(copyCroppedImageItem, m_contextMenu.get());
 #endif
 #if ENABLE(IMAGE_ANALYSIS)
-                    shouldAppendQuickLookImageItem = m_client.supportsLookUpInImages();
+                    if (m_client.supportsLookUpInImages())
+                        appendItem(LookUpImageItem, m_contextMenu.get());
 #endif
                 }
             }
@@ -1188,18 +1186,6 @@ void ContextMenuController::populate()
             appendItem(ShareMenuItem, m_contextMenu.get());
         }
     }
-
-#if ENABLE(IMAGE_ANALYSIS)
-    if (shouldAppendQuickLookImageItem) {
-        if (!frame->settings().preferInlineTextSelectionInImages()) {
-            // In the case where inline text selection is enabled, the Look Up item is only added if
-            // we discover visual look up results after image analysis. In that scenario, a separator
-            // is only added before the Look Up item once we're certain that we want to show it.
-            appendItem(*separatorItem(), m_contextMenu.get());
-        }
-        appendItem(QuickLookImageItem, m_contextMenu.get());
-    }
-#endif // ENABLE(IMAGE_ANALYSIS)
 }
 
 void ContextMenuController::addInspectElementItem()
@@ -1526,7 +1512,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = m_context.hitTestResult().mediaHasAudio();
             shouldCheck = shouldEnable &&  m_context.hitTestResult().mediaMuted();
             break;
-        case ContextMenuItemTagQuickLookImage:
+        case ContextMenuItemTagLookUpImage:
         case ContextMenuItemTagTranslate:
             break;
     }

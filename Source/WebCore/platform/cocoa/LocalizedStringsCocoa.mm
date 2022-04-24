@@ -302,22 +302,7 @@ String contextMenuItemTagLookUpImage()
     return WEB_UI_STRING("Look Up", "Title for Look Up action button");
 }
 
-String contextMenuItemTagQuickLookImage()
-{
-    return WEB_UI_STRING("Quick Look", "Title for Quick Look action button");
-}
-
-String contextMenuItemTagQuickLookImageForTextSelection()
-{
-    return WEB_UI_STRING("Select Text in Quick Look", "Title for Quick Look action button for images with text");
-}
-
-String contextMenuItemTagQuickLookImageForVisualSearch()
-{
-    return WEB_UI_STRING("Look Up in Quick Look", "Title for Quick Look action button for images with visual search results");
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS)
+#endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 

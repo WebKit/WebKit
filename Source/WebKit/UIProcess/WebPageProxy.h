@@ -421,8 +421,6 @@ struct WebNavigationDataStore;
 struct WebPopupItem;
 struct WebSpeechSynthesisVoice;
 
-enum class ImageAnalysisType : uint8_t;
-enum class TapHandlingResult : uint8_t;
 enum class TextRecognitionUpdateResult : uint8_t;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
@@ -1762,7 +1760,7 @@ public:
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
     void updateWithTextRecognitionResult(WebCore::TextRecognitionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&&);
-    void computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType, CompletionHandler<void(bool)>&&);
+    void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
     void startImageAnalysis(const String& identifier);
 #endif
 
@@ -2034,7 +2032,7 @@ public:
 
 #if ENABLE(CONTEXT_MENUS)
 #if ENABLE(IMAGE_ANALYSIS)
-    void handleContextMenuQuickLookImage(QuickLookPreviewActivity);
+    void handleContextMenuLookUpImage();
 #endif
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     void handleContextMenuCopyCroppedImage(ShareableBitmap&, const String& preferredMIMEType);

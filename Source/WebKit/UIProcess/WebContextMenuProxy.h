@@ -33,10 +33,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(COCOA)
-#include "QuickLookPreviewActivity.h"
-#endif
-
 OBJC_CLASS NSMenu;
 
 namespace WebKit {
@@ -55,7 +51,6 @@ public:
 #if PLATFORM(COCOA)
     virtual NSMenu *platformMenu() const = 0;
     virtual NSArray *platformData() const = 0;
-    virtual QuickLookPreviewActivity quickLookPreviewActivity() const { return QuickLookPreviewActivity::None; };
 #endif // PLATFORM(COCOA)
 
 protected:

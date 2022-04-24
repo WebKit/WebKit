@@ -147,7 +147,7 @@ enum ContextMenuAction {
     ContextMenuItemTagToggleVideoEnhancedFullscreen,
     ContextMenuItemTagAddHighlightToCurrentQuickNote,
     ContextMenuItemTagAddHighlightToNewQuickNote,
-    ContextMenuItemTagQuickLookImage,
+    ContextMenuItemTagLookUpImage,
     ContextMenuItemTagTranslate,
     ContextMenuItemTagCopyCroppedImage,
     ContextMenuItemLastNonCustomTag = ContextMenuItemTagCopyCroppedImage,

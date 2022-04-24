@@ -216,7 +216,6 @@
 
 #if PLATFORM(COCOA)
 #include "InsertTextOptions.h"
-#include "QuickLookPreviewActivity.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "UserMediaCaptureManagerProxy.h"
@@ -7206,10 +7205,9 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         ++m_pendingLearnOrIgnoreWordMessageCount;
         break;
 
-    case ContextMenuItemTagQuickLookImage:
+    case ContextMenuItemTagLookUpImage:
 #if ENABLE(IMAGE_ANALYSIS)
-        if (m_activeContextMenu)
-            handleContextMenuQuickLookImage(m_activeContextMenu->quickLookPreviewActivity());
+        handleContextMenuLookUpImage();
 #endif
         return;
 
@@ -8842,9 +8840,9 @@ void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBi
     pageClient().requestTextRecognition(imageURL, imageData, identifier, WTFMove(completionHandler));
 }
 
-void WebPageProxy::computeHasImageAnalysisResults(const URL& imageURL, ShareableBitmap& imageBitmap, ImageAnalysisType type, CompletionHandler<void(bool)>&& completion)
+void WebPageProxy::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
 {
-    pageClient().computeHasImageAnalysisResults(imageURL, imageBitmap, type, WTFMove(completion));
+    pageClient().computeHasVisualSearchResults(imageURL, imageBitmap, WTFMove(completion));
 }
 
 void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)

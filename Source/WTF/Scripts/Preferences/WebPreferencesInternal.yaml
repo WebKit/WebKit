@@ -744,22 +744,6 @@ PreferFasterClickOverDoubleTap:
       "PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)": true
       default: false
 
-PreferInlineTextSelectionInImages:
-  type: bool
-  humanReadableName: "Inline Text Selection in Images"
-  humanReadableDescription: "Prefer inline text selection in images over using the context menu"
-  condition: ENABLE(IMAGE_ANALYSIS)
-  defaultValue:
-    WebCore:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)": false
-      default: true
-    WebKitLegacy:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)": false
-      default: true
-    WebKit:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)": false
-      default: true
-
 PreferSandboxedMediaParsing:
   type: bool
   humanReadableName: "Prefer Sandboxed Parsing of Media"

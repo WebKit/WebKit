@@ -543,7 +543,7 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
 #endif
     case WebCore::ContextMenuItemTagShareMenu:
         return kWKContextMenuItemTagShareMenu;
-    case WebCore::ContextMenuItemTagQuickLookImage:
+    case WebCore::ContextMenuItemTagLookUpImage:
         return kWKContextMenuItemTagRevealImage;
     case WebCore::ContextMenuItemTagTranslate:
         return kWKContextMenuItemTagTranslate;
@@ -748,7 +748,7 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagShareMenu;
 #endif
     case kWKContextMenuItemTagRevealImage:
-        return WebCore::ContextMenuItemTagQuickLookImage;
+        return WebCore::ContextMenuItemTagLookUpImage;
     case kWKContextMenuItemTagTranslate:
         return WebCore::ContextMenuItemTagTranslate;
     case kWKContextMenuItemTagCopyCroppedImage:

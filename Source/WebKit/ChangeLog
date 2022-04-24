@@ -1,3 +1,53 @@
+2022-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove the `PreferInlineTextSelectionInImages` internal feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=234849
+
+        Reviewed by Sam Weinig.
+
+        This patch reverts r279164, which introduced an internal feature to avoid Live Text analysis when hovering over
+        images, and instead added a new context menu item to reveal selectable text in the image by launching the
+        QuickLook panel in Live Text mode.
+
+        This alternate Live Text experience was originally devised as a way to mitigate the power and performance impact
+        of passively triggering Live Text analysis when hovering over images on pre-M1 devices, but this mitigation was
+        ultimately deemed unnecessary in macOS 12.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * UIProcess/Cocoa/QuickLookPreviewActivity.h: Removed.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::computeHasVisualSearchResults):
+        (WebKit::WebViewImpl::computeHasImageAnalysisResults): Deleted.
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::computeHasVisualSearchResults):
+        (WebKit::PageClient::computeHasImageAnalysisResults): Deleted.
+        * UIProcess/WebContextMenuProxy.h:
+        (WebKit::WebContextMenuProxy::quickLookPreviewActivity const): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        (WebKit::WebPageProxy::computeHasVisualSearchResults):
+        (WebKit::WebPageProxy::computeHasImageAnalysisResults): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::computeHasVisualSearchResults):
+        (WebKit::PageClientImpl::computeHasImageAnalysisResults): Deleted.
+        * UIProcess/mac/WKQuickLookPreviewController.h:
+        * UIProcess/mac/WKQuickLookPreviewController.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+        (WebKit::WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem): Deleted.
+        (WebKit::WebContextMenuProxyMac::updateQuickLookContextMenuItemTitle): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::handleContextMenuLookUpImage):
+        (WebKit::WebPageProxy::handleContextMenuQuickLookImage): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-04-23  Brady Eidson  <beidson@apple.com>
 
         Add WKNotification and WKWebsiteDataStore SPI for handling click/close of persistent notifications
