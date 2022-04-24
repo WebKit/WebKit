@@ -187,7 +187,7 @@ template<> struct Converter<IDLAtomStringAdaptor<IDLUSVString>> : DefaultConvert
 };
 
 template<> struct Converter<IDLAtomStringAdaptor<IDLByteString>> : DefaultConverter<IDLAtomStringAdaptor<IDLByteString>> {
-    static String convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    static AtomString convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
         return valueToByteAtomString(lexicalGlobalObject, value);
     }
