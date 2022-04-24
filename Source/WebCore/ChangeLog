@@ -1,3 +1,23 @@
+2022-04-24  Alan Bujtas  <zalan@apple.com>
+
+        Fix a typo (r293297)
+        https://bugs.webkit.org/show_bug.cgi?id=239704
+
+        Unreviewed.
+
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContentForIntegration):
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContentForIntergration): Deleted.
+        * layout/formattingContexts/flex/FlexFormattingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContentForIntegration):
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContentForIntergration): Deleted.
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/integration/flex/LayoutIntegrationFlexLayout.cpp:
+        (WebCore::LayoutIntegration::FlexLayout::layout):
+        * layout/integration/inline/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+
 2022-04-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r293301.

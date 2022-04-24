@@ -118,7 +118,7 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
     }
 }
 
-void FlexFormattingContext::layoutInFlowContentForIntergration(const ConstraintsForInFlowContent&)
+void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent&)
 {
 }
 

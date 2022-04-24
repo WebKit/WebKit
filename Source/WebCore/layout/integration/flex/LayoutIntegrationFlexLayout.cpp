@@ -79,7 +79,7 @@ void FlexLayout::layout()
     auto flexFormattingContext = Layout::FlexFormattingContext { rootLayoutBox(), m_flexFormattingState };
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
 
-    flexFormattingContext.layoutInFlowContentForIntergration({ horizontalConstraints, rootGeometry.contentBoxTop() });
+    flexFormattingContext.layoutInFlowContentForIntegration({ horizontalConstraints, rootGeometry.contentBoxTop() });
 }
 
 void FlexLayout::paint(PaintInfo&, const LayoutPoint&)
