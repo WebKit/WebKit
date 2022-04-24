@@ -970,9 +970,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     inspector/agents/InspectorPageAgent.h
 
+    layout/FormattingState.h
     layout/LayoutState.h
     layout/LayoutUnits.h
     layout/MarginTypes.h
+
+    layout/formattingContexts/FormattingConstraints.h
+    layout/formattingContexts/FormattingContext.h
 
     layout/formattingContexts/flex/FlexFormattingState.h
 

@@ -1,3 +1,11 @@
+2022-04-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WinCairo] Unreviewed build fix
+        https://bugs.webkit.org/show_bug.cgi?id=239692
+        <rdar://problem/92222456>
+
+        * Headers.cmake: Added necessary headers of WebCore/layout.
+
 2022-04-24  Alan Bujtas  <zalan@apple.com>
 
         Fix a typo (r293297)
