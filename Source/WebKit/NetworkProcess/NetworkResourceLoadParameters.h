@@ -52,11 +52,11 @@ public:
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
 
-    mutable WebCore::ResourceLoaderIdentifier identifier;
+    WebCore::ResourceLoaderIdentifier identifier;
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
-    mutable Seconds maximumBufferingTime;
-    mutable WebCore::FetchOptions options;
+    Seconds maximumBufferingTime;
+    WebCore::FetchOptions options;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy;
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;

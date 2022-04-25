@@ -1,3 +1,20 @@
+2022-04-24  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkResourceLoader.m_parameters non const
+        https://bugs.webkit.org/show_bug.cgi?id=239603
+
+        Reviewed by Anders Carlsson.
+
+        Now that NetworkResourceLoader can be transitioned through WebProcesses,
+        several NetworkResourceLoaderParameters might need to be changed over time.
+        For that reason, it no longer makes sense to have m_parameters const.
+
+        Covered by existing tests.
+
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2022-04-24  Daniel Kolesa  <dkolesa@igalia.com>
 
         Use utf-8 for text mode files in generate-automation-atom.py

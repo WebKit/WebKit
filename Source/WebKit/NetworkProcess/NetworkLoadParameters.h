@@ -44,9 +44,9 @@ enum class PreconnectOnly : bool { No, Yes };
 
 class NetworkLoadParameters {
 public:
-    mutable WebPageProxyIdentifier webPageProxyID;
-    mutable WebCore::PageIdentifier webPageID;
-    mutable WebCore::FrameIdentifier webFrameID;
+    WebPageProxyIdentifier webPageProxyID;
+    WebCore::PageIdentifier webPageID;
+    WebCore::FrameIdentifier webFrameID;
     RefPtr<WebCore::SecurityOrigin> topOrigin;
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WTF::ProcessID parentPID { 0 };
