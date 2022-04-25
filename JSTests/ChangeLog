@@ -1,3 +1,19 @@
+2022-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Skip microbenchmarks/memcpy-wasm.js and friends on non-FTL (i.e. non-WASM) platforms
+        https://bugs.webkit.org/show_bug.cgi?id=239705
+
+        Reviewed by Yusuke Suzuki.
+
+        Mark microbenchmarks/memcpy-wasm.js and related tests as skipped on
+        non-FTL platforms since WASM tests are not run there, resulting in
+        failures when they're executed.
+
+        * microbenchmarks/memcpy-wasm-large.js:
+        * microbenchmarks/memcpy-wasm-medium.js:
+        * microbenchmarks/memcpy-wasm-small.js:
+        * microbenchmarks/memcpy-wasm.js:
+
 2022-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] PropertyTable should have compact mode
