@@ -67,6 +67,7 @@ public:
         // Other checks probably aren't necessary but it's good to be paranoid.
         return m_payload == other.m_payload && m_argCount == other.m_argCount && m_retCount == other.m_retCount;
     }
+    bool operator!=(const FunctionSignature& other) const { return !(*this == other); }
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;

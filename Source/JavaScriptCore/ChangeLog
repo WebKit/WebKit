@@ -1,3 +1,10 @@
+2022-04-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GCC] Unreviewed, build fix for Ubuntu LTS/Debian after r293265
+
+        * wasm/WasmTypeDefinition.h:
+        (JSC::Wasm::FunctionSignature::operator!= const):
+
 2022-04-24  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [Wasm] Remove confusing isFuncref and isExternref
