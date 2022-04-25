@@ -205,6 +205,10 @@ void Worker::notifyFinished()
     if (!context)
         return;
 
+    auto sessionID = context->sessionID();
+    if (!sessionID)
+        return;
+
     if (m_scriptLoader->failed()) {
         queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
         return;
@@ -222,7 +226,7 @@ void Worker::notifyFinished()
         m_clientIdentifier,
         context->userAgent(m_scriptLoader->lastRequestURL())
     };
-    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->lastRequestURL(), m_options.name, WTFMove(initializationData), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
+    m_contextProxy.startWorkerGlobalScope(m_scriptLoader->lastRequestURL(), *sessionID, m_options.name, WTFMove(initializationData), m_scriptLoader->script(), contentSecurityPolicyResponseHeaders, m_shouldBypassMainWorldContentSecurityPolicy, m_scriptLoader->crossOriginEmbedderPolicy(), m_workerCreationTime, referrerPolicy, m_options.type, m_options.credentials, m_runtimeFlags);
     InspectorInstrumentation::scriptImported(*context, m_scriptLoader->identifier(), m_scriptLoader->script().toString());
 }
 

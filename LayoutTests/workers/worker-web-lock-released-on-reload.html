@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Makes sure that web locks acquired by web workers are released on page reload.");
+jsTestIsAsync = true;
+
+var didReloadPopup = false;
+function lockAcquiredByWorker()
+{
+    testPassed("Lock was acquired by the worker");
+    if (didReloadPopup) {
+        setTimeout(finishJSTest, 0);
+    } else {
+        timeoutHandle = setTimeout(() => {
+            clearTimeout(timeoutHandle);
+            testFailed("Worker failed to acquire the lock after a reload");
+            finishJSTest();
+        }, 20000);
+        setTimeout(() => {
+            popup.location.reload();
+        }, 0);
+        didReloadPopup = true;
+    }
+}
+
+popup = open("resources/worker-web-lock-released-on-reload-popup.html");
+</script>
+</body>
+</html>

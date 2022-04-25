@@ -77,7 +77,7 @@ public:
     FetchRequestCredentials credentials;
     Settings::Values settingsValues;
     WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
-    std::optional<PAL::SessionID> sessionID { std::nullopt };
+    PAL::SessionID sessionID;
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerData> serviceWorkerData;
 #endif

@@ -127,7 +127,6 @@ class ProcessAssertion;
 class RemoteCDMFactory;
 class RemoteLegacyCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
-class RemoteWebLockRegistry;
 class StorageAreaMap;
 class UserData;
 class WaylandCompositorDisplay;
@@ -335,7 +334,6 @@ public:
 
     WebCacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider.get(); }
     WebBroadcastChannelRegistry& broadcastChannelRegistry() { return m_broadcastChannelRegistry.get(); }
-    RemoteWebLockRegistry& webLockRegistry() { return m_webLockRegistry.get(); }
     WebCookieJar& cookieJar() { return m_cookieJar.get(); }
     WebSocketChannelManager& webSocketChannelManager() { return m_webSocketChannelManager; }
 
@@ -667,7 +665,6 @@ private:
 
     Ref<WebCacheStorageProvider> m_cacheStorageProvider;
     Ref<WebBroadcastChannelRegistry> m_broadcastChannelRegistry;
-    Ref<RemoteWebLockRegistry> m_webLockRegistry;
     Ref<WebCookieJar> m_cookieJar;
     WebSocketChannelManager m_webSocketChannelManager;
 

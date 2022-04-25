@@ -59,7 +59,7 @@ Document* Worklet::document()
 void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     auto* document = this->document();
-    if (!document) {
+    if (!document || !document->page()) {
         promise.reject(Exception { InvalidStateError, "This frame is detached"_s });
         return;
     }

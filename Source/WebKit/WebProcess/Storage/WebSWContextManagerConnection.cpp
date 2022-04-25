@@ -125,7 +125,6 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
     pageConfiguration.databaseProvider = WebDatabaseProvider::getOrCreate(m_pageGroupID);
     pageConfiguration.socketProvider = WebSocketProvider::create(m_webPageProxyID);
     pageConfiguration.broadcastChannelRegistry = WebProcess::singleton().broadcastChannelRegistry();
-    pageConfiguration.webLockRegistry = WebProcess::singleton().webLockRegistry();
     pageConfiguration.userContentProvider = m_userContentController;
 #if ENABLE(WEB_RTC)
     pageConfiguration.libWebRTCProvider = makeUniqueRef<RemoteWorkerLibWebRTCProvider>();

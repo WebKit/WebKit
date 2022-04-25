@@ -35,9 +35,29 @@
 
 namespace WebCore {
 
+static RefPtr<WebLockRegistry>& sharedRegistry()
+{
+    static MainThreadNeverDestroyed<RefPtr<WebLockRegistry>> registry;
+    return registry;
+}
+
+WebLockRegistry& WebLockRegistry::shared()
+{
+    auto& registry = sharedRegistry();
+    if (!registry)
+        registry= LocalWebLockRegistry::create();
+    return *registry;
+}
+
+void WebLockRegistry::setSharedRegistry(Ref<WebLockRegistry>&& registry)
+{
+    ASSERT(!sharedRegistry());
+    sharedRegistry() = WTFMove(registry);
+}
+
 class LocalWebLockRegistry::PerOriginRegistry : public RefCounted<PerOriginRegistry>, public CanMakeWeakPtr<PerOriginRegistry> {
 public:
-    static Ref<PerOriginRegistry> create(LocalWebLockRegistry&, const ClientOrigin&);
+    static Ref<PerOriginRegistry> create(LocalWebLockRegistry&, PAL::SessionID, const ClientOrigin&);
     ~PerOriginRegistry();
 
     struct LockInfo {
@@ -55,7 +75,7 @@ public:
     void clientsAreGoingAway(const Function<bool(const LockInfo&)>& matchClient);
 
 private:
-    PerOriginRegistry(LocalWebLockRegistry&, const ClientOrigin&);
+    PerOriginRegistry(LocalWebLockRegistry&, PAL::SessionID, const ClientOrigin&);
 
     struct LockRequest : LockInfo {
         String name;
@@ -66,6 +86,7 @@ private:
     bool isGrantable(const LockRequest&) const;
 
     WeakPtr<LocalWebLockRegistry> m_globalRegistry;
+    PAL::SessionID m_sessionID;
     ClientOrigin m_clientOrigin;
     FastRobinHoodHashMap<String, Deque<LockRequest>> m_lockRequestQueueMap;
     FastRobinHoodHashMap<String, Vector<LockInfo>> m_heldLocks;
@@ -75,40 +96,41 @@ LocalWebLockRegistry::LocalWebLockRegistry() = default;
 
 LocalWebLockRegistry::~LocalWebLockRegistry() = default;
 
-auto LocalWebLockRegistry::ensureRegistryForOrigin(const ClientOrigin& clientOrigin) -> Ref<PerOriginRegistry>
+auto LocalWebLockRegistry::ensureRegistryForOrigin(PAL::SessionID sessionID, const ClientOrigin& clientOrigin) -> Ref<PerOriginRegistry>
 {
-    if (auto existingRegistry = m_perOriginRegistries.get(clientOrigin))
+    if (auto existingRegistry = m_perOriginRegistries.get({ sessionID, clientOrigin }))
         return *existingRegistry;
 
-    return PerOriginRegistry::create(*this, clientOrigin);
+    return PerOriginRegistry::create(*this, sessionID, clientOrigin);
 }
 
-auto LocalWebLockRegistry::existingRegistryForOrigin(const ClientOrigin& clientOrigin) const -> RefPtr<PerOriginRegistry>
+auto LocalWebLockRegistry::existingRegistryForOrigin(PAL::SessionID sessionID, const ClientOrigin& clientOrigin) const -> RefPtr<PerOriginRegistry>
 {
-    return m_perOriginRegistries.get(clientOrigin).get();
+    return m_perOriginRegistries.get({ sessionID, clientOrigin }).get();
 }
 
-Ref<LocalWebLockRegistry::PerOriginRegistry> LocalWebLockRegistry::PerOriginRegistry::create(LocalWebLockRegistry& globalRegistry, const ClientOrigin& clientOrigin)
+Ref<LocalWebLockRegistry::PerOriginRegistry> LocalWebLockRegistry::PerOriginRegistry::create(LocalWebLockRegistry& globalRegistry, PAL::SessionID sessionID, const ClientOrigin& clientOrigin)
 {
-    return adoptRef(*new PerOriginRegistry(globalRegistry, clientOrigin));
+    return adoptRef(*new PerOriginRegistry(globalRegistry, sessionID, clientOrigin));
 }
 
-LocalWebLockRegistry::PerOriginRegistry::PerOriginRegistry(LocalWebLockRegistry& globalRegistry, const ClientOrigin& clientOrigin)
+LocalWebLockRegistry::PerOriginRegistry::PerOriginRegistry(LocalWebLockRegistry& globalRegistry, PAL::SessionID sessionID, const ClientOrigin& clientOrigin)
     : m_globalRegistry(globalRegistry)
+    , m_sessionID(sessionID)
     , m_clientOrigin(clientOrigin)
 {
-    globalRegistry.m_perOriginRegistries.add(clientOrigin, WeakPtr { * this });
+    globalRegistry.m_perOriginRegistries.add({ sessionID, clientOrigin }, WeakPtr { * this });
 }
 
 LocalWebLockRegistry::PerOriginRegistry::~PerOriginRegistry()
 {
     if (m_globalRegistry)
-        m_globalRegistry->m_perOriginRegistries.remove(m_clientOrigin);
+        m_globalRegistry->m_perOriginRegistries.remove({ m_sessionID, m_clientOrigin });
 }
 
-void LocalWebLockRegistry::requestLock(const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, const String& name, WebLockMode mode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
+void LocalWebLockRegistry::requestLock(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier clientID, const String& name, WebLockMode mode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
-    ensureRegistryForOrigin(clientOrigin)->requestLock(lockIdentifier, clientID, name, mode, steal, ifAvailable, WTFMove(grantedHandler), WTFMove(lockStolenHandler));
+    ensureRegistryForOrigin(sessionID, clientOrigin)->requestLock(lockIdentifier, clientID, name, mode, steal, ifAvailable, WTFMove(grantedHandler), WTFMove(lockStolenHandler));
 }
 
 // https://wicg.github.io/web-locks/#request-a-lock
@@ -135,9 +157,9 @@ void LocalWebLockRegistry::PerOriginRegistry::requestLock(WebLockIdentifier lock
     processLockRequestQueue(name, queue);
 }
 
-void LocalWebLockRegistry::releaseLock(const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, const String& name)
+void LocalWebLockRegistry::releaseLock(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, const String& name)
 {
-    if (auto registry = existingRegistryForOrigin(clientOrigin))
+    if (auto registry = existingRegistryForOrigin(sessionID, clientOrigin))
         registry->releaseLock(lockIdentifier, name);
 }
 
@@ -158,9 +180,9 @@ void LocalWebLockRegistry::PerOriginRegistry::releaseLock(WebLockIdentifier lock
         processLockRequestQueue(name, queueIterator->value);
 }
 
-void LocalWebLockRegistry::abortLockRequest(const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
+void LocalWebLockRegistry::abortLockRequest(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, WebLockIdentifier lockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto registry = existingRegistryForOrigin(clientOrigin);
+    auto registry = existingRegistryForOrigin(sessionID, clientOrigin);
     if (!registry)
         return completionHandler(false);
 
@@ -222,9 +244,9 @@ void LocalWebLockRegistry::PerOriginRegistry::processLockRequestQueue(const Stri
     ASSERT_UNUSED(removedQueue, removedQueue.isEmpty());
 }
 
-void LocalWebLockRegistry::snapshot(const ClientOrigin& clientOrigin, CompletionHandler<void(WebLockManager::Snapshot&&)>&& completionHandler)
+void LocalWebLockRegistry::snapshot(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, CompletionHandler<void(WebLockManager::Snapshot&&)>&& completionHandler)
 {
-    auto registry = existingRegistryForOrigin(clientOrigin);
+    auto registry = existingRegistryForOrigin(sessionID, clientOrigin);
     if (!registry)
         return completionHandler({ });
 
@@ -247,9 +269,9 @@ void LocalWebLockRegistry::PerOriginRegistry::snapshot(CompletionHandler<void(We
     completionHandler(WTFMove(snapshot));
 }
 
-void LocalWebLockRegistry::clientIsGoingAway(const ClientOrigin& clientOrigin, ScriptExecutionContextIdentifier clientID)
+void LocalWebLockRegistry::clientIsGoingAway(PAL::SessionID sessionID, const ClientOrigin& clientOrigin, ScriptExecutionContextIdentifier clientID)
 {
-    if (auto registry = existingRegistryForOrigin(clientOrigin))
+    if (auto registry = existingRegistryForOrigin(sessionID, clientOrigin))
         registry->clientsAreGoingAway([clientID](auto& lockInfo) { return lockInfo.clientID == clientID; });
 }
 
@@ -291,9 +313,9 @@ void LocalWebLockRegistry::PerOriginRegistry::clientsAreGoingAway(const Function
 
 void LocalWebLockRegistry::clientsAreGoingAway(ProcessIdentifier processIdentifier)
 {
-    Vector<ClientOrigin> clientOrigins = copyToVector(m_perOriginRegistries.keys());
-    for (auto& clientOrigin : clientOrigins) {
-        if (auto registry = existingRegistryForOrigin(clientOrigin))
+    Vector<std::pair<PAL::SessionID, ClientOrigin>> clientOrigins = copyToVector(m_perOriginRegistries.keys());
+    for (auto& [sessionID, clientOrigin] : clientOrigins) {
+        if (auto registry = existingRegistryForOrigin(sessionID, clientOrigin))
             registry->clientsAreGoingAway([processIdentifier](auto& lockInfo) { return lockInfo.clientID.processIdentifier() == processIdentifier; });
     }
 }

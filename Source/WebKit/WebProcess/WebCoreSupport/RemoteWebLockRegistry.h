@@ -41,11 +41,11 @@ public:
     ~RemoteWebLockRegistry();
 
     // WebCore::WebLockRegistry.
-    void requestLock(const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name, WebCore::WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
-    void releaseLock(const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name) final;
-    void abortLockRequest(const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) final;
-    void snapshot(const WebCore::ClientOrigin&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&) final;
-    void clientIsGoingAway(const WebCore::ClientOrigin&, WebCore::ScriptExecutionContextIdentifier) final;
+    void requestLock(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name, WebCore::WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
+    void releaseLock(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name) final;
+    void abortLockRequest(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::WebLockIdentifier, WebCore::ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) final;
+    void snapshot(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(WebCore::WebLockManagerSnapshot&&)>&&) final;
+    void clientIsGoingAway(PAL::SessionID, const WebCore::ClientOrigin&, WebCore::ScriptExecutionContextIdentifier) final;
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

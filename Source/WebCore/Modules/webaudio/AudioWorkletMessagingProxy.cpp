@@ -49,12 +49,14 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
 {
     auto* document = worklet.document();
     auto jsRuntimeFlags = document->settings().javaScriptRuntimeFlags();
+    RELEASE_ASSERT(document->sessionID());
 
     return {
         document->url(),
         jsRuntimeFlags,
         worklet.audioContext() ? worklet.audioContext()->sampleRate() : 0.0f,
         worklet.identifier(),
+        *document->sessionID(),
         document->settingsValues(),
         worklet.audioContext() ? !worklet.audioContext()->isOfflineContext() : false
     };

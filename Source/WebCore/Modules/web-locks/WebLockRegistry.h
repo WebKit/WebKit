@@ -29,6 +29,7 @@
 #include "ScriptExecutionContextIdentifier.h"
 #include "WebLockIdentifier.h"
 #include "WebLockMode.h"
+#include <pal/SessionID.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -42,13 +43,16 @@ struct WebLockManagerSnapshot;
 
 class WebLockRegistry : public RefCounted<WebLockRegistry> {
 public:
+    static WebLockRegistry& shared();
+    WEBCORE_EXPORT static void setSharedRegistry(Ref<WebLockRegistry>&&);
+
     virtual ~WebLockRegistry() { }
 
-    virtual void requestLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) = 0;
-    virtual void releaseLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name) = 0;
-    virtual void abortLockRequest(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) = 0;
-    virtual void snapshot(const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) = 0;
-    virtual void clientIsGoingAway(const ClientOrigin&, ScriptExecutionContextIdentifier) = 0;
+    virtual void requestLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) = 0;
+    virtual void releaseLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name) = 0;
+    virtual void abortLockRequest(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) = 0;
+    virtual void snapshot(PAL::SessionID, const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) = 0;
+    virtual void clientIsGoingAway(PAL::SessionID, const ClientOrigin&, ScriptExecutionContextIdentifier) = 0;
 
 protected:
     WebLockRegistry() = default;
@@ -59,21 +63,21 @@ public:
     static Ref<LocalWebLockRegistry> create() { return adoptRef(*new LocalWebLockRegistry); }
     ~LocalWebLockRegistry();
 
-    WEBCORE_EXPORT void requestLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
-    WEBCORE_EXPORT void releaseLock(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name) final;
-    WEBCORE_EXPORT void abortLockRequest(const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) final;
-    WEBCORE_EXPORT void snapshot(const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) final;
-    WEBCORE_EXPORT void clientIsGoingAway(const ClientOrigin&, ScriptExecutionContextIdentifier) final;
+    WEBCORE_EXPORT void requestLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, WebLockMode, bool steal, bool ifAvailable, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler) final;
+    WEBCORE_EXPORT void releaseLock(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name) final;
+    WEBCORE_EXPORT void abortLockRequest(PAL::SessionID, const ClientOrigin&, WebLockIdentifier, ScriptExecutionContextIdentifier, const String& name, CompletionHandler<void(bool)>&&) final;
+    WEBCORE_EXPORT void snapshot(PAL::SessionID, const ClientOrigin&, CompletionHandler<void(WebLockManagerSnapshot&&)>&&) final;
+    WEBCORE_EXPORT void clientIsGoingAway(PAL::SessionID, const ClientOrigin&, ScriptExecutionContextIdentifier) final;
     WEBCORE_EXPORT void clientsAreGoingAway(ProcessIdentifier);
 
 private:
     WEBCORE_EXPORT LocalWebLockRegistry();
 
     class PerOriginRegistry;
-    Ref<PerOriginRegistry> ensureRegistryForOrigin(const ClientOrigin&);
-    RefPtr<PerOriginRegistry> existingRegistryForOrigin(const ClientOrigin&) const;
+    Ref<PerOriginRegistry> ensureRegistryForOrigin(PAL::SessionID, const ClientOrigin&);
+    RefPtr<PerOriginRegistry> existingRegistryForOrigin(PAL::SessionID, const ClientOrigin&) const;
 
-    HashMap<ClientOrigin, WeakPtr<PerOriginRegistry>> m_perOriginRegistries;
+    HashMap<std::pair<PAL::SessionID, ClientOrigin>, WeakPtr<PerOriginRegistry>> m_perOriginRegistries;
 };
 
 } // namespace WebCore

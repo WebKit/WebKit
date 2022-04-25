@@ -293,7 +293,6 @@ WebProcess::WebProcess()
     , m_webLoaderStrategy(*new WebLoaderStrategy)
     , m_cacheStorageProvider(WebCacheStorageProvider::create())
     , m_broadcastChannelRegistry(WebBroadcastChannelRegistry::create())
-    , m_webLockRegistry(RemoteWebLockRegistry::create(*this))
     , m_cookieJar(WebCookieJar::create())
     , m_dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
     , m_nonVisibleProcessGraphicsCleanupTimer(*this, &WebProcess::nonVisibleProcessGraphicsCleanupTimerFired)
@@ -353,6 +352,8 @@ WebProcess::WebProcess()
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     WebMockContentFilterManager::singleton().startObservingSettings();
 #endif
+
+    WebCore::WebLockRegistry::setSharedRegistry(RemoteWebLockRegistry::create(*this));
 }
 
 WebProcess::~WebProcess()

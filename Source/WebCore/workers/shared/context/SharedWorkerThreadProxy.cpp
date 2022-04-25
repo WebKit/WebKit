@@ -57,6 +57,7 @@ static HashSet<SharedWorkerThreadProxy*>& allSharedWorkerThreadProxies()
 
 static WorkerParameters generateWorkerParameters(const WorkerFetchResult& workerFetchResult, WorkerOptions&& workerOptions, const String& userAgent, Document& document)
 {
+    RELEASE_ASSERT(document.sessionID());
     return {
         workerFetchResult.lastRequestURL,
         workerOptions.name,
@@ -72,7 +73,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         workerOptions.credentials,
         document.settingsValues(),
         WorkerThreadMode::CreateNewThread,
-        { },
+        *document.sessionID(),
 #if ENABLE(SERVICE_WORKER)
         { },
 #endif

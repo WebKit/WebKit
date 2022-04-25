@@ -93,7 +93,7 @@ static WorkQueue& sharedFileSystemStorageQueue()
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
-    : WorkerOrWorkletGlobalScope(type, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread, params.clientIdentifier)
+    : WorkerOrWorkletGlobalScope(type, params.sessionID, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread, params.clientIdentifier)
     , m_url(params.scriptURL)
     , m_inspectorIdentifier(params.inspectorIdentifier)
     , m_userAgent(params.userAgent)

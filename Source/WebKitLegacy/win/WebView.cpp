@@ -173,7 +173,6 @@
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/WebCoreJITOperations.h>
 #include <WebCore/WebCoreTextRenderer.h>
-#include <WebCore/WebLockRegistry.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
 #include <comdef.h>
@@ -2839,16 +2838,6 @@ bool WebView::shouldInitializeTrackPointHack()
     return shouldCreateScrollbars;
 }
 
-static Ref<WebCore::LocalWebLockRegistry> getOrCreateWebLockRegistry()
-{
-    static NeverDestroyed<WeakPtr<WebCore::LocalWebLockRegistry>> existingRegistry;
-    if (existingRegistry.get())
-        return *existingRegistry.get();
-    auto registry = WebCore::LocalWebLockRegistry::create();
-    existingRegistry.get() = registry;
-    return registry;
-}
-
 HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupName)
 {
     HRESULT hr = S_OK;
@@ -2922,7 +2911,6 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate(false),
-        getOrCreateWebLockRegistry(),
         WebCore::DummyPermissionController::create(),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>()

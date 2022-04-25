@@ -51,7 +51,7 @@ struct ServiceWorkerClientData;
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
-    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
+    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&);
 
     ~ServiceWorkerGlobalScope();
 
@@ -90,15 +90,13 @@ public:
     void setIsProcessingUserGestureForTesting(bool value) { m_isProcessingUserGesture = value; }
 
 private:
-    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
+    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&);
     void notifyServiceWorkerPageOfCreationIfNecessary();
 
     Type type() const final { return Type::ServiceWorker; }
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
     NotificationClient* notificationClient() final { return m_notificationClient.get(); }
-
-    std::optional<PAL::SessionID> sessionID() const final { return m_sessionID; }
 
     void resetUserGesture() { m_isProcessingUserGesture = false; }
 
@@ -110,7 +108,6 @@ private:
 
     uint64_t m_lastRequestIdentifier { 0 };
     HashMap<uint64_t, RefPtr<DeferredPromise>> m_pendingSkipWaitingPromises;
-    PAL::SessionID m_sessionID;
     std::unique_ptr<NotificationClient> m_notificationClient;
     bool m_hasPendingSilentPushEvent { false };
     bool m_isProcessingUserGesture { false };

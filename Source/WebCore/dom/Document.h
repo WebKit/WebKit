@@ -1683,6 +1683,8 @@ public:
     void addElementWithPendingUserAgentShadowTreeUpdate(Element&);
     WEBCORE_EXPORT void removeElementWithPendingUserAgentShadowTreeUpdate(Element&);
 
+    std::optional<PAL::SessionID> sessionID() const final;
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });
@@ -1805,7 +1807,6 @@ private:
     void removeFromDocumentsMap();
 
     NotificationClient* notificationClient() final;
-    std::optional<PAL::SessionID> sessionID() const final;
 
     const Ref<const Settings> m_settings;
 
