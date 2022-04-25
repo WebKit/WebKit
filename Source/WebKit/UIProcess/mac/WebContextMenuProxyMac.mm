@@ -601,17 +601,26 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         });
     }
 
+    std::optional<WebContextMenuItemData> copyCroppedImageItem;
     std::optional<WebContextMenuItemData> lookUpImageItem;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    filteredItems.removeFirstMatching([&] (auto& item) {
-        if (item.action() != WebCore::ContextMenuItemTagLookUpImage)
-            return false;
-
-        lookUpImageItem = { item };
-        return true;
+    filteredItems.removeAllMatching([&] (auto& item) {
+        switch (item.action()) {
+        case ContextMenuItemTagLookUpImage:
+            ASSERT(!lookUpImageItem);
+            lookUpImageItem = { item };
+            return true;
+        case ContextMenuItemTagCopyCroppedImage:
+            ASSERT(!copyCroppedImageItem);
+            copyCroppedImageItem = { item };
+            return true;
+        default:
+            break;
+        }
+        return false;
     });
-#endif
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
     if (!page()->canHandleContextMenuTranslation() || isPopover) {
@@ -628,7 +637,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     auto imageBitmap = hitTestData.imageBitmap;
 
     RetainPtr sparseMenuItems = [NSPointerArray strongObjectsPointerArray];
-    auto insertMenuItem = makeBlockPtr([protectedThis = Ref { *this }, weakPage = WeakPtr { page() }, imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), lookUpImageItem = WTFMove(lookUpImageItem), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
+    auto insertMenuItem = makeBlockPtr([protectedThis = Ref { *this }, weakPage = WeakPtr { page() }, imageURL = WTFMove(imageURL), imageBitmap = WTFMove(imageBitmap), lookUpImageItem = WTFMove(lookUpImageItem), copyCroppedImageItem = WTFMove(copyCroppedImageItem), completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
         ASSERT(index < [sparseMenuItems count]);
         ASSERT(![sparseMenuItems pointerAtIndex:index]);
         [sparseMenuItems replacePointerAtIndex:index withPointer:item];
@@ -638,12 +647,31 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         [menu setItemArray:[sparseMenuItems allObjects]];
 
         RefPtr page = weakPage.get();
-        if (lookUpImageItem && page && imageBitmap) {
+        if (page && imageBitmap) {
 #if ENABLE(IMAGE_ANALYSIS)
-            page->computeHasVisualSearchResults(imageURL, *imageBitmap, [protectedThis = WTFMove(protectedThis), lookUpImageItem = WTFMove(*lookUpImageItem)] (bool hasVisualSearchResults) mutable {
-                if (hasVisualSearchResults)
-                    [protectedThis->m_menu addItem:createMenuActionItem(lookUpImageItem).get()];
-            });
+            if (lookUpImageItem) {
+                page->computeHasVisualSearchResults(imageURL, *imageBitmap, [protectedThis, lookUpImageItem = WTFMove(*lookUpImageItem)] (bool hasVisualSearchResults) mutable {
+                    if (hasVisualSearchResults)
+                        [protectedThis->m_menu addItem:createMenuActionItem(lookUpImageItem).get()];
+                });
+            }
+
+            if (copyCroppedImageItem) {
+                if (auto image = imageBitmap->makeCGImageCopy()) {
+                    page->setCroppedImageForContextMenu(nullptr);
+                    requestImageAnalysisMarkup(image.get(), [weakPage, protectedThis, copyCroppedImageItem = WTFMove(*copyCroppedImageItem)](auto result, auto) {
+                        if (!result)
+                            return;
+
+                        RefPtr page = weakPage.get();
+                        if (!page)
+                            return;
+
+                        page->setCroppedImageForContextMenu(result);
+                        [protectedThis->m_menu addItem:createMenuActionItem(copyCroppedImageItem).get()];
+                    });
+                }
+            }
 #else
             UNUSED_PARAM(imageURL);
 #endif

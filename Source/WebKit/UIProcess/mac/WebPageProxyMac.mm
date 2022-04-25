@@ -781,29 +781,24 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPageProxy::handleContextMenuCopyCroppedImage(ShareableBitmap& imageBitmap, const String& preferredMIMEType)
+void WebPageProxy::setCroppedImageForContextMenu(CGImageRef image)
 {
-    auto changeCount = NSPasteboard.generalPasteboard.changeCount;
-    auto performCopy = [changeCount, preferredMIMEType](CGImageRef resultImage) {
-        auto pasteboard = NSPasteboard.generalPasteboard;
-        if (changeCount != pasteboard.changeCount || !resultImage)
-            return;
+    m_croppedImageForContextMenu = image;
+}
 
-        auto [data, type] = transcodeWithPreferredMIMEType(resultImage, preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
-        if (!data)
-            return;
-
-        [pasteboard declareTypes:@[(__bridge NSString *)type.get()] owner:nil];
-        [pasteboard setData:data.get() forType:(__bridge NSString *)type.get()];
-    };
-
-    auto originalImage = imageBitmap.makeCGImageCopy();
-    if (!originalImage)
+void WebPageProxy::handleContextMenuCopyCroppedImage(const String& preferredMIMEType)
+{
+    if (!m_croppedImageForContextMenu)
         return;
 
-    requestImageAnalysisMarkup(originalImage.get(), [performCopy = WTFMove(performCopy)](auto image, auto) {
-        performCopy(image);
-    });
+    auto [data, type] = transcodeWithPreferredMIMEType(m_croppedImageForContextMenu.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
+    if (!data)
+        return;
+
+    auto pasteboard = NSPasteboard.generalPasteboard;
+    auto pasteboardType = (__bridge NSString *)type.get();
+    [pasteboard declareTypes:@[pasteboardType] owner:nil];
+    [pasteboard setData:data.get() forType:pasteboardType];
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

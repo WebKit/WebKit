@@ -2035,7 +2035,7 @@ public:
     void handleContextMenuLookUpImage();
 #endif
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    void handleContextMenuCopyCroppedImage(ShareableBitmap&, const String& preferredMIMEType);
+    void handleContextMenuCopyCroppedImage(const String& preferredMIMEType);
 #endif
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -2101,6 +2101,10 @@ public:
 
     void extractVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
     void cancelVideoExtractionInElementFullScreen();
+
+#if ENABLE(CONTEXT_MENUS) && ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    void setCroppedImageForContextMenu(CGImageRef);
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2791,6 +2795,11 @@ private:
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
     ContextMenuContextData m_activeContextMenuContextData;
 #endif
+
+#if ENABLE(CONTEXT_MENUS) && ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    RetainPtr<CGImageRef> m_croppedImageForContextMenu;
+#endif
+
     RefPtr<API::HitTestResult> m_lastMouseMoveHitTestResult;
 
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;

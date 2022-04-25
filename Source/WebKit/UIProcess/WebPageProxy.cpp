@@ -1190,6 +1190,10 @@ void WebPageProxy::close()
     m_activeContextMenu = nullptr;
 #endif
 
+#if ENABLE(CONTEXT_MENUS) && ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    m_croppedImageForContextMenu = nullptr;
+#endif
+
     m_provisionalPage = nullptr;
 
     m_inspector->invalidate();
@@ -7083,6 +7087,10 @@ void WebPageProxy::showContextMenu(ContextMenuContextData&& contextMenuContextDa
     // MouseDown event that triggered this ShowContextMenu message. This can happen if we take too long to enter the nested runloop.
     discardQueuedMouseEvents();
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    m_croppedImageForContextMenu = nullptr;
+#endif
+
     m_activeContextMenuContextData = contextMenuContextData;
 
     m_activeContextMenu = pageClient().createContextMenuProxy(*this, WTFMove(contextMenuContextData), userData);
@@ -7213,8 +7221,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 
     case ContextMenuItemTagCopyCroppedImage:
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-        if (hitTestData.imageBitmap)
-            handleContextMenuCopyCroppedImage(*hitTestData.imageBitmap, hitTestData.sourceImageMIMEType);
+        handleContextMenuCopyCroppedImage(hitTestData.sourceImageMIMEType);
 #endif
         return;
 
