@@ -1,3 +1,14 @@
+2022-04-25  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Use GitHub checkouts (Follow-up)
+        https://bugs.webkit.org/show_bug.cgi?id=239072
+        <rdar://problem/91567092>
+
+        Unreviewed follow-up fix.
+
+        * CISupport/build-webkit-org/steps.py:
+        (CheckOutSource.__init__): Use the specified commit, not the latest.
+
 2022-04-21  Jonathan Bedard  <jbedard@apple.com>
 
         [ews-build.webkit.org] Support alternative remotes
