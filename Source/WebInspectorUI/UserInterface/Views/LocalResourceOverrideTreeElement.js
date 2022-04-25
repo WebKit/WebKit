@@ -108,7 +108,12 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
     updateStatus()
     {
-        // Do nothing. Do not allow ResourceTreeElement / SourceCodeTreeElement to modify our status element.
+        // Don't call `super` as we don't want `WI.ResourceTreeElement` / `WI.SourceCodeTreeElement` / etc. to modify our status element.
+
+        if (this.resource.hadLoadingError())
+            this.addClassName(WI.ResourceTreeElement.FailedStyleClassName);
+        else
+            this.removeClassName(WI.ResourceTreeElement.FailedStyleClassName);
     }
 
     // Popover delegate
