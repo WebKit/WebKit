@@ -1,3 +1,21 @@
+2022-04-25  Antti Koivisto  <antti@apple.com>
+
+        [CSS Typed OM] Fix AttributeStyleMap.get for list values
+        https://bugs.webkit.org/show_bug.cgi?id=239716
+
+        Reviewed by Alan Bujtas.
+
+        Test: css-typedom/typed-om-perspective-value.html
+
+        * css/typedom/CSSStyleValueFactory.cpp:
+        (WebCore::CSSStyleValueFactory::reifyValue):
+
+        The list here hasn't been deep copied. Don't move away a member.
+
+        * css/typedom/CSSStyleValueFactory.h:
+
+        Passing Ref<>&& instead of Ref<> here is a bug-prone over-optimization.
+
 2022-04-25  Tim Nguyen  <ntim@apple.com>
 
         Unprefix modern-media-controls CSS properties

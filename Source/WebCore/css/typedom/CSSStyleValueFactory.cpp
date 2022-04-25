@@ -151,7 +151,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
     return results;
 }
 
-ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&& cssValue, Document* document)
+ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue> cssValue, Document* document)
 {
     if (is<CSSPrimitiveValue>(cssValue)) {
         auto primitiveValue = downcast<CSSPrimitiveValue>(cssValue.ptr());
@@ -254,7 +254,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&&
         return WTF::switchOn(downcast<CSSCustomPropertyValue>(cssValue.get()).value(), [&](const std::monostate&) {
             return ExceptionOr<Ref<CSSStyleValue>> { CSSStyleValue::create(WTFMove(cssValue)) };
         }, [&](const Ref<CSSVariableReferenceValue>& value) {
-            return reifyValue(value.copyRef(), document);
+            return reifyValue(value, document);
         }, [&](Ref<CSSVariableData>& value) {
             return reifyValue(CSSVariableReferenceValue::create(WTFMove(value)));
         }, [&](const CSSValueID&) {
@@ -271,7 +271,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&&
         if (!valueList->length())
             return Exception { TypeError, "The CSSValueList should not be empty."_s };
         
-        return reifyValue(WTFMove(*valueList->begin()), document);
+        return reifyValue(*valueList->begin(), document);
     }
     
     return CSSStyleValue::create(WTFMove(cssValue));

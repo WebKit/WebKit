@@ -1,3 +1,13 @@
+2022-04-25  Antti Koivisto  <antti@apple.com>
+
+        [CSS Typed OM] Fix AttributeStyleMap.get for list values
+        https://bugs.webkit.org/show_bug.cgi?id=239716
+
+        Reviewed by Alan Bujtas.
+
+        * css-typedom/typed-om-perspective-value-expected.txt: Added.
+        * css-typedom/typed-om-perspective-value.html: Added.
+
 2022-04-25  Ziran Sun  <zsun@igalia.com>
 
         UA stylesheet should include table { text-indent: initial } to conform with HTML standard
