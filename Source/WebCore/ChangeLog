@@ -1,3 +1,26 @@
+2022-04-25  Tim Nguyen  <ntim@apple.com>
+
+        Unprefix modern-media-controls CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=239726
+
+        Reviewed by Eric Carlson.
+
+        * Modules/modern-media-controls/controls/button.css:
+        (button):
+        (button > picture):
+        * Modules/modern-media-controls/controls/button.js:
+        (Button.prototype.commitProperty):
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls > *):
+        * Modules/modern-media-controls/controls/slider.css:
+        (.slider > input):
+        (.ios .slider > input):
+        (.slider > input::-webkit-slider-thumb):
+        * Modules/modern-media-controls/controls/text-tracks.css:
+        (video::-webkit-media-text-track-container):
+        * Modules/modern-media-controls/controls/watchos-activity-indicator.css:
+        (button.watchos-activity-indicator > picture):
+
 2022-04-25  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GStreamer] Remove unused rtc variable

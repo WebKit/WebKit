@@ -157,7 +157,7 @@ class Button extends LayoutItem
     commitProperty(propertyName)
     {
         if (propertyName === "maskImage")
-            this.image.element.style.webkitMaskImage = `url(${this._imageSource.src})`;
+            this.image.element.style.maskImage = `url(${this._imageSource.src})`;
         else
             super.commitProperty(propertyName);
     }

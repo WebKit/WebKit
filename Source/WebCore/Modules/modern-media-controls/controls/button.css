@@ -32,8 +32,8 @@ button {
     align-items: center;
     justify-content: center;
     background-color: transparent !important;
-    -webkit-appearance: none;
-    -webkit-user-select: none;
+    appearance: none;
+    user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -42,8 +42,8 @@ button {
 button > picture {
     background-color: var(--secondary-glyph-color);
     mix-blend-mode: plus-lighter;
-    -webkit-mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
     transition: transform 150ms;
     will-change: transform;
     /* Work around webkit.org/b/174565 by making the shrinking button's icon non-interactive */
