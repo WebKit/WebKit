@@ -442,7 +442,7 @@ WI.GradientSliderKnob = class GradientSliderKnob extends WI.Object
 
     _updateTransform()
     {
-        this.element.style.webkitTransform = "translate3d(" + this._x + "px, " + this._y + "px, 0)";
+        this.element.style.transform = "translate3d(" + this._x + "px, " + this._y + "px, 0)";
     }
 };
 

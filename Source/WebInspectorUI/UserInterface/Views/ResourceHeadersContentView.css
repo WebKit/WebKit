@@ -53,7 +53,7 @@ body[dir] .resource-headers > section:matches(.redirect, .headers) > .details {
 }
 
 .resource-headers .go-to-link {
-    -webkit-user-select: text;
+    user-select: text;
 }
 
 .resource-headers .pair.initiator > .value {
@@ -68,7 +68,7 @@ body[dir] .resource-headers > section:matches(.redirect, .headers) > .details {
     margin-left: 3px;
     content: url(../Images/CallStack.svg);
     opacity: 0.5;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 .resource-headers .call-stack:hover {

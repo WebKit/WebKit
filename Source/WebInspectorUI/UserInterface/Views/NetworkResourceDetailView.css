@@ -25,15 +25,12 @@
 
 .content-view.resource-details {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
 
     padding: 12px 20px 0 20px;
     overflow: auto;
 
-    -webkit-user-select: text;
+    user-select: text;
     white-space: nowrap;
 }
 

@@ -63,7 +63,7 @@
     border: 1px solid var(--border-color);
     border-radius: 3px;
     outline: none;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 :matches(.filter-bar, .search-bar) > input[type="search"]:matches(:focus, :not(:placeholder-shown)) {
@@ -76,7 +76,7 @@
     height: 13px;
     margin: 4px 4px 3px 3px;
     background-image: url(../Images/FilterFieldGlyph.svg);
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 :matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-results-button {

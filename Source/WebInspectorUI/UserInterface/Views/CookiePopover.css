@@ -51,7 +51,7 @@
     font-family: Menlo, monospace;
     background-color: var(--background-color-content);
     border: 1px solid var(--text-color-quaternary);
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 .popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"]):matches(:invalid, .invalid) {

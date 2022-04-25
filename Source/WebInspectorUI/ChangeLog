@@ -1,3 +1,185 @@
+2022-04-25  Tim Nguyen  <ntim@apple.com>
+
+        Web Inspector: Unprefix CSS properties in source code
+        https://bugs.webkit.org/show_bug.cgi?id=239517
+
+        Reviewed by Patrick Angle.
+
+        Properties:
+        -webkit-appearance
+        -webkit-mask-image
+        -webkit-clip-path
+        -webkit-text-decoration-*
+        -webkit-user-select
+
+        Values:
+        cursor: -webkit-grab/grabbing
+        -webkit-fill-available
+
+        JS Properties:
+        webkitTransform
+
+        Media queries:
+        -webkit-device-pixel-ratio
+        -webkit-min-device-pixel-ratio
+        -webkit-max-device-pixel-ratio
+
+        Also used shorthand properties there and there.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css:
+        (.sheet-container):
+        (.uncaught-exception-sheet li):
+        * UserInterface/Views/AuditTestCaseContentView.css:
+        (.content-view.audit-test-case > section table > tr > td > :not(.tree-outline)):
+        * UserInterface/Views/AuditTestContentView.css:
+        (.content-view.audit-test.manager-editing > header :is(.name, .description)[contenteditable]):
+        * UserInterface/Views/BoxShadowEditor.css:
+        (.box-shadow-editor > table > tr > td > input[type="text"]):
+        * UserInterface/Views/BreakpointActionView.css:
+        (.breakpoint-action-eval-editor):
+        * UserInterface/Views/BreakpointPopover.css:
+        (.popover .edit-breakpoint-popover-content > table > tr.condition > td > .editor):
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.item.breakpoint .status > .status-image.auto-continue::after):
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu > .content > .overview .legend):
+        (.timeline-view.cpu > .content > .overview > .chart > .container.stats):
+        * UserInterface/Views/CPUUsageCombinedView.css:
+        (.cpu-usage-combined-view > .details):
+        * UserInterface/Views/ChangesDetailsSidebarPanel.css:
+        (.sidebar > .panel.changes-panel .css-rule):
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror-linewidget):
+        * UserInterface/Views/ColorSquare.css:
+        (@media (-webkit-device-pixel-ratio: 1) .color-square > .srgb-edge): Deleted.
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section):
+        (.computed-style-section .computed-property-item .disclosure-button):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-user-command.special-user-log > .console-message-body):
+        (.console-message-body > span):
+        (.console-message-body > span > :matches(.console-message-enclosed, .console-message-preview, .console-message-preview-divider)):
+        (.console-message .console-message-extra-parameters-container > li,):
+        (.console-user-command > .console-message-body):
+        * UserInterface/Views/CookiePopover.css:
+        (.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"])):
+        * UserInterface/Views/DOMEventsBreakdownView.css:
+        (.waterfall-popover-content .dom-events-breakdown):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom.non-selectable):
+        (.tree-outline.dom li .selection-area):
+        * UserInterface/Views/DatabaseContentView.css:
+        (:matches(.database-user-query, .database-query-result)::before):
+        (.database-query-text):
+        (.database-query-result.error):
+        (.database-query-result.no-results):
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section > .content > .group > .row.simple > .value):
+        (.details-section > .content > .group > .row.text):
+        (@media (-webkit-min-device-pixel-ratio: 2) .details-section,): Deleted.
+        * UserInterface/Views/Editing.css:
+        (.editing):
+        * UserInterface/Views/EventBreakpointPopover.css:
+        (.popover .edit-breakpoint-popover-content .event input):
+        * UserInterface/Views/FilterBar.css:
+        (:matches(.filter-bar, .search-bar) > input[type="search"]):
+        (:matches(.filter-bar, .search-bar) > input[type="search"]::-webkit-search-decoration):
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner > input[type="search"]):
+        (.find-banner > button):
+        * UserInterface/Views/FontResourceContentView.css:
+        (.content-view.resource.font .preview > .line > .content):
+        * UserInterface/Views/FormattedValue.css:
+        (.formatted-node > .tree-outline.dom li):
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .filter-bar):
+        (.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle):
+        * UserInterface/Views/GoToLineDialog.css:
+        (.go-to-line-dialog > div > input):
+        * UserInterface/Views/GradientEditor.css:
+        (.gradient-editor > .gradient-angle > input::-webkit-inner-spin-button):
+        * UserInterface/Views/GradientSlider.js:
+        (WI.GradientSliderKnob.prototype._updateTransform):
+        (WI.GradientSliderKnob):
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image img):
+        * UserInterface/Views/IndexedDatabaseContentView.css:
+        (.indexed-database.content-view):
+        * UserInterface/Views/InlineSwatch.css:
+        (@media (-webkit-max-device-pixel-ratio: 1) .inline-swatch): Deleted.
+        * UserInterface/Views/InputPopover.css:
+        (.popover .input-popover-content > .editor):
+        * UserInterface/Views/LocalResourceOverrideLabelView.css:
+        (.local-resource-override-label-view > div > .url):
+        * UserInterface/Views/LocalResourceOverridePopover.css:
+        (.popover .local-resource-override-popover-content .editor):
+        * UserInterface/Views/Main.css:
+        (body):
+        (input[type=range]):
+        (.message-text-view):
+        (.resource-link,):
+        (.go-to-arrow):
+        (.css-documentation-button):
+        (.search-settings):
+        (.expand-list-button):
+        (.bouncy-highlight):
+        (@media (-webkit-device-pixel-ratio: 1) .reference-page-link): Deleted.
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (.content-view.resource-details):
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table > .statistics > .statistic > .text):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.tree-outline.object li):
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .field > input):
+        * UserInterface/Views/RecordingContentView.css:
+        (.content-view.recording > .preview-container):
+        * UserInterface/Views/ResourceCookiesContentView.css:
+        (.resource-cookies .table > .header):
+        * UserInterface/Views/ResourceHeadersContentView.css:
+        (.resource-headers .go-to-link):
+        (.resource-headers .call-stack):
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (.waterfall-popover-content .resource-timing-breakdown):
+        * UserInterface/Views/ResourceTreeElement.css:
+        (.item.resource.resource-type-websocket .status > .ready-state):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.css:
+        (.watch-expression-editor):
+        * UserInterface/Views/Slider.css:
+        (@media (-webkit-min-device-pixel-ratio: 2) .slider): Deleted.
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.source-code.text-editor > .CodeMirror .line-indicator-widget.inline):
+        (@media (-webkit-min-device-pixel-ratio: 2) .popover .debugger-popover-content > .body): Deleted.
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor):
+        (.spreadsheet-style-declaration-editor > .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > *:not(.name, .value-container),):
+        (.spreadsheet-style-declaration-editor > .property.invalid-name:not(.disabled) > .content > *:not(.name, .value-container),):
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property.invalid-value:not(.disabled) > .content .value:not(.editing),):
+        (.spreadsheet-style-declaration-editor .property.has-warning .warning):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration):
+        (.spreadsheet-css-declaration.selecting,):
+        (.spreadsheet-css-declaration .selector > .icon):
+        * UserInterface/Views/SpringEditor.css:
+        (.spring-editor > .number-input-container > .number-input-row > input::-webkit-inner-spin-button):
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor > .CodeMirror .has-breakpoint .CodeMirror-linenumber::before):
+        (.text-editor > .CodeMirror .breakpoint-auto-continue:not(.execution-line.primary) .CodeMirror-linenumber::after):
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame.tall):
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler:not(.disabled, .resizing-selection) > .selection-drag):
+        (.timeline-ruler:not(.disabled, .resizing-selection) > .selection-drag:active):
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline .item .disclosure-button):
+        * UserInterface/Views/TypeTreeElement.css:
+        (.item.type-tree-element > .disclosure-button):
+        * UserInterface/Views/TypeTreeView.css:
+        (.tree-outline.type li):
+        * UserInterface/Views/URLBreakpointPopover.css:
+        (.popover .edit-breakpoint-popover-content .url .editor):
+        (@media (prefers-color-scheme: dark) .popover .edit-breakpoint-popover-content .url .editor):
+
 2022-04-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: Layout: hovering over a node should highlight it in the page

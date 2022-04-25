@@ -112,7 +112,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    -webkit-user-select: text;
+    user-select: text;
     cursor: default;
 }
 

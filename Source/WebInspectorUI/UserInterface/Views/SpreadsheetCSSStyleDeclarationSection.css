@@ -31,12 +31,12 @@
     color: var(--text-color-tertiary);
     background: var(--background-color-content);
     border-bottom: 0.5px solid var(--text-color-quaternary);
-    -webkit-user-select: text;
+    user-select: text;
 }
 
 .spreadsheet-css-declaration.selecting,
 .spreadsheet-css-declaration.selecting .spreadsheet-style-declaration-editor {
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 .spreadsheet-css-declaration :matches(.header, .header-groupings) {
@@ -111,7 +111,7 @@
     margin-top: -1px;
     margin-inline-start: -2px;
     vertical-align: -3.5px;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 .spreadsheet-css-declaration .selector > .icon + * {

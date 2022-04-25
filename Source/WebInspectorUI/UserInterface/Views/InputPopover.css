@@ -32,7 +32,7 @@
     width: 200px;
     margin-top: 5px;
     padding: 4px 0 2px;
-    -webkit-appearance: textfield;
+    appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
     background: white;
 }

@@ -240,7 +240,7 @@ body[dir=rtl] .details-section > .header::before {
     word-break: break-all;
     word-wrap: break-word;
     cursor: text;
-    -webkit-user-select: text;
+    user-select: text;
 }
 
 .details-section > .content > .group > .row.simple > .value .go-to-arrow {
@@ -260,7 +260,7 @@ body[dir=rtl] .details-section > .header::before {
 }
 
 .details-section > .content > .group > .row.text {
-    -webkit-user-select: text;
+    user-select: text;
 }
 
 .details-section > .content > .group > .row.properties:not(.empty) {
@@ -290,7 +290,7 @@ body[dir=rtl] .details-section > .header::before {
     word-break: break-all;
 }
 
-@media (-webkit-min-device-pixel-ratio: 2) {
+@media (min-resolution: 2dppx) {
     .details-section,
     .details-section .details-section:not(.collapsed) > .header,
     .details-section > .content > .group {

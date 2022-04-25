@@ -87,7 +87,7 @@
     background-color: white;
     border: 1px solid var(--border-color);
     outline: none;
-    -webkit-appearance: none;
+    appearance: none;
 
     --find-banner-search-box-border-radius-start: 4px;
     --find-banner-search-box-border-radius-end: 0;
@@ -110,10 +110,9 @@ body[dir=rtl] .find-banner > input[type="search"] {
 .find-banner > button {
     margin: 1px 4px;
 
-    padding-left: 6px;
-    padding-right: 6px;
+    padding-inline: 6px;
 
-    -webkit-appearance: none;
+    appearance: none;
 
     border-radius: 4px;
     border: 1px solid var(--border-color);

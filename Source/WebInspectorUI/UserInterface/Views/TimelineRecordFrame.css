@@ -34,7 +34,7 @@
 }
 
 .timeline-record-frame.tall {
-    -webkit-mask-image: linear-gradient(hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 1) 10%);
+    mask-image: linear-gradient(hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 1) 10%);
 }
 
 .timeline-record-frame > .frame {

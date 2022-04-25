@@ -73,7 +73,7 @@
     background-color: transparent;
     border: none;
     outline: none;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 .open-resource-dialog > .field > input::placeholder {

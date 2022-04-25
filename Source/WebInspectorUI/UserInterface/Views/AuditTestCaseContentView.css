@@ -139,7 +139,7 @@
 }
 
 .content-view.audit-test-case > section table > tr > td > :not(.tree-outline) {
-    -webkit-user-select: text;
+    user-select: text;
 }
 
 .content-view.audit-test-case > section table > tr > td:first-child {

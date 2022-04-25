@@ -53,7 +53,7 @@
     text-align: end;
     background-color: var(--background-color-content);
     border: 1px solid var(--text-color-quaternary);
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 .box-shadow-editor > table > tr > td > input[type="range"] {

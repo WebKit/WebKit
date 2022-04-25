@@ -42,7 +42,7 @@
     width: 3px;
     height: 12px;
     content: "";
-    -webkit-clip-path: polygon(0 20%, 100% 50%, 0 80%);
+    clip-path: polygon(0 20%, 100% 50%, 0 80%);
     background-color: var(--selected-foreground-color);
 }
 

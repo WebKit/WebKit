@@ -24,7 +24,7 @@
  */
 
 .popover .edit-breakpoint-popover-content .event input {
-    width: -webkit-fill-available;
+    width: fill-available;
     margin: 0;
     font-family: Menlo, monospace;
 }

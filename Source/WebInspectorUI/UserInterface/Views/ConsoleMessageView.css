@@ -36,7 +36,7 @@
     background-color: var(--selected-background-color);
     color: var(--selected-foreground-color);
     font: 10px -webkit-system-font, sans-serif;
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 .console-message .repeat-count {
@@ -64,11 +64,11 @@
 }
 
 .console-message-body > span {
-    -webkit-user-select: text;
+    user-select: text;
 }
 
 .console-message-body > span > :matches(.console-message-enclosed, .console-message-preview, .console-message-preview-divider) {
-    -webkit-user-select: none;
+    user-select: none;
 }
 
 .console-message-body > .show-grid {
@@ -154,7 +154,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    -webkit-user-select: text;
+    user-select: text;
     cursor: default;
     padding: 2px 0 2px 15px;
 }
@@ -238,7 +238,7 @@
 
 .console-user-command > .console-message-body {
     color: hsl(209, 100%, 50%);
-    -webkit-user-select: text;
+    user-select: text;
 }
 
 .console-saved-variable {

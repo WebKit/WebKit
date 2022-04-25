@@ -24,7 +24,7 @@
  */
 
 .indexed-database.content-view {
-    -webkit-user-select: text;
+    user-select: text;
 }
 
 .indexed-database.content-view .indexed-database-details {

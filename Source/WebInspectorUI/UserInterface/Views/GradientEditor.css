@@ -92,5 +92,5 @@
 }
 
 .gradient-editor > .gradient-angle > input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+    appearance: none;
 }

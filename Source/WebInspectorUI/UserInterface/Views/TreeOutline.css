@@ -101,7 +101,7 @@ body[dir=rtl] .tree-outline .item :matches(.disclosure-button, .icon) {
     background-position: center;
     background-size: 13px 13px;
     border: none;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 body[dir=rtl] .tree-outline .item .disclosure-button {

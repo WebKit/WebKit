@@ -54,7 +54,7 @@
     height: 13px;
     padding: 0 5px 0 8px;
     border-bottom-left-radius: 0;
-    -webkit-clip-path: polygon(0% 50%, 8px 100%, 100% 100%, 100% 0, 8px 0);
+    clip-path: polygon(0% 50%, 8px 100%, 100% 100%, 100% 0, 8px 0);
 }
 
 .source-code.text-editor > .CodeMirror .line-indicator-widget > .icon {
@@ -186,7 +186,7 @@
     transform: translateY(0.5px);
 }
 
-@media (-webkit-min-device-pixel-ratio: 2) {
+@media (min-resolution: 2dppx) {
     .popover .debugger-popover-content > .body {
         border-width: 0.5px;
     }

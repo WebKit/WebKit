@@ -59,7 +59,7 @@
 .popover .edit-breakpoint-popover-content > table > tr.condition > td > .editor {
     width: 100%;
     padding: 4px 0 2px;
-    -webkit-appearance: textfield;
+    appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
     background: var(--background-color-content);
 }

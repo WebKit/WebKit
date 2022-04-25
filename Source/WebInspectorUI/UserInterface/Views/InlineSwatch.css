@@ -66,7 +66,7 @@
     filter: brightness(0.8);
 }
 
-@media (-webkit-max-device-pixel-ratio: 1) {
+@media (max-resolution: 1dppx) {
     /* Ensure the color swatch is even by even so that it looks okay checkered. */
     .inline-swatch {
         vertical-align: -1px;

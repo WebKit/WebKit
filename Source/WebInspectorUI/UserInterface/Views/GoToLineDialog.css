@@ -66,7 +66,7 @@
     color: hsl(0, 0%, 4%);
     padding: 0 30px 1px 7px;
     outline: none;
-    -webkit-appearance: none;
+    appearance: none;
 }
 
 .go-to-line-dialog > div > input::placeholder {

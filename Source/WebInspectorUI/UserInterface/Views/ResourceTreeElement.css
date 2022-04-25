@@ -37,7 +37,7 @@
     height: 8px;
     margin-top: 4px;
     background-color: white;
-    -webkit-clip-path: circle(50% at 50% 50%);
+    clip-path: circle(50% at 50% 50%);
 }
 
 .item.resource.resource-type-websocket:not(.selected) .status .ready-state.open,

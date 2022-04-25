@@ -56,7 +56,7 @@ body[dir=rtl] .slider > img {
     border-color: -apple-system-control-accent;
 }
 
-@media (-webkit-min-device-pixel-ratio: 2) {
+@media (min-resolution: 2dppx) {
     .slider {
         border: 0.5px solid hsl(0, 0%, 50%);
     }

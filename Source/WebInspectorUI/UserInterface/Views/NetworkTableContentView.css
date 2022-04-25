@@ -387,7 +387,7 @@ body[dir=rtl] .waterfall.network .block {
 .network-table > .statistics > .statistic > .text {
     padding-top: 1px;
     padding-inline-start: 4px;
-    -webkit-user-select: all;
+    user-select: all;
     font-variant-numeric: tabular-nums;
 }
 
