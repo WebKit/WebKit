@@ -24,7 +24,7 @@ from buildbot.plugins import steps, util
 from buildbot.process import buildstep, factory, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
-from buildbot.steps.source.svn import SVN
+from buildbot.steps.source import git
 from twisted.internet import defer
 
 import json
@@ -128,19 +128,24 @@ class ConfigureBuild(buildstep.BuildStep):
         return defer.succeed(None)
 
 
-class CheckOutSource(SVN, object):
+class CheckOutSource(git.Git):
     name = 'clean-and-update-working-directory'
+    CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
     haltOnFailure = False
 
-    def __init__(self, **kwargs):
-        kwargs['repourl'] = 'https://svn.webkit.org/repository/webkit/trunk'
-        kwargs['mode'] = 'incremental'
-        kwargs['logEnviron'] = False
-        super(CheckOutSource, self).__init__(**kwargs)
+    def __init__(self, repourl='https://github.com/WebKit/WebKit.git', **kwargs):
+        super(CheckOutSource, self).__init__(repourl=repourl,
+                                             retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
+                                             timeout=2 * 60 * 60,
+                                             alwaysUseLatest=True,
+                                             logEnviron=False,
+                                             method='clean',
+                                             progress=True,
+                                             **kwargs)
 
     def getResultSummary(self):
         if self.results == FAILURE:
-            self.build.addStepsAfterCurrentStep([SVNCleanup()])
+            self.build.addStepsAfterCurrentStep([CleanUpGitIndexLock()])
 
         if self.results != SUCCESS:
             return {'step': 'Failed to updated working directory'}
@@ -148,17 +153,24 @@ class CheckOutSource(SVN, object):
             return {'step': 'Cleaned and updated working directory'}
 
 
-class SVNCleanup(shell.ShellCommand):
-    name = 'svn-cleanup'
-    command = ['svn', 'cleanup']
-    descriptionDone = ['Run svn cleanup']
+class CleanUpGitIndexLock(shell.ShellCommand):
+    name = 'clean-git-index-lock'
+    command = ['rm', '-f', '.git/index.lock']
+    descriptionDone = ['Deleted .git/index.lock']
 
     def __init__(self, **kwargs):
-        super(SVNCleanup, self).__init__(timeout=10 * 60, logEnviron=False, **kwargs)
+        super(CleanUpGitIndexLock, self).__init__(timeout=2 * 60, logEnviron=False, **kwargs)
+
+    def start(self):
+        platform = self.getProperty('platform', '*')
+        if platform == 'wincairo':
+            self.command = ['del', r'.git\index.lock']
+
+        return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):
-        self.build.buildFinished(['svn issue, retrying build'], RETRY)
-        return super(SVNCleanup, self).evaluateCommand(cmd)
+        self.build.buildFinished(['Git issue, retrying build'], RETRY)
+        return super(CleanUpGitIndexLock, self).evaluateCommand(cmd)
 
 
 class InstallWin32Dependencies(shell.Compile):
@@ -1268,7 +1280,7 @@ class ShowIdentifier(shell.ShellCommand):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
         revision = self.getProperty('got_revision')
-        self.setCommand(['python3', 'Tools/Scripts/git-webkit', 'find', 'r{}'.format(revision)])
+        self.setCommand(['python3', 'Tools/Scripts/git-webkit', 'find', revision])
         return shell.ShellCommand.start(self)
 
     def evaluateCommand(self, cmd):

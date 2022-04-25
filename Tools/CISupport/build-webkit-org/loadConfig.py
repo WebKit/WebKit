@@ -36,7 +36,7 @@ from buildbot.worker import Worker
 from factories import *
 import wkbuild
 
-trunk_filter = ChangeFilter(branch=["trunk", None])
+main_filter = ChangeFilter(branch=["main", None])
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50

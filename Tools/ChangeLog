@@ -1,3 +1,24 @@
+2022-04-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Use GitHub checkouts
+        https://bugs.webkit.org/show_bug.cgi?id=239072
+        <rdar://problem/91567092>
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/build-webkit-org/config.json: Convert schedulers to GitHub based branch names.
+        * CISupport/build-webkit-org/loadConfig.py: Ditto.
+        * CISupport/build-webkit-org/master.cfg: Enable incoming hooks from GitHub.
+        (load_password): Added.
+        * CISupport/build-webkit-org/steps.py:
+        (CheckOutSource): Replace with GitHub based checkout.
+        (CleanUpGitIndexLock): Replaced SVNCleanup.
+        (SVNCleanup): Replace with CleanUpGitIndexLock.
+        (ShowIdentifier.start): `got_revision` will bet hash, not subversion revision.
+        * CISupport/build-webkit-org/steps_unittest.py:
+        (TestShowIdentifier.test_success):
+        (TestShowIdentifier.test_failure):
+
 2022-04-25  Tim Nguyen  <ntim@apple.com>
 
         Fix typo in Tools/CISupport/ews-build/steps.py

@@ -614,7 +614,7 @@
                     }
                   ],
 
-    "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
+    "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
                                        "GTK-Linux-64-bit-Release-Clang",
                                        "GTK-Linux-64-bit-Release-Debian-Stable-Build",
@@ -627,7 +627,8 @@
                                        "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                        "WPE-Linux-64-bit-Release-Non-Unified-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-monterey", "branch": "trunk", "treeStableTimer": 45.0,
+
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-monterey", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Monterey-Release-Build", "Apple-Monterey-Debug-Build"]
                     },
                     { "type": "Triggerable", "name": "monterey-release-tests-wk1",
@@ -669,7 +670,7 @@
                     { "type": "Triggerable", "name": "monterey-applesilicon-release-tests-jsc",
                       "builderNames": ["Apple-Monterey-AppleSilicon-Release-JSC-Tests"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-bigsur", "branch": "trunk", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-bigsur", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-BigSur-Release-Build", "Apple-BigSur-Debug-Build", "Apple-BigSur-LLINT-CLoop-BuildAndTest", "Apple-BigSur-XCBuild-Release-Build"]
                     },
                     { "type": "Triggerable", "name": "bigsur-release-tests-jsc",
@@ -711,25 +712,25 @@
                     { "type": "Triggerable", "name": "bigsur-debug-tests-wk2-gpuprocess",
                       "builderNames": ["Apple-BigSur-Debug-WK2-GPUProcess-Tests"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-15", "branch": "trunk", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-15", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-iOS-15-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-15", "branch": "trunk", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-15", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-iOS-15-Simulator-Release-Build", "Apple-iOS-15-Simulator-Debug-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "tvos-15", "branch": "trunk", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-15", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-tvOS-15-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-15", "branch": "trunk", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-15", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-tvOS-Simulator-15-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "watchos-8", "branch": "trunk", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-8", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-watchOS-8-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-8", "branch": "trunk", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-8", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-watchOS-Simulator-8-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
+                    { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Win-10-Release-Build", "Apple-Win-10-Debug-Build"]
                     },
                     { "type": "Triggerable", "name": "ios-simulator-15-release-gpuprocess-arm64-tests-wk2",
@@ -810,8 +811,8 @@
                     { "type": "Triggerable", "name": "wpe-linux-64-debug-tests-js",
                       "builderNames": ["WPE-Linux-64-bit-Debug-JS-Tests"]
                     },
-                    { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "trunk_filter",
-                      "branch": "trunk", "hour": 22, "minute": 0,
+                    { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
+                      "branch": "main", "hour": 22, "minute": 0,
                       "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004",
                                        "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004"]
                     }
