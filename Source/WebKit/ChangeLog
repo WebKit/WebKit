@@ -1,3 +1,14 @@
+2022-04-25  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GLIB] Default-handle recently-added ProcessTerminationReason values
+        https://bugs.webkit.org/show_bug.cgi?id=239720
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/glib/WebKitNavigationClient.cpp: Add a couple of
+        new values for ProcessTerminationReason that were added on r292912
+        to silent some compile-time warnings.
+
 2022-04-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (249585@main): TestWebKitAPI.IPCTestingAPI.CanReceiveIPCSemaphore is timing out

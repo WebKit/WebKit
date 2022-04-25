@@ -123,6 +123,8 @@ private:
         case ProcessTerminationReason::NavigationSwap:
         case ProcessTerminationReason::RequestedByGPUProcess:
         case ProcessTerminationReason::ExceededProcessCountLimit:
+        case ProcessTerminationReason::IdleExit:
+        case ProcessTerminationReason::Unresponsive:
             break;
         }
         return false;
