@@ -8,8 +8,36 @@ LOCATION = '{{ location }}'
 SPACING = 8
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 
+sys.path.append(SCRIPTS)
+from webkitpy.common.checkout.diff_parser import DiffParser
+
+def message_from_staged_changelogs():
+    try:
+        diff = subprocess.check_output(['{{ git }}', 'diff', '--staged'])
+    except subprocess.CalledProcessError:
+        return ''
+
+    modified_files = DiffParser(diff.splitlines()).files
+    message = ''
+    for path, parsed_diff in modified_files.items():
+        if not path.endswith('ChangeLog'):
+            continue
+
+        # Ignore first line (date, name, email) and second line (empty).
+        diff_lines = parsed_diff.lines[2:]
+
+        # Get added lines and strip leading 8 characters indentation.
+        lines = [line[2][SPACING:] for line in diff_lines if not line[0]]
+
+        message += '\n'.join(lines)
+
+    return message
 
 def message(source=None, sha=None):
+    msg = message_from_staged_changelogs()
+    if msg:
+        return msg
+
     dirname = None
     commit_message = []
 

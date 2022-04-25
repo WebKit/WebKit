@@ -1,3 +1,17 @@
+2022-04-16  Philippe Normand  <philn@igalia.com>
+
+        [git] Allow pre-commit hook to feed from staged ChangeLogs
+        https://bugs.webkit.org/show_bug.cgi?id=239419
+
+        Reviewed by Jonathan Bedard.
+
+        In workflows where prepare-ChangeLog is executed manually before staging and committing
+        changes the prepare-commit-msg hook can now read the curated ChangeLog from the git stage
+        and present it in the editor for validation. In case no ChangeLog was staged, the hook will
+        generate a message itself.
+
+        * Scripts/hooks/prepare-commit-msg:
+
 2022-04-23  Brady Eidson  <beidson@apple.com>
     
         Add WKNotification and WKWebsiteDataStore SPI for handling click/close of persistent notifications
