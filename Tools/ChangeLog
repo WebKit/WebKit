@@ -1,3 +1,12 @@
+2022-04-25  Tim Nguyen  <ntim@apple.com>
+
+        Fix typo in Tools/CISupport/ews-build/steps.py
+
+        Unreviewed.
+
+        * CISupport/ews-build/steps.py:
+        (UpdateWorkingDirectory):
+
 2022-04-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (249585@main): TestWebKitAPI.IPCTestingAPI.CanReceiveIPCSemaphore is timing out

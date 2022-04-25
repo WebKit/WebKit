@@ -744,7 +744,7 @@ class CleanWorkingDirectory(shell.ShellCommand):
 
 class UpdateWorkingDirectory(shell.ShellCommand):
     name = 'update-working-directory'
-    description = ['update-workring-directory running']
+    description = ['update-working-directory running']
     flunkOnFailure = True
     haltOnFailure = True
     command = ['perl', 'Tools/Scripts/update-webkit']
