@@ -3231,6 +3231,8 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
     ENV = dict(
         GIT_COMMITTER_NAME='EWS',
         GIT_COMMITTER_EMAIL='ews@webkit.org',
+        GIT_USER=None,
+        GIT_PASSWORD=None,
     )
 
     def setUp(self):

@@ -57,7 +57,7 @@ RESULTS_DB_URL = 'https://results.webkit.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
 GITHUB_URL = 'https://github.com/'
-GITHUB_PROJECTS = ['WebKit/WebKit']
+GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit']
 HASH_LENGTH_TO_DISPLAY = 8
 DEFAULT_BRANCH = 'main'
 
@@ -829,10 +829,6 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
     description = ['checking-out-pull-request']
     descriptionDone = ['Checked out pull request']
     haltOnFailure = True
-    env = dict(
-        GIT_COMMITTER_NAME='EWS',
-        GIT_COMMITTER_EMAIL=FROM_EMAIL,
-    )
 
     def __init__(self, **kwargs):
         super(CheckOutPullRequest, self).__init__(timeout=10 * 60, logEnviron=False, **kwargs)
@@ -867,6 +863,14 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
             ]
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
+
+        username, access_token = GitHub.credentials()
+        self.env = dict(
+            GIT_COMMITTER_NAME='EWS',
+            GIT_COMMITTER_EMAIL=FROM_EMAIL,
+            GIT_USER=username,
+            GIT_PASSWORD=access_token,
+        )
 
         return super(CheckOutPullRequest, self).run()
 

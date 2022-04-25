@@ -324,8 +324,11 @@ class Events(service.BuildbotService):
 
 class GitHubEventHandlerNoEdits(GitHubEventHandler):
     OPEN_STATES = ('open',)
+    PUBLIC_REPOS = ('WebKit/WebKit',)
+    SENSATIVE_FIELDS = ('github.title',)
     UNSAFE_MERGE_QUEUE_LABEL = 'unsafe-merge-queue'
     MERGE_QUEUE_LABEL = 'merge-queue'
+    LABEL_PROCESS_DELAY = 10
 
     @classmethod
     def file_with_status_sign(cls, info):
@@ -359,6 +362,14 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         log.msg('Failed fetching PR files: response code {}'.format(res.code))
         return []
 
+    def extractProperties(self, payload):
+        result = super(GitHubEventHandlerNoEdits, self).extractProperties(payload)
+        if result.get('project') not in self.PUBLIC_REPOS:
+            for field in self.SENSATIVE_FIELDS:
+                if field in result:
+                    del result[field]
+        return result
+
     def handle_pull_request(self, payload, event):
         pr_number = payload['number']
         action = payload.get('action')
@@ -373,12 +384,13 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
             log.msg("PR #{} was labeled for unsafe-merge-queue".format(pr_number))
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
+            time.sleep(self.LABEL_PROCESS_DELAY)
             return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'unsafe_merge_queue')
         if action == 'labeled' and self.MERGE_QUEUE_LABEL in labels:
             log.msg("PR #{} was labeled for merge-queue".format(pr_number))
             # 'labeled' is usually an ignored action, override it to force build
             payload['action'] = 'synchronize'
-            time.sleep(10)
+            time.sleep(self.LABEL_PROCESS_DELAY)
             return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'merge_queue')
 
         return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)
