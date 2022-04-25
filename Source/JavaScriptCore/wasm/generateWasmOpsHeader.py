@@ -56,9 +56,19 @@ def typeMacroizer():
         yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc, ty)
         inc += 1
 
+
+def typeMacroizerFiltered(filter):
+    for t in typeMacroizer():
+        if not filter(t):
+            yield t
+
 type_definitions = ["#define FOR_EACH_WASM_TYPE(macro)"]
 type_definitions.extend([t for t in typeMacroizer()])
 type_definitions = "".join(type_definitions)
+
+type_definitions_except_funcref_externref = ["#define FOR_EACH_WASM_TYPE_EXCEPT_FUNCREF_AND_EXTERNREF(macro)"]
+type_definitions_except_funcref_externref.extend([t for t in typeMacroizerFiltered(lambda x: x == "funcref" or x == "externref")])
+type_definitions_except_funcref_externref = "".join(type_definitions_except_funcref_externref)
 
 
 def opcodeMacroizer(filter, opcodeField="value", modifier=None):
@@ -206,7 +216,8 @@ static constexpr unsigned expectedVersionNumber = """ + wasm.expectedVersionNumb
 
 static constexpr unsigned numTypes = """ + str(len(types)) + """;
 
-""" + type_definitions + """
+""" + type_definitions + "\n" + """
+""" + type_definitions_except_funcref_externref + """
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
 enum class TypeKind : int8_t {
     FOR_EACH_WASM_TYPE(CREATE_ENUM_VALUE)
@@ -240,8 +251,10 @@ struct Type {
         return static_cast<bool>(nullable);
     }
 
+    // Use Wasm::isFuncref and Wasm::isExternref instead because they check againts all kind of representations of function referenes and external references.
+
     #define CREATE_PREDICATE(name, ...) bool is ## name() const { return kind == TypeKind::name; }
-    FOR_EACH_WASM_TYPE(CREATE_PREDICATE)
+    FOR_EACH_WASM_TYPE_EXCEPT_FUNCREF_AND_EXTERNREF(CREATE_PREDICATE)
     #undef CREATE_PREDICATE
 };
 

@@ -1,3 +1,24 @@
+2022-04-24  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [Wasm] Remove confusing isFuncref and isExternref
+        https://bugs.webkit.org/show_bug.cgi?id=239699
+
+        Reviewed by Yusuke Suzuki.
+
+        There are two functions with the same name Wasm::Type::isFuncref and
+        Wasm::isFuncref but with different behaviour, and so,
+        this brings confusion into the codebase.
+        The first function checks that .kind == funcref and the second one checks
+        for the same but with respect to typed function references proposal.
+        The second one should be used when we want to check that type is funcref, 
+        so the first one is not needed and actually not used, so this patch removes it.
+
+        The same situation is for isExternref.
+
+        * wasm/generateWasmOpsHeader.py:
+        (typeMacroizer):
+        (typeMacroizerFiltered):
+
 2022-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Implement MacroAssemblerRISCV64 fencing methods
