@@ -395,7 +395,7 @@ void BufferMtl::markConversionBuffersDirty()
         buffer.convertedBuffer = nullptr;
         buffer.convertedOffset = 0;
     }
-    mRestartRangeCache.markDirty();
+    mRestartRangeCache.reset();
 }
 
 void BufferMtl::clearConversionBuffers()
@@ -403,7 +403,7 @@ void BufferMtl::clearConversionBuffers()
     mVertexConversionBuffers.clear();
     mIndexConversionBuffers.clear();
     mUniformConversionBuffers.clear();
-    mRestartRangeCache.markDirty();
+    mRestartRangeCache.reset();
 }
 
 template <typename T>
@@ -433,9 +433,9 @@ static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, mtl::Buff
 const std::vector<IndexRange> &BufferMtl::getRestartIndices(ContextMtl *ctx,
                                                             gl::DrawElementsType indexType)
 {
-    if (!mRestartRangeCache || mRestartRangeCache.indexType != indexType)
+    if (!mRestartRangeCache || mRestartRangeCache->indexType != indexType)
     {
-        mRestartRangeCache.markDirty();
+        mRestartRangeCache.reset();
         std::vector<IndexRange> ranges;
         switch (indexType)
         {
@@ -451,9 +451,9 @@ const std::vector<IndexRange> &BufferMtl::getRestartIndices(ContextMtl *ctx,
             default:
                 ASSERT(false);
         }
-        mRestartRangeCache = RestartRangeCache(std::move(ranges), indexType);
+        mRestartRangeCache.emplace(std::move(ranges), indexType);
     }
-    return mRestartRangeCache.ranges;
+    return mRestartRangeCache->ranges;
 }
 
 const std::vector<IndexRange> BufferMtl::getRestartIndicesFromClientData(

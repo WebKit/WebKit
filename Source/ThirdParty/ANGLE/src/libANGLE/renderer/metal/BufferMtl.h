@@ -12,6 +12,7 @@
 
 #import <Metal/Metal.h>
 
+#include <optional>
 #include <utility>
 
 #include "libANGLE/Buffer.h"
@@ -215,17 +216,13 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
 
     struct RestartRangeCache
     {
-        RestartRangeCache() : indexType(gl::DrawElementsType::InvalidEnum) { isDirty = true; }
         RestartRangeCache(std::vector<IndexRange> &&ranges_, gl::DrawElementsType indexType_)
-            : ranges(ranges_), indexType(indexType_), isDirty(false)
+            : ranges(ranges_), indexType(indexType_)
         {}
-        void markDirty() { isDirty = true; }
-        operator bool() const { return isDirty; }
-        std::vector<IndexRange> ranges;
-        gl::DrawElementsType indexType;
-        bool isDirty;
+        const std::vector<IndexRange> ranges;
+        const gl::DrawElementsType indexType;
     };
-    RestartRangeCache mRestartRangeCache;
+    std::optional<RestartRangeCache> mRestartRangeCache;
     std::vector<IndexRange> mRestartIndices;
 };
 

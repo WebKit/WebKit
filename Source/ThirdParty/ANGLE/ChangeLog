@@ -1,3 +1,30 @@
+2022-04-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (Safari 15.4) Performance regression after uploading WebGL buffers
+        https://bugs.webkit.org/show_bug.cgi?id=239015
+
+        Reviewed by Dean Jackson.
+
+        BufferMtl::getRestartIndices() would recalculate restart indices on each
+        draw because RestartRangeCache::operator bool() would return m_isDirty
+        instead of the intended !m_isDirty.
+
+        Use std::optional to hold the RestartRangeCache instead of
+        maintaining m_isDirty. This allows the type system to contribute to the
+        correctness of the code. Dirty restart range cache is not useful and takes
+        up memory.
+
+        Re-apply hunks from r281550 "ANGLE Metal index buffer left mapped when building primitive restart ranges".
+
+        These were overwritten in r286638 "Roll ANGLE to include upstreamed Metal backend".
+
+        * src/libANGLE/renderer/metal/BufferMtl.h:
+        (rx::BufferMtl::RestartRangeCache::RestartRangeCache):
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::BufferMtl::markConversionBuffersDirty):
+        (rx::BufferMtl::clearConversionBuffers):
+        (rx::BufferMtl::getRestartIndices):
+
 2022-04-18  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Use XCBuild for all command-line and project builds
