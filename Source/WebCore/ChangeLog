@@ -1,3 +1,14 @@
+2022-04-24  Youenn Fablet  <youenn@apple.com>
+
+        TextTrackLoader should use SameOrigin mode by default
+        https://bugs.webkit.org/show_bug.cgi?id=239381
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * loader/TextTrackLoader.cpp:
+
 2022-04-24  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, non-unified build fixes after r293285

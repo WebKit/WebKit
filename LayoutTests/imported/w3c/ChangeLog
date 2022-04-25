@@ -1,3 +1,14 @@
+2022-04-24  Youenn Fablet  <youenn@apple.com>
+
+        TextTrackLoader should use SameOrigin mode by default
+        https://bugs.webkit.org/show_bug.cgi?id=239381
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/cloneNode-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-data-url-expected.txt:
+        * web-platform-tests/service-workers/service-worker/webvtt-cross-origin.https-expected.txt:
+
 2022-04-22  Cathie Chen  <cathiechen@igalia.com>
 
         The layout is not updated when style.contain is changed from "size"/"inline-size" to empty string
