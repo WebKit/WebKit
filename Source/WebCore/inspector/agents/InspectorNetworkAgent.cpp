@@ -1108,12 +1108,17 @@ bool InspectorNetworkAgent::willIntercept(const ResourceRequest& request)
         || shouldIntercept(request.url(), Protocol::Network::NetworkStage::Response);
 }
 
-bool InspectorNetworkAgent::shouldInterceptRequest(const ResourceRequest& request)
+bool InspectorNetworkAgent::shouldInterceptRequest(const ResourceLoader& loader)
 {
     if (!m_interceptionEnabled)
         return false;
 
-    return shouldIntercept(request.url(), Protocol::Network::NetworkStage::Request);
+#if ENABLE(SERVICE_WORKER)
+    if (loader.options().serviceWorkerRegistrationIdentifier)
+        return false;
+#endif
+
+    return shouldIntercept(loader.url(), Protocol::Network::NetworkStage::Request);
 }
 
 bool InspectorNetworkAgent::shouldInterceptResponse(const ResourceResponse& response)

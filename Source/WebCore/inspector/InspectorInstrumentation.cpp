@@ -845,10 +845,10 @@ bool InspectorInstrumentation::willInterceptImpl(InstrumentingAgents& instrument
     return false;
 }
 
-bool InspectorInstrumentation::shouldInterceptRequestImpl(InstrumentingAgents& instrumentingAgents, const ResourceRequest& request)
+bool InspectorInstrumentation::shouldInterceptRequestImpl(InstrumentingAgents& instrumentingAgents, const ResourceLoader& loader)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
-        return networkAgent->shouldInterceptRequest(request);
+        return networkAgent->shouldInterceptRequest(loader);
     return false;
 }
 

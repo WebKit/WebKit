@@ -40,25 +40,22 @@ class FragmentedSharedBuffer;
 
 class WEBCORE_EXPORT InspectorInstrumentationWebKit {
 public:
-    static bool shouldInterceptRequest(const Frame*, const ResourceRequest&);
+    static bool shouldInterceptRequest(const ResourceLoader&);
     static bool shouldInterceptResponse(const Frame*, const ResourceResponse&);
     static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponse(const Frame*, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
 
 private:
-    static bool shouldInterceptRequestInternal(const Frame&, const ResourceRequest&);
+    static bool shouldInterceptRequestInternal(const ResourceLoader&);
     static bool shouldInterceptResponseInternal(const Frame&, const ResourceResponse&);
     static void interceptRequestInternal(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponseInternal(const Frame&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
 };
 
-inline bool InspectorInstrumentationWebKit::shouldInterceptRequest(const Frame* frame, const ResourceRequest& request)
+inline bool InspectorInstrumentationWebKit::shouldInterceptRequest(const ResourceLoader& loader)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (!frame)
-        return false;
-
-    return shouldInterceptRequestInternal(*frame, request);
+    return shouldInterceptRequestInternal(loader);
 }
 
 inline bool InspectorInstrumentationWebKit::shouldInterceptResponse(const Frame* frame, const ResourceResponse& response)
@@ -72,7 +69,7 @@ inline bool InspectorInstrumentationWebKit::shouldInterceptResponse(const Frame*
 
 inline void InspectorInstrumentationWebKit::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
-    ASSERT(InspectorInstrumentationWebKit::shouldInterceptRequest(loader.frame(), loader.request()));
+    ASSERT(InspectorInstrumentationWebKit::shouldInterceptRequest(loader));
     interceptRequestInternal(loader, WTFMove(handler));
 }
 

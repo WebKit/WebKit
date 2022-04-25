@@ -236,20 +236,20 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
         return;
 #endif
 
-    if (!tryLoadingUsingURLSchemeHandler(resourceLoader, trackingParameters)) {
-        WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: URL will be scheduled with the NetworkProcess");
+    if (tryLoadingUsingURLSchemeHandler(resourceLoader, trackingParameters))
+        return;
 
-#if ENABLE(SERVICE_WORKER)
-        if (!resourceLoader.options().serviceWorkerRegistrationIdentifier && InspectorInstrumentationWebKit::shouldInterceptRequest(resourceLoader.frame(), resourceLoader.request())) {
-            InspectorInstrumentationWebKit::interceptRequest(resourceLoader, [this, protectedResourceLoader = Ref { resourceLoader }, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, resource](const ResourceRequest& request) {
-                scheduleLoadFromNetworkProcess(protectedResourceLoader, request, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
-            });
-            return;
-        }
-#endif
-        scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
+    if (InspectorInstrumentationWebKit::shouldInterceptRequest(resourceLoader)) {
+        InspectorInstrumentationWebKit::interceptRequest(resourceLoader, [this, protectedResourceLoader = Ref { resourceLoader }, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, resource](const ResourceRequest& request) {
+            auto& resourceLoader = protectedResourceLoader.get();
+            WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: intercepted URL will be scheduled with the NetworkProcess");
+            scheduleLoadFromNetworkProcess(resourceLoader, request, trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
+        });
         return;
     }
+
+    WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: URL will be scheduled with the NetworkProcess");
+    scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
 }
 
 bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resourceLoader, const WebResourceLoader::TrackingParameters& trackingParameters)

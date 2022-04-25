@@ -238,7 +238,7 @@ public:
     static void willDestroyCachedResource(CachedResource&);
 
     static bool willIntercept(const Frame*, const ResourceRequest&);
-    static bool shouldInterceptRequest(const Frame&, const ResourceRequest&);
+    static bool shouldInterceptRequest(const ResourceLoader&);
     static bool shouldInterceptResponse(const Frame&, const ResourceResponse&);
     static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponse(const Frame&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
@@ -446,7 +446,7 @@ private:
     static void willDestroyCachedResourceImpl(CachedResource&);
 
     static bool willInterceptImpl(InstrumentingAgents&, const ResourceRequest&);
-    static bool shouldInterceptRequestImpl(InstrumentingAgents&, const ResourceRequest&);
+    static bool shouldInterceptRequestImpl(InstrumentingAgents&, const ResourceLoader&);
     static bool shouldInterceptResponseImpl(InstrumentingAgents&, const ResourceResponse&);
     static void interceptRequestImpl(InstrumentingAgents&, ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponseImpl(InstrumentingAgents&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
@@ -1288,11 +1288,11 @@ inline bool InspectorInstrumentation::willIntercept(const Frame* frame, const Re
     return false;
 }
 
-inline bool InspectorInstrumentation::shouldInterceptRequest(const Frame& frame, const ResourceRequest& request)
+inline bool InspectorInstrumentation::shouldInterceptRequest(const ResourceLoader& loader)
 {
     ASSERT(InspectorInstrumentationPublic::hasFrontends());
-    if (auto* agents = instrumentingAgents(frame))
-        return shouldInterceptRequestImpl(*agents, request);
+    if (auto* agents = instrumentingAgents(loader.frame()))
+        return shouldInterceptRequestImpl(*agents, loader);
     return false;
 }
 
@@ -1306,7 +1306,7 @@ inline bool InspectorInstrumentation::shouldInterceptResponse(const Frame& frame
 
 inline void InspectorInstrumentation::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
 {
-    ASSERT(InspectorInstrumentation::shouldInterceptRequest(*loader.frame(), loader.request()));
+    ASSERT(InspectorInstrumentation::shouldInterceptRequest(loader));
     if (auto* agents = instrumentingAgents(loader.frame()))
         interceptRequestImpl(*agents, loader, WTFMove(handler));
 }

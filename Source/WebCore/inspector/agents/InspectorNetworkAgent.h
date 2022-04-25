@@ -122,7 +122,7 @@ public:
     void setInitialScriptContent(ResourceLoaderIdentifier, const String& sourceString);
     void didScheduleStyleRecalculation(Document&);
     bool willIntercept(const ResourceRequest&);
-    bool shouldInterceptRequest(const ResourceRequest&);
+    bool shouldInterceptRequest(const ResourceLoader&);
     bool shouldInterceptResponse(const ResourceResponse&);
     void interceptResponse(const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
     void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);

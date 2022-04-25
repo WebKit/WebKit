@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-bool InspectorInstrumentationWebKit::shouldInterceptRequestInternal(const Frame& frame, const ResourceRequest& request)
+bool InspectorInstrumentationWebKit::shouldInterceptRequestInternal(const ResourceLoader& loader)
 {
-    return InspectorInstrumentation::shouldInterceptRequest(frame, request);
+    return InspectorInstrumentation::shouldInterceptRequest(loader);
 }
 
 bool InspectorInstrumentationWebKit::shouldInterceptResponseInternal(const Frame& frame, const ResourceResponse& response)
