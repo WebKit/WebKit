@@ -58,6 +58,18 @@ PASS Array.prototype[Symbol.unscopables]["keys"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "keys").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "keys").enumerable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "keys").configurable is true
+PASS Array.prototype[Symbol.unscopables]["toReversed"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toReversed").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toReversed").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toReversed").configurable is true
+PASS Array.prototype[Symbol.unscopables]["toSorted"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toSorted").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toSorted").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toSorted").configurable is true
+PASS Array.prototype[Symbol.unscopables]["toSpliced"] is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toSpliced").writable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toSpliced").enumerable is true
+PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "toSpliced").configurable is true
 PASS Array.prototype[Symbol.unscopables]["values"] is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "values").writable is true
 PASS Object.getOwnPropertyDescriptor(Array.prototype[Symbol.unscopables], "values").enumerable is true
