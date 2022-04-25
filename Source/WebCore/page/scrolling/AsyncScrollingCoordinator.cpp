@@ -373,8 +373,7 @@ void AsyncScrollingCoordinator::applyPendingScrollUpdates()
 
 void AsyncScrollingCoordinator::scheduleRenderingUpdate()
 {
-    if (m_page)
-        m_page->scheduleRenderingUpdate(RenderingUpdateStep::ScrollingTreeUpdate);
+    m_page->scheduleRenderingUpdate(RenderingUpdateStep::ScrollingTreeUpdate);
 }
 
 FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID scrollingNodeID) const
