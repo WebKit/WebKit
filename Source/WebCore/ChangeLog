@@ -1,3 +1,16 @@
+2022-04-25  Ziran Sun  <zsun@igalia.com>
+
+        UA stylesheet should include table { text-indent: initial } to conform with HTML standard
+        https://bugs.webkit.org/show_bug.cgi?id=201297
+
+        Reviewed by Tim Nguyen.
+
+        As per [1], text-indent for table should be initial.
+        [1] https://html.spec.whatwg.org/multipage/rendering.html#tables-2
+
+        * css/html.css:
+        (table):
+
 2022-04-24  Philippe Normand  <philn@igalia.com>
 
         [GStreamer] Disable new demuxers based on adaptivedemux2

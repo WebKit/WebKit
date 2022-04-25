@@ -1,3 +1,13 @@
+2022-04-25  Ziran Sun  <zsun@igalia.com>
+
+        UA stylesheet should include table { text-indent: initial } to conform with HTML standard
+        https://bugs.webkit.org/show_bug.cgi?id=201297
+
+        Reviewed by Tim Nguyen.
+
+        * web-platform-tests/html/rendering/non-replaced-elements/form-controls/resets-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/tables/table-ua-stylesheet-expected.txt:
+
 2022-04-24  Youenn Fablet  <youenn@apple.com>
 
         TextTrackLoader should use SameOrigin mode by default

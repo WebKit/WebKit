@@ -270,7 +270,7 @@ PASS <table><tbody><tr><td> - letter-spacing
 PASS <table><tbody><tr><td> - word-spacing
 PASS <table><tbody><tr><td> - line-height
 PASS <table><tbody><tr><td> - text-transform
-FAIL <table><tbody><tr><td> - text-indent assert_equals: expected "0px" but got "5px"
+PASS <table><tbody><tr><td> - text-indent
 PASS <table><tbody><tr><td> - text-shadow
 PASS <table><tbody><tr><td> - text-align
 PASS <table><tbody><tr><td> - display
@@ -279,7 +279,7 @@ PASS <tbody><tr><td> (in <table>) - letter-spacing
 PASS <tbody><tr><td> (in <table>) - word-spacing
 PASS <tbody><tr><td> (in <table>) - line-height
 PASS <tbody><tr><td> (in <table>) - text-transform
-FAIL <tbody><tr><td> (in <table>) - text-indent assert_equals: expected "0px" but got "5px"
+PASS <tbody><tr><td> (in <table>) - text-indent
 PASS <tbody><tr><td> (in <table>) - text-shadow
 PASS <tbody><tr><td> (in <table>) - text-align
 PASS <tbody><tr><td> (in <table>) - display
@@ -288,7 +288,7 @@ PASS <tr><td> (in <table><tbody>) - letter-spacing
 PASS <tr><td> (in <table><tbody>) - word-spacing
 PASS <tr><td> (in <table><tbody>) - line-height
 PASS <tr><td> (in <table><tbody>) - text-transform
-FAIL <tr><td> (in <table><tbody>) - text-indent assert_equals: expected "0px" but got "5px"
+PASS <tr><td> (in <table><tbody>) - text-indent
 PASS <tr><td> (in <table><tbody>) - text-shadow
 PASS <tr><td> (in <table><tbody>) - text-align
 PASS <tr><td> (in <table><tbody>) - display
@@ -297,7 +297,7 @@ PASS <td> (in <table><tbody><tr>) - letter-spacing
 PASS <td> (in <table><tbody><tr>) - word-spacing
 PASS <td> (in <table><tbody><tr>) - line-height
 PASS <td> (in <table><tbody><tr>) - text-transform
-FAIL <td> (in <table><tbody><tr>) - text-indent assert_equals: expected "0px" but got "5px"
+PASS <td> (in <table><tbody><tr>) - text-indent
 PASS <td> (in <table><tbody><tr>) - text-shadow
 PASS <td> (in <table><tbody><tr>) - text-align
 PASS <td> (in <table><tbody><tr>) - display
