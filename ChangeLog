@@ -1,3 +1,18 @@
+2022-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Enable Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=239708
+
+        Reviewed by Yusuke Suzuki.
+
+        Turn on the CMake defaults for ENABLE(JIT) and ENABLE(FTL_JIT) options
+        for RISCV64. These are enabled together to avoid having to worry about
+        a 64-bit platform that would want to allow compiling with Baseline JIT
+        enabled and FTL JIT disabled at the same time. But because FTL JIT
+        support for RISCV64 isn't complete yet, it's still disabled at runtime.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2022-04-22  Alex Christensen  <achristensen@webkit.org>
 
         Add my github account name

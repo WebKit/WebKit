@@ -428,6 +428,14 @@ void Options::recomputeDependentOptions()
 #if !ENABLE(FTL_JIT)
     Options::useFTLJIT() = false;
 #endif
+
+#if CPU(RISCV64)
+    // On RISCV64, JIT levels are enabled at build-time to simplify building JSC, avoiding
+    // otherwise rare combinations of build-time configuration. FTL on RISCV64 is disabled
+    // at runtime for now, until it gets int a proper working state.
+    // https://webkit.org/b/239707
+    Options::useFTLJIT() = false;
+#endif
     
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;

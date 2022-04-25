@@ -1,3 +1,16 @@
+2022-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Enable Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=239708
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        Disable FTL JIT at runtime under CPU(RISCV64) since the support is still
+        incomplete. This is necessary due to Baseline JIT and FTL JIT still
+        being enabled at build-time on this platform for pure convenience.
+
 2022-04-24  Diego Pino Garcia  <dpino@igalia.com>
 
         [GCC] Unreviewed, build fix for Ubuntu LTS/Debian after r293265
