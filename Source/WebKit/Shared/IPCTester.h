@@ -69,6 +69,8 @@ private:
     void stopMessageTesting(CompletionHandler<void()>);
     void createStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
     void releaseStreamTester(IPCStreamTesterIdentifier, CompletionHandler<void()>&&);
+    void sendSameSemaphoreBack(IPC::Connection&, IPC::Semaphore&&);
+    void sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
 
     void stopIfNeeded();
 

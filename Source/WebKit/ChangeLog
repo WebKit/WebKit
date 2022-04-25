@@ -1,3 +1,20 @@
+2022-04-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (249585@main): TestWebKitAPI.IPCTestingAPI.CanReceiveIPCSemaphore is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=239507
+
+        Reviewed by Wenson Hsieh.
+
+        Add purpose-built test interfaces for testing sending IPC::Semaphore via the IPC.
+
+        Test: ipc/send-semaphore.html
+
+        * Shared/IPCTester.cpp:
+        (WebKit::IPCTester::sendSameSemaphoreBack):
+        (WebKit::IPCTester::sendSemaphoreBackAndSignalProtocol):
+        * Shared/IPCTester.h:
+        * Shared/IPCTester.messages.in:
+
 2022-04-24  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkResourceLoader.m_parameters non const

@@ -1,3 +1,22 @@
+2022-04-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (249585@main): TestWebKitAPI.IPCTestingAPI.CanReceiveIPCSemaphore is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=239507
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+        Move CanReceiveIPCSemaphore and CanSendIPCSemaphore test logic
+        to LayoutTests/ipc/send-semaphore.html
+        The tests were using audio and canvas implementation detail
+        messages to test that IPC system can send IPC::Semaphore via IPC.
+        Canvas implementation details changed and the test started
+        to fail.
+
+        The new tests use IPC messages that are purpose-built to test this
+        feature. The new tests also actually test that the sent semaphores
+        work.
+
 2022-04-16  Philippe Normand  <philn@igalia.com>
 
         [git] Allow pre-commit hook to feed from staged ChangeLogs

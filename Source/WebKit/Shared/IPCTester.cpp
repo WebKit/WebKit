@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "Decoder.h"
 #include "IPCStreamTester.h"
+#include "IPCTesterMessages.h"
 
 #include <atomic>
 #include <dlfcn.h>
@@ -143,6 +144,28 @@ void IPCTester::releaseStreamTester(IPCStreamTesterIdentifier identifier, Comple
 {
     m_streamTesters.remove(identifier);
     completionHandler();
+}
+
+void IPCTester::sendSameSemaphoreBack(IPC::Connection& connection, IPC::Semaphore&& semaphore)
+{
+    connection.send(Messages::IPCTester::SendSameSemaphoreBack(semaphore), 0);
+}
+
+void IPCTester::sendSemaphoreBackAndSignalProtocol(IPC::Connection& connection, IPC::Semaphore&& semaphore)
+{
+    IPC::Semaphore newSemaphore;
+    connection.send(Messages::IPCTester::SendSemaphoreBackAndSignalProtocol(newSemaphore), 0);
+    if (!semaphore.waitFor(10_s)) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+    newSemaphore.signal();
+    // Wait for protocol commit. Otherwise newSemaphore will be destroyed, and the waiter on the other side
+    // will fail to wait.
+    if (!semaphore.waitFor(10_s)) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
 }
 
 void IPCTester::stopIfNeeded()

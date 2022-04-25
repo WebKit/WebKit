@@ -27,6 +27,9 @@ messages -> IPCTester NotRefCounted {
     StopMessageTesting() -> () Synchronous
     CreateStreamTester(WebKit::IPCStreamTesterIdentifier identifier, IPC::StreamConnectionBuffer stream) WantsConnection
     ReleaseStreamTester(WebKit::IPCStreamTesterIdentifier identifier) -> () Synchronous
+
+    SendSameSemaphoreBack(IPC::Semaphore semaphore) WantsConnection
+    SendSemaphoreBackAndSignalProtocol(IPC::Semaphore semaphore) WantsConnection
 }
 
 #endif

@@ -1,0 +1,4 @@
+
+PASS Sending and receiving a semaphore works
+PASS Sending and then receiving the same semaphore works
+
