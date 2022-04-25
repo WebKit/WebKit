@@ -1295,6 +1295,9 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     response.setHTTPHeaderFields(WTFMove(explicitHeaders));
     response.setHTTPHeaderField(HTTPHeaderName::ContentType, response.mimeType());
     loader->didReceiveResponse(response, [loader, buffer = data.releaseNonNull()]() {
+        if (loader->reachedTerminalState())
+            return;
+
         if (buffer->size())
             loader->didReceiveData(buffer, buffer->size(), DataPayloadWholeResource);
         loader->didFinishLoading(NetworkLoadMetrics());

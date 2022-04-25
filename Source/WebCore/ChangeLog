@@ -1,3 +1,18 @@
+2022-04-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: crash when a subresource is intercepted by a skip network local override with an error status code
+        https://bugs.webkit.org/show_bug.cgi?id=239675
+
+        Reviewed by Patrick Angle.
+
+        Test: http/tests/inspector/network/intercept-request-subresource-with-response-error-status-code.html
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::interceptRequestWithResponse):
+        `SubresourceLoader::didReceiveResponse` will eventually cause `releaseResources` (via `cancel`),
+        which will clear the `m_resource`, which is needed in order to provide the response content.
+        We should only provide the response content if we're still processing the load.
+
 2022-04-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Don't expose aria-roledescription value on "generic" elements (e.g. div and span) unless explicit role value is also defined
