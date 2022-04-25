@@ -606,7 +606,7 @@ bool GStreamerMediaEndpoint::addTrack(GStreamerRtpSenderBackend& sender, MediaSt
 
     sender.setSource(WTFMove(source));
 
-    if (auto rtpSender = sender.rtcSender()) {
+    if (sender.rtcSender()) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Already has a sender.");
         return true;
     }

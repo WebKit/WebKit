@@ -1,3 +1,13 @@
+2022-04-25  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GStreamer] Remove unused rtc variable
+        https://bugs.webkit.org/show_bug.cgi?id=239727
+
+        Reviewed by Philippe Normand.
+
+        * Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp:
+        (WebCore::GStreamerMediaEndpoint::addTrack):
+
 2022-04-25  Ziran Sun  <zsun@igalia.com>
 
         UA stylesheet should include table { text-indent: initial } to conform with HTML standard
