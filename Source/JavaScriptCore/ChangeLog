@@ -1,3 +1,19 @@
+2022-04-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Implement MacroAssemblerRISCV64 fencing methods
+        https://bugs.webkit.org/show_bug.cgi?id=239706
+
+        Reviewed by Yusuke Suzuki.
+
+        Provide MacroAssemblerRISCV64 implementations for the tree fencing
+        methods, using the `fence` instruction but with different corresponding
+        combinations of the predecessor and successor operation sets.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::memoryFence):
+        (JSC::MacroAssemblerRISCV64::storeFence):
+        (JSC::MacroAssemblerRISCV64::loadFence):
+
 2022-04-22  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, non-unified build fixes after r293203

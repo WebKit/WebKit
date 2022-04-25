@@ -3285,9 +3285,20 @@ public:
         m_assembler.addiInsn(RISCV64Registers::zero, RISCV64Registers::zero, Imm::I<0>());
     }
 
-    void memoryFence() { }
-    void storeFence() { }
-    void loadFence() { }
+    void memoryFence()
+    {
+        m_assembler.fenceInsn({ RISCV64Assembler::MemoryOperation::RW }, { RISCV64Assembler::MemoryOperation::RW });
+    }
+
+    void storeFence()
+    {
+        m_assembler.fenceInsn({ RISCV64Assembler::MemoryOperation::W }, { RISCV64Assembler::MemoryOperation::RW });
+    }
+
+    void loadFence()
+    {
+        m_assembler.fenceInsn({ RISCV64Assembler::MemoryOperation::R }, { RISCV64Assembler::MemoryOperation::RW });
+    }
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS8, JumpList);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS16, JumpList);
