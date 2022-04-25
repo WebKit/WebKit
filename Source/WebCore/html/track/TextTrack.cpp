@@ -34,6 +34,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "CommonAtomStrings.h"
 #include "DataCue.h"
 #include "Document.h"
 #include "Event.h"

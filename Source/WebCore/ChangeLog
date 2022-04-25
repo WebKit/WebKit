@@ -1,3 +1,9 @@
+2022-04-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, non-unified build fixes after r293285
+
+        * html/track/TextTrack.cpp:
+
 2022-04-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WinCairo] Unreviewed build fix
