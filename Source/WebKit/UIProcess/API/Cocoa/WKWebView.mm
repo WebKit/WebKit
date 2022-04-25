@@ -1431,6 +1431,8 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     return _scrollView.get();
 }
 
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
 - (BOOL)findInteractionEnabled
 {
     return _findInteractionEnabled;
@@ -1466,6 +1468,8 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     return nil;
 #endif
 }
+
+#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #endif // PLATFORM(IOS_FAMILY)
 

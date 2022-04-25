@@ -33,7 +33,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
 @class UIFindInteraction;
 #endif
 
@@ -650,7 +650,7 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 - (void)setMinimumViewportInset:(NSEdgeInsets)minimumViewportInset maximumViewportInset:(NSEdgeInsets)maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
 #endif
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
 
 /*! @abstract Enables the web view's built-in find interaction. */
 @property (nonatomic, readwrite, getter=isFindInteractionEnabled) BOOL findInteractionEnabled WK_API_AVAILABLE(ios(WK_IOS_TBA));
