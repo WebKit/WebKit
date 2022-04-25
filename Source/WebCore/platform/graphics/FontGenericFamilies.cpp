@@ -48,9 +48,9 @@ static inline bool computeUserPrefersSimplified()
 {
     const Vector<String>& preferredLanguages = userPreferredLanguages();
     for (auto& language : preferredLanguages) {
-        if (equalIgnoringASCIICase(language, "zh-tw"))
+        if (equalLettersIgnoringASCIICase(language, "zh-tw"))
             return false;
-        if (equalIgnoringASCIICase(language, "zh-cn"))
+        if (equalLettersIgnoringASCIICase(language, "zh-cn"))
             return true;
     }
     return true;

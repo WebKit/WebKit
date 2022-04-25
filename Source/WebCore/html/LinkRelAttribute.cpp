@@ -116,13 +116,13 @@ bool LinkRelAttribute::isSupported(Document& document, StringView attribute)
             return true;
     }
 
-    if (document.settings().linkPreconnectEnabled() && equalIgnoringASCIICase(attribute, "preconnect"))
+    if (document.settings().linkPreconnectEnabled() && equalLettersIgnoringASCIICase(attribute, "preconnect"))
         return true;
 
-    if (document.settings().linkPreloadEnabled() && equalIgnoringASCIICase(attribute, "preload"))
+    if (document.settings().linkPreloadEnabled() && equalLettersIgnoringASCIICase(attribute, "preload"))
         return true;
 
-    if (document.settings().linkPrefetchEnabled() && equalIgnoringASCIICase(attribute, "prefetch"))
+    if (document.settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(attribute, "prefetch"))
         return true;
 
     return false;

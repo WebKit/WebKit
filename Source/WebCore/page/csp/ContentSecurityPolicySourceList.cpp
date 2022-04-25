@@ -181,7 +181,7 @@ bool ContentSecurityPolicySourceList::matches(const String& nonce) const
 
 static bool schemeIsInHttpFamily(StringView scheme)
 {
-    return equalIgnoringASCIICase(scheme, "https") || equalIgnoringASCIICase(scheme, "http");
+    return equalLettersIgnoringASCIICase(scheme, "https") || equalLettersIgnoringASCIICase(scheme, "http");
 }
 
 static bool isRestrictedDirectiveForMode(const String& directive, ContentSecurityPolicyModeForExtension mode)
@@ -219,10 +219,10 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
         if (parsedSource.host.hasWildcard && hostIsPublicSuffix)
             return false;
 
-        if (equalIgnoringASCIICase(parsedSource.scheme, "blob"))
+        if (equalLettersIgnoringASCIICase(parsedSource.scheme, "blob"))
             return true;
 
-        if (!equalIgnoringASCIICase(parsedSource.scheme, "https") || parsedSource.host.value.isEmpty())
+        if (!equalLettersIgnoringASCIICase(parsedSource.scheme, "https") || parsedSource.host.value.isEmpty())
             return false;
         break;
     case ContentSecurityPolicyModeForExtension::ManifestV3:

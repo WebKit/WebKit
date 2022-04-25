@@ -242,7 +242,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
     if (!willMutate())
         return { };
 
-    bool important = equalIgnoringASCIICase(priority, "important");
+    bool important = equalLettersIgnoringASCIICase(priority, "important");
     if (!important && !priority.isEmpty())
         return { };
 

@@ -30,39 +30,30 @@
 #include "config.h"
 #include "CSSAtRuleID.h"
 
+#include <wtf/SortedArrayMap.h>
+
 namespace WebCore {
 
 CSSAtRuleID cssAtRuleID(StringView name)
 {
-    if (equalIgnoringASCIICase(name, "charset"))
-        return CSSAtRuleCharset;
-    if (equalIgnoringASCIICase(name, "font-face"))
-        return CSSAtRuleFontFace;
-    if (equalIgnoringASCIICase(name, "font-palette-values"))
-        return CSSAtRuleFontPaletteValues;
-    if (equalIgnoringASCIICase(name, "import"))
-        return CSSAtRuleImport;
-    if (equalIgnoringASCIICase(name, "keyframes"))
-        return CSSAtRuleKeyframes;
-    if (equalIgnoringASCIICase(name, "media"))
-        return CSSAtRuleMedia;
-    if (equalIgnoringASCIICase(name, "namespace"))
-        return CSSAtRuleNamespace;
-    if (equalIgnoringASCIICase(name, "page"))
-        return CSSAtRulePage;
-    if (equalIgnoringASCIICase(name, "supports"))
-        return CSSAtRuleSupports;
-    if (equalIgnoringASCIICase(name, "viewport"))
-        return CSSAtRuleViewport;
-    if (equalIgnoringASCIICase(name, "-webkit-keyframes"))
-        return CSSAtRuleWebkitKeyframes;
-    if (equalIgnoringASCIICase(name, "counter-style"))
-        return CSSAtRuleCounterStyle;
-    if (equalIgnoringASCIICase(name, "layer"))
-        return CSSAtRuleLayer;
-    if (equalIgnoringASCIICase(name, "container"))
-        return CSSAtRuleContainer;
-    return CSSAtRuleInvalid;
+    static constexpr std::pair<ComparableLettersLiteral, CSSAtRuleID> mappings[] = {
+        { "-webkit-keyframes", CSSAtRuleWebkitKeyframes },
+        { "charset", CSSAtRuleCharset },
+        { "container", CSSAtRuleContainer },
+        { "counter-style", CSSAtRuleCounterStyle },
+        { "font-face", CSSAtRuleFontFace },
+        { "font-palette-values", CSSAtRuleFontPaletteValues },
+        { "import", CSSAtRuleImport },
+        { "keyframes", CSSAtRuleKeyframes },
+        { "layer", CSSAtRuleLayer },
+        { "media", CSSAtRuleMedia },
+        { "namespace", CSSAtRuleNamespace },
+        { "page", CSSAtRulePage },
+        { "supports", CSSAtRuleSupports },
+        { "viewport", CSSAtRuleViewport },
+    };
+    static constexpr SortedArrayMap cssAtRules { mappings };
+    return cssAtRules.get(name, CSSAtRuleInvalid);
 }
 
 } // namespace WebCore

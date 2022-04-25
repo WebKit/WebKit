@@ -80,7 +80,7 @@ String SecurityOriginData::databaseIdentifier() const
     // string because of a bug in how we handled the scheme for file URLs.
     // Now that we've fixed that bug, we produce this string for compatibility
     // with existing persistent state.
-    if (equalIgnoringASCIICase(protocol, "file"))
+    if (equalLettersIgnoringASCIICase(protocol, "file"))
         return "file__0"_s;
 
     return makeString(protocol, separatorCharacter, FileSystem::encodeForFileName(host), separatorCharacter, port.value_or(0));

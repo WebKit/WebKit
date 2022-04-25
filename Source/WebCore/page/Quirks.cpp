@@ -363,7 +363,7 @@ bool Quirks::isAmazon() const
 bool Quirks::isGoogleMaps() const
 {
     auto& url = m_document->topDocument().url();
-    return topPrivatelyControlledDomain(url.host().toString()).startsWith("google.") && url.path().startsWithIgnoringASCIICase("/maps/");
+    return topPrivatelyControlledDomain(url.host().toString()).startsWith("google.") && startsWithLettersIgnoringASCIICase(url.path(), "/maps/");
 }
 
 bool Quirks::shouldDispatchSimulatedMouseEvents(EventTarget* target) const
@@ -389,10 +389,10 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(EventTarget* target) const
 
         if (host == "wix.com" || host.endsWith(".wix.com")) {
             // Disable simulated mouse dispatching for template selection.
-            return url.path().startsWithIgnoringASCIICase("/website/templates/") ? ShouldDispatchSimulatedMouseEvents::No : ShouldDispatchSimulatedMouseEvents::Yes;
+            return startsWithLettersIgnoringASCIICase(url.path(), "/website/templates/") ? ShouldDispatchSimulatedMouseEvents::No : ShouldDispatchSimulatedMouseEvents::Yes;
         }
 
-        if ((host == "desmos.com" || host.endsWith(".desmos.com")) && url.path().startsWithIgnoringASCIICase("/calculator/"))
+        if ((host == "desmos.com" || host.endsWith(".desmos.com")) && startsWithLettersIgnoringASCIICase(url.path(), "/calculator/"))
             return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "figma.com" || host.endsWith(".figma.com"))
             return ShouldDispatchSimulatedMouseEvents::Yes;
@@ -615,7 +615,7 @@ bool Quirks::needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const
         return false;
 
     auto& url = m_document->topDocument().url();
-    return equalLettersIgnoringASCIICase(url.host(), "docs.google.com") && url.path().startsWithIgnoringASCIICase("/spreadsheets/");
+    return equalLettersIgnoringASCIICase(url.host(), "docs.google.com") && startsWithLettersIgnoringASCIICase(url.path(), "/spreadsheets/");
 #else
     return false;
 #endif

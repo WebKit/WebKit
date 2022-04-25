@@ -130,7 +130,7 @@ bool SizesCalcParser::calcToReversePolishNotation(CSSParserTokenRange range)
                 return false;
             break;
         case FunctionToken:
-            if (!equalIgnoringASCIICase(token.value(), "calc"))
+            if (!equalLettersIgnoringASCIICase(token.value(), "calc"))
                 return false;
             // "calc(" is the same as "("
             FALLTHROUGH;

@@ -486,7 +486,7 @@ static AtomString consumeStringOrURI(CSSParserTokenRange& range)
     if (token.type() == StringToken || token.type() == UrlToken)
         return range.consumeIncludingWhitespace().value().toAtomString();
 
-    if (token.type() != FunctionToken || !equalIgnoringASCIICase(token.value(), "url"))
+    if (token.type() != FunctionToken || !equalLettersIgnoringASCIICase(token.value(), "url"))
         return AtomString();
 
     CSSParserTokenRange contents = range.consumeBlock();
@@ -551,7 +551,7 @@ RefPtr<StyleRuleImport> CSSParserImpl::consumeImportRule(CSSParserTokenRange pre
             return { };
 
         auto& token = prelude.peek();
-        if (token.type() == FunctionToken && equalIgnoringASCIICase(token.value(), "layer")) {
+        if (token.type() == FunctionToken && equalLettersIgnoringASCIICase(token.value(), "layer")) {
             auto savedPreludeForFailure = prelude;
             auto contents = CSSPropertyParserHelpers::consumeFunction(prelude);
             auto layerName = consumeCascadeLayerName(contents, AllowAnonymous::No);
@@ -561,7 +561,7 @@ RefPtr<StyleRuleImport> CSSParserImpl::consumeImportRule(CSSParserTokenRange pre
             }
             return layerName;
         }
-        if (token.type() == IdentToken && equalIgnoringASCIICase(token.value(), "layer")) {
+        if (token.type() == IdentToken && equalLettersIgnoringASCIICase(token.value(), "layer")) {
             prelude.consumeIncludingWhitespace();
             return CascadeLayerName { };
         }
@@ -1014,7 +1014,7 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
         auto end = range.end();
         removeTrailingWhitespace(range, end);
         declarationValueEnd = end;
-        if (end[-1].type() == IdentToken && equalIgnoringASCIICase(end[-1].value(), "important")) {
+        if (end[-1].type() == IdentToken && equalLettersIgnoringASCIICase(end[-1].value(), "important")) {
             --end;
             removeTrailingWhitespace(range, end);
             if (end[-1].type() == DelimiterToken && end[-1].delimiter() == '!') {
@@ -1070,9 +1070,9 @@ Vector<double> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)
         const CSSParserToken& token = range.consumeIncludingWhitespace();
         if (token.type() == PercentageToken && token.numericValue() >= 0 && token.numericValue() <= 100)
             result.append(token.numericValue() / 100);
-        else if (token.type() == IdentToken && equalIgnoringASCIICase(token.value(), "from"))
+        else if (token.type() == IdentToken && equalLettersIgnoringASCIICase(token.value(), "from"))
             result.append(0);
-        else if (token.type() == IdentToken && equalIgnoringASCIICase(token.value(), "to"))
+        else if (token.type() == IdentToken && equalLettersIgnoringASCIICase(token.value(), "to"))
             result.append(1);
         else
             return { }; // Parser error, invalid value in keyframe selector

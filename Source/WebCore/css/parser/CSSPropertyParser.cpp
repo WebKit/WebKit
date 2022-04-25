@@ -1374,7 +1374,7 @@ static RefPtr<CSSValue> consumeAnimationName(CSSParserTokenRange& range)
 
     if (range.peek().type() == StringToken) {
         const CSSParserToken& token = range.consumeIncludingWhitespace();
-        if (equalIgnoringASCIICase(token.value(), "none"))
+        if (equalLettersIgnoringASCIICase(token.value(), "none"))
             return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
         return CSSValuePool::singleton().createValue(token.value().toString(), CSSUnitType::CSS_STRING);
     }

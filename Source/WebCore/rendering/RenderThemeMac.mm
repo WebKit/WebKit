@@ -2591,7 +2591,7 @@ int RenderThemeMac::attachmentBaseline(const RenderAttachment& attachment) const
 static RefPtr<Icon> iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
     if (!attachmentType.isEmpty()) {
-        if (equalIgnoringASCIICase(attachmentType, "multipart/x-folder") || equalIgnoringASCIICase(attachmentType, "application/vnd.apple.folder")) {
+        if (equalLettersIgnoringASCIICase(attachmentType, "multipart/x-folder") || equalLettersIgnoringASCIICase(attachmentType, "application/vnd.apple.folder")) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto type = kUTTypeFolder;
 ALLOW_DEPRECATED_DECLARATIONS_END

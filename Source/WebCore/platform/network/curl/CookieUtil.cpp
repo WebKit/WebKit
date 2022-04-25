@@ -102,11 +102,11 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
     } else
         attributeName = attribute.stripWhiteSpace();
 
-    if (equalIgnoringASCIICase(attributeName, "httponly"))
+    if (equalLettersIgnoringASCIICase(attributeName, "httponly"))
         result.httpOnly = true;
-    else if (equalIgnoringASCIICase(attributeName, "secure"))
+    else if (equalLettersIgnoringASCIICase(attributeName, "secure"))
         result.secure = true;
-    else if (equalIgnoringASCIICase(attributeName, "domain")) {
+    else if (equalLettersIgnoringASCIICase(attributeName, "domain")) {
         if (attributeValue.isEmpty())
             return;
 
@@ -116,7 +116,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
 
         result.domain = attributeValue.convertToASCIILowercase();
 
-    } else if (equalIgnoringASCIICase(attributeName, "max-age")) {
+    } else if (equalLettersIgnoringASCIICase(attributeName, "max-age")) {
         if (auto maxAgeSeconds = parseIntegerAllowingTrailingJunk<int64_t>(attributeValue)) {
             result.expires = (WallTime::now().secondsSinceEpoch().value() + *maxAgeSeconds) * msPerSecond;
             result.session = false;
@@ -128,7 +128,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             result.session = true;
             result.expires = std::nullopt;
         }
-    } else if (equalIgnoringASCIICase(attributeName, "expires") && !hasMaxAge) {
+    } else if (equalLettersIgnoringASCIICase(attributeName, "expires") && !hasMaxAge) {
         if (auto expiryTime = parseExpiresMS(attributeValue.utf8().data())) {
             result.expires = expiryTime.value();
             result.session = false;
@@ -136,7 +136,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             result.session = true;
             result.expires = std::nullopt;
         }
-    } else if (equalIgnoringASCIICase(attributeName, "path")) {
+    } else if (equalLettersIgnoringASCIICase(attributeName, "path")) {
         if (!attributeValue.isEmpty() && attributeValue.startsWith('/'))
             result.path = attributeValue;
         else

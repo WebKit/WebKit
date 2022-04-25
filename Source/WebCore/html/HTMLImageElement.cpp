@@ -289,7 +289,7 @@ static CrossOriginState parseCrossoriginState(const AtomString& crossoriginValue
 {
     if (crossoriginValue.isNull())
         return NotSet;
-    return equalIgnoringASCIICase(crossoriginValue, "use-credentials") ? UseCredentials : Anonymous;
+    return equalLettersIgnoringASCIICase(crossoriginValue, "use-credentials") ? UseCredentials : Anonymous;
 }
 
 void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)

@@ -808,7 +808,7 @@ static bool willUseWebMFormatReaderForType(const String& type)
     if (!SourceBufferParserWebM::isWebMFormatReaderAvailable())
         return false;
 
-    return equalIgnoringASCIICase(type, "video/webm") || equalIgnoringASCIICase(type, "audio/webm");
+    return equalLettersIgnoringASCIICase(type, "video/webm") || equalLettersIgnoringASCIICase(type, "audio/webm");
 #else
     UNUSED_PARAM(type);
     return false;
@@ -2018,9 +2018,9 @@ void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String, ASCII
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 static bool keySystemIsSupported(const String& keySystem)
 {
-    if (equalIgnoringASCIICase(keySystem, "com.apple.fps") || equalIgnoringASCIICase(keySystem, "com.apple.fps.1_0") || equalIgnoringASCIICase(keySystem, "org.w3c.clearkey"))
-        return true;
-    return false;
+    return equalLettersIgnoringASCIICase(keySystem, "com.apple.fps")
+        || equalIgnoringASCIICase(keySystem, "com.apple.fps.1_0")
+        || equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey");
 }
 #endif
 
@@ -2053,7 +2053,7 @@ bool MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(const String& keySyst
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (!keySystem.isEmpty()) {
         // "Clear Key" is only supported with HLS:
-        if (equalIgnoringASCIICase(keySystem, "org.w3c.clearkey") && !mimeType.isEmpty() && !equalIgnoringASCIICase(mimeType, "application/x-mpegurl"))
+        if (equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey") && !mimeType.isEmpty() && !equalLettersIgnoringASCIICase(mimeType, "application/x-mpegurl"))
             return false;
 
         if (!keySystemIsSupported(keySystem))

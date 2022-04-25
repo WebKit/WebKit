@@ -41,7 +41,7 @@ enum class EnterKeyHint : uint8_t {
     Send
 };
 
-EnterKeyHint enterKeyHintForAttributeValue(const String&);
+EnterKeyHint enterKeyHintForAttributeValue(StringView);
 String attributeValueForEnterKeyHint(EnterKeyHint);
 
 } // namespace WebCore

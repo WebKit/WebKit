@@ -247,7 +247,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 15. If the indexth token in tokens is an ASCII case-insensitive match for one of the strings
     // in the following list, then run the substeps that follow:
     const auto& modeToken = tokens[index];
-    if (equalIgnoringASCIICase(modeToken, "shipping") || equalIgnoringASCIICase(modeToken, "billing")) {
+    if (equalLettersIgnoringASCIICase(modeToken, "shipping") || equalLettersIgnoringASCIICase(modeToken, "billing")) {
         // 1. Let mode be the matching string from the list above.
         const auto& mode = modeToken;
 

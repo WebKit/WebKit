@@ -81,11 +81,11 @@ static FormRelAttributes parseFormRelAttributes(StringView string)
 {
     FormRelAttributes attributes;
     for (auto token : string.split(' ')) {
-        if (equalIgnoringASCIICase(token, "noopener"))
+        if (equalLettersIgnoringASCIICase(token, "noopener"))
             attributes.noopener = true;
-        else if (equalIgnoringASCIICase(token, "noreferrer"))
+        else if (equalLettersIgnoringASCIICase(token, "noreferrer"))
             attributes.noreferrer = true;
-        else if (equalIgnoringASCIICase(token, "opener"))
+        else if (equalLettersIgnoringASCIICase(token, "opener"))
             attributes.opener = true;
     }
     return attributes;
@@ -757,7 +757,7 @@ DOMTokenList& HTMLFormElement::relList()
 {
     if (!m_relList) {
         m_relList = makeUnique<DOMTokenList>(*this, HTMLNames::relAttr, [](Document&, StringView token) {
-            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener") || equalIgnoringASCIICase(token, "opener");
+            return equalLettersIgnoringASCIICase(token, "noreferrer") || equalLettersIgnoringASCIICase(token, "noopener") || equalLettersIgnoringASCIICase(token, "opener");
         });
     }
     return *m_relList;

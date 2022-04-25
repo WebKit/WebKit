@@ -357,7 +357,7 @@ String parseCORSSettingsAttribute(const AtomString& value)
 {
     if (value.isNull())
         return String();
-    if (equalIgnoringASCIICase(value, "use-credentials"))
+    if (equalLettersIgnoringASCIICase(value, "use-credentials"))
         return "use-credentials"_s;
     return "anonymous"_s;
 }

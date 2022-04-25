@@ -30,14 +30,14 @@ namespace WebCore {
 
 void ServerTiming::setParameter(const String& name, const String& value)
 {
-    if (equalIgnoringASCIICase(name, "dur")) {
+    if (equalLettersIgnoringASCIICase(name, "dur")) {
         if (!durationSet) {
             duration = value.toDouble();
             durationSet = true;
         }
         return;
     }
-    if (equalIgnoringASCIICase(name, "desc")) {
+    if (equalLettersIgnoringASCIICase(name, "desc")) {
         if (!descriptionSet) {
             description = value;
             descriptionSet = true;

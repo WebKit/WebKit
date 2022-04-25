@@ -709,7 +709,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
                 if (block.peek().type() != IdentToken)
                     return nullptr;
                 const CSSParserToken& ident = block.consume();
-                if (!equalIgnoringASCIICase(ident.value(), "of"))
+                if (!equalLettersIgnoringASCIICase(ident.value(), "of"))
                     return nullptr;
                 if (block.peek().type() != WhitespaceToken)
                     return nullptr;
@@ -883,7 +883,7 @@ CSSSelector::AttributeMatchType CSSSelectorParser::consumeAttributeFlags(CSSPars
     if (range.peek().type() != IdentToken)
         return CSSSelector::CaseSensitive;
     const CSSParserToken& flag = range.consumeIncludingWhitespace();
-    if (equalIgnoringASCIICase(flag.value(), "i"))
+    if (equalLettersIgnoringASCIICase(flag.value(), "i"))
         return CSSSelector::CaseInsensitive;
     m_failedParsing = true;
     return CSSSelector::CaseSensitive;
@@ -920,11 +920,11 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
         return true;
     }
     if (token.type() == IdentToken) {
-        if (equalIgnoringASCIICase(token.value(), "odd")) {
+        if (equalLettersIgnoringASCIICase(token.value(), "odd")) {
             result = std::make_pair(2, 1);
             return true;
         }
-        if (equalIgnoringASCIICase(token.value(), "even")) {
+        if (equalLettersIgnoringASCIICase(token.value(), "even")) {
             result = std::make_pair(2, 0);
             return true;
         }
