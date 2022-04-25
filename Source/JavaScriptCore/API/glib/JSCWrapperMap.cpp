@@ -123,7 +123,6 @@ gpointer WrapperMap::wrappedObject(JSGlobalContextRef jsContext, JSObjectRef jsO
 {
     ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     JSLockHolder locker(toJS(jsContext));
-    VM& vm = toJS(jsContext)->vm();
     auto* object = toJS(jsObject);
     if (object->inherits<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>>()) {
         if (auto* wrapper = JSC::jsCast<JSC::JSAPIWrapperObject*>(object)->wrappedObject())
