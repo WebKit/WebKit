@@ -463,6 +463,7 @@ http/tests/misc/image-checks-for-accept.html [ Skip ]
 
 # Probably wrong role after adding children to list (AXGroup instead of AXList).
 accessibility/list-with-dynamically-changing-content.html [ Skip ]
+accessibility/ignored-aria-role-description.html [ Skip ]
 
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html [ Skip ]

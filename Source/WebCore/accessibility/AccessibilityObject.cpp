@@ -2704,14 +2704,29 @@ String AccessibilityObject::ariaLandmarkRoleDescription() const
     }
 }
 
+// ARIA spec: User agents must not expose the aria-roledescription property if the element to which aria-roledescription is applied does not have a valid WAI-ARIA role or does not have an implicit WAI-ARIA role semantic.
+bool AccessibilityObject::supportsARIARoleDescription() const
+{
+    auto role = this->roleValue();
+    switch (role) {
+    case AccessibilityRole::Div:
+    case AccessibilityRole::Unknown:
+        return false;
+    default:
+        return true;
+    }
+}
+
 String AccessibilityObject::roleDescription() const
 {
     // aria-roledescription takes precedence over any other rule.
-    String roleDescription = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_roledescriptionAttr));
-    if (!roleDescription.isEmpty())
-        return roleDescription;
+    if (supportsARIARoleDescription()) {
+        auto roleDescription = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_roledescriptionAttr));
+        if (!roleDescription.isEmpty())
+            return roleDescription;
+    }
 
-    roleDescription = rolePlatformDescription();
+    auto roleDescription = rolePlatformDescription();
     if (!roleDescription.isEmpty())
         return roleDescription;
 

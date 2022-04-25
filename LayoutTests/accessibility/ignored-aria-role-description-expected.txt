@@ -1,0 +1,13 @@
+This tests that generic elements are not allowed to have role descriptions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+div role: AXRoleDescription: group
+span text role: AXRoleDescription: group
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+div
+span

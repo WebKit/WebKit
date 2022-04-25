@@ -298,6 +298,7 @@ public:
     WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
     bool supportsCheckedState() const override;
 
+    bool supportsARIARoleDescription() const;
     bool supportsARIAOwns() const override { return false; }
     bool isActiveDescendantOfFocusedContainer() const override;
     void ariaActiveDescendantReferencingElements(AccessibilityChildrenVector&) const override;
