@@ -1,5 +1,16 @@
 2022-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the macOS Monterey build after r293340
+        https://bugs.webkit.org/show_bug.cgi?id=239712
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+
+        Put some of the "Copy Cropped Image" logic here behind ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS), instead of just
+        ENABLE(IMAGE_ANALYSIS).
+
+2022-04-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [macOS] Only show a context menu action to "Copy Cropped Image" when appropriate
         https://bugs.webkit.org/show_bug.cgi?id=239712
         rdar://92239384

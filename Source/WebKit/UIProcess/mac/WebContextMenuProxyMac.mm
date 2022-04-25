@@ -655,7 +655,10 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
                         [protectedThis->m_menu addItem:createMenuActionItem(lookUpImageItem).get()];
                 });
             }
-
+#else
+            UNUSED_PARAM(imageURL);
+#endif
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
             if (copyCroppedImageItem) {
                 if (auto image = imageBitmap->makeCGImageCopy()) {
                     page->setCroppedImageForContextMenu(nullptr);
@@ -673,7 +676,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
                 }
             }
 #else
-            UNUSED_PARAM(imageURL);
+            UNUSED_PARAM(copyCroppedImageItem);
 #endif
         }
 
