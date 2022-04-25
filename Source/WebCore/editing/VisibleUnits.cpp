@@ -1860,7 +1860,7 @@ void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter
     }
 
     if (startPosition != endPosition) {
-        String characterString = plainText(*makeSimpleRange(startPosition, endPosition)).replace(noBreakSpace, ' ');
+        String characterString = makeStringByReplacingAll(plainText(*makeSimpleRange(startPosition, endPosition)), noBreakSpace, ' ');
         for (int i = characterString.length() - 1, index = 0; i >= 0 && index < maxCharacters; --i) {
             if (!index && nextPosition.isNull())
                 index++;

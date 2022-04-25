@@ -1326,7 +1326,7 @@ HRESULT DOMHTMLInputElement::replaceCharactersInRange(int startTarget, int endTa
 
     String newValue = inputElement.value();
     String webCoreReplacementString(replacementString, SysStringLen(replacementString));
-    newValue.replace(startTarget, endTarget - startTarget, webCoreReplacementString);
+    newValue = makeStringByReplacing(newValue, startTarget, endTarget - startTarget, webCoreReplacementString);
     inputElement.setValue(newValue);
     inputElement.setSelectionRange(index, newValue.length());
 

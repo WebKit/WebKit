@@ -224,8 +224,8 @@ static void appendTextRepresentation(StringBuilder& builder, const Text& text)
     String value = text.data();
     builder.append(" length="_s, value.length());
 
-    value.replace('\\', "\\\\"_s);
-    value.replace('\n', "\\n"_s);
+    value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
+    value = makeStringByReplacingAll(value, '\n', "\\n"_s);
     
     constexpr size_t maxDumpLength = 30;
     if (value.length() > maxDumpLength)

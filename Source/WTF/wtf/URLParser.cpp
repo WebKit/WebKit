@@ -2887,12 +2887,12 @@ auto URLParser::parseURLEncodedForm(StringView input) -> URLEncodedForm
     for (StringView bytes : input.split('&')) {
         auto equalIndex = bytes.find('=');
         if (equalIndex == notFound) {
-            auto name = formURLDecode(bytes.toString().replace('+', 0x20));
+            auto name = formURLDecode(makeStringByReplacingAll(bytes.toString(), '+', 0x20));
             if (name)
                 output.append({ name.value(), emptyString() });
         } else {
-            auto name = formURLDecode(bytes.left(equalIndex).toString().replace('+', 0x20));
-            auto value = formURLDecode(bytes.substring(equalIndex + 1).toString().replace('+', 0x20));
+            auto name = formURLDecode(makeStringByReplacingAll(bytes.left(equalIndex).toString(), '+', 0x20));
+            auto value = formURLDecode(makeStringByReplacingAll(bytes.substring(equalIndex + 1).toString(), '+', 0x20));
             if (name && value)
                 output.append({ name.value(), value.value() });
         }

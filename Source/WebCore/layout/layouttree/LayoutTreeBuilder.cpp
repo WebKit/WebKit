@@ -498,8 +498,8 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
         auto textContent = downcast<InlineTextBox>(layoutBox).content();
         stream << " length->(" << textContent.length() << ")";
 
-        textContent.replace('\\', "\\\\"_s);
-        textContent.replace('\n', "\\n"_s);
+        textContent = makeStringByReplacingAll(textContent, '\\', "\\\\"_s);
+        textContent = makeStringByReplacingAll(textContent, '\n', "\\n"_s);
 
         const size_t maxPrintedLength = 80;
         if (textContent.length() > maxPrintedLength) {

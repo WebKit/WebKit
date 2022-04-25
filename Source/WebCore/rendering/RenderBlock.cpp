@@ -3509,7 +3509,7 @@ String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, Strin
     constexpr UChar discCharacterToReplace = bullet;
 #endif
 
-    return string.replace(discCharacterToReplace, textSecurityDiscPUACodePoint);
+    return makeStringByReplacingAll(string, discCharacterToReplace, textSecurityDiscPUACodePoint);
 #endif
 }
     

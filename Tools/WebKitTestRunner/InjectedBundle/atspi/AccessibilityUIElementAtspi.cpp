@@ -895,7 +895,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
     if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Text))
         return JSStringCreateWithCharacters(nullptr, 0);
 
-    auto value = makeString("AXValue: ", m_element->text().replace('\n', "<\\n>"_s).replace(objectReplacementCharacter, "<obj>"_s));
+    auto value = makeString("AXValue: ", makeStringByReplacingAll(makeStringByReplacingAll(m_element->text(), '\n', "<\\n>"_s), objectReplacementCharacter, "<obj>"_s));
     return OpaqueJSString::tryCreate(value).leakRef();
 }
 
@@ -1203,7 +1203,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsign
         auto attributes = m_element->textAttributes(i);
         auto rangeStart = std::max<int>(location, attributes.startOffset);
         auto rangeEnd = std::min<int>(limit, attributes.endOffset);
-        builder.append("\n\tRange attributes for '", text.substring(rangeStart, rangeEnd - rangeStart).replace('\n', "<\\n>"_s).replace(objectReplacementCharacter, "<obj>"_s), "':");
+        builder.append("\n\tRange attributes for '", makeStringByReplacingAll(makeStringByReplacingAll(text.substring(rangeStart, rangeEnd - rangeStart), '\n', "<\\n>"_s), objectReplacementCharacter, "<obj>"_s), "':");
         buildAttributes(attributes);
         endOffset = attributes.endOffset;
     }

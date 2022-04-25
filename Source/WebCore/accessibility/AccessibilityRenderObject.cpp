@@ -1127,11 +1127,8 @@ Vector<String> AccessibilityRenderObject::determineDropEffects() const
 {
     // Order is aria-dropeffect, dropzone, webkitdropzone
     const AtomString& dropEffects = getAttribute(aria_dropeffectAttr);
-    if (!dropEffects.isEmpty()) {
-        String dropEffectsString = dropEffects.string();
-        dropEffectsString.replace('\n', ' ');
-        return dropEffectsString.split(' ');
-    }
+    if (!dropEffects.isEmpty())
+        return makeStringByReplacingAll(dropEffects.string(), '\n', ' ').split(' ');
     
     auto dropzone = getAttribute(dropzoneAttr);
     if (!dropzone.isEmpty())

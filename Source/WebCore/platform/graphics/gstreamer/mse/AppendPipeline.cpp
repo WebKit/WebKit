@@ -113,7 +113,7 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     // The track name is still unknown at this time, though.
     static size_t appendPipelineCount = 0;
     String pipelineName = makeString("append-pipeline-",
-        m_sourceBufferPrivate.type().containerType().replace("/", "-"), '-', appendPipelineCount++);
+        makeStringByReplacingAll(m_sourceBufferPrivate.type().containerType(), '/', '-'), '-', appendPipelineCount++);
     m_pipeline = gst_pipeline_new(pipelineName.utf8().data());
 
     m_bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
@@ -299,9 +299,11 @@ void AppendPipeline::handleStateChangeMessage(GstMessage* message)
     if (GST_MESSAGE_SRC(message) == reinterpret_cast<GstObject*>(m_pipeline.get())) {
         GstState currentState, newState;
         gst_message_parse_state_changed(message, &currentState, &newState, nullptr);
-        CString sourceBufferType = String(m_sourceBufferPrivate.type().raw())
-            .replace("/", "_").replace(" ", "_")
-            .replace("\"", "").replace("\'", "").utf8();
+        String sourceBufferTypeString = makeStringByReplacingAll(m_sourceBufferPrivate.type().raw(), '/', '_');
+        sourceBufferTypeString = makeStringByReplacingAll(sourceBufferTypeString, ' ', '_');
+        sourceBufferTypeString = makeStringByReplacingAll(sourceBufferTypeString, '"', ""_s);
+        sourceBufferTypeString = makeStringByReplacingAll(sourceBufferTypeString, '\'', ""_s);
+        CString sourceBufferType = sourceBufferTypeString.utf8();
         CString dotFileName = makeString("webkit-append-",
             sourceBufferType.data(), '-',
             gst_element_state_get_name(currentState), '_',

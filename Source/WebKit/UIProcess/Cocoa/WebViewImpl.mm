@@ -5232,8 +5232,7 @@ void WebViewImpl::insertText(id string, NSRange replacementRange)
         return;
     }
 
-    String eventText = text;
-    eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+    String eventText = makeStringByReplacingAll(text, NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
     if (!dictationAlternatives.isEmpty()) {
         InsertTextOptions options;
         options.registerUndoGroup = registerUndoGroup;

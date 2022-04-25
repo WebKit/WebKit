@@ -916,10 +916,7 @@ String SQLiteIDBBackingStore::encodeDatabaseName(const String& databaseName)
     if (databaseName.isEmpty())
         return "%00"_s;
 
-    String filename = FileSystem::encodeForFileName(databaseName);
-    filename.replace('.', "%2E"_s);
-
-    return filename;
+    return makeStringByReplacingAll(FileSystem::encodeForFileName(databaseName), '.', "%2E"_s);
 }
 
 String SQLiteIDBBackingStore::decodeDatabaseName(const String& encodedName)
@@ -927,10 +924,7 @@ String SQLiteIDBBackingStore::decodeDatabaseName(const String& encodedName)
     if (encodedName == "%00"_s)
         return emptyString();
 
-    String name = encodedName;
-    name.replace("%2E", ".");
-
-    return FileSystem::decodeFromFilename(name);
+    return FileSystem::decodeFromFilename(makeStringByReplacingAll(encodedName, "%2E"_s, "."_s));
 }
 
 String SQLiteIDBBackingStore::fullDatabasePathForDirectory(const String& fullDatabaseDirectory)

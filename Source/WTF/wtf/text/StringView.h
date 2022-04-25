@@ -1308,25 +1308,30 @@ inline bool String::containsIgnoringASCIICase(StringView string, unsigned start)
     return findIgnoringASCIICase(string, start) != notFound;
 }
 
-inline String& String::replace(StringView target, StringView replacement)
+inline String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, StringView target, StringView replacement)
 {
-    if (m_impl)
-        m_impl = m_impl->replace(target, replacement);
-    return *this;
+    if (auto* impl = string.impl())
+        return String { impl->replace(target, replacement) };
+    return string;
 }
 
-inline String& String::replace(unsigned start, unsigned length, StringView replacement)
+inline String WARN_UNUSED_RETURN makeStringByReplacing(const String& string, unsigned start, unsigned length, StringView replacement)
 {
-    if (m_impl)
-        m_impl = m_impl->replace(start, length, replacement);
-    return *this;
+    if (auto* impl = string.impl())
+        return String { impl->replace(start, length, replacement) };
+    return string;
 }
 
-inline String& String::replace(UChar target, StringView replacement)
+inline String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, UChar target, StringView replacement)
 {
-    if (m_impl)
-        m_impl = m_impl->replace(target, replacement);
-    return *this;
+    if (auto* impl = string.impl())
+        return String { impl->replace(target, replacement) };
+    return string;
+}
+
+inline String WARN_UNUSED_RETURN makeStringBySimplifyingNewLines(const String& string)
+{
+    return makeStringByReplacingAll(makeStringByReplacingAll(string, "\r\n"_s, "\n"_s), '\r', '\n');
 }
 
 inline bool String::startsWith(StringView string) const
@@ -1408,6 +1413,8 @@ inline bool AtomString::endsWithIgnoringASCIICase(StringView string) const
 
 using WTF::append;
 using WTF::equal;
+using WTF::makeStringByReplacing;
+using WTF::makeStringBySimplifyingNewLines;
 using WTF::StringView;
 using WTF::StringViewWithUnderlyingString;
 using WTF::hasUnpairedSurrogate;

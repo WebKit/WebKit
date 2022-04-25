@@ -57,8 +57,7 @@ void WebContextMenuClient::searchWithGoogle(const WebCore::Frame* frame)
 
     auto searchString = frame->editor().selectedText();
     searchString.stripWhiteSpace();
-    searchString = encodeWithURLEscapeSequences(searchString);
-    searchString.replace("%20", "+");
+    searchString = makeStringByReplacingAll(encodeWithURLEscapeSequences(searchString), "%20"_s, "+"_s);
     auto searchURL = URL { "https://www.google.com/search?q=" + searchString + "&ie=UTF-8&oe=UTF-8" };
 
     WebCore::UserGestureIndicator indicator { WebCore::ProcessingUserGesture };

@@ -1351,7 +1351,7 @@ void RenderText::setRenderedText(const String& newText)
     m_text = newText;
 
     if (m_useBackslashAsYenSymbol)
-        m_text.replace('\\', yenSign);
+        m_text = makeStringByReplacingAll(m_text, '\\', yenSign);
     
     const auto& style = this->style();
     if (style.textTransform() != TextTransform::None)

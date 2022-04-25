@@ -302,7 +302,7 @@ String LocaleWin::monthFormat()
 String LocaleWin::shortMonthFormat()
 {
     if (m_shortMonthFormat.isNull())
-        m_shortMonthFormat = convertWindowsDateTimeFormat(getLocaleInfoString(LOCALE_SYEARMONTH)).replace("MMMM", "MMM");
+        m_shortMonthFormat = makeStringByReplacingAll(convertWindowsDateTimeFormat(getLocaleInfoString(LOCALE_SYEARMONTH)), "MMMM"_s, "MMM"_s);
     return m_shortMonthFormat;
 }
 

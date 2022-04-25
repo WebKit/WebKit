@@ -52,9 +52,9 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
         // copy of the original character data content. It will convert all newline and tab
         // characters into space characters. Then, it will draw all space characters, including
         // leading, trailing and multiple contiguous space characters.
-        newString.replace('\t', ' ');
-        newString.replace('\n', ' ');
-        newString.replace('\r', ' ');
+        newString = makeStringByReplacingAll(newString, '\t', ' ');
+        newString = makeStringByReplacingAll(newString, '\n', ' ');
+        newString = makeStringByReplacingAll(newString, '\r', ' ');
         return newString;
     }
 
@@ -63,9 +63,9 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
     // characters. Then it will convert all tab characters into space characters.
     // Then, it will strip off all leading and trailing space characters.
     // Then, all contiguous space characters will be consolidated.
-    newString.replace('\n', emptyString());
-    newString.replace('\r', emptyString());
-    newString.replace('\t', ' ');
+    newString = makeStringByReplacingAll(newString, '\n', ""_s);
+    newString = makeStringByReplacingAll(newString, '\r', ""_s);
+    newString = makeStringByReplacingAll(newString, '\t', ' ');
     return newString;
 }
 

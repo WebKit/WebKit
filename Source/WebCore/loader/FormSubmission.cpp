@@ -65,19 +65,20 @@ static int64_t generateFormDataIdentifier()
     return ++nextIdentifier;
 }
 
+// FIXME: This function copies the body a lot and is really inefficient.
 static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const String& encodingType)
 {
     String body = data.flattenToString();
 
     if (equalLettersIgnoringASCIICase(encodingType, "text/plain")) {
         // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
-        body = PAL::decodeURLEscapeSequences(body.replace('&', "\r\n"_s).replace('+', ' '));
+        body = PAL::decodeURLEscapeSequences(makeStringByReplacingAll(makeStringByReplacingAll(body, '&', "\r\n"_s), '+', ' '));
     }
 
     Vector<char> bodyData;
     bodyData.append("body=", 5);
     FormDataBuilder::encodeStringAsFormData(bodyData, body.utf8());
-    body = String(bodyData.data(), bodyData.size()).replace('+', "%20"_s);
+    body = makeStringByReplacingAll(String(bodyData.data(), bodyData.size()), '+', "%20"_s);
 
     auto query = url.query();
     if (query.isEmpty())
@@ -156,8 +157,7 @@ inline FormSubmission::FormSubmission(Method method, const URL& action, const St
 
 static PAL::TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Document& document)
 {
-    String normalizedAcceptCharset = acceptCharset;
-    normalizedAcceptCharset.replace(',', ' ');
+    String normalizedAcceptCharset = makeStringByReplacingAll(acceptCharset, ',', ' ');
 
     for (auto charset : StringView { normalizedAcceptCharset }.split(' ')) {
         PAL::TextEncoding encoding(charset);

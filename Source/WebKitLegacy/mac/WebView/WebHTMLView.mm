@@ -6699,8 +6699,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     bool eventHandled = false;
-    String eventText = text;
-    eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+    String eventText = makeStringByReplacingAll(text, NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
     if (!coreFrame->editor().hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.

@@ -1632,17 +1632,14 @@ static inline UChar foldQuoteMark(UChar c)
 // to add tailoring on top of the locale-specific tailoring as of this writing.
 String foldQuoteMarks(const String& stringToFold)
 {
-    String result(stringToFold);
-    result.replace(hebrewPunctuationGeresh, '\'');
-    result.replace(hebrewPunctuationGershayim, '"');
-    result.replace(leftDoubleQuotationMark, '"');
-    result.replace(leftLowDoubleQuotationMark, '"');
-    result.replace(leftSingleQuotationMark, '\'');
-    result.replace(leftLowSingleQuotationMark, '\'');
-    result.replace(rightDoubleQuotationMark, '"');
-    result.replace(rightSingleQuotationMark, '\'');
-
-    return result;
+    String result = makeStringByReplacingAll(stringToFold, hebrewPunctuationGeresh, '\'');
+    result = makeStringByReplacingAll(result, hebrewPunctuationGershayim, '"');
+    result = makeStringByReplacingAll(result, leftDoubleQuotationMark, '"');
+    result = makeStringByReplacingAll(result, leftLowDoubleQuotationMark, '"');
+    result = makeStringByReplacingAll(result, leftSingleQuotationMark, '\'');
+    result = makeStringByReplacingAll(result, leftLowSingleQuotationMark, '\'');
+    result = makeStringByReplacingAll(result, rightDoubleQuotationMark, '"');
+    return makeStringByReplacingAll(result, rightSingleQuotationMark, '\'');
 }
 
 #if !UCONFIG_NO_COLLATION
@@ -2479,7 +2476,7 @@ String plainText(const SimpleRange& range, TextIteratorBehaviors defaultBehavior
 
 String plainTextReplacingNoBreakSpace(const SimpleRange& range, TextIteratorBehaviors defaultBehaviors, bool isDisplayString)
 {
-    return plainText(range, defaultBehaviors, isDisplayString).replace(noBreakSpace, ' ');
+    return makeStringByReplacingAll(plainText(range, defaultBehaviors, isDisplayString), noBreakSpace, ' ');
 }
 
 static void forEachMatch(const SimpleRange& range, const String& target, FindOptions options, const Function<bool(CharacterRange)>& match)

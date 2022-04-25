@@ -38,6 +38,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/win/WCharStringExtras.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -298,11 +299,9 @@ void replaceNewlinesWithWindowsStyleNewlines(String& str)
     str = result.toString();
 }
 
-void replaceNBSPWithSpace(String& str)
+void replaceNBSPWithSpace(String& string)
 {
-    static const UChar NonBreakingSpaceCharacter = 0xA0;
-    static const UChar SpaceCharacter = ' ';
-    str.replace(NonBreakingSpaceCharacter, SpaceCharacter);
+    string = makeStringByReplacingAll(string, noBreakSpace, space);
 }
 
 FORMATETC* urlWFormat()

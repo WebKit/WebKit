@@ -1265,8 +1265,8 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
             String value = node()->nodeValue();
             stream << " length->(" << value.length() << ")";
 
-            value.replace('\\', "\\\\"_s);
-            value.replace('\n', "\\n"_s);
+            value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
+            value = makeStringByReplacingAll(value, '\n', "\\n"_s);
             
             const int maxPrintedLength = 80;
             if (value.length() > maxPrintedLength) {

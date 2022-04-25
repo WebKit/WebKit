@@ -1915,8 +1915,8 @@ void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
                 caret = pos - (textLength - show.length());
             }
             
-            show.replace('\n', ' ');
-            show.replace('\r', ' ');
+            show = makeStringByReplacingAll(show, '\n', ' ');
+            show = makeStringByReplacingAll(show, '\r', ' ');
             fprintf(stderr, "==> #text : \"%s\" at offset %d\n", show.utf8().data(), pos);
             fprintf(stderr, "           ");
             for (int i = 0; i < caret; i++)

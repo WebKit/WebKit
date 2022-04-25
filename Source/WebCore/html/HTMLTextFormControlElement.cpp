@@ -258,7 +258,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
     end = std::min(end, textLength);
 
     if (start < end)
-        text.replace(start, end - start, replacement);
+        text = makeStringByReplacing(text, start, end - start, replacement);
     else
         text = makeStringByInserting(text, replacement, start);
 

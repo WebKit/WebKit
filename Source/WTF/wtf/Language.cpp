@@ -151,7 +151,7 @@ static String canonicalLanguageIdentifier(const String& languageCode)
     String lowercaseLanguageCode = languageCode.convertToASCIILowercase();
     
     if (lowercaseLanguageCode.length() >= 3 && lowercaseLanguageCode[2] == '_')
-        lowercaseLanguageCode.replace(2, 1, "-");
+        lowercaseLanguageCode = makeStringByReplacing(lowercaseLanguageCode, 2, 1, "-"_s);
 
     return lowercaseLanguageCode;
 }

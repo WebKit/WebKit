@@ -984,7 +984,7 @@ ExceptionOr<void> InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id,
         return Exception { NotFoundError };
 
     String sheetText = m_parsedStyleSheet->text();
-    sheetText.replace(sourceData->ruleHeaderRange.start, sourceData->ruleHeaderRange.length(), selector);
+    sheetText = makeStringByReplacing(sheetText, sourceData->ruleHeaderRange.start, sourceData->ruleHeaderRange.length(), selector);
     m_parsedStyleSheet->setText(sheetText);
     m_pageStyleSheet->clearHadRulesMutation();
     fireStyleSheetChanged();
@@ -1489,8 +1489,7 @@ bool InspectorStyleSheet::styleSheetTextWithChangedStyle(CSSStyleDeclaration* st
     String text = m_parsedStyleSheet->text();
     ASSERT_WITH_SECURITY_IMPLICATION(bodyEnd <= text.length()); // bodyEnd is exclusive
 
-    text.replace(bodyStart, bodyEnd - bodyStart, newStyleText);
-    *result = text;
+    *result = makeStringByReplacing(text, bodyStart, bodyEnd - bodyStart, newStyleText);
     return true;
 }
 

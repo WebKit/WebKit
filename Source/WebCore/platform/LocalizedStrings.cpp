@@ -302,7 +302,7 @@ String contextMenuItemTagLookUpInDictionary(const String& selectedString)
 #elif USE(GLIB)
     return WEB_UI_FORMAT_STRING("Look Up “%s”", "Look Up context menu item with selected word", truncatedStringForMenuItem(selectedString).utf8().data());
 #else
-    return WEB_UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word").replace("<selection>", truncatedStringForMenuItem(selectedString));
+    return makeStringByReplacingAll(WEB_UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word"), "<selection>"_s, truncatedStringForMenuItem(selectedString));
 #endif
 }
 
@@ -915,7 +915,7 @@ String imageTitle(const String& filename, const IntSize& size)
 #elif USE(GLIB)
     return WEB_UI_FORMAT_STRING("%s %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)", filename.utf8().data(), size.width(), size.height());
 #else
-    return WEB_UI_FORMAT_STRING("<filename> %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)", size.width(), size.height()).replace("<filename>", filename);
+    return makeStringByReplacingAll(WEB_UI_FORMAT_STRING("<filename> %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)", size.width(), size.height()), "<filename>"_s, filename);
 #endif
 }
 
@@ -1325,7 +1325,7 @@ String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName)
 #elif USE(GLIB)
     return WEB_UI_FORMAT_STRING("%s WebCrypto Master Key", "Name of application's single WebCrypto master key in Keychain", localizedApplicationName.utf8().data());
 #else
-    return WEB_UI_STRING("<application> WebCrypto Master Key", "Name of application's single WebCrypto master key in Keychain").replace("<application>", localizedApplicationName);
+    return makeStringByReplacingAll(WEB_UI_STRING("<application> WebCrypto Master Key", "Name of application's single WebCrypto master key in Keychain"), "<application>"_s, localizedApplicationName);
 #endif
 }
 

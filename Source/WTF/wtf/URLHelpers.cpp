@@ -773,7 +773,7 @@ String mapHostNames(const String& string, URLDecodeFunction decodeFunction)
     String result = string;
     while (!hostNameRanges->isEmpty()) {
         auto [location, length, mappedHostName] = hostNameRanges->takeLast();
-        result = result.replace(location, length, mappedHostName);
+        result = makeStringByReplacing(result, location, length, mappedHostName);
     }
     return result;
 }

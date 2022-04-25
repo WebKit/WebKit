@@ -3334,7 +3334,7 @@ String Editor::selectedText(TextIteratorBehaviors behaviors) const
 {
     // We remove '\0' characters because they are not visibly rendered to the user.
     auto range = m_document.selection().selection().firstRange();
-    return range ? plainText(*range, behaviors).replace('\0', ""_s) : emptyString();
+    return range ? makeStringByReplacingAll(plainText(*range, behaviors), '\0', ""_s) : emptyString();
 }
 
 RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size)

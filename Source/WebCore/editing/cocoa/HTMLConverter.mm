@@ -2442,7 +2442,7 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         if (style.nbspMode() == NBSPMode::Normal)
             text = it.text().createNSStringWithoutCopying();
         else
-            text = it.text().toString().replace(noBreakSpace, ' ');
+            text = makeStringByReplacingAll(it.text().toString(), noBreakSpace, ' ');
 
         [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:text.get()];
         [string setAttributes:attrs.get() range:NSMakeRange(stringLength, currentTextLength)];

@@ -90,7 +90,7 @@ LocalizedString::operator LPCTSTR() const
 
     for (unsigned int i = 1; i < m_string.length(); i++)
         if (m_string[i] == '@' && (m_string[i - 1] == '%' || (i > 2 && m_string[i - 1] == '$' && m_string[i - 2] >= '1' && m_string[i - 2] <= '9' && m_string[i - 3] == '%')))
-            m_string.replace(i, 1, "s");
+            m_string = makeStringByReplacing(m_string, i, 1, "s"_s);
 
     return m_string.wideCharacters().data();
 }

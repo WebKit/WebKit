@@ -177,8 +177,7 @@ GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
     // characters, so that soup does not interpret them as fragment identifiers.
     // See http://wkbug.com/68089
     if (m_url.protocolIsData()) {
-        String urlString = m_url.string();
-        urlString.replace("#", "%23");
+        String urlString = makeStringByReplacingAll(m_url.string(), '#', "%23"_s);
         return GUniquePtr<SoupURI>(soup_uri_new(urlString.utf8().data()));
     }
 

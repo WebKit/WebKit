@@ -36,8 +36,7 @@ static String platformLanguage()
     if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C") || equalIgnoringASCIICase(localeDefault, "POSIX"))
         return "en-US"_s;
 
-    String normalizedDefault = localeDefault;
-    normalizedDefault.replace('_', '-');
+    auto normalizedDefault = makeStringByReplacingAll(localeDefault, '_', '-');
     return normalizedDefault.left(normalizedDefault.find('.'));
 }
 

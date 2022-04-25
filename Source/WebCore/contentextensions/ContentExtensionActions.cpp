@@ -473,7 +473,7 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
     String substitution = regexSubstitution;
     size_t resultLength = JSValueToNumber(context, getProperty(result, "length"), nullptr);
     for (size_t i = 0; i < std::min<size_t>(10, resultLength); i++)
-        substitution.replace(makeString('\\', i), valueToWTFString(getArrayValue(result, i)));
+        substitution = makeStringByReplacingAll(substitution, makeString('\\', i), valueToWTFString(getArrayValue(result, i)));
 
     URL replacementURL(substitution);
     if (replacementURL.isValid())

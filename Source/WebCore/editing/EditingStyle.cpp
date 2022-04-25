@@ -1851,9 +1851,8 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
         }
     }
 
-    m_applyFontFace = style.getPropertyValue(CSSPropertyFontFamily);
     // Remove quotes for Outlook 2007 compatibility. See https://bugs.webkit.org/show_bug.cgi?id=79448
-    m_applyFontFace.replace('\"', ""_s);
+    m_applyFontFace = makeStringByReplacingAll(style.getPropertyValue(CSSPropertyFontFamily), '\"', ""_s);
     style.removeProperty(CSSPropertyFontFamily);
 
     if (RefPtr<CSSValue> fontSize = style.getPropertyCSSValue(CSSPropertyFontSize)) {

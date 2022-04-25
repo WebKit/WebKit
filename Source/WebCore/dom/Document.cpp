@@ -6814,7 +6814,7 @@ String Document::displayStringModifiedByEncoding(const String& string) const
 {
     if (!m_decoder)
         return string;
-    return String { string }.replace('\\', m_decoder->encoding().backslashAsCurrencySymbol());
+    return makeStringByReplacingAll(string, '\\', m_decoder->encoding().backslashAsCurrencySymbol());
 }
 
 void Document::dispatchPageshowEvent(PageshowEventPersistence persisted)

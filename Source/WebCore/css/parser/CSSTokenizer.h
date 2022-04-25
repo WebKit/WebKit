@@ -64,7 +64,7 @@ private:
     UChar consume();
     void reconsume(UChar);
 
-    String preprocessString(String);
+    String preprocessString(const String&);
 
     CSSParserToken consumeNumericToken();
     CSSParserToken consumeIdentLikeToken();

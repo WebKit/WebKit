@@ -127,7 +127,7 @@ static String sanitizeFilename(const String& filename)
             illegalCharactersInFilename.add(character);
     }
     for (auto character : illegalCharactersInFilename)
-        result = result.replace(character, '_');
+        result = makeStringByReplacingAll(result, character, '_');
 
     return result;
 }

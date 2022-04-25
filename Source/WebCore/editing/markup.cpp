@@ -422,7 +422,7 @@ String StyledMarkupAccumulator::takeResults()
         result.append(string);
     result.append(takeMarkup());
     // Remove '\0' characters because they are not visibly rendered to the user.
-    return result.toString().replace('\0', ""_s);
+    return makeStringByReplacingAll(result.toString(), '\0', ""_s);
 }
 
 void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
@@ -1170,9 +1170,7 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
     if (text.isEmpty())
         return fragment;
 
-    String string = text;
-    string.replace("\r\n", "\n");
-    string.replace('\r', '\n');
+    String string = makeStringBySimplifyingNewLines(text);
 
     auto createHTMLBRElement = [&document]() {
         auto element = HTMLBRElement::create(document);

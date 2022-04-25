@@ -205,7 +205,7 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
 
 String DatabaseUtilities::stripIndexQueryToMatchStoredValue(const char* originalQuery)
 {
-    return String::fromLatin1(originalQuery).replace("CREATE UNIQUE INDEX IF NOT EXISTS", "CREATE UNIQUE INDEX");
+    return makeStringByReplacingAll(String::fromLatin1(originalQuery), "CREATE UNIQUE INDEX IF NOT EXISTS"_s, "CREATE UNIQUE INDEX"_s);
 }
 
 TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& tableName)

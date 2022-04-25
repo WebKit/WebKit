@@ -2177,8 +2177,8 @@ void MediaPlayerPrivateGStreamer::configureDownloadBuffer(GstElement* element)
     g_object_set(element, "temp-template", newDownloadTemplate.get(), nullptr);
     GST_DEBUG_OBJECT(pipeline(), "Reconfigured file download template from '%s' to '%s'", oldDownloadTemplate.get(), newDownloadTemplate.get());
 
-    auto newDownloadPrefixPath = String::fromLatin1(newDownloadTemplate.get());
-    purgeOldDownloadFiles(newDownloadPrefixPath.replace("XXXXXX", ""));
+    auto newDownloadPrefixPath = makeStringByReplacingAll(String::fromLatin1(newDownloadTemplate.get()), "XXXXXX", "");
+    purgeOldDownloadFiles(newDownloadPrefixPath);
 }
 
 void MediaPlayerPrivateGStreamer::downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer* player)

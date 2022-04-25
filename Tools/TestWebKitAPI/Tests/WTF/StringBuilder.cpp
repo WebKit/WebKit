@@ -209,7 +209,7 @@ TEST(StringBuilderTest, ToString)
     // Changing the original result of toString() should not affect the content of the StringBuilder.
     String string1 = builder.toString();
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
-    string1.replace('0', 'a');
+    string1 = makeStringByReplacingAll(string1, '0', 'a');
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), builder.toString());
     EXPECT_EQ(String("a123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
 
@@ -251,7 +251,7 @@ TEST(StringBuilderTest, ToStringPreserveCapacity)
     EXPECT_EQ(capacity, builder.capacity());
     EXPECT_EQ(string1.characters8(), builder.characters8());
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
-    string1.replace('0', 'a');
+    string1 = makeStringByReplacingAll(string1, '0', 'a');
     EXPECT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"_s), builder.toStringPreserveCapacity());
     EXPECT_EQ(String("a123456789abcdefghijklmnopqrstuvwxyzABC"_s), string1);
 

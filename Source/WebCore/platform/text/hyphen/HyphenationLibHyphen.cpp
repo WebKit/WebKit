@@ -79,8 +79,7 @@ static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<Atom
         filePath = FileSystem::stringFromFileSystemRepresentation(normalizedPath);
         availableLocales.add(locale, Vector<String>()).iterator->value.append(filePath);
 
-        String localeReplacingUnderscores = locale;
-        localeReplacingUnderscores.replace('_', '-');
+        String localeReplacingUnderscores = makeStringByReplacingAll(locale, '_', '-');
         if (locale != localeReplacingUnderscores)
             availableLocales.add(localeReplacingUnderscores, Vector<String>()).iterator->value.append(filePath);
 

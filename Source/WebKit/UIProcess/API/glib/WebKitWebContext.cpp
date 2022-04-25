@@ -1484,7 +1484,7 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
         if (!g_ascii_strcasecmp(languageList[i], "C") || !g_ascii_strcasecmp(languageList[i], "POSIX"))
             languages.append("en-US"_s);
         else
-            languages.append(String::fromUTF8(languageList[i]).replace("_", "-"));
+            languages.append(makeStringByReplacingAll(String::fromUTF8(languageList[i]), '_', '-'));
     }
     context->priv->processPool->setOverrideLanguages(WTFMove(languages));
 }

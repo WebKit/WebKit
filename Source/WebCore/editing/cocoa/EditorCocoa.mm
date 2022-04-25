@@ -208,18 +208,14 @@ String Editor::stringSelectionForPasteboard()
 {
     if (!canCopy())
         return emptyString();
-    String text = selectedText();
-    text.replace(noBreakSpace, ' ');
-    return text;
+    return makeStringByReplacingAll(selectedText(), noBreakSpace, ' ');
 }
 
 String Editor::stringSelectionForPasteboardWithImageAltText()
 {
     if (!canCopy())
         return emptyString();
-    String text = selectedTextForDataTransfer();
-    text.replace(noBreakSpace, ' ');
-    return text;
+    return makeStringByReplacingAll(selectedTextForDataTransfer(), noBreakSpace, ' ');
 }
 
 void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributedString, MailBlockquoteHandling mailBlockquoteHandling)

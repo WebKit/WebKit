@@ -180,7 +180,7 @@ void replace(String& string, const RegularExpression& target, StringView replace
         index = target.match(string, index, &matchLength);
         if (index < 0)
             break;
-        string.replace(index, matchLength, replacement);
+        string = makeStringByReplacing(string, index, matchLength, replacement);
         index += replacement.length();
         if (!matchLength)
             break; // Avoid infinite loop on 0-length matches, e.g. [a-z]*

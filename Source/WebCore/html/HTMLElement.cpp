@@ -449,9 +449,7 @@ ExceptionOr<void> HTMLElement::setInnerText(String&& text)
             stringReplaceAll(WTFMove(text));
             return { };
         }
-        String textWithConsistentLineBreaks = WTFMove(text);
-        textWithConsistentLineBreaks.replace("\r\n", "\n");
-        textWithConsistentLineBreaks.replace('\r', '\n');
+        String textWithConsistentLineBreaks = makeStringBySimplifyingNewLines(text);
         stringReplaceAll(WTFMove(textWithConsistentLineBreaks));
         return { };
     }

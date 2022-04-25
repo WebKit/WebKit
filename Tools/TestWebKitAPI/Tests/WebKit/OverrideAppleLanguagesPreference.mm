@@ -73,8 +73,8 @@ public:
         [task launch];
         NSData *data = [fileHandle readDataToEndOfFile];
         m_savedAppleLanguages = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        m_savedAppleLanguages.replace("\n", "");
-        m_savedAppleLanguages.replace(" ", "");
+        m_savedAppleLanguages = makeStringByReplacingAll(m_savedAppleLanguages, '\n', ""_s);
+        m_savedAppleLanguages = makeStringByReplacingAll(m_savedAppleLanguages, ' ', ""_s);
     }
 
     ~AppleLanguagesTest()

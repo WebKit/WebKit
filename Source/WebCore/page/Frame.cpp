@@ -504,7 +504,7 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
 
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d"), " ");
-    mutableStringToMatch.replace('_', ' ');
+    mutableStringToMatch = makeStringByReplacingAll(mutableStringToMatch, '_', ' ');
     
     JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);
     // Use the largest match we can find in the whole string

@@ -216,7 +216,8 @@ bool GStreamerMediaEndpoint::setConfiguration(MediaEndpointConfiguration& config
         bool stunSet = false;
         for (auto& url : server.urls) {
             if (url.protocol().startsWith("turn")) {
-                auto valid = url.string().isolatedCopy().replace("turn:", "turn://").replace("turns:", "turns://");
+                auto valid = makeStringByReplacingAll(url.string().isolatedCopy(), "turn:"_s, "turn://"_s);
+                valid = makeStringByReplacingAll(valid, "turns:"_s, "turns://"_s);
                 URL validURL(URL(), valid);
                 // FIXME: libnice currently doesn't seem to handle IPv6 addresses very well.
                 if (validURL.host().startsWith('['))
@@ -229,7 +230,7 @@ bool GStreamerMediaEndpoint::setConfiguration(MediaEndpointConfiguration& config
                     GST_WARNING("Unable to use TURN server: %s", validURL.string().utf8().data());
             }
             if (!stunSet && url.protocol().startsWith("stun")) {
-                auto valid = url.string().isolatedCopy().replace("stun:", "stun://");
+                auto valid = makeStringByReplacingAll(url.string().isolatedCopy(), "stun:"_s, "stun://"_s);
                 URL validURL(URL(), valid);
                 // FIXME: libnice currently doesn't seem to handle IPv6 addresses very well.
                 if (validURL.host().startsWith('['))

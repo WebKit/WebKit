@@ -43,13 +43,13 @@
 namespace WebCore {
 
 // https://drafts.csswg.org/css-syntax/#input-preprocessing
-String CSSTokenizer::preprocessString(String string)
+String CSSTokenizer::preprocessString(const String& string)
 {
     // We don't replace '\r' and '\f' with '\n' as the specification suggests, instead
     // we treat them all the same in the isNewLine function below.
     StringImpl* oldImpl = string.impl();
-    string.replace('\0', replacementCharacter);
-    String replaced = replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(string));
+    String replaced = makeStringByReplacingAll(string, '\0', replacementCharacter);
+    replaced = replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(replaced));
     if (replaced.impl() != oldImpl)
         registerString(replaced);
     return replaced;

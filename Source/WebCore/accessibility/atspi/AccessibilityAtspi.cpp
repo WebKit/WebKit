@@ -288,7 +288,7 @@ void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector
     }
 
     ensureCache();
-    String path = makeString("/org/a11y/webkit/accessible/", createVersion4UUIDString().replace('-', '_'));
+    String path = makeString("/org/a11y/webkit/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
     Vector<unsigned, 3> registeredObjects;
     registeredObjects.reserveInitialCapacity(interfaces.size());
     for (const auto& interface : interfaces) {
@@ -332,7 +332,7 @@ String AccessibilityAtspi::registerObject(AccessibilityObjectAtspi& atspiObject,
         return { };
 
     ensureCache();
-    String path = makeString("/org/a11y/atspi/accessible/", createVersion4UUIDString().replace('-', '_'));
+    String path = makeString("/org/a11y/atspi/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
     Vector<unsigned, 7> registeredObjects;
     registeredObjects.reserveInitialCapacity(interfaces.size());
     for (const auto& interface : interfaces) {
@@ -382,7 +382,7 @@ String AccessibilityAtspi::registerHyperlink(AccessibilityObjectAtspi& atspiObje
     if (!m_connection)
         return { };
 
-    String path = makeString("/org/a11y/atspi/accessible/", createVersion4UUIDString().replace('-', '_'));
+    String path = makeString("/org/a11y/atspi/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
     Vector<unsigned, 1> registeredObjects;
     registeredObjects.reserveInitialCapacity(interfaces.size());
     for (const auto& interface : interfaces) {

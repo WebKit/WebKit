@@ -84,8 +84,7 @@ LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
 #endif
     } else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
-        String relCopy = rel;
-        relCopy.replace('\n', ' ');
+        String relCopy = makeStringByReplacingAll(rel, '\n', ' ');
         for (auto word : StringView(relCopy).split(' ')) {
             if (equalLettersIgnoringASCIICase(word, "stylesheet"))
                 isStyleSheet = true;

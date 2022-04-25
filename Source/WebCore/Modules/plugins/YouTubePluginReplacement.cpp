@@ -149,7 +149,7 @@ static HashMap<String, String> queryKeysAndValues(StringView queryString)
         if (keyLength && valueLength) {
             String key = queryString.substring(keyLocation, keyLength).convertToASCIILowercase();
             String value = queryString.substring(valueLocation, valueLength).toString();
-            value.replace('+', ' ');
+            value = makeStringByReplacingAll(value, '+', ' ');
 
             if (!key.isEmpty() && !value.isEmpty())
                 queryDictionary.add(key, value);

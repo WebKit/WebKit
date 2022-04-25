@@ -626,7 +626,9 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
     unsigned textLength = eventText.length();
     while (textLength > 0 && isHTMLLineBreak(eventText[textLength - 1]))
         textLength--;
-    eventText = eventText.left(textLength).replace("\r\n", " ").replace('\r', ' ').replace('\n', ' ');
+    eventText = makeStringByReplacingAll(eventText.left(textLength), "\r\n", " ");
+    eventText = makeStringByReplacingAll(eventText, '\r', ' ');
+    eventText = makeStringByReplacingAll(eventText, '\n', ' ');
     event.setText(limitLength(eventText, appendableLength));
 }
 

@@ -528,8 +528,8 @@ void LegacyInlineTextBox::outputLineBox(TextStream& stream, bool mark, int depth
 
     String value = renderer().text();
     value = value.substring(start(), len());
-    value.replace('\\', "\\\\"_s);
-    value.replace('\n', "\\n"_s);
+    value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
+    value = makeStringByReplacingAll(value, '\n', "\\n"_s);
     stream << boxName() << " " << FloatRect(x(), y(), width(), height()) << " (" << this << ") renderer->(" << &renderer() << ") run(" << start() << ", " << start() + len() << ") \"" << value.utf8().data() << "\"";
     stream.nextLine();
 }

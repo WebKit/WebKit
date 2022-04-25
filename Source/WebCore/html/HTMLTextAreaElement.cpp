@@ -394,9 +394,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
     m_wasModifiedByUser = false;
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We normalize line endings coming from JavaScript here.
-    String normalizedValue = newValue.isNull() ? emptyString() : newValue;
-    normalizedValue.replace("\r\n", "\n");
-    normalizedValue.replace('\r', '\n');
+    auto normalizedValue = newValue.isNull() ? emptyString() : makeStringBySimplifyingNewLines(newValue);
 
     // Return early because we don't want to move the caret or trigger other side effects
     // when the value isn't changing. This matches Firefox behavior, at least.

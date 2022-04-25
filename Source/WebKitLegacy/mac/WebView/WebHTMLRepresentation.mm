@@ -485,7 +485,7 @@ static NSString *matchLabelsAgainstString(NSArray *labels, const String& stringT
     
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     replace(mutableStringToMatch, RegularExpression("\\d"), " ");
-    mutableStringToMatch.replace('_', ' ');
+    mutableStringToMatch = makeStringByReplacingAll(mutableStringToMatch, '_', ' ');
     
     RegularExpression* regExp = regExpForLabels(labels);
     // Use the largest match we can find in the whole string
