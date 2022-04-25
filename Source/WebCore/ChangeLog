@@ -1,3 +1,26 @@
+2022-04-25  Tim Nguyen  <ntim@apple.com>
+
+        Unprefix html.css, fullscreen.css and pdfjs-extras
+        https://bugs.webkit.org/show_bug.cgi?id=239725
+
+        Reviewed by Brent Fulgham.
+
+        Use unprefixed versions of CSS values & properties.
+        Excluded text-align: -webkit-center which has different behavior than text-align: center.
+
+        * Modules/pdfjs-extras/adwaita/style.css:
+        (.dropdownToolbarButton > select):
+        * css/fullscreen.css:
+        (:-webkit-full-screen-ancestor:not(iframe)):
+        * css/html.css:
+        (input, textarea, select, button, meter, progress):
+        (#if defined(ENABLE_DATE_AND_TIME_INPUT_TYPES) && ENABLE_DATE_AND_TIME_INPUT_TYPES):
+        (input::-webkit-credentials-auto-fill-button):
+        (input::-webkit-contacts-auto-fill-button):
+        (input::-webkit-credit-card-auto-fill-button):
+        (::-webkit-validation-bubble-message):
+        (::-webkit-validation-bubble-arrow):
+
 2022-04-25  Antti Koivisto  <antti@apple.com>
 
         [CSS Typed OM] Fix AttributeStyleMap.get for list values
