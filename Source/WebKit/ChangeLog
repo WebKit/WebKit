@@ -1,3 +1,21 @@
+2022-04-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix the tvOS and watchOS builds after r293231
+        https://bugs.webkit.org/show_bug.cgi?id=239736
+        rdar://92283605
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+
+        UIFindInteraction is marked unavailable on watchOS and tvOS.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
+        Use platform-checks rather than the existing HAVE macro, so that these
+        methods are still implemented in older builds. There are no version
+        checks in WKWebView.h.
+
 2022-04-25  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GLIB] Default-handle recently-added ProcessTerminationReason values
