@@ -815,11 +815,11 @@
 		4131C457234C81180028A615 /* turn_port_factory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4131C452234C81180028A615 /* turn_port_factory.cc */; };
 		4131C458234C81180028A615 /* turn_port_factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C453234C81180028A615 /* turn_port_factory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4131C459234C81180028A615 /* basic_port_allocator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4131C454234C81180028A615 /* basic_port_allocator.cc */; };
-		4131C461234C81720028A615 /* video_coding.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45B234C81710028A615 /* video_coding.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4131C462234C81720028A615 /* video_error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45C234C81720028A615 /* video_error_codes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4131C463234C81720028A615 /* video_coding_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45D234C81720028A615 /* video_coding_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4131C464234C81720028A615 /* video_codec_initializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45E234C81720028A615 /* video_codec_initializer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4131C465234C81720028A615 /* video_codec_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45F234C81720028A615 /* video_codec_interface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF60280A93DF00A1A74F /* video_coding.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45B234C81710028A615 /* video_coding.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF64280A93FE00A1A74F /* video_error_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45C234C81720028A615 /* video_error_codes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF63280A93FA00A1A74F /* video_coding_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45D234C81720028A615 /* video_coding_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF61280A93EC00A1A74F /* video_codec_initializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45E234C81720028A615 /* video_codec_initializer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D6BFF62280A93F400A1A74F /* video_codec_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C45F234C81720028A615 /* video_codec_interface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4131C466234C81720028A615 /* video_codec_interface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4131C460234C81720028A615 /* video_codec_interface.cc */; };
 		4131C46F234C81B60028A615 /* rtc_event.h in Headers */ = {isa = PBXBuildFile; fileRef = 4131C468234C81B40028A615 /* rtc_event.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4131C470234C81B60028A615 /* rtc_event.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4131C469234C81B40028A615 /* rtc_event.cc */; };
@@ -19687,15 +19687,11 @@
 				DDF30BC827C5A492006A526F /* video_capturer.h in Headers */,
 				41F2636421267ADF00274F59 /* video_codec.h in Headers */,
 				410091DB242E0BBC00C5EDA2 /* video_codec_constants.h in Headers */,
-				4131C464234C81720028A615 /* video_codec_initializer.h in Headers */,
-				4131C464234C81720028A615 /* video_codec_initializer.h in Headers */,
-				4131C465234C81720028A615 /* video_codec_interface.h in Headers */,
-				4131C465234C81720028A615 /* video_codec_interface.h in Headers */,
+				2D6BFF61280A93EC00A1A74F /* video_codec_initializer.h in Headers */,
+				2D6BFF62280A93F400A1A74F /* video_codec_interface.h in Headers */,
 				410091DC242E0BBC00C5EDA2 /* video_codec_type.h in Headers */,
-				4131C461234C81720028A615 /* video_coding.h in Headers */,
-				4131C461234C81720028A615 /* video_coding.h in Headers */,
-				4131C463234C81720028A615 /* video_coding_defines.h in Headers */,
-				4131C463234C81720028A615 /* video_coding_defines.h in Headers */,
+				2D6BFF60280A93DF00A1A74F /* video_coding.h in Headers */,
+				2D6BFF63280A93FA00A1A74F /* video_coding_defines.h in Headers */,
 				5CDD84021E439A6F00621E92 /* video_coding_impl.h in Headers */,
 				4131BFAA234B88A60028A615 /* video_common.h in Headers */,
 				419C84131FE249AB0040C30F /* video_content_type.h in Headers */,
@@ -19710,8 +19706,7 @@
 				416225D52169818100A91C9B /* video_encoder_factory.h in Headers */,
 				4145F61F1FE1F38D00EB9CAF /* video_encoder_factory.h in Headers */,
 				41F2636A21267ADF00274F59 /* video_encoder_software_fallback_wrapper.h in Headers */,
-				4131C462234C81720028A615 /* video_error_codes.h in Headers */,
-				4131C462234C81720028A615 /* video_error_codes.h in Headers */,
+				2D6BFF64280A93FE00A1A74F /* video_error_codes.h in Headers */,
 				41893919242A704E007FDC41 /* video_fec_generator.h in Headers */,
 				416225D62169818100A91C9B /* video_frame.h in Headers */,
 				5CD2846B1E6A57F40094FDC8 /* video_frame.h in Headers */,
@@ -21665,6 +21660,7 @@
 				415F1FAF21272FBA00064CBF /* gain_applier.cc in Sources */,
 				5CDD84B41E43AF1300621E92 /* gain_control_impl.cc in Sources */,
 				41A08BD021272EE2001D5D7B /* gain_controller2.cc in Sources */,
+				417B013C27FDA7E000C74DE3 /* gcd_helpers.m in Sources */,
 				5CDD83D51E439A6F00621E92 /* generic_decoder.cc in Sources */,
 				4131C42D234C7D8A0028A615 /* generic_frame_info.cc in Sources */,
 				5CDD86571E43B8B500621E92 /* get_hanning_window.c in Sources */,
@@ -21709,7 +21705,6 @@
 				5CDD8A9A1E43C00F00621E92 /* input_audio_file.cc in Sources */,
 				5CDD8FD51E43CD6600621E92 /* inter_arrival.cc in Sources */,
 				41323A6626652AD600B38623 /* inter_arrival_delta.cc in Sources */,
-				417B013A27FDA4CF00C74DE3 /* task_queue_gcd.cc in Sources */,
 				5CDD83DD1E439A6F00621E92 /* inter_frame_delay.cc in Sources */,
 				413111CE2552A3BB001B9D95 /* internal_decoder_factory.cc in Sources */,
 				4131C285234B8CC40028A615 /* internal_encoder_factory.cc in Sources */,
@@ -22225,7 +22220,6 @@
 				4131C38D234B957D0028A615 /* stationarity_estimator.cc in Sources */,
 				5CDD8A511E43BFB300621E92 /* statistics_calculator.cc in Sources */,
 				4131BF0D234B88200028A615 /* stats_collector.cc in Sources */,
-				417B013C27FDA7E000C74DE3 /* gcd_helpers.m in Sources */,
 				5CDD85BC1E43B5C000621E92 /* stats_counter.cc in Sources */,
 				4131C342234B8DDF0028A615 /* stats_types.cc in Sources */,
 				4131C156234B89E20028A615 /* stream.cc in Sources */,
@@ -22258,6 +22252,7 @@
 				5CDD89781E43BF3A00621E92 /* target_bitrate.cc in Sources */,
 				4131C136234B89E20028A615 /* task_queue.cc in Sources */,
 				4131C484234C82740028A615 /* task_queue_base.cc in Sources */,
+				417B013A27FDA4CF00C74DE3 /* task_queue_gcd.cc in Sources */,
 				41893A6B242A7826007FDC41 /* task_queue_paced_sender.cc in Sources */,
 				4131C4F3234C86390028A615 /* task_queue_stdlib.cc in Sources */,
 				4131C1C9234B8A4A0028A615 /* tcp_port.cc in Sources */,
