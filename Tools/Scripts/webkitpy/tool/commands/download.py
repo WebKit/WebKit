@@ -57,11 +57,11 @@ class Clean(AbstractSequencedCommand):
         options.force_clean = True
 
 
-class Land(AbstractSequencedCommand):
-    name = "land"
+class LandUnsafe(AbstractSequencedCommand):
+    name = "land-unsafe"
     help_text = "Land the current working directory diff and updates the associated bug if any"
     argument_names = "[BUGID]"
-    show_in_main_help = True
+    show_in_main_help = False
     steps = [
         steps.AddSvnMimetypeForPng,
         steps.UpdateChangeLogsWithReviewer,

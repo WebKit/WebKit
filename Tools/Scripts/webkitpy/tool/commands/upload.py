@@ -93,7 +93,7 @@ class LandSafely(AbstractPatchUploadingCommand):
     in bugs.webkit.org for BUGID (or the bug ID detected from the ChangeLog).
     The command then uploads the current diff to the bug and marks it for
     commit by the commit-queue."""
-    show_in_main_help = True
+    show_in_main_help = False
     steps = [
         steps.UpdateChangeLogsWithReviewer,
         steps.ValidateChangeLogs,
@@ -101,6 +101,11 @@ class LandSafely(AbstractPatchUploadingCommand):
         steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiffForCommit,
     ]
+
+
+class Land(LandSafely):
+    name = "land"
+    show_in_main_help = True
 
 
 class Prepare(AbstractSequencedCommand):

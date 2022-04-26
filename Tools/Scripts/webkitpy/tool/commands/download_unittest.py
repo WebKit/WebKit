@@ -133,7 +133,7 @@ Adding comment and closing bug 50000
             mock_tool = MockTool()
             mock_tool.scm().create_patch = Mock(return_value="Patch1\nMockPatch\n")
             mock_tool.checkout().modified_changelogs = Mock(return_value=[])
-            self.assert_execute_outputs(Land(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
+            self.assert_execute_outputs(LandUnsafe(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
             # Make sure we're not calling expensive calls too often.
             self.assertEqual(mock_tool.scm().create_patch.call_count, 0)
             self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
@@ -162,7 +162,7 @@ Adding comment and closing bug 50000
         with self.mock_svn_remote():
             mock_tool = MockTool()
             mock_tool.buildbot.light_tree_on_fire()
-            self.assert_execute_outputs(Land(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
+            self.assert_execute_outputs(LandUnsafe(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
 
     def test_check_style(self):
         expected_logs = """Processing 1 patch from 1 bug.
@@ -211,7 +211,7 @@ Not updating bug 50000
         with self.mock_svn_remote():
             options = self._default_options()
             options.comment_bug = False
-            self.assert_execute_outputs(Land(), [50000], options=options, expected_logs=expected_logs)
+            self.assert_execute_outputs(LandUnsafe(), [50000], options=options, expected_logs=expected_logs)
 
     def test_land_no_close(self):
         expected_logs = """Building WebKit
@@ -226,7 +226,7 @@ Committed r49824 (5@main): <https://commits.webkit.org/5@main>
         with self.mock_svn_remote():
             options = self._default_options()
             options.close_bug = False
-            self.assert_execute_outputs(Land(), [50000], options=options, expected_logs=expected_logs)
+            self.assert_execute_outputs(LandUnsafe(), [50000], options=options, expected_logs=expected_logs)
 
     def test_land_no_comment_no_close(self):
         expected_logs = """Building WebKit
@@ -237,7 +237,7 @@ Not updating bug 50000
             options = self._default_options()
             options.comment_bug = False
             options.close_bug = False
-            self.assert_execute_outputs(Land(), [50000], options=options, expected_logs=expected_logs)
+            self.assert_execute_outputs(LandUnsafe(), [50000], options=options, expected_logs=expected_logs)
 
     def test_create_revert(self):
         expected_logs = """Preparing revert for bug 50000.

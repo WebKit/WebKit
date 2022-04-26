@@ -1,3 +1,19 @@
+2022-04-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkit-patch] Use Commit-Queue when landing by default
+        https://bugs.webkit.org/show_bug.cgi?id=239777
+        <rdar://problem/92345543>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+        (LandUnsafe): Renamed from LandUnsafe.
+        (Land): Renamed to LandUnsafe.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (LandSafely):
+        (Land): Inherit from LandSafely.
+
 2022-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust some image transcoding behaviors related to "Copy Cropped Image"
