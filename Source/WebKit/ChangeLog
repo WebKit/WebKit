@@ -1,3 +1,26 @@
+2022-04-26  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(r288464?):[ iOS15 Release GPUP arm64 ] TestWebKitAPI.GPUProcess.ExitsUnderMemoryPressureGetUserMediaAudioCase is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=237854
+        <rdar://problem/90273222>
+
+        Reviewed by Eric Carlson.
+
+        stopProducingData was called on some ended tracks.
+        This would trigger the creation of a new connection in case GPUProcess is gone.
+        To prevent this, we now keep a connection reference in RemoteRealtimeMediaSourceProxy.
+        When the GPUProcess connection is being closed, we update the connection if the track is to be continued.
+
+        Covered by API test.
+
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.cpp:
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.h:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+
 2022-04-25  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Add NSCoding support for findInteractionEnabled

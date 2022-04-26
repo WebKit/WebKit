@@ -45,7 +45,7 @@ public:
     RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&&, String&& name, String&& hashSalt, UserMediaCaptureManager&);
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
-    IPC::Connection* connection() { return m_proxy.connection(); }
+    IPC::Connection& connection() { return m_proxy.connection(); }
 
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
 

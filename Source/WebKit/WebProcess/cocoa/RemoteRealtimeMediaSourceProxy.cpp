@@ -43,41 +43,56 @@
 namespace WebKit {
 using namespace WebCore;
 
+static IPC::Connection& getSourceConnection(bool shouldCaptureInGPUProcess)
+{
+    ASSERT(isMainRunLoop());
+#if ENABLE(GPU_PROCESS)
+    if (shouldCaptureInGPUProcess)
+        return WebProcess::singleton().ensureGPUProcessConnection().connection();
+#endif
+    return *WebProcess::singleton().parentProcessConnection();
+}
+
+RemoteRealtimeMediaSourceProxy::RemoteRealtimeMediaSourceProxy(WebCore::RealtimeMediaSourceIdentifier identifier, const WebCore::CaptureDevice& device, bool shouldCaptureInGPUProcess, const WebCore::MediaConstraints* constraints)
+    : m_identifier(identifier)
+    , m_connection(getSourceConnection(shouldCaptureInGPUProcess))
+    , m_device(device)
+    , m_shouldCaptureInGPUProcess(shouldCaptureInGPUProcess)
+{
+    if (constraints)
+        m_constraints = *constraints;
+}
+
 RemoteRealtimeMediaSourceProxy::~RemoteRealtimeMediaSourceProxy()
 {
     failApplyConstraintCallbacks("Source terminated"_s);
 }
 
-IPC::Connection* RemoteRealtimeMediaSourceProxy::connection()
+void RemoteRealtimeMediaSourceProxy::updateConnection()
 {
-    ASSERT(isMainRunLoop());
-#if ENABLE(GPU_PROCESS)
-    if (m_shouldCaptureInGPUProcess)
-        return &WebProcess::singleton().ensureGPUProcessConnection().connection();
-#endif
-    return WebProcess::singleton().parentProcessConnection();
+    m_connection = getSourceConnection(m_shouldCaptureInGPUProcess);
 }
 
 void RemoteRealtimeMediaSourceProxy::startProducingData()
 {
     m_interrupted = false;
-    connection()->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier }, 0);
+    m_connection->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::stopProducingData()
 {
     m_interrupted = false;
-    connection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
+    m_connection->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::endProducingData()
 {
-    connection()->send(Messages::UserMediaCaptureManagerProxy::EndProducingData { m_identifier }, 0);
+    m_connection->send(Messages::UserMediaCaptureManagerProxy::EndProducingData { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::createRemoteMediaSource(const String& deviceIDHashSalt, WebCore::PageIdentifier pageIdentifier, CreateCallback&& callback, bool shouldUseRemoteFrame)
 {
-    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt, m_constraints, shouldUseRemoteFrame, pageIdentifier), WTFMove(callback));
+    m_connection->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt, m_constraints, shouldUseRemoteFrame, pageIdentifier), WTFMove(callback));
 }
 
 RemoteRealtimeMediaSourceProxy RemoteRealtimeMediaSourceProxy::clone()
@@ -87,14 +102,14 @@ RemoteRealtimeMediaSourceProxy RemoteRealtimeMediaSourceProxy::clone()
 
 void RemoteRealtimeMediaSourceProxy::createRemoteCloneSource(WebCore::RealtimeMediaSourceIdentifier cloneIdentifier)
 {
-    connection()->send(Messages::UserMediaCaptureManagerProxy::Clone { m_identifier, cloneIdentifier }, 0);
+    m_connection->send(Messages::UserMediaCaptureManagerProxy::Clone { m_identifier, cloneIdentifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::ApplyConstraintsHandler&& completionHandler)
 {
     m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
     // FIXME: Use sendAsyncWithReply.
-    connection()->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
+    m_connection->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraintsSucceeded()
@@ -120,7 +135,7 @@ void RemoteRealtimeMediaSourceProxy::end()
 {
     ASSERT(!m_isEnded);
     m_isEnded = true;
-    connection()->send(Messages::UserMediaCaptureManagerProxy::RemoveSource { m_identifier }, 0);
+    m_connection->send(Messages::UserMediaCaptureManagerProxy::RemoveSource { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::whenReady(CompletionHandler<void(String)>&& callback)

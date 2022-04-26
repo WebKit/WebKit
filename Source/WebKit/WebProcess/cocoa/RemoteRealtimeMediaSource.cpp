@@ -143,7 +143,8 @@ void RemoteRealtimeMediaSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     if (isEnded())
         return;
 
-    m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
+    m_proxy.updateConnection();
+    m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(m_proxy.connection());
     m_proxy.resetReady();
     createRemoteMediaSource();
 

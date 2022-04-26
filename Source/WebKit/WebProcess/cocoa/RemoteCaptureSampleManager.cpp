@@ -83,7 +83,7 @@ void RemoteCaptureSampleManager::setConnection(IPC::Connection* connection)
 void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeAudioSource>&& source)
 {
     ASSERT(WTF::isMainRunLoop());
-    setConnection(source->connection());
+    setConnection(&source->connection());
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, source = WTFMove(source)]() mutable {
         auto identifier = source->identifier();
@@ -96,7 +96,7 @@ void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeAudioSource>&& sour
 void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeVideoSource>&& source)
 {
     ASSERT(WTF::isMainRunLoop());
-    setConnection(source->connection());
+    setConnection(&source->connection());
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, source = WTFMove(source)]() mutable {
         auto identifier = source->identifier();
@@ -116,10 +116,10 @@ void RemoteCaptureSampleManager::removeSource(WebCore::RealtimeMediaSourceIdenti
     });
 }
 
-void RemoteCaptureSampleManager::didUpdateSourceConnection(IPC::Connection* connection)
+void RemoteCaptureSampleManager::didUpdateSourceConnection(IPC::Connection& connection)
 {
     ASSERT(WTF::isMainRunLoop());
-    setConnection(connection);
+    setConnection(&connection);
 }
 
 void RemoteCaptureSampleManager::setVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy* proxy)

@@ -64,7 +64,7 @@ void RemoteRealtimeVideoSource::endProducingData()
 
 bool RemoteRealtimeVideoSource::setShouldApplyRotation(bool shouldApplyRotation)
 {
-    connection()->send(Messages::UserMediaCaptureManagerProxy::SetShouldApplyRotation { identifier(), shouldApplyRotation }, 0);
+    connection().send(Messages::UserMediaCaptureManagerProxy::SetShouldApplyRotation { identifier(), shouldApplyRotation }, 0);
     return true;
 }
 
