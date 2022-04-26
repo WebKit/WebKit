@@ -936,7 +936,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         NSURLSessionTaskTransactionMetrics *metrics = taskMetrics.transactionMetrics.lastObject;
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
-        auto privateRelayed = metrics._privacyStance == nw_connection_privacy_stance_direct ? PrivateRelayed::No : PrivateRelayed::Yes;
+        auto privateRelayed = metrics._privacyStance == nw_connection_privacy_stance_direct
+            || metrics._privacyStance == nw_connection_privacy_stance_not_eligible
+            ? PrivateRelayed::No : PrivateRelayed::Yes;
 #else
         auto privateRelayed = PrivateRelayed::No;
 #endif
