@@ -1354,17 +1354,13 @@ static String listMarkerTextForNode(Node* node)
 // Returns the text associated with a list marker if this node is contained within a list item.
 String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const VisiblePosition& visiblePositionStart)
 {
-    // If the range does not contain the start of the line, the list marker text should not be included.
-    if (!isStartOfLine(visiblePositionStart))
-        return String();
-
-    // We should speak the list marker only for the first line.
-    RenderListItem* listItem = renderListItemContainerForNode(node);
+    auto* listItem = renderListItemContainerForNode(node);
     if (!listItem)
-        return String();
-    if (!inSameLine(visiblePositionStart, firstPositionInNode(&listItem->element())))
-        return String();
-    
+        return { };
+    // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
+    if (!isStartOfLine(visiblePositionStart) || !inSameLine(visiblePositionStart, firstPositionInNode(&listItem->element())))
+        return { };
+
     return listMarkerTextForNode(node);
 }
 
