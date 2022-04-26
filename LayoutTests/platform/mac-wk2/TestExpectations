@@ -1675,3 +1675,5 @@ webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesuppo
 
 # rdar://86037417 WindowServer returned not alive with context:,unresponsive work processor(s)
 [ Monterey+ ] http/tests/model/model-document.html [ Skip ]
+
+fast/text/install-font-style-recalc.html [ Pass ]

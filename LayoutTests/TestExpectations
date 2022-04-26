@@ -1107,7 +1107,7 @@ fast/animation/request-animation-frame-in-two-pages.html [ Skip ]
 
 # Only supported on iOS internal configurations, see: https://webkit.org/b/193214#c6
 pointerevents/ios [ Skip ]
-
+pointerevents/mouse [ Failure ]
 # permessage-deflate WebSocket extension only supported by Soup based ports
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html [ Skip ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html [ Skip ]
