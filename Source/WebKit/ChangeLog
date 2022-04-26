@@ -1,3 +1,17 @@
+2022-04-21  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Refactor WebKit resources to emit output tasks for dependency validation
+        https://bugs.webkit.org/show_bug.cgi?id=239556
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKit/WebKit.xcodeproj/project.pbxproj:
+          * Replace the script phase that calls generate-automation-atom.py with
+            a build rule, and process those files as headers.
+          * Clean up references and project metadata for deleted files.
+          * Use WK_FRAMEWORK_VERSION_PREFIX in script output paths so that the
+            realpaths are correct on macOS.
+
 2022-04-25  Brent Fulgham  <bfulgham@apple.com>
 
         HARDENING: Add MESSAGE_CHECK in some Captive Portal cases
