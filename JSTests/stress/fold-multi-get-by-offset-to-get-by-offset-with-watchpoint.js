@@ -1,3 +1,4 @@
+//@ requireOptions("--forceUnlinkedDFG=0")
 //@ defaultNoEagerRun
 
 function foo(o) {

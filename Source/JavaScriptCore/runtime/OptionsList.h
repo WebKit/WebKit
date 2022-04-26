@@ -102,6 +102,7 @@ bool canUseWebAssemblyFastMemory();
     \
     v(Bool, forceCodeBlockLiveness, false, Normal, nullptr) \
     v(Bool, forceICFailure, false, Normal, nullptr) \
+    v(Bool, forceUnlinkedDFG, false, Normal, nullptr) \
     \
     v(Unsigned, repatchCountForCoolDown, 8, Normal, nullptr) \
     v(Unsigned, initialCoolDownCount, 20, Normal, nullptr) \

@@ -439,6 +439,7 @@ void Options::recomputeDependentOptions()
     
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;
+    Options::forceUnlinkedDFG() = false;
 #endif
 
     // At initialization time, we may decide that useJIT should be false for any

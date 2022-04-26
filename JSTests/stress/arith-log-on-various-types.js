@@ -1,4 +1,5 @@
 //@ skip if not $jitTests
+//@ requireOptions("--forceUnlinkedDFG=0")
 //@ runNoCJITValidatePhases
 //@ runFTLNoCJITValidate
 "use strict";

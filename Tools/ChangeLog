@@ -1,3 +1,12 @@
+2022-04-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add forceUnlinkedDFG option
+        https://bugs.webkit.org/show_bug.cgi?id=239751
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc-stress-tests:
+
 2022-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Show the option to Markup Image in the callout bar only when appropriate

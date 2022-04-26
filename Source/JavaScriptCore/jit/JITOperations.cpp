@@ -1953,7 +1953,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
     // possible in order to minimize the chances of us executing baseline code after
     // optimized code is already available.
     JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(
-        vm, JITCompilationKey(codeBlock, JITCompilationMode::DFG));
+        vm, JITCompilationKey(codeBlock, Options::forceUnlinkedDFG() ? JITCompilationMode::UnlinkedDFG : JITCompilationMode::DFG));
 
     if (worklistState == JITWorklist::Compiling) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("compiling"));
@@ -2027,7 +2027,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
 
         CodeBlock* replacementCodeBlock = codeBlock->newReplacement();
         CompilationResult result = DFG::compile(
-            vm, replacementCodeBlock, nullptr, JITCompilationMode::DFG, bytecodeIndex,
+            vm, replacementCodeBlock, nullptr, Options::forceUnlinkedDFG() ? JITCompilationMode::UnlinkedDFG : JITCompilationMode::DFG, bytecodeIndex,
             mustHandleValues, JITToDFGDeferredCompilationCallback::create());
         
         if (result != CompilationSuccessful) {
