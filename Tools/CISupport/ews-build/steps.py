@@ -1671,7 +1671,10 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         build_finish_summary = self.getProperty('build_finish_summary', None)
 
         rc = SKIPPED
-        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+        repository_url = self.getProperty('repository', '')
+        pr_json = self.get_pr_json(pr_number, repository_url)
+
+        if self._is_hash_outdated(pr_json) == 0 and CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
             repository_url = self.getProperty('repository', '')
             rc = SUCCESS
             if any((
