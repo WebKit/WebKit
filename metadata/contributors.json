@@ -4809,6 +4809,7 @@
    {
       "emails" : [
          "mcatanzaro@gnome.org",
+         "mcatanzaro@redhat.com",
          "mcatanzaro@igalia.com"
       ],
       "expertise" : "The WebKitGTK Port, Epiphany, Soup HTTP Backend",

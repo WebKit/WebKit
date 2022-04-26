@@ -1,3 +1,12 @@
+2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        Unreviewed, add my @redhat.com email
+
+        Since I switched from SVN -> GitHub I wound up committing using a different email address
+        than I had been using before. This wasn't intentional, but I like it, so whatever.
+
+        * metadata/contributors.json:
+
 2022-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Remove usage of makeWeakPtr() on Introduction.md
