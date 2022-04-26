@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <html>
 <head>
 <script src="../../../../js-test-resources/js-test-pre.js"></script>
@@ -80,11 +80,6 @@ ws.onclose = function()
     testBufferedAmount(createBlobWithLength(0x10000), 0x10000 + baseOverhead + 8);
     finishJSTest();
 };
-
-ws.onerror = function()
-{
-    debug("Error.");
-}
 
 var messageToSend;
 var bufferedAmountDifference;

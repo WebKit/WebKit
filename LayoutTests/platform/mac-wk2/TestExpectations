@@ -1442,9 +1442,6 @@ webkit.org/b/227639 [ BigSur Release ] fast/history/visited-href-mutation.html [
 [ Monterey arm64 ] fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Failure ]
 [ Monterey arm64 ] fast/animation/css-animation-throttling-lowPowerMode.html [ Failure ]
 
-# rdar://80342948 ([ Monterey wk2 ] http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html is a Flaky failure)
-[ Monterey ] http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html [ Pass Failure ]
-
 # Behavior of navigator-language-ru changed in Monterey
 [ Monterey+ ] fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
 [ BigSur ] fast/text/international/system-language/navigator-language/navigator-language-ru-2.html [ Failure ]
