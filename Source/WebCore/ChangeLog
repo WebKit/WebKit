@@ -1,3 +1,19 @@
+2022-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Save a few drawing operations when painting layer contents
+        https://bugs.webkit.org/show_bug.cgi?id=239756
+
+        Reviewed by Tim Horton.
+
+        Remove an extra save/restore, and a translate(0,0) when painting layers and there's just one
+        dirty rect.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents):
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayer::drawLayerContents): The caller sets the clip when there's just one
+        dirty rect.
+
 2022-04-22  Elliott Williams  <emw@apple.com>
 
         [Xcode] Compute PGO profdata paths instead of searching for them at build time

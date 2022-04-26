@@ -1,7 +1,4 @@
 
-(translate
-  (x 0.00)
-  (y 0.00))
 (save)
 (set-state
   (change-flags [drop-shadow])

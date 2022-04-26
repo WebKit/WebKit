@@ -1,3 +1,17 @@
+2022-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Save a few drawing operations when painting layer contents
+        https://bugs.webkit.org/show_bug.cgi?id=239756
+
+        Reviewed by Tim Horton.
+
+        Remove an extra save/restore, and a translate(0,0) when painting layers and there's just one
+        dirty rect.
+
+        * displaylists/extent-includes-shadow-expected.txt:
+        * displaylists/layer-dispay-list-expected.txt:
+        * displaylists/replay-skip-clipped-rect-expected.txt:
+
 2022-04-26  Karl Rackler  <rackler@apple.com>
 
         [ macOS Debug wk2 ] Six imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ are a flaky crash

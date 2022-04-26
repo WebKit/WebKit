@@ -1259,12 +1259,14 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
             // smaller than the layer bounds (e.g. tiled layers)
             ThemeMac::setFocusRingClipRect(graphicsContext.clipBounds());
 #endif
-
-            for (const auto& rect : dirtyRects) {
-                GraphicsContextStateSaver stateSaver(graphicsContext);
-                graphicsContext.clip(rect);
-
-                layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, layerPaintBehavior);
+            if (dirtyRects.size() == 1)
+                layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, dirtyRects[0], layerPaintBehavior);
+            else {
+                for (const auto& rect : dirtyRects) {
+                    GraphicsContextStateSaver stateSaver(graphicsContext);
+                    graphicsContext.clip(rect);
+                    layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, layerPaintBehavior);
+                }
             }
 
 #if PLATFORM(MAC)

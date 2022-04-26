@@ -533,11 +533,13 @@ void GraphicsLayer::setPaintingPhase(OptionSet<GraphicsLayerPaintingPhase> phase
 
 void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
-    FloatSize offset = offsetFromRenderer() - toFloatSize(scrollOffset());
-    context.translate(-offset);
+    auto offset = offsetFromRenderer() - toFloatSize(scrollOffset());
+    auto clipRect = clip;
 
-    FloatRect clipRect(clip);
-    clipRect.move(offset);
+    if (!offset.isZero()) {
+        context.translate(-offset);
+        clipRect.move(offset);
+    }
 
     client().paintContents(this, context, clipRect, layerPaintBehavior);
 }
