@@ -1,3 +1,13 @@
+2022-04-26  Ziran Sun  <zsun@igalia.com>
+
+        Constructed FormData object should not contain an entry for the submit button that was used to submit the form
+        https://bugs.webkit.org/show_bug.cgi?id=239070
+
+        Reviewed by Chris Dumez.
+
+        Update test expectation as the sub-test is now passing.
+        * web-platform-tests/html/semantics/forms/form-submission-0/constructing-form-data-set-expected.txt:
+
 2022-04-26  Youenn Fablet  <youenn@apple.com>
 
         Service Worker loads should not expose some ResourceTiming information

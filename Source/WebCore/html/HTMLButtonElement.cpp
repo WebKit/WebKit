@@ -141,10 +141,8 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
             document().updateLayoutIgnorePendingStylesheets();
 
             if (auto currentForm = form()) {
-                if (m_type == SUBMIT) {
-                    SetForScope activatedSubmitState(m_isActivatedSubmit, true);
+                if (m_type == SUBMIT)
                     currentForm->submitIfPossible(&event, this);
-                }
 
                 if (m_type == RESET)
                     currentForm->reset();

@@ -127,7 +127,7 @@ public:
 
     static HTMLFormElement* findClosestFormAncestor(const Element&);
     
-    RefPtr<DOMFormData> constructEntryList(Ref<DOMFormData>&&, StringPairVector*);
+    RefPtr<DOMFormData> constructEntryList(RefPtr<HTMLFormControlElement>&&, Ref<DOMFormData>&&, StringPairVector*);
     
 private:
     HTMLFormElement(const QualifiedName&, Document&);
@@ -146,7 +146,7 @@ private:
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
-    void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger, HTMLFormControlElement* submitter = nullptr);
+    void submit(Event*, bool processingUserGesture, FormSubmissionTrigger, HTMLFormControlElement* submitter = nullptr);
 
     void submitDialog(Ref<FormSubmission>&&);
 

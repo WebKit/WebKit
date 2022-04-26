@@ -213,7 +213,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     auto domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmissionOrURLParsing());
     StringPairVector formValues;
 
-    auto result = form.constructEntryList(WTFMove(domFormData), &formValues);
+    auto result = form.constructEntryList(submitter.copyRef(), WTFMove(domFormData), &formValues);
     RELEASE_ASSERT(result);
     domFormData = result.releaseNonNull();
 

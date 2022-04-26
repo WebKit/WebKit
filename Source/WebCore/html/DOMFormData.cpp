@@ -48,7 +48,7 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
     if (!form)
         return formData;
     
-    auto result = form->constructEntryList(WTFMove(formData), nullptr);
+    auto result = form->constructEntryList(nullptr, WTFMove(formData), nullptr);
     
     if (!result)
         return Exception { InvalidStateError, "Already constructing Form entry list."_s };

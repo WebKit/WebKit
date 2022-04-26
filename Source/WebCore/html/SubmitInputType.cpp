@@ -74,10 +74,8 @@ void SubmitInputType::handleDOMActivateEvent(Event& event)
     // the Form or button relationships.
     protectedElement->document().updateLayoutIgnorePendingStylesheets();
 
-    protectedElement->setActivatedSubmit(true);
     if (RefPtr currentForm = protectedElement->form())
         currentForm->submitIfPossible(&event, element()); // Event handlers can run.
-    protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();
 }
 

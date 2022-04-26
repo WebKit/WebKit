@@ -323,17 +323,17 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     m_isSubmittingOrPreparingForSubmission = false;
 
     if (m_shouldSubmit)
-        submit(event, true, !submitter, trigger, submitter);
+        submit(event, !submitter, trigger, submitter);
 }
 
 void HTMLFormElement::submit()
 {
-    submit(nullptr, false, true, NotSubmittedByJavaScript);
+    submit(nullptr, true, NotSubmittedByJavaScript);
 }
 
 void HTMLFormElement::submitFromJavaScript()
 {
-    submit(nullptr, false, UserGestureIndicator::processingUserGesture(), SubmittedByJavaScript);
+    submit(nullptr, UserGestureIndicator::processingUserGesture(), SubmittedByJavaScript);
 }
 
 ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
@@ -393,7 +393,7 @@ RefPtr<HTMLFormControlElement> HTMLFormElement::findSubmitButton(HTMLFormControl
     return firstSuccessfulSubmitButton;
 }
 
-void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger trigger, HTMLFormControlElement* submitter)
+void HTMLFormElement::submit(Event* event, bool processingUserGesture, FormSubmissionTrigger trigger, HTMLFormControlElement* submitter)
 {
     // The submitIfPossible function also does this check, but we need to do it here
     // too, since there are some code paths that bypass that function.
@@ -416,9 +416,16 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     m_isSubmittingOrPreparingForSubmission = true;
     m_wasUserSubmitted = processingUserGesture;
 
-    auto firstSuccessfulSubmitButton = findSubmitButton(submitter, activateSubmitButton);
-    if (firstSuccessfulSubmitButton)
-        firstSuccessfulSubmitButton->setActivatedSubmit(true);
+    if (event && !submitter) {
+        // In a case of implicit submission without a submit button, 'submit' event handler might add a submit button. We search for a submit button again.
+        auto associatedElements = copyAssociatedElementsVector();
+        for (auto& element : associatedElements) {
+            if (auto* control = dynamicDowncast<HTMLFormControlElement>(element.get()); control && control->isSuccessfulSubmitButton()) {
+                submitter = control;
+                break;
+            }
+        }
+    }
 
     Ref protectedThis { *this }; // Form submission can execute arbitary JavaScript.
 
@@ -443,9 +450,6 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
         submitDialog(WTFMove(formSubmission));
     else
         frame->loader().submitForm(WTFMove(formSubmission));
-
-    if (firstSuccessfulSubmitButton)
-        firstSuccessfulSubmitButton->setActivatedSubmit(false);
 
     m_shouldSubmit = false;
     m_isSubmittingOrPreparingForSubmission = false;
@@ -1016,7 +1020,7 @@ const AtomString& HTMLFormElement::autocomplete() const
     return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? offAtom() : onAtom();
 }
 
-RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFormData, StringPairVector* formValues)
+RefPtr<DOMFormData> HTMLFormElement::constructEntryList(RefPtr<HTMLFormControlElement>&& submitter, Ref<DOMFormData>&& domFormData, StringPairVector* formValues)
 {
     // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#constructing-form-data-set
     ASSERT(isMainThread());
@@ -1025,6 +1029,9 @@ RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFo
         return nullptr;
     
     SetForScope isConstructingEntryListScope(m_isConstructingEntryList, true);
+
+    if (submitter)
+        submitter->setActivatedSubmit(true);
     
     for (auto& control : this->copyAssociatedElementsVector()) {
         auto& element = control->asHTMLElement();
@@ -1040,6 +1047,9 @@ RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFo
     }
     
     dispatchEvent(FormDataEvent::create(eventNames().formdataEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::No, domFormData.copyRef()));
+
+    if (submitter)
+        submitter->setActivatedSubmit(false);
     
     return domFormData->clone();
 }

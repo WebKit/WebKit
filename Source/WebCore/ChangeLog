@@ -1,3 +1,31 @@
+2022-04-26  Ziran Sun  <zsun@igalia.com>
+
+        Constructed FormData object should not contain an entry for the submit button that was used to submit the form
+        https://bugs.webkit.org/show_bug.cgi?id=239070
+
+        Reviewed by Chris Dumez.
+
+        When the activedSubmit flag is set for a submit button, its value is appended to a FormData. In the case of form
+        submission called in submit event handler, we include submit button when build FormData. The submit button should
+        not be included though. This patch correct it by calling set the activatedSubmit flag just before or after building
+        FormData.
+        
+        Part of the patch is an import of Chromium CL at
+        https://codereview.chromium.org/2340213002
+
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::create):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::constructEntryList):
+        * html/HTMLFormElement.h:
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::handleDOMActivateEvent):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+
 2022-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         Save a few drawing operations when painting layer contents
