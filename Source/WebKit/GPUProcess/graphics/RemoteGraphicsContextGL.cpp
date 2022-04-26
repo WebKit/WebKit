@@ -78,6 +78,8 @@ RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
 {
     ASSERT(!m_streamConnection);
     ASSERT(!m_context);
+    // Might be destroyed on main thread or stream processing thread.
+    m_streamThread.reset();
 }
 
 void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
@@ -104,7 +106,7 @@ void RemoteGraphicsContextGL::displayWasReconfigured()
 {
     assertIsMainRunLoop();
     remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = Ref { *this }]() {
-        assertIsCurrent(protectedThis->workQueue());
+        assertIsCurrent(protectedThis->m_streamThread);
         protectedThis->m_context->updateContextOnDisplayReconfiguration();
     });
 }
@@ -112,7 +114,8 @@ void RemoteGraphicsContextGL::displayWasReconfigured()
 
 void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    assertIsCurrent(workQueue());
+    m_streamThread.reset();
+    assertIsCurrent(m_streamThread);
     platformWorkQueueInitialize(WTFMove(attributes));
     if (m_context) {
         m_context->addClient(*this);
@@ -125,19 +128,19 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
 
 void RemoteGraphicsContextGL::workQueueUninitialize()
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     m_context = nullptr;
     m_streamConnection = nullptr;
 }
 
 void RemoteGraphicsContextGL::didComposite()
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
 }
 
 void RemoteGraphicsContextGL::forceContextLost()
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
@@ -148,13 +151,13 @@ void RemoteGraphicsContextGL::recycleContext()
 
 void RemoteGraphicsContextGL::dispatchContextChangedNotification()
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     send(Messages::RemoteGraphicsContextGLProxy::WasChanged());
 }
 
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     if (width && height)
         m_context->reshape(width, height);
     else
@@ -164,7 +167,7 @@ void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
 #if !PLATFORM(COCOA) && !PLATFORM(WIN)
 void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     notImplemented();
     completionHandler();
 }
@@ -172,25 +175,25 @@ void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& comp
 
 void RemoteGraphicsContextGL::synthesizeGLError(uint32_t error)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     m_context->synthesizeGLError(static_cast<GCGLenum>(error));
 }
 
 void RemoteGraphicsContextGL::getError(CompletionHandler<void(uint32_t)>&& completionHandler)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     completionHandler(static_cast<uint32_t>(m_context->getError()));
 }
 
 void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     m_context->ensureExtensionEnabled(extension);
 }
 
 void RemoteGraphicsContextGL::markContextChanged()
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     m_context->markContextChanged();
 }
 
@@ -203,7 +206,7 @@ void RemoteGraphicsContextGL::paintRenderingResultsToCanvas(WebCore::RenderingRe
 
 void RemoteGraphicsContextGL::paintRenderingResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     paintPixelBufferToImageBuffer(m_context->readRenderingResultsForPainting(), imageBuffer, WTFMove(completionHandler));
 }
 
@@ -216,13 +219,13 @@ void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingR
 
 void RemoteGraphicsContextGL::paintCompositedResultsToCanvasWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     paintPixelBufferToImageBuffer(m_context->readCompositedResultsForPainting(), imageBuffer, WTFMove(completionHandler));
 }
 
 void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCore::PixelBuffer>&& pixelBuffer, QualifiedRenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     // FIXME: We do not have functioning read/write fences in RemoteRenderingBackend. Thus this is synchronous,
     // as are the messages that call these.
     Lock lock;
@@ -252,7 +255,7 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCor
 
 void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifier mediaPlayerIdentifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
 {
-    assertIsCurrent(m_workQueue());
+    assertIsCurrent(m_streamThread);
 #if USE(AVFOUNDATION)
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(target, target == GraphicsContextGL::TEXTURE_2D);
@@ -298,7 +301,7 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
 
 void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     // FIXME: only run this in testing mode. https://bugs.webkit.org/show_bug.cgi?id=222544
     if (event == WebCore::GraphicsContextGL::SimulatedEventForTesting::Timeout) {
         // Simulate the timeout by just discarding the context. The subsequent messages act like
