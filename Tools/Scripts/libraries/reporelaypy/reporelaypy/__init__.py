@@ -44,7 +44,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 5, 1)
+version = Version(0, 5, 2)
 
 import webkitflaskpy
 
@@ -55,7 +55,7 @@ from reporelaypy.hooks import HookProcessor, HookReceiver
 
 AutoInstall.register(Package('fakeredis', Version(1, 5, 2)))
 AutoInstall.register(Package('hiredis', Version(1, 1, 0)))
-AutoInstall.register(Package('lupa', Version(1, 9)))
+AutoInstall.register(Package('lupa', Version(1, 13)))
 AutoInstall.register(Package('redis', Version(3, 5, 3)))
 AutoInstall.register(Package('sortedcontainers', Version(2, 4, 0)))
 

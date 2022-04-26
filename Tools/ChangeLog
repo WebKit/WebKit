@@ -1,3 +1,17 @@
+2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        Cannot run test-webkitpy, autoinstaller fails to compile lupa
+        https://bugs.webkit.org/show_bug.cgi?id=239786
+
+        Reviewed by Jonathan Bedard.
+
+        We can fix this by updating to a newer version of lupa.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py:
+        * Scripts/libraries/reporelaypy/setup.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py:
+        * Scripts/libraries/resultsdbpy/setup.py:
+
 2022-04-21  Jonathan Bedard  <jbedard@apple.com>
 
         [build.webkit.org] Support identifiers on dashboard (Follow-up fix)
