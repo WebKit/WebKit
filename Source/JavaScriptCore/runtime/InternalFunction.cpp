@@ -137,6 +137,7 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+    JSGlobalObject* baseGlobalObject = baseClass->globalObject();
 
     ASSERT(baseClass->hasMonoProto());
 
@@ -146,21 +147,21 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
     if (LIKELY(targetFunction)) {
         FunctionRareData* rareData = targetFunction->ensureRareData(vm);
         Structure* structure = rareData->internalFunctionAllocationStructure();
-        if (LIKELY(structure && structure->classInfo() == baseClass->classInfo() && structure->globalObject() == baseClass->globalObject()))
+        if (LIKELY(structure && structure->classInfo() == baseClass->classInfo() && structure->globalObject() == baseGlobalObject))
             return structure;
 
         // Note, Reflect.construct might cause the profile to churn but we don't care.
         JSValue prototypeValue = targetFunction->get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue))
-            return rareData->createInternalFunctionAllocationStructureFromBase(vm, prototype->globalObject(vm), prototype, baseClass);
+            return rareData->createInternalFunctionAllocationStructureFromBase(vm, baseGlobalObject, prototype, baseClass);
     } else {
         JSValue prototypeValue = newTarget->get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
         if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue)) {
             // This only happens if someone Reflect.constructs our builtin constructor with another builtin constructor as the new.target.
             // Thus, we don't care about the cost of looking up the structure from our hash table every time.
-            return vm.structureCache.emptyStructureForPrototypeFromBaseStructure(prototype->globalObject(vm), prototype, baseClass);
+            return vm.structureCache.emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseClass);
         }
     }
     
