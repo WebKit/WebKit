@@ -261,31 +261,6 @@ void AXObjectCache::findModalNodes()
     m_modalNodesInitialized = true;
 }
 
-bool AXObjectCache::modalElementHasAccessibleContent(Element& element)
-{
-    // Unless you're trying to compute the new modal node, determining whether an element
-    // has accessible content is as easy as !getOrCreate(element)->children().isEmpty().
-    // So don't call this method on anything besides modal elements.
-    ASSERT(isModalElement(element));
-
-    // Because computing any object's children() is dependent on whether a modal is on the page,
-    // we'll need to walk the DOM and find non-ignored AX objects manually.
-    Vector<Node*> nodeStack = { element.firstChild() };
-    while (!nodeStack.isEmpty()) {
-        for (auto* node = nodeStack.takeLast(); node; node = node->nextSibling()) {
-            if (auto* axObject = getOrCreate(node)) {
-                if (!axObject->computeAccessibilityIsIgnored())
-                    return true;
-            }
-
-            // Don't descend into subtrees for non-visible nodes.
-            if (isNodeVisible(node))
-                nodeStack.append(node->firstChild());
-        }
-    }
-    return false;
-}
-
 Element* AXObjectCache::currentModalNode()
 {
     // There might be multiple modal dialog nodes.
@@ -305,20 +280,14 @@ Element* AXObjectCache::currentModalNode()
     RefPtr<Element> focusedElement = document().focusedElement();
     RefPtr<Element> lastVisible;
     for (auto& element : m_modalElementsSet) {
-        // Elements in m_modalElementsSet may have become un-modal since we added them, but not yet removed
-        // as part of the asynchronous m_deferredModalChangedList handling. Skip these.
-        if (!element || !isModalElement(*element))
-            continue;
+        if (isNodeVisible(element)) {
+            if (focusedElement && focusedElement->isDescendantOf(element)) {
+                m_currentModalElement = element;
+                break;
+            }
 
-        // To avoid trapping users in an empty modal, skip any non-visible element, or any element without accessible content.
-        if (!isNodeVisible(element) || !modalElementHasAccessibleContent(*element))
-            continue;
-
-        if (focusedElement && focusedElement->isDescendantOf(element)) {
-            m_currentModalElement = element;
-            break;
+            lastVisible = element;
         }
-        lastVisible = element;
     }
 
     if (!m_currentModalElement)
