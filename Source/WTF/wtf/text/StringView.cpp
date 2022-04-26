@@ -386,6 +386,38 @@ size_t StringView::reverseFind(StringView matchString, unsigned start) const
     return reverseFindInner(characters16(), matchString.characters16(), start, ourLength, matchLength);
 }
 
+String makeStringByReplacingAll(StringView string, UChar target, UChar replacement)
+{
+    if (string.is8Bit()) {
+        if (!isLatin1(target)) {
+            // Looking for a 16-bit character in an 8-bit string, so we're done.
+            return string.toString();
+        }
+
+        auto* characters = string.characters8();
+        unsigned i;
+        unsigned length = string.length();
+        for (i = 0; i != length; ++i) {
+            if (characters[i] == target)
+                break;
+        }
+        if (i == length)
+            return string.toString();
+        return StringImpl::createByReplacingInCharacters(characters, length, target, replacement, i);
+    }
+
+    auto* characters = string.characters16();
+    unsigned i;
+    unsigned length = string.length();
+    for (i = 0; i != length; ++i) {
+        if (characters[i] == target)
+            break;
+    }
+    if (i == length)
+        return string.toString();
+    return StringImpl::createByReplacingInCharacters(characters, length, target, replacement, i);
+}
+
 int codePointCompare(StringView lhs, StringView rhs)
 {
     bool lhsIs8Bit = lhs.is8Bit();

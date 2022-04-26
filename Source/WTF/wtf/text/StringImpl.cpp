@@ -200,6 +200,9 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     return constructInternal<CharacterType>(*string, length);
 }
 
+template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned length, LChar*& data);
+template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned length, UChar*& data);
+
 Ref<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)
 {
     return createUninitializedInternal(length, data);
@@ -1092,61 +1095,30 @@ Ref<StringImpl> StringImpl::replace(UChar target, UChar replacement)
 {
     if (target == replacement)
         return *this;
-    unsigned i;
-    for (i = 0; i != m_length; ++i) {
-        UChar character = is8Bit() ? m_data8[i] : m_data16[i];
-        if (character == target)
-            break;
-    }
-    if (i == m_length)
-        return *this;
 
     if (is8Bit()) {
         if (!isLatin1(target)) {
             // Looking for a 16-bit character in an 8-bit string, so we're done.
             return *this;
         }
-
-        if (isLatin1(replacement)) {
-            LChar* data;
-            LChar oldChar = static_cast<LChar>(target);
-            LChar newChar = static_cast<LChar>(replacement);
-
-            auto newImpl = createUninitializedInternalNonEmpty(m_length, data);
-
-            for (i = 0; i != m_length; ++i) {
-                LChar character = m_data8[i];
-                if (character == oldChar)
-                    character = newChar;
-                data[i] = character;
-            }
-            return newImpl;
-        }
-
-        UChar* data;
-        auto newImpl = createUninitializedInternalNonEmpty(m_length, data);
-
+        unsigned i;
         for (i = 0; i != m_length; ++i) {
-            UChar character = m_data8[i];
-            if (character == target)
-                character = replacement;
-            data[i] = character;
+            if (static_cast<UChar>(m_data8[i]) == target)
+                break;
         }
-
-        return newImpl;
+        if (i == m_length)
+            return *this;
+        return createByReplacingInCharacters(m_data8, m_length, target, replacement, i);
     }
 
-    UChar* data;
-    auto newImpl = createUninitializedInternalNonEmpty(m_length, data);
-
-    copyCharacters(data, m_data16, i);
-    for (unsigned j = i; j != m_length; ++j) {
-        UChar character = m_data16[j];
-        if (character == target)
-            character = replacement;
-        data[j] = character;
+    unsigned i;
+    for (i = 0; i != m_length; ++i) {
+        if (m_data16[i] == target)
+            break;
     }
-    return newImpl;
+    if (i == m_length)
+        return *this;
+    return createByReplacingInCharacters(m_data16, m_length, target, replacement, i);
 }
 
 Ref<StringImpl> StringImpl::replace(unsigned position, unsigned lengthToReplace, StringView string)

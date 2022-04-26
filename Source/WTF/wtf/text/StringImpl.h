@@ -259,6 +259,9 @@ public:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(unsigned length, UChar*&);
     template<typename CharacterType> static RefPtr<StringImpl> tryCreateUninitialized(unsigned length, CharacterType*&);
 
+    static Ref<StringImpl> createByReplacingInCharacters(const LChar*, unsigned length, UChar target, UChar replacement, unsigned indexOfFirstTargetCharacter);
+    static Ref<StringImpl> createByReplacingInCharacters(const UChar*, unsigned length, UChar target, UChar replacement, unsigned indexOfFirstTargetCharacter);
+
     static Ref<StringImpl> createStaticStringImpl(const char* characters, unsigned length)
     {
         ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
@@ -1322,6 +1325,44 @@ inline Ref<StringImpl> StringImpl::removeCharacters(const Predicate& findMatch)
     if (is8Bit())
         return removeCharactersImpl(characters8(), findMatch);
     return removeCharactersImpl(characters16(), findMatch);
+}
+
+inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(const LChar* characters, unsigned length, UChar target, UChar replacement, unsigned indexOfFirstTargetCharacter)
+{
+    ASSERT(indexOfFirstTargetCharacter < length);
+    if (isLatin1(replacement)) {
+        LChar* data;
+        LChar oldChar = target;
+        LChar newChar = replacement;
+        auto newImpl = createUninitializedInternalNonEmpty(length, data);
+        memcpy(data, characters, indexOfFirstTargetCharacter);
+        for (unsigned i = indexOfFirstTargetCharacter; i != length; ++i) {
+            LChar character = characters[i];
+            data[i] = character == oldChar ? newChar : character;
+        }
+        return newImpl;
+    }
+
+    UChar* data;
+    auto newImpl = createUninitializedInternalNonEmpty(length, data);
+    for (unsigned i = 0; i != length; ++i) {
+        UChar character = characters[i];
+        data[i] = character == target ? replacement : character;
+    }
+    return newImpl;
+}
+
+inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(const UChar* characters, unsigned length, UChar target, UChar replacement, unsigned indexOfFirstTargetCharacter)
+{
+    ASSERT(indexOfFirstTargetCharacter < length);
+    UChar* data;
+    auto newImpl = createUninitializedInternalNonEmpty(length, data);
+    copyCharacters(data, characters, indexOfFirstTargetCharacter);
+    for (unsigned i = indexOfFirstTargetCharacter; i != length; ++i) {
+        UChar character = characters[i];
+        data[i] = character == target ? replacement : character;
+    }
+    return newImpl;
 }
 
 } // namespace WTF

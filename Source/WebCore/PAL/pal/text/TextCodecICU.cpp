@@ -302,7 +302,7 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
     // Encoding will change the yen sign back into a backslash.
     String copy;
     if (shouldShowBackslashAsCurrencySymbolIn(m_encodingName)) {
-        copy = makeStringByReplacingAll(string.toStringWithoutCopying(), '\\', yenSign);
+        copy = makeStringByReplacingAll(string, '\\', yenSign);
         string = copy;
     }
 

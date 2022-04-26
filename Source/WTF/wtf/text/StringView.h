@@ -1329,6 +1329,8 @@ inline String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, 
     return string;
 }
 
+WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN makeStringByReplacingAll(StringView, UChar target, UChar replacement);
+
 inline String WARN_UNUSED_RETURN makeStringBySimplifyingNewLines(const String& string)
 {
     return makeStringByReplacingAll(makeStringByReplacingAll(string, "\r\n"_s, "\n"_s), '\r', '\n');
