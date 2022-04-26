@@ -376,14 +376,6 @@ size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef objectRef,
     VM& vm = globalObject->vm();
     JSObject* object = toJS(objectRef);
 
-    if (!object) {
-        // For some reason prior to https://bugs.webkit.org/show_bug.cgi?id=235720 Clang would emit code
-        // to early return if objectRef is 0 but not after. Passing 0 should be invalid API use.
-        static bool shouldntCrash = isLinkedBeforeTypedArrayLengthQuirk();
-        RELEASE_ASSERT(shouldntCrash);
-        return 0;
-    }
-
     if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, object))
         return jsBuffer->impl()->byteLength();
     
