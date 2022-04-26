@@ -1,3 +1,27 @@
+2022-04-22  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Compute PGO profdata paths instead of searching for them at build time
+        https://bugs.webkit.org/show_bug.cgi?id=239681
+
+        Reviewed by Alexey Proskuryakov.
+
+        Production builds should always use profdata from the SDK, internal
+        release builds should use profdata from the local WebKitAdditions, and
+        everyone else should use the stub profdata. Add a PROFILE_DATA_PATH
+        build setting which implements these rules and replace the script
+        phases that checked those paths dynamically.
+
+        This fixes XCBuild validation issues in the open-source build, and
+        should prevent production builders from using stale profdata in
+        BUILT_PRODUCTS_DIR. Additionally, engineers can now build with custom
+        profile data by overriding PROFILE_DATA_PATH.
+
+        If PROFILE_DATA_PATH does not appear to be raw LLVM profiling data, it
+        is decoded using compression_tool(1).
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2022-04-25  Keith Miller  <keith_miller@apple.com>
 
         structureIDToStructureWithScratch should only do things if ADDRESS64

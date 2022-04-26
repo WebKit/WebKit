@@ -1,3 +1,13 @@
+2022-04-22  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Compute PGO profdata paths instead of searching for them at build time
+        https://bugs.webkit.org/show_bug.cgi?id=239681
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2022-04-26  Xi Ruoyao  <xry111@mengyan1223.wang>
 
         [GTK] Initialize m_eglDisplay in PlatformDisplay::PlatformDisplay(GdkDisplay*)

@@ -1,3 +1,13 @@
+2022-04-22  Elliott Williams  <emw@apple.com>
+
+        [Xcode] Compute PGO profdata paths instead of searching for them at build time
+        https://bugs.webkit.org/show_bug.cgi?id=239681
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/BaseTarget.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust some image transcoding behaviors related to "Copy Cropped Image"
