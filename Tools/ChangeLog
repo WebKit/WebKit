@@ -1,3 +1,26 @@
+2022-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        [ iOS EWS ] css3/background/background-repeat-round-auto2.html is a image failure
+        https://bugs.webkit.org/show_bug.cgi?id=238965
+        <rdar://91454381>
+
+        Reviewed by Tim Horton.
+
+        Generic shaders can produce slightly different results to optimized shaders, and
+        get swapped in racily, so disable them for testing on platforms where accelerated
+        drawing is used.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.port_adjust_environment_for_test_driver):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._setup_environ_for_driver):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.test_expectations_file_position):
+        (IOSPort):
+        (IOSPort.port_adjust_environment_for_test_driver):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.port_adjust_environment_for_test_driver):
+
 2022-04-26  Jonathan Bedard  <jbedard@apple.com>
 
         [webkit-patch] Use Commit-Queue when landing by default

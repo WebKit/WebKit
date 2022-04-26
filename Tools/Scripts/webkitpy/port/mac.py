@@ -188,6 +188,12 @@ class MacPort(DarwinPort):
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 
+    def port_adjust_environment_for_test_driver(self, env):
+        env = super(MacPort, self).port_adjust_environment_for_test_driver(env)
+        env['CA_DISABLE_GENERIC_SHADERS'] = '1'
+        env['__XPC_CA_DISABLE_GENERIC_SHADERS'] = '1'
+        return env
+
     def _clear_global_caches_and_temporary_files(self):
         self._filesystem.rmtree(os.path.expanduser('~/Library/' + self.driver_name()))
         self._filesystem.rmtree(os.path.expanduser('~/Library/Application Support/' + self.driver_name()))

@@ -110,3 +110,9 @@ class IOSPort(DevicePort):
 
     def test_expectations_file_position(self):
         return 5
+
+    def port_adjust_environment_for_test_driver(self, env):
+        env = super(IOSPort, self).port_adjust_environment_for_test_driver(env)
+        env['CA_DISABLE_GENERIC_SHADERS'] = '1'
+        env['__XPC_CA_DISABLE_GENERIC_SHADERS'] = '1'
+        return env

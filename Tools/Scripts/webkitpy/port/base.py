@@ -786,6 +786,9 @@ class Port(object):
         if name in os.environ:
             clean_env[name] = os.environ[name]
 
+    def port_adjust_environment_for_test_driver(self, env):
+        return env
+
     def setup_environ_for_server(self, server_name=None):
         # We intentionally copy only a subset of os.environ when
         # launching subprocesses to ensure consistent test results.

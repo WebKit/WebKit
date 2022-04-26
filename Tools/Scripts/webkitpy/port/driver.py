@@ -437,6 +437,9 @@ class Driver(object):
         self._append_environment_variable_path(environment, '__XPC_DYLD_LIBRARY_PATH', build_root_path)
         self._append_environment_variable_path(environment, 'DYLD_FRAMEWORK_PATH', build_root_path)
         self._append_environment_variable_path(environment, '__XPC_DYLD_FRAMEWORK_PATH', build_root_path)
+
+        self._port.port_adjust_environment_for_test_driver(environment)
+
         # Use an isolated temp directory that can be deleted after testing (especially important on Mac, as
         # CoreMedia disk cache is in the temp directory).
         environment['TMPDIR'] = str(self._driver_tempdir)
