@@ -158,16 +158,6 @@ ALWAYS_INLINE void AbstractSlotVisitor::appendHidden(const WriteBarrierBase<T, T
     appendHiddenUnbarriered(slot.get());
 }
 
-ALWAYS_INLINE void AbstractSlotVisitor::append(const WriteBarrierStructureID& slot)
-{
-    appendUnbarriered(reinterpret_cast<JSCell*>(slot.get()));
-}
-
-ALWAYS_INLINE void AbstractSlotVisitor::appendHidden(const WriteBarrierStructureID& slot)
-{
-    appendHiddenUnbarriered(reinterpret_cast<JSCell*>(slot.get()));
-}
-
 ALWAYS_INLINE void AbstractSlotVisitor::appendHiddenUnbarriered(JSValue value)
 {
     if (value.isCell())

@@ -173,7 +173,7 @@ double JSCell::toNumber(JSGlobalObject* globalObject) const
 
 JSObject* JSCell::toObjectSlow(JSGlobalObject* globalObject) const
 {
-    Integrity::auditStructureID(structureID());
+    Integrity::auditStructureID(globalObject->vm(), structureID());
     ASSERT(!isObject());
     if (isString())
         return static_cast<const JSString*>(this)->toObject(globalObject);

@@ -381,7 +381,7 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
     }
     if (m_stubRoutine) {
         for (StructureID weakReference : m_stubRoutine->weakStructures()) {
-            Structure* structure = weakReference.decode();
+            Structure* structure = vm.getStructure(weakReference);
             if (!vm.heap.isMarked(structure))
                 return false;
         }

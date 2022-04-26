@@ -61,7 +61,7 @@ public:
         return instance;
     }
 
-    Structure* objectDoingSideEffectPutWithoutCorrectSlotStatusStructure() { return m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.get(); }
+    Structure* objectDoingSideEffectPutWithoutCorrectSlotStatusStructure() { return m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.get(); }
     
 private:
     JSDollarVM(VM& vm, Structure* structure)
@@ -76,7 +76,7 @@ private:
 
     DECLARE_VISIT_CHILDREN;
 
-    WriteBarrierStructureID m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID;
+    WriteBarrier<Structure> m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure;
 };
 
 } // namespace JSC

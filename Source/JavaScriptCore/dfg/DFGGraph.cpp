@@ -262,7 +262,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     if (node->hasTransition()) {
         out.print(comma, pointerDumpInContext(node->transition(), context));
 #if USE(JSVALUE64)
-        out.print(", ID:", node->transition()->next->id().bits());
+        out.print(", ID:", node->transition()->next->id());
 #else
         out.print(", ID:", RawPointer(node->transition()->next.get()));
 #endif
