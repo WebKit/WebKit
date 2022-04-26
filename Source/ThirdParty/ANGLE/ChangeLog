@@ -1,3 +1,28 @@
+2022-04-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Update test_expectations, run_code_generation.py, angle_unittests.gni from ANGLE upstream
+        https://bugs.webkit.org/show_bug.cgi?id=239645
+
+        Unreviewed, reproducible with Tools/Scripts/update-angle --regenerate-changes-diff
+
+        These are not changed in downstream but the changes are due to stale merges.
+        Reduces the changes.diff
+
+        * changes.diff:
+        * scripts/run_code_generation.py:
+        (main):
+        * src/tests/angle_unittests.gni:
+        * src/tests/deqp_support/deqp_egl_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_egl_TestExpectations.
+        * src/tests/deqp_support/deqp_gles2_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles2_TestExpectations.
+        * src/tests/deqp_support/deqp_gles31_rotate_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles31_rotate_TestExpectations.
+        * src/tests/deqp_support/deqp_gles31_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles31_TestExpectations.
+        * src/tests/deqp_support/deqp_gles3_rotate_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles3_rotate_TestExpectations.
+        * src/tests/deqp_support/deqp_gles3_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_gles3_TestExpectations.
+        * src/tests/deqp_support/deqp_khr_gles2_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_khr_gles2_TestExpectations.
+        * src/tests/deqp_support/deqp_khr_gles31_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_khr_gles31_TestExpectations.
+        * src/tests/deqp_support/deqp_khr_gles32_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_khr_gles32_TestExpectations.
+        * src/tests/deqp_support/deqp_khr_gles3_TestExpectations: Renamed from Source/ThirdParty/ANGLE/src/tests/deqp_support/deqp_khr_gles3_TestExpectations.
+
 2022-04-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (Safari 15.4) Performance regression after uploading WebGL buffers

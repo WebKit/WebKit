@@ -254,11 +254,8 @@ def main():
                 f = open(os.path.basename(script), "r")
                 if subprocess.call([get_executable_name(f.readline()),
                                     os.path.basename(script)]) != 0:
-                    print('Error Running ' + name + ' code generator')
                     sys.exit(1)
                 f.close()
-            else:
-                print('Verifying ' + name + ' code generator')
 
         # Update the hash dictionary.
         all_new_hashes[fname] = new_hashes
