@@ -56,6 +56,7 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const Re
     , m_initiator(initiator)
     , m_resourceLoadTiming(timing)
     , m_networkLoadMetrics(networkLoadMetrics)
+    , m_isLoadedFromServiceWorker(response.source() == ResourceResponse::Source::ServiceWorker)
 {
     if (RuntimeEnabledFeatures::sharedFeatures().serverTimingEnabled() && !m_networkLoadMetrics.failsTAOCheck)
         m_serverTiming = ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming));

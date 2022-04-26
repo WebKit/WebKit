@@ -55,6 +55,7 @@ public:
     ResourceTiming isolatedCopy() &&;
 
     void overrideInitiatorName(const String& name) { m_initiator = name; }
+    bool isLoadedFromServiceWorker() const { return m_isLoadedFromServiceWorker; }
 
 private:
     ResourceTiming(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
@@ -72,6 +73,7 @@ private:
     ResourceLoadTiming m_resourceLoadTiming;
     NetworkLoadMetrics m_networkLoadMetrics;
     Vector<ServerTiming> m_serverTiming;
+    bool m_isLoadedFromServiceWorker { false };
 };
 
 } // namespace WebCore

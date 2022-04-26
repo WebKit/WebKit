@@ -1,3 +1,12 @@
+2022-04-26  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker loads should not expose some ResourceTiming information
+        https://bugs.webkit.org/show_bug.cgi?id=239608
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/resource-timing-fetch-variants.https-expected.txt:
+
 2022-04-25  Youenn Fablet  <youenn@apple.com>
 
         Service workers should not intercept embed/object related loads

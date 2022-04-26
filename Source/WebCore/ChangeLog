@@ -1,3 +1,32 @@
+2022-04-26  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker loads should not expose some ResourceTiming information
+        https://bugs.webkit.org/show_bug.cgi?id=239608
+
+        Reviewed by Alex Christensen.
+
+        Filter out some resource timing info when the load is served from a service worker.
+        While we could do the filtering on service worker side, it is best to do it within PerformanceResourceTiming
+        as native clients might still want to use non filtered data in case the service worker is returning a network load
+        as the response.
+
+        Covered by rebased test.
+
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::ResourceTiming):
+        * loader/ResourceTiming.h:
+        (WebCore::ResourceTiming::isLoadedFromServiceWorker const):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::nextHopProtocol const):
+        (WebCore::PerformanceResourceTiming::redirectStart const):
+        (WebCore::PerformanceResourceTiming::redirectEnd const):
+        (WebCore::PerformanceResourceTiming::domainLookupStart const):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd const):
+        (WebCore::PerformanceResourceTiming::connectStart const):
+        (WebCore::PerformanceResourceTiming::connectEnd const):
+        * page/PerformanceResourceTiming.h:
+        (WebCore::PerformanceResourceTiming::isLoadedFromServiceWorker const):
+
 2022-04-25  Youenn Fablet  <youenn@apple.com>
 
         Service workers should not intercept embed/object related loads
