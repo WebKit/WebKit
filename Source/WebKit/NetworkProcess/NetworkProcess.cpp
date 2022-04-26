@@ -479,7 +479,7 @@ void NetworkProcess::ensureSession(PAL::SessionID sessionID, bool shouldUseTesti
     if (sessionID.isEphemeral())
         storageSession = createPrivateStorageSession(cfIdentifier.get(), std::nullopt, WebCore::NetworkStorageSession::ShouldDisableCFURLCache::Yes);
     else if (sessionID != PAL::SessionID::defaultSessionID())
-        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get());
+        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(cfIdentifier.get(), WebCore::NetworkStorageSession::ShouldDisableCFURLCache::Yes);
 
     if (NetworkStorageSession::processMayUseCookieAPI()) {
         ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
