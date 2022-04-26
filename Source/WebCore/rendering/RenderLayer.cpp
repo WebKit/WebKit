@@ -493,7 +493,7 @@ void RenderLayer::insertOnlyThisLayer(LayerChangeTiming timing)
 
     // Remove all descendant layers from the hierarchy and add them to the new position.
     for (auto& child : childrenOfType<RenderElement>(renderer()))
-        child.moveLayers(m_parent, *this);
+        child.moveLayers(*this);
 
     if (parent()) {
         if (timing == LayerChangeTiming::StyleChange)
