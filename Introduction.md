@@ -661,7 +661,7 @@ class A : CanMakeWeakPtr<A> { }
 ...
 
 function foo(A& a) {
-    WeakPtr<A> weakA = makeWeakPtr(a);
+    WeakPtr<A> weakA = a;
 }
 ```
 
