@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerOverrideLoad(urlSuffix) {
+    let url = "http://127.0.0.1:8000/inspector/network/resources/override.txt";
+    if (urlSuffix)
+        url += urlSuffix;
+    fetch(url).catch(() => {
+        TestPage.dispatchEventToFrontend("LoadComplete");
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.interceptRequestWithError");
+
+    function addTestCase({name, description, expression, overrides}) {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let localResourceOverrides = overrides.map((override) => {
+                    InspectorTest.log("Creating Local Resource Override for: " + override.url);
+                    let localResourceOverride = WI.LocalResourceOverride.create(override.url, WI.LocalResourceOverride.InterceptType.Block, override);
+                    WI.networkManager.addLocalResourceOverride(localResourceOverride);
+                    return localResourceOverride;
+                });
+
+                InspectorTest.log("Triggering load...");
+                let [resourceWasAddedEvent] = await Promise.all([
+                    WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                    WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFail),
+                    InspectorTest.awaitEvent("LoadComplete"),
+                    InspectorTest.evaluateInPage(expression),
+                ]);
+
+                let resource = resourceWasAddedEvent.data.resource;
+                InspectorTest.assert(resource.failed, "Should fail to load");
+                InspectorTest.log(`Resource with url '${resource.url}' failed to load with error '${resource.failureReasonText}'.`);
+
+                for (let localResourceOverride of localResourceOverrides)
+                    WI.networkManager.removeLocalResourceOverride(localResourceOverride);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Network.interceptRequestWithError.ResourceErrorType.General",
+        description: "Block request wth general error.",
+        expression: `triggerOverrideLoad("#General")`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            resourceErrorType: WI.LocalResourceOverride.ResourceErrorType.General,
+        }],
+    });
+
+    addTestCase({
+        name: "Network.interceptRequestWithError.ResourceErrorType.AccessControl",
+        description: "Block request wth access control error.",
+        expression: `triggerOverrideLoad("#AccessControl")`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            resourceErrorType: WI.LocalResourceOverride.ResourceErrorType.AccessControl,
+        }],
+    });
+
+    addTestCase({
+        name: "Network.interceptRequestWithError.ResourceErrorType.Cancellation",
+        description: "Block request wth cancellation error.",
+        expression: `triggerOverrideLoad("#Cancellation")`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            resourceErrorType: WI.LocalResourceOverride.ResourceErrorType.Cancellation,
+        }],
+    });
+
+    addTestCase({
+        name: "Network.interceptRequestWithError.ResourceErrorType.Timeout",
+        description: "Block request wth timeout error.",
+        expression: `triggerOverrideLoad("#Timeout")`,
+        overrides: [{
+            url: "http://127.0.0.1:8000/inspector/network/resources/override.txt",
+            resourceErrorType: WI.LocalResourceOverride.ResourceErrorType.Timeout,
+        }],
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test request interception with response.</p>
+</body>
+</html>

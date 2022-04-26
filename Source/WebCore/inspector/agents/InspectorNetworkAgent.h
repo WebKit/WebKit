@@ -43,6 +43,7 @@
 #include <wtf/RobinHoodHashMap.h>
 
 namespace Inspector {
+class ConsoleMessage;
 class InjectedScriptManager;
 }
 
@@ -68,6 +69,8 @@ class InspectorNetworkAgent : public InspectorAgentBase, public Inspector::Netwo
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ~InspectorNetworkAgent() override;
+
+    static constexpr ASCIILiteral errorDomain() { return "InspectorNetworkAgent"_s; }
 
     static bool shouldTreatAsText(const String& mimeType);
     static Ref<TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);
@@ -138,6 +141,7 @@ protected:
     virtual Vector<WebSocket*> activeWebSockets() WTF_REQUIRES_LOCK(WebSocket::allActiveWebSocketsLock()) = 0;
     virtual void setResourceCachingDisabledInternal(bool) = 0;
     virtual ScriptExecutionContext* scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&) = 0;
+    virtual void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) = 0;
     virtual bool shouldForceBufferingNetworkResourceData() const = 0;
 
 private:

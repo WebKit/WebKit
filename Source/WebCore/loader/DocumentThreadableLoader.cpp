@@ -44,6 +44,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorNetworkAgent.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
 #include "MixedContentChecker.h"
@@ -754,7 +755,7 @@ void DocumentThreadableLoader::reportIntegrityMetadataError(const CachedResource
 void DocumentThreadableLoader::logErrorAndFail(const ResourceError& error)
 {
     if (m_shouldLogError == ShouldLogError::Yes) {
-        if (error.isAccessControl() && !error.localizedDescription().isEmpty())
+        if (error.isAccessControl() && error.domain() != InspectorNetworkAgent::errorDomain() && !error.localizedDescription().isEmpty())
             m_document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
         logError(m_document, error, m_options.initiator);
     }

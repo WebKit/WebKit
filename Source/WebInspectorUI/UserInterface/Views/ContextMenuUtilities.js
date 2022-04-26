@@ -95,6 +95,13 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
                     initiatorHint: WI.TabBrowser.TabNavigationInitiator.ContextMenu,
                 });
             });
+
+            if (WI.NetworkManager.supportsBlockingRequests()) {
+                contextMenu.appendItem(WI.UIString("Block Request URL"), async () => {
+                    let localResourceOverride = await sourceCode.createLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Block);
+                    WI.networkManager.addLocalResourceOverride(localResourceOverride);
+                });
+            }
         } else {
             let localResourceOverride = WI.networkManager.localResourceOverridesForURL(sourceCode.url)[0];
             if (localResourceOverride) {

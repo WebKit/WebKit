@@ -71,4 +71,9 @@ ScriptExecutionContext* WorkerNetworkAgent::scriptExecutionContext(Protocol::Err
     return &m_globalScope;
 }
 
+void WorkerNetworkAgent::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
+{
+    m_globalScope.addConsoleMessage(WTFMove(message));
+}
+
 } // namespace WebCore

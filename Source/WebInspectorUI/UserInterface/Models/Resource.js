@@ -184,11 +184,17 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         let classes = [];
 
+        let localResourceOverride = resource.localResourceOverride || WI.networkManager.localResourceOverridesForURL(resource.url).filter((localResourceOverride) => !localResourceOverride.disabled)[0];
         let isOverride = !!resource.localResourceOverride;
         let wasOverridden = resource.responseSource === WI.Resource.ResponseSource.InspectorOverride;
-        let shouldBeOverridden = resource.isLoading() && WI.networkManager.localResourceOverridesForURL(resource.url).some((localResourceOverride) => !localResourceOverride.disabled);
-        if (isOverride || wasOverridden || shouldBeOverridden)
+        let shouldBeOverridden = resource.isLoading() && localResourceOverride;
+        let shouldBeBlocked = (resource.failed || isOverride) && localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.Block;
+        if (isOverride || wasOverridden || shouldBeOverridden || shouldBeBlocked) {
             classes.push("override");
+
+            if (shouldBeBlocked || localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork)
+                classes.push("skip-network");
+        }
 
         if (resource.type === WI.Resource.Type.Other) {
             if (resource.requestedByteRange)

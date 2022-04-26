@@ -69,6 +69,7 @@
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoaderClient.h"
+#include "WebConsoleAgent.h"
 #include <wtf/URL.h>
 #include "WebSocket.h"
 #include "WebSocketChannel.h"
@@ -1311,6 +1312,26 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     return { };
 }
 
+static ResourceError::Type toResourceErrorType(Protocol::Network::ResourceErrorType protocolResourceErrorType)
+{
+    switch (protocolResourceErrorType) {
+    case Protocol::Network::ResourceErrorType::General:
+        return ResourceError::Type::General;
+
+    case Protocol::Network::ResourceErrorType::AccessControl:
+        return ResourceError::Type::AccessControl;
+
+    case Protocol::Network::ResourceErrorType::Cancellation:
+        return ResourceError::Type::Cancellation;
+
+    case Protocol::Network::ResourceErrorType::Timeout:
+        return ResourceError::Type::Timeout;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ResourceError::Type::Null;
+}
+
 Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId& requestId, Protocol::Network::ResourceErrorType errorType)
 {
     auto pendingRequest = m_pendingInterceptRequests.take(requestId);
@@ -1321,25 +1342,9 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(c
     if (loader.reachedTerminalState())
         return makeUnexpected("Unable to abort request, it has already been processed"_s);
 
-    switch (errorType) {
-    case Protocol::Network::ResourceErrorType::General:
-        loader.didFail(ResourceError(errorDomainWebKitInternal, 0, loader.url(), "Request intercepted"_s, ResourceError::Type::General));
-        return { };
+    addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Info, makeString("Web Inspector blocked ", loader.url().string(), " from loading"), loader.identifier().toUInt64()));
 
-    case Protocol::Network::ResourceErrorType::AccessControl:
-        loader.didFail(ResourceError(errorDomainWebKitInternal, 0, loader.url(), "Access denied"_s, ResourceError::Type::AccessControl));
-        return { };
-
-    case Protocol::Network::ResourceErrorType::Cancellation:
-        loader.didFail(ResourceError(errorDomainWebKitInternal, 0, loader.url(), "Request canceled"_s, ResourceError::Type::Cancellation));
-        return { };
-
-    case Protocol::Network::ResourceErrorType::Timeout:
-        loader.didFail(ResourceError(errorDomainWebKitInternal, 0, loader.url(), "Request timed out"_s, ResourceError::Type::Timeout));
-        return { };
-    }
-
-    ASSERT_NOT_REACHED();
+    loader.didFail(ResourceError(InspectorNetworkAgent::errorDomain(), 0, loader.url(), "Blocked by Web Inspector"_s, toResourceErrorType(errorType)));
     return { };
 }
 

@@ -28,8 +28,9 @@ WI.LocalResourceOverrideRequestContentView = class LocalResourceOverrideRequestC
     constructor(localResourceOverride)
     {
         console.assert(localResourceOverride instanceof WI.LocalResourceOverride, localResourceOverride);
-        console.assert(localResourceOverride.type === WI.LocalResourceOverride.InterceptType.Request, localResourceOverride);
-        console.assert(WI.NetworkManager.supportsOverridingRequests());
+        console.assert(localResourceOverride.type === WI.LocalResourceOverride.InterceptType.Block || localResourceOverride.type === WI.LocalResourceOverride.InterceptType.Request, localResourceOverride);
+        console.assert(localResourceOverride.type !== WI.LocalResourceOverride.InterceptType.Block || WI.NetworkManager.supportsBlockingRequests(), localResourceOverride);
+        console.assert(localResourceOverride.type !== WI.LocalResourceOverride.InterceptType.Request || WI.NetworkManager.supportsOverridingRequests(), localResourceOverride);
 
         let localResource = localResourceOverride.localResource;
         let string = localResource.requestData || "";
@@ -68,11 +69,43 @@ WI.LocalResourceOverrideRequestContentView = class LocalResourceOverrideRequestC
         this.textEditor.readOnly = false;
         this.textEditor.addEventListener(WI.TextEditor.Event.ContentDidChange, this._handleTextEditorContentDidChange, this);
 
-        let requestMethod = this.representedObject.localResource.requestMethod;
-        if (!WI.HTTPUtilities.RequestMethodsWithBody.has(requestMethod)) {
-            let message = WI.createMessageTextView(WI.UIString("%s requests do not have a body").format(requestMethod));
-            this.element.appendChild(message);
+        let message = null;
+        switch (this.representedObject.type) {
+        case WI.LocalResourceOverride.InterceptType.Block: {
+            let selectElement = document.createElement("select");
+
+            function addOption(resourceErrorType) {
+                let optionElement = selectElement.appendChild(document.createElement("option"));
+                optionElement.textContent = WI.LocalResourceOverride.displayNameForResourceErrorType(resourceErrorType);
+                optionElement.value = resourceErrorType;
+            }
+            addOption(WI.LocalResourceOverride.ResourceErrorType.General);
+            addOption(WI.LocalResourceOverride.ResourceErrorType.Timeout);
+            addOption(WI.LocalResourceOverride.ResourceErrorType.Cancellation);
+            addOption(WI.LocalResourceOverride.ResourceErrorType.AccessControl);
+
+            selectElement.value = this.representedObject.resourceErrorType;
+            selectElement.addEventListener("change", (event) => {
+                this.representedObject.resourceErrorType = selectElement.value;
+            });
+
+            message = document.createDocumentFragment();
+            String.format(WI.UIString("Block URL with %s error"), [selectElement], String.standardFormatters, message, (a, b) => {
+                a.append(b);
+                return a;
+            });
+            break;
         }
+
+        case WI.LocalResourceOverride.InterceptType.Request: {
+            let requestMethod = this.representedObject.localResource.requestMethod;
+            if (!WI.HTTPUtilities.RequestMethodsWithBody.has(requestMethod))
+                message = WI.UIString("%s requests do not have a body").format(requestMethod);
+            break;
+        }
+        }
+        if (message)
+            this.element.appendChild(WI.createMessageTextView(message));
     }
 
     // Private

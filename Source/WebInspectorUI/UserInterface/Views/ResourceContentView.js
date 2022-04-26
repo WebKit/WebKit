@@ -87,7 +87,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
                 this._createLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("create-local-resource-override", this.createLocalResourceOverrideTooltip, "Images/NavigationItemNetworkOverride.svg", 13, 14);
                 this._createLocalResourceOverrideButtonNavigationItem.enabled = false; // Enabled when the content is available.
                 this._createLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-                if (WI.NetworkManager.supportsOverridingRequests())
+                if (WI.NetworkManager.supportsOverridingRequests() || WI.NetworkManager.supportsBlockingRequests())
                     WI.addMouseDownContextMenuHandlers(this._createLocalResourceOverrideButtonNavigationItem.element, this._populateCreateLocalResourceOverrideContextMenu.bind(this));
                 else
                     this._createLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCreateLocalResourceOverride, this);
@@ -334,16 +334,25 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         if (!this._createLocalResourceOverrideButtonNavigationItem.enabled)
             return;
 
-        contextMenu.appendItem(WI.UIString("Create Request Local Override"), () => {
-            // Request overrides cannot be created from a file as files don't have network info.
-            this._createAndShowLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Request);
-        });
+        if (WI.NetworkManager.supportsOverridingRequests()) {
+            contextMenu.appendItem(WI.UIString("Create Request Local Override"), () => {
+                // Request overrides cannot be created from a file as files don't have network info.
+                this._createAndShowLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Request);
+            });
+        }
 
         contextMenu.appendItem(WI.UIString("Create Response Local Override"), () => {
             this._createAndShowLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Response, {
                 requestInitialContent: !event.shiftKey,
             });
         });
+
+        if (WI.NetworkManager.supportsBlockingRequests()) {
+            contextMenu.appendItem(WI.UIString("Block Request URL"), async () => {
+                let localResourceOverride = await this._resource.createLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Block);
+                WI.networkManager.addLocalResourceOverride(localResourceOverride);
+            });
+        }
     }
 
     _handleCreateLocalResourceOverride(event)

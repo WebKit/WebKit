@@ -29,6 +29,7 @@
 
 #include "CommandLineAPIHost.h"
 #include "DOMWindow.h"
+#include "InspectorNetworkAgent.h"
 #include "InspectorWebAgentBase.h"
 #include "JSExecState.h"
 #include "Logging.h"
@@ -70,6 +71,9 @@ void WebConsoleAgent::didReceiveResponse(ResourceLoaderIdentifier requestIdentif
 
 void WebConsoleAgent::didFailLoading(ResourceLoaderIdentifier requestIdentifier, const ResourceError& error)
 {
+    if (error.domain() == InspectorNetworkAgent::errorDomain())
+        return;
+
     // Report failures only.
     if (error.isCancellation())
         return;

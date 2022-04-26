@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
+#include "PageConsoleClient.h"
 #include "WebSocket.h"
 #include "WebSocketChannel.h"
 
@@ -114,6 +115,11 @@ ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Protocol::Error
     }
 
     return document;
+}
+
+void PageNetworkAgent::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
+{
+    m_inspectedPage.console().addMessage(WTFMove(message));
 }
 
 } // namespace WebCore

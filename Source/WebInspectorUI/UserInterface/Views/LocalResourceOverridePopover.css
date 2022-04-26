@@ -69,7 +69,7 @@
     width: 344px;
 }
 
-.popover .local-resource-override-popover-content.response .editor.url {
+.popover .local-resource-override-popover-content:is(.response, .block) .editor.url {
     width: 330px;
 }
 

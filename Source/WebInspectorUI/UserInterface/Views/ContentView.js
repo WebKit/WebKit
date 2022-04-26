@@ -108,7 +108,7 @@ WI.ContentView = class ContentView extends WI.View
         }
 
         if (representedObject instanceof WI.LocalResourceOverride) {
-            if (representedObject.type === WI.LocalResourceOverride.InterceptType.Request)
+            if (representedObject.type === WI.LocalResourceOverride.InterceptType.Block || representedObject.type === WI.LocalResourceOverride.InterceptType.Request)
                 return new WI.LocalResourceOverrideRequestContentView(representedObject);
             return WI.ContentView.createFromRepresentedObject(representedObject.localResource);
         }
@@ -271,7 +271,7 @@ WI.ContentView = class ContentView extends WI.View
             return representedObject.sourceCode;
 
         if (representedObject instanceof WI.LocalResourceOverride) {
-            if (representedObject.type !== WI.LocalResourceOverride.InterceptType.Request)
+            if (representedObject.type === WI.LocalResourceOverride.InterceptType.Response || representedObject.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork)
                 return representedObject.localResource;
             return representedObject;
         }

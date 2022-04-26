@@ -44,6 +44,7 @@ private:
     Vector<WebSocket*> activeWebSockets() WTF_REQUIRES_LOCK(WebSocket::allActiveWebSocketsLock());
     void setResourceCachingDisabledInternal(bool);
     ScriptExecutionContext* scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&);
+    void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&);
     bool shouldForceBufferingNetworkResourceData() const { return false; }
 
     Page& m_inspectedPage;

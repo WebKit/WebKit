@@ -1,5 +1,39 @@
 2022-04-25  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: add UI for blocking requests
+        https://bugs.webkit.org/show_bug.cgi?id=239674
+
+        Reviewed by Patrick Angle.
+
+        Test: http/tests/inspector/network/intercept-request-with-error.html
+
+        * inspector/agents/InspectorNetworkAgent.h:
+        (WebCore::InspectorNetworkAgent::errorDomain): Added.
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::toResourceErrorType): Added.
+        (WebCore::InspectorNetworkAgent::interceptRequestWithError):
+        Unify the resource error message for consistency.
+        Mark the resource error as coming from Web Inspector so that it can identified (see below).
+
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::didFailLoading):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::logErrorAndFail):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFail):
+        Don't add console messages for requests that were blocked by Web Inspector.
+
+        * inspector/agents/page/PageNetworkAgent.h:
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        (WebCore::PageNetworkAgent::addConsoleMessage): Added.
+        * inspector/agents/worker/WorkerNetworkAgent.h:
+        * inspector/agents/worker/WorkerNetworkAgent.cpp:
+        (WebCore::WorkerNetworkAgent::addConsoleMessage): Added.
+        Add a `virtual` method so that `InspectorNetworkAgent` can log to the console (`PageNetworkAgent`
+        uses the `Page`, `WorkerNetworkAgent` uses the `WorkerOrWorkletGlobalScope`, etc.).
+
+2022-04-25  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: request interception should not be guarded based on service workers
         https://bugs.webkit.org/show_bug.cgi?id=239677
 

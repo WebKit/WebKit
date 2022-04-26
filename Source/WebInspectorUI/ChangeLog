@@ -1,5 +1,90 @@
 2022-04-25  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: add UI for blocking requests
+        https://bugs.webkit.org/show_bug.cgi?id=239674
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Models/LocalResourceOverride.js:
+        (WI.LocalResourceOverride):
+        (WI.LocalResourceOverride.create):
+        (WI.LocalResourceOverride.displayNameForNetworkStageOfType): Added.
+        (WI.LocalResourceOverride.displayNameForType):
+        (WI.LocalResourceOverride.displayNameForResourceErrorType): Added.
+        (WI.LocalResourceOverride.fromJSON):
+        (WI.LocalResourceOverride.prototype.toJSON):
+        (WI.LocalResourceOverride.prototype.get resourceErrorType): Added.
+        (WI.LocalResourceOverride.prototype.set resourceErrorType): Added.
+        (WI.LocalResourceOverride.prototype.get canMapToFile):
+        Add `WI.LocalResourceOverride.ResourceErrorType` (and a corresponding member variable) that
+        is be used when blocking matching requests.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.supportsBlockingRequests): Added.
+        (WI.NetworkManager.prototype.async requestIntercepted):
+        (WI.NetworkManager.prototype._handleResourceOverrideResourceErrorTypeChanged): Added.
+        Make sure to save `WI.LocalResourceOverride.InterceptType.Block` whenever the
+        `WI.LocalResourceOverride.ResourceErrorType` changes.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView):
+        (WI.ResourceContentView.prototype._populateCreateLocalResourceOverrideContextMenu):
+        (WI.ResourceContentView.prototype._handleCreateLocalResourceOverride): Deleted.
+        Add contextmenu items for "Block Request URL".
+
+        * UserInterface/Views/LocalResourceOverrideRequestContentView.js:
+        (WI.LocalResourceOverrideRequestContentView):
+        (WI.LocalResourceOverrideRequestContentView.prototype.initialLayout):
+        (WI.LocalResourceOverrideRequestContentView.prototype.initialLayout.addOption): Added.
+        * UserInterface/Views/LocalResourceOverrideRequestContentView.css:
+        (.content-view.text.local-resource-override-request > .message-text-view select): Added.
+        There will be no request or response content for `WI.LocalResourceOverride.InterceptType.Block`
+        so show a `<select>` for choosing the `WI.LocalResourceOverride.ResourceErrorType`.
+
+        * UserInterface/Views/LocalResourceOverridePopover.js:
+        (WI.LocalResourceOverridePopover.prototype.get serializedData):
+        (WI.LocalResourceOverridePopover.prototype.show):
+        * UserInterface/Views/LocalResourceOverridePopover.css:
+        (.popover .local-resource-override-popover-content:is(.response, .block) .editor.url): Renamed from `.popover .local-resource-override-popover-content.response .editor.url`.
+        Only show the URL editor for `WI.LocalResourceOverride.InterceptType.Block`.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.classNamesForResource):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement.prototype._updateResource):
+        (WI.ResourceTreeElement.prototype._updateIcon):
+        (WI.ResourceTreeElement.prototype._loadingDidFail): Added.
+        * UserInterface/Views/ResourceIcons.css:
+        (.resource-icon.override.skip-network .icon): Added.
+        (body:not(.window-inactive, .window-docked-inactive) :is(.table, .data-grid):focus-within .selected .resource-icon.override.skip-network .icon, body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .selected.resource-icon.override.skip-network .icon): Added.
+        (@media (prefers-color-scheme: dark) .resource-icon.override.skip-network .icon): Added.
+        * UserInterface/Images/SkipNetwork.svg: Added.
+        Add a new icon for when requests do not involve any network activity.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        (WI.ContentView.resolvedRepresentedObjectForRepresentedObject):
+        * UserInterface/Views/FontResourceContentView.js:
+        (WI.FontResourceContentView.prototype.dropZoneShouldAppearForDragEvent):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WI.ImageResourceContentView.prototype.dropZoneShouldAppearForDragEvent):
+        * UserInterface/Views/LocalResourceOverrideTreeElement.js:
+        (WI.LocalResourceOverrideTreeElement.prototype.willDismissPopover):
+        Use positive checks for the desired `WI.LocalResourceOverride.InterceptType` instead of
+        a negative check for the one value meant to be exlucded in the expectation that no new
+        enum values would get added (which this patch proves to be false).
+
+        * UserInterface/Views/LocalResourceOverrideLabelView.js:
+        (WI.LocalResourceOverrideLabelView.prototype.initialLayout):
+        Use the new `WI.LocalResourceOverride.displayNameForNetworkStageOfType` instead of doing
+        that work here.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2022-04-25  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: response overrides with an error status code should indicate that somewhere
         https://bugs.webkit.org/show_bug.cgi?id=239676
 

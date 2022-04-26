@@ -132,7 +132,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
         let wasSelected = this.selected;
 
-        if (serializedData.type !== WI.LocalResourceOverride.InterceptType.Request) {
+        if (serializedData.type === WI.LocalResourceOverride.InterceptType.Response || serializedData.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork) {
             let revision = this._localResourceOverride.localResource.currentRevision;
             serializedData.responseContent = revision.content;
             serializedData.responseBase64Encoded = revision.base64Encoded;

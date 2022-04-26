@@ -178,9 +178,8 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         if (existingOverrides.length > 1)
             return false;
 
-        // Request overrides cannot be created/updated from a file as files don't have network info.
         let localResourceOverride = this.resource.localResourceOverride || existingOverrides[0];
-        if (localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.Request)
+        if (localResourceOverride && !localResourceOverride.canMapToFile)
             return false;
 
         // Appear if the drop contains a file.
