@@ -1,3 +1,33 @@
+2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        Several internationalization tests broken with ICU 69.1
+        https://bugs.webkit.org/show_bug.cgi?id=239724
+
+        Reviewed by Ross Kirsling and Yusuke Suzuki.
+
+        Update these tests to be more permissive of different results for different ICU versions.
+        ICU 69 on macOS is producing different results from ICU 69 on Linux for reasons unexplained,
+        so instead of checking the version number, let's instead just accept both ways.
+
+        * stress/array-toLocaleString.js:
+        (shouldBeOneOf):
+        * stress/date-toLocaleString.js:
+        (shouldBeOneOf):
+        * stress/intl-datetimeformat-formatrange-relevant-extensions-ja.js:
+        (shouldBeOneOf):
+        (vm.icuVersion):
+        (shouldBeOneOfThem): Deleted.
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions-ja.js:
+        (shouldBeOneOf):
+        * stress/intl-datetimeformat.js:
+        (shouldBeOneOf):
+        (shouldBeOneOfThem): Deleted.
+        * stress/intl-locale-info.js:
+        (shouldBeOneOf):
+        (shouldBe):
+        * stress/intl-locale.js:
+        (shouldBeOneOf):
+
 2022-04-24  Zan Dobersek  <zdobersek@igalia.com>
 
         Skip microbenchmarks/memcpy-wasm.js and friends on non-FTL (i.e. non-WASM) platforms

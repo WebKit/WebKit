@@ -3,6 +3,11 @@ function shouldBe(actual, expected) {
         throw new Error(`expected ${expected} but got ${actual}`);
 }
 
+function shouldBeOneOf(actual, expectedArray) {
+    if (!expectedArray.some((value) => value === actual))
+        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
+}
+
 {
     let he = new Intl.Locale("he")
     shouldBe(JSON.stringify(he.weekInfo), `{"firstDay":7,"weekend":[5,6],"minimalDays":1}`);
@@ -88,7 +93,7 @@ function shouldBe(actual, expected) {
     shouldBe(JSON.stringify(locale.calendars), `["gregory","chinese"]`);
     shouldBe(JSON.stringify(locale.collations), `["pinyin","big5han","gb2312","stroke","unihan","zhuyin","emoji","eor"]`);
     shouldBe(locale.hourCycle, undefined);
-    shouldBe(JSON.stringify(locale.hourCycles), $vm.icuVersion() >= 69 ? `["h23"]` : `["h12"]`);
+    shouldBeOneOf(JSON.stringify(locale.hourCycles), [ `["h23"]`, `["h12"]` ]);
     shouldBe(JSON.stringify(locale.numberingSystems), `["latn"]`);
     shouldBe(locale.timeZones, undefined);
 }

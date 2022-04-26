@@ -3,13 +3,7 @@ function shouldBe(actual, expected) {
         throw new Error(`expected ${expected} but got ${actual}`);
 }
 
-function shouldBeOneOfThem(actual, expectedArray) {
-    // Tolerate different space characters used by different ICU versions.
-    // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
-    // regular old U+0020. Let's ignore these differences.
-    if (typeof actual === 'string')
-        actual = actual.replaceAll(' ', ' ');
-
+function shouldBeOneOf(actual, expectedArray) {
     if (!expectedArray.some((value) => value === actual))
         throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
 }
@@ -344,7 +338,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-indian', { timeZone: 'America/Los_Angeles'
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamicc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437 AH');
 shouldBe(Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2015');
-shouldBeOneOfThem(Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), [ '12/25/27 H', '12/25/H27' ]);
+shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), [ '12/25/27 H', '12/25/H27' ]);
 shouldBe(Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1394 AP');
 shouldBe(Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/104 Minguo');
 shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
@@ -763,7 +757,7 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric
     shouldBe(JSON.stringify(actual), JSON.stringify(expected));
 }
 {
-    shouldBe(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec', hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2 }), $vm.icuVersion() >= 69 ? "〇〇:〇〇:〇〇.〇〇" : "上午一二:〇〇:〇〇.〇〇");
+    shouldBeOneOf(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec', hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2 }), [ "〇〇:〇〇:〇〇.〇〇", "上午一二:〇〇:〇〇.〇〇" ]);
 }
 {
     const dtf = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Melbourne', year: 'numeric' });

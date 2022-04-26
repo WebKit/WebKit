@@ -13,6 +13,12 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
 
+function shouldBeOneOf(actual, expectedArray) {
+    actual = normalize(actual);
+    if (!expectedArray.some((value) => value === actual))
+        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
+}
+
 function compareParts(actual, expected) {
     if (actual.length !== expected.length)
         return false;
@@ -133,7 +139,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         timeZone: 'America/Los_Angeles',
         calendar: 'chinese'
     });
-    shouldBe(fmt2.format(date1), $vm.icuVersion() >= 69 ? `丙戌-11-22 2:00` : `丙戌年11月22日 2:00`);
+    shouldBeOneOf(fmt2.format(date1), [ `丙戌-11-22 2:00`, `丙戌年11月22日 2:00` ]);
     shouldBeParts(fmt2.formatRangeToParts(date1, date2), [
         {"type":"yearName","value":"丙戌","source":"shared"},
         {"type":"literal","value":"年","source":"shared"},

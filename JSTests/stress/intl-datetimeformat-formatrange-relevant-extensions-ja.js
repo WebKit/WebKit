@@ -9,7 +9,7 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
 
-function shouldBeOneOfThem(actual, expectedArray) {
+function shouldBeOneOf(actual, expectedArray) {
     // Tolerate different space characters used by different ICU versions.
     // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
     // regular old U+0020. Let's ignore these differences.
@@ -71,7 +71,7 @@ if ($vm.icuVersion() >= 64) {
         timeZone: 'America/Los_Angeles',
         calendar: 'chinese'
     });
-    shouldBe(fmt2.format(date1), $vm.icuVersion() >= 69 ? `丙戌-11-22 2:00` : `丙戌年11月22日 2:00`);
+    shouldBeOneOf(fmt2.format(date1), [ `丙戌-11-22 2:00`, `丙戌年11月22日 2:00` ]);
     shouldBe(fmt2.formatRange(date1, date2), `丙戌年11月22日 2時00分～3時00分`);
     shouldBe(fmt2.formatRange(date1, date3), `丙戌年11月22日 2:00～丙戌年12月2日 2:00`);
 
@@ -107,11 +107,11 @@ if ($vm.icuVersion() >= 64) {
     });
     shouldBe(fmt5.format(date1), `07/1/10 10:00`);
     shouldBe(fmt5.format(date8), `07/1/11 24:00`);
-    shouldBeOneOfThem(fmt5.formatRange(date1, date2), [ `07/1/10 10:00～11:00`, `07/1/10 10時00分～11時00分` ]);
+    shouldBeOneOf(fmt5.formatRange(date1, date2), [ `07/1/10 10:00～11:00`, `07/1/10 10時00分～11時00分` ]);
     shouldBe(fmt5.formatRange(date1, date3), `07/1/10 10:00～07/1/20 10:00`);
-    shouldBeOneOfThem(fmt5.formatRange(date1, date5), [ `07/1/10 10:00～12:00`, `07/1/10 10時00分～12時00分` ]);
-    shouldBeOneOfThem(fmt5.formatRange(date1, date6), [ `07/1/10 10:00～14:00`, `07/1/10 10時00分～14時00分` ]);
-    shouldBeOneOfThem(fmt5.formatRange(date1, date7), [ `07/1/10 10:00～23:00`, `07/1/10 10時00分～23時00分` ]);
+    shouldBeOneOf(fmt5.formatRange(date1, date5), [ `07/1/10 10:00～12:00`, `07/1/10 10時00分～12時00分` ]);
+    shouldBeOneOf(fmt5.formatRange(date1, date6), [ `07/1/10 10:00～14:00`, `07/1/10 10時00分～14時00分` ]);
+    shouldBeOneOf(fmt5.formatRange(date1, date7), [ `07/1/10 10:00～23:00`, `07/1/10 10時00分～23時00分` ]);
     if ($vm.icuVersion() > 66)
         shouldBe(fmt5.formatRange(date1, date8), `07/1/10 10:00～07/1/11 24:00`);
 
@@ -144,11 +144,11 @@ if ($vm.icuVersion() >= 64) {
     });
     shouldBe(fmt7.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt7.format(date8), `07/1/11 午前0:00`);
-    shouldBeOneOfThem(fmt7.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
-    shouldBeOneOfThem(fmt7.formatRange(date1, date3), [ `07/1/10 午前10:00～07/1/20 午前10:00`, `07/1/10 午前10時00分～午後0時00分` ]);
-    shouldBeOneOfThem(fmt7.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
-    shouldBeOneOfThem(fmt7.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
-    shouldBeOneOfThem(fmt7.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
+    shouldBeOneOf(fmt7.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
+    shouldBeOneOf(fmt7.formatRange(date1, date3), [ `07/1/10 午前10:00～07/1/20 午前10:00`, `07/1/10 午前10時00分～午後0時00分` ]);
+    shouldBeOneOf(fmt7.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
+    shouldBeOneOf(fmt7.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
+    shouldBeOneOf(fmt7.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
     shouldBe(fmt7.formatRange(date1, date8), `07/1/10 午前10:00～07/1/11 午前0:00`);
 
     let fmt8 = new Intl.DateTimeFormat("ja", {
@@ -182,11 +182,11 @@ if ($vm.icuVersion() >= 64) {
     });
     shouldBe(fmt9.format(date1), `07/1/10 10:00`);
     shouldBe(fmt9.format(date8), `07/1/11 24:00`);
-    shouldBeOneOfThem(fmt9.formatRange(date1, date2), [ `07/1/10 10:00～11:00`, `07/1/10 10時00分～11時00分` ]);
+    shouldBeOneOf(fmt9.formatRange(date1, date2), [ `07/1/10 10:00～11:00`, `07/1/10 10時00分～11時00分` ]);
     shouldBe(fmt9.formatRange(date1, date3), `07/1/10 10:00～07/1/20 10:00`);
-    shouldBeOneOfThem(fmt9.formatRange(date1, date5), [ `07/1/10 10:00～12:00`, `07/1/10 10時00分～12時00分` ]);
-    shouldBeOneOfThem(fmt9.formatRange(date1, date6), [ `07/1/10 10:00～14:00`, `07/1/10 10時00分～14時00分` ]);
-    shouldBeOneOfThem(fmt9.formatRange(date1, date7), [ `07/1/10 10:00～23:00`, `07/1/10 10時00分～23時00分` ]);
+    shouldBeOneOf(fmt9.formatRange(date1, date5), [ `07/1/10 10:00～12:00`, `07/1/10 10時00分～12時00分` ]);
+    shouldBeOneOf(fmt9.formatRange(date1, date6), [ `07/1/10 10:00～14:00`, `07/1/10 10時00分～14時00分` ]);
+    shouldBeOneOf(fmt9.formatRange(date1, date7), [ `07/1/10 10:00～23:00`, `07/1/10 10時00分～23時00分` ]);
     if ($vm.icuVersion() > 66)
         shouldBe(fmt9.formatRange(date1, date8), `07/1/10 10:00～07/1/11 24:00`);
 
@@ -219,11 +219,11 @@ if ($vm.icuVersion() >= 64) {
     });
     shouldBe(fmt11.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt11.format(date8), `07/1/11 午前00:00`);
-    shouldBeOneOfThem(fmt11.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
+    shouldBeOneOf(fmt11.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
     shouldBe(fmt11.formatRange(date1, date3), `07/1/10 午前10:00～07/1/20 午前10:00`);
-    shouldBeOneOfThem(fmt11.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
-    shouldBeOneOfThem(fmt11.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
-    shouldBeOneOfThem(fmt11.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
+    shouldBeOneOf(fmt11.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
+    shouldBeOneOf(fmt11.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
+    shouldBeOneOf(fmt11.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
     shouldBe(fmt11.formatRange(date1, date8), `07/1/10 午前10:00～07/1/11 午前0:00`);
 
     let fmt12 = new Intl.DateTimeFormat("ja", {
@@ -258,11 +258,11 @@ if ($vm.icuVersion() >= 64) {
     });
     shouldBe(fmt13.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt13.format(date8), `07/1/11 午前00:00`);
-    shouldBeOneOfThem(fmt13.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
+    shouldBeOneOf(fmt13.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
     shouldBe(fmt13.formatRange(date1, date3), `07/1/10 午前10:00～07/1/20 午前10:00`);
-    shouldBeOneOfThem(fmt13.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
-    shouldBeOneOfThem(fmt13.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
-    shouldBeOneOfThem(fmt13.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
+    shouldBeOneOf(fmt13.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
+    shouldBeOneOf(fmt13.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
+    shouldBeOneOf(fmt13.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
     shouldBe(fmt13.formatRange(date1, date8), `07/1/10 午前10:00～07/1/11 午前0:00`);
 
     let fmt14 = new Intl.DateTimeFormat("ja", {
@@ -277,11 +277,11 @@ if ($vm.icuVersion() >= 64) {
     });
     shouldBe(fmt14.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt14.format(date8), `07/1/11 午前00:00`);
-    shouldBeOneOfThem(fmt14.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
+    shouldBeOneOf(fmt14.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
     shouldBe(fmt14.formatRange(date1, date3), `07/1/10 午前10:00～07/1/20 午前10:00`);
-    shouldBeOneOfThem(fmt14.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
-    shouldBeOneOfThem(fmt14.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
-    shouldBeOneOfThem(fmt14.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
+    shouldBeOneOf(fmt14.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
+    shouldBeOneOf(fmt14.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
+    shouldBeOneOf(fmt14.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
     shouldBe(fmt14.formatRange(date1, date8), `07/1/10 午前10:00～07/1/11 午前0:00`);
 
     let fmt15 = new Intl.DateTimeFormat("ja", {
@@ -296,11 +296,11 @@ if ($vm.icuVersion() >= 64) {
     });
     shouldBe(fmt15.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt15.format(date8), `07/1/11 午前00:00`);
-    shouldBeOneOfThem(fmt15.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
+    shouldBeOneOf(fmt15.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
     shouldBe(fmt15.formatRange(date1, date3), `07/1/10 午前10:00～07/1/20 午前10:00`);
-    shouldBeOneOfThem(fmt15.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
-    shouldBeOneOfThem(fmt15.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
-    shouldBeOneOfThem(fmt15.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
+    shouldBeOneOf(fmt15.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
+    shouldBeOneOf(fmt15.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
+    shouldBeOneOf(fmt15.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
     shouldBe(fmt15.formatRange(date1, date8), `07/1/10 午前10:00～07/1/11 午前0:00`);
 
     let fmt16 = new Intl.DateTimeFormat("ja", {
@@ -315,10 +315,10 @@ if ($vm.icuVersion() >= 64) {
     });
     shouldBe(fmt16.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt16.format(date8), `07/1/11 午前00:00`);
-    shouldBeOneOfThem(fmt16.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
+    shouldBeOneOf(fmt16.formatRange(date1, date2), [ `07/1/10 午前10:00～午前11:00`, `07/1/10 午前10時00分～11時00分` ]);
     shouldBe(fmt16.formatRange(date1, date3), `07/1/10 午前10:00～07/1/20 午前10:00`);
-    shouldBeOneOfThem(fmt16.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
-    shouldBeOneOfThem(fmt16.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
-    shouldBeOneOfThem(fmt16.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
+    shouldBeOneOf(fmt16.formatRange(date1, date5), [ `07/1/10 午前10:00～午後0:00`, `07/1/10 午前10時00分～午後0時00分` ]);
+    shouldBeOneOf(fmt16.formatRange(date1, date6), [ `07/1/10 午前10:00～午後2:00`, `07/1/10 午前10時00分～午後2時00分` ]);
+    shouldBeOneOf(fmt16.formatRange(date1, date7), [ `07/1/10 午前10:00～午後11:00`, `07/1/10 午前10時00分～午後11時00分` ]);
     shouldBe(fmt16.formatRange(date1, date8), `07/1/10 午前10:00～07/1/11 午前0:00`);
 }

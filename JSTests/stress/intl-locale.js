@@ -3,6 +3,11 @@ function shouldBe(actual, expected) {
         throw new Error(`expected ${expected} but got ${actual}`);
 }
 
+function shouldBeOneOf(actual, expectedArray) {
+    if (!expectedArray.some((value) => value === actual))
+        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
+}
+
 function shouldNotThrow(func) {
     func();
 }
@@ -152,7 +157,7 @@ shouldBe(
         ? 'en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved'
         : 'en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-x-reserved'
 );
-shouldBe(new Intl.Locale('cel-gaulish', { script: 'Arab', numberingSystem: 'gujr' }).toString(), $vm.icuVersion() >= 69 ? 'xtg-Arab-u-nu-gujr' : 'xtg-Arab-u-nu-gujr-x-cel-gaulish');
+shouldBeOneOf(new Intl.Locale('cel-gaulish', { script: 'Arab', numberingSystem: 'gujr' }).toString(), [ 'xtg-Arab-u-nu-gujr', 'xtg-Arab-u-nu-gujr-x-cel-gaulish', 'cel-Arab-gaulish-u-nu-gujr' ]);
 shouldBe(new Intl.Locale('en-Latn-US-u-ca-gregory-co-phonebk-hc-h12-kf-upper-kn-false-nu-latn').toString(), 'en-Latn-US-u-ca-gregory-co-phonebk-hc-h12-kf-upper-kn-false-nu-latn');
 
 const options = {
@@ -229,7 +234,7 @@ shouldThrow(() => new Intl.Locale('en', { numberingSystem: 'ng' }), RangeError);
 
 shouldBe(new Intl.Locale('en-Latn-US').language, 'en');
 shouldBe(new Intl.Locale('en', { language: 'ar' }).language, 'ar');
-shouldBe(new Intl.Locale('cel-gaulish').language, 'xtg');
+shouldBeOneOf(new Intl.Locale('cel-gaulish').language, [ 'xtg', 'cel' ]);
 shouldThrow(() => new Intl.Locale('en', { language: { toString() { throw new Error(); } } }), Error);
 shouldThrow(() => new Intl.Locale('en', { language: 'fail' }), RangeError);
 
