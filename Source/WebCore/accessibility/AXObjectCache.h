@@ -471,7 +471,8 @@ private:
     Element* currentModalNode();
     bool isNodeVisible(Node*) const;
     void handleModalChange(Element&);
-    
+    bool modalElementHasAccessibleContent(Element&);
+
     Document& m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
