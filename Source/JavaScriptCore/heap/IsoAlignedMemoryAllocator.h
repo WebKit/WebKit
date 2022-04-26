@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "IsoMemoryAllocatorBase.h"
+#include "AlignedMemoryAllocator.h"
 #include <wtf/BitVector.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/HashMap.h>
@@ -34,12 +34,13 @@
 
 namespace JSC {
 
-class IsoAlignedMemoryAllocator final : public IsoMemoryAllocatorBase {
+class IsoAlignedMemoryAllocator final : public AlignedMemoryAllocator {
 public:
-    using Base = IsoMemoryAllocatorBase;
-
     IsoAlignedMemoryAllocator(CString);
     ~IsoAlignedMemoryAllocator() final;
+
+    void* tryAllocateAlignedMemory(size_t alignment, size_t size) final;
+    void freeAlignedMemory(void*) final;
 
     void dump(PrintStream&) const final;
 
@@ -47,11 +48,17 @@ public:
     void freeMemory(void*) final;
     void* tryReallocateMemory(void*, size_t) final;
 
-protected:
-    void* tryMallocBlock() final;
-    void freeBlock(void* block) final;
-    void commitBlock(void* block) final;
-    void decommitBlock(void* block) final;
+private:
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    // If breakdown is enabled, we do not ensure Iso-feature. This is totally OK since breakdown is memory bloat debugging feature.
+    WTF::DebugHeap m_debugHeap;
+#else
+    Vector<void*> m_blocks;
+    HashMap<void*, unsigned> m_blockIndices;
+    BitVector m_committed;
+    unsigned m_firstUncommitted { 0 };
+    Lock m_lock;
+#endif
 };
 
 } // namespace JSC

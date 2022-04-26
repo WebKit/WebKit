@@ -80,7 +80,7 @@ void TypeProfilerLog::processLogEntries(VM& vm, const String& reason)
         Structure* structure = nullptr;
         bool sawPolyProtoStructure = false;
         if (id) {
-            structure = id.decode();
+            structure = Heap::heap(value.asCell())->structureIDTable().get(id);
             auto iter = cachedMonoProtoShapes.find(structure);
             if (iter == cachedMonoProtoShapes.end()) {
                 auto key = std::make_pair(structure, value.asCell());
@@ -131,7 +131,7 @@ void TypeProfilerLog::visit(AbstractSlotVisitor& visitor)
     for (LogEntry* entry = m_logStartPtr; entry != m_currentLogEntryPtr; ++entry) {
         visitor.appendUnbarriered(entry->value);
         if (StructureID id = entry->structureID) {
-            Structure* structure = id.decode();
+            Structure* structure = visitor.heap()->structureIDTable().get(id); 
             visitor.appendUnbarriered(structure);
         }
     }

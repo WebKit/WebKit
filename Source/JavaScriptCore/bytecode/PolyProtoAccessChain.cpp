@@ -80,10 +80,10 @@ RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* glo
     return adoptRef(*new PolyProtoAccessChain(WTFMove(chain)));
 }
 
-bool PolyProtoAccessChain::needImpurePropertyWatchpoint(VM&) const
+bool PolyProtoAccessChain::needImpurePropertyWatchpoint(VM& vm) const
 {
     for (StructureID structureID : m_chain) {
-        if (structureID.decode()->needImpurePropertyWatchpoint())
+        if (vm.getStructure(structureID)->needImpurePropertyWatchpoint())
             return true;
     }
     return false;

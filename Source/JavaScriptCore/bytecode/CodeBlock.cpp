@@ -1192,6 +1192,7 @@ template<typename Visitor>
 void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor)
 {
     typename Visitor::SuppressGCVerifierScope suppressScope(visitor);
+    VM& vm = *m_vm;
 
     if (jitType() == JITType::InterpreterThunk) {
         if (m_metadata) {
@@ -1201,9 +1202,9 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
                 if (!oldStructureID || !newStructureID)
                     return;
 
-                Structure* oldStructure = oldStructureID.decode();
+                Structure* oldStructure = vm.heap.structureIDTable().get(oldStructureID);
                 if (visitor.isMarked(oldStructure)) {
-                    Structure* newStructure = newStructureID.decode();
+                    Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
                     visitor.appendUnbarriered(newStructure);
                 }
             });
@@ -1219,9 +1220,9 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
                 if (!visitor.isMarked(property))
                     return;
 
-                Structure* oldStructure = oldStructureID.decode();
+                Structure* oldStructure = vm.heap.structureIDTable().get(oldStructureID);
                 if (visitor.isMarked(oldStructure)) {
-                    Structure* newStructure = newStructureID.decode();
+                    Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
                     visitor.appendUnbarriered(newStructure);
                 }
             });
@@ -1237,9 +1238,9 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
                 if (!visitor.isMarked(brand))
                     return;
 
-                Structure* oldStructure = oldStructureID.decode();
+                Structure* oldStructure = vm.heap.structureIDTable().get(oldStructureID);
                 if (visitor.isMarked(oldStructure)) {
-                    Structure* newStructure = newStructureID.decode();
+                    Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
                     visitor.appendUnbarriered(newStructure);
                 }
             });
@@ -1268,7 +1269,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
         dfgCommon->recordedStatuses.markIfCheap(visitor);
         
         for (StructureID structureID : dfgCommon->m_weakStructureReferences)
-            structureID.decode()->markIfCheap(visitor);
+            vm.getStructure(structureID)->markIfCheap(visitor);
 
         for (auto& transition : dfgCommon->m_transitions) {
             if (shouldMarkTransition(visitor, transition)) {
@@ -1308,7 +1309,6 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, Visitor& visitor)
     
 #if ENABLE(DFG_JIT)
     VM& vm = *m_vm;
-    UNUSED_VARIABLE(vm);
     if (visitor.isMarked(this))
         return;
     
@@ -1333,7 +1333,7 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, Visitor& visitor)
     }
     if (allAreLiveSoFar) {
         for (StructureID structureID : dfgCommon->m_weakStructureReferences) {
-            Structure* structure = structureID.decode();
+            Structure* structure = vm.getStructure(structureID);
             if (!visitor.isMarked(structure)) {
                 allAreLiveSoFar = false;
                 break;
@@ -1367,7 +1367,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             if (modeMetadata.mode != GetByIdMode::Default)
                 return;
             StructureID oldStructureID = modeMetadata.defaultMode.structureID;
-            if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
+            if (!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 return;
             dataLogLnIf(Options::verboseOSR(), "Clearing ", opName, " LLInt property access.");
             LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(modeMetadata);
@@ -1388,19 +1388,19 @@ void CodeBlock::finalizeLLIntInlineCaches()
 
         m_metadata->forEach<OpTryGetById>([&] (auto& metadata) {
             StructureID oldStructureID = metadata.m_structureID;
-            if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
+            if (!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 return;
             dataLogLnIf(Options::verboseOSR(), "Clearing try_get_by_id LLInt property access.");
-            metadata.m_structureID = StructureID();
+            metadata.m_structureID = 0;
             metadata.m_offset = 0;
         });
 
         m_metadata->forEach<OpGetByIdDirect>([&] (auto& metadata) {
             StructureID oldStructureID = metadata.m_structureID;
-            if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
+            if (!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 return;
             dataLogLnIf(Options::verboseOSR(), "Clearing get_by_id_direct LLInt property access.");
-            metadata.m_structureID = StructureID();
+            metadata.m_structureID = 0;
             metadata.m_offset = 0;
         });
 
@@ -1408,11 +1408,11 @@ void CodeBlock::finalizeLLIntInlineCaches()
             JSCell* property = metadata.m_property.get();
             StructureID structureID = metadata.m_structureID;
 
-            if ((!property || vm.heap.isMarked(property)) && (!structureID || vm.heap.isMarked(structureID.decode())))
+            if ((!property || vm.heap.isMarked(property)) && (!structureID || vm.heap.isMarked(vm.heap.structureIDTable().get(structureID))))
                 return;
 
             dataLogLnIf(Options::verboseOSR(), "Clearing LLInt private property access.");
-            metadata.m_structureID = StructureID();
+            metadata.m_structureID = 0;
             metadata.m_offset = 0;
             metadata.m_property.clear();
         });
@@ -1421,14 +1421,14 @@ void CodeBlock::finalizeLLIntInlineCaches()
             StructureID oldStructureID = metadata.m_oldStructureID;
             StructureID newStructureID = metadata.m_newStructureID;
             StructureChain* chain = metadata.m_structureChain.get();
-            if ((!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
-                && (!newStructureID || vm.heap.isMarked(newStructureID.decode()))
+            if ((!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
+                && (!newStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(newStructureID)))
                 && (!chain || vm.heap.isMarked(chain)))
                 return;
             dataLogLnIf(Options::verboseOSR(), "Clearing LLInt put transition.");
-            metadata.m_oldStructureID = StructureID();
+            metadata.m_oldStructureID = 0;
             metadata.m_offset = 0;
-            metadata.m_newStructureID = StructureID();
+            metadata.m_newStructureID = 0;
             metadata.m_structureChain.clear();
         });
 
@@ -1436,15 +1436,15 @@ void CodeBlock::finalizeLLIntInlineCaches()
             StructureID oldStructureID = metadata.m_oldStructureID;
             StructureID newStructureID = metadata.m_newStructureID;
             JSCell* property = metadata.m_property.get();
-            if ((!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
+            if ((!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 && (!property || vm.heap.isMarked(property))
-                && (!newStructureID || vm.heap.isMarked(newStructureID.decode())))
+                && (!newStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(newStructureID))))
                 return;
 
             dataLogLnIf(Options::verboseOSR(), "Clearing LLInt put_private_name transition.");
-            metadata.m_oldStructureID = StructureID();
+            metadata.m_oldStructureID = 0;
             metadata.m_offset = 0;
-            metadata.m_newStructureID = StructureID();
+            metadata.m_newStructureID = 0;
             metadata.m_property.clear();
         });
 
@@ -1452,37 +1452,37 @@ void CodeBlock::finalizeLLIntInlineCaches()
             StructureID oldStructureID = metadata.m_oldStructureID;
             StructureID newStructureID = metadata.m_newStructureID;
             JSCell* brand = metadata.m_brand.get();
-            if ((!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
+            if ((!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 && (!brand || vm.heap.isMarked(brand))
-                && (!newStructureID || vm.heap.isMarked(newStructureID.decode())))
+                && (!newStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(newStructureID))))
                 return;
 
             dataLogLnIf(Options::verboseOSR(), "Clearing LLInt set_private_brand transition.");
-            metadata.m_oldStructureID = StructureID();
-            metadata.m_newStructureID = StructureID();
+            metadata.m_oldStructureID = 0;
+            metadata.m_newStructureID = 0;
             metadata.m_brand.clear();
         });
 
         m_metadata->forEach<OpCheckPrivateBrand>([&] (auto& metadata) {
             StructureID structureID = metadata.m_structureID;
             JSCell* brand = metadata.m_brand.get();
-            if ((!structureID || vm.heap.isMarked(structureID.decode()))
+            if ((!structureID || vm.heap.isMarked(vm.heap.structureIDTable().get(structureID)))
                 && (!brand || vm.heap.isMarked(brand)))
                 return;
 
             dataLogLnIf(Options::verboseOSR(), "Clearing LLInt check_private_brand transition.");
-            metadata.m_structureID = StructureID();
+            metadata.m_structureID = 0;
             metadata.m_brand.clear();
         });
 
         m_metadata->forEach<OpToThis>([&] (auto& metadata) {
-            if (!metadata.m_cachedStructureID || vm.heap.isMarked(metadata.m_cachedStructureID.decode()))
+            if (!metadata.m_cachedStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(metadata.m_cachedStructureID)))
                 return;
             if (Options::verboseOSR()) {
-                Structure* structure = metadata.m_cachedStructureID.decode();
+                Structure* structure = vm.heap.structureIDTable().get(metadata.m_cachedStructureID);
                 dataLogF("Clearing LLInt to_this with structure %p.\n", structure);
             }
-            metadata.m_cachedStructureID = StructureID();
+            metadata.m_cachedStructureID = 0;
             metadata.m_toThisStatus = merge(metadata.m_toThisStatus, ToThisClearedByGC);
         });
 
@@ -1569,7 +1569,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             return true;
         };
 
-        if (!vm.heap.isMarked(std::get<0>(pair.key).decode()))
+        if (!vm.heap.isMarked(vm.heap.structureIDTable().get(std::get<0>(pair.key))))
             return clear();
 
         for (const LLIntPrototypeLoadAdaptiveStructureWatchpoint& watchpoint : pair.value) {
@@ -1886,7 +1886,7 @@ void CodeBlock::stronglyVisitWeakReferences(const ConcurrentJSLocker&, Visitor& 
         visitor.append(weakReference);
 
     for (StructureID structureID : dfgCommon->m_weakStructureReferences)
-        visitor.appendUnbarriered(structureID.decode());
+        visitor.appendUnbarriered(visitor.vm().getStructure(structureID));
 #endif    
 }
 
