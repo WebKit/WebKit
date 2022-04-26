@@ -1,3 +1,19 @@
+2022-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r293117): Context menu lift animation encompasses the entire web view
+        https://bugs.webkit.org/show_bug.cgi?id=239782
+        rdar://92342919
+
+        Reviewed by Aditya Keerthi.
+
+        After r293117, we no longer implement the context menu delegate method for vending a targeted preview when
+        showing the context menu for a link or image; rename to match the name of the method we implement to match the
+        name of the UIKit delegate method.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView contextMenuInteraction:configuration:highlightPreviewForItemWithIdentifier:]):
+        (-[WKContentView contextMenuInteraction:configuration:previewForHighlightingItemWithIdentifier:]): Deleted.
+
 2022-04-22  Elliott Williams  <emw@apple.com>
 
         [Xcode] Compute PGO profdata paths instead of searching for them at build time
