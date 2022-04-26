@@ -1,3 +1,25 @@
+2022-04-24  Philippe Normand  <philn@igalia.com>
+
+        [Flatpak SDK] Partial revert of r249480
+        https://bugs.webkit.org/show_bug.cgi?id=239700
+
+        Reviewed by Adrian Perez de Castro.
+
+        The switch to upstream gtk3 recipe broke something related with icons handling and
+        introduced a crash in media/video-controls-drag.html. For the time being, revert to our
+        custom recipe.
+
+        This patch also updates the pipenv environment used to build the SDK, to BuildStream 1.6.5.
+
+        * Pipfile:
+        * Pipfile.lock:
+        * elements/qt5/qtbase.bst:
+        * elements/sdk-platform.bst:
+        * elements/sdk/adwaita-icon-theme.bst:
+        * elements/sdk/gst-plugins-base.bst:
+        * elements/sdk/gst-plugins-good.bst:
+        * elements/sdk/gtk+-3.bst: Added.
+
 2022-04-11  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Almost-easter eggs update

@@ -9,7 +9,7 @@ depends:
 - freedesktop-sdk.bst:components/gdk-pixbuf.bst
 - sdk/gstreamer.bst
 - sdk/graphene.bst
-- freedesktop-sdk.bst:components/gtk3.bst
+- sdk/gtk+-3.bst
 - freedesktop-sdk.bst:components/pango.bst
 - freedesktop-sdk.bst:components/libdrm.bst
 - freedesktop-sdk.bst:components/libsoup.bst
