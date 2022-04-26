@@ -2001,7 +2001,7 @@ void Element::classAttributeChanged(const AtomString& newClassString)
     auto newClassNames = newStringHasClasses ? SpaceSplitString(newClassString, shouldFoldCase) : SpaceSplitString();
     {
         Style::ClassChangeInvalidation styleInvalidation(*this, oldClassNames, newClassNames);
-        elementData()->setClassNames(newClassNames);
+        elementData()->setClassNames(WTFMove(newClassNames));
     }
 
     if (hasRareData()) {

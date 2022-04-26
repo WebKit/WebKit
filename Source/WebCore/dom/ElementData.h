@@ -85,7 +85,7 @@ public:
 
     static const unsigned attributeNotFound = static_cast<unsigned>(-1);
 
-    void setClassNames(const SpaceSplitString& classNames) const { m_classNames = classNames; }
+    void setClassNames(SpaceSplitString&& classNames) const { m_classNames = WTFMove(classNames); }
     const SpaceSplitString& classNames() const { return m_classNames; }
     static ptrdiff_t classNamesMemoryOffset() { return OBJECT_OFFSETOF(ElementData, m_classNames); }
 
