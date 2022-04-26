@@ -113,7 +113,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncToString, (JSGlobalObject* globalObject,
 
     ASSERT(value);
 
-    Integrity::auditStructureID(value->structureID());
+    Integrity::auditStructureID(vm, value->structureID());
     int32_t radix = extractToStringRadixArgument(globalObject, callFrame->argument(0), scope);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -156,7 +156,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncValueOf, (JSGlobalObject* globalObject, 
     JSBigInt* value = toThisBigIntValue(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, { });
 
-    Integrity::auditStructureID(value->structureID());
+    Integrity::auditStructureID(vm, value->structureID());
     return JSValue::encode(value);
 }
 

@@ -81,7 +81,7 @@ PutByStatus PutByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
     if (!structureID)
         return PutByStatus(NoInformation);
     
-    Structure* structure = structureID.decode();
+    Structure* structure = vm.heap.structureIDTable().get(structureID);
 
     StructureID newStructureID = metadata.m_newStructureID;
     if (!newStructureID) {
@@ -92,7 +92,7 @@ PutByStatus PutByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeInde
         return PutByVariant::replace(nullptr, structure, offset);
     }
 
-    Structure* newStructure = newStructureID.decode();
+    Structure* newStructure = vm.heap.structureIDTable().get(newStructureID);
     
     ASSERT(structure->transitionWatchpointSetHasBeenInvalidated());
     
@@ -189,7 +189,7 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
         
     case CacheType::Stub: {
         PolymorphicAccess* list = stubInfo->m_stub.get();
-
+        
         PutByStatus result;
         result.m_state = Simple;
         

@@ -48,7 +48,6 @@ class VM;
 class VerifierSlotVisitor;
 template<typename T> class Weak;
 template<typename T, typename Traits> class WriteBarrierBase;
-class WriteBarrierStructureID;
 
 class AbstractSlotVisitor {
     WTF_MAKE_NONCOPYABLE(AbstractSlotVisitor);
@@ -144,8 +143,6 @@ public:
 
     template<typename T, typename Traits> void append(const WriteBarrierBase<T, Traits>&);
     template<typename T, typename Traits> void appendHidden(const WriteBarrierBase<T, Traits>&);
-    void append(const WriteBarrierStructureID&);
-    void appendHidden(const WriteBarrierStructureID&);
     template<typename Iterator> void append(Iterator begin , Iterator end);
     ALWAYS_INLINE void appendValues(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
     ALWAYS_INLINE void appendValuesHidden(const WriteBarrierBase<Unknown, RawValueTraits<Unknown>>*, size_t count);
