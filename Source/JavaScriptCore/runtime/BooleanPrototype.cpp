@@ -76,7 +76,7 @@ JSC_DEFINE_HOST_FUNCTION(booleanProtoFuncToString, (JSGlobalObject* globalObject
     if (UNLIKELY(!thisObject))
         return throwVMTypeError(globalObject, scope);
 
-    Integrity::auditStructureID(thisObject->structureID());
+    Integrity::auditStructureID(vm, thisObject->structureID());
     if (thisObject->internalValue() == jsBoolean(false))
         return JSValue::encode(vm.smallStrings.falseString());
 
@@ -96,7 +96,7 @@ JSC_DEFINE_HOST_FUNCTION(booleanProtoFuncValueOf, (JSGlobalObject* globalObject,
     if (UNLIKELY(!thisObject))
         return throwVMTypeError(globalObject, scope);
 
-    Integrity::auditStructureID(thisObject->structureID());
+    Integrity::auditStructureID(vm, thisObject->structureID());
     return JSValue::encode(thisObject->internalValue());
 }
 
