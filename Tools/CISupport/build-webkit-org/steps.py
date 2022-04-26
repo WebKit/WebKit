@@ -476,6 +476,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
         "--buildbot-master", CURRENT_HOSTNAME,
         "--report", RESULTS_WEBKIT_URL,
     ]
+    commandExtra = ['--treat-failing-as-flaky=0.7,10,20']
     failedTestsFormatString = "%d JSC test%s failed"
     logfiles = {"json": jsonFileName}
 
@@ -493,6 +494,10 @@ class RunJavaScriptCoreTests(TestWithFailureCount):
 
         platform = self.getProperty('platform')
         architecture = self.getProperty("architecture")
+        # Ask run-jsc-stress-tests to report flaky (including to the resultsdb)
+        # but do not fail the whole run if the pass rate of the failing tests is
+        # high enough.
+        self.command += self.commandExtra
         # Currently run-javascriptcore-test doesn't support run javascript core test binaries list below remotely
         if architecture in ['mips', 'armv7', 'aarch64']:
             self.command += ['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi']
