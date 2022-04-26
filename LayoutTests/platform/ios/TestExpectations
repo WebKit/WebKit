@@ -2107,6 +2107,8 @@ accessibility/aria-sort-changed-notification.html [ Pass ]
 # Enable "aria-table-attributes" test for iOS
 webkit.org/b/150366 accessibility/aria-table-attributes.html [ Pass ]
 
+accessibility/ignore-modals-without-any-content.html [ Pass ]
+
 accessibility/selected-state-changed-notifications.html [ Pass ]
 accessibility/element-line-rects-and-text.html [ Pass ]
 

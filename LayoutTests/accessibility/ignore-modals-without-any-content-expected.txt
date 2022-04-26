@@ -1,0 +1,22 @@
+This test ensures that we ignore modals that don't have any accessible content.
+
+Beginning search from #container element.
+
+AXRole: AXStaticText
+AXValue: Foo text, before modal
+
+AXRole: AXStaticText
+AXValue: Foo text, after modal
+
+Appending a text node to modal to make it accessible.
+PASS: #container AX element is no longer accessible after adding accessible content to modal.
+
+Beginning search from #modal element.
+
+AXRole: AXStaticText
+AXValue: Foo text, inside modal
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
