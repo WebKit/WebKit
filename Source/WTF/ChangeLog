@@ -1,3 +1,13 @@
+2022-04-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove WebArchiveDebugMode
+        https://bugs.webkit.org/show_bug.cgi?id=239738
+        <rdar://problem/88406961>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2022-04-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the `PreferInlineTextSelectionInImages` internal feature flag

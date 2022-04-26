@@ -1,3 +1,20 @@
+2022-04-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove WebArchiveDebugMode
+        https://bugs.webkit.org/show_bug.cgi?id=239738
+        <rdar://problem/88406961>
+
+        Reviewed by Tim Horton.
+
+        Remove use case of WebArchiveDebugMode and deprecate it now that it
+        is no longer in use. Add a new temporary flag WebArchiveTestMode
+        that is more aptly named and will maintain existing behavior for
+        internal tests temporarily.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::scheduleArchiveLoad):
+
 2022-04-26  Claudio Saavedra  <csaavedra@igalia.com>
 
         [DatabaseTracker] Use PRIu64 for logging for portability
