@@ -1,3 +1,25 @@
+2022-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Add object addresses to IPC logging
+        https://bugs.webkit.org/show_bug.cgi?id=239754
+
+        Reviewed by Cameron McCormack.
+
+        It's useful if IPC logging shows the receiver address, so you can distinguish different
+        receivers.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::textStreamForLogging):
+        (IPC::logMessageImpl):
+        (IPC::logMessage):
+        (IPC::logReply):
+        (IPC::handleMessage):
+        (IPC::handleMessageWantsConnection):
+        (IPC::handleMessageSynchronous):
+        (IPC::handleMessageSynchronousWantsConnection):
+        (IPC::handleMessageAsync):
+        (IPC::handleMessageAsyncWantsConnection):
+
 2022-04-26  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(r288464?):[ iOS15 Release GPUP arm64 ] TestWebKitAPI.GPUProcess.ExitsUnderMemoryPressureGetUserMediaAudioCase is a constant failure

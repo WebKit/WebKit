@@ -50,7 +50,7 @@ constexpr unsigned loggingContainerSizeLimit = 200;
 #if !LOG_DISABLED
 enum class ForReply : bool { No, Yes };
 
-inline TextStream textStreamForLogging(const Connection& connection, MessageName messageName, ForReply forReply)
+inline TextStream textStreamForLogging(const Connection& connection, MessageName messageName, void* object, ForReply forReply)
 {
     TextStream stream(TextStream::LineMode::SingleLine, { }, loggingContainerSizeLimit);
     stream << '[';
@@ -62,22 +62,28 @@ inline TextStream textStreamForLogging(const Connection& connection, MessageName
 #else
     UNUSED_PARAM(connection);
 #endif
-    auto arrow = forReply == ForReply::Yes ? "<- " : "-> ";
-    stream << arrow << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << "] " << description(messageName);
-    if (forReply == ForReply::Yes)
-        stream << " Reply";
+
+    switch (forReply) {
+    case ForReply::No:
+        stream << "-> " << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << " receiver " << object << "] " << description(messageName);
+        break;
+    case ForReply::Yes:
+        stream << "<- " << WebCore::processTypeDescription(WebCore::processType()) << ' ' << getCurrentProcessID() << "] " << description(messageName) << " Reply";
+        break;
+    }
+
     return stream;
 }
 #endif
 
 template<typename ArgsTuple, size_t... ArgsIndex>
-void logMessageImpl(const Connection& connection, MessageName messageName, const ArgsTuple& args, std::index_sequence<ArgsIndex...>)
+void logMessageImpl(const Connection& connection, MessageName messageName, void* object, const ArgsTuple& args, std::index_sequence<ArgsIndex...>)
 {
 #if !LOG_DISABLED
     if (LOG_CHANNEL(IPCMessages).state != WTFLogChannelState::On)
         return;
 
-    auto stream = textStreamForLogging(connection, messageName, ForReply::No);
+    auto stream = textStreamForLogging(connection, messageName, object, ForReply::No);
 
     if (auto argumentDescriptions = messageArgumentDescriptions(messageName))
         (stream.dumpProperty((*argumentDescriptions)[ArgsIndex].name, ValueOrEllipsis(std::get<ArgsIndex>(args))), ...);
@@ -91,9 +97,9 @@ void logMessageImpl(const Connection& connection, MessageName messageName, const
 }
 
 template<typename ArgsTuple, typename ArgsIndices = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
-void logMessage(const Connection& connection, MessageName messageName, const ArgsTuple& args)
+void logMessage(const Connection& connection, MessageName messageName, void* object, const ArgsTuple& args)
 {
-    logMessageImpl(connection, messageName, args, ArgsIndices());
+    logMessageImpl(connection, messageName, object, args, ArgsIndices());
 }
 
 template<typename... T>
@@ -103,7 +109,7 @@ void logReply(const Connection& connection, MessageName messageName, const T&...
     if (!sizeof...(T))
         return;
 
-    auto stream = textStreamForLogging(connection, messageName, ForReply::Yes);
+    auto stream = textStreamForLogging(connection, messageName, nullptr, ForReply::Yes);
 
     unsigned argIndex = 0;
     if (auto argumentDescriptions = messageReplyArgumentDescriptions(messageName))
@@ -249,7 +255,7 @@ void handleMessage(Connection& connection, Decoder& decoder, C* object, MF funct
     if (UNLIKELY(!arguments))
         return;
 
-    logMessage(connection, T::name(), *arguments);
+    logMessage(connection, T::name(), object, *arguments);
     callMemberFunction(WTFMove(*arguments), object, function);
 }
 
@@ -260,7 +266,7 @@ void handleMessageWantsConnection(Connection& connection, Decoder& decoder, C* o
     if (UNLIKELY(!arguments))
         return;
 
-    logMessage(connection, T::name(), *arguments);
+    logMessage(connection, T::name(), object, *arguments);
     callMemberFunction(connection, WTFMove(*arguments), object, function);
 }
 
@@ -274,7 +280,7 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
     using CompletionHandlerFromMF = typename CompletionHandlerTypeDeduction<MF>::template Type<std::tuple_size_v<typename T::Arguments>>;
     static_assert(CompletionHandlerValidation::template matchingTypes<CompletionHandlerFromMF, typename T::DelayedReply>());
 
-    logMessage(connection, T::name(), *arguments);
+    logMessage(connection, T::name(), object, *arguments);
     callMemberFunction(WTFMove(*arguments),
         CompletionHandlerFromMF([replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
             logReply(connection, T::name(), args...);
@@ -295,7 +301,7 @@ bool handleMessageSynchronousWantsConnection(Connection& connection, Decoder& de
     using CompletionHandlerFromMF = typename CompletionHandlerTypeDeduction<MF>::template Type<1 + std::tuple_size_v<typename T::Arguments>>;
     static_assert(CompletionHandlerValidation::template matchingTypes<CompletionHandlerFromMF, typename T::DelayedReply>());
 
-    logMessage(connection, T::name(), *arguments);
+    logMessage(connection, T::name(), object, *arguments);
     callMemberFunction(connection, WTFMove(*arguments),
         CompletionHandlerFromMF([replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
             logReply(connection, T::name(), args...);
@@ -320,7 +326,7 @@ void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decod
     using CompletionHandlerFromMF = typename CompletionHandlerTypeDeduction<MF>::template Type<std::tuple_size_v<typename T::Arguments>>;
     static_assert(CompletionHandlerValidation::template matchingTypes<CompletionHandlerFromMF, typename T::DelayedReply>());
 
-    logMessage(connection.connection(), T::name(), *arguments);
+    logMessage(connection.connection(), T::name(), object, *arguments);
     callMemberFunction(WTFMove(*arguments),
         CompletionHandlerFromMF([syncRequestID, connection = Ref { connection }] (auto&&... args) mutable {
             logReply(connection->connection(), T::name(), args...);
@@ -343,7 +349,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
     using CompletionHandlerFromMF = typename CompletionHandlerTypeDeduction<MF>::template Type<std::tuple_size_v<typename T::Arguments>>;
     static_assert(CompletionHandlerValidation::template matchingTypes<CompletionHandlerFromMF, typename T::AsyncReply>());
 
-    logMessage(connection, T::name(), *arguments);
+    logMessage(connection, T::name(), object, *arguments);
     callMemberFunction(WTFMove(*arguments),
         CompletionHandlerFromMF { [listenerID = *listenerID, connection = Ref { connection }] (auto&&... args) mutable {
             auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), listenerID);
@@ -368,7 +374,7 @@ void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder,
     using CompletionHandlerFromMF = typename CompletionHandlerTypeDeduction<MF>::template Type<1 + std::tuple_size_v<typename T::Arguments>>;
     static_assert(CompletionHandlerValidation::template matchingTypes<CompletionHandlerFromMF, typename T::AsyncReply>());
 
-    logMessage(connection, T::name(), *arguments);
+    logMessage(connection, T::name(), object, *arguments);
     callMemberFunction(connection, WTFMove(*arguments),
         CompletionHandlerFromMF { [listenerID = *listenerID, connection = Ref { connection }] (auto&&... args) mutable {
             auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), listenerID);
