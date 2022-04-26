@@ -1,5 +1,14 @@
 2022-04-26  Karl Rackler  <rackler@apple.com>
 
+        [ macOS ] webanimations/accelerated-animation-slot-invalidation.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=239791
+
+        Unreviewed test gardening. 
+
+        * platform/mac/TestExpectations:
+
+2022-04-26  Karl Rackler  <rackler@apple.com>
+
         [ macOS Debug wk2 ] Thirteen imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ are a flaky crash
         https://bugs.webkit.org/show_bug.cgi?id=239770
 

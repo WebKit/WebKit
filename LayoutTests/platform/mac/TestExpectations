@@ -2294,3 +2294,6 @@ http/tests/webgpu [ Pass ]
 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
 
 editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
+
+webkit.org/b/239791 webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
+
