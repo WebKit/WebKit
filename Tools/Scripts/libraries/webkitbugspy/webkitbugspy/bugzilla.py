@@ -24,6 +24,7 @@ import calendar
 import re
 import requests
 import sys
+import urllib
 import time
 import webkitcorepy
 
@@ -112,8 +113,11 @@ class Tracker(GenericTracker):
 
     def credentials(self, required=True, validate=False):
         def validater(username, password):
-            response = requests.get('{}/rest/user/{}?login={}&password={}'.format(self.url, username, username, password))
+            quoted_username = requests.utils.quote(username)
+            quoted_password = requests.utils.quote(password)
+            response = requests.get('{}/rest/user/{}?login={}&password={}'.format(self.url, quoted_username, quoted_username, quoted_password))
             if response.status_code == 200:
+                print('Yeehaw, credentials valid!')
                 return True
             sys.stderr.write('Login to {} for {} failed\n'.format(self.url, username))
             return False
@@ -127,11 +131,13 @@ class Tracker(GenericTracker):
 
     def _login_arguments(self, required=False, query=None):
         username, password = self.credentials(required=required)
+        print(username)
+        print(password)
         if not username or not password:
             return '?{}'.format(query) if query else ''
         return '?login={username}&password={password}{query}'.format(
-            username=username,
-            password=password,
+            username=requests.utils.quote(username),
+            password=requests.utils.quote(password),
             query='&{}'.format(query) if query else '',
         )
 
@@ -148,7 +154,10 @@ class Tracker(GenericTracker):
         issue._labels = []
 
         if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version'):
+            print('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))
             response = requests.get('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))
+            if response.status_code != 200:
+                print(response)
             response = response.json().get('bugs', []) if response.status_code == 200 else None
             if response:
                 response = response[0]
@@ -181,6 +190,7 @@ class Tracker(GenericTracker):
 
             else:
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))
+                sys.exit(1)
 
         if member in ['description', 'comments']:
             response = requests.get('{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=False)))
