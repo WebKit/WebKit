@@ -221,6 +221,8 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
         shouldRequireResidentKey = authenticatorSelection->requireResidentKey;
         residentKeyRequirement = authenticatorSelection->residentKey;
     }
+    if (!LocalService::isAvailable())
+        requestTypes &= ~ASCCredentialRequestTypePlatformPublicKeyRegistration;
 
     auto requestContext = adoptNS([allocASCCredentialRequestContextInstance() initWithRequestTypes:requestTypes]);
     [requestContext setRelyingPartyIdentifier:options.rp.id];
@@ -428,6 +430,10 @@ static inline void continueAfterRequest(RetainPtr<id <ASCCredentialProtocol>> cr
 
 void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialRequestContext> requestContext, RequestCompletionHandler&& handler)
 {
+    if (requestContext.get().requestTypes == ASCCredentialRequestTypeNone) {
+        handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "This request has been cancelled by the user."_s });
+        return;
+    }
     m_proxy = adoptNS([allocASCAgentProxyInstance() init]);
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if ([requestContext respondsToSelector:@selector(requestStyle)] && requestContext.get().requestStyle == ASCredentialRequestStyleAutoFill) {
