@@ -571,7 +571,7 @@ ScriptExecutionContextIdentifier DocumentLoader::resultingClientId() const
 
 void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
 {
-    auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && m_frame->settings().serviceWorkersEnabled() && url.protocolIsInHTTPFamily();
+    bool shouldTryLoadingThroughServiceWorker = m_canUseServiceWorkers && !frameLoader()->isReloadingFromOrigin() && m_frame->page() && url.protocolIsInHTTPFamily();
     if (!shouldTryLoadingThroughServiceWorker) {
         callback(std::nullopt);
         return;
@@ -891,7 +891,7 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    if (m_frame && m_frame->settings().serviceWorkersEnabled() && response.source() == ResourceResponse::Source::MemoryCache) {
+    if (m_canUseServiceWorkers && response.source() == ResourceResponse::Source::MemoryCache) {
         matchRegistration(response.url(), [this, protectedThis = Ref { *this }, response, completionHandler = WTFMove(completionHandler)](auto&& registrationData) mutable {
             if (!m_mainDocumentError.isNull() || !m_frame) {
                 completionHandler();
@@ -1244,7 +1244,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
             document.setBaseURLOverride(m_archive->mainResource()->url());
 #endif
 #if ENABLE(SERVICE_WORKER)
-        if (m_frame && m_frame->settings().serviceWorkersEnabled()) {
+        if (m_canUseServiceWorkers) {
             if (!document.securityOrigin().isUnique()) {
                 if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
                     document.setActiveServiceWorker(ServiceWorker::getOrCreate(document, WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
@@ -2019,8 +2019,21 @@ bool DocumentLoader::maybeLoadEmpty()
     return true;
 }
 
+#if ENABLE(SERVICE_WORKER)
+static bool canUseServiceWorkers(Frame* frame)
+{
+    if (!frame || !frame->settings().serviceWorkersEnabled())
+        return false;
+    auto* ownerElement = frame->ownerElement();
+    return !ownerElement || !is<HTMLPlugInElement>(ownerElement);
+}
+#endif
+
 void DocumentLoader::startLoadingMainResource()
 {
+#if ENABLE(SERVICE_WORKER)
+    m_canUseServiceWorkers = canUseServiceWorkers(m_frame.get());
+#endif
     m_mainDocumentError = ResourceError();
     timing().markStartTime();
     ASSERT(!m_mainResource);
@@ -2138,18 +2151,16 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         CachingPolicy::AllowCaching);
 
 #if ENABLE(SERVICE_WORKER)
-    if (m_frame && m_frame->settings().serviceWorkersEnabled()) {
-        if (!isSandboxingAllowingServiceWorkerFetchHandling(frameLoader()->effectiveSandboxFlags()))
-            mainResourceLoadOptions.serviceWorkersMode = ServiceWorkersMode::None;
-        else {
-            // The main navigation load will trigger the registration of the client.
-            if (m_resultingClientId)
-                scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
-            m_resultingClientId = ScriptExecutionContextIdentifier::generate();
-            ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
-            scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
-            mainResourceLoadOptions.clientIdentifier = m_resultingClientId;
-        }
+    if (!m_canUseServiceWorkers || !isSandboxingAllowingServiceWorkerFetchHandling(frameLoader()->effectiveSandboxFlags()))
+        mainResourceLoadOptions.serviceWorkersMode = ServiceWorkersMode::None;
+    else {
+        // The main navigation load will trigger the registration of the client.
+        if (m_resultingClientId)
+            scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
+        m_resultingClientId = ScriptExecutionContextIdentifier::generate();
+        ASSERT(!scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
+        scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
+        mainResourceLoadOptions.clientIdentifier = m_resultingClientId;
     }
 #endif
 

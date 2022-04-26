@@ -192,6 +192,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         options.contentSecurityPolicyImposition = element().isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
         options.loadedFromPluginElement = is<HTMLPlugInElement>(element()) ? LoadedFromPluginElement::Yes : LoadedFromPluginElement::No;
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+        options.serviceWorkersMode = is<HTMLPlugInElement>(element()) ? ServiceWorkersMode::None : ServiceWorkersMode::All;
         bool isImageElement = is<HTMLImageElement>(element());
         if (isImageElement)
             options.referrerPolicy = downcast<HTMLImageElement>(element()).referrerPolicy();

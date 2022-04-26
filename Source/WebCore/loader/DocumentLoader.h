@@ -708,6 +708,7 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
+    bool m_canUseServiceWorkers { true };
 #endif
     ScriptExecutionContextIdentifier m_resultingClientId;
 
