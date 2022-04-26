@@ -148,6 +148,10 @@ protected:
             if (m_remoteRenderingBackendProxy->waitForDidCreateImageBufferBackend() == RemoteRenderingBackendProxy::DidReceiveBackendCreationResult::TimeoutOrIPCFailure)
                 ++numberOfTimeoutsOrFailures;
         }
+        if (numberOfTimeoutsOrFailures == maximumTimeoutOrFailureCount) {
+            LOG_WITH_STREAM(SharedDisplayLists, stream << "Exceeded max number of timeouts waiting for image buffer " << m_renderingResourceIdentifier << " backend creation");
+            RELEASE_LOG_FAULT(SharedDisplayLists, "Exceeded max number of timeouts waiting for image buffer backend creation in remote rendering backend %" PRIu64 ".", m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64());
+        }
         return m_backend.get();
     }
 

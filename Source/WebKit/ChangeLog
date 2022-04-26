@@ -1,3 +1,20 @@
+2022-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix crashes under RemoteLayerBackingStore::applyBackingStoreToLayer()
+        https://bugs.webkit.org/show_bug.cgi?id=239742
+        <rdar://91533748>
+
+        Reviewed by Wenson Hsieh.
+
+        It's possible for ensureBackendCreated() to time out, especially when debugging the GPU
+        process, in which case RemoteLayerBackingStore can end up with a front buffer with no
+        backend, which results in an unset m_bufferHandle in the UI process. So add some logging
+        when this happens, and check the m_bufferHandle optional before accessing its value.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2022-04-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove WebArchiveDebugMode

@@ -565,35 +565,37 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(GraphicsContext& context,
 
 void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, bool replayCGDisplayListsIntoBackingStore)
 {
-    ASSERT(m_bufferHandle);
     layer.contentsOpaque = m_isOpaque;
 
     RetainPtr<id> contents;
-    WTF::switchOn(*m_bufferHandle,
-        [&] (ShareableBitmap::Handle& handle) {
-            ASSERT(m_type == Type::Bitmap);
-            if (auto bitmap = ShareableBitmap::create(handle))
-                contents = bridge_id_cast(bitmap->makeCGImageCopy());
-        },
-        [&] (MachSendRight& machSendRight) {
-            ASSERT(m_type == Type::IOSurface);
-            switch (contentsType) {
-            case RemoteLayerBackingStore::LayerContentsType::IOSurface: {
-                auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight), DestinationColorSpace::SRGB());
-                contents = surface ? surface->asLayerContents() : nil;
-                break;
+    // m_bufferHandle can be unset here if IPC with the GPU process timed out.
+    if (m_bufferHandle) {
+        WTF::switchOn(*m_bufferHandle,
+            [&] (ShareableBitmap::Handle& handle) {
+                ASSERT(m_type == Type::Bitmap);
+                if (auto bitmap = ShareableBitmap::create(handle))
+                    contents = bridge_id_cast(bitmap->makeCGImageCopy());
+            },
+            [&] (MachSendRight& machSendRight) {
+                ASSERT(m_type == Type::IOSurface);
+                switch (contentsType) {
+                case RemoteLayerBackingStore::LayerContentsType::IOSurface: {
+                    auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight), DestinationColorSpace::SRGB());
+                    contents = surface ? surface->asLayerContents() : nil;
+                    break;
+                }
+                case RemoteLayerBackingStore::LayerContentsType::CAMachPort:
+                    contents = bridge_id_cast(adoptCF(CAMachPortCreate(machSendRight.leakSendRight())));
+                    break;
+                }
             }
-            case RemoteLayerBackingStore::LayerContentsType::CAMachPort:
-                contents = bridge_id_cast(adoptCF(CAMachPortCreate(machSendRight.leakSendRight())));
-                break;
-            }
-        }
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        , [&] (IPC::SharedBufferCopy& buffer) {
-            ASSERT_NOT_REACHED();
-        }
+            , [&] (IPC::SharedBufferCopy& buffer) {
+                ASSERT_NOT_REACHED();
+            }
 #endif
-    );
+        );
+    }
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_displayListBufferHandle) {
