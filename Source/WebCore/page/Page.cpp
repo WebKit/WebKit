@@ -383,6 +383,16 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
     if (m_lowPowerModeNotifier->isLowPowerModeEnabled())
         m_throttlingReasons.add(ThrottlingReason::LowPowerMode);
+
+    static bool fontCacheInvalidationCallbackRegistered = false;
+    if (!fontCacheInvalidationCallbackRegistered) {
+        FontCache::registerFontCacheInvalidationCallback([] {
+            forEachPage([](auto& page) {
+                page.setNeedsRecalcStyleInAllFrames();
+            });
+        });
+        fontCacheInvalidationCallbackRegistered = true;
+    }
 }
 
 Page::~Page()
