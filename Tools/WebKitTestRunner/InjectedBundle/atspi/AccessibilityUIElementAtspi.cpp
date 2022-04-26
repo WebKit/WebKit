@@ -629,19 +629,19 @@ static String xmlRoleValueString(const String& xmlRoles)
 
     if (regionRoles->contains(xmlRoles))
         return "AXLandmarkRegion"_s;
-    if (equalLettersIgnoringASCIICase(xmlRoles, "banner"))
+    if (equalLettersIgnoringASCIICase(xmlRoles, "banner"_s))
         return "AXLandmarkBanner"_s;
-    if (equalLettersIgnoringASCIICase(xmlRoles, "complementary"))
+    if (equalLettersIgnoringASCIICase(xmlRoles, "complementary"_s))
         return "AXLandmarkComplementary"_s;
-    if (equalLettersIgnoringASCIICase(xmlRoles, "contentinfo"))
+    if (equalLettersIgnoringASCIICase(xmlRoles, "contentinfo"_s))
         return "AXLandmarkContentInfo"_s;
-    if (equalLettersIgnoringASCIICase(xmlRoles, "form"))
+    if (equalLettersIgnoringASCIICase(xmlRoles, "form"_s))
         return "AXLandmarkForm"_s;
-    if (equalLettersIgnoringASCIICase(xmlRoles, "main"))
+    if (equalLettersIgnoringASCIICase(xmlRoles, "main"_s))
         return "AXLandmarkMain"_s;
-    if (equalLettersIgnoringASCIICase(xmlRoles, "navigation"))
+    if (equalLettersIgnoringASCIICase(xmlRoles, "navigation"_s))
         return "AXLandmarkNavigation"_s;
-    if (equalLettersIgnoringASCIICase(xmlRoles, "search"))
+    if (equalLettersIgnoringASCIICase(xmlRoles, "search"_s))
         return "AXLandmarkSearch"_s;
 
     return { };

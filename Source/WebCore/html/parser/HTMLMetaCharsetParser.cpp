@@ -106,7 +106,7 @@ PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const Attrib
         const String& attributeValue = attribute.second;
 
         if (attributeName == http_equivAttr) {
-            if (equalLettersIgnoringASCIICase(attributeValue, "content-type"))
+            if (equalLettersIgnoringASCIICase(attributeValue, "content-type"_s))
                 gotPragma = true;
         } else if (attributeName == charsetAttr) {
             charset = attributeValue;

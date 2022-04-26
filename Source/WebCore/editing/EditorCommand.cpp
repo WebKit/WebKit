@@ -276,9 +276,9 @@ static bool executeClearText(Frame& frame, Event*, EditorCommandSource, const St
 
 static bool executeDefaultParagraphSeparator(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    if (equalLettersIgnoringASCIICase(value, "div"))
+    if (equalLettersIgnoringASCIICase(value, "div"_s))
         frame.editor().setDefaultParagraphSeparator(EditorParagraphSeparatorIsDiv);
-    else if (equalLettersIgnoringASCIICase(value, "p"))
+    else if (equalLettersIgnoringASCIICase(value, "p"_s))
         frame.editor().setDefaultParagraphSeparator(EditorParagraphSeparatorIsP);
 
     return true;
@@ -1099,13 +1099,13 @@ static bool executeStrikethrough(Frame& frame, Event*, EditorCommandSource sourc
 
 static bool executeStyleWithCSS(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    frame.editor().setShouldStyleWithCSS(!equalLettersIgnoringASCIICase(value, "false"));
+    frame.editor().setShouldStyleWithCSS(!equalLettersIgnoringASCIICase(value, "false"_s));
     return true;
 }
 
 static bool executeUseCSS(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    frame.editor().setShouldStyleWithCSS(equalLettersIgnoringASCIICase(value, "false"));
+    frame.editor().setShouldStyleWithCSS(equalLettersIgnoringASCIICase(value, "false"_s));
     return true;
 }
 

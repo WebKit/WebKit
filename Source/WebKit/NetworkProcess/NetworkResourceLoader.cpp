@@ -766,9 +766,9 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     };
 
     auto isMediaMIMEType = [] (const String& mimeType) {
-        return startsWithLettersIgnoringASCIICase(mimeType, "audio/")
-            || startsWithLettersIgnoringASCIICase(mimeType, "video/")
-            || equalLettersIgnoringASCIICase(mimeType, "application/octet-stream");
+        return startsWithLettersIgnoringASCIICase(mimeType, "audio/"_s)
+            || startsWithLettersIgnoringASCIICase(mimeType, "video/"_s)
+            || equalLettersIgnoringASCIICase(mimeType, "application/octet-stream"_s);
     };
 
     if (!m_bufferedData

@@ -184,7 +184,7 @@ bool DataDetection::isDataDetectorLink(Element& element)
 
 bool DataDetection::requiresExtendedContext(Element& element)
 {
-    return equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr), "calendar-event");
+    return equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr), "calendar-event"_s);
 }
 
 String DataDetection::dataDetectorIdentifier(Element& element)
@@ -276,7 +276,7 @@ static void removeResultLinksFromAnchor(Element& element)
     if (!elementParent)
         return;
     
-    bool elementIsDDAnchor = is<HTMLAnchorElement>(element) && equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
+    bool elementIsDDAnchor = is<HTMLAnchorElement>(element) && equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s);
     if (!elementIsDDAnchor)
         return;
 
@@ -292,7 +292,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
     for (Node* node = &startNode; node; node = NodeTraversal::next(*node)) {
         if (is<HTMLAnchorElement>(*node)) {
             auto& anchor = downcast<HTMLAnchorElement>(*node);
-            if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
+            if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
                 return true;
             removeResultLinksFromAnchor(anchor);
         }
@@ -301,7 +301,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
             // If we found the end node and no link, return false unless an ancestor node is a link.
             // The only ancestors not tested at this point are in the direct line from self's parent to the top.
             for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
-                if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
+                if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
                     return true;
                 removeResultLinksFromAnchor(anchor);
             }
@@ -689,7 +689,7 @@ bool DataDetection::isDataDetectorAttribute(const QualifiedName& name)
 
 bool DataDetection::isDataDetectorElement(const Element& element)
 {
-    return is<HTMLAnchorElement>(element) && equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
+    return is<HTMLAnchorElement>(element) && equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s);
 }
 
 std::optional<std::pair<Ref<HTMLElement>, IntRect>> DataDetection::findDataDetectionResultElementInImageOverlay(const FloatPoint& location, const HTMLElement& imageOverlayHost)

@@ -184,11 +184,11 @@ enum ClipboardDataType { ClipboardDataTypeNone, ClipboardDataTypeURL, ClipboardD
 static ClipboardDataType clipboardTypeFromMIMEType(const String& type)
 {
     // two special cases for IE compatibility
-    if (equalLettersIgnoringASCIICase(type, "text/plain"))
+    if (equalLettersIgnoringASCIICase(type, "text/plain"_s))
         return ClipboardDataTypeText;
-    if (equalLettersIgnoringASCIICase(type, "text/uri-list"))
+    if (equalLettersIgnoringASCIICase(type, "text/uri-list"_s))
         return ClipboardDataTypeURL;
-    if (equalLettersIgnoringASCIICase(type, "text/html"))
+    if (equalLettersIgnoringASCIICase(type, "text/html"_s))
         return ClipboardDataTypeTextHTML;
 
     return ClipboardDataTypeNone;

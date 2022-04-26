@@ -418,14 +418,14 @@ bool CachedResource::isExpired() const
 static inline bool shouldCacheSchemeIndefinitely(StringView scheme)
 {
 #if PLATFORM(COCOA)
-    if (equalLettersIgnoringASCIICase(scheme, "applewebdata"))
+    if (equalLettersIgnoringASCIICase(scheme, "applewebdata"_s))
         return true;
 #endif
 #if USE(SOUP)
-    if (equalLettersIgnoringASCIICase(scheme, "resource"))
+    if (equalLettersIgnoringASCIICase(scheme, "resource"_s))
         return true;
 #endif
-    return equalLettersIgnoringASCIICase(scheme, "data");
+    return equalLettersIgnoringASCIICase(scheme, "data"_s);
 }
 
 Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) const

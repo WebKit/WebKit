@@ -872,11 +872,11 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const
 {
     String message;
-    if (equalLettersIgnoringASCIICase(name, "allow"))
+    if (equalLettersIgnoringASCIICase(name, "allow"_s))
         message = "The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect."_s;
-    else if (equalLettersIgnoringASCIICase(name, "options"))
+    else if (equalLettersIgnoringASCIICase(name, "options"_s))
         message = "The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect."_s;
-    else if (equalLettersIgnoringASCIICase(name, "policy-uri"))
+    else if (equalLettersIgnoringASCIICase(name, "policy-uri"_s))
         message = "The 'policy-uri' directive has been removed from the specification. Please specify a complete policy via the Content-Security-Policy header."_s;
     else
         message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n"); // FIXME: Why does this include a newline?
@@ -939,7 +939,7 @@ void ContentSecurityPolicy::reportInvalidPathCharacter(const String& directiveNa
 void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiveName, const String& source) const
 {
     logToConsole(makeString("The source list for Content Security Policy directive '", directiveName, "' contains an invalid source: '", source, "'. It will be ignored.",
-        equalLettersIgnoringASCIICase(source, "'none'") ? " Note that 'none' has no effect unless it is the only expression in the source list." : ""));
+        equalLettersIgnoringASCIICase(source, "'none'"_s) ? " Note that 'none' has no effect unless it is the only expression in the source list." : ""));
 }
 
 void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const

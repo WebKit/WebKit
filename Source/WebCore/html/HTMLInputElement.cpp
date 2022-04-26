@@ -749,7 +749,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomStrin
         addToRadioButtonGroup();
         HTMLTextFormControlElement::parseAttribute(name, value);
     } else if (name == autocompleteAttr) {
-        if (equalLettersIgnoringASCIICase(value, "off")) {
+        if (equalLettersIgnoringASCIICase(value, "off"_s)) {
             m_autocomplete = Off;
             registerForSuspensionCallbackIfNeeded();
         } else {
@@ -1964,7 +1964,7 @@ MediaCaptureType HTMLInputElement::mediaCaptureType() const
     if (captureAttribute.isNull())
         return MediaCaptureTypeNone;
     
-    if (equalLettersIgnoringASCIICase(captureAttribute, "user"))
+    if (equalLettersIgnoringASCIICase(captureAttribute, "user"_s))
         return MediaCaptureTypeUser;
     
     return MediaCaptureTypeEnvironment;

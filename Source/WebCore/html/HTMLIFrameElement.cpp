@@ -112,7 +112,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomStri
     } else if (name == loadingAttr) {
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
         // do not allow the reverse situation since the eager load is already started.
-        if (m_lazyLoadFrameObserver && !equalLettersIgnoringASCIICase(value, "lazy")) {
+        if (m_lazyLoadFrameObserver && !equalLettersIgnoringASCIICase(value, "lazy"_s)) {
             m_lazyLoadFrameObserver->unobserve();
             loadDeferredFrame();
         }
@@ -158,7 +158,7 @@ const FeaturePolicy& HTMLIFrameElement::featurePolicy() const
 
 const AtomString& HTMLIFrameElement::loadingForBindings() const
 {
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy") ? lazyAtom() : eagerAtom();
+    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy"_s) ? lazyAtom() : eagerAtom();
 }
 
 void HTMLIFrameElement::setLoadingForBindings(const AtomString& value)
@@ -174,7 +174,7 @@ static bool isFrameLazyLoadable(const Document& document, const URL& completeURL
     if (!document.frame() || !document.frame()->script().canExecuteScripts(NotAboutToExecuteScript))
         return false;
 
-    return equalLettersIgnoringASCIICase(loadingAttributeValue, "lazy");
+    return equalLettersIgnoringASCIICase(loadingAttributeValue, "lazy"_s);
 }
 
 bool HTMLIFrameElement::shouldLoadFrameLazily()

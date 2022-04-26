@@ -532,7 +532,7 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
 ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header)
 {
     StringView leftToken = header.left(header.find(','));
-    if (equalLettersIgnoringASCIICase(stripLeadingAndTrailingHTTPSpaces(leftToken), "nosniff"))
+    if (equalLettersIgnoringASCIICase(stripLeadingAndTrailingHTTPSpaces(leftToken), "nosniff"_s))
         return ContentTypeOptionsDisposition::Nosniff;
     return ContentTypeOptionsDisposition::None;
 }
@@ -562,11 +562,11 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(StringView header)
     for (auto currentHeader : header.split(',')) {
         currentHeader = currentHeader.stripWhiteSpace();
         XFrameOptionsDisposition currentValue = XFrameOptionsDisposition::None;
-        if (equalLettersIgnoringASCIICase(currentHeader, "deny"))
+        if (equalLettersIgnoringASCIICase(currentHeader, "deny"_s))
             currentValue = XFrameOptionsDisposition::Deny;
-        else if (equalLettersIgnoringASCIICase(currentHeader, "sameorigin"))
+        else if (equalLettersIgnoringASCIICase(currentHeader, "sameorigin"_s))
             currentValue = XFrameOptionsDisposition::SameOrigin;
-        else if (equalLettersIgnoringASCIICase(currentHeader, "allowall"))
+        else if (equalLettersIgnoringASCIICase(currentHeader, "allowall"_s))
             currentValue = XFrameOptionsDisposition::AllowAll;
         else
             currentValue = XFrameOptionsDisposition::Invalid;
@@ -677,7 +677,7 @@ bool parseRange(StringView range, long long& rangeOffset, long long& rangeEnd, l
 
     // The "bytes" unit identifier should be present.
     static const unsigned bytesLength = 6;
-    if (!startsWithLettersIgnoringASCIICase(range, "bytes="))
+    if (!startsWithLettersIgnoringASCIICase(range, "bytes="_s))
         return false;
 
     StringView byteRange = range.substring(bytesLength);
@@ -877,7 +877,7 @@ bool isForbiddenHeaderName(const String& name)
             break;
         }
     }
-    return startsWithLettersIgnoringASCIICase(name, "sec-") || startsWithLettersIgnoringASCIICase(name, "proxy-");
+    return startsWithLettersIgnoringASCIICase(name, "sec-"_s) || startsWithLettersIgnoringASCIICase(name, "proxy-"_s);
 }
 
 // Implements <https://fetch.spec.whatwg.org/#no-cors-safelisted-request-header-name>.
@@ -901,19 +901,19 @@ bool isNoCORSSafelistedRequestHeaderName(const String& name)
 // Implements <https://fetch.spec.whatwg.org/#privileged-no-cors-request-header-name>.
 bool isPriviledgedNoCORSRequestHeaderName(const String& name)
 {
-    return equalLettersIgnoringASCIICase(name, "range");
+    return equalLettersIgnoringASCIICase(name, "range"_s);
 }
 
 // Implements <https://fetch.spec.whatwg.org/#forbidden-response-header-name>.
 bool isForbiddenResponseHeaderName(const String& name)
 {
-    return equalLettersIgnoringASCIICase(name, "set-cookie") || equalLettersIgnoringASCIICase(name, "set-cookie2");
+    return equalLettersIgnoringASCIICase(name, "set-cookie"_s) || equalLettersIgnoringASCIICase(name, "set-cookie2"_s);
 }
 
 // Implements <https://fetch.spec.whatwg.org/#forbidden-method>.
 bool isForbiddenMethod(const String& name)
 {
-    return equalLettersIgnoringASCIICase(name, "connect") || equalLettersIgnoringASCIICase(name, "trace") || equalLettersIgnoringASCIICase(name, "track");
+    return equalLettersIgnoringASCIICase(name, "connect"_s) || equalLettersIgnoringASCIICase(name, "trace"_s) || equalLettersIgnoringASCIICase(name, "track"_s);
 }
 
 bool isSimpleHeader(const String& name, const String& value)
@@ -1013,7 +1013,7 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
         if (!parsedContentType)
             return false;
         String mimeType = parsedContentType->mimeType();
-        if (!(equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded") || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data") || equalLettersIgnoringASCIICase(mimeType, "text/plain")))
+        if (!(equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded"_s) || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data"_s) || equalLettersIgnoringASCIICase(mimeType, "text/plain"_s)))
             return false;
         break;
     }

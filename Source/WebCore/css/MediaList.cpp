@@ -240,7 +240,7 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
         return;
 
     for (auto& query : mediaQuerySet->queryVector()) {
-        if (!query.ignored() && !equalLettersIgnoringASCIICase(query.mediaType(), "print")) {
+        if (!query.ignored() && !equalLettersIgnoringASCIICase(query.mediaType(), "print"_s)) {
             auto& expressions = query.expressions();
             for (auto& expression : expressions) {
                 if (expression.mediaFeature() == MediaFeatureNames::resolution || expression.mediaFeature() == MediaFeatureNames::maxResolution || expression.mediaFeature() == MediaFeatureNames::minResolution) {

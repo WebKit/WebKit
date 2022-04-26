@@ -175,7 +175,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
     auto parseMultipartBoundary = [] (const std::optional<MimeType>& mimeType) -> std::optional<String> {
         if (!mimeType)
             return std::nullopt;
-        if (equalLettersIgnoringASCIICase(mimeType->type, "multipart") && equalLettersIgnoringASCIICase(mimeType->subtype, "form-data")) {
+        if (equalLettersIgnoringASCIICase(mimeType->type, "multipart"_s) && equalLettersIgnoringASCIICase(mimeType->subtype, "form-data"_s)) {
             auto iterator = mimeType->parameters.find<HashTranslatorASCIILiteral>("boundary"_s);
             if (iterator != mimeType->parameters.end())
                 return iterator->value;
@@ -201,7 +201,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
             currentBoundary = nextBoundary;
             nextBoundary = static_cast<const uint8_t*>(memmem(nextBoundary + boundaryLength, length - (nextBoundary + boundaryLength - data), boundary.data(), boundaryLength));
         }
-    } else if (mimeType && equalLettersIgnoringASCIICase(mimeType->type, "application") && equalLettersIgnoringASCIICase(mimeType->subtype, "x-www-form-urlencoded")) {
+    } else if (mimeType && equalLettersIgnoringASCIICase(mimeType->type, "application"_s) && equalLettersIgnoringASCIICase(mimeType->subtype, "x-www-form-urlencoded"_s)) {
         auto dataString = String::fromUTF8(data, length);
         for (auto& pair : WTF::URLParser::parseURLEncodedForm(dataString))
             form->append(pair.key, pair.value);

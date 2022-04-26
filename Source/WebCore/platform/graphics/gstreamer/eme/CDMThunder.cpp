@@ -214,15 +214,15 @@ bool CDMPrivateThunder::supportsSessions() const
 bool CDMPrivateThunder::supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData) const
 {
     // Validate the initData buffer as an JSON object in keyids case.
-    if (equalLettersIgnoringASCIICase(initDataType, "keyids") && CDMUtilities::parseJSONObject(initData))
+    if (equalLettersIgnoringASCIICase(initDataType, "keyids"_s) && CDMUtilities::parseJSONObject(initData))
         return true;
 
     // Validate the initData buffer as CENC initData. FIXME: Validate it is actually CENC.
-    if (equalLettersIgnoringASCIICase(initDataType, "cenc") && !initData.isEmpty())
+    if (equalLettersIgnoringASCIICase(initDataType, "cenc"_s) && !initData.isEmpty())
         return true;
 
     // Validate the initData buffer as WebM initData.
-    if (equalLettersIgnoringASCIICase(initDataType, "webm") && !initData.isEmpty())
+    if (equalLettersIgnoringASCIICase(initDataType, "webm"_s) && !initData.isEmpty())
         return true;
 
     return false;

@@ -42,7 +42,7 @@ namespace WebCore {
 
 bool CSSFontFaceSrcValue::isSVGFontFaceSrc() const
 {
-    return equalLettersIgnoringASCIICase(m_format, "svg");
+    return equalLettersIgnoringASCIICase(m_format, "svg"_s);
 }
 
 bool CSSFontFaceSrcValue::isSVGFontTarget() const

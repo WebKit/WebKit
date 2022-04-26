@@ -259,7 +259,7 @@ static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& req
 
 static bool isMediaMIMEType(const String& type)
 {
-    return startsWithLettersIgnoringASCIICase(type, "video/") || startsWithLettersIgnoringASCIICase(type, "audio/");
+    return startsWithLettersIgnoringASCIICase(type, "video/"_s) || startsWithLettersIgnoringASCIICase(type, "audio/"_s);
 }
 
 static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceResponse& response, size_t bodySize)

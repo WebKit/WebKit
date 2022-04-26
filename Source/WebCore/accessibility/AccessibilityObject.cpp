@@ -1748,9 +1748,9 @@ bool AccessibilityObject::supportsAutoComplete() const
 String AccessibilityObject::autoCompleteValue() const
 {
     const AtomString& autoComplete = getAttribute(aria_autocompleteAttr);
-    if (equalLettersIgnoringASCIICase(autoComplete, "inline")
-        || equalLettersIgnoringASCIICase(autoComplete, "list")
-        || equalLettersIgnoringASCIICase(autoComplete, "both"))
+    if (equalLettersIgnoringASCIICase(autoComplete, "inline"_s)
+        || equalLettersIgnoringASCIICase(autoComplete, "list"_s)
+        || equalLettersIgnoringASCIICase(autoComplete, "both"_s))
         return autoComplete;
 
     return "none"_s;
@@ -1766,7 +1766,7 @@ bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
         return false;
     
     // Both "true" (case-insensitive) and the empty string count as true.
-    return contentEditableValue.isEmpty() || equalLettersIgnoringASCIICase(contentEditableValue, "true");
+    return contentEditableValue.isEmpty() || equalLettersIgnoringASCIICase(contentEditableValue, "true"_s);
 }
     
 #if ENABLE(ACCESSIBILITY)
@@ -2160,7 +2160,7 @@ String AccessibilityObject::actionVerb() const
 
 bool AccessibilityObject::ariaIsMultiline() const
 {
-    return equalLettersIgnoringASCIICase(getAttribute(aria_multilineAttr), "true");
+    return equalLettersIgnoringASCIICase(getAttribute(aria_multilineAttr), "true"_s);
 }
 
 String AccessibilityObject::invalidStatus() const
@@ -2886,7 +2886,7 @@ bool AccessibilityObject::supportsARIAAttributes() const
     
 bool AccessibilityObject::liveRegionStatusIsEnabled(const AtomString& liveRegionStatus)
 {
-    return equalLettersIgnoringASCIICase(liveRegionStatus, "polite") || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive");
+    return equalLettersIgnoringASCIICase(liveRegionStatus, "polite"_s) || equalLettersIgnoringASCIICase(liveRegionStatus, "assertive"_s);
 }
     
 bool AccessibilityObject::supportsLiveRegion(bool excludeIfOff) const
@@ -2990,11 +2990,11 @@ AccessibilitySortDirection AccessibilityObject::sortDirection() const
     if (sortAttribute.isNull())
         return AccessibilitySortDirection::None;
 
-    if (equalLettersIgnoringASCIICase(sortAttribute, "ascending"))
+    if (equalLettersIgnoringASCIICase(sortAttribute, "ascending"_s))
         return AccessibilitySortDirection::Ascending;
-    if (equalLettersIgnoringASCIICase(sortAttribute, "descending"))
+    if (equalLettersIgnoringASCIICase(sortAttribute, "descending"_s))
         return AccessibilitySortDirection::Descending;
-    if (equalLettersIgnoringASCIICase(sortAttribute, "other"))
+    if (equalLettersIgnoringASCIICase(sortAttribute, "other"_s))
         return AccessibilitySortDirection::Other;
 
     return AccessibilitySortDirection::None;
@@ -3032,7 +3032,7 @@ String AccessibilityObject::popupValue() const
     }
 
     // aria-haspopup specification states that true must be treated as menu.
-    if (equalLettersIgnoringASCIICase(hasPopup, "true"))
+    if (equalLettersIgnoringASCIICase(hasPopup, "true"_s))
         return "menu"_s;
 
     // The spec states that "User agents must treat any value of aria-haspopup that is not
@@ -3100,7 +3100,7 @@ void AccessibilityObject::classList(Vector<String>& classList) const
 bool AccessibilityObject::supportsPressed() const
 {
     const AtomString& expanded = getAttribute(aria_pressedAttr);
-    return equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false");
+    return equalLettersIgnoringASCIICase(expanded, "true"_s) || equalLettersIgnoringASCIICase(expanded, "false"_s);
 }
     
 bool AccessibilityObject::supportsExpanded() const
@@ -3126,7 +3126,7 @@ bool AccessibilityObject::supportsExpanded() const
     case AccessibilityRole::WebApplication: {
         // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
         const AtomString& expanded = getAttribute(aria_expandedAttr);
-        return equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false");
+        return equalLettersIgnoringASCIICase(expanded, "true"_s) || equalLettersIgnoringASCIICase(expanded, "false"_s);
     }
     default:
         return false;
@@ -3147,7 +3147,7 @@ bool AccessibilityObject::isExpanded() const
     }
 
     if (supportsExpanded())
-        return equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true");
+        return equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"_s);
 
     return false;  
 }
@@ -3188,17 +3188,17 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 
     if (isToggleButton()) {
         const AtomString& ariaPressed = getAttribute(aria_pressedAttr);
-        if (equalLettersIgnoringASCIICase(ariaPressed, "true"))
+        if (equalLettersIgnoringASCIICase(ariaPressed, "true"_s))
             return AccessibilityButtonState::On;
-        if (equalLettersIgnoringASCIICase(ariaPressed, "mixed"))
+        if (equalLettersIgnoringASCIICase(ariaPressed, "mixed"_s))
             return AccessibilityButtonState::Mixed;
         return AccessibilityButtonState::Off;
     }
     
     const AtomString& result = getAttribute(aria_checkedAttr);
-    if (equalLettersIgnoringASCIICase(result, "true"))
+    if (equalLettersIgnoringASCIICase(result, "true"_s))
         return AccessibilityButtonState::On;
-    if (equalLettersIgnoringASCIICase(result, "mixed")) {
+    if (equalLettersIgnoringASCIICase(result, "mixed"_s)) {
         // ARIA says that radio, menuitemradio, and switch elements must NOT expose button state mixed.
         AccessibilityRole ariaRole = ariaRoleAttribute();
         if (ariaRole == AccessibilityRole::RadioButton || ariaRole == AccessibilityRole::MenuItemRadio || ariaRole == AccessibilityRole::Switch)
@@ -3678,7 +3678,7 @@ bool AccessibilityObject::isAXHidden() const
         return false;
     
     return Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
-        return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "true") && !object.isFocused();
+        return equalLettersIgnoringASCIICase(object.getAttribute(aria_hiddenAttr), "true"_s) && !object.isFocused();
     }) != nullptr;
 }
 
@@ -4055,7 +4055,7 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AXCoreObject* child
 
     AccessibilityIsIgnoredFromParentData result = AccessibilityIsIgnoredFromParentData(this);
     if (!m_isIgnoredFromParentData.isNull()) {
-        result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || equalLettersIgnoringASCIICase(downcast<AccessibilityObject>(child)->getAttribute(aria_hiddenAttr), "true")) && !child->isFocused();
+        result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || equalLettersIgnoringASCIICase(downcast<AccessibilityObject>(child)->getAttribute(aria_hiddenAttr), "true"_s)) && !child->isFocused();
         result.isPresentationalChildOfAriaRole = m_isIgnoredFromParentData.isPresentationalChildOfAriaRole || ariaRoleHasPresentationalChildren();
         result.isDescendantOfBarrenParent = m_isIgnoredFromParentData.isDescendantOfBarrenParent || !canHaveChildren();
     } else {

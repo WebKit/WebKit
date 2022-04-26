@@ -77,7 +77,7 @@ bool UserContentURLPattern::parse(StringView pattern)
 
     int pathStartPos = 0;
 
-    if (equalLettersIgnoringASCIICase(m_scheme, "file"))
+    if (equalLettersIgnoringASCIICase(m_scheme, "file"_s))
         pathStartPos = hostStartPos;
     else {
         size_t hostEndPos = pattern.find('/', hostStartPos);
@@ -117,7 +117,7 @@ bool UserContentURLPattern::matches(const URL& test) const
     if (m_scheme != "*" && !equalIgnoringASCIICase(test.protocol(), m_scheme))
         return false;
 
-    if (!equalLettersIgnoringASCIICase(m_scheme, "file") && !matchesHost(test))
+    if (!equalLettersIgnoringASCIICase(m_scheme, "file"_s) && !matchesHost(test))
         return false;
 
     return matchesPath(test);

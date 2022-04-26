@@ -143,7 +143,7 @@ RefPtr<Uint8Array> CDMSessionAVContentKeySession::generateKeyRequest(const Strin
     errorCode = MediaPlayer::NoError;
     systemCode = 0;
 
-    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease")) {
+    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"_s)) {
         m_mode = KeyRelease;
         m_certificate = initData;
         return generateKeyReleaseMessage(errorCode, systemCode);

@@ -145,20 +145,20 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
 
 bool FontCustomPlatformData::supportsFormat(const String& format)
 {
-    return equalLettersIgnoringASCIICase(format, "truetype")
-        || equalLettersIgnoringASCIICase(format, "opentype")
+    return equalLettersIgnoringASCIICase(format, "truetype"_s)
+        || equalLettersIgnoringASCIICase(format, "opentype"_s)
 #if USE(WOFF2)
-        || equalLettersIgnoringASCIICase(format, "woff2")
+        || equalLettersIgnoringASCIICase(format, "woff2"_s)
 #if ENABLE(VARIATION_FONTS)
-        || equalLettersIgnoringASCIICase(format, "woff2-variations")
+        || equalLettersIgnoringASCIICase(format, "woff2-variations"_s)
 #endif
 #endif
 #if ENABLE(VARIATION_FONTS)
-        || equalLettersIgnoringASCIICase(format, "woff-variations")
-        || equalLettersIgnoringASCIICase(format, "truetype-variations")
-        || equalLettersIgnoringASCIICase(format, "opentype-variations")
+        || equalLettersIgnoringASCIICase(format, "woff-variations"_s)
+        || equalLettersIgnoringASCIICase(format, "truetype-variations"_s)
+        || equalLettersIgnoringASCIICase(format, "opentype-variations"_s)
 #endif
-        || equalLettersIgnoringASCIICase(format, "woff");
+        || equalLettersIgnoringASCIICase(format, "woff"_s);
 }
 
 }

@@ -424,15 +424,15 @@ static bool shouldAllowExternalLoad(const URL& url)
         return false;
 
     // On Windows, libxml computes a URL relative to where its DLL resides.
-    if (startsWithLettersIgnoringASCIICase(urlString, "file:///") && urlString.endsWithIgnoringASCIICase("/etc/catalog"))
+    if (startsWithLettersIgnoringASCIICase(urlString, "file:///"_s) && urlString.endsWithIgnoringASCIICase("/etc/catalog"))
         return false;
 
     // The most common DTD. There isn't much point in hammering www.w3c.org by requesting this for every XHTML document.
-    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/tr/xhtml"))
+    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/tr/xhtml"_s))
         return false;
 
     // Similarly, there isn't much point in requesting the SVG DTD.
-    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/graphics/svg"))
+    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/graphics/svg"_s))
         return false;
 
     // The libxml doesn't give us a lot of context for deciding whether to

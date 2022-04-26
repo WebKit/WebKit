@@ -45,7 +45,7 @@ static String testPathFromURL(WKURLRef url)
     String schemeString(schemeCFString.get());
     String pathString(pathCFString.get());
     
-    if (equalLettersIgnoringASCIICase(schemeString, "file")) {
+    if (equalLettersIgnoringASCIICase(schemeString, "file"_s)) {
         String layoutTests("/LayoutTests/"_s);
         size_t layoutTestsOffset = pathString.find(layoutTests);
         if (layoutTestsOffset == notFound)
@@ -54,7 +54,7 @@ static String testPathFromURL(WKURLRef url)
         return pathString.substring(layoutTestsOffset + layoutTests.length());
     }
 
-    if (!equalLettersIgnoringASCIICase(schemeString, "http") && !equalLettersIgnoringASCIICase(schemeString, "https"))
+    if (!equalLettersIgnoringASCIICase(schemeString, "http"_s) && !equalLettersIgnoringASCIICase(schemeString, "https"_s))
         return String();
 
     auto hostCFString = adoptCF(CFURLCopyHostName(cfURL.get()));

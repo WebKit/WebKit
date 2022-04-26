@@ -517,11 +517,11 @@ bool WebSocketHandshake::checkResponseHeaders()
         return false;
     }
 
-    if (!equalLettersIgnoringASCIICase(serverUpgrade, "websocket")) {
+    if (!equalLettersIgnoringASCIICase(serverUpgrade, "websocket"_s)) {
         m_failureReason = "Error during WebSocket handshake: 'Upgrade' header value is not 'WebSocket'"_s;
         return false;
     }
-    if (!equalLettersIgnoringASCIICase(serverConnection, "upgrade")) {
+    if (!equalLettersIgnoringASCIICase(serverConnection, "upgrade"_s)) {
         m_failureReason = "Error during WebSocket handshake: 'Connection' header value is not 'Upgrade'"_s;
         return false;
     }

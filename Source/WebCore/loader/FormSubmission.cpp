@@ -70,7 +70,7 @@ static void appendMailtoPostFormDataToURL(URL& url, const FormData& data, const 
 {
     String body = data.flattenToString();
 
-    if (equalLettersIgnoringASCIICase(encodingType, "text/plain")) {
+    if (equalLettersIgnoringASCIICase(encodingType, "text/plain"_s)) {
         // Convention seems to be to decode, and s/&/\r\n/. Also, spaces are encoded as %20.
         body = PAL::decodeURLEscapeSequences(makeStringByReplacingAll(makeStringByReplacingAll(body, '&', "\r\n"_s), '+', ' '));
     }
@@ -102,9 +102,9 @@ void FormSubmission::Attributes::parseAction(const String& action)
 
 String FormSubmission::Attributes::parseEncodingType(const String& type)
 {
-    if (equalLettersIgnoringASCIICase(type, "multipart/form-data"))
+    if (equalLettersIgnoringASCIICase(type, "multipart/form-data"_s))
         return "multipart/form-data"_s;
-    if (equalLettersIgnoringASCIICase(type, "text/plain"))
+    if (equalLettersIgnoringASCIICase(type, "text/plain"_s))
         return textPlainContentTypeAtom();
     return "application/x-www-form-urlencoded"_s;
 }
@@ -117,10 +117,10 @@ void FormSubmission::Attributes::updateEncodingType(const String& type)
 
 FormSubmission::Method FormSubmission::Attributes::parseMethodType(const String& type, bool dialogElementEnabled)
 {
-    if (dialogElementEnabled && equalLettersIgnoringASCIICase(type, "dialog"))
+    if (dialogElementEnabled && equalLettersIgnoringASCIICase(type, "dialog"_s))
         return FormSubmission::Method::Dialog;
 
-    if (equalLettersIgnoringASCIICase(type, "post"))
+    if (equalLettersIgnoringASCIICase(type, "post"_s))
         return FormSubmission::Method::Post;
 
     return FormSubmission::Method::Get;

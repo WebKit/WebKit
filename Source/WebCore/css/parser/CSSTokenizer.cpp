@@ -595,7 +595,7 @@ CSSParserToken CSSTokenizer::consumeIdentLikeToken()
 {
     StringView name = consumeName();
     if (consumeIfNext('(')) {
-        if (equalLettersIgnoringASCIICase(name, "url")) {
+        if (equalLettersIgnoringASCIICase(name, "url"_s)) {
             // The spec is slightly different so as to avoid dropping whitespace
             // tokens, but they wouldn't be used and this is easier.
             m_input.advanceUntilNonWhitespace();

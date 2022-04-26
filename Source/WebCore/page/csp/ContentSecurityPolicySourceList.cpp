@@ -88,7 +88,7 @@ template<typename CharacterType> static bool isSourceListNone(StringParsingBuffe
 {
     skipWhile<isASCIISpace>(buffer);
 
-    if (!skipExactlyIgnoringASCIICase(buffer, "'none'"))
+    if (!skipExactlyIgnoringASCIICase(buffer, "'none'"_s))
         return false;
 
     skipWhile<isASCIISpace>(buffer);
@@ -181,7 +181,7 @@ bool ContentSecurityPolicySourceList::matches(const String& nonce) const
 
 static bool schemeIsInHttpFamily(StringView scheme)
 {
-    return equalLettersIgnoringASCIICase(scheme, "https") || equalLettersIgnoringASCIICase(scheme, "http");
+    return equalLettersIgnoringASCIICase(scheme, "https"_s) || equalLettersIgnoringASCIICase(scheme, "http"_s);
 }
 
 static bool isRestrictedDirectiveForMode(const String& directive, ContentSecurityPolicyModeForExtension mode)
@@ -219,10 +219,10 @@ bool ContentSecurityPolicySourceList::isValidSourceForExtensionMode(const Conten
         if (parsedSource.host.hasWildcard && hostIsPublicSuffix)
             return false;
 
-        if (equalLettersIgnoringASCIICase(parsedSource.scheme, "blob"))
+        if (equalLettersIgnoringASCIICase(parsedSource.scheme, "blob"_s))
             return true;
 
-        if (!equalLettersIgnoringASCIICase(parsedSource.scheme, "https") || parsedSource.host.value.isEmpty())
+        if (!equalLettersIgnoringASCIICase(parsedSource.scheme, "https"_s) || parsedSource.host.value.isEmpty())
             return false;
         break;
     case ContentSecurityPolicyModeForExtension::ManifestV3:
@@ -289,7 +289,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
     if (buffer.atEnd())
         return std::nullopt;
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'none'"))
+    if (skipExactlyIgnoringASCIICase(buffer, "'none'"_s))
         return std::nullopt;
 
     Source source;
@@ -299,7 +299,7 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'")
+    if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'"_s)
         && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)
         && (m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrc
             || m_directiveName == ContentSecurityPolicyDirectiveNames::scriptSrcElem)) {
@@ -309,33 +309,33 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'self'")) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'self'"_s)) {
         m_allowSelf = !m_allowNonParserInsertedScripts;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-inline'") && !isRestrictedDirectiveForMode(m_directiveName, m_contentSecurityPolicyModeForExtension)) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-inline'"_s) && !isRestrictedDirectiveForMode(m_directiveName, m_contentSecurityPolicyModeForExtension)) {
         m_allowInline = !m_allowNonParserInsertedScripts;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-eval'") && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-eval'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowEval = true;
         m_allowWasmEval = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'wasm-unsafe-eval'") && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'wasm-unsafe-eval'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowWasmEval = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-hashes'") && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'unsafe-hashes'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_allowUnsafeHashes = true;
         return source;
     }
 
-    if (skipExactlyIgnoringASCIICase(buffer, "'report-sample'") && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+    if (skipExactlyIgnoringASCIICase(buffer, "'report-sample'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
         m_reportSample = true;
         return source;
     }
@@ -574,7 +574,7 @@ template<typename CharacterType> static bool isNonceCharacter(CharacterType c)
 // nonce-value     = base64-value
 template<typename CharacterType> bool ContentSecurityPolicySourceList::parseNonceSource(StringParsingBuffer<CharacterType> buffer)
 {
-    if (!skipExactlyIgnoringASCIICase(buffer, "'nonce-"))
+    if (!skipExactlyIgnoringASCIICase(buffer, "'nonce-"_s))
         return false;
 
     auto beginNonceValue = buffer.position();

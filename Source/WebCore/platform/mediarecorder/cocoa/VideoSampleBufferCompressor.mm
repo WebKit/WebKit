@@ -43,7 +43,7 @@ std::unique_ptr<VideoSampleBufferCompressor> VideoSampleBufferCompressor::create
 {
     auto profile = Profile::Baseline;
     for (auto codec : ContentType(mimeType).codecs()) {
-        if (startsWithLettersIgnoringASCIICase(codec, "avc1.") && codec.length() >= 11) {
+        if (startsWithLettersIgnoringASCIICase(codec, "avc1."_s) && codec.length() >= 11) {
             if (codec[5] == '6' && codec[6] == '4')
                 profile = Profile::High;
             else if (codec[5] == '4' && (codec[6] == 'd' || codec[6] == 'D'))

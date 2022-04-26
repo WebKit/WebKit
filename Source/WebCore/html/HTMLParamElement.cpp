@@ -59,7 +59,7 @@ AtomString HTMLParamElement::value() const
 
 bool HTMLParamElement::isURLParameter(const String& name)
 {
-    return equalLettersIgnoringASCIICase(name, "data") || equalLettersIgnoringASCIICase(name, "movie") || equalLettersIgnoringASCIICase(name, "src");
+    return equalLettersIgnoringASCIICase(name, "data"_s) || equalLettersIgnoringASCIICase(name, "movie"_s) || equalLettersIgnoringASCIICase(name, "src"_s);
 }
 
 bool HTMLParamElement::isURLAttribute(const Attribute& attribute) const

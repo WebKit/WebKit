@@ -65,13 +65,13 @@ const MathMLElement::Length& MathMLFractionElement::lineThickness()
     // However, it only states that "thin" and "thick" are respectively thiner and thicker.
     // The MathML in HTML5 implementation note suggests 50% and 200% and these values are also used in Gecko.
     m_lineThickness = Length();
-    if (equalLettersIgnoringASCIICase(thickness, "thin")) {
+    if (equalLettersIgnoringASCIICase(thickness, "thin"_s)) {
         m_lineThickness.value().type = LengthType::UnitLess;
         m_lineThickness.value().value = .5;
-    } else if (equalLettersIgnoringASCIICase(thickness, "medium")) {
+    } else if (equalLettersIgnoringASCIICase(thickness, "medium"_s)) {
         m_lineThickness.value().type = LengthType::UnitLess;
         m_lineThickness.value().value = 1;
-    } else if (equalLettersIgnoringASCIICase(thickness, "thick")) {
+    } else if (equalLettersIgnoringASCIICase(thickness, "thick"_s)) {
         m_lineThickness.value().type = LengthType::UnitLess;
         m_lineThickness.value().value = 2;
     } else
@@ -85,9 +85,9 @@ MathMLFractionElement::FractionAlignment MathMLFractionElement::cachedFractionAl
         return alignment.value();
 
     auto& value = attributeWithoutSynchronization(name);
-    if (equalLettersIgnoringASCIICase(value, "left"))
+    if (equalLettersIgnoringASCIICase(value, "left"_s))
         alignment = FractionAlignmentLeft;
-    else if (equalLettersIgnoringASCIICase(value, "right"))
+    else if (equalLettersIgnoringASCIICase(value, "right"_s))
         alignment = FractionAlignmentRight;
     else
         alignment = FractionAlignmentCenter;

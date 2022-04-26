@@ -167,7 +167,7 @@ bool webKitDMABufVideoSinkIsEnabled()
     std::call_once(s_flag,
         [&] {
             const char* value = g_getenv("WEBKIT_GST_DMABUF_SINK_ENABLED");
-            s_enabled = value && (equalLettersIgnoringASCIICase(value, "true") || equalLettersIgnoringASCIICase(value, "1"));
+            s_enabled = value && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
         });
     return s_enabled;
 }

@@ -123,13 +123,13 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
 MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(StringView text)
 {
     auto encoding = text.stripWhiteSpace();
-    if (equalLettersIgnoringASCIICase(encoding, "base64"))
+    if (equalLettersIgnoringASCIICase(encoding, "base64"_s))
         return Base64;
-    if (equalLettersIgnoringASCIICase(encoding, "quoted-printable"))
+    if (equalLettersIgnoringASCIICase(encoding, "quoted-printable"_s))
         return QuotedPrintable;
-    if (equalLettersIgnoringASCIICase(encoding, "7bit"))
+    if (equalLettersIgnoringASCIICase(encoding, "7bit"_s))
         return SevenBit;
-    if (equalLettersIgnoringASCIICase(encoding, "binary"))
+    if (equalLettersIgnoringASCIICase(encoding, "binary"_s))
         return Binary;
     LOG_ERROR("Unknown encoding '%s' found in MIME header.", text.utf8().data());
     return Unknown;

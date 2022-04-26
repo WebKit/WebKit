@@ -145,9 +145,9 @@ void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         if (document().settings().coreMathMLEnabled() || hasTagName(mathTag) || hasTagName(mrowTag) || hasTagName(mstyleTag) || isMathMLToken())
             addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
     } else if (name == displaystyleAttr) {
-        if (equalLettersIgnoringASCIICase(value, "false"))
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyMathStyle, CSSValueCompact);
-        else if (equalLettersIgnoringASCIICase(value, "true"))
+        else if (equalLettersIgnoringASCIICase(value, "true"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyMathStyle, CSSValueNormal);
     } else {
         if (document().settings().coreMathMLEnabled()) {

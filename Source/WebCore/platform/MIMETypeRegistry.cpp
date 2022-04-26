@@ -428,7 +428,7 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(const String& mimeType)
 {
-    if (isSupportedImageMIMEType(mimeType) || equalLettersIgnoringASCIICase(mimeType, "image/svg+xml"))
+    if (isSupportedImageMIMEType(mimeType) || equalLettersIgnoringASCIICase(mimeType, "image/svg+xml"_s))
         return true;
 
 #if HAVE(AVASSETREADER)
@@ -496,42 +496,42 @@ bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isSupportedWebAssemblyMIMEType(const String& mimeType)
 {
-    return equalLettersIgnoringASCIICase(mimeType, "application/wasm");
+    return equalLettersIgnoringASCIICase(mimeType, "application/wasm"_s);
 }
 
 bool MIMETypeRegistry::isSupportedStyleSheetMIMEType(const String& mimeType)
 {
-    return equalLettersIgnoringASCIICase(mimeType, "text/css");
+    return equalLettersIgnoringASCIICase(mimeType, "text/css"_s);
 }
 
 bool MIMETypeRegistry::isSupportedFontMIMEType(const String& mimeType)
 {
     static const unsigned fontLength = 5;
-    if (!startsWithLettersIgnoringASCIICase(mimeType, "font/"))
+    if (!startsWithLettersIgnoringASCIICase(mimeType, "font/"_s))
         return false;
     auto subtype = StringView { mimeType }.substring(fontLength);
-    return equalLettersIgnoringASCIICase(subtype, "woff")
-        || equalLettersIgnoringASCIICase(subtype, "woff2")
-        || equalLettersIgnoringASCIICase(subtype, "otf")
-        || equalLettersIgnoringASCIICase(subtype, "ttf")
-        || equalLettersIgnoringASCIICase(subtype, "sfnt");
+    return equalLettersIgnoringASCIICase(subtype, "woff"_s)
+        || equalLettersIgnoringASCIICase(subtype, "woff2"_s)
+        || equalLettersIgnoringASCIICase(subtype, "otf"_s)
+        || equalLettersIgnoringASCIICase(subtype, "ttf"_s)
+        || equalLettersIgnoringASCIICase(subtype, "sfnt"_s);
 }
 
 bool MIMETypeRegistry::isTextMediaPlaylistMIMEType(const String& mimeType)
 {
-    if (startsWithLettersIgnoringASCIICase(mimeType, "application/")) {
+    if (startsWithLettersIgnoringASCIICase(mimeType, "application/"_s)) {
         static const unsigned applicationLength = 12;
         auto subtype = StringView { mimeType }.substring(applicationLength);
-        return equalLettersIgnoringASCIICase(subtype, "vnd.apple.mpegurl")
-            || equalLettersIgnoringASCIICase(subtype, "mpegurl")
-            || equalLettersIgnoringASCIICase(subtype, "x-mpegurl");
+        return equalLettersIgnoringASCIICase(subtype, "vnd.apple.mpegurl"_s)
+            || equalLettersIgnoringASCIICase(subtype, "mpegurl"_s)
+            || equalLettersIgnoringASCIICase(subtype, "x-mpegurl"_s);
     }
 
-    if (startsWithLettersIgnoringASCIICase(mimeType, "audio/")) {
+    if (startsWithLettersIgnoringASCIICase(mimeType, "audio/"_s)) {
         static const unsigned audioLength = 6;
         auto subtype = StringView { mimeType }.substring(audioLength);
-        return equalLettersIgnoringASCIICase(subtype, "mpegurl")
-            || equalLettersIgnoringASCIICase(subtype, "x-mpegurl");
+        return equalLettersIgnoringASCIICase(subtype, "mpegurl"_s)
+            || equalLettersIgnoringASCIICase(subtype, "x-mpegurl"_s);
     }
 
     return false;
@@ -542,7 +542,7 @@ bool MIMETypeRegistry::isSupportedJSONMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return false;
 
-    if (equalLettersIgnoringASCIICase(mimeType, "application/json"))
+    if (equalLettersIgnoringASCIICase(mimeType, "application/json"_s))
         return true;
 
     // When detecting +json ensure there is a non-empty type / subtype preceeding the suffix.
@@ -571,7 +571,7 @@ bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isSupportedTextTrackMIMEType(const String& mimeType)
 {
-    return equalLettersIgnoringASCIICase(mimeType, "text/vtt");
+    return equalLettersIgnoringASCIICase(mimeType, "text/vtt"_s);
 }
 
 bool MIMETypeRegistry::isUnsupportedTextMIMEType(const String& mimeType)
@@ -584,10 +584,10 @@ bool MIMETypeRegistry::isTextMIMEType(const String& mimeType)
 {
     return isSupportedJavaScriptMIMEType(mimeType)
         || isSupportedJSONMIMEType(mimeType) // Render JSON as text/plain.
-        || (startsWithLettersIgnoringASCIICase(mimeType, "text/")
-            && !equalLettersIgnoringASCIICase(mimeType, "text/html")
-            && !equalLettersIgnoringASCIICase(mimeType, "text/xml")
-            && !equalLettersIgnoringASCIICase(mimeType, "text/xsl"));
+        || (startsWithLettersIgnoringASCIICase(mimeType, "text/"_s)
+            && !equalLettersIgnoringASCIICase(mimeType, "text/html"_s)
+            && !equalLettersIgnoringASCIICase(mimeType, "text/xml"_s)
+            && !equalLettersIgnoringASCIICase(mimeType, "text/xsl"_s));
 }
 
 static inline bool isValidXMLMIMETypeChar(UChar c)
@@ -599,7 +599,7 @@ static inline bool isValidXMLMIMETypeChar(UChar c)
 
 bool MIMETypeRegistry::isXMLMIMEType(const String& mimeType)
 {
-    if (equalLettersIgnoringASCIICase(mimeType, "text/xml") || equalLettersIgnoringASCIICase(mimeType, "application/xml") || equalLettersIgnoringASCIICase(mimeType, "text/xsl"))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/xml"_s) || equalLettersIgnoringASCIICase(mimeType, "application/xml"_s) || equalLettersIgnoringASCIICase(mimeType, "text/xsl"_s))
         return true;
 
     if (!mimeType.endsWithIgnoringASCIICase("+xml"))
@@ -622,8 +622,8 @@ bool MIMETypeRegistry::isXMLMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isXMLEntityMIMEType(StringView mimeType)
 {
-    return equalLettersIgnoringASCIICase(mimeType, "text/xml-external-parsed-entity")
-        || equalLettersIgnoringASCIICase(mimeType, "application/xml-external-parsed-entity");
+    return equalLettersIgnoringASCIICase(mimeType, "text/xml-external-parsed-entity"_s)
+        || equalLettersIgnoringASCIICase(mimeType, "application/xml-external-parsed-entity"_s);
 }
 
 bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
@@ -632,9 +632,9 @@ bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
     // of using a hash set.
     // Any of the MIME types below may be followed by any number of specific versions of the JVM,
     // which is why we use startsWith()
-    return startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-applet")
-        || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-bean")
-        || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-vm");
+    return startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-applet"_s)
+        || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-bean"_s)
+        || startsWithLettersIgnoringASCIICase(mimeType, "application/x-java-vm"_s);
 }
 
 bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
@@ -645,7 +645,7 @@ bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
 
 bool MIMETypeRegistry::isPostScriptMIMEType(const String& mimeType)
 {
-    return equalLettersIgnoringASCIICase(mimeType, "application/postscript");
+    return equalLettersIgnoringASCIICase(mimeType, "application/postscript"_s);
 }
 
 bool MIMETypeRegistry::isPDFOrPostScriptMIMEType(const String& mimeType)
@@ -671,7 +671,7 @@ bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
         return true;
 #endif
 
-    if (startsWithLettersIgnoringASCIICase(mimeType, "text/"))
+    if (startsWithLettersIgnoringASCIICase(mimeType, "text/"_s))
         return !isUnsupportedTextMIMEType(mimeType);
 
     return false;

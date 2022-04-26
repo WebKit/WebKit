@@ -285,9 +285,9 @@ breakBreak:
 
 TextResourceDecoder::ContentType TextResourceDecoder::determineContentType(const String& mimeType)
 {
-    if (equalLettersIgnoringASCIICase(mimeType, "text/css"))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/css"_s))
         return CSS;
-    if (equalLettersIgnoringASCIICase(mimeType, "text/html"))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/html"_s))
         return HTML;
     if (MIMETypeRegistry::isXMLMIMEType(mimeType))
         return XML;
@@ -343,7 +343,7 @@ void TextResourceDecoder::setEncoding(const PAL::TextEncoding& encoding, Encodin
 
     // When encoding comes from meta tag (i.e. it cannot be XML files sent via XHR),
     // treat x-user-defined as windows-1252 (bug 18270)
-    if (source == EncodingFromMetaTag && equalLettersIgnoringASCIICase(encoding.name(), "x-user-defined"))
+    if (source == EncodingFromMetaTag && equalLettersIgnoringASCIICase(encoding.name(), "x-user-defined"_s))
         m_encoding = "windows-1252";
     else if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)        
         m_encoding = encoding.closestByteBasedEquivalent();

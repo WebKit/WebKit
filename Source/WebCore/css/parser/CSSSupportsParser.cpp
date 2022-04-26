@@ -57,7 +57,7 @@ enum ClauseType { Unresolved, Conjunction, Disjunction };
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserTokenRange range)
 {
     if (range.peek().type() == IdentToken || range.peek().type() == FunctionToken) {
-        if (equalLettersIgnoringASCIICase(range.peek().value(), "not"))
+        if (equalLettersIgnoringASCIICase(range.peek().value(), "not"_s))
             return consumeNegation(range);
     }
 
@@ -92,8 +92,8 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeCondition(CSSParserT
         
         if (clauseType == Unresolved)
             clauseType = token.value().length() == 3 ? Conjunction : Disjunction;
-        if ((clauseType == Conjunction && !equalLettersIgnoringASCIICase(token.value(), "and"))
-            || (clauseType == Disjunction && !equalLettersIgnoringASCIICase(token.value(), "or")))
+        if ((clauseType == Conjunction && !equalLettersIgnoringASCIICase(token.value(), "and"_s))
+            || (clauseType == Disjunction && !equalLettersIgnoringASCIICase(token.value(), "or"_s)))
             return Invalid;
 
         if (token.type() == IdentToken)

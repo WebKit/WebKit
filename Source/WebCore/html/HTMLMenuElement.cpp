@@ -71,7 +71,7 @@ void HTMLMenuElement::parseAttribute(const QualifiedName& name, const AtomString
         return;
     }
     bool wasTouchBarMenu = m_isTouchBarMenu;
-    m_isTouchBarMenu = equalLettersIgnoringASCIICase(value, "touchbar");
+    m_isTouchBarMenu = equalLettersIgnoringASCIICase(value, "touchbar"_s);
     if (!wasTouchBarMenu && m_isTouchBarMenu) {
         if (auto* page = document().page()) {
             page->chrome().client().didInsertMenuElement(*this);

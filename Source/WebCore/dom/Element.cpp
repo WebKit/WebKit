@@ -686,7 +686,7 @@ ALWAYS_INLINE void Element::synchronizeAttribute(const QualifiedName& name) cons
 static ALWAYS_INLINE bool isStyleAttribute(const Element& element, const AtomString& attributeLocalName)
 {
     if (shouldIgnoreAttributeCase(element))
-        return equalLettersIgnoringASCIICase(attributeLocalName, "style");
+        return equalLettersIgnoringASCIICase(attributeLocalName, "style"_s);
     return attributeLocalName == styleAttr->localName();
 }
 
@@ -4117,9 +4117,9 @@ bool Element::isSpellCheckingEnabled() const
         auto& value = ancestor->attributeWithoutSynchronization(HTMLNames::spellcheckAttr);
         if (value.isNull())
             continue;
-        if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"))
+        if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"_s))
             return true;
-        if (equalLettersIgnoringASCIICase(value, "false"))
+        if (equalLettersIgnoringASCIICase(value, "false"_s))
             return false;
     }
     return true;
@@ -4527,7 +4527,7 @@ void Element::createUniqueElementData()
 
 bool Element::canContainRangeEndPoint() const
 {
-    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(roleAttr), "img");
+    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(roleAttr), "img"_s);
 }
 
 String Element::completeURLsInAttributeValue(const URL& base, const Attribute& attribute) const
@@ -4544,7 +4544,7 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
     // This is impossible for us to implement as the DOM tree does not allow for such structures,
     // Opera also appears to disallow such usage.
 
-    if (equalLettersIgnoringASCIICase(where, "beforebegin")) {
+    if (equalLettersIgnoringASCIICase(where, "beforebegin"_s)) {
         auto* parent = this->parentNode();
         if (!parent)
             return nullptr;
@@ -4554,21 +4554,21 @@ ExceptionOr<Node*> Element::insertAdjacent(const String& where, Ref<Node>&& newC
         return newChild.ptr();
     }
 
-    if (equalLettersIgnoringASCIICase(where, "afterbegin")) {
+    if (equalLettersIgnoringASCIICase(where, "afterbegin"_s)) {
         auto result = insertBefore(newChild, firstChild());
         if (result.hasException())
             return result.releaseException();
         return newChild.ptr();
     }
 
-    if (equalLettersIgnoringASCIICase(where, "beforeend")) {
+    if (equalLettersIgnoringASCIICase(where, "beforeend"_s)) {
         auto result = appendChild(newChild);
         if (result.hasException())
             return result.releaseException();
         return newChild.ptr();
     }
 
-    if (equalLettersIgnoringASCIICase(where, "afterend")) {
+    if (equalLettersIgnoringASCIICase(where, "afterend"_s)) {
         auto* parent = this->parentNode();
         if (!parent)
             return nullptr;
@@ -4592,13 +4592,13 @@ ExceptionOr<Element*> Element::insertAdjacentElement(const String& where, Elemen
 // Step 1 of https://w3c.github.io/DOM-Parsing/#dom-element-insertadjacenthtml.
 static ExceptionOr<ContainerNode&> contextNodeForInsertion(const String& where, Element& element)
 {
-    if (equalLettersIgnoringASCIICase(where, "beforebegin") || equalLettersIgnoringASCIICase(where, "afterend")) {
+    if (equalLettersIgnoringASCIICase(where, "beforebegin"_s) || equalLettersIgnoringASCIICase(where, "afterend"_s)) {
         auto* parent = element.parentNode();
         if (!parent || is<Document>(*parent))
             return Exception { NoModificationAllowedError };
         return *parent;
     }
-    if (equalLettersIgnoringASCIICase(where, "afterbegin") || equalLettersIgnoringASCIICase(where, "beforeend"))
+    if (equalLettersIgnoringASCIICase(where, "afterbegin"_s) || equalLettersIgnoringASCIICase(where, "beforeend"_s))
         return element;
     return Exception { SyntaxError };
 }

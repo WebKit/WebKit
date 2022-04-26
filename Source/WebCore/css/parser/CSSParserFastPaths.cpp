@@ -1077,10 +1077,10 @@ bool CSSParserFastPaths::isPartialKeywordPropertyID(CSSPropertyID propertyId)
 static bool isUniversalKeyword(StringView string)
 {
     // These keywords can be used for all properties.
-    return equalLettersIgnoringASCIICase(string, "initial")
-        || equalLettersIgnoringASCIICase(string, "inherit")
-        || equalLettersIgnoringASCIICase(string, "unset")
-        || equalLettersIgnoringASCIICase(string, "revert");
+    return equalLettersIgnoringASCIICase(string, "initial"_s)
+        || equalLettersIgnoringASCIICase(string, "inherit"_s)
+        || equalLettersIgnoringASCIICase(string, "unset"_s)
+        || equalLettersIgnoringASCIICase(string, "revert"_s);
 }
 
 static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView string, const CSSParserContext& context)

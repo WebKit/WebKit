@@ -1280,8 +1280,8 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
     auto containerType = type.containerType();
-    bool isAudioContainerType = equalLettersIgnoringASCIICase(containerType, "audio/webm");
-    bool isVideoContainerType = equalLettersIgnoringASCIICase(containerType, "video/webm");
+    bool isAudioContainerType = equalLettersIgnoringASCIICase(containerType, "audio/webm"_s);
+    bool isVideoContainerType = equalLettersIgnoringASCIICase(containerType, "video/webm"_s);
     if (!isAudioContainerType && !isVideoContainerType)
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 

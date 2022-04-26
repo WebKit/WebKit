@@ -71,7 +71,7 @@ FontDescription::FontDescription()
 static AtomString computeSpecializedChineseLocale()
 {
     for (auto& language : userPreferredLanguages()) {
-        if (startsWithLettersIgnoringASCIICase(language, "zh-"))
+        if (startsWithLettersIgnoringASCIICase(language, "zh-"_s))
             return language;
     }
     return AtomString("zh-hans", AtomString::ConstructFromLiteral); // We have no signal. Pick one option arbitrarily.

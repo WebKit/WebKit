@@ -61,7 +61,7 @@ const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
 #if PLATFORM(COCOA)
 static inline bool isBuiltInPDFPlugIn(const PluginInfo& plugin)
 {
-    return equalLettersIgnoringASCIICase(plugin.bundleIdentifier, "com.apple.webkit.builtinpdfplugin");
+    return equalLettersIgnoringASCIICase(plugin.bundleIdentifier, "com.apple.webkit.builtinpdfplugin"_s);
 }
 #else
 static inline bool isBuiltInPDFPlugIn(const PluginInfo&)

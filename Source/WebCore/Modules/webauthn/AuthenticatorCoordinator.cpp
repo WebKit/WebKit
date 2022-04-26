@@ -58,7 +58,7 @@ static bool needsAppIdQuirks(const String& host, const String& appId)
     // existing device registrations that authenticate 'google.com' against 'gstatic.com'. Firefox and other browsers
     // have agreed to grant an exception to the AppId rules for a limited time period (5 years from January, 2018) to
     // allow existing Google users to seamlessly transition to proper WebAuthN behavior.
-    if (equalLettersIgnoringASCIICase(host, "google.com") || host.endsWithIgnoringASCIICase(".google.com"))
+    if (equalLettersIgnoringASCIICase(host, "google.com"_s) || host.endsWithIgnoringASCIICase(".google.com"))
         return (appId == "https://www.gstatic.com/securitykey/origins.json"_s) || (appId == "https://www.gstatic.com/securitykey/a/google.com/origins.json"_s);
     return false;
 }

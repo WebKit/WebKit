@@ -147,13 +147,13 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
             };
 
             auto algorithm = getStringProperty("alg"_s);
-            if (!equalLettersIgnoringASCIICase(algorithm, "a128kw")) {
+            if (!equalLettersIgnoringASCIICase(algorithm, "a128kw"_s)) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: algorithm unsupported", this);
                 continue;
             }
 
             auto keyType = getStringProperty("kty"_s);
-            if (!equalLettersIgnoringASCIICase(keyType, "oct")) {
+            if (!equalLettersIgnoringASCIICase(keyType, "oct"_s)) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: keyType unsupported", this);
                 continue;
             }

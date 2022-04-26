@@ -441,16 +441,16 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithEmpty)
 TEST(WTF, StartsWithLettersIgnoringASCIICase)
 {
     String string("Test tEST"_s);
-    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test t"));
-    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test te"));
-    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test test"));
-    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(string, "test tex"));
+    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test t"_s));
+    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test te"_s));
+    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, "test test"_s));
+    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(string, "test tex"_s));
 
-    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, ""));
-    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(emptyString(), ""));
+    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(string, ""_s));
+    ASSERT_TRUE(startsWithLettersIgnoringASCIICase(emptyString(), ""_s));
 
-    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(String(), "t"));
-    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(String(), ""));
+    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(String(), "t"_s));
+    ASSERT_FALSE(startsWithLettersIgnoringASCIICase(String(), ""_s));
 }
 
 TEST(WTF, StringImplEndsWithIgnoringASCIICaseBasic)

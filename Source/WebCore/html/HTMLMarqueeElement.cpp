@@ -99,7 +99,7 @@ void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedN
             addHTMLNumberToStyle(style, CSSPropertyWebkitMarqueeSpeed, value);
     } else if (name == loopAttr) {
         if (!value.isEmpty()) {
-            if (value == "-1" || equalLettersIgnoringASCIICase(value, "infinite"))
+            if (value == "-1" || equalLettersIgnoringASCIICase(value, "infinite"_s))
                 addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
             else
                 addHTMLNumberToStyle(style, CSSPropertyWebkitMarqueeRepetition, value);

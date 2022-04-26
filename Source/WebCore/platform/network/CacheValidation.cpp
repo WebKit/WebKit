@@ -286,13 +286,13 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
             // A no-cache directive with a value is only meaningful for proxy caches.
             // It should be ignored by a browser level cache.
             // http://tools.ietf.org/html/rfc7234#section-5.2.2.2
-            if (equalLettersIgnoringASCIICase(directives[i].first, "no-cache") && directives[i].second.isEmpty())
+            if (equalLettersIgnoringASCIICase(directives[i].first, "no-cache"_s) && directives[i].second.isEmpty())
                 result.noCache = true;
-            else if (equalLettersIgnoringASCIICase(directives[i].first, "no-store"))
+            else if (equalLettersIgnoringASCIICase(directives[i].first, "no-store"_s))
                 result.noStore = true;
-            else if (equalLettersIgnoringASCIICase(directives[i].first, "must-revalidate"))
+            else if (equalLettersIgnoringASCIICase(directives[i].first, "must-revalidate"_s))
                 result.mustRevalidate = true;
-            else if (equalLettersIgnoringASCIICase(directives[i].first, "max-age")) {
+            else if (equalLettersIgnoringASCIICase(directives[i].first, "max-age"_s)) {
                 if (result.maxAge) {
                     // First max-age directive wins if there are multiple ones.
                     continue;
@@ -301,7 +301,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 double maxAge = directives[i].second.toDouble(ok);
                 if (ok)
                     result.maxAge = Seconds { maxAge };
-            } else if (equalLettersIgnoringASCIICase(directives[i].first, "max-stale")) {
+            } else if (equalLettersIgnoringASCIICase(directives[i].first, "max-stale"_s)) {
                 // https://tools.ietf.org/html/rfc7234#section-5.2.1.2
                 if (result.maxStale) {
                     // First max-stale directive wins if there are multiple ones.
@@ -316,9 +316,9 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 double maxStale = directives[i].second.toDouble(ok);
                 if (ok)
                     result.maxStale = Seconds { maxStale };
-            } else if (equalLettersIgnoringASCIICase(directives[i].first, "immutable")) {
+            } else if (equalLettersIgnoringASCIICase(directives[i].first, "immutable"_s)) {
                 result.immutable = true;
-            } else if (equalLettersIgnoringASCIICase(directives[i].first, "stale-while-revalidate")) {
+            } else if (equalLettersIgnoringASCIICase(directives[i].first, "stale-while-revalidate"_s)) {
                 if (result.staleWhileRevalidate) {
                     // First stale-while-revalidate directive wins if there are multiple ones.
                     continue;

@@ -241,7 +241,7 @@ bool SQLiteDatabase::useWALJournalMode()
 
 #ifndef NDEBUG
         String mode = walStatement->columnText(0);
-        if (!equalLettersIgnoringASCIICase(mode, "wal")) {
+        if (!equalLettersIgnoringASCIICase(mode, "wal"_s)) {
             LOG_ERROR("SQLite database journal_mode should be 'WAL', but is '%s'", mode.utf8().data());
             return false;
         }

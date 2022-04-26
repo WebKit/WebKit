@@ -223,7 +223,7 @@ static bool hasValidImportConditions(StringView conditions)
 void CSSPreloadScanner::emitRule()
 {
     StringView rule(m_rule.data(), m_rule.size());
-    if (equalLettersIgnoringASCIICase(rule, "import")) {
+    if (equalLettersIgnoringASCIICase(rule, "import"_s)) {
         String url = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
         StringView conditions(m_ruleConditions.data(), m_ruleConditions.size());
         if (!url.isEmpty() && hasValidImportConditions(conditions)) {
@@ -232,7 +232,7 @@ void CSSPreloadScanner::emitRule()
             m_requests->append(makeUnique<PreloadRequest>("css"_s, url, baseElementURL, CachedResource::Type::CSSStyleSheet, String(), PreloadRequest::ModuleScript::No, ReferrerPolicy::EmptyString));
         }
         m_state = Initial;
-    } else if (equalLettersIgnoringASCIICase(rule, "charset"))
+    } else if (equalLettersIgnoringASCIICase(rule, "charset"_s))
         m_state = Initial;
     else
         m_state = DoneParsingImportRules;

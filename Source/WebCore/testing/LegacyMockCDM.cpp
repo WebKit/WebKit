@@ -56,7 +56,7 @@ protected:
 
 bool LegacyMockCDM::supportsKeySystem(const String& keySystem)
 {
-    return equalLettersIgnoringASCIICase(keySystem, "com.webcore.mock");
+    return equalLettersIgnoringASCIICase(keySystem, "com.webcore.mock"_s);
 }
 
 bool LegacyMockCDM::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
@@ -64,12 +64,12 @@ bool LegacyMockCDM::supportsKeySystemAndMimeType(const String& keySystem, const 
     if (!supportsKeySystem(keySystem))
         return false;
 
-    return equalLettersIgnoringASCIICase(mimeType, "video/mock");
+    return equalLettersIgnoringASCIICase(mimeType, "video/mock"_s);
 }
 
 bool LegacyMockCDM::supportsMIMEType(const String& mimeType)
 {
-    return equalLettersIgnoringASCIICase(mimeType, "video/mock");
+    return equalLettersIgnoringASCIICase(mimeType, "video/mock"_s);
 }
 
 std::unique_ptr<LegacyCDMSession> LegacyMockCDM::createSession(LegacyCDMSessionClient& client)

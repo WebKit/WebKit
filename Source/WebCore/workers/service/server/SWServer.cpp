@@ -1289,7 +1289,7 @@ bool SWServer::canHandleScheme(StringView scheme) const
 {
     if (scheme.isNull())
         return false;
-    if (!startsWithLettersIgnoringASCIICase(scheme, "http"))
+    if (!startsWithLettersIgnoringASCIICase(scheme, "http"_s))
         return false;
     if (scheme.length() == 5 && isASCIIAlphaCaselessEqual(scheme[4], 's'))
         return true;

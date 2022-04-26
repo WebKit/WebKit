@@ -152,7 +152,7 @@ bool HTMLElement::hasPresentationalHintsForAttribute(const QualifiedName& name) 
 
 static bool isLTROrRTLIgnoringCase(const AtomString& dirAttributeValue)
 {
-    return equalLettersIgnoringASCIICase(dirAttributeValue, "rtl") || equalLettersIgnoringASCIICase(dirAttributeValue, "ltr");
+    return equalLettersIgnoringASCIICase(dirAttributeValue, "rtl"_s) || equalLettersIgnoringASCIICase(dirAttributeValue, "ltr"_s);
 }
 
 enum class ContentEditableType {
@@ -166,11 +166,11 @@ static inline ContentEditableType contentEditableType(const AtomString& value)
 {
     if (value.isNull())
         return ContentEditableType::Inherit;
-    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"))
+    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "true"_s))
         return ContentEditableType::True;
-    if (equalLettersIgnoringASCIICase(value, "false"))
+    if (equalLettersIgnoringASCIICase(value, "false"_s))
         return ContentEditableType::False;
-    if (equalLettersIgnoringASCIICase(value, "plaintext-only"))
+    if (equalLettersIgnoringASCIICase(value, "plaintext-only"_s))
         return ContentEditableType::PlaintextOnly;
 
     return ContentEditableType::Inherit;
@@ -184,7 +184,7 @@ static ContentEditableType contentEditableType(const HTMLElement& element)
 void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
-        if (equalLettersIgnoringASCIICase(value, "middle"))
+        if (equalLettersIgnoringASCIICase(value, "middle"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, value);
@@ -212,14 +212,14 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
     } else if (name == hiddenAttr) {
         addPropertyToPresentationalHintStyle(style, CSSPropertyDisplay, CSSValueNone);
     } else if (name == draggableAttr) {
-        if (equalLettersIgnoringASCIICase(value, "true")) {
+        if (equalLettersIgnoringASCIICase(value, "true"_s)) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
             if (!isDraggableIgnoringAttributes())
                 addPropertyToPresentationalHintStyle(style, CSSPropertyUserSelect, CSSValueNone);
-        } else if (equalLettersIgnoringASCIICase(value, "false"))
+        } else if (equalLettersIgnoringASCIICase(value, "false"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
     } else if (name == dirAttr) {
-        if (equalLettersIgnoringASCIICase(value, "auto"))
+        if (equalLettersIgnoringASCIICase(value, "auto"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
         else {
             auto unicodeBidiValue = CSSValueEmbed;
@@ -416,11 +416,11 @@ static inline const AtomString& toValidDirValue(const AtomString& value)
 {
     static MainThreadNeverDestroyed<const AtomString> ltrValue("ltr", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> rtlValue("rtl", AtomString::ConstructFromLiteral);
-    if (equalLettersIgnoringASCIICase(value, "ltr"))
+    if (equalLettersIgnoringASCIICase(value, "ltr"_s))
         return ltrValue;
-    if (equalLettersIgnoringASCIICase(value, "rtl"))
+    if (equalLettersIgnoringASCIICase(value, "rtl"_s))
         return rtlValue;
-    if (equalLettersIgnoringASCIICase(value, "auto"))
+    if (equalLettersIgnoringASCIICase(value, "auto"_s))
         return autoAtom();
     return nullAtom();
 }
@@ -528,25 +528,25 @@ void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, Mu
     CSSValueID floatValue = CSSValueInvalid;
     CSSValueID verticalAlignValue = CSSValueInvalid;
 
-    if (equalLettersIgnoringASCIICase(alignment, "absmiddle"))
+    if (equalLettersIgnoringASCIICase(alignment, "absmiddle"_s))
         verticalAlignValue = CSSValueMiddle;
-    else if (equalLettersIgnoringASCIICase(alignment, "absbottom"))
+    else if (equalLettersIgnoringASCIICase(alignment, "absbottom"_s))
         verticalAlignValue = CSSValueBottom;
-    else if (equalLettersIgnoringASCIICase(alignment, "left")) {
+    else if (equalLettersIgnoringASCIICase(alignment, "left"_s)) {
         floatValue = CSSValueLeft;
         verticalAlignValue = CSSValueTop;
-    } else if (equalLettersIgnoringASCIICase(alignment, "right")) {
+    } else if (equalLettersIgnoringASCIICase(alignment, "right"_s)) {
         floatValue = CSSValueRight;
         verticalAlignValue = CSSValueTop;
-    } else if (equalLettersIgnoringASCIICase(alignment, "top"))
+    } else if (equalLettersIgnoringASCIICase(alignment, "top"_s))
         verticalAlignValue = CSSValueTop;
-    else if (equalLettersIgnoringASCIICase(alignment, "middle"))
+    else if (equalLettersIgnoringASCIICase(alignment, "middle"_s))
         verticalAlignValue = CSSValueWebkitBaselineMiddle;
-    else if (equalLettersIgnoringASCIICase(alignment, "center"))
+    else if (equalLettersIgnoringASCIICase(alignment, "center"_s))
         verticalAlignValue = CSSValueMiddle;
-    else if (equalLettersIgnoringASCIICase(alignment, "bottom"))
+    else if (equalLettersIgnoringASCIICase(alignment, "bottom"_s))
         verticalAlignValue = CSSValueBaseline;
-    else if (equalLettersIgnoringASCIICase(alignment, "texttop"))
+    else if (equalLettersIgnoringASCIICase(alignment, "texttop"_s))
         verticalAlignValue = CSSValueTextTop;
 
     if (floatValue != CSSValueInvalid)
@@ -583,13 +583,13 @@ String HTMLElement::contentEditable() const
 
 ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
 {
-    if (equalLettersIgnoringASCIICase(enabled, "true"))
+    if (equalLettersIgnoringASCIICase(enabled, "true"_s))
         setAttributeWithoutSynchronization(contenteditableAttr, trueAtom());
-    else if (equalLettersIgnoringASCIICase(enabled, "false"))
+    else if (equalLettersIgnoringASCIICase(enabled, "false"_s))
         setAttributeWithoutSynchronization(contenteditableAttr, falseAtom());
-    else if (equalLettersIgnoringASCIICase(enabled, "plaintext-only"))
+    else if (equalLettersIgnoringASCIICase(enabled, "plaintext-only"_s))
         setAttributeWithoutSynchronization(contenteditableAttr, plaintextOnlyAtom());
-    else if (equalLettersIgnoringASCIICase(enabled, "inherit"))
+    else if (equalLettersIgnoringASCIICase(enabled, "inherit"_s))
         removeAttribute(contenteditableAttr);
     else
         return Exception { SyntaxError };
@@ -600,9 +600,9 @@ bool HTMLElement::draggable() const
 {
     auto& value = attributeWithoutSynchronization(draggableAttr);
     if (isDraggableIgnoringAttributes())
-        return !equalLettersIgnoringASCIICase(value, "false");
+        return !equalLettersIgnoringASCIICase(value, "false"_s);
 
-    return equalLettersIgnoringASCIICase(value, "true");
+    return equalLettersIgnoringASCIICase(value, "true"_s);
 }
 
 void HTMLElement::setDraggable(bool value)
@@ -665,9 +665,9 @@ bool HTMLElement::translate() const
 {
     for (auto& element : lineageOfType<HTMLElement>(*this)) {
         const AtomString& value = element.attributeWithoutSynchronization(translateAttr);
-        if (equalLettersIgnoringASCIICase(value, "yes") || (value.isEmpty() && !value.isNull()))
+        if (equalLettersIgnoringASCIICase(value, "yes"_s) || (value.isEmpty() && !value.isNull()))
             return true;
-        if (equalLettersIgnoringASCIICase(value, "no"))
+        if (equalLettersIgnoringASCIICase(value, "no"_s))
             return false;
     }
     // Default on the root element is translate=yes.
@@ -755,7 +755,7 @@ void HTMLElement::childrenChanged(const ChildChange& change)
 bool HTMLElement::hasDirectionAuto() const
 {
     const AtomString& direction = attributeWithoutSynchronization(dirAttr);
-    return (hasTagName(bdiTag) && direction.isNull()) || equalLettersIgnoringASCIICase(direction, "auto");
+    return (hasTagName(bdiTag) && direction.isNull()) || equalLettersIgnoringASCIICase(direction, "auto"_s);
 }
 
 TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) const
@@ -783,7 +783,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
     RefPtr<Node> node = firstChild();
     while (node) {
         // Skip bdi, script, style and text form controls.
-        if (equalLettersIgnoringASCIICase(node->nodeName(), "bdi") || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
+        if (equalLettersIgnoringASCIICase(node->nodeName(), "bdi"_s) || node->hasTagName(scriptTag) || node->hasTagName(styleTag)
             || (is<Element>(*node) && downcast<Element>(*node).isTextField())) {
             node = NodeTraversal::nextSkippingChildren(*node, this);
             continue;
@@ -792,7 +792,7 @@ TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) c
         // Skip elements with valid dir attribute
         if (is<Element>(*node)) {
             auto& dirAttributeValue = downcast<Element>(*node).attributeWithoutSynchronization(dirAttr);
-            if (isLTROrRTLIgnoringCase(dirAttributeValue) || equalLettersIgnoringASCIICase(dirAttributeValue, "auto")) {
+            if (isLTROrRTLIgnoringCase(dirAttributeValue) || equalLettersIgnoringASCIICase(dirAttributeValue, "auto"_s)) {
                 node = NodeTraversal::nextSkippingChildren(*node, this);
                 continue;
             }
@@ -821,7 +821,7 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
     if (is<HTMLElement>(parent) && parent->selfOrAncestorHasDirAutoAttribute())
         downcast<HTMLElement>(*parent).adjustDirectionalityIfNeededAfterChildAttributeChanged(this);
 
-    if (equalLettersIgnoringASCIICase(value, "auto"))
+    if (equalLettersIgnoringASCIICase(value, "auto"_s))
         calculateAndAdjustDirectionality();
 }
 
@@ -927,7 +927,7 @@ static std::optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView string)
         return Color::black;
 
     // "transparent" doesn't apply a color either.
-    if (equalLettersIgnoringASCIICase(string, "transparent"))
+    if (equalLettersIgnoringASCIICase(string, "transparent"_s))
         return std::nullopt;
 
     if (auto namedColor = CSSParser::parseNamedColor(string))
@@ -1051,7 +1051,7 @@ bool HTMLElement::shouldAutocorrect() const
 {
     auto& autocorrectValue = attributeWithoutSynchronization(HTMLNames::autocorrectAttr);
     // Unrecognized values fall back to "on".
-    return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
+    return !equalLettersIgnoringASCIICase(autocorrectValue, "off"_s);
 }
 
 void HTMLElement::setAutocorrect(bool autocorrect)

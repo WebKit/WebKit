@@ -168,27 +168,27 @@ template<bool characterPredicate(UChar)> void reverseSkipWhile(const UChar*& pos
         --position;
 }
 
-template<typename CharacterType, unsigned lowercaseLettersArraySize> bool skipExactlyIgnoringASCIICase(const CharacterType*& position, const CharacterType* end, const char (&lowercaseLetters)[lowercaseLettersArraySize])
+template<typename CharacterType> bool skipExactlyIgnoringASCIICase(const CharacterType*& position, const CharacterType* end, ASCIILiteral literal)
 {
-    constexpr auto lowercaseLettersLength = lowercaseLettersArraySize - 1;
+    auto literalLength = literal.length();
     
-    if (position + lowercaseLettersLength > end)
+    if (position + literalLength > end)
         return false;
-    if (!equalLettersIgnoringASCIICase(position, lowercaseLettersLength, lowercaseLetters))
+    if (!equalLettersIgnoringASCIICase(position, literalLength, literal))
         return false;
-    position += lowercaseLettersLength;
+    position += literalLength;
     return true;
 }
 
-template<typename CharacterType, unsigned lowercaseLettersArraySize> bool skipExactlyIgnoringASCIICase(StringParsingBuffer<CharacterType>& buffer, const char (&lowercaseLetters)[lowercaseLettersArraySize])
+template<typename CharacterType> bool skipExactlyIgnoringASCIICase(StringParsingBuffer<CharacterType>& buffer, ASCIILiteral literal)
 {
-    constexpr auto lowercaseLettersLength = lowercaseLettersArraySize - 1;
+    auto literalLength = literal.length();
 
-    if (buffer.lengthRemaining() < lowercaseLettersLength)
+    if (buffer.lengthRemaining() < literalLength)
         return false;
-    if (!equalLettersIgnoringASCIICase(buffer.position(), lowercaseLettersLength, lowercaseLetters))
+    if (!equalLettersIgnoringASCIICase(buffer.position(), literalLength, literal))
         return false;
-    buffer += lowercaseLettersLength;
+    buffer += literalLength;
     return true;
 }
 

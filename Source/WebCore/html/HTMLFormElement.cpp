@@ -81,11 +81,11 @@ static FormRelAttributes parseFormRelAttributes(StringView string)
 {
     FormRelAttributes attributes;
     for (auto token : string.split(' ')) {
-        if (equalLettersIgnoringASCIICase(token, "noopener"))
+        if (equalLettersIgnoringASCIICase(token, "noopener"_s))
             attributes.noopener = true;
-        else if (equalLettersIgnoringASCIICase(token, "noreferrer"))
+        else if (equalLettersIgnoringASCIICase(token, "noreferrer"_s))
             attributes.noreferrer = true;
-        else if (equalLettersIgnoringASCIICase(token, "opener"))
+        else if (equalLettersIgnoringASCIICase(token, "opener"_s))
             attributes.opener = true;
     }
     return attributes;
@@ -514,7 +514,7 @@ bool HTMLFormElement::shouldAutocorrect() const
 {
     const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
-        return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
+        return !equalLettersIgnoringASCIICase(autocorrectValue, "off"_s);
     if (RefPtr<HTMLFormElement> form = this->form())
         return form->shouldAutocorrect();
     return true;
@@ -761,7 +761,7 @@ DOMTokenList& HTMLFormElement::relList()
 {
     if (!m_relList) {
         m_relList = makeUnique<DOMTokenList>(*this, HTMLNames::relAttr, [](Document&, StringView token) {
-            return equalLettersIgnoringASCIICase(token, "noreferrer") || equalLettersIgnoringASCIICase(token, "noopener") || equalLettersIgnoringASCIICase(token, "opener");
+            return equalLettersIgnoringASCIICase(token, "noreferrer"_s) || equalLettersIgnoringASCIICase(token, "noopener"_s) || equalLettersIgnoringASCIICase(token, "opener"_s);
         });
     }
     return *m_relList;
@@ -973,7 +973,7 @@ void HTMLFormElement::didMoveToNewDocument(Document& oldDocument, Document& newD
 
 bool HTMLFormElement::shouldAutocomplete() const
 {
-    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off");
+    return !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off"_s);
 }
 
 void HTMLFormElement::finishParsingChildren()
@@ -1017,7 +1017,7 @@ void HTMLFormElement::setAutocomplete(const AtomString& value)
 
 const AtomString& HTMLFormElement::autocomplete() const
 {
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off") ? offAtom() : onAtom();
+    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(autocompleteAttr), "off"_s) ? offAtom() : onAtom();
 }
 
 RefPtr<DOMFormData> HTMLFormElement::constructEntryList(RefPtr<HTMLFormControlElement>&& submitter, Ref<DOMFormData>&& domFormData, StringPairVector* formValues)

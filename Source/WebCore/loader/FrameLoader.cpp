@@ -3244,7 +3244,7 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
 
     // FIXME: What about load types other than Standard and Reload?
 
-    return (!isFormSubmission || equalLettersIgnoringASCIICase(httpMethod, "get"))
+    return (!isFormSubmission || equalLettersIgnoringASCIICase(httpMethod, "get"_s))
         && !isReload(loadType)
         && loadType != FrameLoadType::Same
         && m_frame.document()->backForwardCacheState() != Document::InBackForwardCache

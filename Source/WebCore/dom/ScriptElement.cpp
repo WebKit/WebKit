@@ -172,7 +172,7 @@ std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(Lega
 
     // https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type
     // Setting the attribute to an ASCII case-insensitive match for the string "module" means that the script is a module script.
-    if (equalLettersIgnoringASCIICase(type, "module"))
+    if (equalLettersIgnoringASCIICase(type, "module"_s))
         return ScriptType::Module;
     return std::nullopt;
 }
@@ -484,11 +484,11 @@ bool ScriptElement::isScriptForEventSupported() const
     String forAttribute = forAttributeValue();
     if (!eventAttribute.isNull() && !forAttribute.isNull()) {
         forAttribute = stripLeadingAndTrailingHTMLSpaces(forAttribute);
-        if (!equalLettersIgnoringASCIICase(forAttribute, "window"))
+        if (!equalLettersIgnoringASCIICase(forAttribute, "window"_s))
             return false;
 
         eventAttribute = stripLeadingAndTrailingHTMLSpaces(eventAttribute);
-        if (!equalLettersIgnoringASCIICase(eventAttribute, "onload") && !equalLettersIgnoringASCIICase(eventAttribute, "onload()"))
+        if (!equalLettersIgnoringASCIICase(eventAttribute, "onload"_s) && !equalLettersIgnoringASCIICase(eventAttribute, "onload()"_s))
             return false;
     }
     return true;

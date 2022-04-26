@@ -290,7 +290,7 @@ inline bool operator<(ComparableASCIILiteral a, ComparableStringView b)
 
 inline bool operator==(ComparableStringView a, ComparableLettersLiteral b)
 {
-    return equalLettersIgnoringASCIICaseCommonWithoutLength(a.string, b.literal);
+    return equalLettersIgnoringASCIICaseCommon(a.string, b.literal);
 }
 
 inline bool operator<(ComparableStringView a, ComparableLettersLiteral b)

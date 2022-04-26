@@ -369,15 +369,15 @@ bool SecurityOrigin::canReceiveDragData(const SecurityOrigin& dragInitiator) con
 static bool isFeedWithNestedProtocolInHTTPFamily(const URL& url)
 {
     const String& string = url.string();
-    if (!startsWithLettersIgnoringASCIICase(string, "feed"))
+    if (!startsWithLettersIgnoringASCIICase(string, "feed"_s))
         return false;
-    return startsWithLettersIgnoringASCIICase(string, "feed://")
-        || startsWithLettersIgnoringASCIICase(string, "feed:http:")
-        || startsWithLettersIgnoringASCIICase(string, "feed:https:")
-        || startsWithLettersIgnoringASCIICase(string, "feeds:http:")
-        || startsWithLettersIgnoringASCIICase(string, "feeds:https:")
-        || startsWithLettersIgnoringASCIICase(string, "feedsearch:http:")
-        || startsWithLettersIgnoringASCIICase(string, "feedsearch:https:");
+    return startsWithLettersIgnoringASCIICase(string, "feed://"_s)
+        || startsWithLettersIgnoringASCIICase(string, "feed:http:"_s)
+        || startsWithLettersIgnoringASCIICase(string, "feed:https:"_s)
+        || startsWithLettersIgnoringASCIICase(string, "feeds:http:"_s)
+        || startsWithLettersIgnoringASCIICase(string, "feeds:https:"_s)
+        || startsWithLettersIgnoringASCIICase(string, "feedsearch:http:"_s)
+        || startsWithLettersIgnoringASCIICase(string, "feedsearch:https:"_s);
 }
 
 bool SecurityOrigin::canDisplay(const URL& url) const
@@ -605,7 +605,7 @@ bool SecurityOrigin::isLocalHostOrLoopbackIPAddress(StringView host)
         return true;
 
     // FIXME: Ensure that localhost resolves to the loopback address.
-    if (equalLettersIgnoringASCIICase(host, "localhost") || host.endsWithIgnoringASCIICase(".localhost"))
+    if (equalLettersIgnoringASCIICase(host, "localhost"_s) || host.endsWithIgnoringASCIICase(".localhost"))
         return true;
 
     return false;

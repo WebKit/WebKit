@@ -1350,7 +1350,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(c
 
 bool InspectorNetworkAgent::shouldTreatAsText(const String& mimeType)
 {
-    return startsWithLettersIgnoringASCIICase(mimeType, "text/")
+    return startsWithLettersIgnoringASCIICase(mimeType, "text/"_s)
         || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
         || MIMETypeRegistry::isSupportedJSONMIMEType(mimeType)
         || MIMETypeRegistry::isXMLMIMEType(mimeType)

@@ -324,10 +324,10 @@ String SystemFontDatabaseCoreText::monospaceFamily(const String& locale)
 #if PLATFORM(MAC) && ENABLE(MONOSPACE_FONT_EXCEPTION)
     // In general, CoreText uses Monaco for monospaced (see: Terminal.app and Xcode.app).
     // For now, we want to use Courier for web compatibility, until we have more time to do compatibility testing.
-    if (equalLettersIgnoringASCIICase(result, "monaco"))
+    if (equalLettersIgnoringASCIICase(result, "monaco"_s))
         return "Courier"_str;
 #elif PLATFORM(IOS_FAMILY) && ENABLE(MONOSPACE_FONT_EXCEPTION)
-    if (equalLettersIgnoringASCIICase(result, "courier new"))
+    if (equalLettersIgnoringASCIICase(result, "courier new"_s))
         return "Courier"_str;
 #endif
     return result;

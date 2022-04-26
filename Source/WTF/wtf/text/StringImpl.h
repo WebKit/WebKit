@@ -585,8 +585,8 @@ bool equalIgnoringASCIICase(const StringImpl*, const char*);
 
 WTF_EXPORT_PRIVATE bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
 
-template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl&, const char (&lowercaseLetters)[length]);
-template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl*, const char (&lowercaseLetters)[length]);
+bool equalLettersIgnoringASCIICase(const StringImpl&, ASCIILiteral);
+bool equalLettersIgnoringASCIICase(const StringImpl*, ASCIILiteral);
 
 template<typename CodeUnit, typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, CodeUnit>>* = nullptr>
 size_t find(const CodeUnit*, unsigned length, CodeUnitMatchFunction&&, unsigned start = 0);
@@ -1269,24 +1269,24 @@ inline bool equalIgnoringASCIICase(const StringImpl* a, const char* b)
     return a && equalIgnoringASCIICase(*a, b);
 }
 
-template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const StringImpl& string, const char (&lowercaseLetters)[length])
+inline bool startsWithLettersIgnoringASCIICase(const StringImpl& string, ASCIILiteral literal)
 {
-    return startsWithLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
+    return startsWithLettersIgnoringASCIICaseCommon(string, literal);
 }
 
-template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const StringImpl* string, const char (&lowercaseLetters)[length])
+inline bool startsWithLettersIgnoringASCIICase(const StringImpl* string, ASCIILiteral literal)
 {
-    return string && startsWithLettersIgnoringASCIICase(*string, lowercaseLetters);
+    return string && startsWithLettersIgnoringASCIICase(*string, literal);
 }
 
-template<unsigned length> inline bool equalLettersIgnoringASCIICase(const StringImpl& string, const char (&lowercaseLetters)[length])
+inline bool equalLettersIgnoringASCIICase(const StringImpl& string, ASCIILiteral literal)
 {
-    return equalLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
+    return equalLettersIgnoringASCIICaseCommon(string, literal);
 }
 
-template<unsigned length> inline bool equalLettersIgnoringASCIICase(const StringImpl* string, const char (&lowercaseLetters)[length])
+inline bool equalLettersIgnoringASCIICase(const StringImpl* string, ASCIILiteral literal)
 {
-    return string && equalLettersIgnoringASCIICase(*string, lowercaseLetters);
+    return string && equalLettersIgnoringASCIICase(*string, literal);
 }
 
 template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharactersImpl(const CharacterType* characters, const Predicate& findMatch)

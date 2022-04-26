@@ -104,7 +104,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType(const String& ke
         return true;
 
     // FIXME: Why is this ignoring case since the check in supportsMIMEType is checking case?
-    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"))
+    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"_s))
         return true;
 
     MediaEngineSupportParameters parameters;

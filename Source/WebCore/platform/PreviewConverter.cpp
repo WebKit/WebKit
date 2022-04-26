@@ -42,7 +42,7 @@ bool PreviewConverter::supportsMIMEType(const String& mimeType)
     if (mimeType.isNull())
         return false;
 
-    if (equalLettersIgnoringASCIICase(mimeType, "text/html") || equalLettersIgnoringASCIICase(mimeType, "text/plain"))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/html"_s) || equalLettersIgnoringASCIICase(mimeType, "text/plain"_s))
         return false;
 
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> supportedMIMETypes = platformSupportedMIMETypes();

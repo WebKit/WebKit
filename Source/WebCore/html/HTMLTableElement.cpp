@@ -285,21 +285,21 @@ static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& bor
     borderBottom = false;
     borderLeft = false;
 
-    if (equalLettersIgnoringASCIICase(value, "above"))
+    if (equalLettersIgnoringASCIICase(value, "above"_s))
         borderTop = true;
-    else if (equalLettersIgnoringASCIICase(value, "below"))
+    else if (equalLettersIgnoringASCIICase(value, "below"_s))
         borderBottom = true;
-    else if (equalLettersIgnoringASCIICase(value, "hsides"))
+    else if (equalLettersIgnoringASCIICase(value, "hsides"_s))
         borderTop = borderBottom = true;
-    else if (equalLettersIgnoringASCIICase(value, "vsides"))
+    else if (equalLettersIgnoringASCIICase(value, "vsides"_s))
         borderLeft = borderRight = true;
-    else if (equalLettersIgnoringASCIICase(value, "lhs"))
+    else if (equalLettersIgnoringASCIICase(value, "lhs"_s))
         borderLeft = true;
-    else if (equalLettersIgnoringASCIICase(value, "rhs"))
+    else if (equalLettersIgnoringASCIICase(value, "rhs"_s))
         borderRight = true;
-    else if (equalLettersIgnoringASCIICase(value, "box") || equalLettersIgnoringASCIICase(value, "border"))
+    else if (equalLettersIgnoringASCIICase(value, "box"_s) || equalLettersIgnoringASCIICase(value, "border"_s))
         borderTop = borderBottom = borderLeft = borderRight = true;
-    else if (!equalLettersIgnoringASCIICase(value, "void"))
+    else if (!equalLettersIgnoringASCIICase(value, "void"_s))
         return false;
     return true;
 }
@@ -335,7 +335,7 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
     } else if (name == alignAttr) {
         if (!value.isEmpty()) {
-            if (equalLettersIgnoringASCIICase(value, "center")) {
+            if (equalLettersIgnoringASCIICase(value, "center"_s)) {
                 addPropertyToPresentationalHintStyle(style, CSSPropertyMarginInlineStart, CSSValueAuto);
                 addPropertyToPresentationalHintStyle(style, CSSPropertyMarginInlineEnd, CSSValueAuto);
             } else
@@ -387,15 +387,15 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomStrin
         m_frameAttr = getBordersFromFrameAttributeValue(value, borderTop, borderRight, borderBottom, borderLeft);
     } else if (name == rulesAttr) {
         m_rulesAttr = UnsetRules;
-        if (equalLettersIgnoringASCIICase(value, "none"))
+        if (equalLettersIgnoringASCIICase(value, "none"_s))
             m_rulesAttr = NoneRules;
-        else if (equalLettersIgnoringASCIICase(value, "groups"))
+        else if (equalLettersIgnoringASCIICase(value, "groups"_s))
             m_rulesAttr = GroupsRules;
-        else if (equalLettersIgnoringASCIICase(value, "rows"))
+        else if (equalLettersIgnoringASCIICase(value, "rows"_s))
             m_rulesAttr = RowsRules;
-        else if (equalLettersIgnoringASCIICase(value, "cols"))
+        else if (equalLettersIgnoringASCIICase(value, "cols"_s))
             m_rulesAttr = ColsRules;
-        else if (equalLettersIgnoringASCIICase(value, "all"))
+        else if (equalLettersIgnoringASCIICase(value, "all"_s))
             m_rulesAttr = AllRules;
     } else if (name == cellpaddingAttr) {
         if (!value.isEmpty())

@@ -39,13 +39,13 @@ AutocapitalizeType autocapitalizeTypeForAttributeValue(const AtomString& attribu
     if (attributeValue.isEmpty())
         return AutocapitalizeType::Default;
 
-    if (equalLettersIgnoringASCIICase(attributeValue, "on") || equalLettersIgnoringASCIICase(attributeValue, "sentences"))
+    if (equalLettersIgnoringASCIICase(attributeValue, "on"_s) || equalLettersIgnoringASCIICase(attributeValue, "sentences"_s))
         return AutocapitalizeType::Sentences;
-    if (equalLettersIgnoringASCIICase(attributeValue, "off") || equalLettersIgnoringASCIICase(attributeValue, "none"))
+    if (equalLettersIgnoringASCIICase(attributeValue, "off"_s) || equalLettersIgnoringASCIICase(attributeValue, "none"_s))
         return AutocapitalizeType::None;
-    if (equalLettersIgnoringASCIICase(attributeValue, "words"))
+    if (equalLettersIgnoringASCIICase(attributeValue, "words"_s))
         return AutocapitalizeType::Words;
-    if (equalLettersIgnoringASCIICase(attributeValue, "characters"))
+    if (equalLettersIgnoringASCIICase(attributeValue, "characters"_s))
         return AutocapitalizeType::AllCharacters;
 
     // Unrecognized values fall back to "on".

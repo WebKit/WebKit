@@ -276,7 +276,7 @@ bool isRendererReplacedElement(RenderObject* renderer, TextIteratorBehaviors beh
         Element& element = downcast<Element>(*renderer->node());
         if (is<HTMLFormControlElement>(element) || is<HTMLLegendElement>(element) || is<HTMLProgressElement>(element) || element.hasTagName(meterTag))
             return true;
-        if (equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(roleAttr), "img"))
+        if (equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(roleAttr), "img"_s))
             return true;
 #if USE(ATSPI)
         // Links are also replaced with object replacement character in ATSPI.

@@ -130,7 +130,7 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
 {
     // Listing a key with no value is shorthand for key=yes
     int numericValue;
-    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "yes") || equalLettersIgnoringASCIICase(value, "true"))
+    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "yes"_s) || equalLettersIgnoringASCIICase(value, "true"_s))
         numericValue = 1;
     else
         numericValue = parseIntegerAllowingTrailingJunk<int>(value).value_or(0);
@@ -138,29 +138,29 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
     // We treat key of "resizable" here as an additional feature rather than setting resizeable to true.
     // This is consistent with Firefox, but could also be handled at another level.
 
-    if (equalLettersIgnoringASCIICase(key, "left") || equalLettersIgnoringASCIICase(key, "screenx"))
+    if (equalLettersIgnoringASCIICase(key, "left"_s) || equalLettersIgnoringASCIICase(key, "screenx"_s))
         features.x = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "top") || equalLettersIgnoringASCIICase(key, "screeny"))
+    else if (equalLettersIgnoringASCIICase(key, "top"_s) || equalLettersIgnoringASCIICase(key, "screeny"_s))
         features.y = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "width") || equalLettersIgnoringASCIICase(key, "innerwidth"))
+    else if (equalLettersIgnoringASCIICase(key, "width"_s) || equalLettersIgnoringASCIICase(key, "innerwidth"_s))
         features.width = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "height") || equalLettersIgnoringASCIICase(key, "innerheight"))
+    else if (equalLettersIgnoringASCIICase(key, "height"_s) || equalLettersIgnoringASCIICase(key, "innerheight"_s))
         features.height = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "menubar"))
+    else if (equalLettersIgnoringASCIICase(key, "menubar"_s))
         features.menuBarVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "toolbar"))
+    else if (equalLettersIgnoringASCIICase(key, "toolbar"_s))
         features.toolBarVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "location"))
+    else if (equalLettersIgnoringASCIICase(key, "location"_s))
         features.locationBarVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "status"))
+    else if (equalLettersIgnoringASCIICase(key, "status"_s))
         features.statusBarVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "fullscreen"))
+    else if (equalLettersIgnoringASCIICase(key, "fullscreen"_s))
         features.fullscreen = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "scrollbars"))
+    else if (equalLettersIgnoringASCIICase(key, "scrollbars"_s))
         features.scrollbarsVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "noopener"))
+    else if (equalLettersIgnoringASCIICase(key, "noopener"_s))
         features.noopener = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "noreferrer"))
+    else if (equalLettersIgnoringASCIICase(key, "noreferrer"_s))
         features.noreferrer = numericValue;
     else if (numericValue == 1)
         features.additionalFeatures.append(key.toString());
@@ -217,8 +217,8 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap& features, ASCIIL
     auto& value = it->value;
     return value.isNull()
         || value == "1"
-        || equalLettersIgnoringASCIICase(value, "yes")
-        || equalLettersIgnoringASCIICase(value, "on");
+        || equalLettersIgnoringASCIICase(value, "yes"_s)
+        || equalLettersIgnoringASCIICase(value, "on"_s);
 }
 
 static std::optional<float> floatFeature(const DialogFeaturesMap& features, ASCIILiteral key, float min, float max)

@@ -165,8 +165,8 @@ bool SVGTests::hasFeatureForLegacyBindings(const String& feature, const String& 
     // This is what the DOMImplementation function now does in JavaScript as is now suggested in the DOM specification.
     // The behavior implemented below is quirky, but preserves what WebKit has done for at least the last few years.
 
-    bool hasSVG10FeaturePrefix = startsWithLettersIgnoringASCIICase(feature, "org.w3c.dom.svg") || startsWithLettersIgnoringASCIICase(feature, "org.w3c.svg");
-    bool hasSVG11FeaturePrefix = startsWithLettersIgnoringASCIICase(feature, "http://www.w3.org/tr/svg");
+    bool hasSVG10FeaturePrefix = startsWithLettersIgnoringASCIICase(feature, "org.w3c.dom.svg"_s) || startsWithLettersIgnoringASCIICase(feature, "org.w3c.svg"_s);
+    bool hasSVG11FeaturePrefix = startsWithLettersIgnoringASCIICase(feature, "http://www.w3.org/tr/svg"_s);
 
     // We don't even try to handle feature names that don't look like the SVG ones, so just return true for all of those.
     if (!(hasSVG10FeaturePrefix || hasSVG11FeaturePrefix))

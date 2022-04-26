@@ -248,7 +248,7 @@ private:
             break;
         case TagId::Script:
             if (match(attributeName, typeAttr)) {
-                m_moduleScript = equalLettersIgnoringASCIICase(attributeValue, "module") ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
+                m_moduleScript = equalLettersIgnoringASCIICase(attributeValue, "module"_s) ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
                 break;
             } else if (match(attributeName, nonceAttr)) {
                 m_nonceAttribute = attributeValue;
@@ -291,15 +291,15 @@ private:
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
             else if (match(attributeName, typeAttr))
-                m_inputIsImage = equalLettersIgnoringASCIICase(attributeValue, "image");
+                m_inputIsImage = equalLettersIgnoringASCIICase(attributeValue, "image"_s);
             break;
         case TagId::Meta:
             if (match(attributeName, contentAttr))
                 m_metaContent = attributeValue;
             else if (match(attributeName, nameAttr))
-                m_metaIsViewport = equalLettersIgnoringASCIICase(attributeValue, "viewport");
+                m_metaIsViewport = equalLettersIgnoringASCIICase(attributeValue, "viewport"_s);
             else if (m_document.settings().disabledAdaptationsMetaTagEnabled() && match(attributeName, nameAttr))
-                m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(attributeValue, "disabled-adaptations");
+                m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(attributeValue, "disabled-adaptations"_s);
             break;
         case TagId::Base:
         case TagId::Style:

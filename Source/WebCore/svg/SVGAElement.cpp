@@ -228,10 +228,10 @@ DOMTokenList& SVGAElement::relList()
     if (!m_relList) {
         m_relList = makeUnique<DOMTokenList>(*this, SVGNames::relAttr, [](Document&, StringView token) {
 #if USE(SYSTEM_PREVIEW)
-            if (equalLettersIgnoringASCIICase(token, "ar"))
+            if (equalLettersIgnoringASCIICase(token, "ar"_s))
                 return true;
 #endif
-            return equalLettersIgnoringASCIICase(token, "noreferrer") || equalLettersIgnoringASCIICase(token, "noopener");
+            return equalLettersIgnoringASCIICase(token, "noreferrer"_s) || equalLettersIgnoringASCIICase(token, "noopener"_s);
         });
     }
     return *m_relList;

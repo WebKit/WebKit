@@ -360,8 +360,8 @@ bool equalIgnoringASCIICase(const String&, const String&);
 bool equalIgnoringASCIICase(const String&, ASCIILiteral);
 bool equalIgnoringASCIICase(const String&, const char*);
 
-template<unsigned length> bool equalLettersIgnoringASCIICase(const String&, const char (&lowercaseLetters)[length]);
-template<unsigned length> bool startsWithLettersIgnoringASCIICase(const String&, const char (&lowercaseLetters)[length]);
+bool equalLettersIgnoringASCIICase(const String&, ASCIILiteral);
+bool startsWithLettersIgnoringASCIICase(const String&, ASCIILiteral);
 
 inline bool equalIgnoringNullity(const String& a, const String& b) { return equalIgnoringNullity(a.impl(), b.impl()); }
 template<size_t inlineCapacity> inline bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, const String& b) { return equalIgnoringNullity(a, b.impl()); }
@@ -570,9 +570,9 @@ String String::removeCharacters(const Predicate& findMatch) const
     return m_impl ? m_impl->removeCharacters(findMatch) : String { };
 }
 
-template<unsigned length> inline bool equalLettersIgnoringASCIICase(const String& string, const char (&lowercaseLetters)[length])
+inline bool equalLettersIgnoringASCIICase(const String& string, ASCIILiteral literal)
 {
-    return equalLettersIgnoringASCIICase(string.impl(), lowercaseLetters);
+    return equalLettersIgnoringASCIICase(string.impl(), literal);
 }
 
 inline bool equalIgnoringASCIICase(const String& a, const String& b)
@@ -590,9 +590,9 @@ inline bool equalIgnoringASCIICase(const String& a, ASCIILiteral b)
     return equalIgnoringASCIICase(a.impl(), b.characters());
 }
 
-template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const String& string, const char (&lowercaseLetters)[length])
+inline bool startsWithLettersIgnoringASCIICase(const String& string, ASCIILiteral literal)
 {
-    return startsWithLettersIgnoringASCIICase(string.impl(), lowercaseLetters);
+    return startsWithLettersIgnoringASCIICase(string.impl(), literal);
 }
 
 struct HashTranslatorASCIILiteral {

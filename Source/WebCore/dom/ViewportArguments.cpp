@@ -320,10 +320,10 @@ static float findSizeValue(StringView key, StringView value, const InternalViewp
     if (valueWasExplicit)
         *valueWasExplicit = true;
 
-    if (equalLettersIgnoringASCIICase(value, "device-width"))
+    if (equalLettersIgnoringASCIICase(value, "device-width"_s))
         return ViewportArguments::ValueDeviceWidth;
 
-    if (equalLettersIgnoringASCIICase(value, "device-height"))
+    if (equalLettersIgnoringASCIICase(value, "device-height"_s))
         return ViewportArguments::ValueDeviceHeight;
 
     float sizeValue = numericPrefix(key, value, errorHandler);
@@ -345,13 +345,13 @@ static float findScaleValue(StringView key, StringView value, const InternalView
     // 4) device-width and device-height are translated to 10.0.
     // 5) no and unknown values are translated to 0.0
 
-    if (equalLettersIgnoringASCIICase(value, "yes"))
+    if (equalLettersIgnoringASCIICase(value, "yes"_s))
         return 1;
-    if (equalLettersIgnoringASCIICase(value, "no"))
+    if (equalLettersIgnoringASCIICase(value, "no"_s))
         return 0;
-    if (equalLettersIgnoringASCIICase(value, "device-width"))
+    if (equalLettersIgnoringASCIICase(value, "device-width"_s))
         return 10;
-    if (equalLettersIgnoringASCIICase(value, "device-height"))
+    if (equalLettersIgnoringASCIICase(value, "device-height"_s))
         return 10;
 
     float numericValue = numericPrefix(key, value, errorHandler);
@@ -371,24 +371,24 @@ static bool findBooleanValue(StringView key, StringView value, const InternalVie
     // Numbers >= 1, numbers <= -1, device-width and device-height are mapped to yes.
     // Numbers in the range <-1, 1>, and unknown values, are mapped to no.
 
-    if (equalLettersIgnoringASCIICase(value, "yes"))
+    if (equalLettersIgnoringASCIICase(value, "yes"_s))
         return true;
-    if (equalLettersIgnoringASCIICase(value, "no"))
+    if (equalLettersIgnoringASCIICase(value, "no"_s))
         return false;
-    if (equalLettersIgnoringASCIICase(value, "device-width"))
+    if (equalLettersIgnoringASCIICase(value, "device-width"_s))
         return true;
-    if (equalLettersIgnoringASCIICase(value, "device-height"))
+    if (equalLettersIgnoringASCIICase(value, "device-height"_s))
         return true;
     return std::abs(numericPrefix(key, value, errorHandler)) >= 1;
 }
 
 static ViewportFit parseViewportFitValue(StringView key, StringView value, const InternalViewportErrorHandler& errorHandler)
 {
-    if (equalLettersIgnoringASCIICase(value, "auto"))
+    if (equalLettersIgnoringASCIICase(value, "auto"_s))
         return ViewportFit::Auto;
-    if (equalLettersIgnoringASCIICase(value, "contain"))
+    if (equalLettersIgnoringASCIICase(value, "contain"_s))
         return ViewportFit::Contain;
-    if (equalLettersIgnoringASCIICase(value, "cover"))
+    if (equalLettersIgnoringASCIICase(value, "cover"_s))
         return ViewportFit::Cover;
 
     errorHandler(UnrecognizedViewportArgumentValueError, value, key);
@@ -454,27 +454,27 @@ void setViewportFeature(ViewportArguments& arguments, StringView key, StringView
         errorHandler(errorCode, viewportErrorMessage(errorCode, replacement1, replacement2));
     };
 
-    if (equalLettersIgnoringASCIICase(key, "width"))
+    if (equalLettersIgnoringASCIICase(key, "width"_s))
         arguments.width = findSizeValue(key, value, internalErrorHandler, &arguments.widthWasExplicit);
-    else if (equalLettersIgnoringASCIICase(key, "height"))
+    else if (equalLettersIgnoringASCIICase(key, "height"_s))
         arguments.height = findSizeValue(key, value, internalErrorHandler);
-    else if (equalLettersIgnoringASCIICase(key, "initial-scale"))
+    else if (equalLettersIgnoringASCIICase(key, "initial-scale"_s))
         arguments.zoom = findScaleValue(key, value, internalErrorHandler);
-    else if (equalLettersIgnoringASCIICase(key, "minimum-scale"))
+    else if (equalLettersIgnoringASCIICase(key, "minimum-scale"_s))
         arguments.minZoom = findScaleValue(key, value, internalErrorHandler);
-    else if (equalLettersIgnoringASCIICase(key, "maximum-scale"))
+    else if (equalLettersIgnoringASCIICase(key, "maximum-scale"_s))
         arguments.maxZoom = findScaleValue(key, value, internalErrorHandler);
-    else if (equalLettersIgnoringASCIICase(key, "user-scalable"))
+    else if (equalLettersIgnoringASCIICase(key, "user-scalable"_s))
         arguments.userZoom = findBooleanValue(key, value, internalErrorHandler);
 #if PLATFORM(IOS_FAMILY)
-    else if (equalLettersIgnoringASCIICase(key, "minimal-ui")) {
+    else if (equalLettersIgnoringASCIICase(key, "minimal-ui"_s)) {
         // FIXME: Ignore silently for now. This code should eventually be removed
         // so we start giving the warning in the web inspector as for other unimplemented keys.
     }
 #endif
-    else if (equalLettersIgnoringASCIICase(key, "shrink-to-fit"))
+    else if (equalLettersIgnoringASCIICase(key, "shrink-to-fit"_s))
         arguments.shrinkToFit = findBooleanValue(key, value, internalErrorHandler);
-    else if (equalLettersIgnoringASCIICase(key, "viewport-fit") && viewportFitEnabled)
+    else if (equalLettersIgnoringASCIICase(key, "viewport-fit"_s) && viewportFitEnabled)
         arguments.viewportFit = parseViewportFitValue(key, value, internalErrorHandler);
     else
         internalErrorHandler(UnrecognizedViewportArgumentKeyError, key, { });

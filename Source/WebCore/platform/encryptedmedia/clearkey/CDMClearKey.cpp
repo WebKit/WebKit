@@ -68,7 +68,7 @@ static std::optional<Vector<RefPtr<KeyHandle>>> parseLicenseFormat(const JSON::O
                 return false;
 
             auto keyType = keyObject->getString("kty"_s);
-            if (!keyType || !equalLettersIgnoringASCIICase(keyType, "oct"))
+            if (!keyType || !equalLettersIgnoringASCIICase(keyType, "oct"_s))
                 return false;
 
             auto keyID = keyObject->getString("kid"_s);
@@ -277,7 +277,7 @@ std::unique_ptr<CDMPrivate> CDMFactoryClearKey::createCDM(const String& keySyste
 bool CDMFactoryClearKey::supportsKeySystem(const String& keySystem)
 {
     // `org.w3.clearkey` is the only supported key system.
-    return equalLettersIgnoringASCIICase(keySystem, "org.w3.clearkey");
+    return equalLettersIgnoringASCIICase(keySystem, "org.w3.clearkey"_s);
 }
 
 CDMPrivateClearKey::CDMPrivateClearKey() = default;
@@ -393,15 +393,15 @@ bool CDMPrivateClearKey::supportsSessions() const
 bool CDMPrivateClearKey::supportsInitData(const AtomString& initDataType, const FragmentedSharedBuffer& initData) const
 {
     // Validate the initData buffer as an JSON object in keyids case.
-    if (equalLettersIgnoringASCIICase(initDataType, "keyids") && CDMUtilities::parseJSONObject(initData))
+    if (equalLettersIgnoringASCIICase(initDataType, "keyids"_s) && CDMUtilities::parseJSONObject(initData))
         return true;
 
     // Validate the initData buffer as CENC initData.
-    if (equalLettersIgnoringASCIICase(initDataType, "cenc") && isCencInitData(initData))
+    if (equalLettersIgnoringASCIICase(initDataType, "cenc"_s) && isCencInitData(initData))
         return true;
 
     // Validate the initData buffer as WebM initData.
-    if (equalLettersIgnoringASCIICase(initDataType, "webm") && !initData.isEmpty())
+    if (equalLettersIgnoringASCIICase(initDataType, "webm"_s) && !initData.isEmpty())
         return true;
 
     return false;
@@ -462,10 +462,10 @@ void CDMInstanceSessionClearKey::requestLicense(LicenseType, const AtomString& i
 
     m_sessionID = String::number(s_sessionIdValue);
 
-    if (equalLettersIgnoringASCIICase(initDataType, "cenc"))
+    if (equalLettersIgnoringASCIICase(initDataType, "cenc"_s))
         initData = extractKeyidsFromCencInitData(initData.get());
 
-    if (equalLettersIgnoringASCIICase(initDataType, "webm"))
+    if (equalLettersIgnoringASCIICase(initDataType, "webm"_s))
         initData = extractKeyIdFromWebMInitData(initData.get());
 
     callOnMainThread(

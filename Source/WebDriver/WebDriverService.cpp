@@ -680,7 +680,7 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
                 return nullptr;
         } else if (it->key == "platformName" && platformCapabilities.platformName) {
             auto platformName = it->value->asString();
-            if (!equalLettersIgnoringASCIICase(platformName, "any") && platformCapabilities.platformName.value() != platformName)
+            if (!equalLettersIgnoringASCIICase(platformName, "any"_s) && platformCapabilities.platformName.value() != platformName)
                 return nullptr;
         } else if (it->key == "acceptInsecureCerts" && platformCapabilities.acceptInsecureCerts) {
             auto acceptInsecureCerts = it->value->asBoolean();

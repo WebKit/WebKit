@@ -149,8 +149,8 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         return cachedRequest;
     }
 
-    FetchOptions::Credentials credentials = equalLettersIgnoringASCIICase(crossOriginAttribute, "omit")
-        ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(crossOriginAttribute, "use-credentials")
+    FetchOptions::Credentials credentials = equalLettersIgnoringASCIICase(crossOriginAttribute, "omit"_s)
+        ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(crossOriginAttribute, "use-credentials"_s)
         ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     options.credentials = credentials;
     switch (credentials) {

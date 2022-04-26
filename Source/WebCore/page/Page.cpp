@@ -3391,7 +3391,7 @@ bool Page::useDarkAppearance() const
 {
 #if ENABLE(DARK_MODE_CSS)
     FrameView* view = mainFrame().view();
-    if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"))
+    if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"_s))
         return false;
     if (m_useDarkAppearanceOverride)
         return m_useDarkAppearanceOverride.value();

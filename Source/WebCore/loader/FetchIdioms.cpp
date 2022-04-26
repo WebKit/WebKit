@@ -34,9 +34,9 @@ namespace WebCore {
 bool shouldBlockResponseDueToMIMEType(const ResourceResponse& response, FetchOptions::Destination requestDestination)
 {
     String mimeType = extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType));
-    return isScriptLikeDestination(requestDestination) && (startsWithLettersIgnoringASCIICase(mimeType, "audio/")
-        || startsWithLettersIgnoringASCIICase(mimeType, "image/") || startsWithLettersIgnoringASCIICase(mimeType, "video/")
-        || equalLettersIgnoringASCIICase(mimeType, "text/csv"));
+    return isScriptLikeDestination(requestDestination) && (startsWithLettersIgnoringASCIICase(mimeType, "audio/"_s)
+        || startsWithLettersIgnoringASCIICase(mimeType, "image/"_s) || startsWithLettersIgnoringASCIICase(mimeType, "video/"_s)
+        || equalLettersIgnoringASCIICase(mimeType, "text/csv"_s));
 }
 
 } // namespace WebCore

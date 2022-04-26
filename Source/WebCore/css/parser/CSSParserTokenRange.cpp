@@ -82,7 +82,7 @@ CSSParserTokenRange CSSParserTokenRange::consumeBlockCheckingForEditability(Styl
         else if (token.getBlockType() == CSSParserToken::BlockEnd)
             nestingLevel--;
 
-        if (styleSheet && !styleSheet->usesStyleBasedEditability() && token.type() == IdentToken && equalLettersIgnoringASCIICase(token.value(), "-webkit-user-modify"))
+        if (styleSheet && !styleSheet->usesStyleBasedEditability() && token.type() == IdentToken && equalLettersIgnoringASCIICase(token.value(), "-webkit-user-modify"_s))
             styleSheet->parserSetUsesStyleBasedEditability();
     } while (nestingLevel && m_first < m_last);
     

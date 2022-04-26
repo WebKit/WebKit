@@ -113,7 +113,7 @@ RefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyRequest(const String& m
 
     m_initData = initData;
 
-    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease")) {
+    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"_s)) {
         m_mode = KeyRelease;
         return generateKeyReleaseMessage(errorCode, systemCode);
     }

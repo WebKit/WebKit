@@ -110,9 +110,9 @@ void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomStri
 {
     if (name == typeAttr) {
         Type oldType = m_type;
-        if (equalLettersIgnoringASCIICase(value, "reset"))
+        if (equalLettersIgnoringASCIICase(value, "reset"_s))
             m_type = RESET;
-        else if (equalLettersIgnoringASCIICase(value, "button"))
+        else if (equalLettersIgnoringASCIICase(value, "button"_s))
             m_type = BUTTON;
         else
             m_type = SUBMIT;

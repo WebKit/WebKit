@@ -186,9 +186,9 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomSt
         // The virtual/physical values were a Netscape extension of HTML 3.0, now deprecated.
         // The soft/hard /off values are a recommendation for HTML 4 extension by IE and NS 4.
         WrapMethod wrap;
-        if (equalLettersIgnoringASCIICase(value, "physical") || equalLettersIgnoringASCIICase(value, "hard") || equalLettersIgnoringASCIICase(value, "on"))
+        if (equalLettersIgnoringASCIICase(value, "physical"_s) || equalLettersIgnoringASCIICase(value, "hard"_s) || equalLettersIgnoringASCIICase(value, "on"_s))
             wrap = HardWrap;
-        else if (equalLettersIgnoringASCIICase(value, "off"))
+        else if (equalLettersIgnoringASCIICase(value, "off"_s))
             wrap = NoWrap;
         else
             wrap = SoftWrap;

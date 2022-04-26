@@ -48,7 +48,7 @@ namespace WebCore {
 
 bool isCurrentColorString(const String& colorString)
 {
-    return equalLettersIgnoringASCIICase(colorString, "currentcolor");
+    return equalLettersIgnoringASCIICase(colorString, "currentcolor"_s);
 }
 
 Color parseColor(const String& colorString, CanvasBase& canvasBase)

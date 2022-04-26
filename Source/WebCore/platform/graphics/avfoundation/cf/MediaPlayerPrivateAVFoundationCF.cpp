@@ -911,8 +911,8 @@ DestinationColorSpace MediaPlayerPrivateAVFoundationCF::colorSpace()
 
 static bool keySystemIsSupported(const String& keySystem)
 {
-    return equalLettersIgnoringASCIICase(keySystem, "com.apple.fps")
-        || equalLettersIgnoringASCIICase(keySystem, "com.apple.fps.1_0");
+    return equalLettersIgnoringASCIICase(keySystem, "com.apple.fps"_s)
+        || equalLettersIgnoringASCIICase(keySystem, "com.apple.fps.1_0"_s);
 }
 
 #endif

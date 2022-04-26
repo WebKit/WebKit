@@ -264,12 +264,12 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
 
     setValue(text, TextFieldEventBehavior::DispatchNoEvent, TextControlSetValueSelection::DoNotSet);
 
-    if (equalLettersIgnoringASCIICase(selectionMode, "select")) {
+    if (equalLettersIgnoringASCIICase(selectionMode, "select"_s)) {
         newSelectionStart = start;
         newSelectionEnd = start + replacementLength;
-    } else if (equalLettersIgnoringASCIICase(selectionMode, "start"))
+    } else if (equalLettersIgnoringASCIICase(selectionMode, "start"_s))
         newSelectionStart = newSelectionEnd = start;
-    else if (equalLettersIgnoringASCIICase(selectionMode, "end"))
+    else if (equalLettersIgnoringASCIICase(selectionMode, "end"_s))
         newSelectionStart = newSelectionEnd = start + replacementLength;
     else {
         // Default is "preserve".
@@ -814,11 +814,11 @@ String HTMLTextFormControlElement::directionForFormData() const
     auto direction = [this] {
         for (auto& element : lineageOfType<HTMLElement>(*this)) {
             auto& value = element.attributeWithoutSynchronization(dirAttr);
-            if (equalLettersIgnoringASCIICase(value, "rtl"))
+            if (equalLettersIgnoringASCIICase(value, "rtl"_s))
                 return TextDirection::RTL;
-            if (equalLettersIgnoringASCIICase(value, "ltr"))
+            if (equalLettersIgnoringASCIICase(value, "ltr"_s))
                 return TextDirection::LTR;
-            if (equalLettersIgnoringASCIICase(value, "auto")) {
+            if (equalLettersIgnoringASCIICase(value, "auto"_s)) {
                 bool isAuto;
                 return element.directionalityIfhasDirAutoAttribute(isAuto);
             }

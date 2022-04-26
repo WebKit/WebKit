@@ -752,7 +752,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomHTMLToken&& token)
     if (token.name() == inputTag) {
         m_tree.reconstructTheActiveFormattingElements();
         auto* typeAttribute = findAttribute(token.attributes(), typeAttr);
-        bool shouldClearFramesetOK = !typeAttribute || !equalLettersIgnoringASCIICase(typeAttribute->value(), "hidden");
+        bool shouldClearFramesetOK = !typeAttribute || !equalLettersIgnoringASCIICase(typeAttribute->value(), "hidden"_s);
         m_tree.insertSelfClosingHTMLElement(WTFMove(token));
         if (shouldClearFramesetOK)
             m_framesetOk = false;
@@ -994,7 +994,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomHTMLToken&& token)
     }
     if (token.name() == inputTag) {
         auto* typeAttribute = findAttribute(token.attributes(), typeAttr);
-        if (typeAttribute && equalLettersIgnoringASCIICase(typeAttribute->value(), "hidden")) {
+        if (typeAttribute && equalLettersIgnoringASCIICase(typeAttribute->value(), "hidden"_s)) {
             parseError(token);
             m_tree.insertSelfClosingHTMLElement(WTFMove(token));
             return;

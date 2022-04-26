@@ -288,43 +288,43 @@ ExceptionOr<void> DOMSelection::setPosition(Node* node, unsigned offset)
 void DOMSelection::modify(const String& alterString, const String& directionString, const String& granularityString)
 {
     FrameSelection::EAlteration alter;
-    if (equalLettersIgnoringASCIICase(alterString, "extend"))
+    if (equalLettersIgnoringASCIICase(alterString, "extend"_s))
         alter = FrameSelection::AlterationExtend;
-    else if (equalLettersIgnoringASCIICase(alterString, "move"))
+    else if (equalLettersIgnoringASCIICase(alterString, "move"_s))
         alter = FrameSelection::AlterationMove;
     else
         return;
 
     SelectionDirection direction;
-    if (equalLettersIgnoringASCIICase(directionString, "forward"))
+    if (equalLettersIgnoringASCIICase(directionString, "forward"_s))
         direction = SelectionDirection::Forward;
-    else if (equalLettersIgnoringASCIICase(directionString, "backward"))
+    else if (equalLettersIgnoringASCIICase(directionString, "backward"_s))
         direction = SelectionDirection::Backward;
-    else if (equalLettersIgnoringASCIICase(directionString, "left"))
+    else if (equalLettersIgnoringASCIICase(directionString, "left"_s))
         direction = SelectionDirection::Left;
-    else if (equalLettersIgnoringASCIICase(directionString, "right"))
+    else if (equalLettersIgnoringASCIICase(directionString, "right"_s))
         direction = SelectionDirection::Right;
     else
         return;
 
     TextGranularity granularity;
-    if (equalLettersIgnoringASCIICase(granularityString, "character"))
+    if (equalLettersIgnoringASCIICase(granularityString, "character"_s))
         granularity = TextGranularity::CharacterGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "word"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "word"_s))
         granularity = TextGranularity::WordGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "sentence"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "sentence"_s))
         granularity = TextGranularity::SentenceGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "line"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "line"_s))
         granularity = TextGranularity::LineGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "paragraph"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "paragraph"_s))
         granularity = TextGranularity::ParagraphGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "lineboundary"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "lineboundary"_s))
         granularity = TextGranularity::LineBoundary;
-    else if (equalLettersIgnoringASCIICase(granularityString, "sentenceboundary"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "sentenceboundary"_s))
         granularity = TextGranularity::SentenceBoundary;
-    else if (equalLettersIgnoringASCIICase(granularityString, "paragraphboundary"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "paragraphboundary"_s))
         granularity = TextGranularity::ParagraphBoundary;
-    else if (equalLettersIgnoringASCIICase(granularityString, "documentboundary"))
+    else if (equalLettersIgnoringASCIICase(granularityString, "documentboundary"_s))
         granularity = TextGranularity::DocumentBoundary;
     else
         return;

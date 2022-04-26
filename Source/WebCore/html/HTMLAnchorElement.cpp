@@ -288,9 +288,9 @@ bool HTMLAnchorElement::canStartSelection() const
 bool HTMLAnchorElement::draggable() const
 {
     const AtomString& value = attributeWithoutSynchronization(draggableAttr);
-    if (equalLettersIgnoringASCIICase(value, "true"))
+    if (equalLettersIgnoringASCIICase(value, "true"_s))
         return true;
-    if (equalLettersIgnoringASCIICase(value, "false"))
+    if (equalLettersIgnoringASCIICase(value, "false"_s))
         return false;
     return hasAttributeWithoutSynchronization(hrefAttr);
 }
@@ -315,12 +315,12 @@ DOMTokenList& HTMLAnchorElement::relList()
     if (!m_relList) {
         m_relList = makeUnique<DOMTokenList>(*this, HTMLNames::relAttr, [](Document& document, StringView token) {
 #if USE(SYSTEM_PREVIEW)
-            if (equalLettersIgnoringASCIICase(token, "ar"))
+            if (equalLettersIgnoringASCIICase(token, "ar"_s))
                 return document.settings().systemPreviewEnabled();
 #else
             UNUSED_PARAM(document);
 #endif
-            return equalLettersIgnoringASCIICase(token, "noreferrer") || equalLettersIgnoringASCIICase(token, "noopener") || equalLettersIgnoringASCIICase(token, "opener");
+            return equalLettersIgnoringASCIICase(token, "noreferrer"_s) || equalLettersIgnoringASCIICase(token, "noopener"_s) || equalLettersIgnoringASCIICase(token, "opener"_s);
         });
     }
     return *m_relList;

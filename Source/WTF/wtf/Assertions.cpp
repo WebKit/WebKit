@@ -562,7 +562,7 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
             component = component.substring(1);
         }
 
-        if (equalLettersIgnoringASCIICase(component, "all")) {
+        if (equalLettersIgnoringASCIICase(component, "all"_s)) {
             setStateOfAllChannels(channels, count, logChannelState);
             continue;
         }
@@ -570,13 +570,13 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
         WTFLogLevel logChannelLevel = WTFLogLevel::Error;
         if (++it != componentInfo.end()) {
             auto level = (*it).stripWhiteSpace();
-            if (equalLettersIgnoringASCIICase(level, "error"))
+            if (equalLettersIgnoringASCIICase(level, "error"_s))
                 logChannelLevel = WTFLogLevel::Error;
-            else if (equalLettersIgnoringASCIICase(level, "warning"))
+            else if (equalLettersIgnoringASCIICase(level, "warning"_s))
                 logChannelLevel = WTFLogLevel::Warning;
-            else if (equalLettersIgnoringASCIICase(level, "info"))
+            else if (equalLettersIgnoringASCIICase(level, "info"_s))
                 logChannelLevel = WTFLogLevel::Info;
-            else if (equalLettersIgnoringASCIICase(level, "debug"))
+            else if (equalLettersIgnoringASCIICase(level, "debug"_s))
                 logChannelLevel = WTFLogLevel::Debug;
             else
                 WTFLogAlways("Unknown logging level: %s", level.utf8().data());

@@ -710,11 +710,11 @@ bool MediaElementSession::wirelessVideoPlaybackDisabled() const
 
 #if PLATFORM(IOS_FAMILY)
     auto& legacyAirplayAttributeValue = m_element.attributeWithoutSynchronization(HTMLNames::webkitairplayAttr);
-    if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "deny")) {
+    if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "deny"_s)) {
         INFO_LOG(LOGIDENTIFIER, "returning TRUE because of legacy attribute");
         return true;
     }
-    if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "allow")) {
+    if (equalLettersIgnoringASCIICase(legacyAirplayAttributeValue, "allow"_s)) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE because of legacy attribute");
         return false;
     }

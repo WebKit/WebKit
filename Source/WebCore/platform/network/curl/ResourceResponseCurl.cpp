@@ -66,7 +66,7 @@ bool ResourceResponse::isAppendableHeader(const String &key)
     };
 
     // Custom headers start with 'X-', and need no further checking.
-    if (startsWithLettersIgnoringASCIICase(key, "x-"))
+    if (startsWithLettersIgnoringASCIICase(key, "x-"_s))
         return true;
 
     for (const auto& header : appendableHeaders) {
@@ -118,7 +118,7 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
             addHTTPHeaderField(key, value);
         else
             setHTTPHeaderField(key, value);
-    } else if (startsWithLettersIgnoringASCIICase(header, "http")) {
+    } else if (startsWithLettersIgnoringASCIICase(header, "http"_s)) {
         // This is the first line of the response.
         setStatusLine(header);
     }

@@ -228,8 +228,8 @@ bool equalIgnoringASCIICase(StringView, ASCIILiteral);
 WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
 bool equalIgnoringNullity(StringView, StringView);
 
-template<unsigned length> bool equalLettersIgnoringASCIICase(StringView, const char (&lowercaseLetters)[length]);
-template<unsigned length> bool startsWithLettersIgnoringASCIICase(StringView, const char (&lowercaseLetters)[length]);
+bool equalLettersIgnoringASCIICase(StringView, ASCIILiteral);
+bool startsWithLettersIgnoringASCIICase(StringView, ASCIILiteral);
 
 inline bool operator==(StringView a, StringView b) { return equal(a, b); }
 inline bool operator==(StringView a, const LChar *b);
@@ -1111,14 +1111,14 @@ StringView StringView::stripLeadingAndTrailingMatchedCharacters(const MatchedCha
     return stripLeadingAndTrailingMatchedCharacters<UChar>(characters16(), predicate);
 }
 
-template<unsigned length> inline bool equalLettersIgnoringASCIICase(StringView string, const char (&lowercaseLetters)[length])
+inline bool equalLettersIgnoringASCIICase(StringView string, ASCIILiteral literal)
 {
-    return equalLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
+    return equalLettersIgnoringASCIICaseCommon(string, literal);
 }
 
-template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(StringView string, const char (&lowercaseLetters)[length])
+inline bool startsWithLettersIgnoringASCIICase(StringView string, ASCIILiteral literal)
 {
-    return startsWithLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
+    return startsWithLettersIgnoringASCIICaseCommon(string, literal);
 }
 
 inline bool equalIgnoringNullity(StringView a, StringView b)

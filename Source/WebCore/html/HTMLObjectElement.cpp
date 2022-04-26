@@ -135,9 +135,9 @@ static void mapDataParamToSrc(Vector<AtomString>& paramNames, Vector<AtomString>
     bool foundSrcParam = false;
     AtomString dataParamValue;
     for (unsigned i = 0; i < paramNames.size(); ++i) {
-        if (equalLettersIgnoringASCIICase(paramNames[i], "src"))
+        if (equalLettersIgnoringASCIICase(paramNames[i], "src"_s))
             foundSrcParam = true;
-        else if (equalLettersIgnoringASCIICase(paramNames[i], "data"))
+        else if (equalLettersIgnoringASCIICase(paramNames[i], "data"_s))
             dataParamValue = paramValues[i];
     }
     if (!foundSrcParam && !dataParamValue.isNull()) {
@@ -164,10 +164,10 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
         paramValues.append(param.value());
 
         // FIXME: url adjustment does not belong in this function.
-        if (url.isEmpty() && urlParameter.isEmpty() && (equalLettersIgnoringASCIICase(name, "src") || equalLettersIgnoringASCIICase(name, "movie") || equalLettersIgnoringASCIICase(name, "code") || equalLettersIgnoringASCIICase(name, "url")))
+        if (url.isEmpty() && urlParameter.isEmpty() && (equalLettersIgnoringASCIICase(name, "src"_s) || equalLettersIgnoringASCIICase(name, "movie"_s) || equalLettersIgnoringASCIICase(name, "code"_s) || equalLettersIgnoringASCIICase(name, "url"_s)))
             urlParameter = stripLeadingAndTrailingHTMLSpaces(param.value());
         // FIXME: serviceType calculation does not belong in this function.
-        if (serviceType.isEmpty() && equalLettersIgnoringASCIICase(name, "type")) {
+        if (serviceType.isEmpty() && equalLettersIgnoringASCIICase(name, "type"_s)) {
             serviceType = param.value();
             size_t pos = serviceType.find(';');
             if (pos != notFound)
@@ -435,7 +435,7 @@ bool HTMLObjectElement::containsJavaApplet() const
         return true;
 
     for (auto& child : childrenOfType<Element>(*this)) {
-        if (child.hasTagName(paramTag) && equalLettersIgnoringASCIICase(child.getNameAttribute(), "type")
+        if (child.hasTagName(paramTag) && equalLettersIgnoringASCIICase(child.getNameAttribute(), "type"_s)
             && MIMETypeRegistry::isJavaAppletMIMEType(child.attributeWithoutSynchronization(valueAttr).string()))
             return true;
         if (child.hasTagName(objectTag) && downcast<HTMLObjectElement>(child).containsJavaApplet())

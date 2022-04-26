@@ -225,17 +225,17 @@ void TextTrack::setKindKeywordIgnoringASCIICase(StringView keyword)
         setKind(Kind::Subtitles);
         return;
     }
-    if (equalLettersIgnoringASCIICase(keyword, "captions"))
+    if (equalLettersIgnoringASCIICase(keyword, "captions"_s))
         setKind(Kind::Captions);
-    else if (equalLettersIgnoringASCIICase(keyword, "chapters"))
+    else if (equalLettersIgnoringASCIICase(keyword, "chapters"_s))
         setKind(Kind::Chapters);
-    else if (equalLettersIgnoringASCIICase(keyword, "descriptions"))
+    else if (equalLettersIgnoringASCIICase(keyword, "descriptions"_s))
         setKind(Kind::Descriptions);
-    else if (equalLettersIgnoringASCIICase(keyword, "forced"))
+    else if (equalLettersIgnoringASCIICase(keyword, "forced"_s))
         setKind(Kind::Forced);
-    else if (equalLettersIgnoringASCIICase(keyword, "metadata"))
+    else if (equalLettersIgnoringASCIICase(keyword, "metadata"_s))
         setKind(Kind::Metadata);
-    else if (equalLettersIgnoringASCIICase(keyword, "subtitles"))
+    else if (equalLettersIgnoringASCIICase(keyword, "subtitles"_s))
         setKind(Kind::Subtitles);
     else {
         // The invalid value default is the metadata state.

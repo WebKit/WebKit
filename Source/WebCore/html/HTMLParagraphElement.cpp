@@ -54,11 +54,11 @@ Ref<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagN
 void HTMLParagraphElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
-        if (equalLettersIgnoringASCIICase(value, "middle") || equalLettersIgnoringASCIICase(value, "center"))
+        if (equalLettersIgnoringASCIICase(value, "middle"_s) || equalLettersIgnoringASCIICase(value, "center"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
-        else if (equalLettersIgnoringASCIICase(value, "left"))
+        else if (equalLettersIgnoringASCIICase(value, "left"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueWebkitLeft);
-        else if (equalLettersIgnoringASCIICase(value, "right"))
+        else if (equalLettersIgnoringASCIICase(value, "right"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, value);

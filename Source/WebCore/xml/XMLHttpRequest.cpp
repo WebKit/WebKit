@@ -171,7 +171,7 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
         auto& context = downcast<Document>(*scriptExecutionContext());
 
         String mimeType = responseMIMEType();
-        bool isHTML = equalLettersIgnoringASCIICase(mimeType, "text/html");
+        bool isHTML = equalLettersIgnoringASCIICase(mimeType, "text/html"_s);
         bool isXML = MIMETypeRegistry::isXMLMIMEType(mimeType);
 
         // The W3C spec requires the final MIME type to be some valid XML type, or text/html.
@@ -1022,7 +1022,7 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
     case ResponseType::Json:
         return TextResourceDecoder::create("text/plain"_s, "UTF-8");
     case ResponseType::Document: {
-        if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"))
+        if (equalLettersIgnoringASCIICase(responseMIMEType(), "text/html"_s))
             return TextResourceDecoder::create("text/html"_s, "UTF-8");
         auto decoder = TextResourceDecoder::create("application/xml"_s);
         // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.

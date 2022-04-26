@@ -36,29 +36,29 @@ static std::optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy,
     // "never" / "default" / "always" are legacy keywords that we support and still defined in the HTML specification:
     // https://html.spec.whatwg.org/#meta-referrer
     if (shouldParseLegacyKeywords == ShouldParseLegacyKeywords::Yes) {
-        if (equalLettersIgnoringASCIICase(policy, "never"))
+        if (equalLettersIgnoringASCIICase(policy, "never"_s))
             return ReferrerPolicy::NoReferrer;
-        if (equalLettersIgnoringASCIICase(policy, "always"))
+        if (equalLettersIgnoringASCIICase(policy, "always"_s))
             return ReferrerPolicy::UnsafeUrl;
-        if (equalLettersIgnoringASCIICase(policy, "default"))
+        if (equalLettersIgnoringASCIICase(policy, "default"_s))
             return ReferrerPolicy::Default;
     }
 
-    if (equalLettersIgnoringASCIICase(policy, "no-referrer"))
+    if (equalLettersIgnoringASCIICase(policy, "no-referrer"_s))
         return ReferrerPolicy::NoReferrer;
-    if (equalLettersIgnoringASCIICase(policy, "unsafe-url"))
+    if (equalLettersIgnoringASCIICase(policy, "unsafe-url"_s))
         return ReferrerPolicy::UnsafeUrl;
-    if (equalLettersIgnoringASCIICase(policy, "origin"))
+    if (equalLettersIgnoringASCIICase(policy, "origin"_s))
         return ReferrerPolicy::Origin;
-    if (equalLettersIgnoringASCIICase(policy, "origin-when-cross-origin"))
+    if (equalLettersIgnoringASCIICase(policy, "origin-when-cross-origin"_s))
         return ReferrerPolicy::OriginWhenCrossOrigin;
-    if (equalLettersIgnoringASCIICase(policy, "same-origin"))
+    if (equalLettersIgnoringASCIICase(policy, "same-origin"_s))
         return ReferrerPolicy::SameOrigin;
-    if (equalLettersIgnoringASCIICase(policy, "strict-origin"))
+    if (equalLettersIgnoringASCIICase(policy, "strict-origin"_s))
         return ReferrerPolicy::StrictOrigin;
-    if (equalLettersIgnoringASCIICase(policy, "strict-origin-when-cross-origin"))
+    if (equalLettersIgnoringASCIICase(policy, "strict-origin-when-cross-origin"_s))
         return ReferrerPolicy::StrictOriginWhenCrossOrigin;
-    if (equalLettersIgnoringASCIICase(policy, "no-referrer-when-downgrade"))
+    if (equalLettersIgnoringASCIICase(policy, "no-referrer-when-downgrade"_s))
         return ReferrerPolicy::NoReferrerWhenDowngrade;
     if (!policy.isNull() && policy.isEmpty())
         return ReferrerPolicy::EmptyString;

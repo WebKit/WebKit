@@ -4544,7 +4544,7 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
 static bool matchesExtensionOrEquivalent(const String& filename, const String& extension)
 {
     return filename.endsWithIgnoringASCIICase(makeString('.', extension))
-        || (equalLettersIgnoringASCIICase(extension, "jpeg") && filename.endsWithIgnoringASCIICase(".jpg"));
+        || (equalLettersIgnoringASCIICase(extension, "jpeg"_s) && filename.endsWithIgnoringASCIICase(".jpg"_s));
 }
 
 void WebViewImpl::setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *pasteboard)

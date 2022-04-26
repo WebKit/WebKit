@@ -74,11 +74,11 @@ template<typename CharacterType> static constexpr CharacterType networkModeIdent
 
 std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const uint8_t* data, int length)
 {
-    static constexpr const char cacheManifestMIMEType[] = "text/cache-manifest";
+    static constexpr auto cacheManifestMIMEType = "text/cache-manifest"_s;
     bool allowFallbackNamespaceOutsideManifestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
     auto manifestPath = WebCore::manifestPath(manifestURL);
 
-    auto manifestString = TextResourceDecoder::create(ASCIILiteral::fromLiteralUnsafe(cacheManifestMIMEType), "UTF-8")->decodeAndFlush(data, length);
+    auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8")->decodeAndFlush(data, length);
 
     return readCharactersForParsing(manifestString, [&](auto buffer) -> std::optional<ApplicationCacheManifest> {
         using CharacterType = typename decltype(buffer)::CharacterType;

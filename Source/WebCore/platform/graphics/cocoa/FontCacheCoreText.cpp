@@ -720,11 +720,11 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const St
 
 #if PLATFORM(IOS_FAMILY)
     // Substitute the default monospace font for well-known monospace fonts.
-    if (equalLettersIgnoringASCIICase(family, "monaco") || equalLettersIgnoringASCIICase(family, "menlo"))
+    if (equalLettersIgnoringASCIICase(family, "monaco"_s) || equalLettersIgnoringASCIICase(family, "menlo"_s))
         return fontForFamily(description, "courier"_s);
 
     // Substitute Verdana for Lucida Grande.
-    if (equalLettersIgnoringASCIICase(family, "lucida grande"))
+    if (equalLettersIgnoringASCIICase(family, "lucida grande"_s))
         return fontForFamily(description, "verdana"_s);
 #endif
 
@@ -1183,11 +1183,11 @@ static bool isDotPrefixedForbiddenFont(const AtomString& family)
 {
     if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ForbidsDotPrefixedFonts))
         return family.startsWith('.');
-    return equalLettersIgnoringASCIICase(family, ".applesystemuifontserif")
-        || equalLettersIgnoringASCIICase(family, ".sf ns mono")
-        || equalLettersIgnoringASCIICase(family, ".sf ui mono")
-        || equalLettersIgnoringASCIICase(family, ".sf arabic")
-        || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded");
+    return equalLettersIgnoringASCIICase(family, ".applesystemuifontserif"_s)
+        || equalLettersIgnoringASCIICase(family, ".sf ns mono"_s)
+        || equalLettersIgnoringASCIICase(family, ".sf ui mono"_s)
+        || equalLettersIgnoringASCIICase(family, ".sf arabic"_s)
+        || equalLettersIgnoringASCIICase(family, ".applesystemuifontrounded"_s);
 }
 
 static FontLookup platformFontLookupWithFamily(const AtomString& family, FontSelectionRequest request, float size, AllowUserInstalledFonts allowUserInstalledFonts)
@@ -1260,15 +1260,15 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
     std::optional<SystemFontKind> systemDesign;
 
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
-    if (equalLettersIgnoringASCIICase(family, "ui-serif"))
+    if (equalLettersIgnoringASCIICase(family, "ui-serif"_s))
         systemDesign = SystemFontKind::UISerif;
-    else if (equalLettersIgnoringASCIICase(family, "ui-monospace"))
+    else if (equalLettersIgnoringASCIICase(family, "ui-monospace"_s))
         systemDesign = SystemFontKind::UIMonospace;
-    else if (equalLettersIgnoringASCIICase(family, "ui-rounded"))
+    else if (equalLettersIgnoringASCIICase(family, "ui-rounded"_s))
         systemDesign = SystemFontKind::UIRounded;
 #endif
 
-    if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui") || equalLettersIgnoringASCIICase(family, "ui-sans-serif")) {
+    if (equalLettersIgnoringASCIICase(family, "-webkit-system-font"_s) || equalLettersIgnoringASCIICase(family, "-apple-system"_s) || equalLettersIgnoringASCIICase(family, "-apple-system-font"_s) || equalLettersIgnoringASCIICase(family, "system-ui"_s) || equalLettersIgnoringASCIICase(family, "ui-sans-serif"_s)) {
         ASSERT(!systemDesign);
         systemDesign = SystemFontKind::SystemUI;
     }
@@ -1289,22 +1289,22 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
         return createFontForInstalledFonts(descriptor.get(), size, allowUserInstalledFonts);
     }
 
-    if (equalLettersIgnoringASCIICase(family, "-apple-menu")) {
+    if (equalLettersIgnoringASCIICase(family, "-apple-menu"_s)) {
         auto result = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontMenuItem, size, fontDescription.computedLocale().string().createCFString().get()));
         return createFontForInstalledFonts(result.get(), allowUserInstalledFonts);
     }
 
-    if (equalLettersIgnoringASCIICase(family, "-apple-status-bar")) {
+    if (equalLettersIgnoringASCIICase(family, "-apple-status-bar"_s)) {
         auto result = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, size, fontDescription.computedLocale().string().createCFString().get()));
         return createFontForInstalledFonts(result.get(), allowUserInstalledFonts);
     }
 
-    if (equalLettersIgnoringASCIICase(family, "lastresort")) {
+    if (equalLettersIgnoringASCIICase(family, "lastresort"_s)) {
         static const CTFontDescriptorRef lastResort = CTFontDescriptorCreateLastResort();
         return adoptCF(CTFontCreateWithFontDescriptor(lastResort, size, nullptr));
     }
 
-    if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {
+    if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers"_s)) {
         int numberSpacingType = kNumberSpacingType;
         int monospacedNumbersSelector = kMonospacedNumbersSelector;
         auto numberSpacingNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &numberSpacingType));
@@ -1525,19 +1525,19 @@ std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&
             return heitiTCReplacement;
         break;
     case 6:
-        if (equalLettersIgnoringASCIICase(familyName, "simsun"))
+        if (equalLettersIgnoringASCIICase(familyName, "simsun"_s))
             return songtiSC;
         if (equal(familyName, weiruanXinXiMingTi))
             return songtiTC;
         break;
     case 10:
-        if (equalLettersIgnoringASCIICase(familyName, "ms mingliu"))
+        if (equalLettersIgnoringASCIICase(familyName, "ms mingliu"_s))
             return songtiTC;
         if (equalIgnoringASCIICase(familyName, "\\5b8b\\4f53"))
             return songtiSC;
         break;
     case 18:
-        if (equalLettersIgnoringASCIICase(familyName, "microsoft jhenghei"))
+        if (equalLettersIgnoringASCIICase(familyName, "microsoft jhenghei"_s))
             return heitiTCReplacement;
         break;
     }

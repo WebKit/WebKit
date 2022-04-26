@@ -783,7 +783,7 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
         keyframe.timingFunction = timingFunctionResult.returnValue();
 
         for (auto& [property, value] : keyframe.styleStrings) {
-            if (equalLettersIgnoringASCIICase(value, "inherit"))
+            if (equalLettersIgnoringASCIICase(value, "inherit"_s))
                 m_inheritedProperties.add(property);
         }
     }

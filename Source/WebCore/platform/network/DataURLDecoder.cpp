@@ -50,10 +50,10 @@ static bool shouldRemoveFragmentIdentifier(const String& mediaType)
         return false;
 
     // HLS uses # in the middle of the manifests.
-    return !equalLettersIgnoringASCIICase(mediaType, "video/mpegurl")
-        && !equalLettersIgnoringASCIICase(mediaType, "audio/mpegurl")
-        && !equalLettersIgnoringASCIICase(mediaType, "application/x-mpegurl")
-        && !equalLettersIgnoringASCIICase(mediaType, "vnd.apple.mpegurl");
+    return !equalLettersIgnoringASCIICase(mediaType, "video/mpegurl"_s)
+        && !equalLettersIgnoringASCIICase(mediaType, "audio/mpegurl"_s)
+        && !equalLettersIgnoringASCIICase(mediaType, "application/x-mpegurl"_s)
+        && !equalLettersIgnoringASCIICase(mediaType, "vnd.apple.mpegurl"_s);
 #else
     UNUSED_PARAM(mediaType);
     return true;
@@ -112,7 +112,7 @@ public:
         auto formatType = header.substring(formatTypeStart, header.length() - formatTypeStart);
         formatType = stripLeadingAndTrailingHTTPSpaces(formatType);
 
-        isBase64 = equalLettersIgnoringASCIICase(formatType, "base64");
+        isBase64 = equalLettersIgnoringASCIICase(formatType, "base64"_s);
 
         // If header does not end with "base64", mediaType should be the whole header.
         auto mediaType = (isBase64 ? header.left(mediaTypeEnd) : header).toString();

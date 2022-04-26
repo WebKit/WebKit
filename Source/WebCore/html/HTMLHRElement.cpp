@@ -64,10 +64,10 @@ bool HTMLHRElement::hasPresentationalHintsForAttribute(const QualifiedName& name
 void HTMLHRElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
-        if (equalLettersIgnoringASCIICase(value, "left")) {
+        if (equalLettersIgnoringASCIICase(value, "left"_s)) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyMarginLeft, 0, CSSUnitType::CSS_PX);
             addPropertyToPresentationalHintStyle(style, CSSPropertyMarginRight, CSSValueAuto);
-        } else if (equalLettersIgnoringASCIICase(value, "right")) {
+        } else if (equalLettersIgnoringASCIICase(value, "right"_s)) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
             addPropertyToPresentationalHintStyle(style, CSSPropertyMarginRight, 0, CSSUnitType::CSS_PX);
         } else {

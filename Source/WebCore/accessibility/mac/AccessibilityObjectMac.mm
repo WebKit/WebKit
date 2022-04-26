@@ -491,15 +491,15 @@ String AccessibilityObject::rolePlatformDescription() const
 
             // These input types are not enabled on mac yet, we check the type attribute for now.
             auto& type = input.attributeWithoutSynchronization(HTMLNames::typeAttr);
-            if (equalLettersIgnoringASCIICase(type, "date"))
+            if (equalLettersIgnoringASCIICase(type, "date"_s))
                 return AXDateFieldText();
-            if (equalLettersIgnoringASCIICase(type, "time"))
+            if (equalLettersIgnoringASCIICase(type, "time"_s))
                 return AXTimeFieldText();
-            if (equalLettersIgnoringASCIICase(type, "week"))
+            if (equalLettersIgnoringASCIICase(type, "week"_s))
                 return AXWeekFieldText();
-            if (equalLettersIgnoringASCIICase(type, "month"))
+            if (equalLettersIgnoringASCIICase(type, "month"_s))
                 return AXMonthFieldText();
-            if (equalLettersIgnoringASCIICase(type, "datetime-local"))
+            if (equalLettersIgnoringASCIICase(type, "datetime-local"_s))
                 return AXDateTimeFieldText();
         }
     }

@@ -152,7 +152,7 @@ inline bool isValidCSSContentType(Element& element, const AtomString& type)
     // FIXME: Should MIME types really be case sensitive in XML documents? Doesn't seem like they should,
     // even though other things are case sensitive in that context. MIME types should never be case sensitive.
     // We should verify this and then remove the isHTMLElement check here.
-    return element.isHTMLElement() ? equalLettersIgnoringASCIICase(type, "text/css") : type == cssContentTypeAtom();
+    return element.isHTMLElement() ? equalLettersIgnoringASCIICase(type, "text/css"_s) : type == cssContentTypeAtom();
 }
 
 void InlineStyleSheetOwner::createSheet(Element& element, const String& text)

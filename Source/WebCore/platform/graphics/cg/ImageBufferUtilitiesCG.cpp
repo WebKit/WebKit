@@ -83,11 +83,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kUTTypeGIF = CFSTR("com.compuserve.gif");
     });
 
-    if (equalLettersIgnoringASCIICase(mimeType, "image/png"))
+    if (equalLettersIgnoringASCIICase(mimeType, "image/png"_s))
         return kUTTypePNG;
-    if (equalLettersIgnoringASCIICase(mimeType, "image/jpeg"))
+    if (equalLettersIgnoringASCIICase(mimeType, "image/jpeg"_s))
         return jpegUTI();
-    if (equalLettersIgnoringASCIICase(mimeType, "image/gif"))
+    if (equalLettersIgnoringASCIICase(mimeType, "image/gif"_s))
         return kUTTypeGIF;
 
     ASSERT_NOT_REACHED();

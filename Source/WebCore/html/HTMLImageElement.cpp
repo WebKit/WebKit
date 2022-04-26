@@ -281,7 +281,7 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
 
 bool HTMLImageElement::hasLazyLoadableAttributeValue(const AtomString& attributeValue)
 {
-    return equalLettersIgnoringASCIICase(attributeValue, "lazy");
+    return equalLettersIgnoringASCIICase(attributeValue, "lazy"_s);
 }
 
 enum CrossOriginState { NotSet, UseCredentials, Anonymous };
@@ -289,7 +289,7 @@ static CrossOriginState parseCrossoriginState(const AtomString& crossoriginValue
 {
     if (crossoriginValue.isNull())
         return NotSet;
-    return equalLettersIgnoringASCIICase(crossoriginValue, "use-credentials") ? UseCredentials : Anonymous;
+    return equalLettersIgnoringASCIICase(crossoriginValue, "use-credentials"_s) ? UseCredentials : Anonymous;
 }
 
 void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
@@ -681,9 +681,9 @@ String HTMLImageElement::decoding() const
 DecodingMode HTMLImageElement::decodingMode() const
 {
     const AtomString& decodingMode = attributeWithoutSynchronization(decodingAttr);
-    if (equalLettersIgnoringASCIICase(decodingMode, "sync"))
+    if (equalLettersIgnoringASCIICase(decodingMode, "sync"_s))
         return DecodingMode::Synchronous;
-    if (equalLettersIgnoringASCIICase(decodingMode, "async"))
+    if (equalLettersIgnoringASCIICase(decodingMode, "async"_s))
         return DecodingMode::Asynchronous;
     return DecodingMode::Auto;
 }

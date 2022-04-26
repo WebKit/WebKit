@@ -608,10 +608,10 @@ void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&&
             return;
         }
         auto containerType = contentType.containerType();
-        if (equalLettersIgnoringASCIICase(containerType, "video/vp8")) {
+        if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {
             info.powerEfficient = false;
             info.smooth = isVPSoftwareDecoderSmooth(*info.supportedConfiguration.video);
-        } else if (equalLettersIgnoringASCIICase(containerType, "video/vp9")) {
+        } else if (equalLettersIgnoringASCIICase(containerType, "video/vp9"_s)) {
             auto decodingInfo = computeVPParameters(*info.supportedConfiguration.video);
             if (decodingInfo && !decodingInfo->supported && isSupportingVP9VTB()) {
                 callback({ });
@@ -659,7 +659,7 @@ void LibWebRTCProvider::createEncodingConfiguration(MediaEncodingConfiguration&&
         info.supported = true;
 #if PLATFORM(COCOA)
         auto containerType = contentType.containerType();
-        if (equalLettersIgnoringASCIICase(containerType, "video/vp8") || equalLettersIgnoringASCIICase(containerType, "video/vp9")) {
+        if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s) || equalLettersIgnoringASCIICase(containerType, "video/vp9"_s)) {
             info.powerEfficient = false;
             // FIXME: Provide more granular VPX encoder smoothness.
             info.smooth = false;

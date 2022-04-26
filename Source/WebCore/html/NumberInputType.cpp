@@ -178,7 +178,7 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
 
     ASSERT(element());
     auto& stepString = element()->attributeWithoutSynchronization(stepAttr);
-    if (equalLettersIgnoringASCIICase(stepString, "any"))
+    if (equalLettersIgnoringASCIICase(stepString, "any"_s))
         return false;
 
     const Decimal minimum = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(minAttr));

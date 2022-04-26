@@ -56,11 +56,11 @@ Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Docum
 void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == shapeAttr) {
-        if (equalLettersIgnoringASCIICase(value, "default"))
+        if (equalLettersIgnoringASCIICase(value, "default"_s))
             m_shape = Default;
-        else if (equalLettersIgnoringASCIICase(value, "circle") || equalLettersIgnoringASCIICase(value, "circ"))
+        else if (equalLettersIgnoringASCIICase(value, "circle"_s) || equalLettersIgnoringASCIICase(value, "circ"_s))
             m_shape = Circle;
-        else if (equalLettersIgnoringASCIICase(value, "poly") || equalLettersIgnoringASCIICase(value, "polygon"))
+        else if (equalLettersIgnoringASCIICase(value, "poly"_s) || equalLettersIgnoringASCIICase(value, "polygon"_s))
             m_shape = Poly;
         else {
             // The missing value default is the rectangle state.

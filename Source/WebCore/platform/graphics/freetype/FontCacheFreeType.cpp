@@ -491,16 +491,16 @@ static bool areStronglyAliased(const String& familyA, const String& familyB)
 
 static inline bool isCommonlyUsedGenericFamily(const String& familyNameString)
 {
-    return equalLettersIgnoringASCIICase(familyNameString, "sans")
-        || equalLettersIgnoringASCIICase(familyNameString, "sans-serif")
-        || equalLettersIgnoringASCIICase(familyNameString, "serif")
-        || equalLettersIgnoringASCIICase(familyNameString, "monospace")
-        || equalLettersIgnoringASCIICase(familyNameString, "fantasy")
+    return equalLettersIgnoringASCIICase(familyNameString, "sans"_s)
+        || equalLettersIgnoringASCIICase(familyNameString, "sans-serif"_s)
+        || equalLettersIgnoringASCIICase(familyNameString, "serif"_s)
+        || equalLettersIgnoringASCIICase(familyNameString, "monospace"_s)
+        || equalLettersIgnoringASCIICase(familyNameString, "fantasy"_s)
 #if PLATFORM(GTK)
-        || equalLettersIgnoringASCIICase(familyNameString, "-webkit-system-font")
-        || equalLettersIgnoringASCIICase(familyNameString, "-webkit-system-ui")
+        || equalLettersIgnoringASCIICase(familyNameString, "-webkit-system-font"_s)
+        || equalLettersIgnoringASCIICase(familyNameString, "-webkit-system-ui"_s)
 #endif
-        || equalLettersIgnoringASCIICase(familyNameString, "cursive");
+        || equalLettersIgnoringASCIICase(familyNameString, "cursive"_s);
 }
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)

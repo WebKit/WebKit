@@ -96,7 +96,7 @@ static bool isValidVideoMIMEType(const ContentType& contentType)
         return false;
 
     auto containerType = contentType.containerType();
-    if (!startsWithLettersIgnoringASCIICase(containerType, "video/") && !startsWithLettersIgnoringASCIICase(containerType, "application/"))
+    if (!startsWithLettersIgnoringASCIICase(containerType, "video/"_s) && !startsWithLettersIgnoringASCIICase(containerType, "application/"_s))
         return false;
 
     return true;
@@ -112,7 +112,7 @@ static bool isValidAudioMIMEType(const ContentType& contentType)
         return false;
 
     auto containerType = contentType.containerType();
-    if (!startsWithLettersIgnoringASCIICase(containerType, "audio/") && !startsWithLettersIgnoringASCIICase(containerType, "application/"))
+    if (!startsWithLettersIgnoringASCIICase(containerType, "audio/"_s) && !startsWithLettersIgnoringASCIICase(containerType, "application/"_s))
         return false;
 
     return true;

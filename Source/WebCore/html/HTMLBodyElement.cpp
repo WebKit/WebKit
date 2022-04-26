@@ -91,7 +91,7 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
     } else if (name == textAttr) {
         addHTMLColorToStyle(style, CSSPropertyColor, value);
     } else if (name == bgpropertiesAttr) {
-        if (equalLettersIgnoringASCIICase(value, "fixed"))
+        if (equalLettersIgnoringASCIICase(value, "fixed"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyBackgroundAttachment, CSSValueFixed);
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);

@@ -232,11 +232,11 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
                 currentIcon.purposes = purposes;
             } else {
                 for (auto keyword : StringView(purposeStringValue).stripWhiteSpace().splitAllowingEmptyEntries(' ')) {
-                    if (equalLettersIgnoringASCIICase(keyword, "monochrome"))
+                    if (equalLettersIgnoringASCIICase(keyword, "monochrome"_s))
                         purposes.add(ApplicationManifest::Icon::Purpose::Monochrome);
-                    else if (equalLettersIgnoringASCIICase(keyword, "maskable"))
+                    else if (equalLettersIgnoringASCIICase(keyword, "maskable"_s))
                         purposes.add(ApplicationManifest::Icon::Purpose::Maskable);
-                    else if (equalLettersIgnoringASCIICase(keyword, "any"))
+                    else if (equalLettersIgnoringASCIICase(keyword, "any"_s))
                         purposes.add(ApplicationManifest::Icon::Purpose::Any);
                     else
                         logDeveloperWarning(makeString("\""_s, purposeStringValue, "\" is not a valid purpose."_s));

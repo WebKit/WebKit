@@ -455,7 +455,7 @@ static inline bool isGDIFontWeightBold(LONG gdiFontWeight)
 
 static LONG adjustedGDIFontWeight(LONG gdiFontWeight, const String& family)
 {
-    if (equalLettersIgnoringASCIICase(family, "lucida grande")) {
+    if (equalLettersIgnoringASCIICase(family, "lucida grande"_s)) {
         if (gdiFontWeight == FW_NORMAL)
             return FW_MEDIUM;
         if (gdiFontWeight == FW_BOLD)
@@ -647,7 +647,7 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 
 std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext&)
 {
-    bool isLucidaGrande = equalLettersIgnoringASCIICase(family, "lucida grande");
+    bool isLucidaGrande = equalLettersIgnoringASCIICase(family, "lucida grande"_s);
 
     bool useGDI = fontDescription.renderingMode() == FontRenderingMode::Alternate && !isLucidaGrande;
 
@@ -698,7 +698,7 @@ std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&
     // FIXME: Seems unlikely this is still needed. If it was really needed, I think we
     // would need it on other platforms too.
     case 8:
-        if (equalLettersIgnoringASCIICase(familyName, "ms serif"))
+        if (equalLettersIgnoringASCIICase(familyName, "ms serif"_s))
             return "Times New Roman"_s;
         break;
     // On Windows, we don't support bitmap fonts, but legacy content expects support.
@@ -707,7 +707,7 @@ std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&
     // FIXME: Seems unlikely this is still needed. If it was really needed, I think we
     // would need it on other platforms too.
     case 13:
-        if (equalLettersIgnoringASCIICase(familyName, "ms sans serif"))
+        if (equalLettersIgnoringASCIICase(familyName, "ms sans serif"_s))
             return "Microsoft Sans Serif"_s;
         break;
     }

@@ -589,7 +589,7 @@ bool HTMLFormControlElement::shouldAutocorrect() const
 {
     const AtomString& autocorrectValue = attributeWithoutSynchronization(autocorrectAttr);
     if (!autocorrectValue.isEmpty())
-        return !equalLettersIgnoringASCIICase(autocorrectValue, "off");
+        return !equalLettersIgnoringASCIICase(autocorrectValue, "off"_s);
     if (RefPtr<HTMLFormElement> form = this->form())
         return form->shouldAutocorrect();
     return true;

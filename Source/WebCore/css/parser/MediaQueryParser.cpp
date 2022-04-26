@@ -113,7 +113,7 @@ void MediaQueryParser::readRestrictor(CSSParserTokenType type, const CSSParserTo
 
 void MediaQueryParser::readMediaNot(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
 {
-    if (type == IdentToken && equalLettersIgnoringASCIICase(token.value(), "not"))
+    if (type == IdentToken && equalLettersIgnoringASCIICase(token.value(), "not"_s))
         setStateAndRestrict(ReadFeatureStart, MediaQuery::Not);
     else
         readFeatureStart(type, token, range);
@@ -128,10 +128,10 @@ void MediaQueryParser::readContainerQuery(CSSParserTokenType type, const CSSPars
 static bool isRestrictorOrLogicalOperator(const CSSParserToken& token)
 {
     // FIXME: it would be more efficient to use lower-case always for tokenValue.
-    return equalLettersIgnoringASCIICase(token.value(), "not")
-        || equalLettersIgnoringASCIICase(token.value(), "and")
-        || equalLettersIgnoringASCIICase(token.value(), "or")
-        || equalLettersIgnoringASCIICase(token.value(), "only");
+    return equalLettersIgnoringASCIICase(token.value(), "not"_s)
+        || equalLettersIgnoringASCIICase(token.value(), "and"_s)
+        || equalLettersIgnoringASCIICase(token.value(), "or"_s)
+        || equalLettersIgnoringASCIICase(token.value(), "only"_s);
 }
 
 void MediaQueryParser::readMediaType(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& range)
@@ -142,9 +142,9 @@ void MediaQueryParser::readMediaType(CSSParserTokenType type, const CSSParserTok
         else
             m_state = ReadFeature;
     } else if (type == IdentToken) {
-        if (m_state == ReadRestrictor && equalLettersIgnoringASCIICase(token.value(), "not"))
+        if (m_state == ReadRestrictor && equalLettersIgnoringASCIICase(token.value(), "not"_s))
             setStateAndRestrict(ReadMediaType, MediaQuery::Not);
-        else if (m_state == ReadRestrictor && equalLettersIgnoringASCIICase(token.value(), "only"))
+        else if (m_state == ReadRestrictor && equalLettersIgnoringASCIICase(token.value(), "only"_s))
             setStateAndRestrict(ReadMediaType, MediaQuery::Only);
         else if (m_mediaQueryData.restrictor() != MediaQuery::None
             && isRestrictorOrLogicalOperator(token)) {
@@ -174,7 +174,7 @@ void MediaQueryParser::commitMediaQuery()
 
 void MediaQueryParser::readAnd(CSSParserTokenType type, const CSSParserToken& token, CSSParserTokenRange& /*range*/)
 {
-    if (type == IdentToken && equalLettersIgnoringASCIICase(token.value(), "and")) {
+    if (type == IdentToken && equalLettersIgnoringASCIICase(token.value(), "and"_s)) {
         m_state = ReadFeatureStart;
     } else if (type == CommaToken && m_parserType != MediaConditionParser) {
         commitMediaQuery();
@@ -271,7 +271,7 @@ void MediaQueryParser::handleBlocks(const CSSParserToken& token)
         if (token.type() == LeftParenthesisToken)
             return false;
         if (m_parserType == ContainerQueryParser && token.type() == FunctionToken)
-            return !equalLettersIgnoringASCIICase(token.value(), "size");
+            return !equalLettersIgnoringASCIICase(token.value(), "size"_s);
         return true;
     }();
     if (shouldSkipBlock)

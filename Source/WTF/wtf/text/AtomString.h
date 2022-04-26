@@ -206,7 +206,7 @@ bool equalIgnoringASCIICase(const AtomString&, const String&);
 bool equalIgnoringASCIICase(const String&, const AtomString&);
 bool equalIgnoringASCIICase(const AtomString&, const char*);
 
-template<unsigned length> bool equalLettersIgnoringASCIICase(const AtomString&, const char (&lowercaseLetters)[length]);
+bool equalLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
 
 WTF_EXPORT_PRIVATE AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&&);
 WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacter(String&&);
@@ -331,9 +331,9 @@ inline AtomString AtomString::fromUTF8(const char* characters)
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<AtomString>;
 
-template<unsigned length> inline bool equalLettersIgnoringASCIICase(const AtomString& string, const char (&lowercaseLetters)[length])
+inline bool equalLettersIgnoringASCIICase(const AtomString& string, ASCIILiteral literal)
 {
-    return equalLettersIgnoringASCIICase(string.string(), lowercaseLetters);
+    return equalLettersIgnoringASCIICase(string.string(), literal);
 }
 
 inline bool equalIgnoringASCIICase(const AtomString& a, const AtomString& b)

@@ -73,7 +73,7 @@ WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef websi
     for (size_t i = 0; i < length; ++i) {
         WKStringRef name = static_cast<WKStringRef>(WKArrayGetItemAtIndex(keys.get(), i));
         auto field = WebCore::HTTPHeaderField::create(toImpl(name)->string(), toImpl(static_cast<WKStringRef>(WKDictionaryGetItemForKey(dictionary, name)))->string());
-        if (field && startsWithLettersIgnoringASCIICase(field->name(), "x-"))
+        if (field && startsWithLettersIgnoringASCIICase(field->name(), "x-"_s))
             fields.uncheckedAppend(WTFMove(*field));
     }
     toImpl(websitePolicies)->setLegacyCustomHeaderFields(WTFMove(fields));

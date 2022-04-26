@@ -146,11 +146,11 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
     // because of the analogy with HTMLElementFactory.
 
     // Plug-ins cannot take over for HTML, XHTML, plain text, or non-PDF images.
-    if (equalLettersIgnoringASCIICase(contentType, "text/html"))
+    if (equalLettersIgnoringASCIICase(contentType, "text/html"_s))
         return HTMLDocument::create(frame, settings, url, documentIdentifier);
-    if (equalLettersIgnoringASCIICase(contentType, "application/xhtml+xml"))
+    if (equalLettersIgnoringASCIICase(contentType, "application/xhtml+xml"_s))
         return XMLDocument::createXHTML(frame, settings, url);
-    if (equalLettersIgnoringASCIICase(contentType, "text/plain"))
+    if (equalLettersIgnoringASCIICase(contentType, "text/plain"_s))
         return TextDocument::create(frame, settings, url, documentIdentifier);
 
 #if ENABLE(PDFJS)
@@ -180,7 +180,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
 #endif
 
 #if ENABLE(FTPDIR)
-    if (equalLettersIgnoringASCIICase(contentType, "application/x-ftp-directory"))
+    if (equalLettersIgnoringASCIICase(contentType, "application/x-ftp-directory"_s))
         return FTPDirectoryDocument::create(frame, settings, url);
 #endif
 
@@ -201,7 +201,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
         return ImageDocument::create(*frame, url);
     if (MIMETypeRegistry::isTextMIMEType(contentType))
         return TextDocument::create(frame, settings, url, documentIdentifier);
-    if (equalLettersIgnoringASCIICase(contentType, "image/svg+xml"))
+    if (equalLettersIgnoringASCIICase(contentType, "image/svg+xml"_s))
         return SVGDocument::create(frame, settings, url);
     if (MIMETypeRegistry::isXMLMIMEType(contentType)) {
         auto document = XMLDocument::create(frame, settings, url);

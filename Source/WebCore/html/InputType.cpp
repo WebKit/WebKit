@@ -954,7 +954,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
 
     newValue = newValue + stepRange.step() * Decimal::fromDouble(count);
     const AtomString& stepString = element()->getAttribute(HTMLNames::stepAttr);
-    if (!equalLettersIgnoringASCIICase(stepString, "any"))
+    if (!equalLettersIgnoringASCIICase(stepString, "any"_s))
         newValue = stepRange.alignValueForStep(current, newValue);
 
     // 8. If the element has a minimum, and value is less than that minimum, then set value to the smallest value that, when subtracted from the step

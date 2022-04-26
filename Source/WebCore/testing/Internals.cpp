@@ -452,28 +452,28 @@ void InspectorStubFrontend::sendMessageToFrontend(const String& message)
 
 static bool markerTypeFrom(const String& markerType, DocumentMarker::MarkerType& result)
 {
-    if (equalLettersIgnoringASCIICase(markerType, "spelling"))
+    if (equalLettersIgnoringASCIICase(markerType, "spelling"_s))
         result = DocumentMarker::Spelling;
-    else if (equalLettersIgnoringASCIICase(markerType, "grammar"))
+    else if (equalLettersIgnoringASCIICase(markerType, "grammar"_s))
         result = DocumentMarker::Grammar;
-    else if (equalLettersIgnoringASCIICase(markerType, "textmatch"))
+    else if (equalLettersIgnoringASCIICase(markerType, "textmatch"_s))
         result = DocumentMarker::TextMatch;
-    else if (equalLettersIgnoringASCIICase(markerType, "replacement"))
+    else if (equalLettersIgnoringASCIICase(markerType, "replacement"_s))
         result = DocumentMarker::Replacement;
-    else if (equalLettersIgnoringASCIICase(markerType, "correctionindicator"))
+    else if (equalLettersIgnoringASCIICase(markerType, "correctionindicator"_s))
         result = DocumentMarker::CorrectionIndicator;
-    else if (equalLettersIgnoringASCIICase(markerType, "rejectedcorrection"))
+    else if (equalLettersIgnoringASCIICase(markerType, "rejectedcorrection"_s))
         result = DocumentMarker::RejectedCorrection;
-    else if (equalLettersIgnoringASCIICase(markerType, "autocorrected"))
+    else if (equalLettersIgnoringASCIICase(markerType, "autocorrected"_s))
         result = DocumentMarker::Autocorrected;
-    else if (equalLettersIgnoringASCIICase(markerType, "spellcheckingexemption"))
+    else if (equalLettersIgnoringASCIICase(markerType, "spellcheckingexemption"_s))
         result = DocumentMarker::SpellCheckingExemption;
-    else if (equalLettersIgnoringASCIICase(markerType, "deletedautocorrection"))
+    else if (equalLettersIgnoringASCIICase(markerType, "deletedautocorrection"_s))
         result = DocumentMarker::DeletedAutocorrection;
-    else if (equalLettersIgnoringASCIICase(markerType, "dictationalternatives"))
+    else if (equalLettersIgnoringASCIICase(markerType, "dictationalternatives"_s))
         result = DocumentMarker::DictationAlternatives;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    else if (equalLettersIgnoringASCIICase(markerType, "telephonenumber"))
+    else if (equalLettersIgnoringASCIICase(markerType, "telephonenumber"_s))
         result = DocumentMarker::TelephoneNumber;
 #endif
     else
@@ -486,7 +486,7 @@ static bool markerTypesFrom(const String& markerType, OptionSet<DocumentMarker::
 {
     DocumentMarker::MarkerType singularResult;
 
-    if (markerType.isEmpty() || equalLettersIgnoringASCIICase(markerType, "all"))
+    if (markerType.isEmpty() || equalLettersIgnoringASCIICase(markerType, "all"_s))
         result = DocumentMarker::allMarkers();
     else if (markerTypeFrom(markerType, singularResult))
         result = singularResult;
@@ -4023,11 +4023,11 @@ void Internals::simulateAudioInterruption(HTMLMediaElement& element)
 
 ExceptionOr<bool> Internals::mediaElementHasCharacteristic(HTMLMediaElement& element, const String& characteristic)
 {
-    if (equalLettersIgnoringASCIICase(characteristic, "audible"))
+    if (equalLettersIgnoringASCIICase(characteristic, "audible"_s))
         return element.hasAudio();
-    if (equalLettersIgnoringASCIICase(characteristic, "visual"))
+    if (equalLettersIgnoringASCIICase(characteristic, "visual"_s))
         return element.hasVideo();
-    if (equalLettersIgnoringASCIICase(characteristic, "legible"))
+    if (equalLettersIgnoringASCIICase(characteristic, "legible"_s))
         return element.hasClosedCaptions();
 
     return Exception { SyntaxError };
@@ -4159,13 +4159,13 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
 #if ENABLE(VIDEO)
     auto& captionPreferences = document->page()->group().ensureCaptionPreferences();
 
-    if (equalLettersIgnoringASCIICase(mode, "automatic"))
+    if (equalLettersIgnoringASCIICase(mode, "automatic"_s))
         captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::Automatic);
-    else if (equalLettersIgnoringASCIICase(mode, "forcedonly"))
+    else if (equalLettersIgnoringASCIICase(mode, "forcedonly"_s))
         captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
-    else if (equalLettersIgnoringASCIICase(mode, "alwayson"))
+    else if (equalLettersIgnoringASCIICase(mode, "alwayson"_s))
         captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::AlwaysOn);
-    else if (equalLettersIgnoringASCIICase(mode, "manual"))
+    else if (equalLettersIgnoringASCIICase(mode, "manual"_s))
         captionPreferences.setCaptionDisplayMode(CaptionUserPreferences::Manual);
     else
         return Exception { SyntaxError };
@@ -4308,13 +4308,13 @@ ExceptionOr<void> Internals::beginMediaSessionInterruption(const String& interru
 {
     PlatformMediaSession::InterruptionType interruption = PlatformMediaSession::SystemInterruption;
 
-    if (equalLettersIgnoringASCIICase(interruptionString, "system"))
+    if (equalLettersIgnoringASCIICase(interruptionString, "system"_s))
         interruption = PlatformMediaSession::SystemInterruption;
-    else if (equalLettersIgnoringASCIICase(interruptionString, "systemsleep"))
+    else if (equalLettersIgnoringASCIICase(interruptionString, "systemsleep"_s))
         interruption = PlatformMediaSession::SystemSleep;
-    else if (equalLettersIgnoringASCIICase(interruptionString, "enteringbackground"))
+    else if (equalLettersIgnoringASCIICase(interruptionString, "enteringbackground"_s))
         interruption = PlatformMediaSession::EnteringBackground;
-    else if (equalLettersIgnoringASCIICase(interruptionString, "suspendedunderlock"))
+    else if (equalLettersIgnoringASCIICase(interruptionString, "suspendedunderlock"_s))
         interruption = PlatformMediaSession::SuspendedUnderLock;
     else
         return Exception { InvalidAccessError };
@@ -4327,7 +4327,7 @@ void Internals::endMediaSessionInterruption(const String& flagsString)
 {
     PlatformMediaSession::EndInterruptionFlags flags = PlatformMediaSession::NoFlags;
 
-    if (equalLettersIgnoringASCIICase(flagsString, "mayresumeplaying"))
+    if (equalLettersIgnoringASCIICase(flagsString, "mayresumeplaying"_s))
         flags = PlatformMediaSession::MayResumePlaying;
 
     PlatformMediaSessionManager::sharedManager().endInterruption(flags);
@@ -4355,13 +4355,13 @@ void Internals::applicationDidEnterBackground(bool suspendedUnderLock) const
 
 static PlatformMediaSession::MediaType mediaTypeFromString(const String& mediaTypeString)
 {
-    if (equalLettersIgnoringASCIICase(mediaTypeString, "video"))
+    if (equalLettersIgnoringASCIICase(mediaTypeString, "video"_s))
         return PlatformMediaSession::MediaType::Video;
-    if (equalLettersIgnoringASCIICase(mediaTypeString, "audio"))
+    if (equalLettersIgnoringASCIICase(mediaTypeString, "audio"_s))
         return PlatformMediaSession::MediaType::Audio;
-    if (equalLettersIgnoringASCIICase(mediaTypeString, "videoaudio"))
+    if (equalLettersIgnoringASCIICase(mediaTypeString, "videoaudio"_s))
         return PlatformMediaSession::MediaType::VideoAudio;
-    if (equalLettersIgnoringASCIICase(mediaTypeString, "webaudio"))
+    if (equalLettersIgnoringASCIICase(mediaTypeString, "webaudio"_s))
         return PlatformMediaSession::MediaType::WebAudio;
 
     return PlatformMediaSession::MediaType::None;
@@ -4379,17 +4379,17 @@ ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaType
     restrictions = PlatformMediaSessionManager::NoRestrictions;
 
     for (StringView restrictionString : restrictionsString.split(',')) {
-        if (equalLettersIgnoringASCIICase(restrictionString, "concurrentplaybacknotpermitted"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "concurrentplaybacknotpermitted"_s))
             restrictions |= PlatformMediaSessionManager::ConcurrentPlaybackNotPermitted;
-        if (equalLettersIgnoringASCIICase(restrictionString, "backgroundprocessplaybackrestricted"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "backgroundprocessplaybackrestricted"_s))
             restrictions |= PlatformMediaSessionManager::BackgroundProcessPlaybackRestricted;
-        if (equalLettersIgnoringASCIICase(restrictionString, "backgroundtabplaybackrestricted"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "backgroundtabplaybackrestricted"_s))
             restrictions |= PlatformMediaSessionManager::BackgroundTabPlaybackRestricted;
-        if (equalLettersIgnoringASCIICase(restrictionString, "interruptedplaybacknotpermitted"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "interruptedplaybacknotpermitted"_s))
             restrictions |= PlatformMediaSessionManager::InterruptedPlaybackNotPermitted;
-        if (equalLettersIgnoringASCIICase(restrictionString, "inactiveprocessplaybackrestricted"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "inactiveprocessplaybackrestricted"_s))
             restrictions |= PlatformMediaSessionManager::InactiveProcessPlaybackRestricted;
-        if (equalLettersIgnoringASCIICase(restrictionString, "suspendedunderlockplaybackrestricted"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "suspendedunderlockplaybackrestricted"_s))
             restrictions |= PlatformMediaSessionManager::SuspendedUnderLockPlaybackRestricted;
     }
     PlatformMediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
@@ -4435,39 +4435,39 @@ void Internals::setMediaElementRestrictions(HTMLMediaElement& element, StringVie
     restrictions = MediaElementSession::NoRestrictions;
 
     for (StringView restrictionString : restrictionsString.split(',')) {
-        if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"_s))
             restrictions |= MediaElementSession::NoRestrictions;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforload"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforload"_s))
             restrictions |= MediaElementSession::RequireUserGestureForLoad;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforvideoratechange"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforvideoratechange"_s))
             restrictions |= MediaElementSession::RequireUserGestureForVideoRateChange;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforfullscreen"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforfullscreen"_s))
             restrictions |= MediaElementSession::RequireUserGestureForFullscreen;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsenttoloadmedia"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsenttoloadmedia"_s))
             restrictions |= MediaElementSession::RequirePageConsentToLoadMedia;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsenttoresumemedia"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsenttoresumemedia"_s))
             restrictions |= MediaElementSession::RequirePageConsentToResumeMedia;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergesturetoshowplaybacktargetpicker"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergesturetoshowplaybacktargetpicker"_s))
             restrictions |= MediaElementSession::RequireUserGestureToShowPlaybackTargetPicker;
-        if (equalLettersIgnoringASCIICase(restrictionString, "wirelessvideoplaybackdisabled"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "wirelessvideoplaybackdisabled"_s))
             restrictions |= MediaElementSession::WirelessVideoPlaybackDisabled;
 #endif
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforaudioratechange"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforaudioratechange"_s))
             restrictions |= MediaElementSession::RequireUserGestureForAudioRateChange;
-        if (equalLettersIgnoringASCIICase(restrictionString, "autopreloadingnotpermitted"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "autopreloadingnotpermitted"_s))
             restrictions |= MediaElementSession::AutoPreloadingNotPermitted;
-        if (equalLettersIgnoringASCIICase(restrictionString, "invisibleautoplaynotpermitted"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "invisibleautoplaynotpermitted"_s))
             restrictions |= MediaElementSession::InvisibleAutoplayNotPermitted;
-        if (equalLettersIgnoringASCIICase(restrictionString, "overrideusergesturerequirementformaincontent"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "overrideusergesturerequirementformaincontent"_s))
             restrictions |= MediaElementSession::OverrideUserGestureRequirementForMainContent;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergesturetocontrolcontrolsmanager"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergesturetocontrolcontrolsmanager"_s))
             restrictions |= MediaElementSession::RequireUserGestureToControlControlsManager;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireplaybackTocontrolcontrolsmanager"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireplaybackTocontrolcontrolsmanager"_s))
             restrictions |= MediaElementSession::RequirePlaybackToControlControlsManager;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforvideoduetolowpowermode"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforvideoduetolowpowermode"_s))
             restrictions |= MediaElementSession::RequireUserGestureForVideoDueToLowPowerMode;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requirepagevisibilitytoplayaudio"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requirepagevisibilitytoplayaudio"_s))
             restrictions |= MediaElementSession::RequirePageVisibilityToPlayAudio;
     }
     element.mediaSession().addBehaviorRestriction(restrictions);
@@ -4478,27 +4478,27 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
     PlatformMediaSession::RemoteControlCommandType command;
     PlatformMediaSession::RemoteCommandArgument parameter { argument, { } };
 
-    if (equalLettersIgnoringASCIICase(commandString, "play"))
+    if (equalLettersIgnoringASCIICase(commandString, "play"_s))
         command = PlatformMediaSession::PlayCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "pause"))
+    else if (equalLettersIgnoringASCIICase(commandString, "pause"_s))
         command = PlatformMediaSession::PauseCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "stop"))
+    else if (equalLettersIgnoringASCIICase(commandString, "stop"_s))
         command = PlatformMediaSession::StopCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "toggleplaypause"))
+    else if (equalLettersIgnoringASCIICase(commandString, "toggleplaypause"_s))
         command = PlatformMediaSession::TogglePlayPauseCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "beginseekingbackward"))
+    else if (equalLettersIgnoringASCIICase(commandString, "beginseekingbackward"_s))
         command = PlatformMediaSession::BeginSeekingBackwardCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "endseekingbackward"))
+    else if (equalLettersIgnoringASCIICase(commandString, "endseekingbackward"_s))
         command = PlatformMediaSession::EndSeekingBackwardCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "beginseekingforward"))
+    else if (equalLettersIgnoringASCIICase(commandString, "beginseekingforward"_s))
         command = PlatformMediaSession::BeginSeekingForwardCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "endseekingforward"))
+    else if (equalLettersIgnoringASCIICase(commandString, "endseekingforward"_s))
         command = PlatformMediaSession::EndSeekingForwardCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "seektoplaybackposition"))
+    else if (equalLettersIgnoringASCIICase(commandString, "seektoplaybackposition"_s))
         command = PlatformMediaSession::SeekToPlaybackPositionCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "beginscrubbing"))
+    else if (equalLettersIgnoringASCIICase(commandString, "beginscrubbing"_s))
         command = PlatformMediaSession::BeginScrubbingCommand;
-    else if (equalLettersIgnoringASCIICase(commandString, "endscrubbing"))
+    else if (equalLettersIgnoringASCIICase(commandString, "endscrubbing"_s))
         command = PlatformMediaSession::EndScrubbingCommand;
     else
         return Exception { InvalidAccessError };
@@ -4550,11 +4550,11 @@ void Internals::setAudioContextRestrictions(AudioContext& context, StringView re
     restrictions = AudioContext::NoRestrictions;
 
     for (StringView restrictionString : restrictionsString.split(',')) {
-        if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "norestrictions"_s))
             restrictions |= AudioContext::NoRestrictions;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforaudiostart"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requireusergestureforaudiostart"_s))
             restrictions |= AudioContext::RequireUserGestureForAudioStartRestriction;
-        if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsentforaudiostart"))
+        if (equalLettersIgnoringASCIICase(restrictionString, "requirepageconsentforaudiostart"_s))
             restrictions |= AudioContext::RequirePageConsentForAudioStartRestriction;
     }
     context.addBehaviorRestriction(restrictions);
@@ -4696,11 +4696,11 @@ ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(const String&
 
     MediaPlaybackTargetContext::MockState state = MediaPlaybackTargetContext::MockState::Unknown;
 
-    if (equalLettersIgnoringASCIICase(deviceState, "deviceavailable"))
+    if (equalLettersIgnoringASCIICase(deviceState, "deviceavailable"_s))
         state = MediaPlaybackTargetContext::MockState::OutputDeviceAvailable;
-    else if (equalLettersIgnoringASCIICase(deviceState, "deviceunavailable"))
+    else if (equalLettersIgnoringASCIICase(deviceState, "deviceunavailable"_s))
         state = MediaPlaybackTargetContext::MockState::OutputDeviceUnavailable;
-    else if (equalLettersIgnoringASCIICase(deviceState, "unknown"))
+    else if (equalLettersIgnoringASCIICase(deviceState, "unknown"_s))
         state = MediaPlaybackTargetContext::MockState::Unknown;
     else
         return Exception { InvalidAccessError };
@@ -4747,11 +4747,11 @@ void Internals::setPageMuted(StringView statesString)
 
     WebCore::MediaProducerMutedStateFlags state;
     for (StringView stateString : statesString.split(',')) {
-        if (equalLettersIgnoringASCIICase(stateString, "audio"))
+        if (equalLettersIgnoringASCIICase(stateString, "audio"_s))
             state.add(MediaProducerMutedState::AudioIsMuted);
-        if (equalLettersIgnoringASCIICase(stateString, "capturedevices"))
+        if (equalLettersIgnoringASCIICase(stateString, "capturedevices"_s))
             state.add(MediaProducer::AudioAndVideoCaptureIsMuted);
-        if (equalLettersIgnoringASCIICase(stateString, "screencapture"))
+        if (equalLettersIgnoringASCIICase(stateString, "screencapture"_s))
             state.add(MediaProducerMutedState::ScreenCaptureIsMuted);
     }
 
@@ -6233,7 +6233,7 @@ Internals::TextIndicatorInfo Internals::textIndicatorForRange(const Range& range
 
 void Internals::addPrefetchLoadEventListener(HTMLLinkElement& link, RefPtr<EventListener>&& listener)
 {
-    if (link.document().settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(link.rel(), "prefetch")) {
+    if (link.document().settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(link.rel(), "prefetch"_s)) {
         link.allowPrefetchLoadAndErrorForTesting();
         link.addEventListener(eventNames().loadEvent, listener.releaseNonNull(), false);
     }

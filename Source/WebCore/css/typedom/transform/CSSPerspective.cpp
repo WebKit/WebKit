@@ -47,7 +47,7 @@ static ExceptionOr<CSSPerspectiveValue> checkLength(CSSPerspectiveValue length)
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssperspective-cssperspective
     auto checkKeywordValue = [] (RefPtr<CSSKeywordValue> value) -> ExceptionOr<CSSPerspectiveValue> {
         RELEASE_ASSERT(value);
-        if (!equalLettersIgnoringASCIICase(value->value(), "none"))
+        if (!equalLettersIgnoringASCIICase(value->value(), "none"_s))
             return Exception { TypeError };
         return { WTFMove(value) };
     };

@@ -144,7 +144,7 @@ Ref<BlobResourceHandle> BlobResourceHandle::createAsync(BlobData* blobData, cons
 
 void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
-    if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
+    if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get"_s)) {
         error = ResourceError(webKitBlobResourceDomain, static_cast<int>(Error::MethodNotAllowed), response.url(), "Request method must be GET"_s);
         return;
     }
@@ -198,7 +198,7 @@ void BlobResourceHandle::doStart()
     if (erroredOrAborted())
         return;
 
-    if (!equalLettersIgnoringASCIICase(firstRequest().httpMethod(), "get")) {
+    if (!equalLettersIgnoringASCIICase(firstRequest().httpMethod(), "get"_s)) {
         notifyFail(Error::MethodNotAllowed);
         return;
     }

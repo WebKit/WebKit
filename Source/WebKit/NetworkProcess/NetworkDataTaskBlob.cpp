@@ -122,7 +122,7 @@ void NetworkDataTaskBlob::resume()
             return;
         }
 
-        if (!equalLettersIgnoringASCIICase(m_firstRequest.httpMethod(), "get")) {
+        if (!equalLettersIgnoringASCIICase(m_firstRequest.httpMethod(), "get"_s)) {
             didFail(Error::MethodNotAllowed);
             return;
         }

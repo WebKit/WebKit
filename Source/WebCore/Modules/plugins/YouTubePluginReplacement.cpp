@@ -50,13 +50,13 @@ Ref<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement& plugi
 
 bool YouTubePluginReplacement::supportsMIMEType(const String& mimeType)
 {
-    return equalLettersIgnoringASCIICase(mimeType, "application/x-shockwave-flash")
-        || equalLettersIgnoringASCIICase(mimeType, "application/futuresplash");
+    return equalLettersIgnoringASCIICase(mimeType, "application/x-shockwave-flash"_s)
+        || equalLettersIgnoringASCIICase(mimeType, "application/futuresplash"_s);
 }
 
 bool YouTubePluginReplacement::supportsFileExtension(StringView extension)
 {
-    return equalLettersIgnoringASCIICase(extension, "spl") || equalLettersIgnoringASCIICase(extension, "swf");
+    return equalLettersIgnoringASCIICase(extension, "spl"_s) || equalLettersIgnoringASCIICase(extension, "swf"_s);
 }
 
 YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
@@ -172,12 +172,12 @@ static bool isYouTubeURL(const URL& url)
         return false;
 
     auto hostName = url.host();
-    return equalLettersIgnoringASCIICase(hostName, "m.youtube.com")
-        || equalLettersIgnoringASCIICase(hostName, "youtu.be")
-        || equalLettersIgnoringASCIICase(hostName, "www.youtube.com")
-        || equalLettersIgnoringASCIICase(hostName, "youtube.com")
-        || equalLettersIgnoringASCIICase(hostName, "www.youtube-nocookie.com")
-        || equalLettersIgnoringASCIICase(hostName, "youtube-nocookie.com");
+    return equalLettersIgnoringASCIICase(hostName, "m.youtube.com"_s)
+        || equalLettersIgnoringASCIICase(hostName, "youtu.be"_s)
+        || equalLettersIgnoringASCIICase(hostName, "www.youtube.com"_s)
+        || equalLettersIgnoringASCIICase(hostName, "youtube.com"_s)
+        || equalLettersIgnoringASCIICase(hostName, "www.youtube-nocookie.com"_s)
+        || equalLettersIgnoringASCIICase(hostName, "youtube-nocookie.com"_s);
 }
 
 static const String& valueForKey(const HashMap<String, String>& dictionary, const String& key)
@@ -198,8 +198,8 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
         return URL();
 
     auto hostName = url.host();
-    bool isYouTubeMobileWebAppURL = equalLettersIgnoringASCIICase(hostName, "m.youtube.com");
-    isYouTubeShortenedURL = equalLettersIgnoringASCIICase(hostName, "youtu.be");
+    bool isYouTubeMobileWebAppURL = equalLettersIgnoringASCIICase(hostName, "m.youtube.com"_s);
+    isYouTubeShortenedURL = equalLettersIgnoringASCIICase(hostName, "youtu.be"_s);
 
     // Short URL of the form: http://youtu.be/v1d301D
     if (isYouTubeShortenedURL) {
@@ -227,7 +227,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
         fragment = emptyString();
     }
     
-    if (equalLettersIgnoringASCIICase(path, "/watch")) {
+    if (equalLettersIgnoringASCIICase(path, "/watch"_s)) {
         if (!query.isEmpty()) {
             const auto& queryDictionary = queryKeysAndValues(query);
             String videoID = valueForKey(queryDictionary, "v"_s);
@@ -253,7 +253,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
                 }
             }
         }
-    } else if (startsWithLettersIgnoringASCIICase(path, "/v/") || startsWithLettersIgnoringASCIICase(path, "/e/")) {
+    } else if (startsWithLettersIgnoringASCIICase(path, "/v/"_s) || startsWithLettersIgnoringASCIICase(path, "/e/"_s)) {
         StringView videoID;
         StringView pathAfterFirstAmpersand;
 
@@ -304,7 +304,7 @@ AtomString YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL
     
         // From the original URL, we need to get the part before /path/VideoId.
         locationOfPathBeforeVideoID = StringView(srcString).find(srcPath.left(locationOfVideoIDInPath));
-    } else if (equalLettersIgnoringASCIICase(srcPath, "/watch")) {
+    } else if (equalLettersIgnoringASCIICase(srcPath, "/watch"_s)) {
         // From the original URL, we need to get the part before /watch/#!v=VideoID
         // FIXME: Shouldn't this be ASCII case-insensitive?
         locationOfPathBeforeVideoID = srcString.find("/watch");
