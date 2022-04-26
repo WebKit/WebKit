@@ -79,17 +79,6 @@ ApplePayRemoteUIEnabled:
     WebCore:
       default: true
 
-AriaReflectionEnabled:
-  type: bool
-  humanReadableName: "ARIA Reflection"
-  humanReadableDescription: "ARIA Reflection support"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 AsyncFrameScrollingEnabled:
   type: bool
   webcoreOnChange: setNeedsRelayoutAllFrames

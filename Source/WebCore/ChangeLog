@@ -1,3 +1,19 @@
+2022-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Remove AriaReflectionEnabled runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=239532
+
+        Reviewed by Chris Fleizach.
+
+        ARIA reflection shipped in Safari 12.1 (July 2019)
+        so it looks the runtime flag is not needed anymore.
+
+        * accessibility/AccessibilityRole.idl:
+        * accessibility/AriaAttributes.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setAriaReflectionEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::ariaReflectionEnabled const): Deleted.
+
 2022-04-26  Ziran Sun  <zsun@igalia.com>
 
         Constructed FormData object should not contain an entry for the submit button that was used to submit the form

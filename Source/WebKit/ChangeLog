@@ -1,3 +1,15 @@
+2022-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Remove AriaReflectionEnabled runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=239532
+
+        Reviewed by Chris Fleizach.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAriaReflectionEnabled): Deleted.
+        (WKPreferencesGetAriaReflectionEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
 2022-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r293117): Context menu lift animation encompasses the entire web view

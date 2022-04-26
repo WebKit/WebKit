@@ -89,9 +89,6 @@ public:
     void setAccessibilityObjectModelEnabled(bool isEnabled) { m_accessibilityObjectModelEnabled = isEnabled; }
     bool accessibilityObjectModelEnabled() const { return m_accessibilityObjectModelEnabled; }
 
-    void setAriaReflectionEnabled(bool isEnabled) { m_ariaReflectionEnabled = isEnabled; }
-    bool ariaReflectionEnabled() const { return m_ariaReflectionEnabled; }
-
     void setItpDebugModeEnabled(bool isEnabled) { m_itpDebugMode = isEnabled; }
     bool itpDebugModeEnabled() const { return m_itpDebugMode; }
 
@@ -287,7 +284,6 @@ private:
     bool m_webXREnabled { false };
 #endif
     bool m_accessibilityObjectModelEnabled { false };
-    bool m_ariaReflectionEnabled { true };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };

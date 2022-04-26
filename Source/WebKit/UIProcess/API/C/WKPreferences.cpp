@@ -1845,16 +1845,6 @@ bool WKPreferencesGetAccessibilityObjectModelEnabled(WKPreferencesRef preference
     return toImpl(preferencesRef)->accessibilityObjectModelEnabled();
 }
 
-void WKPreferencesSetAriaReflectionEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setAriaReflectionEnabled(flag);
-}
-
-bool WKPreferencesGetAriaReflectionEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->ariaReflectionEnabled();
-}
-
 void WKPreferencesSetSyntheticEditingCommandsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSyntheticEditingCommandsEnabled(flag);

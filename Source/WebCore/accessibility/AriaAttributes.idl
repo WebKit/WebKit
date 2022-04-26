@@ -24,9 +24,7 @@
  */
 
 // https://wicg.github.io/aom/spec/aria-reflection.html#AriaAttributes
-[
-    EnabledAtRuntime=AriaReflectionEnabled,
-] interface mixin AriaAttributes {
+interface mixin AriaAttributes {
     [Reflect=aria_atomic]           attribute [AtomString] DOMString? ariaAtomic;
     [Reflect=aria_autocomplete]     attribute [AtomString] DOMString? ariaAutoComplete;
     [Reflect=aria_busy]             attribute [AtomString] DOMString? ariaBusy;
