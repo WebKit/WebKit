@@ -301,7 +301,7 @@ class Git(Scm):
     SSH_REMOTE = re.compile('(ssh://)?git@(?P<host>[^:/]+)[:/](?P<path>.+).git')
     HTTP_REMOTE = re.compile(r'(?P<protocol>https?)://(?P<host>[^\/]+)/(?P<path>.+).git')
     REMOTE_BRANCH = re.compile(r'remotes\/(?P<remote>[^\/]+)\/(?P<branch>.+)')
-    USER_REMOTE = re.compile(r'(?P<username>[^:/]+):(?P<branch>.+)')
+    USER_REMOTE = re.compile(r'(?P<name>[^:]+):(?P<branch>.+)')
     GIT_CONFIG_EXTENSION = 'git_config_extension'
     PROJECT_CONFIG_OPTIONS = {
         'pull.rebase': ['true', 'false'],
@@ -864,34 +864,38 @@ class Git(Scm):
         match = self.USER_REMOTE.match(argument)
         rmt = self.remote()
         if match and isinstance(rmt, remote.GitHub):
-            username = match.group('username')
-            if not self.url(match.group('username')):
+            name = match.group('name')
+            username = name.split('/')[0]
+            repo_name = rmt.name if '/' not in name else name.split('/', 1)[-1]
+            name = username + repo_name[len(rmt.name):]
+
+            if not self.url(name):
                 url = self.url()
                 if '://' in url:
-                    rmt = '{}://{}/{}/{}.git'.format(url.split(':')[0], url.split('/')[2], username, rmt.name)
+                    rmt = '{}://{}/{}/{}.git'.format(url.split(':')[0], url.split('/')[2], username, repo_name)
                 elif ':' in url:
-                    rmt = '{}:{}/{}.git'.format(url.split(':')[0], username, rmt.name)
+                    rmt = '{}:{}/{}.git'.format(url.split(':')[0], username, repo_name)
                 else:
                     sys.stderr.write("Failed to convert '{}' to '{}' remote\n".format(url, username))
                     return None
                 if run(
-                    [self.executable(), 'remote', 'add', username, rmt],
+                    [self.executable(), 'remote', 'add', name, rmt],
                     capture_output=True, cwd=self.root_path,
                 ).returncode:
-                    sys.stderr.write("Failed to add remote '{}' as '{}'\n".format(rmt, username))
+                    sys.stderr.write("Failed to add remote '{}' as '{}'\n".format(rmt, name))
                     return None
                 self.config.clear()
             branch = match.group('branch')
             rc = run(
-                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(username, branch)] + log_arg,
+                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(name, branch)] + log_arg,
                 cwd=self.root_path,
             ).returncode
             if not rc:
                 return self.commit()
             if rc == 128:
-                run([self.executable(), 'fetch', username], cwd=self.root_path)
+                run([self.executable(), 'fetch', name], cwd=self.root_path)
             return None if run(
-                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(username, branch)] + log_arg,
+                [self.executable(), 'checkout'] + ['-B', branch, '{}/{}'.format(name, branch)] + log_arg,
                 cwd=self.root_path,
             ).returncode else self.commit()
 

@@ -41,6 +41,10 @@ class Checkout(Command):
             type=str, default=None,
             help='String representation of a commit or branch to be normalized',
         )
+        parser.add_argument(
+            '--remote', dest='remote', type=str, default=None,
+            help='Specify remote to search for pull request from.',
+        )
 
     @classmethod
     def main(cls, args, repository, **kwargs):
@@ -54,7 +58,7 @@ class Checkout(Command):
         target = args.argument[0]
         match = cls.PR_RE.match(target)
         if match:
-            rmt = repository.remote()
+            rmt = repository.remote(name=args.remote)
             if not rmt:
                 sys.stderr.write('Repository does not have associated remote\n')
                 return 1
@@ -65,11 +69,16 @@ class Checkout(Command):
             if not pr:
                 sys.stderr.write("Failed to find 'PR-{}' associated with this repository\n".format(match.group('number')))
                 return 1
-            if isinstance(rmt, remote.GitHub) and pr.author.github:
-                target = '{}:{}'.format(pr.author.github, pr.head)
+
+            fork_key = (pr._metadata or {}).get('full_name', pr.author.github)
+            if isinstance(rmt, remote.GitHub) and fork_key:
+                target = '{}:{}'.format(fork_key, pr.head)
             else:
                 target = pr.head
             log.info("Found associated branch '{}' for '{}'".format(target, pr))
+        elif args.remote:
+            sys.stderr.write('Caller specified --remote, but argument was not a pull request.')
+            return 1
 
         try:
             commit = repository.checkout(target)

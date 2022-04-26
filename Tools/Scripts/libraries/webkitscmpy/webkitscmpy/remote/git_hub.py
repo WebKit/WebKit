@@ -62,6 +62,7 @@ class GitHub(Scm):
                 generator=self,
                 metadata=dict(
                     issue=self.repository.tracker.from_string(issue_ref) if issue_ref else None,
+                    full_name=data.get('head', {}).get('repo', {}).get('full_name')
                 ), url='{}/pull/{}'.format(self.repository.url, data['number']),
                 draft=data['draft'],
             )
