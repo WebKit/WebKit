@@ -1,3 +1,15 @@
+2022-04-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add NSCoding support for findInteractionEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=239733
+        rdar://87850648
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithCoder:]):
+        (-[WKWebView encodeWithCoder:]):
+
 2022-04-21  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Refactor WebKit resources to emit output tasks for dependency validation

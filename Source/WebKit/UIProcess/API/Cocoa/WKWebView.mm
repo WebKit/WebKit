@@ -602,6 +602,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     self.magnification = [coder decodeDoubleForKey:@"magnification"];
 #endif
 
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+    self.findInteractionEnabled = [coder decodeBoolForKey:@"findInteractionEnabled"];
+#endif
+
     return self;
 }
 
@@ -618,6 +622,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #if PLATFORM(MAC)
     [coder encodeBool:self.allowsMagnification forKey:@"allowsMagnification"];
     [coder encodeDouble:self.magnification forKey:@"magnification"];
+#endif
+
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+    [coder encodeBool:self.isFindInteractionEnabled forKey:@"findInteractionEnabled"];
 #endif
 }
 

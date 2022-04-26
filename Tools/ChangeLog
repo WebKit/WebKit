@@ -1,3 +1,14 @@
+2022-04-25  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Add NSCoding support for findInteractionEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=239733
+        rdar://87850648
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Coding.mm:
+        (TEST):
+
 2022-04-25  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Differentiate gardening commits in bug comments
