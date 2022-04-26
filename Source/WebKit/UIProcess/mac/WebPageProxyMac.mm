@@ -791,7 +791,7 @@ void WebPageProxy::handleContextMenuCopyCroppedImage(const String& preferredMIME
     if (!m_croppedImageForContextMenu)
         return;
 
-    auto [data, type] = transcodeWithPreferredMIMEType(m_croppedImageForContextMenu.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
+    auto [data, type] = imageDataForCroppedImageResult(m_croppedImageForContextMenu.get(), preferredMIMEType.createCFString().get());
     if (!data)
         return;
 

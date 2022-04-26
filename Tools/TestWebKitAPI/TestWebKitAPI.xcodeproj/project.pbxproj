@@ -1072,6 +1072,8 @@
 		F458286027750525003ECCF3 /* modal-container-custom.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F458285F2775051B003ECCF3 /* modal-container-custom.html */; };
 		F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45B63FA1F197F33009D38B9 /* image-map.html */; };
 		F45B63FE1F19D410009D38B9 /* ActionSheetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */; };
+		F45C640028178AD30090DFAB /* green-400x400.webp in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45C63FF28178AC40090DFAB /* green-400x400.webp */; };
+		F45C640128178AD70090DFAB /* webp-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F45C63FE28178A530090DFAB /* webp-image.html */; };
 		F45D3891215A7B4B002A2979 /* TestInspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45D3890215A7B4B002A2979 /* TestInspectorBar.mm */; };
 		F45E15732112CE2900307E82 /* KeyboardInputTestsIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */; };
 		F45E15762112CE6200307E82 /* TestInputDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = F45E15752112CE6200307E82 /* TestInputDelegate.mm */; };
@@ -1397,6 +1399,7 @@
 				074994421EA5034B000DA45E /* getUserMediaAudioVideoCapture.html in Copy Resources */,
 				074994521EA5034B000DA46E /* getUserMediaPermission.html in Copy Resources */,
 				F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */,
+				F45C640028178AD30090DFAB /* green-400x400.webp in Copy Resources */,
 				573255A522139BC700396AE8 /* helloworld.webarchive in Copy Resources */,
 				9B4F8FA7159D52DD002D9F94 /* HTMLCollectionNamedItem.html in Copy Resources */,
 				9B26FCCA159D16DE00CC3765 /* HTMLFormCollectionNamedItem.html in Copy Resources */,
@@ -1669,6 +1672,7 @@
 				1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */,
 				31E9BDA3247F5729002E51A2 /* webgl.html in Copy Resources */,
 				7A33FF3427C8317D00D7E03E /* webkit-logo.pdf in Copy Resources */,
+				F45C640128178AD70090DFAB /* webp-image.html in Copy Resources */,
 				51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */,
 				51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */,
 				536770361CC81B6100D425B1 /* WebScriptObjectDescription.html in Copy Resources */,
@@ -3097,6 +3101,8 @@
 		F458285F2775051B003ECCF3 /* modal-container-custom.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "modal-container-custom.html"; sourceTree = "<group>"; };
 		F45B63FA1F197F33009D38B9 /* image-map.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-map.html"; sourceTree = "<group>"; };
 		F45B63FC1F19D410009D38B9 /* ActionSheetTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionSheetTests.mm; sourceTree = "<group>"; };
+		F45C63FE28178A530090DFAB /* webp-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "webp-image.html"; sourceTree = "<group>"; };
+		F45C63FF28178AC40090DFAB /* green-400x400.webp */ = {isa = PBXFileReference; lastKnownFileType = file; path = "green-400x400.webp"; sourceTree = "<group>"; };
 		F45D388F215A7B4B002A2979 /* TestInspectorBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestInspectorBar.h; sourceTree = "<group>"; };
 		F45D3890215A7B4B002A2979 /* TestInspectorBar.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInspectorBar.mm; sourceTree = "<group>"; };
 		F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = KeyboardInputTestsIOS.mm; sourceTree = "<group>"; };
@@ -4195,6 +4201,7 @@
 				07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */,
 				467C565121B5ECDF0057516D /* GetSessionCookie.html */,
 				F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */,
+				F45C63FF28178AC40090DFAB /* green-400x400.webp */,
 				EB230D3D245E722E00C66AD1 /* IDBCheckpointWAL.html */,
 				510477761D298E57009747EB /* IDBDeleteRecovery.html */,
 				5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */,
@@ -4370,6 +4377,7 @@
 				5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */,
 				46A44A5325A782DD00F61E16 /* webaudio-createMediaElementSource.html */,
 				7A33FF3227C8314D00D7E03E /* webkit-logo.pdf */,
+				F45C63FE28178A530090DFAB /* webp-image.html */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
 				5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */,

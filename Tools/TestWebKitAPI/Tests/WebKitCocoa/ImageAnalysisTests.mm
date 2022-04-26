@@ -372,7 +372,7 @@ static void invokeImageMarkupAction(TestWKWebView *webView)
     [webView waitForNextPresentationUpdate];
 }
 
-TEST(ImageAnalysisTests, PerformImageAnalysisMarkup)
+static void runMarkupTest(NSString *testPage, NSString *scriptToSelectText, Function<void(TestWKWebView *, NSString *)>&& checkWebView)
 {
     auto iconPath = [NSBundle.mainBundle pathForResource:@"icon" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"];
     RetainPtr iconImage = [UIImage imageWithContentsOfFile:iconPath];
@@ -386,21 +386,36 @@ TEST(ImageAnalysisTests, PerformImageAnalysisMarkup)
 
     [webView _setEditable:YES];
     [webView _setInputDelegate:inputDelegate.get()];
-    [webView synchronouslyLoadTestPageNamed:@"multiple-images"];
-    [webView objectByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(document.body, 0, document.images[0], 1)"];
+    [webView synchronouslyLoadTestPageNamed:testPage];
+    [webView objectByEvaluatingJavaScript:scriptToSelectText];
     [webView waitForNextPresentationUpdate];
 
     NSString *previousSelectedText = [webView selectedText];
     invokeImageMarkupAction(webView.get());
+    checkWebView(webView.get(), previousSelectedText);
+}
 
-    EXPECT_WK_STREQ(previousSelectedText, [webView selectedText]);
-    Util::waitForConditionWithLogging([&] {
-        return [[webView objectByEvaluatingJavaScript:@"document.images[0].getBoundingClientRect().width"] intValue] == 215;
-    }, 3, @"Expected bounding client rect to become 215.");
+TEST(ImageAnalysisTests, PerformImageAnalysisMarkup)
+{
+    runMarkupTest(@"multiple-images", @"getSelection().setBaseAndExtent(document.body, 0, document.images[0], 1)", [](TestWKWebView *webView, NSString *previousSelectedText) {
+        EXPECT_WK_STREQ(previousSelectedText, webView.selectedText);
+        Util::waitForConditionWithLogging([&] {
+            return [[webView objectByEvaluatingJavaScript:@"document.images[0].getBoundingClientRect().width"] intValue] == 215;
+        }, 3, @"Expected bounding client rect to become 215.");
 
-    NSString *undoTitle = [webView undoManager].undoMenuItemTitle;
-    EXPECT_GT(undoTitle.length, 0U);
-    EXPECT_FALSE([undoTitle containsString:@"Paste"]);
+        NSString *undoTitle = webView.undoManager.undoMenuItemTitle;
+        EXPECT_GT(undoTitle.length, 0U);
+        EXPECT_FALSE([undoTitle containsString:@"Paste"]);
+    });
+}
+
+TEST(ImageAnalysisTests, PerformImageAnalysisMarkupWithWebPImages)
+{
+    runMarkupTest(@"webp-image", @"getSelection().selectAllChildren(document.body)", [](TestWKWebView *webView, NSString *) {
+        Util::waitForConditionWithLogging([&] {
+            return [[webView objectByEvaluatingJavaScript:@"document.images[0].getBoundingClientRect().width"] intValue] == 215;
+        }, 3, @"Expected bounding client rect to become 215.");
+    });
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)

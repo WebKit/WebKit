@@ -4758,7 +4758,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
             return;
 
         auto [elementContext, image, preferredMIMEType] = *view->_imageAnalysisMarkupData;
-        if (auto [data, type] = WebKit::transcodeWithPreferredMIMEType(image.get(), preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier); data)
+        if (auto [data, type] = WebKit::imageDataForCroppedImageResult(image.get(), preferredMIMEType.createCFString().get()); data)
             view->_page->replaceImageWithMarkupResults(elementContext, { String { type.get() } }, { static_cast<const uint8_t*>([data bytes]), [data length] });
     }];
 }
@@ -11027,11 +11027,14 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
     auto changeCount = UIPasteboard.generalPasteboard.changeCount;
     WebKit::requestImageAnalysisMarkup(image.CGImage, [changeCount, weakSelf = WeakObjCPtr<WKContentView>(self), originalImage = RetainPtr { image }, sourceMIMEType = RetainPtr { sourceMIMEType }](CGImageRef result, CGRect) mutable {
+        if (!result)
+            return;
+
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
 
-        auto [data, type] = WebKit::transcodeWithPreferredMIMEType(result ?: [originalImage CGImage], (__bridge CFStringRef)sourceMIMEType.get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
+        auto [data, type] = WebKit::imageDataForCroppedImageResult(result, (__bridge CFStringRef)sourceMIMEType.get());
         if (!data)
             return;
 

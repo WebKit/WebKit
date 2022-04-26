@@ -33,7 +33,12 @@
 #import "TransactionID.h"
 #import <WebCore/TextRecognitionResult.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
+#import <wtf/RobinHoodHashSet.h>
 #import <wtf/WorkQueue.h>
+
+#if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#endif
 
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
 
@@ -173,6 +178,27 @@ bool isLiveTextAvailableAndEnabled()
 {
     return PAL::isVisionKitCoreFrameworkAvailable();
 }
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForCroppedImageResult(CGImageRef image, const String& sourceMIMEType)
+{
+    static NeverDestroyed allowedMIMETypesForTranscoding = [] {
+        static constexpr std::array types { "image/png"_s, "image/tiff"_s, "image/gif"_s, "image/bmp"_s };
+        MemoryCompactLookupOnlyRobinHoodHashSet<String> set;
+        set.reserveInitialCapacity(std::size(types));
+        for (auto type : types)
+            set.add(type);
+        return set;
+    }();
+
+    if (!sourceMIMEType.isEmpty() && allowedMIMETypesForTranscoding->contains(sourceMIMEType))
+        return transcodeWithPreferredMIMEType(image, sourceMIMEType.createCFString().get());
+
+    return transcodeWithPreferredMIMEType(image, CFSTR("image/png"));
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 } // namespace WebKit
 

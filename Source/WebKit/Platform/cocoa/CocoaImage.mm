@@ -50,19 +50,20 @@ RetainPtr<NSData> transcode(CGImageRef image, CFStringRef typeIdentifier)
     return data;
 }
 
-std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMEType(CGImageRef image, CFStringRef preferredMIMEType, CFStringRef fallbackTypeIdentifier)
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMEType(CGImageRef image, CFStringRef preferredMIMEType)
 {
-    auto targetType = RetainPtr { fallbackTypeIdentifier };
-    if (CFStringGetLength(preferredMIMEType)) {
+    ASSERT(CFStringGetLength(preferredMIMEType));
 #if HAVE(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK)
-        auto preferredTypeIdentifier = RetainPtr { (__bridge CFStringRef)[UTType typeWithMIMEType:(__bridge NSString *)preferredMIMEType conformingToType:UTTypeImage].identifier };
+    auto preferredTypeIdentifier = RetainPtr { (__bridge CFStringRef)[UTType typeWithMIMEType:(__bridge NSString *)preferredMIMEType conformingToType:UTTypeImage].identifier };
 #else
-        auto preferredTypeIdentifier = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, preferredMIMEType, kUTTypeImage));
+    auto preferredTypeIdentifier = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, preferredMIMEType, kUTTypeImage));
 #endif
-        if (WebCore::isSupportedImageType(preferredTypeIdentifier.get()))
-            targetType = WTFMove(preferredTypeIdentifier);
+    if (WebCore::isSupportedImageType(preferredTypeIdentifier.get())) {
+        if (auto data = transcode(image, preferredTypeIdentifier.get()); [data length])
+            return { WTFMove(data), WTFMove(preferredTypeIdentifier) };
     }
-    return { transcode(image, targetType.get()), targetType };
+
+    return { nil, nil };
 }
 
 } // namespace WebKit

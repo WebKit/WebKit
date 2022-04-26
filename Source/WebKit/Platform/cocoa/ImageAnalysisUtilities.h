@@ -31,6 +31,8 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 
+OBJC_CLASS NSData;
+
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 using CocoaImageAnalysis = VKCImageAnalysis;
 using CocoaImageAnalyzer = VKCImageAnalyzer;
@@ -60,6 +62,8 @@ RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAn
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 void requestImageAnalysisWithIdentifier(CocoaImageAnalyzer *, const String& identifier, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
 void requestImageAnalysisMarkup(CGImageRef, CompletionHandler<void(CGImageRef, CGRect)>&&);
+
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForCroppedImageResult(CGImageRef, const String& sourceMIMEType);
 
 #if PLATFORM(IOS_FAMILY)
 using PlatformImageAnalysisObject = VKCImageAnalysisInteraction;

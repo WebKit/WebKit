@@ -344,7 +344,7 @@ void WebContextMenuProxyMac::applyMarkupToControlledImage()
         if (!protectedPage || !result)
             return;
 
-        auto [data, type] = transcodeWithPreferredMIMEType(result, preferredMIMEType.createCFString().get(), (__bridge CFStringRef)UTTypeTIFF.identifier);
+        auto [data, type] = imageDataForCroppedImageResult(result, preferredMIMEType.createCFString().get());
         if (!data)
             return;
 

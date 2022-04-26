@@ -1,3 +1,42 @@
+2022-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust some image transcoding behaviors related to "Copy Cropped Image"
+        https://bugs.webkit.org/show_bug.cgi?id=239748
+        rdar://92287000
+
+        Reviewed by Kate Cheney.
+
+        Refactor some logic for extracting "cropped images" and "markup images". Currently, we always try to preserve
+        the MIME type of the source image data, but this causes various issues, such as images losing alpha or failing
+        to transcode altogether. See below for more details.
+
+        Test: ImageAnalysisTests.PerformImageAnalysisMarkupWithWebPImages
+
+        * Platform/cocoa/CocoaImage.h:
+        * Platform/cocoa/CocoaImage.mm:
+        (WebKit::transcodeWithPreferredMIMEType):
+
+        Drop support for the `fallbackTypeIdentifier` argument, now that nothing depends on it.
+
+        * Platform/cocoa/ImageAnalysisUtilities.h:
+        * Platform/cocoa/ImageAnalysisUtilities.mm:
+        (WebKit::imageDataForCroppedImageResult):
+
+        Add a new helper method to convert a CGImageRef to raw image data that's appropriate for the given source MIME
+        type. If the type belongs one of a short list of supported types, we use it directly; otherwise, fall back to
+        "image/png".
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView imageAnalysisMarkupMenu]):
+        (-[WKContentView actionSheetAssistant:copyCroppedImage:sourceMIMEType:]):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+
+        Deploy `imageDataForCroppedImageResult` in place of directly calling `transcodeWithPreferredMIMEType`.
+
+        (WebKit::WebContextMenuProxyMac::applyMarkupToControlledImage):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::handleContextMenuCopyCroppedImage):
+
 2022-04-26  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Do not pass ASCCredentialRequestTypePlatform... if LocalService unavailable

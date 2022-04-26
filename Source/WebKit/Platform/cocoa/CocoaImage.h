@@ -40,6 +40,6 @@ OBJC_CLASS NSData;
 namespace WebKit {
 
 RetainPtr<NSData> transcode(CGImageRef, CFStringRef typeIdentifier);
-std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMEType(CGImageRef, CFStringRef preferredMIMEType, CFStringRef fallbackTypeIdentifier);
+std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> transcodeWithPreferredMIMEType(CGImageRef, CFStringRef preferredMIMEType);
 
 } // namespace WebKit
