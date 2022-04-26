@@ -4656,7 +4656,10 @@ class DetermineLandedIdentifier(shell.ShellCommand):
 
     def comment_text_for_bug(self, svn_revision=None, identifier=None):
         identifier_str = identifier if identifier and '@' in identifier else '?'
-        comment = 'Committed r{} ({}): <{}>'.format(svn_revision, identifier_str, self.url_for_identifier(identifier))
+        comment = '{} r{} ({}): <{}>'.format(
+            'Test gardening commit' if self.getProperty('is_test_gardening') else 'Committed',
+            svn_revision, identifier_str, self.url_for_identifier(identifier),
+        )
 
         patch_id = self.getProperty('patch_id', '')
         if patch_id:

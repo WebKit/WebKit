@@ -5495,6 +5495,42 @@ Date:   Mon Feb 17 15:09:42 2020 +0000
         self.assertEqual(self.getProperty('build_summary'), 'Committed 220797@main')
         return rc
 
+    def test_success_gardening_pr(self):
+        with self.mock_commits_webkit_org(), self.mock_sleep():
+            self.setupStep(DetermineLandedIdentifier())
+            self.setProperty('svn_revision', '293254')
+            self.setProperty('github.number', '1234')
+            self.setProperty('is_test_gardening', True)
+            self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=300,
+                        logEnviron=False,
+                        command=['git', 'log', '-1', '--no-decorate']) +
+                ExpectShell.log('stdio', stdout=''''commit 5dc27962b4c5bdfd17d17faa785f70abbb0550ed
+Author: Matteo Flores <matteo_flores@apple.com>
+Date:   Fri Apr 22 21:24:12 2022 +0000
+
+    REBASLINE: [ Monterey ] fast/text/khmer-lao-font.html is a constant text failure
+    
+    https://bugs.webkit.org/show_bug.cgi?id=238917
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-bigsur/fast/text/khmer-lao-font-expected.txt: Copied from LayoutTests/platform/mac/fast/text/khmer-lao-font-expected.txt.
+    * platform/mac/fast/text/khmer-lao-font-expected.txt:
+    
+    Canonical link: https://commits.webkit.org/249903@main
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293254 268f45cc-cd09-0410-ab3c-d52691b4dbfc''') +
+                0,
+            )
+            self.expectOutcome(result=SUCCESS, state_string='Identifier: 249903@main')
+            with current_hostname(EWS_BUILD_HOSTNAME):
+                rc = self.runStep()
+
+        self.assertEqual(self.getProperty('comment_text'), 'Test gardening commit r293254 (249903@main): <https://commits.webkit.org/249903@main>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
+        self.assertEqual(self.getProperty('build_summary'), 'Committed 249903@main')
+        return rc
+
     def test_success_pr_fallback(self):
         with self.mock_commits_webkit_org(identifier='220797@main'), self.mock_sleep():
             self.setupStep(DetermineLandedIdentifier())
