@@ -361,15 +361,6 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
     return nullptr;
 }
 
-#if PLATFORM(IOS)
-inline static bool isLinkedBeforeTypedArrayLengthQuirk()
-{
-    return !linkedOnOrAfter(SDKVersion::FirstWithoutTypedArrayAPIQuirk);
-}
-#else
-inline static bool isLinkedBeforeTypedArrayLengthQuirk() { return false; }
-#endif
-
 size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
     JSGlobalObject* globalObject = toJS(ctx);
