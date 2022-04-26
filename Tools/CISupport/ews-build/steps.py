@@ -238,8 +238,8 @@ class GitHubMixin(object):
             return 1
         return 0
 
-    def should_send_email_for_pr(self, pr_number):
-        pr_json = self.get_pr_json(pr_number)
+    def should_send_email_for_pr(self, pr_number, repository_url=None):
+        pr_json = self.get_pr_json(pr_number, repository_url=repository_url)
         if not pr_json:
             return True
 
@@ -2512,7 +2512,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
 
             if patch_id and not self.should_send_email_for_patch(patch_id):
                 return
-            if pr_number and not self.should_send_email_for_pr(pr_number):
+            if pr_number and not self.should_send_email_for_pr(pr_number, self.getProperty('repository')):
                 return
             if not patch_id and not (pr_number and sha):
                 self._addToLog('stderr', 'Unrecognized change type')
@@ -3355,7 +3355,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
 
             if patch_id and not self.should_send_email_for_patch(patch_id):
                 return
-            if pr_number and not self.should_send_email_for_pr(pr_number):
+            if pr_number and not self.should_send_email_for_pr(pr_number, self.getProperty('repository')):
                 return
             if not patch_id and not (pr_number and sha):
                 self._addToLog('stderr', 'Unrecognized change type')
