@@ -30,6 +30,7 @@ Commits = function(url)
     console.assert(url);
     this.url = url;
     this.heads = {'main': null};
+    this.commits = {}
 };
 
 BaseObject.addConstructorFunctions(Commits);
@@ -45,6 +46,7 @@ Commits.prototype = {
         Object.entries(self.heads).forEach(function(branch){
             JSON.load(self.url + '/' + branch[0] + '/json', function(data) {
                 self.heads[branch[0]] = data;
+                self.commits[data.identifier] = data;
             });
         });
     },
@@ -60,4 +62,36 @@ Commits.prototype = {
             return parseFloat(split[1]);
         return null
     },
+    lastNIdentifiers(branch, count) {
+        if (!this.heads[branch])
+            return [];
+
+        var split = this.heads[branch].identifier.split(/\.|@/);
+        var result = [];
+        for(; count--;) {
+            var identifier = '';
+            if (split.length === 2)
+                identifier = `${parseFloat(split[0]) - count}@${branch}`;
+            else if (split.length === 3)
+                identifier = `${split[0]}.${parseFloat(split[1]) - count}@${branch}`;
+
+            result.push(identifier);
+        }
+        return result.reverse();
+    },
+    fetch: function(branch, count) {
+        var self = this;
+        this.lastNIdentifiers(branch, count).forEach((identifier) => {
+            if (self.commits[identifier] !== undefined)
+                return;
+            self.commits[identifier] = null;
+
+            JSON.load(self.url + '/' + identifier + '/json', function(data) {
+                self.commits[data.identifier] = data;
+            });
+        });
+    },
+    urlFor: function(identifier) {
+        return `${this.url}/${identifier}`;
+    }
 };

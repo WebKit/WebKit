@@ -27,6 +27,10 @@ MockCommits = function(url)
 {
     BaseObject.call(this);
     this.heads = {'main': {'identifier': '33022@main'}};
+    this.commits = {
+        '33021@main': {'identifier': '33021@main'},
+        '33022@main': this.heads['main'],
+    }
 };
 
 BaseObject.addConstructorFunctions(MockCommits);
@@ -47,4 +51,25 @@ MockCommits.prototype = {
             return parseFloat(split[1]);
         return null
     },
+    lastNIdentifiers(branch, count) {
+        if (!this.heads[branch])
+            return [];
+
+        var split = this.heads[branch].identifier.split(/\.|@/);
+        var result = [];
+        for(; count--;) {
+            var identifier = '';
+            if (split.length === 2)
+                identifier = `${parseFloat(split[0]) - count}@${branch}`;
+            else if (split.length === 3)
+                identifier = `${split[0]}.${parseFloat(split[1]) - count}@${branch}`;
+
+            result.push(identifier);
+        }
+        return result.reverse();
+    },
+    fetch: function(branch, count) {},
+    urlFor: function(identifier) {
+        return `${this.url}/${identifier}`;
+    }
 };
