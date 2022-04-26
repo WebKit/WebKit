@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Dominic Szablewski (dominic@phoboslab.org)
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,6 @@
 #include "JSTypedArrays.h"
 #include "TypedArrayController.h"
 #include <wtf/RefPtr.h>
-
-#if PLATFORM(IOS)
-#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
-#endif
 
 using namespace JSC;
 

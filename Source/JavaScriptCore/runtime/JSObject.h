@@ -1368,7 +1368,7 @@ inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
 inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStructureID, Butterfly* butterfly)
 {
     if (isX86() || vm.heap.mutatorShouldBeFenced()) {
-        setStructureIDDirectly(oldStructureID.nuke());
+        setStructureIDDirectly(nuke(oldStructureID));
         WTF::storeStoreFence();
         m_butterfly.set(vm, this, butterfly);
         WTF::storeStoreFence();
@@ -1512,6 +1512,7 @@ template<bool checkNullStructure>
 ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = getVM(globalObject);
+    auto& structureIDTable = vm.heap.structureIDTable();
     JSObject* object = this;
     while (true) {
         if (UNLIKELY(TypeInfo::overridesGetOwnPropertySlot(object->inlineTypeFlags()))) {
@@ -1526,10 +1527,10 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, Prope
             return object->getNonIndexPropertySlot(globalObject, propertyName, slot);
         }
         ASSERT(object->type() != ProxyObjectType);
-        Structure* structure = object->structureID().decode();
+        Structure* structure = structureIDTable.get(object->structureID());
 #if USE(JSVALUE64)
         if (checkNullStructure && UNLIKELY(!structure))
-            CRASH_WITH_INFO(object->type(), object->structureID().bits());
+            CRASH_WITH_INFO(object->type(), object->structureID(), structureIDTable.size());
 #endif
         if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
             return true;
