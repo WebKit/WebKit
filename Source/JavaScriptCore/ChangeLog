@@ -1,3 +1,12 @@
+2022-04-25  Keith Miller  <keith_miller@apple.com>
+
+        structureIDToStructureWithScratch should only do things if ADDRESS64
+        https://bugs.webkit.org/show_bug.cgi?id=239749
+
+        Reviewed by Saam Barati.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2022-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable change-array-by-copy

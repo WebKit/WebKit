@@ -741,10 +741,12 @@ macro writeBarrierOnGlobalLexicalEnvironment(size, get, valueFieldName)
 end
 
 macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
-    andq constexpr structureIDMask, structureIDThenStructure
-    leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
-    loadp [scratch], scratch
-    addp scratch, structureIDThenStructure
+    if ADDRESS64
+        andq constexpr structureIDMask, structureIDThenStructure
+        leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
+        loadp [scratch], scratch
+        addp scratch, structureIDThenStructure
+    end
 end
 
 macro loadStructureWithScratch(cell, structure, scratch)
