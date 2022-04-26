@@ -1,3 +1,17 @@
+2022-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Show the option to Markup Image in the callout bar only when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=239779
+        rdar://88941823
+
+        Reviewed by Darin Adler.
+
+        Make a minor adjustment to only show this callout bar action in the case where `_imageAnalysisMarkupData` has
+        already been computed and cached.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView imageAnalysisMarkupMenu]):
+
 2022-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Remove AriaReflectionEnabled runtime flag

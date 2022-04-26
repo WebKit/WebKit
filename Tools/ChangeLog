@@ -1,3 +1,20 @@
+2022-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Show the option to Markup Image in the callout bar only when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=239779
+        rdar://88941823
+
+        Reviewed by Darin Adler.
+
+        Adjust some API tests so that they continue passing after these changes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::iconImage):
+        (TestWebKitAPI::simulateCalloutBarAppearance):
+        (TestWebKitAPI::invokeImageMarkupAction):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::runMarkupTest):
+
 2022-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         [ iOS EWS ] css3/background/background-repeat-round-auto2.html is a image failure

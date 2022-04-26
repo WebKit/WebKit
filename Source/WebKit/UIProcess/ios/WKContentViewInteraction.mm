@@ -4750,7 +4750,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (!_page || !_page->preferences().imageAnalysisMarkupEnabled())
         return nil;
 
-    if (_page->editorState().isMissingPostLayoutData || !_page->editorState().postLayoutData().selectedEditableImage)
+    if (_page->editorState().isMissingPostLayoutData || !_imageAnalysisMarkupData)
+        return nil;
+
+    if (_imageAnalysisMarkupData->element != _page->editorState().postLayoutData().selectedEditableImage)
         return nil;
 
     return [self menuWithInlineAction:WebCore::contextMenuItemTitleMarkupImage() identifier:@"WKActionMarkupImage" handler:[](WKContentView *view) {
