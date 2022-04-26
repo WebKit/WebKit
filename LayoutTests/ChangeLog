@@ -1,3 +1,12 @@
+2022-04-26  Karl Rackler  <rackler@apple.com>
+
+        [ macOS Debug wk2 ] Four imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ are a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=239770
+
+        Unreviewed test gardening. 
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-04-26  Youenn Fablet  <youenn@apple.com>
 
         Service Worker loads should not expose some ResourceTiming information
