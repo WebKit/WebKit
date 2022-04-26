@@ -1,3 +1,16 @@
+2022-04-26  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Remove misspelled constant "LocalAuthenticatiorAccessGroup" 
+        https://bugs.webkit.org/show_bug.cgi?id=235894
+        rdar://88104045
+
+        Reviewed by Brent Fulgham.
+
+        This change removes a constant with a misspelled variable name after all
+        downstream usage is removed.
+
+        * Modules/webauthn/WebAuthenticationConstants.h:
+
 2022-04-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove WebArchiveDebugMode
