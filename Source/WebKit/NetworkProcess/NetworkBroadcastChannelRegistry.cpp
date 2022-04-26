@@ -26,16 +26,38 @@
 #include "config.h"
 #include "NetworkBroadcastChannelRegistry.h"
 
+#include "NetworkProcessProxyMessages.h"
 #include "WebBroadcastChannelRegistryMessages.h"
 #include <WebCore/MessageWithMessagePorts.h>
 #include <wtf/CallbackAggregator.h>
 
 namespace WebKit {
 
-NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry() = default;
+#define REGISTRY_MESSAGE_CHECK(assertion) REGISTRY_MESSAGE_CHECK_COMPLETION(assertion, (void)0)
+#define REGISTRY_MESSAGE_CHECK_COMPLETION(assertion, completion) do { \
+    ASSERT(assertion); \
+    if (UNLIKELY(!(assertion))) { \
+        if (auto webProcessIdentifier = m_networkProcess->webProcessIdentifierForConnection(connection)) \
+            m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateWebProcess(webProcessIdentifier), 0); \
+        { completion; } \
+        return; \
+    } \
+} while (0)
+
+static bool isValidClientOrigin(const WebCore::ClientOrigin& clientOrigin)
+{
+    return !clientOrigin.topOrigin.isEmpty() && !clientOrigin.clientOrigin.isEmpty();
+}
+
+NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry(NetworkProcess& networkProcess)
+    : m_networkProcess(networkProcess)
+{
+}
 
 void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
 {
+    REGISTRY_MESSAGE_CHECK(isValidClientOrigin(origin));
+
     auto& channelsForOrigin = m_broadcastChannels.ensure(origin, [] { return NameToConnectionIdentifiersMap { }; }).iterator->value;
     auto& connectionIdentifiersForName = channelsForOrigin.ensure(name, [] { return Vector<IPC::Connection::UniqueID> { }; }).iterator->value;
     ASSERT(!connectionIdentifiersForName.contains(connection.uniqueID()));
@@ -44,6 +66,8 @@ void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connectio
 
 void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name)
 {
+    REGISTRY_MESSAGE_CHECK(isValidClientOrigin(origin));
+
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());
     if (channelsForOriginIterator == m_broadcastChannels.end())
@@ -59,6 +83,8 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
 
 void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
+    REGISTRY_MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), completionHandler());
+
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());
     if (channelsForOriginIterator == m_broadcastChannels.end())
@@ -100,5 +126,8 @@ void NetworkBroadcastChannelRegistry::removeConnection(IPC::Connection& connecti
     for (auto& originToRemove : originsToRemove)
         m_broadcastChannels.remove(originToRemove);
 }
+
+#undef REGISTRY_MESSAGE_CHECK
+#undef REGISTRY_MESSAGE_CHECK_COMPLETION
 
 } // namespace WebKit

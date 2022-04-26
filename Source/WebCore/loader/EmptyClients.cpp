@@ -1183,9 +1183,9 @@ public:
 private:
     EmptyBroadcastChannelRegistry() = default;
 
-    void registerChannel(const ClientOrigin&, const String&, BroadcastChannelIdentifier) final { }
-    void unregisterChannel(const ClientOrigin&, const String&, BroadcastChannelIdentifier) final { }
-    void postMessage(const ClientOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
+    void registerChannel(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier) final { }
+    void unregisterChannel(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier) final { }
+    void postMessage(const PartitionedSecurityOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
 class EmptyWebLockRegistry final : public WebLockRegistry {
