@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -158,6 +158,8 @@
 #include "RemoteVideoFrameObjectHeap.h"
 #endif
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, (&connection()))
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -257,6 +259,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if HAVE(AUDIT_TOKEN)
     , m_presentingApplicationAuditToken(WTFMove(parameters.presentingApplicationAuditToken))
 #endif
+    , m_isCaptivePortalModeEnabled(parameters.isCaptivePortalModeEnabled)
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
@@ -549,6 +552,8 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
 #if ENABLE(WEBGL)
 void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContextGLAttributes attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamConnectionBuffer&& stream)
 {
+    MESSAGE_CHECK(!isCaptivePortalModeEnabled());
+
     auto it = m_remoteRenderingBackendMap.find(renderingBackendIdentifier);
     if (it == m_remoteRenderingBackendMap.end())
         return;
@@ -562,6 +567,8 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContext
 
 void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdentifier graphicsContextGLIdentifier)
 {
+    MESSAGE_CHECK(!isCaptivePortalModeEnabled());
+
     m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
     if (m_remoteGraphicsContextGLMap.isEmpty())
         gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
@@ -986,5 +993,7 @@ void GPUConnectionToWebProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, b
 #endif
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS)

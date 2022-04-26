@@ -36,6 +36,7 @@ namespace WebKit {
 struct GPUProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
     Vector<String> overrideLanguages;
+    bool isCaptivePortalModeEnabled { false };
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif
@@ -47,6 +48,7 @@ struct GPUProcessConnectionParameters {
     {
         encoder << webProcessIdentity;
         encoder << overrideLanguages;
+        encoder << isCaptivePortalModeEnabled;
 #if ENABLE(IPC_TESTING_API)
         encoder << ignoreInvalidMessageForTesting;
 #endif
@@ -67,6 +69,11 @@ struct GPUProcessConnectionParameters {
         if (!overrideLanguages)
             return std::nullopt;
 
+        std::optional<bool> isCaptivePortalModeEnabled;
+        decoder >> isCaptivePortalModeEnabled;
+        if (!isCaptivePortalModeEnabled)
+            return std::nullopt;
+
 #if ENABLE(IPC_TESTING_API)
         std::optional<bool> ignoreInvalidMessageForTesting;
         decoder >> ignoreInvalidMessageForTesting;
@@ -83,6 +90,7 @@ struct GPUProcessConnectionParameters {
         return GPUProcessConnectionParameters {
             WTFMove(*webProcessIdentity),
             WTFMove(*overrideLanguages),
+            *isCaptivePortalModeEnabled,
 #if ENABLE(IPC_TESTING_API)
             *ignoreInvalidMessageForTesting,
 #endif

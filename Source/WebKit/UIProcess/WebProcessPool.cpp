@@ -524,6 +524,8 @@ void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, G
     parameters.presentingApplicationAuditToken = configuration().presentingApplicationProcessToken();
 #endif
 
+    parameters.isCaptivePortalModeEnabled = webProcessProxy.captivePortalMode() == WebProcessProxy::CaptivePortalMode::Enabled;
+
     ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = WeakPtr { *this }, parameters, webProcessProxy = WeakPtr { webProcessProxy }, reply = WTFMove(reply)] (auto& connectionInfo) mutable {
         if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
             // Retry on the next RunLoop iteration because we may be inside the WebProcessPool destructor.

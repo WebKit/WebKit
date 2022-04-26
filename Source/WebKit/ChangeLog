@@ -1,3 +1,33 @@
+2022-04-25  Brent Fulgham  <bfulgham@apple.com>
+
+        HARDENING: Add MESSAGE_CHECK in some Captive Portal cases
+        https://bugs.webkit.org/show_bug.cgi?id=239551
+        <rdar://91478748>
+
+        Reviewed by Darin Adler.
+
+        Add MESSAGE_CHECK protections to a set of message handlers for API prohibited when
+        sent from a Captive Portal process. This change also adds a flag to the GPUProcessConnectionParameters
+        struct so that GPU Process connections can be marked as being associated with a Captive Portal
+        process.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::createGraphicsContextGL):
+        (WebKit::GPUConnectionToWebProcess::releaseGraphicsContextGL):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::isCaptivePortalModeEnabled const):
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestinationManager::createAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::deleteAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::startAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::stopAudioDestination):
+        * Shared/GPUProcessConnectionParameters.h:
+        (WebKit::GPUProcessConnectionParameters::encode const):
+        (WebKit::GPUProcessConnectionParameters::decode):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+
 2022-04-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: request interception should not be guarded based on service workers

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,6 +134,8 @@ public:
     RemoteMediaResourceManager& remoteMediaResourceManager();
 
     PAL::SessionID sessionID() const { return m_sessionID; }
+
+    bool isCaptivePortalModeEnabled() const { return m_isCaptivePortalModeEnabled; }
 
     Logger& logger();
 
@@ -365,6 +367,7 @@ private:
 
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
     bool m_isActiveNowPlayingProcess { false };
+    bool m_isCaptivePortalModeEnabled { false };
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     UniqueRef<LocalAudioSessionRoutingArbitrator> m_routingArbitrator;
