@@ -1,5 +1,17 @@
 2022-04-26  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [DatabaseTracker] Use PRIu64 for logging for portability
+        https://bugs.webkit.org/show_bug.cgi?id=239765
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use PRIu64 when logging to avoid warnings.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::setQuota):
+
+2022-04-26  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GStreamer] Mark unused variable
         https://bugs.webkit.org/show_bug.cgi?id=239766
 
