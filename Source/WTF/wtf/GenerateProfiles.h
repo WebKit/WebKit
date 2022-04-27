@@ -32,8 +32,8 @@
 #include <notify.h>
 #include <unistd.h>
 
-extern "C" uint64_t __llvm_profile_get_size_for_buffer();
-extern "C" int __llvm_profile_write_buffer(char *);
+extern "C" int __llvm_profile_write_file(void);
+extern "C" void __llvm_profile_set_filename(const char*);
 extern "C" void __llvm_profile_reset_counters(void);
 
 #endif
@@ -44,37 +44,48 @@ template<typename OnceFlagDiversifier>
 ALWAYS_INLINE void registerProfileGenerationCallback(const char* name)
 {
 #if ENABLE(LLVM_PROFILE_GENERATION)
+    constexpr int WRITE_SUCCESS = 0;
+
+    static int profileCount = 0;
+    static NeverDestroyed<String> profileFileBase;
+    static NeverDestroyed<String> profileFileName;
     static std::once_flag registerFlag;
     std::call_once(registerFlag, [name] {
-        WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d><0>: Registering callback for profile data.", name, getpid());
+        int pid = getpid();
+        WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d>: Registering callback for profile data.", name, pid);
         WTFLogAlways("<WEBKIT_LLVM_PROFILE> To collect a profile: `notifyutil -p com.apple.WebKit.profiledata`");
         WTFLogAlways("<WEBKIT_LLVM_PROFILE> To copy the output: `"
             R"HERE(log stream --style json --color none | perl -mFile::Basename -mFile::Copy -nle 'if (m/<WEBKIT_LLVM_PROFILE>.*<BEGIN>(.*)<END>/) { (my $l = $1) =~ s/\\\//\//g; my $b = File::Basename::basename($l); my $d = "./profiles/$b"; print "Moving $l to $d"; File::Copy::move($l, $d); }')HERE"
             "`.");
         WTFLogAlways("<WEBKIT_LLVM_PROFILE> To sanity-check the output: `for f in ./profiles/*; do echo $f; xcrun -sdk macosx.internal llvm-profdata show $f; done;`.");
+
+        {
+            // Maybe we could use %t instead here, but this folder is permitted through the sandbox because of ANGLE.
+            FileSystem::PlatformFileHandle fileHandle;
+            auto filePath = FileSystem::openTemporaryFile(makeString(name, "-", getpid()), fileHandle, ".profraw");
+            profileFileBase.get() = String::fromUTF8(filePath.utf8().data());
+            FileSystem::closeFile(fileHandle);
+        }
+
+        WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d>: We will dump the resulting profile to %s.", name, pid, profileFileBase->utf8().data());
+
         int token;
         notify_register_dispatch("com.apple.WebKit.profiledata", &token, dispatch_get_main_queue(), ^(int) {
-            int pid = getpid();
-            int64_t time = MonotonicTime::now().secondsSinceEpoch().milliseconds();
+            profileFileName.get() = makeString(profileFileBase.get(), ".", profileCount++, ".profraw");
+            __llvm_profile_set_filename(profileFileName->utf8().data()); // Must stay alive while it is used by llvm.
 
-            auto bufferSize = __llvm_profile_get_size_for_buffer();
-            WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d><%lld>: LLVM collected %llu bytes of profile data.", 
-                name, pid, time, bufferSize);
+            WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d><%lf>: About to write to %s.", 
+                name, pid, MonotonicTime::now().secondsSinceEpoch().milliseconds(), profileFileName->utf8().data());
 
-            auto* buffer = static_cast<char*>(calloc(sizeof(char), bufferSize));
-            __llvm_profile_write_buffer(buffer);
+            int writeResult = __llvm_profile_write_file();
+            if (writeResult == WRITE_SUCCESS) {
+                WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d><%lf>: Wrote to file <BEGIN>%s<END>.", 
+                    name, pid, MonotonicTime::now().secondsSinceEpoch().milliseconds(), profileFileName->utf8().data());
+            } else {
+                WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d><%lf>: Error writing profile file %s.", 
+                    name, pid, MonotonicTime::now().secondsSinceEpoch().milliseconds(), profileFileName->utf8().data());
+            }
 
-            String fileName(String::fromUTF8(name) + "-" + pid + "-" + time + "-");
-
-            FileSystem::PlatformFileHandle fileHandle;
-            auto filePath = FileSystem::openTemporaryFile(fileName, fileHandle, ".profraw");
-            size_t bytesWritten = FileSystem::writeToFile(fileHandle, reinterpret_cast<const void*>(buffer), bufferSize);
-
-            WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d><%lld>: Wrote %zu bytes to file <BEGIN>%s<END>.", 
-                name, pid, time, bytesWritten, filePath.utf8().data());
-
-            FileSystem::closeFile(fileHandle);
-            free(buffer);
             __llvm_profile_reset_counters();
         });
     });
