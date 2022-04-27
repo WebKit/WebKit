@@ -119,6 +119,12 @@ static bool urlRequiresMacintoshPlatform(const String& domain, const String& bas
         || domain == "exchange.tu-berlin.de")
         return true;
 
+    // https://www.sspa.juntadeandalucia.es/servicioandaluzdesalud/clicsalud/pages/portada.jsf
+    // Andalusian Health Service discriminates against WebKitGTK's standard user
+    // agent with an unsupported browser warning.
+    if (domain == "www.sspa.juntadeandalucia.es")
+        return true;
+
     return false;
 }
 

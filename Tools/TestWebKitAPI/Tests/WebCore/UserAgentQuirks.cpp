@@ -104,6 +104,7 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasMacPlatformQuirk("http://outlook.office.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://mail.ntu.edu.tw/");
     assertUserAgentForURLHasMacPlatformQuirk("http://exchange.tu-berlin.de/");
+    assertUserAgentForURLHasMacPlatformQuirk("http://www.sspa.juntadeandalucia.es/");
 
     assertUserAgentForURLHasEmptyQuirk("http://accounts.google.com/");
     assertUserAgentForURLHasEmptyQuirk("http://docs.google.com/");
