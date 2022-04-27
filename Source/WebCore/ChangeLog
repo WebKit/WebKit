@@ -1,5 +1,21 @@
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
+        <link rel=preconnect> always sends credentials to different-origin, ignoring crossorigin=anonymous
+        https://bugs.webkit.org/show_bug.cgi?id=239119
+        <rdar://problem/91643534>
+
+        Reviewed by John Wilander.
+
+        Update the check as per spec, step 5 of
+        https://html.spec.whatwg.org/multipage/links.html#link-type-preconnect
+
+        This is difficult to test as preconnect can only expose TLS credentials.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preconnectIfNeeded):
+
+2022-04-27  Youenn Fablet  <youenn@apple.com>
+
         Add testRunner API to clear memory cache
         https://bugs.webkit.org/show_bug.cgi?id=239804
         rdar://92033309
