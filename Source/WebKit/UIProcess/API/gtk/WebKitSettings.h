@@ -135,10 +135,10 @@ webkit_settings_get_enable_html5_database                      (WebKitSettings *
 WEBKIT_API void
 webkit_settings_set_enable_html5_database                      (WebKitSettings *settings,
                                                                 gboolean        enabled);
-WEBKIT_API gboolean
+WEBKIT_DEPRECATED gboolean
 webkit_settings_get_enable_xss_auditor                         (WebKitSettings *settings);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_settings_set_enable_xss_auditor                         (WebKitSettings *settings,
                                                                 gboolean        enabled);
 

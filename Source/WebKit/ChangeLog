@@ -1,3 +1,21 @@
+2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        [GLib] Make WebKitSettings XSS auditor functions no-op
+        https://bugs.webkit.org/show_bug.cgi?id=239651
+        <rdar://problem/92304443>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Let's deprecate these functions.
+
+        Also, do not print warnings because they are called during init by the property setters.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_get_enable_xss_auditor):
+        (webkit_settings_set_enable_xss_auditor):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/wpe/WebKitSettings.h:
+
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
         service worker update should refresh imported scripts in addition to the main script

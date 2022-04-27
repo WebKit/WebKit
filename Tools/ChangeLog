@@ -1,3 +1,14 @@
+2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
+
+        [GLib] Make WebKitSettings XSS auditor functions no-op
+        https://bugs.webkit.org/show_bug.cgi?id=239651
+        <rdar://problem/92304443>
+
+        Reviewed by Adrian Perez de Castro.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
         Add testRunner API to clear memory cache

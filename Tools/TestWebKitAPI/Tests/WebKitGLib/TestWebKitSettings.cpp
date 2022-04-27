@@ -72,9 +72,9 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_html5_database(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_html5_database(settings));
 
-    // XSS Auditor is enabled by default.
-    g_assert_true(webkit_settings_get_enable_xss_auditor(settings));
-    webkit_settings_set_enable_xss_auditor(settings, FALSE);
+    // XSS Auditor is deprecated and always disabled.
+    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
+    webkit_settings_set_enable_xss_auditor(settings, TRUE);
     g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
 
     // Frame flattening is disabled by default.
