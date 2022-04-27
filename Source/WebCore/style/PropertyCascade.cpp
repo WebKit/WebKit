@@ -154,6 +154,23 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const Ma
     setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
 }
 
+const PropertyCascade::Property* PropertyCascade::lastDeferredPropertyResolvingRelated(CSSPropertyID propertyID) const
+{
+    auto relatedID = getRelatedPropertyId(propertyID);
+    if (relatedID == CSSPropertyInvalid) {
+        ASSERT_NOT_REACHED();
+        return hasDeferredProperty(propertyID) ? &deferredProperty(propertyID) : nullptr;
+    }
+    auto indexForPropertyID = deferredPropertyIndex(propertyID);
+    auto indexForRelatedID = deferredPropertyIndex(relatedID);
+    if (indexForPropertyID > indexForRelatedID)
+        return &deferredProperty(propertyID);
+    if (indexForPropertyID < indexForRelatedID)
+        return &deferredProperty(relatedID);
+    ASSERT(!hasDeferredProperty(propertyID));
+    ASSERT(!hasDeferredProperty(relatedID));
+    return nullptr;
+}
 
 bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel, bool important)
 {

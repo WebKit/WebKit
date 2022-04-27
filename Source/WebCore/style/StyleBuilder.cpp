@@ -322,9 +322,8 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
                     applyRollbackCascadeProperty(property, linkMatchMask);
                     return;
                 }
-            } else if (rollbackCascade->hasDeferredProperty(id)) {
-                auto& property = rollbackCascade->deferredProperty(id);
-                applyRollbackCascadeProperty(property, linkMatchMask);
+            } else if (auto* property = rollbackCascade->lastDeferredPropertyResolvingRelated(id)) {
+                applyRollbackCascadeProperty(*property, linkMatchMask);
                 return;
             }
         }

@@ -1,3 +1,29 @@
+2022-04-26  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Fix cascade rollback for deferred properties
+        https://bugs.webkit.org/show_bug.cgi?id=238125
+
+        Reviewed by Antti Koivisto.
+
+        When a deferred property was set to 'revert' or 'revert-layer', it used
+        to roll back to a declaration of the same exact property (or behave as
+        'unset' if none).
+
+        This patch lets deferred properties roll back to their related property,
+        e.g. '-webkit-box-shadow: revert-layer' can roll back to a 'box-shadow'
+        declaration in the previous layer.
+
+        This is consistent with logical and physical properties, where the
+        rollback happens after resolving logical properties.
+
+        Test: imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer.html
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::lastDeferredPropertyResolvingRelated const):
+        * style/PropertyCascade.h:
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyProperty):
+
 2022-04-26  Elliott Williams  <emw@apple.com>
 
         Fix build error: "cp: JavaScriptCore.profdata is not a directory"

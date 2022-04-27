@@ -64,6 +64,7 @@ public:
 
     bool hasDeferredProperty(CSSPropertyID) const;
     const Property& deferredProperty(CSSPropertyID) const;
+    const Property* lastDeferredPropertyResolvingRelated(CSSPropertyID) const;
 
     bool hasCustomProperty(const AtomString&) const;
     Property customProperty(const AtomString&) const;

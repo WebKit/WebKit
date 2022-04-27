@@ -1,3 +1,15 @@
+2022-04-26  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Fix cascade rollback for deferred properties
+        https://bugs.webkit.org/show_bug.cgi?id=238125
+
+        Reviewed by Antti Koivisto.
+
+        Add custom expectation for mac-wk1 since scroll-behavior is disabled
+        there, and thus not checked by the test.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer-expected.txt: Added.
+
 2022-04-26  Karl Rackler  <rackler@apple.com>
 
         [ macOS ] webanimations/accelerated-animation-slot-invalidation.html is a flaky image failure
