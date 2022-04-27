@@ -1262,20 +1262,40 @@ angle::Result ProgramMtl::commitUniforms(ContextMtl *context, mtl::RenderCommand
         {
             continue;
         }
-        // If we exceed the default uniform max size, try to allocate a buffer. Worst case
-        // scenario, fall back on a large setBytes.
-        bool needsCommitUniform = true;
-        if (needsCommitUniform)
+        if(mAuxBufferPool)
         {
-            ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
+            mAuxBufferPool->releaseInFlightBuffers(context);
+        }
+        // If we exceed the default inline max size, try to allocate a buffer
+        bool needsCommitUniform = true;
+        if (needsCommitUniform && uniformBlock.uniformData.size() <= mtl::kInlineConstDataMaxSize)
+        {
+            ASSERT(uniformBlock.uniformData.size() <= mtl::kInlineConstDataMaxSize);
             cmdEncoder->setBytes(shaderType, uniformBlock.uniformData.data(),
                                  uniformBlock.uniformData.size(),
                                  mtl::kDefaultUniformsBindingIndex);
         }
+        else if(needsCommitUniform)
+        {
+            ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
+            mtl::BufferRef mtlBufferOut;
+            size_t  offsetOut;
+            uint8_t * ptrOut;
+            //Allocate a new Uniform buffer
+            ANGLE_TRY(getBufferPool(context)->allocate(context,
+                uniformBlock.uniformData.size(), &ptrOut, &mtlBufferOut, &offsetOut));
+            //Copy the uniform result
+            memcpy(ptrOut, uniformBlock.uniformData.data(), uniformBlock.uniformData.size());
+            //Commit
+            ANGLE_TRY(getBufferPool(context)->commit(context));
+            //Set buffer
+            cmdEncoder->setBuffer(shaderType, mtlBufferOut, (uint32_t)offsetOut, mtl::kDefaultUniformsBindingIndex);
+
+
+        }
 
         mDefaultUniformBlocksDirty.reset(shaderType);
     }
-
     return angle::Result::Continue;
 }
 

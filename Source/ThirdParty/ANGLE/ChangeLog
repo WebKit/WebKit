@@ -1,3 +1,17 @@
+2022-04-26  Kyle Piddington  <kpiddington@apple.com>
+
+        Max Limits have been reduced
+        https://bugs.webkit.org/show_bug.cgi?id=238914
+        Allow larger constant uniform buffer data. Provide a 
+        buffer to Metal if uniform data exceeds 4kb
+        Tested by running deqp gles3 limits tests for uniform data
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        (rx::ProgramMtl::commitUniforms):
+        * src/libANGLE/renderer/metal/mtl_common.h:
+
 2022-04-18  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r292743. rdar://problem/91437430
