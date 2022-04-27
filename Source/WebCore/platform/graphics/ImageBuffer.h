@@ -98,7 +98,7 @@ public:
     virtual GraphicsContext* drawingContext() { return nullptr; }
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
-    virtual void flushDrawingContextAsync() { }
+    virtual bool flushDrawingContextAsync() { return false; }
     virtual void didFlush(GraphicsContextFlushIdentifier) { }
 
     virtual FloatSize logicalSize() const = 0;
