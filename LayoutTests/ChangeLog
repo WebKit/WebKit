@@ -1,3 +1,12 @@
+2022-04-26  Karl Rackler  <rackler@apple.com>
+
+        [ macOS ] webanimations/accelerated-animation-after-forward-filling-animation.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=239794
+
+        Unreviewed test gardening. 
+
+        * platform/mac/TestExpectations:
+
 2022-04-26  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Fix cascade rollback for deferred properties

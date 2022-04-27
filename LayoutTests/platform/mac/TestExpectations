@@ -2297,3 +2297,5 @@ editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
 
 webkit.org/b/239791 webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/239794 webanimations/accelerated-animation-after-forward-filling-animation.html [ Pass ImageOnlyFailure ]
+
