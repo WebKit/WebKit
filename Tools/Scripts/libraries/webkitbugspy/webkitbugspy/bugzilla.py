@@ -112,7 +112,8 @@ class Tracker(GenericTracker):
 
     def credentials(self, required=True, validate=False):
         def validater(username, password):
-            response = requests.get('{}/rest/user/{}?login={}&password={}'.format(self.url, username, username, password))
+            quoted_username = requests.utils.quote(username)
+            response = requests.get('{}/rest/user/{}?login={}&password={}'.format(self.url, quoted_username, quoted_username, requests.utils.quote(password)))
             if response.status_code == 200:
                 return True
             sys.stderr.write('Login to {} for {} failed\n'.format(self.url, username))
@@ -130,8 +131,8 @@ class Tracker(GenericTracker):
         if not username or not password:
             return '?{}'.format(query) if query else ''
         return '?login={username}&password={password}{query}'.format(
-            username=username,
-            password=password,
+            username=requests.utils.quote(username),
+            password=requests.utils.quote(password),
             query='&{}'.format(query) if query else '',
         )
 

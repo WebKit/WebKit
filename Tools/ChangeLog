@@ -1,5 +1,23 @@
 2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
 
+        [git-webkit] Cannot create pull request branch using bug URL, fails to fetch comments from Bugzilla, fails to modify bug
+        https://bugs.webkit.org/show_bug.cgi?id=239741
+
+        Reviewed by Jonathan Bedard.
+
+        Need to URL encode the username and password before appending them to the URL.
+
+        * Scripts/libraries/webkitbugspy/setup.py:
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py:
+        * Scripts/libraries/webkitbugspy/webkitbugspy/bugzilla.py:
+        (Tracker.credentials.validater):
+        (Tracker._login_arguments):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/bugzilla.py:
+        (Bugzilla.__init__):
+        (Bugzilla.request):
+
+2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
+
         Cannot run test-webkitpy, autoinstaller fails to compile lupa
         https://bugs.webkit.org/show_bug.cgi?id=239786
 
