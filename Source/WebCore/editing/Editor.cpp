@@ -3495,7 +3495,7 @@ void Editor::applyEditingStyleToBodyElement() const
     RefPtr body { document().body() };
     if (!body)
         return;
-    body->setInlineStyleProperty(CSSPropertyWordWrap, CSSValueBreakWord);
+    body->setInlineStyleProperty(CSSPropertyOverflowWrap, CSSValueBreakWord);
     body->setInlineStyleProperty(CSSPropertyWebkitNbspMode, CSSValueSpace);
     body->setInlineStyleProperty(CSSPropertyLineBreak, CSSValueAfterWhiteSpace);
 }

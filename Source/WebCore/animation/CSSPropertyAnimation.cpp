@@ -3587,7 +3587,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyUnicodeBidi:
         case CSSPropertyUnicodeRange:
         case CSSPropertyWillChange:
-        case CSSPropertyWordWrap:
 #if ENABLE(APPLE_PAY)
         case CSSPropertyApplePayButtonStyle:
         case CSSPropertyApplePayButtonType:

@@ -202,7 +202,6 @@ width: 50%
 will-change: auto
 word-break: normal
 word-spacing: 0px
-word-wrap: normal
 writing-mode: horizontal-tb
 z-index: auto
 zoom: 1

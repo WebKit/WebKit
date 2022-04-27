@@ -3673,8 +3673,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createValue(style.wordBreak());
         case CSSPropertyWordSpacing:
             return zoomAdjustedPixelValue(style.fontCascade().wordSpacing(), style);
-        case CSSPropertyWordWrap:
-            return cssValuePool.createValue(style.overflowWrap());
         case CSSPropertyLineBreak:
             return cssValuePool.createValue(style.lineBreak());
         case CSSPropertyWebkitNbspMode:

@@ -673,7 +673,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     // case CSSPropertyOverflowAnchor:
     //    return valueID == CSSValueNone || valueID == CSSValueAuto;
     case CSSPropertyOverflowWrap: // normal | break-word | anywhere
-    case CSSPropertyWordWrap:
         return valueID == CSSValueNormal || valueID == CSSValueBreakWord || valueID == CSSValueAnywhere;
     case CSSPropertyOverflowX: // visible | hidden | scroll | auto | overlay (overlay is a synonym for auto)
         if (context.overflowClipEnabled && valueID == CSSValueClip)
@@ -993,7 +992,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyUserSelect:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
-    case CSSPropertyWordWrap:
 
     // SVG CSS properties from SVG 1.1, Appendix N: Property Index.
     case CSSPropertyAlignmentBaseline:

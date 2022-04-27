@@ -157,10 +157,10 @@ void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const Qualified
     if (name == wrapAttr) {
         if (shouldWrapText()) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePreWrap);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyOverflowWrap, CSSValueBreakWord);
         } else {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWordWrap, CSSValueNormal);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyOverflowWrap, CSSValueNormal);
         }
     } else
         HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);

@@ -332,7 +332,6 @@ PASS width
 PASS will-change
 PASS word-break
 PASS word-spacing
-PASS word-wrap
 PASS writing-mode
 PASS x
 PASS y

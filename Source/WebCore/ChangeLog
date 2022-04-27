@@ -1,3 +1,29 @@
+2022-04-27  Tim Nguyen  <ntim@apple.com>
+
+        [css-text] Make word-wrap CSS property an alias of overflow-wrap
+        https://bugs.webkit.org/show_bug.cgi?id=166782
+
+        Reviewed by Antti Koivisto.
+
+        This follows the spec, and fixes cascade issues when applying both properties (see bug 239579).
+
+        Relevant WPT expectations updated to pass.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyEditingStyleToBodyElement const):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::collectPresentationalHintsForAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::collectPresentationalHintsForAttribute):
+
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
         [Mac] http/tests/media/user-gesture-preserved-across-xmlhttprequest.html is a flaky fail/crash/timeout

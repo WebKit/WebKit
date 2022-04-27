@@ -200,7 +200,7 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
             userModifyValue = CSSValueReadWritePlaintextOnly;
             FALLTHROUGH;
         case ContentEditableType::True:
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyOverflowWrap, CSSValueBreakWord);
             addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
             addPropertyToPresentationalHintStyle(style, CSSPropertyLineBreak, CSSValueAfterWhiteSpace);
 #if PLATFORM(IOS_FAMILY)

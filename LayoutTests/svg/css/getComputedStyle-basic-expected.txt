@@ -404,8 +404,6 @@ rect: style.getPropertyValue(word-break) : normal
 rect: style.getPropertyCSSValue(word-break) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(word-spacing) : 0px
 rect: style.getPropertyCSSValue(word-spacing) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(word-wrap) : normal
-rect: style.getPropertyCSSValue(word-wrap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(writing-mode) : horizontal-tb
 rect: style.getPropertyCSSValue(writing-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(z-index) : auto
@@ -918,8 +916,6 @@ g: style.getPropertyValue(word-break) : normal
 g: style.getPropertyCSSValue(word-break) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(word-spacing) : 0px
 g: style.getPropertyCSSValue(word-spacing) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(word-wrap) : normal
-g: style.getPropertyCSSValue(word-wrap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(writing-mode) : horizontal-tb
 g: style.getPropertyCSSValue(writing-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(z-index) : auto

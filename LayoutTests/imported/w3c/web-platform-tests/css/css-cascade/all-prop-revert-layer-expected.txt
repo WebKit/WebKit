@@ -216,7 +216,7 @@ PASS outline-color
 PASS outline-offset
 PASS outline-style
 PASS outline-width
-FAIL overflow-wrap assert_not_equals: Should get a different computed value. got disallowed value "normal"
+PASS overflow-wrap
 PASS overflow-x
 PASS overflow-y
 PASS overscroll-behavior-x
@@ -327,7 +327,6 @@ PASS width
 PASS will-change
 PASS word-break
 PASS word-spacing
-PASS word-wrap
 PASS writing-mode
 PASS x
 PASS y

@@ -3816,9 +3816,16 @@
             }
         },
         "overflow-wrap": {
+            "codegen-properties": {
+                "aliases": [
+                    "word-wrap"
+                ]
+            },
+            "inherited": true,
             "values": [
                 "normal",
-                "break-word"
+                "break-word",
+                "anywhere"
             ],
             "specification": {
                 "category": "css-text",
@@ -5084,24 +5091,6 @@
             "specification": {
                 "category": "css-22",
                 "url": "https://www.w3.org/TR/CSS22/text.html#propdef-word-spacing"
-            }
-        },
-        "word-wrap": {
-            "inherited": true,
-            "values": [
-                "normal",
-                "break-word"
-            ],
-            "codegen-properties": {
-                "name-for-methods": "OverflowWrap"
-            },
-            "status": {
-                "status": "obsolete",
-                "comment": "Replaced by overflow-wrap"
-            },
-            "specification": {
-                "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#overflow-wrap"
             }
         },
         "x": {
