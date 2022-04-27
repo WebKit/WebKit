@@ -2244,5 +2244,11 @@ webkit.org/b/237849 imported/w3c/web-platform-tests/css/filter-effects/filters-d
 
 #rdar://91780899
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-blocks-mouse-events.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-receives-element-events.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/closed-dialog-does-not-block-mouse-events.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-inlines.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-ancestor-is-inert.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/non-modal-dialog-does-not-block-mouse-events.html [ Failure ]
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/simulated-click-inert.html [ Failure ]
 
 fast/text/install-font-style-recalc.html [ Pass ]
