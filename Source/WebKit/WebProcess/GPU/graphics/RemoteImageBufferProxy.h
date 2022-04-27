@@ -133,12 +133,13 @@ protected:
 #if !LOG_DISABLED
         auto startTime = MonotonicTime::now();
 #endif
-        LOG_WITH_STREAM(SharedDisplayLists, stream << "Waiting for Flush{" << m_sentFlushIdentifier << "} in Image(" << m_renderingResourceIdentifier << ")");
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " waitForDidFlushWithTimeout: waiting for flush {" << m_sentFlushIdentifier);
         while (numberOfTimeouts < maximumNumberOfTimeouts && hasPendingFlush()) {
             if (!m_remoteRenderingBackendProxy->waitForDidFlush())
                 ++numberOfTimeouts;
         }
-        LOG_WITH_STREAM(SharedDisplayLists, stream << "Done waiting: " << MonotonicTime::now() - startTime << "; " << numberOfTimeouts << " timeout(s)");
+
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " waitForDidFlushWithTimeout: done waiting " << (MonotonicTime::now() - startTime).milliseconds() << "ms; " << numberOfTimeouts << " timeout(s)");
 
         if (UNLIKELY(numberOfTimeouts >= maximumNumberOfTimeouts))
             RELEASE_LOG_FAULT(SharedDisplayLists, "Exceeded timeout while waiting for flush in remote rendering backend: %" PRIu64 ".", m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64());
@@ -274,21 +275,26 @@ protected:
             return;
 
         TraceScope tracingScope(FlushRemoteImageBufferStart, FlushRemoteImageBufferEnd);
-        flushDrawingContextAsync();
-        waitForDidFlushWithTimeout();
+
+        bool shouldWait = flushDrawingContextAsync();
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContext: shouldWait " << shouldWait);
+        if (shouldWait)
+            waitForDidFlushWithTimeout();
     }
 
-    void flushDrawingContextAsync() final
+    bool flushDrawingContextAsync() final
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return;
+            return false;
 
-        if (m_remoteDisplayList.needsFlush() || !hasPendingFlush()) {
-            m_sentFlushIdentifier = WebCore::GraphicsContextFlushIdentifier::generate();
-            m_remoteDisplayList.flushContext(m_sentFlushIdentifier);
-        }
-
+        if (!m_remoteDisplayList.needsFlush())
+            return hasPendingFlush();
+        
+        m_sentFlushIdentifier = WebCore::GraphicsContextFlushIdentifier::generate();
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync - flush " << m_sentFlushIdentifier);
+        m_remoteDisplayList.flushContext(m_sentFlushIdentifier);
         m_remoteDisplayList.resetNeedsFlush();
+        return true;
     }
 
     void recordNativeImageUse(WebCore::NativeImage& image)
