@@ -91,7 +91,7 @@ public:
     size_t getNext() const override
     {
         PAS_ASSERT(!m_indices.empty());
-        size_t index = pas_get_random(pas_cheesy_random, static_cast<unsigned>(m_indices.size()));
+        size_t index = pas_get_random(pas_fast_random, static_cast<unsigned>(m_indices.size()));
         size_t result = m_indices[index];
         m_indices[index] = m_indices.back();
         m_indices.pop_back();
@@ -764,7 +764,7 @@ void testTwoBaselinesEvictions(size_t size1, size_t size2, size_t count,
     pas_heap_ref heap2 = ISO_HEAP_REF_INITIALIZER(size2);
     vector<void*> objects;
 
-    pas_mock_cheesy_random = random;
+    pas_mock_fast_random = random;
 
     for (size_t index = 0; index < count; ++index) {
         objects.push_back(iso_allocate(&heap1));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,47 +27,62 @@
 #define PAS_RANDOM_H
 
 #include "pas_utils.h"
+#include <stdlib.h>
 
 PAS_BEGIN_EXTERN_C;
 
 enum pas_random_kind {
     /* This is a PRNG optimized for speed and nothing else. It's used whenever we need a random
        number only as a performance optimization. */
-    pas_cheesy_random,
+    pas_fast_random,
 
     /* This is a PRNG optimized for security. It's used whenever we need unpredictable data.
-       
-       FIXME: Implement this. */
+       This will incur significant performance penalties over pas_fast_random. */
     pas_secure_random
 };
 
 typedef enum pas_random_kind pas_random_kind;
 
-extern PAS_API unsigned pas_cheesy_random_state;
+extern PAS_API unsigned pas_fast_random_state;
 
 /* This is useful for testing. */
-extern PAS_API unsigned (*pas_mock_cheesy_random)(void);
+extern PAS_API unsigned (*pas_mock_fast_random)(void);
 
-/* Returns a random number in [0, upper_bound). If upper_bound is zero, returns a number somewhere
-   in the whole unsigned range. */
+/* Returns a random number in [0, upper_bound).
+   If the upper_bound is set to zero, than the range shall be [0, UINT32_MAX). */
 static inline unsigned pas_get_random(pas_random_kind kind, unsigned upper_bound)
 {
-    unsigned current_state;
-    
-    /* FIXME: Need to do something different if kind is pas_secure_random. */
-    /* FIXME: Need to do something other than modulo for dealing with max_value. */
-
-    if (kind == pas_cheesy_random && pas_mock_cheesy_random)
-        current_state = pas_mock_cheesy_random();
-    else {
-        current_state = pas_xorshift32(pas_cheesy_random_state);
-        pas_cheesy_random_state = current_state;
-    }
+    unsigned rand_value;
 
     if (!upper_bound)
-        return current_state;
-    
-    return current_state % upper_bound;
+        upper_bound = UINT32_MAX;
+
+    switch (kind) {
+    case pas_fast_random:
+        if (PAS_LIKELY(!pas_mock_fast_random)) {
+            pas_fast_random_state = pas_xorshift32(pas_fast_random_state);
+            rand_value = pas_fast_random_state % upper_bound;
+        } else {
+            /* This is testing code. It will not be called during regular code flow. */
+            rand_value = pas_mock_fast_random() % upper_bound;
+        }
+
+        break;
+
+    case pas_secure_random:
+        /* Secure random is only supported on Darwin and FreeBSD at the moment due to arc4random being built into the
+          stdlib. Fall back to fast behavior on other operating systems. */
+        #if PAS_OS(DARWIN) || PAS_OS(FREEBSD)
+        rand_value = arc4random_uniform(upper_bound);
+        #else
+        pas_fast_random_state = pas_xorshift32(pas_fast_random_state);
+        rand_value = pas_fast_random_state % upper_bound;
+        #endif
+
+        break;
+    }
+
+    return rand_value;
 }
 
 PAS_END_EXTERN_C;

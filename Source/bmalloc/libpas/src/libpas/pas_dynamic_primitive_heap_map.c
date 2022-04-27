@@ -87,13 +87,13 @@ pas_dynamic_primitive_heap_map_find_slow(pas_dynamic_primitive_heap_map* map,
                being dynamically changed. We try to allow that. */
         
             result = heaps_for_size->heaps[
-                pas_get_random(pas_secure_random, heaps_for_size->num_heaps)];
+                pas_get_random(pas_fast_random, heaps_for_size->num_heaps)];
         } else {
             if (map->num_heaps >= map->max_heaps) {
                 if (verbose)
                     pas_log("Returning existing heap globally.\n");
 
-                result = map->heaps[pas_get_random(pas_secure_random, map->num_heaps)];
+                result = map->heaps[pas_get_random(pas_fast_random, map->num_heaps)];
             } else {
                 pas_simple_type_with_key_data* key_data;
                 

@@ -95,7 +95,7 @@ find_first_eligible_consider_view(
         return true;
     }
 
-    if (pas_get_random(pas_cheesy_random, 0)
+    if (pas_get_random(pas_fast_random, 0)
         <= pas_segregated_shared_page_directory_probability_of_ineligibility) {
         if (verbose)
             pas_log("cannot bump at %zu, clearing eligibility.\n", config->index);

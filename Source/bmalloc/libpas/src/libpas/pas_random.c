@@ -29,7 +29,7 @@
 
 #include "pas_random.h"
 
-unsigned pas_cheesy_random_state = 42;
-unsigned (*pas_mock_cheesy_random)(void) = NULL;
+unsigned pas_fast_random_state = 42;
+unsigned (*pas_mock_fast_random)(void) = NULL;
 
 #endif /* LIBPAS_ENABLED */

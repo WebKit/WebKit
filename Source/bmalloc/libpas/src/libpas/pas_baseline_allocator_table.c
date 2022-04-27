@@ -63,7 +63,7 @@ void pas_baseline_allocator_table_initialize_if_necessary(void)
 
 unsigned pas_baseline_allocator_table_get_random_index(void)
 {
-    return pas_get_random(pas_cheesy_random, PAS_MIN(PAS_NUM_BASELINE_ALLOCATORS,
+    return pas_get_random(pas_fast_random, PAS_MIN(PAS_NUM_BASELINE_ALLOCATORS,
                                                      pas_baseline_allocator_table_bound));
 }
 

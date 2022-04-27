@@ -1,3 +1,30 @@
+2022-04-25  Brandon Stewart  <brandonstewart@apple.com>
+
+        [libpas] Implement secure random numbers
+        https://bugs.webkit.org/show_bug.cgi?id=239735
+
+        Reviewed by Yusuke Suzuki.
+
+        We currently have a cheesy random and secure random, which use the same implementation for generating
+        random numbers. (We are going to ignore the mock testing code here). This patch introduces a fast random and
+        secure random. The fast random maintains the same properties as the previous implementation, while secure random
+        will use the cryptographically secure arc4random_uniform to give better randomness. arc4random() can be quite an
+        expensive operation and based on discussing with Yusuke he found heavy performance penalties when using this in
+        JSC. Our secure random shall only be used in cases where true randomness is needed. We have 2 spots where we
+        currently use secure random we shall just migrate those over to using fast random.
+
+        * libpas/src/libpas/pas_baseline_allocator_table.c:
+        (pas_baseline_allocator_table_get_random_index):
+        * libpas/src/libpas/pas_dynamic_primitive_heap_map.c:
+        (pas_dynamic_primitive_heap_map_find_slow):
+        * libpas/src/libpas/pas_random.c:
+        * libpas/src/libpas/pas_random.h:
+        (pas_get_random):
+        * libpas/src/libpas/pas_segregated_shared_page_directory.c:
+        (find_first_eligible_consider_view):
+        * libpas/src/test/IsoHeapPartialAndBaselineTests.cpp:
+        (std::testTwoBaselinesEvictions):
+
 2022-04-18  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Use XCBuild for all command-line and project builds
