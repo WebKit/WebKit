@@ -177,6 +177,8 @@ public:
     bool contains(UChar character) const { return find(character) != notFound; }
     bool contains(const LChar* string) const { return find(string) != notFound; }
     bool contains(StringView) const;
+    template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
+    bool contains(CodeUnitMatchFunction matchFunction) const { return find(matchFunction, 0) != notFound; }
     bool containsIgnoringASCIICase(StringView) const;
     bool containsIgnoringASCIICase(StringView, unsigned start) const;
 

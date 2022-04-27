@@ -439,7 +439,7 @@ ExceptionOr<void> HTMLElement::setInnerText(String&& text)
 {
     // FIXME: This doesn't take whitespace collapsing into account at all.
 
-    if (!text.contains('\n') && !text.contains('\r')) {
+    if (!text.contains([](UChar c) { return c == '\n' || c == '\r'; })) {
         stringReplaceAll(WTFMove(text));
         return { };
     }
@@ -473,7 +473,7 @@ ExceptionOr<void> HTMLElement::setOuterText(String&& text)
     RefPtr<Node> newChild;
 
     // Convert text to fragment with <br> tags instead of linebreaks if needed.
-    if (text.contains('\r') || text.contains('\n'))
+    if (text.contains([](UChar c) { return c == '\n' || c == '\r'; }))
         newChild = textToFragment(document(), WTFMove(text));
     else
         newChild = Text::create(document(), WTFMove(text));
