@@ -80,8 +80,7 @@ ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBacke
 
 void ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
 {
-    ASSERT(surface());
-    surface()->setOwnershipIdentity(resourceOwner);
+    m_surface->setOwnershipIdentity(resourceOwner);
 }
 
 } // namespace WebKit

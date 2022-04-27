@@ -1,3 +1,19 @@
+2022-04-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't flush the IOSurface CGContext when just setting ownership identity
+        https://bugs.webkit.org/show_bug.cgi?id=239800
+
+        Reviewed by Myles C. Maxfield.
+
+        ImageBufferIOSurfaceBackend::surface() has a call to flushContext(), which we don't need
+        to do if we're just getting the surface to call setOwnershipIdentity(), so use m_surface
+        directly.
+
+        This is a ~18% perf gain on the Leaves MotionMark subtest on iPhone.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::setOwnershipIdentity):
+
 2022-04-26  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting "[Xcode] Compute PGO profdata paths instead of searching for them at build time"
