@@ -364,7 +364,7 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
 
     def extractProperties(self, payload):
         result = super(GitHubEventHandlerNoEdits, self).extractProperties(payload)
-        if payload.get('repository', {}).get('full_name') not in self.PUBLIC_REPOS:
+        if payload.get('base', {}).get('repo', {}).get('full_name') not in self.PUBLIC_REPOS:
             for field in self.SENSATIVE_FIELDS:
                 if field in result:
                     del result[field]
