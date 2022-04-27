@@ -593,17 +593,6 @@ sub possiblyColored($$)
     }
 }
 
-sub adjustPathForRecentRenamings($) 
-{ 
-    my ($fullPath) = @_; 
- 
-    $fullPath =~ s|WebCore/webaudio|WebCore/Modules/webaudio|g;
-    $fullPath =~ s|JavaScriptCore/wtf|WTF/wtf|g;
-    $fullPath =~ s|test_expectations.txt|TestExpectations|g;
-
-    return $fullPath; 
-} 
-
 sub canonicalizePath($)
 {
     my ($file) = @_;
@@ -850,12 +839,7 @@ sub parseGitDiffHeader($$)
     if (/$gitDiffStartRegEx/) {
         # Use $POSTMATCH to preserve the end-of-line character.
         my $eol = $POSTMATCH;
-
-        # The first and second paths can differ in the case of copies
-        # and renames.  We use the second file path because it is the
-        # destination path.
-        $indexPath = adjustPathForRecentRenamings(parseGitDiffStartLine($_));
-
+        $indexPath = parseGitDiffStartLine($_);
         $_ = "Index: $indexPath$eol"; # Convert to SVN format.
     } else {
         die("Could not parse leading \"diff --git\" line: \"$line\".");
@@ -978,7 +962,7 @@ sub parseSvnDiffHeader($$)
 
     my $indexPath;
     if (/$svnDiffStartRegEx/) {
-        $indexPath = adjustPathForRecentRenamings($1);
+        $indexPath = $1;
     } else {
         die("First line of SVN diff does not begin with \"Index \": \"$_\"");
     }

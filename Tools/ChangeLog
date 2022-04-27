@@ -1,3 +1,17 @@
+2022-04-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Remove adjustPathForRecentRenamings from VCSUtils.pm, they are not recent anymore
+        https://bugs.webkit.org/show_bug.cgi?id=239646
+
+        Reviewed by Darin Adler.
+
+        These were used to adjust patches 10 years ago.
+        The functionality renames *_test_expectations.txt in ANGLE imports, which causes surprises
+        and hard to track redundant sections while inspecting downstream differences to upstream.
+
+        * Scripts/VCSUtils.pm:
+        (parseGitDiffHeader):
+
 2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         [git-webkit] Cannot create pull request branch using bug URL, fails to fetch comments from Bugzilla, fails to modify bug
