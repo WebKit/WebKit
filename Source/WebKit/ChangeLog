@@ -1,3 +1,39 @@
+2022-04-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] The function getpwnam can sometimes fail
+        https://bugs.webkit.org/show_bug.cgi?id=239513
+        <rdar://89758690>
+
+        Reviewed by Darin Adler.
+
+        The system function getpwnam is caching the results from the first invocation, and will return the cached
+        values after the first call. It may happen that opendirectoryd will invalidate the cached values by
+        posting notifications. If that happens, getpwnam will then fail, since there are no cached values and
+        the WebContent process' sandbox is blocking access to opendirectoryd. This patch addresses this issue
+        by observing these notifications in the UI process, and recreating the cached values for getpwnam, by
+        calling the function in the WebContent process while holding a temporary sandbox extenstion to
+        opendirectoryd.
+
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/mac/GPUProcessMac.mm:
+        (WebKit::GPUProcess::openDirectoryCacheInvalidated):
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * Shared/AuxiliaryProcess.h:
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::getHomeDirectory):
+        (WebKit::populateSandboxInitializationParameters):
+        (WebKit::AuxiliaryProcess::openDirectoryCacheInvalidated):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::openDirectoryCacheInvalidated):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         [GLib] Make WebKitSettings XSS auditor functions no-op

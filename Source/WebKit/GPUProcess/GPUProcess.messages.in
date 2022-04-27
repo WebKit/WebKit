@@ -91,6 +91,10 @@ messages -> GPUProcess LegacyReceiver {
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
 #endif
 
+#if PLATFORM(MAC)
+    OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle)
+#endif
+
     WebProcessConnectionCountForTesting() -> (uint64_t count)
 }
 

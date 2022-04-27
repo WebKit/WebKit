@@ -88,6 +88,8 @@
 #if PLATFORM(MAC)
 #import "WebInspectorPreferenceObserver.h"
 #import <QuartzCore/CARemoteLayerServer.h>
+#import <notify.h>
+#import <notify_keys.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #else
 #import "UIKitSPI.h"
@@ -707,6 +709,24 @@ void WebProcessPool::registerNotificationObservers()
     }];
     
     addCFNotificationObserver(colorPreferencesDidChangeCallback, AppleColorPreferencesChangedNotification, CFNotificationCenterGetDistributedCenter());
+
+    const char* messages[] = { kNotifyDSCacheInvalidation, kNotifyDSCacheInvalidationGroup, kNotifyDSCacheInvalidationHost, kNotifyDSCacheInvalidationService, kNotifyDSCacheInvalidationUser };
+    m_openDirectoryNotifyTokens.reserveInitialCapacity(std::size(messages));
+    for (auto* message : messages) {
+        int notifyToken;
+        notify_register_dispatch(message, &notifyToken, dispatch_get_main_queue(), ^(int token) {
+            RELEASE_LOG(Notifications, "OpenDirectory invalidated cache");
+            auto handle = SandboxExtension::createHandleForMachLookup("com.apple.system.opendirectoryd.libinfo"_s, std::nullopt);
+            if (!handle)
+                return;
+#if ENABLE(GPU_PROCESS)
+            if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+                gpuProcess->send(Messages::GPUProcess::OpenDirectoryCacheInvalidated(*handle), 0);
+#endif
+            sendToAllProcesses(Messages::WebProcess::OpenDirectoryCacheInvalidated(*handle));
+        });
+        m_openDirectoryNotifyTokens.append(notifyToken);
+    }
 #elif !PLATFORM(MACCATALYST)
     addCFNotificationObserver(backlightLevelDidChangeCallback, (__bridge CFStringRef)UIBacklightLevelChangedNotification);
 #if PLATFORM(IOS)
@@ -770,6 +790,8 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_scrollerStyleNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_deactivationObserver.get()];
     removeCFNotificationObserver(AppleColorPreferencesChangedNotification, CFNotificationCenterGetDistributedCenter());
+    for (auto token : m_openDirectoryNotifyTokens)
+        notify_cancel(token);
 #elif !PLATFORM(MACCATALYST)
     removeCFNotificationObserver((__bridge CFStringRef)UIBacklightLevelChangedNotification);
 #if PLATFORM(IOS)

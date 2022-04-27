@@ -810,6 +810,7 @@ private:
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::PowerObserver> m_powerObserver;
     std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
+    Vector<int> m_openDirectoryNotifyTokens;
 #endif
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;

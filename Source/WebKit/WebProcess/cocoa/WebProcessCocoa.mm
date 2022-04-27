@@ -1290,6 +1290,13 @@ void WebProcess::consumeAudioComponentRegistrations(const IPC::SharedBufferCopy&
         WEBPROCESS_RELEASE_LOG_ERROR(Process, "Could not apply AudioComponent registrations, err(%ld)", static_cast<long>(err));
 }
 
+#if PLATFORM(MAC)
+void WebProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)
+{
+    AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
+}
+#endif
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

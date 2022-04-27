@@ -665,6 +665,20 @@ static StringView parseOSVersion(StringView osSystemMarketingVersion)
     return osSystemMarketingVersion.left(secondDotIndex);
 }
 
+static String getHomeDirectory()
+{
+    // According to the man page for getpwuid_r, we should use sysconf(_SC_GETPW_R_SIZE_MAX) to determine the size of the buffer.
+    // However, a buffer size of 4096 should be sufficient, since PATH_MAX is 1024.
+    char buffer[4096];
+    passwd pwd;
+    passwd* result = nullptr;
+    if (getpwuid_r(getuid(), &pwd, buffer, sizeof(buffer), &result) || !result) {
+        WTFLogAlways("%s: Couldn't find home directory", getprogname());
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    return String::fromUTF8(pwd.pw_dir);
+}
+
 static void populateSandboxInitializationParameters(SandboxInitializationParameters& sandboxParameters)
 {
     RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
@@ -690,17 +704,10 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
 
-    char buffer[4096];
-    int bufferSize = sizeof(buffer);
-    struct passwd pwd;
-    struct passwd* result = 0;
-    if (getpwuid_r(getuid(), &pwd, buffer, bufferSize, &result) || !result) {
-        WTFLogAlways("%s: Couldn't find home directory\n", getprogname());
-        exit(EX_NOPERM);
-    }
-
-    sandboxParameters.addPathParameter("HOME_DIR", pwd.pw_dir);
-    String path = FileSystem::pathByAppendingComponent(String::fromUTF8(pwd.pw_dir), "Library"_s);
+    auto homeDirectory = getHomeDirectory();
+    
+    sandboxParameters.addPathParameter("HOME_DIR", homeDirectory);
+    String path = FileSystem::pathByAppendingComponent(homeDirectory, "Library"_s);
     sandboxParameters.addPathParameter("HOME_LIBRARY_DIR", FileSystem::fileSystemRepresentation(path).data());
     path = FileSystem::pathByAppendingComponent(path, "/Preferences"_s);
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR", FileSystem::fileSystemRepresentation(path).data());
@@ -823,6 +830,23 @@ bool AuxiliaryProcess::isSystemWebKit()
     return isSystemWebKit;
 }
 #endif
+
+void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)
+{
+    // When Open Directory has invalidated the in-process cache for the results of getpwnam/getpwuid_r,
+    // we need to rebuild the cache by getting the home directory while holding a temporary sandbox
+    // extension to the associated Open Directory service.
+
+    auto sandboxExtension = SandboxExtension::create(WTFMove(handle));
+    if (!sandboxExtension)
+        return;
+
+    sandboxExtension->consume();
+
+    getHomeDirectory();
+
+    sandboxExtension->revoke();
+}
 
 } // namespace WebKit
 

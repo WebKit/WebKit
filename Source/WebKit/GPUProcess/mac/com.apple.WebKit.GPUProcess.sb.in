@@ -876,6 +876,11 @@
 )
 #endif
 
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.system.opendirectoryd.libinfo")))
+
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.relatived.tempest")
 )

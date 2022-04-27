@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "MessageSender.h"
+#include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/UserActivity.h>
@@ -144,6 +145,10 @@ protected:
     virtual void dispatchSimulatedNotificationsForPreferenceChange(const String& key) { }
 #endif
     void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters&);
+
+#if PLATFORM(MAC)
+    void openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
+#endif
 
 private:
     virtual bool shouldOverrideQuarantine() { return true; }
