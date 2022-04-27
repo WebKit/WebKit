@@ -192,9 +192,6 @@ void CSSParser::parseDeclarationForInspector(const CSSParserContext& context, co
 RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, Style::BuilderState& builderState)
 {
     ASSERT((propID == CSSPropertyCustom && value.isCustomPropertyValue()) || (propID != CSSPropertyCustom && !value.isCustomPropertyValue()));
-    auto& style = builderState.style();
-    auto direction = style.direction();
-    auto writingMode = style.writingMode();
 
     if (is<CSSPendingSubstitutionValue>(value)) {
         // FIXME: Should have a resolvedShorthands cache to stop this from being done over and over for each longhand value.
@@ -211,10 +208,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
             return nullptr;
 
         for (auto& property : parsedProperties) {
-            CSSPropertyID currentId = property.id();
-            if (CSSProperty::isDirectionAwareProperty(currentId))
-                currentId = CSSProperty::resolveDirectionAwareProperty(currentId, direction, writingMode);
-            if (currentId == propID)
+            if (property.id() == propID)
                 return property.value();
         }
 

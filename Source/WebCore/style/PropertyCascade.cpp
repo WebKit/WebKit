@@ -38,11 +38,10 @@
 namespace WebCore {
 namespace Style {
 
-PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, IncludedProperties includedProperties, Direction direction)
+PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, IncludedProperties includedProperties)
     : m_matchResult(matchResult)
     , m_includedProperties(includedProperties)
     , m_maximumCascadeLevel(maximumCascadeLevel)
-    , m_direction(direction)
 {
     buildCascade();
 }
@@ -52,8 +51,6 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel max
     , m_includedProperties(parent.m_includedProperties)
     , m_maximumCascadeLevel(maximumCascadeLevel)
     , m_maximumCascadeLayerPriorityForRollback(maximumCascadeLayerPriorityForRollback)
-    , m_direction(parent.direction())
-    , m_directionIsUnresolved(false)
 {
     buildCascade();
 }
@@ -105,11 +102,7 @@ static void initializeCSSValue(PropertyCascade::Property& property)
 
 void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
 {
-    if (CSSProperty::isDirectionAwareProperty(id)) {
-        auto direction = this->direction();
-        id = CSSProperty::resolveDirectionAwareProperty(id, direction.textDirection, direction.writingMode);
-    }
-
+    ASSERT(!CSSProperty::isInLogicalPropertyGroup(id));
     ASSERT(id < firstDeferredProperty);
 
     auto& property = m_properties[id];
@@ -140,7 +133,6 @@ void PropertyCascade::set(CSSPropertyID id, CSSValue& cssValue, const MatchedPro
 
 void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const MatchedProperties& matchedProperties, CascadeLevel cascadeLevel)
 {
-    ASSERT(!CSSProperty::isDirectionAwareProperty(id));
     ASSERT(id >= firstDeferredProperty);
     ASSERT(id <= lastDeferredProperty);
 
@@ -154,9 +146,15 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const Ma
     setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
 }
 
-const PropertyCascade::Property* PropertyCascade::lastDeferredPropertyResolvingRelated(CSSPropertyID propertyID) const
+const PropertyCascade::Property* PropertyCascade::lastDeferredPropertyResolvingRelated(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode) const
 {
-    auto relatedID = getRelatedPropertyId(propertyID);
+    auto relatedID = [&] {
+        if (!CSSProperty::isInLogicalPropertyGroup(propertyID))
+            return getRelatedPropertyId(propertyID);
+        if (CSSProperty::isDirectionAwareProperty(propertyID))
+            return CSSProperty::resolveDirectionAwareProperty(propertyID, direction, writingMode);
+        return CSSProperty::unresolvePhysicalProperty(propertyID, direction, writingMode);
+    }();
     if (relatedID == CSSPropertyInvalid) {
         ASSERT_NOT_REACHED();
         return hasDeferredProperty(propertyID) ? &deferredProperty(propertyID) : nullptr;
@@ -296,51 +294,6 @@ void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel)
 
     for (auto& match : importantMatches)
         addMatch(matchedDeclarations[match.index], cascadeLevel, true);
-}
-
-PropertyCascade::Direction PropertyCascade::resolveDirectionAndWritingMode(Direction inheritedDirection) const
-{
-    Direction result = inheritedDirection;
-
-    bool hadImportantWritingMode = false;
-    bool hadImportantDirection = false;
-
-    for (auto cascadeLevel : { CascadeLevel::UserAgent, CascadeLevel::User, CascadeLevel::Author }) {
-        for (const auto& matchedProperties : declarationsForCascadeLevel(m_matchResult, cascadeLevel)) {
-            for (unsigned i = 0, count = matchedProperties.properties->propertyCount(); i < count; ++i) {
-                auto property = matchedProperties.properties->propertyAt(i);
-                if (!property.value()->isPrimitiveValue() || property.value()->isCSSWideKeyword())
-                    continue;
-                switch (property.id()) {
-                case CSSPropertyWritingMode:
-                    if (!hadImportantWritingMode || property.isImportant()) {
-                        result.writingMode = downcast<CSSPrimitiveValue>(*property.value());
-                        hadImportantWritingMode = property.isImportant();
-                    }
-                    break;
-                case CSSPropertyDirection:
-                    if (!hadImportantDirection || property.isImportant()) {
-                        result.textDirection = downcast<CSSPrimitiveValue>(*property.value());
-                        hadImportantDirection = property.isImportant();
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-    }
-
-    return result;
-}
-
-PropertyCascade::Direction PropertyCascade::direction() const
-{
-    if (m_directionIsUnresolved) {
-        m_direction = resolveDirectionAndWritingMode(m_direction);
-        m_directionIsUnresolved = false;
-    }
-    return m_direction;
 }
 
 void PropertyCascade::sortDeferredPropertyIDs()

@@ -48,11 +48,6 @@ namespace Style {
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
-inline PropertyCascade::Direction directionFromStyle(const RenderStyle& style)
-{
-    return { style.direction(), style.writingMode() };
-}
-
 inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 {
     switch (id) {
@@ -81,7 +76,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 }
 
 Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, PropertyCascade::IncludedProperties includedProperties)
-    : m_cascade(matchResult, cascadeLevel, includedProperties, directionFromStyle(style))
+    : m_cascade(matchResult, cascadeLevel, includedProperties)
     , m_state(*this, style, WTFMove(context))
 {
 }
@@ -271,10 +266,10 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
     auto valueToApply = resolveValue(id, value);
+    auto& style = m_state.style();
 
     if (CSSProperty::isDirectionAwareProperty(id)) {
-        auto direction = m_cascade.direction();
-        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, direction.textDirection, direction.writingMode);
+        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, style.direction(), style.writingMode());
         ASSERT(newId != id);
         return applyProperty(newId, valueToApply.get(), linkMatchMask);
     }
@@ -322,7 +317,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
                     applyRollbackCascadeProperty(property, linkMatchMask);
                     return;
                 }
-            } else if (auto* property = rollbackCascade->lastDeferredPropertyResolvingRelated(id)) {
+            } else if (auto* property = rollbackCascade->lastDeferredPropertyResolvingRelated(id, style.direction(), style.writingMode())) {
                 applyRollbackCascadeProperty(*property, linkMatchMask);
                 return;
             }
@@ -346,7 +341,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     }
 
     if (isInherit && !CSSProperty::isInheritedProperty(id))
-        m_state.style().setHasExplicitlyInheritedProperties();
+        style.setHasExplicitlyInheritedProperties();
 
 #if ENABLE(CSS_PAINTING_API)
     if (is<CSSPaintImageValue>(valueToApply)) {
@@ -355,7 +350,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
             Locker locker { paintWorklet->paintDefinitionLock() };
             if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
                 for (auto& property : registration->inputProperties)
-                    m_state.style().addCustomPaintWatchProperty(property);
+                    style.addCustomPaintWatchProperty(property);
             }
         }
     }

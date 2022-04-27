@@ -68,6 +68,7 @@ my $numPredefinedProperties = 2;
 my %nameIsColorProperty;
 my %nameIsDescriptorOnly;
 my %nameIsHighPriority;
+my %nameIsDeferred;
 my %nameIsInherited;
 my %namePriorityShouldSink;
 my %logicalPropertyGroups;
@@ -288,6 +289,7 @@ sub addProperty($$)
                 } elsif ($codegenOptionName eq "sink-priority") {
                     $namePriorityShouldSink{$name} = 1;
                 } elsif ($codegenOptionName eq "related-property") {
+                    $nameIsDeferred{$name} = 1;
                     $relatedProperty{$name} = $codegenProperties->{"related-property"}
                 } elsif ($codegenOptionName eq "aliases") {
                     $nameToAliases{$name} = $codegenProperties->{"aliases"};
@@ -307,6 +309,7 @@ sub addProperty($$)
                     $nameIsColorProperty{$name} = 1;
                 } elsif ($codegenOptionName eq "logical-property-group") {
                     die "Shorthand property $name can't belong to a logical property group\n" if exists $codegenProperties->{"longhands"};
+                    $nameIsDeferred{$name} = 1;
                     my $groupName = $codegenProperties->{$codegenOptionName}{"name"};
                     my $resolver = $codegenProperties->{$codegenOptionName}{"resolver"};
                     my $kind;
@@ -361,10 +364,10 @@ sub sortByDescendingPriorityAndName
         return -1;
     }
     # Defer names with a related property to the back
-    if (!!$relatedProperty{$a} < !!$relatedProperty{$b}) {
+    if (!!$nameIsDeferred{$a} < !!$nameIsDeferred{$b}) {
         return -1;
     }
-    if (!!$relatedProperty{$a} > !!$relatedProperty{$b}) {
+    if (!!$nameIsDeferred{$a} > !!$nameIsDeferred{$b}) {
         return 1;
     }
     # Sort sunken names at the end of their priority bucket
@@ -854,7 +857,7 @@ foreach my $name (@names) {
   if ($nameIsHighPriority{$name}) {
     $firstHighPriorityPropertyName = $name if !$firstHighPriorityPropertyName;
     $lastHighPriorityPropertyName = $name;
-  } elsif (!$relatedProperty{$name}) {
+  } elsif (!$nameIsDeferred{$name}) {
     $firstLowPriorityPropertyName = $name if !$firstLowPriorityPropertyName;
     $lastLowPriorityPropertyName = $name;
   } else {

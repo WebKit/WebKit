@@ -40,12 +40,7 @@ class PropertyCascade {
 public:
     enum IncludedProperties { All, InheritedOnly };
 
-    struct Direction {
-        TextDirection textDirection;
-        WritingMode writingMode;
-    };
-
-    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, Direction);
+    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
@@ -64,15 +59,13 @@ public:
 
     bool hasDeferredProperty(CSSPropertyID) const;
     const Property& deferredProperty(CSSPropertyID) const;
-    const Property* lastDeferredPropertyResolvingRelated(CSSPropertyID) const;
+    const Property* lastDeferredPropertyResolvingRelated(CSSPropertyID, TextDirection, WritingMode) const;
 
     bool hasCustomProperty(const AtomString&) const;
     Property customProperty(const AtomString&) const;
 
     Span<const CSSPropertyID> deferredPropertyIDs() const;
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
-
-    Direction direction() const;
 
 private:
     void buildCascade();
@@ -84,7 +77,6 @@ private:
     void setDeferred(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
 
-    Direction resolveDirectionAndWritingMode(Direction inheritedDirection) const;
 
     unsigned deferredPropertyIndex(CSSPropertyID) const;
     void setDeferredPropertyIndex(CSSPropertyID, unsigned);
@@ -94,8 +86,6 @@ private:
     const IncludedProperties m_includedProperties;
     const CascadeLevel m_maximumCascadeLevel;
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
-    mutable Direction m_direction;
-    mutable bool m_directionIsUnresolved { true };
 
     // The CSSPropertyID enum is sorted like this:
     // 1. CSSPropertyInvalid and CSSPropertyCustom.

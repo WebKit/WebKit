@@ -1,3 +1,72 @@
+2022-04-27  Oriol Brufau  <obrufau@igalia.com>
+
+        Reland "Fix CSS cascade regarding logical properties"
+        https://bugs.webkit.org/show_bug.cgi?id=236199
+
+        Reviewed by Antti Koivisto.
+
+        This is a reland of https://commits.webkit.org/r291546, which was
+        reverted due to a performance regression. This problem should have been
+        addressed by bug 238260.
+
+        Original summary:
+        > The CSS cascade was trying to resolve logical properties into physical
+        > ones too early. This failed if we still didn't know the direction or
+        > writing-mode, e.g. because they were set to a variable or to a CSS-wide
+        > keyword.
+        >
+        > This patch keeps logical properties as-is during the cascade. They are
+        > only resolved when finally applied. Also, both logical properties and
+        > their physical equivalents are now set to apply in parse order, since
+        > 'height: 0px; block-size: 1px' and 'block-size: 1px; height: 0px' can be
+        > different, the order matters.
+
+        Tests: imported/w3c/web-platform-tests/css/css-logical/animation-004.html
+               imported/w3c/web-platform-tests/css/css-logical/logicalprops-with-deferred-writing-mode.html
+
+        * css/makeprop.pl:
+        (addProperty):
+        (sortByDescendingPriorityAndName):
+        Defer properties that belong to a logical property group.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        Logical properties no longer need special handling for variables.
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::PropertyCascade):
+        Remove members no longer needed.
+
+        (WebCore::Style::PropertyCascade::set):
+        This method is no longer used for properties in a logical property
+        group. Remove dead code and add assert.
+
+        (WebCore::Style::PropertyCascade::setDeferred):
+        Remove assert, logical properties are now handled here.
+
+        (WebCore::Style::PropertyCascade::lastDeferredPropertyResolvingRelated const):
+        Take into account that properties in a logical property group are now
+        deferred.
+
+        (WebCore::Style::PropertyCascade::resolveDirectionAndWritingMode const): Deleted.
+        (WebCore::Style::PropertyCascade::direction const): Deleted.
+        Remove broken logic.
+
+        * style/PropertyCascade.h:
+        Remove members, struct and methods no longer needed.
+        Update method signatures.
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::Builder):
+        Remove argument no longer needed.
+
+        (WebCore::Style::Builder::applyProperty):
+        Resolve logical properties using the direction and writing-mode from the
+        style.
+
+        (WebCore::Style::directionFromStyle): Deleted.
+        Remove function no longer needed.
+
 2022-04-24  Philippe Normand  <philn@igalia.com>
 
         [GStreamer] Track handling fixes
