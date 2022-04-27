@@ -984,7 +984,7 @@ private:
             return downcast<RenderBox>(renderer()).location();
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (is<RenderSVGModelObject>(renderer()))
-            return downcast<RenderSVGModelObject>(renderer()).layoutLocation();
+            return downcast<RenderSVGModelObject>(renderer()).currentSVGLayoutLocation();
 #endif
 
         return LayoutPoint();

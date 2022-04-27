@@ -175,8 +175,10 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
         if (options.contains(DecorationOption::OverrideBoxWithFilterBoxForChildren) && is<RenderSVGContainer>(child))
             childBoundingBoxComputation.adjustBoxForClippingAndEffects({ DecorationOption::OverrideBoxWithFilterBox }, childBox);
 
-        if (auto layerTransform = transformationMatrixFromChild(child))
-            childBox = layerTransform->mapRect(childBox);
+        if (!options.contains(DecorationOption::IgnoreTransformations)) {
+            if (auto layerTransform = transformationMatrixFromChild(child))
+                childBox = layerTransform->mapRect(childBox);
+        }
 
         if (options == objectBoundingBoxDecoration)
             uniteBoundingBoxRespectingValidity(boxValid, box, child, childBox);

@@ -196,6 +196,10 @@ void RenderSVGRoot::layout()
 
         SVGBoundingBoxComputation boundingBoxComputation(*this);
         m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
+
+        constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
+        m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
+
         m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     }
 
@@ -397,6 +401,7 @@ void RenderSVGRoot::updateFromStyle()
     RenderReplaced::updateFromStyle();
 
     setHasSVGTransform();
+    setHasTransformRelatedProperty();
 
     if (shouldApplyViewportClip())
         setHasNonVisibleOverflow();

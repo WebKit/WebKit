@@ -129,6 +129,9 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             layer()->willRemoveChildWithBlendMode();
 #endif
         setHasTransformRelatedProperty(false); // All transform-related properties force layers, so we know we don't have one or the object doesn't support them.
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        setHasSVGTransform(false); // Same reason as for setHasTransformRelatedProperty().
+#endif
         setHasReflection(false);
 
         // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
@@ -275,7 +278,7 @@ std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContain
     */
 
     if (moveToOrigin)
-        adjustedRect.moveBy(flooredLayoutPoint(objectBoundingBox().minXMinYCorner()));
+        adjustedRect.moveBy(nominalSVGLayoutLocation());
 
     if (auto* transform = layer()->transform())
         adjustedRect = transform->mapRect(adjustedRect);
@@ -355,6 +358,13 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
         transform.multiplyAffineTransform(svgTransform.value());
 
     style.unapplyTransformOrigin(transform, originTranslate);
+}
+
+void RenderLayerModelObject::updateHasSVGTransformFlags(const SVGGraphicsElement& graphicsElement)
+{
+    bool hasSVGTransform = !graphicsElement.animatedLocalTransform().isIdentity();
+    setHasTransformRelatedProperty(style().hasTransformRelatedProperty() || hasSVGTransform);
+    setHasSVGTransform(hasSVGTransform);
 }
 #endif
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2021 Igalia S.L.
+ * Copyright (C) 2021, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,15 +35,16 @@ public:
     explicit SVGBoundingBoxComputation(const RenderLayerModelObject&);
     ~SVGBoundingBoxComputation() = default;
 
-    enum class DecorationOption : uint8_t {
+    enum class DecorationOption : uint16_t {
         IncludeFillShape                    = 1 << 0, /* corresponds to 'bool fill'     */
         IncludeStrokeShape                  = 1 << 1, /* corresponds to 'bool stroke'   */
         IncludeMarkers                      = 1 << 2, /* corresponds to 'bool markers'  */
         IncludeClippers                     = 1 << 3, /* corresponds to 'bool clippers' */
         IncludeMaskers                      = 1 << 4, /* WebKit extension - internal    */
         IncludeOutline                      = 1 << 5, /* WebKit extension - internal    */
-        OverrideBoxWithFilterBox            = 1 << 6, /* WebKit extension - internal    */
-        OverrideBoxWithFilterBoxForChildren = 1 << 7  /* WebKit extension - internal    */
+        IgnoreTransformations               = 1 << 6, /* WebKit extension - internal    */
+        OverrideBoxWithFilterBox            = 1 << 7, /* WebKit extension - internal    */
+        OverrideBoxWithFilterBoxForChildren = 1 << 8  /* WebKit extension - internal    */
     };
 
     using DecorationOptions = OptionSet<DecorationOption>;
@@ -73,7 +74,7 @@ public:
             return LayoutRect();
 
         auto visualOverflowRect = enclosingLayoutRect(repaintBoundingBox);
-        visualOverflowRect.moveBy(-flooredLayoutPoint(renderer.objectBoundingBox().minXMinYCorner()));
+        visualOverflowRect.moveBy(-renderer.nominalSVGLayoutLocation());
         return visualOverflowRect;
     }
 

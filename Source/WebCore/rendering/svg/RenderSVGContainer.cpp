@@ -119,19 +119,14 @@ void RenderSVGContainer::layoutChildren()
 
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration, &m_objectBoundingBoxValid);
+
+    constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
+    m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
+
     m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
-    setLayoutRect(enclosingLayoutRect(m_objectBoundingBox));
+    setCurrentSVGLayoutRect(enclosingLayoutRect(m_objectBoundingBoxWithoutTransformations));
 
     containerLayout.positionChildrenRelativeToContainer();
-}
-
-void RenderSVGContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderSVGModelObject::styleDidChange(diff, oldStyle);
-
-    // FIXME: [LBSE] Upstream RenderLayer changes
-    // if (hasLayer())
-    //     layer()->setIsOpportunisticStackingContext(true);
 }
 
 bool RenderSVGContainer::selfWillPaint()
@@ -165,7 +160,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
         return;
     }
 
-    auto adjustedPaintOffset = paintOffset + layoutLocation();
+    auto adjustedPaintOffset = paintOffset + currentSVGLayoutLocation();
     if (paintInfo.phase == PaintPhase::Mask) {
         // FIXME: [LBSE] Upstream SVGRenderSupport changes
         // SVGRenderSupport::paintSVGMask(*this, paintInfo, adjustedPaintOffset);
@@ -185,7 +180,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOff
 
 bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    auto adjustedLocation = accumulatedOffset + layoutLocation();
+    auto adjustedLocation = accumulatedOffset + currentSVGLayoutLocation();
 
     auto visualOverflowRect = visualOverflowRectEquivalent();
     visualOverflowRect.moveBy(adjustedLocation);
@@ -193,8 +188,7 @@ bool RenderSVGContainer::nodeAtPoint(const HitTestRequest& request, HitTestResul
         return false;
 
     auto localPoint = locationInContainer.point();
-    auto boundingBoxTopLeftCorner = flooredLayoutPoint(objectBoundingBox().minXMinYCorner());
-    auto coordinateSystemOriginTranslation = boundingBoxTopLeftCorner - adjustedLocation;
+    auto coordinateSystemOriginTranslation = nominalSVGLayoutLocation() - adjustedLocation;
     localPoint.move(coordinateSystemOriginTranslation);
 
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))

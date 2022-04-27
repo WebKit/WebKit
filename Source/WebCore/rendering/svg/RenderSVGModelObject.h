@@ -58,26 +58,21 @@ public:
 
     inline SVGElement& element() const;
 
+    LayoutRect currentSVGLayoutRect() const { return m_layoutRect; }
+    void setCurrentSVGLayoutRect(const LayoutRect& layoutRect) { m_layoutRect = layoutRect; }
+
+    LayoutPoint currentSVGLayoutLocation() const final { return m_layoutRect.location(); }
+    void setCurrentSVGLayoutLocation(const LayoutPoint& location) final { m_layoutRect.setLocation(location); }
+
     // Mimic the RenderBox accessors - by sharing the same terminology the painting / hit testing / layout logic is
     // similar to read compared to non-SVG renderers such as RenderBox & friends.
     LayoutRect borderBoxRectEquivalent() const { return { LayoutPoint(), m_layoutRect.size() }; }
     LayoutRect contentBoxRectEquivalent() const { return borderBoxRectEquivalent(); }
     LayoutRect frameRectEquivalent() const { return m_layoutRect; }
-
     LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
 
-    void applyTopLeftLocationOffsetEquivalent(LayoutPoint& point) const { point.moveBy(layoutLocation()); }
-
-    LayoutRect layoutRect() const { return m_layoutRect; }
-    void setLayoutRect(const LayoutRect& layoutRect) { m_layoutRect = layoutRect; }
-    void setLayoutLocation(const LayoutPoint& layoutLocation) { m_layoutRect.setLocation(layoutLocation); }
-
-    LayoutPoint paintingLocation() const { return toLayoutPoint(layoutLocation() - flooredLayoutPoint(objectBoundingBox().minXMinYCorner())); }
-    LayoutPoint layoutLocation() const { return m_layoutRect.location(); }
-    LayoutSize layoutLocationOffset() const { return toLayoutSize(m_layoutRect.location()); }
-    LayoutSize layoutSize() const { return m_layoutRect.size(); }
-
     // For RenderLayer only
+    void applyTopLeftLocationOffsetEquivalent(LayoutPoint& point) const { point.moveBy(currentSVGLayoutLocation()); }
     FloatRect borderBoxRectInFragmentEquivalent(RenderFragmentContainer*, RenderBox::RenderBoxFragmentInfoFlags = RenderBox::CacheRenderBoxFragmentInfo) const;
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
     LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy) { return overflowClipRect(location, fragment, relevancy); }

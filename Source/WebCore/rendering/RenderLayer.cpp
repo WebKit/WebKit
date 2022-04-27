@@ -302,9 +302,9 @@ static ScrollingScope nextScrollingScope()
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderLayer);
 
-RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
-    : m_isRenderViewLayer(rendererLayerModelObject.isRenderView())
-    , m_forcedStackingContext(rendererLayerModelObject.isMedia())
+RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
+    : m_isRenderViewLayer(renderer.isRenderView())
+    , m_forcedStackingContext(renderer.isMedia())
     , m_isNormalFlowOnly(false)
     , m_isCSSStackingContext(false)
     , m_isOpportunisticStackingContext(false)
@@ -343,7 +343,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_hasNotIsolatedBlendingDescendantsStatusDirty(false)
 #endif
     , m_repaintRectsValid(false)
-    , m_renderer(rendererLayerModelObject)
+    , m_renderer(renderer)
 {
     setIsNormalFlowOnly(shouldBeNormalFlowOnly());
     setIsCSSStackingContext(shouldBeCSSStackingContext());
@@ -353,9 +353,9 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     if (isRenderViewLayer())
         m_boxScrollingScope = m_contentsScrollingScope = nextScrollingScope();
 
-    if (!renderer().firstChild()) {
+    if (!renderer.firstChild()) {
         m_visibleContentStatusDirty = false;
-        m_hasVisibleContent = renderer().style().visibility() == Visibility::Visible;
+        m_hasVisibleContent = renderer.style().visibility() == Visibility::Visible;
     }
 }
 
@@ -552,9 +552,6 @@ static bool canCreateStackingContext(const RenderLayer& layer)
 {
     auto& renderer = layer.renderer();
     return renderer.hasTransformRelatedProperty()
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        || renderer.hasSVGTransform()
-#endif
         || renderer.hasClipPath()
         || renderer.hasFilter()
         || renderer.hasMask()
@@ -3545,19 +3542,29 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
 void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& translationOffset)
 {
+    auto usesSVGSubtreeTransformRules = [](const RenderLayerModelObject& renderer) {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        return renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer() && !renderer.isSVGRoot();
+#else
+        UNUSED_PARAM(renderer);
+#endif
+        return false;
+    };
+
     // This involves subtracting out the position of the layer in our current coordinate space, but preserving
     // the accumulated error for sub-pixel layout.
+    // Note: The pixel-snapping logic is disabled for the whole SVG render tree, except the outermost <svg>.
     float deviceScaleFactor = renderer().document().deviceScaleFactor();
     LayoutSize offsetFromParent = offsetFromAncestor(paintingInfo.rootLayer);
     offsetFromParent += translationOffset;
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
     // Add the subpixel accumulation to the current layer's offset so that we can always snap the translateRight value to where the renderer() is supposed to be painting.
     LayoutSize offsetForThisLayer = offsetFromParent + paintingInfo.subpixelOffset;
-    FloatSize devicePixelSnappedOffsetForThisLayer = toFloatSize(roundPointToDevicePixels(toLayoutPoint(offsetForThisLayer), deviceScaleFactor));
+    FloatSize alignedOffsetForThisLayer = usesSVGSubtreeTransformRules(renderer()) ? offsetForThisLayer : toFloatSize(roundPointToDevicePixels(toLayoutPoint(offsetForThisLayer), deviceScaleFactor));
     // We handle accumulated subpixels through nested layers here. Since the context gets translated to device pixels,
     // all we need to do is add the delta to the accumulated pixels coming from ancestor layers.
     // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
-    transform.translateRight(devicePixelSnappedOffsetForThisLayer.width(), devicePixelSnappedOffsetForThisLayer.height());
+    transform.translateRight(alignedOffsetForThisLayer.width(), alignedOffsetForThisLayer.height());
     // Apply the transform.
     auto oldTransform = context.getCTM();
     auto affineTransform = transform.toAffineTransform();
@@ -3567,7 +3574,10 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
         paintingInfo.eventRegionContext->pushTransform(affineTransform);
 
     // Now do a paint with the root layer shifted to be us.
-    LayoutSize adjustedSubpixelOffset = offsetForThisLayer - LayoutSize(devicePixelSnappedOffsetForThisLayer);
+    LayoutSize adjustedSubpixelOffset;
+    if (!usesSVGSubtreeTransformRules(renderer()) && !renderer().isSVGRoot())
+        adjustedSubpixelOffset = offsetForThisLayer - LayoutSize(alignedOffsetForThisLayer);
+
     LayerPaintingInfo transformedPaintingInfo(paintingInfo);
     transformedPaintingInfo.rootLayer = this;
     transformedPaintingInfo.paintDirtyRect = LayoutRect(encloseRectToDevicePixels(valueOrDefault(transform.inverse()).mapRect(paintingInfo.paintDirtyRect), deviceScaleFactor));

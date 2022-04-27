@@ -61,12 +61,8 @@ void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();
 
-    bool hasSVGTransform = false;
     if (is<SVGGraphicsElement>(element()))
-        hasSVGTransform = !downcast<SVGGraphicsElement>(element()).animatedLocalTransform().isIdentity();
-
-    setHasTransformRelatedProperty(style().hasTransformRelatedProperty() || hasSVGTransform);
-    setHasSVGTransform(hasSVGTransform);
+        updateHasSVGTransformFlags(downcast<SVGGraphicsElement>(element()));
 }
 
 FloatRect RenderSVGModelObject::borderBoxRectInFragmentEquivalent(RenderFragmentContainer*, RenderBox::RenderBoxFragmentInfoFlags) const
@@ -141,7 +137,7 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelO
 
 void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append(snappedIntRect(LayoutRect(accumulatedOffset + layoutLocation(), layoutSize())));
+    rects.append(snappedIntRect(LayoutRect(accumulatedOffset + m_layoutRect.location(), m_layoutRect.size())));
 }
 
 void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const

@@ -1,3 +1,101 @@
+2022-04-27  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [LBSE] Fix origin of transformations in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=239717
+
+        Reviewed by Rob Buis.
+
+        Fix the majority of SVG transform issues in LBSE. webkit.org/b/237711 laid the groundwork for SVG
+        transforms in LBSE, however there are still issues:
+
+        - SVG transforms specified alone on SVG elements, w/o any additional style/perspective related property
+          such as transform-box / transform-origin / ... do not trigger layer creation, fix by adapting StyleAdjuster.
+
+        - Switching on/off transforms for a SVG element, was not tracking updates to both 'HasSVGTransform' and
+          'HasTransformRelatedProperty' flags correctly, fix that by introducing an 'updateHasSVGTransformFlags' helper.
+
+        - Modify SVGContainerLayout to avoid a dependency on the children transformations when computing container
+          boundaries. In the legacy engine, we always have to mark the whole ancestor chain as 'need to recompute boundaries'
+          and invoking a re-layout, to perform the recomputation. This change avoids the invalidation of the whole ancestor
+          chain, when an elements transform changes in a non-accelerated way (e.g. SVGTransformList manipulation, SMIL
+          <animateTransform> / <animate> / <set>). In CSS transformations do not affect layout, only hit-testing and painting.
+
+          -> SVG/CSS transforms applied on SVG elements is conceptually equivalent to CSS transformations on CSS boxes now.
+             Transformation changes no longer affect the 'internal geometry' (objectBoundingBoxWithoutTransformations()).
+             currentSVGLayoutLocation() / nominalSVGLayoutLocation() are computed using the 'internal geometry' and used
+             throughout layout.
+
+          This avoids most of the RenderLayer / RenderLayerBacking specific changes that were present in the downstream
+          LBSE implementation, while also solving an important design issue: no back-splash from children to parents.
+          Large, deep nested documents -- as seen in the wild -- will benefit the most, avoiding the frequent ancestor
+          walks to mark the containing block / parent hierachy for re-layout.
+
+        Covered by existing tests, no change in behaviour. (However testability for LBSE is ready soon!).
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::referenceBoxRect const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::canCreateStackingContext):
+        (WebCore::RenderLayer::paintLayerByApplyingTransform):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::rendererLocation const):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        (WebCore::RenderLayerModelObject::computeVisibleRectInSVGContainer const):
+        (WebCore::RenderLayerModelObject::updateHasSVGTransformFlags):
+        * rendering/RenderLayerModelObject.h:
+        (WebCore::RenderLayerModelObject::nominalSVGLayoutLocation const):
+        (WebCore::RenderLayerModelObject::currentSVGLayoutLocation const):
+        (WebCore::RenderLayerModelObject::setCurrentSVGLayoutLocation):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::objectBoundingBoxWithoutTransformations const):
+        * rendering/svg/RenderSVGBlock.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layoutChildren):
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::nodeAtPoint):
+        (WebCore::RenderSVGContainer::styleDidChange): Deleted.
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::updateFromStyle):
+        (WebCore::RenderSVGModelObject::absoluteRects const):
+        * rendering/svg/RenderSVGModelObject.h:
+        (WebCore::RenderSVGModelObject::currentSVGLayoutRect const):
+        (WebCore::RenderSVGModelObject::setCurrentSVGLayoutRect):
+        (WebCore::RenderSVGModelObject::frameRectEquivalent const):
+        (WebCore::RenderSVGModelObject::applyTopLeftLocationOffsetEquivalent const):
+        (WebCore::RenderSVGModelObject::layoutRect const): Deleted.
+        (WebCore::RenderSVGModelObject::setLayoutRect): Deleted.
+        (WebCore::RenderSVGModelObject::setLayoutLocation): Deleted.
+        (WebCore::RenderSVGModelObject::paintingLocation const): Deleted.
+        (WebCore::RenderSVGModelObject::layoutLocation const): Deleted.
+        (WebCore::RenderSVGModelObject::layoutLocationOffset const): Deleted.
+        (WebCore::RenderSVGModelObject::layoutSize const): Deleted.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        (WebCore::RenderSVGRoot::updateFromStyle):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::layout):
+        (WebCore::RenderSVGShape::paint):
+        (WebCore::RenderSVGShape::nodeAtPoint):
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::updateFromStyle):
+        * rendering/svg/SVGBoundingBoxComputation.cpp:
+        (WebCore::SVGBoundingBoxComputation::handleRootOrContainer const):
+        * rendering/svg/SVGBoundingBoxComputation.h:
+        (WebCore::SVGBoundingBoxComputation::computeVisualOverflowRect):
+        * rendering/svg/SVGContainerLayout.cpp:
+        (WebCore::SVGContainerLayout::positionChildrenRelativeToContainer):
+        (WebCore::SVGContainerLayout::verifyLayoutLocationConsistency):
+        (WebCore::layoutLocationFromRenderer): Deleted.
+        (WebCore::setLayoutLocationForRenderer): Deleted.
+        * rendering/svg/SVGContainerLayout.h:
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
         <link rel=preconnect> always sends credentials to different-origin, ignoring crossorigin=anonymous

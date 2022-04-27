@@ -54,6 +54,7 @@
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGElement.h"
+#include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
@@ -364,13 +365,29 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     else
         style.setUsedZIndex(style.specifiedZIndex());
 
+    // For SVG compatibility purposes we have to consider the 'animatedLocalTransform' besides the RenderStyle to query
+    // if an element has a transform. SVG transforms are not stored on the RenderStyle, and thus we need a special case here.
+    auto hasTransformRelatedProperty = [](const RenderStyle& style, const Element* element) {
+        if (style.hasTransformRelatedProperty())
+            return true;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (element && element->document().settings().layerBasedSVGEngineEnabled() && is<SVGGraphicsElement>(element))
+            return !downcast<SVGGraphicsElement>(*element).animatedLocalTransform().isIdentity();
+#else
+        UNUSED_PARAM(element);
+#endif
+
+        return false;
+    };
+
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
     // cases where objects that should be blended as a single unit end up with a non-transparent
     // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
     if (style.hasAutoUsedZIndex()) {
         if ((m_element && m_document.documentElement() == m_element)
             || style.hasOpacity()
-            || style.hasTransformRelatedProperty()
+            || hasTransformRelatedProperty(style, m_element)
             || style.hasMask()
             || style.clipPath()
             || style.boxReflect()

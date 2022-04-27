@@ -40,6 +40,7 @@ public:
     bool isObjectBoundingBoxValid() const { return m_objectBoundingBoxValid; }
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
+    FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
     FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
     FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
@@ -48,8 +49,6 @@ protected:
 
     ASCIILiteral renderName() const override { return "RenderSVGContainer"_s; }
     bool canHaveChildren() const final { return true; }
-
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void layout() override;
     virtual void layoutChildren();
@@ -62,6 +61,7 @@ protected:
 
     bool m_objectBoundingBoxValid { false };
     FloatRect m_objectBoundingBox;
+    FloatRect m_objectBoundingBoxWithoutTransformations;
     FloatRect m_strokeBoundingBox;
 
 private:

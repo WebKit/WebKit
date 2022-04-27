@@ -97,8 +97,10 @@ void RenderSVGTransformableContainer::updateFromStyle()
 {
     RenderSVGContainer::updateFromStyle();
 
-    if (associatedUseElement(graphicsElement()))
+    if (associatedUseElement(graphicsElement())) {
         setHasSVGTransform();
+        setHasTransformRelatedProperty();
+    }
 }
 
 void RenderSVGTransformableContainer::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const

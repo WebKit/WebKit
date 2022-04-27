@@ -151,7 +151,7 @@ void RenderSVGShape::layout()
         updateShapeFromElement();
 
         m_needsShapeUpdate = false;
-        setLayoutRect(enclosingLayoutRect(m_fillBoundingBox));
+        setCurrentSVGLayoutRect(enclosingLayoutRect(m_fillBoundingBox));
     }
 
     updateLayerTransform();
@@ -288,7 +288,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
     }
 
-    auto adjustedPaintOffset = paintOffset + layoutLocation();
+    auto adjustedPaintOffset = paintOffset + currentSVGLayoutLocation();
     if (paintInfo.phase == PaintPhase::Mask) {
         // FIXME: [LBSE] Upstream SVGRenderSupport changes
         // SVGRenderSupport::paintSVGMask(*this, paintInfo, adjustedPaintOffset);
@@ -308,7 +308,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
-    auto coordinateSystemOriginTranslation = adjustedPaintOffset - flooredLayoutPoint(objectBoundingBox().location());
+    auto coordinateSystemOriginTranslation = adjustedPaintOffset - nominalSVGLayoutLocation();
     paintInfo.context().translate(coordinateSystemOriginTranslation.width(), coordinateSystemOriginTranslation.height());
 
     if (style().svgStyle().shapeRendering() == ShapeRendering::CrispEdges)
@@ -345,11 +345,10 @@ bool RenderSVGShape::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     if (hitTestAction != HitTestForeground)
         return false;
 
-    auto adjustedLocation = accumulatedOffset + layoutLocation();
+    auto adjustedLocation = accumulatedOffset + currentSVGLayoutLocation();
 
     auto localPoint = locationInContainer.point();
-    auto boundingBoxTopLeftCorner = flooredLayoutPoint(objectBoundingBox().minXMinYCorner());
-    auto coordinateSystemOriginTranslation = boundingBoxTopLeftCorner - adjustedLocation;
+    auto coordinateSystemOriginTranslation = nominalSVGLayoutLocation() - adjustedLocation;
     localPoint.move(coordinateSystemOriginTranslation);
 
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))

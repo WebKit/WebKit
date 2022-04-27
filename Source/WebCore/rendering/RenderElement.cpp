@@ -2418,21 +2418,43 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
     if (!is<SVGElement>(element()))
         return { };
 
+    auto alignReferenceBox = [&](FloatRect referenceBox) {
+        // The CSS borderBoxRect() is defined to start at an origin of (0, 0).
+        // A possible shift of a CSS box (e.g. due to non-static position + top/left properties)
+        // does not effect the borderBoxRect() location. The location information
+        // is propagated upon paint time, e.g. via 'paintOffset' when calling RenderObject::paint(),
+        // or by altering the RenderLayer TransformationMatrix to include the 'offsetFromAncestor'
+        // right in the transformation matrix, when CSS transformations are present (see RenderLayer
+        // paintLayerByApplyingTransform() for details).
+        //
+        // To mimic the expectation for SVG, 'fill-box' must behave the same: if we'd include
+        // the 'referenceBox' location in the returned rect, we'd apply the (x, y) location
+        // information for the SVG renderer twice. We would shift the 'transform-origin' by (x, y)
+        // and at the same time alter the CTM in RenderLayer::paintLayerByApplyingTransform() by
+        // including a translation to the enclosing transformed ancestor ('offsetFromAncestor').
+        // Avoid that, and move by -nominalSVGLayoutLocation().
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (isSVGLayerAwareRenderer() && !isSVGRoot() && document().settings().layerBasedSVGEngineEnabled())
+            referenceBox.moveBy(-downcast<RenderLayerModelObject>(*this).nominalSVGLayoutLocation());
+#endif
+        return referenceBox;
+    };
+
     switch (boxType) {
     case CSSBoxType::BoxMissing:
     case CSSBoxType::ContentBox:
     case CSSBoxType::PaddingBox:
     case CSSBoxType::FillBox:
-        return objectBoundingBox();
+        return alignReferenceBox(objectBoundingBox());
     case CSSBoxType::BorderBox:
     case CSSBoxType::MarginBox:
     case CSSBoxType::StrokeBox:
-        return strokeBoundingBox();
+        return alignReferenceBox(strokeBoundingBox());
     case CSSBoxType::ViewBox:
         // FIXME: [LBSE] Upstream: Cache the immutable SVGLengthContext per SVGElement, to avoid the repeated RenderSVGRoot size queries in determineViewport().
         FloatSize viewportSize;
         SVGLengthContext(downcast<SVGElement>(element())).determineViewport(viewportSize);
-        return { { }, viewportSize };
+        return alignReferenceBox({ { }, viewportSize });
     }
 
     ASSERT_NOT_REACHED();

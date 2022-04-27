@@ -367,6 +367,19 @@ public:
     virtual FloatRect objectBoundingBox() const;
     virtual FloatRect strokeBoundingBox() const;
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // The objectBoundingBox of a SVG container is affected by the transformations applied on its children -- the container
+    // bounding box is a union of all child bounding boxes, mapped through their transformation matrices.
+    //
+    // This method ignores all transformations and computes the objectBoundingBox, without mapping through the child
+    // transformation matrices. The SVG render tree is constructed in such a way, that it can be mapped to CSS equivalents:
+    // The SVG render tree underneath the outermost <svg> behaves as a set of absolutely positioned, possibly nested, boxes.
+    // They are laid out in such a way that transformations do NOT affect layout, as in HTML/CSS world, but take affect during
+    // painting, hit-testing etc. This allows to minimize the amount of re-layouts when animating transformations in SVG
+    // (not using CSS Animations/Transitions / Web Animations, but e.g. SMIL <animateTransform>, JS, ...).
+    virtual FloatRect objectBoundingBoxWithoutTransformations() const { return objectBoundingBox(); }
+#endif
+
     // Returns the smallest rectangle enclosing all of the painted content
     // respecting clipping, masking, filters, opacity, stroke-width and markers
     virtual FloatRect repaintRectInLocalCoordinates() const;

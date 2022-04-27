@@ -40,7 +40,7 @@ public:
 
     void positionChildrenRelativeToContainer();
 
-    static void verifyLayoutLocationConsistency(const RenderElement&);
+    static void verifyLayoutLocationConsistency(const RenderLayerModelObject&);
     static bool transformToRootChanged(const RenderObject* ancestor);
 
 private:

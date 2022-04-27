@@ -120,41 +120,6 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
         ASSERT(elementsThatDidNotReceiveLayout.isEmpty());
 }
 
-static inline LayoutPoint layoutLocationFromRenderer(const RenderObject& renderer)
-{
-    if (is<RenderSVGModelObject>(renderer))
-        return downcast<RenderSVGModelObject>(renderer).layoutLocation();
-
-    if (is<RenderSVGBlock>(renderer)) // <foreignObject> / <text>
-        return downcast<RenderSVGBlock>(renderer).location();
-
-    if (is<RenderSVGInline>(renderer)) // <tspan> / <textPath>
-        return { };
-
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-static inline void setLayoutLocationForRenderer(RenderObject& renderer, const LayoutPoint& newLocation)
-{
-    if (is<RenderSVGModelObject>(renderer)) {
-        downcast<RenderSVGModelObject>(renderer).setLayoutLocation(newLocation);
-        return;
-    }
-
-    // <foreignObject> / <text>
-    if (is<RenderSVGBlock>(renderer)) {
-        downcast<RenderSVGBlock>(renderer).setLocation(newLocation);
-        return;
-    }
-
-    // <tspan> / <textPath>
-    if (is<RenderSVGInline>(renderer))
-        return;
-
-    ASSERT_NOT_REACHED();
-}
-
 void SVGContainerLayout::positionChildrenRelativeToContainer()
 {
     if (m_positionedChildren.isEmpty())
@@ -177,40 +142,36 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
     };
 
     // Arrange layout location for all child renderers relative to the container layout location.
-    auto parentLayoutLocation = flooredLayoutPoint(m_container.objectBoundingBox().minXMinYCorner());
-    for (RenderObject& child : m_positionedChildren) {
+    auto parentLayoutLocation = m_container.nominalSVGLayoutLocation();
+    for (RenderLayerModelObject& child : m_positionedChildren) {
         verifyPositionedChildRendererExpectation(child);
 
-        auto objectBoundingBoxChild = child.objectBoundingBox();
-        auto layoutLocation = flooredLayoutPoint(objectBoundingBoxChild.minXMinYCorner());
-        auto desiredLayoutLocation = toLayoutPoint(layoutLocation - parentLayoutLocation);
-        auto currentLayoutLocation = layoutLocationFromRenderer(child);
-        if (currentLayoutLocation == desiredLayoutLocation)
-            continue;
-        setLayoutLocationForRenderer(child, desiredLayoutLocation);
+        auto desiredLayoutLocation = toLayoutPoint(child.nominalSVGLayoutLocation() - parentLayoutLocation);
+        if (child.currentSVGLayoutLocation() != desiredLayoutLocation)
+            child.setCurrentSVGLayoutLocation(desiredLayoutLocation);
     }
 }
 
-void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderElement& renderer)
+void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderLayerModelObject& renderer)
 {
     if (renderer.isSVGLayerAwareRenderer() && !renderer.isSVGRoot()) {
-        auto currentLayoutLocation = layoutLocationFromRenderer(renderer);
+        auto currentLayoutLocation = renderer.currentSVGLayoutLocation();
 
         auto expectedLayoutLocation = currentLayoutLocation;
-        for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
+        for (auto& ancestor : ancestorsOfType<RenderLayerModelObject>(renderer)) {
             ASSERT(ancestor.isSVGLayerAwareRenderer());
             if (ancestor.isSVGRoot())
                 break;
-            expectedLayoutLocation.moveBy(layoutLocationFromRenderer(ancestor));
+            expectedLayoutLocation.moveBy(ancestor.currentSVGLayoutLocation());
         }
 
-        auto initialLayoutLocation = flooredLayoutPoint(renderer.objectBoundingBox().minXMinYCorner());
+        auto initialLayoutLocation = renderer.nominalSVGLayoutLocation();
         if (expectedLayoutLocation == initialLayoutLocation) {
             LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName().characters() << ")"
-                << " - verifyLayoutLocationConsistency() objectBoundingBox / layoutLocation are in sync.");
+                << " - verifyLayoutLocationConsistency() currentSVGLayoutLocation / nominalSVGLayoutLocation are in sync.");
         } else {
             LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName().characters() << ")"
-                << " - verifyLayoutLocationConsistency() objectBoundingBox / layoutLocation invariant violated -- out of sync due to partial layout?"
+                << " - verifyLayoutLocationConsistency() currentSVGLayoutLocation / nominalSVGLayoutLocation invariant violated -- out of sync due to partial layout?"
                 << " currentLayoutLocation=" << currentLayoutLocation
                 << "  (expectedLayoutLocation=" << expectedLayoutLocation
                 << " != initialLayoutLocation=" << initialLayoutLocation << ")"
@@ -224,7 +185,7 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderElement& re
         }
     }
 
-    for (auto& child : childrenOfType<RenderElement>(renderer)) {
+    for (auto& child : childrenOfType<RenderLayerModelObject>(renderer)) {
         if (child.isSVGLayerAwareRenderer())
             verifyLayoutLocationConsistency(child);
     }
