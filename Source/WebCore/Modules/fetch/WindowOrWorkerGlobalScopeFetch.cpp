@@ -55,8 +55,13 @@ static void doFetch(ScriptExecutionContext& scope, FetchRequest::Info&& input, F
         return;
     }
 
-    FetchResponse::fetch(scope, request.get(), [promise = WTFMove(promise), scope = Ref { scope }](auto&& result) mutable {
-        scope->eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise), result = WTFMove(result)]() mutable {
+    FetchResponse::fetch(scope, request.get(), [promise = WTFMove(promise), scope = Ref { scope }, userGestureToken = UserGestureIndicator::currentUserGesture()](auto&& result) mutable {
+        scope->eventLoop().queueTask(TaskSource::Networking, [promise = WTFMove(promise), userGestureToken = WTFMove(userGestureToken), result = WTFMove(result)]() mutable {
+            if (!userGestureToken || userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !userGestureToken->processingUserGesture()) {
+                promise.settle(WTFMove(result));
+                return;
+            }
+            UserGestureIndicator gestureIndicator(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::IsPropagatedFromFetch::Yes);
             promise.settle(WTFMove(result));
         });
     }, cachedResourceRequestInitiators().fetch);

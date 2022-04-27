@@ -2191,7 +2191,7 @@ webkit.org/b/231463 fast/css/accent-color/range.html [ ImageOnlyFailure ]
 
 webkit.org/b/229521 pointer-lock/lock-already-locked.html [ Pass Failure ]
 
-webkit.org/b/229588 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Pass Crash Failure Timeout ]
+[ Debug ] http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Slow ]
 
 webkit.org/b/228176 [ BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
 
