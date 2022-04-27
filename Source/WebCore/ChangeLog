@@ -1,3 +1,57 @@
+2022-04-24  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer] Track handling fixes
+        https://bugs.webkit.org/show_bug.cgi?id=239702
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        When the player is using playbin3 the audio/video/text tracks are associated to the
+        corresponding GstStream, itself part of a single GstStreamCollection. There is no need to
+        use a GRefPtr for GstStream in this case because those streams are not meant to be modified
+        and they remain valid as long as the parent collection is alive. So the player now keeps
+        track of the current stream collection and the private tracks handle GstStream pointers.
+
+        The stream collection handling was refactored, removing redundant logging, making use of
+        ScopeExit and removing the special case for text tracks creation.
+
+        This patch also changes the internal storage of tracks from HashMap<AtomString,RePtr<T>> to
+        HashMap<AtomString,Ref<T>>, bringing us a bit closer to the AVF implementation.
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer):
+        (WebCore::AudioTrackPrivateGStreamer::updateConfigurationFromTags):
+        (WebCore::AudioTrackPrivateGStreamer::updateConfigurationFromCaps):
+        (WebCore::AudioTrackPrivateGStreamer::kind const):
+        (WebCore::AudioTrackPrivateGStreamer::disconnect):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h:
+        (WebCore::InbandTextTrackPrivateGStreamer::create):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::updateEnabledVideoTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::updateEnabledAudioTrack):
+        (WebCore::MediaPlayerPrivateGStreamer::playbin3SendSelectStreamsIfAppropriate):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::handleStreamCollectionMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer):
+        (WebCore::TrackPrivateBaseGStreamer::disconnect):
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        (WebCore::TrackPrivateBaseGStreamer::stream const):
+        (WebCore::TrackPrivateBaseGStreamer::stream): Deleted.
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer):
+        (WebCore::VideoTrackPrivateGStreamer::updateConfigurationFromTags):
+        (WebCore::VideoTrackPrivateGStreamer::updateConfigurationFromCaps):
+        (WebCore::VideoTrackPrivateGStreamer::kind const):
+        (WebCore::VideoTrackPrivateGStreamer::disconnect):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+
 2022-04-27  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] unable to start playing audio when device is locked

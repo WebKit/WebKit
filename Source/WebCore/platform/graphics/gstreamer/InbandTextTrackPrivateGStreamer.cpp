@@ -43,15 +43,15 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
 {
 }
 
-InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstStream>&& stream)
+InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index, GstStream* stream)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
-    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, WTFMove(stream))
+    , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, stream)
 {
-    m_id = AtomString::fromLatin1(gst_stream_get_stream_id(m_stream.get()));
+    m_id = AtomString::fromLatin1(gst_stream_get_stream_id(m_stream));
     GST_INFO("Track %d got stream start for stream %s.", m_index, m_id.string().utf8().data());
 
-    GST_DEBUG("Stream %" GST_PTR_FORMAT, m_stream.get());
-    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
+    GST_DEBUG("Stream %" GST_PTR_FORMAT, m_stream);
+    auto caps = adoptGRef(gst_stream_get_caps(m_stream));
     const char* mediaType = capsMediaType(caps.get());
     m_kind = g_str_has_prefix(mediaType, "closedcaption/") ? Kind::Captions : Kind::Subtitles;
 }

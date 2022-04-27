@@ -43,9 +43,9 @@ public:
         return adoptRef(*new VideoTrackPrivateGStreamer(player, index, WTFMove(pad), shouldHandleStreamStartEvent));
     }
 
-    static Ref<VideoTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstStream>&& stream)
+    static Ref<VideoTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
     {
-        return adoptRef(*new VideoTrackPrivateGStreamer(player, index, WTFMove(stream)));
+        return adoptRef(*new VideoTrackPrivateGStreamer(player, index, stream));
     }
 
     Kind kind() const final;
@@ -67,7 +67,7 @@ protected:
 
 private:
     VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
-    VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstStream>&&);
+    VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GstStream*);
 
     WeakPtr<MediaPlayerPrivateGStreamer> m_player;
 };

@@ -40,22 +40,22 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
 {
 }
 
-VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstStream>&& stream)
-    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTFMove(stream))
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, stream)
     , m_player(player)
 {
     int kind;
-    auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
+    auto tags = adoptGRef(gst_stream_get_tags(m_stream));
 
     if (tags && gst_tag_list_get_int(tags.get(), "webkit-media-stream-kind", &kind) && kind == static_cast<int>(VideoTrackPrivate::Kind::Main)) {
-        auto streamFlags = gst_stream_get_stream_flags(m_stream.get());
-        gst_stream_set_stream_flags(m_stream.get(), static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
+        auto streamFlags = gst_stream_get_stream_flags(m_stream);
+        gst_stream_set_stream_flags(m_stream, static_cast<GstStreamFlags>(streamFlags | GST_STREAM_FLAG_SELECT));
     }
 
-    g_signal_connect_swapped(m_stream.get(), "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
+    g_signal_connect_swapped(m_stream, "notify::caps", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
         track->updateConfigurationFromCaps();
     }), this);
-    g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
+    g_signal_connect_swapped(m_stream, "notify::tags", G_CALLBACK(+[](VideoTrackPrivateGStreamer* track) {
         track->updateConfigurationFromTags();
     }), this);
 
@@ -65,7 +65,7 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivat
 
 void VideoTrackPrivateGStreamer::updateConfigurationFromTags()
 {
-    auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
+    auto tags = adoptGRef(gst_stream_get_tags(m_stream));
     unsigned bitrate;
     if (!tags || !gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
         return;
@@ -79,7 +79,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags()
 
 void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
 {
-    auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));
+    auto caps = adoptGRef(gst_stream_get_caps(m_stream));
     if (!caps || !gst_caps_is_fixed(caps.get()))
         return;
 
@@ -165,7 +165,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
 {
-    if (m_stream.get() && gst_stream_get_stream_flags(m_stream.get()) & GST_STREAM_FLAG_SELECT)
+    if (m_stream && gst_stream_get_stream_flags(m_stream) & GST_STREAM_FLAG_SELECT)
         return VideoTrackPrivate::Kind::Main;
 
     return VideoTrackPrivate::kind();
@@ -174,7 +174,7 @@ VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
 void VideoTrackPrivateGStreamer::disconnect()
 {
     if (m_stream)
-        g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+        g_signal_handlers_disconnect_matched(m_stream, G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
     m_player = nullptr;
     TrackPrivateBaseGStreamer::disconnect();
