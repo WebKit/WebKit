@@ -1,3 +1,22 @@
+2022-04-26  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM] Fix warning: cast from ‘char*’ to ‘JSC::Wasm::Type*’ increases required alignment of target type [-Wcast-align]
+        https://bugs.webkit.org/show_bug.cgi?id=239698
+
+        Reviewed by Darin Adler.
+        
+        There is a warning inside TypeDefinition on some platforms so this
+        patch fixes it.
+
+        * wasm/WasmTypeDefinition.h:
+        (JSC::Wasm::FunctionSignature::FunctionSignature):
+        (JSC::Wasm::FunctionSignature::storage):
+        (JSC::Wasm::FunctionSignature::storage const):
+        (JSC::Wasm::StructType::StructType):
+        (JSC::Wasm::StructType::storage):
+        (JSC::Wasm::StructType::storage const):
+        (JSC::Wasm::TypeDefinition::payload):
+
 2022-04-26  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting "[Xcode] Compute PGO profdata paths instead of searching for them at build time"

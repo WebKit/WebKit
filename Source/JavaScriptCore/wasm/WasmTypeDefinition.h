@@ -47,7 +47,7 @@ using StructFieldCount = uint32_t;
 
 class FunctionSignature {
 public:
-    FunctionSignature(const char* payload, FunctionArgCount argumentCount, FunctionArgCount returnCount)
+    FunctionSignature(Type* payload, FunctionArgCount argumentCount, FunctionArgCount returnCount)
         : m_payload(payload)
         , m_argCount(argumentCount)
         , m_retCount(returnCount)
@@ -75,13 +75,13 @@ public:
     Type& getReturnType(FunctionArgCount i) { ASSERT(i < returnCount()); return *storage(i); }
     Type& getArgumentType(FunctionArgCount i) { ASSERT(i < argumentCount()); return *storage(returnCount() + i); }
 
-    Type* storage(FunctionArgCount i) { return i + reinterpret_cast<Type*>(const_cast<char*>(m_payload)); }
-    Type* storage(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->storage(i); }
+    Type* storage(FunctionArgCount i) { return i + m_payload; }
+    const Type* storage(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->storage(i); }
 
 private:
     friend class TypeInformation;
 
-    const char* m_payload;
+    Type* m_payload;
     FunctionArgCount m_argCount;
     FunctionArgCount m_retCount;
 };
@@ -102,7 +102,7 @@ struct StructField {
 
 class StructType {
 public:
-    StructType(const char* payload, StructFieldCount fieldCount)
+    StructType(StructField* payload, StructFieldCount fieldCount)
         : m_payload(payload)
         , m_fieldCount(fieldCount)
     {
@@ -115,11 +115,11 @@ public:
     void dump(WTF::PrintStream& out) const;
 
     StructField& getField(StructFieldCount i) { ASSERT(i < fieldCount()); return *storage(i); }
-    StructField* storage(StructFieldCount i) { return i + reinterpret_cast<StructField*>(const_cast<char*>(m_payload)); }
-    StructField* storage(StructFieldCount i) const { return const_cast<StructType*>(this)->storage(i); }
+    StructField* storage(StructFieldCount i) { return i + m_payload; }
+    const StructField* storage(StructFieldCount i) const { return const_cast<StructType*>(this)->storage(i); }
 
 private:
-    const char* m_payload;
+    StructField* m_payload;
     StructFieldCount m_fieldCount;
 };
 
@@ -130,16 +130,18 @@ class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
     TypeDefinition(const TypeDefinition&) = delete;
 
     TypeDefinition(FunctionArgCount retCount, FunctionArgCount argCount)
-        : m_typeHeader { FunctionSignature { payload(), argCount, retCount } }
+        : m_typeHeader { FunctionSignature { static_cast<Type*>(payload()), argCount, retCount } }
     {
     }
 
     TypeDefinition(StructFieldCount fieldCount)
-        : m_typeHeader { StructType { payload(), fieldCount } }
+        : m_typeHeader { StructType { static_cast<StructField*>(payload()), fieldCount } }
     {
     }
 
-    char* payload() { return reinterpret_cast<char*>(this) + sizeof(TypeDefinition); }
+    // Payload starts past end of this object.
+    void* payload() { return this + 1; }
+
     static size_t allocatedFunctionSize(Checked<FunctionArgCount> retCount, Checked<FunctionArgCount> argCount) { return sizeof(TypeDefinition) + (retCount + argCount) * sizeof(Type); }
     static size_t allocatedStructSize(Checked<StructFieldCount> fieldCount) { return sizeof(TypeDefinition) + fieldCount * sizeof(StructField); }
 
