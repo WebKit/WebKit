@@ -110,7 +110,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
     {
         // Don't call `super` as we don't want `WI.ResourceTreeElement` / `WI.SourceCodeTreeElement` / etc. to modify our status element.
 
-        if (this.resource.hadLoadingError())
+        if (this.resource?.hadLoadingError())
             this.addClassName(WI.ResourceTreeElement.FailedStyleClassName);
         else
             this.removeClassName(WI.ResourceTreeElement.FailedStyleClassName);
