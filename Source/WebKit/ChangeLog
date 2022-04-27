@@ -1,3 +1,11 @@
+2022-04-26  Elliott Williams  <emw@apple.com>
+
+        Unreviewed, reverting "[Xcode] Compute PGO profdata paths instead of searching for them at build time"
+        https://bugs.webkit.org/show_bug.cgi?id=239681
+
+        * Configurations/BaseTarget.xcconfig:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Adjust what we consider to be private relayed
