@@ -1,5 +1,9 @@
 {
     "shape-outside": {
         "description": "Defines a shape around which adjacent inline content should wrap."
+    },
+    "-webkit-appearance": {
+        "description": "Changes the appearance of buttons and other controls to resemble native controls.",
+        "syntax": "none | button | caret | checkbox | default-button | inner-spin-button | listbox | listitem | media-play-button | media-slider | media-sliderthumb | media-volume-slider | media-volume-sliderthumb | menulist | menulist-button | meter | progress-bar | progress-bar-value | push-button | radio | searchfield | searchfield-cancel-button | searchfield-decoration | searchfield-results-button | searchfield-results-decoration | slider-horizontal | slider-vertical | sliderthumb-horizontal | sliderthumb-vertical | square-button | textarea | textfield | -apple-pay-button"
     }
 }

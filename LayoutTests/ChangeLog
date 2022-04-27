@@ -1,3 +1,14 @@
+2022-04-27  Ziran Sun  <zsun@igalia.com>
+
+        [css-ui] Remove some unimplemented -webkit-appearance keywords
+        https://bugs.webkit.org/show_bug.cgi?id=238930
+
+        Reviewed by Aditya Keerthi.
+
+        * imported/blink/editing/execCommand/outdent-collapse-table-crash.html:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
         Add testRunner API to clear memory cache

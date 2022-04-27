@@ -274,12 +274,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case MenulistButtonPart:
         return adjustMenuListButtonStyle(style, element);
     case MediaPlayButtonPart:
-    case MediaCurrentTimePart:
-    case MediaTimeRemainingPart:
-    case MediaEnterFullscreenButtonPart:
-    case MediaExitFullscreenButtonPart:
-    case MediaMuteButtonPart:
-    case MediaVolumeSliderContainerPart:
         return adjustMediaControlStyle(style, element);
     case MediaSliderPart:
     case MediaVolumeSliderPart:
@@ -533,33 +527,14 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
         return paintSliderThumb(box, paintInfo, integralSnappedRect);
-    case MediaEnterFullscreenButtonPart:
-    case MediaExitFullscreenButtonPart:
-        return paintMediaFullscreenButton(box, paintInfo, integralSnappedRect);
     case MediaPlayButtonPart:
         return paintMediaPlayButton(box, paintInfo, integralSnappedRect);
-    case MediaOverlayPlayButtonPart:
-        return paintMediaOverlayPlayButton(box, paintInfo, integralSnappedRect);
-    case MediaMuteButtonPart:
-        return paintMediaMuteButton(box, paintInfo, integralSnappedRect);
-    case MediaSeekBackButtonPart:
-        return paintMediaSeekBackButton(box, paintInfo, integralSnappedRect);
-    case MediaSeekForwardButtonPart:
-        return paintMediaSeekForwardButton(box, paintInfo, integralSnappedRect);
-    case MediaRewindButtonPart:
-        return paintMediaRewindButton(box, paintInfo, integralSnappedRect);
-    case MediaReturnToRealtimeButtonPart:
-        return paintMediaReturnToRealtimeButton(box, paintInfo, integralSnappedRect);
-    case MediaToggleClosedCaptionsButtonPart:
-        return paintMediaToggleClosedCaptionsButton(box, paintInfo, integralSnappedRect);
     case MediaSliderPart:
         return paintMediaSliderTrack(box, paintInfo, integralSnappedRect);
     case MediaSliderThumbPart:
         return paintMediaSliderThumb(box, paintInfo, integralSnappedRect);
     case MediaVolumeSliderMuteButtonPart:
-        return paintMediaMuteButton(box, paintInfo, integralSnappedRect);
-    case MediaVolumeSliderContainerPart:
-        return paintMediaVolumeSliderContainer(box, paintInfo, integralSnappedRect);
+        return paintMediaMuteButton(box, paintInfo, integralSnappedRect);    
     case MediaVolumeSliderPart:
         return paintMediaVolumeSliderTrack(box, paintInfo, integralSnappedRect);
     case MediaVolumeSliderThumbPart:
@@ -568,12 +543,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
         return paintMediaFullScreenVolumeSliderTrack(box, paintInfo, integralSnappedRect);
     case MediaFullScreenVolumeSliderThumbPart:
         return paintMediaFullScreenVolumeSliderThumb(box, paintInfo, integralSnappedRect);
-    case MediaTimeRemainingPart:
-        return paintMediaTimeRemaining(box, paintInfo, integralSnappedRect);
-    case MediaCurrentTimePart:
-        return paintMediaCurrentTime(box, paintInfo, integralSnappedRect);
-    case MediaControlsBackgroundPart:
-        return paintMediaControlsBackground(box, paintInfo, integralSnappedRect);
     case MenulistButtonPart:
     case TextFieldPart:
     case TextAreaPart:

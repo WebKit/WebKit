@@ -466,9 +466,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case ButtonPart:
         m_value.valueID = CSSValueButton;
         break;
-    case ButtonBevelPart:
-        m_value.valueID = CSSValueButtonBevel;
-        break;
     case DefaultButtonPart:
         m_value.valueID = CSSValueDefaultButton;
         break;
@@ -481,44 +478,14 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
     case ListItemPart:
         m_value.valueID = CSSValueListitem;
         break;
-    case MediaEnterFullscreenButtonPart:
-        m_value.valueID = CSSValueMediaEnterFullscreenButton;
-        break;
-    case MediaExitFullscreenButtonPart:
-        m_value.valueID = CSSValueMediaExitFullscreenButton;
-        break;
     case MediaPlayButtonPart:
         m_value.valueID = CSSValueMediaPlayButton;
-        break;
-    case MediaOverlayPlayButtonPart:
-        m_value.valueID = CSSValueMediaOverlayPlayButton;
-        break;
-    case MediaMuteButtonPart:
-        m_value.valueID = CSSValueMediaMuteButton;
-        break;
-    case MediaSeekBackButtonPart:
-        m_value.valueID = CSSValueMediaSeekBackButton;
-        break;
-    case MediaSeekForwardButtonPart:
-        m_value.valueID = CSSValueMediaSeekForwardButton;
-        break;
-    case MediaRewindButtonPart:
-        m_value.valueID = CSSValueMediaRewindButton;
-        break;
-    case MediaReturnToRealtimeButtonPart:
-        m_value.valueID = CSSValueMediaReturnToRealtimeButton;
-        break;
-    case MediaToggleClosedCaptionsButtonPart:
-        m_value.valueID = CSSValueMediaToggleClosedCaptionsButton;
         break;
     case MediaSliderPart:
         m_value.valueID = CSSValueMediaSlider;
         break;
     case MediaSliderThumbPart:
         m_value.valueID = CSSValueMediaSliderthumb;
-        break;
-    case MediaVolumeSliderContainerPart:
-        m_value.valueID = CSSValueMediaVolumeSliderContainer;
         break;
     case MediaVolumeSliderPart:
         m_value.valueID = CSSValueMediaVolumeSlider;
@@ -528,24 +495,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         break;
     case MediaVolumeSliderThumbPart:
         m_value.valueID = CSSValueMediaVolumeSliderthumb;
-        break;
-    case MediaControlsBackgroundPart:
-        m_value.valueID = CSSValueMediaControlsBackground;
-        break;
-    case MediaControlsFullscreenBackgroundPart:
-        m_value.valueID = CSSValueMediaControlsFullscreenBackground;
-        break;
+        break;    
     case MediaFullScreenVolumeSliderPart:
         m_value.valueID = CSSValueMediaFullscreenVolumeSlider;
         break;
     case MediaFullScreenVolumeSliderThumbPart:
         m_value.valueID = CSSValueMediaFullscreenVolumeSliderThumb;
-        break;
-    case MediaCurrentTimePart:
-        m_value.valueID = CSSValueMediaCurrentTimeDisplay;
-        break;
-    case MediaTimeRemainingPart:
-        m_value.valueID = CSSValueMediaTimeRemainingDisplay;
         break;
     case MediaControlsLightBarBackgroundPart:
         m_value.valueID = CSSValueMediaControlsLightBarBackground;
@@ -558,12 +513,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         break;
     case MenulistButtonPart:
         m_value.valueID = CSSValueMenulistButton;
-        break;
-    case MenulistTextPart:
-        m_value.valueID = CSSValueMenulistText;
-        break;
-    case MenulistTextFieldPart:
-        m_value.valueID = CSSValueMenulistTextfield;
         break;
     case MeterPart:
         m_value.valueID = CSSValueMeter;

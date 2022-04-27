@@ -1,3 +1,56 @@
+2022-04-27  Ziran Sun  <zsun@igalia.com>
+
+        [css-ui] Remove some unimplemented -webkit-appearance keywords
+        https://bugs.webkit.org/show_bug.cgi?id=238930
+
+        Reviewed by Aditya Keerthi.
+
+        Remove the following unimplmented --webkit-appearance keyworkds:
+        button-bevel
+        media-controls-background
+        media-controls-fullscreen-background
+        media-current-time-display
+        media-enter-fullscreen-button
+        media-exit-fullscreen-button
+        media-mute-button
+        media-overlay-play-button
+        media-return-to-realtime-button
+        media-rewind-button
+        media-seek-back-button
+        media-seek-forward-button
+        media-time-remaining-display
+        media-toggle-closed-captions-button
+        media-volume-slider-container
+        menulist-textfield
+        menulist-text
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * platform/ThemeTypes.cpp:
+        (WebCore::operator<<):
+        * platform/ThemeTypes.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintMediaPlayButton):
+        (WebCore::RenderTheme::paintMediaMuteButton):
+        (WebCore::RenderTheme::paintMediaSliderThumb):
+        (WebCore::RenderTheme::paintMediaVolumeSliderThumb):
+        (WebCore::RenderTheme::paintMediaFullscreenButton): Deleted.
+        (WebCore::RenderTheme::paintMediaOverlayPlayButton): Deleted.
+        (WebCore::RenderTheme::paintMediaSeekBackButton): Deleted.
+        (WebCore::RenderTheme::paintMediaSeekForwardButton): Deleted.
+        (WebCore::RenderTheme::paintMediaVolumeSliderContainer): Deleted.
+        (WebCore::RenderTheme::paintMediaRewindButton): Deleted.
+        (WebCore::RenderTheme::paintMediaReturnToRealtimeButton): Deleted.
+        (WebCore::RenderTheme::paintMediaToggleClosedCaptionsButton): Deleted.
+        (WebCore::RenderTheme::paintMediaControlsBackground): Deleted.
+        (WebCore::RenderTheme::paintMediaCurrentTime): Deleted.
+        (WebCore::RenderTheme::paintMediaTimeRemaining): Deleted.
+
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
         service worker update should refresh imported scripts in addition to the main script
