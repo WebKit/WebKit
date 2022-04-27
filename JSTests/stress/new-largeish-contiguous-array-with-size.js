@@ -1,6 +1,5 @@
 // We only need one run of this with any GC or JIT strategy. This test is not particularly fast.
 // Unfortunately, it needs to run for a while to test the thing it's testing.
-//@ skip if $architecture == "mips"
 //@ runWithRAMSize(10000000)
 //@ requireOptions("-e", "let leakFactor=3") if $architecture == "mips"
 //@ slow!
