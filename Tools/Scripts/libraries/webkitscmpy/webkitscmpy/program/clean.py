@@ -41,15 +41,24 @@ class Clean(Command):
             type=str, default=None,
             help='String representation(s) of a commit or branch to be cleaned',
         )
+        parser.add_argument(
+            '--remote', dest='remote', type=str, default=None,
+            help='Specify remote to search for pull request from.',
+        )
 
     @classmethod
-    def cleanup(cls, repository, argument):
+    def cleanup(cls, repository, argument, remote_target=None):
         if not repository.is_git:
             sys.stderr('Can only cleanup branches on git repositories\n')
             return 1
 
-        rmt = repository.remote()
-        target = 'fork' if isinstance(rmt, remote.GitHub) else 'origin'
+        rmt = repository.remote(name=remote_target)
+        if isinstance(rmt, remote.GitHub) and remote_target in (None, 'origin'):
+            target = 'fork'
+        elif isinstance(rmt, remote.GitHub):
+            target = '{}-fork'.format(remote_target)
+        else:
+            target = 'origin'
 
         match = cls.PR_RE.match(argument)
         if match:
@@ -103,5 +112,5 @@ class Clean(Command):
 
         result = 0
         for argument in args.arguments:
-            result += cls.cleanup(repository, argument)
+            result += cls.cleanup(repository, argument, remote_target=args.remote)
         return result

@@ -1,5 +1,20 @@
 2022-04-27  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Cleanup PRs on alternate remotes
+        https://bugs.webkit.org/show_bug.cgi?id=239814
+        <rdar://problem/92410887>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/clean.py:
+        (Clean.parser): Add --remote argument.
+        (Clean.cleanup): Allow caller to specify remote.
+        (Clean.main): Pass remote to cleanup.
+
+2022-04-27  Jonathan Bedard  <jbedard@apple.com>
+
         [ews-build.webkit.org] Support alternative remotes (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=239617
         <rdar://problem/92115230>
