@@ -1,3 +1,15 @@
+2022-04-27  Tim Nguyen  <ntim@apple.com>
+
+        Make -webkit-transform-style an alias of transform-style
+        https://bugs.webkit.org/show_bug.cgi?id=239808
+
+        Reviewed by NOBODY (OOPS!).
+
+        Fixes cascade issues when applying both -webkit-transform-style and transform-style (see bug 239579), and removes
+        unnecessary code as well given the FIXME was never addressed.
+
+        * web-platform-tests/css/css-cascade/all-prop-revert-layer-expected.txt:
+
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
         service worker update should refresh imported scripts in addition to the main script

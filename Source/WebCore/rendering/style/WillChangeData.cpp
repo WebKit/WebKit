@@ -95,7 +95,6 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
     case CSSPropertyTranslate:
     case CSSPropertyTransform:
     case CSSPropertyTransformStyle:
-    case CSSPropertyWebkitTransformStyle:
     case CSSPropertyClipPath:
     case CSSPropertyMask:
     case CSSPropertyWebkitMask:
