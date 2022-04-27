@@ -3923,7 +3923,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return list;
         }
         case CSSPropertyTransformStyle:
-        case CSSPropertyWebkitTransformStyle:
             switch (style.transformStyle3D()) {
             case TransformStyle3D::Flat:
                 return cssValuePool.createIdentifierValue(CSSValueFlat);

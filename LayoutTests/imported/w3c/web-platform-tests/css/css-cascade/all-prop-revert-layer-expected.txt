@@ -310,7 +310,7 @@ PASS transform-box
 FAIL transform-origin-x assert_not_equals: Should have the initial value. got disallowed value ""
 FAIL transform-origin-y assert_not_equals: Should have the initial value. got disallowed value ""
 FAIL transform-origin-z assert_not_equals: Should have the initial value. got disallowed value ""
-FAIL transform-style assert_not_equals: Should get a different computed value. got disallowed value "flat"
+PASS transform-style
 PASS transition-delay
 PASS transition-duration
 PASS transition-property

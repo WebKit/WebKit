@@ -373,7 +373,6 @@ PASS -webkit-text-stroke-color
 PASS -webkit-text-stroke-width
 PASS -webkit-text-zoom
 PASS -webkit-touch-callout
-PASS -webkit-transform-style
 PASS -webkit-user-drag
 PASS -webkit-user-modify
 
