@@ -48,6 +48,10 @@ struct DateTimeChooserParameters;
 
 // A super class of date, datetime, datetime-local, month, time, and week types.
 class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElement::EditControlOwner {
+public:
+    bool typeMismatchFor(const String&) const final;
+    bool valueMissing(const String&) const final;
+
 protected:
     enum class DateTimeFormatValidationResults : uint8_t {
         HasYear = 1 << 0,
@@ -69,14 +73,13 @@ protected:
     ~BaseDateAndTimeInputType();
 
     Decimal parseToNumber(const String&, const Decimal&) const override;
-    String serialize(const Decimal&) const override;
+    String serialize(const Decimal&) const final;
     String serializeWithComponents(const DateComponents&) const;
 
     bool shouldHaveSecondField(const DateComponents&) const;
     bool shouldHaveMillisecondField(const DateComponents&) const;
-    bool typeMismatchFor(const String&) const final;
+
     bool typeMismatch() const final;
-    bool valueMissing(const String&) const final;
 
 private:
     class DateTimeFormatValidator final : public DateTimeFormat::TokenHandler {
@@ -123,11 +126,11 @@ private:
     void elementDidBlur() final;
     void detach() final;
 
-    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
-    void handleKeypressEvent(KeyboardEvent&) override;
-    void handleKeyupEvent(KeyboardEvent&) override;
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
+    void handleKeypressEvent(KeyboardEvent&) final;
+    void handleKeyupEvent(KeyboardEvent&) final;
     void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
-    bool accessKeyAction(bool sendMouseEvents) override;
+    bool accessKeyAction(bool sendMouseEvents) final;
 
     // DateTimeEditElement::EditControlOwner functions:
     void didBlurFromControl() final;

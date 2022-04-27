@@ -49,6 +49,7 @@ public:
     }
 
     virtual ~ColorInputType();
+    bool typeMismatchFor(const String&) const final;
 
 private:
     void didChooseColor(const Color&) final;
@@ -71,7 +72,6 @@ private:
     void detach() final;
     void elementDidBlur() final;
     bool shouldRespectListAttribute() final;
-    bool typeMismatchFor(const String&) const final;
     bool shouldResetOnDocumentActivation() final;
     Color valueAsColor() const final;
     void selectColor(StringView) final;
@@ -84,5 +84,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(ColorInputType, Type::Color)
 
 #endif // ENABLE(INPUT_TYPE_COLOR)

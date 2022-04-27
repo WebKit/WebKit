@@ -41,12 +41,12 @@ class RangeInputType final : public InputType {
     template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
     explicit RangeInputType(HTMLInputElement&);
+    bool typeMismatchFor(const String&) const final;
 
 private:
     const AtomString& formControlType() const final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
-    bool typeMismatchFor(const String&) const final;
     bool supportsRequired() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     void handleMouseDownEvent(MouseEvent&) final;
@@ -87,3 +87,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(RangeInputType, Type::Range)

@@ -169,6 +169,81 @@ bool InputType::themeSupportsDataListUI(InputType* type)
     return RenderTheme::singleton().supportsDataListUI(type->formControlType());
 }
 
+template<typename T> static bool validateInputType(const T& inputType, const String& value)
+{
+    ASSERT(inputType.canSetStringValue());
+    return !inputType.typeMismatchFor(value)
+        && !inputType.stepMismatch(value)
+        && !inputType.rangeUnderflow(value)
+        && !inputType.rangeOverflow(value)
+        && !inputType.patternMismatch(value)
+        && !inputType.valueMissing(value);
+}
+
+bool InputType::isValidValue(const String& value) const
+{
+    switch (m_type) {
+    case Type::Button:
+        return validateInputType(downcast<ButtonInputType>(*this), value);
+    case Type::Checkbox:
+        return validateInputType(downcast<CheckboxInputType>(*this), value);
+#if ENABLE(INPUT_TYPE_COLOR)
+    case Type::Color:
+        return validateInputType(downcast<ColorInputType>(*this), value);
+#endif
+#if ENABLE(INPUT_TYPE_DATE)
+    case Type::Date:
+        return validateInputType(downcast<DateInputType>(*this), value);
+#endif
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+    case Type::DateTimeLocal:
+        return validateInputType(downcast<DateTimeLocalInputType>(*this), value);
+#endif
+    case Type::Email:
+        return validateInputType(downcast<EmailInputType>(*this), value);
+    case Type::File:
+        return validateInputType(downcast<FileInputType>(*this), value);
+    case Type::Hidden:
+        return validateInputType(downcast<HiddenInputType>(*this), value);
+    case Type::Image:
+        return validateInputType(downcast<ImageInputType>(*this), value);
+#if ENABLE(INPUT_TYPE_MONTH)
+    case Type::Month:
+        return validateInputType(downcast<MonthInputType>(*this), value);
+#endif
+    case Type::Number:
+        return validateInputType(downcast<NumberInputType>(*this), value);
+    case Type::Password:
+        return validateInputType(downcast<PasswordInputType>(*this), value);
+    case Type::Radio:
+        return validateInputType(downcast<RadioInputType>(*this), value);
+    case Type::Range:
+        return validateInputType(downcast<RangeInputType>(*this), value);
+    case Type::Reset:
+        return validateInputType(downcast<ResetInputType>(*this), value);
+    case Type::Search:
+        return validateInputType(downcast<SearchInputType>(*this), value);
+    case Type::Submit:
+        return validateInputType(downcast<SubmitInputType>(*this), value);
+    case Type::Telephone:
+        return validateInputType(downcast<TelephoneInputType>(*this), value);
+#if ENABLE(INPUT_TYPE_TIME)
+    case Type::Time:
+        return validateInputType(downcast<TimeInputType>(*this), value);
+#endif
+    case Type::URL:
+        return validateInputType(downcast<URLInputType>(*this), value);
+#if ENABLE(INPUT_TYPE_WEEK)
+    case Type::Week:
+        return validateInputType(downcast<WeekInputType>(*this), value);
+#endif
+    case Type::Text:
+        return validateInputType(downcast<TextInputType>(*this), value);
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool InputType::shouldSaveAndRestoreFormControlState() const
 {
     return true;

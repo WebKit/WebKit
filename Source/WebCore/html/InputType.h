@@ -164,6 +164,8 @@ public:
 
     virtual const AtomString& formControlType() const = 0;
 
+    bool isValidValue(const String&) const;
+
     // Type query functions.
 
     // Any time we are using one of these functions it's best to refactor
@@ -201,6 +203,8 @@ public:
     bool isSteppable() const { return steppableTypes.contains(m_type); }
     bool supportsValidation() const { return !nonValidatingTypes.contains(m_type); }
     bool canHaveTypeSpecificValue() const { return isFileUpload(); }
+
+    Type type() const { return m_type; }
 
     bool isInteractiveContent() const;
     bool supportLabels() const;
@@ -433,7 +437,7 @@ ALWAYS_INLINE bool isInvalidInputType(const InputType& baseInputType, const Stri
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(ToValueTypeName, predicate) \
+#define SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(ToValueTypeName, TypeEnumValue) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-static bool isType(const WebCore::InputType& input) { return input.predicate; } \
+static bool isType(const WebCore::InputType& input) { return input.type() == WebCore::InputType::TypeEnumValue; } \
 SPECIALIZE_TYPE_TRAITS_END()

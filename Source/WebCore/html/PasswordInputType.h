@@ -37,16 +37,21 @@ namespace WebCore {
 class PasswordInputType final : public BaseTextInputType {
     template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit PasswordInputType(HTMLInputElement& element) : BaseTextInputType(Type::Password, element) { }
+    explicit PasswordInputType(HTMLInputElement& element)
+        : BaseTextInputType(Type::Password, element)
+    {
+    }
 
 private:
-    const AtomString& formControlType() const override;
-    bool shouldSaveAndRestoreFormControlState() const override;
-    FormControlState saveFormControlState() const override;
-    void restoreFormControlState(const FormControlState&) override;
-    bool shouldUseInputMethod() const override;
-    bool shouldResetOnDocumentActivation() override;
-    bool shouldRespectListAttribute() override;
+    const AtomString& formControlType() const final;
+    bool shouldSaveAndRestoreFormControlState() const final;
+    FormControlState saveFormControlState() const final;
+    void restoreFormControlState(const FormControlState&) final;
+    bool shouldUseInputMethod() const final;
+    bool shouldResetOnDocumentActivation() final;
+    bool shouldRespectListAttribute() final;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(PasswordInputType, Type::Password)
