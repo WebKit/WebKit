@@ -345,9 +345,9 @@ void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler
         m_registrationStore->flushChanges(WTFMove(completionHandler));
 }
 
-void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const WorkerFetchResult& result)
+void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, WorkerFetchResult&& result)
 {
-    m_server.scriptFetchFinished(jobDataIdentifier, registrationKey, result);
+    m_server.scriptFetchFinished(jobDataIdentifier, registrationKey, WTFMove(result));
 }
 
 void SWServer::Connection::didResolveRegistrationPromise(const ServiceWorkerRegistrationKey& key)
@@ -507,6 +507,27 @@ URL static inline originURL(const SecurityOrigin& origin)
     return url;
 }
 
+ResourceRequest SWServer::createScriptRequest(const URL& url, const ServiceWorkerJobData& jobData, SWServerRegistration& registration)
+{
+    ResourceRequest request { url };
+
+    auto topOrigin = jobData.topOrigin.securityOrigin();
+    auto origin = SecurityOrigin::create(jobData.scriptURL);
+
+    request.setDomainForCachePartition(jobData.domainForCachePartition);
+    request.setAllowCookies(true);
+    request.setFirstPartyForCookies(originURL(topOrigin));
+
+    request.setHTTPHeaderField(HTTPHeaderName::Origin, origin->toString());
+    request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
+    request.setHTTPReferrer(originURL(origin).string());
+    request.setHTTPUserAgent(serviceWorkerClientUserAgent(ClientOrigin { jobData.topOrigin, SecurityOrigin::create(jobData.scriptURL)->data() }));
+    request.setPriority(ResourceLoadPriority::Low);
+    request.setIsAppInitiated(registration.isAppInitiated());
+
+    return request;
+}
+
 void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerRegistration& registration)
 {
     LOG(ServiceWorker, "Server issuing startScriptFetch for current job %s in client", jobData.identifier().loggingString().utf8().data());
@@ -526,32 +547,42 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerReg
     if (jobData.connectionIdentifier() == Process::identifier()) {
         ASSERT(jobData.type == ServiceWorkerJobType::Update);
         // This is a soft-update job, create directly a network load to fetch the script.
-        ResourceRequest request { jobData.scriptURL };
-
-        auto topOrigin = jobData.topOrigin.securityOrigin();
-        auto origin = SecurityOrigin::create(jobData.scriptURL);
-
-        request.setDomainForCachePartition(jobData.domainForCachePartition);
-        request.setAllowCookies(true);
-        request.setFirstPartyForCookies(originURL(topOrigin));
-
-        request.setHTTPHeaderField(HTTPHeaderName::Origin, origin->toString());
-        request.setHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
-        request.setHTTPReferrer(originURL(origin).string());
-        request.setHTTPUserAgent(serviceWorkerClientUserAgent(ClientOrigin { jobData.topOrigin, SecurityOrigin::create(jobData.scriptURL)->data() }));
-        request.setPriority(ResourceLoadPriority::Low);
-        request.setIsAppInitiated(registration.isAppInitiated());
-
-        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](auto& result) {
+        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, createScriptRequest(jobData.scriptURL, jobData, registration), [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](auto&& result) {
             if (weakThis)
-                weakThis->scriptFetchFinished(jobDataIdentifier, registrationKey, result);
+                weakThis->scriptFetchFinished(jobDataIdentifier, registrationKey, WTFMove(result));
         });
         return;
     }
     ASSERT_WITH_MESSAGE(connection, "If the connection was lost, this job should have been cancelled");
 }
 
-void SWServer::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const WorkerFetchResult& result)
+class RefreshImportedScriptsHandler : public RefCounted<RefreshImportedScriptsHandler> {
+public:
+    using Callback = CompletionHandler<void(Vector<std::pair<URL, ScriptBuffer>>&&)>;
+    static Ref<RefreshImportedScriptsHandler> create(size_t expectedItems, Callback&& callback) { return adoptRef(*new RefreshImportedScriptsHandler(expectedItems, WTFMove(callback))); }
+
+    void add(const URL& url, WorkerFetchResult&& result)
+    {
+        if (result.error.isNull())
+            m_scripts.append(std::make_pair(url, WTFMove(result.script)));
+
+        if (!--m_remainingItems)
+            m_callback(std::exchange(m_scripts, { }));
+    }
+
+private:
+    RefreshImportedScriptsHandler(size_t expectedItems, Callback&& callback)
+        : m_remainingItems(expectedItems)
+        , m_callback(WTFMove(callback))
+    {
+    }
+
+    size_t m_remainingItems;
+    Callback m_callback;
+    Vector<std::pair<URL, ScriptBuffer>> m_scripts;
+};
+
+void SWServer::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, WorkerFetchResult&& result)
 {
     LOG(ServiceWorker, "Server handling scriptFetchFinished for current job %s in client", jobDataIdentifier.loggingString().utf8().data());
 
@@ -561,7 +592,39 @@ void SWServer::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobData
     if (!jobQueue)
         return;
 
-    jobQueue->scriptFetchFinished(jobDataIdentifier, result);
+    jobQueue->scriptFetchFinished(jobDataIdentifier, WTFMove(result));
+}
+
+void SWServer::refreshImportedScripts(const ServiceWorkerJobData& jobData, SWServerRegistration& registration, const Vector<URL>& urls)
+{
+    RefreshImportedScriptsHandler::Callback callback = [weakThis = WeakPtr { *this }, jobDataIdentifier = jobData.identifier(), registrationKey = jobData.registrationKey()](auto&& scripts) {
+        if (weakThis)
+            weakThis->refreshImportedScriptsFinished(jobDataIdentifier, registrationKey, scripts);
+    };
+    bool shouldRefreshCache = registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || (registration.getNewestWorker() && registration.isStale());
+
+    auto* connection = m_connections.get(jobData.connectionIdentifier());
+    if (connection) {
+        connection->refreshImportedScripts(jobData.identifier().jobIdentifier, shouldRefreshCache ? FetchOptions::Cache::NoCache : FetchOptions::Cache::Default, urls, WTFMove(callback));
+        return;
+    }
+
+    ASSERT(jobData.connectionIdentifier() == Process::identifier());
+    auto handler = RefreshImportedScriptsHandler::create(urls.size(), WTFMove(callback));
+    for (auto& url : urls) {
+        m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, createScriptRequest(url, jobData, registration), [handler, url, size = urls.size()](auto&& result) {
+            handler->add(url, WTFMove(result));
+        });
+    }
+}
+
+void SWServer::refreshImportedScriptsFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const Vector<std::pair<URL, ScriptBuffer>>& scripts)
+{
+    auto jobQueue = m_jobQueues.get(registrationKey);
+    if (!jobQueue)
+        return;
+
+    jobQueue->importedScriptsFetchFinished(jobDataIdentifier, scripts);
 }
 
 void SWServer::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, SWServerWorker& worker, const String& message)

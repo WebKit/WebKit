@@ -69,7 +69,7 @@ static bool doCertificatesMatch(const CertificateInfo& first, const CertificateI
 #endif
 }
 
-void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const WorkerFetchResult& result)
+void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, WorkerFetchResult&& result)
 {
     if (!isCurrentlyProcessingJob(jobDataIdentifier))
         return;
@@ -101,20 +101,52 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerJobDataIdentifier&
     // flag set, and script's source text is a byte-for-byte match with newestWorker's script resource's source
     // text, then:
     if (newestWorker && equalIgnoringFragmentIdentifier(newestWorker->scriptURL(), job.scriptURL) && newestWorker->type() == job.workerType && result.script == newestWorker->script() && doCertificatesMatch(result.certificateInfo, newestWorker->certificateInfo())) {
-        RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::scriptFetchFinished, script and certificate are matching for registrationID=%llu", this, registration->identifier().toUInt64());
+
+        auto scriptURLs = newestWorker->importedScriptURLs();
+        if (!scriptURLs.isEmpty()) {
+            m_workerFetchResult = WTFMove(result);
+            m_server.refreshImportedScripts(job, *registration, scriptURLs);
+            return;
+        }
+
         // FIXME: for non classic scripts, check the script’s module record's [[ECMAScriptCode]].
 
-        // Invoke Resolve Job Promise with job and registration.
-        m_server.resolveRegistrationJob(job, registration->data(), ShouldNotifyWhenResolved::No);
-
-        // Invoke Finish Job with job and abort these steps.
-        finishCurrentJob();
+        RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::scriptFetchFinished, script, certificate and imported scripts are matching for registrationID=%llu", this, registration->identifier().toUInt64());
+        scriptAndImportedScriptsFetchFinished(job, *registration);
         return;
     }
 
-    // FIXME: Update all the imported scripts as per spec. For now, we just do as if there is none.
-
     m_server.updateWorker(job.identifier(), *registration, job.scriptURL, result.script, result.certificateInfo, result.contentSecurityPolicy, result.crossOriginEmbedderPolicy, result.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
+}
+
+void SWServerJobQueue::importedScriptsFetchFinished(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const Vector<std::pair<URL, ScriptBuffer>>& importedScripts)
+{
+    if (!isCurrentlyProcessingJob(jobDataIdentifier))
+        return;
+
+    auto& job = firstJob();
+
+    auto* registration = m_server.getRegistration(m_registrationKey);
+    if (!registration)
+        return;
+
+    auto* newestWorker = registration->getNewestWorker();
+    if (newestWorker && newestWorker->matchingImportedScripts(importedScripts)) {
+        RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::importedScriptsFetchFinished, script, certificate and imported scripts are matching for registrationID=%llu", this, registration->identifier().toUInt64());
+        scriptAndImportedScriptsFetchFinished(job, *registration);
+        return;
+    }
+
+    m_server.updateWorker(job.identifier(), *registration, job.scriptURL, m_workerFetchResult.script, m_workerFetchResult.certificateInfo, m_workerFetchResult.contentSecurityPolicy, m_workerFetchResult.crossOriginEmbedderPolicy, m_workerFetchResult.referrerPolicy, job.workerType, { }, job.serviceWorkerPageIdentifier());
+}
+
+void SWServerJobQueue::scriptAndImportedScriptsFetchFinished(const ServiceWorkerJobData& job, SWServerRegistration& registration)
+{
+    // Invoke Resolve Job Promise with job and registration.
+    m_server.resolveRegistrationJob(job, registration.data(), ShouldNotifyWhenResolved::No);
+
+    // Invoke Finish Job with job and abort these steps.
+    finishCurrentJob();
 }
 
 // https://w3c.github.io/ServiceWorker/#update-algorithm

@@ -34,6 +34,7 @@
 #include "ServiceWorkerTypes.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerScriptLoaderClient.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -57,6 +58,9 @@ public:
     void resolvedWithRegistration(ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     void resolvedWithUnregistrationResult(bool);
     void startScriptFetch(FetchOptions::Cache);
+
+    using RefreshImportedScriptsCallback = CompletionHandler<void(Vector<std::pair<URL, ScriptBuffer>>&&)>;
+    void refreshImportedScripts(const Vector<URL>&, FetchOptions::Cache, RefreshImportedScriptsCallback&&);
 
     using Identifier = ServiceWorkerJobIdentifier;
     Identifier identifier() const { return m_jobData.identifier().jobIdentifier; }
@@ -84,8 +88,26 @@ private:
 
     bool m_completed { false };
 
+    class ImportedScriptsLoader : public WorkerScriptLoaderClient {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        explicit ImportedScriptsLoader(RefreshImportedScriptsCallback&&);
+        ~ImportedScriptsLoader();
+        void load(ScriptExecutionContext&, const Vector<URL>&, FetchOptions::Cache);
+        void cancel();
+
+    private:
+        void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final { }
+        void notifyFinished() final;
+
+        RefreshImportedScriptsCallback m_callback;
+        Vector<Ref<WorkerScriptLoader>> m_loaders;
+        size_t m_remainingLoads { 0 };
+    };
+
     ServiceWorkerOrClientIdentifier m_contextIdentifier;
     RefPtr<WorkerScriptLoader> m_scriptLoader;
+    std::unique_ptr<ImportedScriptsLoader> m_importedScriptsLoader;
 
 #if ASSERT_ENABLED
     Ref<Thread> m_creationThread { Thread::current() };

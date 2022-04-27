@@ -427,6 +427,21 @@ bool SWServerWorker::isClientActiveServiceWorker(ScriptExecutionContextIdentifie
     return registrationIdentifier == m_data.registrationIdentifier;
 }
 
+Vector<URL> SWServerWorker::importedScriptURLs() const
+{
+    return copyToVector(m_scriptResourceMap.keys());
+}
+
+bool SWServerWorker::matchingImportedScripts(const Vector<std::pair<URL, ScriptBuffer>>& scripts) const
+{
+    for (auto& script : scripts) {
+        auto iterator = m_scriptResourceMap.find(script.first);
+        if (iterator == m_scriptResourceMap.end() || iterator->value.script != script.second)
+            return false;
+    }
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

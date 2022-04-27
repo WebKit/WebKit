@@ -129,6 +129,7 @@ private:
     void willSettleRegistrationPromise(bool success);
 
     ServiceWorkerOrClientIdentifier contextIdentifier() final;
+    ScriptExecutionContext* context() final { return scriptExecutionContext(); }
 
     SWClientConnection& ensureSWClientConnection();
 

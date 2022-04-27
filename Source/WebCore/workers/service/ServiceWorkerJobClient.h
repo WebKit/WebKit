@@ -36,6 +36,7 @@ class ContentSecurityPolicyResponseHeaders;
 class Exception;
 class ResourceError;
 class ScriptBuffer;
+class ScriptExecutionContext;
 class ServiceWorkerJob;
 struct CrossOriginEmbedderPolicy;
 struct ServiceWorkerRegistrationData;
@@ -45,6 +46,7 @@ class ServiceWorkerJobClient {
 public:
     virtual ~ServiceWorkerJobClient() = default;
 
+    virtual ScriptExecutionContext* context() = 0;
     virtual ServiceWorkerOrClientIdentifier contextIdentifier() = 0;
 
     virtual void jobFailedWithException(ServiceWorkerJob&, const Exception&) = 0;

@@ -50,7 +50,7 @@ class NetworkSession;
 class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerSoftUpdateLoader> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Handler = CompletionHandler<void(const WebCore::WorkerFetchResult&)>;
+    using Handler = CompletionHandler<void(WebCore::WorkerFetchResult&&)>;
     static void start(NetworkSession*, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);
 
     ~ServiceWorkerSoftUpdateLoader();
