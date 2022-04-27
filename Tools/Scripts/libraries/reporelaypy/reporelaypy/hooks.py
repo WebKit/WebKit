@@ -23,6 +23,7 @@
 import hashlib
 import hmac
 import json
+import re
 import sys
 
 from flask import current_app, json as fjson, request
@@ -39,6 +40,7 @@ class HookProcessor(object):
     TYPES = ('pull_request', 'push')
     BRANCH_PREFIX = 'refs/heads/'
     TAG_PREFIX = 'refs/tags/'
+    REMOTES_RE = re.compile(r'remote\.(?P<remote>\S+)\.url')
 
     @classmethod
     def is_valid(cls, type, data):
@@ -68,17 +70,27 @@ class HookProcessor(object):
             return None
 
         branch = data.get('ref')
+        remote = ''
+        name = data.get('repository', {}).get('url', '').split('://')[-1]
+        if name and self.checkout.repository:
+            for config_arg, url in self.checkout.repository.config().items():
+                match = self.REMOTES_RE.match(config_arg)
+                if not match or '{}.git'.format(name) not in [url.split('@')[-1], url.split('://')[-1]]:
+                    continue
+                remote = match.group('remote')
+                break
+
         if type == 'push' and branch:
             try:
                 if branch.startswith(self.BRANCH_PREFIX):
                     branch = branch[len(self.BRANCH_PREFIX):]
                     self.checkout.update_for(branch, track=True)
-                    [self.checkout.push_update(branch=branch, remote=remote, track=True) for remote in self.checkout.remotes.keys()]
+                    self.checkout.forward_update(branch=branch, remote=remote, track=True)
 
                 if branch.startswith(self.TAG_PREFIX):
                     tag = branch[len(self.TAG_PREFIX):]
                     self.checkout.fetch()
-                    [self.checkout.push_update(tag=tag, remote=remote) for remote in self.checkout.remotes.keys()]
+                    self.checkout.forward_update(tag=tag, remote=remote)
 
             except BaseException as e:
                 sys.stderr.write('{}\n'.format(e))

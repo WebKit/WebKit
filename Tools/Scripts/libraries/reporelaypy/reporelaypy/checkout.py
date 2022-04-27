@@ -50,6 +50,7 @@ class Checkout(object):
                 url=obj.url,
                 sentinal=obj.sentinal,
                 remotes=obj.remotes,
+                forwarding=obj.forwarding,
                 credentials=obj.credentials,
             )
             if obj.fallback_repository:
@@ -104,11 +105,17 @@ class Checkout(object):
         with open(os.path.expanduser('~/.git-credentials'), 'w') as f:
             f.write(git_credentials_content)
 
-    def __init__(self, path, url=None, http_proxy=None, sentinal=True, fallback_url=None, primary=True, remotes=None, credentials=None):
+    def __init__(
+        self, path, url=None, http_proxy=None,
+        sentinal=True, fallback_url=None, primary=True,
+        remotes=None, credentials=None,
+        forwarding=None,
+    ):
         self.sentinal = sentinal
         self.path = path
         self.url = url
         self.remotes = remotes or dict()
+        self.forwarding = forwarding or [('origin', list(self.remotes.keys()))]
         self.credentials = credentials or dict()
         self._repository = None
         self._child_process = None
@@ -204,8 +211,8 @@ class Checkout(object):
                 return ref == line.split()[0]
         return False
 
-    def push_update(self, branch=None, tag=None, remote=None, track=False):
-        if not remote or remote in (self.REMOTE, 'fork'):
+    def push_update(self, branch=None, tag=None, remote=None, track=False, dest_branch=None):
+        if not remote or remote in ('fork',):
             return False
 
         if tag:
@@ -219,9 +226,25 @@ class Checkout(object):
             return False
 
         return not run(
-            [self.repository.executable(), 'push', remote, branch, '-f'],
+            [self.repository.executable(), 'push', remote, '{}:{}'.format(branch, dest_branch or branch)],
             cwd=self.repository.root_path,
         ).returncode
+
+    def forward_update(self, branch=None, tag=None, remote=None, track=False):
+        for match, tos in self.forwarding:
+            if match not in (remote, '{}:{}'.format(remote, branch or tag)):
+                continue
+            for to in tos:
+                split = to.split(':', 1)
+                self.push_update(
+                    branch=branch,
+                    tag=tag,
+                    remote=split[0],
+                    track=track,
+                    dest_branch=split[1] if len(split) > 1 else None,
+                )
+            return
+        return
 
     def fetch(self, remote=REMOTE):
         return not run(
@@ -273,7 +296,7 @@ class Checkout(object):
             if branch in all_branches:
                 all_branches.remove(branch)
             self.update_for(branch=branch, remote=remote)
-            [self.push_update(branch=branch, remote=remote) for remote in self.remotes.keys()]
+            self.forward_update(branch=branch, remote=remote)
 
         # Then, track all untracked branches
         print('Tracking new branches...')
@@ -282,7 +305,7 @@ class Checkout(object):
                 [self.repository.executable(), 'branch', '--track', branch, 'remotes/{}/{}'.format(remote, branch)],
                 cwd=self.repository.root_path,
             )
-            [self.push_update(branch=branch, remote=remote) for remote in self.remotes.keys()]
+            self.forward_update(branch=branch, remote=remote)
             self.repository.cache.populate(branch=branch)
 
         # Sync all tags
@@ -295,4 +318,4 @@ class Checkout(object):
             remote_tags = set(self.repository.tags(remote=target_remote))
             for tag in origin_tags - remote_tags:
                 print(f'    {tag}')
-                self.push_update(tag=tag, remote=target_remote)
+                self.forward_update(tag=tag, remote=remote)

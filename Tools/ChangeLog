@@ -1,3 +1,24 @@
+2022-04-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [commits.webkit.org] Change branch forwarding behavior
+        https://bugs.webkit.org/show_bug.cgi?id=239136
+        <rdar://problem/91314217>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Bump version.
+        * Scripts/libraries/reporelaypy/setup.py: Ditto.
+        * Scripts/libraries/reporelaypy/reporelaypy/checkout.py:
+        (Checkout.Encoder.default): Encode forwarding list.
+        (Checkout.__init__): Add forwarding argument.
+        (Checkout.push_update): Add dest_branch argument.
+        (Checkout.forward_update): Trigger push_update based on forwarding arguments.
+        (Checkout.update_all): Use forward_update instead of pushing to every branch.
+        * Scripts/libraries/reporelaypy/reporelaypy/hooks.py:
+        (HookProcessor.process_worker_hook): Extract remote from incoming data, invoke forward_update.
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/checkout_unittest.py:
+        (CheckoutUnittest.test_json):
+
 2022-04-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         test-webkitperl outputs git hints during the test
