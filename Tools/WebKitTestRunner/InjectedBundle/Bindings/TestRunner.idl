@@ -408,6 +408,8 @@ interface TestRunner {
     undefined cleanUpKeychain(DOMString attrLabel, optional DOMString applicationLabelBase64);
     boolean keyExistsInKeychain(DOMString attrLabel, DOMString applicationLabelBase64);
 
+    undefined clearMemoryCache();
+
     // Private Click Measurement
     undefined clearPrivateClickMeasurement();
     undefined clearPrivateClickMeasurementsThroughWebsiteDataRemoval();

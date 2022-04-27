@@ -54,6 +54,7 @@
 #include "ColorSerialization.h"
 #include "ComposedTreeIterator.h"
 #include "CookieJar.h"
+#include "CrossOriginPreflightResultCache.h"
 #include "Cursor.h"
 #include "DOMPointReadOnly.h"
 #include "DOMRect.h"
@@ -948,6 +949,7 @@ bool Internals::isFetchObjectContextStopped(const FetchObject& object)
 void Internals::clearMemoryCache()
 {
     MemoryCache::singleton().evictResources();
+    CrossOriginPreflightResultCache::singleton().clear();
 }
 
 void Internals::pruneMemoryCacheToSize(unsigned size)

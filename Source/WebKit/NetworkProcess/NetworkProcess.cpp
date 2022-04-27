@@ -67,6 +67,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/CommonAtomStrings.h>
 #include <WebCore/CookieJar.h>
+#include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/DNS.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -1552,6 +1553,9 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     if (session)
         session->removeNetworkWebsiteData(modifiedSince, std::nullopt, [clearTasksHandler] { });
 
+    if (websiteDataTypes.contains(WebsiteDataType::MemoryCache))
+        CrossOriginPreflightResultCache::singleton().clear();
+
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler] { });
 
@@ -1641,6 +1645,9 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         }
     }
 #endif
+
+    if (websiteDataTypes.contains(WebsiteDataType::MemoryCache))
+        CrossOriginPreflightResultCache::singleton().clear();
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral()) {
         forEachNetworkSession([originDatas, &clearTasksHandler](auto& session) {

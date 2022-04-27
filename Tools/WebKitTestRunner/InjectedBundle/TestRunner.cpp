@@ -2083,6 +2083,11 @@ void TestRunner::dumpPrivateClickMeasurement()
     postSynchronousPageMessage("DumpPrivateClickMeasurement");
 }
 
+void TestRunner::clearMemoryCache()
+{
+    postSynchronousPageMessage("ClearMemoryCache");
+}
+
 void TestRunner::clearPrivateClickMeasurement()
 {
     postSynchronousPageMessage("ClearPrivateClickMeasurement");

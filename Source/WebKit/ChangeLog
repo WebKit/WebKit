@@ -1,5 +1,23 @@
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
+        Add testRunner API to clear memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=239804
+        rdar://92033309
+
+        Reviewed by Chris Dumez.
+
+        Add necessary WebKit API to implement the testRunner API.
+        Make use of new testRunner API in added test.
+
+        Test: http/wpt/fetch/clear-memory-cache.html
+
+        * NetworkProcess/NetworkProcess.cpp:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+
+2022-04-27  Youenn Fablet  <youenn@apple.com>
+
         Shared workers should match service worker registrations
         https://bugs.webkit.org/show_bug.cgi?id=239122
 

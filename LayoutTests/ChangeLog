@@ -1,5 +1,17 @@
 2022-04-27  Youenn Fablet  <youenn@apple.com>
 
+        Add testRunner API to clear memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=239804
+        rdar://92033309
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/fetch/clear-memory-cache-expected.txt: Added.
+        * http/wpt/fetch/clear-memory-cache.html: Added.
+        * http/wpt/fetch/resources/clear-memory-cache.py: Added.
+
+2022-04-27  Youenn Fablet  <youenn@apple.com>
+
         Shared workers should match service worker registrations
         https://bugs.webkit.org/show_bug.cgi?id=239122
 

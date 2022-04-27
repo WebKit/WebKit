@@ -1,3 +1,20 @@
+2022-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Add testRunner API to clear memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=239804
+        rdar://92033309
+
+        Reviewed by Chris Dumez.
+
+        Implement the clear memory cache testRunner API and related plumbery.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+
 2022-04-26  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Remove adjustPathForRecentRenamings from VCSUtils.pm, they are not recent anymore
