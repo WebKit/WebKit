@@ -1,3 +1,12 @@
+2022-04-27  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GTK] The setting WebKitMinimumFontSize is not reset by the testing framework, leading to flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=237181
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Remove skip now that the test doesn't cause problems.
+
 2022-04-27  Tim Nguyen  <ntim@apple.com>
 
         [css-text] Make word-wrap CSS property an alias of overflow-wrap
