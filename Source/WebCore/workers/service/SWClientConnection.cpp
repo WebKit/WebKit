@@ -37,6 +37,8 @@
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
 #include "SharedWorkerContextManager.h"
+#include "SharedWorkerThread.h"
+#include "SharedWorkerThreadProxy.h"
 #include "Worker.h"
 #include "WorkerFetchResult.h"
 #include <wtf/CrossThreadCopier.h>
@@ -114,17 +116,33 @@ void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jo
 }
 
 
+static void postMessageToContainer(ScriptExecutionContext& context, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
+{
+    if (auto* container = context.ensureServiceWorkerContainer())
+        container->postMessage(WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+}
+
 void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
 {
     ASSERT(isMainThread());
 
-    // FIXME: destinationContextIdentifier can only identify a Document at the moment.
-    auto* destinationDocument = Document::allDocumentsMap().get(destinationContextIdentifier);
-    if (!destinationDocument)
+    if (auto* destinationDocument = Document::allDocumentsMap().get(destinationContextIdentifier)) {
+        postMessageToContainer(*destinationDocument, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
         return;
+    }
 
-    if (auto* container = destinationDocument->ensureServiceWorkerContainer())
-        container->postMessage(WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+    if (auto* worker = Worker::byIdentifier(destinationContextIdentifier)) {
+        worker->postTaskToWorkerGlobalScope([message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& context) mutable {
+            postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+        });
+        return;
+    }
+
+    if (auto* sharedWorker = SharedWorkerThreadProxy::byIdentifier(destinationContextIdentifier)) {
+        sharedWorker->thread().runLoop().postTask([message = WTFMove(message), sourceData = WTFMove(sourceData).isolatedCopy(), sourceOrigin = WTFMove(sourceOrigin).isolatedCopy()] (auto& context) mutable {
+            postMessageToContainer(context, WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+        });
+    }
 }
 
 static void forAllWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
@@ -244,13 +262,18 @@ void SWClientConnection::notifyClientsOfControllerChange(const HashSet<ScriptExe
             updateController(*document, ServiceWorkerData { newController });
             continue;
         }
-        if (auto* worker = Worker::workerByIdentifier(clientIdentifier)) {
+        if (auto* worker = Worker::byIdentifier(clientIdentifier)) {
             worker->postTaskToWorkerGlobalScope([newController = newController.isolatedCopy()] (auto& context) mutable {
                 updateController(context, WTFMove(newController));
             });
             continue;
         }
-        // FIXME: Support shared workers.
+        if (auto* sharedWorker = SharedWorkerThreadProxy::byIdentifier(clientIdentifier)) {
+            sharedWorker->thread().runLoop().postTask([newController = newController.isolatedCopy()] (auto& context) mutable {
+                updateController(context, WTFMove(newController));
+            });
+            continue;
+        }
     }
 }
 

@@ -72,11 +72,9 @@ WebCore::RegistrableDomain WebSharedWorker::registrableDomain() const
     return WebCore::RegistrableDomain { url() };
 }
 
-void WebSharedWorker::setFetchResult(WebCore::WorkerFetchResult&& fetchResult, WebSharedWorkerServerToContextConnection* contextConnection)
+void WebSharedWorker::setFetchResult(WebCore::WorkerFetchResult&& fetchResult)
 {
     m_fetchResult = WTFMove(fetchResult);
-    if (contextConnection)
-        launch(*contextConnection);
 }
 
 void WebSharedWorker::didCreateContextConnection(WebSharedWorkerServerToContextConnection& contextConnection)

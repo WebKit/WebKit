@@ -267,7 +267,7 @@ void Worker::forEachWorker(const Function<Function<void(ScriptExecutionContext&)
         worker->postTaskToWorkerGlobalScope(callback());
 }
 
-Worker* Worker::workerByIdentifier(ScriptExecutionContextIdentifier identifier)
+Worker* Worker::byIdentifier(ScriptExecutionContextIdentifier identifier)
 {
     return allWorkers().get(identifier);
 }

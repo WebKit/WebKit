@@ -589,15 +589,13 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
             useProcessForRemoteWorkers(*process);
     }
 
-    bool shouldUseSeparateRemoteWorkerProcess = workerType == RemoteWorkerType::ServiceWorker && s_useSeparateServiceWorkerProcess;
-
     // Prioritize the requesting WebProcess for running the service worker.
-    if (!remoteWorkerProcessProxy && !shouldUseSeparateRemoteWorkerProcess && requestingProcess) {
+    if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess && requestingProcess) {
         if (&requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->isMatchingRegistrableDomain(registrableDomain))
             useProcessForRemoteWorkers(*requestingProcess);
     }
 
-    if (!remoteWorkerProcessProxy && !shouldUseSeparateRemoteWorkerProcess) {
+    if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess) {
         for (auto& process : processPool->m_processes) {
             if (process.ptr() == processPool->m_prewarmedProcess.get() || process->isDummyProcessProxy())
                 continue;

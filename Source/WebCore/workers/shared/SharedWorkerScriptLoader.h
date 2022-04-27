@@ -40,13 +40,14 @@ struct ServiceWorkerRegistrationData;
 class SharedWorker;
 class WorkerScriptLoader;
 struct WorkerFetchResult;
+struct WorkerInitializationData;
 
 class SharedWorkerScriptLoader : private WorkerScriptLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SharedWorkerScriptLoader(URL&&, SharedWorker&, WorkerOptions&&);
 
-    void load(CompletionHandler<void(WorkerFetchResult&&)>&&);
+    void load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
 
     const URL& url() const { return m_url; }
     SharedWorker& worker() { return m_worker.get(); }
@@ -60,7 +61,7 @@ private:
     const Ref<SharedWorker> m_worker;
     const Ref<WorkerScriptLoader> m_loader;
     const URL m_url;
-    CompletionHandler<void(WorkerFetchResult&&)> m_completionHandler;
+    CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)> m_completionHandler;
 };
 
 } // namespace WebCore

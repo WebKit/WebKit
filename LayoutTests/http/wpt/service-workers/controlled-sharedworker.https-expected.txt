@@ -1,0 +1,5 @@
+
+PASS Register service worker
+PASS Verify shared worker is controlled
+PASS Verify shared worker can post message to its service worker
+

@@ -30,6 +30,7 @@
 #include "InspectorInstrumentation.h"
 #include "SharedWorker.h"
 #include "WorkerFetchResult.h"
+#include "WorkerInitializationData.h"
 #include "WorkerRunLoop.h"
 #include "WorkerScriptLoader.h"
 
@@ -43,13 +44,13 @@ SharedWorkerScriptLoader::SharedWorkerScriptLoader(URL&& url, SharedWorker& work
 {
 }
 
-void SharedWorkerScriptLoader::load(CompletionHandler<void(WorkerFetchResult&&)>&& completionHandler)
+void SharedWorkerScriptLoader::load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&& completionHandler)
 {
     ASSERT(!m_completionHandler);
     m_completionHandler = WTFMove(completionHandler);
 
     auto source = m_options.type == WorkerType::Module ? WorkerScriptLoader::Source::ModuleScript : WorkerScriptLoader::Source::ClassicWorkerScript;
-    m_loader->loadAsynchronously(*m_worker->scriptExecutionContext(), ResourceRequest(m_url), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode());
+    m_loader->loadAsynchronously(*m_worker->scriptExecutionContext(), ResourceRequest(m_url), source, m_worker->workerFetchOptions(m_options, FetchOptions::Destination::Sharedworker), ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective, ServiceWorkersMode::All, *this, WorkerRunLoop::defaultMode(), ScriptExecutionContextIdentifier::generate());
 }
 
 void SharedWorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse&)
@@ -61,7 +62,13 @@ void SharedWorkerScriptLoader::notifyFinished()
 {
     if (auto* scriptExecutionContext = m_worker->scriptExecutionContext(); !m_loader->failed())
         InspectorInstrumentation::scriptImported(*scriptExecutionContext, m_loader->identifier(), m_loader->script().toString());
-    m_completionHandler(m_loader->fetchResult()); // deletes this.
+    m_completionHandler(m_loader->fetchResult(), WorkerInitializationData {
+#if ENABLE(SERVICE_WORKER)
+        m_loader->takeServiceWorkerData(),
+#endif
+        m_loader->clientIdentifier(),
+        m_loader->userAgentForSharedWorker()
+    }); // deletes this.
 }
 
 } // namespace WebCore

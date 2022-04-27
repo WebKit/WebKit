@@ -30,6 +30,7 @@
 #include <WebCore/SharedWorkerObjectIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
 #include <WebCore/WorkerFetchResult.h>
+#include <WebCore/WorkerInitializationData.h>
 #include <WebCore/WorkerOptions.h>
 #include <wtf/WeakPtr.h>
 
@@ -71,9 +72,14 @@ public:
     bool isRunning() const { return m_isRunning; }
     void markAsRunning() { m_isRunning = true; }
 
+    const WebCore::WorkerInitializationData& initializationData() const { return m_initializationData; }
+    void setInitializationData(WebCore::WorkerInitializationData&& initializationData) { m_initializationData = WTFMove(initializationData); }
+
     const WebCore::WorkerFetchResult& fetchResult() const { return m_fetchResult; }
-    void setFetchResult(WebCore::WorkerFetchResult&&, WebSharedWorkerServerToContextConnection*);
+    void setFetchResult(WebCore::WorkerFetchResult&&);
     bool didFinishFetching() const { return !!m_fetchResult.script; }
+
+    void launch(WebSharedWorkerServerToContextConnection&);
 
 private:
     WebSharedWorker(WebSharedWorker&&) = delete;
@@ -83,7 +89,6 @@ private:
 
     void suspendIfNeeded();
     void resumeIfNeeded();
-    void launch(WebSharedWorkerServerToContextConnection&);
 
     struct SharedWorkerObjectState {
         bool isSuspended { false };
@@ -96,6 +101,7 @@ private:
     WebCore::WorkerOptions m_workerOptions;
     HashMap<WebCore::SharedWorkerObjectIdentifier, SharedWorkerObjectState> m_sharedWorkerObjects;
     WebCore::WorkerFetchResult m_fetchResult;
+    WebCore::WorkerInitializationData m_initializationData;
     bool m_isRunning { false };
     bool m_isSuspended { false };
 };

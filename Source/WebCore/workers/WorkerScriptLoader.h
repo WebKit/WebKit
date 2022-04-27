@@ -104,6 +104,9 @@ public:
     std::optional<ServiceWorkerData> takeServiceWorkerData() { return std::exchange(m_activeServiceWorkerData, { }); }
 #endif
 
+    ScriptExecutionContextIdentifier clientIdentifier() const { return m_clientIdentifier; }
+    const String& userAgentForSharedWorker() const { return m_userAgentForSharedWorker; }
+
 private:
     friend class RefCounted<WorkerScriptLoader>;
     friend struct std::default_delete<WorkerScriptLoader>;
@@ -139,6 +142,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerData> m_activeServiceWorkerData;
 #endif
+    String m_userAgentForSharedWorker;
 };
 
 } // namespace WebCore

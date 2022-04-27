@@ -1999,6 +1999,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/WorkerFetchResult.h
     workers/WorkerFontLoadRequest.h
     workers/WorkerGlobalScope.h
+    workers/WorkerInitializationData.h
     workers/WorkerLoaderProxy.h
     workers/WorkerObjectProxy.h
     workers/WorkerOptions.h

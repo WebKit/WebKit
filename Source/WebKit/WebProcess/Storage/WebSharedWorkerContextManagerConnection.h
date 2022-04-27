@@ -38,6 +38,7 @@
 namespace WebCore {
 struct ClientOrigin;
 struct WorkerFetchResult;
+struct WorkerInitializationData;
 struct WorkerOptions;
 }
 
@@ -58,7 +59,7 @@ public:
 
 private:
     // IPC Messages.
-    void launchSharedWorker(WebCore::ClientOrigin&&, WebCore::SharedWorkerIdentifier, WebCore::WorkerOptions&&, WebCore::WorkerFetchResult&&);
+    void launchSharedWorker(WebCore::ClientOrigin&&, WebCore::SharedWorkerIdentifier, WebCore::WorkerOptions&&, WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&);
     void updatePreferencesStore(const WebPreferencesStore&);
     void setUserAgent(String&& userAgent) { m_userAgent = WTFMove(userAgent); }
     void close();

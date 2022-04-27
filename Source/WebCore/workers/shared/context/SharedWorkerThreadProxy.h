@@ -41,11 +41,14 @@ class SharedWorkerThread;
 
 struct ClientOrigin;
 struct WorkerFetchResult;
+struct WorkerInitializationData;
 
 class SharedWorkerThreadProxy final : public ThreadSafeRefCounted<SharedWorkerThreadProxy>, public WorkerObjectProxy, public WorkerLoaderProxy, public WorkerDebuggerProxy {
 public:
     template<typename... Args> static Ref<SharedWorkerThreadProxy> create(Args&&... args) { return adoptRef(*new SharedWorkerThreadProxy(std::forward<Args>(args)...)); }
     WEBCORE_EXPORT ~SharedWorkerThreadProxy();
+
+    static SharedWorkerThreadProxy* byIdentifier(ScriptExecutionContextIdentifier);
 
     SharedWorkerIdentifier identifier() const;
     SharedWorkerThread& thread() { return m_workerThread; }
@@ -54,7 +57,7 @@ public:
     void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
 private:
-    WEBCORE_EXPORT SharedWorkerThreadProxy(UniqueRef<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, const String& userAgent, CacheStorageProvider&);
+    WEBCORE_EXPORT SharedWorkerThreadProxy(UniqueRef<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, WorkerInitializationData&&, CacheStorageProvider&);
 
     // WorkerObjectProxy.
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
@@ -78,6 +81,7 @@ private:
 
     UniqueRef<Page> m_page;
     Ref<Document> m_document;
+    ScriptExecutionContextIdentifier m_contextIdentifier;
     Ref<SharedWorkerThread> m_workerThread;
     CacheStorageProvider& m_cacheStorageProvider;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;

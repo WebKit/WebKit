@@ -1039,6 +1039,28 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
     m_clientToControllingRegistration.add(clientIdentifier, *controllingServiceWorkerRegistrationIdentifier);
 }
 
+std::optional<SWServer::GatheredClientData> SWServer::gatherClientData(const ClientOrigin& clientOrigin, ScriptExecutionContextIdentifier clientIdentifier)
+{
+    auto clientDataIterator = m_clientsById.find(clientIdentifier);
+    if (clientDataIterator == m_clientsById.end())
+        return { };
+
+    auto controllingRegistratioIterator = m_clientToControllingRegistration.find(clientIdentifier);
+    if (controllingRegistratioIterator == m_clientToControllingRegistration.end())
+        return { };
+
+    auto clientsPerOriginIterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
+    if (clientsPerOriginIterator == m_clientIdentifiersPerOrigin.end())
+        return { };
+
+    return GatheredClientData {
+        clientOrigin,
+        clientDataIterator->value,
+        controllingRegistratioIterator->value,
+        clientsPerOriginIterator->value.userAgent
+    };
+}
+
 void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, ScriptExecutionContextIdentifier clientIdentifier)
 {
     auto clientRegistrableDomain = clientOrigin.clientRegistrableDomain();

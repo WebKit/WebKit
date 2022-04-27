@@ -12,6 +12,10 @@ async function doTest(event)
         event.source.postMessage(self.receivedFetch);
         return;
     }
+    if (event.data === "ping") {
+        event.source.postMessage("pong");
+        return;
+    }
     event.source.postMessage("KO");
 }
 

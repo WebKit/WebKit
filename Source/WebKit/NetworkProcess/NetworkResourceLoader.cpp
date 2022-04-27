@@ -1215,12 +1215,21 @@ void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newReq
     startNetworkLoad(WTFMove(newRequest), FirstLoad::No);
 }
 
+#if ENABLE(SERVICE_WORKER)
+static bool shouldTryToMatchRegistrationOnRedirection(const FetchOptions& options, bool isServiceWorkerLoaded)
+{
+    if (options.mode == FetchOptions::Mode::Navigate)
+        return true;
+    return isServiceWorkerLoaded && (options.destination == FetchOptions::Destination::Worker || options.destination == FetchOptions::Destination::Sharedworker);
+}
+#endif
+
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
     LOADER_RELEASE_LOG("continueWillSendRequest: (isAllowedToAskUserForCredentials=%d)", isAllowedToAskUserForCredentials);
 
 #if ENABLE(SERVICE_WORKER)
-    if (parameters().options.mode == FetchOptions::Mode::Navigate || (parameters().options.destination == FetchOptions::Destination::Worker && m_serviceWorkerFetchTask)) {
+    if (shouldTryToMatchRegistrationOnRedirection(parameters().options, !!m_serviceWorkerFetchTask)) {
         m_serviceWorkerRegistration = { };
         if (auto serviceWorkerFetchTask = m_connection->createFetchTask(*this, newRequest)) {
             LOADER_RELEASE_LOG("continueWillSendRequest: Created a ServiceWorkerFetchTask to handle the redirect (fetchIdentifier=%" PRIu64 ")", serviceWorkerFetchTask->fetchIdentifier().toUInt64());

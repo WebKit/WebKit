@@ -83,7 +83,7 @@ public:
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
 
     static void forEachWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
-    static Worker* workerByIdentifier(ScriptExecutionContextIdentifier);
+    static Worker* byIdentifier(ScriptExecutionContextIdentifier);
 
 private:
     Worker(ScriptExecutionContext&, JSC::RuntimeFlags, WorkerOptions&&);

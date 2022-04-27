@@ -1,3 +1,42 @@
+2022-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Shared workers should match service worker registrations
+        https://bugs.webkit.org/show_bug.cgi?id=239122
+
+        Reviewed by Chris Dumez.
+
+        Update SharedWorkerScriptLoader to set correctly client ID and service worker data.
+        Ditto for SharedWorkerThread and SharedWorkerThreadProxy.
+        Add support to get a SharedWorkerThreadProxy from a client ID.
+        Use this in SWClientConnection to add support for controller change and post messaging.
+
+        Given we create the shared worker identifier in one web process but we might spawn the actual worker in another process,
+        we need to unregister the identifier with the old process identifier and register the identifier with the new process identifier.
+        This is done at shared worker launch time.
+
+        Covered by updated tests.
+        Test: http/wpt/service-workers/controlled-sharedworker.https.html
+
+        * Headers.cmake:
+        * workers/Worker.cpp:
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerInitializationData.h:
+        * workers/WorkerScriptLoader.cpp:
+        * workers/WorkerScriptLoader.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::gatherClientData):
+        * workers/service/server/SWServer.h:
+        * workers/service/SWClientConnection.cpp:
+        * workers/service/ServiceWorkerContainer.cpp:
+        * workers/shared/SharedWorkerObjectConnection.cpp:
+        * workers/shared/SharedWorkerObjectConnection.h:
+        * workers/shared/SharedWorkerScriptLoader.cpp:
+        * workers/shared/SharedWorkerScriptLoader.h:
+        * workers/shared/context/SharedWorkerThread.cpp:
+        * workers/shared/context/SharedWorkerThreadProxy.cpp:
+        * workers/shared/context/SharedWorkerThreadProxy.h:
+
 2022-04-26  Antti Koivisto  <antti@apple.com>
 
         ::first-letter does not work if used only in shadow content

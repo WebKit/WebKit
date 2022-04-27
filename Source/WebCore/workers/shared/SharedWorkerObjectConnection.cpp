@@ -33,6 +33,7 @@
 #include "SharedWorker.h"
 #include "SharedWorkerScriptLoader.h"
 #include "WorkerFetchResult.h"
+#include "WorkerInitializationData.h"
 #include "WorkerScriptLoader.h"
 
 namespace WebCore {
@@ -46,25 +47,25 @@ SharedWorkerObjectConnection::SharedWorkerObjectConnection() = default;
 
 SharedWorkerObjectConnection::~SharedWorkerObjectConnection() = default;
 
-void SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WorkerOptions&& workerOptions, CompletionHandler<void(WorkerFetchResult&&)>&& completionHandler)
+void SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WorkerOptions&& workerOptions, CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&& completionHandler)
 {
     ASSERT(isMainThread());
 
     auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
     CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%{public}s, worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
     if (!workerObject)
-        return completionHandler(workerFetchError(ResourceError { ResourceError::Type::Cancellation }));
+        return completionHandler(workerFetchError(ResourceError { ResourceError::Type::Cancellation }), { });
 
     auto loaderIdentifier = ++loaderIdentifierSeed;
     auto loader = makeUniqueRef<SharedWorkerScriptLoader>(WTFMove(url), *workerObject, WTFMove(workerOptions));
     auto loaderPtr = loader.ptr();
     m_loaders.add(loaderIdentifier, WTFMove(loader));
 
-    loaderPtr->load([this, loaderIdentifier, completionHandler = WTFMove(completionHandler)](WorkerFetchResult&& fetchResult) mutable {
+    loaderPtr->load([this, loaderIdentifier, completionHandler = WTFMove(completionHandler)](auto&& fetchResult, auto&& initializationData) mutable {
         CONNECTION_RELEASE_LOG("fetchScriptInClient: finished script load, success=%d", fetchResult.error.isNull());
         auto loader = m_loaders.take(loaderIdentifier);
         ASSERT(loader);
-        completionHandler(WTFMove(fetchResult));
+        completionHandler(WTFMove(fetchResult), WTFMove(initializationData));
     });
 }
 

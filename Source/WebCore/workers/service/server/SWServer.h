@@ -246,6 +246,14 @@ public:
     std::optional<ServiceWorkerRegistrationIdentifier> clientIdentifierToControllingRegistration(ScriptExecutionContextIdentifier) const;
     WEBCORE_EXPORT void forEachClientForOrigin(const ClientOrigin&, const Function<void(ServiceWorkerClientData&)>&);
 
+    struct GatheredClientData {
+        ClientOrigin clientOrigin;
+        ServiceWorkerClientData serviceWorkerClientData;
+        std::optional<ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier;
+        String userAgent;
+    };
+    WEBCORE_EXPORT std::optional<GatheredClientData> gatherClientData(const ClientOrigin&, ScriptExecutionContextIdentifier);
+
 private:
     unsigned maxRegistrationCount();
     bool allowLoopbackIPAddress(const String&);

@@ -1,3 +1,3 @@
 
-FAIL Test Clients.get() with window and worker clients assert_not_equals: Shared worker client should not be undefined got disallowed value undefined
+PASS Test Clients.get() with window and worker clients
 

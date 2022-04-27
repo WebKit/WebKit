@@ -85,6 +85,10 @@ public:
     void fetchTaskTimedOut(WebCore::ServiceWorkerIdentifier);
 
     void transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader&, WebCore::SWServerRegistration&);
+    std::optional<WebCore::SWServer::GatheredClientData> gatherClientData(WebCore::ScriptExecutionContextIdentifier);
+
+    void registerServiceWorkerClient(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
+    void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
 
 private:
     // Implement SWServer::Connection (Messages to the client WebProcess)
@@ -110,8 +114,6 @@ private:
     void matchRegistration(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<WebCore::ServiceWorkerRegistrationData>&&)>&&);
     void getRegistrations(const WebCore::SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(const Vector<WebCore::ServiceWorkerRegistrationData>&)>&&);
 
-    void registerServiceWorkerClient(WebCore::ClientOrigin&&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
-    void unregisterServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier&);
     void terminateWorkerFromClient(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     void whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
 

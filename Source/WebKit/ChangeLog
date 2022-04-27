@@ -1,3 +1,27 @@
+2022-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Shared workers should match service worker registrations
+        https://bugs.webkit.org/show_bug.cgi?id=239122
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/SharedWorker/WebSharedWorker.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServer.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.h:
+        * NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        * WebProcess/Storage/WebSharedWorkerContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSharedWorkerContextManagerConnection.h:
+        * WebProcess/Storage/WebSharedWorkerContextManagerConnection.messages.in:
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess):
+
 2022-04-26  Simon Fraser  <simon.fraser@apple.com>
 
         Don't flush the IOSurface CGContext when just setting ownership identity

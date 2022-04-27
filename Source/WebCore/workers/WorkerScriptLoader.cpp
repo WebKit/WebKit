@@ -156,8 +156,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     // A service worker job can be executed from a worker context or a document context.
     options.serviceWorkersMode = serviceWorkerMode;
 #if ENABLE(SERVICE_WORKER)
-    // FIXME: Add support for shared worker.
-    if (m_destination == FetchOptions::Destination::Worker && is<Document>(scriptExecutionContext)) {
+    if ((m_destination == FetchOptions::Destination::Worker || m_destination == FetchOptions::Destination::Sharedworker) && is<Document>(scriptExecutionContext)) {
         ASSERT(clientIdentifier);
         options.clientIdentifier = m_clientIdentifier = clientIdentifier;
         // In case of blob URLs, we reuse the document controlling service worker.
@@ -168,6 +167,8 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     } else if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
+    if (m_destination == FetchOptions::Destination::Sharedworker)
+        m_userAgentForSharedWorker = scriptExecutionContext.userAgent(scriptRequest.url());
 
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);

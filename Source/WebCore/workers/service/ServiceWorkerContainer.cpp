@@ -58,6 +58,7 @@
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerThread.h"
+#include "SharedWorkerGlobalScope.h"
 #include "WorkerFetchResult.h"
 #include "WorkerSWClientConnection.h"
 #include <wtf/IsoMallocInlines.h>
@@ -133,7 +134,7 @@ auto ServiceWorkerContainer::ready() -> ReadyPromise&
 ServiceWorker* ServiceWorkerContainer::controller() const
 {
     auto* context = scriptExecutionContext();
-    ASSERT_WITH_MESSAGE(!context || is<Document>(*context) || is<DedicatedWorkerGlobalScope>(*context) || !context->activeServiceWorker(), "Only documents and dedicated workers can have a controller at the moment.");
+    ASSERT_WITH_MESSAGE(!context || is<Document>(*context) || is<DedicatedWorkerGlobalScope>(*context)  || is<SharedWorkerGlobalScope>(*context) || !context->activeServiceWorker(), "Only documents, dedicated and shared workers can have a controller.");
     return context ? context->activeServiceWorker() : nullptr;
 }
 

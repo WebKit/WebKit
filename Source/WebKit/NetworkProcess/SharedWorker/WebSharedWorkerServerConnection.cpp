@@ -114,7 +114,7 @@ void WebSharedWorkerServerConnection::resumeForBackForwardCache(WebCore::SharedW
         session->ensureSharedWorkerServer().resumeForBackForwardCache(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
 
-void WebSharedWorkerServerConnection::fetchScriptInClient(const WebSharedWorker& sharedWorker, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&& completionHandler)
+void WebSharedWorkerServerConnection::fetchScriptInClient(const WebSharedWorker& sharedWorker, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&& completionHandler)
 {
     CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%{public}s", sharedWorkerObjectIdentifier.toString().utf8().data());
     sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, WTFMove(completionHandler));

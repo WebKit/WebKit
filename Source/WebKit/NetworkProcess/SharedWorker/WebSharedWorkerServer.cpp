@@ -87,13 +87,13 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
     ASSERT(serverConnection);
 
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: Fetching shared worker script in client");
-    serverConnection->fetchScriptInClient(*sharedWorker, sharedWorkerObjectIdentifier, [weakThis = WeakPtr { *this }, sharedWorker = WeakPtr { *sharedWorker }](WebCore::WorkerFetchResult&& fetchResult) {
+    serverConnection->fetchScriptInClient(*sharedWorker, sharedWorkerObjectIdentifier, [weakThis = WeakPtr { *this }, sharedWorker = WeakPtr { *sharedWorker }](auto&& fetchResult, auto&& initializationData) {
         if (weakThis && sharedWorker)
-            weakThis->didFinishFetchingSharedWorkerScript(*sharedWorker, WTFMove(fetchResult));
+            weakThis->didFinishFetchingSharedWorkerScript(*sharedWorker, WTFMove(fetchResult), WTFMove(initializationData));
     });
 }
 
-void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker& sharedWorker, WebCore::WorkerFetchResult&& fetchResult)
+void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker& sharedWorker, WebCore::WorkerFetchResult&& fetchResult, WebCore::WorkerInitializationData&& initializationData)
 {
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::didFinishFetchingSharedWorkerScript sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p, success=%d", sharedWorker.identifier().toUInt64(), &sharedWorker, fetchResult.error.isNull());
 
@@ -107,10 +107,12 @@ void WebSharedWorkerServer::didFinishFetchingSharedWorkerScript(WebSharedWorker&
         return;
     }
 
-    auto* connection = m_contextConnections.get(sharedWorker.registrableDomain());
-    sharedWorker.setFetchResult(WTFMove(fetchResult), connection);
+    sharedWorker.setInitializationData(WTFMove(initializationData));
+    sharedWorker.setFetchResult(WTFMove(fetchResult));
 
-    if (!connection)
+    if (auto* connection = m_contextConnections.get(sharedWorker.registrableDomain()))
+        sharedWorker.launch(*connection);
+    else
         createContextConnection(sharedWorker.registrableDomain(), sharedWorker.firstSharedWorkerObjectProcess());
 }
 

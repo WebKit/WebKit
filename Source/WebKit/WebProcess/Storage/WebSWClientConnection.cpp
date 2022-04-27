@@ -192,6 +192,7 @@ void WebSWClientConnection::setServiceWorkerClientIsControlled(ScriptExecutionCo
         completionHandler(data.activeWorker ? loader->setControllingServiceWorker(WTFMove(*data.activeWorker)) : false);
         return;
     }
+
     completionHandler(false);
 }
 

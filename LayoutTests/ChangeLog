@@ -1,3 +1,17 @@
+2022-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Shared workers should match service worker registrations
+        https://bugs.webkit.org/show_bug.cgi?id=239122
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/controlled-sharedworker.https-expected.txt: Added.
+        * http/wpt/service-workers/controlled-sharedworker.https.html: Added.
+        * http/wpt/service-workers/resources/controlled-sharedworker.js: Added.
+        * http/wpt/service-workers/skipFetchEvent-worker.js:
+        * platform/glib/imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt: Removed.
+
 2022-04-26  Antti Koivisto  <antti@apple.com>
 
         ::first-letter does not work if used only in shadow content
