@@ -78,7 +78,7 @@ class TestInstallGitLFS(testing.PathTestCase):
         with OutputCapture() as captured, mocks.remote.GitHub('github.com/git-lfs/git-lfs', releases={
             'v3.1.2/git-lfs-darwin-arm64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
             'v3.1.2/git-lfs-darwin-amd64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
-        }), mocks.local.Git(self.path), mocks.local.Svn():
+        }), mocks.local.Git(self.path), mocks.local.Svn(), patch('platform.system', lambda: 'Darwin'), patch('platform.machine', lambda: 'x86_64'):
             self.assertIsNone(local.Git(self.path).config().get('lfs.repositoryformatversion'))
             self.assertEqual(0, program.main(
                 args=('install-git-lfs',),
@@ -97,7 +97,7 @@ class TestInstallGitLFS(testing.PathTestCase):
         with OutputCapture() as captured, mocks.remote.GitHub('github.com/git-lfs/git-lfs', releases={
             'v3.1.2/git-lfs-darwin-arm64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
             'v3.1.2/git-lfs-darwin-amd64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
-        }), mocks.local.Git(self.path) as mocked, mocks.local.Svn():
+        }), mocks.local.Git(self.path) as mocked, mocks.local.Svn(), patch('platform.system', lambda: 'Darwin'), patch('platform.machine', lambda: 'x86_64'):
             mocked.has_git_lfs = True
 
             self.assertIsNone(local.Git(self.path).config().get('lfs.repositoryformatversion'))
@@ -117,7 +117,7 @@ class TestInstallGitLFS(testing.PathTestCase):
         with OutputCapture() as captured, mocks.remote.GitHub('github.com/git-lfs/git-lfs', releases={
             'v3.1.2/git-lfs-darwin-arm64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
             'v3.1.2/git-lfs-darwin-amd64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
-        }), mocks.local.Git(self.path) as mocked, mocks.local.Svn():
+        }), mocks.local.Git(self.path) as mocked, mocks.local.Svn(), patch('platform.system', lambda: 'Darwin'), patch('platform.machine', lambda: 'x86_64'):
             mocked.has_git_lfs = True
             mocked.edit_config('lfs.repositoryformatversion', '0')
 
@@ -137,7 +137,7 @@ class TestInstallGitLFS(testing.PathTestCase):
         with OutputCapture() as captured, mocks.remote.GitHub('github.com/git-lfs/git-lfs', releases={
             'v3.1.2/git-lfs-darwin-arm64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
             'v3.1.2/git-lfs-darwin-amd64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
-        }), mocks.local.Git(), mocks.local.Svn():
+        }), mocks.local.Git(), mocks.local.Svn(), patch('platform.system', lambda: 'Darwin'), patch('platform.machine', lambda: 'x86_64'):
             self.assertEqual(0, program.main(
                 args=('install-git-lfs',),
                 path=self.path,

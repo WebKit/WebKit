@@ -1,5 +1,21 @@
 2022-04-27  Jonathan Bedard  <jbedard@apple.com>
 
+        test-webkitpy TestInstallGitLFS fails
+        https://bugs.webkit.org/show_bug.cgi?id=239788
+        <rdar://problem/92363359>
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/install_git_lfs_unittest.py:
+        (TestInstallGitLFS.test_install): Specify mock system and machine.
+        (TestInstallGitLFS.test_configure): Ditto.
+        (TestInstallGitLFS.test_no_op): Ditto.
+        (TestInstallGitLFS.test_no_repo): Ditto.
+
+2022-04-27  Jonathan Bedard  <jbedard@apple.com>
+
         [commits.webkit.org] Change branch forwarding behavior
         https://bugs.webkit.org/show_bug.cgi?id=239136
         <rdar://problem/91314217>
