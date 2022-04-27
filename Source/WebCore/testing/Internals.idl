@@ -115,6 +115,13 @@ enum AudioSessionCategory {
     "AudioProcessing"
 };
 
+enum RouteSharingPolicy {
+    "Default",
+    "LongFormAudio",
+    "Independent",
+    "LongFormVideo"
+};
+
 enum AutoplayPolicy {
     "Default",
     "Allow",
@@ -962,6 +969,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     readonly attribute boolean supportsAudioSession;
     AudioSessionCategory audioSessionCategory();
     [Conditional=VIDEO] AudioSessionCategory categoryAtMostRecentPlayback(HTMLMediaElement element);
+    RouteSharingPolicy routeSharingPolicy();
 
     double preferredAudioBufferSize();
     double currentAudioBufferSize();

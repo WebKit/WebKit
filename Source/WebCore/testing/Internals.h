@@ -884,6 +884,7 @@ public:
 
 #if USE(AUDIO_SESSION)
     using AudioSessionCategory = WebCore::AudioSessionCategory;
+    using RouteSharingPolicy = WebCore::RouteSharingPolicy;
 #else
     enum class AudioSessionCategory : uint8_t {
         None,
@@ -894,10 +895,18 @@ public:
         PlayAndRecord,
         AudioProcessing,
     };
+
+    enum class RouteSharingPolicy : uint8_t {
+        Default,
+        LongFormAudio,
+        Independent,
+        LongFormVideo
+    };
 #endif
 
     bool supportsAudioSession() const;
     AudioSessionCategory audioSessionCategory() const;
+    RouteSharingPolicy routeSharingPolicy() const;
 #if ENABLE(VIDEO)
     AudioSessionCategory categoryAtMostRecentPlayback(HTMLMediaElement&) const;
 #endif
