@@ -228,11 +228,8 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
 
     ALWAYS_LOG(LOGIDENTIFIER, state);
 
-    auto currentPosition = this->currentPosition();
-    if (m_positionState && currentPosition) {
-        m_positionState->position = *currentPosition;
-        m_timeAtLastPositionUpdate = MonotonicTime::now();
-    }
+    updateReportedPosition();
+
     m_playbackState = state;
     notifyPlaybackStateObservers();
 }
@@ -394,6 +391,29 @@ RefPtr<HTMLMediaElement> MediaSession::activeMediaElement() const
         return nullptr;
 
     return HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::MediaSession, doc);
+}
+
+void MediaSession::updateReportedPosition()
+{
+    auto currentPosition = this->currentPosition();
+    if (m_positionState && currentPosition) {
+        m_lastReportedPosition = m_positionState->position = *currentPosition;
+        m_timeAtLastPositionUpdate = MonotonicTime::now();
+    }
+}
+
+void MediaSession::willBeginPlayback()
+{
+    updateReportedPosition();
+    m_playbackState = MediaSessionPlaybackState::Playing;
+    notifyPositionStateObservers();
+}
+
+void MediaSession::willPausePlayback()
+{
+    updateReportedPosition();
+    m_playbackState = MediaSessionPlaybackState::Paused;
+    notifyPositionStateObservers();
 }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

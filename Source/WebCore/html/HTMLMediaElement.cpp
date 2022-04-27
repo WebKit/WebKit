@@ -789,7 +789,7 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomStrin
             removeBehaviorRestrictionsAfterFirstUserGesture();
     } else if (name == titleAttr) {
         if (m_mediaSession)
-            m_mediaSession->clientCharacteristicsChanged();
+            m_mediaSession->clientCharacteristicsChanged(false);
     }
     else
         HTMLElement::parseAttribute(name, value);
@@ -893,7 +893,7 @@ void HTMLMediaElement::removedFromAncestor(RemovalType removalType, ContainerNod
     }
 
     if (m_mediaSession)
-        m_mediaSession->clientCharacteristicsChanged();
+        m_mediaSession->clientCharacteristicsChanged(false);
 
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
@@ -2352,7 +2352,7 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
 
     logMediaLoadRequest(document().page(), String(), convertEnumerationToString(error), false);
 
-    mediaSession().clientCharacteristicsChanged();
+    mediaSession().clientCharacteristicsChanged(false);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (!m_hasPlaybackTargetAvailabilityListeners)
         mediaSession().setActive(false);
@@ -2577,7 +2577,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             scheduleUpdateMediaState();
 #endif
 
-            mediaSession().clientCharacteristicsChanged();
+            mediaSession().clientCharacteristicsChanged(false);
 
             // As the spec only mentiones HAVE_METADATA, run the later
             // steps if we are moving to a higher state.
@@ -3319,7 +3319,7 @@ void HTMLMediaElement::finishSeek()
         scheduleEvent(eventNames().canplayEvent);
 
     if (m_mediaSession)
-        m_mediaSession->clientCharacteristicsChanged();
+        m_mediaSession->clientCharacteristicsChanged(true);
 
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource)
@@ -5918,7 +5918,7 @@ void HTMLMediaElement::clearMediaPlayer()
 
     queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
         if (m_mediaSession) {
-            m_mediaSession->clientCharacteristicsChanged();
+            m_mediaSession->clientCharacteristicsChanged(false);
             m_mediaSession->canProduceAudioChanged();
         }
     });

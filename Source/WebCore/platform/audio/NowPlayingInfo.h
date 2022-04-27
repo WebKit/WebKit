@@ -81,6 +81,7 @@ struct NowPlayingInfo {
     String sourceApplicationIdentifier;
     double duration { 0 };
     double currentTime { 0 };
+    double rate { 1.0 };
     bool supportsSeeking { false };
     MediaUniqueIdentifier uniqueIdentifier;
     bool isPlaying { false };
@@ -95,6 +96,7 @@ struct NowPlayingInfo {
             && sourceApplicationIdentifier == other.sourceApplicationIdentifier
             && duration == other.duration
             && currentTime == other.currentTime
+            && rate == other.rate
             && supportsSeeking == other.supportsSeeking
             && uniqueIdentifier == other.uniqueIdentifier
             && isPlaying == other.isPlaying
@@ -113,7 +115,7 @@ struct NowPlayingInfo {
 
 template<class Encoder> inline void NowPlayingInfo::encode(Encoder& encoder) const
 {
-    encoder << title << artist << album << sourceApplicationIdentifier << duration << currentTime << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility << artwork;
+    encoder << title << artist << album << sourceApplicationIdentifier << duration << currentTime << rate << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility << artwork;
 }
 
 template<class Decoder> inline std::optional<NowPlayingInfo> NowPlayingInfo::decode(Decoder& decoder)
@@ -142,6 +144,10 @@ template<class Decoder> inline std::optional<NowPlayingInfo> NowPlayingInfo::dec
     if (!decoder.decode(currentTime))
         return { };
 
+    double rate;
+    if (!decoder.decode(rate))
+        return { };
+
     bool supportsSeeking;
     if (!decoder.decode(supportsSeeking))
         return { };
@@ -162,7 +168,7 @@ template<class Decoder> inline std::optional<NowPlayingInfo> NowPlayingInfo::dec
     if (!decoder.decode(artwork))
         return { };
 
-    return NowPlayingInfo { WTFMove(title), WTFMove(artist), WTFMove(album), WTFMove(sourceApplicationIdentifier), duration, currentTime, supportsSeeking, uniqueIdentifier, isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
+    return NowPlayingInfo { WTFMove(title), WTFMove(artist), WTFMove(album), WTFMove(sourceApplicationIdentifier), duration, currentTime, rate, supportsSeeking, uniqueIdentifier, isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
 }
 
 } // namespace WebCore

@@ -375,9 +375,9 @@ void PlatformMediaSession::canProduceAudioChanged()
     PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
 }
 
-void PlatformMediaSession::clientCharacteristicsChanged()
+void PlatformMediaSession::clientCharacteristicsChanged(bool positionChanged)
 {
-    PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this);
+    PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this, positionChanged);
 }
 
 static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)

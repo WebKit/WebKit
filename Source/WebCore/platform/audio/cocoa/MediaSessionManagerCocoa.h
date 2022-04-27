@@ -87,7 +87,7 @@ protected:
     bool sessionWillBeginPlayback(PlatformMediaSession&) override;
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) override;
     void sessionDidEndRemoteScrubbing(PlatformMediaSession&) final;
-    void clientCharacteristicsChanged(PlatformMediaSession&) final;
+    void clientCharacteristicsChanged(PlatformMediaSession&, bool) final;
     void sessionCanProduceAudioChanged() final;
 
     virtual void providePresentingApplicationPIDIfNecessary() { }

@@ -309,7 +309,7 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
     }
 }
 
-void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession& session)
+void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession& session, bool)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     scheduleSessionStatusUpdate();
@@ -376,7 +376,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
         CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoDuration, cfDuration.get());
     }
 
-    double rate = nowPlayingInfo.isPlaying ? 1 : 0;
+    double rate = nowPlayingInfo.isPlaying ? nowPlayingInfo.rate : 0;
     auto cfRate = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &rate));
     CFDictionarySetValue(info.get(), kMRMediaRemoteNowPlayingInfoPlaybackRate, cfRate.get());
 

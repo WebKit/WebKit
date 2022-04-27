@@ -234,6 +234,12 @@ bool MediaElementSession::clientWillBeginPlayback()
 
     m_elementIsHiddenBecauseItWasRemovedFromDOM = false;
     updateClientDataBuffering();
+
+#if ENABLE(MEDIA_SESSION)
+    if (auto* session = mediaSession())
+        session->willBeginPlayback();
+#endif
+
     return true;
 }
 
@@ -243,6 +249,12 @@ bool MediaElementSession::clientWillPausePlayback()
         return false;
 
     updateClientDataBuffering();
+
+#if ENABLE(MEDIA_SESSION)
+    if (auto* session = mediaSession())
+        session->willPausePlayback();
+#endif
+
     return true;
 }
 
@@ -1176,6 +1188,7 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
     bool allowsNowPlayingControlsVisibility = page && !page->isVisibleAndActive();
     bool isPlaying = state() == PlatformMediaSession::Playing;
     bool supportsSeeking = m_element.supportsSeeking();
+    double rate = 1.0;
     double duration = supportsSeeking ? m_element.duration() : MediaPlayer::invalidTime();
     double currentTime = m_element.currentTime();
     if (!std::isfinite(currentTime) || !supportsSeeking)
@@ -1183,6 +1196,14 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
 
 #if ENABLE(MEDIA_SESSION)
     auto* session = mediaSession();
+    auto positionState = session ? session->positionState() : std::nullopt;
+    auto currentPosition = session ? session->currentPosition() : std::nullopt;
+    if (positionState) {
+        duration = positionState->duration;
+        rate = positionState->playbackRate;
+    }
+    if (currentPosition)
+        currentTime = *currentPosition;
     auto* sessionMetadata = session ? session->metadata() : nullptr;
     if (sessionMetadata) {
         std::optional<NowPlayingInfoArtwork> artwork;
@@ -1190,11 +1211,11 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
             ASSERT(sessionMetadata->artworkImage()->data(), "An image must always have associated data");
             artwork = NowPlayingInfoArtwork { sessionMetadata->artworkSrc(), sessionMetadata->artworkImage()->mimeType(), sessionMetadata->artworkImage()->data() };
         }
-        return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), m_element.sourceApplicationIdentifier(), duration, currentTime, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
+        return NowPlayingInfo { sessionMetadata->title(), sessionMetadata->artist(), sessionMetadata->album(), m_element.sourceApplicationIdentifier(), duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, WTFMove(artwork) };
     }
 #endif
 
-    return NowPlayingInfo { m_element.mediaSessionTitle(), emptyString(), emptyString(), m_element.sourceApplicationIdentifier(), duration, currentTime, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { }};
+    return NowPlayingInfo { m_element.mediaSessionTitle(), emptyString(), emptyString(), m_element.sourceApplicationIdentifier(), duration, currentTime, rate, supportsSeeking, m_element.mediaUniqueIdentifier(), isPlaying, allowsNowPlayingControlsVisibility, { } };
 }
 
 void MediaElementSession::updateMediaUsageIfChanged()
@@ -1299,14 +1320,30 @@ void MediaElementSession::ensureIsObservingMediaSession()
 
 void MediaElementSession::metadataChanged(const RefPtr<MediaMetadata>&)
 {
-    clientCharacteristicsChanged();
+    clientCharacteristicsChanged(false);
 }
 
-void MediaElementSession::positionStateChanged(const std::optional<MediaPositionState>&) { }
+void MediaElementSession::positionStateChanged(const std::optional<MediaPositionState>&)
+{
+    clientCharacteristicsChanged(false);
+}
 
 void MediaElementSession::playbackStateChanged(MediaSessionPlaybackState) { }
 
 void MediaElementSession::actionHandlersChanged() { }
+
+void MediaElementSession::clientCharacteristicsChanged(bool positionChanged)
+{
+#if ENABLE(MEDIA_SESSION)
+    auto* session = mediaSession();
+    if (positionChanged && session) {
+        auto positionState = session->positionState();
+        if (positionState)
+            session->setPositionState(MediaPositionState { positionState->duration, positionState->playbackRate, m_element.currentTime() });
+    }
+#endif
+    PlatformMediaSession::clientCharacteristicsChanged(positionChanged);
+}
 
 }
 

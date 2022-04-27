@@ -131,7 +131,7 @@ public:
     virtual void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying);
     virtual void sessionStateChanged(PlatformMediaSession&);
     virtual void sessionDidEndRemoteScrubbing(PlatformMediaSession&) { };
-    virtual void clientCharacteristicsChanged(PlatformMediaSession&) { }
+    virtual void clientCharacteristicsChanged(PlatformMediaSession&, bool) { }
     virtual void sessionCanProduceAudioChanged();
 
 #if PLATFORM(IOS_FAMILY)

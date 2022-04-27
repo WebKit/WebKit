@@ -1,3 +1,71 @@
+2022-04-26  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaSession.setPositionState() does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=237196
+
+        Reviewed by Eric Carlson.
+
+        Use MediaSession's positionState if present when constructing NowPlaying
+        MediaRemote data.
+        We emulate what the media-session position would have been had the
+        time progressed according to the playback rate.
+        As such, we need to tell the media-session when no action handlers are
+        set that the media was paused or played again.
+        When seeking, we update the new time position and continue according to
+        the set playback rate.
+
+        Tested manually with the following scenarios:
+        - Set a page only defining the media-session's position state once
+        - Let the media element play by default, check the Now Playing position
+        - Pause/Play using Now Playing control and checks that the time doesn't
+          jump around.
+        - Seek using Now Playing and check that the media seeks properly and that
+          the Now Playing positon progress from the seek point according to the
+          media-session's playback rate.
+        - Seek using default media control and check the same as above.
+        - Seek using default media control, then pause in Now Playing: check that
+          the playback position doesn't jump around.
+
+        We don't have a way to properly test the MediaRemote
+        external framework and with existing MediaSession API tests currently
+        disabled following bug 221514.
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::setPlaybackState):
+        (WebCore::MediaSession::updateReportedPosition):
+        (WebCore::MediaSession::willBeginPlayback):
+        (WebCore::MediaSession::willPausePlayback):
+        (WebCore::MediaSession::positionOverridden):
+        * Modules/mediasession/MediaSession.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        (WebCore::HTMLMediaElement::removedFromAncestor):
+        (WebCore::HTMLMediaElement::mediaLoadingFailed):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::finishSeek):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::clientWillBeginPlayback):
+        (WebCore::MediaElementSession::clientWillPausePlayback):
+        (WebCore::MediaElementSession::nowPlayingInfo const):
+        (WebCore::MediaElementSession::metadataChanged):
+        (WebCore::MediaElementSession::positionStateChanged):
+        (WebCore::MediaElementSession::clientCharacteristicsChanged):
+        * html/MediaElementSession.h:
+        * platform/audio/NowPlayingInfo.h:
+        (WebCore::NowPlayingInfo::operator== const):
+        (WebCore::NowPlayingInfo::encode const):
+        (WebCore::NowPlayingInfo::decode):
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::clientCharacteristicsChanged):
+        * platform/audio/PlatformMediaSession.h:
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::clientCharacteristicsChanged):
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::clientCharacteristicsChanged):
+        (WebCore::MediaSessionManagerCocoa::setNowPlayingInfo):
+
 2022-04-26  Elliott Williams  <emw@apple.com>
 
         Unreviewed, reverting "[Xcode] Compute PGO profdata paths instead of searching for them at build time"

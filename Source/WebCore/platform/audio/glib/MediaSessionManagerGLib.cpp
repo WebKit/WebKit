@@ -227,7 +227,7 @@ void MediaSessionManagerGLib::sessionStateChanged(PlatformMediaSession& platform
     session->playbackStatusChanged(platformSession);
 }
 
-void MediaSessionManagerGLib::clientCharacteristicsChanged(PlatformMediaSession& platformSession)
+void MediaSessionManagerGLib::clientCharacteristicsChanged(PlatformMediaSession& platformSession, bool)
 {
     ALWAYS_LOG(LOGIDENTIFIER, platformSession.logIdentifier());
     if (m_isSeeking) {
