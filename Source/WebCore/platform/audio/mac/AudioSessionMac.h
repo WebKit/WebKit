@@ -50,6 +50,7 @@ private:
 
     // AudioSession
     CategoryType category() const final { return m_category; }
+    RouteSharingPolicy routeSharingPolicy() const { return m_policy; }
     void audioOutputDeviceChanged() final;
     void setIsPlayingToBluetoothOverride(std::optional<bool>) final;
     void setCategory(CategoryType, RouteSharingPolicy) final;
@@ -58,7 +59,6 @@ private:
     size_t numberOfOutputChannels() const final;
     size_t maximumNumberOfOutputChannels() const final;
     bool tryToSetActiveInternal(bool) final;
-    RouteSharingPolicy routeSharingPolicy() const final;
     String routingContextUID() const final;
     size_t preferredBufferSize() const final;
     void setPreferredBufferSize(size_t) final;
@@ -70,6 +70,7 @@ private:
     std::optional<bool> m_lastMutedState;
     mutable WeakHashSet<ConfigurationChangeObserver> m_configurationChangeObservers;
     AudioSession::CategoryType m_category { AudioSession::CategoryType::None };
+    RouteSharingPolicy m_policy { RouteSharingPolicy::Default };
 #if ENABLE(ROUTING_ARBITRATION)
     bool m_setupArbitrationOngoing { false };
     bool m_inRoutingArbitration { false };

@@ -1,3 +1,14 @@
+2022-04-27  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] unable to start playing audio when device is locked
+        https://bugs.webkit.org/show_bug.cgi?id=239812
+        <rdar://90642648>
+
+        Reviewed by Jer Noble.
+
+        * media/audio-session-category-expected.txt:
+        * media/audio-session-category.html:
+
 2022-04-27  Karl Rackler  <rackler@apple.com>
 
         [ macOS Debug wk2 ] fast/css/identical-logical-height-decl.html is a flaky image failure

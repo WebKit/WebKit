@@ -36,19 +36,24 @@
             runWithKeyDown(() => { run('video.play()') });
             await waitFor(video, 'playing');
             testExpected('internals.audioSessionCategory()', 'None');
-
+            testExpected('internals.routeSharingPolicy()', 'Default');
+            
             consoleWrite('<br>** Check category when an unmuted element is playing.');
             runWithKeyDown(() => { run('video.muted = false') });
             await waitFor(video, 'volumechange');
             testExpected('internals.audioSessionCategory()', 'MediaPlayback');
+            testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
 
             consoleWrite('<br>** Mute the element, check again after 500ms.');
             run('video.pause()');
             runWithKeyDown(() => { run('video.muted = true') });
             await sleepFor(500);
             testExpected('internals.audioSessionCategory()', 'MediaPlayback');
+            testExpected('internals.routeSharingPolicy()', 'LongFormAudio');
 
             await waitForCategory('None', 3, '<br>** And check again after 3 seconds.');
+            testExpected('internals.routeSharingPolicy()', 'Default');
+
             video.src = '';
             video.load();
         }
@@ -77,13 +82,16 @@
             oscillator.start(0);
             await sleepFor(500);
             testExpected('internals.audioSessionCategory()', 'AmbientSound');
+            testExpected('internals.routeSharingPolicy()', 'Default');
 
             consoleWrite('<br>** Close the context, check again after 500ms.');
             await context.close();
             await sleepFor(500);
             testExpected('internals.audioSessionCategory()', 'AmbientSound');
+            testExpected('internals.routeSharingPolicy()', 'Default');
 
             await waitForCategory('None', 3, '<br>** And check again after 3 seconds.');
+            testExpected('internals.routeSharingPolicy()', 'Default');
         }
         
         async function testMediaStream()
@@ -94,12 +102,14 @@
             consoleWrite('<br>** Check category when capturing.');
             let stream = await navigator.mediaDevices.getUserMedia({audio : true});
             testExpected('internals.audioSessionCategory()', 'PlayAndRecord');
+            testExpected('internals.routeSharingPolicy()', 'Default');
 
             consoleWrite('<br>** Check after MediaStream is attached to audio element.');
             video.srcObject = stream;
             runWithKeyDown(() => { run('video.play()') });
             await waitFor(video, 'playing');
             testExpected('internals.audioSessionCategory()', 'PlayAndRecord');
+            testExpected('internals.routeSharingPolicy()', 'Default');
 
             consoleWrite('<br>** Check after MediaStream muting audio track.');
             const audioTrack = stream.getAudioTracks()[0];
