@@ -1,3 +1,18 @@
+2022-04-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        test-webkitperl outputs git hints during the test
+        https://bugs.webkit.org/show_bug.cgi?id=239759
+
+        Reviewed by Alexey Proskuryakov.
+
+        Avoid git hints about initial branch name during a test that initializes a git repository.
+        The output disrupts the test system result reporting output.
+
+        Specify the quiet operation. --initial-branch cannot be specified
+        since the Perl tests run on older git.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/filenameWithParentheses.pl:
+
 2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         [GLib] Make WebKitSettings XSS auditor functions no-op
