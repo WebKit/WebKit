@@ -1,3 +1,26 @@
+2022-04-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GCC] GCC9.3 defines 'remove_cvref_t' but not '__cpp_lib_remove_cvref'
+        https://bugs.webkit.org/show_bug.cgi?id=239805
+
+        Reviewed by Žan Doberšek.
+
+        GCC9.3 defines 'remove_cvref_t' but not '__cpp_lib_remove_cvref'. The
+        latter was introduced in GCC9.4:
+        
+          https://github.com/gcc-mirror/gcc/blob/releases/gcc-9.4.0/libstdc%2B%2B-v3/include/std/type_traits#L3024
+        
+        The flag '__cpp_lib_remove_cvref' is used to check whether 'remove_cvref_t'
+        is defined, but it's not posible to rely on it for GCC9.3 as explained on the
+        paragraph above.
+        
+        Instead we check whether __cplusplus is <= 201703L since the GCC commit
+        that defined 'remove_cvref_t' does it if __cplusplus > 201703L. See:
+        
+          https://github.com/gcc-mirror/gcc/commit/6791489ee5214b0181aa22adc250cbbde1897a5c
+
+        * wtf/StdLibExtras.h:
+
 2022-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Remove AriaReflectionEnabled runtime flag

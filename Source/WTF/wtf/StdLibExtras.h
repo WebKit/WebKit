@@ -605,7 +605,8 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
 
-#if defined(__GLIBCXX__) && !defined(__cpp_lib_remove_cvref)
+// TODO: Needed for GCC<=9.3. Remove it after Ubuntu 20.04 end of support (May 2023).
+#if defined(__GLIBCXX__) && __cplusplus <= 201703L
 namespace std {
 template <typename T>
 struct remove_cvref {
