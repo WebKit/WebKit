@@ -3373,6 +3373,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyWebkitMaskPosition,
         CSSPropertyMaskRepeat,
         CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft,
+        CSSPropertyBorderBlockStart, CSSPropertyBorderBlockEnd, CSSPropertyBorderInlineStart, CSSPropertyBorderInlineEnd,
         CSSPropertyBorderColor,
         CSSPropertyBorderRadius,
         CSSPropertyBorderWidth,

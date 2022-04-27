@@ -201,8 +201,6 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
         auto& substitution = downcast<CSSPendingSubstitutionValue>(value);
 
         auto shorthandID = substitution.shorthandPropertyId();
-        if (CSSProperty::isDirectionAwareProperty(shorthandID))
-            shorthandID = CSSProperty::resolveDirectionAwareProperty(shorthandID, direction, writingMode);
 
         auto resolvedData = substitution.shorthandValue().resolveVariableReferences(builderState);
         if (!resolvedData)

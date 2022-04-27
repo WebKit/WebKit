@@ -1,3 +1,35 @@
+2022-04-26  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Side border shorthands should not be logical/physical
+        https://bugs.webkit.org/show_bug.cgi?id=239734
+
+        Reviewed by Tim Nguyen.
+
+        No test since now there should be no observable change in behavior.
+
+        However, this refactoring will be needed for bug 236199.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        Mark logical side border shorthands as animatable.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        Add code for serializing logical side border shorthands.
+
+        * css/CSSProperties.json:
+        Stop side border shorthands from being in a logical property group.
+        They will just expand into logical or physical longhands, but the
+        shorthands themselves will be normal.
+
+        * css/makeprop.pl:
+        (addProperty):
+        Assert that no shorthand belongs to a logical property group.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        Remove dead code.
+
 2022-04-26  Jean-Yves Avenard  <jya@apple.com>
 
         MediaSession.setPositionState() does not work.

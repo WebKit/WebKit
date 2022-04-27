@@ -306,6 +306,7 @@ sub addProperty($$)
                 } elsif ($codegenOptionName eq "color-property") {
                     $nameIsColorProperty{$name} = 1;
                 } elsif ($codegenOptionName eq "logical-property-group") {
+                    die "Shorthand property $name can't belong to a logical property group\n" if exists $codegenProperties->{"longhands"};
                     my $groupName = $codegenProperties->{$codegenOptionName}{"name"};
                     my $resolver = $codegenProperties->{$codegenOptionName}{"resolver"};
                     my $kind;
