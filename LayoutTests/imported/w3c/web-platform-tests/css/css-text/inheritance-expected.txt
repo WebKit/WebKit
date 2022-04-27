@@ -8,7 +8,7 @@ PASS Property letter-spacing inherits
 PASS Property line-break has initial value auto
 PASS Property line-break inherits
 PASS Property overflow-wrap has initial value normal
-FAIL Property overflow-wrap inherits assert_equals: expected "break-word" but got "normal"
+PASS Property overflow-wrap inherits
 PASS Property tab-size has initial value 8
 PASS Property tab-size inherits
 FAIL Property text-align-all has initial value start assert_true: text-align-all doesn't seem to be supported in the computed style expected true got false

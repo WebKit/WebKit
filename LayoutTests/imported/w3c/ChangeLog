@@ -1,5 +1,14 @@
 2022-04-27  Tim Nguyen  <ntim@apple.com>
 
+        Rebaseline imported/w3c/web-platform-tests/css/css-text/inheritance.html after r293521
+        https://bugs.webkit.org/show_bug.cgi?id=166782
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/css/css-text/inheritance-expected.txt:
+
+2022-04-27  Tim Nguyen  <ntim@apple.com>
+
         Make -webkit-transform-style an alias of transform-style
         https://bugs.webkit.org/show_bug.cgi?id=239808
 
