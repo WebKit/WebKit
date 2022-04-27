@@ -798,8 +798,6 @@ LayoutUnit LegacyRootInlineBox::verticalPositionForBox(LegacyInlineBox* box, Ver
 
     // This method determines the vertical position for inline elements.
     bool firstLine = isFirstLine();
-    if (firstLine && !blockFlow().view().usesFirstLineRules())
-        firstLine = false;
 
     // Check the cache.
     bool isRenderInline = renderer->isRenderInline();

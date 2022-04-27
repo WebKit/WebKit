@@ -2458,13 +2458,8 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     if (isReplacedOrInlineBlock() && linePositionMode == PositionOnContainingLine)
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
-    if (firstLine && view().usesFirstLineRules()) {
-        auto& s = firstLineStyle();
-        if (&s != &style())
-            return s.computedLineHeight();
-    }
-    
-    return style().computedLineHeight();
+    auto& lineStyle = firstLine ? firstLineStyle() : style();
+    return lineStyle.computedLineHeight();
 }
 
 LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
@@ -2617,9 +2612,6 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
 {
     firstLetter = nullptr;
     firstLetterContainer = nullptr;
-
-    if (!view().usesFirstLetterRules())
-        return;
 
     // Don't recur
     if (style().styleType() == PseudoId::FirstLetter)

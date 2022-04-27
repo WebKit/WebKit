@@ -45,7 +45,6 @@
 #include "Quirks.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
-#include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -490,7 +489,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
 
     // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
     // on the document timeline.
-    if (document.backForwardCacheState() == Document::NotInBackForwardCache && !document.renderView()->printing()) {
+    if (document.backForwardCacheState() == Document::NotInBackForwardCache && !document.printing()) {
         if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
             styleable.updateCSSTransitions(*oldStyle, *newStyle);
 
@@ -787,8 +786,6 @@ auto TreeResolver::updateQueryContainer(Element& element, const RenderStyle& sty
 
 std::unique_ptr<Update> TreeResolver::resolve()
 {
-    auto& renderView = *m_document.renderView();
-
     Element* documentElement = m_document.documentElement();
     if (!documentElement) {
         m_document.styleScope().resolver();
@@ -809,16 +806,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
     m_scopeStack.append(adoptRef(*new Scope(m_document)));
     m_parentStack.append(Parent(m_document));
 
-    auto rootResolver = scope().resolver;
-
-    // Pseudo element removal and similar may only work with these flags still set. Reset them after the style recalc.
-    renderView.setUsesFirstLineRules(renderView.usesFirstLineRules() || rootResolver->usesFirstLineRules());
-    renderView.setUsesFirstLetterRules(renderView.usesFirstLetterRules() || rootResolver->usesFirstLetterRules());
-
     resolveComposedTree();
-
-    renderView.setUsesFirstLineRules(rootResolver->usesFirstLineRules());
-    renderView.setUsesFirstLetterRules(rootResolver->usesFirstLetterRules());
 
     ASSERT(m_scopeStack.size() == 1);
     ASSERT(m_parentStack.size() == 1);

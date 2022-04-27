@@ -215,7 +215,7 @@ bool RenderInline::mayAffectLayout() const
         || parentStyle->lineHeight() != style().lineHeight()))
         || hasHardLineBreakChildOnly;
 
-    if (!mayAffectLayout && checkFonts && view().usesFirstLineRules()) {
+    if (!mayAffectLayout && checkFonts) {
         // Have to check the first line style as well.
         parentStyle = &parent()->firstLineStyle();
         auto& childStyle = firstLineStyle();
@@ -856,13 +856,8 @@ LegacyInlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 
 LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
-    if (firstLine && view().usesFirstLineRules()) {
-        const RenderStyle& firstLineStyle = this->firstLineStyle();
-        if (&firstLineStyle != &style())
-            return firstLineStyle.computedLineHeight();
-    }
-
-    return style().computedLineHeight();
+    auto& lineStyle = firstLine ? firstLineStyle() : style();
+    return lineStyle.computedLineHeight();
 }
 
 LayoutUnit RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
