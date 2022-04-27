@@ -2242,4 +2242,7 @@ webkit.org/b/233621 http/tests/webgpu [ Skip ]
 
 webkit.org/b/237849 imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html [ ImageOnlyFailure ]
 
+#rdar://91780899
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-blocks-mouse-events.html [ Skip ]
+
 fast/text/install-font-style-recalc.html [ Pass ]

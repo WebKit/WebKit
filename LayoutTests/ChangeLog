@@ -1,3 +1,19 @@
+2022-04-26  Truitt Savell  <tsavell@apple.com>
+
+        Cleanup expectations for 7 imported/w3c/web-platform-tests/html/semantics/interactive-elements/ tests
+        https://bugs.webkit.org/show_bug.cgi?id=239790
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/backdrop-receives-element-events-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/closed-dialog-does-not-block-mouse-events-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-inlines-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-ancestor-is-inert-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-blocks-mouse-events-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/non-modal-dialog-does-not-block-mouse-events-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/simulated-click-inert-expected.txt: Removed.
+
 2022-04-26  Karl Rackler  <rackler@apple.com>
 
         [ macOS ] webanimations/accelerated-animation-after-forward-filling-animation.html is a flaky image failure
