@@ -2732,13 +2732,14 @@ TEST_P(RobustResourceInitTestES3, BlitDepthStencilAfterClearBuffer)
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(RobustResourceInitTest,
-                                       WithAllocateNonZeroMemory(ES2_VULKAN()));
+                                       ES2_VULKAN().enable(Feature::AllocateNonZeroMemory));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RobustResourceInitTestES3);
-ANGLE_INSTANTIATE_TEST_ES3_AND(RobustResourceInitTestES3, WithAllocateNonZeroMemory(ES3_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES3_AND(RobustResourceInitTestES3,
+                               ES3_VULKAN().enable(Feature::AllocateNonZeroMemory));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(RobustResourceInitTestES31);
 ANGLE_INSTANTIATE_TEST_ES31_AND(RobustResourceInitTestES31,
-                                WithAllocateNonZeroMemory(ES31_VULKAN()));
+                                ES31_VULKAN().enable(Feature::AllocateNonZeroMemory));
 
 }  // namespace angle

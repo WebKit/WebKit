@@ -2243,7 +2243,7 @@ TEST_P(TransformFeedbackTest, EndWithDifferentProgram)
     // AMD drivers fail because they perform transform feedback when it should be paused.
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
-    // https://crbug.com/1207380 Pixel 2 is crashing during ES3_Vulkan_AsyncQueue testing
+    // https://crbug.com/1207380 Pixel 2 is crashing during ES3_Vulkan_AsyncCommandQueue testing
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsPixel2());
 
     std::vector<std::string> tfVaryings;
@@ -4078,6 +4078,66 @@ TEST_P(TransformFeedbackTest, BaseInstance)
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 
     EXPECT_GL_NO_ERROR();
+}
+
+// Tests that deleting a buffer then resuming transform feedback produces an error.
+TEST_P(TransformFeedbackTest, ResumingTransformFeedbackAfterDeletebuffer)
+{
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(testProgram, essl1_shaders::vs::Simple(),
+                                        essl1_shaders::fs::Green(), {"gl_Position"},
+                                        GL_INTERLEAVED_ATTRIBS);
+    glUseProgram(testProgram);
+
+    std::vector<uint8_t> bufData(100, 0);
+
+    GLBuffer buf;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, buf);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, bufData.size(), bufData.data(), GL_DYNAMIC_COPY);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf);
+    glBeginTransformFeedback(GL_POINTS);
+    glPauseTransformFeedback();
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    buf.reset();
+    ASSERT_GL_NO_ERROR();
+
+    // Should produce an error because of a missing buffer binding.
+    glResumeTransformFeedback();
+    ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Validates that drawing after deleting a buffer in a paused XFB.
+TEST_P(TransformFeedbackTest, DrawAfterDeletingPausedBuffer)
+{
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(testProgram, essl1_shaders::vs::Simple(),
+                                        essl1_shaders::fs::Green(), {"gl_Position"},
+                                        GL_INTERLEAVED_ATTRIBS);
+    glUseProgram(testProgram);
+
+    std::vector<uint8_t> data(100, 0);
+
+    std::array<Vector3, 6> quadVerts = GetQuadVertices();
+
+    GLint loc = glGetAttribLocation(testProgram, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, loc);
+
+    GLBuffer posBuf;
+    glBindBuffer(GL_ARRAY_BUFFER, posBuf);
+    glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(loc);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    GLBuffer buf;
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buf);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, data.size() * sizeof(data[0]), data.data(),
+                 GL_STATIC_DRAW);
+    glBeginTransformFeedback(GL_POINTS);
+    glPauseTransformFeedback();
+    glDrawArrays(GL_POINTS, 0, 1);
+    buf.reset();
+    glDrawArrays(GL_POINTS, 0, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);

@@ -2683,6 +2683,10 @@ void FrameCaptureShared::ReplayCall(gl::Context *context,
                 replayContext->getAsConstPointer<const GLint *>(
                     params.getParam("length", ParamType::TGLintConstPointer, 3)));
             break;
+        case angle::EntryPoint::GLShadingRateQCOM:
+            context->shadingRateQCOM(
+                params.getParam("rate", ParamType::TGLenum, 0).value.GLenumVal);
+            break;
         case angle::EntryPoint::GLStencilFunc:
             context->stencilFunc(params.getParam("func", ParamType::TGLenum, 0).value.GLenumVal,
                                  params.getParam("ref", ParamType::TGLint, 1).value.GLintVal,

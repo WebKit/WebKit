@@ -149,8 +149,8 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
     void onDetach(const Context *context, rx::Serial framebufferSerial) override;
     GLuint getId() const override;
 
-    InitState initState(const ImageIndex &imageIndex) const override;
-    void setInitState(const ImageIndex &imageIndex, InitState initState) override;
+    InitState initState(GLenum binding, const ImageIndex &imageIndex) const override;
+    void setInitState(GLenum binding, const ImageIndex &imageIndex, InitState initState) override;
 
     GLenum getImplementationColorReadFormat(const Context *context) const;
     GLenum getImplementationColorReadType(const Context *context) const;

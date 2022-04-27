@@ -87,12 +87,25 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
     const bool hasRenderToTextureEXT =
         renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled;
 
-    const VkImageUsageFlags usage =
-        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
-        VK_IMAGE_USAGE_SAMPLED_BIT |
-        (isDepthStencilFormat ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
-                              : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) |
-        (isRenderToTexture && !hasRenderToTextureEXT ? VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT : 0);
+    // Transfer and sampled usage are used for various utilities such as readback or blit.
+    VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
+                              VK_IMAGE_USAGE_SAMPLED_BIT;
+
+    // Renderbuffer's normal usage is as framebuffer attachment.
+    usage |= isDepthStencilFormat ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
+                                  : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+    // When used to emulate multisampled render to texture, it can be read as input attachment.
+    if (isRenderToTexture && !hasRenderToTextureEXT)
+    {
+        usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+    }
+
+    // For framebuffer fetch and advanced blend emulation, color will be read as input attachment.
+    if (!isDepthStencilFormat)
+    {
+        usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+    }
 
     const uint32_t imageSamples = isRenderToTexture ? 1 : samples;
 
@@ -175,8 +188,9 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
     if (mImage->isQueueChangeNeccesary(rendererQueueFamilyIndex))
     {
         vk::OutsideRenderPassCommandBuffer *commandBuffer;
-        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer({}, &commandBuffer));
-        mImage->retain(&contextVk->getResourceUseList());
+        vk::CommandBufferAccess access;
+        access.onExternalAcquireRelease(mImage);
+        ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
         mImage->changeLayoutAndQueue(contextVk, aspect, vk::ImageLayout::ColorAttachment,
                                      rendererQueueFamilyIndex, commandBuffer);
     }
@@ -250,6 +264,7 @@ angle::Result RenderbufferVk::getAttachmentRenderTarget(const gl::Context *conte
 }
 
 angle::Result RenderbufferVk::initializeContents(const gl::Context *context,
+                                                 GLenum binding,
                                                  const gl::ImageIndex &imageIndex)
 {
     // Note: stageSubresourceRobustClear only uses the intended format to count channels.

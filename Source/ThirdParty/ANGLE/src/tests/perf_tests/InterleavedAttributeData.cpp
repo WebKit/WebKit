@@ -72,10 +72,9 @@ class InterleavedAttributeDataBenchmark
 InterleavedAttributeDataBenchmark::InterleavedAttributeDataBenchmark()
     : ANGLERenderTest("InterleavedAttributeData", GetParam()), mPointSpriteProgram(0)
 {
-    // Timing out on Intel. http://crbug.com/921004
     if (GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
     {
-        mSkipTest = true;
+        skipTest("http://crbug.com/921004 Timing out on Intel");
     }
 }
 

@@ -291,6 +291,8 @@ class TCompiler : public TShHandleBase
                              const TParseContext &parseContext,
                              ShCompileOptions compileOptions);
 
+    bool postParseChecks(const TParseContext &parseContext);
+
     sh::GLenum mShaderType;
     ShShaderSpec mShaderSpec;
     ShShaderOutput mOutputType;

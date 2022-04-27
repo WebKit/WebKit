@@ -111,7 +111,7 @@ void LinkProgramBenchmark::initializeBenchmark()
     if (GetParam().threadOption != ThreadOption::SingleThread &&
         !IsGLExtensionEnabled("GL_KHR_parallel_shader_compile"))
     {
-        mSkipTest = true;
+        skipTest("non-single-thread but missing GL_KHR_parallel_shader_compile");
         return;
     }
 

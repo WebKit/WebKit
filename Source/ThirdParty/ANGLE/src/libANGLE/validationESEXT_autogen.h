@@ -836,6 +836,8 @@ bool ValidateGetQueryObjectui64vRobustANGLE(const Context *context,
                                             const GLsizei *length,
                                             const GLuint64 *params);
 
+// GL_ANGLE_robust_resource_initialization
+
 // GL_ANGLE_semaphore_fuchsia
 bool ValidateImportSemaphoreZirconHandleANGLE(const Context *context,
                                               angle::EntryPoint entryPoint,
@@ -2580,6 +2582,9 @@ bool ValidateFramebufferTextureMultiviewOVR(const Context *context,
                                             GLsizei numViews);
 
 // GL_OVR_multiview2
+
+// GL_QCOM_shading_rate
+bool ValidateShadingRateQCOM(const Context *context, angle::EntryPoint entryPoint, GLenum rate);
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ESEXT_AUTOGEN_H_

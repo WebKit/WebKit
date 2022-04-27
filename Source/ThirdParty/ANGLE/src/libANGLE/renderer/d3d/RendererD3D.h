@@ -19,11 +19,12 @@
 #include "libANGLE/Version.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/d3d/ShaderD3D.h"
 #include "libANGLE/renderer/d3d/VertexDataManager.h"
 #include "libANGLE/renderer/d3d/formatutilsD3D.h"
 #include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/renderer/serial_utils.h"
-#include "platform/FeaturesD3D.h"
+#include "platform/FeaturesD3D_autogen.h"
 
 namespace egl
 {
@@ -277,7 +278,7 @@ class RendererD3D : public BufferFactoryD3D
                                               gl::ShaderType type,
                                               const std::vector<D3DVarying> &streamOutVaryings,
                                               bool separatedOutputBuffers,
-                                              const angle::CompilerWorkaroundsD3D &workarounds,
+                                              const CompilerWorkaroundsD3D &workarounds,
                                               ShaderExecutableD3D **outExectuable) = 0;
     virtual angle::Result ensureHLSLCompilerInitialized(d3d::Context *context)     = 0;
 

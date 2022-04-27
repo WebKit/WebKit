@@ -15,6 +15,7 @@
 #include "libANGLE/renderer/RenderTargetCache.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ResourceVk.h"
+#include "libANGLE/renderer/vulkan/SurfaceVk.h"
 #include "libANGLE/renderer/vulkan/UtilsVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
@@ -145,9 +146,14 @@ class FramebufferVk : public FramebufferImpl
 
     const vk::RenderPassDesc &getRenderPassDesc() const { return mRenderPassDesc; }
 
+    void updateColorResolveAttachment(
+        uint32_t colorIndexGL,
+        vk::ImageOrBufferViewSubresourceSerial resolveImageViewSerial);
+
     angle::Result getFramebuffer(ContextVk *contextVk,
                                  vk::Framebuffer **framebufferOut,
-                                 const vk::ImageView *resolveImageViewIn);
+                                 const vk::ImageView *resolveImageViewIn,
+                                 const SwapchainResolveMode swapchainResolveMode);
 
     bool hasDeferredClears() const { return !mDeferredClears.empty(); }
     angle::Result flushDeferredClears(ContextVk *contextVk);
@@ -161,6 +167,8 @@ class FramebufferVk : public FramebufferImpl
 
     void onSwitchProgramFramebufferFetch(ContextVk *contextVk, bool programUsesFramebufferFetch);
     bool hasFramebufferFetch() const { return mCurrentFramebufferDesc.hasFramebufferFetch(); }
+
+    void removeColorResolveAttachment(uint32_t colorIndexGL);
 
   private:
     FramebufferVk(RendererVk *renderer,
@@ -233,11 +241,6 @@ class FramebufferVk : public FramebufferImpl
 
     VkClearValue getCorrectedColorClearValue(size_t colorIndexGL,
                                              const VkClearColorValue &clearColor) const;
-
-    void updateColorResolveAttachment(
-        uint32_t colorIndexGL,
-        vk::ImageOrBufferViewSubresourceSerial resolveImageViewSerial);
-    void removeColorResolveAttachment(uint32_t colorIndexGL);
 
     void updateLayerCount();
 

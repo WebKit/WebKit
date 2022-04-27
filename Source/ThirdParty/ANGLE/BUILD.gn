@@ -4,6 +4,9 @@
 
 # import the ozone_platform_x11 variable
 import("gni/angle.gni")
+if (angle_enable_vulkan) {
+  import("//build_overrides//vulkan_headers.gni")
+}
 if (angle_has_build) {
   import("//build/config/linux/pkg_config.gni")
   import("//build/config/sanitizers/sanitizers.gni")
@@ -440,6 +443,13 @@ config("angle_gl_visibility_config") {
       "GL_APICALL=__attribute__((visibility(\"default\")))",
       "GL_API=__attribute__((visibility(\"default\")))",
     ]
+  }
+}
+
+config("angle_vulkan_wayland_config") {
+  if (angle_enable_vulkan && angle_use_wayland &&
+      defined(vulkan_wayland_include_dirs)) {
+    include_dirs = vulkan_wayland_include_dirs
   }
 }
 
@@ -1399,6 +1409,21 @@ if (angle_standalone || build_with_chromium) {
     deps = [
       ":angle_gpu_info_util",
       "${angle_jsoncpp_dir}:jsoncpp",
+    ]
+  }
+}
+
+if (angle_enable_cgl) {
+  config("supports_automatic_graphics_switching") {
+    # For discussion about config, inputs, etc, see:
+    # https://bugs.chromium.org/p/chromium/issues/detail?id=781858
+    _plist_file = "util/osx/supports_automatic_graphics_switching.plist"
+    inputs = [ _plist_file ]
+    ldflags = [
+      "-sectcreate",
+      "__TEXT",
+      "__info_plist",
+      rebase_path(_plist_file, root_build_dir),
     ]
   }
 }

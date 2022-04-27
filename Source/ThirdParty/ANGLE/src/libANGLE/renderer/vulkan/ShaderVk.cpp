@@ -12,7 +12,7 @@
 #include "common/debug.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
-#include "platform/FeaturesVk.h"
+#include "platform/FeaturesVk_autogen.h"
 
 namespace rx
 {
@@ -53,6 +53,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
     if (contextVk->getFeatures().basicGLLineRasterization.enabled)
     {
         compileOptions |= SH_ADD_BRESENHAM_LINE_RASTER_EMULATION;
+    }
+
+    if (contextVk->getFeatures().emulateAdvancedBlendEquations.enabled)
+    {
+        compileOptions |= SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION;
     }
 
     if (contextVk->emulateSeamfulCubeMapSampling())

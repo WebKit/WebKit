@@ -69,6 +69,7 @@ class SurfaceD3D : public SurfaceImpl
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
     angle::Result initializeContents(const gl::Context *context,
+                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
     const angle::Format *getD3DTextureColorFormat() const override;

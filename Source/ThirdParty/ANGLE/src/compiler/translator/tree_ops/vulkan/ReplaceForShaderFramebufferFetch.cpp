@@ -99,7 +99,11 @@ bool InputAttachmentReferenceTraverser::visitDeclaration(Visit visit, TIntermDec
 
     if (symbol->getType().getQualifier() == EvqFragmentInOut)
     {
-        const unsigned int inputAttachmentIdx = symbol->getType().getLayoutQualifier().location;
+        // The input attachment index is identical to the location qualifier.  If there's only one
+        // output, GLSL is allowed to not specify the location qualifier, in which case it would
+        // implicitly be at location 0.
+        const unsigned int inputAttachmentIdx =
+            std::max(0, symbol->getType().getLayoutQualifier().location);
 
         if (symbol->getType().isArray())
         {
@@ -394,14 +398,12 @@ TIntermNode *ReplaceSubpassInputUtils::assignSubpassLoad(TIntermTyped *resultVar
                                                          TIntermTyped *inputAttachmentSymbol,
                                                          const uint8_t targetVecSize)
 {
-    TIntermSequence *subpassArguments = new TIntermSequence();
-    subpassArguments->push_back(inputAttachmentSymbol);
-
     // TODO: support interaction with multisampled framebuffers.  For example, the sample ID needs
     // to be provided to the built-in call here.  http://anglebug.com/6195
 
+    TIntermSequence subpassArguments  = {inputAttachmentSymbol};
     TIntermTyped *subpassLoadFuncCall = CreateSubpassLoadFuncCall(
-        mSymbolTable, inputAttachmentSymbol->getBasicType(), subpassArguments);
+        mSymbolTable, inputAttachmentSymbol->getBasicType(), &subpassArguments);
 
     TIntermTyped *result = subpassLoadFuncCall;
     if (targetVecSize < 4)

@@ -34,6 +34,7 @@ const char *gPerfCounters      = nullptr;
 // Default to three warmup loops. There's no science to this. More than two loops was experimentally
 // helpful on a Windows NVIDIA setup when testing with Vulkan and native trace tests.
 int gWarmupLoops = 3;
+int gWarmupSteps = std::numeric_limits<int>::max();
 }  // namespace angle
 
 namespace
@@ -120,6 +121,12 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
         else if (strcmp("--warmup-loops", argv[argIndex]) == 0)
         {
             gWarmupLoops = ReadIntArgument(argv[argIndex + 1]);
+            // Skip an additional argument.
+            argIndex++;
+        }
+        else if (strcmp("--warmup-steps", argv[argIndex]) == 0)
+        {
+            gWarmupSteps = ReadIntArgument(argv[argIndex + 1]);
             // Skip an additional argument.
             argIndex++;
         }

@@ -187,8 +187,6 @@ TEST_P(BlendMinMaxTest, RGBA16F)
 {
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"));
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF((IsAndroid() && IsVulkan()) || isSwiftshader());
 
     // TODO(anglebug.com/5491) Context.cpp disallows GL_EXT_color_buffer_half_float on iOS because
     // it doesn't support GL_EXT_color_buffer_float.

@@ -122,6 +122,20 @@ TIntermConstantUnion *CreateFloatNode(float value, TPrecision precision)
     return new TIntermConstantUnion(u, type);
 }
 
+TIntermConstantUnion *CreateVecNode(const float values[],
+                                    unsigned int vecSize,
+                                    TPrecision precision)
+{
+    TConstantUnion *u = new TConstantUnion[vecSize];
+    for (unsigned int channel = 0; channel < vecSize; ++channel)
+    {
+        u[channel].setFConst(values[channel]);
+    }
+
+    TType type(EbtFloat, precision, EvqConst, static_cast<uint8_t>(vecSize));
+    return new TIntermConstantUnion(u, type);
+}
+
 TIntermConstantUnion *CreateIndexNode(int index)
 {
     TConstantUnion *u = new TConstantUnion[1];

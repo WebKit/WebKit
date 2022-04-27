@@ -114,6 +114,7 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
                             gl::Command source) override;
 
     angle::Result initializeContents(const gl::Context *context,
+                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
     GLsizei getRenderToTextureSamples();
@@ -176,7 +177,8 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
     bool canCreateRenderTargetForImage(const gl::ImageIndex &index) const;
     angle::Result ensureRenderTarget(const gl::Context *context);
 
-    virtual angle::Result createCompleteStorage(bool renderTarget,
+    virtual angle::Result createCompleteStorage(const gl::Context *context,
+                                                bool renderTarget,
                                                 TexStoragePointer *outTexStorage) const = 0;
     virtual angle::Result setCompleteTexStorage(const gl::Context *context,
                                                 TextureStorage *newCompleteTexStorage)  = 0;
@@ -322,7 +324,8 @@ class TextureD3D_2D : public TextureD3D
 
   private:
     angle::Result initializeStorage(const gl::Context *context, bool renderTarget) override;
-    angle::Result createCompleteStorage(bool renderTarget,
+    angle::Result createCompleteStorage(const gl::Context *context,
+                                        bool renderTarget,
                                         TexStoragePointer *outTexStorage) const override;
     angle::Result setCompleteTexStorage(const gl::Context *context,
                                         TextureStorage *newCompleteTexStorage) override;
@@ -452,7 +455,8 @@ class TextureD3D_Cube : public TextureD3D
 
   private:
     angle::Result initializeStorage(const gl::Context *context, bool renderTarget) override;
-    angle::Result createCompleteStorage(bool renderTarget,
+    angle::Result createCompleteStorage(const gl::Context *context,
+                                        bool renderTarget,
                                         TexStoragePointer *outTexStorage) const override;
     angle::Result setCompleteTexStorage(const gl::Context *context,
                                         TextureStorage *newCompleteTexStorage) override;
@@ -586,7 +590,8 @@ class TextureD3D_3D : public TextureD3D
 
   private:
     angle::Result initializeStorage(const gl::Context *context, bool renderTarget) override;
-    angle::Result createCompleteStorage(bool renderTarget,
+    angle::Result createCompleteStorage(const gl::Context *context,
+                                        bool renderTarget,
                                         TexStoragePointer *outStorage) const override;
     angle::Result setCompleteTexStorage(const gl::Context *context,
                                         TextureStorage *newCompleteTexStorage) override;
@@ -715,7 +720,8 @@ class TextureD3D_2DArray : public TextureD3D
 
   private:
     angle::Result initializeStorage(const gl::Context *context, bool renderTarget) override;
-    angle::Result createCompleteStorage(bool renderTarget,
+    angle::Result createCompleteStorage(const gl::Context *context,
+                                        bool renderTarget,
                                         TexStoragePointer *outStorage) const override;
     angle::Result setCompleteTexStorage(const gl::Context *context,
                                         TextureStorage *newCompleteTexStorage) override;
@@ -832,7 +838,8 @@ class TextureD3D_External : public TextureD3DImmutableBase
 
   private:
     angle::Result initializeStorage(const gl::Context *context, bool renderTarget) override;
-    angle::Result createCompleteStorage(bool renderTarget,
+    angle::Result createCompleteStorage(const gl::Context *context,
+                                        bool renderTarget,
                                         TexStoragePointer *outTexStorage) const override;
     angle::Result setCompleteTexStorage(const gl::Context *context,
                                         TextureStorage *newCompleteTexStorage) override;
@@ -881,7 +888,8 @@ class TextureD3D_2DMultisample : public TextureD3DImmutableBase
 
   private:
     angle::Result initializeStorage(const gl::Context *context, bool renderTarget) override;
-    angle::Result createCompleteStorage(bool renderTarget,
+    angle::Result createCompleteStorage(const gl::Context *context,
+                                        bool renderTarget,
                                         TexStoragePointer *outTexStorage) const override;
     angle::Result initMipmapImages(const gl::Context *context) override;
 
@@ -926,7 +934,8 @@ class TextureD3D_2DMultisampleArray : public TextureD3DImmutableBase
 
   private:
     angle::Result initializeStorage(const gl::Context *context, bool renderTarget) override;
-    angle::Result createCompleteStorage(bool renderTarget,
+    angle::Result createCompleteStorage(const gl::Context *context,
+                                        bool renderTarget,
                                         TexStoragePointer *outTexStorage) const override;
     angle::Result initMipmapImages(const gl::Context *context) override;
 

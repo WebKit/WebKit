@@ -89,11 +89,10 @@ class TextureUploadSubImageBenchmark : public TextureUploadBenchmarkBase
     {
         addExtensionPrerequisite("GL_EXT_texture_storage");
 
-        // http://anglebug.com/6319
         if (IsLinux() && IsIntel() &&
             GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
         {
-            mSkipTest = true;
+            skipTest("http://anglebug.com/6319");
         }
     }
 
@@ -185,10 +184,9 @@ TextureUploadBenchmarkBase::TextureUploadBenchmarkBase(const char *benchmarkName
     setWebGLCompatibilityEnabled(GetParam().webgl);
     setRobustResourceInit(GetParam().webgl);
 
-    // Crashes on nvidia+d3d11. http://crbug.com/945415
     if (GetParam().getRenderer() == EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE)
     {
-        mSkipTest = true;
+        skipTest("http://crbug.com/945415 Crashes on nvidia+d3d11");
     }
 }
 

@@ -393,6 +393,31 @@ class RendererVk : angle::NonCopyable
         }
     }
 
+    angle::VulkanPerfCounters getCommandQueuePerfCounters()
+    {
+        vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
+        if (isAsyncCommandQueueEnabled())
+        {
+            return mCommandProcessor.getPerfCounters();
+        }
+        else
+        {
+            return mCommandQueue.getPerfCounters();
+        }
+    }
+    void resetCommandQueuePerFrameCounters()
+    {
+        vk::ScopedCommandQueueLock lock(this, mCommandQueueMutex);
+        if (isAsyncCommandQueueEnabled())
+        {
+            mCommandProcessor.resetPerFramePerfCounters();
+        }
+        else
+        {
+            mCommandQueue.resetPerFramePerfCounters();
+        }
+    }
+
     egl::Display *getDisplay() const { return mDisplay; }
 
     VkResult getLastPresentResult(VkSwapchainKHR swapchain)
@@ -547,10 +572,13 @@ class RendererVk : angle::NonCopyable
         return mDeviceLocalVertexConversionBufferMemoryTypeIndex;
     }
 
-    vk::BufferPool *getDefaultBufferPool(VkDeviceSize size, uint32_t memoryTypeIndex);
+    void addBufferBlockToOrphanList(vk::BufferBlock *block);
+    void pruneOrphanedBufferBlocks();
 
-    void pruneDefaultBufferPools();
-    bool isDueForBufferPoolPrune();
+    bool isShadingRateSupported(gl::ShadingRate shadingRate) const
+    {
+        return mSupportedFragmentShadingRates.test(shadingRate);
+    }
 
   private:
     angle::Result initializeDevice(DisplayVk *displayVk, uint32_t queueFamilyIndex);
@@ -571,6 +599,12 @@ class RendererVk : angle::NonCopyable
     template <VkFormatFeatureFlags VkFormatProperties::*features>
     bool hasFormatFeatureBits(angle::FormatID formatID,
                               const VkFormatFeatureFlags featureBits) const;
+
+    // Initialize VMA allocator and buffer suballocator related data.
+    angle::Result initializeMemoryAllocator(DisplayVk *displayVk);
+
+    // Query and cache supported fragment shading rates
+    bool canSupportFragmentShadingRate(const vk::ExtensionNameList &deviceExtensionNames);
 
     egl::Display *mDisplay;
 
@@ -624,8 +658,9 @@ class RendererVk : angle::NonCopyable
     VkPhysicalDeviceHostQueryResetFeaturesEXT mHostQueryResetFeatures;
     VkPhysicalDeviceDepthClipControlFeaturesEXT mDepthClipControlFeatures;
     VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT mBlendOperationAdvancedFeatures;
-    VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT mBlendOperationAdvancedProperties;
     VkPhysicalDeviceSamplerYcbcrConversionFeatures mSamplerYcbcrConversionFeatures;
+    VkPhysicalDeviceFragmentShadingRateFeaturesKHR mFragmentShadingRateFeatures;
+    angle::PackedEnumBitSet<gl::ShadingRate, uint8_t> mSupportedFragmentShadingRates;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
     uint32_t mMaxVertexAttribDivisor;
     uint32_t mCurrentQueueFamilyIndex;
@@ -649,20 +684,27 @@ class RendererVk : angle::NonCopyable
     vk::SharedBufferSuballocationGarbageList mSuballocationGarbage;
     vk::SharedBufferSuballocationGarbageList mPendingSubmissionSuballocationGarbage;
 
-    vk::MemoryProperties mMemoryProperties;
     vk::FormatTable mFormatTable;
+    // A cache of VkFormatProperties as queried from the device over time.
+    mutable angle::FormatMap<VkFormatProperties> mFormatProperties;
+
+    vk::Allocator mAllocator;
+    vk::MemoryProperties mMemoryProperties;
+    VkDeviceSize mPreferredLargeHeapBlockSize;
 
     // The default alignment for BufferVk object
     size_t mDefaultBufferAlignment;
-
     // The cached memory type index for staging buffer that is host visible.
     uint32_t mCoherentStagingBufferMemoryTypeIndex;
     uint32_t mNonCoherentStagingBufferMemoryTypeIndex;
     size_t mStagingBufferAlignment;
-
+    // For vertex conversion buffers
     uint32_t mHostVisibleVertexConversionBufferMemoryTypeIndex;
     uint32_t mDeviceLocalVertexConversionBufferMemoryTypeIndex;
     size_t mVertexConversionBufferAlignment;
+
+    // Holds orphaned BufferBlocks when ShareGroup gets destroyed
+    vk::BufferBlockPointerVector mOrphanedBufferBlocks;
 
     // All access to the pipeline cache is done through EGL objects so it is thread safe to not use
     // a lock.
@@ -672,9 +714,6 @@ class RendererVk : angle::NonCopyable
     bool mPipelineCacheDirty;
     bool mPipelineCacheInitialized;
 
-    // A cache of VkFormatProperties as queried from the device over time.
-    mutable angle::FormatMap<VkFormatProperties> mFormatProperties;
-
     // Latest validation data for debug overlay.
     std::string mLastValidationMessage;
     uint32_t mValidationMessageCount;
@@ -682,8 +721,6 @@ class RendererVk : angle::NonCopyable
     // Whether framebuffer fetch has been used, for the purposes of more accurate syncval error
     // filtering.
     bool mIsFramebufferFetchUsed;
-
-    DebugAnnotatorVk mAnnotator;
 
     // How close to VkPhysicalDeviceLimits::maxMemoryAllocationCount we allow ourselves to get
     static constexpr double kPercentMaxMemoryAllocationCount = 0.3;
@@ -715,7 +752,6 @@ class RendererVk : angle::NonCopyable
     vk::CommandBufferRecycler<vk::RenderPassCommandBuffer, vk::RenderPassCommandBufferHelper>
         mRenderPassCommandBufferRecycler;
 
-    vk::Allocator mAllocator;
     SamplerCache mSamplerCache;
     SamplerYcbcrConversionCache mYuvConversionCache;
     angle::HashMap<VkFormat, uint32_t> mVkFormatDescriptorCountMap;
@@ -725,8 +761,12 @@ class RendererVk : angle::NonCopyable
     // Tracks resource serials.
     vk::ResourceSerialFactory mResourceSerialFactory;
 
+    // Application executable information
+    VkApplicationInfo mApplicationInfo;
     // Process GPU memory reports
     vk::MemoryReport mMemoryReport;
+    // Helpers for adding trace annotations
+    DebugAnnotatorVk mAnnotator;
 
     // Stats about all Vulkan object caches
     using VulkanCacheStats = angle::PackedEnumMap<VulkanCacheType, CacheStats>;
@@ -749,12 +789,6 @@ class RendererVk : angle::NonCopyable
 
     vk::ExtensionNameList mEnabledInstanceExtensions;
     vk::ExtensionNameList mEnabledDeviceExtensions;
-
-    vk::BufferPoolPointerArray mDefaultBufferPools;
-
-    std::unique_ptr<vk::BufferPool> mSmallBufferPool;
-
-    double mLastPruneTime;
 };
 
 }  // namespace rx

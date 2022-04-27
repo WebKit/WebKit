@@ -272,6 +272,30 @@ int ReplaceAllSubstrings(std::string *str,
     return count;
 }
 
+std::string ToCamelCase(const std::string &str)
+{
+    std::string result;
+
+    bool lastWasUnderscore = false;
+    for (char c : str)
+    {
+        if (c == '_')
+        {
+            lastWasUnderscore = true;
+            continue;
+        }
+
+        if (lastWasUnderscore)
+        {
+            c                 = static_cast<char>(std::toupper(c));
+            lastWasUnderscore = false;
+        }
+        result += c;
+    }
+
+    return result;
+}
+
 std::vector<std::string> GetStringsFromEnvironmentVarOrAndroidProperty(const char *varName,
                                                                        const char *propertyName,
                                                                        const char *separator)

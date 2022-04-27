@@ -187,13 +187,13 @@ class State : angle::NonCopyable
     }
 
     // Blend state manipulation
-    bool isBlendEnabled() const { return mBlendStateExt.mEnabledMask.test(0); }
+    bool isBlendEnabled() const { return mBlendStateExt.getEnabledMask().test(0); }
     bool isBlendEnabledIndexed(GLuint index) const
     {
-        ASSERT(static_cast<size_t>(index) < mBlendStateExt.mMaxDrawBuffers);
-        return mBlendStateExt.mEnabledMask.test(index);
+        ASSERT(static_cast<size_t>(index) < mBlendStateExt.getDrawBufferCount());
+        return mBlendStateExt.getEnabledMask().test(index);
     }
-    DrawBufferMask getBlendEnabledDrawBufferMask() const { return mBlendStateExt.mEnabledMask; }
+    DrawBufferMask getBlendEnabledDrawBufferMask() const { return mBlendStateExt.getEnabledMask(); }
     void setBlend(bool enabled);
     void setBlendIndexed(bool enabled, GLuint index);
     void setBlendFactors(GLenum sourceRGB, GLenum destRGB, GLenum sourceAlpha, GLenum destAlpha);
@@ -361,6 +361,10 @@ class State : angle::NonCopyable
         ASSERT(mVertexArray != nullptr);
         return mVertexArray;
     }
+
+    // QCOM_shading_rate helpers
+    void setShadingRate(GLenum rate);
+    ShadingRate getShadingRate() const { return mShadingRate; }
 
     // If both a Program and a ProgramPipeline are bound, the Program will
     // always override the ProgramPipeline.
@@ -689,6 +693,7 @@ class State : angle::NonCopyable
         EXTENDED_DIRTY_BIT_CLIP_DISTANCES,          // clip distances
         EXTENDED_DIRTY_BIT_MIPMAP_GENERATION_HINT,  // mipmap generation hint
         EXTENDED_DIRTY_BIT_SHADER_DERIVATIVE_HINT,  // shader derivative hint
+        EXTENDED_DIRTY_BIT_SHADING_RATE,            // QCOM_shading_rate
         EXTENDED_DIRTY_BIT_INVALID,
         EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,
     };
@@ -859,12 +864,12 @@ class State : angle::NonCopyable
 
     bool hasConstantAlphaBlendFunc() const
     {
-        return (mBlendFuncConstantAlphaDrawBuffers & mBlendStateExt.mEnabledMask).any();
+        return (mBlendFuncConstantAlphaDrawBuffers & mBlendStateExt.getEnabledMask()).any();
     }
 
     bool hasSimultaneousConstantColorAndAlphaBlendFunc() const
     {
-        return (mBlendFuncConstantColorDrawBuffers & mBlendStateExt.mEnabledMask).any() &&
+        return (mBlendFuncConstantColorDrawBuffers & mBlendStateExt.getEnabledMask()).any() &&
                hasConstantAlphaBlendFunc();
     }
 
@@ -1168,6 +1173,10 @@ class State : angle::NonCopyable
     GLfloat mBoundingBoxMaxY;
     GLfloat mBoundingBoxMaxZ;
     GLfloat mBoundingBoxMaxW;
+
+    // QCOM_shading_rate
+    bool mShadingRatePreserveAspectRatio;
+    ShadingRate mShadingRate;
 };
 
 ANGLE_INLINE angle::Result State::syncDirtyObjects(const Context *context,

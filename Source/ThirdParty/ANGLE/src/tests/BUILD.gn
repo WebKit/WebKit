@@ -26,7 +26,7 @@ if (is_android) {
     ]
 
     deps = [
-      "//build/android:native_libraries_java",
+      "//build/android:build_java",
       "//build/android/gtest_apk:native_test_instrumentation_test_runner_java",
     ]
   }
@@ -401,7 +401,10 @@ if (is_win || is_linux || is_chromeos || is_android || is_apple) {
       "$angle_root:libGLESv2_static",
     ]
 
-    data = [ "$angle_root/src/tests/run_perf_tests.py" ]
+    data = [
+      "$angle_root/src/tests/py_utils/android_helper.py",
+      "$angle_root/src/tests/run_perf_tests.py",
+    ]
     data_deps = [ "//testing:run_perf_test" ]
 
     # These tests depend on vulkan_command_buffer_utils, which is
@@ -462,7 +465,10 @@ if (build_angle_perftests) {
       "$angle_spirv_tools_dir:spvtools_val",
     ]
 
-    data = [ "$angle_root/src/tests/run_perf_tests.py" ]
+    data = [
+      "$angle_root/src/tests/py_utils/android_helper.py",
+      "$angle_root/src/tests/run_perf_tests.py",
+    ]
 
     data_deps = [
       "${angle_root}:libEGL",

@@ -562,8 +562,8 @@ const char *ValidateProgramDrawAdvancedBlendState(const Context *context, Progra
 {
     const State &state = context->getState();
     const BlendEquationBitSet &supportedBlendEquations =
-        program->getState().getAdvancedBlendEquations();
-    const DrawBufferMask &enabledDrawBufferMask = state.getBlendStateExt().mEnabledMask;
+        program->getExecutable().getAdvancedBlendEquations();
+    const DrawBufferMask &enabledDrawBufferMask = state.getBlendStateExt().getEnabledMask();
 
     for (size_t blendEnabledBufferIndex : enabledDrawBufferMask)
     {
@@ -918,7 +918,7 @@ bool ValidateDrawInstancedANGLE(const Context *context, angle::EntryPoint entryP
 
     const auto &attribs  = state.getVertexArray()->getVertexAttributes();
     const auto &bindings = state.getVertexArray()->getVertexBindings();
-    for (size_t attributeIndex = 0; attributeIndex < MAX_VERTEX_ATTRIBS; attributeIndex++)
+    for (size_t attributeIndex = 0; attributeIndex < attribs.size(); attributeIndex++)
     {
         const VertexAttribute &attrib = attribs[attributeIndex];
         const VertexBinding &binding  = bindings[attrib.bindingIndex];
@@ -3012,6 +3012,14 @@ bool ValidateStateQuery(const Context *context,
             }
             break;
 
+        case GL_SHADING_RATE_QCOM:
+            if (!context->getExtensions().shadingRateQCOM)
+            {
+                context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
+                return false;
+            }
+            break;
+
         default:
             break;
     }
@@ -4135,17 +4143,17 @@ const char *ValidateDrawStates(const Context *context)
 
     // Advanced blend equation can only be enabled for a single render target.
     const BlendStateExt &blendStateExt = state.getBlendStateExt();
-    if (blendStateExt.mUsesAdvancedBlendEquationMask.any())
+    if (blendStateExt.getUsesAdvancedBlendEquationMask().any())
     {
         const size_t drawBufferCount            = framebuffer->getDrawbufferStateCount();
         uint32_t advancedBlendRenderTargetCount = 0;
 
-        for (size_t drawBufferIndex : blendStateExt.mUsesAdvancedBlendEquationMask)
+        for (size_t drawBufferIndex : blendStateExt.getUsesAdvancedBlendEquationMask())
         {
             if (drawBufferIndex < drawBufferCount &&
                 framebuffer->getDrawBufferState(drawBufferIndex) != GL_NONE &&
-                blendStateExt.mEnabledMask.test(drawBufferIndex) &&
-                blendStateExt.mUsesAdvancedBlendEquationMask.test(drawBufferIndex))
+                blendStateExt.getEnabledMask().test(drawBufferIndex) &&
+                blendStateExt.getUsesAdvancedBlendEquationMask().test(drawBufferIndex))
             {
                 ++advancedBlendRenderTargetCount;
             }

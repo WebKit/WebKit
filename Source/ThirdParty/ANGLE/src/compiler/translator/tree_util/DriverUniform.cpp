@@ -27,7 +27,7 @@ constexpr ImmutableString kEmulatedDepthRangeParams = ImmutableString("ANGLEDept
 constexpr const char kViewport[]               = "viewport";
 constexpr const char kClipDistancesEnabled[]   = "clipDistancesEnabled";
 constexpr const char kUnused[]                 = "_unused";
-constexpr const char kUnused2[]                = "_unused2";
+constexpr const char kAdvancedBlendEquation[]  = "advancedBlendEquation";
 constexpr const char kXfbVerticesPerInstance[] = "xfbVerticesPerInstance";
 constexpr const char kXfbBufferOffsets[]       = "xfbBufferOffsets";
 constexpr const char kAcbBufferOffsets[]       = "acbBufferOffsets";
@@ -81,8 +81,8 @@ TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
 {
     constexpr size_t kNumGraphicsDriverUniforms                                                = 8;
     constexpr std::array<const char *, kNumGraphicsDriverUniforms> kGraphicsDriverUniformNames = {
-        {kViewport, kClipDistancesEnabled, kUnused, kXfbVerticesPerInstance, kNumSamples,
-         kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange}};
+        {kViewport, kClipDistancesEnabled, kAdvancedBlendEquation, kXfbVerticesPerInstance,
+         kNumSamples, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange}};
 
     // This field list mirrors the structure of GraphicsDriverUniforms in ContextVk.cpp.
     TFieldList *driverFieldList = new TFieldList;
@@ -91,7 +91,10 @@ TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
         new TType(EbtFloat, EbpHigh, EvqGlobal, 4),
         new TType(EbtUInt, EbpHigh,
                   EvqGlobal),  // uint clipDistancesEnabled;  // 32 bits for 32 clip distances max
-        new TType(EbtUInt, EbpHigh, EvqGlobal),  // Gap usable for future
+        new TType(
+            EbtUInt, EbpLow,
+            EvqGlobal),  // uint advancedBlendEquation;
+                         // Up to BlendEquationType::HslLuminosity-BlendEquationType::Multiply+1
         new TType(EbtInt, EbpHigh, EvqGlobal),
         new TType(EbtInt, EbpLow, EvqGlobal),  // uint numSamples;         // Up to 16
         new TType(EbtInt, EbpHigh, EvqGlobal, 4),
@@ -256,6 +259,11 @@ TIntermTyped *DriverUniform::getNumSamplesRef() const
     return createDriverUniformRef(kNumSamples);
 }
 
+TIntermTyped *DriverUniform::getAdvancedBlendEquationRef() const
+{
+    return createDriverUniformRef(kAdvancedBlendEquation);
+}
+
 //
 // Class DriverUniformExtended
 //
@@ -266,7 +274,7 @@ TFieldList *DriverUniformExtended::createUniformFields(TSymbolTable *symbolTable
     constexpr size_t kNumGraphicsDriverUniformsExt = 7;
     constexpr std::array<const char *, kNumGraphicsDriverUniformsExt>
         kGraphicsDriverUniformNamesExt = {
-            {kHalfRenderArea, kFlipXY, kNegFlipXY, kDither, kUnused2, kFragRotation, kPreRotation}};
+            {kHalfRenderArea, kFlipXY, kNegFlipXY, kDither, kUnused, kFragRotation, kPreRotation}};
 
     const std::array<TType *, kNumGraphicsDriverUniformsExt> kDriverUniformTypesExt = {{
         new TType(EbtFloat, EbpHigh, EvqGlobal, 2),

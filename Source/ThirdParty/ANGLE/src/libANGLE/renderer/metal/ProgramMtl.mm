@@ -675,14 +675,13 @@ angle::Result ProgramMtl::getSpecializedShader(ContextMtl *context,
                     [NSString stringWithUTF8String:sh::mtl::kCoverageMaskEnabledConstName];
             }
             
+            NSString *depthWriteEnabledStr =
+                [NSString stringWithUTF8String:sh::mtl::kDepthWriteEnabledConstName];
 
             funcConstants = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
             [funcConstants setConstantValue:&emulateCoverageMask
                                        type:MTLDataTypeBool
                                    withName:coverageMaskEnabledStr];
-            
-            NSString *depthWriteEnabledStr = 
-                [NSString stringWithUTF8String:sh::mtl::kDepthWriteEnabledConstName];
             
             MTLPixelFormat depthPixelFormat =
                 (MTLPixelFormat)renderPipelineDesc.outputDescriptor.depthAttachmentPixelFormat;
@@ -706,7 +705,6 @@ angle::Result ProgramMtl::getSpecializedShader(ContextMtl *context,
         setConstantValue:&(context->getDisplay()->getFeatures().allowSamplerCompareLod.enabled)
                     type:MTLDataTypeBool
                 withName:@"ANGLEUseSampleCompareLod"];
-
     // Create Metal shader object
     ANGLE_MTL_OBJC_SCOPE
     {

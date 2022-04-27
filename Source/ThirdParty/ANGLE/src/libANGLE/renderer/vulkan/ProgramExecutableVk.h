@@ -109,10 +109,7 @@ using ImmutableSamplerIndexMap = angle::HashMap<vk::YcbcrConversionDesc, uint32_
 
 struct ProgramExecutablePerfCounters
 {
-    DescriptorSetCountList descriptorSetAllocations;
-    DescriptorSetCountList descriptorSetCacheHits;
-    DescriptorSetCountList descriptorSetCacheMisses;
-    DescriptorSetCountList descriptorSetCacheSizes;
+    angle::PackedEnumMap<DescriptorSetIndex, CacheStats> cacheStats;
     DescriptorSetCountList descriptorSetCacheKeySizesBytes;
 };
 
@@ -174,7 +171,7 @@ class ProgramExecutableVk
         vk::BufferHelper *emptyBuffer,
         vk::ResourceUseList *resourceUseList,
         FramebufferVk *framebufferVk,
-        const vk::DescriptorSetDesc &shaderBuffersDesc);
+        const vk::DescriptorSetDesc &shaderResourcesDesc);
     angle::Result updateUniformsAndXfbDescriptorSet(vk::Context *context,
                                                     UpdateDescriptorSetsBuilder *updateBuilder,
                                                     vk::ResourceUseList *resourceUseList,
@@ -214,7 +211,8 @@ class ProgramExecutableVk
     }
 
     void accumulateCacheStats(VulkanCacheType cacheType, const CacheStats &cacheStats);
-    ProgramExecutablePerfCounters getAndResetObjectPerfCounters();
+    ProgramExecutablePerfCounters getDescriptorSetPerfCounters();
+    void resetDescriptorSetPerfCounters();
 
     size_t getDefaultUniformAlignedSize(vk::Context *context, gl::ShaderType shaderType) const
     {
@@ -261,6 +259,7 @@ class ProgramExecutableVk
                                                   bool *newPoolAllocatedOut);
     void addInterfaceBlockDescriptorSetDesc(const std::vector<gl::InterfaceBlock> &blocks,
                                             gl::ShaderType shaderType,
+                                            ShaderVariableType variableType,
                                             VkDescriptorType descType,
                                             vk::DescriptorSetLayoutDesc *descOut);
     void addAtomicCounterBufferDescriptorSetDesc(
@@ -295,15 +294,16 @@ class ProgramExecutableVk
     angle::Result allocateShaderResourcesDescriptorSet(
         vk::Context *context,
         vk::ResourceUseList *resourceUseList,
-        const vk::DescriptorSetDesc *shaderBuffersDesc);
+        const vk::DescriptorSetDesc *shaderResourcesDesc);
     angle::Result updateBuffersDescriptorSet(vk::Context *context,
                                              UpdateDescriptorSetsBuilder *updateBuilder,
                                              vk::BufferHelper *emptyBuffer,
                                              vk::ResourceUseList *resourceUseList,
                                              gl::ShaderType shaderType,
-                                             const vk::DescriptorSetDesc &shaderBuffersDesc,
+                                             const vk::DescriptorSetDesc &shaderResourcesDesc,
                                              const gl::BufferVector &buffers,
                                              const std::vector<gl::InterfaceBlock> &blocks,
+                                             ShaderVariableType variableType,
                                              VkDescriptorType descriptorType,
                                              VkDeviceSize maxBoundBufferRange,
                                              bool cacheHit);
@@ -315,7 +315,7 @@ class ProgramExecutableVk
         const gl::BufferVector &atomicCounterBufferBindings,
         const gl::ProgramExecutable &executable,
         gl::ShaderType shaderType,
-        const vk::DescriptorSetDesc &shaderBuffersDesc,
+        const vk::DescriptorSetDesc &shaderResourcesDesc,
         bool cacheHit);
     angle::Result updateImagesDescriptorSet(vk::Context *context,
                                             vk::ResourceUseList *resourceUseList,
@@ -331,8 +331,6 @@ class ProgramExecutableVk
         VkDescriptorSetLayout descriptorSetLayout,
         uint32_t descriptorCountMultiplier,
         vk::DynamicDescriptorPool *dynamicDescriptorPool);
-
-    void outputCumulativePerfCounters();
 
     size_t calcUniformUpdateRequiredSpace(vk::Context *context,
                                           const gl::ProgramExecutable &glExecutable,
@@ -419,8 +417,6 @@ class ProgramExecutableVk
     gl::ShaderVector<uint32_t> mDynamicUniformDescriptorOffsets;
     std::vector<uint32_t> mDynamicShaderBufferDescriptorOffsets;
 
-    // TODO: http://anglebug.com/4524: Need a different hash key than a string,
-    // since that's slow to calculate.
     ShaderInterfaceVariableInfoMap mVariableInfoMap;
 
     // We store all permutations of surface rotation and transformed SPIR-V programs here. We may

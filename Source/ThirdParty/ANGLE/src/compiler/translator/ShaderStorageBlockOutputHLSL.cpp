@@ -36,6 +36,9 @@ namespace sh
 namespace
 {
 
+constexpr const char kShaderStorageDeclarationString[] =
+    "// @@ SHADER STORAGE DECLARATION STRING @@";
+
 void GetBlockLayoutInfo(TIntermTyped *node,
                         bool rowMajorAlreadyAssigned,
                         TLayoutBlockStorage *storage,
@@ -503,9 +506,24 @@ void ShaderStorageBlockOutputHLSL::traverseSSBOAccess(TIntermTyped *node, SSBOMe
     loc->traverse(mOutputHLSL);
 }
 
-void ShaderStorageBlockOutputHLSL::writeShaderStorageBlocksHeader(TInfoSinkBase &out) const
+void ShaderStorageBlockOutputHLSL::writeShaderStorageBlocksHeader(GLenum shaderType,
+                                                                  TInfoSinkBase &out) const
 {
-    out << mResourcesHLSL->shaderStorageBlocksHeader(mReferencedShaderStorageBlocks);
+    if (mReferencedShaderStorageBlocks.empty())
+    {
+        return;
+    }
+
+    mResourcesHLSL->allocateShaderStorageBlockRegisters(mReferencedShaderStorageBlocks);
+    out << "// Shader Storage Blocks\n\n";
+    if (shaderType == GL_COMPUTE_SHADER)
+    {
+        out << mResourcesHLSL->shaderStorageBlocksHeader(mReferencedShaderStorageBlocks);
+    }
+    else
+    {
+        out << kShaderStorageDeclarationString << "\n";
+    }
     mSSBOFunctionHLSL->shaderStorageBlockFunctionHeader(out);
 }
 

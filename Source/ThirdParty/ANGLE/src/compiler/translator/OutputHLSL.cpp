@@ -660,7 +660,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
 
     mResourcesHLSL->uniformsHeader(out, mOutputType, mReferencedUniforms, mSymbolTable);
     out << mResourcesHLSL->uniformBlocksHeader(mReferencedUniformBlocks, mUniformBlockOptimizedMap);
-    mSSBOOutputHLSL->writeShaderStorageBlocksHeader(out);
+    mSSBOOutputHLSL->writeShaderStorageBlocksHeader(mShaderType, out);
 
     if (!mEqualityFunctions.empty())
     {

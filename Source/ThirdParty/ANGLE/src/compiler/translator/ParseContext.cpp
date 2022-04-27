@@ -1238,9 +1238,11 @@ void TParseContext::checkCanBeDeclaredWithoutInitializer(const TSourceLoc &line,
         }
     }
 
-    // Implicitly declared arrays are disallowed for shaders other than tessellation shaders.
-    if (mShaderType != GL_TESS_CONTROL_SHADER && mShaderType != GL_TESS_EVALUATION_SHADER &&
-        type->isArray())
+    // Implicitly declared arrays are only allowed with tessellation or geometry shader inputs
+    if (type->isArray() &&
+        ((mShaderType != GL_TESS_CONTROL_SHADER && mShaderType != GL_TESS_EVALUATION_SHADER &&
+          mShaderType != GL_GEOMETRY_SHADER) ||
+         (mShaderType == GL_GEOMETRY_SHADER && type->getQualifier() == EvqGeometryOut)))
     {
         const TSpan<const unsigned int> &arraySizes = type->getArraySizes();
         for (unsigned int size : arraySizes)
@@ -1248,8 +1250,8 @@ void TParseContext::checkCanBeDeclaredWithoutInitializer(const TSourceLoc &line,
             if (size == 0)
             {
                 error(line,
-                      "implicitly sized arrays disallowed for shaders that are not tessellation "
-                      "shaders",
+                      "implicitly sized arrays only allowed for tessellation shaders "
+                      "or geometry shader inputs",
                       identifier);
             }
         }
@@ -1425,7 +1427,8 @@ void TParseContext::checkIsParameterQualifierValid(
     TType *type)
 {
     // The only parameter qualifiers a parameter can have are in, out, inout or const.
-    TTypeQualifier typeQualifier = typeQualifierBuilder.getParameterTypeQualifier(mDiagnostics);
+    TTypeQualifier typeQualifier =
+        typeQualifierBuilder.getParameterTypeQualifier(type->getBasicType(), mDiagnostics);
 
     if (typeQualifier.qualifier == EvqParamOut || typeQualifier.qualifier == EvqParamInOut)
     {
@@ -2818,10 +2821,11 @@ void TParseContext::checkGeometryShaderInputAndSetArraySize(const TSourceLoc &lo
                 // [GLSL ES 3.2 SPEC Chapter 4.4.1.2]
                 // An input can be declared without an array size if there is a previous layout
                 // which specifies the size.
-                error(location,
-                      "Missing a valid input primitive declaration before declaring an unsized "
-                      "array input",
-                      token);
+                warning(location,
+                        "Missing a valid input primitive declaration before declaring an unsized "
+                        "array input",
+                        "Deferred");
+                mDeferredArrayTypesToSize.push_back(type);
             }
         }
         else if (type->isArray())
@@ -2881,7 +2885,7 @@ void TParseContext::checkTessellationShaderUnsizedArraysAndSetSize(const TSource
                 // declared, this is deferred until such time as it does.
                 if (mTessControlShaderOutputVertices == 0)
                 {
-                    mTessControlDeferredArrayTypesToSize.push_back(type);
+                    mDeferredArrayTypesToSize.push_back(type);
                 }
                 else
                 {
@@ -3449,6 +3453,14 @@ bool TParseContext::parseGeometryShaderInputLayoutQualifier(const TTypeQualifier
                   "layout");
             return false;
         }
+
+        // Size any implicitly sized arrays that have already been declared.
+        for (TType *type : mDeferredArrayTypesToSize)
+        {
+            type->sizeOutermostUnsizedArray(
+                symbolTable.getGlInVariableWithArraySize()->getType().getOutermostArraySize());
+        }
+        mDeferredArrayTypesToSize.clear();
     }
 
     // Set mGeometryInvocations if exists
@@ -3539,10 +3551,11 @@ bool TParseContext::parseTessControlShaderOutputLayoutQualifier(const TTypeQuali
         mTessControlShaderOutputVertices = layoutQualifier.vertices;
 
         // Size any implicitly sized arrays that have already been declared.
-        for (TType *type : mTessControlDeferredArrayTypesToSize)
+        for (TType *type : mDeferredArrayTypesToSize)
         {
             type->sizeOutermostUnsizedArray(mTessControlShaderOutputVertices);
         }
+        mDeferredArrayTypesToSize.clear();
     }
     else
     {

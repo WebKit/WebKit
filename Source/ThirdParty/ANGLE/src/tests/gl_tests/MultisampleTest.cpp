@@ -11,6 +11,7 @@
 #include "test_utils/gl_raii.h"
 #include "util/OSWindow.h"
 #include "util/shader_utils.h"
+#include "util/test_utils.h"
 
 using namespace angle;
 
@@ -863,6 +864,19 @@ class MultisampleResolveTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 };
+
+// Test the multisampled optimized resolve subpass
+TEST_P(MultisampleResolveTest, DISABLED_ResolveSubpassMSImage)
+{
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    // Draw green.
+    drawQuad(greenProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    swapBuffers();
+
+    // Wait for visual verification.
+    angle::Sleep(2000);
+}
 
 // These colors match the shader in resolveToFBO which returns (0.5, 0.6, 0.7, 0.8).
 const GLColor MultisampleResolveTest::kEXPECTED_R8(128, 0, 0, 255);

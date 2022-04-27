@@ -31,12 +31,6 @@ class ProgramPipelineVk : public ProgramPipelineImpl
     const ProgramExecutableVk &getExecutable() const { return mExecutable; }
     ProgramExecutableVk &getExecutable() { return mExecutable; }
 
-    ProgramVk *getShaderProgram(gl::ShaderType shaderType) const
-    {
-        const gl::Program *program = mState.getShaderProgram(shaderType);
-        return SafeGetImplAs<ProgramVk>(program);
-    }
-
     angle::Result link(const gl::Context *glContext,
                        const gl::ProgramMergedVaryings &mergedVaryings,
                        const gl::ProgramVaryingPacking &varyingPacking) override;

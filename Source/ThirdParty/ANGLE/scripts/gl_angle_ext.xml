@@ -811,6 +811,7 @@
         <command>
             <proto>void <name>glProvokingVertexANGLE</name></proto>
             <param group="VertexProvokingMode"><ptype>GLenum</ptype> <name>mode</name></param>
+            <alias name="glProvokingVertex"/>
         </command>
         <command>
             <proto>void <name>glLoseContextCHROMIUM</name></proto>
@@ -1039,6 +1040,12 @@
                 <command name="glGetQueryObjectui64vRobustANGLE"/>
             </require>
         </extension>
+        <extension name="GL_ANGLE_robust_resource_initialization" supported='gles2'>
+            <require>
+                <enum name="GL_ROBUST_RESOURCE_INITIALIZATION_ANGLE"/>
+                <enum name="GL_RESOURCE_INITIALIZED_ANGLE"/>
+            </require>
+        </extension>
         <extension name="GL_ANGLE_copy_texture_3d" supported='gles2'>
             <require>
                 <command name="glCopyTexture3DANGLE"/>
@@ -1153,6 +1160,13 @@
     </extensions>
 
     <!-- SECTION: GL enumerant (token) definitions. -->
+    <enums namespace="GL" start="0x93A7" end="0x93A7" vendor="ANGLE">
+        <enum value="0x93A7" name="GL_ROBUST_RESOURCE_INITIALIZATION_ANGLE"/>
+    </enums>
+    <enums namespace="GL" start="0x969F" end="0x969F" vendor="ANGLE">
+        <enum value="0x969F" name="GL_RESOURCE_INITIALIZED_ANGLE"/>
+    </enums>
+
     <enums namespace="GL" start="0x93AE" end="0x93AF" vendor="ANGLE">
         <enum value="0x93AE" name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE"/>
         <enum value="0x93AF" name="GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE"/>

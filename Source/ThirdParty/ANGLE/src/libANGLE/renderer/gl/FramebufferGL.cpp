@@ -26,7 +26,7 @@
 #include "libANGLE/renderer/gl/TextureGL.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
-#include "platform/FeaturesGL.h"
+#include "platform/FeaturesGL_autogen.h"
 #include "platform/PlatformMethods.h"
 
 using namespace gl;
@@ -76,7 +76,8 @@ static BlitFramebufferBounds GetBlitFramebufferBounds(const gl::Context *context
 
 void BindFramebufferAttachment(const FunctionsGL *functions,
                                GLenum attachmentPoint,
-                               const FramebufferAttachment *attachment)
+                               const FramebufferAttachment *attachment,
+                               const angle::FeaturesGL &features)
 {
     if (attachment)
     {
@@ -159,6 +160,12 @@ void BindFramebufferAttachment(const FunctionsGL *functions,
         {
             const Renderbuffer *renderbuffer     = attachment->getRenderbuffer();
             const RenderbufferGL *renderbufferGL = GetImplAs<RenderbufferGL>(renderbuffer);
+
+            if (features.alwaysUnbindFramebufferTexture2D.enabled)
+            {
+                functions->framebufferTexture2D(GL_FRAMEBUFFER, attachmentPoint, GL_TEXTURE_2D, 0,
+                                                0);
+            }
 
             functions->framebufferRenderbuffer(GL_FRAMEBUFFER, attachmentPoint, GL_RENDERBUFFER,
                                                renderbufferGL->getRenderbufferID());
@@ -840,7 +847,7 @@ angle::Result FramebufferGL::blit(const gl::Context *context,
     gl::Rectangle finalSourceArea(sourceArea);
     gl::Rectangle finalDestArea(destArea);
 
-    if (features.adjustSrcDstRegionBlitFramebuffer.enabled)
+    if (features.adjustSrcDstRegionForBlitFramebuffer.enabled)
     {
         angle::Result result = adjustSrcDstRegion(context, finalSourceArea, finalDestArea,
                                                   &finalSourceArea, &finalDestArea);
@@ -849,7 +856,7 @@ angle::Result FramebufferGL::blit(const gl::Context *context,
             return result;
         }
     }
-    if (features.clipSrcRegionBlitFramebuffer.enabled)
+    if (features.clipSrcRegionForBlitFramebuffer.enabled)
     {
         angle::Result result = clipSrcRegion(context, finalSourceArea, finalDestArea,
                                              &finalSourceArea, &finalDestArea);
@@ -1266,7 +1273,8 @@ angle::Result FramebufferGL::syncState(const gl::Context *context,
             case Framebuffer::DIRTY_BIT_DEPTH_ATTACHMENT:
             {
                 const FramebufferAttachment *newAttachment = mState.getDepthAttachment();
-                BindFramebufferAttachment(functions, GL_DEPTH_ATTACHMENT, newAttachment);
+                BindFramebufferAttachment(functions, GL_DEPTH_ATTACHMENT, newAttachment,
+                                          GetFeaturesGL(context));
                 if (newAttachment)
                 {
                     attachment = newAttachment;
@@ -1276,7 +1284,8 @@ angle::Result FramebufferGL::syncState(const gl::Context *context,
             case Framebuffer::DIRTY_BIT_STENCIL_ATTACHMENT:
             {
                 const FramebufferAttachment *newAttachment = mState.getStencilAttachment();
-                BindFramebufferAttachment(functions, GL_STENCIL_ATTACHMENT, newAttachment);
+                BindFramebufferAttachment(functions, GL_STENCIL_ATTACHMENT, newAttachment,
+                                          GetFeaturesGL(context));
                 if (newAttachment)
                 {
                     attachment = newAttachment;
@@ -1329,7 +1338,7 @@ angle::Result FramebufferGL::syncState(const gl::Context *context,
                     const FramebufferAttachment *newAttachment = mState.getColorAttachment(index);
                     BindFramebufferAttachment(functions,
                                               static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + index),
-                                              newAttachment);
+                                              newAttachment, GetFeaturesGL(context));
                     if (newAttachment)
                     {
                         attachment = newAttachment;

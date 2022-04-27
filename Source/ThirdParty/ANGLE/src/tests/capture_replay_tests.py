@@ -85,7 +85,13 @@ def winext(name, ext):
 
 
 def AutodetectGoma():
-    return winext('compiler_proxy', 'exe') in (p.name() for p in psutil.process_iter())
+    for p in psutil.process_iter():
+        try:
+            if winext('compiler_proxy', 'exe') == p.name():
+                return True
+        except:
+            pass
+    return False
 
 
 class SubProcess():

@@ -1,3 +1,222 @@
+2022-04-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Update ANGLE to 2022-04-26 (7ca11287a056d4150cba96c9c9b964153ad539cb)
+        https://bugs.webkit.org/show_bug.cgi?id=239114
+        <rdar://problem/91944443>
+
+        Reviewed by Kenneth Russell.
+
+        Contains upstream commits:
+        git log --oneline fe28a4295af087ee82b8f629b67176b95019af6d..7ca11287a056d4150cba96c9c9b964153ad539cb --pretty="%h %s"
+        7ca11287a Roll SwiftShader from f13461dbb23c to 5f5faa3a2aad (1 revision)
+        9d6b3a7ee Vulkan: Move overlay draw after swap's implicit flush
+        4aae5815f Vulkan: Overlay widgets for submission statistics
+        02b968481 Vulkan: Add support for GL_QCOM_shading_rate
+        69705e5c0 Add -Wno-deprecated-non-prototype
+        c0ac374f7 Replace `adb exec-out cat` with pull to temp location.
+        018118394 Refactor platform code
+        ea76cb0f5 Vulkan: Add entry points for GL_QCOM_shading_rate
+        62ca64492 Reland "Fix BlendStateExt::mMaxColorMask initialization"
+        d1788614c Use adb instead of catapult to run perf tests on Android.
+        e0183a421 Revert "Mark contexts as shared when importing EGL images."
+        400d9fe43 Rename feature files to *_autogen.h
+        0f3710d99 Generalize GetDisplayFromNativeDisplay
+        a8cac0058 Remove observer when element array buffer is detached
+        2d6e42fcc Update Program Pipeline TODOs.
+        853b6edf9 Roll SwiftShader from 71f3089b729c to f13461dbb23c (1 revision)
+        c95bd5e7e Roll vulkan-deps from 01fd48aca427 to f685346e2e51 (6 revisions)
+        2db718edf Vulkan: Skip empty submissions
+        b07a11569 Split Context ResourceUseList to RP Commandbuffers
+        37c53684e Split Context ResourceUseList to RP Commandbuffers
+        158951600 Avoid leaking gl::Framebuffers in gl::Context
+        f565ea4d6 Roll vulkan-deps from 158676f39f3b to 01fd48aca427 (13 revisions)
+        ad93a708a Further expand Vulkan end2end_test skip
+        e6fc5e62c Use _FindAdb (cached) directly instead of Adb wrapper.
+        4ac3ec13e Switch py_utils import to pathlib.
+        64fa5edaa Suppress VVL UNASSIGNED-BestPractices-SemaphoreCount
+        e1fdef909 Revert "Vulkan: Cache ImageView serials on texture changes."
+        3b38b3790 Vulkan: Add feature avoid HOST_VISIBLE and DEVICE_LOCAL combination
+        d988db39b Fall back to adb on PATH if platform-tools not present.
+        2dd13ebbd Track Surface color & depth/stencil init separately.
+        8f56edfdd Roll Chromium from 408793418c48 to 192db13f8509 (548 revisions)
+        0690f5d34 Revert "CGL, MTL: pbuffer for IOSurface fails for some formats"
+        0439d9cd2 Vulkan: Update glslang wrapper TODO.
+        768c7d47e Revert "Re-land: "Vulkan: Support Wayland""
+        47b9a97b6 Expand Vulkan end2end_test skip.
+        dc1b7029e Disable MSAN in the Vulkan loader
+        7a32cf547 Android: Add //build to blueprint.
+        13784ebe3 Vulkan: use "undefined" for layerProvokingVertex
+        04c6f9375 Roll SwiftShader from ea5f37f39193 to 71f3089b729c (5 revisions)
+        96239a340 Roll Chromium from a434f1de2483 to 408793418c48 (456 revisions)
+        1d67951e0 Avoid IOError in capture_replay_tests.py
+        dd493b5ca EGL: allow eglQueryString(EGL_NO_DISPLAY, EGL_VERSION)
+        6cbedc984 Add a test for backwards mip generation with draw
+        d3dbaa8df Vulkan: Remove BufferVk::mHasBeenReferencedByGPU
+        5097d10c1 D3D: unsuppress some now-passing tests.
+        cb1ee485f Vulkan: Add perf test for MSAA swapchain resolve
+        c66de085a Vulkan: Fix surface invalidate w.r.t shared present mode
+        19c6a8566 Tests: Add Free Fire Max trace
+        7d229d047 Vulkan: Cache ImageView serials on texture changes.
+        7c091cb35 Use adb directly (instead of catapult) in gold tests.
+        4efc4ee68 Fix validate state cache after XFB buffer deleted.
+        3f800e5c8 Metal:Clear Backbuffer when Robust Resource Init enabled
+        5b84ad797 CGL, MTL: pbuffer for IOSurface fails for some formats
+        ff8a9f6a1 Vulkan: Renaming "ShaderBuffers" to "ShaderResources".
+        f6cdd02fb Re-land: "Vulkan: Support Wayland"
+        5610ab642 Fix ANGLEGetDisplayPlatform after method deprecation
+        6199e905a Switch to using //build/android:build_java
+        b2a1f0d28 Track total vs per-frame descriptor set counters.
+        37cdf93d0 Vulkan: Acquire a new buffer even when size is unchanged
+        349612591 Roll vulkan-deps from 00e1ddd4230c to 158676f39f3b (8 revisions)
+        f4a550bff Roll SwiftShader from 103a69bd6c82 to ea5f37f39193 (3 revisions)
+        dde8b6629 Roll Chromium from e1b5a693bbfe to a434f1de2483 (504 revisions)
+        fcec69045 Generate feature variable names from display names
+        f4fc8e168 Revert "Fix BlendStateExt::mMaxColorMask initialization"
+        5014ce664 Vulkan: Add orphaned list for non-empty BufferBlocks.
+        55c21842b Vulkan: Use flat array lookups for shader variables.
+        6e130d2b7 D3D: fix SSBOs used in vertex shaders.
+        50d008a7e Fix BlendStateExt::mMaxColorMask initialization
+        cfc92ebf1 Vulkan: Encapsulate ShareGroup::mContexts
+        9907f22d0 gold tests: Add command-line arg for gold instance.
+        e18240d13 Mark contexts as shared when importing EGL images.
+        bddb944bc Vulkan: Prep variable info map to remove hashing.
+        242f0d81f Revert "Infra: Enable Skia Gold tests on Pixel 6"
+        acdec48ad Tests: Add Monster Strike trace
+        e77be6632 Use ProgramExecutable directly in GlslangWrapper.
+        c82513afb Add FastMap class.
+        4cd15cb39 Skip a Vulkan test due to a threading flake.
+        64fa1e80f Revert "vulkan: Call glFinish in VulkanHelper destructor"
+        9cc459c98 Add check for GL_ANDROID_extension_pack_es31a support
+        dbe5b7554 Roll vulkan-deps from 1a408eb154d7 to 00e1ddd4230c (8 revisions)
+        834ca6869 Roll Chromium from e9b55eb91cb1 to e1b5a693bbfe (303 revisions)
+        197100880 Vulkan: Call into vulkan directly for big size allocation.
+        bdb52cb8b Vulkan: Remove retains before acquireBufferHelper
+        866210add Metal: Fix bytesPerRow computation for compressed formats
+        33c8a2d0d Roll vulkan-deps from 7f875b15c6a3 to 1a408eb154d7 (4 revisions)
+        d903818a8 Roll Chromium from 573f2ec89cb9 to e9b55eb91cb1 (411 revisions)
+        3636d129e Infra: Enable Skia Gold tests on Pixel 6
+        d18e9e84a Roll vulkan-deps from c9be322642fb to 7f875b15c6a3 (16 revisions)
+        dfde9f402 Roll SwiftShader from 1d450ae99a0f to 103a69bd6c82 (3 revisions)
+        ff084b28d Roll Chromium from e6765ea8299f to 573f2ec89cb9 (443 revisions)
+        5f7db7755 Vulkan: updateUniforms when commandbuffer is valid
+        3587e217d Remove copyResourceUseList from ShareGroupVk
+        956fb16ec Remove Win NVIDIA dEQP suppressions
+        5e48e5b8d Roll VK-GL-CTS from 2748d45ebbb4 to a22069b4e3b7 (10 revisions)
+        aefb2a99e vulkan: Call glFinish in VulkanHelper destructor
+        4a33204ce Roll VK-GL-CTS from 20a474e64382 to 2748d45ebbb4 (1 revision)
+        039660a07 Translator: Drop const from opaque parameter types
+        0360248c6 Suppress flaky end2end failures on Mac/NVIDIA/OpenGL
+        03b3bc3f6 Tests: Add Special Forces Group 2 trace.
+        c3f159629 Fix OOB problem in validationES.{h,cpp}
+        fef34a6ef doc/DevSetup: Add Visual Studio Installer hint.
+        27b01dd4a Roll SwiftShader from 011bba68c819 to 1d450ae99a0f (4 revisions)
+        fcd6e2605 GN: Fix util target when X11 not enabled
+        b5d34da08 Add src/tests/py_utils/ for utils, angle_path_util for imports.
+        7e61e176e Roll Chromium from 61150a1970a3 to e6765ea8299f (515 revisions)
+        871878352 Metal: For readPixels copy IOSurface to non-IOSurface texture
+        52237c322 Suppress CopyTextureTest.CopyToMipmap on Intel Mac OpenGL
+        d2fd28cae Vulkan: Relax advanced blend on VK extension requirement
+        c5271e8e6 Vulkan: Emulate GL_KHR_blend_equation_advanced
+        01c0bc215 Revert "Vulkan: Support Wayland"
+        af51a287a Vulkan: Enum class instead of bool didRespecify
+        e9d695b5d Roll vulkan-deps from 345e2a278e69 to c9be322642fb (74 revisions)
+        f00d827e0 Roll SwiftShader from 620982155d55 to 011bba68c819 (4 revisions)
+        4b8e5db62 Roll Chromium from f961a0d4732b to 61150a1970a3 (431 revisions)
+        985d42934 Metal:Speed up BGRA8 to RGBA8 copy for readPixels
+        8074061d2 Remove feature override platform methods
+        a0b5299b6 Vulkan: Fix resolve with subpass into smaller framebuffer
+        6768aff71 Fix Geometry Shader Conformance Test Failure on Pixel6
+        445bf9bdf Use the real max vertex attrib index instead of MAX_VERTEX_ATTRIBS
+        d4cbd9bfe vulkan: Mark external memory textures as preinitialized
+        291be0b7a Suppress multisample_interpolation dEQP failures on Pixel 6 Vulkan
+        9442b7a83 D3D: Remove a pass-through function.
+        957f82974 Vulkan: Change ContextVk to Context for BufferPool APIs
+        510351f20 Vulkan: Support Wayland
+        ea86cfd2e Roll chromium_revision f89964bd5b..f961a0d473 (990903:991486)
+        fb093278c egl_angle_ext: add more missing extension enum values
+        93ccde91b Update ANGLE's docs regarding Windows 10 SDK version to use
+        19582d120 gl_angle_ext.xml: treat glProvokingVertexANGLE as alias
+        fec9c918e Roll SwiftShader from d15c42482560 to 620982155d55 (2 revisions)
+        aed5951e3 Reland "Vulkan: Fix texture-after-framebuffer sync issues"
+        797e627e6 Autogenerate list of features as enum
+        eeb396535 Autogenerate features
+        9237272f9 Metal:remove TextureMtl::mIsPow2
+        e08476cf5 Metal: Avoid leaking MTLDevice lists in DisplayMtl
+        1b2adb402 Metal: Avoid leaking MTLFunctionConstantValues in ProgramMtl
+        a201bbc98 egl_angle_ext.xml: add missing enums and typedefs
+        5c85fd4e1 Add error check on resuming XFB with deleted buffer.
+        a947c5f56 Skip BlitFramebufferTest.ScissoredMultisampleStencil
+        fb91e27cf add GL_ANGLE_robust_resource_initialization extension to xml
+        6803a2d01 D3D11: implement SSBOs in pixel and vertex shaders.
+        c458b5add Fix CheckedNumeric using the wrong type.
+        04782d86b Validate vertex attrib index against caps.maxVertexAttributes
+        767b65939 Roll VK-GL-CTS from 6f8a7182bd26 to 20a474e64382 (14 revisions)
+        b120ab6d4 Roll Chromium from a01c0c749d0a to f89964bd5b42 (617 revisions)
+        1b94c5856 Revert "Vulkan: Switch loader to new driver files env var."
+        727cd8ef6 Fix pointer sscanf for ChromeOS
+        92e99653d Fix crashes in gl::VertexArray::detachBuffer() and onDestory()
+        4b381f419 Vulkan: Fix descriptorSet perf counter values.
+        09a24f3d5 Roll SwiftShader from d09282e5c609 to d15c42482560 (2 revisions)
+        5a16a1f99 Roll Chromium from 64472fba3112 to a01c0c749d0a (448 revisions)
+        3cea7fcc0 Split Context ResourceUseList to RP Commandbuffers
+        ac1301069 Metal: Remove Unused IOSurface code
+        1f6123d55 Vulkan: Switch loader to new driver files env var.
+        a16491d98 Vulkan: Fix invalidation of non-existing aspects
+        d6ff967e3 Roll SwiftShader from d3cc7d7ac0c3 to d09282e5c609 (6 revisions)
+        b7e8ab48d Roll Chromium from 6f6eb80eab19 to 64472fba3112 (509 revisions)
+        ba04fcfd1 Support ANGLE_PREFERRED_DEVICE on CGL
+        23558369a Update perf tests arguments.
+        f36dde314 D3D: remove NV GetDimensions() workaround for image load/store.
+        7a9856f67 Report durations of all flaky retries in JSON test output
+        9d486a85e GL: Unbind textures from FBO after calls to frameBufferTexture2D
+        a1c9ba709 Update validation of glFramebufferTextureLayer for cube maps
+        152616eed Tests: Add Aztec Ruins High trace
+        06c201f84 Roll SwiftShader from 1b159f6cdecb to d3cc7d7ac0c3 (1 revision)
+        b4eaa3a29 Roll Chromium from 3c01a5c3bc2f to 6f6eb80eab19 (52 revisions)
+        ff9bd35d9 Roll Chromium from c32f123be7eb to 3c01a5c3bc2f (107 revisions)
+        bac8915c5 Roll Chromium from f39b4372b8a8 to c32f123be7eb (777 revisions)
+        366f60116 Roll vulkan-deps from 6d732e01d9ea to 345e2a278e69 (3 revisions)
+        607d398e0 Vulkan: Optimize resolve of multisample swapchains
+        0ffff9eda Vulkan: Perf counters test for glInvalidateSubFramebuffer
+        ca3b7d35f Vulkan: Roll volk
+        3258477a0 Skip car_chase on all Intel Windows platforms
+        78f5ef92a Roll SwiftShader from 7d100c556081 to 1b159f6cdecb (2 revisions)
+        7b0f63182 Vulkan: Wayland include directories
+        8b84cf15e Tests: Add GFXBench Car Chase trace
+        256bbb8ac Vulkan: Don't invalidate resolve attachment except with MSRTT
+        b3fff1aaf retrace_restricted_traces: Check for json file.
+        a11bf0edc Fix Max Atomic Counter Conformance Test Failure on Pixel6
+        a555be4aa Tests: Add Scary Teacher 3D trace
+        e933df513 retrace_restricted_traces: Remove unused code.
+        808f754c4 Capture/Replay: Use glFramebufferTexture2D for cubes
+        1a3411c7d Set SKIPPED status on skipped tests, rely on it in Gold tests.
+        34471fed1 Vulkan: Skip failing intel blend test.
+        4f7efb51b Remove swiftshader_spirv_tools_dir
+        2cb264b5a Roll SwiftShader from a190ceed7293 to 7d100c556081 (9 revisions)
+        83d3a98cd Remove commented out mSkipTest.
+        74eac5e5a Roll VK-GL-CTS from fbc38865227d to 6f8a7182bd26 (14 revisions)
+        e7d44541e Use GTEST_SKIP to set gTest status of skipped tests to SKIPPED.
+        b33767ec9 Revert "Vulkan: Fix texture-after-framebuffer sync issues"
+        bd7915fd0 Use provided format as intended format for EGLImage from VkImage
+        4655ef15d Roll SwiftShader from 649d6e46aeae to a190ceed7293 (1 revision)
+        4b2602259 Roll Chromium from 804d5a91d49d to f39b4372b8a8 (124 revisions)
+        4b232a9a8 Roll Chromium from 384f873e0970 to 804d5a91d49d (4365 revisions)
+        f41303cda Skip end2end tests timing out on TSAN and ASAN
+        535cd538f Vulkan: Fix texture-after-framebuffer sync issues
+        4615a0355 Skip failing tests on Pixel 6
+        6b94a71ce Vulkan: Lift SwS suppressions.
+        ba0eba20b Remove the TODOs regarding multisample buffer age
+        cd9e887ae Vulkan: Add multisample buffer age tests
+        8f9043636 Vulkan: Move memory allocation initialization code into function
+        b169f6f94 Vulkan: Fix no location decoration vs framebuffer fetch
+        5cffbe965 Android: Track peak GPU memory in restricted_trace_perf
+        cc19587e2 infra: Use logarithmic batching in LUCI config.
+        e10803f76 Compiler: Allow deferred array sizing in geometry shaders
+        dd86dd15b Cache outer array offset in linked uniforms.
+        0754b1f72 Roll SwiftShader from bc5bec05c369 to 649d6e46aeae (3 revisions)
+        57a081c76 Roll vulkan-deps from e37ba68c0fde to 6d732e01d9ea (4 revisions)
+        d3492eef5 Vulkan: Handle border color for stencil component
+
 2022-04-26  Kyle Piddington  <kpiddington@apple.com>
 
         Max Limits have been reduced

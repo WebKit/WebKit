@@ -487,7 +487,7 @@ angle::Result FramebufferMtl::blitWithDraw(const gl::Context *context,
             dsBlitParams.srcLevel   = srcStencilRt->getLevelIndex();
             dsBlitParams.srcLayer   = srcStencilRt->getLayerIndex();
 
-            if (!contextMtl->getDisplay()->getFeatures().hasStencilOutput.enabled &&
+            if (!contextMtl->getDisplay()->getFeatures().hasShaderStencilOutput.enabled &&
                 mStencilRenderTarget)
             {
                 // Directly writing to stencil in shader is not supported, use temporary copy buffer
@@ -551,7 +551,7 @@ gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) co
     }
 
     ContextMtl *contextMtl = mtl::GetImpl(context);
-    if (!contextMtl->getDisplay()->getFeatures().allowSeparatedDepthStencilBuffers.enabled &&
+    if (!contextMtl->getDisplay()->getFeatures().allowSeparateDepthStencilBuffers.enabled &&
         mState.hasSeparateDepthAndStencilAttachments())
     {
         return gl::FramebufferStatus::Incomplete(
@@ -687,6 +687,30 @@ angle::Result FramebufferMtl::getSamplePosition(const gl::Context *context,
     return angle::Result::Stop;
 }
 
+bool FramebufferMtl::prepareForUse(const gl::Context *context) const
+{
+    if (mBackbuffer)
+    {
+        // Backbuffer might obtain new drawable, which means it might change the
+        // the native texture used as the target of the render pass.
+        // We need to call this before creating render encoder.
+        if (IsError(mBackbuffer->ensureCurrentDrawableObtained(context)))
+        {
+            return false;
+        }
+
+        if (mBackbuffer->hasRobustResourceInit())
+        {
+            (void)mBackbuffer->initializeContents(context, GL_BACK, gl::ImageIndex::Make2D(0));
+            if (mBackbuffer->hasDepthStencil())
+            {
+                (void)mBackbuffer->initializeContents(context, GL_DEPTH, gl::ImageIndex::Make2D(0));
+            }
+        }
+    }
+    return true;
+}
+
 RenderTargetMtl *FramebufferMtl::getColorReadRenderTarget(const gl::Context *context) const
 {
     if (mState.getReadIndex() >= mColorRenderTargets.size())
@@ -694,18 +718,9 @@ RenderTargetMtl *FramebufferMtl::getColorReadRenderTarget(const gl::Context *con
         return nullptr;
     }
 
-    if (mBackbuffer)
+    if (!prepareForUse(context))
     {
-        bool isNewDrawable = false;
-        if (IsError(mBackbuffer->ensureCurrentDrawableObtained(context, &isNewDrawable)))
-        {
-            return nullptr;
-        }
-
-        if (isNewDrawable && mBackbuffer->hasRobustResourceInit())
-        {
-            (void)mBackbuffer->initializeContents(context, gl::ImageIndex::Make2D(0));
-        }
+        return nullptr;
     }
 
     return mColorRenderTargets[mState.getReadIndex()];
@@ -761,22 +776,9 @@ mtl::RenderCommandEncoder *FramebufferMtl::ensureRenderPassStarted(const gl::Con
 {
     ContextMtl *contextMtl = mtl::GetImpl(context);
 
-    if (mBackbuffer)
+    if (!prepareForUse(context))
     {
-        // Backbuffer might obtain new drawable, which means it might change the
-        // the native texture used as the target of the render pass.
-        // We need to call this before creating render encoder.
-        bool isNewDrawable;
-        if (IsError(mBackbuffer->ensureCurrentDrawableObtained(context, &isNewDrawable)))
-        {
-            return nullptr;
-        }
-
-        if (isNewDrawable && mBackbuffer->hasRobustResourceInit())
-        {
-            // Apply robust resource initialization on newly obtained drawable.
-            (void)mBackbuffer->initializeContents(context, gl::ImageIndex::Make2D(0));
-        }
+        return nullptr;
     }
 
     // Only support ensureRenderPassStarted() with different load & store options only. The
@@ -1486,6 +1488,20 @@ angle::Result FramebufferMtl::readPixelsImpl(const gl::Context *context,
         }
         ANGLE_MTL_CHECK(contextMtl, texture->samples() == 1, GL_INVALID_OPERATION);
     }
+
+    if (contextMtl->getDisplay()
+            ->getFeatures()
+            .copyIOSurfaceToNonIOSurfaceForReadOptimization.enabled &&
+        texture->hasIOSurface() && texture->mipmapLevels() == 1 &&
+        texture->textureType() == MTLTextureType2D)
+    {
+        // Reading a texture may be slow if it's an IOSurface because metal has to lock/unlock the
+        // surface, whereas copying the texture to non IOSurface texture and then reading from that
+        // may be fast depending on the GPU/driver.
+        ANGLE_TRY(contextMtl->copy2DTextureSlice0Level0ToWorkTexture(texture));
+        texture = contextMtl->getWorkTexture();
+    }
+
     if (texture->isBeingUsedByGPU(contextMtl))
     {
         contextMtl->flushCommandBuffer(mtl::WaitUntilFinished);

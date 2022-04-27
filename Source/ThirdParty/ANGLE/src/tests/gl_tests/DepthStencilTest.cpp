@@ -10,7 +10,7 @@
 
 #include "test_utils/ANGLETest.h"
 
-#include "platform/FeaturesVk.h"
+#include "platform/FeaturesVk_autogen.h"
 #include "test_utils/gl_raii.h"
 
 using namespace angle;
@@ -80,13 +80,6 @@ class DepthStencilTest : public ANGLETest
     {
         glBindFramebuffer(GL_FRAMEBUFFER, mColorDepthFBO);
         mHasStencil = false;
-    }
-
-    // Override a feature to force emulation of stencil-only and depth-only formats with a packed
-    // depth/stencil format
-    void overrideFeaturesVk(FeaturesVk *featuresVk) override
-    {
-        featuresVk->overrideFeatures({"force_fallback_format"}, true);
     }
 
     void prepareSingleEmulatedWithPacked();
@@ -678,9 +671,16 @@ TEST_P(DepthStencilTestES3, ReadOnlyDepthStencilThenOutputDepthStencil)
     EXPECT_PIXEL_COLOR_EQ(kSize / 2, kSize / 2, GLColor::yellow);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(DepthStencilTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
+    DepthStencilTest,
+    ES2_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DepthStencilTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(DepthStencilTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(DepthStencilTestES3,
+                               ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+                               ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
 
 }  // anonymous namespace

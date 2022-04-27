@@ -24,7 +24,6 @@
 // Below cases are failed due to binding multi-UAVs to a single buffer is not supported in D3D backend.
 // http://anglebug.com/3032
 3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.*.single_buffer* = FAIL
-3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.nested_structs_arrays_instance_arrays.13 = FAIL
 3032 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer* = FAIL
 
 1442 D3D11 : dEQP-GLES31.functional.state_query.integer.max_compute_atomic_counters_* = FAIL
@@ -106,13 +105,11 @@
 5197 LINUX OPENGL : dEQP-GLES31.functional.compute.indirect_dispatch.gen_in_compute.large_offset_multiple_invocations = TIMEOUT
 
 // OpenGL/D3D11 Failing Tests
-1951 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.ssbo.* = SKIP
 1442 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
 1442 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
 1442 OPENGL : dEQP-GLES31.functional.separate_shader.* = SKIP
 1442 D3D11 : dEQP-GLES31.functional.separate_shader.* = SKIP
 1442 OPENGL : dEQP-GLES31.functional.state_query.program.program_separable_get_programiv = FAIL
-1442 D3D11 : dEQP-GLES31.functional.state_query.program.program_separable_get_programiv = FAIL
 1442 OPENGL : dEQP-GLES31.functional.state_query.program_pipeline.* = SKIP
 1442 D3D11 : dEQP-GLES31.functional.state_query.program_pipeline.* = SKIP
 
@@ -163,8 +160,11 @@
 // Cannot create 2D (array) view of 3D texture.  These fail with validation errors, and cause a crash in syncval.
 3886 VULKAN : dEQP-GLES31.functional.image_load_store.3d.*single_layer = SKIP
 
-// Framebuffer fetch implementation bug
-6909 VULKAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.basic.framebuffer_texture_layer = SKIP
+// Emulated advanced blend equations (only Nvidia and SwiftShader support the Vulkan extension):
+3586 AMD VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
+3586 INTEL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
+3586 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
+3586 PIXEL6 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
 
 ////
 //// AMD Vulkan expectations
@@ -379,6 +379,12 @@
 // Geometry shader support:
 // This fails on pre-release Android T drivers as of 3/25/22:
 5430 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.query.primitives_generated_* = FAIL
+
+// Fails on Android 13 DP2
+6876 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_*1 = FAIL
+6876 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_*2 = FAIL
+6876 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_*4 = FAIL
+6876 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_*8 = FAIL
 
 // ASAN Test bugs
 6678 ASAN : dEQP-GLES31.functional.ssbo.array_length.* = SKIP

@@ -43,8 +43,6 @@ class SamplersTest31 : public SamplersTest
 // Verify that samplerParameterf supports TEXTURE_MAX_ANISOTROPY_EXT valid values.
 TEST_P(SamplersTest, ValidTextureSamplerMaxAnisotropyExt)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     GLSampler sampler;
 
     // Exact min
@@ -65,8 +63,6 @@ TEST_P(SamplersTest, ValidTextureSamplerMaxAnisotropyExt)
 // GL_TEXTURE_MAX_ANISOTROPY_EXT
 TEST_P(SamplersTest, InvalidUnderTextureSamplerMaxAnisotropyExt)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     GLSampler sampler;
 
     // Under min
@@ -77,8 +73,6 @@ TEST_P(SamplersTest, InvalidUnderTextureSamplerMaxAnisotropyExt)
 // GL_TEXTURE_MAX_ANISOTROPY_EXT
 TEST_P(SamplersTest, InvalidOverTextureSamplerMaxAnisotropyExt)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     GLSampler sampler;
 
     GLfloat maxValue = 0.0f;

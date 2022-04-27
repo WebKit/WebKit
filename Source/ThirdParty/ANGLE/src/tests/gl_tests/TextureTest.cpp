@@ -4742,7 +4742,7 @@ TEST_P(Texture2DTestES3, CopyCompressedImageMipMaps)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
     // TODO(http://anglebug.com/5634): Fix calls to vkCmdCopyBufferToImage() with images smaller
     // than the compressed format block size.
-    ANGLE_SKIP_TEST_IF(isAllocateNonZeroMemoryEnabled());
+    ANGLE_SKIP_TEST_IF(GetParam().isEnabled(Feature::AllocateNonZeroMemory));
 
     constexpr uint32_t kSize             = 4;
     constexpr size_t kNumLevels          = 3;
@@ -7643,7 +7643,7 @@ TEST_P(Texture2DRGTest, TextureRGUNormTest)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_rg"));
     // This workaround causes a GL error on Windows AMD, which is likely a driver bug.
     // The workaround is not intended to be enabled in this configuration so skip it.
-    ANGLE_SKIP_TEST_IF(GetParam().eglParameters.emulateCopyTexImage2DFromRenderbuffers &&
+    ANGLE_SKIP_TEST_IF(GetParam().isEnabled(Feature::EmulateCopyTexImage2DFromRenderbuffers) &&
                        IsWindows() && IsAMD());
 
     GLubyte pixelValue  = 0xab;
@@ -9513,11 +9513,12 @@ TEST_P(Texture2DTestES3, NonZeroBaseEmulatedClear)
     // Tests behavior of the Vulkan backend with emulated formats.
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
-    // This test assumes GL_RGB is always emulated, which overrides the WithAllocateNonZeroMemory
-    // memory feature, clearing the memory to zero. However, if the format is *not* emulated and the
-    // feature WithAllocateNonZeroMemory is enabled, the texture memory will contain non-zero
-    // memory, which means the color is not black (causing the test to fail).
-    ANGLE_SKIP_TEST_IF(isAllocateNonZeroMemoryEnabled());
+    // This test assumes GL_RGB is always emulated, which overrides the
+    // Feature::AllocateNonZeroMemory memory feature, clearing the memory to zero. However, if the
+    // format is *not* emulated and the feature Feature::AllocateNonZeroMemory is enabled, the
+    // texture memory will contain non-zero memory, which means the color is not black (causing the
+    // test to fail).
+    ANGLE_SKIP_TEST_IF(GetParam().isEnabled(Feature::AllocateNonZeroMemory));
 
     setUpProgram();
 
@@ -10487,12 +10488,12 @@ TEST_P(ExtraSamplerCubeShadowUseTest, Basic)
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
-#define ES2_EMULATE_COPY_TEX_IMAGE()                          \
-    WithEmulateCopyTexImage2DFromRenderbuffers(ES2_OPENGL()), \
-        WithEmulateCopyTexImage2DFromRenderbuffers(ES2_OPENGLES())
-#define ES3_EMULATE_COPY_TEX_IMAGE()                          \
-    WithEmulateCopyTexImage2DFromRenderbuffers(ES3_OPENGL()), \
-        WithEmulateCopyTexImage2DFromRenderbuffers(ES3_OPENGLES())
+#define ES2_EMULATE_COPY_TEX_IMAGE()                                      \
+    ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers), \
+        ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers)
+#define ES3_EMULATE_COPY_TEX_IMAGE()                                      \
+    ES3_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers), \
+        ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers)
 ANGLE_INSTANTIATE_TEST(Texture2DTest, ANGLE_ALL_TEST_PLATFORMS_ES2, ES2_EMULATE_COPY_TEX_IMAGE());
 ANGLE_INSTANTIATE_TEST_ES2(TextureCubeTest);
 ANGLE_INSTANTIATE_TEST_ES2(Texture2DTestWithDrawScale);
@@ -10501,7 +10502,8 @@ ANGLE_INSTANTIATE_TEST_ES2(SamplerArrayTest);
 ANGLE_INSTANTIATE_TEST_ES2(SamplerArrayAsFunctionParameterTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3);
-ANGLE_INSTANTIATE_TEST_ES3_AND(Texture2DTestES3, WithAllocateNonZeroMemory(ES3_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES3_AND(Texture2DTestES3,
+                               ES3_VULKAN().enable(Feature::AllocateNonZeroMemory));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3RobustInit);
 ANGLE_INSTANTIATE_TEST_ES3(Texture2DTestES3RobustInit);

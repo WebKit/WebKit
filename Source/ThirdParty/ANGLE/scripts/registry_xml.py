@@ -198,6 +198,7 @@ gles_requestable_extensions = [
     "GL_OES_vertex_type_10_10_10_2",
     "GL_OVR_multiview",
     "GL_OVR_multiview2",
+    "GL_QCOM_shading_rate",
     "GL_WEBGL_video_texture",
 ]
 

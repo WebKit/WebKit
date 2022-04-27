@@ -76,6 +76,7 @@ struct LinkedUniform : public sh::ShaderVariable, public ActiveVariable
     int bufferIndex;
     sh::BlockMemberInfo blockInfo;
     std::vector<unsigned int> outerArraySizes;
+    unsigned int outerArrayOffset;
 };
 
 struct BufferVariable : public sh::ShaderVariable, public ActiveVariable

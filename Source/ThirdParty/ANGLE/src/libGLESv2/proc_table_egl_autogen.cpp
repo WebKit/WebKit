@@ -803,6 +803,7 @@ const ProcEntry g_procTable[] = {
     {"glShadeModel", P(GL_ShadeModel)},
     {"glShaderBinary", P(GL_ShaderBinary)},
     {"glShaderSource", P(GL_ShaderSource)},
+    {"glShadingRateQCOM", P(GL_ShadingRateQCOM)},
     {"glSignalSemaphoreEXT", P(GL_SignalSemaphoreEXT)},
     {"glStencilFunc", P(GL_StencilFunc)},
     {"glStencilFuncSeparate", P(GL_StencilFuncSeparate)},
@@ -946,5 +947,5 @@ const ProcEntry g_procTable[] = {
     {"glWaitSync", P(GL_WaitSync)},
     {"glWeightPointerOES", P(GL_WeightPointerOES)}};
 
-const size_t g_numProcs = 913;
+const size_t g_numProcs = 914;
 }  // namespace egl

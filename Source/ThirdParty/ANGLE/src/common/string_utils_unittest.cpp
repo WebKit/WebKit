@@ -177,6 +177,43 @@ TEST(StringUtilsTest, HexStringToUIntBasic)
     EXPECT_FALSE(HexStringToUInt(testStringD, &uintValue));
 }
 
+// Tests for ToCamelCase
+TEST(StringUtilsTest, ToCamelCase)
+{
+    // No underscore in input; expect identical output
+    EXPECT_EQ("", ToCamelCase(""));
+    EXPECT_EQ("a", ToCamelCase("a"));
+    EXPECT_EQ("AbCdEfG", ToCamelCase("AbCdEfG"));
+    EXPECT_EQ("aBcDeFg", ToCamelCase("aBcDeFg"));
+
+    // Underscore should be removed and the next character turned upper case
+    EXPECT_EQ("", ToCamelCase("_"));
+    EXPECT_EQ("aB", ToCamelCase("a_b"));
+    EXPECT_EQ("aB", ToCamelCase("a_b"));
+    EXPECT_EQ("camelCase", ToCamelCase("camel_case"));
+    EXPECT_EQ("abCDeBEfG", ToCamelCase("abCDe_bEfG"));
+
+    // Multiple underscores
+    EXPECT_EQ("aBCDEFG", ToCamelCase("a_b_c_d_e_f_g"));
+    EXPECT_EQ("abCdEfGh", ToCamelCase("ab_cd_ef_gh"));
+    EXPECT_EQ("aShortName", ToCamelCase("a_short_name"));
+    EXPECT_EQ("someShortWords", ToCamelCase("some_short_words"));
+    EXPECT_EQ("bunchOLetters", ToCamelCase("bunch_o_letters"));
+    EXPECT_EQ("whatEndsInE", ToCamelCase("what_ends_in_e"));
+    EXPECT_EQ("adjustSrcDstRegionForBlitFramebuffer",
+              ToCamelCase("adjust_src_dst_region_for_BlitFramebuffer"));
+
+    // Uppercase after underscore
+    EXPECT_EQ("abCDEFGh", ToCamelCase("ab_CD_eF_Gh"));
+    EXPECT_EQ("IWasThere", ToCamelCase("I_was_there"));
+    EXPECT_EQ("whereDidTHATComeFrom", ToCamelCase("where_did_THAT_come_from"));
+
+    // Digits
+    EXPECT_EQ("ab123c4deF5gHi6J", ToCamelCase("ab1_2_3c_4de_f5g_hi6_j"));
+    EXPECT_EQ("maxSize16KB", ToCamelCase("max_size_16KB"));
+    EXPECT_EQ("supportRGBA8", ToCamelCase("support_RGBA8"));
+}
+
 // Basic functionality for NamesMatchWithWildcard.
 TEST(StringUtilsTest, NamesMatchWithWildcard)
 {

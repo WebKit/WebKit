@@ -1339,6 +1339,7 @@ enum class EntryPoint
     GLShaderBinary,
     GLShaderSource,
     GLShaderStorageBlockBinding,
+    GLShadingRateQCOM,
     GLSignalSemaphoreEXT,
     GLSpecializeShader,
     GLStencilFunc,

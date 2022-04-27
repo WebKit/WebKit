@@ -212,7 +212,7 @@ angle::Result VertexArrayGL::syncDrawState(const gl::Context *context,
         indexRange.start = first;
         indexRange.end   = first + count - 1;
 
-        if (features.shiftInstancedArrayDataWithExtraOffset.enabled && first > 0)
+        if (features.shiftInstancedArrayDataWithOffset.enabled && first > 0)
         {
             gl::AttributesMask updatedStreamingAttribsMask = needsStreamingAttribs;
             auto candidateAttributesMask =
@@ -438,7 +438,7 @@ angle::Result VertexArrayGL::streamAttributes(
 
             GLuint adjustedDivisor = GetAdjustedDivisor(mAppliedNumViews, binding.getDivisor());
             // streamedVertexCount is only going to be modified by
-            // shiftInstancedArrayDataWithExtraOffset workaround, otherwise it's const
+            // shiftInstancedArrayDataWithOffset workaround, otherwise it's const
             size_t streamedVertexCount = ComputeVertexBindingElementCount(
                 adjustedDivisor, indexRange.vertexCount(), instanceCount);
 

@@ -217,23 +217,6 @@ inline void DefaultHistogramSparse(PlatformMethods *platform, const char *name, 
 using HistogramBooleanFunc = void (*)(PlatformMethods *platform, const char *name, bool sample);
 inline void DefaultHistogramBoolean(PlatformMethods *platform, const char *name, bool sample) {}
 
-// Allows us to programatically override ANGLE's default workarounds for testing purposes.
-using OverrideWorkaroundsD3DFunc = void (*)(PlatformMethods *platform,
-                                            angle::FeaturesD3D *featuresD3D);
-inline void DefaultOverrideWorkaroundsD3D(PlatformMethods *platform,
-                                          angle::FeaturesD3D *featuresD3D)
-{}
-
-using OverrideFeaturesVkFunc = void (*)(PlatformMethods *platform,
-                                        angle::FeaturesVk *featuresVulkan);
-inline void DefaultOverrideFeaturesVk(PlatformMethods *platform, angle::FeaturesVk *featuresVulkan)
-{}
-
-using OverrideFeaturesMtlFunc = void (*)(PlatformMethods *platform,
-                                         angle::FeaturesMtl *featuresMetal);
-inline void DefaultOverrideFeaturesMtl(PlatformMethods *platform, angle::FeaturesMtl *featuresMetal)
-{}
-
 // Callback on a successful program link with the program binary. Can be used to store
 // shaders to disk. Keys are a 160-bit SHA-1 hash.
 using ProgramKeyType   = std::array<uint8_t, 20>;
@@ -253,6 +236,13 @@ using PostWorkerTaskFunc                           = void (*)(PlatformMethods *p
                                     void *userData);
 constexpr PostWorkerTaskFunc DefaultPostWorkerTask = nullptr;
 
+// Placeholder values where feature override callbacks used to be.  They are deprecated in favor of
+// EGL_ANGLE_feature_control.  The placeholders are there to keep the layout of the PlatformMethods
+// constant to support drop-in replacement of ANGLE's .so files in applications built with an older
+// header.
+using PlaceholderCallbackFunc = void (*)(...);
+inline void DefaultPlaceholderCallback(...) {}
+
 // Platform methods are enumerated here once.
 #define ANGLE_PLATFORM_OP(OP)                                    \
     OP(currentTime, CurrentTime)                                 \
@@ -267,10 +257,10 @@ constexpr PostWorkerTaskFunc DefaultPostWorkerTask = nullptr;
     OP(histogramEnumeration, HistogramEnumeration)               \
     OP(histogramSparse, HistogramSparse)                         \
     OP(histogramBoolean, HistogramBoolean)                       \
-    OP(overrideWorkaroundsD3D, OverrideWorkaroundsD3D)           \
-    OP(overrideFeaturesVk, OverrideFeaturesVk)                   \
+    OP(placeholder1, PlaceholderCallback)                        \
+    OP(placeholder2, PlaceholderCallback)                        \
     OP(cacheProgram, CacheProgram)                               \
-    OP(overrideFeaturesMtl, OverrideFeaturesMtl)                 \
+    OP(placeholder3, PlaceholderCallback)                        \
     OP(postWorkerTask, PostWorkerTask)
 
 #define ANGLE_PLATFORM_METHOD_DEF(Name, CapsName) CapsName##Func Name = Default##CapsName;
@@ -293,6 +283,11 @@ inline PlatformMethods::PlatformMethods() = default;
 
 // Subtract one to account for the context pointer.
 constexpr unsigned int g_NumPlatformMethods = (sizeof(PlatformMethods) / sizeof(uintptr_t)) - 1;
+
+// No further uses of platform methods is allowed.  EGL extensions should be used instead.  While
+// methods are being removed, use PlaceholderCallback to keep the layout of PlatformMethods
+// constant.
+static_assert(g_NumPlatformMethods == 17, "Avoid adding methods to PlatformMethods");
 
 #define ANGLE_PLATFORM_METHOD_STRING(Name) #Name
 #define ANGLE_PLATFORM_METHOD_STRING2(Name, CapsName) ANGLE_PLATFORM_METHOD_STRING(Name),

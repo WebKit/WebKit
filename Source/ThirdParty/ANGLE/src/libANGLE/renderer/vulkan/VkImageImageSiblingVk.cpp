@@ -48,20 +48,25 @@ angle::Result VkImageImageSiblingVk::initImpl(DisplayVk *displayVk)
     const angle::FormatID formatID = vk::GetFormatIDFromVkFormat(mVkImageInfo.format);
     ANGLE_VK_CHECK(displayVk, formatID != angle::FormatID::NONE, VK_ERROR_FORMAT_NOT_SUPPORTED);
 
-    const vk::Format &vkFormat             = renderer->getFormat(formatID);
-    const angle::FormatID intendedFormatID = vkFormat.getIntendedFormatID();
+    const vk::Format &vkFormat = renderer->getFormat(formatID);
     const vk::ImageAccess imageAccess =
         isRenderable(nullptr) ? vk::ImageAccess::Renderable : vk::ImageAccess::SampleOnly;
     const angle::FormatID actualImageFormatID = vkFormat.getActualImageFormatID(imageAccess);
     const angle::Format &format               = angle::Format::Get(actualImageFormatID);
+
+    angle::FormatID intendedFormatID;
     if (mInternalFormat != GL_NONE)
     {
-        GLenum type = gl::GetSizedInternalFormatInfo(format.glInternalFormat).type;
-        mFormat     = gl::Format(mInternalFormat, type);
+        // If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is provided for eglCreateImageKHR(),
+        // the provided format will be used for mFormat and intendedFormat.
+        intendedFormatID = angle::Format::InternalFormatToID(mInternalFormat);
+        GLenum type      = gl::GetSizedInternalFormatInfo(format.glInternalFormat).type;
+        mFormat          = gl::Format(mInternalFormat, type);
     }
     else
     {
-        mFormat = gl::Format(format.glInternalFormat);
+        intendedFormatID = vkFormat.getIntendedFormatID();
+        mFormat          = gl::Format(format.glInternalFormat);
     }
 
     // Create the image

@@ -2666,6 +2666,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glShaderSource";
         case EntryPoint::GLShaderStorageBlockBinding:
             return "glShaderStorageBlockBinding";
+        case EntryPoint::GLShadingRateQCOM:
+            return "glShadingRateQCOM";
         case EntryPoint::GLSignalSemaphoreEXT:
             return "glSignalSemaphoreEXT";
         case EntryPoint::GLSpecializeShader:

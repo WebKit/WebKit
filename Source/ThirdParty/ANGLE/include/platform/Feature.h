@@ -25,39 +25,38 @@ namespace angle
 
 enum class FeatureCategory
 {
-    AppWorkarounds,
-    FrontendWorkarounds,
     FrontendFeatures,
+    FrontendWorkarounds,
     OpenGLWorkarounds,
     D3DWorkarounds,
-    D3DCompilerWorkarounds,
-    VulkanWorkarounds,
     VulkanFeatures,
+    VulkanWorkarounds,
+    VulkanAppWorkarounds,
     MetalFeatures,
     MetalWorkarounds,
 };
 
-constexpr char kFeatureCategoryFrontendWorkarounds[]    = "Frontend workarounds";
-constexpr char kFeatureCategoryFrontendFeatures[]       = "Frontend features";
-constexpr char kFeatureCategoryOpenGLWorkarounds[]      = "OpenGL workarounds";
-constexpr char kFeatureCategoryD3DWorkarounds[]         = "D3D workarounds";
-constexpr char kFeatureCategoryD3DCompilerWorkarounds[] = "D3D compiler workarounds";
-constexpr char kFeatureCategoryVulkanWorkarounds[]      = "Vulkan workarounds";
-constexpr char kFeatureCategoryVulkanFeatures[]         = "Vulkan features";
-constexpr char kFeatureCategoryMetalFeatures[]          = "Metal features";
-constexpr char kFeatureCategoryMetalWorkarounds[]       = "Metal workarounds";
-constexpr char kFeatureCategoryUnknown[]                = "Unknown";
+constexpr char kFeatureCategoryFrontendWorkarounds[]  = "Frontend workarounds";
+constexpr char kFeatureCategoryFrontendFeatures[]     = "Frontend features";
+constexpr char kFeatureCategoryOpenGLWorkarounds[]    = "OpenGL workarounds";
+constexpr char kFeatureCategoryD3DWorkarounds[]       = "D3D workarounds";
+constexpr char kFeatureCategoryVulkanAppWorkarounds[] = "Vulkan app workarounds";
+constexpr char kFeatureCategoryVulkanWorkarounds[]    = "Vulkan workarounds";
+constexpr char kFeatureCategoryVulkanFeatures[]       = "Vulkan features";
+constexpr char kFeatureCategoryMetalFeatures[]        = "Metal features";
+constexpr char kFeatureCategoryMetalWorkarounds[]     = "Metal workarounds";
+constexpr char kFeatureCategoryUnknown[]              = "Unknown";
 
 inline const char *FeatureCategoryToString(const FeatureCategory &fc)
 {
     switch (fc)
     {
-        case FeatureCategory::FrontendWorkarounds:
-            return kFeatureCategoryFrontendWorkarounds;
-            break;
-
         case FeatureCategory::FrontendFeatures:
             return kFeatureCategoryFrontendFeatures;
+            break;
+
+        case FeatureCategory::FrontendWorkarounds:
+            return kFeatureCategoryFrontendWorkarounds;
             break;
 
         case FeatureCategory::OpenGLWorkarounds:
@@ -68,16 +67,16 @@ inline const char *FeatureCategoryToString(const FeatureCategory &fc)
             return kFeatureCategoryD3DWorkarounds;
             break;
 
-        case FeatureCategory::D3DCompilerWorkarounds:
-            return kFeatureCategoryD3DCompilerWorkarounds;
+        case FeatureCategory::VulkanFeatures:
+            return kFeatureCategoryVulkanFeatures;
             break;
 
         case FeatureCategory::VulkanWorkarounds:
             return kFeatureCategoryVulkanWorkarounds;
             break;
 
-        case FeatureCategory::VulkanFeatures:
-            return kFeatureCategoryVulkanFeatures;
+        case FeatureCategory::VulkanAppWorkarounds:
+            return kFeatureCategoryVulkanAppWorkarounds;
             break;
 
         case FeatureCategory::MetalFeatures:
@@ -106,20 +105,20 @@ inline const char *FeatureStatusToString(const bool &status)
     return kFeatureStatusDisabled;
 }
 
-struct Feature;
+struct FeatureInfo;
 
-using FeatureMap  = std::map<std::string, Feature *>;
-using FeatureList = std::vector<const Feature *>;
+using FeatureMap  = std::map<std::string, FeatureInfo *>;
+using FeatureList = std::vector<const FeatureInfo *>;
 
-struct Feature
+struct FeatureInfo
 {
-    Feature(const Feature &other);
-    Feature(const char *name,
-            const FeatureCategory &category,
-            const char *description,
-            FeatureMap *const mapPtr,
-            const char *bug);
-    ~Feature();
+    FeatureInfo(const FeatureInfo &other);
+    FeatureInfo(const char *name,
+                const FeatureCategory &category,
+                const char *description,
+                FeatureMap *const mapPtr,
+                const char *bug);
+    ~FeatureInfo();
 
     // The name of the workaround, lowercase, camel_case
     const char *const name;
@@ -141,12 +140,12 @@ struct Feature
     const char *condition;
 };
 
-inline Feature::Feature(const Feature &other) = default;
-inline Feature::Feature(const char *name,
-                        const FeatureCategory &category,
-                        const char *description,
-                        FeatureMap *const mapPtr,
-                        const char *bug = "")
+inline FeatureInfo::FeatureInfo(const FeatureInfo &other) = default;
+inline FeatureInfo::FeatureInfo(const char *name,
+                                const FeatureCategory &category,
+                                const char *description,
+                                FeatureMap *const mapPtr,
+                                const char *bug = "")
     : name(name),
       category(category),
       description(description),
@@ -160,7 +159,7 @@ inline Feature::Feature(const char *name,
     }
 }
 
-inline Feature::~Feature() = default;
+inline FeatureInfo::~FeatureInfo() = default;
 
 struct FeatureSetBase
 {
@@ -177,24 +176,8 @@ struct FeatureSetBase
     FeatureMap members = FeatureMap();
 
   public:
-    void overrideFeatures(const std::vector<std::string> &featureNames, bool enabled)
-    {
-        for (const std::string &name : featureNames)
-        {
-            if (members.find(name) != members.end())
-            {
-                members[name]->enabled = enabled;
-            }
-        }
-    }
-
-    void populateFeatureList(FeatureList *features) const
-    {
-        for (FeatureMap::const_iterator it = members.begin(); it != members.end(); it++)
-        {
-            features->push_back(it->second);
-        }
-    }
+    void overrideFeatures(const std::vector<std::string> &featureNames, bool enabled);
+    void populateFeatureList(FeatureList *features) const;
 
     const FeatureMap &getFeatures() const { return members; }
 };

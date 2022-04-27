@@ -1519,6 +1519,18 @@ class CacheStats final : angle::NonCopyable
     CacheStats() { reset(); }
     ~CacheStats() {}
 
+    CacheStats(const CacheStats &rhs)
+        : mHitCount(rhs.mHitCount), mMissCount(rhs.mMissCount), mSize(rhs.mSize)
+    {}
+
+    CacheStats &operator=(const CacheStats &rhs)
+    {
+        mHitCount  = rhs.mHitCount;
+        mMissCount = rhs.mMissCount;
+        mSize      = rhs.mSize;
+        return *this;
+    }
+
     ANGLE_INLINE void hit() { mHitCount++; }
     ANGLE_INLINE void miss() { mMissCount++; }
     ANGLE_INLINE void accumulate(const CacheStats &stats)
@@ -1552,6 +1564,12 @@ class CacheStats final : angle::NonCopyable
         mHitCount  = 0;
         mMissCount = 0;
         mSize      = 0;
+    }
+
+    void resetHitAndMissCount()
+    {
+        mHitCount  = 0;
+        mMissCount = 0;
     }
 
   private:
@@ -1805,31 +1823,29 @@ class DescriptorSetCache final : angle::NonCopyable
     DescriptorSetCache() = default;
     ~DescriptorSetCache() { ASSERT(mPayload.empty()); }
 
-    void destroy(RendererVk *rendererVk, VulkanCacheType cacheType);
+    ANGLE_INLINE void clear() { mPayload.clear(); }
 
-    ANGLE_INLINE bool get(const vk::DescriptorSetDesc &desc, VkDescriptorSet *descriptorSet)
+    ANGLE_INLINE bool get(const vk::DescriptorSetDesc &desc,
+                          VkDescriptorSet *descriptorSet,
+                          CacheStats *cacheStats)
     {
         auto iter = mPayload.find(desc);
         if (iter != mPayload.end())
         {
             *descriptorSet = iter->second;
-            mCacheStats.hit();
+            cacheStats->hit();
             return true;
         }
-        mCacheStats.miss();
+        cacheStats->miss();
         return false;
     }
 
-    ANGLE_INLINE void insert(const vk::DescriptorSetDesc &desc, VkDescriptorSet descriptorSet)
+    ANGLE_INLINE void insert(const vk::DescriptorSetDesc &desc,
+                             VkDescriptorSet descriptorSet,
+                             CacheStats *cacheStats)
     {
         mPayload.emplace(desc, descriptorSet);
-        mCacheStats.incrementSize();
-    }
-
-    template <typename Accumulator>
-    void accumulateCacheStats(VulkanCacheType cacheType, Accumulator *accumulator)
-    {
-        accumulator->accumulateCacheStats(cacheType, mCacheStats);
+        cacheStats->incrementSize();
     }
 
     size_t getTotalCacheKeySizeBytes() const
@@ -1845,7 +1861,6 @@ class DescriptorSetCache final : angle::NonCopyable
 
   private:
     angle::HashMap<vk::DescriptorSetDesc, VkDescriptorSet> mPayload;
-    CacheStats mCacheStats;
 };
 
 // Only 1 driver uniform binding is used.

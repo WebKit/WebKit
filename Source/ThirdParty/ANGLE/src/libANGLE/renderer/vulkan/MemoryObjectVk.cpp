@@ -249,7 +249,7 @@ angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
 
     // TODO(jmadill, spang): Memory sub-allocation. http://anglebug.com/2162
     ASSERT(offset == 0);
-    ASSERT(externalMemoryRequirements.size == mSize);
+    ASSERT(externalMemoryRequirements.size <= mSize);
 
     VkMemoryPropertyFlags flags = hasProtectedContent ? VK_MEMORY_PROPERTY_PROTECTED_BIT : 0;
     ANGLE_TRY(image->initExternalMemory(contextVk, renderer->getMemoryProperties(),

@@ -523,7 +523,7 @@ void main()
     glDispatchCompute(1, 1, 1);
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
     mappedBuffer =
-        glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 3, GL_MAP_READ_BIT);
+        glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 3, GL_MAP_WRITE_BIT);
 
     memcpy(mappedBuffer, expectedBufferData, sizeof(expectedBufferData));
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
@@ -1104,8 +1104,6 @@ void main()
 // Test that texelFetch works well in compute shader.
 TEST_P(ComputeShaderTest, TexelFetchFunction)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr char kCS[] = R"(#version 310 es
 layout(local_size_x=16, local_size_y=12) in;
 precision highp usampler2D;
@@ -1174,8 +1172,6 @@ void main()
 // Test that texture function works well in compute shader.
 TEST_P(ComputeShaderTest, TextureFunction)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr char kCS[] = R"(#version 310 es
 layout(local_size_x=16, local_size_y=16) in;
 precision highp usampler2D;

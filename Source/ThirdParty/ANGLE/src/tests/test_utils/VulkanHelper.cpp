@@ -15,6 +15,7 @@
 #include "common/system_utils.h"
 #include "common/vulkan/vulkan_icd.h"
 #include "test_utils/ANGLETest.h"
+#include "vulkan/vulkan_core.h"
 
 namespace angle
 {
@@ -92,6 +93,18 @@ bool HasExtension(const std::vector<const char *> enabledExtensions, const char 
             return true;
     }
 
+    return false;
+}
+
+bool HasExtension(const char *const *enabledExtensions, const char *extensionName)
+{
+    size_t i = 0;
+    while (enabledExtensions[i])
+    {
+        if (!strcmp(enabledExtensions[i], extensionName))
+            return true;
+        i++;
+    }
     return false;
 }
 
@@ -425,6 +438,18 @@ void VulkanHelper::initializeFromANGLE()
 
     EXPECT_EGL_TRUE(eglQueryDeviceAttribEXT(device, EGL_VULKAN_QUEUE_FAMILIY_INDEX_ANGLE, &result));
     mGraphicsQueueFamilyIndex = static_cast<uint32_t>(result);
+
+    EXPECT_EGL_TRUE(eglQueryDeviceAttribEXT(device, EGL_VULKAN_DEVICE_EXTENSIONS_ANGLE, &result));
+    const char *const *enabledDeviceExtensions = reinterpret_cast<const char *const *>(result);
+
+    mHasExternalMemoryFd =
+        HasExtension(enabledDeviceExtensions, VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME);
+    mHasExternalSemaphoreFd =
+        HasExtension(enabledDeviceExtensions, VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME);
+    mHasExternalMemoryFuchsia =
+        HasExtension(enabledDeviceExtensions, VK_FUCHSIA_EXTERNAL_MEMORY_EXTENSION_NAME);
+    mHasExternalSemaphoreFuchsia =
+        HasExtension(enabledDeviceExtensions, VK_FUCHSIA_EXTERNAL_SEMAPHORE_EXTENSION_NAME);
 
 #if ANGLE_SHARED_LIBVULKAN
     volkLoadDevice(mDevice);
@@ -1193,6 +1218,199 @@ void VulkanHelper::readPixels(VkImage srcImage,
     vkDestroyBuffer(mDevice, stagingBuffer, nullptr);
 
     vkUnmapMemory(mDevice, deviceMemory);
+    vkFreeMemory(mDevice, deviceMemory, nullptr);
+}
+
+void VulkanHelper::writePixels(VkImage dstImage,
+                               VkImageLayout imageLayout,
+                               VkFormat imageFormat,
+                               VkOffset3D imageOffset,
+                               VkExtent3D imageExtent,
+                               const void *pixels,
+                               size_t pixelsSize)
+{
+    ASSERT(imageFormat == VK_FORMAT_B8G8R8A8_UNORM || imageFormat == VK_FORMAT_R8G8B8A8_UNORM);
+    ASSERT(imageExtent.depth == 1);
+    ASSERT(pixelsSize == 4 * imageExtent.width * imageExtent.height);
+
+    VkBufferCreateInfo bufferCreateInfo = {
+        /* .sType = */ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+        /* .pNext = */ nullptr,
+        /* .flags = */ 0,
+        /* .size = */ pixelsSize,
+        /* .usage = */ VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+        /* .sharingMode = */ VK_SHARING_MODE_EXCLUSIVE,
+        /* .queueFamilyIndexCount = */ 0,
+        /* .pQueueFamilyIndices = */ nullptr,
+    };
+    VkBuffer stagingBuffer = VK_NULL_HANDLE;
+    VkResult result        = vkCreateBuffer(mDevice, &bufferCreateInfo, nullptr, &stagingBuffer);
+    ASSERT(result == VK_SUCCESS);
+
+    VkMemoryPropertyFlags requestedMemoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+    VkMemoryRequirements memoryRequirements;
+    vkGetBufferMemoryRequirements(mDevice, stagingBuffer, &memoryRequirements);
+    uint32_t memoryTypeIndex = FindMemoryType(mMemoryProperties, memoryRequirements.memoryTypeBits,
+                                              requestedMemoryPropertyFlags);
+    ASSERT(memoryTypeIndex != UINT32_MAX);
+    VkDeviceSize deviceMemorySize = memoryRequirements.size;
+
+    VkMemoryDedicatedAllocateInfoKHR memoryDedicatedAllocateInfo = {
+        /* .sType = */ VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR,
+        /* .pNext = */ nullptr,
+        /* .image = */ VK_NULL_HANDLE,
+        /* .buffer = */ stagingBuffer,
+    };
+    VkMemoryAllocateInfo memoryAllocateInfo = {
+        /* .sType = */ VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+        /* .pNext = */ &memoryDedicatedAllocateInfo,
+        /* .allocationSize = */ deviceMemorySize,
+        /* .memoryTypeIndex = */ memoryTypeIndex,
+    };
+
+    VkDeviceMemory deviceMemory = VK_NULL_HANDLE;
+    result = vkAllocateMemory(mDevice, &memoryAllocateInfo, nullptr, &deviceMemory);
+    ASSERT(result == VK_SUCCESS);
+
+    result = vkBindBufferMemory(mDevice, stagingBuffer, deviceMemory, 0 /* memoryOffset */);
+    ASSERT(result == VK_SUCCESS);
+
+    void *stagingMemory = nullptr;
+    result = vkMapMemory(mDevice, deviceMemory, 0 /* offset */, deviceMemorySize, 0 /* flags */,
+                         &stagingMemory);
+    ASSERT(result == VK_SUCCESS);
+
+    VkMappedMemoryRange memoryRanges[] = {
+        /* [0] = */ {
+            /* .sType = */ VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
+            /* .pNext = */ nullptr,
+            /* .memory = */ deviceMemory,
+            /* .offset = */ 0,
+            /* .size = */ deviceMemorySize,
+        },
+    };
+    constexpr uint32_t memoryRangeCount = std::extent<decltype(memoryRanges)>();
+
+    result = vkInvalidateMappedMemoryRanges(mDevice, memoryRangeCount, memoryRanges);
+    ASSERT(result == VK_SUCCESS);
+
+    memcpy(stagingMemory, pixels, pixelsSize);
+
+    vkUnmapMemory(mDevice, deviceMemory);
+
+    VkCommandBuffer commandBuffers[]                      = {VK_NULL_HANDLE};
+    constexpr uint32_t commandBufferCount                 = std::extent<decltype(commandBuffers)>();
+    VkCommandBufferAllocateInfo commandBufferAllocateInfo = {
+        /* .sType = */ VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        /* .pNext = */ nullptr,
+        /* .commandPool = */ mCommandPool,
+        /* .level = */ VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        /* .commandBufferCount = */ commandBufferCount,
+    };
+
+    result = vkAllocateCommandBuffers(mDevice, &commandBufferAllocateInfo, commandBuffers);
+    ASSERT(result == VK_SUCCESS);
+
+    VkCommandBufferBeginInfo commandBufferBeginInfo = {
+        /* .sType = */ VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        /* .pNext = */ nullptr,
+        /* .flags = */ VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+        /* .pInheritanceInfo = */ nullptr,
+    };
+    result = vkBeginCommandBuffer(commandBuffers[0], &commandBufferBeginInfo);
+    ASSERT(result == VK_SUCCESS);
+
+    // Memory barrier for pipeline from Host-Write to Transfer-Read.
+    VkMemoryBarrier memoryBarriers[] = {
+        /* [0] = */ {/* .sType = */ VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+                     /* .pNext = */ nullptr,
+                     /* .srcAccessMask = */ VK_ACCESS_HOST_WRITE_BIT,
+                     /* .dstAccessMask = */ VK_ACCESS_TRANSFER_READ_BIT},
+    };
+    constexpr uint32_t memoryBarrierCount = std::extent<decltype(memoryBarriers)>();
+    vkCmdPipelineBarrier(commandBuffers[0], VK_PIPELINE_STAGE_HOST_BIT,
+                         VK_PIPELINE_STAGE_TRANSFER_BIT, 0 /* dependencyFlags */,
+                         memoryBarrierCount, memoryBarriers, 0, nullptr, 0, nullptr);
+
+    // Memory-barrier for image to Transfer-Write.
+    if (imageLayout != VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+    {
+        VkImageMemoryBarrier imageMemoryBarriers = {
+            /* .sType = */ VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            /* .pNext = */ nullptr,
+            /* .srcAccessMask = */ VK_ACCESS_NONE,
+            /* .dstAccessMask = */ VK_ACCESS_TRANSFER_WRITE_BIT,
+            /* .oldLayout = */ imageLayout,
+            /* .newLayout = */ VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            /* .srcQueueFamilyIndex = */ mGraphicsQueueFamilyIndex,
+            /* .dstQueueFamilyIndex = */ mGraphicsQueueFamilyIndex,
+            /* .image = */ dstImage,
+            /* .subresourceRange = */
+            {
+                /* .aspectMask = */ VK_IMAGE_ASPECT_COLOR_BIT,
+                /* .baseMipLevel = */ 0,
+                /* .levelCount = */ 1,
+                /* .baseArrayLayer = */ 0,
+                /* .layerCount = */ 1,
+            },
+
+        };
+        vkCmdPipelineBarrier(commandBuffers[0], VK_PIPELINE_STAGE_TRANSFER_BIT,
+                             VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1,
+                             &imageMemoryBarriers);
+        imageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    }
+
+    // Issue the buffer to image copy.
+    VkBufferImageCopy bufferImageCopies[] = {
+        /* [0] = */ {
+            /* .bufferOffset = */ 0,
+            /* .bufferRowLength = */ 0,
+            /* .bufferImageHeight = */ 0,
+            /* .imageSubresources = */
+            {
+                /* .aspectMask = */ VK_IMAGE_ASPECT_COLOR_BIT,
+                /* .mipLevel = */ 0,
+                /* .baseArrayLayer = */ 0,
+                /* .layerCount = */ 1,
+            },
+            /* .imageOffset = */ imageOffset,
+            /* .imageExtent = */ imageExtent,
+        },
+    };
+
+    constexpr uint32_t bufferImageCopyCount = std::extent<decltype(bufferImageCopies)>();
+
+    vkCmdCopyBufferToImage(commandBuffers[0], stagingBuffer, dstImage, imageLayout,
+                           bufferImageCopyCount, bufferImageCopies);
+
+    result = vkEndCommandBuffer(commandBuffers[0]);
+    ASSERT(result == VK_SUCCESS);
+
+    const VkSubmitInfo submits[] = {
+        /* [0] = */ {
+            /* .sType */ VK_STRUCTURE_TYPE_SUBMIT_INFO,
+            /* .pNext = */ nullptr,
+            /* .waitSemaphoreCount = */ 0,
+            /* .pWaitSemaphores = */ nullptr,
+            /* .pWaitDstStageMask = */ nullptr,
+            /* .commandBufferCount = */ commandBufferCount,
+            /* .pCommandBuffers = */ commandBuffers,
+            /* .signalSemaphoreCount = */ 0,
+            /* .pSignalSemaphores = */ nullptr,
+        },
+    };
+    constexpr uint32_t submitCount = std::extent<decltype(submits)>();
+
+    const VkFence fence = VK_NULL_HANDLE;
+    result              = vkQueueSubmit(mGraphicsQueue, submitCount, submits, fence);
+    ASSERT(result == VK_SUCCESS);
+
+    result = vkQueueWaitIdle(mGraphicsQueue);
+    ASSERT(result == VK_SUCCESS);
+
+    vkFreeCommandBuffers(mDevice, mCommandPool, commandBufferCount, commandBuffers);
+    vkDestroyBuffer(mDevice, stagingBuffer, nullptr);
     vkFreeMemory(mDevice, deviceMemory, nullptr);
 }
 

@@ -93,16 +93,17 @@ const int32_t offsetY = {offset_y};
 const int32_t width = {width};
 const int32_t height = {height};
 
-widget->{subwidget}type      = WidgetType::{type};
-widget->{subwidget}fontSize  = fontSize;
-widget->{subwidget}coords[0] = {coord0};
-widget->{subwidget}coords[1] = {coord1};
-widget->{subwidget}coords[2] = {coord2};
-widget->{subwidget}coords[3] = {coord3};
-widget->{subwidget}color[0]  = {color_r}f;
-widget->{subwidget}color[1]  = {color_g}f;
-widget->{subwidget}color[2]  = {color_b}f;
-widget->{subwidget}color[3]  = {color_a}f;
+widget->{subwidget}type          = WidgetType::{type};
+widget->{subwidget}fontSize      = fontSize;
+widget->{subwidget}coords[0]     = {coord0};
+widget->{subwidget}coords[1]     = {coord1};
+widget->{subwidget}coords[2]     = {coord2};
+widget->{subwidget}coords[3]     = {coord3};
+widget->{subwidget}color[0]      = {color_r}f;
+widget->{subwidget}color[1]      = {color_g}f;
+widget->{subwidget}color[2]      = {color_b}f;
+widget->{subwidget}color[3]      = {color_a}f;
+widget->{subwidget}matchToWidget = {match_to};
 }}
 """
 
@@ -149,6 +150,7 @@ class OverlayWidget:
     def extract_common(self, properties):
         self.color = properties['color']
         self.coords = properties['coords']
+        self.match_to = properties.get('match_to', None)
         if is_graph_type(self.type):
             self.bar_width = properties['bar_width']
             self.height = properties['height']
@@ -280,6 +282,9 @@ def generate_widget_init_helper(widget, is_graph_description=False):
     coord0, coord2 = get_bounding_box_coords('offsetX', 'width', offset_x_is_left, is_left_aligned)
     coord1, coord3 = get_bounding_box_coords('offsetY', 'height', offset_y_is_top, is_top_aligned)
 
+    match_to = 'nullptr' if widget.match_to is None else \
+               'mState.mOverlayWidgets[WidgetId::' + widget.match_to + '].get()'
+
     return WIDGET_INIT_TEMPLATE.format(
         subwidget='description.' if is_graph_description else '',
         offset_x=offset_x,
@@ -295,7 +300,8 @@ def generate_widget_init_helper(widget, is_graph_description=False):
         color_r=color[0],
         color_g=color[1],
         color_b=color[2],
-        color_a=color[3])
+        color_a=color[3],
+        match_to=match_to)
 
 
 def generate_widget_init(widget):

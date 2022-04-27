@@ -227,6 +227,7 @@ angle::Result TextureNULL::setStorageMultisample(const gl::Context *context,
 }
 
 angle::Result TextureNULL::initializeContents(const gl::Context *context,
+                                              GLenum binding,
                                               const gl::ImageIndex &imageIndex)
 {
     return angle::Result::Continue;

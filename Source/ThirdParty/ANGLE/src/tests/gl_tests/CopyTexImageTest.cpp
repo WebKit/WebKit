@@ -1231,12 +1231,12 @@ ANGLE_INSTANTIATE_TEST(CopyTexImageTest,
                        ANGLE_ALL_TEST_PLATFORMS_ES2,
                        ES2_D3D11_PRESENT_PATH_FAST(),
                        ES3_VULKAN(),
-                       WithEmulateCopyTexImage2DFromRenderbuffers(ES2_OPENGL()),
-                       WithEmulateCopyTexImage2DFromRenderbuffers(ES2_OPENGLES()));
+                       ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
+                       ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CopyTexImageTestES3);
 ANGLE_INSTANTIATE_TEST(CopyTexImageTestES3,
                        ANGLE_ALL_TEST_PLATFORMS_ES3,
-                       WithEmulateCopyTexImage2DFromRenderbuffers(ES3_OPENGL()),
-                       WithEmulateCopyTexImage2DFromRenderbuffers(ES3_OPENGLES()));
+                       ES3_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),
+                       ES3_OPENGLES().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers));
 }  // namespace angle

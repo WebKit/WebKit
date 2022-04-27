@@ -206,6 +206,7 @@ class FramebufferMtl : public FramebufferImpl
                                      const mtl::BufferRef *dstBuffer) const;
 
     RenderTargetMtl *getColorReadRenderTargetNoCache(const gl::Context *context) const;
+    bool prepareForUse(const gl::Context *context) const;
 
     // NOTE: we cannot use RenderTargetCache here because it doesn't support separate
     // depth & stencil attachments as of now. Separate depth & stencil could be useful to

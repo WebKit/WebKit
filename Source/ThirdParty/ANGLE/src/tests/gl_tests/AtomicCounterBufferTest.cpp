@@ -68,6 +68,290 @@ TEST_P(AtomicCounterBufferTest31, ExceedMaxVertexAtomicCounters)
     EXPECT_EQ(0u, program);
 }
 
+// Test that Tessellation Control Shader Can Read/Write to atomic counter buffers
+TEST_P(AtomicCounterBufferTest31, TessellationControlShaderMaxAtomicCounterTests)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    GLint maxTessellationControlAtomicCounters = 0;
+    glGetIntegerv(GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS, &maxTessellationControlAtomicCounters);
+    ANGLE_SKIP_TEST_IF(maxTessellationControlAtomicCounters <= 0);
+
+    // Cap the atomic counters to an arbitrary value 16 in case we do not have a limit for
+    // GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS on certain devices
+    GLint maxTessellationControlAtomicCountersCap = 16u;
+    maxTessellationControlAtomicCounters =
+        std::min(maxTessellationControlAtomicCounters, maxTessellationControlAtomicCountersCap);
+
+    const unsigned int tessellationControlPointsCount = 3;
+
+    // Vertex Shader Code
+    const char *kVS =
+        "#version 310 es\n"
+        "\n"
+        "in vec4 a_position;\n"
+        "flat out int vertex_id;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    gl_Position  = a_position;\n"
+        "}\n";
+
+    // Tessellation Control Shader Code
+    // gl_InvocationID = 0: increment all elements in atomic counters acs[].
+    // gl_InvocationID = 1: increment acs[index] where index==0
+    // gl_InvocationID = 2: increment acs[index] where index==0,1
+    // We have tessellationControlPointsCount=3 vertices output from the Tessellation Control
+    // Shader Stage, meaning we have three tessellation shader code running in parallel, each with a
+    // unique gl_InvocationID.
+    std::stringstream tcs_code_sstream;
+    tcs_code_sstream
+        << "#version 310 es\n"
+           "#extension GL_EXT_tessellation_shader : require\n"
+           "layout(vertices ="
+        << tessellationControlPointsCount
+        << ") out;\n"
+           "uniform int nLoopIterations;\n"
+           "layout(binding = 0) uniform atomic_uint acs["
+        << maxTessellationControlAtomicCounters
+        << "];\n"
+           "void main()\n"
+           "{\n"
+           "for (int counter_id = 1;\n"
+           "counter_id <= nLoopIterations;\n"
+           "++counter_id)\n"
+           "{\n"
+           "if ((gl_InvocationID % counter_id) == 0)\n"
+           "{\n"
+           "   atomicCounterIncrement(acs[counter_id - 1]);\n"
+           "}\n"
+           "}\n"
+           "\n"
+           "       gl_out [gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;\n"
+           "       gl_TessLevelInner[0] = 1.0;\n"
+           "       gl_TessLevelOuter[0] = 1.0;\n"
+           "       gl_TessLevelOuter[1] = 1.0;\n"
+           "       gl_TessLevelOuter[2] = 1.0;\n"
+           "}\n";
+    std::string tcs_code = tcs_code_sstream.str();
+    const char *kTC      = tcs_code.c_str();
+
+    // Tessellation Evaluation Shader Code
+    constexpr char kTES[] =
+        "#version 310 es\n"
+        "#extension GL_EXT_tessellation_shader : require\n"
+        "layout (triangles) in;\n"
+        "void main()\n"
+        "{\n"
+        "   gl_Position = gl_TessCoord[0] * gl_in[0].gl_Position +"
+        "                 gl_TessCoord[1] * gl_in[1].gl_Position +"
+        "                 gl_TessCoord[2] * gl_in[2].gl_Position;\n"
+        "}\n";
+
+    // Fragment Shader Code
+    const char *kFS =
+        "#version 310 es\n"
+        "\n"
+        "precision highp float;\n"
+        "\n"
+        "out vec4 result;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    result = vec4(1.0);\n"
+        "}\n";
+    GLuint program = CompileProgramWithTESS(kVS, kTC, kTES, kFS);
+    EXPECT_NE(0u, program);
+    glUseProgram(program);
+
+    // Create and Bind Atomic Counter Buffer Object
+    GLuint atomicBufferID;
+    glGenBuffers(1, &atomicBufferID);
+    GLuint *atomicBufferData = new GLuint[maxTessellationControlAtomicCounters];
+    memset(atomicBufferData, 0, sizeof(GLuint) * maxTessellationControlAtomicCounters);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicBufferID);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * maxTessellationControlAtomicCounters,
+                 NULL, GL_DYNAMIC_COPY);
+    glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0,
+                    sizeof(GLuint) * maxTessellationControlAtomicCounters, atomicBufferData);
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicBufferID);
+
+    // Bind nLoopIterationsUniformLocation uniform
+    GLint nLoopIterationsUniformLocation = -1;
+    nLoopIterationsUniformLocation       = glGetUniformLocation(program, "nLoopIterations");
+    EXPECT_NE(-1, nLoopIterationsUniformLocation);
+    glUniform1i(nLoopIterationsUniformLocation, maxTessellationControlAtomicCounters);
+
+    // Issue a Drawcall
+    std::array<Vector3, 3> triangleVertices = {
+        Vector3(-1.0f, 1.0f, 0.5f), Vector3(-1.0f, -1.0f, 0.5f), Vector3(1.0f, -1.0f, 0.5f)};
+    GLint positionLocation = glGetAttribLocation(program, "a_position");
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+    glDrawArrays(GL_PATCHES, 0, 3);
+    ASSERT_GL_NO_ERROR();
+
+    // Check the value of atomic counter buffer
+    GLuint *atomicBufferResult = (GLuint *)glMapBufferRange(
+        GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * maxTessellationControlAtomicCounters,
+        GL_MAP_READ_BIT);
+
+    for (GLint n_ac = 1; n_ac <= maxTessellationControlAtomicCounters; ++n_ac)
+    {
+        unsigned int expected_value = 0;
+        for (unsigned int n_draw_call_vertex = 0;
+             n_draw_call_vertex < tessellationControlPointsCount; ++n_draw_call_vertex)
+        {
+            if ((n_draw_call_vertex % n_ac) == 0)
+            {
+                expected_value++;
+            }
+        }
+        EXPECT_EQ(atomicBufferResult[n_ac - 1], expected_value);
+    }
+
+    glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
+    glDisableVertexAttribArray(positionLocation);
+    glDeleteBuffers(1, &atomicBufferID);
+    glDeleteProgram(program);
+}
+
+// Test that Tessellation Evaluation Shader Can Read/Write to atomic counter buffers
+TEST_P(AtomicCounterBufferTest31, TessellationEvaluationShaderMaxAtomicCounterTests)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    GLint maxTessellationEvaluationAtomicCounters = 0;
+    glGetIntegerv(GL_MAX_TESS_EVALUATION_ATOMIC_COUNTERS, &maxTessellationEvaluationAtomicCounters);
+    ANGLE_SKIP_TEST_IF(maxTessellationEvaluationAtomicCounters <= 0);
+
+    // Cap the atomic counters to an arbitrary value 16 in case we do not have a limit for
+    // GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS on certain devices
+    GLint maxTessellationEvaluationAtomicCountersCap = 16u;
+    maxTessellationEvaluationAtomicCounters = std::min(maxTessellationEvaluationAtomicCounters,
+                                                       maxTessellationEvaluationAtomicCountersCap);
+
+    const unsigned int tessellationControlPointsCount = 3;
+
+    // Vertex Shader Code
+    const char *kVS =
+        "#version 310 es\n"
+        "\n"
+        "in vec4 a_position;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    gl_Position  = a_position;\n"
+        "}\n";
+
+    // Tessellation Control Shader Code
+    std::stringstream tcs_code_sstream;
+    tcs_code_sstream
+        << "#version 310 es\n"
+           "#extension GL_EXT_tessellation_shader : require\n"
+           "layout(vertices = "
+        << tessellationControlPointsCount
+        << ") out;\n"
+           "void main()\n"
+           "{\n"
+           "       gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;\n"
+           "       gl_TessLevelInner[0] = 1.0;\n"
+           "       gl_TessLevelOuter[0] = 1.0;\n"
+           "       gl_TessLevelOuter[1] = 1.0;\n"
+           "       gl_TessLevelOuter[2] = 1.0;\n"
+           "}\n";
+    std::string tcs_code = tcs_code_sstream.str();
+    const char *kTC      = tcs_code.c_str();
+
+    // Tessellation Evaluation Shader Code
+    // The gl_TessLevelInner and gl_TessLevelOuter values in tessellation control shader (tcs) code
+    // are set to 1, meaning we do not subdivide the patch and create more vertices. The number of
+    // tessellation evaluation shader (tes) invocations is the same as number of vertex output from
+    // tcs (e.g. tessellationControlPointsCount).
+    // Increment all elements in atomic counters acs[] in every tes invocation.
+    // Final value in atomic counters acs[] should be the same as the number of
+    // tes invocations (e.g. tessellationControlPointsCount).
+    std::stringstream tes_code_sstream;
+    tes_code_sstream << "#version 310 es\n"
+                        "#extension GL_EXT_tessellation_shader : require\n"
+                        "layout (triangles) in;\n"
+                        "uniform int nLoopIterations;\n"
+                        "layout(binding = 0) uniform atomic_uint acs["
+                     << maxTessellationEvaluationAtomicCounters
+                     << "];\n"
+                        "void main()\n"
+                        "{\n"
+                        "for (int counter_id = 0;\n"
+                        "counter_id < nLoopIterations;\n"
+                        "++counter_id)\n"
+                        "{\n"
+                        "   atomicCounterIncrement(acs[counter_id]);\n"
+                        "}\n"
+                        "\n"
+                        "   gl_Position = gl_TessCoord[0] * gl_in[0].gl_Position +"
+                        "                 gl_TessCoord[1] * gl_in[1].gl_Position +"
+                        "                 gl_TessCoord[2] * gl_in[2].gl_Position;\n"
+                        "}\n";
+    std::string tes_code = tes_code_sstream.str();
+    const char *kTES     = tes_code.c_str();
+
+    // Fragment Shader Code
+    const char *kFS =
+        "#version 310 es\n"
+        "\n"
+        "precision highp float;\n"
+        "\n"
+        "out vec4 result;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    result = vec4(1.0);\n"
+        "}\n";
+    GLuint program = CompileProgramWithTESS(kVS, kTC, kTES, kFS);
+    EXPECT_NE(0u, program);
+    glUseProgram(program);
+
+    // Create and Bind Atomic Counter Buffer Object
+    GLuint atomicBufferID;
+    glGenBuffers(1, &atomicBufferID);
+    GLuint *atomicBufferData = new GLuint[maxTessellationEvaluationAtomicCounters];
+    memset(atomicBufferData, 0, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicBufferID);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters,
+                 NULL, GL_DYNAMIC_COPY);
+    glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0,
+                    sizeof(GLuint) * maxTessellationEvaluationAtomicCounters, atomicBufferData);
+    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicBufferID);
+
+    // Bind nLoopIterationsUniformLocation uniform
+    GLint nLoopIterationsUniformLocation = -1;
+    nLoopIterationsUniformLocation       = glGetUniformLocation(program, "nLoopIterations");
+    EXPECT_NE(-1, nLoopIterationsUniformLocation);
+    glUniform1i(nLoopIterationsUniformLocation, maxTessellationEvaluationAtomicCounters);
+
+    // Issue Drawcall
+    std::array<Vector3, 3> triangleVertices = {
+        Vector3(-1.0f, 1.0f, 0.5f), Vector3(-1.0f, -1.0f, 0.5f), Vector3(1.0f, -1.0f, 0.5f)};
+    GLint positionLocation = glGetAttribLocation(program, "a_position");
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices.data());
+    glEnableVertexAttribArray(positionLocation);
+    glDrawArrays(GL_PATCHES, 0, 3);
+    ASSERT_GL_NO_ERROR();
+
+    // Check the value of atomic counter buffer
+    GLuint *atomicBufferResult = (GLuint *)glMapBufferRange(
+        GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * maxTessellationEvaluationAtomicCounters,
+        GL_MAP_READ_BIT);
+    unsigned int expected_value = tessellationControlPointsCount;
+    for (GLint n_ac = 0; n_ac < maxTessellationEvaluationAtomicCounters; ++n_ac)
+    {
+        EXPECT_EQ(atomicBufferResult[n_ac], expected_value);
+    }
+
+    glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
+    glDisableVertexAttribArray(positionLocation);
+    glDeleteBuffers(1, &atomicBufferID);
+    glDeleteProgram(program);
+}
+
 // Counters matching across shader stages should fail if offsets aren't all specified.
 // GLSL ES Spec 3.10.4, section 9.2.1.
 TEST_P(AtomicCounterBufferTest31, OffsetNotAllSpecified)

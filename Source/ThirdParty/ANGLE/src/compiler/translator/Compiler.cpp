@@ -461,7 +461,7 @@ TIntermBlock *TCompiler::compileTreeImpl(const char *const shaderStrings[],
         return nullptr;
     }
 
-    if (parseContext.getTreeRoot() == nullptr)
+    if (!postParseChecks(parseContext))
     {
         return nullptr;
     }
@@ -1114,6 +1114,29 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         {
             mEarlyFragmentTestsOptimized = CheckEarlyFragmentTestsFeasible(this, root);
         }
+    }
+
+    return true;
+}
+
+bool TCompiler::postParseChecks(const TParseContext &parseContext)
+{
+    std::stringstream errorMessage;
+
+    if (parseContext.getTreeRoot() == nullptr)
+    {
+        errorMessage << "Shader parsing failed (mTreeRoot == nullptr)";
+    }
+
+    for (TType *type : parseContext.getDeferredArrayTypesToSize())
+    {
+        errorMessage << "Unsized global array type: " << type->getBasicString();
+    }
+
+    if (!errorMessage.str().empty())
+    {
+        mDiagnostics.globalError(errorMessage.str().c_str());
+        return false;
     }
 
     return true;

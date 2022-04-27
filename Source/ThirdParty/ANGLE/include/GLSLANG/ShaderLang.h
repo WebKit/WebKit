@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 271
+#define ANGLE_SH_VERSION 272
 
 enum ShShaderSpec
 {
@@ -247,7 +247,9 @@ const ShCompileOptions SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER = UINT64_C(1) << 
 // ShBuiltInResources in vertex shaders.
 const ShCompileOptions SH_CLAMP_POINT_SIZE = UINT64_C(1) << 32;
 
-// Bit 33 is available.
+// This flag indicates whether advanced blend equation should be emulated.  Currently only
+// implemented for the Vulkan backend.
+const ShCompileOptions SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION = UINT64_C(1) << 33;
 
 // Don't use loops to initialize uninitialized variables. Only has an effect if some kind of
 // variable initialization is turned on.

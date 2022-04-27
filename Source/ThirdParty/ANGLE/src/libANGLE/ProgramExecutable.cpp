@@ -167,6 +167,20 @@ RangeUI AddUniforms(const ShaderMap<Program *> &programs,
     }
     return RangeUI(startRange, static_cast<unsigned int>(outputUniforms.size()));
 }
+
+template <typename BlockT>
+void AppendActiveBlocks(ShaderType shaderType,
+                        const std::vector<BlockT> &blocksIn,
+                        std::vector<BlockT> &blocksOut)
+{
+    for (const BlockT &block : blocksIn)
+    {
+        if (block.isActive(shaderType))
+        {
+            blocksOut.push_back(block);
+        }
+    }
+}
 }  // anonymous namespace
 
 ProgramExecutable::ProgramExecutable()
@@ -230,7 +244,8 @@ ProgramExecutable::ProgramExecutable(const ProgramExecutable &other)
       mAtomicCounterBuffers(other.mAtomicCounterBuffers),
       mShaderStorageBlocks(other.mShaderStorageBlocks),
       mFragmentInoutRange(other.mFragmentInoutRange),
-      mUsesEarlyFragmentTestsOptimization(other.mUsesEarlyFragmentTestsOptimization)
+      mUsesEarlyFragmentTestsOptimization(other.mUsesEarlyFragmentTestsOptimization),
+      mAdvancedBlendEquations(other.mAdvancedBlendEquations)
 {
     reset();
 }
@@ -276,6 +291,7 @@ void ProgramExecutable::reset()
 
     mFragmentInoutRange                 = RangeUI(0, 0);
     mUsesEarlyFragmentTestsOptimization = false;
+    mAdvancedBlendEquations.reset();
 
     mGeometryShaderInputPrimitiveType  = PrimitiveMode::Triangles;
     mGeometryShaderOutputPrimitiveType = PrimitiveMode::TriangleStrip;
@@ -307,6 +323,9 @@ void ProgramExecutable::load(bool isSeparable, gl::BinaryInputStream *stream)
     mFragmentInoutRange                 = RangeUI(fragmentInoutRangeLow, fragmentInoutRangeHigh);
 
     mUsesEarlyFragmentTestsOptimization = stream->readBool();
+
+    static_assert(sizeof(mAdvancedBlendEquations.bits()) == sizeof(uint32_t));
+    mAdvancedBlendEquations = BlendEquationBitSet(stream->readInt<uint32_t>());
 
     mLinkedShaderStages = ShaderBitSet(stream->readInt<uint8_t>());
 
@@ -342,6 +361,7 @@ void ProgramExecutable::load(bool isSeparable, gl::BinaryInputStream *stream)
         LoadBlockMemberInfo(stream, &uniform.blockInfo);
 
         stream->readIntVector<unsigned int>(&uniform.outerArraySizes);
+        uniform.outerArrayOffset = stream->readInt<unsigned int>();
 
         uniform.typeInfo = &GetUniformTypeInfo(uniform.type);
 
@@ -535,6 +555,7 @@ void ProgramExecutable::save(bool isSeparable, gl::BinaryOutputStream *stream) c
     stream->writeInt(mFragmentInoutRange.high());
 
     stream->writeBool(mUsesEarlyFragmentTestsOptimization);
+    stream->writeInt(mAdvancedBlendEquations.bits());
 
     stream->writeInt(mLinkedShaderStages.bits());
 
@@ -566,6 +587,7 @@ void ProgramExecutable::save(bool isSeparable, gl::BinaryOutputStream *stream) c
         WriteBlockMemberInfo(stream, uniform.blockInfo);
 
         stream->writeIntVector(uniform.outerArraySizes);
+        stream->writeInt(uniform.outerArrayOffset);
 
         // Active shader info
         for (ShaderType shaderType : gl::AllShaderTypes())
@@ -723,16 +745,12 @@ std::string ProgramExecutable::getInfoLogString() const
 
 bool ProgramExecutable::isAttribLocationActive(size_t attribLocation) const
 {
-    // TODO(timvp): http://anglebug.com/3570: Enable this assert here somehow.
-    //    ASSERT(!mLinkingState);
     ASSERT(attribLocation < mActiveAttribLocationsMask.size());
     return mActiveAttribLocationsMask[attribLocation];
 }
 
 AttributesMask ProgramExecutable::getAttributesMask() const
 {
-    // TODO(timvp): http://anglebug.com/3570: Enable this assert here somehow.
-    //    ASSERT(!mLinkingState);
     return mAttributesMask;
 }
 
@@ -1485,7 +1503,7 @@ bool ProgramExecutable::linkUniforms(
 
     linkSamplerAndImageBindings(combinedImageUniformsCountOut);
 
-    if (!linkAtomicCounterBuffers())
+    if (!linkAtomicCounterBuffers(context, infoLog))
     {
         return false;
     }
@@ -1589,7 +1607,7 @@ void ProgramExecutable::linkSamplerAndImageBindings(GLuint *combinedImageUniform
     mDefaultUniformRange = RangeUI(0, low);
 }
 
-bool ProgramExecutable::linkAtomicCounterBuffers()
+bool ProgramExecutable::linkAtomicCounterBuffers(const Context *context, InfoLog &infoLog)
 {
     for (unsigned int index : mAtomicCounterUniformRange)
     {
@@ -1624,22 +1642,50 @@ bool ProgramExecutable::linkAtomicCounterBuffers()
         }
     }
 
-    // TODO(jie.a.chen@intel.com): Count each atomic counter buffer to validate against
-    // gl_Max[Vertex|Fragment|Compute|Geometry|Combined]AtomicCounterBuffers.
-
+    // Count each atomic counter buffer to validate against
+    // per-stage and combined gl_Max*AtomicCounterBuffers.
+    GLint combinedShaderACBCount           = 0;
+    gl::ShaderMap<GLint> perShaderACBCount = {};
+    for (unsigned int bufferIndex = 0; bufferIndex < getActiveAtomicCounterBufferCount();
+         ++bufferIndex)
+    {
+        AtomicCounterBuffer &acb        = mAtomicCounterBuffers[bufferIndex];
+        const ShaderBitSet shaderStages = acb.activeShaders();
+        for (gl::ShaderType shaderType : shaderStages)
+        {
+            ++perShaderACBCount[shaderType];
+        }
+        ++combinedShaderACBCount;
+    }
+    const Caps &caps = context->getCaps();
+    if (combinedShaderACBCount > caps.maxCombinedAtomicCounterBuffers)
+    {
+        infoLog << " combined AtomicCounterBuffers count exceeds limit";
+        return false;
+    }
+    for (gl::ShaderType stage : gl::AllShaderTypes())
+    {
+        if (perShaderACBCount[stage] > caps.maxShaderAtomicCounterBuffers[stage])
+        {
+            infoLog << GetShaderTypeString(stage)
+                    << " shader AtomicCounterBuffers count exceeds limit";
+            return false;
+        }
+    }
     return true;
 }
 
-void ProgramExecutable::copyShaderBuffersFromProgram(const ProgramState &programState)
+void ProgramExecutable::copyInputsFromProgram(const ProgramState &programState)
 {
-    const std::vector<InterfaceBlock> &ubos = programState.getUniformBlocks();
-    mUniformBlocks.insert(mUniformBlocks.end(), ubos.begin(), ubos.end());
+    mProgramInputs = programState.getProgramInputs();
+}
 
-    const std::vector<InterfaceBlock> &ssbos = programState.getShaderStorageBlocks();
-    mShaderStorageBlocks.insert(mShaderStorageBlocks.end(), ssbos.begin(), ssbos.end());
-
-    const std::vector<AtomicCounterBuffer> &atomics = programState.getAtomicCounterBuffers();
-    mAtomicCounterBuffers.insert(mAtomicCounterBuffers.end(), atomics.begin(), atomics.end());
+void ProgramExecutable::copyShaderBuffersFromProgram(const ProgramState &programState,
+                                                     ShaderType shaderType)
+{
+    AppendActiveBlocks(shaderType, programState.getUniformBlocks(), mUniformBlocks);
+    AppendActiveBlocks(shaderType, programState.getShaderStorageBlocks(), mShaderStorageBlocks);
+    AppendActiveBlocks(shaderType, programState.getAtomicCounterBuffers(), mAtomicCounterBuffers);
 }
 
 void ProgramExecutable::clearSamplerBindings()
@@ -1657,6 +1703,13 @@ void ProgramExecutable::copyImageBindingsFromProgram(const ProgramState &program
 {
     const std::vector<ImageBinding> &bindings = programState.getImageBindings();
     mImageBindings.insert(mImageBindings.end(), bindings.begin(), bindings.end());
+}
+
+void ProgramExecutable::copyOutputsFromProgram(const ProgramState &programState)
+{
+    mOutputVariables          = programState.getOutputVariables();
+    mOutputLocations          = programState.getOutputLocations();
+    mSecondaryOutputLocations = programState.getSecondaryOutputLocations();
 }
 
 void ProgramExecutable::copyUniformsFromProgramMap(const ShaderMap<Program *> &programs)

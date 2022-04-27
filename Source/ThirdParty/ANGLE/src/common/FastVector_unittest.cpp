@@ -384,4 +384,27 @@ TEST(FastIntegerMap, BasicUsage)
     EXPECT_TRUE(testMap.empty());
     EXPECT_EQ(testMap.size(), 0u);
 }
+
+// Basic usage tests of fast map.
+TEST(FastMap, Basic)
+{
+    FastMap<int, 5> testMap;
+    EXPECT_TRUE(testMap.empty());
+
+    testMap[5] = 5;
+    EXPECT_FALSE(testMap.empty());
+
+    testMap.clear();
+    EXPECT_TRUE(testMap.empty());
+
+    for (int i = 0; i < 10; ++i)
+    {
+        testMap[i] = i;
+    }
+
+    for (int i = 0; i < 10; ++i)
+    {
+        EXPECT_TRUE(testMap[i] == i);
+    }
+}
 }  // namespace angle

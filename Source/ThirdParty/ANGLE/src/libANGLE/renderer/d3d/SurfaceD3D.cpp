@@ -458,15 +458,26 @@ angle::Result SurfaceD3D::getAttachmentRenderTarget(const gl::Context *context,
 }
 
 angle::Result SurfaceD3D::initializeContents(const gl::Context *context,
+                                             GLenum binding,
                                              const gl::ImageIndex &imageIndex)
 {
-    if (mState.config->renderTargetFormat != GL_NONE)
+    switch (binding)
     {
-        ANGLE_TRY(mRenderer->initRenderTarget(context, mSwapChain->getColorRenderTarget()));
-    }
-    if (mState.config->depthStencilFormat != GL_NONE)
-    {
-        ANGLE_TRY(mRenderer->initRenderTarget(context, mSwapChain->getDepthStencilRenderTarget()));
+        case GL_BACK:
+            ASSERT(mState.config->renderTargetFormat != GL_NONE);
+            ANGLE_TRY(mRenderer->initRenderTarget(context, mSwapChain->getColorRenderTarget()));
+            break;
+
+        case GL_DEPTH:
+        case GL_STENCIL:
+            ASSERT(mState.config->depthStencilFormat != GL_NONE);
+            ANGLE_TRY(
+                mRenderer->initRenderTarget(context, mSwapChain->getDepthStencilRenderTarget()));
+            break;
+
+        default:
+            UNREACHABLE();
+            break;
     }
     return angle::Result::Continue;
 }

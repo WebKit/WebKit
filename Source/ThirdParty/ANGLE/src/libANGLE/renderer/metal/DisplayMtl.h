@@ -19,7 +19,7 @@
 #include "libANGLE/renderer/metal/mtl_render_utils.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
-#include "platform/FeaturesMtl.h"
+#include "platform/FeaturesMtl_autogen.h"
 
 namespace egl
 {

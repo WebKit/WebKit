@@ -318,7 +318,7 @@ bool IsEmptyScissor(const State &glState)
 
 bool IsColorMaskedOut(const BlendStateExt &blendStateExt, const GLint drawbuffer)
 {
-    ASSERT(static_cast<size_t>(drawbuffer) < blendStateExt.mMaxDrawBuffers);
+    ASSERT(static_cast<size_t>(drawbuffer) < blendStateExt.getDrawBufferCount());
     return blendStateExt.getColorMaskIndexed(static_cast<size_t>(drawbuffer)) == 0;
 }
 
@@ -357,6 +357,43 @@ void GetPerfMonitorString(const std::string &name,
     {
         memcpy(stringOut, name.c_str(), numCharsWritten);
     }
+}
+
+bool CanSupportAEP(const gl::Version &version, const gl::Extensions &extensions)
+{
+    // From the GL_ANDROID_extension_pack_es31a extension spec:
+    // OpenGL ES 3.1 and GLSL ES 3.10 are required.
+    // The following extensions are required:
+    // * KHR_debug
+    // * KHR_texture_compression_astc_ldr
+    // * KHR_blend_equation_advanced
+    // * OES_sample_shading
+    // * OES_sample_variables
+    // * OES_shader_image_atomic
+    // * OES_shader_multisample_interpolation
+    // * OES_texture_stencil8
+    // * OES_texture_storage_multisample_2d_array
+    // * EXT_copy_image
+    // * EXT_draw_buffers_indexed
+    // * EXT_geometry_shader
+    // * EXT_gpu_shader5
+    // * EXT_primitive_bounding_box
+    // * EXT_shader_io_blocks
+    // * EXT_tessellation_shader
+    // * EXT_texture_border_clamp
+    // * EXT_texture_buffer
+    // * EXT_texture_cube_map_array
+    // * EXT_texture_sRGB_decode
+    return (version >= ES_3_1 && extensions.debugKHR && extensions.textureCompressionAstcLdrKHR &&
+            extensions.blendEquationAdvancedKHR && extensions.sampleShadingOES &&
+            extensions.sampleVariablesOES && extensions.shaderImageAtomicOES &&
+            extensions.shaderMultisampleInterpolationOES && extensions.textureStencil8OES &&
+            extensions.textureStorageMultisample2dArrayOES && extensions.copyImageEXT &&
+            extensions.drawBuffersIndexedEXT && extensions.geometryShaderEXT &&
+            extensions.gpuShader5EXT && extensions.primitiveBoundingBoxEXT &&
+            extensions.shaderIoBlocksEXT && extensions.tessellationShaderEXT &&
+            extensions.textureBorderClampEXT && extensions.textureBufferEXT &&
+            extensions.textureCubeMapArrayEXT && extensions.textureSRGBDecodeEXT);
 }
 }  // anonymous namespace
 
@@ -3515,7 +3552,7 @@ void Context::beginTransformFeedback(PrimitiveMode primitiveMode)
     ASSERT(transformFeedback != nullptr);
     ASSERT(!transformFeedback->isPaused());
 
-    // TODO: http://anglebug.com/3570: Handle PPOs
+    // TODO: http://anglebug.com/7232: Handle PPOs
     ANGLE_CONTEXT_TRY(transformFeedback->begin(this, primitiveMode, mState.getProgram()));
     mStateCache.onActiveTransformFeedbackChange(this);
 }
@@ -3617,17 +3654,16 @@ Extensions Context::generateSupportedExtensions() const
     if (getClientVersion() < ES_3_1)
     {
         // Disable ES3.1+ extensions
-        supportedExtensions.geometryShaderEXT         = false;
-        supportedExtensions.geometryShaderOES         = false;
-        supportedExtensions.tessellationShaderEXT     = false;
-        supportedExtensions.extensionPackEs31aANDROID = false;
-        supportedExtensions.gpuShader5EXT             = false;
-        supportedExtensions.primitiveBoundingBoxEXT   = false;
-        supportedExtensions.shaderImageAtomicOES      = false;
-        supportedExtensions.shaderIoBlocksEXT         = false;
-        supportedExtensions.shaderIoBlocksOES         = false;
-        supportedExtensions.textureBufferEXT          = false;
-        supportedExtensions.textureBufferOES          = false;
+        supportedExtensions.geometryShaderEXT       = false;
+        supportedExtensions.geometryShaderOES       = false;
+        supportedExtensions.tessellationShaderEXT   = false;
+        supportedExtensions.gpuShader5EXT           = false;
+        supportedExtensions.primitiveBoundingBoxEXT = false;
+        supportedExtensions.shaderImageAtomicOES    = false;
+        supportedExtensions.shaderIoBlocksEXT       = false;
+        supportedExtensions.shaderIoBlocksOES       = false;
+        supportedExtensions.textureBufferEXT        = false;
+        supportedExtensions.textureBufferOES        = false;
 
         // TODO(http://anglebug.com/2775): Multisample arrays could be supported on ES 3.0 as well
         // once 2D multisample texture extension is exposed there.
@@ -3749,6 +3785,10 @@ Extensions Context::generateSupportedExtensions() const
 
     // Performance counter queries are always supported. Different groups exist on each back-end.
     supportedExtensions.performanceMonitorAMD = true;
+
+    // GL_ANDROID_extension_pack_es31a
+    supportedExtensions.extensionPackEs31aANDROID =
+        CanSupportAEP(getClientVersion(), supportedExtensions);
 
     return supportedExtensions;
 }
@@ -3966,7 +4006,7 @@ void Context::initCaps()
     // If we're capturing application calls for replay, apply some feature limits to increase
     // portability of the trace.
     if (getShareGroup()->getFrameCaptureShared()->enabled() ||
-        getFrontendFeatures().captureLimits.enabled)
+        getFrontendFeatures().enableCaptureLimits.enabled)
     {
         INFO() << "Limit some features because "
                << (getShareGroup()->getFrameCaptureShared()->enabled()
@@ -5822,6 +5862,11 @@ void Context::sampleMaski(GLuint maskNumber, GLbitfield mask)
 void Context::scissor(GLint x, GLint y, GLsizei width, GLsizei height)
 {
     mState.setScissorParams(x, y, width, height);
+}
+
+void Context::shadingRateQCOM(GLenum rate)
+{
+    mState.setShadingRate(rate);
 }
 
 void Context::stencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
@@ -9270,7 +9315,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
     ASSERT(mCurrentDrawSurface == nullptr);
     ASSERT(mCurrentReadSurface == nullptr);
 
-    std::unique_ptr<gl::Framebuffer> newDefaultFramebuffer;
+    UniqueFramebufferPointer newDefaultFramebuffer;
 
     mCurrentDrawSurface = drawSurface;
     mCurrentReadSurface = readSurface;
@@ -9278,11 +9323,11 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
     if (drawSurface != nullptr)
     {
         ANGLE_TRY(drawSurface->makeCurrent(this));
-        newDefaultFramebuffer = drawSurface->createDefaultFramebuffer(this, readSurface);
+        newDefaultFramebuffer = {new Framebuffer(this, drawSurface, readSurface), this};
     }
     else
     {
-        newDefaultFramebuffer = std::make_unique<gl::Framebuffer>(this, mImplementation.get(), readSurface);
+        newDefaultFramebuffer = {new Framebuffer(this, mImplementation.get(), readSurface), this};
     }
     ASSERT(newDefaultFramebuffer);
 
@@ -9293,14 +9338,15 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
 
     // Update default framebuffer, the binding of the previous default
     // framebuffer (or lack of) will have a nullptr.
+    Framebuffer *framebuffer = newDefaultFramebuffer.get();
     mState.mFramebufferManager->setDefaultFramebuffer(newDefaultFramebuffer.release());
     if (mState.getDrawFramebuffer() == nullptr)
     {
-        bindDrawFramebuffer(mState.mFramebufferManager->getDefaultFramebuffer()->id());
+        bindDrawFramebuffer(framebuffer->id());
     }
     if (mState.getReadFramebuffer() == nullptr)
     {
-        bindReadFramebuffer(mState.mFramebufferManager->getDefaultFramebuffer()->id());
+        bindReadFramebuffer(framebuffer->id());
     }
 
     return egl::NoError();

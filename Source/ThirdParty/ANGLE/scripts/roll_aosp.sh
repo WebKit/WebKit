@@ -111,6 +111,7 @@ git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git ${DEP
 export PATH=`pwd`/${DEPOT_TOOLS_DIR}:$PATH
 
 third_party_deps=(
+    "build"
     "third_party/abseil-cpp"
     "third_party/vulkan-deps/glslang/src"
     "third_party/vulkan-deps/spirv-headers/src"
@@ -157,15 +158,6 @@ for dep in "${third_party_deps[@]}"; do
 done
 
 extra_removal_files=(
-   # Some third_party deps have OWNERS files which contains users that have not logged into
-   # the Android gerrit. Repo cannot upload with these files present.
-   "third_party/abseil-cpp/OWNERS"
-   "third_party/vulkan_memory_allocator/OWNERS"
-   "third_party/zlib/OWNERS"
-   "third_party/zlib/google/OWNERS"
-   "third_party/zlib/contrib/tests/OWNERS"
-   "third_party/zlib/contrib/bench/OWNERS"
-   "third_party/zlib/contrib/tests/fuzzers/OWNERS"
    # Remove Android.mk files to prevent automated CLs:
    #   "[LSC] Add LOCAL_LICENSE_KINDS to external/angle"
    "Android.mk"

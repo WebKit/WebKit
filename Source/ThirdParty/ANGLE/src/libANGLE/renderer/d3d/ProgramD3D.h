@@ -18,7 +18,7 @@
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/d3d/DynamicHLSL.h"
 #include "libANGLE/renderer/d3d/RendererD3D.h"
-#include "platform/FeaturesD3D.h"
+#include "platform/FeaturesD3D_autogen.h"
 
 namespace rx
 {
@@ -104,6 +104,13 @@ struct D3DUniformBlock : D3DInterfaceBlock
     gl::ShaderMap<bool> mUseStructuredBuffers;
     gl::ShaderMap<unsigned int> mByteWidths;
     gl::ShaderMap<unsigned int> mStructureByteStrides;
+};
+
+struct ShaderStorageBlock
+{
+    std::string name;
+    unsigned int arraySize     = 0;
+    unsigned int registerIndex = 0;
 };
 
 struct D3DUBOCache
@@ -537,7 +544,7 @@ class ProgramD3D : public ProgramImpl
     std::vector<std::unique_ptr<ComputeExecutable>> mComputeExecutables;
 
     gl::ShaderMap<std::string> mShaderHLSL;
-    gl::ShaderMap<angle::CompilerWorkaroundsD3D> mShaderWorkarounds;
+    gl::ShaderMap<CompilerWorkaroundsD3D> mShaderWorkarounds;
 
     bool mUsesFragDepth;
     bool mHasANGLEMultiviewEnabled;
@@ -585,6 +592,7 @@ class ProgramD3D : public ProgramImpl
     std::map<std::string, int> mAtomicBindingMap;
     std::vector<D3DUniformBlock> mD3DUniformBlocks;
     std::vector<D3DInterfaceBlock> mD3DShaderStorageBlocks;
+    gl::ShaderMap<std::vector<ShaderStorageBlock>> mShaderStorageBlocks;
     std::array<unsigned int, gl::IMPLEMENTATION_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS>
         mComputeAtomicCounterBufferRegisterIndices;
 

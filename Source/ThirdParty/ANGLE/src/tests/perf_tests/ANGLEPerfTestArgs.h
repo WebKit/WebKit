@@ -23,6 +23,7 @@ extern const char *gScreenShotDir;
 extern int gScreenShotFrame;
 extern bool gVerboseLogging;
 extern int gWarmupLoops;
+extern int gWarmupSteps;
 extern double gCalibrationTimeSeconds;
 extern double gMaxTrialTimeSeconds;
 extern int gTestTrials;

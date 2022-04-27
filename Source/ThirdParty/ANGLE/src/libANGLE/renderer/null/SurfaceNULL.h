@@ -47,6 +47,7 @@ class SurfaceNULL : public SurfaceImpl
     EGLint getSwapBehavior() const override;
 
     angle::Result initializeContents(const gl::Context *context,
+                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 };
 

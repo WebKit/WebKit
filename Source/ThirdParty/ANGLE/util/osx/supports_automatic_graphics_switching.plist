@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>angle_end2end_tests</string>
+	<string>angle_test</string> <!-- Generic name so we don't need per target .plist file.-->
 	<key>CFBundleIdentifier</key>
-	<string>org.chromium.angle.angle_end2end_tests</string>
+	<string>org.chromium.angle.angle_test</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
 </dict>

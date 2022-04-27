@@ -32,6 +32,7 @@
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 #include "compiler/translator/tree_ops/SeparateStructFromUniformDeclarations.h"
 #include "compiler/translator/tree_ops/vulkan/DeclarePerVertexBlocks.h"
+#include "compiler/translator/tree_ops/vulkan/EmulateAdvancedBlendEquations.h"
 #include "compiler/translator/tree_ops/vulkan/EmulateDithering.h"
 #include "compiler/translator/tree_ops/vulkan/EmulateFragColorData.h"
 #include "compiler/translator/tree_ops/vulkan/FlagSamplersWithTexelFetch.h"
@@ -1191,6 +1192,18 @@ bool TranslatorVulkan::translateImpl(TInfoSinkBase &sink,
 
             // Emulate gl_FragColor and gl_FragData with normal output variables.
             if (!EmulateFragColorData(this, root, &getSymbolTable()))
+            {
+                return false;
+            }
+
+            // This should be operated after doing ReplaceLastFragData and ReplaceInOutVariables,
+            // because they will create the input attachment variables. AddBlendMainCaller will
+            // check the existing input attachment variables and if there is no existing input
+            // attachment variable then create a new one.
+            if (getAdvancedBlendEquations().any() &&
+                (compileOptions & SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION) != 0 &&
+                !EmulateAdvancedBlendEquations(this, root, &getSymbolTable(), driverUniforms,
+                                               &mUniforms, getAdvancedBlendEquations()))
             {
                 return false;
             }

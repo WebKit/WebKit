@@ -289,13 +289,14 @@ bool FramebufferAttachment::operator!=(const FramebufferAttachment &other) const
 
 InitState FramebufferAttachment::initState() const
 {
-    return mResource ? mResource->initState(mTarget.textureIndex()) : InitState::Initialized;
+    return mResource ? mResource->initState(mTarget.binding(), mTarget.textureIndex())
+                     : InitState::Initialized;
 }
 
 angle::Result FramebufferAttachment::initializeContents(const Context *context)
 {
     ASSERT(mResource);
-    ANGLE_TRY(mResource->initializeContents(context, mTarget.textureIndex()));
+    ANGLE_TRY(mResource->initializeContents(context, mTarget.binding(), mTarget.textureIndex()));
     setInitState(InitState::Initialized);
     return angle::Result::Continue;
 }
@@ -303,7 +304,7 @@ angle::Result FramebufferAttachment::initializeContents(const Context *context)
 void FramebufferAttachment::setInitState(InitState initState) const
 {
     ASSERT(mResource);
-    mResource->setInitState(mTarget.textureIndex(), initState);
+    mResource->setInitState(mTarget.binding(), mTarget.textureIndex(), initState);
 }
 
 ////// FramebufferAttachmentObject Implementation //////
@@ -324,6 +325,7 @@ angle::Result FramebufferAttachmentObject::getAttachmentRenderTarget(
 }
 
 angle::Result FramebufferAttachmentObject::initializeContents(const Context *context,
+                                                              GLenum binding,
                                                               const ImageIndex &imageIndex)
 {
     ASSERT(context->isRobustResourceInitEnabled());
@@ -337,11 +339,11 @@ angle::Result FramebufferAttachmentObject::initializeContents(const Context *con
 
         ImageIndex fullMipIndex = ImageIndex::MakeFromType(
             imageIndex.getType(), imageIndex.getLevelIndex(), ImageIndex::kEntireLevel, size.depth);
-        return getAttachmentImpl()->initializeContents(context, fullMipIndex);
+        return getAttachmentImpl()->initializeContents(context, binding, fullMipIndex);
     }
     else
     {
-        return getAttachmentImpl()->initializeContents(context, imageIndex);
+        return getAttachmentImpl()->initializeContents(context, binding, imageIndex);
     }
 }
 

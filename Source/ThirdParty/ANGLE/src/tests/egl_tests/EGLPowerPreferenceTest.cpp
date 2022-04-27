@@ -19,13 +19,7 @@
 #include "util/OSWindow.h"
 
 using namespace angle;
-namespace
-{
-// TODO(anglebug.com/7093): Implement bundling of Info.plist to angle_end2end_tests
-// In the mean time, change this manually to true and cp src/tests/end2end_tests/mac/Info.plist
-// out/Debug/
-const bool testRunnerSupportsAutomaticGraphicsSwitching = false;
-}  // namespace
+
 class EGLPowerPreferenceTest : public ANGLETest
 {
   public:
@@ -46,7 +40,6 @@ class EGLPowerPreferenceTest : public ANGLETest
 
 TEST_P(EGLPowerPreferenceTest, ForceGPUSwitch)
 {
-    ANGLE_SKIP_TEST_IF(!testRunnerSupportsAutomaticGraphicsSwitching);
     ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(getDisplay(), "EGL_ANGLE_power_preference"));
     size_t lowPower   = FindLowPowerGPU(mSystemInfo);
     size_t highPower  = FindHighPowerGPU(mSystemInfo);
@@ -69,14 +62,16 @@ TEST_P(EGLPowerPreferenceTest, ForceGPUSwitch)
 
 TEST_P(EGLPowerPreferenceTest, HandleGPUSwitchAfterForceGPUSwitch)
 {
-    ANGLE_SKIP_TEST_IF(!testRunnerSupportsAutomaticGraphicsSwitching);
     ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(getDisplay(), "EGL_ANGLE_power_preference"));
     size_t initialGPU = FindActiveOpenGLGPU(mSystemInfo);
     size_t changedGPU = FindLowPowerGPU(mSystemInfo);
-    if (initialGPU == changedGPU)
-    {
-        changedGPU = FindHighPowerGPU(mSystemInfo);
-    }
+    // On all platforms the extension is implemented (e.g. CGL): If we start with integrated, and
+    // force DGPU, we cannot eglHandleGPUSwitchANGLE() from DGPU to integrated.
+    // eglHandleGPUSwitchANGLE() will switch to the "default", which will be DGPU.
+    // If we start with DGPU and switch to integrated, we *can* eglHandleGPUSwitchANGLE() back
+    // to the default, DGPU.
+    ANGLE_SKIP_TEST_IF(initialGPU == changedGPU);
+
     EGLint hi = 0;
     EGLint lo = 0;
     for (int i = 0; i < 5; ++i)

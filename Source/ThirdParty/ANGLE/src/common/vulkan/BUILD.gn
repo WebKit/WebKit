@@ -32,6 +32,7 @@ if (angle_enable_vulkan || angle_build_vulkan_system_info) {
     if (angle_use_wayland) {
       include_dirs = [ "$angle_wayland_dir/src" ]
     }
+    configs = [ "$angle_root:angle_vulkan_wayland_config" ]
   }
 
   angle_source_set("angle_vulkan_headers") {

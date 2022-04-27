@@ -27,7 +27,7 @@
 #include "libANGLE/Observer.h"
 #include "libANGLE/Version.h"
 #include "platform/Feature.h"
-#include "platform/FrontendFeatures.h"
+#include "platform/FrontendFeatures_autogen.h"
 
 namespace angle
 {
@@ -150,7 +150,8 @@ class Display final : public LabeledObject,
     Error releaseThread();
 
     static Display *GetDisplayFromDevice(Device *device, const AttributeMap &attribMap);
-    static Display *GetDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay,
+    static Display *GetDisplayFromNativeDisplay(EGLenum platform,
+                                                EGLNativeDisplayType nativeDisplay,
                                                 const AttributeMap &attribMap);
     static Display *GetExistingDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay);
 

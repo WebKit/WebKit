@@ -22,8 +22,9 @@ On Windows:
 
  * ***IMPORTANT: Set `DEPOT_TOOLS_WIN_TOOLCHAIN=0` in your environment if you are not a Googler.***
  * Install [Visual Studio Community 2022](https://visualstudio.microsoft.com/vs/)
- * Install the [Windows 10 SDK, latest version](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).
-   * You can install it through Visual Studio Installer if available.
+ * Install the [Windows SDK](https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/).
+   * You can install it through Visual Studio Installer if available. It might be necessary to switch to the `Individual components` tab to find the latest version.
+   * The currently supported Windows SDK version can be found in [vs_toolchain.py](https://chromium.googlesource.com/chromium/src/build/+/refs/heads/main/vs_toolchain.py).
    * The SDK is required for GN-generated Visual Studio projects, the D3D Debug runtime, and the latest HLSL Compiler runtime.
  * (optional) See the [Chromium Windows build instructions](https://chromium.googlesource.com/chromium/src/+/main/docs/windows_build_instructions.md) for more info.
 

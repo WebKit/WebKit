@@ -13,7 +13,7 @@
 #include "common/Color.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
-#include "platform/FeaturesD3D.h"
+#include "platform/FeaturesD3D_autogen.h"
 
 namespace gl
 {

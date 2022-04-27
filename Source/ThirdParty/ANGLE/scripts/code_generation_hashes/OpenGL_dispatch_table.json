@@ -1,6 +1,6 @@
 {
   "scripts/gl.xml":
-    "4ea42a5934348eab4d30c0e92e00c90d",
+    "e8f8d52f5a5b8bd5bdd4557fdc58d5dd",
   "src/libANGLE/renderer/angle_format.py":
     "2f8fa768088e22b0963bbdf842d3e725",
   "src/libANGLE/renderer/gl/DispatchTableGL_autogen.cpp":

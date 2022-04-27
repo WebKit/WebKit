@@ -36,6 +36,7 @@ class FramebufferAttachmentObjectImpl : public angle::Subject
                                                     FramebufferAttachmentRenderTarget **rtOut);
 
     virtual angle::Result initializeContents(const gl::Context *context,
+                                             GLenum binding,
                                              const gl::ImageIndex &imageIndex);
 };
 
@@ -52,6 +53,7 @@ inline angle::Result FramebufferAttachmentObjectImpl::getAttachmentRenderTarget(
 
 inline angle::Result FramebufferAttachmentObjectImpl::initializeContents(
     const gl::Context *context,
+    GLenum binding,
     const gl::ImageIndex &imageIndex)
 {
     UNIMPLEMENTED();

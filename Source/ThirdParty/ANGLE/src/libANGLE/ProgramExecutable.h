@@ -137,6 +137,11 @@ class ProgramExecutable final : public angle::Subject
         return mLinkedShaderStages[shaderType];
     }
     size_t getLinkedShaderStageCount() const { return mLinkedShaderStages.count(); }
+    bool hasLinkedGraphicsShader() const
+    {
+        return mLinkedShaderStages.any() &&
+               mLinkedShaderStages != gl::ShaderBitSet{gl::ShaderType::Compute};
+    }
     bool hasLinkedTessellationShader() const
     {
         return mLinkedShaderStages[ShaderType::TessEvaluation];
@@ -220,6 +225,7 @@ class ProgramExecutable final : public angle::Subject
     const RangeUI &getAtomicCounterUniformRange() const { return mAtomicCounterUniformRange; }
     const RangeUI &getFragmentInoutRange() const { return mFragmentInoutRange; }
     bool usesEarlyFragmentTestsOptimization() const { return mUsesEarlyFragmentTestsOptimization; }
+    BlendEquationBitSet getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
     const std::vector<TransformFeedbackVarying> &getLinkedTransformFeedbackVaryings() const
     {
         return mLinkedTransformFeedbackVaryings;
@@ -341,15 +347,15 @@ class ProgramExecutable final : public angle::Subject
                       std::vector<UnusedUniform> *unusedUniforms,
                       std::vector<VariableLocation> *uniformLocationsOutOrNull);
 
-    void copyShaderBuffersFromProgram(const ProgramState &programState);
+    void copyInputsFromProgram(const ProgramState &programState);
+    void copyShaderBuffersFromProgram(const ProgramState &programState, ShaderType shaderType);
     void clearSamplerBindings();
     void copySamplerBindingsFromProgram(const ProgramState &programState);
     void copyImageBindingsFromProgram(const ProgramState &programState);
+    void copyOutputsFromProgram(const ProgramState &programState);
     void copyUniformsFromProgramMap(const ShaderMap<Program *> &programs);
 
   private:
-    // TODO(timvp): http://anglebug.com/3570: Investigate removing these friend
-    // class declarations and accessing the necessary members with getters/setters.
     friend class Program;
     friend class ProgramPipeline;
     friend class ProgramState;
@@ -393,7 +399,7 @@ class ProgramExecutable final : public angle::Subject
                                      const ProgramAliasedBindings &fragmentOutputIndices);
 
     void linkSamplerAndImageBindings(GLuint *combinedImageUniformsCount);
-    bool linkAtomicCounterBuffers();
+    bool linkAtomicCounterBuffers(const Context *context, InfoLog &infoLog);
 
     InfoLog mInfoLog;
 
@@ -460,6 +466,9 @@ class ProgramExecutable final : public angle::Subject
 
     RangeUI mFragmentInoutRange;
     bool mUsesEarlyFragmentTestsOptimization;
+
+    // KHR_blend_equation_advanced supported equation list
+    BlendEquationBitSet mAdvancedBlendEquations;
 
     // An array of the samplers that are used by the program
     std::vector<SamplerBinding> mSamplerBindings;

@@ -2242,6 +2242,17 @@ typedef unsigned int GLhandleARB;
             <enum name="GL_SMOOTH"/>
         </group>
 
+        <group name="ShadingRate">
+            <enum name="GL_SHADING_RATE_QCOM"/>
+            <enum name="GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM"/>
+            <enum name="GL_SHADING_RATE_1X1_PIXELS_QCOM"/>
+            <enum name="GL_SHADING_RATE_1X2_PIXELS_QCOM"/>
+            <enum name="GL_SHADING_RATE_2X1_PIXELS_QCOM"/>
+            <enum name="GL_SHADING_RATE_2X2_PIXELS_QCOM"/>
+            <enum name="GL_SHADING_RATE_4X2_PIXELS_QCOM"/>
+            <enum name="GL_SHADING_RATE_4X4_PIXELS_QCOM"/>
+        </group>
+
         <group name="StencilFaceDirection">
              <enum name="GL_FRONT"/>
              <enum name="GL_BACK"/>
@@ -10187,7 +10198,17 @@ typedef unsigned int GLhandleARB;
     <enums namespace="GL" start="0x96A0" end="0x96AF" vendor="Qualcomm" comment="contact Maurice Ribble">
             <unused start="0x96A0" end="0x96A1" vendor="Qualcomm"/>
         <enum value="0x96A2" name="GL_FRAMEBUFFER_FETCH_NONCOHERENT_QCOM"/>
-            <unused start="0x96A3" end="0x96AF" vendor="Qualcomm"/>
+            <unused start="0x96A3" end="0x96A3" vendor="Qualcomm"/>
+        <enum value="0x96A4" name="GL_SHADING_RATE_QCOM"/>
+        <enum value="0x96A5" name="GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM"/>
+        <enum value="0x96A6" name="GL_SHADING_RATE_1X1_PIXELS_QCOM"/>
+        <enum value="0x96A7" name="GL_SHADING_RATE_1X2_PIXELS_QCOM"/>
+        <enum value="0x96A8" name="GL_SHADING_RATE_2X1_PIXELS_QCOM"/>
+        <enum value="0x96A9" name="GL_SHADING_RATE_2X2_PIXELS_QCOM"/>
+        <enum value="0x96AC" name="GL_SHADING_RATE_4X2_PIXELS_QCOM"/>
+            <unused start="0x96AD" end="0x96AD" vendor="Qualcomm"/>
+        <enum value="0x96AE" name="GL_SHADING_RATE_4X4_PIXELS_QCOM"/>
+            <unused start="0x96AF" end="0x96AF" vendor="Qualcomm"/>
     </enums>
 
 <!-- Enums reservable for future use. To reserve a new range, allocate one
@@ -26244,6 +26265,10 @@ typedef unsigned int GLhandleARB;
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLuint</ptype> <name>storageBlockIndex</name></param>
             <param><ptype>GLuint</ptype> <name>storageBlockBinding</name></param>
+        </command>
+        <command>
+            <proto>void <name>glShadingRateQCOM</name></proto>
+            <param group="ShadingRate"><ptype>GLenum</ptype> <name>rate</name></param>
         </command>
         <command>
             <proto>void <name>glSharpenTexFuncSGIS</name></proto>
@@ -49088,6 +49113,19 @@ typedef unsigned int GLhandleARB;
         <extension name="GL_QCOM_writeonly_rendering" supported="gles1|gles2">
             <require>
                 <enum name="GL_WRITEONLY_RENDERING_QCOM"/>
+            </require>
+        </extension>
+        <extension name="GL_QCOM_shading_rate" supported="gles2">
+            <require>
+                <enum name="GL_SHADING_RATE_QCOM"/>
+                <enum name="GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM"/>
+                <enum name="GL_SHADING_RATE_1X1_PIXELS_QCOM"/>
+                <enum name="GL_SHADING_RATE_1X2_PIXELS_QCOM"/>
+                <enum name="GL_SHADING_RATE_2X1_PIXELS_QCOM"/>
+                <enum name="GL_SHADING_RATE_2X2_PIXELS_QCOM"/>
+                <enum name="GL_SHADING_RATE_4X2_PIXELS_QCOM"/>
+                <enum name="GL_SHADING_RATE_4X4_PIXELS_QCOM"/>
+                <command name="glShadingRateQCOM"/>
             </require>
         </extension>
         <extension name="GL_REND_screen_coordinates" supported="gl">

@@ -497,7 +497,8 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
         // If a render pass is open with commands, it must be for this framebuffer.  Otherwise,
         // either FramebufferVk::syncState() or ContextVk::syncState() would have closed it.
         vk::Framebuffer *currentFramebuffer = nullptr;
-        ANGLE_TRY(getFramebuffer(contextVk, &currentFramebuffer, nullptr));
+        ANGLE_TRY(getFramebuffer(contextVk, &currentFramebuffer, nullptr,
+                                 SwapchainResolveMode::Disabled));
         ASSERT(contextVk->hasStartedRenderPassWithFramebuffer(currentFramebuffer));
 
         // Emit debug-util markers for this mid-render-pass clear
@@ -1139,10 +1140,9 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
         // Non-identity pre-rotation cases do not use Vulkan's builtin blit.
         //
         // For simplicity, we either blit all render targets with a Vulkan command, or none.
-        bool canBlitWithCommand = !isColorResolve && noClip &&
-                                  (noFlip || !disableFlippingBlitWithCommand) &&
-                                  HasSrcBlitFeature(renderer, readRenderTarget) &&
-                                  (rotation == SurfaceRotation::Identity);
+        bool canBlitWithCommand =
+            !isColorResolve && noClip && (noFlip || !disableFlippingBlitWithCommand) &&
+            HasSrcBlitFeature(renderer, readRenderTarget) && rotation == SurfaceRotation::Identity;
         // If we need to reinterpret the colorspace then the blit must be done through a shader
         bool reinterpretsColorspace =
             mCurrentFramebufferDesc.getWriteControlMode() != gl::SrgbWriteControlMode::Default;
@@ -1194,21 +1194,35 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
             // renderer), so there's no chance for the resolve attachment to take advantage of the
             // data already being present in the tile.
             vk::Framebuffer *srcVkFramebuffer = nullptr;
-            ANGLE_TRY(srcFramebufferVk->getFramebuffer(contextVk, &srcVkFramebuffer, nullptr));
+            ANGLE_TRY(srcFramebufferVk->getFramebuffer(contextVk, &srcVkFramebuffer, nullptr,
+                                                       SwapchainResolveMode::Disabled));
 
             // TODO(https://anglebug.com/4968): Support multiple open render passes so we can remove
             //  this hack to 'restore' the finished render pass.
             contextVk->restoreFinishedRenderPass(srcVkFramebuffer);
 
-            if (mState.getEnabledDrawBuffers().count() == 1 &&
+            // glBlitFramebuffer() needs to copy the read color attachment to all enabled
+            // attachments in the draw framebuffer, but Vulkan requires a 1:1 relationship for
+            // multisample attachments to resolve attachments in the render pass subpass.  Due to
+            // this, we currently only support using resolve attachments when there is a single draw
+            // attachment enabled.
+            bool canResolveWithSubpass =
+                mState.getEnabledDrawBuffers().count() == 1 &&
                 mCurrentFramebufferDesc.getLayerCount() == 1 &&
-                contextVk->hasStartedRenderPassWithFramebuffer(srcVkFramebuffer))
+                contextVk->hasStartedRenderPassWithFramebuffer(srcVkFramebuffer);
+
+            // Additionally, when resolving with a resolve attachment, the src and destination
+            // offsets must match, the render area must match the resolve area, and there should be
+            // no flipping or rotation.  Fortunately, in GLES the blit source and destination areas
+            // are already required to be identical.
+            ASSERT(params.srcOffset[0] == params.dstOffset[0] &&
+                   params.srcOffset[1] == params.dstOffset[1]);
+            canResolveWithSubpass =
+                canResolveWithSubpass && noFlip && rotation == SurfaceRotation::Identity &&
+                blitArea == contextVk->getStartedRenderPassCommands().getRenderArea();
+
+            if (canResolveWithSubpass)
             {
-                // glBlitFramebuffer() needs to copy the read color attachment to all enabled
-                // attachments in the draw framebuffer, but Vulkan requires a 1:1 relationship for
-                // multisample attachments to resolve attachments in the render pass subpass.
-                // Due to this, we currently only support using resolve attachments when there is a
-                // single draw attachment enabled.
                 ANGLE_TRY(resolveColorWithSubpass(contextVk, params));
             }
             else
@@ -1244,11 +1258,10 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
         ASSERT(!isDepthStencilResolve || readRenderTarget->getLevelIndex() == gl::LevelIndex(0));
 
         // Similarly, only blit if there's been no clipping or rotating.
-        bool canBlitWithCommand = !isDepthStencilResolve && noClip &&
-                                  (noFlip || !disableFlippingBlitWithCommand) &&
-                                  HasSrcBlitFeature(renderer, readRenderTarget) &&
-                                  HasDstBlitFeature(renderer, drawRenderTarget) &&
-                                  (rotation == SurfaceRotation::Identity);
+        bool canBlitWithCommand =
+            !isDepthStencilResolve && noClip && (noFlip || !disableFlippingBlitWithCommand) &&
+            HasSrcBlitFeature(renderer, readRenderTarget) &&
+            HasDstBlitFeature(renderer, drawRenderTarget) && rotation == SurfaceRotation::Identity;
         bool areChannelsBlitCompatible =
             AreSrcAndDstDepthStencilChannelsBlitCompatible(readRenderTarget, drawRenderTarget);
 
@@ -1421,7 +1434,8 @@ angle::Result FramebufferVk::resolveColorWithSubpass(ContextVk *contextVk,
     const vk::ImageView *resolveImageView = nullptr;
     ANGLE_TRY(drawRenderTarget->getImageView(contextVk, &resolveImageView));
     vk::Framebuffer *newSrcFramebuffer = nullptr;
-    ANGLE_TRY(srcFramebufferVk->getFramebuffer(contextVk, &newSrcFramebuffer, resolveImageView));
+    ANGLE_TRY(srcFramebufferVk->getFramebuffer(contextVk, &newSrcFramebuffer, resolveImageView,
+                                               SwapchainResolveMode::Disabled));
     // 2. Update the RenderPassCommandBufferHelper with the new framebuffer and render pass
     vk::RenderPassCommandBufferHelper &commandBufferHelper =
         contextVk->getStartedRenderPassCommands();
@@ -1625,7 +1639,8 @@ angle::Result FramebufferVk::invalidateImpl(ContextVk *contextVk,
     //- Bind FBO 1, invalidate D/S
     // to invalidate the D/S of FBO 2 since it would be the currently active renderpass.
     vk::Framebuffer *currentFramebuffer = nullptr;
-    ANGLE_TRY(getFramebuffer(contextVk, &currentFramebuffer, nullptr));
+    ANGLE_TRY(
+        getFramebuffer(contextVk, &currentFramebuffer, nullptr, SwapchainResolveMode::Disabled));
 
     if (contextVk->hasStartedRenderPassWithFramebuffer(currentFramebuffer))
     {
@@ -2039,7 +2054,7 @@ void FramebufferVk::updateRenderPassDesc(ContextVk *contextVk)
         mRenderPassDesc.setFramebufferFetchMode(programUsesFramebufferFetch);
     }
 
-    if (contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled)
+    if (contextVk->getFeatures().enableMultisampledRenderToTexture.enabled)
     {
         // Update descriptions regarding multisampled-render-to-texture use.
         bool isRenderToTexture = false;
@@ -2070,7 +2085,8 @@ void FramebufferVk::updateRenderPassDesc(ContextVk *contextVk)
 
 angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
                                             vk::Framebuffer **framebufferOut,
-                                            const vk::ImageView *resolveImageViewIn)
+                                            const vk::ImageView *resolveImageViewIn,
+                                            const SwapchainResolveMode swapchainResolveMode)
 {
     // First return a presently valid Framebuffer
     if (mFramebuffer != nullptr)
@@ -2092,11 +2108,11 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
     // If we've a Framebuffer provided by a Surface (default FBO/backbuffer), query it.
     if (mBackbuffer)
     {
-        return mBackbuffer->getCurrentFramebuffer(contextVk,
-                                                  mRenderPassDesc.getFramebufferFetchMode()
-                                                      ? FramebufferFetchMode::Enabled
+        return mBackbuffer->getCurrentFramebuffer(
+            contextVk,
+            mRenderPassDesc.getFramebufferFetchMode() ? FramebufferFetchMode::Enabled
                                                       : FramebufferFetchMode::Disabled,
-                                                  *compatibleRenderPass, framebufferOut);
+            *compatibleRenderPass, swapchainResolveMode, framebufferOut);
     }
 
     // Gather VkImageViews over all FBO attachments, also size of attached region.
@@ -2747,7 +2763,7 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
     }
 
     vk::Framebuffer *framebuffer = nullptr;
-    ANGLE_TRY(getFramebuffer(contextVk, &framebuffer, nullptr));
+    ANGLE_TRY(getFramebuffer(contextVk, &framebuffer, nullptr, SwapchainResolveMode::Disabled));
 
     // If deferred clears were used in the render pass, expand the render area to the whole
     // framebuffer.

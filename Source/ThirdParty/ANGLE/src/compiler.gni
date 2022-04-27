@@ -345,6 +345,8 @@ angle_translator_lib_vulkan_sources = [
   "src/compiler/translator/tree_ops/vulkan/DeclarePerVertexBlocks.cpp",
   "src/compiler/translator/tree_ops/vulkan/DeclarePerVertexBlocks.h",
   "src/compiler/translator/tree_ops/vulkan/EarlyFragmentTestsOptimization.cpp",
+  "src/compiler/translator/tree_ops/vulkan/EmulateAdvancedBlendEquations.cpp",
+  "src/compiler/translator/tree_ops/vulkan/EmulateAdvancedBlendEquations.h",
   "src/compiler/translator/tree_ops/vulkan/EmulateDithering.cpp",
   "src/compiler/translator/tree_ops/vulkan/EmulateDithering.h",
   "src/compiler/translator/tree_ops/vulkan/EmulateFragColorData.cpp",

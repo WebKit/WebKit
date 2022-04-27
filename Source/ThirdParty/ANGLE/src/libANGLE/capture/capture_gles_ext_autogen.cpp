@@ -11376,4 +11376,13 @@ CallCapture CaptureFramebufferTextureMultiviewOVR(const State &glState,
     return CallCapture(angle::EntryPoint::GLFramebufferTextureMultiviewOVR, std::move(paramBuffer));
 }
 
+CallCapture CaptureShadingRateQCOM(const State &glState, bool isCallValid, GLenum rate)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addEnumParam("rate", GLenumGroup::ShadingRate, ParamType::TGLenum, rate);
+
+    return CallCapture(angle::EntryPoint::GLShadingRateQCOM, std::move(paramBuffer));
+}
+
 }  // namespace gl

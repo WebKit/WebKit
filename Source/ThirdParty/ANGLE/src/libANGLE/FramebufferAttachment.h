@@ -224,8 +224,10 @@ class FramebufferAttachmentObject : public angle::Subject, public angle::Observe
     virtual GLuint getId() const                                                = 0;
 
     // These are used for robust resource initialization.
-    virtual InitState initState(const ImageIndex &imageIndex) const              = 0;
-    virtual void setInitState(const ImageIndex &imageIndex, InitState initState) = 0;
+    virtual InitState initState(GLenum binding, const ImageIndex &imageIndex) const = 0;
+    virtual void setInitState(GLenum binding,
+                              const ImageIndex &imageIndex,
+                              InitState initState)                                  = 0;
 
     angle::Result getAttachmentRenderTarget(const Context *context,
                                             GLenum binding,
@@ -233,7 +235,9 @@ class FramebufferAttachmentObject : public angle::Subject, public angle::Observe
                                             GLsizei samples,
                                             rx::FramebufferAttachmentRenderTarget **rtOut) const;
 
-    angle::Result initializeContents(const Context *context, const ImageIndex &imageIndex);
+    angle::Result initializeContents(const Context *context,
+                                     GLenum binding,
+                                     const ImageIndex &imageIndex);
 
   protected:
     virtual rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const = 0;

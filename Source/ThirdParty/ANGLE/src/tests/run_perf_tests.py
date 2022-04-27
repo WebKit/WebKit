@@ -9,29 +9,30 @@
 
 import argparse
 import fnmatch
+import functools
 import importlib
 import io
 import json
 import logging
 import time
 import os
+import pathlib
 import re
 import subprocess
 import sys
 
-# Add //src/testing into sys.path for importing xvfb and test_env, and
-# //src/testing/scripts for importing common.
-d = os.path.dirname
-THIS_DIR = d(os.path.abspath(__file__))
-ANGLE_DIR = d(d(THIS_DIR))
-sys.path.append(os.path.join(ANGLE_DIR, 'testing'))
-sys.path.append(os.path.join(ANGLE_DIR, 'testing', 'scripts'))
+PY_UTILS = str(pathlib.Path(__file__).resolve().parent / 'py_utils')
+if PY_UTILS not in sys.path:
+    os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
+import android_helper
+import angle_path_util
 
+angle_path_util.AddDepsDirToPath('testing/scripts')
 import common
 import test_env
 import xvfb
 
-sys.path.append(os.path.join(ANGLE_DIR, 'third_party', 'catapult', 'tracing'))
+angle_path_util.AddDepsDirToPath('third_party/catapult/tracing')
 from tracing.value import histogram
 from tracing.value import histogram_set
 from tracing.value import merge_histograms
@@ -92,15 +93,27 @@ def run_command_with_output(argv, stdoutfile, env=None, cwd=None, log=True):
         return process.returncode
 
 
-def _run_and_get_output(args, cmd, env):
+@functools.lru_cache()
+def _use_adb(test_suite):
+    return android_helper.ApkFileExists(test_suite)
+
+
+def _run_and_get_output(args, cmd, env, runner_args):
+    if _use_adb(args.test_suite):
+        result, output = android_helper.RunTests(
+            args.test_suite, cmd[1:], log_output=args.show_test_stdout)
+        return result, output.decode().split('\n')
+
+    runner_cmd = cmd + runner_args
+
     lines = []
-    logging.debug(' '.join(cmd))
+    logging.debug(' '.join(runner_cmd))
     with common.temporary_file() as tempfile_path:
         if args.xvfb:
-            exit_code = xvfb.run_executable(cmd, env, stdoutfile=tempfile_path)
+            exit_code = xvfb.run_executable(runner_cmd, env, stdoutfile=tempfile_path)
         else:
             exit_code = run_command_with_output(
-                cmd, env=env, stdoutfile=tempfile_path, log=args.show_test_stdout)
+                runner_cmd, env=env, stdoutfile=tempfile_path, log=args.show_test_stdout)
         with open(tempfile_path) as f:
             for line in f:
                 lines.append(line.strip())
@@ -334,11 +347,15 @@ def main():
     env['DEVICE_TIMEOUT_MULTIPLIER'] = '20'
 
     # Get test list
-    cmd = [get_binary_name(args.test_suite), '--list-tests', '--verbose']
-    exit_code, lines = _run_and_get_output(args, cmd, env)
-    if exit_code != EXIT_SUCCESS:
-        logging.fatal('Could not find test list from test output:\n%s' % '\n'.join(lines))
-    tests = _get_tests_from_output(lines)
+    if _use_adb(args.test_suite):
+        android_helper.PrepareTestSuite(args.test_suite)
+        tests = android_helper.ListTests()
+    else:
+        cmd = [get_binary_name(args.test_suite), '--list-tests', '--verbose']
+        exit_code, lines = _run_and_get_output(args, cmd, env, [])
+        if exit_code != EXIT_SUCCESS:
+            logging.fatal('Could not find test list from test output:\n%s' % '\n'.join(lines))
+        tests = _get_tests_from_output(lines)
 
     if args.filter:
         tests = _filter_tests(tests, args.filter)
@@ -359,18 +376,28 @@ def main():
     histograms = histogram_set.HistogramSet()
     total_errors = 0
 
+    prepared_traces = set()
     for test_index in range(num_tests):
         test = tests[test_index]
+
+        if _use_adb(args.test_suite):
+            trace = android_helper.GetTraceFromTestName(test)
+            if trace and trace not in prepared_traces:
+                android_helper.PrepareRestrictedTraces([trace])
+                prepared_traces.add(trace)
+
         cmd = [
             get_binary_name(args.test_suite),
             '--gtest_filter=%s' % test,
+            '--verbose',
+            '--calibration-time',
+            str(args.calibration_time),
+        ]
+        runner_args = [
             '--extract-test-list-from-filter',
             '--enable-device-cache',
             '--skip-clear-data',
             '--use-existing-test-data',
-            '--verbose',
-            '--calibration-time',
-            str(args.calibration_time),
         ]
         if args.steps_per_trial:
             steps_per_trial = args.steps_per_trial
@@ -380,7 +407,8 @@ def main():
                 '--warmup-loops',
                 str(args.warmup_loops),
             ]
-            exit_code, calibrate_output = _run_and_get_output(args, cmd_calibrate, env)
+            exit_code, calibrate_output = _run_and_get_output(args, cmd_calibrate, env,
+                                                              runner_args)
             if exit_code != EXIT_SUCCESS:
                 logging.fatal('%s failed. Output:\n%s' %
                               (cmd_calibrate[0], '\n'.join(calibrate_output)))
@@ -420,7 +448,7 @@ def main():
 
             with common.temporary_file() as histogram_file_path:
                 cmd_run += ['--isolated-script-test-perf-output=%s' % histogram_file_path]
-                exit_code, output = _run_and_get_output(args, cmd_run, env)
+                exit_code, output = _run_and_get_output(args, cmd_run, env, runner_args)
                 if exit_code != EXIT_SUCCESS:
                     logging.error('%s failed. Output:\n%s' % (cmd_run[0], '\n'.join(output)))
                     results.result_fail(test)

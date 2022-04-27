@@ -79,8 +79,9 @@ class ReadPixelsPBONVTest : public ReadPixelsTest
     {
         ANGLE_SKIP_TEST_IF(!hasPBOExts());
 
+        mPBOBufferSize = bufferSize;
         glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
-        glBufferData(GL_PIXEL_PACK_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_PIXEL_PACK_BUFFER, mPBOBufferSize, nullptr, GL_STATIC_DRAW);
         glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 
         glDeleteTextures(1, &mTexture);
@@ -110,11 +111,12 @@ class ReadPixelsPBONVTest : public ReadPixelsTest
                IsGLExtensionEnabled("GL_EXT_texture_storage");
     }
 
-    GLuint mPBO       = 0;
-    GLuint mTexture   = 0;
-    GLuint mFBO       = 0;
-    GLuint mFBOWidth  = 0;
-    GLuint mFBOHeight = 0;
+    GLuint mPBO           = 0;
+    GLuint mTexture       = 0;
+    GLuint mFBO           = 0;
+    GLuint mFBOWidth      = 0;
+    GLuint mFBOHeight     = 0;
+    GLuint mPBOBufferSize = 0;
 };
 
 // Test basic usage of PBOs.
@@ -140,7 +142,7 @@ TEST_P(ReadPixelsPBONVTest, Basic)
     glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
     glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-    void *mappedPtr    = glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, 32, GL_MAP_READ_BIT);
+    void *mappedPtr = glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
     GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
     EXPECT_GL_NO_ERROR();
 
@@ -1111,7 +1113,8 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsPBOTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsPBOTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsPBODrawTest);
-ANGLE_INSTANTIATE_TEST_ES3_AND(ReadPixelsPBODrawTest, WithForceVulkanFallbackFormat(ES3_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES3_AND(ReadPixelsPBODrawTest,
+                               ES3_VULKAN().enable(Feature::ForceFallbackFormat));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsMultisampleTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsMultisampleTest);

@@ -73,10 +73,11 @@ class VulkanPerformanceCounterTest : public ANGLETest
             ASSERT_NE(featureName, nullptr);
             ASSERT_NE(featureStatus, nullptr);
 
-            const bool isStoreOpNoneQCOM =
-                strcmp(featureName, "supportsRenderPassStoreOpNoneQCOM") == 0;
+            const bool isStoreOpNone =
+                strcmp(featureName, GetFeatureName(Feature::SupportsRenderPassStoreOpNone)) == 0;
             const bool isLoadStoreOpNoneEXT =
-                strcmp(featureName, "supportsRenderPassLoadStoreOpNone") == 0;
+                strcmp(featureName, GetFeatureName(Feature::SupportsRenderPassLoadStoreOpNone)) ==
+                0;
             const bool isEnabled  = strcmp(featureStatus, angle::kFeatureStatusEnabled) == 0;
             const bool isDisabled = strcmp(featureStatus, angle::kFeatureStatusDisabled) == 0;
             ASSERT_TRUE(isEnabled || isDisabled);
@@ -88,7 +89,7 @@ class VulkanPerformanceCounterTest : public ANGLETest
                 mLoadOpNoneSupport = isSupported;
             }
 
-            if (isStoreOpNoneQCOM || isLoadStoreOpNoneEXT)
+            if (isStoreOpNone || isLoadStoreOpNoneEXT)
             {
                 if (mStoreOpNoneSupport == ANGLEFeature::Unknown ||
                     mStoreOpNoneSupport == ANGLEFeature::Unsupported)
@@ -97,7 +98,8 @@ class VulkanPerformanceCounterTest : public ANGLETest
                 }
             }
 
-            if (strcmp(featureName, "preferDrawClearOverVkCmdClearAttachments") == 0)
+            if (strcmp(featureName,
+                       GetFeatureName(Feature::PreferDrawClearOverVkCmdClearAttachments)) == 0)
             {
                 mPreferDrawOverClearAttachments = isSupported;
             }
@@ -189,7 +191,7 @@ class VulkanPerformanceCounterTest : public ANGLETest
         // Clear and draw with depth and stencil buffer enabled
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |
                 (clearStencil ? GL_STENCIL_BUFFER_BIT : 0));
-        drawQuad(*program, essl1_shaders::PositionAttrib(), 0.5f);
+        drawQuad(*program, essl1_shaders::PositionAttrib(), 1.f);
         ASSERT_GL_NO_ERROR();
     }
 
@@ -563,10 +565,10 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotBreakR
     initANGLEFeatures();
     // http://anglebug.com/6354
 
-    size_t kMaxBufferToImageCopySize  = 1 << 28;
-    uint32_t kNumSubmits              = 2;
-    uint32_t expectedRenderPassCount  = getPerfCounters().renderPasses + 1;
-    uint32_t expectedSubmitFrameCount = getPerfCounters().submittedFrames + kNumSubmits;
+    size_t kMaxBufferToImageCopySize     = 1 << 28;
+    uint32_t kNumSubmits                 = 2;
+    uint32_t expectedRenderPassCount     = getPerfCounters().renderPasses + 1;
+    uint32_t expectedSubmitCommandsCount = getPerfCounters().vkQueueSubmitCallsTotal + kNumSubmits;
 
     // Step 1: Set up a simple 2D texture.
     GLTexture texture;
@@ -620,7 +622,7 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotBreakR
 
     // Verify render pass and submitted frame counts.
     EXPECT_EQ(getPerfCounters().renderPasses, expectedRenderPassCount);
-    EXPECT_EQ(getPerfCounters().submittedFrames, expectedSubmitFrameCount);
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedSubmitCommandsCount);
 }
 
 // Tests that RGB texture should not break renderpass.
@@ -772,19 +774,27 @@ TEST_P(VulkanPerformanceCounterTest, IndependentBufferCopiesShareSingleBarrier)
     // Step 1: Set up four buffers for two copies.
     GLBuffer srcA;
     glBindBuffer(GL_COPY_READ_BUFFER, srcA);
-    glBufferData(GL_COPY_READ_BUFFER, sizeof(srcDataA), srcDataA, GL_STATIC_COPY);
+    // Note: We can't use GL_STATIC_COPY. Using STATIC will cause driver to allocate a host
+    // invisible memory and issue a copyToBuffer, which will trigger outsideRenderPassCommandBuffer
+    // flush when glCopyBufferSubData is called due to read after write. That will break the
+    // expectations and cause test to fail.
+    glBufferData(GL_COPY_READ_BUFFER, sizeof(srcDataA), srcDataA, GL_DYNAMIC_COPY);
 
     GLBuffer dstA;
     glBindBuffer(GL_COPY_WRITE_BUFFER, dstA);
-    glBufferData(GL_COPY_WRITE_BUFFER, sizeof(srcDataA[0]) * 2, nullptr, GL_STATIC_COPY);
+    // Note: We can't use GL_STATIC_COPY. Using STATIC will cause driver to allocate a host
+    // invisible memory and issue a copyToBuffer, which will trigger outsideRenderPassCommandBuffer
+    // flush when glCopyBufferSubData is called due to write after write. That will break the
+    // expectations and cause test to fail.
+    glBufferData(GL_COPY_WRITE_BUFFER, sizeof(srcDataA[0]) * 2, nullptr, GL_DYNAMIC_COPY);
 
     GLBuffer srcB;
     glBindBuffer(GL_COPY_READ_BUFFER, srcB);
-    glBufferData(GL_COPY_READ_BUFFER, sizeof(srcDataB), srcDataB, GL_STATIC_COPY);
+    glBufferData(GL_COPY_READ_BUFFER, sizeof(srcDataB), srcDataB, GL_DYNAMIC_COPY);
 
     GLBuffer dstB;
     glBindBuffer(GL_COPY_WRITE_BUFFER, dstB);
-    glBufferData(GL_COPY_WRITE_BUFFER, sizeof(srcDataB[0]) * 2, nullptr, GL_STATIC_COPY);
+    glBufferData(GL_COPY_WRITE_BUFFER, sizeof(srcDataB[0]) * 2, nullptr, GL_DYNAMIC_COPY);
 
     // We expect that ANGLE generate zero additional command buffers.
     uint32_t expectedFlushCount = getPerfCounters().flushedOutsideRenderPassCommandBuffers;
@@ -1556,6 +1566,80 @@ TEST_P(VulkanPerformanceCounterTest, DepthStencilInvalidateSub)
     ASSERT_GL_NO_ERROR();
     swapBuffers();
     compareDepthStencilLoadOpCounters(getPerfCounters(), expected);
+}
+
+// Similar to InvalidateSub, but uses glInvalidateSubFramebuffer such that the given area does NOT
+// covers the whole framebuffer.
+TEST_P(VulkanPerformanceCounterTest, DepthStencilPartialInvalidateSub)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    initANGLEFeatures();
+
+    angle::VulkanPerfCounters expected;
+
+    // Expect rpCount+1, depth(Clears+1, Loads+0, LoadNones+0, Stores+1, StoreNones+0),
+    // stencil(Clears+1, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 1, 0, 0, 1, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 1, 0, 0, 1, 0, &expected);
+
+    // Create the framebuffer and make sure depth/stencil have valid contents.
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    GLFramebuffer framebuffer;
+    GLTexture texture;
+    GLRenderbuffer renderbuffer;
+    setupClearAndDrawForDepthStencilOpsTest(&drawRed, &framebuffer, &texture, &renderbuffer, true);
+
+    // Break the render pass so depth/stencil values are stored.
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    compareDepthStencilOpCounters(getPerfCounters(), expected);
+
+    // Start a new render pass that is scissored.  Depth/stencil should be loaded.  The draw call is
+    // followed by an invalidate, so store shouldn't happen.
+
+    // Expect rpCount+1, depth(Clears+0, Loads+1, LoadNones+0, Stores+0, StoreNones+0),
+    // stencil(Clears+0, Loads+1, LoadNones+0, Stores+0, StoreNones+0)
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 0, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 1, 0, 0, 0, &expected);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(kOpsTestSize / 8, kOpsTestSize / 4, kOpsTestSize / 2, kOpsTestSize / 3);
+
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilFunc(GL_ALWAYS, 0x55, 0xFF);
+    glDepthFunc(GL_ALWAYS);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    const GLenum discards[] = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT};
+    glInvalidateSubFramebuffer(GL_FRAMEBUFFER, 2, discards, kOpsTestSize / 8, kOpsTestSize / 8,
+                               7 * kOpsTestSize / 8, 7 * kOpsTestSize / 8);
+
+    // Break the render pass so depth/stencil values are discarded.
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+    EXPECT_PIXEL_COLOR_EQ(kOpsTestSize / 2, kOpsTestSize / 2, GLColor::green);
+    compareDepthStencilOpCounters(getPerfCounters(), expected);
+
+    // Start another render pass without scissor.  Because parts of the framebuffer attachments were
+    // not invalidated, depth/stencil should be loaded.
+
+    // Expect rpCount+1, depth(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0),
+    // stencil(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0)
+    setExpectedCountersForDepthOps(getPerfCounters(), 1, 0, 1, 0, 1, 0, &expected);
+    setExpectedCountersForStencilOps(getPerfCounters(), 0, 1, 0, 1, 0, &expected);
+
+    glDisable(GL_SCISSOR_TEST);
+
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results
+    EXPECT_EQ(expected.renderPasses, getPerfCounters().renderPasses);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    compareDepthStencilOpCounters(getPerfCounters(), expected);
 }
 
 // Tests that another case does not break render pass, and that counts are correct:
@@ -3985,8 +4069,7 @@ void main()
         }
     }
 
-    // TODO(syoussefi): Validate.
-    ANGLE_UNUSED_VARIABLE(descriptorSetAllocationsBefore);
+    EXPECT_GT(descriptorSetAllocationsBefore, 0u);
 
     ASSERT_GL_NO_ERROR();
 
@@ -4004,7 +4087,7 @@ void main()
 
     // Check for unnecessary descriptor set allocations.
     uint32_t descriptorSetAllocationsAfter = getPerfCounters().descriptorSetAllocations;
-    EXPECT_EQ(descriptorSetAllocationsAfter, 0u);
+    EXPECT_EQ(descriptorSetAllocationsAfter, descriptorSetAllocationsBefore);
 }
 
 // Test that mapping a buffer that the GPU is using as read-only ghosts the buffer, rather than
@@ -4213,6 +4296,92 @@ TEST_P(VulkanPerformanceCounterTest_MSAA, SwapShouldInvalidateDepthStencil)
     // Swap buffers to implicitely resolve
     swapBuffers();
     compareDepthStencilOpCounters(getPerfCounters(), expected);
+}
+
+// Verifies that multisample swapchain resolve occurs in subpass.
+TEST_P(VulkanPerformanceCounterTest_MSAA, SwapShouldResolveWithSubpass)
+{
+    angle::VulkanPerfCounters expected;
+    // Expect rpCount+1, color(Clears+1, Loads+0, LoadNones+0, Stores+1, StoreNones+0)
+    setExpectedCountersForColorOps(getPerfCounters(), 1, 1, 0, 0, 1, 0, &expected);
+
+    uint32_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass + 1;
+    uint32_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass;
+
+    // Clear color.
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Set up program
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Draw green
+    glUniform4f(colorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.95f);
+    ASSERT_GL_NO_ERROR();
+
+    // Swap buffers to implicitly resolve
+    swapBuffers();
+    EXPECT_EQ(getPerfCounters().swapchainResolveInSubpass, expectedResolvesSubpass);
+    EXPECT_EQ(getPerfCounters().swapchainResolveOutsideSubpass, expectedResolvesOutside);
+
+    compareColorOpCounters(getPerfCounters(), expected);
+}
+
+// Verifies that in a multisample swapchain, drawing to the default FBO followed by user FBO and
+// then swapping triggers the resolve outside the optimization subpass.
+TEST_P(VulkanPerformanceCounterTest_MSAA, SwapAfterDrawToDifferentFBOsShouldResolveOutsideSubpass)
+{
+    constexpr GLsizei kSize = 16;
+    angle::VulkanPerfCounters expected;
+    // Expect rpCount+1, color(Clears+1, Loads+0, LoadNones+0, Stores+2, StoreNones+0)
+    setExpectedCountersForColorOps(getPerfCounters(), 1, 1, 0, 0, 2, 0, &expected);
+
+    uint32_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass;
+    uint32_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass + 1;
+
+    // Create a framebuffer to clear.
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Clear color.
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Set up program
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Draw green to default framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glUniform4f(colorUniformLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.95f);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw blue to the user framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glUniform4f(colorUniformLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.95f);
+    ASSERT_GL_NO_ERROR();
+
+    // Swap buffers to resolve outside the optimization subpass
+    swapBuffers();
+    EXPECT_EQ(getPerfCounters().swapchainResolveInSubpass, expectedResolvesSubpass);
+    EXPECT_EQ(getPerfCounters().swapchainResolveOutsideSubpass, expectedResolvesOutside);
+
+    compareColorOpCounters(getPerfCounters(), expected);
 }
 
 // Tests that uniform updates eventually stop updating descriptor sets.
@@ -4739,6 +4908,89 @@ TEST_P(VulkanPerformanceCounterTest, InvalidateThenRepeatedClearThenReadbackThen
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::magenta);
     compareColorOpCounters(getPerfCounters(), expected);
+}
+
+// Tests that the submission counters count the implicit submission in eglSwapBuffers().
+TEST_P(VulkanPerformanceCounterTest, VerifySubmitCounters)
+{
+    initANGLEFeatures();
+
+    uint32_t expectedVkQueueSubmitCount      = getPerfCounters().vkQueueSubmitCallsTotal;
+    uint32_t expectedCommandQueueSubmitCount = getPerfCounters().commandQueueSubmitCallsTotal;
+
+    // One submission coming from clear and read back
+    ++expectedVkQueueSubmitCount;
+    ++expectedCommandQueueSubmitCount;
+
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedVkQueueSubmitCount);
+    EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedCommandQueueSubmitCount);
+
+    // One submission coming from draw and implicit submission from eglSwapBuffers
+    ++expectedVkQueueSubmitCount;
+    ++expectedCommandQueueSubmitCount;
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 1.f);
+    swapBuffers();
+
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedVkQueueSubmitCount);
+    EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedCommandQueueSubmitCount);
+}
+
+// Ensure that glFlush doesn't lead to vkQueueSubmit if there's nothing to submit.
+TEST_P(VulkanPerformanceCounterTest, UnnecessaryFlushDoesntCauseSubmission)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    initANGLEFeatures();
+
+    swapBuffers();
+    uint32_t expectedVkQueueSubmitCalls = getPerfCounters().vkQueueSubmitCallsTotal;
+
+    glFlush();
+    glFlush();
+    glFlush();
+
+    // Nothing was recorded, so there shouldn't be anything to flush.
+    glFinish();
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedVkQueueSubmitCalls);
+
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // One submission for the above readback
+    ++expectedVkQueueSubmitCalls;
+
+    glFinish();
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedVkQueueSubmitCalls);
+
+    glFlush();
+    glFlush();
+    glFlush();
+
+    // No addional submissions since last one
+    glFinish();
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedVkQueueSubmitCalls);
+}
+
+// Ensure that glFenceSync doesn't lead to vkQueueSubmit if there's nothing to submit.
+TEST_P(VulkanPerformanceCounterTest, SyncWihtoutCommandsDoesntCauseSubmission)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    initANGLEFeatures();
+
+    swapBuffers();
+    uint32_t expectedVkQueueSubmitCalls = getPerfCounters().vkQueueSubmitCallsTotal;
+
+    glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+
+    // Nothing was recorded, so there shouldn't be anything to flush.
+    glFinish();
+    EXPECT_EQ(getPerfCounters().vkQueueSubmitCallsTotal, expectedVkQueueSubmitCalls);
 }
 
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest, ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER());

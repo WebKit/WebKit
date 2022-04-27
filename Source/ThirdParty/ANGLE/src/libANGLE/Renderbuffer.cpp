@@ -359,7 +359,7 @@ bool Renderbuffer::isRenderable(const Context *context,
                                                  context->getExtensions());
 }
 
-InitState Renderbuffer::initState(const gl::ImageIndex & /*imageIndex*/) const
+InitState Renderbuffer::initState(GLenum /*binding*/, const gl::ImageIndex & /*imageIndex*/) const
 {
     if (isEGLImageTarget())
     {
@@ -369,7 +369,9 @@ InitState Renderbuffer::initState(const gl::ImageIndex & /*imageIndex*/) const
     return mState.mInitState;
 }
 
-void Renderbuffer::setInitState(const gl::ImageIndex & /*imageIndex*/, InitState initState)
+void Renderbuffer::setInitState(GLenum /*binding*/,
+                                const gl::ImageIndex & /*imageIndex*/,
+                                InitState initState)
 {
     if (isEGLImageTarget())
     {

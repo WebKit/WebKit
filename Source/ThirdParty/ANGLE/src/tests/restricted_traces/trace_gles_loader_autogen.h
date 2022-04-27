@@ -786,6 +786,7 @@
 #define glGenVertexArraysOES t_glGenVertexArraysOES
 #define glIsVertexArrayOES t_glIsVertexArrayOES
 #define glFramebufferTextureMultiviewOVR t_glFramebufferTextureMultiviewOVR
+#define glShadingRateQCOM t_glShadingRateQCOM
 #define glDrawTexfOES t_glDrawTexfOES
 #define glDrawTexfvOES t_glDrawTexfvOES
 #define glDrawTexiOES t_glDrawTexiOES
@@ -1683,6 +1684,7 @@ ANGLE_TRACE_LOADER_EXPORT extern PFNGLGENVERTEXARRAYSOESPROC t_glGenVertexArrays
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLISVERTEXARRAYOESPROC t_glIsVertexArrayOES;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLFRAMEBUFFERTEXTUREMULTIVIEWOVRPROC
     t_glFramebufferTextureMultiviewOVR;
+ANGLE_TRACE_LOADER_EXPORT extern PFNGLSHADINGRATEQCOMPROC t_glShadingRateQCOM;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXFOESPROC t_glDrawTexfOES;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXFVOESPROC t_glDrawTexfvOES;
 ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXIOESPROC t_glDrawTexiOES;

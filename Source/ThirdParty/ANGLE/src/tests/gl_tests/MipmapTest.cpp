@@ -2134,7 +2134,7 @@ TEST_P(MipmapTestES3, GenerateMipmapWithRedefineLevelAndTexture)
 }
 
 // Test that manually generating mipmaps using draw calls is functional
-TEST_P(MipmapTestES31, UpdateBaseLevel)
+TEST_P(MipmapTestES31, GenerateMipmapWithDraw)
 {
     constexpr char kVS[] = R"(#version 310 es
 precision highp float;
@@ -2267,18 +2267,131 @@ void main()
     }
 }
 
+// Test that manually generating lower mipmaps using draw calls is functional
+TEST_P(MipmapTestES31, GenerateLowerMipsWithDraw)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, essl1_shaders::Texture2DUniform()), 0);
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, 4, GL_RGBA8, 8, 8);
+    EXPECT_GL_NO_ERROR();
+
+    glActiveTexture(GL_TEXTURE0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    const std::array<GLColor, 4> kMip2Color = {
+        GLColor::red,
+        GLColor::green,
+        GLColor::blue,
+        GLColor::white,
+    };
+
+    GLFramebuffer fb0, fb1, fb2;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fb0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+    EXPECT_GL_NO_ERROR();
+    glBindFramebuffer(GL_FRAMEBUFFER, fb1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 1);
+    EXPECT_GL_NO_ERROR();
+    glBindFramebuffer(GL_FRAMEBUFFER, fb2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 2);
+    EXPECT_GL_NO_ERROR();
+
+    // initialize mip 2
+    glBindFramebuffer(GL_FRAMEBUFFER, fb2);
+    glTexSubImage2D(GL_TEXTURE_2D, 2, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, kMip2Color.data());
+    EXPECT_GL_NO_ERROR();
+
+    // draw mip 1 with mip 2
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2);
+
+    glViewport(0, 0, 4, 4);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb1);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
+    EXPECT_GL_NO_ERROR();
+
+    // draw mip 0 with mip 1
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+
+    glViewport(0, 0, 8, 8);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5);
+    EXPECT_GL_NO_ERROR();
+
+    // Read back rendered pixel values and compare
+    auto getCoeff = [](uint32_t x, uint32_t dimension) {
+        const uint32_t dimDiv2 = dimension / 2;
+        const uint32_t x2      = x > dimDiv2 ? (dimension - 1 - x) : x;
+
+        const uint32_t denominator = dimension * dimension / 4;
+        uint32_t numerator         = x2 * (x2 + 1) / 2;
+        if (x > dimDiv2)
+        {
+            numerator = denominator - numerator;
+        }
+        return static_cast<float>(numerator) / static_cast<float>(denominator);
+    };
+    auto upscale = [&](uint32_t index, uint32_t dimension) {
+        uint32_t x = index % dimension;
+        uint32_t y = index / dimension;
+
+        const float xCoeff = getCoeff(x, dimension);
+        const float yCoeff = getCoeff(y, dimension);
+
+        GLColor result;
+        for (uint32_t channel = 0; channel < 4; ++channel)
+        {
+            const float mixX0 =
+                kMip2Color[0][channel] * (1 - xCoeff) + kMip2Color[1][channel] * xCoeff;
+            const float mixX1 =
+                kMip2Color[2][channel] * (1 - xCoeff) + kMip2Color[3][channel] * xCoeff;
+            const float mix = mixX0 * (1 - yCoeff) + mixX1 * yCoeff;
+
+            result[channel] = static_cast<GLubyte>(round(mix));
+        }
+        return result;
+    };
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fb0);
+    for (uint32_t i = 0; i < 64; ++i)
+    {
+        const GLColor expect = upscale(i, 8);
+        EXPECT_PIXEL_COLOR_NEAR(i % 8, i / 8, expect, 1);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fb1);
+    for (uint32_t i = 0; i < 16; ++i)
+    {
+        const GLColor expect = upscale(i, 4);
+        EXPECT_PIXEL_COLOR_NEAR(i % 4, i / 4, expect, 1);
+    }
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(MipmapTest);
 
 namespace extraPlatforms
 {
-ANGLE_INSTANTIATE_TEST(MipmapTest, WithNoGenMultipleMipsPerPass(ES2_METAL()));
+ANGLE_INSTANTIATE_TEST(MipmapTest, ES2_METAL().disable(Feature::AllowGenMultipleMipsPerPass));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Mipmap3DBoxFilterTest);
 ANGLE_INSTANTIATE_TEST(Mipmap3DBoxFilterTest,
                        ES2_METAL(),
-                       WithNoGenMultipleMipsPerPass(ES2_METAL()));
+                       ES2_METAL().disable(Feature::AllowGenMultipleMipsPerPass));
 }  // namespace extraPlatforms
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MipmapTestES3);

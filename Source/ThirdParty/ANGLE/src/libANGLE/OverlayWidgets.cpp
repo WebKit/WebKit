@@ -202,7 +202,7 @@ class AppendWidgetDataHelper
                                  TextWidgetData *textWidget,
                                  OverlayWidgetCounts *widgetCounts);
 
-    using FormatGraphTitleFunc = std::function<std::string(size_t maxValue)>;
+    using FormatGraphTitleFunc = std::function<std::string(size_t curValue, size_t maxValue)>;
     static void AppendRunningGraphCommon(const overlay::Widget *widget,
                                          const gl::Extents &imageExtent,
                                          TextWidgetData *textWidget,
@@ -269,12 +269,22 @@ void AppendWidgetDataHelper::AppendRunningGraphCommon(
     OverlayWidgetCounts *widgetCounts,
     AppendWidgetDataHelper::FormatGraphTitleFunc formatFunc)
 {
-    const overlay::RunningGraph *graph = static_cast<const overlay::RunningGraph *>(widget);
+    const overlay::RunningGraph *graph   = static_cast<const overlay::RunningGraph *>(widget);
+    const overlay::Widget *matchToWidget = widget->matchToWidget;
+
+    if (matchToWidget == nullptr)
+    {
+        matchToWidget = widget;
+    }
+    const overlay::RunningGraph *matchToGraph =
+        static_cast<const overlay::RunningGraph *>(matchToWidget);
 
     const size_t maxValue =
         *std::max_element(graph->runningValues.begin(), graph->runningValues.end());
+    const size_t maxValueInMatchToGraph =
+        *std::max_element(matchToGraph->runningValues.begin(), matchToGraph->runningValues.end());
     const int32_t graphHeight = std::abs(widget->coords[3] - widget->coords[1]);
-    const float graphScale    = static_cast<float>(graphHeight) / maxValue;
+    const float graphScale    = static_cast<float>(graphHeight) / maxValueInMatchToGraph;
 
     const size_t graphSize  = graph->runningValues.size();
     const size_t currentIdx = graph->lastValueIndex - 1;
@@ -287,8 +297,7 @@ void AppendWidgetDataHelper::AppendRunningGraphCommon(
     if ((*widgetCounts)[WidgetInternalType::Text] <
         kWidgetInternalTypeMaxWidgets[WidgetInternalType::Text])
     {
-        // std::string text = formatFunc(maxValue);
-        std::string text = formatFunc(curValue);
+        std::string text = formatFunc(curValue, maxValue);
         AppendTextCommon(&graph->description, imageExtent, text, textWidget, widgetCounts);
     }
 }
@@ -374,7 +383,7 @@ void AppendWidgetDataHelper::AppendVulkanRenderPassCount(const overlay::Widget *
                                                          GraphWidgetData *graphWidget,
                                                          OverlayWidgetCounts *widgetCounts)
 {
-    auto format = [](size_t maxValue) {
+    auto format = [](size_t curValue, size_t maxValue) {
         std::ostringstream text;
         text << "RenderPass Count: " << maxValue;
         return text.str();
@@ -423,7 +432,7 @@ void AppendWidgetDataHelper::AppendVulkanWriteDescriptorSetCount(const overlay::
                                                                  GraphWidgetData *graphWidget,
                                                                  OverlayWidgetCounts *widgetCounts)
 {
-    auto format = [](size_t maxValue) {
+    auto format = [](size_t curValue, size_t maxValue) {
         std::ostringstream text;
         text << "WriteDescriptorSet Count: " << maxValue;
         return text.str();
@@ -438,7 +447,7 @@ void AppendWidgetDataHelper::AppendVulkanDescriptorSetAllocations(const overlay:
                                                                   GraphWidgetData *graphWidget,
                                                                   OverlayWidgetCounts *widgetCounts)
 {
-    auto format = [](size_t maxValue) {
+    auto format = [](size_t curValue, size_t maxValue) {
         std::ostringstream text;
         text << "Descriptor Set Allocations: " << maxValue;
         return text.str();
@@ -447,15 +456,15 @@ void AppendWidgetDataHelper::AppendVulkanDescriptorSetAllocations(const overlay:
     AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
 }
 
-void AppendWidgetDataHelper::AppendVulkanShaderBufferDSHitRate(const overlay::Widget *widget,
-                                                               const gl::Extents &imageExtent,
-                                                               TextWidgetData *textWidget,
-                                                               GraphWidgetData *graphWidget,
-                                                               OverlayWidgetCounts *widgetCounts)
+void AppendWidgetDataHelper::AppendVulkanShaderResourceDSHitRate(const overlay::Widget *widget,
+                                                                 const gl::Extents &imageExtent,
+                                                                 TextWidgetData *textWidget,
+                                                                 GraphWidgetData *graphWidget,
+                                                                 OverlayWidgetCounts *widgetCounts)
 {
-    auto format = [](size_t maxValue) {
+    auto format = [](size_t curValue, size_t maxValue) {
         std::ostringstream text;
-        text << "Shader Buffer DS Hit Rate (Max: " << maxValue << "%)";
+        text << "Shader Resource DS Hit Rate (Max: " << maxValue << "%)";
         return text.str();
     };
 
@@ -468,7 +477,7 @@ void AppendWidgetDataHelper::AppendVulkanDynamicBufferAllocations(const overlay:
                                                                   GraphWidgetData *graphWidget,
                                                                   OverlayWidgetCounts *widgetCounts)
 {
-    auto format = [](size_t maxValue) {
+    auto format = [](size_t curValue, size_t maxValue) {
         std::ostringstream text;
         text << "DynamicBuffer Allocations (Max: " << maxValue << ")";
         return text.str();
@@ -484,9 +493,9 @@ void AppendWidgetDataHelper::AppendVulkanTextureDescriptorCacheSize(
     GraphWidgetData *graphWidget,
     OverlayWidgetCounts *widgetCounts)
 {
-    auto format = [](size_t curVal) {
+    auto format = [](size_t curValue, size_t maxValue) {
         std::ostringstream text;
-        text << "Total Texture Descriptor Cache Size: " << curVal;
+        text << "Total Texture Descriptor Cache Size: " << curValue;
         return text.str();
     };
 
@@ -500,9 +509,9 @@ void AppendWidgetDataHelper::AppendVulkanUniformDescriptorCacheSize(
     GraphWidgetData *graphWidget,
     OverlayWidgetCounts *widgetCounts)
 {
-    auto format = [](size_t curVal) {
+    auto format = [](size_t curValue, size_t maxValue) {
         std::ostringstream text;
-        text << "Total Uniform Descriptor Cache Size: " << curVal;
+        text << "Total Uniform Descriptor Cache Size: " << curValue;
         return text.str();
     };
 
@@ -515,9 +524,9 @@ void AppendWidgetDataHelper::AppendVulkanDescriptorCacheSize(const overlay::Widg
                                                              GraphWidgetData *graphWidget,
                                                              OverlayWidgetCounts *widgetCounts)
 {
-    auto format = [](size_t curVal) {
+    auto format = [](size_t curValue, size_t maxValue) {
         std::ostringstream text;
-        text << "Total Descriptor Cache Size: " << curVal;
+        text << "Total Descriptor Cache Size: " << curValue;
         return text.str();
     };
 
@@ -536,6 +545,36 @@ void AppendWidgetDataHelper::AppendVulkanDescriptorCacheKeySize(const overlay::W
     text << "DS Cache Key Size: " << std::fixed << std::setprecision(1) << kb << " kb";
 
     AppendTextCommon(widget, imageExtent, text.str(), textWidget, widgetCounts);
+}
+
+void AppendWidgetDataHelper::AppendVulkanAttemptedSubmissions(const overlay::Widget *widget,
+                                                              const gl::Extents &imageExtent,
+                                                              TextWidgetData *textWidget,
+                                                              GraphWidgetData *graphWidget,
+                                                              OverlayWidgetCounts *widgetCounts)
+{
+    auto format = [](size_t curValue, size_t maxValue) {
+        std::ostringstream text;
+        text << "Attempted submissions (peak): " << maxValue;
+        return text.str();
+    };
+
+    AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
+}
+
+void AppendWidgetDataHelper::AppendVulkanActualSubmissions(const overlay::Widget *widget,
+                                                           const gl::Extents &imageExtent,
+                                                           TextWidgetData *textWidget,
+                                                           GraphWidgetData *graphWidget,
+                                                           OverlayWidgetCounts *widgetCounts)
+{
+    auto format = [](size_t curValue, size_t maxValue) {
+        std::ostringstream text;
+        text << "Actual submissions (peak): " << maxValue;
+        return text.str();
+    };
+
+    AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
 }
 
 std::ostream &AppendWidgetDataHelper::OutputPerSecond(std::ostream &out,

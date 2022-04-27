@@ -632,6 +632,8 @@ bool ValidCap(const Context *context, GLenum cap, bool queryOnly)
             break;
         case GL_SAMPLE_SHADING:
             return context->getExtensions().sampleShadingOES;
+        case GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM:
+            return context->getExtensions().shadingRateQCOM;
     }
 
     // GLES1 emulation: GLES1-specific caps after this point
@@ -3638,7 +3640,7 @@ bool ValidateBufferSubData(const Context *context,
     }
 
     // Check for possible overflow of size + offset
-    angle::CheckedNumeric<size_t> checkedSize(size);
+    angle::CheckedNumeric<decltype(size + offset)> checkedSize(size);
     checkedSize += offset;
     if (!checkedSize.IsValid())
     {
@@ -3743,7 +3745,7 @@ bool ValidateBindAttribLocation(const Context *context,
                                 GLuint index,
                                 const GLchar *name)
 {
-    if (index >= MAX_VERTEX_ATTRIBS)
+    if (index >= static_cast<GLuint>(context->getCaps().maxVertexAttributes))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxVertexAttribute);
         return false;
@@ -4241,7 +4243,7 @@ bool ValidateDisableVertexAttribArray(const Context *context,
                                       angle::EntryPoint entryPoint,
                                       GLuint index)
 {
-    if (index >= MAX_VERTEX_ATTRIBS)
+    if (index >= static_cast<GLuint>(context->getCaps().maxVertexAttributes))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxVertexAttribute);
         return false;
@@ -4254,7 +4256,7 @@ bool ValidateEnableVertexAttribArray(const Context *context,
                                      angle::EntryPoint entryPoint,
                                      GLuint index)
 {
-    if (index >= MAX_VERTEX_ATTRIBS)
+    if (index >= static_cast<GLuint>(context->getCaps().maxVertexAttributes))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxVertexAttribute);
         return false;
@@ -6125,7 +6127,7 @@ bool ValidateVertexAttribDivisorANGLE(const Context *context,
         return false;
     }
 
-    if (index >= MAX_VERTEX_ATTRIBS)
+    if (index >= static_cast<GLuint>(context->getCaps().maxVertexAttributes))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxVertexAttribute);
         return false;
@@ -6159,7 +6161,7 @@ bool ValidateVertexAttribDivisorEXT(const Context *context,
         return false;
     }
 
-    if (index >= MAX_VERTEX_ATTRIBS)
+    if (index >= static_cast<GLuint>(context->getCaps().maxVertexAttributes))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxVertexAttribute);
         return false;

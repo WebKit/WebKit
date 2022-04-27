@@ -631,6 +631,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetQueryObjectui64vRobustANGLE(GLuint id,
                                                                 GLsizei *length,
                                                                 GLuint64 *params);
 
+// GL_ANGLE_robust_resource_initialization
+
 // GL_ANGLE_semaphore_fuchsia
 ANGLE_EXPORT void GL_APIENTRY GL_ImportSemaphoreZirconHandleANGLE(GLuint semaphore,
                                                                   GLenum handleType,
@@ -1735,6 +1737,9 @@ ANGLE_EXPORT void GL_APIENTRY GL_FramebufferTextureMultiviewOVR(GLenum target,
                                                                 GLsizei numViews);
 
 // GL_OVR_multiview2
+
+// GL_QCOM_shading_rate
+ANGLE_EXPORT void GL_APIENTRY GL_ShadingRateQCOM(GLenum rate);
 }  // extern "C"
 
 #endif  // LIBGLESV2_ENTRY_POINTS_GLES_EXT_AUTOGEN_H_

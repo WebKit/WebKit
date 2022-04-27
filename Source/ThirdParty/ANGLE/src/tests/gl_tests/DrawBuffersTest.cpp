@@ -996,6 +996,90 @@ TEST_P(DrawBuffersTestES3, 2DArrayTextures)
     glDeleteProgram(program);
 }
 
+// Test that binding multiple faces of a CubeMap texture works correctly
+TEST_P(DrawBuffersTestES3, CubeMapTextures)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture.get());
+    glTexStorage2D(GL_TEXTURE_CUBE_MAP, 1, GL_RGBA8, getWindowWidth(), getWindowHeight());
+    EXPECT_GL_NO_ERROR();
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.get(), 0, 3);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture.get(), 0, 2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture.get(), 0, 1);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture.get(), 0, 0);
+    EXPECT_GL_NO_ERROR();
+
+    bool flags[8] = {true, true, true, true, false};
+
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    const GLenum bufs[] = {
+        GL_COLOR_ATTACHMENT0,
+        GL_COLOR_ATTACHMENT1,
+        GL_COLOR_ATTACHMENT2,
+        GL_COLOR_ATTACHMENT3,
+    };
+
+    glDrawBuffers(4, bufs);
+    drawQuad(program, positionAttrib(), 0.5);
+
+    verifyAttachmentLayer(0, texture.get(), 0, 3);
+    verifyAttachmentLayer(1, texture.get(), 0, 2);
+    verifyAttachmentLayer(2, texture.get(), 0, 1);
+    verifyAttachmentLayer(3, texture.get(), 0, 0);
+
+    EXPECT_GL_NO_ERROR();
+
+    glDeleteProgram(program);
+}
+
+// Test that binding multiple layers of a CubeMap array texture works correctly
+TEST_P(DrawBuffersTestES3, CubeMapArrayTextures)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"));
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, texture.get());
+    glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGBA8, getWindowWidth(), getWindowHeight(),
+                   static_cast<GLint>(kCubeFaces.size()));
+    EXPECT_GL_NO_ERROR();
+
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture.get(), 0, 3);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, texture.get(), 0, 2);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, texture.get(), 0, 1);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, texture.get(), 0, 0);
+    EXPECT_GL_NO_ERROR();
+
+    bool flags[8] = {true, true, true, true, false};
+
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    const GLenum bufs[] = {
+        GL_COLOR_ATTACHMENT0,
+        GL_COLOR_ATTACHMENT1,
+        GL_COLOR_ATTACHMENT2,
+        GL_COLOR_ATTACHMENT3,
+    };
+
+    glDrawBuffers(4, bufs);
+    drawQuad(program, positionAttrib(), 0.5);
+
+    verifyAttachmentLayer(0, texture.get(), 0, 3);
+    verifyAttachmentLayer(1, texture.get(), 0, 2);
+    verifyAttachmentLayer(2, texture.get(), 0, 1);
+    verifyAttachmentLayer(3, texture.get(), 0, 0);
+
+    EXPECT_GL_NO_ERROR();
+
+    glDeleteProgram(program);
+}
+
 // Test that blend works when draw buffers and framebuffers change.
 TEST_P(DrawBuffersTestES3, BlendWithDrawBufferAndFramebufferChanges)
 {
@@ -1370,7 +1454,10 @@ TEST_P(ColorMaskForDrawBuffersTest, Blit)
 ANGLE_INSTANTIATE_TEST(DrawBuffersTest,
                        ANGLE_ALL_TEST_PLATFORMS_ES2,
                        ANGLE_ALL_TEST_PLATFORMS_ES3,
-                       WithNoTransformFeedback(ES2_VULKAN()));
+                       ES2_VULKAN()
+                           .disable(Feature::SupportsTransformFeedbackExtension)
+                           .disable(Feature::SupportsGeometryStreamsCapability)
+                           .disable(Feature::EmulateTransformFeedback));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBuffersWebGL2Test);
 ANGLE_INSTANTIATE_TEST_ES3(DrawBuffersWebGL2Test);

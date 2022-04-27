@@ -45,7 +45,7 @@
       'android-arm64-pixel6': {
         'os_type': 'android',
         'mixins': [
-          'android_s',
+          'android_t',
           'oriole',
           'gpu-swarming-pool',
           'limited_capacity_bot',

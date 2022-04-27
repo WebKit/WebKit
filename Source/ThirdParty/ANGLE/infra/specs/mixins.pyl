@@ -14,7 +14,7 @@
 # For more info see Chromium's mixins.pyl in testing/buildbot.
 
 { 'android_r': {'swarming': {'dimensions': {'device_os': 'R'}}},
-  'android_s': {'swarming': {'dimensions': {'device_os': 'S'}}},
+  'android_t': {'swarming': {'dimensions': {'device_os': 'T'}}},
   'angle_skia_gold_test': { '$mixin_append': { 'args': [ '--git-revision=${got_angle_revision}'],
                                                'precommit_args': [ '--gerrit-issue=${patch_issue}',
                                                                    '--gerrit-patchset=${patch_set}',

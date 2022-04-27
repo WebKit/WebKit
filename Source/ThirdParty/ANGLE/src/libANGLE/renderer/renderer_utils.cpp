@@ -24,6 +24,75 @@
 #include "platform/Feature.h"
 
 #include <string.h>
+#include <cctype>
+
+namespace angle
+{
+namespace
+{
+// For the sake of feature name matching, underscore is ignored, and the names are matched
+// case-insensitive.  This allows feature names to be overriden both in snake_case (previously used
+// by ANGLE) and camelCase.
+bool FeatureNameMatch(const std::string &a, const std::string &b)
+{
+    size_t ai = 0;
+    size_t bi = 0;
+
+    while (ai < a.size() && bi < b.size())
+    {
+        if (a[ai] == '_')
+        {
+            ++ai;
+        }
+        if (b[bi] == '_')
+        {
+            ++bi;
+        }
+        if (std::tolower(a[ai++]) != std::tolower(b[bi++]))
+        {
+            return false;
+        }
+    }
+
+    return ai == a.size() && bi == b.size();
+}
+
+// Search for a feature by name, matching it loosely so that both snake_case and camelCase names are
+// matched.
+FeatureInfo *FindFeatureByName(FeatureMap *features, const std::string &name)
+{
+    for (auto iter : *features)
+    {
+        if (FeatureNameMatch(iter.first, name))
+        {
+            return iter.second;
+        }
+    }
+    return nullptr;
+}
+}  // anonymous namespace
+
+// FeatureSetBase implementation
+void FeatureSetBase::overrideFeatures(const std::vector<std::string> &featureNames, bool enabled)
+{
+    for (const std::string &name : featureNames)
+    {
+        FeatureInfo *feature = FindFeatureByName(&members, name);
+        if (feature != nullptr)
+        {
+            feature->enabled = enabled;
+        }
+    }
+}
+
+void FeatureSetBase::populateFeatureList(FeatureList *features) const
+{
+    for (FeatureMap::const_iterator it = members.begin(); it != members.end(); it++)
+    {
+        features->push_back(it->second);
+    }
+}
+}  // namespace angle
 
 namespace rx
 {
@@ -225,7 +294,6 @@ void SetFloatUniformMatrixFast(unsigned int arrayElementOffset,
 
     memcpy(targetData, valueData, matrixSize * count);
 }
-
 }  // anonymous namespace
 
 void RotateRectangle(const SurfaceRotation rotation,
@@ -382,22 +450,13 @@ void PackPixels(const PackPixelsParams &params,
         return;
     }
 
-    PixelCopyFunction fastCopyFunc = sourceFormat.fastCopyFunctions.get(params.destFormat->id);
+    FastCopyFunction fastCopyFunc = sourceFormat.fastCopyFunctions.get(params.destFormat->id);
 
     if (fastCopyFunc)
     {
         // Fast copy is possible through some special function
-        for (int y = 0; y < destHeight; ++y)
-        {
-            for (int x = 0; x < destWidth; ++x)
-            {
-                uint8_t *dest =
-                    destWithOffset + y * params.outputPitch + x * params.destFormat->pixelBytes;
-                const uint8_t *src = source + y * yAxisPitch + x * xAxisPitch;
-
-                fastCopyFunc(src, dest);
-            }
-        }
+        fastCopyFunc(source, xAxisPitch, yAxisPitch, destWithOffset, params.destFormat->pixelBytes,
+                     params.outputPitch, destWidth, destHeight);
         return;
     }
 
@@ -435,17 +494,32 @@ bool FastCopyFunctionMap::has(angle::FormatID formatID) const
     return (get(formatID) != nullptr);
 }
 
-PixelCopyFunction FastCopyFunctionMap::get(angle::FormatID formatID) const
+namespace
 {
-    for (size_t index = 0; index < mSize; ++index)
+
+const FastCopyFunctionMap::Entry *getEntry(const FastCopyFunctionMap::Entry *entry,
+                                           size_t numEntries,
+                                           angle::FormatID formatID)
+{
+    const FastCopyFunctionMap::Entry *end = entry + numEntries;
+    while (entry != end)
     {
-        if (mData[index].formatID == formatID)
+        if (entry->formatID == formatID)
         {
-            return mData[index].func;
+            return entry;
         }
+        ++entry;
     }
 
     return nullptr;
+}
+
+}  // namespace
+
+FastCopyFunction FastCopyFunctionMap::get(angle::FormatID formatID) const
+{
+    const FastCopyFunctionMap::Entry *entry = getEntry(mData, mSize, formatID);
+    return entry ? entry->func : nullptr;
 }
 
 bool ShouldUseDebugLayers(const egl::AttributeMap &attribs)
@@ -1006,6 +1080,7 @@ void ApplyFeatureOverrides(angle::FeatureSetBase *features, const egl::DisplaySt
     std::vector<std::string> overridesDisabled =
         angle::GetCachedStringsFromEnvironmentVarOrAndroidProperty(
             kAngleFeatureOverridesDisabledEnvName, kAngleFeatureOverridesDisabledPropertyName, ":");
+
     features->overrideFeatures(overridesEnabled, true);
     LogFeatureStatus(*features, overridesEnabled, true);
 

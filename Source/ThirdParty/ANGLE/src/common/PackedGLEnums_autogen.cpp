@@ -1504,6 +1504,79 @@ std::ostream &operator<<(std::ostream &os, ShadingModel value)
 }
 
 template <>
+ShadingRate FromGLenum<ShadingRate>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_SHADING_RATE_1X1_PIXELS_QCOM:
+            return ShadingRate::_1x1;
+        case GL_SHADING_RATE_1X2_PIXELS_QCOM:
+            return ShadingRate::_1x2;
+        case GL_SHADING_RATE_2X1_PIXELS_QCOM:
+            return ShadingRate::_2x1;
+        case GL_SHADING_RATE_2X2_PIXELS_QCOM:
+            return ShadingRate::_2x2;
+        case GL_SHADING_RATE_4X2_PIXELS_QCOM:
+            return ShadingRate::_4x2;
+        case GL_SHADING_RATE_4X4_PIXELS_QCOM:
+            return ShadingRate::_4x4;
+        default:
+            return ShadingRate::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(ShadingRate from)
+{
+    switch (from)
+    {
+        case ShadingRate::_1x1:
+            return GL_SHADING_RATE_1X1_PIXELS_QCOM;
+        case ShadingRate::_1x2:
+            return GL_SHADING_RATE_1X2_PIXELS_QCOM;
+        case ShadingRate::_2x1:
+            return GL_SHADING_RATE_2X1_PIXELS_QCOM;
+        case ShadingRate::_2x2:
+            return GL_SHADING_RATE_2X2_PIXELS_QCOM;
+        case ShadingRate::_4x2:
+            return GL_SHADING_RATE_4X2_PIXELS_QCOM;
+        case ShadingRate::_4x4:
+            return GL_SHADING_RATE_4X4_PIXELS_QCOM;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, ShadingRate value)
+{
+    switch (value)
+    {
+        case ShadingRate::_1x1:
+            os << "GL_SHADING_RATE_1X1_PIXELS_QCOM";
+            break;
+        case ShadingRate::_1x2:
+            os << "GL_SHADING_RATE_1X2_PIXELS_QCOM";
+            break;
+        case ShadingRate::_2x1:
+            os << "GL_SHADING_RATE_2X1_PIXELS_QCOM";
+            break;
+        case ShadingRate::_2x2:
+            os << "GL_SHADING_RATE_2X2_PIXELS_QCOM";
+            break;
+        case ShadingRate::_4x2:
+            os << "GL_SHADING_RATE_4X2_PIXELS_QCOM";
+            break;
+        case ShadingRate::_4x4:
+            os << "GL_SHADING_RATE_4X4_PIXELS_QCOM";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 TextureCombine FromGLenum<TextureCombine>(GLenum from)
 {
     switch (from)

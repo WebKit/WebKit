@@ -75,6 +75,20 @@ const char ESSL310_With_FramebufferFetch[] =
         oCol = mix(oCol, uSrcCol, 0.5f);
     })";
 
+const char ESSL310_With_FramebufferFetchVec3[] =
+    R"(
+    precision highp float;
+
+    layout (blend_support_multiply) out;
+    layout (location = 0, noncoherent) inout vec3 oCol;
+
+    uniform vec3 uSrcCol;
+
+    void main (void)
+    {
+        oCol = mix(oCol, uSrcCol, 0.5f);
+    })";
+
 class KHRBlendEquationAdvancedTest : public sh::ShaderExtensionTest
 {
   public:
@@ -138,13 +152,26 @@ class KHRBlendEquationAdvancedTest : public sh::ShaderExtensionTest
             << " could not be constructed.";
     }
 
-    testing::AssertionResult TestShaderCompile(ShShaderOutput shaderOutputType, const char *pragma)
+    enum class Emulation
+    {
+        Disabled,
+        Enabled
+    };
+
+    testing::AssertionResult TestShaderCompile(ShShaderOutput shaderOutputType,
+                                               const char *pragma,
+                                               Emulation emulate)
     {
         const char *shaderStrings[] = {testing::get<1>(GetParam()), pragma,
                                        testing::get<2>(GetParam())};
 
-        bool success = sh::Compile(mCompilerList[shaderOutputType], shaderStrings, 3,
-                                   SH_VARIABLES | SH_OBJECT_CODE);
+        ShCompileOptions compileFlags = SH_VARIABLES | SH_OBJECT_CODE;
+        if (emulate == Emulation::Enabled)
+        {
+            compileFlags |= SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION;
+        }
+
+        bool success = sh::Compile(mCompilerList[shaderOutputType], shaderStrings, 3, compileFlags);
         if (success)
         {
             return ::testing::AssertionSuccess()
@@ -153,17 +180,17 @@ class KHRBlendEquationAdvancedTest : public sh::ShaderExtensionTest
         return ::testing::AssertionFailure() << sh::GetInfoLog(mCompilerList[shaderOutputType]);
     }
 
-    void TestShaderCompile(bool expectation, const char *pragma)
+    void TestShaderCompile(bool expectation, const char *pragma, Emulation emulate)
     {
         for (auto shaderOutputType : mShaderOutputList)
         {
             if (expectation)
             {
-                EXPECT_TRUE(TestShaderCompile(shaderOutputType.first, pragma));
+                EXPECT_TRUE(TestShaderCompile(shaderOutputType.first, pragma, emulate));
             }
             else
             {
-                EXPECT_FALSE(TestShaderCompile(shaderOutputType.first, pragma));
+                EXPECT_FALSE(TestShaderCompile(shaderOutputType.first, pragma, emulate));
             }
         }
     }
@@ -187,22 +214,20 @@ class KHRBlendEquationAdvancedTest : public sh::ShaderExtensionTest
 class KHRBlendEquationAdvancedES310Test : public KHRBlendEquationAdvancedTest
 {};
 
-// Extension flag is required to compile properly. Expect failure when it is
-// not present.
+// Extension flag is required to compile properly. Expect failure when it is not present.
 TEST_P(KHRBlendEquationAdvancedES310Test, CompileFailsWithoutExtension)
 {
     SetExtensionEnable(false);
     InitializeCompiler();
-    TestShaderCompile(false, EXTPragma);
+    TestShaderCompile(false, EXTPragma, Emulation::Disabled);
 }
 
-// Extension directive is required to compile properly. Expect failure when
-// it is not present.
+// Extension directive is required to compile properly. Expect failure when it is not present.
 TEST_P(KHRBlendEquationAdvancedES310Test, CompileFailsWithExtensionWithoutPragma)
 {
     SetExtensionEnable(true);
     InitializeCompiler();
-    TestShaderCompile(false, "");
+    TestShaderCompile(false, "", Emulation::Disabled);
 }
 
 INSTANTIATE_TEST_SUITE_P(CorrectESSL310Shaders,
@@ -211,6 +236,7 @@ INSTANTIATE_TEST_SUITE_P(CorrectESSL310Shaders,
                                  Values(sh::ESSLVersion310),
                                  Values(ESSL310_Simple,
                                         ESSL310_With_FramebufferFetch,
+                                        ESSL310_With_FramebufferFetchVec3,
                                         ESSL310_DeclaredMultiplyScreenSeparately,
                                         ESSL310_DeclaredMultiplyScreenSuccessively)));
 
@@ -231,16 +257,24 @@ class KHRBlendEquationAdvancedSuccessTest : public KHRBlendEquationAdvancedTest
 class KHRBlendEquationAdvancedES310SuccessTest : public KHRBlendEquationAdvancedSuccessTest
 {};
 
-// With extension flag and extension directive, compiling succeeds.
-// Also test that the extension directive state is reset correctly.
+// With extension flag and extension directive, compiling succeeds.  Also test that the extension
+// directive state is reset correctly.
 TEST_P(KHRBlendEquationAdvancedES310SuccessTest, CompileSucceedsWithExtensionAndPragma)
 {
     SetExtensionEnable(true);
     InitializeCompiler();
-    TestShaderCompile(true, EXTPragma);
+    TestShaderCompile(true, EXTPragma, Emulation::Disabled);
     // Test reset functionality.
-    TestShaderCompile(false, "");
-    TestShaderCompile(true, EXTPragma);
+    TestShaderCompile(false, "", Emulation::Disabled);
+    TestShaderCompile(true, EXTPragma, Emulation::Disabled);
+}
+
+// Same as CompileSucceedsWithExtensionAndPragma but with emulation.
+TEST_P(KHRBlendEquationAdvancedES310SuccessTest, CompileSucceedsWithExtensionAndPragmaWithEmulation)
+{
+    SetExtensionEnable(true);
+    InitializeCompiler();
+    TestShaderCompile(true, EXTPragma, Emulation::Enabled);
 }
 
 // The SL #version 100 shaders that are correct work similarly
@@ -251,6 +285,7 @@ INSTANTIATE_TEST_SUITE_P(CorrectESSL310Shaders,
                                  Values(sh::ESSLVersion310),
                                  Values(ESSL310_Simple,
                                         ESSL310_With_FramebufferFetch,
+                                        ESSL310_With_FramebufferFetchVec3,
                                         ESSL310_DeclaredMultiplyScreenSeparately,
                                         ESSL310_DeclaredMultiplyScreenSuccessively)));
 
@@ -280,12 +315,20 @@ TEST_P(KHRBlendEquationAdvancedEnabledSeparatelyTest, DeclaredEquationSeparately
 {
     SetExtensionEnable(true);
     InitializeCompiler();
-    TestShaderCompile(true, EXTPragma);
+    TestShaderCompile(true, EXTPragma, Emulation::Disabled);
 
     const ShHandle compilerHandle = GetCompilerHandle(SH_SPIRV_VULKAN_OUTPUT);
     gl::BlendEquationBitSet enabledBlendEquation(sh::GetAdvancedBlendEquations(compilerHandle));
     EXPECT_TRUE(enabledBlendEquation.test(gl::BlendEquationType::Multiply));
     EXPECT_TRUE(enabledBlendEquation.test(gl::BlendEquationType::Screen));
+}
+
+// Same as DeclaredEquationSeparately but with emulation.
+TEST_P(KHRBlendEquationAdvancedEnabledSeparatelyTest, DeclaredEquationSeparatelyWithEmulation)
+{
+    SetExtensionEnable(true);
+    InitializeCompiler();
+    TestShaderCompile(true, EXTPragma, Emulation::Enabled);
 }
 
 INSTANTIATE_TEST_SUITE_P(CorrectESSL310Shaders,
@@ -303,7 +346,7 @@ TEST_P(KHRBlendEquationAdvancedEnabledSuccessivelyTest, DeclaredEquationSuccessi
 {
     SetExtensionEnable(true);
     InitializeCompiler();
-    TestShaderCompile(true, EXTPragma);
+    TestShaderCompile(true, EXTPragma, Emulation::Disabled);
 
     const ShHandle compilerHandle = GetCompilerHandle(SH_SPIRV_VULKAN_OUTPUT);
     gl::BlendEquationBitSet enabledBlendEquation(sh::GetAdvancedBlendEquations(compilerHandle));

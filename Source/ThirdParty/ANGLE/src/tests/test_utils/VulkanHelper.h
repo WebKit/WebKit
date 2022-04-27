@@ -112,6 +112,16 @@ class VulkanHelper
                                       VkImageLayout newLayout,
                                       VkSemaphore semaphore);
 
+    // Writes pixels into an image. Currently only VK_FORMAT_R8G8B8A8_UNORM
+    // and VK_FORMAT_B8G8R8A8_UNORM formats are supported.
+    void writePixels(VkImage dstImage,
+                     VkImageLayout imageLayout,
+                     VkFormat imageFormat,
+                     VkOffset3D imageOffset,
+                     VkExtent3D imageExtent,
+                     const void *pixels,
+                     size_t pixelsSize);
+
     // Copies pixels out of an image. Currently only VK_FORMAT_R8G8B8A8_UNORM
     // and VK_FORMAT_B8G8R8A8_UNORM formats are supported.
     void readPixels(VkImage srcImage,

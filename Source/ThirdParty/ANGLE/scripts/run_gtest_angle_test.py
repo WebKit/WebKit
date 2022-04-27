@@ -26,22 +26,19 @@ run_performance_test.py.
 import argparse
 import json
 import os
+import pathlib
 import shutil
 import sys
 import tempfile
 import traceback
 
-# Add //src/testing into sys.path for importing xvfb and test_env, and
-# //src/testing/scripts for importing common.
-d = os.path.dirname
-THIS_DIR = d(os.path.abspath(__file__))
-ANGLE_SRC_DIR = d(THIS_DIR)
-sys.path.insert(0, os.path.join(ANGLE_SRC_DIR, 'testing'))
-sys.path.insert(0, os.path.join(ANGLE_SRC_DIR, 'testing', 'scripts'))
-CHROMIUM_SRC_DIR = d(d(ANGLE_SRC_DIR))
-sys.path.insert(0, os.path.join(CHROMIUM_SRC_DIR, 'testing'))
-sys.path.insert(0, os.path.join(CHROMIUM_SRC_DIR, 'testing', 'scripts'))
 
+PY_UTILS = str(pathlib.Path(__file__).resolve().parents[1] / 'src' / 'tests' / 'py_utils')
+if PY_UTILS not in sys.path:
+    os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
+import angle_path_util
+
+angle_path_util.AddDepsDirToPath('testing/scripts')
 import common
 import xvfb
 import test_env

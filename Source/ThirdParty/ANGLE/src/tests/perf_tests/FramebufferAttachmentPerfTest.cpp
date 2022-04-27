@@ -82,8 +82,7 @@ void FramebufferAttachmentBenchmark::initializeBenchmark()
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxAttachmentCount);
     if (mTextures.size() > static_cast<size_t>(maxAttachmentCount))
     {
-        // Texture count exceeds maximum attachment unit count, skip the test
-        mSkipTest = true;
+        skipTest("Texture count exceeds maximum attachment unit count");
     }
 }
 

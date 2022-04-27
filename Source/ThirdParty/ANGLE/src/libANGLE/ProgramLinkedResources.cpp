@@ -458,6 +458,20 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
             {
                 linkedUniform.setParentArrayIndex(variable.parentArrayIndex());
             }
+
+            std::vector<unsigned int> arrayDims = arraySizes;
+            ASSERT(variable.arraySizes.size() == 1 || variable.arraySizes.size() == 0);
+            arrayDims.push_back(variable.arraySizes.empty() ? 1 : variable.arraySizes[0]);
+
+            size_t numDimensions = arraySizes.size();
+            uint32_t arrayStride = 1;
+            for (size_t dimension = numDimensions; dimension > 0;)
+            {
+                --dimension;
+                arrayStride *= arrayDims[dimension + 1];
+                linkedUniform.outerArrayOffset += arrayStride * mArrayElementStack[dimension];
+            }
+
             if (mMarkActive)
             {
                 linkedUniform.setActive(mShaderType, true);
@@ -505,6 +519,18 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
         sh::VariableNameVisitor::exitStructAccess(structVar, isRowMajor);
     }
 
+    void enterArrayElement(const sh::ShaderVariable &arrayVar, unsigned int arrayElement) override
+    {
+        mArrayElementStack.push_back(arrayElement);
+        sh::VariableNameVisitor::enterArrayElement(arrayVar, arrayElement);
+    }
+
+    void exitArrayElement(const sh::ShaderVariable &arrayVar, unsigned int arrayElement) override
+    {
+        mArrayElementStack.pop_back();
+        sh::VariableNameVisitor::exitArrayElement(arrayVar, arrayElement);
+    }
+
     ShaderUniformCount getCounts() const { return mUniformCount; }
 
   private:
@@ -525,6 +551,7 @@ class FlattenUniformVisitor : public sh::VariableNameVisitor
     std::vector<LinkedUniform> *mAtomicCounterUniforms;
     std::vector<LinkedUniform> *mInputAttachmentUniforms;
     std::vector<UnusedUniform> *mUnusedUniforms;
+    std::vector<unsigned int> mArrayElementStack;
     ShaderUniformCount mUniformCount;
     unsigned int mStructStackSize = 0;
 };

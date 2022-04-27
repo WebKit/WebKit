@@ -227,9 +227,8 @@ void TransformFeedbackVk::updateDescriptorSetLayout(
 
     for (uint32_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
     {
-        const std::string bufferName = GetXfbBufferName(bufferIndex);
         const ShaderInterfaceVariableInfo &info =
-            variableInfoMap.get(gl::ShaderType::Vertex, bufferName);
+            variableInfoMap.getTransformFeedbackInfo(gl::ShaderType::Vertex, bufferIndex);
 
         ASSERT(info.binding != std::numeric_limits<uint32_t>::max());
 
@@ -381,9 +380,8 @@ void TransformFeedbackVk::writeDescriptorSet(vk::Context *context,
 {
     ASSERT(context->getRenderer()->getFeatures().emulateTransformFeedback.enabled);
 
-    const std::string bufferName = GetXfbBufferName(0);
     const ShaderInterfaceVariableInfo &info =
-        variableInfoMap.get(gl::ShaderType::Vertex, bufferName);
+        variableInfoMap.getTransformFeedbackInfo(gl::ShaderType::Vertex, 0);
 
     VkWriteDescriptorSet &writeDescriptorInfo = updateBuilder->allocWriteDescriptorSet();
     writeDescriptorInfo.sType                 = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

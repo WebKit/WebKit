@@ -3656,6 +3656,8 @@ void GL_APIENTRY GL_GetQueryObjectui64vRobustANGLE(GLuint id,
     }
 }
 
+// GL_ANGLE_robust_resource_initialization
+
 // GL_ANGLE_semaphore_fuchsia
 void GL_APIENTRY GL_ImportSemaphoreZirconHandleANGLE(GLuint semaphore,
                                                      GLenum handleType,
@@ -11679,4 +11681,30 @@ void GL_APIENTRY GL_FramebufferTextureMultiviewOVR(GLenum target,
 }
 
 // GL_OVR_multiview2
+
+// GL_QCOM_shading_rate
+void GL_APIENTRY GL_ShadingRateQCOM(GLenum rate)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLShadingRateQCOM, "context = %d, rate = %s", CID(context),
+          GLenumToString(GLenumGroup::ShadingRate, rate));
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateShadingRateQCOM(context, angle::EntryPoint::GLShadingRateQCOM, rate));
+        if (isCallValid)
+        {
+            context->shadingRateQCOM(rate);
+        }
+        ANGLE_CAPTURE(ShadingRateQCOM, isCallValid, context, rate);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
 }  // extern "C"

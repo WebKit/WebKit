@@ -524,14 +524,26 @@ angle::Result ProgramPipeline::link(const Context *context)
     // Merge uniforms.
     mState.mExecutable->copyUniformsFromProgramMap(mState.mPrograms);
 
+    if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex))
+    {
+        const ProgramState &programState = mState.mPrograms[gl::ShaderType::Vertex]->getState();
+        mState.mExecutable->copyInputsFromProgram(programState);
+    }
+
     // Merge shader buffers (UBOs, SSBOs, and atomic counter buffers) into the executable.
     // Also copy over image and sampler bindings.
     for (ShaderType shaderType : mState.mExecutable->getLinkedShaderStages())
     {
         const ProgramState &programState = mState.mPrograms[shaderType]->getState();
-        mState.mExecutable->copyShaderBuffersFromProgram(programState);
+        mState.mExecutable->copyShaderBuffersFromProgram(programState, shaderType);
         mState.mExecutable->copySamplerBindingsFromProgram(programState);
         mState.mExecutable->copyImageBindingsFromProgram(programState);
+    }
+
+    if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::Fragment))
+    {
+        const ProgramState &programState = mState.mPrograms[gl::ShaderType::Fragment]->getState();
+        mState.mExecutable->copyOutputsFromProgram(programState);
     }
 
     if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex) ||

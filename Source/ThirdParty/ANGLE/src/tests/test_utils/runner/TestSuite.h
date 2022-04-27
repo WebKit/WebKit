@@ -70,9 +70,9 @@ const char *TestResultTypeToString(TestResultType type);
 
 struct TestResult
 {
-    TestResultType type       = TestResultType::NoResult;
-    double elapsedTimeSeconds = 0.0;
-    uint32_t flakyFailures    = 0;
+    TestResultType type                    = TestResultType::NoResult;
+    std::vector<double> elapsedTimeSeconds = std::vector<double>({0.0});
+    uint32_t flakyFailures                 = 0;
 };
 
 inline bool operator==(const TestResult &a, const TestResult &b)

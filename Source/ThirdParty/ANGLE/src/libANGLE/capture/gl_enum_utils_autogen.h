@@ -174,6 +174,7 @@ enum class GLenumGroup
     ShaderParameterName,
     ShaderType,
     ShadingModel,
+    ShadingRate,
     StencilFaceDirection,
     StencilFunction,
     StencilOp,

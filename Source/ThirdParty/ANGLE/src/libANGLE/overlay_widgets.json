@@ -24,6 +24,7 @@
         " - length: for Text widgets, maximum number of characters for this widget",
         " - bar_width: for Graph widgets, size of each graph bar.",
         " - height: for Graph widgets, the height of the graph.",
+        " - match_to: a reference to another widget",
         " - text: for Graph widgets, data for the attached Text widget.  This is a map with the same",
         "         Text keys as above except type, which is implicitly Text."
     ],
@@ -134,8 +135,8 @@
             }
         },
         {
-            "name": "VulkanShaderBufferDSHitRate",
-            "comment": "Shader Buffer Descriptor Set Cache Hit Rate.",
+            "name": "VulkanShaderResourceDSHitRate",
+            "comment": "Shader Resource Descriptor Set Cache Hit Rate.",
             "type": "RunningGraph(60)",
             "color": [255, 0, 75, 200],
             "coords": [-50, 360],
@@ -143,8 +144,8 @@
             "height": 100,
             "description": {
                 "color": [255, 0, 75, 255],
-                "coords": ["VulkanShaderBufferDSHitRate.left.align",
-                           "VulkanShaderBufferDSHitRate.top.adjacent"],
+                "coords": ["VulkanShaderResourceDSHitRate.left.align",
+                           "VulkanShaderResourceDSHitRate.top.adjacent"],
                 "font": "small",
                 "length": 40
             }
@@ -201,7 +202,7 @@
             "name": "VulkanUniformDescriptorCacheSize",
             "comment": "Number of cached default uniform descriptor sets",
             "type": "RunningGraph(60)",
-            "color": [0, 200, 300, 200],
+            "color": [0, 200, 255, 200],
             "coords": [0, 450],
             "bar_width": 5,
             "height": 100,
@@ -221,6 +222,40 @@
             "coords": [10, 100],
             "font": "small",
             "length": 30
+        },
+        {
+            "name": "VulkanAttemptedSubmissions",
+            "comment": "Number of times the Vulkan backend attempted to submit commands",
+            "type": "RunningGraph(60)",
+            "color": [255, 0, 0, 100],
+            "coords": [-50, 50],
+            "bar_width": 5,
+            "height": 100,
+            "description": {
+                "color": [200, 0, 75, 255],
+                "coords": ["VulkanAttemptedSubmissions.left.align",
+                           "VulkanAttemptedSubmissions.top.adjacent"],
+                "font": "small",
+                "length": 45
+            }
+        },
+        {
+            "name": "VulkanActualSubmissions",
+            "comment": "Number of times the Vulkan backend actually submitted commands",
+            "type": "RunningGraph(60)",
+            "color": [0, 255, 0, 200],
+            "coords": ["VulkanAttemptedSubmissions.left.align",
+                       "VulkanAttemptedSubmissions.top.align"],
+            "bar_width": 5,
+            "height": 100,
+            "match_to": "VulkanAttemptedSubmissions",
+            "description": {
+                "color": [0, 200, 75, 255],
+                "coords": ["VulkanActualSubmissions.left.align",
+                           "VulkanActualSubmissions.bottom.adjacent"],
+                "font": "small",
+                "length": 45
+            }
         }
     ]
 }

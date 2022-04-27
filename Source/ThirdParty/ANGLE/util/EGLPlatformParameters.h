@@ -10,7 +10,11 @@
 
 #include "util/util_gl.h"
 
+#include "angle_features_autogen.h"
+
+#include <string>
 #include <tuple>
+#include <vector>
 
 namespace angle
 {
@@ -59,49 +63,34 @@ struct EGLPlatformParameters
     auto tie() const
     {
         return std::tie(renderer, majorVersion, minorVersion, deviceType, presentPath,
-                        debugLayersEnabled, transformFeedbackFeature, allocateNonZeroMemoryFeature,
-                        emulateCopyTexImage2DFromRenderbuffers, shaderStencilOutputFeature,
-                        genMultipleMipsPerPassFeature, platformMethods, robustness,
-                        emulatedPrerotation, asyncCommandQueueFeatureVulkan,
-                        hasExplicitMemBarrierFeatureMtl, hasCheapRenderPassFeatureMtl,
-                        forceBufferGPUStorageFeatureMtl, supportsVulkanViewportFlip,
-                        supportsVulkanMultiDrawIndirect, WithVulkanPreferCPUForBufferSubData,
-                        emulatedVAOs, generateSPIRVThroughGlslang, captureLimits,
-                        forceRobustResourceInit, directMetalGeneration, forceInitShaderVariables,
-                        forceVulkanFallbackFormat, displayPowerPreference,
-                        forceSubmitImmutableTextureUpdates, createPipelineDuringLink);
+                        debugLayersEnabled, robustness, displayPowerPreference,
+                        disabledFeatureOverrides, enabledFeatureOverrides, platformMethods);
     }
 
-    EGLint renderer                               = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
-    EGLint majorVersion                           = EGL_DONT_CARE;
-    EGLint minorVersion                           = EGL_DONT_CARE;
-    EGLint deviceType                             = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
-    EGLint presentPath                            = EGL_DONT_CARE;
-    EGLint debugLayersEnabled                     = EGL_DONT_CARE;
-    EGLint robustness                             = EGL_DONT_CARE;
-    EGLint transformFeedbackFeature               = EGL_DONT_CARE;
-    EGLint allocateNonZeroMemoryFeature           = EGL_DONT_CARE;
-    EGLint emulateCopyTexImage2DFromRenderbuffers = EGL_DONT_CARE;
-    EGLint shaderStencilOutputFeature             = EGL_DONT_CARE;
-    EGLint genMultipleMipsPerPassFeature          = EGL_DONT_CARE;
-    uint32_t emulatedPrerotation                  = 0;  // Can be 0, 90, 180 or 270
-    EGLint asyncCommandQueueFeatureVulkan         = EGL_DONT_CARE;
-    EGLint hasExplicitMemBarrierFeatureMtl        = EGL_DONT_CARE;
-    EGLint hasCheapRenderPassFeatureMtl           = EGL_DONT_CARE;
-    EGLint forceBufferGPUStorageFeatureMtl        = EGL_DONT_CARE;
-    EGLint supportsVulkanViewportFlip             = EGL_DONT_CARE;
-    EGLint supportsVulkanMultiDrawIndirect        = EGL_DONT_CARE;
-    EGLint WithVulkanPreferCPUForBufferSubData    = EGL_DONT_CARE;
-    EGLint emulatedVAOs                           = EGL_DONT_CARE;
-    EGLint generateSPIRVThroughGlslang            = EGL_DONT_CARE;
-    EGLint captureLimits                          = EGL_DONT_CARE;
-    EGLint forceRobustResourceInit                = EGL_DONT_CARE;
-    EGLint directMetalGeneration                  = EGL_DONT_CARE;
-    EGLint forceInitShaderVariables               = EGL_DONT_CARE;
-    EGLint forceVulkanFallbackFormat              = EGL_DONT_CARE;
-    EGLint displayPowerPreference                 = EGL_DONT_CARE;
-    EGLint forceSubmitImmutableTextureUpdates     = EGL_DONT_CARE;
-    EGLint createPipelineDuringLink               = EGL_DONT_CARE;
+    // Helpers to enable and disable ANGLE features.  Expects a kFeature* value from
+    // angle_features_autogen.h.
+    EGLPlatformParameters &enable(angle::Feature feature)
+    {
+        enabledFeatureOverrides.push_back(feature);
+        return *this;
+    }
+    EGLPlatformParameters &disable(angle::Feature feature)
+    {
+        disabledFeatureOverrides.push_back(feature);
+        return *this;
+    }
+
+    EGLint renderer               = EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE;
+    EGLint majorVersion           = EGL_DONT_CARE;
+    EGLint minorVersion           = EGL_DONT_CARE;
+    EGLint deviceType             = EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE;
+    EGLint presentPath            = EGL_DONT_CARE;
+    EGLint debugLayersEnabled     = EGL_DONT_CARE;
+    EGLint robustness             = EGL_DONT_CARE;
+    EGLint displayPowerPreference = EGL_DONT_CARE;
+
+    std::vector<angle::Feature> enabledFeatureOverrides;
+    std::vector<angle::Feature> disabledFeatureOverrides;
 
     angle::PlatformMethods *platformMethods = nullptr;
 };

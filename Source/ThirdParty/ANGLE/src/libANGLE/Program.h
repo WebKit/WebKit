@@ -343,8 +343,6 @@ class ProgramState final : angle::NonCopyable
     }
 
     bool hasImages() const { return !getImageBindings().empty(); }
-    bool hasEarlyFragmentTestsOptimization() const { return mEarlyFramentTestsOptimization; }
-    BlendEquationBitSet getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
     rx::SpecConstUsageBits getSpecConstUsageBits() const { return mSpecConstUsageBits; }
 
     // A Program can only either be graphics or compute, but never both, so it
@@ -392,9 +390,6 @@ class ProgramState final : angle::NonCopyable
 
     bool mBinaryRetrieveableHint;
     bool mSeparable;
-    bool mEarlyFramentTestsOptimization;
-    // KHR_blend_equation_advanced supported equation list
-    BlendEquationBitSet mAdvancedBlendEquations;
     rx::SpecConstUsageBits mSpecConstUsageBits;
 
     // ANGLE_multiview.

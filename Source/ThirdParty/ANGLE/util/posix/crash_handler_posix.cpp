@@ -428,11 +428,11 @@ const char *ResolveAddress(const MemoryRegionArray &regions,
         if (pathSlashPos != std::string::npos && region.path.substr(pathSlashPos) == baseModule)
         {
             uintptr_t scannedAddress;
-            int scanReturn = sscanf(address, "%lX", &scannedAddress);
+            int scanReturn = sscanf(address, "%" SCNxPTR, &scannedAddress);
             ASSERT(scanReturn == 1);
             scannedAddress -= region.base;
             char printBuffer[255] = {};
-            size_t scannedSize    = sprintf(printBuffer, "0x%lX", scannedAddress);
+            size_t scannedSize    = sprintf(printBuffer, "0x%" PRIXPTR, scannedAddress);
             size_t bufferSize     = buffer.size();
             buffer.resize(bufferSize + scannedSize + 1, 0);
             memcpy(&buffer[bufferSize], printBuffer, scannedSize);

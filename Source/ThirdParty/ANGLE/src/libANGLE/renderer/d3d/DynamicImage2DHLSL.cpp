@@ -390,8 +390,7 @@ void OutputImage2DSizeFunction(std::ostringstream &out,
                                unsigned int texture3DCount,
                                unsigned int texture2DArrayCount,
                                const std::string &offsetStr,
-                               const std::string &declarationStr,
-                               bool getDimensionsIgnoresBaseLevel)
+                               const std::string &declarationStr)
 {
     out << getImage2DGroupReturnType(textureGroup, IMAGE2DSIZE) << " "
         << Image2DHLSLGroupFunctionName(textureGroup, IMAGE2DSIZE) << "(";
@@ -405,17 +404,7 @@ void OutputImage2DSizeFunction(std::ostringstream &out,
         if (texture2DCount == totalCount)
         {
             out << "    const uint index = imageIndex -  " << offsetStr << "2D;\n";
-            if (getDimensionsIgnoresBaseLevel)
-            {
-                out << "    uint levelCount;\n";
-                out << "    const uint level = " << getImageMetadata(textureGroup) << ".level;\n";
-                out << "    " << declarationStr
-                    << "2D[index].GetDimensions(level, width, height, levelCount);\n";
-            }
-            else
-            {
-                out << "    " << declarationStr << "2D[index].GetDimensions(width, height);\n";
-            }
+            out << "    " << declarationStr << "2D[index].GetDimensions(width, height);\n";
         }
         else
         {
@@ -825,15 +814,13 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
         out << "};\n";
     }
 
-    gl::Shader *shaderGL                     = programData.getAttachedShader(shaderType);
-    const ShaderD3D *shaderD3D               = GetImplAs<ShaderD3D>(shaderGL);
-    const bool getDimensionsIgnoresBaseLevel = programD3D.usesGetDimensionsIgnoresBaseLevel();
+    gl::Shader *shaderGL       = programData.getAttachedShader(shaderType);
+    const ShaderD3D *shaderD3D = GetImplAs<ShaderD3D>(shaderGL);
 
     if (shaderD3D->useImage2DFunction(Image2DHLSLGroupFunctionName(textureGroup, IMAGE2DSIZE)))
     {
         OutputImage2DSizeFunction(out, textureGroup, totalCount, texture2DCount, texture3DCount,
-                                  texture2DArrayCount, offsetStr, declarationStr,
-                                  getDimensionsIgnoresBaseLevel);
+                                  texture2DArrayCount, offsetStr, declarationStr);
     }
     if (shaderD3D->useImage2DFunction(Image2DHLSLGroupFunctionName(textureGroup, IMAGE2DLOAD)))
     {
@@ -851,7 +838,7 @@ void OutputHLSLImage2DUniformGroup(ProgramD3D &programD3D,
 constexpr const char kImage2DFunctionString[] = "// @@ IMAGE2D DECLARATION FUNCTION STRING @@";
 }  // anonymous namespace
 
-std::string generateShaderForImage2DBindSignature(
+std::string GenerateShaderForImage2DBindSignature(
     const d3d::Context *context,
     ProgramD3D &programD3D,
     const gl::ProgramState &programData,

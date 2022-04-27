@@ -214,7 +214,7 @@ void QueryTexLevelParameterBase(const Texture *texture,
             break;
         case GL_RESOURCE_INITIALIZED_ANGLE:
             *params = CastFromGLintStateValue<ParamType>(
-                pname, texture->initState(ImageIndex::MakeFromTarget(target, level)) ==
+                pname, texture->initState(GL_NONE, ImageIndex::MakeFromTarget(target, level)) ==
                            InitState::Initialized);
             break;
         case GL_TEXTURE_BUFFER_DATA_STORE_BINDING:
@@ -1469,7 +1469,7 @@ void QueryRenderbufferiv(const Context *context,
             *params = static_cast<GLint>(renderbuffer->getImplementationColorReadType(context));
             break;
         case GL_RESOURCE_INITIALIZED_ANGLE:
-            *params = (renderbuffer->initState(ImageIndex()) == InitState::Initialized);
+            *params = (renderbuffer->initState(GL_NONE, ImageIndex()) == InitState::Initialized);
             break;
         default:
             UNREACHABLE();
@@ -3335,6 +3335,14 @@ bool GetQueryParameterInfo(const State &glState,
             }
             *type      = GL_FLOAT;
             *numParams = 8;
+            return true;
+        case GL_SHADING_RATE_QCOM:
+            if (!extensions.shadingRateQCOM)
+            {
+                return false;
+            }
+            *type      = GL_INT;
+            *numParams = 1;
             return true;
     }
 

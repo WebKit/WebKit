@@ -209,8 +209,26 @@ egl::Error DisplayCGL::initialize(egl::Display *display)
 
     if (mSupportsGPUSwitching)
     {
-        // Determine the currently active GPU on the system.
-        mCurrentGPUID = angle::GetGpuIDFromDisplayID(kCGDirectMainDisplay);
+        auto gpuIndex = info.getPreferredGPUIndex();
+        if (gpuIndex)
+        {
+            auto gpuID         = info.gpus[*gpuIndex].systemDeviceId;
+            auto virtualScreen = GetVirtualScreenByRegistryID(mPixelFormat, gpuID);
+            if (virtualScreen)
+            {
+                CGLError error = CGLSetVirtualScreen(mContext, *virtualScreen);
+                ASSERT(error == kCGLNoError);
+                if (error == kCGLNoError)
+                {
+                    mCurrentGPUID = gpuID;
+                }
+            }
+        }
+        if (mCurrentGPUID == 0)
+        {
+            // Determine the currently active GPU on the system.
+            mCurrentGPUID = angle::GetGpuIDFromDisplayID(kCGDirectMainDisplay);
+        }
     }
 
     if (CGLSetCurrentContext(mContext) != kCGLNoError)

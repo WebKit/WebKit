@@ -82,7 +82,14 @@ using MipGenerationFunction = void (*)(size_t sourceWidth,
 
 typedef void (*PixelReadFunction)(const uint8_t *source, uint8_t *dest);
 typedef void (*PixelWriteFunction)(const uint8_t *source, uint8_t *dest);
-typedef void (*PixelCopyFunction)(const uint8_t *source, uint8_t *dest);
+typedef void (*FastCopyFunction)(const uint8_t *source,
+                                 int srcXAxisPitch,
+                                 int srcYAxisPitch,
+                                 uint8_t *dest,
+                                 int destXAxisPitch,
+                                 int destYAxisPitch,
+                                 int width,
+                                 int height);
 
 class FastCopyFunctionMap
 {
@@ -90,7 +97,7 @@ class FastCopyFunctionMap
     struct Entry
     {
         angle::FormatID formatID;
-        PixelCopyFunction func;
+        FastCopyFunction func;
     };
 
     constexpr FastCopyFunctionMap() : FastCopyFunctionMap(nullptr, 0) {}
@@ -98,7 +105,7 @@ class FastCopyFunctionMap
     constexpr FastCopyFunctionMap(const Entry *data, size_t size) : mSize(size), mData(data) {}
 
     bool has(angle::FormatID formatID) const;
-    PixelCopyFunction get(angle::FormatID formatID) const;
+    FastCopyFunction get(angle::FormatID formatID) const;
 
   private:
     size_t mSize;

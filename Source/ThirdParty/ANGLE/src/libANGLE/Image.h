@@ -109,8 +109,10 @@ class ExternalImageSibling : public ImageSibling
     void onDetach(const gl::Context *context, rx::Serial framebufferSerial) override;
     GLuint getId() const override;
 
-    gl::InitState initState(const gl::ImageIndex &imageIndex) const override;
-    void setInitState(const gl::ImageIndex &imageIndex, gl::InitState initState) override;
+    gl::InitState initState(GLenum binding, const gl::ImageIndex &imageIndex) const override;
+    void setInitState(GLenum binding,
+                      const gl::ImageIndex &imageIndex,
+                      gl::InitState initState) override;
 
     rx::ExternalImageSiblingImpl *getImplementation() const;
 

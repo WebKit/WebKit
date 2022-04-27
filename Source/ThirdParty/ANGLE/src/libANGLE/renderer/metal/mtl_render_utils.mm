@@ -1746,7 +1746,7 @@ angle::Result DepthStencilBlitUtils::setupDepthStencilBlitWithDraw(
     {
         cmdEncoder->setFragmentTexture(params.srcStencil, 1);
 
-        if (!contextMtl->getDisplay()->getFeatures().hasStencilOutput.enabled)
+        if (!contextMtl->getDisplay()->getFeatures().hasShaderStencilOutput.enabled)
         {
             // Hardware must support stencil writing directly in shader.
             UNREACHABLE();

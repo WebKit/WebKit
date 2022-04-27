@@ -53,8 +53,6 @@ class FramebufferRenderMipmapTest : public ANGLETest
 // when using a non-zero level in glFramebufferTexture2D.
 TEST_P(FramebufferRenderMipmapTest, Validation)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     bool renderToMipmapSupported =
         IsGLExtensionEnabled("GL_OES_fbo_render_mipmap") || getClientMajorVersion() > 2;
 

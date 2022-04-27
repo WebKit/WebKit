@@ -6,7 +6,7 @@
 
 #include "test_utils/ANGLETest.h"
 
-#include "platform/FeaturesVk.h"
+#include "platform/FeaturesVk_autogen.h"
 #include "test_utils/gl_raii.h"
 #include "util/random_utils.h"
 #include "util/shader_utils.h"
@@ -235,6 +235,8 @@ class MaskedScissoredClearTestBase
 class MaskedScissoredClearTest : public MaskedScissoredClearTestBase
 {};
 
+// Overrides a feature to force emulation of stencil-only and depth-only formats with a packed
+// depth/stencil format
 class VulkanClearTest : public MaskedScissoredClearTestBase
 {
   protected:
@@ -285,13 +287,6 @@ class VulkanClearTest : public MaskedScissoredClearTestBase
     {
         glBindFramebuffer(GL_FRAMEBUFFER, mColorDepthFBO);
         mHasStencil = false;
-    }
-
-    // Override a feature to force emulation of stencil-only and depth-only formats with a packed
-    // depth/stencil format
-    void overrideFeaturesVk(FeaturesVk *featuresVk) override
-    {
-        featuresVk->overrideFeatures({"force_fallback_format"}, true);
     }
 
   private:
@@ -748,8 +743,6 @@ TEST_P(ClearTestES3, ClearPlusMaskDrawAndClear)
 // clears to the correct values.
 TEST_P(ClearTestES3, ClearMultipleAttachmentsFollowedBySpecificOne)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr uint32_t kSize            = 16;
     constexpr uint32_t kAttachmentCount = 4;
     std::vector<unsigned char> pixelData(kSize * kSize * 4, 255);
@@ -2882,17 +2875,8 @@ ANGLE_INSTANTIATE_TEST_COMBINE_4(MaskedScissoredClearTest,
                                  testing::Range(0, 3),
                                  testing::Range(0, 3),
                                  testing::Bool(),
-                                 ES2_D3D9(),
-                                 ES2_D3D11(),
-                                 ES3_D3D11(),
-                                 ES2_OPENGL(),
-                                 ES3_OPENGL(),
-                                 ES2_OPENGLES(),
-                                 ES3_OPENGLES(),
-                                 ES2_VULKAN(),
-                                 ES3_VULKAN(),
-                                 ES2_METAL(),
-                                 ES3_METAL());
+                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanClearTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_4(VulkanClearTest,
@@ -2901,8 +2885,10 @@ ANGLE_INSTANTIATE_TEST_COMBINE_4(VulkanClearTest,
                                  testing::Range(0, 3),
                                  testing::Range(0, 3),
                                  testing::Bool(),
-                                 ES2_VULKAN(),
-                                 ES3_VULKAN());
+                                 ES2_VULKAN().enable(Feature::ForceFallbackFormat),
+                                 ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+                                 ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+                                 ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
 
 // Not all ANGLE backends support RGB backbuffers
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ClearTestRGB);

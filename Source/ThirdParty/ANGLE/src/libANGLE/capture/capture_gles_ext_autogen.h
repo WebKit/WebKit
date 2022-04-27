@@ -838,6 +838,8 @@ angle::CallCapture CaptureGetQueryObjectui64vRobustANGLE(const State &glState,
                                                          GLsizei *length,
                                                          GLuint64 *params);
 
+// GL_ANGLE_robust_resource_initialization
+
 // GL_ANGLE_semaphore_fuchsia
 angle::CallCapture CaptureImportSemaphoreZirconHandleANGLE(const State &glState,
                                                            bool isCallValid,
@@ -2605,6 +2607,9 @@ angle::CallCapture CaptureFramebufferTextureMultiviewOVR(const State &glState,
                                                          GLsizei numViews);
 
 // GL_OVR_multiview2
+
+// GL_QCOM_shading_rate
+angle::CallCapture CaptureShadingRateQCOM(const State &glState, bool isCallValid, GLenum rate);
 
 // Parameter Captures
 

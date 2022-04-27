@@ -35,6 +35,7 @@ class RenderbufferNULL : public RenderbufferImpl
     angle::Result setStorageEGLImageTarget(const gl::Context *context, egl::Image *image) override;
 
     angle::Result initializeContents(const gl::Context *context,
+                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 };
 

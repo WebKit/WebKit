@@ -816,6 +816,16 @@ void ValidateAST::visitFunctionPrototype(TIntermFunctionPrototype *node)
                                     param->name().data());
                 mQualifiersFailed = true;
             }
+
+            if (IsOpaqueType(paramType.getBasicType()) && qualifier != EvqParamIn)
+            {
+                mDiagnostics->error(
+                    node->getLine(),
+                    "Found function prototype with an invalid qualifier on opaque parameter "
+                    "<validateQualifiers>",
+                    param->name().data());
+                mQualifiersFailed = true;
+            }
         }
 
         if (mOptions.validatePrecision && IsPrecisionApplicableToType(paramType.getBasicType()) &&

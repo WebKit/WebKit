@@ -362,9 +362,6 @@ class ANGLETestBase
   public:
     void setWindowVisible(OSWindow *osWindow, bool isVisible);
 
-    virtual void overrideWorkaroundsD3D(angle::FeaturesD3D *featuresD3D) {}
-    virtual void overrideFeaturesVk(angle::FeaturesVk *featuresVulkan) {}
-
     static void ReleaseFixtures();
 
     bool isSwiftshader() const
@@ -483,7 +480,6 @@ class ANGLETestBase
     EGLWindow *getEGLWindow() const;
     int getWindowWidth() const;
     int getWindowHeight() const;
-    bool isEmulatedPrerotation() const;
 
     EGLint getPlatformRenderer() const;
 
@@ -533,17 +529,7 @@ class ANGLETestBase
                mCurrentParams->isSwiftshader();
     }
 
-    bool isAsyncCommandQueueFeatureEnabled() const
-    {
-        return mCurrentParams->eglParameters.asyncCommandQueueFeatureVulkan == EGL_TRUE;
-    }
-
     bool platformSupportsMultithreading() const;
-
-    bool isAllocateNonZeroMemoryEnabled() const
-    {
-        return mCurrentParams->getAllocateNonZeroMemoryFeature() == EGL_TRUE;
-    }
 
     bool mIsSetUp = false;
 

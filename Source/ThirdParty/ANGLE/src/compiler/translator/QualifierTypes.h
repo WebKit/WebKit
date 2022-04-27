@@ -198,7 +198,8 @@ class TTypeQualifierBuilder : angle::NonCopyable
     // Goes over the qualifier sequence and parses it to form a type qualifier for a function
     // parameter.
     // The returned object is initialized even if the parsing fails.
-    TTypeQualifier getParameterTypeQualifier(TDiagnostics *diagnostics) const;
+    TTypeQualifier getParameterTypeQualifier(TBasicType parameterBasicType,
+                                             TDiagnostics *diagnostics) const;
     // Goes over the qualifier sequence and parses it to form a type qualifier for a variable.
     // The returned object is initialized even if the parsing fails.
     TTypeQualifier getVariableTypeQualifier(TDiagnostics *diagnostics) const;

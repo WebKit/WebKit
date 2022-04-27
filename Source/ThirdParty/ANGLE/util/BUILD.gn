@@ -14,6 +14,8 @@ _util_sources = [
   "OSPixmap.h",
   "OSWindow.cpp",
   "OSWindow.h",
+  "angle_features_autogen.cpp",
+  "angle_features_autogen.h",
   "com_utils.h",
   "geometry_utils.cpp",
   "geometry_utils.h",
@@ -63,7 +65,7 @@ if (is_fuchsia) {
     "fuchsia/ScenicWindow.cpp",
     "fuchsia/ScenicWindow.h",
   ]
-} else if (use_ozone && !angle_use_x11) {
+} else if (use_ozone && !(angle_use_x11 || angle_use_wayland)) {
   # Use X11 impl by default otherwise switch to fake Ozone impl that does not
   # seem to do anything real.
   # TODO(msisov): probably, we need to have a proper support for different
@@ -174,6 +176,7 @@ config("angle_util_config") {
   if ((is_linux || is_chromeos) && angle_use_x11) {
     libs = [ "X11" ]
   }
+  configs = [ "$angle_root:angle_vulkan_wayland_config" ]
 }
 
 foreach(is_shared_library,

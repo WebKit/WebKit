@@ -7,7 +7,7 @@
 // Test issuing multiview Draw* commands.
 //
 
-#include "platform/FeaturesD3D.h"
+#include "platform/FeaturesD3D_autogen.h"
 #include "test_utils/MultiviewTest.h"
 #include "test_utils/gl_raii.h"
 
@@ -285,12 +285,6 @@ class MultiviewRenderTest : public MultiviewFramebufferTestBase
   protected:
     MultiviewRenderTest() : MultiviewFramebufferTestBase(GetParam(), GetParam().mSamples) {}
 
-    void overrideWorkaroundsD3D(FeaturesD3D *features) override
-    {
-        features->overrideFeatures({"select_view_in_geometry_shader"},
-                                   GetParam().mForceUseGeometryShaderOnD3D);
-    }
-
     virtual void testSetUp() {}
     virtual void testTearDown() {}
 
@@ -528,11 +522,6 @@ class MultiviewLayeredRenderTest : public MultiviewFramebufferTestBase
     MultiviewLayeredRenderTest() : MultiviewFramebufferTestBase(GetParam(), 0) {}
     void SetUp() final { MultiviewFramebufferTestBase::FramebufferTestSetUp(); }
     void TearDown() final { MultiviewFramebufferTestBase::FramebufferTestTearDown(); }
-    void overrideWorkaroundsD3D(FeaturesD3D *features) final
-    {
-        features->overrideFeatures({"select_view_in_geometry_shader"},
-                                   GetParam().mForceUseGeometryShaderOnD3D);
-    }
 };
 
 // The test verifies that glDraw*Indirect works for any number of views.

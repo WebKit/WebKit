@@ -1089,5 +1089,5 @@ INSTANTIATE_TEST_SUITE_P(
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiDrawIndirectTest);
 
 ANGLE_INSTANTIATE_TEST_ES31_AND(MultiDrawIndirectTest,
-                                WithNoVulkanMultiDrawIndirect(ES31_VULKAN()));
+                                ES31_VULKAN().disable(Feature::SupportsMultiDrawIndirect));
 }  // namespace

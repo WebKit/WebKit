@@ -1253,7 +1253,7 @@ ANGLE_INLINE bool ValidateVertexAttribIndex(const Context *context,
                                             angle::EntryPoint entryPoint,
                                             GLuint index)
 {
-    if (index >= MAX_VERTEX_ATTRIBS)
+    if (index >= static_cast<GLuint>(context->getCaps().maxVertexAttributes))
     {
         context->validationError(entryPoint, GL_INVALID_VALUE,
                                  err::kIndexExceedsMaxVertexAttribute);

@@ -130,53 +130,57 @@ struct PerfMonitorTriplet
     uint32_t value;
 };
 
-#define ANGLE_VK_PERF_COUNTERS_X(FN)              \
-    FN(primaryBuffers)                            \
-    FN(renderPasses)                              \
-    FN(submittedFrames)                           \
-    FN(writeDescriptorSets)                       \
-    FN(flushedOutsideRenderPassCommandBuffers)    \
-    FN(resolveImageCommands)                      \
-    FN(colorLoadOpClears)                         \
-    FN(colorLoadOpLoads)                          \
-    FN(colorLoadOpNones)                          \
-    FN(colorStoreOpStores)                        \
-    FN(colorStoreOpNones)                         \
-    FN(colorClearAttachments)                     \
-    FN(depthLoadOpClears)                         \
-    FN(depthLoadOpLoads)                          \
-    FN(depthLoadOpNones)                          \
-    FN(depthStoreOpStores)                        \
-    FN(depthStoreOpNones)                         \
-    FN(depthClearAttachments)                     \
-    FN(stencilLoadOpClears)                       \
-    FN(stencilLoadOpLoads)                        \
-    FN(stencilLoadOpNones)                        \
-    FN(stencilStoreOpStores)                      \
-    FN(stencilStoreOpNones)                       \
-    FN(stencilClearAttachments)                   \
-    FN(colorAttachmentUnresolves)                 \
-    FN(depthAttachmentUnresolves)                 \
-    FN(stencilAttachmentUnresolves)               \
-    FN(colorAttachmentResolves)                   \
-    FN(depthAttachmentResolves)                   \
-    FN(stencilAttachmentResolves)                 \
-    FN(readOnlyDepthStencilRenderPasses)          \
-    FN(descriptorSetAllocations)                  \
-    FN(descriptorSetCacheTotalSize)               \
-    FN(descriptorSetCacheKeySizeBytes)            \
-    FN(uniformsAndXfbDescriptorSetCacheHits)      \
-    FN(uniformsAndXfbDescriptorSetCacheMisses)    \
-    FN(uniformsAndXfbDescriptorSetCacheTotalSize) \
-    FN(textureDescriptorSetCacheHits)             \
-    FN(textureDescriptorSetCacheMisses)           \
-    FN(textureDescriptorSetCacheTotalSize)        \
-    FN(shaderBuffersDescriptorSetCacheHits)       \
-    FN(shaderBuffersDescriptorSetCacheMisses)     \
-    FN(shaderBuffersDescriptorSetCacheTotalSize)  \
-    FN(buffersGhosted)                            \
-    FN(vertexArraySyncStateCalls)                 \
-    FN(allocateNewBufferBlockCalls)               \
+#define ANGLE_VK_PERF_COUNTERS_X(FN)               \
+    FN(commandQueueSubmitCallsTotal)               \
+    FN(commandQueueSubmitCallsPerFrame)            \
+    FN(vkQueueSubmitCallsTotal)                    \
+    FN(vkQueueSubmitCallsPerFrame)                 \
+    FN(renderPasses)                               \
+    FN(writeDescriptorSets)                        \
+    FN(flushedOutsideRenderPassCommandBuffers)     \
+    FN(swapchainResolveInSubpass)                  \
+    FN(swapchainResolveOutsideSubpass)             \
+    FN(resolveImageCommands)                       \
+    FN(colorLoadOpClears)                          \
+    FN(colorLoadOpLoads)                           \
+    FN(colorLoadOpNones)                           \
+    FN(colorStoreOpStores)                         \
+    FN(colorStoreOpNones)                          \
+    FN(colorClearAttachments)                      \
+    FN(depthLoadOpClears)                          \
+    FN(depthLoadOpLoads)                           \
+    FN(depthLoadOpNones)                           \
+    FN(depthStoreOpStores)                         \
+    FN(depthStoreOpNones)                          \
+    FN(depthClearAttachments)                      \
+    FN(stencilLoadOpClears)                        \
+    FN(stencilLoadOpLoads)                         \
+    FN(stencilLoadOpNones)                         \
+    FN(stencilStoreOpStores)                       \
+    FN(stencilStoreOpNones)                        \
+    FN(stencilClearAttachments)                    \
+    FN(colorAttachmentUnresolves)                  \
+    FN(depthAttachmentUnresolves)                  \
+    FN(stencilAttachmentUnresolves)                \
+    FN(colorAttachmentResolves)                    \
+    FN(depthAttachmentResolves)                    \
+    FN(stencilAttachmentResolves)                  \
+    FN(readOnlyDepthStencilRenderPasses)           \
+    FN(descriptorSetAllocations)                   \
+    FN(descriptorSetCacheTotalSize)                \
+    FN(descriptorSetCacheKeySizeBytes)             \
+    FN(uniformsAndXfbDescriptorSetCacheHits)       \
+    FN(uniformsAndXfbDescriptorSetCacheMisses)     \
+    FN(uniformsAndXfbDescriptorSetCacheTotalSize)  \
+    FN(textureDescriptorSetCacheHits)              \
+    FN(textureDescriptorSetCacheMisses)            \
+    FN(textureDescriptorSetCacheTotalSize)         \
+    FN(shaderResourcesDescriptorSetCacheHits)      \
+    FN(shaderResourcesDescriptorSetCacheMisses)    \
+    FN(shaderResourcesDescriptorSetCacheTotalSize) \
+    FN(buffersGhosted)                             \
+    FN(vertexArraySyncStateCalls)                  \
+    FN(allocateNewBufferBlockCalls)                \
     FN(dynamicBufferAllocations)
 
 #define ANGLE_DECLARE_PERF_COUNTER(COUNTER) uint32_t COUNTER;
@@ -459,6 +463,19 @@ class ConditionalMutex final : angle::NonCopyable
 #    define ANGLE_SCOPED_DISABLE_LSAN() __lsan::ScopedDisabler lsanDisabler
 #else
 #    define ANGLE_SCOPED_DISABLE_LSAN()
+#endif
+
+#if defined(ANGLE_WITH_MSAN)
+class MsanScopedDisableInterceptorChecks final : angle::NonCopyable
+{
+  public:
+    MsanScopedDisableInterceptorChecks() { __msan_scoped_disable_interceptor_checks(); }
+    ~MsanScopedDisableInterceptorChecks() { __msan_scoped_enable_interceptor_checks(); }
+};
+#    define ANGLE_SCOPED_DISABLE_MSAN() \
+        MsanScopedDisableInterceptorChecks msanScopedDisableInterceptorChecks
+#else
+#    define ANGLE_SCOPED_DISABLE_MSAN()
 #endif
 
 // The ANGLE_NO_SANITIZE_MEMORY macro suppresses MemorySanitizer checks for

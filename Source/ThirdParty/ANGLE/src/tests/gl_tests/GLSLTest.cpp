@@ -1163,8 +1163,6 @@ void main()
 // Draw an array of points with the first vertex offset at 0 using gl_VertexID
 TEST_P(GLSLTest_ES3, GLVertexIDOffsetZeroDrawArray)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr int kStartIndex  = 0;
     constexpr int kArrayLength = 5;
     constexpr char kVS[]       = R"(#version 300 es
@@ -1554,8 +1552,6 @@ void main() {
 // Draw an array of points with the first vertex offset at 5 using gl_VertexID
 TEST_P(GLSLTest_ES3, GLVertexIDOffsetFiveDrawArray)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
     // Bug in Nexus drivers, offset does not work. (anglebug.com/3264)
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
 
@@ -9031,9 +9027,6 @@ void main()
 // Tests that PointCoord behaves the same betweeen a user FBO and the back buffer.
 TEST_P(GLSLTest, PointCoordConsistency)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(isSwiftshader());
-
     constexpr char kPointCoordVS[] = R"(attribute vec2 position;
 uniform vec2 viewportSize;
 void main()
@@ -9666,12 +9659,16 @@ void InitBuffer(GLuint program,
 template <typename T>
 bool VerifyBuffer(GLuint buffer, const T data[], uint32_t dataSize)
 {
+    uint32_t sizeInBytes = dataSize * sizeof(*data);
+
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
 
     const T *ptr = reinterpret_cast<const T *>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, dataSize, GL_MAP_READ_BIT));
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeInBytes, GL_MAP_READ_BIT));
 
-    bool isCorrect = memcmp(ptr, data, dataSize * sizeof(*data)) == 0;
+    bool isCorrect = memcmp(ptr, data, sizeInBytes) == 0;
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
     return isCorrect;
@@ -15260,25 +15257,72 @@ void main() {
     ASSERT_GL_NO_ERROR();
 }
 
+// Make sure const sampler parameters work.
+TEST_P(GLSLTest, ConstSamplerParameter)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+uniform sampler2D samp;
+
+vec4 sampleConstSampler(const sampler2D s) {
+    return texture2D(s, vec2(0));
+}
+
+void main() {
+    gl_FragColor = sampleConstSampler(samp);
+}
+)";
+    CompileShader(GL_FRAGMENT_SHADER, kFS);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Make sure passing const sampler parameters to another function work.
+TEST_P(GLSLTest, ConstSamplerParameterAsArgument)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+
+uniform sampler2D samp;
+
+vec4 sampleSampler(sampler2D s) {
+    return texture2D(s, vec2(0));
+}
+
+vec4 sampleConstSampler(const sampler2D s) {
+    return sampleSampler(s);
+}
+
+void main() {
+    gl_FragColor = sampleConstSampler(samp);
+}
+)";
+    CompileShader(GL_FRAGMENT_SHADER, kFS);
+    ASSERT_GL_NO_ERROR();
+}
 }  // anonymous namespace
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(GLSLTest, WithGlslang(ES2_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(GLSLTest,
+                                       ES2_VULKAN().enable(Feature::GenerateSPIRVThroughGlslang));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(GLSLTestNoValidation);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTest_ES3);
-ANGLE_INSTANTIATE_TEST_ES3_AND(GLSLTest_ES3, WithGlslang(ES3_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES3_AND(GLSLTest_ES3,
+                               ES3_VULKAN().enable(Feature::GenerateSPIRVThroughGlslang));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTestLoops);
-ANGLE_INSTANTIATE_TEST_ES3_AND(GLSLTestLoops, WithGlslang(ES3_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES3_AND(GLSLTestLoops,
+                               ES3_VULKAN().enable(Feature::GenerateSPIRVThroughGlslang));
 
-ANGLE_INSTANTIATE_TEST_ES2_AND(WebGLGLSLTest, WithGlslang(ES2_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES2_AND(WebGLGLSLTest,
+                               ES2_VULKAN().enable(Feature::GenerateSPIRVThroughGlslang));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2GLSLTest);
-ANGLE_INSTANTIATE_TEST_ES3_AND(WebGL2GLSLTest, WithGlslang(ES3_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES3_AND(WebGL2GLSLTest,
+                               ES3_VULKAN().enable(Feature::GenerateSPIRVThroughGlslang));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTest_ES31);
-ANGLE_INSTANTIATE_TEST_ES31_AND(GLSLTest_ES31, WithGlslang(ES31_VULKAN()));
+ANGLE_INSTANTIATE_TEST_ES31_AND(GLSLTest_ES31,
+                                ES31_VULKAN().enable(Feature::GenerateSPIRVThroughGlslang));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTest_ES31_InitShaderVariables);
-ANGLE_INSTANTIATE_TEST(GLSLTest_ES31_InitShaderVariables, WithInitShaderVariables(ES31_VULKAN()));
+ANGLE_INSTANTIATE_TEST(GLSLTest_ES31_InitShaderVariables,
+                       ES31_VULKAN().enable(Feature::ForceInitShaderVariables));

@@ -110,7 +110,7 @@ void main (void)
 // array
 static constexpr char k310Coherent4AttachmentArrayFS[] = R"(#version 310 es
 #extension GL_EXT_shader_framebuffer_fetch : require
-layout(location = 0) inout highp vec4 o_color[4];
+inout highp vec4 o_color[4];
 uniform highp vec4 u_color;
 
 void main (void)
@@ -184,7 +184,7 @@ void main (void)
 // Non-coherent version of a 3.1 GLSL fragment shader that writes the output to a storage buffer.
 static constexpr char k310NonCoherentStorageBuffer[] = R"(#version 310 es
 #extension GL_EXT_shader_framebuffer_fetch_non_coherent : require
-layout(noncoherent, location = 0) inout highp vec4 o_color;
+layout(noncoherent) inout highp vec4 o_color;
 
 layout(std140, binding = 0) buffer outBlock {
     highp vec4 data[256];

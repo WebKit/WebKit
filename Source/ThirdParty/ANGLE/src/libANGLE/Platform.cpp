@@ -48,6 +48,13 @@ bool ANGLE_APIENTRY ANGLEGetDisplayPlatform(angle::EGLDisplayType display,
     {
         const char *expectedName = angle::g_PlatformMethodNames[nameIndex];
         const char *actualName   = methodNames[nameIndex];
+
+        // Skip deprecated methods.  The names of these methods start with |placeholder|.
+        constexpr char kPlaceholder[] = "placeholder";
+        if (strncmp(expectedName, kPlaceholder, sizeof(kPlaceholder) - 1) == 0)
+        {
+            continue;
+        }
         if (strcmp(expectedName, actualName) != 0)
         {
             ERR() << "Invalid platform method name: " << actualName << ", expected " << expectedName

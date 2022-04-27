@@ -72,6 +72,7 @@ class RenderbufferVk : public RenderbufferImpl, public angle::ObserverInterface
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
     angle::Result initializeContents(const gl::Context *context,
+                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
     vk::ImageHelper *getImage() const { return mImage; }

@@ -42,7 +42,7 @@ class EGLBufferAgeTest : public ANGLETest
         ASSERT_EGL_SUCCESS() << "Error during test TearDown";
     }
 
-    bool chooseConfig(EGLConfig *config) const
+    virtual bool chooseConfig(EGLConfig *config) const
     {
         bool result          = false;
         EGLint count         = 0;
@@ -101,6 +101,78 @@ class EGLBufferAgeTest : public ANGLETest
     const EGLint kWidth      = 64;
     const EGLint kHeight     = 64;
     bool mExtensionSupported = false;
+};
+
+class EGLBufferAgeTest_MSAA : public EGLBufferAgeTest
+{
+  public:
+    EGLBufferAgeTest_MSAA() : EGLBufferAgeTest() {}
+
+    bool chooseConfig(EGLConfig *config) const override
+    {
+        bool result          = false;
+        EGLint count         = 0;
+        EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
+        EGLint attribs[]     = {EGL_RED_SIZE,
+                            8,
+                            EGL_GREEN_SIZE,
+                            8,
+                            EGL_BLUE_SIZE,
+                            8,
+                            EGL_ALPHA_SIZE,
+                            8,
+                            EGL_RENDERABLE_TYPE,
+                            clientVersion,
+                            EGL_SAMPLE_BUFFERS,
+                            1,
+                            EGL_SAMPLES,
+                            4,
+                            EGL_SURFACE_TYPE,
+                            EGL_WINDOW_BIT,
+                            EGL_NONE};
+
+        result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
+        EXPECT_EGL_TRUE(result && (count > 0));
+        return result;
+    }
+};
+
+class EGLBufferAgeTest_MSAA_DS : public EGLBufferAgeTest
+{
+  public:
+    EGLBufferAgeTest_MSAA_DS() : EGLBufferAgeTest() {}
+
+    bool chooseConfig(EGLConfig *config) const override
+    {
+        bool result          = false;
+        EGLint count         = 0;
+        EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
+        EGLint attribs[]     = {EGL_RED_SIZE,
+                            8,
+                            EGL_GREEN_SIZE,
+                            8,
+                            EGL_BLUE_SIZE,
+                            8,
+                            EGL_ALPHA_SIZE,
+                            8,
+                            EGL_DEPTH_SIZE,
+                            8,
+                            EGL_STENCIL_SIZE,
+                            8,
+                            EGL_RENDERABLE_TYPE,
+                            clientVersion,
+                            EGL_SAMPLE_BUFFERS,
+                            1,
+                            EGL_SAMPLES,
+                            4,
+                            EGL_SURFACE_TYPE,
+                            EGL_WINDOW_BIT,
+                            EGL_NONE};
+
+        result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
+        EXPECT_EGL_TRUE(result && (count > 0));
+        return result;
+    }
 };
 
 // Query for buffer age
@@ -215,6 +287,144 @@ TEST_P(EGLBufferAgeTest, VerifyContents)
     }
 
     EXPECT_GT(age, 0);
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
+// Verify contents of buffer are as expected for a multisample image
+TEST_P(EGLBufferAgeTest_MSAA, VerifyContentsForMultisampled)
+{
+    ANGLE_SKIP_TEST_IF(!mExtensionSupported);
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    EXPECT_TRUE(chooseConfig(&config));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLBufferAgeTest_MSAA", kWidth, kHeight);
+    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    std::vector<angle::GLColor> kColorSet;
+    for (uint32_t i = 0; i < 16; i++)
+    {
+        kColorSet.emplace_back(i * 10, 0, 0, 255);
+    }
+
+    // Set up
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    EGLint age     = 0;
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+
+    for (size_t i = 0; i < kColorSet.size(); i++)
+    {
+        age = queryAge(surface);
+        if (age > 0)
+        {
+            // Check that color/content is what we expect
+            angle::GLColor expectedColor = kColorSet[i - age];
+            EXPECT_PIXEL_COLOR_EQ(1, 1, expectedColor);
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glUseProgram(program);
+        glUniform4fv(colorLocation, 1, kColorSet[i].toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+        eglSwapBuffers(mDisplay, surface);
+        ASSERT_EGL_SUCCESS() << "eglSwapBuffers failed.";
+    }
+
+    EXPECT_GE(age, 0);
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
+// Verify contents of buffer are as expected for a multisample image with depth/stencil enabled
+TEST_P(EGLBufferAgeTest_MSAA_DS, VerifyContentsForMultisampledWithDepthStencil)
+{
+    ANGLE_SKIP_TEST_IF(!mExtensionSupported);
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    EXPECT_TRUE(chooseConfig(&config));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLBufferAgeTest_MSAA", kWidth, kHeight);
+    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    std::vector<angle::GLColor> kColorSet;
+    for (uint32_t i = 0; i < 16; i++)
+    {
+        kColorSet.emplace_back(i * 10, 0, 0, 255);
+    }
+
+    // Set up
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    EGLint age     = 0;
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+
+    for (size_t i = 0; i < kColorSet.size(); i++)
+    {
+        age = queryAge(surface);
+        if (age > 0)
+        {
+            // Check that color/content is what we expect
+            angle::GLColor expectedColor = kColorSet[i - age];
+            EXPECT_PIXEL_COLOR_EQ(1, 1, expectedColor);
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glUseProgram(program);
+        glUniform4fv(colorLocation, 1, kColorSet[i].toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+        eglSwapBuffers(mDisplay, surface);
+        ASSERT_EGL_SUCCESS() << "eglSwapBuffers failed.";
+    }
+
+    EXPECT_GE(age, 0);
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
@@ -346,6 +556,20 @@ TEST_P(EGLBufferAgeTest, BufferPreserved)
 }
 
 ANGLE_INSTANTIATE_TEST(EGLBufferAgeTest,
+                       WithNoFixture(ES2_OPENGLES()),
+                       WithNoFixture(ES3_OPENGLES()),
+                       WithNoFixture(ES2_OPENGL()),
+                       WithNoFixture(ES3_OPENGL()),
+                       WithNoFixture(ES2_VULKAN()),
+                       WithNoFixture(ES3_VULKAN()));
+ANGLE_INSTANTIATE_TEST(EGLBufferAgeTest_MSAA,
+                       WithNoFixture(ES2_OPENGLES()),
+                       WithNoFixture(ES3_OPENGLES()),
+                       WithNoFixture(ES2_OPENGL()),
+                       WithNoFixture(ES3_OPENGL()),
+                       WithNoFixture(ES2_VULKAN()),
+                       WithNoFixture(ES3_VULKAN()));
+ANGLE_INSTANTIATE_TEST(EGLBufferAgeTest_MSAA_DS,
                        WithNoFixture(ES2_OPENGLES()),
                        WithNoFixture(ES3_OPENGLES()),
                        WithNoFixture(ES2_OPENGL()),

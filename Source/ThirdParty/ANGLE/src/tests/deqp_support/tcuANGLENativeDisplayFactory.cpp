@@ -32,6 +32,7 @@
 #include "tcuTexture.hpp"
 #include "util/OSPixmap.h"
 #include "util/OSWindow.h"
+#include "util/angle_features_autogen.h"
 
 // clang-format off
 #if (DE_OS == DE_OS_WIN32)
@@ -441,15 +442,18 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
 
         for (; *enabledFeatures; ++enabledFeatures)
         {
-            if (strcmp(enabledFeatures[0], "emulatedPrerotation90") == 0)
+            if (strcmp(enabledFeatures[0],
+                       angle::GetFeatureName(angle::Feature::EmulatedPrerotation90)) == 0)
             {
                 preRotation = 90;
             }
-            else if (strcmp(enabledFeatures[0], "emulatedPrerotation180") == 0)
+            else if (strcmp(enabledFeatures[0],
+                            angle::GetFeatureName(angle::Feature::EmulatedPrerotation180)) == 0)
             {
                 preRotation = 180;
             }
-            else if (strcmp(enabledFeatures[0], "emulatedPrerotation270") == 0)
+            else if (strcmp(enabledFeatures[0],
+                            angle::GetFeatureName(angle::Feature::EmulatedPrerotation270)) == 0)
             {
                 preRotation = 270;
             }

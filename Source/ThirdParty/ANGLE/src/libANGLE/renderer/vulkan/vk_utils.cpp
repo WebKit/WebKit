@@ -6,8 +6,8 @@
 // vk_utils:
 //    Helper functions for the Vulkan Renderer.
 //
+
 #include "libANGLE/renderer/vulkan/vk_utils.h"
-#include "common/system_utils.h"
 
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
@@ -40,8 +40,6 @@ namespace
 // Pick an arbitrary value to initialize non-zero memory for sanitization.  Note that 0x3F3F3F3F
 // as float is about 0.75.
 constexpr int kNonZeroInitValue = 0x3F;
-// Time interval in seconds that we should try to prune default buffer pools.
-constexpr double kTimeElapsedForPruneDefaultBufferPool = 0.25;
 
 VkImageUsageFlags GetStagingBufferUsageFlags(vk::StagingUsage usage)
 {
@@ -643,71 +641,6 @@ angle::Result AllocateBufferMemoryWithRequirements(Context *context,
                                               buffer, deviceMemoryOut);
 }
 
-BufferPool *GetDefaultBufferPool(std::unique_ptr<vk::BufferPool> &smallBufferPool,
-                                 vk::BufferPoolPointerArray &defaultBufferPools,
-                                 RendererVk *renderer,
-                                 VkDeviceSize size,
-                                 uint32_t memoryTypeIndex)
-{
-    if (size <= kMaxSizeToUseSmallBufferPool &&
-        memoryTypeIndex ==
-            renderer->getVertexConversionBufferMemoryTypeIndex(vk::MemoryHostVisibility::Visible))
-    {
-        if (!smallBufferPool)
-        {
-            const vk::Allocator &allocator = renderer->getAllocator();
-            VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
-
-            VkMemoryPropertyFlags memoryPropertyFlags;
-            allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
-
-            std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
-            pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::BUDDY, usageFlags, 0,
-                                memoryTypeIndex, memoryPropertyFlags);
-            smallBufferPool = std::move(pool);
-        }
-        return smallBufferPool.get();
-    }
-    else if (!defaultBufferPools[memoryTypeIndex])
-    {
-        const vk::Allocator &allocator = renderer->getAllocator();
-        VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
-
-        VkMemoryPropertyFlags memoryPropertyFlags;
-        allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
-
-        std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
-        pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::GENERAL, usageFlags, 0,
-                            memoryTypeIndex, memoryPropertyFlags);
-        defaultBufferPools[memoryTypeIndex] = std::move(pool);
-    }
-
-    return defaultBufferPools[memoryTypeIndex].get();
-}
-
-void PruneDefaultBufferPools(RendererVk *renderer,
-                             BufferPoolPointerArray &defaultBufferPools,
-                             std::unique_ptr<vk::BufferPool> &smallBufferPool)
-{
-    for (std::unique_ptr<vk::BufferPool> &pool : defaultBufferPools)
-    {
-        if (pool)
-        {
-            pool->pruneEmptyBuffers(renderer);
-        }
-    }
-    if (smallBufferPool)
-    {
-        smallBufferPool->pruneEmptyBuffers(renderer);
-    }
-}
-
-bool IsDueForBufferPoolPrune(double lastPruneTime)
-{
-    double timeElapsed = angle::GetCurrentSystemTime() - lastPruneTime;
-    return timeElapsed > kTimeElapsedForPruneDefaultBufferPool;
-}
-
 angle::Result InitShaderAndSerial(Context *context,
                                   ShaderAndSerial *shaderAndSerial,
                                   const uint32_t *shaderCode,
@@ -1040,6 +973,10 @@ PFN_vkCreateStreamDescriptorSurfaceGGP vkCreateStreamDescriptorSurfaceGGP = null
 // VK_KHR_shared_presentable_image
 PFN_vkGetSwapchainStatusKHR vkGetSwapchainStatusKHR = nullptr;
 
+// VK_KHR_fragment_shading_rate
+PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR vkGetPhysicalDeviceFragmentShadingRatesKHR = nullptr;
+PFN_vkCmdSetFragmentShadingRateKHR vkCmdSetFragmentShadingRateKHR                         = nullptr;
+
 void InitDebugUtilsEXTFunctions(VkInstance instance)
 {
     GET_INSTANCE_FUNC(vkCreateDebugUtilsMessengerEXT);
@@ -1159,6 +1096,13 @@ void InitExternalSemaphoreCapabilitiesFunctions(VkInstance instance)
 void InitGetSwapchainStatusKHRFunctions(VkDevice device)
 {
     GET_DEVICE_FUNC(vkGetSwapchainStatusKHR);
+}
+
+// VK_KHR_fragment_shading_rate
+void InitFragmentShadingRateKHRFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkGetPhysicalDeviceFragmentShadingRatesKHR);
+    GET_DEVICE_FUNC(vkCmdSetFragmentShadingRateKHR);
 }
 
 #    undef GET_INSTANCE_FUNC
@@ -1673,20 +1617,20 @@ void BufferBlock::destroy(RendererVk *renderer)
     mDeviceMemory.destroy(device);
 }
 
-angle::Result BufferBlock::init(ContextVk *contextVk,
+angle::Result BufferBlock::init(Context *context,
                                 Buffer &buffer,
                                 vma::VirtualBlockCreateFlags flags,
                                 DeviceMemory &deviceMemory,
                                 VkMemoryPropertyFlags memoryPropertyFlags,
                                 VkDeviceSize size)
 {
-    RendererVk *renderer = contextVk->getRenderer();
+    RendererVk *renderer = context->getRenderer();
     ASSERT(!mVirtualBlock.valid());
     ASSERT(!mBuffer.valid());
     ASSERT(!mDeviceMemory.valid());
 
     mVirtualBlockMutex.init(renderer->isAsyncCommandQueueEnabled());
-    ANGLE_VK_TRY(contextVk, mVirtualBlock.init(renderer->getDevice(), flags, size));
+    ANGLE_VK_TRY(context, mVirtualBlock.init(renderer->getDevice(), flags, size));
 
     mBuffer              = std::move(buffer);
     mDeviceMemory        = std::move(deviceMemory);

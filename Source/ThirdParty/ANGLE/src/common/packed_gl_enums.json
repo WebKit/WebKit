@@ -291,5 +291,14 @@
         "TransferDst": "GL_LAYOUT_TRANSFER_DST_EXT",
         "DepthReadOnlyStencilAttachment": "GL_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_EXT",
         "DepthAttachmentStencilReadOnly": "GL_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_EXT"
+    },
+    "ShadingRate":
+    {
+        "_1x1": "GL_SHADING_RATE_1X1_PIXELS_QCOM",
+        "_1x2": "GL_SHADING_RATE_1X2_PIXELS_QCOM",
+        "_2x1": "GL_SHADING_RATE_2X1_PIXELS_QCOM",
+        "_2x2": "GL_SHADING_RATE_2X2_PIXELS_QCOM",
+        "_4x2": "GL_SHADING_RATE_4X2_PIXELS_QCOM",
+        "_4x4": "GL_SHADING_RATE_4X4_PIXELS_QCOM"
     }
 }

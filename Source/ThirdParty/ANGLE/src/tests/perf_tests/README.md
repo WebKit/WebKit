@@ -33,6 +33,7 @@ Several command-line arguments control how the tests run:
 * `--render-test-output-dir=dir`: Equivalent to `--screenshot-dir dir`.
 * `--verbose`: Print extra timing information.
 * `--warmup-loops x`: Number of times to warm up the test before starting timing. Defaults to 3.
+* `--warmup-steps x`: Maximum number of steps for the warmup loops. Defaults to unlimited.
 * `--no-warmup`: Skip warming up the tests. Equivalent to `--warmup-steps 0`.
 * `--calibration-time`: Run each test calibration step in a fixed time. Defaults to 1 second.
 * `--max-trial-time x`: Run each test trial under this max time. Defaults to 10 seconds.

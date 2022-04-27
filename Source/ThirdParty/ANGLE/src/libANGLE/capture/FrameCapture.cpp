@@ -1856,7 +1856,7 @@ void CaptureFramebufferAttachment(std::vector<CallCapture> *setupCalls,
     {
         gl::ImageIndex index = attachment.getTextureImageIndex();
 
-        if (index.usesTex3D() || IsCubeMapFaceTarget(index.getTarget()))
+        if (index.usesTex3D())
         {
             Capture(setupCalls, CaptureFramebufferTextureLayer(
                                     replayState, true, GL_FRAMEBUFFER, attachment.getBinding(),
@@ -2165,7 +2165,8 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
 
     gl::AttributesMask vertexPointerBindings;
 
-    for (GLuint attribIndex = 0; attribIndex < gl::MAX_VERTEX_ATTRIBS; ++attribIndex)
+    ASSERT(vertexAttribs.size() <= vertexBindings.size());
+    for (GLuint attribIndex = 0; attribIndex < vertexAttribs.size(); ++attribIndex)
     {
         const gl::VertexAttribute defaultAttrib(attribIndex);
         const gl::VertexBinding defaultBinding;
@@ -2747,7 +2748,7 @@ void CaptureDefaultVertexAttribs(const gl::State &replayState,
     const std::vector<gl::VertexAttribCurrentValueData> &currentValues =
         apiState.getVertexAttribCurrentValues();
 
-    for (GLuint attribIndex = 0; attribIndex < gl::MAX_VERTEX_ATTRIBS; ++attribIndex)
+    for (GLuint attribIndex = 0; attribIndex < currentValues.size(); ++attribIndex)
     {
         const gl::VertexAttribCurrentValueData &defaultValue = currentValues[attribIndex];
         if (!IsDefaultCurrentValue(defaultValue))

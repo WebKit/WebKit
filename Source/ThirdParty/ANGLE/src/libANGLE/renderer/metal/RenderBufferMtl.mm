@@ -208,6 +208,7 @@ angle::Result RenderbufferMtl::getAttachmentRenderTarget(const gl::Context *cont
 }
 
 angle::Result RenderbufferMtl::initializeContents(const gl::Context *context,
+                                                  GLenum binding,
                                                   const gl::ImageIndex &imageIndex)
 {
     if (imageIndex.valid())

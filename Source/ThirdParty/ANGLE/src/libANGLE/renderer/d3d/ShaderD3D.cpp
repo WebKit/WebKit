@@ -175,7 +175,7 @@ void ShaderD3D::uncompile()
     mDebugInfo.clear();
 }
 
-void ShaderD3D::generateWorkarounds(angle::CompilerWorkaroundsD3D *workarounds) const
+void ShaderD3D::generateWorkarounds(CompilerWorkaroundsD3D *workarounds) const
 {
     if (mUsesDiscardRewriting)
     {

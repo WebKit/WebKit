@@ -70,7 +70,7 @@ ClearParameters GetClearParameters(const gl::State &state, GLbitfield mask)
     {
         clearParams.clearColor.reset();
     }
-    clearParams.colorMask = state.getBlendStateExt().mColorMask;
+    clearParams.colorMask = state.getBlendStateExt().getColorMaskBits();
 
     if (mask & GL_DEPTH_BUFFER_BIT)
     {

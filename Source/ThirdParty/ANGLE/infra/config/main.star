@@ -283,6 +283,10 @@ def angle_builder(name, cpu):
             column_keys = ["v.gpu"],
             grouping_keys = ["status", "v.test_suite"],
         ),
+        triggering_policy = scheduler.policy(
+            kind = scheduler.LOGARITHMIC_BATCHING_KIND,
+            log_base = 2,
+        ),
     )
 
     luci.console_view_entry(

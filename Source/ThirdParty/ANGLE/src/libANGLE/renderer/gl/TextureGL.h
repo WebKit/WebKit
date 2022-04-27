@@ -201,6 +201,7 @@ class TextureGL : public TextureImpl
     angle::Result setMaxLevel(const gl::Context *context, GLuint maxLevel);
 
     angle::Result initializeContents(const gl::Context *context,
+                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
     GLint getRequiredExternalTextureImageUnits(const gl::Context *context) override;

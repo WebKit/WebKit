@@ -149,7 +149,11 @@ class BlitGL : angle::NonCopyable
                                     RenderbufferGL *source,
                                     GLenum sizedInternalFormat);
 
-    angle::Result clearFramebuffer(const gl::Context *context, FramebufferGL *source);
+    angle::Result clearFramebuffer(const gl::Context *context,
+                                   bool colorClear,
+                                   bool depthClear,
+                                   bool stencilClear,
+                                   FramebufferGL *source);
 
     angle::Result clearRenderableTextureAlphaToOne(const gl::Context *context,
                                                    GLuint texture,

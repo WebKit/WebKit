@@ -236,12 +236,15 @@ GLuint ExternalImageSibling::getId() const
     return 0;
 }
 
-gl::InitState ExternalImageSibling::initState(const gl::ImageIndex &imageIndex) const
+gl::InitState ExternalImageSibling::initState(GLenum binding,
+                                              const gl::ImageIndex &imageIndex) const
 {
     return gl::InitState::Initialized;
 }
 
-void ExternalImageSibling::setInitState(const gl::ImageIndex &imageIndex, gl::InitState initState)
+void ExternalImageSibling::setInitState(GLenum binding,
+                                        const gl::ImageIndex &imageIndex,
+                                        gl::InitState initState)
 {}
 
 rx::ExternalImageSiblingImpl *ExternalImageSibling::getImplementation() const
@@ -350,14 +353,14 @@ angle::Result Image::orphanSibling(const gl::Context *context, ImageSibling *sib
 
     if (mState.source == sibling)
     {
-        // The external source of an image cannot be redefined so it cannot be orpahend.
+        // The external source of an image cannot be redefined so it cannot be orphaned.
         ASSERT(!IsExternalImageTarget(mState.sourceType));
 
         // If the sibling is the source, it cannot be a target.
         ASSERT(mState.targets.find(sibling) == mState.targets.end());
         mState.source = nullptr;
         mOrphanedAndNeedsInit =
-            (sibling->initState(mState.imageIndex) == gl::InitState::MayNeedInit);
+            (sibling->initState(GL_NONE, mState.imageIndex) == gl::InitState::MayNeedInit);
     }
     else
     {
@@ -515,7 +518,7 @@ gl::InitState Image::sourceInitState() const
         return mOrphanedAndNeedsInit ? gl::InitState::MayNeedInit : gl::InitState::Initialized;
     }
 
-    return mState.source->initState(mState.imageIndex);
+    return mState.source->initState(GL_NONE, mState.imageIndex);
 }
 
 void Image::setInitState(gl::InitState initState)
@@ -525,7 +528,7 @@ void Image::setInitState(gl::InitState initState)
         mOrphanedAndNeedsInit = false;
     }
 
-    return mState.source->setInitState(mState.imageIndex, initState);
+    return mState.source->setInitState(GL_NONE, mState.imageIndex, initState);
 }
 
 Error Image::exportVkImage(void *vkImage, void *vkImageCreateInfo)

@@ -66,6 +66,11 @@ class Widget
     int32_t coords[4];
     float color[4];
 
+    // In some cases, a widget may need to match its contents (e.g. graph height scaling) with
+    // another related widget.  In such a case, this pointer will point to the widget it needs to
+    // match to.
+    Widget *matchToWidget;
+
     friend class gl::Overlay;
     friend class gl::OverlayState;
     friend class overlay_impl::AppendWidgetDataHelper;

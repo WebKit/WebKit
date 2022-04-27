@@ -93,7 +93,7 @@ class DynamicBuffer : angle::NonCopyable
     // This releases resources when they might currently be in use.
     void release(RendererVk *renderer);
 
-    // This adds in-flight buffers to the context's mResourceUseList and then releases them
+    // This adds in-flight buffers to the mResourceUseList in the sharegroup and then releases them.
     void releaseInFlightBuffersToResourceUseList(ContextVk *contextVk);
 
     // This frees resources immediately.
@@ -843,20 +843,21 @@ class BufferPool : angle::NonCopyable
                        uint32_t memoryTypeIndex,
                        VkMemoryPropertyFlags memoryProperty);
 
-    angle::Result allocateBuffer(ContextVk *contextVk,
+    angle::Result allocateBuffer(Context *context,
                                  VkDeviceSize sizeInBytes,
                                  VkDeviceSize alignment,
                                  BufferSuballocation *suballocation);
 
-    // This frees resources immediately.
-    void destroy(RendererVk *renderer);
-
+    // Frees resources immediately, or orphan the non-empty BufferBlocks if allowed. If orphan is
+    // not allowed, it will assert if BufferBlock is still not empty.
+    void destroy(RendererVk *renderer, bool orphanAllowed);
+    // Remove and destroy empty BufferBlocks
     void pruneEmptyBuffers(RendererVk *renderer);
 
     bool valid() const { return mSize != 0; }
 
   private:
-    angle::Result allocateNewBuffer(ContextVk *contextVk, VkDeviceSize sizeInBytes);
+    angle::Result allocateNewBuffer(Context *context, VkDeviceSize sizeInBytes);
 
     vma::VirtualBlockCreateFlags mVirtualBlockCreateFlags;
     VkBufferUsageFlags mUsage;
@@ -871,7 +872,11 @@ class BufferPool : angle::NonCopyable
     // and only to find out that we have to allocate a new one next frame.
     static constexpr int32_t kMaxCountRemainsEmpty = 4;
     static constexpr int32_t kMaxEmptyBufferCount  = 16;
+    // max size to go down the suballocation code path. Any allocation greater or equal this size
+    // will call into vulkan directly to allocate a dedicated VkDeviceMemory.
+    static constexpr size_t kMaxBufferSizeForSuballocation = 4 * 1024 * 1024;
 };
+using BufferPoolPointerArray = std::array<std::unique_ptr<BufferPool>, VK_MAX_MEMORY_TYPES>;
 
 enum class BufferAccess
 {
@@ -1032,6 +1037,8 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     bool hasGLMemoryBarrierIssued() const { return mHasGLMemoryBarrierIssued; }
 
+    vk::ResourceUseList &getResourceUseList() { return mResourceUseList; }
+
     // Dumping the command stream is disabled by default.
     static constexpr bool kEnableCommandStreamDiagnostics = false;
 
@@ -1088,6 +1095,7 @@ class CommandBufferHelperCommon : angle::NonCopyable
     // For Buffers, we track the read/write access type so we can enable simultaneous reads.
     static constexpr uint32_t kFlatMapSize = 16;
     angle::FlatUnorderedMap<BufferSerial, BufferAccess, kFlatMapSize> mUsedBuffers;
+    vk::ResourceUseList mResourceUseList;
 };
 
 class OutsideRenderPassCommandBufferHelper final : public CommandBufferHelperCommon
@@ -1172,15 +1180,13 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
                     AliasingMode aliasingMode,
                     ImageHelper *image);
 
-    void colorImagesDraw(ResourceUseList *resourceUseList,
-                         gl::LevelIndex level,
+    void colorImagesDraw(gl::LevelIndex level,
                          uint32_t layerStart,
                          uint32_t layerCount,
                          ImageHelper *image,
                          ImageHelper *resolveImage,
                          PackedAttachmentIndex packedAttachmentIndex);
-    void depthStencilImagesDraw(ResourceUseList *resourceUseList,
-                                gl::LevelIndex level,
+    void depthStencilImagesDraw(gl::LevelIndex level,
                                 uint32_t layerStart,
                                 uint32_t layerCount,
                                 ImageHelper *image,
@@ -2879,6 +2885,14 @@ struct CommandBufferImageWrite
     uint32_t layerStart;
     uint32_t layerCount;
 };
+struct CommandBufferBufferExternalAcquireRelease
+{
+    BufferHelper *buffer;
+};
+struct CommandBufferResourceAccess
+{
+    Resource *resource;
+};
 class CommandBufferAccess : angle::NonCopyable
 {
   public:
@@ -2935,6 +2949,9 @@ class CommandBufferAccess : angle::NonCopyable
         onImageWrite(levelStart, levelCount, layerStart, layerCount, aspectFlags,
                      ImageLayout::ComputeShaderWrite, image);
     }
+    void onExternalAcquireRelease(ImageHelper *image) { onResourceAccess(image); }
+    void onQueryAccess(QueryHelper *query) { onResourceAccess(query); }
+    void onBufferExternalAcquireRelease(BufferHelper *buffer);
 
     // The limits reflect the current maximum concurrent usage of each resource type.  ASSERTs will
     // fire if this limit is exceeded in the future.
@@ -2942,11 +2959,19 @@ class CommandBufferAccess : angle::NonCopyable
     using WriteBuffers = angle::FixedVector<CommandBufferBufferAccess, 2>;
     using ReadImages   = angle::FixedVector<CommandBufferImageAccess, 2>;
     using WriteImages  = angle::FixedVector<CommandBufferImageWrite, 1>;
+    using ExternalAcquireReleaseBuffers =
+        angle::FixedVector<CommandBufferBufferExternalAcquireRelease, 1>;
+    using AccessResources = angle::FixedVector<CommandBufferResourceAccess, 1>;
 
     const ReadBuffers &getReadBuffers() const { return mReadBuffers; }
     const WriteBuffers &getWriteBuffers() const { return mWriteBuffers; }
     const ReadImages &getReadImages() const { return mReadImages; }
     const WriteImages &getWriteImages() const { return mWriteImages; }
+    const ExternalAcquireReleaseBuffers &getExternalAcquireReleaseBuffers() const
+    {
+        return mExternalAcquireReleaseBuffers;
+    }
+    const AccessResources &getAccessResources() const { return mAccessResources; }
 
   private:
     void onBufferRead(VkAccessFlags readAccessType, PipelineStage readStage, BufferHelper *buffer);
@@ -2962,11 +2987,14 @@ class CommandBufferAccess : angle::NonCopyable
                       VkImageAspectFlags aspectFlags,
                       ImageLayout imageLayout,
                       ImageHelper *image);
+    void onResourceAccess(Resource *resource);
 
     ReadBuffers mReadBuffers;
     WriteBuffers mWriteBuffers;
     ReadImages mReadImages;
     WriteImages mWriteImages;
+    ExternalAcquireReleaseBuffers mExternalAcquireReleaseBuffers;
+    AccessResources mAccessResources;
 };
 
 // This class' responsibility is to create index buffers needed to support line loops in Vulkan.

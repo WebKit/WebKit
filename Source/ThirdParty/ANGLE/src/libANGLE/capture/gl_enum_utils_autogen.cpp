@@ -1901,6 +1901,8 @@ const char *GLenumToString(GLenumGroup enumGroup, unsigned int value)
                     return "GL_PACK_REVERSE_ROW_ORDER_ANGLE";
                 case 0x93A6:
                     return "GL_PROGRAM_BINARY_ANGLE";
+                case 0x93A7:
+                    return "GL_ROBUST_RESOURCE_INITIALIZATION_ANGLE";
                 case 0x93AE:
                     return "GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE";
                 case 0x93AF:
@@ -1977,6 +1979,8 @@ const char *GLenumToString(GLenumGroup enumGroup, unsigned int value)
                     return "GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_BASE_VIEW_INDEX_OVR";
                 case 0x9633:
                     return "GL_FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR";
+                case 0x969F:
+                    return "GL_RESOURCE_INITIALIZED_ANGLE";
                 default:
                     return UnknownGLenumToString(value);
             }
@@ -3659,6 +3663,31 @@ const char *GLenumToString(GLenumGroup enumGroup, unsigned int value)
                     return "GL_TESS_CONTROL_SHADER";
                 case 0x91B9:
                     return "GL_COMPUTE_SHADER";
+                default:
+                    return UnknownGLenumToString(value);
+            }
+        }
+
+        case GLenumGroup::ShadingRate:
+        {
+            switch (value)
+            {
+                case 0x96A4:
+                    return "GL_SHADING_RATE_QCOM";
+                case 0x96A5:
+                    return "GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM";
+                case 0x96A6:
+                    return "GL_SHADING_RATE_1X1_PIXELS_QCOM";
+                case 0x96A7:
+                    return "GL_SHADING_RATE_1X2_PIXELS_QCOM";
+                case 0x96A8:
+                    return "GL_SHADING_RATE_2X1_PIXELS_QCOM";
+                case 0x96A9:
+                    return "GL_SHADING_RATE_2X2_PIXELS_QCOM";
+                case 0x96AC:
+                    return "GL_SHADING_RATE_4X2_PIXELS_QCOM";
+                case 0x96AE:
+                    return "GL_SHADING_RATE_4X4_PIXELS_QCOM";
                 default:
                     return UnknownGLenumToString(value);
             }

@@ -43,6 +43,7 @@ angle::Result RenderbufferNULL::setStorageEGLImageTarget(const gl::Context *cont
 }
 
 angle::Result RenderbufferNULL::initializeContents(const gl::Context *context,
+                                                   GLenum binding,
                                                    const gl::ImageIndex &imageIndex)
 {
     return angle::Result::Continue;

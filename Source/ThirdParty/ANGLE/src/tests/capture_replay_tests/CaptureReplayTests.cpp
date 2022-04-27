@@ -85,9 +85,9 @@ class CaptureReplayTests
         configParams.webGLCompatibility    = traceInfo.isWebGLCompatibilityEnabled;
         configParams.robustResourceInit    = traceInfo.isRobustResourceInitEnabled;
 
-        mPlatformParams.renderer                 = traceInfo.displayPlatformType;
-        mPlatformParams.deviceType               = traceInfo.displayDeviceType;
-        mPlatformParams.forceInitShaderVariables = EGL_TRUE;
+        mPlatformParams.renderer   = traceInfo.displayPlatformType;
+        mPlatformParams.deviceType = traceInfo.displayDeviceType;
+        mPlatformParams.enable(angle::Feature::ForceInitShaderVariables);
 
         if (!mEGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(),
                                       angle::GLESDriverType::AngleEGL, mPlatformParams,

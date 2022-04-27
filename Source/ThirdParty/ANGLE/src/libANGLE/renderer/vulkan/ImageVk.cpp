@@ -64,7 +64,8 @@ egl::Error ImageVk::initialize(const egl::Display *display)
         TextureVk *textureVk = GetImplAs<TextureVk>(GetAs<gl::Texture>(mState.source));
 
         // Make sure the texture uses renderable format
-        ANGLE_TRY(ResultToEGL(textureVk->ensureRenderable(contextVk)));
+        TextureUpdateResult updateResult = TextureUpdateResult::ImageUnaffected;
+        ANGLE_TRY(ResultToEGL(textureVk->ensureRenderable(contextVk, &updateResult)));
 
         // Make sure the texture has created its backing storage
         ANGLE_TRY(ResultToEGL(

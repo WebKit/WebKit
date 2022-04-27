@@ -290,10 +290,7 @@ class ProgramBinaryES3Test : public ProgramBinaryTest
 
 void ProgramBinaryES3Test::testBinaryAndUBOBlockIndexes(bool drawWithProgramFirst)
 {
-    // We can't run the test if no program binary formats are supported.
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -384,10 +381,7 @@ TEST_P(ProgramBinaryES3Test, UniformBlockBindingNoDraw)
 // Test the shaders with arrays-of-struct uniforms are properly saved and restored
 TEST_P(ProgramBinaryES3Test, TestArrayOfStructUniform)
 {
-    // We can't run the test if no program binary formats are supported.
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -519,9 +513,7 @@ TEST_P(ProgramBinaryES3Test, TestArrayOfStructUniform)
 // drawing works.
 TEST_P(ProgramBinaryES3Test, SaveAndLoadDetachedShaders)
 {
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     // We use shaders with the "flat" qualifier, to ensure that "flat" behaves
     // across save/load. This is primarily to catch possible bugs in the Metal
@@ -629,10 +621,7 @@ void main()
 // Tests the difference between uniform static and active use
 TEST_P(ProgramBinaryES3Test, ActiveUniformShader)
 {
-    // We can't run the test if no program binary formats are supported.
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -712,10 +701,7 @@ TEST_P(ProgramBinaryES3Test, BinaryWithLargeUniformCount)
     // http://anglebug.com/3721
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL() && IsWindows());
 
-    // We can't run the test if no program binary formats are supported.
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -937,9 +923,90 @@ TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
     glDeleteProgram(reloadedProgram);
 }
 
+// Test that array of structs containing array of samplers work as expected.
+TEST_P(ProgramBinaryES3Test, ArrayOfStructContainingArrayOfSamplers)
+{
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
+
+    constexpr char kFS[] =
+        "precision mediump float;\n"
+        "struct Data { mediump sampler2D data[2]; };\n"
+        "uniform Data test[2];\n"
+        "void main() {\n"
+        "    gl_FragColor = vec4(texture2D(test[1].data[1], vec2(0.0, 0.0)).r,\n"
+        "                        texture2D(test[1].data[0], vec2(0.0, 0.0)).r,\n"
+        "                        texture2D(test[0].data[1], vec2(0.0, 0.0)).r,\n"
+        "                        texture2D(test[0].data[0], vec2(0.0, 0.0)).r);\n"
+        "}\n";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(program.get());
+    GLTexture textures[4];
+    GLColor expected = MakeGLColor(32, 64, 96, 255);
+    GLubyte data[8]  = {};  // 4 bytes of padding, so that texture can be initialized with 4 bytes
+    memcpy(data, expected.data(), sizeof(expected));
+    for (int i = 0; i < 4; i++)
+    {
+        int outerIdx = i % 2;
+        int innerIdx = i / 2;
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        // Each element provides two components.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data + i);
+        std::stringstream uniformName;
+        uniformName << "test[" << innerIdx << "].data[" << outerIdx << "]";
+        // Then send it as a uniform
+        GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+        // The uniform should be active.
+        EXPECT_NE(uniformLocation, -1);
+
+        glUniform1i(uniformLocation, 3 - i);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, expected);
+
+    // Read back the binary.
+    GLint programLength = 0;
+    glGetProgramiv(program, GL_PROGRAM_BINARY_LENGTH, &programLength);
+    ASSERT_GL_NO_ERROR();
+
+    GLsizei readLength  = 0;
+    GLenum binaryFormat = GL_NONE;
+    std::vector<uint8_t> binary(programLength);
+    glGetProgramBinary(program, programLength, &readLength, &binaryFormat, binary.data());
+    ASSERT_GL_NO_ERROR();
+
+    // Load a new program with the binary.
+    ANGLE_GL_BINARY_ES3_PROGRAM(binaryProgram, binary, binaryFormat);
+    glUseProgram(binaryProgram);
+
+    for (int i = 0; i < 4; i++)
+    {
+        int outerIdx = i % 2;
+        int innerIdx = i / 2;
+        std::stringstream uniformName;
+        uniformName << "test[" << innerIdx << "].data[" << outerIdx << "]";
+        // Then send it as a uniform
+        GLint uniformLocation = glGetUniformLocation(program, uniformName.str().c_str());
+        // The uniform should be active.
+        EXPECT_NE(uniformLocation, -1);
+
+        glUniform1i(uniformLocation, 3 - i);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Verify the uniform data with the binary program.
+    drawQuad(binaryProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, expected);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryES3Test);
 ANGLE_INSTANTIATE_TEST_ES3_AND(ProgramBinaryES3Test,
-                               WithCreateVulkanPipelineDuringLink(ES3_VULKAN()));
+                               ES3_VULKAN().enable(Feature::CreatePipelineDuringLink));
 
 class ProgramBinaryES31Test : public ANGLETest
 {
@@ -956,15 +1023,20 @@ class ProgramBinaryES31Test : public ANGLETest
         // Test flakiness was noticed when reusing displays.
         forceNewDisplay();
     }
+
+    GLint getAvailableProgramBinaryFormatCount() const
+    {
+        GLint formatCount;
+        glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS_OES, &formatCount);
+        return formatCount;
+    }
 };
 
 // Tests that saving and loading a program attached with computer shader.
 TEST_P(ProgramBinaryES31Test, ProgramBinaryWithComputeShader)
 {
-    // We can't run the test if no program binary formats are supported.
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
+
     // http://anglebug.com/4092
     ANGLE_SKIP_TEST_IF(IsVulkan());
 
@@ -1009,10 +1081,7 @@ TEST_P(ProgramBinaryES31Test, ProgramBinaryWithComputeShader)
 // uniform block.
 TEST_P(ProgramBinaryES31Test, SeparableProgramLinkedUniforms)
 {
-    // We can't run the test if no program binary formats are supported.
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     constexpr char kComputeShader[] = R"(#version 310 es
 layout(local_size_x=4, local_size_y=3, local_size_z=1) in;
@@ -1053,10 +1122,7 @@ void main() {
 // Tests that saving and loading a program attached with computer shader.
 TEST_P(ProgramBinaryES31Test, ProgramBinaryWithAtomicCounterComputeShader)
 {
-    // We can't run the test if no program binary formats are supported.
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     constexpr char kComputeShader[] = R"(#version 310 es
 layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
@@ -1116,10 +1182,7 @@ void main() {
 // Tests that image texture works correctly when loading a program from binary.
 TEST_P(ProgramBinaryES31Test, ImageTextureBinding)
 {
-    // We can't run the test if no program binary formats are supported.
-    GLint binaryFormatCount = 0;
-    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
-    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     const char kComputeShader[] =
         R"(#version 310 es
@@ -1175,7 +1238,7 @@ TEST_P(ProgramBinaryES31Test, ImageTextureBinding)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryES31Test);
 ANGLE_INSTANTIATE_TEST_ES31_AND(ProgramBinaryES31Test,
-                                WithCreateVulkanPipelineDuringLink(ES31_VULKAN()));
+                                ES31_VULKAN().enable(Feature::CreatePipelineDuringLink));
 
 class ProgramBinaryTransformFeedbackTest : public ANGLETest
 {
@@ -1239,7 +1302,7 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_get_program_binary"));
 
-    ANGLE_SKIP_TEST_IF(!getAvailableProgramBinaryFormatCount());
+    ANGLE_SKIP_TEST_IF(getAvailableProgramBinaryFormatCount() == 0);
 
     // http://anglebug.com/3690
     ANGLE_SKIP_TEST_IF(IsAndroid() && (IsPixel2() || IsPixel2XL()) && IsVulkan());
@@ -1288,7 +1351,7 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryTransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(ProgramBinaryTransformFeedbackTest,
-                               WithCreateVulkanPipelineDuringLink(ES3_VULKAN()));
+                               ES3_VULKAN().enable(Feature::CreatePipelineDuringLink));
 
 // For the ProgramBinariesAcrossPlatforms tests, we need two sets of params:
 // - a set to save the program binary
@@ -1518,18 +1581,19 @@ TEST_P(ProgramBinariesAcrossPlatforms, CreateAndReloadBinary)
 // clang-format off
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinariesAcrossPlatforms);
 ANGLE_INSTANTIATE_TEST(ProgramBinariesAcrossPlatforms,
-                       //                     | Save the program   | Load the program      | Expected
-                       //                     | using these params | using these params    | link result
-                       PlatformsWithLinkResult(ES2_D3D11(),         ES2_D3D11(),            true         ), // Loading + reloading binary should work
-                       PlatformsWithLinkResult(ES3_D3D11(),         ES3_D3D11(),            true         ), // Loading + reloading binary should work
-                       PlatformsWithLinkResult(ES2_D3D11(),         ES2_D3D9(),             false        ), // Switching from D3D11 to D3D9 shouldn't work
-                       PlatformsWithLinkResult(ES2_D3D9(),          ES2_D3D11(),            false        ), // Switching from D3D9 to D3D11 shouldn't work
-                       PlatformsWithLinkResult(ES2_D3D11(),         ES3_D3D11(),            false        ), // Switching to newer client version shouldn't work
-                       PlatformsWithLinkResult(ES2_VULKAN(),        ES2_VULKAN(),           true         ), // Loading + reloading binary should work
-                       PlatformsWithLinkResult(ES3_VULKAN(),        ES3_VULKAN(),           true         ), // Loading + reloading binary should work
-                       PlatformsWithLinkResult(ES31_VULKAN(),       ES31_VULKAN(),          true         ), // Loading + reloading binary should work
-                       PlatformsWithLinkResult(ES3_VULKAN(),        ES31_VULKAN(),          false        ), // Switching to newer client version shouldn't work with Vulkan
-                       PlatformsWithLinkResult(WithCreateVulkanPipelineDuringLink(ES2_VULKAN()),        WithCreateVulkanPipelineDuringLink(ES2_VULKAN()),           true         ), // Loading + reloading binary with compiling shaders at link time should work
-                       PlatformsWithLinkResult(WithCreateVulkanPipelineDuringLink(ES3_VULKAN()),        WithCreateVulkanPipelineDuringLink(ES3_VULKAN()),           true         ), // Loading + reloading binary with compiling shaders at link time should work
-                       );
+                       //                     | Save the     | Load the     | Expected
+                       //                     | program in   | program in   | link
+                       //                     | this config  | this config  | result
+                       PlatformsWithLinkResult(ES2_D3D11(),   ES2_D3D11(),   true ), // Loading + reloading binary should work
+                       PlatformsWithLinkResult(ES3_D3D11(),   ES3_D3D11(),   true ), // Loading + reloading binary should work
+                       PlatformsWithLinkResult(ES2_D3D11(),   ES2_D3D9(),    false), // Switching from D3D11 to D3D9 shouldn't work
+                       PlatformsWithLinkResult(ES2_D3D9(),    ES2_D3D11(),   false), // Switching from D3D9 to D3D11 shouldn't work
+                       PlatformsWithLinkResult(ES2_D3D11(),   ES3_D3D11(),   false), // Switching to newer client version shouldn't work
+                       PlatformsWithLinkResult(ES2_VULKAN(),  ES2_VULKAN(),  true ), // Loading + reloading binary should work
+                       PlatformsWithLinkResult(ES3_VULKAN(),  ES3_VULKAN(),  true ), // Loading + reloading binary should work
+                       PlatformsWithLinkResult(ES31_VULKAN(), ES31_VULKAN(), true ), // Loading + reloading binary should work
+                       PlatformsWithLinkResult(ES3_VULKAN(),  ES31_VULKAN(), false), // Switching to newer client version shouldn't work with Vulkan
+                       PlatformsWithLinkResult(ES2_VULKAN().enable(Feature::CreatePipelineDuringLink), ES2_VULKAN().enable(Feature::CreatePipelineDuringLink),true), // Loading + reloading binary with compiling shaders at link time should work
+                       PlatformsWithLinkResult(ES3_VULKAN().enable(Feature::CreatePipelineDuringLink), ES3_VULKAN().enable(Feature::CreatePipelineDuringLink),true), // Loading + reloading binary with compiling shaders at link time should work
+                      );
 // clang-format on

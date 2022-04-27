@@ -10,6 +10,7 @@
 #define LIBANGLE_RENDERER_GLSLANG_WRAPPER_UTILS_H_
 
 #include <functional>
+
 #include "common/spirv/spirv_types.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/renderer_utils.h"
@@ -143,7 +144,7 @@ std::string GlslangGetMappedSamplerName(const std::string &originalName);
 std::string GetXfbBufferName(const uint32_t bufferIndex);
 
 void GlslangAssignLocations(const GlslangSourceOptions &options,
-                            const gl::ProgramState &programState,
+                            const gl::ProgramExecutable &programExecutable,
                             const gl::ProgramVaryingPacking &varyingPacking,
                             const gl::ShaderType shaderType,
                             const gl::ShaderType frontShaderType,
@@ -153,7 +154,7 @@ void GlslangAssignLocations(const GlslangSourceOptions &options,
                             ShaderInterfaceVariableInfoMap *variableInfoMapOut);
 
 void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
-                                             const gl::ProgramState &programState,
+                                             const gl::ProgramExecutable &programExecutable,
                                              bool isTransformFeedbackStage,
                                              GlslangProgramInterfaceInfo *programInterfaceInfo,
                                              ShaderInterfaceVariableInfoMap *variableInfoMapOut);

@@ -56,7 +56,7 @@ class ShaderStorageBlockOutputHLSL
     // Writes the atomic memory function calls for SSBO.
     void outputAtomicMemoryFunctionCallPrefix(TIntermTyped *node, TOperator op);
 
-    void writeShaderStorageBlocksHeader(TInfoSinkBase &out) const;
+    void writeShaderStorageBlocksHeader(GLenum shaderType, TInfoSinkBase &out) const;
 
   private:
     void traverseSSBOAccess(TIntermTyped *node, SSBOMethod method);

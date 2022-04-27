@@ -80,6 +80,8 @@ def auto_script(script):
 
 
 generators = {
+    'ANGLE features':
+        'include/platform/gen_features.py',
     'ANGLE format':
         'src/libANGLE/renderer/gen_angle_format_table.py',
     'ANGLE load functions table':

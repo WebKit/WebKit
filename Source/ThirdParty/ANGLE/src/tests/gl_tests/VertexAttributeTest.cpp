@@ -5,7 +5,7 @@
 //
 #include "anglebase/numerics/safe_conversions.h"
 #include "common/mathutil.h"
-#include "platform/FeaturesVk.h"
+#include "platform/FeaturesVk_autogen.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/random_utils.h"
@@ -296,12 +296,6 @@ class VertexAttributeTest : public ANGLETest
     {
         glDeleteProgram(mProgram);
         glDeleteBuffers(1, &mBuffer);
-    }
-
-    // Override a feature to force emulation of attribute formats.
-    void overrideFeaturesVk(FeaturesVk *featuresVk) override
-    {
-        featuresVk->overrideFeatures({"force_fallback_format"}, true);
     }
 
     GLuint compileMultiAttribProgram(GLint attribCount)
@@ -4127,56 +4121,54 @@ TEST_P(VertexAttributeTestES3, emptyBuffer)
 
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/5577
 #if !defined(__APPLE__)
-#    define EMULATED_VAO_CONFIGS                                          \
-        WithEmulatedVAOs(ES2_OPENGL()), WithEmulatedVAOs(ES2_OPENGLES()), \
-            WithEmulatedVAOs(ES3_OPENGL()), WithEmulatedVAOs(ES3_OPENGLES()),
+#    define EMULATED_VAO_CONFIGS                                       \
+        ES2_OPENGL().enable(Feature::SyncVertexArraysToDefault),       \
+            ES2_OPENGLES().enable(Feature::SyncVertexArraysToDefault), \
+            ES3_OPENGL().enable(Feature::SyncVertexArraysToDefault),   \
+            ES3_OPENGLES().enable(Feature::SyncVertexArraysToDefault),
 #else
 #    define EMULATED_VAO_CONFIGS
 #endif
 
-// Use this to select which configurations (e.g. which renderer, which GLES major version) these
-// tests should be run against.
-// D3D11 Feature Level 9_3 uses different D3D formats for vertex attribs compared to Feature Levels
-// 10_0+, so we should test them separately.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VertexAttributeTest,
-    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
-                                             /* hasBarrier */ false,
-                                             /* cheapRenderPass */ true),
-    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
-                                             /* hasBarrier */ false,
-                                             /* cheapRenderPass */ false),
+    ES2_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass),
     EMULATED_VAO_CONFIGS);
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VertexAttributeOORTest,
-    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
-                                             /* hasBarrier */ false,
-                                             /* cheapRenderPass */ true),
-    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
-                                             /* hasBarrier */ false,
-                                             /* cheapRenderPass */ false));
+    ES2_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     VertexAttributeTestES3,
-    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
-                                             /* hasBarrier */ false,
-                                             /* cheapRenderPass */ true),
-    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
-                                             /* hasBarrier */ false,
-                                             /* cheapRenderPass */ false));
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeTestES31);
-ANGLE_INSTANTIATE_TEST_ES31(VertexAttributeTestES31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(VertexAttributeTestES31,
+                                ES31_VULKAN().enable(Feature::ForceFallbackFormat),
+                                ES31_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VertexAttributeCachingTest,
-    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
-                                             /* hasBarrier */ false,
-                                             /* cheapRenderPass */ true),
-    WithMetalMemoryBarrierAndCheapRenderPass(ES3_METAL(),
-                                             /* hasBarrier */ false,
-                                             /* cheapRenderPass */ false));
+    ES2_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
+    ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass));
 
 }  // anonymous namespace

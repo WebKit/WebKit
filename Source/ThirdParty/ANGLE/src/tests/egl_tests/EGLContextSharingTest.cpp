@@ -1286,5 +1286,5 @@ ANGLE_INSTANTIATE_TEST(EGLContextSharingTestNoFixture,
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLContextSharingTestNoSyncTextureUploads);
 ANGLE_INSTANTIATE_TEST(EGLContextSharingTestNoSyncTextureUploads,
-                       WithForceSubmitImmutableTextureUpdates(ES2_VULKAN()),
-                       WithForceSubmitImmutableTextureUpdates(ES3_VULKAN()));
+                       ES2_VULKAN().enable(Feature::ForceSubmitImmutableTextureUpdates),
+                       ES3_VULKAN().enable(Feature::ForceSubmitImmutableTextureUpdates));

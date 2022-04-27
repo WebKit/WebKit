@@ -103,6 +103,9 @@ int ReplaceAllSubstrings(std::string *str,
                          const std::string &substring,
                          const std::string &replacement);
 
+// Takes a snake_case string and turns it into camelCase.
+std::string ToCamelCase(const std::string &str);
+
 // Split up a string parsed from an environment variable.
 std::vector<std::string> GetStringsFromEnvironmentVarOrAndroidProperty(const char *varName,
                                                                        const char *propertyName,

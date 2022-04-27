@@ -448,6 +448,45 @@ void FastVector<T, N, Storage>::ensure_capacity(size_t capacity)
     }
 }
 
+template <class Value, size_t N>
+class FastMap final
+{
+  public:
+    FastMap() {}
+    ~FastMap() {}
+
+    Value &operator[](uint32_t key)
+    {
+        if (mData.size() <= key)
+        {
+            mData.resize(key + 1, {});
+        }
+        return mData[key];
+    }
+
+    const Value &operator[](uint32_t key) const
+    {
+        ASSERT(key < mData.size());
+        return mData[key];
+    }
+
+    void clear() { mData.clear(); }
+
+    bool empty() const { return mData.empty(); }
+    size_t size() const { return mData.size(); }
+
+    const Value *data() const { return mData.data(); }
+
+    bool operator==(const FastMap<Value, N> &other) const
+    {
+        return (size() == other.size()) &&
+               (memcmp(data(), other.data(), size() * sizeof(Value)) == 0);
+    }
+
+  private:
+    FastVector<Value, N> mData;
+};
+
 template <class Key, class Value, size_t N>
 class FlatUnorderedMap final
 {

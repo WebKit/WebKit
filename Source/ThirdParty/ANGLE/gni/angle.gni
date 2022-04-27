@@ -459,6 +459,7 @@ if (angle_standalone || build_with_chromium) {
 
       data = invoker.data + [
                "$angle_root/scripts/run_gtest_angle_test.py",
+               "$angle_root/src/tests/py_utils/angle_path_util.py",
                "//testing/scripts/common.py",
                "//testing/xvfb.py",
              ]
@@ -478,10 +479,15 @@ if (angle_standalone || build_with_chromium) {
         ]
       }
 
-      if (is_mac && angle_enable_metal) {
-        # On macOS, compiling Metal shader sometimes takes very long time due to internal caching
-        # mechanism. This hooking library is a way to bypass this caching mechanism.
-        data_deps += [ "$angle_root/src/libANGLE/renderer/metal/file_hooking:metal_shader_cache_file_hooking" ]
+      if (is_mac) {
+        if (angle_enable_metal) {
+          # On macOS, compiling Metal shader sometimes takes very long time due to internal caching
+          # mechanism. This hooking library is a way to bypass this caching mechanism.
+          data_deps += [ "$angle_root/src/libANGLE/renderer/metal/file_hooking:metal_shader_cache_file_hooking" ]
+        }
+        if (angle_enable_cgl) {
+          configs += [ "$angle_root:supports_automatic_graphics_switching" ]
+        }
       }
 
       if ((is_linux && !is_chromeos) ||

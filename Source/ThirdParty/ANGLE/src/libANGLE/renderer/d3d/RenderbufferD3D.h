@@ -49,6 +49,7 @@ class RenderbufferD3D : public RenderbufferImpl
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
     angle::Result initializeContents(const gl::Context *context,
+                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
   private:

@@ -144,6 +144,42 @@ void main()
     EXPECT_GL_NO_ERROR();
 }
 
+// Verify that Geometry Shader can be compiled when geometry shader array input size
+// is set after shader input variables.
+// http://anglebug.com/7125 GFXBench Car Chase uses this pattern
+TEST_P(GeometryShaderTest, DeferredSetOfArrayInputSize)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    // "layout (invocations = 3, triangles) in;" should be declared before "in vec4 texcoord [];",
+    // but here it is declared later.
+    constexpr char kGS[]  = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+in vec4 texcoord[];
+out vec4 o_texcoord;
+layout (invocations = 3, triangles_adjacency) in;
+layout (triangle_strip, max_vertices = 3) out;
+void main()
+{
+    int n;
+    for (n = 0; n < gl_in.length(); n++)
+    {
+        gl_Position = gl_in[n].gl_Position;
+        gl_Layer   = gl_InvocationID;
+        o_texcoord = texcoord[n];
+        EmitVertex();
+    }
+    EndPrimitive();
+})";
+    GLuint geometryShader = CompileShader(GL_GEOMETRY_SHADER_EXT, kGS);
+    EXPECT_NE(0u, geometryShader);
+    GLuint programID = glCreateProgram();
+    glAttachShader(programID, geometryShader);
+    glDetachShader(programID, geometryShader);
+    glDeleteShader(geometryShader);
+    glDeleteProgram(programID);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Verify that all the implementation dependent geometry shader related resource limits meet the
 // requirement of GL_EXT_geometry_shader SPEC.
 TEST_P(GeometryShaderTest, GeometryShaderImplementationDependentLimits)
@@ -1852,9 +1888,9 @@ ANGLE_INSTANTIATE_TEST_ES3(GeometryShaderTestES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GeometryShaderTest);
 ANGLE_INSTANTIATE_TEST_ES31_AND(GeometryShaderTest,
-                                WithEmulatedPrerotation(ES31_VULKAN(), 90),
-                                WithEmulatedPrerotation(ES31_VULKAN(), 180),
-                                WithEmulatedPrerotation(ES31_VULKAN(), 270));
+                                ES31_VULKAN().enable(Feature::EmulatedPrerotation90),
+                                ES31_VULKAN().enable(Feature::EmulatedPrerotation180),
+                                ES31_VULKAN().enable(Feature::EmulatedPrerotation270));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GeometryShaderTestES32);
 ANGLE_INSTANTIATE_TEST_ES32(GeometryShaderTestES32);

@@ -25,7 +25,7 @@
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
 #include "libANGLE/renderer/renderer_utils.h"
-#include "platform/FeaturesGL.h"
+#include "platform/FeaturesGL_autogen.h"
 
 using angle::Vector2;
 
@@ -199,6 +199,19 @@ angle::Result PrepareForClear(StateManagerGL *stateManager,
     return angle::Result::Continue;
 }
 
+angle::Result UnbindAttachment(const gl::Context *context,
+                               const FunctionsGL *functions,
+                               GLenum framebufferTarget,
+                               GLenum attachment)
+{
+    // Always use framebufferTexture2D as a workaround for an Nvidia driver bug. See
+    // https://anglebug.com/5536 and FeaturesGL.alwaysUnbindFramebufferTexture2D
+    ANGLE_GL_TRY(context,
+                 functions->framebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, 0, 0));
+
+    return angle::Result::Continue;
+}
+
 angle::Result UnbindAttachments(const gl::Context *context,
                                 const FunctionsGL *functions,
                                 GLenum framebufferTarget,
@@ -206,8 +219,7 @@ angle::Result UnbindAttachments(const gl::Context *context,
 {
     for (GLenum bindTarget : bindTargets)
     {
-        ANGLE_GL_TRY(context, functions->framebufferRenderbuffer(framebufferTarget, bindTarget,
-                                                                 GL_RENDERBUFFER, 0));
+        ANGLE_TRY(UnbindAttachment(context, functions, framebufferTarget, bindTarget));
     }
     return angle::Result::Continue;
 }
@@ -389,6 +401,7 @@ angle::Result BlitGL::copySubImageToLUMAWorkaroundTexture(const gl::Context *con
 
     // Finally orphan the scratch textures so they can be GCed by the driver.
     ANGLE_TRY(orphanScratchTextures(context));
+    ANGLE_TRY(UnbindAttachment(context, mFunctions, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0));
 
     ANGLE_TRY(scopedState.exit(context));
     return angle::Result::Continue;
@@ -417,8 +430,7 @@ angle::Result BlitGL::blitColorBufferWithShader(const gl::Context *context,
     angle::Result result = blitColorBufferWithShader(context, source, mScratchFBO, sourceAreaIn,
                                                      destAreaIn, filter, writeAlpha);
     // Unbind the texture from the the scratch framebuffer.
-    ANGLE_GL_TRY(context, mFunctions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                                                              GL_RENDERBUFFER, 0));
+    ANGLE_TRY(UnbindAttachment(context, mFunctions, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0));
     return result;
 }
 
@@ -666,6 +678,7 @@ angle::Result BlitGL::copySubTexture(const gl::Context *context,
 
     ANGLE_TRY(setVAOState(context));
     ANGLE_GL_TRY(context, mFunctions->drawArrays(GL_TRIANGLES, 0, 3));
+    ANGLE_TRY(UnbindAttachment(context, mFunctions, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0));
 
     *copySucceededOut = true;
     ANGLE_TRY(scopedState.exit(context));
@@ -816,6 +829,8 @@ angle::Result BlitGL::copySubTextureCPUReadback(const gl::Context *context,
                               destOffset.y, readPixelsArea.width, readPixelsArea.height,
                               texSubImageFormat.format, texSubImageFormat.type, destMemory));
 
+    ANGLE_TRY(UnbindAttachment(context, mFunctions, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0));
+
     return angle::Result::Continue;
 }
 
@@ -850,6 +865,7 @@ angle::Result BlitGL::copyTexSubImage(const gl::Context *context,
                                                destOffset.x, destOffset.y, sourceArea.x,
                                                sourceArea.y, sourceArea.width, sourceArea.height));
 
+    ANGLE_TRY(UnbindAttachment(context, mFunctions, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0));
     *copySucceededOut = true;
     return angle::Result::Continue;
 }
@@ -994,13 +1010,17 @@ angle::Result BlitGL::clearRenderbuffer(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result BlitGL::clearFramebuffer(const gl::Context *context, FramebufferGL *source)
+angle::Result BlitGL::clearFramebuffer(const gl::Context *context,
+                                       bool colorClear,
+                                       bool depthClear,
+                                       bool stencilClear,
+                                       FramebufferGL *source)
 {
     // initializeResources skipped because no local state is used
 
     // Clear all attachments
     GLbitfield clearMask = 0;
-    ANGLE_TRY(SetClearState(mStateManager, true, true, true, &clearMask));
+    ANGLE_TRY(SetClearState(mStateManager, colorClear, depthClear, stencilClear, &clearMask));
 
     mStateManager->bindFramebuffer(GL_FRAMEBUFFER, source->getFramebufferID());
     ANGLE_GL_TRY(context, mFunctions->clear(clearMask));
@@ -1029,8 +1049,7 @@ angle::Result BlitGL::clearRenderableTextureAlphaToOne(const gl::Context *contex
     ANGLE_GL_TRY(context, mFunctions->clear(GL_COLOR_BUFFER_BIT));
 
     // Unbind the texture from the the scratch framebuffer
-    ANGLE_GL_TRY(context, mFunctions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                                                              GL_RENDERBUFFER, 0));
+    ANGLE_TRY(UnbindAttachment(context, mFunctions, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0));
 
     return angle::Result::Continue;
 }
@@ -1109,6 +1128,7 @@ angle::Result BlitGL::generateSRGBMipmap(const gl::Context *context,
     }
 
     ANGLE_TRY(orphanScratchTextures(context));
+    ANGLE_TRY(UnbindAttachment(context, mFunctions, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0));
 
     ANGLE_TRY(scopedState.exit(context));
     return angle::Result::Continue;

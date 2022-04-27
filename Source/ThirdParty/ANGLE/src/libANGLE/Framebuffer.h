@@ -519,6 +519,8 @@ class Framebuffer final : public angle::ObserverInterface,
     mutable Optional<DirtyBits> mDirtyBitsGuard;
 };
 
+using UniqueFramebufferPointer = angle::UniqueObjectPointer<Framebuffer, Context>;
+
 }  // namespace gl
 
 #endif  // LIBANGLE_FRAMEBUFFER_H_

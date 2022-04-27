@@ -7,8 +7,9 @@
 // Thread sanitizer skips.
 6718 TSAN : MultithreadingTestES3.MultithreadFenceDraw/* = SKIP
 6718 TSAN : MultithreadingTestES3.MultithreadFenceTexImage/* = SKIP
-6746 TSAN : *AsyncQueue* = SKIP
-6804 LINUX VULKAN TSAN : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = SKIP
+6746 TSAN : *_AsyncCommandQueue* = SKIP
+6804 TSAN : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = SKIP
+7159 TSAN : InstancingTestES3.LargeDivisor/* = SKIP
 
 // Generic
 // Fails in the flush thread when calling eglMakeCurrent.
@@ -47,6 +48,12 @@
 6926 VULKAN : Texture2DTestES3.TextureRGBUpdateWithPBO/ES3_Vulkan* = SKIP
 6730 VULKAN : GLSLTest_ES3.GLVertexIDIntegerTextureDrawElementsU8Line/* = SKIP
 6730 VULKAN : GLSLTest_ES3.GLVertexIDIntegerTextureDrawElementsU8LineIds/* = SKIP
+7151 VULKAN : IncompleteTextureTestES31.MultisampleTexture/* = SKIP
+7197 VULKAN : BlitFramebufferTest.ResolveWithRotation/ES3_Vulkan_EmulatedPrerotation180 = SKIP
+7197 VULKAN : BlitFramebufferTest.ResolveWithRotation/ES3_Vulkan_EmulatedPrerotation270 = SKIP
+7197 VULKAN : BlitFramebufferTest.BlitMultisampleStencilToDefault/ES3_Vulkan_EmulatedPrerotation180 = SKIP
+7198 VULKAN : BlitFramebufferTest.BlitMultisampleStencilToDefault/ES3_Vulkan_EmulatedPrerotation90 = SKIP
+7198 VULKAN : BlitFramebufferTest.BlitMultisampleStencilToDefault/ES3_Vulkan_EmulatedPrerotation270 = SKIP
 
 // Windows
 3786 WIN NVIDIA D3D11 : BufferDataOverflowTest.VertexBufferIntegerOverflow/* = SKIP
@@ -92,8 +99,9 @@
 // Generates invalid errors when compiling the shader in the GL backend
 6172 NVIDIA OpenGL : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
 6172 NVIDIA GLES : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
-6977 NVIDIA OpenGL : MipmapTestES31.UpdateBaseLevel/* = SKIP
-6977 NVIDIA GLES : MipmapTestES31.UpdateBaseLevel/* = SKIP
+6977 NVIDIA OpenGL : MipmapTestES31.GenerateMipmapWithDraw/* = SKIP
+6977 NVIDIA GLES : MipmapTestES31.GenerateMipmapWithDraw/* = SKIP
+6977 LINUX NVIDIA OpenGL : MipmapTestES31.GenerateLowerMipsWithDraw/* = SKIP
 
 // Intel Vulkan
 
@@ -112,6 +120,7 @@
 // Fails on older mesa in some sequence of test
 6563 LINUX INTEL VULKAN : TransformFeedbackTest.EndWithDifferentProgram/* = SKIP
 6962 WIN INTEL VULKAN : BlitFramebufferTestES31.PartialResolve/* = SKIP
+7177 INTEL VULKAN : EXTBlendFuncExtendedDrawTest.FragData/* = SKIP
 
 // Linux AMD
 6855 LINUX AMD OPENGL : ClearTestES3.ClearMaxAttachmentsAfterDraw/* = SKIP
@@ -152,6 +161,20 @@
 6643 MAC AMD OPENGL : TransformFeedbackTest.TransformFeedbackPausedDrawThenResume/* = SKIP
 6738 MAC AMD OPENGL : Texture3DTestES3.PixelUnpackStateTex* = SKIP
 1296467 MAC OPENGL : VertexAttributeTestES3.emptyBuffer/* = SKIP
+7203 MAC INTEL OPENGL : CopyTextureTest.CopyToMipmap/* = SKIP
+7206 MAC NVIDIA OPENGL : CopyTextureTest.CubeMap*/ES2_OpenGL = SKIP
+7206 MAC NVIDIA OPENGL : CopyTextureTest.CopyToMipmap/ES2_OpenGL = SKIP
+7206 MAC NVIDIA OPENGL : BlitFramebufferTest.NonZeroBaseDestinationStencil/ES3_OpenGL = SKIP
+7206 MAC NVIDIA OPENGL : BlendIntegerTest.MRTUnsigned/ES3_OpenGL = SKIP
+7206 MAC NVIDIA OPENGL : BlendIntegerTest.MRTSigned/ES3_OpenGL = SKIP
+7206 MAC NVIDIA OPENGL : DrawBuffersTest.BlendWithGaps/ES3_OpenGL = SKIP
+
+// BlitFramebufferTest.ScissoredMultisampleStencil failures
+3496 MAC INTEL OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
+3496 MAC AMD OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/* = SKIP
+7191 MAC NVIDIA OPENGL : BlitFramebufferTest.ScissoredMultisampleStencil/ES3_OpenGL = SKIP
+
+// Mac Metal
 
 // Failures from Transform Feedback Enablement. Passes on BigSur
 6407 MAC NVIDIA METAL : TransformFeedbackTest.OptimizedVaryings/ES3_Metal = SKIP
@@ -265,7 +288,8 @@
 7109 WIN D3D11 : SimpleStateChangeTestES3.InvalidateRGBThenDraw/* = SKIP
 7109 WIN D3D11 : SimpleStateChangeTestES3.DrawAndInvalidateRGBThenVerifyAlpha/* = SKIP
 7113 WIN D3D9 : GLSLTest.LoopBodyEndingInBranch*/* = SKIP
-1312167 WIN D3D9 : RobustResourceInitTest.OutOfBoundsArrayBuffers/* = SKIP
+7148 WIN D3D9 : RobustResourceInitTest.OutOfBoundsArrayBuffers/* = SKIP
+7213 WIN D3D11 : BufferDataTestES3.BufferDataWithNullFollowedByMap/* = SKIP
 
 // Android
 6095 ANDROID GLES : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP
@@ -294,8 +318,8 @@
 200067929 NEXUS5X GLES : ShaderStorageBufferTest31.ShaderStorageBufferReadWriteAndBufferSubData/* = SKIP
 
 // Pixel 4 expectations.
-6344 PIXEL4ORXL : GLSLTest_ES31_InitShaderVariables.InitIOBlockWithStruct/ES3_1_Vulkan_InitShaderVars = SKIP
-6344 PIXEL4ORXL : GLSLTest_ES31_InitShaderVariables.InitIOBlockWithComplexTypes/ES3_1_Vulkan_InitShaderVars = SKIP
+6344 PIXEL4ORXL : GLSLTest_ES31_InitShaderVariables.InitIOBlockWithStruct/ES3_1_Vulkan_ForceInitShaderVariables = SKIP
+6344 PIXEL4ORXL : GLSLTest_ES31_InitShaderVariables.InitIOBlockWithComplexTypes/ES3_1_Vulkan_ForceInitShaderVariables = SKIP
 
 5981 PIXEL4ORXL GLES : BlitFramebufferTest.BlitSRGBToRGBOversizedDestArea/* = SKIP
 5981 PIXEL4ORXL GLES : CopyTexImageTest.CopyTexSubImageFrom3DTexureOES/* = SKIP
@@ -356,6 +380,7 @@
 5981 PIXEL4ORXL GLES : VulkanExternalImageTest.ShouldClearOpaqueFdRGBA8/* = SKIP
 5981 PIXEL4ORXL GLES : VulkanExternalImageTest.TextureFormatCompatChromiumFd/* = SKIP
 7142 PIXEL4ORXL GLES : GLSLTest.AliasingFunctionOutParamAndGlobal/* = SKIP
+7213 PIXEL4ORXL GLES : BufferDataTestES3.BufferDataWithNullFollowedByMap/* = SKIP
 
 5946 PIXEL4ORXL VULKAN : TransformFeedbackTestES32.PrimitivesWrittenAndGenerated/* = SKIP
 5947 PIXEL4ORXL VULKAN : FramebufferFetchES31.DrawFetchBlitDrawFetch_NonCoherent/* = SKIP
@@ -401,6 +426,8 @@
 7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MaskedDrawMidRPClearWithGapsRGB/* = SKIP
 7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MidRenderPassClearWithGaps/* = SKIP
 7140 PIXEL4ORXL VULKAN : DrawBuffersTest.MidRenderPassClearWithGapsRGB/* = SKIP
+
+7207 PIXEL4ORXL VULKAN : VulkanPerformanceCounterTest.InRenderpassFlushShouldNotBreakRenderpass/* = SKIP
 
 6167 NEXUS5X GLES : DepthStencilTestES3.FramebufferClearThenStencilAttachedThenStencilTestState/* = SKIP
 6167 NEXUS5X GLES : DepthStencilTestES3.FramebufferClearThenStencilTestStateThenStencilAttached/* = SKIP
@@ -454,6 +481,10 @@
 7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.MappingGpuReadOnlyBufferGhostsBuffer/* = SKIP
 7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.ClearThenScissoredDraw/* = SKIP
 7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.ReadOnlyDepthStencilFeedbackLoopUsesSingleRenderPass/* = SKIP
+7158 PIXEL6 VULKAN : ImageTestES3.SourceAHBCubeTargetCube/* = SKIP
+7158 PIXEL6 VULKAN : ImageTestES31.SourceAHBCubeArrayTargetCubeArray/* = SKIP
+7158 PIXEL6 VULKAN : ImageTestES3.SourceAHBMipTarget2DMip/* = SKIP
+7158 PIXEL6 VULKAN : ImageTestES3.SourceAHBMipTarget2DMipGenerateMipmap/* = SKIP
 
 // AMD windows failures.  The GPU and driver on our bots are very old and buggy.
 // http://crbug.com/1224996
@@ -468,9 +499,24 @@
 1224996 WIN AMD VULKAN : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP
 1224996 WIN AMD VULKAN : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
 7144 WIN AMD VULKAN : GLSLTest.AliasingFunctionOutParamAndGlobal/* = SKIP
-
 // Test is disabled as it only pertains to desktop GLSL
 6197 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = SKIP
+// The following tests are disabled because of AMD vulkan driver crash on compiling compute shader for convertIndexBufferGPU
+7227 WIN AMD VULKAN : DrawElementsTest.PartOfIndexBufferThenAll/* = SKIP
+7227 WIN AMD VULKAN : GLSLTest_ES3.GLVertexIDIntegerTextureDrawElementsU8/* = SKIP
+7227 WIN AMD VULKAN : IndexedPointsTestUByte.* = SKIP
+7227 WIN AMD VULKAN : InstancingTest.IndexedAttrib0TriFanBuffer* = SKIP
+7227 WIN AMD VULKAN : InstancingTest.IndexedAttrib1TriFanBuffer* = SKIP
+7227 WIN AMD VULKAN : MultisampleTest.ContentPresevedAfterInterruption/* = SKIP
+7227 WIN AMD VULKAN : RobustResourceInitTest.OutOfBoundsIndexBuffers/* = SKIP
+7227 WIN AMD VULKAN : SimpleStateChangeTest.DrawElementsThenDrawElementsNewIndexBuffer/* = SKIP
+7227 WIN AMD VULKAN : SimpleStateChangeTest.DrawElementsUBYTEX2ThenDrawElementsUSHORT/* = SKIP
+7227 WIN AMD VULKAN : SimpleStateChangeTest.UpdateBoundElementArrayBuffer/* = SKIP
+7227 WIN AMD VULKAN : TriangleFanDrawTest.DrawTriangleFanElements/* = SKIP
+7227 WIN AMD VULKAN : TriangleFanDrawTest.DrawTriangleFanPrimitiveRestartAt* = SKIP
+7227 WIN AMD VULKAN : WebGLCompatibilityTest.DrawElementsBufferOutOfBoundsInIndexBuffer/* = SKIP
+7227 WIN AMD VULKAN : WebGLCompatibilityTest.DrawElementsBufferOutOfBoundsInVertexBuffer/* = SKIP
+7227 WIN AMD VULKAN : WebGLCompatibilityTest.DrawElementsOffsetRestriction/* = SKIP
 
 // Slow tests
 5076 : GLSLTest.VerifyMaxVertexUniformVectors* = TIMEOUT
@@ -515,8 +561,8 @@
 6751 D3D11 : MultiDrawIndirectTest.MultiDrawElementsIndirect* = SKIP
 6751 D3D11 : DrawBaseVertexBaseInstanceTest.MultiDrawElementsInstancedBaseVertexBaseInstance/* = SKIP
 
-// ASAN flakes with Vulkan / SwiftShader / AsyncQueue
-6875 ASAN VULKAN SWIFTSHADER : ComputeShaderTest.*/ES3_1_Vulkan_SwiftShader_AsyncQueue = SKIP
+// ASAN flakes with Vulkan / SwiftShader / AsyncCommandQueue
+6875 ASAN VULKAN SWIFTSHADER : ComputeShaderTest.*/ES3_1_Vulkan_SwiftShader_AsyncCommandQueue = SKIP
 6875 SWIFTSHADER : TransformFeedbackTest.SpanMultipleRenderPasses/* = SKIP
 
 7112 SWIFTSHADER : TransformFeedbackTest.BaseInstance/* = SKIP
@@ -526,6 +572,7 @@
 // ASAN flaky timeouts and crashes with Win / Vulkan / Swiftshader
 6965 ASAN WIN VULKAN SWIFTSHADER : MipmapTest* = SKIP
 6968 ASAN WIN VULKAN SWIFTSHADER : MultithreadingTest.MultiContextDrawWithSwapBuffers/ES3_Vulkan_SwiftShader = SKIP
+7160 ASAN WIN VULKAN SWIFTSHADER : GeometryShaderTest.LayeredFramebufferMidRenderClear3DColor/ES3_1_Vulkan_SwiftShader = SKIP
 
 // Regression after a buffer change.
 6881 INTEL VULKAN LINUX : Texture2DTest.TexStorageWithPBOMiddlePixelDifferent/* = SKIP
@@ -559,3 +606,10 @@
 7029 NVIDIA GLES : GLSLTest.SwizzledChainedAssignIncrement/* = SKIP
 
 7085 : VulkanPerformanceCounterTest.DepthStencilInvalidateDrawDisable/* = SKIP
+
+// Flaking due to threading usage of the queue
+7204 : VulkanImageTest.PreInitializedOnGLImport/*AsyncCommandQueue = SKIP
+
+// Causes incompatible error in GL back-end.
+7218 OPENGL : TransformFeedbackTest.DrawAfterDeletingPausedBuffer/* = SKIP
+7218 GLES : TransformFeedbackTest.DrawAfterDeletingPausedBuffer/* = SKIP

@@ -599,6 +599,8 @@ EXPORTS
     glTexSubImage2DRobustANGLE
     glTexSubImage3DRobustANGLE
 
+    ; GL_ANGLE_robust_resource_initialization
+
     ; GL_ANGLE_semaphore_fuchsia
     glImportSemaphoreZirconHandleANGLE
 
@@ -1149,6 +1151,9 @@ EXPORTS
     glFramebufferTextureMultiviewOVR
 
     ; GL_OVR_multiview2
+
+    ; GL_QCOM_shading_rate
+    glShadingRateQCOM
 
     ; EGL 1.0
     EGL_ChooseConfig

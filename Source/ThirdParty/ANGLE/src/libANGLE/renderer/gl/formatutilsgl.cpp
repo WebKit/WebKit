@@ -14,7 +14,7 @@
 #include "anglebase/no_destructor.h"
 #include "common/string_utils.h"
 #include "libANGLE/formatutils.h"
-#include "platform/FeaturesGL.h"
+#include "platform/FeaturesGL_autogen.h"
 
 namespace rx
 {
@@ -507,7 +507,7 @@ static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
         }
 
         if (internalFormat.sizedInternalFormat == GL_RGBA4 &&
-            (features.rgba4IsNotSupportedForColorRendering.enabled ||
+            (features.RGBA4IsNotSupportedForColorRendering.enabled ||
              features.promotePackedFormatsTo8BitPerChannel.enabled))
         {
             // Use an 8-bit format instead
@@ -576,7 +576,7 @@ static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
         }
         else if (internalFormat.colorEncoding == GL_SRGB)
         {
-            if (features.unsizedsRGBReadPixelsDoesntTransform.enabled)
+            if (features.unsizedSRGBReadPixelsDoesntTransform.enabled)
             {
                 // Work around some Adreno driver bugs that don't read back SRGB data correctly when
                 // it's in unsized SRGB texture formats.
@@ -655,7 +655,7 @@ static GLenum GetNativeFormat(const FunctionsGL *functions,
         // Transform sRGB formats to RGB if either the GLES driver doesn't support GL_EXT_sRGB, or
         // to work around Adreno driver bugs reading back unsized sRGB texture data.
         if (!functions->hasGLESExtension("GL_EXT_sRGB") ||
-            features.unsizedsRGBReadPixelsDoesntTransform.enabled)
+            features.unsizedSRGBReadPixelsDoesntTransform.enabled)
         {
             if (format == GL_SRGB)
             {

@@ -25,6 +25,8 @@
 
 namespace rx
 {
+// Time interval in seconds that we should try to prune default buffer pools.
+constexpr double kTimeElapsedForPruneDefaultBufferPool = 0.25;
 
 DisplayVk::DisplayVk(const egl::DisplayState &state)
     : DisplayImpl(state),
@@ -409,7 +411,23 @@ void DisplayVk::populateFeatureList(angle::FeatureList *features)
 
 ShareGroupVk::ShareGroupVk()
 {
-    mLastPruneTime = angle::GetCurrentSystemTime();
+    mLastPruneTime             = angle::GetCurrentSystemTime();
+    mOrphanNonEmptyBufferBlock = false;
+}
+
+void ShareGroupVk::addContext(ContextVk *contextVk)
+{
+    mContexts.insert(contextVk);
+
+    if (contextVk->getState().hasDisplayTextureShareGroup())
+    {
+        mOrphanNonEmptyBufferBlock = true;
+    }
+}
+
+void ShareGroupVk::removeContext(ContextVk *contextVk)
+{
+    mContexts.erase(contextVk);
 }
 
 void ShareGroupVk::onDestroy(const egl::Display *display)
@@ -420,13 +438,13 @@ void ShareGroupVk::onDestroy(const egl::Display *display)
     {
         if (pool)
         {
-            pool->destroy(renderer);
+            pool->destroy(renderer, mOrphanNonEmptyBufferBlock);
         }
     }
 
     if (mSmallBufferPool)
     {
-        mSmallBufferPool->destroy(renderer);
+        mSmallBufferPool->destroy(renderer, mOrphanNonEmptyBufferBlock);
     }
 
     mPipelineLayoutCache.destroy(renderer);
@@ -451,19 +469,62 @@ vk::BufferPool *ShareGroupVk::getDefaultBufferPool(RendererVk *renderer,
                                                    VkDeviceSize size,
                                                    uint32_t memoryTypeIndex)
 {
-    return vk::GetDefaultBufferPool(mSmallBufferPool, mDefaultBufferPools, renderer, size,
-                                    memoryTypeIndex);
+    if (size <= kMaxSizeToUseSmallBufferPool &&
+        memoryTypeIndex ==
+            renderer->getVertexConversionBufferMemoryTypeIndex(vk::MemoryHostVisibility::Visible))
+    {
+        if (!mSmallBufferPool)
+        {
+            const vk::Allocator &allocator = renderer->getAllocator();
+            VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
+
+            VkMemoryPropertyFlags memoryPropertyFlags;
+            allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
+
+            std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
+            pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::BUDDY, usageFlags, 0,
+                                memoryTypeIndex, memoryPropertyFlags);
+            mSmallBufferPool = std::move(pool);
+        }
+        return mSmallBufferPool.get();
+    }
+    else if (!mDefaultBufferPools[memoryTypeIndex])
+    {
+        const vk::Allocator &allocator = renderer->getAllocator();
+        VkBufferUsageFlags usageFlags  = GetDefaultBufferUsageFlags(renderer);
+
+        VkMemoryPropertyFlags memoryPropertyFlags;
+        allocator.getMemoryTypeProperties(memoryTypeIndex, &memoryPropertyFlags);
+
+        std::unique_ptr<vk::BufferPool> pool = std::make_unique<vk::BufferPool>();
+        pool->initWithFlags(renderer, vma::VirtualBlockCreateFlagBits::GENERAL, usageFlags, 0,
+                            memoryTypeIndex, memoryPropertyFlags);
+        mDefaultBufferPools[memoryTypeIndex] = std::move(pool);
+    }
+
+    return mDefaultBufferPools[memoryTypeIndex].get();
 }
 
 void ShareGroupVk::pruneDefaultBufferPools(RendererVk *renderer)
 {
     mLastPruneTime = angle::GetCurrentSystemTime();
 
-    vk::PruneDefaultBufferPools(renderer, mDefaultBufferPools, mSmallBufferPool);
+    for (std::unique_ptr<vk::BufferPool> &pool : mDefaultBufferPools)
+    {
+        if (pool)
+        {
+            pool->pruneEmptyBuffers(renderer);
+        }
+    }
+    if (mSmallBufferPool)
+    {
+        mSmallBufferPool->pruneEmptyBuffers(renderer);
+    }
 }
 
 bool ShareGroupVk::isDueForBufferPoolPrune()
 {
-    return vk::IsDueForBufferPoolPrune(mLastPruneTime);
+    double timeElapsed = angle::GetCurrentSystemTime() - mLastPruneTime;
+    return timeElapsed > kTimeElapsedForPruneDefaultBufferPool;
 }
 }  // namespace rx

@@ -78,7 +78,9 @@ group("angle_restricted_trace_gold_tests") {
   data = [
     "restricted_trace_gold_tests.py",
     "restricted_traces.json",
-    "../skia_gold/",
+    "../py_utils/android_helper.py",
+    "../py_utils/angle_path_util.py",
+    "../py_utils/skia_gold/",
     "//build/skia_gold_common/",
     "//testing/scripts/common.py",
     "//testing/xvfb.py",
