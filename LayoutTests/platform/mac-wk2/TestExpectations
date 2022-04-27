@@ -1743,3 +1743,5 @@ webkit.org/b/239770 [ Debug ] imported/w3c/web-platform-tests/html/semantics/emb
 webkit.org/b/239770 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_progress.html [ Pass Crash ]
 webkit.org/b/239770 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplay.html [ Pass Crash ]
 webkit.org/b/239770 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html [ Pass Crash ]
+
+webkit.org/b/239818 [ Debug ] fast/css/identical-logical-height-decl.html [ Pass ImageOnlyFailure ]
