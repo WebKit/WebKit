@@ -125,10 +125,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (!indexesForAction)
             return null;
 
-        if (Array.isArray(indexesForAction) && !indexesForAction.includes(index))
-            return null;
-
-        if (typeof indexesForAction === "object") {
+        if (Array.isArray(indexesForAction)) {
+            if (!indexesForAction.includes(index))
+                return null;
+        } else if (typeof indexesForAction === "object") {
             let indexesForActionVariant = indexesForAction[count];
             if (!indexesForActionVariant)
                 return null;
