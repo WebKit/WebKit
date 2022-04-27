@@ -377,6 +377,9 @@ public:
     // Saturated truncation.
     PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type returnType, Type operandType);
 
+    // GC
+    PartialResult WARN_UNUSED_RETURN addRttCanon(uint32_t typeIndex, ExpressionType& result);
+
     // Basic operators
     template<OpType>
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
@@ -525,6 +528,7 @@ private:
             return gFuncref();
         case TypeKind::Ref:
         case TypeKind::RefNull:
+        case TypeKind::Rtt:
             return gRef(type);
         case TypeKind::Externref:
             return gExternref();
@@ -1059,6 +1063,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         case TypeKind::Funcref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
+        case TypeKind::Rtt:
             append(Move, arg, m_locals[i]);
             break;
         case TypeKind::F32:
@@ -2990,6 +2995,14 @@ auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, Expressio
     inBoundsCase->setSuccessors(continuation);
 
     m_currentBlock = continuation;
+
+    return { };
+}
+
+auto AirIRGenerator::addRttCanon(uint32_t typeIndex, ExpressionType& result) -> PartialResult
+{
+    result = tmpForType(Types::I32);
+    emitCCall(&operationWasmRttCanon, result, instanceValue(), addConstant(Types::I32, typeIndex));
 
     return { };
 }

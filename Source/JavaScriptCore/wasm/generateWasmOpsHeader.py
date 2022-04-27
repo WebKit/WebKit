@@ -126,7 +126,7 @@ def atomicBinaryRMWMacroizer():
 
 
 defines = ["#define FOR_EACH_WASM_SPECIAL_OP(macro)"]
-defines.extend([op for op in opcodeMacroizer(lambda op: not (isUnary(op) or isBinary(op) or op["category"] == "control" or op["category"] == "memory" or op["value"] == 0xfc or isAtomic(op)))])
+defines.extend([op for op in opcodeMacroizer(lambda op: not (isUnary(op) or isBinary(op) or op["category"] == "control" or op["category"] == "memory" or op["value"] == 0xfc or op["category"] == "gc" or isAtomic(op)))])
 defines.append("\n\n#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: op["category"] == "control")])
 defines.append("\n\n#define FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)")
@@ -153,6 +153,8 @@ defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(macro)")
 defines.extend([op for op in atomicBinaryRMWMacroizer()])
 defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: isAtomic(op) and (not isAtomicLoad(op) and not isAtomicStore(op) and not isAtomicBinaryRMW(op)), opcodeField="extendedOp")])
+defines.append("\n\n#define FOR_EACH_WASM_GC_OP(macro)")
+defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "gc"), opcodeField="extendedOp")])
 defines.append("\n\n")
 
 defines = "".join(defines)
@@ -334,6 +336,7 @@ inline TypeKind linearizedToType(int i)
     FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
     FOR_EACH_WASM_MEMORY_STORE_OP(macro) \\
     macro(Ext1,  0xFC, Oops, 0) \\
+    macro(GCPrefix,  0xFB, Oops, 0) \\
     macro(ExtAtomic, 0xFE, Oops, 0)
 
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
@@ -369,6 +372,10 @@ enum class StoreOpType : uint8_t {
 enum class Ext1OpType : uint8_t {
     FOR_EACH_WASM_TABLE_OP(CREATE_ENUM_VALUE)
     FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_ENUM_VALUE)
+};
+
+enum class GCOpType : uint8_t {
+    FOR_EACH_WASM_GC_OP(CREATE_ENUM_VALUE)
 };
 
 enum class ExtAtomicOpType : uint8_t {

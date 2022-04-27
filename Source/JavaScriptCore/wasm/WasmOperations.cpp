@@ -821,6 +821,12 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance* instan
     return JSValue::encode(value);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmRttCanon, EncodedJSValue, (Instance*, uint32_t))
+{
+    // FIXME: We don't need real RTT values right now, so let's use jsNull.
+    return JSValue::encode(jsNull());
+}
+
 JSC_DEFINE_JIT_OPERATION(operationGetWasmTableSize, int32_t, (Instance* instance, unsigned tableIndex))
 {
     return instance->table(tableIndex)->length();

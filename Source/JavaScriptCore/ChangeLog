@@ -1,3 +1,52 @@
+2022-04-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-GC] Introduce rtt types
+        https://bugs.webkit.org/show_bug.cgi?id=239493
+
+        Reviewed by Keith Miller.
+        
+        Add a basic support through runtime call for rtt.canon and rtt types.
+        It is a prototype implementation of rtt types needed to move forward
+        with wasm gc proposal (https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md).
+        For example, we don't need to use rtt values for struct.new,
+        but we do need them for the future js api.
+        So, rtt.canon returns jsNull for now, but we can replace it with
+        properly defined values when the spec will be ready.
+
+        * bytecode/BytecodeList.rb:
+        * llint/WebAssembly.asm:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::tmpForType):
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::addRttCanon):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addRttCanon):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::WasmCallingConvention::marshallLocation const):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        (JSC::Wasm::isValidHeapTypeKind):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::callInformationForCallee):
+        (JSC::Wasm::LLIntGenerator::addArguments):
+        (JSC::Wasm::LLIntGenerator::addRttCanon):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmOperations.h:
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/wasm.json:
+
 2022-04-26  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM] Fix warning: cast from ‘char*’ to ‘JSC::Wasm::Type*’ increases required alignment of target type [-Wcast-align]

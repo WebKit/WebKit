@@ -1,3 +1,18 @@
+2022-04-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-GC] Introduce rtt types
+        https://bugs.webkit.org/show_bug.cgi?id=239493
+
+        Reviewed by Keith Miller.
+        
+        Added basic tests for manipulation of rtt types.
+
+        * wasm/gc/rtt.js: Added.
+        (module):
+        (testRttTypes):
+        (testRttCanon):
+        * wasm/wasm.json:
+
 2022-04-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add forceUnlinkedDFG option

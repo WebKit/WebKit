@@ -602,6 +602,7 @@ slowWasmOp(set_global_ref_portable_binding)
 slowWasmOp(memory_atomic_wait32)
 slowWasmOp(memory_atomic_wait64)
 slowWasmOp(memory_atomic_notify)
+slowWasmOp(rtt_canon)
 
 wasmOp(grow_memory, WasmGrowMemory, macro(ctx)
     callWasmSlowPath(_slow_path_wasm_grow_memory)

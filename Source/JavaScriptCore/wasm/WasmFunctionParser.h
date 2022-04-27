@@ -1039,6 +1039,32 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         return { };
     }
 
+    case GCPrefix: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+
+        uint8_t extOp;
+        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse extended GC opcode");
+
+        switch (static_cast<GCOpType>(extOp)) {
+        case GCOpType::RttCanon: {
+            uint32_t typeIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for rtt.canon");
+            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "rtt.canon index ", typeIndex, " is out of bounds");
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addRttCanon(typeIndex, result));
+
+            m_expressionStack.constructAndAppend(Type { TypeKind::Rtt, Nullable::No, static_cast<TypeIndex>(typeIndex) }, result);
+            return { };
+        }
+
+        default:
+            WASM_PARSER_FAIL_IF(true, "invalid extended GC op ", extOp);
+            break;
+        }
+        return { };
+    }
+
     case ExtAtomic: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyThreading(), "wasm-threading is not enabled");
         uint8_t extOp;
@@ -1925,6 +1951,26 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case RefFunc: {
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
+        return { };
+    }
+
+    case GCPrefix: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
+
+        uint8_t extOp;
+        WASM_PARSER_FAIL_IF(!parseUInt8(extOp), "can't parse extended GC opcode");
+
+        switch (static_cast<GCOpType>(extOp)) {
+        case GCOpType::RttCanon: {
+            uint32_t unused;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get type index immediate for rtt.canon in unreachable context");
+            return { };
+        }
+        default:
+            WASM_PARSER_FAIL_IF(true, "invalid extended GC op ", extOp);
+            break;
+        }
+
         return { };
     }
 

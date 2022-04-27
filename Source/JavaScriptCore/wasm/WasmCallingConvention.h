@@ -109,6 +109,7 @@ private:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
+        case TypeKind::Rtt:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:

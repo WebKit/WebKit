@@ -322,6 +322,12 @@ WASM_SLOW_PATH_DECL(ref_func)
     WASM_RETURN(Wasm::operationWasmRefFunc(instance, instruction.m_functionIndex));
 }
 
+WASM_SLOW_PATH_DECL(rtt_canon)
+{
+    auto instruction = pc->as<WasmRttCanon>();
+    WASM_RETURN(Wasm::operationWasmRttCanon(instance, instruction.m_typeIndex));
+}
+
 WASM_SLOW_PATH_DECL(table_get)
 {
     auto instruction = pc->as<WasmTableGet>();

@@ -89,6 +89,7 @@ WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_notify);
 WASM_SLOW_PATH_HIDDEN_DECL(throw);
 WASM_SLOW_PATH_HIDDEN_DECL(rethrow);
 WASM_SLOW_PATH_HIDDEN_DECL(retrieve_and_clear_exception);
+WASM_SLOW_PATH_HIDDEN_DECL(rtt_canon);
 
 extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame*, const WasmInstruction*, Wasm::Instance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" SlowPathReturnType slow_path_wasm_popcount(const WasmInstruction* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
