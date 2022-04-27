@@ -35,6 +35,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
+#import "TestInputDelegate.h"
 #import "UIKitSPI.h"
 #endif
 
@@ -608,6 +609,40 @@ TEST(WebKit, ScrollToFoundRangeWithExistingSelection)
 
     TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
     EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 664)));
+}
+
+TEST(WebKit, ScrollToFoundRangeDoesNotFocusElement)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><input id='input'><div id='editor' contenteditable><p>Top</p><p style='margin-top: 800px'>Bottom</p></div>"];
+
+    auto scrollViewDelegate = adoptNS([[TestScrollViewDelegate alloc] init]);
+    [webView scrollView].delegate = scrollViewDelegate.get();
+
+    bool inputFocused = false;
+
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&inputFocused] (WKWebView *, id<_WKFocusedElementInfo> focusedElementInfo) -> _WKFocusStartsInputSessionPolicy {
+        switch (focusedElementInfo.type) {
+        case WKInputTypeText:
+            inputFocused = true;
+            break;
+        default:
+            ADD_FAILURE() << "Unexpected focus change.";
+            break;
+        }
+
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView evaluateJavaScript:@"document.getElementById('input').focus()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&inputFocused);
+
+    auto ranges = textRangesForQueryString(webView.get(), @"Bottom");
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+
+    TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
 }
 
 #endif // HAVE(UIFINDINTERACTION)

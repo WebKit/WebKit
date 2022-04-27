@@ -1,3 +1,21 @@
+2022-04-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Focus changes unexpectedly when scrolling to a found text range
+        https://bugs.webkit.org/show_bug.cgi?id=239793
+        rdar://90996437
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/WebFoundTextRangeController.cpp:
+        (WebKit::WebFoundTextRangeController::scrollTextRangeToVisible):
+
+        Specify `DoNotSetFocus` in the `TemporarySelectionOption`s to avoid
+        unnecessary focus changes when scrolling to a found text range.
+
+        Focus changes can cause the web view to regain first responder status
+        while searching for text, which will dismiss the find panel and end
+        the search session.
+
 2022-04-27  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] The function getpwnam can sometimes fail

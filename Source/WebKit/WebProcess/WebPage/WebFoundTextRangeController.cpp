@@ -154,7 +154,7 @@ void WebFoundTextRangeController::scrollTextRangeToVisible(const WebFoundTextRan
         return;
 
     WebCore::VisibleSelection visibleSelection(*simpleRange);
-    OptionSet temporarySelectionOptions { WebCore::TemporarySelectionOption::DelegateMainFrameScroll, WebCore::TemporarySelectionOption::RevealSelectionBounds };
+    OptionSet temporarySelectionOptions { WebCore::TemporarySelectionOption::DelegateMainFrameScroll, WebCore::TemporarySelectionOption::RevealSelectionBounds, WebCore::TemporarySelectionOption::DoNotSetFocus };
 
     if (document->isTopDocument())
         temporarySelectionOptions.add(WebCore::TemporarySelectionOption::SmoothScroll);
