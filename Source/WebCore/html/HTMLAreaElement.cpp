@@ -250,7 +250,7 @@ bool HTMLAreaElement::supportsFocus() const
     return isLink();
 }
 
-String HTMLAreaElement::target() const
+AtomString HTMLAreaElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }

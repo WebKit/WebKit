@@ -104,7 +104,7 @@ public:
     WEBCORE_EXPORT URL url() const;
     WEBCORE_EXPORT URL originalURL() const;
     WEBCORE_EXPORT const String& referrer() const;
-    WEBCORE_EXPORT const String& target() const;
+    WEBCORE_EXPORT const AtomString& target() const;
     WEBCORE_EXPORT bool isTargetItem() const;
     
     WEBCORE_EXPORT FormData* formData();
@@ -133,7 +133,7 @@ public:
     WEBCORE_EXPORT void setURLString(const String&);
     WEBCORE_EXPORT void setOriginalURLString(const String&);
     WEBCORE_EXPORT void setReferrer(const String&);
-    WEBCORE_EXPORT void setTarget(const String&);
+    WEBCORE_EXPORT void setTarget(const AtomString&);
     WEBCORE_EXPORT void setTitle(const String&);
     WEBCORE_EXPORT void setIsTargetItem(bool);
     
@@ -154,7 +154,7 @@ public:
 
     WEBCORE_EXPORT void addChildItem(Ref<HistoryItem>&&);
     void setChildItem(Ref<HistoryItem>&&);
-    WEBCORE_EXPORT HistoryItem* childItemWithTarget(const String&);
+    WEBCORE_EXPORT HistoryItem* childItemWithTarget(const AtomString&);
     HistoryItem* childItemWithDocumentSequenceNumber(long long number);
     WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& children() const;
     WEBCORE_EXPORT bool hasChildren() const;
@@ -231,7 +231,7 @@ private:
     String m_urlString;
     String m_originalURLString;
     String m_referrer;
-    String m_target;
+    AtomString m_target;
     String m_title;
     String m_displayTitle;
     

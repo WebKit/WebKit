@@ -34,7 +34,7 @@ AtomString CustomXPathNSResolver::lookupNamespaceURI(const AtomString& prefix)
     if (result.type() != CallbackResultType::Success)
         return nullAtom();
 
-    return result.releaseReturnValue();
+    return AtomString { result.releaseReturnValue() };
 }
 
 } // namespace WebCore

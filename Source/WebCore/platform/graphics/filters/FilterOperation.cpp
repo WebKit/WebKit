@@ -48,10 +48,10 @@ bool DefaultFilterOperation::operator==(const FilterOperation& operation) const
     return representedType() == downcast<DefaultFilterOperation>(operation).representedType();
 }
 
-ReferenceFilterOperation::ReferenceFilterOperation(const String& url, const String& fragment)
+ReferenceFilterOperation::ReferenceFilterOperation(const String& url, AtomString&& fragment)
     : FilterOperation(REFERENCE)
     , m_url(url)
-    , m_fragment(fragment)
+    , m_fragment(WTFMove(fragment))
 {
 }
 

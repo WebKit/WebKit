@@ -45,7 +45,7 @@ Ref<WebCore::RealtimeMediaSource> SpeechRecognitionRemoteRealtimeMediaSource::cr
 }
 
 SpeechRecognitionRemoteRealtimeMediaSource::SpeechRecognitionRemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier identifier, SpeechRecognitionRemoteRealtimeMediaSourceManager& manager, const WebCore::CaptureDevice& captureDevice, WebCore::PageIdentifier pageIdentifier)
-: WebCore::RealtimeMediaSource(WebCore::RealtimeMediaSource::Type::Audio, String { captureDevice.label() }, String { captureDevice.persistentId() }, { }, pageIdentifier)
+: WebCore::RealtimeMediaSource(WebCore::RealtimeMediaSource::Type::Audio, AtomString { captureDevice.label() }, String { captureDevice.persistentId() }, { }, pageIdentifier)
     , m_identifier(identifier)
     , m_manager(manager)
 #if PLATFORM(COCOA)

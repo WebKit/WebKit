@@ -50,7 +50,7 @@ enum class PluginLoadClientPolicy : uint8_t {
 };
 
 struct MimeClassInfo {
-    String type;
+    AtomString type;
     String desc;
     Vector<String> extensions;
 };

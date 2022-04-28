@@ -28,7 +28,7 @@
     JSCustomMarkFunction,
     Exposed=Window
 ] interface PopStateEvent : Event {
-    constructor(DOMString type, optional PopStateEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional PopStateEventInit eventInitDict);
 
     [CachedAttribute, CustomGetter] readonly attribute any state;
 };

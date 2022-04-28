@@ -56,7 +56,7 @@ private:
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
 
     WeakPtr<PaintWorkletGlobalScope::PaintDefinition> m_paintDefinition;
-    Vector<String> m_inputProperties;
+    Vector<AtomString> m_inputProperties;
     WeakPtr<RenderElement> m_element;
     Vector<String> m_arguments;
 };

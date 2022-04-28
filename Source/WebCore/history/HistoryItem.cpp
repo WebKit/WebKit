@@ -122,7 +122,7 @@ void HistoryItem::reset()
     m_urlString = String();
     m_originalURLString = String();
     m_referrer = String();
-    m_target = String();
+    m_target = nullAtom();
     m_title = String();
     m_displayTitle = String();
 
@@ -198,7 +198,7 @@ const String& HistoryItem::referrer() const
     return m_referrer;
 }
 
-const String& HistoryItem::target() const
+const AtomString& HistoryItem::target() const
 {
     return m_target;
 }
@@ -240,7 +240,7 @@ void HistoryItem::setTitle(const String& title)
     notifyChanged();
 }
 
-void HistoryItem::setTarget(const String& target)
+void HistoryItem::setTarget(const AtomString& target)
 {
     m_target = target;
     notifyChanged();
@@ -343,7 +343,7 @@ void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
     m_children.append(WTFMove(child));
 }
 
-HistoryItem* HistoryItem::childItemWithTarget(const String& target)
+HistoryItem* HistoryItem::childItemWithTarget(const AtomString& target)
 {
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i) {

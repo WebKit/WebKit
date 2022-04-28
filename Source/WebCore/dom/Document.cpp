@@ -1513,7 +1513,7 @@ void Document::setCharset(const String& charset)
     decoder()->setEncoding(charset, TextResourceDecoder::UserChosenEncoding);
 }
 
-void Document::setContentLanguage(const String& language)
+void Document::setContentLanguage(const AtomString& language)
 {
     if (m_contentLanguage == language)
         return;
@@ -3817,7 +3817,7 @@ void Document::setHasElementUsingStyleBasedEditability()
     m_hasElementUsingStyleBasedEditability = true;
 }
 
-void Document::processMetaHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead)
+void Document::processMetaHttpEquiv(const String& equiv, const AtomString& content, bool isInDocumentHead)
 {
     ASSERT(!equiv.isNull());
     ASSERT(!content.isNull());

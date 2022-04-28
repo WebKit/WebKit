@@ -1144,7 +1144,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     [Conditional=SERVICE_WORKER] PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
 
-    undefined overrideModalContainerSearchTermForTesting(DOMString term);
+    undefined overrideModalContainerSearchTermForTesting([AtomString] DOMString term);
 
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] Promise<sequence<DOMString>> modelInlinePreviewUUIDs();
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] DOMString modelInlinePreviewUUIDForModelElement(HTMLModelElement modelElement);

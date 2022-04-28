@@ -48,7 +48,7 @@ ComputedStylePropertyMapReadOnly::ComputedStylePropertyMapReadOnly(Element& elem
 {
 }
 
-ExceptionOr<RefPtr<CSSStyleValue>> ComputedStylePropertyMapReadOnly::get(const String& property) const
+ExceptionOr<RefPtr<CSSStyleValue>> ComputedStylePropertyMapReadOnly::get(const AtomString& property) const
 {
     // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-get
     if (isCustomPropertyName(property))
@@ -66,7 +66,7 @@ ExceptionOr<RefPtr<CSSStyleValue>> ComputedStylePropertyMapReadOnly::get(const S
     return StylePropertyMapReadOnly::reifyValue(ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, EUpdateLayout::UpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed).get(), m_element->document(), m_element.ptr());
 }
 
-ExceptionOr<Vector<RefPtr<CSSStyleValue>>> ComputedStylePropertyMapReadOnly::getAll(const String& property) const
+ExceptionOr<Vector<RefPtr<CSSStyleValue>>> ComputedStylePropertyMapReadOnly::getAll(const AtomString& property) const
 {
     // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-getall
     if (isCustomPropertyName(property))
@@ -84,7 +84,7 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> ComputedStylePropertyMapReadOnly::get
     return StylePropertyMapReadOnly::reifyValueToVector(ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, EUpdateLayout::UpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed).get(), m_element->document(), m_element.ptr());
 }
 
-ExceptionOr<bool> ComputedStylePropertyMapReadOnly::has(const String& property) const
+ExceptionOr<bool> ComputedStylePropertyMapReadOnly::has(const AtomString& property) const
 {
     // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-has
     auto result = get(property);

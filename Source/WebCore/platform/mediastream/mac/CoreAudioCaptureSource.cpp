@@ -675,18 +675,18 @@ CaptureSourceOrError CoreAudioCaptureSource::create(String&& deviceID, String&& 
     if (!device)
         return { "No CoreAudioCaptureSource device"_s };
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), String { device->label() }, WTFMove(hashSalt), device->deviceID(), nullptr, pageIdentifier));
+    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), AtomString { device->label() }, WTFMove(hashSalt), device->deviceID(), nullptr, pageIdentifier));
 #elif PLATFORM(IOS_FAMILY)
     auto device = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(WTFMove(deviceID));
     if (!device)
         return { "No AVAudioSessionCaptureDevice device"_s };
 
-    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), String { device->label() }, WTFMove(hashSalt), 0, nullptr, pageIdentifier));
+    auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), AtomString { device->label() }, WTFMove(hashSalt), 0, nullptr, pageIdentifier));
 #endif
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
 }
 
-CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, String&& label, String&& hashSalt, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit, PageIdentifier pageIdentifier)
+CaptureSourceOrError CoreAudioCaptureSource::createForTesting(String&& deviceID, AtomString&& label, String&& hashSalt, const MediaConstraints* constraints, BaseAudioSharedUnit& overrideUnit, PageIdentifier pageIdentifier)
 {
     auto source = adoptRef(*new CoreAudioCaptureSource(WTFMove(deviceID), WTFMove(label), WTFMove(hashSalt), 0, &overrideUnit, pageIdentifier));
     return initializeCoreAudioCaptureSource(WTFMove(source), constraints);
@@ -771,7 +771,7 @@ void CoreAudioCaptureSourceFactory::whenAudioCaptureUnitIsNotRunning(Function<vo
     return CoreAudioSharedUnit::unit().whenAudioCaptureUnitIsNotRunning(WTFMove(callback));
 }
 
-CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t captureDeviceID, BaseAudioSharedUnit* overrideUnit, PageIdentifier pageIdentifier)
+CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, AtomString&& label, String&& hashSalt, uint32_t captureDeviceID, BaseAudioSharedUnit* overrideUnit, PageIdentifier pageIdentifier)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(label), WTFMove(deviceID), WTFMove(hashSalt), pageIdentifier)
     , m_captureDeviceID(captureDeviceID)
     , m_overrideUnit(overrideUnit)

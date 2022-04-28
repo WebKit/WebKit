@@ -2812,7 +2812,7 @@ inline static bool isFlexOrGridItem(RenderObject* renderer)
     return box.isFlexItem() || box.isGridItem();
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& propertyName)
+RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& propertyName)
 {
     Element* styledElement = m_element.get();
     if (!styledElement)
@@ -2838,7 +2838,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& prope
     });
 }
 
-String ComputedStyleExtractor::customPropertyText(const String& propertyName)
+String ComputedStyleExtractor::customPropertyText(const AtomString& propertyName)
 {
     RefPtr<CSSValue> propertyValue = customPropertyValue(propertyName);
     return propertyValue ? propertyValue->cssText() : emptyString();

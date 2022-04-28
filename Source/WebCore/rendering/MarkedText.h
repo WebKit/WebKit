@@ -72,7 +72,7 @@ struct MarkedText {
     unsigned endOffset;
     Type type;
     const RenderedDocumentMarker* marker { nullptr };
-    String highlightName { };
+    AtomString highlightName { };
 
     bool isEmpty() const { return endOffset <= startOffset; }
     bool operator!=(const MarkedText& other) const { return !(*this == other); }

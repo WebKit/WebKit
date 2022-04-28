@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(String&& videoTrackId)
+RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer(AtomString&& videoTrackId)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(videoTrackId))
     , RealtimeIncomingSourceGStreamer()
 {

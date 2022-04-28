@@ -53,9 +53,9 @@ public:
     Iterator createIterator() { return Iterator(*this); }
 
     virtual ~StylePropertyMapReadOnly() = default;
-    virtual ExceptionOr<RefPtr<CSSStyleValue>> get(const String& property) const = 0;
-    virtual ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const String&) const = 0;
-    virtual ExceptionOr<bool> has(const String&) const = 0;
+    virtual ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString& property) const = 0;
+    virtual ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const = 0;
+    virtual ExceptionOr<bool> has(const AtomString&) const = 0;
     virtual unsigned size() const = 0;
 
     static RefPtr<CSSStyleValue> reifyValue(CSSValue*, Document&, Element* = nullptr);

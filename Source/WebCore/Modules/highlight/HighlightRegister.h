@@ -42,9 +42,9 @@ public:
     static Ref<HighlightRegister> create() { return adoptRef(*new HighlightRegister); }
 
     void initializeMapLike(DOMMapAdapter&);
-    void setFromMapLike(String&&, Ref<Highlight>&&);
+    void setFromMapLike(AtomString&&, Ref<Highlight>&&);
     void clear();
-    bool remove(const String&);
+    bool remove(const AtomString&);
     
 
     HighlightVisibility highlightsVisibility() const { return m_highlightVisibility; }
@@ -53,11 +53,11 @@ public:
 #endif
     
     WEBCORE_EXPORT void addAnnotationHighlightWithRange(Ref<StaticRange>&&);
-    const HashMap<String, Ref<Highlight>>& map() const { return m_map; }
+    const HashMap<AtomString, Ref<Highlight>>& map() const { return m_map; }
     
 private:
     HighlightRegister() = default;
-    HashMap<String, Ref<Highlight>> m_map;
+    HashMap<AtomString, Ref<Highlight>> m_map;
 
     HighlightVisibility m_highlightVisibility { HighlightVisibility::Hidden };
 };

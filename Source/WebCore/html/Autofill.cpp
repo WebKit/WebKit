@@ -144,7 +144,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 29. If form is not null and form's autocomplete attribute is in the off state, then let the element's autofill field name be "off". Otherwise, let the element's autofill field name be "on".
     auto defaultLabel = [&] () -> AutofillData {
         if (element.autofillMantle() == AutofillMantle::Anchor)
-            return { emptyString(), emptyString() };
+            return { emptyAtom(), emptyString() };
         
         auto form = element.form();
         if (form && form->autocomplete() == offAtom())
@@ -276,7 +276,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 17. If the first eight characters of the indexth token in tokens are not an ASCII case-insensitive
     // match for the string "section-", then jump to the step labeled default.
     const auto& sectionToken = tokens[index];
-    if (!startsWithLettersIgnoringASCIICase(StringView(sectionToken), "section-"_s))
+    if (!startsWithLettersIgnoringASCIICase(sectionToken, "section-"_s))
         return defaultLabel();
 
     // 18. Let section be the indexth token in tokens, converted to ASCII lowercase.

@@ -54,7 +54,7 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool supportsFocus() const final;
-    String target() const final;
+    AtomString target() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isMouseFocusable() const final;
     bool isFocusable() const final;

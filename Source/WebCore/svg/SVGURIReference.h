@@ -36,11 +36,11 @@ public:
 
     void parseAttribute(const QualifiedName&, const AtomString&);
 
-    static String fragmentIdentifierFromIRIString(const String&, const Document&);
+    static AtomString fragmentIdentifierFromIRIString(const String&, const Document&);
 
     struct TargetElementResult {
         RefPtr<Element> element;
-        String identifier;
+        AtomString identifier;
     };
     static TargetElementResult targetElementFromIRIString(const String&, const TreeScope&, RefPtr<Document> externalDocument = nullptr);
 

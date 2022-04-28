@@ -74,7 +74,7 @@ MockTrackBox::MockTrackBox(ArrayBuffer* data)
     auto array = JSC::Int8Array::create(data, 12, 4);
     for (int i = 0; i < 4; ++i)
         builder.append(static_cast<char>(array->item(i)));
-    m_codec = builder.toString();
+    m_codec = builder.toAtomString();
 
     m_kind = static_cast<TrackKind>(view->get<uint8_t>(16, true));
 }

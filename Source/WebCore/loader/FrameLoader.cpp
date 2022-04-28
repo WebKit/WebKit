@@ -426,7 +426,7 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, PolicyChe
     client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), identifier, activeDocumentLoader()->downloadAttribute(), WTFMove(function));
 }
 
-void FrameLoader::changeLocation(const URL& url, const String& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
+void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
     auto* frame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
@@ -715,12 +715,12 @@ void FrameLoader::setOutgoingReferrer(const URL& url)
     m_outgoingReferrer = url.strippedForUseAsReferrer();
 }
 
-static String extractContentLanguageFromHeader(const String& header)
+static AtomString extractContentLanguageFromHeader(const String& header)
 {
     auto commaIndex = header.find(',');
     if (commaIndex == notFound)
-        return stripLeadingAndTrailingHTMLSpaces(header);
-    return StringView(header).left(commaIndex).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString();
+        return AtomString { stripLeadingAndTrailingHTMLSpaces(header) };
+    return StringView(header).left(commaIndex).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toAtomString();
 }
 
 void FrameLoader::didBeginDocument(bool dispatch)
@@ -765,9 +765,9 @@ void FrameLoader::didBeginDocument(bool dispatch)
 
         String headerContentLanguage = m_documentLoader->response().httpHeaderField(HTTPHeaderName::ContentLanguage);
         if (!headerContentLanguage.isEmpty()) {
-            headerContentLanguage = extractContentLanguageFromHeader(headerContentLanguage);
-            if (!headerContentLanguage.isEmpty())
-                m_frame.document()->setContentLanguage(headerContentLanguage);
+            auto contentLanguage = extractContentLanguageFromHeader(headerContentLanguage);
+            if (!contentLanguage.isEmpty())
+                m_frame.document()->setContentLanguage(WTFMove(contentLanguage));
         }
 
         // https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object (Step 7)
@@ -1339,7 +1339,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     Ref<Frame> protect(m_frame);
 
     // Anchor target is ignored when the download attribute is set since it will download the hyperlink rather than follow it.
-    String effectiveFrameName = frameLoadRequest.downloadAttribute().isNull() ? frameLoadRequest.frameName() : String();
+    auto effectiveFrameName = frameLoadRequest.downloadAttribute().isNull() ? frameLoadRequest.frameName() : nullAtom();
     bool isFormSubmission = formState;
 
     // The search for a target frame is done earlier in the case of form submission.
@@ -3056,7 +3056,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadPostRequest: frame load started");
 
-    String frameName = request.frameName();
+    auto frameName = request.frameName();
     LockHistory lockHistory = request.lockHistory();
     AllowNavigationToInvalidURL allowNavigationToInvalidURL = request.allowNavigationToInvalidURL();
     NewFrameOpenerPolicy openerPolicy = request.newFrameOpenerPolicy();
@@ -3571,7 +3571,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
 }
 
 void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& request,
-    FormState* formState, const String& frameName, const NavigationAction& action, ShouldContinuePolicyCheck shouldContinue, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy openerPolicy)
+    FormState* formState, const AtomString& frameName, const NavigationAction& action, ShouldContinuePolicyCheck shouldContinue, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy openerPolicy)
 {
     if (shouldContinue != ShouldContinuePolicyCheck::Yes)
         return;

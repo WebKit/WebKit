@@ -36,7 +36,7 @@
     EnabledBySetting=PictureInPictureAPIEnabled,
     Exposed=Window
 ] interface PictureInPictureEvent : Event {
-    constructor(DOMString type, PictureInPictureEventInit eventInitDict);
+    constructor([AtomString] DOMString type, PictureInPictureEventInit eventInitDict);
 
     [SameObject] readonly attribute PictureInPictureWindow pictureInPictureWindow;
 };

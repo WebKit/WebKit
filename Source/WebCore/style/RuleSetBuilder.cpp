@@ -35,6 +35,7 @@
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 namespace Style {
@@ -224,7 +225,7 @@ void RuleSetBuilder::pushCascadeLayer(const CascadeLayerName& name)
         if (name.isEmpty()) {
             // Make unique name for an anonymous layer.
             unsigned long long random = randomNumber() * std::numeric_limits<unsigned long long>::max();
-            return CascadeLayerName { "anon_"_s + String::number(random) };
+            return CascadeLayerName { makeAtomString("anon_"_s, random) };
         }
         return name;
     };

@@ -772,7 +772,7 @@ inline void BuilderCustom::applyValueListStyleType(BuilderState& builderState, C
         return;
     }
     builderState.style().setListStyleType(ListStyleType::String);
-    builderState.style().setListStyleStringValue(primitiveValue.stringValue());
+    builderState.style().setListStyleStringValue(AtomString { primitiveValue.stringValue() });
 }
 
 inline void BuilderCustom::applyInheritOutlineStyle(BuilderState& builderState)
@@ -878,7 +878,7 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
     if (primitiveValue.valueID() == CSSValueAuto)
         fontDescription.setSpecifiedLocale(nullAtom());
     else
-        fontDescription.setSpecifiedLocale(primitiveValue.stringValue());
+        fontDescription.setSpecifiedLocale(AtomString { primitiveValue.stringValue() });
     builderState.setFontDescription(WTFMove(fontDescription));
 }
 
@@ -1050,12 +1050,12 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
         bool isGenericFamily = false;
         if (contentValue.isFontFamily()) {
             const CSSFontFamily& fontFamily = contentValue.fontFamily();
-            family = fontFamily.familyName;
+            family = AtomString { fontFamily.familyName };
             // If the family name was resolved by the CSS parser from a system font ID, then it is generic.
             isGenericFamily = fontFamily.fromSystemFontID;
         } else {
             if (contentValue.valueID() == CSSValueWebkitBody)
-                family = builderState.document().settings().standardFontFamily();
+                family = AtomString { builderState.document().settings().standardFontFamily() };
             else {
                 isGenericFamily = true;
                 family = CSSPropertyParserHelpers::genericFontFamily(contentValue.valueID());
@@ -1332,7 +1332,7 @@ inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderStat
     if (primitiveValue.isString()) {
         builderState.style().setTextEmphasisFill(TextEmphasisFill::Filled);
         builderState.style().setTextEmphasisMark(TextEmphasisMark::Custom);
-        builderState.style().setTextEmphasisCustomMark(primitiveValue.stringValue());
+        builderState.style().setTextEmphasisCustomMark(AtomString { primitiveValue.stringValue() });
         return;
     }
 
@@ -1381,7 +1381,7 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
 
     for (auto& item : downcast<CSSValueList>(value)) {
         Pair* pair = downcast<CSSPrimitiveValue>(item.get()).pairValue();
-        AtomString identifier = pair->first()->stringValue();
+        AtomString identifier { pair->first()->stringValue() };
         int value = pair->second()->intValue();
         auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
@@ -1985,7 +1985,7 @@ void BuilderCustom::applyValueAlt(BuilderState& builderState, CSSValue& value)
         else
             const_cast<RenderStyle&>(builderState.parentStyle()).setUnique();
 
-        QualifiedName attr(nullAtom(), primitiveValue.stringValue(), nullAtom());
+        QualifiedName attr(nullAtom(), AtomString { primitiveValue.stringValue() }, nullAtom());
         const AtomString& value = builderState.element() ? builderState.element()->getAttribute(attr) : nullAtom();
         builderState.style().setContentAltText(value.isNull() ? emptyAtom() : value);
 

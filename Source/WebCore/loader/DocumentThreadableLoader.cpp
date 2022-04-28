@@ -581,7 +581,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
 
         request.setAllowCookies(m_options.storedCredentialsPolicy == StoredCredentialsPolicy::Use);
         CachedResourceRequest newRequest(WTFMove(request), options);
-        newRequest.setInitiator(m_options.initiator);
+        newRequest.setInitiator(AtomString { m_options.initiator });
         newRequest.setOrigin(securityOrigin());
 
         ASSERT(!m_resource);

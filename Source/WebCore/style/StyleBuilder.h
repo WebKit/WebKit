@@ -43,7 +43,7 @@ public:
     void applyNonHighPriorityProperties();
 
     void applyProperty(CSSPropertyID propertyID) { applyProperties(propertyID, propertyID); }
-    void applyCustomProperty(const String& name);
+    void applyCustomProperty(const AtomString& name);
 
     BuilderState& state() { return m_state; }
 

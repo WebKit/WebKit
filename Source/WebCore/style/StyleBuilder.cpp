@@ -167,7 +167,7 @@ void Builder::applyCustomProperties()
         applyCustomProperty(name);
 }
 
-void Builder::applyCustomProperty(const String& name)
+void Builder::applyCustomProperty(const AtomString& name)
 {
     if (m_state.m_appliedCustomProperties.contains(name) || !m_cascade.customProperties().contains(name))
         return;

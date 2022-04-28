@@ -93,14 +93,14 @@ public:
     WEBCORE_EXPORT const URL& url() const;
     WEBCORE_EXPORT void setURL(const URL&);
 
-    WEBCORE_EXPORT const String& mimeType() const;
-    WEBCORE_EXPORT void setMimeType(const String& mimeType);
+    WEBCORE_EXPORT const AtomString& mimeType() const;
+    WEBCORE_EXPORT void setMimeType(const AtomString&);
 
     WEBCORE_EXPORT long long expectedContentLength() const;
     WEBCORE_EXPORT void setExpectedContentLength(long long expectedContentLength);
 
-    WEBCORE_EXPORT const String& textEncodingName() const;
-    WEBCORE_EXPORT void setTextEncodingName(String&&);
+    WEBCORE_EXPORT const AtomString& textEncodingName() const;
+    WEBCORE_EXPORT void setTextEncodingName(AtomString&&);
 
     WEBCORE_EXPORT int httpStatusCode() const;
     WEBCORE_EXPORT void setHTTPStatusCode(int);
@@ -109,8 +109,8 @@ public:
     WEBCORE_EXPORT const AtomString& httpStatusText() const;
     WEBCORE_EXPORT void setHTTPStatusText(const AtomString&);
 
-    WEBCORE_EXPORT const String& httpVersion() const;
-    WEBCORE_EXPORT void setHTTPVersion(const String&);
+    WEBCORE_EXPORT const AtomString& httpVersion() const;
+    WEBCORE_EXPORT void setHTTPVersion(const AtomString&);
     WEBCORE_EXPORT bool isHTTP09() const;
 
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;

@@ -87,7 +87,7 @@ static bool resolveVariableReference(CSSParserTokenRange range, CSSValueID funct
 
     range.consumeWhitespace();
     ASSERT(range.peek().type() == IdentToken);
-    String variableName = range.consumeIncludingWhitespace().value().toString();
+    auto variableName = range.consumeIncludingWhitespace().value().toAtomString();
     ASSERT(range.atEnd() || (range.peek().type() == CommaToken));
 
     // Apply this variable first, in case it is still unresolved

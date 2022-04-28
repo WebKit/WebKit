@@ -1307,7 +1307,7 @@ public:
     RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
 #endif
 
-    void overrideModalContainerSearchTermForTesting(const String& term);
+    void overrideModalContainerSearchTermForTesting(AtomString&& term);
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     using ModelInlinePreviewUUIDsPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;

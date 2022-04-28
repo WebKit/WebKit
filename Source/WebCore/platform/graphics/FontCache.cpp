@@ -223,9 +223,9 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
     // Leading "@" in the font name enables Windows vertical flow flag for the font.
     // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
     // IE disregards "@" regardless of the orientation, so we follow the behavior.
-    const String& familyName = passedFamilyName.substring(passedFamilyName[0] == '@' ? 1 : 0);
+    auto familyName = StringView(passedFamilyName).substring(passedFamilyName[0] == '@' ? 1 : 0).toAtomString();
 #else
-    const String& familyName = passedFamilyName;
+    const AtomString& familyName { passedFamilyName };
 #endif
 
     static std::once_flag onceFlag;

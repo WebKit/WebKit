@@ -38,7 +38,7 @@ void HighlightRegister::initializeMapLike(DOMMapAdapter& map)
         map.set<IDLDOMString, IDLInterface<Highlight>>(keyValue.key, keyValue.value);
 }
 
-void HighlightRegister::setFromMapLike(String&& key, Ref<Highlight>&& value)
+void HighlightRegister::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
 {
     m_map.set(WTFMove(key), WTFMove(value));
 }
@@ -48,7 +48,7 @@ void HighlightRegister::clear()
     m_map.clear();
 }
 
-bool HighlightRegister::remove(const String& key)
+bool HighlightRegister::remove(const AtomString& key)
 {
     return m_map.remove(key);
 }

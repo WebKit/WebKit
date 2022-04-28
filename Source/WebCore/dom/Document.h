@@ -473,8 +473,8 @@ public:
     void overrideMIMEType(const String&);
     WEBCORE_EXPORT String contentType() const;
 
-    String contentLanguage() const { return m_contentLanguage; }
-    void setContentLanguage(const String&);
+    const AtomString& contentLanguage() const { return m_contentLanguage; }
+    void setContentLanguage(const AtomString&);
 
     String xmlEncoding() const { return m_xmlEncoding; }
     String xmlVersion() const { return m_xmlVersion; }
@@ -716,7 +716,7 @@ public:
     void setBaseURLOverride(const URL&);
     const URL& baseURLOverride() const { return m_baseURLOverride; }
     const URL& baseElementURL() const { return m_baseElementURL; }
-    const String& baseTarget() const { return m_baseTarget; }
+    const AtomString& baseTarget() const { return m_baseTarget; }
     void processBaseElement();
 
     WEBCORE_EXPORT URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
@@ -927,7 +927,7 @@ public:
     // when a meta tag is encountered during document parsing, and also when a script dynamically changes or adds a meta
     // tag. This enables scripts to use meta tags to perform refreshes and set expiry dates in addition to them being
     // specified in an HTML file.
-    void processMetaHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead);
+    void processMetaHttpEquiv(const String& equiv, const AtomString& content, bool isInDocumentHead);
 
 #if PLATFORM(IOS_FAMILY)
     void processFormatDetection(const String&);
@@ -1839,7 +1839,7 @@ private:
     // This property is read-only from JavaScript, but writable from Objective C.
     String m_documentURI;
 
-    String m_baseTarget;
+    AtomString m_baseTarget;
 
     // MIME type of the document in case it was cloned or created by XHR.
     String m_overriddenMIMEType;
@@ -1917,7 +1917,7 @@ private:
     StandaloneStatus m_xmlStandalone { StandaloneStatus::Unspecified };
     bool m_hasXMLDeclaration { false };
 
-    String m_contentLanguage;
+    AtomString m_contentLanguage;
 
     RefPtr<TextResourceDecoder> m_decoder;
 

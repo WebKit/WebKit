@@ -28,7 +28,7 @@
     Conditional=SPEECH_SYNTHESIS,
     Exposed=Window
 ] interface SpeechSynthesisErrorEvent : SpeechSynthesisEvent {
-    constructor(DOMString type, SpeechSynthesisErrorEventInit eventInitDict);
+    constructor([AtomString] DOMString type, SpeechSynthesisErrorEventInit eventInitDict);
 
     readonly attribute SpeechSynthesisErrorCode error;
 };

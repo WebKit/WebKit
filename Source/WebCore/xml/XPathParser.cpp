@@ -429,7 +429,7 @@ int Parser::lex(YYSTYPE& yylval)
     return token.type;
 }
 
-bool Parser::expandQualifiedName(const String& qualifiedName, String& localName, AtomString& namespaceURI)
+bool Parser::expandQualifiedName(const String& qualifiedName, AtomString& localName, AtomString& namespaceURI)
 {
     size_t colon = qualifiedName.find(':');
     if (colon != notFound) {
@@ -442,9 +442,9 @@ bool Parser::expandQualifiedName(const String& qualifiedName, String& localName,
             m_sawNamespaceError = true;
             return false;
         }
-        localName = qualifiedName.substring(colon + 1);
+        localName = StringView(qualifiedName).substring(colon + 1).toAtomString();
     } else
-        localName = qualifiedName;
+        localName = AtomString { qualifiedName };
     return true;
 }
 

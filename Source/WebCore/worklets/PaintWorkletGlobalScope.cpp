@@ -61,7 +61,7 @@ double PaintWorkletGlobalScope::devicePixelRatio() const
     return responsibleDocument()->domWindow()->devicePixelRatio();
 }
 
-PaintWorkletGlobalScope::PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<String>&& inputProperties, Vector<String>&& inputArguments)
+PaintWorkletGlobalScope::PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments)
     : name(name)
     , paintConstructor(paintConstructor)
     , paintCallback(WTFMove(paintCallback))
@@ -71,7 +71,7 @@ PaintWorkletGlobalScope::PaintDefinition::PaintDefinition(const AtomString& name
 }
 
 // https://drafts.css-houdini.org/css-paint-api/#registering-custom-paint
-ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& globalObject, const String& name, Strong<JSObject> paintConstructor)
+ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& globalObject, const AtomString& name, Strong<JSObject> paintConstructor)
 {
     auto& vm = paintConstructor->vm();
     JSC::JSLockHolder lock(vm);
@@ -90,13 +90,13 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
         if (paintDefinitionMap().contains(name))
             return Exception { InvalidModificationError, "This name has already been registered"_s };
 
-        Vector<String> inputProperties;
+        Vector<AtomString> inputProperties;
 
         JSValue inputPropertiesIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputProperties"_s));
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         if (!inputPropertiesIterableValue.isUndefined())
-            inputProperties = convert<IDLSequence<IDLDOMString>>(globalObject, inputPropertiesIterableValue);
+            inputProperties = convert<IDLSequence<IDLAtomStringAdaptor<IDLDOMString>>>(globalObject, inputPropertiesIterableValue);
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
         // FIXME: Validate input properties here (step 7).

@@ -6774,10 +6774,10 @@ RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoin
 }
 #endif
 
-void Internals::overrideModalContainerSearchTermForTesting(const String& term)
+void Internals::overrideModalContainerSearchTermForTesting(AtomString&& term)
 {
     if (auto observer = contextDocument()->modalContainerObserver())
-        observer->overrideSearchTermForTesting(term);
+        observer->overrideSearchTermForTesting(WTFMove(term));
 }
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)

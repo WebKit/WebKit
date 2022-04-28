@@ -525,7 +525,7 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     parameters.required = element.isRequired();
 
     if (!document.settings().langAttributeAwareFormControlUIEnabled())
-        parameters.locale = defaultLanguage();
+        parameters.locale = AtomString { defaultLanguage() };
     else {
         AtomString computedLocale = element.computeInheritedLanguage();
         parameters.locale = computedLocale.isEmpty() ? AtomString(defaultLanguage()) : computedLocale;

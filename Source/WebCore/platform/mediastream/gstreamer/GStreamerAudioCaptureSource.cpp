@@ -96,15 +96,8 @@ AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
 }
 
 GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice device, String&& hashSalt)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, AtomString { device.persistentId() }, String { device.label() }, WTFMove(hashSalt))
     , m_capturer(makeUnique<GStreamerAudioCapturer>(device))
-{
-    initializeDebugCategory();
-}
-
-GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
-    , m_capturer(makeUnique<GStreamerAudioCapturer>())
 {
     initializeDebugCategory();
 }

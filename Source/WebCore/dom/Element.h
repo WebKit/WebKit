@@ -424,7 +424,7 @@ public:
     URL getNonEmptyURLAttribute(const QualifiedName&) const;
 
     virtual const AtomString& imageSourceURL() const;
-    virtual String target() const { return String(); }
+    virtual AtomString target() const { return nullAtom(); }
 
     static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
     virtual void focus(const FocusOptions& = { });

@@ -767,15 +767,15 @@ DOMTokenList& HTMLFormElement::relList()
     return *m_relList;
 }
 
-String HTMLFormElement::target() const
+AtomString HTMLFormElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }
 
-String HTMLFormElement::effectiveTarget(const Event* event, HTMLFormControlElement* overrideSubmitter) const
+AtomString HTMLFormElement::effectiveTarget(const Event* event, HTMLFormControlElement* overrideSubmitter) const
 {
     if (RefPtr submitter = overrideSubmitter ? overrideSubmitter : findSubmitter(event)) {
-        auto targetValue = submitter->attributeWithoutSynchronization(formtargetAttr);
+        auto& targetValue = submitter->attributeWithoutSynchronization(formtargetAttr);
         if (!targetValue.isNull())
             return targetValue;
     }

@@ -43,7 +43,7 @@
     boolean getModifierState(DOMString keyArg);
 
     // Everything below is legacy.
-    readonly attribute DOMString keyIdentifier;
+    readonly attribute [AtomString] DOMString keyIdentifier;
     [ImplementedAs=location] readonly attribute unsigned long keyLocation;
     readonly attribute boolean altGraphKey;
     readonly attribute unsigned long charCode;
@@ -65,7 +65,7 @@ dictionary KeyboardEventInit : EventModifierInit {
 
     // This members are not in the specification but are needed to initialize the corresponding legacy
     // attributes we still support on KeyboardEvent for backward compatibility.
-    DOMString keyIdentifier = "";
+    [AtomString] DOMString keyIdentifier = "";
     unsigned long keyLocation;
     unsigned long charCode = 0;
     unsigned long keyCode = 0;

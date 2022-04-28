@@ -44,7 +44,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSStyleValue);
 
-ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(const String& property, const String& cssText)
+ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(const AtomString& property, const String& cssText)
 {
     constexpr bool parseMultiple = false;
     auto parseResult = CSSStyleValueFactory::parseStyleValue(property, cssText, parseMultiple);
@@ -60,7 +60,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(const String& property, con
     return WTFMove(returnValue.at(0));
 }
 
-ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValue::parseAll(const String& property, const String& cssText)
+ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValue::parseAll(const AtomString& property, const String& cssText)
 {
     constexpr bool parseMultiple = true;
     return CSSStyleValueFactory::parseStyleValue(property, cssText, parseMultiple);

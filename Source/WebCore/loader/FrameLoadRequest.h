@@ -40,7 +40,7 @@ class SecurityOrigin;
 
 class FrameLoadRequest {
 public:
-    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, ResourceRequest&&, const String& frameName, InitiatedByMainFrame, const AtomString& downloadAttribute = { }, const SystemPreviewInfo& = { });
+    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, ResourceRequest&&, const AtomString& frameName, InitiatedByMainFrame, const AtomString& downloadAttribute = { }, const SystemPreviewInfo& = { });
     WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, const SubstituteData& = SubstituteData());
 
     WEBCORE_EXPORT ~FrameLoadRequest();
@@ -56,8 +56,8 @@ public:
     ResourceRequest& resourceRequest() { return m_resourceRequest; }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
 
-    const String& frameName() const { return m_frameName; }
-    void setFrameName(const String& frameName) { m_frameName = frameName; }
+    const AtomString& frameName() const { return m_frameName; }
+    void setFrameName(const AtomString& frameName) { m_frameName = frameName; }
 
     void setShouldCheckNewWindowPolicy(bool checkPolicy) { m_shouldCheckNewWindowPolicy = checkPolicy; }
     bool shouldCheckNewWindowPolicy() const { return m_shouldCheckNewWindowPolicy; }
@@ -109,7 +109,7 @@ private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
     ResourceRequest m_resourceRequest;
-    String m_frameName;
+    AtomString m_frameName;
     SubstituteData m_substituteData;
     String m_clientRedirectSourceForHistory;
 

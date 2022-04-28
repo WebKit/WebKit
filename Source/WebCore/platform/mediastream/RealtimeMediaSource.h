@@ -110,7 +110,7 @@ public:
 
     virtual Ref<RealtimeMediaSource> clone() { return *this; }
 
-    const String& hashedId() const;
+    const AtomString& hashedId() const;
     String deviceIDHashSalt() const;
 
     const String& persistentID() const { return m_persistentID; }
@@ -136,8 +136,8 @@ public:
 
     virtual bool interrupted() const { return false; }
 
-    const String& name() const { return m_name; }
-    void setName(String&& name) { m_name = WTFMove(name); }
+    const AtomString& name() const { return m_name; }
+    void setName(const AtomString& name) { m_name = name; }
 
     unsigned fitnessScore() const { return m_fitnessScore; }
 
@@ -226,7 +226,7 @@ public:
     PageIdentifier pageIdentifier() const { return m_pageIdentifier; }
 
 protected:
-    RealtimeMediaSource(Type, String&& name, String&& deviceID = { }, String&& hashSalt = { }, PageIdentifier = { });
+    RealtimeMediaSource(Type, AtomString&& name, String&& deviceID = { }, String&& hashSalt = { }, PageIdentifier = { });
 
     void scheduleDeferredTask(Function<void()>&&);
 
@@ -280,10 +280,10 @@ private:
 
     PageIdentifier m_pageIdentifier;
     String m_idHashSalt;
-    String m_hashedID;
+    AtomString m_hashedID;
     String m_persistentID;
     Type m_type;
-    String m_name;
+    AtomString m_name;
     WeakHashSet<Observer> m_observers;
 
     mutable Lock m_audioSampleObserversLock;

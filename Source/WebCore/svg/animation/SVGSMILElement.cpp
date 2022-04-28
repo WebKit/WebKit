@@ -126,7 +126,7 @@ void ConditionEventListener::handleEvent(ScriptExecutionContext&, Event&)
     m_animation->handleConditionEvent(m_condition);
 }
 
-SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const String& baseID, const String& name, SMILTime offset, int repeats)
+SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const String& baseID, const AtomString& name, SMILTime offset, int repeats)
     : m_type(type)
     , m_beginOrEnd(beginOrEnd)
     , m_baseID(baseID)
@@ -190,7 +190,7 @@ void SVGSMILElement::buildPendingResource()
         return;
     }
 
-    String id;
+    AtomString id;
     RefPtr<Element> target;
     auto& href = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
     if (href.isEmpty())
@@ -412,7 +412,7 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     if (nameView.isEmpty())
         return false;
 
-    String nameString;
+    AtomString nameString;
     Condition::Type type;
     int repeats = -1;
     if (nameView.startsWith("repeat(") && nameView.endsWith(')')) {
@@ -428,14 +428,14 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
         if (baseID.isEmpty())
             return false;
         type = Condition::Syncbase;
-        nameString = nameView.toString();
+        nameString = nameView.toAtomString();
     } else if (nameView.startsWith("accesskey(")) {
         // FIXME: accesskey() support.
         type = Condition::AccessKey;
-        nameString = nameView.toString();
+        nameString = nameView.toAtomString();
     } else {
         type = Condition::EventBase;
-        nameString = nameView.toString();
+        nameString = nameView.toAtomString();
     }
     
     m_conditions.append(Condition(type, beginOrEnd, baseID.toString(), WTFMove(nameString), offset, repeats));

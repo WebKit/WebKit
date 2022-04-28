@@ -89,7 +89,7 @@ public:
     }
 
 private:
-    ExceptionOr<RefPtr<CSSStyleValue>> get(const String& property) const final
+    ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString& property) const final
     {
         ASSERT(m_element); // Hitting this assertion would imply a GC bug. Element is collected while this property map is alive.
         if (!m_element)
@@ -97,7 +97,7 @@ private:
         return extractInlineProperty(property, *m_element);
     }
 
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const String&) const final
+    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const final
     {
         // FIXME: implement.
         return Vector<RefPtr<CSSStyleValue>>();
@@ -115,7 +115,7 @@ private:
         return { };
     }
 
-    ExceptionOr<bool> has(const String&) const final
+    ExceptionOr<bool> has(const AtomString&) const final
     {
         // FIXME: implement.
         return false;
@@ -128,7 +128,7 @@ private:
 
     void clearElement() override { m_element = nullptr; }
 
-    static RefPtr<CSSStyleValue> extractInlineProperty(const String& name, StyledElement& element)
+    static RefPtr<CSSStyleValue> extractInlineProperty(const AtomString& name, StyledElement& element)
     {
         if (!element.inlineStyle())
             return nullptr;

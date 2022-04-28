@@ -1109,11 +1109,11 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
 }
 
 #if ENABLE(CSS_PAINTING_API)
-void RenderStyle::addCustomPaintWatchProperty(const String& name)
+void RenderStyle::addCustomPaintWatchProperty(const AtomString& name)
 {
     auto& data = m_rareNonInheritedData.access();
     if (!data.customPaintWatchedProperties)
-        data.customPaintWatchedProperties = makeUnique<HashSet<String>>();
+        data.customPaintWatchedProperties = makeUnique<HashSet<AtomString>>();
     data.customPaintWatchedProperties->add(name);
 }
 

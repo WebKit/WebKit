@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-RealtimeMediaSource::RealtimeMediaSource(Type type, String&& name, String&& deviceID, String&& hashSalt, PageIdentifier pageIdentifier)
+RealtimeMediaSource::RealtimeMediaSource(Type type, AtomString&& name, String&& deviceID, String&& hashSalt, PageIdentifier pageIdentifier)
     : m_pageIdentifier(pageIdentifier)
     , m_idHashSalt(WTFMove(hashSalt))
     , m_persistentID(WTFMove(deviceID))
@@ -58,7 +58,7 @@ RealtimeMediaSource::RealtimeMediaSource(Type type, String&& name, String&& devi
     if (m_persistentID.isEmpty())
         m_persistentID = createVersion4UUIDString();
 
-    m_hashedID = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, m_idHashSalt);
+    m_hashedID = AtomString { RealtimeMediaSourceCenter::singleton().hashStringWithSalt(m_persistentID, m_idHashSalt) };
 }
 
 void RealtimeMediaSource::addAudioSampleObserver(AudioSampleObserver& observer)
@@ -1096,7 +1096,7 @@ void RealtimeMediaSource::scheduleDeferredTask(Function<void()>&& function)
     });
 }
 
-const String& RealtimeMediaSource::hashedId() const
+const AtomString& RealtimeMediaSource::hashedId() const
 {
 #ifndef NDEBUG
     ASSERT(!m_hashedID.isEmpty());

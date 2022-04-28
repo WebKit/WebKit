@@ -1402,7 +1402,7 @@ public:
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
-    void addCustomPaintWatchProperty(const String& name);
+    void addCustomPaintWatchProperty(const AtomString& name);
 #endif
 
     // Support for paint-order, stroke-linecap, stroke-linejoin, and stroke-miterlimit from https://drafts.fxtf.org/paint/.

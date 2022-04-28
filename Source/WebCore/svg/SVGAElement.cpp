@@ -134,7 +134,7 @@ void SVGAElement::defaultEventHandler(Event& event)
                 }
             }
 
-            String target = this->target();
+            auto target = this->target();
             if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new")
                 target = blankTargetFrameName();
             event.setDefaultHandled();

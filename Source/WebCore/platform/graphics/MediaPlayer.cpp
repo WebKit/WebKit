@@ -479,7 +479,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
 #endif
 
     // If the MIME type is missing or is not meaningful, try to figure it out from the URL.
-    AtomString containerType = m_contentType.containerType();
+    AtomString containerType { m_contentType.containerType() };
     if (containerType.isEmpty() || containerType == applicationOctetStream() || containerType == textPlainContentTypeAtom()) {
         if (m_url.protocolIsData())
             m_contentType = ContentType(mimeTypeFromDataURL(m_url.string()));
@@ -1103,11 +1103,11 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
 {
     // 4.8.10.3 MIME types - The canPlayType(type) method must return the empty string if type is a type that the 
     // user agent knows it cannot render or is the type "application/octet-stream"
-    AtomString containerType = parameters.type.containerType();
+    AtomString containerType { parameters.type.containerType() };
     if (containerType == applicationOctetStream())
         return SupportsType::IsNotSupported;
 
-    if (!startsWithLettersIgnoringASCIICase(containerType.string(), "video/"_s) && !startsWithLettersIgnoringASCIICase(containerType.string(), "audio/"_s) && !startsWithLettersIgnoringASCIICase(containerType.string(), "application/"_s))
+    if (!startsWithLettersIgnoringASCIICase(containerType, "video/"_s) && !startsWithLettersIgnoringASCIICase(containerType, "audio/"_s) && !startsWithLettersIgnoringASCIICase(containerType, "application/"_s))
         return SupportsType::IsNotSupported;
 
     const MediaPlayerFactory* engine = bestMediaEngineForSupportParameters(parameters);

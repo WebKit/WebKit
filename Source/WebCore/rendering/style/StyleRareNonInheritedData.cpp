@@ -188,7 +188,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , justifyItems(o.justifyItems)
     , justifySelf(o.justifySelf)
     , customProperties(o.customProperties)
-    , customPaintWatchedProperties(o.customPaintWatchedProperties ? makeUnique<HashSet<String>>(*o.customPaintWatchedProperties) : nullptr)
+    , customPaintWatchedProperties(o.customPaintWatchedProperties ? makeUnique<HashSet<AtomString>>(*o.customPaintWatchedProperties) : nullptr)
     , rotate(o.rotate)
     , scale(o.scale)
     , translate(o.translate)

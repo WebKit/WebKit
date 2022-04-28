@@ -120,7 +120,7 @@ public:
     void updateFrameSize();
 
 private:
-    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, String&& name, String&& deviceID, String&& hashSalt, PageIdentifier);
+    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, AtomString&& name, String&& deviceID, String&& hashSalt, PageIdentifier);
     virtual ~DisplayCaptureSourceCocoa();
 
     // RealtimeMediaSource

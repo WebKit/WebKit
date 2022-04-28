@@ -674,7 +674,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
 
     AtomString fontFamily;
     if (auto fontFamilyValue = properties->getPropertyCSSValue(CSSPropertyFontFamily))
-        fontFamily = downcast<CSSPrimitiveValue>(*fontFamilyValue).fontFamily().familyName;
+        fontFamily = AtomString { downcast<CSSPrimitiveValue>(*fontFamilyValue).fontFamily().familyName };
 
     std::optional<FontPaletteIndex> basePalette;
     if (auto basePaletteValue = properties->getPropertyCSSValue(CSSPropertyBasePalette)) {
@@ -700,7 +700,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
         }
     }
 
-    return StyleRuleFontPaletteValues::create(name->stringValue(), fontFamily, WTFMove(basePalette), WTFMove(overrideColors));
+    return StyleRuleFontPaletteValues::create(AtomString { name->stringValue() }, AtomString { fontFamily }, WTFMove(basePalette), WTFMove(overrideColors));
 }
 
 RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefixed, CSSParserTokenRange prelude, CSSParserTokenRange block)
@@ -710,11 +710,11 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefix
     if (!prelude.atEnd())
         return nullptr; // Parse error; expected single non-whitespace token in @keyframes header
 
-    String name;
+    AtomString name;
     if (nameToken.type() == IdentToken) {
-        name = nameToken.value().toString();
+        name = nameToken.value().toAtomString();
     } else if (nameToken.type() == StringToken && webkitPrefixed)
-        name = nameToken.value().toString();
+        name = nameToken.value().toAtomString();
     else
         return nullptr; // Parse error; expected ident token in @keyframes header
 

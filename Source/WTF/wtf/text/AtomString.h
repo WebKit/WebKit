@@ -195,6 +195,7 @@ bool equalIgnoringASCIICase(const AtomString&, ASCIILiteral);
 bool equalIgnoringASCIICase(const AtomString&, const char*) = delete;
 
 bool equalLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
+bool startsWithLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
 
 WTF_EXPORT_PRIVATE AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&&);
 WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacter(String&&);
@@ -324,6 +325,11 @@ inline bool equalLettersIgnoringASCIICase(const AtomString& string, ASCIILiteral
     return equalLettersIgnoringASCIICase(string.string(), literal);
 }
 
+inline bool startsWithLettersIgnoringASCIICase(const AtomString& string, ASCIILiteral literal)
+{
+    return startsWithLettersIgnoringASCIICase(string.string(), literal);
+}
+
 inline bool equalIgnoringASCIICase(const AtomString& a, const AtomString& b)
 {
     return equalIgnoringASCIICase(a.string(), b.string());
@@ -342,6 +348,11 @@ inline bool equalIgnoringASCIICase(const String& a, const AtomString& b)
 inline bool equalIgnoringASCIICase(const AtomString& a, ASCIILiteral b)
 {
     return equalIgnoringASCIICase(a.string(), b);
+}
+
+inline int codePointCompare(const AtomString& a, const AtomString& b)
+{
+    return codePointCompare(a.string(), b.string());
 }
 
 template<> struct IntegerToStringConversionTrait<AtomString> {

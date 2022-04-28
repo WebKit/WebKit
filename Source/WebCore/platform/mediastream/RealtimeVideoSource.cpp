@@ -36,7 +36,7 @@
 namespace WebCore {
 
 RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface)
-    : RealtimeMediaSource(Type::Video, String { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() }, source->pageIdentifier())
+    : RealtimeMediaSource(Type::Video, AtomString { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() }, source->pageIdentifier())
     , m_source(WTFMove(source))
 #if PLATFORM(COCOA)
     , m_shouldUseIOSurface(shouldUseIOSurface)
@@ -58,7 +58,7 @@ RealtimeVideoSource::~RealtimeVideoSource()
 void RealtimeVideoSource::whenReady(CompletionHandler<void(String)>&& callback)
 {
     m_source->whenReady([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto message) mutable {
-        setName(String { m_source->name() });
+        setName(m_source->name());
         m_currentSettings = m_source->settings();
         setSize(m_source->size());
         setFrameRate(m_source->frameRate());

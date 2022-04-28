@@ -43,7 +43,6 @@ public:
 
 protected:
     GStreamerAudioCaptureSource(GStreamerCaptureDevice, String&& hashSalt);
-    GStreamerAudioCaptureSource(String&& deviceID, String&& name, String&& hashSalt);
     virtual ~GStreamerAudioCaptureSource();
     void startProducingData() override;
     void stopProducingData() override;

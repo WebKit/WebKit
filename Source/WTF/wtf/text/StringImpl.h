@@ -419,7 +419,7 @@ public:
 
     Ref<StringImpl> foldCase();
 
-    Ref<StringImpl> stripWhiteSpace();
+    WTF_EXPORT_PRIVATE Ref<StringImpl> stripWhiteSpace();
     WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace();
     Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 

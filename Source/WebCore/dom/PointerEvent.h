@@ -78,8 +78,8 @@ public:
     }
 
     static RefPtr<PointerEvent> create(short button, const MouseEvent&, PointerID, const String& pointerType);
-    static Ref<PointerEvent> create(const String& type, short button, const MouseEvent&, PointerID, const String& pointerType);
-    static Ref<PointerEvent> create(const String& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
+    static Ref<PointerEvent> create(const AtomString& type, short button, const MouseEvent&, PointerID, const String& pointerType);
+    static Ref<PointerEvent> create(const AtomString& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);

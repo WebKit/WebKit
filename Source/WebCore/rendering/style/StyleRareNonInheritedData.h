@@ -191,7 +191,7 @@ public:
     StyleSelfAlignmentData justifySelf;
 
     DataRef<StyleCustomPropertyData> customProperties;
-    std::unique_ptr<HashSet<String>> customPaintWatchedProperties;
+    std::unique_ptr<HashSet<AtomString>> customPaintWatchedProperties;
 
     RefPtr<RotateTransformOperation> rotate;
     RefPtr<ScaleTransformOperation> scale;

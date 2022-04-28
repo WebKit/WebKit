@@ -145,15 +145,15 @@ AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, con
 
     // FIXME: Use the system font database to handle standardFamily
     if (familyName == serifFamily)
-        return SystemFontDatabaseCoreText::singleton().serifFamily(locale.string());
+        return AtomString { SystemFontDatabaseCoreText::singleton().serifFamily(locale.string()) };
     if (familyName == sansSerifFamily)
-        return SystemFontDatabaseCoreText::singleton().sansSerifFamily(locale.string());
+        return AtomString { SystemFontDatabaseCoreText::singleton().sansSerifFamily(locale.string()) };
     if (familyName == cursiveFamily)
-        return SystemFontDatabaseCoreText::singleton().cursiveFamily(locale.string());
+        return AtomString { SystemFontDatabaseCoreText::singleton().cursiveFamily(locale.string()) };
     if (familyName == fantasyFamily)
-        return SystemFontDatabaseCoreText::singleton().fantasyFamily(locale.string());
+        return AtomString { SystemFontDatabaseCoreText::singleton().fantasyFamily(locale.string()) };
     if (familyName == monospaceFamily)
-        return SystemFontDatabaseCoreText::singleton().monospaceFamily(locale.string());
+        return AtomString { SystemFontDatabaseCoreText::singleton().monospaceFamily(locale.string()) };
 
     return nullAtom();
 }

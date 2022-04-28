@@ -28,7 +28,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface AudioProcessingEvent : Event {
-    [EnabledBySetting=WebAudioEnabled] constructor (DOMString type, AudioProcessingEventInit eventInitDict);
+    [EnabledBySetting=WebAudioEnabled] constructor ([AtomString] DOMString type, AudioProcessingEventInit eventInitDict);
     readonly attribute double playbackTime;
     readonly attribute AudioBuffer inputBuffer;
     readonly attribute AudioBuffer outputBuffer; 

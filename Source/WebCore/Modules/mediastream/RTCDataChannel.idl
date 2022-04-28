@@ -43,7 +43,7 @@
     readonly attribute RTCPriorityType priority;
     attribute unsigned long bufferedAmountLowThreshold;
 
-    attribute DOMString binaryType;
+    attribute [AtomString] DOMString binaryType;
 
     undefined send(ArrayBuffer data);
     undefined send(ArrayBufferView data);

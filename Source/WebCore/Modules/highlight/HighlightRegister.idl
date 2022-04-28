@@ -29,5 +29,5 @@
 ] interface HighlightRegister {
     constructor();
 
-    maplike<DOMString, Highlight>;
+    maplike<[AtomString] DOMString, Highlight>;
 };

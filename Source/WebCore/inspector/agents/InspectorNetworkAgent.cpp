@@ -115,7 +115,7 @@ public:
         m_statusCode = response.httpStatusCode();
 
         // FIXME: This assumes text only responses. We should support non-text responses as well.
-        PAL::TextEncoding textEncoding(response.textEncodingName());
+        PAL::TextEncoding textEncoding(response.textEncodingName().string());
         bool useDetector = false;
         if (!textEncoding.isValid()) {
             textEncoding = PAL::UTF8Encoding();

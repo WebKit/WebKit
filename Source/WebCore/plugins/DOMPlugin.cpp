@@ -92,7 +92,7 @@ RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomString& propertyName)
 
 Vector<AtomString> DOMPlugin::supportedPropertyNames() const
 {
-    return m_mimeTypes.map([](auto& type) -> AtomString {
+    return m_mimeTypes.map([](auto& type) {
         return type->type();
     });
 }

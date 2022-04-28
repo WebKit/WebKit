@@ -104,8 +104,8 @@ public:
 
     DOMTokenList& relList();
 
-    String target() const final;
-    String effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
+    AtomString target() const final;
+    AtomString effectiveTarget(const Event*, HTMLFormControlElement* submitter) const;
 
     bool wasUserSubmitted() const;
 

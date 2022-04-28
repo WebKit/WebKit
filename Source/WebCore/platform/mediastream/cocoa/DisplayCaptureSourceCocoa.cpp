@@ -95,7 +95,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Captur
     if (!capturer.has_value())
         return CaptureSourceOrError { WTFMove(capturer.error()) };
 
-    auto source = adoptRef(*new DisplayCaptureSourceCocoa(WTFMove(capturer.value()), String { device.label() }, String { device.persistentId() }, WTFMove(hashSalt), pageIdentifier));
+    auto source = adoptRef(*new DisplayCaptureSourceCocoa(WTFMove(capturer.value()), AtomString { device.label() }, String { device.persistentId() }, WTFMove(hashSalt), pageIdentifier));
     if (constraints) {
         auto result = source->applyConstraints(*constraints);
         if (result)
@@ -105,7 +105,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(Expected<UniqueRef<Captur
     return CaptureSourceOrError(WTFMove(source));
 }
 
-DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& capturer, String&& name, String&& deviceID, String&& hashSalt, PageIdentifier pageIdentifier)
+DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(UniqueRef<Capturer>&& capturer, AtomString&& name, String&& deviceID, String&& hashSalt, PageIdentifier pageIdentifier)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Video, WTFMove(name), WTFMove(deviceID), WTFMove(hashSalt), pageIdentifier)
     , m_capturer(WTFMove(capturer))
     , m_timer(RunLoop::current(), this, &DisplayCaptureSourceCocoa::emitFrame)

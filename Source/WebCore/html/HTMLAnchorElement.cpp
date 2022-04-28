@@ -336,7 +336,7 @@ int HTMLAnchorElement::defaultTabIndex() const
     return 0;
 }
 
-String HTMLAnchorElement::target() const
+AtomString HTMLAnchorElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }
@@ -625,7 +625,7 @@ void HTMLAnchorElement::handleClick(Event& event)
 }
 
 // Falls back to using <base> element's target if the anchor does not have one.
-String HTMLAnchorElement::effectiveTarget() const
+AtomString HTMLAnchorElement::effectiveTarget() const
 {
     auto effectiveTarget = target();
     if (effectiveTarget.isEmpty())

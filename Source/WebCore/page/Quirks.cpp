@@ -1212,7 +1212,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
             if (!domWindow)
                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
-            ExceptionOr<RefPtr<WindowProxy>> proxyOrException =  domWindow->open(*domWindow, *domWindow, kinjaURL->string(), emptyString(), loginPopupWindowFeatureString);
+            ExceptionOr<RefPtr<WindowProxy>> proxyOrException =  domWindow->open(*domWindow, *domWindow, kinjaURL->string(), emptyAtom(), loginPopupWindowFeatureString);
             if (proxyOrException.hasException())
                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
             auto proxy = proxyOrException.releaseReturnValue();
@@ -1249,7 +1249,7 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
                 auto domWindow = document->domWindow();
                 if (domWindow) {
-                    ExceptionOr<RefPtr<WindowProxy>> proxyOrException = domWindow->open(*domWindow, *domWindow, staticRadioPlayerURLString(), emptyString(), BBCRadioPlayerPopUpWindowFeatureString);
+                    ExceptionOr<RefPtr<WindowProxy>> proxyOrException = domWindow->open(*domWindow, *domWindow, staticRadioPlayerURLString(), emptyAtom(), BBCRadioPlayerPopUpWindowFeatureString);
                     if (proxyOrException.hasException())
                         return;
                     auto proxy = proxyOrException.releaseReturnValue();

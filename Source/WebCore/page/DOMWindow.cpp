@@ -1424,16 +1424,16 @@ unsigned DOMWindow::length() const
     return frame()->tree().scopedChildCount();
 }
 
-String DOMWindow::name() const
+AtomString DOMWindow::name() const
 {
     RefPtr frame = this->frame();
     if (!frame)
-        return String();
+        return nullAtom();
 
     return frame->tree().name();
 }
 
-void DOMWindow::setName(const String& string)
+void DOMWindow::setName(const AtomString& string)
 {
     RefPtr frame = this->frame();
     if (!frame)

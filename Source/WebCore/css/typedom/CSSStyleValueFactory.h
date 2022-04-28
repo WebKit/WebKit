@@ -49,9 +49,9 @@ public:
     
     static ExceptionOr<void> extractCSSValues(Vector<Ref<CSSValue>>&, const CSSPropertyID&, const String&);
     static ExceptionOr<void> extractShorthandCSSValues(Vector<Ref<CSSValue>>&, const CSSPropertyID&, const String&);
-    static ExceptionOr<void> extractCustomCSSValues(Vector<Ref<CSSValue>>&, const String&, const String&);
+    static ExceptionOr<void> extractCustomCSSValues(Vector<Ref<CSSValue>>&, const AtomString&, const String&);
 
-    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(const String&, const String&, bool);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(const AtomString&, const String&, bool);
 
 protected:
     CSSStyleValueFactory() = delete;

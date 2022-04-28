@@ -52,14 +52,14 @@ class WebAudioSourceProviderAVFObjC;
 class CoreAudioCaptureSource : public RealtimeMediaSource {
 public:
     WEBCORE_EXPORT static CaptureSourceOrError create(String&& deviceID, String&& hashSalt, const MediaConstraints*, PageIdentifier);
-    static CaptureSourceOrError createForTesting(String&& deviceID, String&& label, String&& hashSalt, const MediaConstraints*, BaseAudioSharedUnit& overrideUnit, PageIdentifier);
+    static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, String&& hashSalt, const MediaConstraints*, BaseAudioSharedUnit& overrideUnit, PageIdentifier);
 
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
     CMClockRef timebaseClock();
 
 protected:
-    CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t persistentID, BaseAudioSharedUnit*, PageIdentifier);
+    CoreAudioCaptureSource(String&& deviceID, AtomString&& label, String&& hashSalt, uint32_t persistentID, BaseAudioSharedUnit*, PageIdentifier);
     virtual ~CoreAudioCaptureSource();
     BaseAudioSharedUnit& unit();
     const BaseAudioSharedUnit& unit() const;

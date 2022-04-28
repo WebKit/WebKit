@@ -73,8 +73,8 @@ RefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomString& propertyName)
 
 Vector<AtomString> DOMPluginArray::supportedPropertyNames() const
 {
-    return m_publiclyVisiblePlugins.map([](auto& plugin) -> AtomString {
-        return plugin->name();
+    return m_publiclyVisiblePlugins.map([](auto& plugin) {
+        return AtomString { plugin->name() };
     });
 }
 

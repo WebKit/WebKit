@@ -88,7 +88,7 @@ ExceptionOr<void> CSSStyleValueFactory::extractShorthandCSSValues(Vector<Ref<CSS
     return { };
 }
 
-ExceptionOr<void> CSSStyleValueFactory::extractCustomCSSValues(Vector<Ref<CSSValue>>& cssValues, const String& customPropertyName, const String& cssText)
+ExceptionOr<void> CSSStyleValueFactory::extractCustomCSSValues(Vector<Ref<CSSValue>>& cssValues, const AtomString& customPropertyName, const String& cssText)
 {
     auto styleDeclaration = MutableStyleProperties::create();
     
@@ -104,7 +104,7 @@ ExceptionOr<void> CSSStyleValueFactory::extractCustomCSSValues(Vector<Ref<CSSVal
     return { };
 }
 
-ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(const String& cssProperty, const String& cssText, bool parseMultiple)
+ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(const AtomString& cssProperty, const String& cssText, bool parseMultiple)
 {
     // https://www.w3.org/TR/css-typed-om-1/#cssstylevalue
     
@@ -116,7 +116,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
         if (result.hasException())
             return result.releaseException();
     } else {
-        String property = cssProperty.convertToASCIILowercase();
+        auto property = cssProperty.convertToASCIILowercase();
         
         auto propertyID = cssPropertyID(property);
 

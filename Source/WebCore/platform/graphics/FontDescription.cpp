@@ -72,7 +72,7 @@ static AtomString computeSpecializedChineseLocale()
 {
     for (auto& language : userPreferredLanguages()) {
         if (startsWithLettersIgnoringASCIICase(language, "zh-"_s))
-            return language;
+            return AtomString { language };
     }
     return "zh-hans"_s; // We have no signal. Pick one option arbitrarily.
 }

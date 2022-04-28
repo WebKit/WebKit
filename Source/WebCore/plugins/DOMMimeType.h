@@ -34,7 +34,7 @@ public:
     static Ref<DOMMimeType> create(Navigator&, const MimeClassInfo&, DOMPlugin&);
     ~DOMMimeType();
 
-    String type() const;
+    AtomString type() const;
     String suffixes() const;
     String description() const;
     RefPtr<DOMPlugin> enabledPlugin() const;

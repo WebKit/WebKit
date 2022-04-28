@@ -68,9 +68,9 @@ protected:
 
 class ReferencePathOperation final : public PathOperation {
 public:
-    static Ref<ReferencePathOperation> create(const String& url, const String& fragment, const RefPtr<SVGElement>);
+    static Ref<ReferencePathOperation> create(const String& url, const AtomString& fragment, const RefPtr<SVGElement>);
     const String& url() const { return m_url; }
-    const String& fragment() const { return m_fragment; }
+    const AtomString& fragment() const { return m_fragment; }
     const SVGElement* element() const;
 
 private:
@@ -82,10 +82,10 @@ private:
         return m_url == referenceClip.m_url;
     }
 
-    ReferencePathOperation(const String& url, const String& fragment, const RefPtr<SVGElement>);
+    ReferencePathOperation(const String& url, const AtomString& fragment, const RefPtr<SVGElement>);
 
     String m_url;
-    String m_fragment;
+    AtomString m_fragment;
     RefPtr<SVGElement> m_element;
 };
 

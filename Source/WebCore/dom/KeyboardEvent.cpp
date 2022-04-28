@@ -108,7 +108,7 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
     , m_underlyingPlatformEvent(makeUnique<PlatformKeyboardEvent>(key))
     , m_key(key.key())
     , m_code(key.code())
-    , m_keyIdentifier(key.keyIdentifier())
+    , m_keyIdentifier(AtomString { key.keyIdentifier() })
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
     , m_isComposing(view && is<DOMWindow>(view->window()) && downcast<DOMWindow>(*view->window()).frame() && downcast<DOMWindow>(*view->window()).frame()->editor().hasComposition())
@@ -153,7 +153,7 @@ Ref<KeyboardEvent> KeyboardEvent::create(const AtomString& type, const Init& ini
 }
 
 void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view,
-    const String& keyIdentifier, unsigned location, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
+    const AtomString& keyIdentifier, unsigned location, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
 {
     if (isBeingDispatched())
         return;

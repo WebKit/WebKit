@@ -197,7 +197,7 @@ IntOutsets SVGFilterBuilder::calculateFilterOutsets(SVGFilterElement& filterElem
     for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
         // We should not be strict about not finding the input primitives here because SourceGraphic and SourceAlpha do not have primitives.
         auto inputs = graph.getNamedNodes(effectElement.filterEffectInputsNames()).value_or(SVGFilterPrimitivesGraph::NodeVector());
-        graph.addNamedNode(effectElement.result(), { effectElement });
+        graph.addNamedNode(AtomString { effectElement.result() }, { effectElement });
         graph.setNodeInputs(effectElement, WTFMove(inputs));
     }
 

@@ -591,7 +591,7 @@ void SVGElement::synchronizeAttribute(const QualifiedName& name)
 {
     // If the value of the property has changed, serialize the new value to the attribute.
     if (auto value = propertyRegistry().synchronize(name))
-        setSynchronizedLazyAttribute(name, *value);
+        setSynchronizedLazyAttribute(name, AtomString { *value });
 }
     
 void SVGElement::synchronizeAllAttributes()
@@ -600,7 +600,7 @@ void SVGElement::synchronizeAllAttributes()
     // the properties which have changed but not committed yet.
     auto map = propertyRegistry().synchronizeAllAttributes();
     for (const auto& entry : map)
-        setSynchronizedLazyAttribute(entry.key, entry.value);
+        setSynchronizedLazyAttribute(entry.key, AtomString { entry.value });
 }
 
 void SVGElement::commitPropertyChange(SVGProperty* property)
@@ -624,7 +624,7 @@ void SVGElement::commitPropertyChange(SVGAnimatedProperty& animatedProperty)
     if (!propertyRegistry().isAnimatedStylePropertyAttribute(attributeName))
         propertyRegistry().setAnimatedPropertyDirty(attributeName, animatedProperty);
     else
-        setSynchronizedLazyAttribute(attributeName, animatedProperty.baseValAsString());
+        setSynchronizedLazyAttribute(attributeName, AtomString { animatedProperty.baseValAsString() });
 
     setAnimatedSVGAttributesAreDirty();
     svgAttributeChanged(attributeName);
@@ -932,7 +932,7 @@ Node::InsertedIntoAncestorResult SVGElement::insertedIntoAncestor(InsertionType 
 
     if (needsPendingResourceHandling() && insertionType.connectedToDocument && !isInShadowTree()) {
         SVGDocumentExtensions& extensions = document().accessSVGExtensions();
-        String resourceId = getIdAttribute();
+        auto& resourceId = getIdAttribute();
         if (extensions.isIdOfPendingResource(resourceId))
             return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
     }
@@ -953,7 +953,7 @@ void SVGElement::buildPendingResourcesIfNeeded()
         return;
 
     SVGDocumentExtensions& extensions = document().accessSVGExtensions();
-    String resourceId = getIdAttribute();
+    auto resourceId = getIdAttribute();
     if (!extensions.isIdOfPendingResource(resourceId))
         return;
 

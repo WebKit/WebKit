@@ -145,7 +145,6 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
             capabilities.addFacingMode(std::get<MockCameraProperties>(m_device.properties).facingMode);
             capabilities.setDeviceId(hashedId());
             updateCapabilities(capabilities);
-            capabilities.setDeviceId(hashedId());
         } else if (mockDisplay()) {
             capabilities.setWidth(CapabilityValueOrRange(72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
             capabilities.setHeight(CapabilityValueOrRange(45, std::get<MockDisplayProperties>(m_device.properties).defaultSize.height()));
@@ -415,10 +414,10 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
         }
         string = makeString("Camera: ", camera);
         statsLocation.move(0, m_statsFontSize);
-        context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
+        context.drawText(statsFont, TextRun(string), statsLocation);
     } else if (!name().isNull()) {
         statsLocation.move(0, m_statsFontSize);
-        context.drawText(statsFont, TextRun { name() }, statsLocation);
+        context.drawText(statsFont, TextRun { name().string() }, statsLocation);
     }
 
     FloatPoint bipBopLocation(captureSize.width() * .6, captureSize.height() * .6);

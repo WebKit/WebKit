@@ -26,7 +26,7 @@
 [
     Exposed=Window
 ] interface AnimationEvent : Event {
-    constructor(DOMString type, optional AnimationEventInit animationEventInitDict);
+    constructor([AtomString] DOMString type, optional AnimationEventInit animationEventInitDict);
 
     readonly attribute DOMString animationName;
     readonly attribute double elapsedTime;

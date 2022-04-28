@@ -35,7 +35,7 @@ class SVGAElement final : public SVGGraphicsElement, public SVGURIReference {
 public:
     static Ref<SVGAElement> create(const QualifiedName&, Document&);
 
-    String target() const final { return m_target->currentValue(); }
+    AtomString target() const final { return AtomString { m_target->currentValue() }; }
     Ref<SVGAnimatedString>& targetAnimated() { return m_target; }
 
     SharedStringHash visitedLinkHash() const;

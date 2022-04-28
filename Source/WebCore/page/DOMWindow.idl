@@ -49,7 +49,7 @@
     [DoNotCheckSecurity, LegacyUnforgeable, CustomGetter] readonly attribute WindowProxy window;
     [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy self;
     [LegacyUnforgeable] readonly attribute Document document;
-    attribute DOMString name;
+    attribute [AtomString] DOMString name;
     [DoNotCheckSecurity, PutForwards=href, LegacyUnforgeable] readonly attribute Location location;
     readonly attribute History history;
     [ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;

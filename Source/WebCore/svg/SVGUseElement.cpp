@@ -227,7 +227,7 @@ void SVGUseElement::updateUserAgentShadowTree()
         return;
     document().removeElementWithPendingUserAgentShadowTreeUpdate(*this);
 
-    String targetID;
+    AtomString targetID;
     auto* target = findTarget(&targetID);
     if (!target) {
         document().accessSVGExtensions().addPendingResource(targetID, *this);
@@ -396,7 +396,7 @@ static void associateReplacementClonesWithOriginals(SVGElement& replacementClone
         associateReplacementCloneWithOriginal(pair.first, pair.second);
 }
 
-SVGElement* SVGUseElement::findTarget(String* targetID) const
+SVGElement* SVGUseElement::findTarget(AtomString* targetID) const
 {
     auto* correspondingElement = this->correspondingElement();
     auto& original = correspondingElement ? downcast<SVGUseElement>(*correspondingElement) : *this;
@@ -409,7 +409,7 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
         // If we ever want the change that and let the caller to wait on the external document,
         // we should change this function so it returns the appropriate document to go with the ID.
         if (!targetID->isNull() && isExternalURIReference(original.href(), original.document()))
-            *targetID = String { };
+            *targetID = nullAtom();
     }
     if (!is<SVGElement>(targetResult.element))
         return nullptr;

@@ -587,7 +587,7 @@ const AtomString& HTMLLinkElement::rel() const
     return attributeWithoutSynchronization(relAttr);
 }
 
-String HTMLLinkElement::target() const
+AtomString HTMLLinkElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }

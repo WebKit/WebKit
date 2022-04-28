@@ -39,9 +39,9 @@ public:
 private:
     explicit ComputedStylePropertyMapReadOnly(Element&);
 
-    ExceptionOr<RefPtr<CSSStyleValue>> get(const String&) const final;
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const String&) const final;
-    ExceptionOr<bool> has(const String&) const final;
+    ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString&) const final;
+    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const final;
+    ExceptionOr<bool> has(const AtomString&) const final;
     unsigned size() const final;
     Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> entries() const final;
 

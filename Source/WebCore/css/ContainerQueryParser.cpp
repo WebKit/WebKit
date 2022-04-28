@@ -38,13 +38,13 @@ std::optional<FilteredContainerQuery> ContainerQueryParser::consumeFilteredConta
 
 std::optional<FilteredContainerQuery> ContainerQueryParser::consumeFilteredContainerQuery(CSSParserTokenRange& range)
 {
-    auto consumeName = [&]() -> AtomString {
+    auto consumeName = [&] {
         if (range.peek().type() == LeftParenthesisToken || range.peek().type() == FunctionToken)
             return nullAtom();
         auto nameValue = CSSPropertyParserHelpers::consumeSingleContainerName(range);
         if (!nameValue)
             return nullAtom();
-        return nameValue->stringValue();
+        return AtomString { nameValue->stringValue() };
     };
 
     auto name = consumeName();
@@ -167,11 +167,13 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeSizeFeature(CSSParse
     return sizeFeature;
 }
 
-static String consumeFeatureName(CSSParserTokenRange& range)
+static AtomString consumeFeatureName(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
         return nullAtom();
-    return range.consumeIncludingWhitespace().value().convertToASCIILowercase();
+    // FIXME: This is a bit inefficient. Ideally, we'd convert to lowercase as part of converting the
+    // StringView to an AtomString.
+    return AtomString { range.consumeIncludingWhitespace().value().convertToASCIILowercase() };
 }
 
 std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSSParserTokenRange& range)

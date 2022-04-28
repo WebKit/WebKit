@@ -131,7 +131,7 @@ void FormSubmission::Attributes::updateMethodType(const String& type, bool dialo
     m_method = parseMethodType(type, dialogElementEnabled);
 }
 
-inline FormSubmission::FormSubmission(Method method, const String& returnValue, const URL& action, const String& target, const String& contentType, LockHistory lockHistory, Event* event)
+inline FormSubmission::FormSubmission(Method method, const String& returnValue, const URL& action, const AtomString& target, const String& contentType, LockHistory lockHistory, Event* event)
     : m_method(method)
     , m_action(action)
     , m_target(target)
@@ -142,7 +142,7 @@ inline FormSubmission::FormSubmission(Method method, const String& returnValue, 
 {
 }
 
-inline FormSubmission::FormSubmission(Method method, const URL& action, const String& target, const String& contentType, Ref<FormState>&& state, Ref<FormData>&& data, const String& boundary, LockHistory lockHistory, Event* event)
+inline FormSubmission::FormSubmission(Method method, const URL& action, const AtomString& target, const String& contentType, Ref<FormState>&& state, Ref<FormData>&& data, const String& boundary, LockHistory lockHistory, Event* event)
     : m_method(method)
     , m_action(action)
     , m_target(target)

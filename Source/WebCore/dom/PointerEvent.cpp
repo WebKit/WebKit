@@ -64,12 +64,12 @@ RefPtr<PointerEvent> PointerEvent::create(short button, const MouseEvent& mouseE
     return create(type, button, mouseEvent, pointerId, pointerType);
 }
 
-Ref<PointerEvent> PointerEvent::create(const String& type, short button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, short button, const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
     return adoptRef(*new PointerEvent(type, button, mouseEvent, pointerId, pointerType));
 }
 
-Ref<PointerEvent> PointerEvent::create(const String& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
+Ref<PointerEvent> PointerEvent::create(const AtomString& type, PointerID pointerId, const String& pointerType, IsPrimary isPrimary)
 {
     return adoptRef(*new PointerEvent(type, pointerId, pointerType, isPrimary));
 }

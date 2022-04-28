@@ -111,7 +111,7 @@ bool BaseCheckableInputType::storesValueSeparateFromAttribute()
 void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
-    element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
+    element()->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
 }
 
 void BaseCheckableInputType::fireInputAndChangeEvents()

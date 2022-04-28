@@ -46,18 +46,18 @@ class PaintWorkletGlobalScope final : public WorkletGlobalScope {
 public:
     static RefPtr<PaintWorkletGlobalScope> tryCreate(Document&, ScriptSourceCode&&);
 
-    ExceptionOr<void> registerPaint(JSC::JSGlobalObject&, const String& name, JSC::Strong<JSC::JSObject> paintConstructor);
+    ExceptionOr<void> registerPaint(JSC::JSGlobalObject&, const AtomString& name, JSC::Strong<JSC::JSObject> paintConstructor);
     double devicePixelRatio() const;
 
     // All paint definitions must be destroyed before the vm is destroyed, because otherwise they will point to freed memory.
     struct PaintDefinition : public CanMakeWeakPtr<PaintDefinition> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<String>&& inputProperties, Vector<String>&& inputArguments);
+        PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments);
 
         const AtomString name;
         const JSC::JSObject* const paintConstructor;
         const Ref<CSSPaintCallback> paintCallback;
-        const Vector<String> inputProperties;
+        const Vector<AtomString> inputProperties;
         const Vector<String> inputArguments;
     };
 

@@ -64,7 +64,7 @@ CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevi
 }
 
 MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type type, Ref<MockRealtimeVideoSourceGStreamer>&& source, String&& hashSalt, CaptureDevice::DeviceType deviceType)
-    : RealtimeMediaSource(type, source->name().isolatedCopy(), source->persistentID().isolatedCopy(), WTFMove(hashSalt))
+    : RealtimeMediaSource(type, source->name().string().isolatedCopy(), source->persistentID().isolatedCopy(), WTFMove(hashSalt))
     , m_source(WTFMove(source))
     , m_deviceType(deviceType)
 {

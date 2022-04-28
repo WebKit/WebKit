@@ -230,8 +230,8 @@ public:
 
     unsigned length() const;
 
-    String name() const;
-    void setName(const String&);
+    AtomString name() const;
+    void setName(const AtomString&);
 
     String status() const;
     void setStatus(const String&);

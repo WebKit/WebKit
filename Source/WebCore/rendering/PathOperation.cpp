@@ -30,13 +30,13 @@
 
 namespace WebCore {
 
-Ref<ReferencePathOperation> ReferencePathOperation::create(const String& url, const String& fragment, const RefPtr<SVGElement> element)
+Ref<ReferencePathOperation> ReferencePathOperation::create(const String& url, const AtomString& fragment, const RefPtr<SVGElement> element)
 {
     return adoptRef(*new ReferencePathOperation(url, fragment, element));
 }
 
 
-ReferencePathOperation::ReferencePathOperation(const String& url, const String& fragment, const RefPtr<SVGElement> element)
+ReferencePathOperation::ReferencePathOperation(const String& url, const AtomString& fragment, const RefPtr<SVGElement> element)
     : PathOperation(Reference)
     , m_url(url)
     , m_fragment(fragment)

@@ -93,12 +93,12 @@ private:
     void setActive(bool active, bool pause, Style::InvalidationScope) final;
     bool isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
-    String target() const override;
+    AtomString target() const override;
     int defaultTabIndex() const final;
     bool draggable() const final;
     bool isInteractiveContent() const final;
 
-    String effectiveTarget() const;
+    AtomString effectiveTarget() const;
 
     void sendPings(const URL& destinationURL);
 

@@ -37,7 +37,7 @@ public:
 private:
     HTMLBaseElement(const QualifiedName&, Document&);
 
-    String target() const final;
+    AtomString target() const final;
     bool isURLAttribute(const Attribute&) const final;
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;

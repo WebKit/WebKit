@@ -172,8 +172,8 @@ bool BuilderState::createFilterOperations(const CSSValue& inValue, FilterOperati
                 continue;
 
             auto filterURL = primitiveValue.stringValue();
-            auto fragment = document().completeURL(filterURL).fragmentIdentifier().toString();
-            operations.operations().append(ReferenceFilterOperation::create(filterURL, fragment));
+            auto fragment = document().completeURL(filterURL).fragmentIdentifier().toAtomString();
+            operations.operations().append(ReferenceFilterOperation::create(filterURL, WTFMove(fragment)));
             continue;
         }
 
