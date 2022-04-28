@@ -1,5 +1,21 @@
 2022-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        test-webkitperl outputs errors about uninitialized $platform variable
+        https://bugs.webkit.org/show_bug.cgi?id=239762
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make filter-build-webkit a module that exports the tested functions.
+        Avoid running filter-webkit-build main code if the code is being imported
+        as a module.
+
+        * Scripts/filter-build-webkit:
+        (main):
+        (shouldIgnoreLine):
+        * Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl:
+
+2022-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         IPC testing API should have the ability to test IPC::Connection send and receive through IPC::Connection
         https://bugs.webkit.org/show_bug.cgi?id=239495
 

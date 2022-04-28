@@ -23,6 +23,17 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Filters the output of build-webkit into a more human-readable format.
+package FilterBuildWebKit;
+
+BEGIN {
+    use Exporter   ();
+    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+    $VERSION     = 1.00;
+    @ISA         = qw(Exporter);
+    @EXPORT      = qw(&shouldIgnoreLine);
+    %EXPORT_TAGS = ();
+    @EXPORT_OK   = ();
+}
 
 use strict;
 use warnings;
@@ -105,143 +116,145 @@ __END__
     exit 1;
 }
 
-my $getOptionsResult = GetOptions(
-    'h|help'                => \$showHelp,
-    'o|output=s'            => \$outputPath,
-    'p|platform=s'          => \$platform,
-    'f|format=s'            => \&setOutputFormatOption,
-    'color!'                => \$useColor,
-    'l|log'                 => \$logUnfilteredOutput,
-    'logfile=s'             => \&setLogfileOption,
-);
+sub main() {
+    my $getOptionsResult = GetOptions(
+        'h|help'                => \$showHelp,
+        'o|output=s'            => \$outputPath,
+        'p|platform=s'          => \$platform,
+        'f|format=s'            => \&setOutputFormatOption,
+        'color!'                => \$useColor,
+        'l|log'                 => \$logUnfilteredOutput,
+        'logfile=s'             => \&setLogfileOption,
+    );
 
-if (-t STDIN || $showHelp || !$getOptionsResult) {
-    usageAndExit();
-}
-
-open(OUTPUT_HANDLE, ">$outputPath") or die "Failed to open $outputPath : $!";
-if ($logUnfilteredOutput) {
-    open(UNFILTERED_OUTPUT_HANDLE, ">$unfilteredOutputPath") or die "Failed to open $unfilteredOutputPath : $!";
-}
-
-print OUTPUT_HANDLE HTML_HEADER if ($outputFormat eq "html");
-
-my $buildFinished;
-my $buildFailed = 0;
-for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line = <>) {
-    print UNFILTERED_OUTPUT_HANDLE $line if $logUnfilteredOutput;
-
-    chomp($line);
-
-    next if shouldIgnoreLine($previousLine, $line);
-
-    $line =~ s/\(in target .* from project .*\)$//g;
-
-    if ($line =~ /^={10}/) {
-        printLine($line, STYLE_SUCCESS);
-        $buildFinished = 1;
-    } elsif ($line =~ /^===/) {
-        printLine($line, STYLE_HEADER);
-    } elsif ($line =~ /^note: [Uu]sing/) {
-        printLine($line, STYLE_HEADER);
-    } elsif ($line =~ /Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files|LinkStoryboards/) {
-        printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
-        printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
-        my ($command, $path) = ($2, basename($4));
-        $path =~ s/("|\\|\.[ah]$)//g;
-        printLine("$command $path", STYLE_PLAIN);
-    } elsif ($line =~ /^(Ditto) (\S+) (\S+)/) {
-        my ($command, $path) = ($1, basename($3));
-        printLine("$command $path", STYLE_PLAIN);
-    } elsif ($line =~ /^(CompileAssetCatalog) .*/) {
-        printLine("$1", STYLE_PLAIN);
-    } elsif ($line =~ /^\S+mkdir .*?(\S+)$/) {
-        my $path = basename($1);
-        printLine("mkdir $path", STYLE_PLAIN);
-    } elsif ($line =~ /^\S+\/usr\/bin\/tapi reexport .*?(\S+)$/) {
-        my $path = basename($1);
-        printLine("tapi $path", STYLE_PLAIN);
-    } elsif ($line =~ /^plutil .*?(\S+)$/) {
-        my $path = basename($1);
-        printLine("plutil $path", STYLE_PLAIN);
-    } elsif ($line =~ /^cp (\S+)/) {
-        my $path = basename($1);
-        printLine("cp $path", STYLE_PLAIN);
-    } elsif ($line =~ /python(\d\.\d+)? (\S+) (.+)/) {
-        my ($command, $path) = (basename($2), basename($3));
-        printLine("python $command $path", STYLE_PLAIN);
-    } elsif ($line =~ /^\/\S+?(strip|WebCoreExportFileGenerator) .*?(\/|\> )(\S+)/) {
-        my ($command, $path) = (basename($1), basename($3));
-        printLine("$command $path", STYLE_PLAIN);
-    } elsif ($line =~ /^offlineasm\: /) {
-        printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^Generating bindings for the (\S+) builtin\./) {
-        printLine("Generating $1 builtin", STYLE_PLAIN);
-    } elsif ($line =~ /^Generating (bindings|messages? (header|receiver|dispatcher)|derived source) for (\S+)\.\.\./) {
-        my ($command, $path) = ($1, basename($3));
-        printLine("Generating $command $path", STYLE_PLAIN);
-    } elsif ($line =~ /^(Generating|Merging) (\S+) (from|for) (\S+)/) {
-        printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^Postprocessed ANGLE header:? (\S+)/) {
-        my $path = basename($1);
-        printLine("Postprocessed ANGLE header $path", STYLE_PLAIN);
-    } elsif ($line =~ /^Prepare build/) {
-        printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^Signing Identity:/) {
-        printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^Pre-processing (\S+) sandbox profile/) {
-        printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^Scripts\/generate-unified-source-bundles.rb/) {
-        printLine("Generating unified sources", STYLE_PLAIN);
-    } elsif ($line =~ /^ruby JavaScriptCore\/generator\/main.rb JavaScriptCore\/bytecode\/BytecodeList.rb.*/) {
-        printLine("Generating bytecode list", STYLE_PLAIN);
-    } elsif ($line =~ /^ruby JavaScriptCore\/b3\/air\/opcode_generator.rb JavaScriptCore\/b3\/air\/AirOpcode.opcodes$/) {
-        printLine("Generating opcodes", STYLE_PLAIN);
-    } elsif ($line =~ /^ruby WebCore\/Scripts\/GenerateSettings.rb --input .*/) {
-        printLine("Generating settings", STYLE_PLAIN);
-    } elsif ($line =~ /^ruby "?WebCore\/domjit\/generate-abstract-heap.rb"? (\S+) (\S+)/) {
-        printLine("Generating abstract heap", STYLE_PLAIN);
-    } elsif ($line =~ /^bash -c "perl JavaScriptCorePrivateHeaders\/xxd.pl .* \<\(gzip -cn .*\) .*"/) {
-        printLine("Converting WHLSLStandardLibrary", STYLE_PLAIN);
-    } elsif ($line =~ /^sh .*\/generate-https-upgrade-database\.sh .*\/HTTPSUpgradeList.txt HTTPSUpgradeList.db/) {
-        printLine("Converting HTTPSUpgradeList", STYLE_PLAIN);
-    } elsif ($line =~ /^.*\/GeneratePreferences.rb --input .*\.yaml/) {
-        printLine("Generating preferences", STYLE_PLAIN);
-    } elsif ($line =~ /^### (Generating \.xcfilelists for .*)$/) {
-        printLine("$1", STYLE_PLAIN);
-    } elsif ($line =~ /^(Pre-processing InspectorBackendCommands\.\.\.)$/) {
-        printLine("$1", STYLE_PLAIN);
-    } elsif ($line =~ /^(Unlocking '.*keychain-db')$/) {
-        printLine("$1", STYLE_PLAIN);
-    } elsif ($line =~ /^(Using unified source list files: .*)$/) {
-        printLine("$1", STYLE_PLAIN);
-    } elsif ($line =~ /^(\S+\/cc).*?(\S+)\.(out|exp)/) {
-        my ($command, $path) = (basename($1), basename($2));
-        printLine("$command $path", STYLE_PLAIN);
-    } elsif ($line =~ /^(File Doesn't Exist, Will Create:)(.*\.entitlements)$/) {
-        my $path = basename($2);
-        printLine("Creating Entitlements File $path", STYLE_PLAIN);
-    } elsif ($line =~ /^(building \S+)$/) {
-        printLine("$1", STYLE_PLAIN);
-    } elsif ($line =~ /^(running build command .*+)$/) {
-        printLine("$1", STYLE_PLAIN);
-    } else {
-        # This only gets hit if stderr is redirected to stdout.
-        if (($line =~ /\*\* BUILD FAILED \*\*/) || ($line =~ /^Build FAILED./)) {
-            $buildFailed = 1;
-        }
-        printLine($line, $buildFinished ? STYLE_SUCCESS : STYLE_ALERT);
+    if (-t STDIN || $showHelp || !$getOptionsResult) {
+        usageAndExit();
     }
+
+    open(OUTPUT_HANDLE, ">$outputPath") or die "Failed to open $outputPath : $!";
+    if ($logUnfilteredOutput) {
+        open(UNFILTERED_OUTPUT_HANDLE, ">$unfilteredOutputPath") or die "Failed to open $unfilteredOutputPath : $!";
+    }
+
+    print OUTPUT_HANDLE HTML_HEADER if ($outputFormat eq "html");
+
+    my $buildFinished;
+    my $buildFailed = 0;
+    for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line = <>) {
+        print UNFILTERED_OUTPUT_HANDLE $line if $logUnfilteredOutput;
+
+        chomp($line);
+
+        next if shouldIgnoreLine($previousLine, $line);
+
+        $line =~ s/\(in target .* from project .*\)$//g;
+
+        if ($line =~ /^={10}/) {
+            printLine($line, STYLE_SUCCESS);
+            $buildFinished = 1;
+        } elsif ($line =~ /^===/) {
+            printLine($line, STYLE_HEADER);
+        } elsif ($line =~ /^note: [Uu]sing/) {
+            printLine($line, STYLE_HEADER);
+        } elsif ($line =~ /Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files|LinkStoryboards/) {
+            printLine($line, STYLE_PLAIN);
+        } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
+            printLine("Build Succeeded", STYLE_SUCCESS);
+        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+            my ($command, $path) = ($2, basename($4));
+            $path =~ s/("|\\|\.[ah]$)//g;
+            printLine("$command $path", STYLE_PLAIN);
+        } elsif ($line =~ /^(Ditto) (\S+) (\S+)/) {
+            my ($command, $path) = ($1, basename($3));
+            printLine("$command $path", STYLE_PLAIN);
+        } elsif ($line =~ /^(CompileAssetCatalog) .*/) {
+            printLine("$1", STYLE_PLAIN);
+        } elsif ($line =~ /^\S+mkdir .*?(\S+)$/) {
+            my $path = basename($1);
+            printLine("mkdir $path", STYLE_PLAIN);
+        } elsif ($line =~ /^\S+\/usr\/bin\/tapi reexport .*?(\S+)$/) {
+            my $path = basename($1);
+            printLine("tapi $path", STYLE_PLAIN);
+        } elsif ($line =~ /^plutil .*?(\S+)$/) {
+            my $path = basename($1);
+            printLine("plutil $path", STYLE_PLAIN);
+        } elsif ($line =~ /^cp (\S+)/) {
+            my $path = basename($1);
+            printLine("cp $path", STYLE_PLAIN);
+        } elsif ($line =~ /python(\d\.\d+)? (\S+) (.+)/) {
+            my ($command, $path) = (basename($2), basename($3));
+            printLine("python $command $path", STYLE_PLAIN);
+        } elsif ($line =~ /^\/\S+?(strip|WebCoreExportFileGenerator) .*?(\/|\> )(\S+)/) {
+            my ($command, $path) = (basename($1), basename($3));
+            printLine("$command $path", STYLE_PLAIN);
+        } elsif ($line =~ /^offlineasm\: /) {
+            printLine($line, STYLE_PLAIN);
+        } elsif ($line =~ /^Generating bindings for the (\S+) builtin\./) {
+            printLine("Generating $1 builtin", STYLE_PLAIN);
+        } elsif ($line =~ /^Generating (bindings|messages? (header|receiver|dispatcher)|derived source) for (\S+)\.\.\./) {
+            my ($command, $path) = ($1, basename($3));
+            printLine("Generating $command $path", STYLE_PLAIN);
+        } elsif ($line =~ /^(Generating|Merging) (\S+) (from|for) (\S+)/) {
+            printLine($line, STYLE_PLAIN);
+        } elsif ($line =~ /^Postprocessed ANGLE header:? (\S+)/) {
+            my $path = basename($1);
+            printLine("Postprocessed ANGLE header $path", STYLE_PLAIN);
+        } elsif ($line =~ /^Prepare build/) {
+            printLine($line, STYLE_PLAIN);
+        } elsif ($line =~ /^Signing Identity:/) {
+            printLine($line, STYLE_PLAIN);
+        } elsif ($line =~ /^Pre-processing (\S+) sandbox profile/) {
+            printLine($line, STYLE_PLAIN);
+        } elsif ($line =~ /^Scripts\/generate-unified-source-bundles.rb/) {
+            printLine("Generating unified sources", STYLE_PLAIN);
+        } elsif ($line =~ /^ruby JavaScriptCore\/generator\/main.rb JavaScriptCore\/bytecode\/BytecodeList.rb.*/) {
+            printLine("Generating bytecode list", STYLE_PLAIN);
+        } elsif ($line =~ /^ruby JavaScriptCore\/b3\/air\/opcode_generator.rb JavaScriptCore\/b3\/air\/AirOpcode.opcodes$/) {
+            printLine("Generating opcodes", STYLE_PLAIN);
+        } elsif ($line =~ /^ruby WebCore\/Scripts\/GenerateSettings.rb --input .*/) {
+            printLine("Generating settings", STYLE_PLAIN);
+        } elsif ($line =~ /^ruby "?WebCore\/domjit\/generate-abstract-heap.rb"? (\S+) (\S+)/) {
+            printLine("Generating abstract heap", STYLE_PLAIN);
+        } elsif ($line =~ /^bash -c "perl JavaScriptCorePrivateHeaders\/xxd.pl .* \<\(gzip -cn .*\) .*"/) {
+            printLine("Converting WHLSLStandardLibrary", STYLE_PLAIN);
+        } elsif ($line =~ /^sh .*\/generate-https-upgrade-database\.sh .*\/HTTPSUpgradeList.txt HTTPSUpgradeList.db/) {
+            printLine("Converting HTTPSUpgradeList", STYLE_PLAIN);
+        } elsif ($line =~ /^.*\/GeneratePreferences.rb --input .*\.yaml/) {
+            printLine("Generating preferences", STYLE_PLAIN);
+        } elsif ($line =~ /^### (Generating \.xcfilelists for .*)$/) {
+            printLine("$1", STYLE_PLAIN);
+        } elsif ($line =~ /^(Pre-processing InspectorBackendCommands\.\.\.)$/) {
+            printLine("$1", STYLE_PLAIN);
+        } elsif ($line =~ /^(Unlocking '.*keychain-db')$/) {
+            printLine("$1", STYLE_PLAIN);
+        } elsif ($line =~ /^(Using unified source list files: .*)$/) {
+            printLine("$1", STYLE_PLAIN);
+        } elsif ($line =~ /^(\S+\/cc).*?(\S+)\.(out|exp)/) {
+            my ($command, $path) = (basename($1), basename($2));
+            printLine("$command $path", STYLE_PLAIN);
+        } elsif ($line =~ /^(File Doesn't Exist, Will Create:)(.*\.entitlements)$/) {
+            my $path = basename($2);
+            printLine("Creating Entitlements File $path", STYLE_PLAIN);
+        } elsif ($line =~ /^(building \S+)$/) {
+            printLine("$1", STYLE_PLAIN);
+        } elsif ($line =~ /^(running build command .*+)$/) {
+            printLine("$1", STYLE_PLAIN);
+        } else {
+            # This only gets hit if stderr is redirected to stdout.
+            if (($line =~ /\*\* BUILD FAILED \*\*/) || ($line =~ /^Build FAILED./)) {
+                $buildFailed = 1;
+            }
+            printLine($line, $buildFinished ? STYLE_SUCCESS : STYLE_ALERT);
+        }
+    }
+
+    print OUTPUT_HANDLE HTML_FOOTER if ($outputFormat eq "html");
+
+    close(OUTPUT_HANDLE);
+    close(UNFILTERED_OUTPUT_HANDLE) if ($logUnfilteredOutput);
+
+    exit $buildFailed;
 }
-
-print OUTPUT_HANDLE HTML_FOOTER if ($outputFormat eq "html");
-
-close(OUTPUT_HANDLE);
-close(UNFILTERED_OUTPUT_HANDLE) if ($logUnfilteredOutput);
-
-exit $buildFailed;
 
 sub printLine($$)
 {
@@ -408,3 +421,7 @@ sub shouldIgnoreLine($$)
 
     return 0;
 }
+
+__PACKAGE__->main() unless caller();
+
+1;
