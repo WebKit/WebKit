@@ -820,7 +820,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     IntSize bitmapSize = bounds.size();
     float deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
     bitmapSize.scale(deviceScaleFactor);
-    auto bitmap = ShareableBitmap::createShareable(bitmapSize, { });
+    auto bitmap = ShareableBitmap::create(bitmapSize, { });
     if (!bitmap)
         return;
 

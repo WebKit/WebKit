@@ -207,7 +207,7 @@ ShareableBitmap::Handle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime
         return { };
 
     auto imageSize = image->size();
-    auto bitmap = ShareableBitmap::createShareable(imageSize, { player->colorSpace() });
+    auto bitmap = ShareableBitmap::create(imageSize, { player->colorSpace() });
     if (!bitmap)
         return { };
 

@@ -73,7 +73,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     return makeUnique<ImageBufferShareableMappedIOSurfaceBackend>(parameters, WTFMove(surface));
 }
 
-ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle() const
+ImageBufferBackendHandle ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle(SharedMemory::Protection) const
 {
     return ImageBufferBackendHandle(m_surface->createSendRight());
 }

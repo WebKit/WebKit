@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,9 +211,8 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     case API::Object::Type::Image: {
         auto& image = static_cast<const WebImage&>(object);
 
-        ShareableBitmap::Handle handle;
-        ASSERT(image.bitmap().isBackedBySharedMemory());
-        if (!image.bitmap().isBackedBySharedMemory() || !image.bitmap().createHandle(handle)) {
+        auto handle = image.createHandle();
+        if (handle.isNull()) {
             // Initial false indicates no allocated bitmap or is not shareable.
             encoder << false;
             break;
@@ -221,6 +220,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
 
         // Initial true indicates a bitmap was allocated and is shareable.
         encoder << true;
+        encoder << image.parameters();
         encoder << handle;
         break;
     }
@@ -390,15 +390,16 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!didEncode)
             break;
 
+        std::optional<WebCore::ImageBufferBackend::Parameters> parameters;
+        decoder >> parameters;
+        if (!parameters)
+            return false;
+
         ShareableBitmap::Handle handle;
         if (!decoder.decode(handle))
             return false;
 
-        auto bitmap = ShareableBitmap::create(handle);
-        if (!bitmap)
-            return false;
-
-        result = WebImage::create(bitmap.releaseNonNull());
+        result = WebImage::create(*parameters, WTFMove(handle));
         break;
     }
 

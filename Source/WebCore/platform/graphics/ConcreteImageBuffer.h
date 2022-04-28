@@ -43,7 +43,7 @@ public:
         auto backend = BackendType::create(parameters, creationContext);
         if (!backend)
             return nullptr;
-        return adoptRef(new ImageBufferType(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...));
+        return create<ImageBufferType>(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...);
     }
 
     template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
@@ -53,6 +53,12 @@ public:
         auto backend = BackendType::create(parameters, context);
         if (!backend)
             return nullptr;
+        return create<ImageBufferType>(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename ImageBufferType = ConcreteImageBuffer, typename... Arguments>
+    static RefPtr<ImageBufferType> create(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, Arguments&&... arguments)
+    {
         return adoptRef(new ImageBufferType(parameters, WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
@@ -277,6 +283,26 @@ protected:
             return backend->copyToPlatformTexture(context, target, destinationTexture, internalformat, premultiplyAlpha, flipY);
         return false;
     }
+
+#if USE(CAIRO)
+    RefPtr<cairo_surface_t> createCairoSurface() override
+    {
+        auto* backend = ensureBackendCreated();
+        if (!backend)
+            return nullptr;
+        
+        auto surface = backend->createCairoSurface();
+
+        ref(); // Balanced by deref below.
+
+        static cairo_user_data_key_t dataKey;
+        cairo_surface_set_user_data(surface.get(), &dataKey, this, [](void *buffer) {
+            static_cast<ConcreteImageBuffer*>(buffer)->deref();
+        });
+
+        return surface;
+    }
+#endif
 
     bool isInUse() const override
     {

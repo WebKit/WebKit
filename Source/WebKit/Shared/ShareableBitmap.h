@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,14 +79,11 @@ public:
     static CheckedUint32 calculateBytesPerRow(WebCore::IntSize, const Configuration&);
     static CheckedUint32 calculateBytesPerPixel(const Configuration&);
 
-    // Create a shareable bitmap that uses malloced memory.
+    // Create a shareable bitmap whose backing memory can be shared with another process.
     static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, Configuration);
 
-    // Create a shareable bitmap whose backing memory can be shared with another process.
-    static RefPtr<ShareableBitmap> createShareable(const WebCore::IntSize&, Configuration);
-
     // Create a shareable bitmap from an already existing shared memory block.
-    static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, Configuration, RefPtr<SharedMemory>);
+    static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, Configuration, Ref<SharedMemory>&&);
 
     // Create a shareable bitmap from a handle.
     static RefPtr<ShareableBitmap> create(const Handle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
@@ -94,10 +91,11 @@ public:
     // Create a handle.
     bool createHandle(Handle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
 
-    ~ShareableBitmap();
-
     const WebCore::IntSize& size() const { return m_size; }
     WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
+
+    void* data() const;
+    size_t bytesPerRow() const { return calculateBytesPerRow(m_size, m_configuration); }
 
     // Create a graphics context that can be used to paint into the backing store.
     std::unique_ptr<WebCore::GraphicsContext> createGraphicsContext();
@@ -105,8 +103,6 @@ public:
     // Paint the backing store into the given context.
     void paint(WebCore::GraphicsContext&, const WebCore::IntPoint& destination, const WebCore::IntRect& source);
     void paint(WebCore::GraphicsContext&, float scaleFactor, const WebCore::IntPoint& destination, const WebCore::IntRect& source);
-
-    bool isBackedBySharedMemory() const { return m_sharedMemory; }
 
     // This creates a bitmap image that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
@@ -124,14 +120,14 @@ public:
 #elif USE(CAIRO)
     // This creates a BitmapImage that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
+    RefPtr<cairo_surface_t> createPersistentCairoSurface();
     RefPtr<cairo_surface_t> createCairoSurface();
 
     WebCore::PlatformImagePtr createPlatformImage() { return createCairoSurface(); }
 #endif
 
 private:
-    ShareableBitmap(const WebCore::IntSize&, Configuration, void*);
-    ShareableBitmap(const WebCore::IntSize&, Configuration, RefPtr<SharedMemory>);
+    ShareableBitmap(const WebCore::IntSize&, Configuration, Ref<SharedMemory>&&);
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef) const;
@@ -143,11 +139,6 @@ private:
     static void releaseSurfaceData(void* typelessBitmap);
 #endif
 
-public:
-    void* data() const;
-    size_t bytesPerRow() const { return calculateBytesPerRow(m_size, m_configuration); }
-    
-private:
     size_t sizeInBytes() const { return numBytesForSize(m_size, m_configuration); }
 
     WebCore::IntSize m_size;
@@ -157,11 +148,7 @@ private:
     bool m_releaseBitmapContextDataCalled { false };
 #endif
 
-    // If the shareable bitmap is backed by shared memory, this points to the shared memory object.
-    RefPtr<SharedMemory> m_sharedMemory;
-
-    // If the shareable bitmap is backed by fastMalloced memory, this points to the data.
-    void* m_data { nullptr };
+    Ref<SharedMemory> m_sharedMemory;
 };
 
 } // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -294,11 +294,15 @@ private:
     if (_imageReplyCallbacks.isEmpty())
         return;
 
-    WebCore::IntSize size = image->bitmap().size();
+    auto size = image->size();
     size.scale(1 / _page->deviceScaleFactor());
+    
+    auto nativeImage = image->copyNativeImage(WebCore::DontCopyBackingStore);
+    if (!nativeImage)
+        return;
 
     auto imageCallback = _imageReplyCallbacks.takeFirst();
-    imageCallback(adoptNS([[NSImage alloc] initWithCGImage:image->bitmap().makeCGImage().get() size:size]).get());
+    imageCallback(adoptNS([[NSImage alloc] initWithCGImage:nativeImage->platformImage().get() size:size]).get());
 }
 
 #pragma mark - WKTextFinderMatch callbacks

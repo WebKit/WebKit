@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2013 University of Washington.
@@ -81,7 +81,8 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     if (!frame.page())
         return nullptr;
 
-    frame.document()->updateLayout();
+    Ref document = *frame.document();
+    document->updateLayout();
 
     FrameView::SelectionInSnapshot shouldIncludeSelection = FrameView::IncludeSelection;
     if (options.flags.contains(SnapshotFlags::ExcludeSelectionHighlighting))
@@ -114,9 +115,13 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     if (options.flags.contains(SnapshotFlags::PaintWithIntegralScaleFactor))
         scaleFactor = ceilf(scaleFactor);
 
-    auto buffer = ImageBuffer::create(imageRect.size(), RenderingPurpose::Unspecified, scaleFactor, options.colorSpace, options.pixelFormat);
+    auto purpose = options.flags.contains(SnapshotFlags::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
+    auto hostWindow = (document->view() && document->view()->root()) ? document->view()->root()->hostWindow() : nullptr;
+
+    auto buffer = ImageBuffer::create(imageRect.size(), purpose, scaleFactor, options.colorSpace, options.pixelFormat, { }, { hostWindow });
     if (!buffer)
         return nullptr;
+
     buffer->context().translate(-imageRect.x(), -imageRect.y());
 
     if (!clipRects.isEmpty()) {

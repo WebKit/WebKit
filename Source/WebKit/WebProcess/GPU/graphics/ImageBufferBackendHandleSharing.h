@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "ImageBufferBackendHandle.h"
 #include <WebCore/ImageBufferBackend.h>
 
@@ -34,7 +32,8 @@ namespace WebKit {
 
 class ImageBufferBackendHandleSharing : public WebCore::ImageBufferBackendSharing {
 public:
-    virtual ImageBufferBackendHandle createBackendHandle() const = 0;
+    virtual ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const = 0;
+    virtual RefPtr<ShareableBitmap> bitmap() const { return nullptr; }
 
     virtual void setBackendHandle(ImageBufferBackendHandle&&) { }
     virtual bool hasBackendHandle() const { return false; }
@@ -52,5 +51,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_IMAGE_BUFFER_BACKEND_SHARING(WebKit::ImageBufferBackendHandleSharing, isImageBufferBackendHandleSharing())
-
-#endif // ENABLE(GPU_PROCESS)

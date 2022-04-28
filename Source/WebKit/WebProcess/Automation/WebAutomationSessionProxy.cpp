@@ -861,7 +861,7 @@ void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, s
             return;
         }
 
-        image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
+        handle = image->createHandle(SharedMemory::Protection::ReadOnly);
         WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, { }), 0);
     });
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -872,6 +872,8 @@ template<> struct EnumTraits<WebCore::RenderingPurpose> {
         WebCore::RenderingPurpose::Canvas,
         WebCore::RenderingPurpose::DOM,
         WebCore::RenderingPurpose::LayerBacking,
+        WebCore::RenderingPurpose::Snapshot,
+        WebCore::RenderingPurpose::ShareableSnapshot,
         WebCore::RenderingPurpose::MediaPainting
     >;
 };

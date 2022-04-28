@@ -3102,8 +3102,8 @@ static void textInteractionPositionInformation(WebPage& page, const HTMLInputEle
 RefPtr<ShareableBitmap> WebPage::shareableBitmapSnapshotForNode(Element& element)
 {
     // Ensure that the image contains at most 600K pixels, so that it is not too big.
-    if (RefPtr<WebImage> snapshot = snapshotNode(element, SnapshotOptionsShareable, 600 * 1024))
-        return &snapshot->bitmap();
+    if (auto snapshot = snapshotNode(element, SnapshotOptionsShareable, 600 * 1024))
+        return snapshot->bitmap();
     return nullptr;
 }
 

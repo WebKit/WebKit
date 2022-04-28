@@ -6900,14 +6900,14 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
     m_findClient->didCountStringMatches(this, string, matchCount);
 }
 
-void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex)
+void WebPageProxy::didGetImageForFindMatch(const ImageBufferBackend::Parameters& parameters, ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex)
 {
-    auto bitmap = ShareableBitmap::create(contentImageHandle);
-    if (!bitmap) {
+    auto image = WebImage::create(parameters, WTFMove(contentImageHandle));
+    if (!image) {
         ASSERT_NOT_REACHED();
         return;
     }
-    m_findMatchesClient->didGetImageForMatchResult(this, WebImage::create(bitmap.releaseNonNull()).ptr(), matchIndex);
+    m_findMatchesClient->didGetImageForMatchResult(this, image.get(), matchIndex);
 }
 
 void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint64_t lifetime)

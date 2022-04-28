@@ -155,6 +155,10 @@ public:
     virtual bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
 
+#if USE(CAIRO)
+    virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }
+#endif
+
 protected:
     ImageBuffer() = default;
 

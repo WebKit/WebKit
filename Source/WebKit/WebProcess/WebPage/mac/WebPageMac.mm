@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -576,9 +576,13 @@ void WebPage::setTopOverhangImage(WebImage* image)
     if (!layer)
         return;
 
+    auto nativeImage = image->copyNativeImage();
+    if (!nativeImage)
+        return;
+
     layer->setSize(image->size());
     layer->setPosition(FloatPoint(0, -image->size().height()));
-    layer->platformLayer().contents = (__bridge id)image->bitmap().makeCGImageCopy().get();
+    layer->platformLayer().contents = (__bridge id)nativeImage->platformImage().get();
 }
 
 void WebPage::setBottomOverhangImage(WebImage* image)
@@ -591,8 +595,12 @@ void WebPage::setBottomOverhangImage(WebImage* image)
     if (!layer)
         return;
 
+    auto nativeImage = image->copyNativeImage();
+    if (!nativeImage)
+        return;
+
     layer->setSize(image->size());
-    layer->platformLayer().contents = (__bridge id)image->bitmap().makeCGImageCopy().get();
+    layer->platformLayer().contents = (__bridge id)nativeImage->platformImage().get();
 }
 
 void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)

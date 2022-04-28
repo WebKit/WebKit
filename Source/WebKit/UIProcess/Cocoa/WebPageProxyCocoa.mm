@@ -307,7 +307,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     resultRect.setLocation({ });
 
     WebKit::ShareableBitmap::Configuration bitmapConfiguration;
-    auto bitmap = WebKit::ShareableBitmap::createShareable(resultRect.size(), bitmapConfiguration);
+    auto bitmap = WebKit::ShareableBitmap::create(resultRect.size(), bitmapConfiguration);
     if (!bitmap)
         return nullptr;
 

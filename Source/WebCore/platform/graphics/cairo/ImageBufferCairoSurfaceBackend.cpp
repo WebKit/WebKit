@@ -89,6 +89,11 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::copyNativeImage(BackingStore
     return nullptr;
 }
 
+RefPtr<cairo_surface_t> ImageBufferCairoSurfaceBackend::createCairoSurface()
+{
+    return RefPtr { m_surface.get() };
+}
+
 RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::cairoSurfaceCoerceToImage() const
 {
     BackingStoreCopy copyBehavior;

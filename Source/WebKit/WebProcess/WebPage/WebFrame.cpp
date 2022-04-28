@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include "WebChromeClient.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDocumentLoader.h"
+#include "WebImage.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
@@ -859,27 +860,13 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
 }
 #endif
 
-RefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
+RefPtr<WebImage> WebFrame::createSelectionSnapshot() const
 {
-    auto snapshot = snapshotSelection(*coreFrame(), { { WebCore::SnapshotFlags::ForceBlackText }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto snapshot = snapshotSelection(*coreFrame(), { { WebCore::SnapshotFlags::ForceBlackText, WebCore::SnapshotFlags::Shareable }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
     if (!snapshot)
         return nullptr;
 
-    auto sharedSnapshot = ShareableBitmap::createShareable(snapshot->backendSize(), { });
-    if (!sharedSnapshot)
-        return nullptr;
-
-    // FIXME: We should consider providing a way to use subpixel antialiasing for the snapshot
-    // if we're compositing this image onto a solid color (e.g. the modern find indicator style).
-    auto graphicsContext = sharedSnapshot->createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
-
-    float deviceScaleFactor = coreFrame()->page()->deviceScaleFactor();
-    graphicsContext->scale(deviceScaleFactor);
-    graphicsContext->drawConsumingImageBuffer(WTFMove(snapshot), FloatPoint());
-
-    return sharedSnapshot;
+    return WebImage::create(snapshot.releaseNonNull());
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)

@@ -1,3 +1,41 @@
+2022-04-28  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make WebImage be backed by ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=239527
+        rdar://91113628
+
+        Reviewed by Tim Horton.
+
+        Before enabling GPU Process for DOM rendering there were two modes for
+        page snapshot: Local bitmap and ShareableBitmap. The ShareableBitmap is
+        shared between the WebProcess and the UIProcess. The image is drawn in
+        WebProcess and is consumed by the UIProcess.
+
+        After enabling GPU Process for DOM rendering, a new mode should be added:
+        Remote ShareableBitmap. In this mode, the graphics will be recorded in
+        WebProcess, the drawing will be committed in GPUProcess and the image will
+        be consumed by either the WebProcess or the UIProcess.
+
+        To add this new mode, the snapshot will be drawn to an ImageBuffer instead
+        of a ShareableBitmap. And WebImage will be backed by an ImageBuffer instead
+        of a ShareableBitmap.
+
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRectWithClip):
+        * page/FrameSnapshotting.h:
+        * platform/graphics/ConcreteImageBuffer.h:
+        (WebCore::ConcreteImageBuffer::create):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::createCairoSurface):
+        * platform/graphics/ImageBufferBackend.h:
+        (WebCore::ImageBufferBackend::createCairoSurface):
+        (WebCore::ImageBufferBackend::Parameters::encode const):
+        (WebCore::ImageBufferBackend::Parameters::decode):
+        * platform/graphics/RenderingMode.h:
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoSurfaceBackend::createCairoSurface):
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.h:
+
 2022-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Use more smart pointers in Element.cpp

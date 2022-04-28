@@ -82,7 +82,7 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
 void ContextMenuContextData::setImage(WebCore::Image* image)
 {
     // FIXME: figure out the rounding strategy for ShareableBitmap.
-    m_controlledImage = ShareableBitmap::createShareable(IntSize(image->size()), { });
+    m_controlledImage = ShareableBitmap::create(IntSize(image->size()), { });
     auto graphicsContext = m_controlledImage->createGraphicsContext();
     if (!graphicsContext)
         return;

@@ -4380,7 +4380,7 @@ void webKitWebViewDidReceiveSnapshot(WebKitWebView* webView, uint64_t callbackID
         return;
     }
 
-    g_task_return_pointer(task.get(), webImage->bitmap().createCairoSurface().leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
+    g_task_return_pointer(task.get(), webImage->createCairoSurface().leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
 }
 
 static inline unsigned webKitSnapshotOptionsToSnapshotOptions(WebKitSnapshotOptions options)

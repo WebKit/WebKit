@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,11 @@
 #include "RenderingMode.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+
+#if USE(CAIRO)
+#include "RefPtrCairo.h"
+#include <cairo.h>
+#endif
 
 namespace WebCore {
 
@@ -90,6 +95,9 @@ public:
         DestinationColorSpace colorSpace;
         PixelFormat pixelFormat;
         RenderingPurpose purpose;
+
+        template<typename Encoder> void encode(Encoder&) const;
+        template<typename Decoder> static std::optional<Parameters> decode(Decoder&);
     };
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
@@ -127,6 +135,10 @@ public:
 
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const { return false; }
+
+#if USE(CAIRO)
+    virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }
+#endif
 
     virtual bool isInUse() const { return false; }
     virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
@@ -182,6 +194,45 @@ protected:
 
     Parameters m_parameters;
 };
+
+template<typename Encoder> void ImageBufferBackend::Parameters::encode(Encoder& encoder) const
+{
+    encoder << logicalSize;
+    encoder << resolutionScale;
+    encoder << colorSpace;
+    encoder << pixelFormat;
+    encoder << purpose;
+}
+
+template<typename Decoder> std::optional<ImageBufferBackend::Parameters> ImageBufferBackend::Parameters::decode(Decoder& decoder)
+{
+    std::optional<FloatSize> logicalSize;
+    decoder >> logicalSize;
+    if (!logicalSize)
+        return std::nullopt;
+
+    std::optional<float> resolutionScale;
+    decoder >> resolutionScale;
+    if (!resolutionScale)
+        return std::nullopt;
+
+    std::optional<DestinationColorSpace> colorSpace;
+    decoder >> colorSpace;
+    if (!colorSpace)
+        return std::nullopt;
+
+    std::optional<PixelFormat> pixelFormat;
+    decoder >> pixelFormat;
+    if (!pixelFormat)
+        return std::nullopt;
+
+    std::optional<RenderingPurpose> purpose;
+    decoder >> purpose;
+    if (!purpose)
+        return std::nullopt;
+
+    return { { *logicalSize, *resolutionScale, *colorSpace, *pixelFormat, *purpose } };
+}
 
 } // namespace WebCore
 

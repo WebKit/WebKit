@@ -49,7 +49,7 @@ static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surfac
         return nullptr;
 
     IntSize imageSize(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
-    auto bitmap = ShareableBitmap::createShareable(imageSize, { });
+    auto bitmap = ShareableBitmap::create(imageSize, { });
     auto graphicsContext = bitmap->createGraphicsContext();
 
     ASSERT(graphicsContext->hasPlatformContext());

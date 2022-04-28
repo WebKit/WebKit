@@ -1222,7 +1222,7 @@ public:
     void getImageForFindMatch(int32_t matchIndex);
     void selectFindMatch(int32_t matchIndex);
     void indicateFindMatch(int32_t matchIndex);
-    void didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex);
+    void didGetImageForFindMatch(const WebCore::ImageBufferBackend::Parameters&, ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
     void hideFindIndicator();
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "ShareableBitmap.h"
 #include "WKPage.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebImage.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/DocumentMarkerController.h>
@@ -318,20 +319,18 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(m_findMatches[matchIndex]);
 
-    RefPtr<ShareableBitmap> selectionSnapshot = WebFrame::fromCoreFrame(*frame)->createSelectionSnapshot();
+    auto selectionSnapshot = WebFrame::fromCoreFrame(*frame)->createSelectionSnapshot();
 
     frame->selection().setSelection(oldSelection);
 
     if (!selectionSnapshot)
         return;
 
-    ShareableBitmap::Handle handle;
-    selectionSnapshot->createHandle(handle);
-
+    auto handle = selectionSnapshot->createHandle();
     if (handle.isNull())
         return;
 
-    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(handle, matchIndex));
+    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(selectionSnapshot->parameters(), handle, matchIndex));
 }
 
 void FindController::selectFindMatch(uint32_t matchIndex)

@@ -2639,7 +2639,7 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
 
     ShareableBitmap::Handle handle;
     if (image)
-        image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
+        handle = image->createHandle(SharedMemory::Protection::ReadOnly);
 
     completionHandler(handle);
 }
@@ -2708,14 +2708,13 @@ void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize
     }
 }
 
-static ShareableBitmap::Configuration snapshotOptionsToBitmapConfiguration(SnapshotOptions options, WebPage& page)
+static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage& page)
 {
-    ShareableBitmap::Configuration configuration;
 #if USE(CG)
     if (options & SnapshotOptionsUseScreenColorSpace)
-        configuration.colorSpace = screenColorSpace(page.corePage()->mainFrame().view());
+        return screenColorSpace(page.corePage()->mainFrame().view());
 #endif
-    return configuration;
+    return DestinationColorSpace::SRGB();
 }
 
 RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options)
@@ -2728,14 +2727,12 @@ RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bit
     if (!frameView)
         return nullptr;
 
-    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options), snapshotOptionsToBitmapConfiguration(options, *this));
+    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options), snapshotColorSpace(options, *this), &m_page->chrome().client());
     if (!snapshot)
         return nullptr;
-    auto graphicsContext = snapshot->bitmap().createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
 
-    paintSnapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView, *graphicsContext);
+    auto& graphicsContext = snapshot->context();
+    paintSnapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView, graphicsContext);
 
     return snapshot;
 }
@@ -2766,27 +2763,26 @@ RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions opti
         snapshotSize = IntSize(snapshotSize.width() * scaleFactor, maximumHeight);
     }
 
-    auto snapshot = WebImage::create(snapshotSize, snapshotOptionsToImageOptions(options), snapshotOptionsToBitmapConfiguration(options, *this));
+    auto snapshot = WebImage::create(snapshotSize, snapshotOptionsToImageOptions(options), snapshotColorSpace(options, *this), &m_page->chrome().client());
     if (!snapshot)
         return nullptr;
-    auto graphicsContext = snapshot->bitmap().createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
+
+    auto& graphicsContext = snapshot->context();
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
         double deviceScaleFactor = corePage()->deviceScaleFactor();
-        graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+        graphicsContext.applyDeviceScaleFactor(deviceScaleFactor);
         scaleFactor /= deviceScaleFactor;
     }
 
-    graphicsContext->scale(scaleFactor);
-    graphicsContext->translate(-snapshotRect.location());
+    graphicsContext.scale(scaleFactor);
+    graphicsContext.translate(-snapshotRect.location());
 
     Color savedBackgroundColor = frameView->baseBackgroundColor();
     frameView->setBaseBackgroundColor(Color::transparentBlack);
     frameView->setNodeToDraw(&node);
 
-    frameView->paintContentsForSnapshot(*graphicsContext, snapshotRect, FrameView::ExcludeSelection, FrameView::DocumentCoordinates);
+    frameView->paintContentsForSnapshot(graphicsContext, snapshotRect, FrameView::ExcludeSelection, FrameView::DocumentCoordinates);
 
     frameView->setBaseBackgroundColor(savedBackgroundColor);
     frameView->setNodeToDraw(nullptr);
@@ -5659,37 +5655,33 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
         ASSERT(coreFrame->document()->printing());
 #endif
 
-        auto bitmap = ShareableBitmap::createShareable(imageSize, { });
-        if (!bitmap) {
+        image = WebImage::create(imageSize, ImageOptionsShareable, DestinationColorSpace::SRGB(), &m_page->chrome().client());
+        if (!image) {
             ASSERT_NOT_REACHED();
             return completionHandler({ });
         }
-        auto graphicsContext = bitmap->createGraphicsContext();
-        if (graphicsContext) {
-            float printingScale = static_cast<float>(imageSize.width()) / rect.width();
-            graphicsContext->scale(printingScale);
+
+        auto& graphicsContext = image->context();
+        float printingScale = static_cast<float>(imageSize.width()) / rect.width();
+        graphicsContext.scale(printingScale);
 
 #if PLATFORM(MAC)
-            if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
-                ASSERT(!m_printContext);
-                graphicsContext->scale(FloatSize(1, -1));
-                graphicsContext->translate(0, -rect.height());
-                drawPDFDocument(graphicsContext->platformContext(), pdfDocument.get(), printInfo, rect);
-            } else
+        if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
+            ASSERT(!m_printContext);
+            graphicsContext.scale(FloatSize(1, -1));
+            graphicsContext.translate(0, -rect.height());
+            drawPDFDocument(graphicsContext.platformContext(), pdfDocument.get(), printInfo, rect);
+        } else
 #endif
-            {
-                m_printContext->spoolRect(*graphicsContext, rect);
-            }
+        {
+            m_printContext->spoolRect(graphicsContext, rect);
         }
-
-        image = WebImage::create(bitmap.releaseNonNull());
     }
 #endif
 
     ShareableBitmap::Handle handle;
-
     if (image)
-        image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
+        handle = image->createHandle(SharedMemory::Protection::ReadOnly);
 
     completionHandler(handle);
 }

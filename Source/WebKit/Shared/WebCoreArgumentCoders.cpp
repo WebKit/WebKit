@@ -1017,7 +1017,7 @@ bool ArgumentCoder<Credential>::decode(Decoder& decoder, Credential& credential)
 
 static void encodeImage(Encoder& encoder, Image& image)
 {
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image.size()), { });
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(IntSize(image.size()), { });
     auto graphicsContext = bitmap->createGraphicsContext();
     encoder << !!graphicsContext;
     if (!graphicsContext)

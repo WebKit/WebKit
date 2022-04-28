@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,6 @@
 
 #include "config.h"
 #include "ImageBufferShareableBitmapBackend.h"
-
-#if ENABLE(GPU_PROCESS)
 
 #include "ShareableBitmap.h"
 #include <WebCore/GraphicsContext.h>
@@ -85,7 +83,7 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto bitmap = ShareableBitmap::createShareable(backendSize, configuration(parameters));
+    auto bitmap = ShareableBitmap::create(backendSize, configuration(parameters));
     if (!bitmap)
         return nullptr;
 
@@ -93,7 +91,7 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (!context)
         return nullptr;
 
-    return makeUnique<ImageBufferShareableBitmapBackend>(parameters, WTFMove(bitmap), WTFMove(context));
+    return makeUnique<ImageBufferShareableBitmapBackend>(parameters, bitmap.releaseNonNull(), WTFMove(context));
 }
 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
@@ -111,10 +109,10 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (!context)
         return nullptr;
 
-    return makeUnique<ImageBufferShareableBitmapBackend>(parameters, WTFMove(bitmap), WTFMove(context));
+    return makeUnique<ImageBufferShareableBitmapBackend>(parameters, bitmap.releaseNonNull(), WTFMove(context));
 }
 
-ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Parameters& parameters, RefPtr<ShareableBitmap>&& bitmap, std::unique_ptr<GraphicsContext>&& context)
+ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Parameters& parameters, Ref<ShareableBitmap>&& bitmap, std::unique_ptr<GraphicsContext>&& context)
     : PlatformImageBufferBackend(parameters)
     , m_bitmap(WTFMove(bitmap))
     , m_context(WTFMove(context))
@@ -126,10 +124,10 @@ ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Param
     m_context->applyDeviceScaleFactor(resolutionScale());
 }
 
-ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle() const
+ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle(SharedMemory::Protection protection) const
 {
     ShareableBitmap::Handle handle;
-    m_bitmap->createHandle(handle);
+    m_bitmap->createHandle(handle, protection);
     return ImageBufferBackendHandle(WTFMove(handle));
 }
 
@@ -142,6 +140,13 @@ unsigned ImageBufferShareableBitmapBackend::bytesPerRow() const
 {
     return m_bitmap->bytesPerRow();
 }
+
+#if USE(CAIRO)
+RefPtr<cairo_surface_t> ImageBufferShareableBitmapBackend::createCairoSurface()
+{
+    return m_bitmap->createPersistentCairoSurface();
+}
+#endif
 
 RefPtr<NativeImage> ImageBufferShareableBitmapBackend::copyNativeImage(BackingStoreCopy) const
 {
@@ -164,5 +169,3 @@ void ImageBufferShareableBitmapBackend::putPixelBuffer(const PixelBuffer& pixelB
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(GPU_PROCESS)

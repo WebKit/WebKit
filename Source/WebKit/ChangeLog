@@ -1,3 +1,168 @@
+2022-04-28  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make WebImage be backed by ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=239527
+        rdar://91113628
+
+        Reviewed by Tim Horton.
+
+        -- Allow ImageBufferBackendHandleSharing and ImageBufferShareableBitmapBackend
+           to compile always.
+
+        -- Make WebImage hold an ImageBuffer instead of having it hold a ShareableBitamp.
+
+        -- Pass the ChromeClient to WebImage::create() so it can call its
+           createImageBuffer() which creates RemoteImageBuffer for GPUProcess
+           drawing.
+
+        -- Remove the ShareableBitamp local mode where is backed by a local memory
+           buffer. This mode was added to make WebImage can be non shareable even 
+           it was backed by ShareableBitamp. So ShareableBitmap::createShareable()
+           should be renamed ShareableBitmap::create().
+
+        -- Replace WebImage::bitmap()::makeCGImageCopy() with 
+           WebImage::copyNativeImage(WebCore::CopyBackingStore)
+
+        -- Replace WebImage::bitmap()::makeCGImageCopy() with
+           WebImage::copyNativeImage(WebCore::DontCopyBackingStore)
+
+        -- Replace WebImage::bitmap()::createGraphicsContext() with
+           WebImage::context()
+
+        -- Allow encoding and decoding ImageBufferShareableBitmapBackend by allowing 
+           ImageBufferBackend::Parameters to be encoded and decoded.
+
+        -- Make ImageBuffer be able to createCairoSurface(). The pointer to this
+           surface will be leaked. And to maintain a correct life cycle for the 
+           surface data which is owned by the backend, the ImageBuffer itself
+           will be ref() when the surface RefPtr is created and will be deref()
+           when the surface raw pointer is destroyed.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier):
+        (WebKit::RemoteRenderingBackend::getFilteredImageForImageBuffer):
+        * GPUProcess/graphics/wc/WCScene.cpp:
+        (WebKit::WCScene::update):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime):
+        * Shared/API/c/WKImage.cpp:
+        (WKImageCreate):
+        * Shared/API/c/cairo/WKImageCairo.cpp:
+        (WKImageCreateCairoSurface):
+        (WKImageCreateFromCairoSurface):
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateCGImage):
+        (WKImageCreateFromCGImage):
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::setImage):
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::createBackendHandle const):
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.h:
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createHandle const):
+        (WebKit::ShareableBitmap::ShareableBitmap):
+        (WebKit::ShareableBitmap::data const):
+        (WebKit::ShareableBitmap::createShareable): Deleted.
+        (WebKit::ShareableBitmap::~ShareableBitmap): Deleted.
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::bytesPerRow const):
+        (WebKit::ShareableBitmap::isBackedBySharedMemory const): Deleted.
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeImage):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebImage.cpp:
+        (WebKit::WebImage::create):
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::size const):
+        (WebKit::WebImage::parameters const):
+        (WebKit::WebImage::context const):
+        (WebKit::WebImage::copyNativeImage const):
+        (WebKit::WebImage::bitmap const):
+        (WebKit::WebImage::createCairoSurface):
+        (WebKit::WebImage::createHandle const):
+        (WebKit::WebImage::~WebImage): Deleted.
+        * Shared/WebImage.h:
+        (WebKit::WebImage::bitmap): Deleted.
+        (WebKit::WebImage::bitmap const): Deleted.
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createPersistentCairoSurface):
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::encodeImage):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webKitWebViewDidReceiveSnapshot):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::convertPlatformImageToBitmap):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didGetImageForFindMatch):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient didGetImageForMatchResult:]):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::takeScreenshot):
+        * WebProcess/GPU/graphics/ImageBufferBackendHandle.h:
+        * WebProcess/GPU/graphics/ImageBufferBackendHandleSharing.h:
+        (WebKit::ImageBufferBackendHandleSharing::bitmap const):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        (WebKit::ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend):
+        (WebKit::ImageBufferShareableBitmapBackend::createBackendHandle const):
+        (WebKit::ImageBufferShareableBitmapBackend::createCairoSurface):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::createShareableBitmapFromNativeImage):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferRemoteIOSurfaceBackend::createBackendHandle const):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::createBackendHandle const):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle renderedImageWithOptions:width:]):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::image const):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::snapshot):
+        * WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp:
+        (WebKit::createShareableBitmap):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createImageBuffer const):
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertDragImageToBitmap):
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::display):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::getImageForFindMatch):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSelectionSnapshot const):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::takeSnapshot):
+        (WebKit::snapshotColorSpace):
+        (WebKit::WebPage::snapshotAtSize):
+        (WebKit::WebPage::snapshotNode):
+        (WebKit::WebPage::drawRectToImage):
+        (WebKit::snapshotOptionsToBitmapConfiguration): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::shareableBitmapSnapshotForNode):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setTopOverhangImage):
+        (WebKit::WebPage::setBottomOverhangImage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shouldUseRemoteRenderingFor):
+
 2022-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         IPC testing API should have the ability to test IPC::Connection send and receive through IPC::Connection

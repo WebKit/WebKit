@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #include "FindController.h"
 #include "FrameInfoData.h"
 #include "HangDetectionDisabler.h"
+#include "ImageBufferShareableBitmapBackend.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleNodeHandle.h"
 #include "NavigationActionData.h"
@@ -67,6 +68,7 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
+#include <WebCore/ConcreteImageBuffer.h>
 #include <WebCore/ContentRuleListResults.h>
 #include <WebCore/DataListSuggestionPicker.h>
 #include <WebCore/DatabaseTracker.h>
@@ -941,8 +943,12 @@ WebCore::DisplayRefreshMonitorFactory* WebChromeClient::displayRefreshMonitorFac
 #if ENABLE(GPU_PROCESS)
 RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat) const
 {
-    if (!WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
-        return nullptr;
+    if (!WebProcess::singleton().shouldUseRemoteRenderingFor(purpose)) {
+        if (purpose != RenderingPurpose::ShareableSnapshot)
+            return nullptr;
+
+        return ConcreteImageBuffer<ImageBufferShareableBitmapBackend>::create(size, resolutionScale, colorSpace, PixelFormat::BGRA8, RenderingPurpose::ShareableSnapshot, { });
+    }
 
     return m_page.ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
 }

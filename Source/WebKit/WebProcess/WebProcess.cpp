@@ -2205,6 +2205,8 @@ bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
         return m_useGPUProcessForCanvasRendering;
     case RenderingPurpose::DOM:
     case RenderingPurpose::LayerBacking:
+    case RenderingPurpose::Snapshot:
+    case RenderingPurpose::ShareableSnapshot:
         return m_useGPUProcessForDOMRendering;
     case RenderingPurpose::MediaPainting:
         return m_useGPUProcessForMedia;
