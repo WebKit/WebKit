@@ -79,6 +79,7 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
     m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
+
 void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& size, const WTF::MachSendRight& machSendRight)
 {
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());

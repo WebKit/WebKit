@@ -489,6 +489,7 @@ void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
         m_renderingCanBeAccelerated = m_player->renderingCanBeAccelerated();
         connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(m_renderingCanBeAccelerated), m_id);
     }
+    renderingModeChanged();
 }
 
 void MediaPlayerPrivateRemote::checkAcceleratedRenderingState()
