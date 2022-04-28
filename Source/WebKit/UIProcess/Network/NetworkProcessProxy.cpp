@@ -230,15 +230,6 @@ static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()
     return false;
 }
 
-static bool anyProcessPoolShouldTakeUIBackgroundAssertion()
-{
-    for (auto& processPool : WebProcessPool::allProcessPools()) {
-        if (processPool->shouldTakeUIBackgroundAssertion())
-            return true;
-    }
-    return false;
-}
-
 NetworkProcessProxy::NetworkProcessProxy()
     : AuxiliaryProcessProxy(anyProcessPoolAlwaysRunsAtBackgroundPriority(), networkProcessResponsivenessTimeout)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
@@ -247,7 +238,7 @@ NetworkProcessProxy::NetworkProcessProxy()
 #else
     , m_customProtocolManagerClient(makeUniqueRef<API::CustomProtocolManagerClient>())
 #endif
-    , m_throttler(*this, anyProcessPoolShouldTakeUIBackgroundAssertion())
+    , m_throttler(*this, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
     , m_cookieManager(makeUniqueRef<WebCookieManagerProxy>(*this))
 {
     connect();

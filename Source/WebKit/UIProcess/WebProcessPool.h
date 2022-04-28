@@ -435,6 +435,7 @@ public:
 
     bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
     bool shouldTakeUIBackgroundAssertion() const { return m_shouldTakeUIBackgroundAssertion; }
+    static bool anyProcessPoolNeedsUIBackgroundAssertion();
 
 #if ENABLE(GAMEPAD)
     void gamepadConnected(const UIGamepad&, WebCore::EventMakesGamepadsVisible);

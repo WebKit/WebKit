@@ -130,7 +130,7 @@ static String gpuProcessCachesDirectory()
 
 GPUProcessProxy::GPUProcessProxy()
     : AuxiliaryProcessProxy()
-    , m_throttler(*this, false)
+    , m_throttler(*this, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
 #if ENABLE(MEDIA_STREAM)
     , m_useMockCaptureDevices(MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
 #endif

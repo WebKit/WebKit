@@ -2166,6 +2166,15 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
         processPool->terminateServiceWorkers();
 }
 
+bool WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion()
+{
+    for (auto& processPool : WebProcessPool::allProcessPools()) {
+        if (processPool->shouldTakeUIBackgroundAssertion())
+            return true;
+    }
+    return false;
+}
+
 #if ENABLE(SERVICE_WORKER)
 size_t WebProcessPool::serviceWorkerProxiesCount() const
 {
