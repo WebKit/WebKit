@@ -81,6 +81,12 @@ class PullRequest(Command):
             '--remote', dest='remote', type=str, default=None,
             help='Make a pull request against a specific remote',
         )
+        parser.add_argument(
+            '--checks', '--no-checks',
+            dest='checks', default=None,
+            help='Explicitly enable or disable automatic pre-flight checks',
+            action=arguments.NoAction,
+        )
 
     @classmethod
     def create_commit(cls, args, repository, **kwargs):
@@ -173,8 +179,37 @@ class PullRequest(Command):
         return existing_pr
 
     @classmethod
+    def pre_pr_checks(cls, repository):
+        num_checks = 0
+        log.info('Running pre-PR checks...')
+        for key, path in repository.config().items():
+            if not key.startswith('webkitscmpy.pre-pr.'):
+                continue
+            num_checks += 1
+            name = key.split('.')[-1]
+            log.info('    Running {}...'.format(name))
+            command = run(path.split(' '), cwd=repository.root_path)
+            if command.returncode:
+                if Terminal.choose(
+                    '{} failed, continue uploading pull request?'.format(name),
+                    default='No',
+                ) == 'No':
+                    sys.stderr.write('Pre-PR check {} failed\n'.format(name))
+                    return False
+                else:
+                    log.info('    {} failed, continuing PR upload anyway'.format(name))
+            else:
+                log.info('    Ran {}!'.format(name))
+
+        if num_checks:
+            log.info('All pre-PR checks run!')
+        else:
+            log.info('No pre-PR checks to run')
+        return True
+
+    @classmethod
     def create_pull_request(cls, repository, args, branch_point):
-        # FIXME: We can do better by infering the remote from the branch point, if it's not specified
+        # FIXME: We can do better by inferring the remote from the branch point, if it's not specified
         source_remote = args.remote or 'origin'
         if not repository.config().get('remote.{}.url'.format(source_remote)):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
@@ -190,6 +225,12 @@ class PullRequest(Command):
             branch_point = Branch.branch_point(repository)
         else:
             branch_point = Branch.branch_point(repository)
+
+        if args.checks is None:
+            args.checks = repository.config().get('webkitscmpy.auto-check', 'false') == 'true'
+        if args.checks and not cls.pre_pr_checks(repository):
+            sys.stderr.write('Checks have failed, aborting pull request.\n')
+            return 1
 
         remote_repo = repository.remote(name=source_remote)
         if not remote_repo:

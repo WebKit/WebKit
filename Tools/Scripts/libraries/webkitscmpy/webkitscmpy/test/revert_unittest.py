@@ -72,6 +72,8 @@ class TestRevert(testing.PathTestCase):
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
@@ -104,6 +106,7 @@ index 05e8751..0bf3c85 100644
         self.assertEqual(captured.stderr.getvalue(), 'Please commit your changes or stash them before you revert commit: d8bce26fa65c6fc8f39c17927abb77f69fab82fc')
 
     def test_update(self):
+        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
@@ -138,6 +141,8 @@ index 05e8751..0bf3c85 100644
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating 'eng/pr-branch-1' as a reference branch",
@@ -148,6 +153,8 @@ index 05e8751..0bf3c85 100644
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 '    Found 1 commit...',
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Checking PR labels for 'merging-blocked'...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",

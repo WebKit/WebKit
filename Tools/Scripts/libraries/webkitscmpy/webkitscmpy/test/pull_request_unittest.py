@@ -301,7 +301,9 @@ class TestDoPullRequest(testing.PathTestCase):
 Creating commit...
 Rebasing 'eng/pr-branch' on 'main'...
 Rebased 'eng/pr-branch' on 'main!'
-    Found 1 commit...""")
+    Found 1 commit...
+Running pre-PR checks...
+No pre-PR checks to run""")
         self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/pr-branch'\n")
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
 
@@ -325,7 +327,9 @@ Rebased 'eng/pr-branch' on 'main!'
 Creating commit...
 Rebasing 'eng/pr-branch' on 'main'...
 Rebased 'eng/pr-branch' on 'main!'
-    Found 1 commit...""")
+    Found 1 commit...
+Running pre-PR checks...
+No pre-PR checks to run""")
 
     def test_github(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, mocks.local.Git(
@@ -356,6 +360,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
@@ -391,6 +397,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
@@ -438,6 +446,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Checking PR labels for 'merging-blocked'...",
                 "Removing 'merging-blocked' from PR 1...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
@@ -480,6 +490,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 '    Found 1 commit...',
                 '    Found 2 commits...',
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Checking PR labels for 'merging-blocked'...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
@@ -527,6 +539,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Checking PR labels for 'merging-blocked'...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
@@ -586,6 +600,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
@@ -645,6 +661,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
@@ -683,6 +701,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Creating pull-request for 'eng/pr-branch'...",
             ],
@@ -716,6 +736,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
             ],
         )
@@ -752,6 +774,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
@@ -790,6 +814,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 '    Found 1 commit...',
                 '    Found 2 commits...',
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
@@ -834,6 +860,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
@@ -878,6 +906,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
@@ -925,6 +955,8 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',

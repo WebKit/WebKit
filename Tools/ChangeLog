@@ -1,5 +1,24 @@
 2022-04-27  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Run style checker
+        https://bugs.webkit.org/show_bug.cgi?id=239730
+        <rdar://problem/92428565>
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git): Add webkitscmpy.auto-check option.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.parser): Add --check/--no-check flag.
+        (PullRequest.pre_pr_checks): Find and run all pre-PR checks.
+        (PullRequest.create_pull_request): Run PR checks.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/revert_unittest.py:
+
+2022-04-27  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Cleanup PRs on alternate remotes
         https://bugs.webkit.org/show_bug.cgi?id=239814
         <rdar://problem/92410887>

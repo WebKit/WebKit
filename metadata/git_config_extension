@@ -4,6 +4,9 @@
         pull-request = append
         history = disabled
         update-fork = true
+        auto-check = true
 [webkitscmpy "remotes"]
         origin = git@github.com:WebKit/WebKit.git
         apple = git@github.com:apple/WebKit.git
+[webkitscmpy "pre-pr"]
+        style-checker = python3 Tools/Scripts/check-webkit-style

@@ -1,3 +1,13 @@
+2022-04-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Run style checker
+        https://bugs.webkit.org/show_bug.cgi?id=239730
+        <rdar://problem/92428565>
+
+        Reviewed by Chris Dumez.
+
+        * metadata/git_config_extension: Add style-checker as pre-pr check.
+
 2022-04-26  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         Unreviewed, add my @redhat.com email
