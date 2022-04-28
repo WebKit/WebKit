@@ -52,6 +52,8 @@ class GlyphBuffer;
 class GraphicsContext;
 
 class DrawGlyphsRecorder {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(DrawGlyphsRecorder);
 public:
     enum class DeconstructDrawGlyphs : bool { No, Yes };
     enum class DeriveFontFromContext : bool { No, Yes };

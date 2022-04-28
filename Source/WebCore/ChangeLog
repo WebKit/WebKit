@@ -1,3 +1,21 @@
+2022-04-28  Simon Fraser  <simon.fraser@apple.com>
+
+        DisplayList::Recorder should lazily create the DrawGlyphsRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=239829
+
+        Reviewed by Myles C. Maxfield.
+
+        Creating a DrawGlyphsRecorder does a bit of work that calls into Core Graphics. We don't need
+        to do this work for a layer that has no text, so delay this work until the first drawGlyphs() call.
+
+        This is a few % perf gain on the Images MotionMark subtest.
+
+        * platform/graphics/DrawGlyphsRecorder.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::Recorder):
+        (WebCore::DisplayList::Recorder::drawGlyphs):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
 2022-04-28  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Make WebImage be backed by ImageBuffer
