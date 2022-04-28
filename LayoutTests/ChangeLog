@@ -1,3 +1,12 @@
+2022-04-28  Truitt Savell  <tsavell@apple.com>
+
+        Remove expectations for tiled-drawing/scrolling/scroll-snap/scroll-snap-momentum-in-non-snapping-axis.html
+        https://bugs.webkit.org/show_bug.cgi?id=228930
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-04-28  Simon Fraser  <simon.fraser@apple.com>
 
         [ macOS Debug wk2 ] Thirteen imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ are a flaky crash (ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData))
