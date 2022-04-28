@@ -1,3 +1,19 @@
+2022-04-27  Sihui Liu  <sihui_liu@apple.com>
+
+        [ iOS ] TestWebKitAPI.IndexedDB.IndexedDBSuspendImminently is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=239310
+        <rdar://problem/91721160>
+
+        Reviewed by Youenn Fablet.
+
+        Message may be received before runTestAndCheckResult(), so we should not unset receivedScriptMessage before
+        wait.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBSuspendImminently.mm:
+        (runUntilMessageReceived):
+        (TEST):
+        (runTestAndCheckResult): Deleted.
+
 2022-04-27  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Run style checker
