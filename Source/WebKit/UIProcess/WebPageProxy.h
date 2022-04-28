@@ -2651,7 +2651,7 @@ private:
     static Vector<SandboxExtension::Handle> createNetworkExtensionsSandboxExtensions(WebProcessProxy&);
 #endif
 
-    static SandboxExtension::Handle fontdMachExtensionHandle();
+    SandboxExtension::Handle fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions);
 
     void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
 

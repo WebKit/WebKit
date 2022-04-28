@@ -201,11 +201,12 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);
 #if PLATFORM(IOS)
+    auto auditToken = process.auditToken();
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, std::nullopt))
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
             loadParameters.contentFilterExtensionHandle = WTFMove(*handle);
 
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, std::nullopt))
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
             loadParameters.frontboardServiceExtensionHandle = WTFMove(*handle);
 
         process.markHasManagedSessionSandboxAccess();
@@ -841,7 +842,7 @@ void WebPageProxy::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&
 void WebPageProxy::grantAccessToAssetServices()
 {
     SandboxExtension::Handle mobileAssetHandleV2;
-    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, std::nullopt))
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
         mobileAssetHandleV2 = WTFMove(*handle);
     process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandleV2), 0);
 }
@@ -853,13 +854,13 @@ void WebPageProxy::revokeAccessToAssetServices()
 
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
-    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(fontdMachExtensionHandle()), 0);
+    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
 }
 
-SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle()
+SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions machBootstrapOptions)
 {
     SandboxExtension::Handle fontMachExtensionHandle;
-    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, std::nullopt))
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, process().auditToken(), machBootstrapOptions))
         fontMachExtensionHandle = WTFMove(*handle);
     return fontMachExtensionHandle;
 }

@@ -49,7 +49,7 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource(SpeechRecognit
         m_sourcesNeedingSandboxExtension.add(identifier);
         if (m_sourcesNeedingSandboxExtension.size() == 1) {
             SandboxExtension::Handle handleForTCCD;
-            if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_connection->getAuditToken()))
+            if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_connection->getAuditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
                 handleForTCCD = WTFMove(*handle);
             SandboxExtension::Handle handleForMicrophone;
             if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))

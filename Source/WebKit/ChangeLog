@@ -1,3 +1,64 @@
+2022-04-28  Per Arne Vollan  <pvollan@apple.com>
+
+        Dynamically switch message filter
+        https://bugs.webkit.org/show_bug.cgi?id=238577
+        <rdar://69263324>
+
+        Reviewed by Geoffrey Garen.
+
+        Use a sandbox state variable to dynamically switch the bootstrap filter in the WebContent process' sandbox.
+        During launch of the WebContent process, we use a more permissive bootstrap filter to allow creating Mach
+        connections in this time frame. After the WebContent process has launched, we switch to a blocking filter,
+        which will essentially block access to launchd. The bootstrap filter is being switched back to the more
+        permissive version when we create new Mach sandbox extensions for the WebContent process. This is done on
+        a case by case basis, by adding a new parameter to control this behavior when creating Mach sandbox
+        extensions. While launching the WebContent process there is usually no need to specify that the permissive
+        bootstrap filter is needed, since we are already using the permissive filter during launch time. However,
+        for some Mach extensions that will only result in a new XPC connection in the WebContent process after launch,
+        we need to specify that the permissive filter is requried. Otherwise, creating the new XPC connection after
+        launch will fail. For Mach sandbox extensions created after launch of the WebContent process, we always need
+        to use the permissive bootstrap filter to be able to create the XPC connection. Enabling the permissive
+        bootstrap filter requires the audit token to be available, which means we need to pass the audit token when
+        creating the new Mach sandbox extensions. This patch also waits until after the Web page has been created to
+        set the sandbox variable which indicates that the WebContent process has launched. Without this last change,
+        the bootstrap filter would have needed switching when creating the Web page, since creating the WebPage will
+        consume and revoke some mach extensions.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Scripts/process-entitlements.sh:
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtension::createHandleForMachLookup):
+        (WebKit::SandboxExtension::createHandlesForMachLookup):
+        * Shared/Sandbox/SandboxStateVariables.h: Added.
+        * Shared/SandboxExtension.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::addPlatformLoadParameters):
+        (WebKit::WebPageProxy::grantAccessToAssetServices):
+        (WebKit::WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry):
+        (WebKit::WebPageProxy::fontdMachExtensionHandle):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::unblockAccessibilityServerIfNeeded):
+        (WebKit::WebProcessProxy::messageSourceIsValidWebContentProcess):
+        (WebKit::WebProcessProxy::auditToken const):
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processNextQueuedMouseEvent):
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Set top origin of CORS preflight requests

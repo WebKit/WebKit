@@ -86,6 +86,8 @@ int sandbox_apply(sandbox_profile_t);
 char *sandbox_extension_issue_iokit_registry_entry_class_to_process(const char *extension_class, const char *registry_entry_class, uint32_t flags, audit_token_t);
 char *sandbox_extension_issue_iokit_registry_entry_class(const char *extension_class, const char *registry_entry_class, uint32_t flags);
 
+bool sandbox_enable_state_flag(const char *varname, audit_token_t);
+
 WTF_EXTERN_C_END
 
 #endif // OS(DARWIN)

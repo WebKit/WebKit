@@ -197,6 +197,12 @@ function mac_process_webcontent_shared_entitlements()
             plistbuddy Add :com.apple.security.cs.single-jit bool YES
         fi
 
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
+        then
+            plistbuddy Add :com.apple.private.security.mutable-state-flags array
+            plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
+        fi
+
         if [[ "${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}" == YES ]]
         then
             plistbuddy Add :com.apple.private.xpc.domain-extension bool YES
@@ -344,6 +350,8 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.verified-jit bool YES
     plistbuddy Add :com.apple.private.security.message-filter bool YES
+    plistbuddy Add :com.apple.private.security.mutable-state-flags array
+    plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
     plistbuddy Add :com.apple.private.webinspector.allow-remote-inspection bool YES
     plistbuddy Add :com.apple.private.webinspector.proxy-application bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES

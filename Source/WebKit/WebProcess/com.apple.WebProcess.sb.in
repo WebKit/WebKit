@@ -2056,27 +2056,42 @@
 #endif
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
-(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-bootstrap))
+(define (mach-bootstrap-message-numbers)
+    (message-number 204 207 301 711 800 804))
+
+(define (allow-mach-bootstrap-with-filter)
     (allow mach-bootstrap
         (apply-message-filter
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (deny mach-message-send (with telemetry))
-            (allow mach-message-send (message-number
+            (allow mach-message-send
+                (mach-bootstrap-message-numbers)))))
+
+(if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-bootstrap))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+#if HAVE(SANDBOX_STATE_FLAGS)
+    (begin
+        (if (require-ancestor-with-entitlement "com.apple.private.security.enable-state-flags")
+            (allow mach-bootstrap
+                (apply-message-filter
+                    (allow mach-message-send (with telemetry-backtrace))))
+        ;; else
+            (allow-mach-bootstrap-with-filter))
+
+        (with-filter
+            (require-any
+                (require-not (state-flag "WebContentProcessLaunched"))
+                (state-flag "EnableMachBootstrap"))
+            (allow-mach-bootstrap-with-filter))))
 #else
+    (allow-mach-bootstrap-with-filter))
+#endif // HAVE(SANDBOX_STATE_FLAGS)
+#else
+    (allow mach-bootstrap
+        (apply-message-filter
             (deny xpc-message-send (with telemetry))
-            (allow xpc-message-send (message-number
+            (allow xpc-message-send
+                (mach-bootstrap-message-numbers)))))
 #endif
-                204
-                207
-                301
-                711
-                800
-                804
-                )
-            )
-        )
-    )
-)
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint

@@ -2271,6 +2271,8 @@
 		E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
+		E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */; };
+		E36FF00427F36FBD004BE21A /* preferences.sb in Resources */ = {isa = PBXBuildFile; fileRef = E36FF00227F36FBD004BE21A /* preferences.sb */; };
 		E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3816B3B27E24639005EAFC0 /* WebMockContentFilterManager.cpp */; };
 		E3816B3E27E2463A005EAFC0 /* WebMockContentFilterManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E3816B3C27E24639005EAFC0 /* WebMockContentFilterManager.h */; };
 		E3866AE52397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */; };
@@ -7100,9 +7102,10 @@
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34B110F27C46D09006D2F2E /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		E3612FF026F90862007B1175 /* Sandbox */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sandbox; sourceTree = "<group>"; };
 		E36D701A27B709ED006531B7 /* WebAttachmentElementClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAttachmentElementClient.h; sourceTree = "<group>"; };
 		E36D701D27B718EF006531B7 /* WebAttachmentElementClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAttachmentElementClient.cpp; sourceTree = "<group>"; };
+		E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxStateVariables.h; sourceTree = "<group>"; };
+		E36FF00227F36FBD004BE21A /* preferences.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = preferences.sb; sourceTree = "<group>"; };
 		E3816B3B27E24639005EAFC0 /* WebMockContentFilterManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMockContentFilterManager.cpp; path = Network/WebMockContentFilterManager.cpp; sourceTree = "<group>"; };
 		E3816B3C27E24639005EAFC0 /* WebMockContentFilterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMockContentFilterManager.h; path = Network/WebMockContentFilterManager.h; sourceTree = "<group>"; };
 		E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDeviceOrientationUpdateProviderProxy.mm; path = ios/WebDeviceOrientationUpdateProviderProxy.mm; sourceTree = "<group>"; };
@@ -7888,7 +7891,7 @@
 				BC111B5A112F628200337BAB /* mac */,
 				51AF1B3D271F46A6001538E6 /* Notifications */,
 				2D2E04761F5BEC4F00BB25ED /* RemoteLayerTree */,
-				E3612FF026F90862007B1175 /* Sandbox */,
+				E36FEFFE27F36F34004BE21A /* Sandbox */,
 				1CB74645274379F100F19874 /* WebGPU */,
 				1ABF43781A368035003FB0E6 /* WebsiteData */,
 				118502602673B0DA00A6425E /* XR */,
@@ -13700,6 +13703,15 @@
 			name = PDF;
 			sourceTree = "<group>";
 		};
+		E36FEFFE27F36F34004BE21A /* Sandbox */ = {
+			isa = PBXGroup;
+			children = (
+				E36FF00227F36FBD004BE21A /* preferences.sb */,
+				E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */,
+			);
+			path = Sandbox;
+			sourceTree = "<group>";
+		};
 		E404906F21DE65D70037F0DB /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -14000,13 +14012,7 @@
 				2DD9EB2D1A6F012500BB1267 /* APINavigationClient.h in Headers */,
 				BCF69FA21176D01400471A52 /* APINavigationData.h in Headers */,
 				2DF9EEEE1A786EAD00B6CFBE /* APINavigationResponse.h in Headers */,
-				DD4DB788280F9471001700D4 /* EnterFullscreen.js in Headers */,
-				DD4DB789280F9471001700D4 /* FindNodes.js in Headers */,
-				DD4DB78A280F9471001700D4 /* FormElementClear.js in Headers */,
-				DD4DB78B280F9471001700D4 /* FormSubmit.js in Headers */,
 				7A1E2A851EEFE8920037A0E0 /* APINotificationProvider.h in Headers */,
-				DD4DB787280F945E001700D4 /* ElementDisplayed.js in Headers */,
-				DD4DB786280F945A001700D4 /* ElementAttribute.js in Headers */,
 				BC33DD681238464600360F3F /* APINumber.h in Headers */,
 				BC857FB512B830E600EDEB2E /* APIOpenPanelParameters.h in Headers */,
 				7C89D2981A6753B2003A5FDE /* APIPageConfiguration.h in Headers */,
@@ -14274,8 +14280,11 @@
 				2DA6731A20C754B1003CB401 /* DynamicViewportSizeUpdate.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
+				DD4DB786280F945A001700D4 /* ElementAttribute.js in Headers */,
+				DD4DB787280F945E001700D4 /* ElementDisplayed.js in Headers */,
 				BC032DA810F437D10058C15A /* Encoder.h in Headers */,
 				CDCDC99D248FE8DA00A69522 /* EndowmentStateTracker.h in Headers */,
+				DD4DB788280F9471001700D4 /* EnterFullscreen.js in Headers */,
 				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
 				572EBBD72537EBAE000552B3 /* ExtraPrivateSymbolsForTAPI.h in Headers */,
@@ -14286,9 +14295,12 @@
 				9312BAD526F33C2600FDDF5F /* FileSystemStorageManager.h in Headers */,
 				00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */,
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
+				DD4DB789280F9471001700D4 /* FindNodes.js in Headers */,
 				C59C4A5918B81174007BDCB6 /* FocusedElementInformation.h in Headers */,
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
 				9BD8AB4A25820E53005386F8 /* FontReference.h in Headers */,
+				DD4DB78A280F9471001700D4 /* FormElementClear.js in Headers */,
+				DD4DB78B280F9471001700D4 /* FormSubmit.js in Headers */,
 				1A14F8E21D74C834006CBEC6 /* FrameInfoData.h in Headers */,
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
 				5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */,
@@ -14616,6 +14628,7 @@
 				BC2D021712AC41CB00E732A3 /* SameDocumentNavigationType.h in Headers */,
 				1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */,
 				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
+				E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */,
 				7BAB111025DD02B3008FC479 /* ScopedActiveMessageReceiveQueue.h in Headers */,
 				E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */,
 				0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */,
@@ -14861,7 +14874,6 @@
 				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
 				DDA0A2B527E55E4E005E086E /* WebFormDelegate.h in Headers */,
 				DDA0A30127E55E4E005E086E /* WebFormDelegatePrivate.h in Headers */,
-				519DFBE7281387C1003FF6AD /* WKNotificationPrivateMac.h in Headers */,
 				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
 				E5227D8427A11261008EAB57 /* WebFoundTextRange.h in Headers */,
 				E55CFD4E279D31E5002F1020 /* WebFoundTextRangeController.h in Headers */,
@@ -15350,6 +15362,7 @@
 				318BE17914743E6F00A8FBB2 /* WKNotification.h in Headers */,
 				318BE17114743DB100A8FBB2 /* WKNotificationManager.h in Headers */,
 				31A2EC74148D59CA00810D71 /* WKNotificationPermissionRequest.h in Headers */,
+				519DFBE7281387C1003FF6AD /* WKNotificationPrivateMac.h in Headers */,
 				312C0C4A146DDC8A0016C911 /* WKNotificationProvider.h in Headers */,
 				37C4C0941814B3AF003688B9 /* WKNSArray.h in Headers */,
 				373CEAD6185417AE008C363D /* WKNSData.h in Headers */,
@@ -15975,6 +15988,7 @@
 				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				3FB08E431F60B240005E5312 /* iOS.xcassets in Resources */,
+				E36FF00427F36FBD004BE21A /* preferences.sb in Resources */,
 				5C8BC797218CBB4800813886 /* SafeBrowsing.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

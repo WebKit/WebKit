@@ -1,3 +1,15 @@
+2022-04-28  Per Arne Vollan  <pvollan@apple.com>
+
+        Dynamically switch message filter
+        https://bugs.webkit.org/show_bug.cgi?id=238577
+        <rdar://69263324>
+
+        Reviewed by Geoffrey Garen.
+
+        Add SPI to set sandbox state variable.
+
+        * wtf/spi/darwin/SandboxSPI.h:
+
 2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Use quadratic-probing instead of double-hashing

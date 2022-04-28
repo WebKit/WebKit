@@ -459,17 +459,17 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageCounter, ("WebPage")
 
 Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 {
+    auto page = adoptRef(*new WebPage(pageID, WTFMove(parameters)));
+
+    if (WebProcess::singleton().injectedBundle())
+        WebProcess::singleton().injectedBundle()->didCreatePage(page.ptr());
+
 #if HAVE(SANDBOX_STATE_FLAGS)
     // This call is not meant to actually read a preference, but is only here to trigger a sandbox rule in the
     // WebContent process, which will toggle a sandbox variable used to determine if the WebContent process
     // has finished launching. This call should be replaced with proper API when available.
     CFPreferencesGetAppIntegerValue(CFSTR("key"), CFSTR("com.apple.WebKit.WebContent.Launch"), nullptr);
 #endif
-
-    Ref<WebPage> page = adoptRef(*new WebPage(pageID, WTFMove(parameters)));
-
-    if (WebProcess::singleton().injectedBundle())
-        WebProcess::singleton().injectedBundle()->didCreatePage(page.ptr());
 
     return page;
 }

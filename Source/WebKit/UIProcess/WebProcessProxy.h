@@ -433,6 +433,10 @@ public:
     WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
     CaptivePortalMode captivePortalMode() const { return m_captivePortalMode; }
 
+#if PLATFORM(COCOA)
+    std::optional<audit_token_t> auditToken() const;
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, CaptivePortalMode);
 

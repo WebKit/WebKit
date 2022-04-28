@@ -716,14 +716,21 @@ void WebProcessPool::registerNotificationObservers()
         int notifyToken;
         notify_register_dispatch(message, &notifyToken, dispatch_get_main_queue(), ^(int token) {
             RELEASE_LOG(Notifications, "OpenDirectory invalidated cache");
+#if ENABLE(GPU_PROCESS)
             auto handle = SandboxExtension::createHandleForMachLookup("com.apple.system.opendirectoryd.libinfo"_s, std::nullopt);
             if (!handle)
                 return;
-#if ENABLE(GPU_PROCESS)
             if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
                 gpuProcess->send(Messages::GPUProcess::OpenDirectoryCacheInvalidated(*handle), 0);
 #endif
-            sendToAllProcesses(Messages::WebProcess::OpenDirectoryCacheInvalidated(*handle));
+            for (auto& process : m_processes) {
+                if (!process->canSendMessage())
+                    continue;
+                auto handle = SandboxExtension::createHandleForMachLookup("com.apple.system.opendirectoryd.libinfo"_s, process->auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
+                if (!handle)
+                    continue;
+                process->send(Messages::WebProcess::OpenDirectoryCacheInvalidated(*handle), 0);
+            }
         });
         m_openDirectoryNotifyTokens.append(notifyToken);
     }

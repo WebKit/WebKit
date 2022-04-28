@@ -59,7 +59,12 @@ public:
         NoReport,
         DoNotCanonicalize,
     };
-    
+
+    enum class MachBootstrapOptions : uint8_t {
+        DoNotEnableMachBootstrap,
+        EnableMachBootstrap
+    };
+
     class Handle {
         WTF_MAKE_NONCOPYABLE(Handle);
     public:
@@ -91,9 +96,9 @@ public:
     static std::optional<std::pair<Handle, String>> createHandleForTemporaryFile(StringView prefix, Type);
     static std::optional<Handle> createHandleForGenericExtension(ASCIILiteral extensionClass);
 #if HAVE(AUDIT_TOKEN)
-    static std::optional<Handle> createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
-    static Vector<Handle> createHandlesForMachLookup(Span<const ASCIILiteral> services, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
-    static Vector<Handle> createHandlesForMachLookup(std::initializer_list<const ASCIILiteral> services, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
+    static std::optional<Handle> createHandleForMachLookup(ASCIILiteral service, std::optional<audit_token_t>, MachBootstrapOptions = MachBootstrapOptions::DoNotEnableMachBootstrap, OptionSet<Flags> = Flags::Default);
+    static Vector<Handle> createHandlesForMachLookup(Span<const ASCIILiteral> services, std::optional<audit_token_t>, MachBootstrapOptions = MachBootstrapOptions::DoNotEnableMachBootstrap, OptionSet<Flags> = Flags::Default);
+    static Vector<Handle> createHandlesForMachLookup(std::initializer_list<const ASCIILiteral> services, std::optional<audit_token_t>, MachBootstrapOptions = MachBootstrapOptions::DoNotEnableMachBootstrap, OptionSet<Flags> = Flags::Default);
     static std::optional<Handle> createHandleForReadByAuditToken(StringView path, audit_token_t);
     static std::optional<Handle> createHandleForIOKitClassExtension(ASCIILiteral iokitClass, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
     static Vector<Handle> createHandlesForIOKitClassExtensions(Span<const ASCIILiteral> iokitClasses, std::optional<audit_token_t>, OptionSet<Flags> = Flags::Default);
