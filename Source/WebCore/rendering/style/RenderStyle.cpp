@@ -1112,25 +1112,20 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
 void RenderStyle::addCustomPaintWatchProperty(const AtomString& name)
 {
     auto& data = m_rareNonInheritedData.access();
-    if (!data.customPaintWatchedProperties)
-        data.customPaintWatchedProperties = makeUnique<HashSet<AtomString>>();
-    data.customPaintWatchedProperties->add(name);
+    data.customPaintWatchedProperties.add(name);
 }
 
 inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const StyleRareNonInheritedData& aData, const RenderStyle& b, const StyleRareNonInheritedData& bData)
 {
-    auto* propertiesA = aData.customPaintWatchedProperties.get();
-    auto* propertiesB = bData.customPaintWatchedProperties.get();
+    auto& propertiesA = aData.customPaintWatchedProperties;
+    auto& propertiesB = bData.customPaintWatchedProperties;
 
-    if (UNLIKELY(propertiesA || propertiesB)) {
+    if (UNLIKELY(!propertiesA.isEmpty() || !propertiesB.isEmpty())) {
         // FIXME: We should not need to use ComputedStyleExtractor here.
         ComputedStyleExtractor extractor((Element*) nullptr);
 
-        for (auto* watchPropertiesMap : { propertiesA, propertiesB }) {
-            if (!watchPropertiesMap)
-                continue;
-
-            for (auto& name : *watchPropertiesMap) {
+        for (auto& watchPropertiesMap : { propertiesA, propertiesB }) {
+            for (auto& name : watchPropertiesMap) {
                 RefPtr<CSSValue> valueA;
                 RefPtr<CSSValue> valueB;
                 if (isCustomPropertyName(name)) {

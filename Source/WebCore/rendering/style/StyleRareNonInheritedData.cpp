@@ -188,7 +188,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , justifyItems(o.justifyItems)
     , justifySelf(o.justifySelf)
     , customProperties(o.customProperties)
-    , customPaintWatchedProperties(o.customPaintWatchedProperties ? makeUnique<HashSet<AtomString>>(*o.customPaintWatchedProperties) : nullptr)
+    , customPaintWatchedProperties(o.customPaintWatchedProperties)
     , rotate(o.rotate)
     , scale(o.scale)
     , translate(o.translate)
@@ -304,8 +304,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && justifyItems == o.justifyItems
         && justifySelf == o.justifySelf
         && customProperties == o.customProperties
-        && ((customPaintWatchedProperties && o.customPaintWatchedProperties && *customPaintWatchedProperties == *o.customPaintWatchedProperties)
-            || (!customPaintWatchedProperties && !o.customPaintWatchedProperties))
+        && customPaintWatchedProperties == o.customPaintWatchedProperties
         && pageSizeType == o.pageSizeType
         && transformStyle3D == o.transformStyle3D
         && transformStyleForcedToFlat == o.transformStyleForcedToFlat
