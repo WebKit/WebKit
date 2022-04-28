@@ -1387,8 +1387,7 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
     return RecommendDesktopClassBrowsingForRequest::Auto;
 }
 
-enum class IgnoreAppCompatibilitySafeguards : bool { No, Yes };
-static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& request, WebCore::IntSize viewSize, IgnoreAppCompatibilitySafeguards ignoreSafeguards)
+bool WebPageProxy::isDesktopClassBrowsingRecommended(const WebCore::ResourceRequest& request) const
 {
     auto desktopClassBrowsingRecommendation = desktopClassBrowsingRecommendedForRequest(request);
     if (desktopClassBrowsingRecommendation == RecommendDesktopClassBrowsingForRequest::Yes)
@@ -1398,7 +1397,7 @@ static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& requ
         return false;
 
 #if !PLATFORM(MACCATALYST)
-    if (webViewSizeIsNarrow(viewSize))
+    if (!pageClient().isInMultitaskingMode() && webViewSizeIsNarrow(viewSize()))
         return false;
 #endif
 
@@ -1412,7 +1411,7 @@ static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& requ
         auto screenClass = MGGetSInt32Answer(kMGQMainScreenClass, MGScreenClassPad2);
         shouldRecommendDesktopClassBrowsing = screenClass != MGScreenClassPad3 && screenClass != MGScreenClassPad4 && desktopClassBrowsingSupported();
 #endif
-        if (ignoreSafeguards == IgnoreAppCompatibilitySafeguards::No && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ModernCompabilityModeByDefault)) {
+        if (!m_navigationClient->shouldBypassContentModeSafeguards() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ModernCompabilityModeByDefault)) {
             // Opt out apps that haven't yet built against the iOS 13 SDK to limit any incompatibilities as a result of enabling desktop-class browsing by default in
             // WKWebView on appropriately-sized iPad models.
             shouldRecommendDesktopClassBrowsing = false;
@@ -1428,12 +1427,10 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         policies.setMediaSourcePolicy(WebsiteMediaSourcePolicy::Enable);
     }
 
-    auto viewSize = this->viewSize();
     bool useDesktopBrowsingMode;
     switch (policies.preferredContentMode()) {
     case WebContentMode::Recommended: {
-        auto ignoreSafeguards = m_navigationClient->shouldBypassContentModeSafeguards() ? IgnoreAppCompatibilitySafeguards::Yes : IgnoreAppCompatibilitySafeguards::No;
-        useDesktopBrowsingMode = desktopClassBrowsingRecommended(request, viewSize, ignoreSafeguards);
+        useDesktopBrowsingMode = isDesktopClassBrowsingRecommended(request);
         break;
     }
     case WebContentMode::Mobile:

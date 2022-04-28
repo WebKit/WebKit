@@ -170,6 +170,10 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 @property (nonatomic, readonly) int32_t _deviceOrientation;
 
+#if HAVE(MULTITASKING_MODE)
+@property (nonatomic, readonly) BOOL _isInMultitaskingMode;
+#endif
+
 @end
 
 _WKTapHandlingResult wkTapHandlingResult(WebKit::TapHandlingResult);

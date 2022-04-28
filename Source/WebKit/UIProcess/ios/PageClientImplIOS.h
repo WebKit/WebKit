@@ -310,6 +310,8 @@ private:
     void beginElementFullscreenVideoExtraction(const ShareableBitmap::Handle&, WebCore::FloatRect) final;
     void cancelElementFullscreenVideoExtraction() final;
 
+    bool isInMultitaskingMode() const final;
+
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };

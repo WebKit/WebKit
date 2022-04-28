@@ -1069,6 +1069,15 @@ void PageClientImpl::cancelElementFullscreenVideoExtraction()
     [m_contentView cancelElementFullscreenVideoExtraction];
 }
 
+bool PageClientImpl::isInMultitaskingMode() const
+{
+#if HAVE(MULTITASKING_MODE)
+    return [m_webView _isInMultitaskingMode];
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

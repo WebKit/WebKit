@@ -2425,6 +2425,7 @@ private:
     void updateStringForFind(const String&);
 
     bool isValidPerformActionOnElementAuthorizationToken(const String& authorizationToken) const;
+    bool isDesktopClassBrowsingRecommended(const WebCore::ResourceRequest&) const;
 #endif
 
     void focusedFrameChanged(const std::optional<WebCore::FrameIdentifier>&);

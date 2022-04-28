@@ -1,3 +1,32 @@
+2022-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a mechanism to override desktop-class browsing state in multitasking mode
+        https://bugs.webkit.org/show_bug.cgi?id=239801
+        rdar://89786146
+
+        Reviewed by Tim Horton.
+
+        Keep the recommended desktop-class browsing state stable as the width of the web view changes, while
+        multitasking mode is active.
+
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::isInMultitaskingMode const):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isInMultitaskingMode const):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::isDesktopClassBrowsingRecommended const):
+
+        Turn the static helper function `desktopClassBrowsingRecommended` into a private method instead, so that we
+        don't need to pass in all the information we need from the WebPageProxy when determining whether we should
+        default to desktop-class browsing. This also allows us to make a slight adjustment here to avoid recommending
+        mobile content when the window is narrower than 375 points in multitasking mode.
+
+        (WebKit::WebPageProxy::effectiveContentModeAfterAdjustingPolicies):
+        (WebKit::desktopClassBrowsingRecommended): Deleted.
+
 2022-04-27  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid sending a flush IPC to the GPU process when destroying a RemoteImageBuffer
