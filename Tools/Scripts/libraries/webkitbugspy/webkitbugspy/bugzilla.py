@@ -56,10 +56,10 @@ class Tracker(GenericTracker):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
 
-
-    def __init__(self, url, users=None, res=None):
+    def __init__(self, url, users=None, res=None, login_attempts=3):
         super(Tracker, self).__init__(users=users)
 
+        self._logins_left = login_attempts + 1 if login_attempts else 1
         match = self.ROOT_RE.match(url)
         if not match:
             raise TypeError("'{}' is not a valid bugzilla url".format(url))
@@ -89,6 +89,8 @@ class Tracker(GenericTracker):
                 query='names={name}'.format(name=username or email or name),
             ),
         ))
+        if response.status_code // 100 == 4 and self._logins_left:
+            self._logins_left -= 1
         response = response.json().get('users') if response.status_code // 100 == 2 else None
         if not response:
             return self.users.create(
@@ -127,6 +129,11 @@ class Tracker(GenericTracker):
         )
 
     def _login_arguments(self, required=False, query=None):
+        if not self._logins_left:
+            if required:
+                raise RuntimeError('Exhausted login attempts')
+            return '?{}'.format(query) if query else ''
+
         username, password = self.credentials(required=required)
         if not username or not password:
             return '?{}'.format(query) if query else ''
@@ -150,6 +157,8 @@ class Tracker(GenericTracker):
 
         if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version'):
             response = requests.get('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))
+            if response.status_code // 100 == 4 and self._logins_left:
+                self._logins_left -= 1
             response = response.json().get('bugs', []) if response.status_code == 200 else None
             if response:
                 response = response[0]
@@ -185,6 +194,8 @@ class Tracker(GenericTracker):
 
         if member in ['description', 'comments']:
             response = requests.get('{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=False)))
+            if response.status_code // 100 == 4 and self._logins_left:
+                self._logins_left -= 1
             if response.status_code == 200:
                 response = response.json().get('bugs', {}).get(str(issue.id), {}).get('comments', None)
             else:
@@ -218,6 +229,8 @@ class Tracker(GenericTracker):
                 url=self.url, id=issue.id,
                 query=self._login_arguments(required=False, query='include_fields=see_also'),
             ))
+            if response.status_code // 100 == 4 and self._logins_left:
+                self._logins_left -= 1
             response = response.json().get('bugs', []) if response.status_code == 200 else None
             if response:
                 for link in response[0].get('see_also', []):
@@ -287,11 +300,17 @@ class Tracker(GenericTracker):
 
         if update_dict:
             update_dict['ids'] = [issue.id]
-            response = requests.put(
-                '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
-                json=update_dict,
-            )
-            if response.status_code // 100 != 2:
+            response = None
+            try:
+                response = requests.put(
+                    '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                    json=update_dict,
+                )
+            except RuntimeError as e:
+                sys.stderr.write('{}\n'.format(e))
+            if response and response.status_code // 100 == 4 and self._logins_left:
+                self._logins_left -= 1
+            if not response or response.status_code // 100 != 2:
                 if assignee:
                     issue._assignee = None
                 if opened is not None:
@@ -306,11 +325,18 @@ class Tracker(GenericTracker):
         return issue
 
     def add_comment(self, issue, text):
-        response = requests.post(
-            '{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=True)),
-            json=dict(comment=text),
-        )
-        if response.status_code // 100 != 2:
+        response = None
+        try:
+            response = requests.post(
+                '{}/rest/bug/{}/comment{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                json=dict(comment=text),
+            )
+        except RuntimeError as e:
+            sys.stderr.write('{}\n'.format(e))
+
+        if response and response.status_code // 100 == 4 and self._logins_left:
+            self._logins_left -= 1
+        if not response or response.status_code // 100 != 2:
             sys.stderr.write("Failed to add comment to '{}'\n".format(issue))
             return None
 
@@ -329,6 +355,8 @@ class Tracker(GenericTracker):
     @webkitcorepy.decorators.Memoize()
     def projects(self):
         response = requests.get('{}/rest/product_enterable{}'.format(self.url, self._login_arguments(required=False)))
+        if response.status_code // 100 == 4 and self._logins_left:
+            self._logins_left -= 1
         if response.status_code // 100 != 2:
             sys.stderr.write("Failed to retrieve project list'\n")
             return dict()
@@ -336,6 +364,8 @@ class Tracker(GenericTracker):
         result = dict()
         for id in response.json().get('ids', []):
             id_response = requests.get('{}/rest/product/{}{}'.format(self.url, id, self._login_arguments(required=False)))
+            if response.status_code // 100 == 4 and self._logins_left:
+                self._logins_left -= 1
             if response.status_code // 100 != 2:
                 sys.stderr.write("Failed to query bugzilla about prod '{}'\n".format(id))
                 continue
@@ -403,8 +433,16 @@ class Tracker(GenericTracker):
         if assign:
             params['assigned_to'] = self.me().username
 
-        response = requests.post('{}/rest/bug{}'.format(self.url, self._login_arguments(required=True)), json=params)
-        if response.status_code // 100 != 2:
-            sys.stderr.write("Failed to create bug: {}\n".format(response.json().get('message', '?')))
+        response = None
+        try:
+            response = requests.post('{}/rest/bug{}'.format(self.url, self._login_arguments(required=True)), json=params)
+        except RuntimeError as e:
+            sys.stderr.write('{}\n'.format(e))
+        if response and response.status_code // 100 == 4 and self._logins_left:
+            self._logins_left -= 1
+        if not response or response.status_code // 100 != 2:
+            sys.stderr.write("Failed to create bug: {}\n".format(
+                response.json().get('message', '?') if response else 'Login attempts exhausted'),
+            )
             return None
         return self.issue(response.json()['id'])

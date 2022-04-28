@@ -21,11 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import os
 import re
 import unittest
 
-from webkitbugspy import Issue, Tracker, User, bugzilla, mocks
+from webkitbugspy import Tracker, User, bugzilla, mocks
 from webkitcorepy import OutputCapture, mocks as wkmocks
 
 
@@ -380,3 +379,38 @@ What version of 'WebKit' should the bug be associated with?:
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
             issue = bugzilla.Tracker(self.URL).issue(1)
             self.assertEqual(issue.labels, [])
+
+    def test_exhausted_logins(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
+            tracker = bugzilla.Tracker(self.URL)
+            tracker._logins_left = 0
+
+            with OutputCapture() as captured:
+                self.assertFalse(tracker.issue(1).close())
+            self.assertEqual(
+                captured.stderr.getvalue(),
+                'Exhausted login attempts\n'
+                "Failed to modify 'https://bugs.example.com/show_bug.cgi?id=1 Example issue 1'\n",
+            )
+
+            with OutputCapture() as captured:
+                self.assertIsNone(tracker.issue(1).add_comment('Failed comment'))
+            self.assertEqual(
+                captured.stderr.getvalue(),
+                'Exhausted login attempts\n'
+                "Failed to add comment to 'https://bugs.example.com/show_bug.cgi?id=1 Example issue 1'\n",
+            )
+
+            with OutputCapture() as captured:
+                self.assertIsNone(tracker.create(
+                    'New bug', 'Creating new bug',
+                    project='WebKit', component='Tables', version='Other',
+                ))
+            self.assertEqual(
+                captured.stderr.getvalue(),
+                'Exhausted login attempts\n'
+                'Failed to create bug: Login attempts exhausted\n',
+            )

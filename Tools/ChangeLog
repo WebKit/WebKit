@@ -1,3 +1,25 @@
+2022-04-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Limit number of failed bugzilla login attempts
+        https://bugs.webkit.org/show_bug.cgi?id=239850
+        <rdar://problem/92462214>
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/bugzilla.py:
+        (Tracker.__init__): Caller can define the number of failed login attempts.
+        (Tracker.user): Detect a failed login.
+        (Tracker._login_arguments): Only provide login arguments if login attempts
+        have not been exceeded.
+        (Tracker.populate): Detect a failed login.
+        (Tracker.set): Detect a failed login, handle case where login arguments are
+        not provided due to exceeded login attempts.
+        (Tracker.add_comment): Ditto.
+        (Tracker.projects): Detect a failed login.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/bugzilla_unittest.py:
+
 2022-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         test-webkitperl outputs errors about uninitialized $platform variable

@@ -46,7 +46,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(0, 5, 3)
+version = Version(0, 5, 4)
 
 from .user import User
 from .issue import Issue
