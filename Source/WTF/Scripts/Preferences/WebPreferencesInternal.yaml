@@ -119,7 +119,7 @@ BlockIOKitInWebContentSandbox:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 CSSDisplayContentsAXSupportEnabled:
   type: bool
