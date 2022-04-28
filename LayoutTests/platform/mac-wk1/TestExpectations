@@ -1874,3 +1874,17 @@ webkit.org/b/238642 imported/w3c/web-platform-tests/css/css-contain/contain-body
 
 webkit.org/b/237783 imported/w3c/web-platform-tests/html/semantics/forms/input-change-event-properties.html [ Timeout ]
 
+webkit.org/b/239835 webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/image_bitmap_from_video/tex-2d-r8-red-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-float.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-float.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-half_float.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-r8ui-red_integer-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-rg32f-rg-float.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb9_e5-rgb-float.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-3d-rg16f-rg-half_float.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb5_a1-rgba-unsigned_byte.html [ Pass Timeout ]
+webkit.org/b/239835 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba4-rgba-unsigned_byte.html [ Pass Timeout ]
