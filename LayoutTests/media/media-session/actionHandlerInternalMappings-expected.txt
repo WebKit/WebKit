@@ -22,12 +22,12 @@ ACTION: seekto
 Command: SeekToPlaybackPositionCommand
 Iterate over all possible actions
 Command: PauseCommand
+Command: PlayCommand
 Command: SkipBackwardCommand
 Command: SkipForwardCommand
-Command: NextTrackCommand
-Command: PreviousTrackCommand
 Command: SeekToPlaybackPositionCommand
-Command: PlayCommand
+Command: PreviousTrackCommand
+Command: NextTrackCommand
 Command: StopCommand
 Iterate over possible actions after video element src is cleared
 RUN(video.src = "")

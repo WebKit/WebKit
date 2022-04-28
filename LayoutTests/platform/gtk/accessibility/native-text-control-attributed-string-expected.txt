@@ -10,13 +10,13 @@ Attributed string for range (0, 9):
 		bg-color:255,255,255
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
+		weight:400
 		fg-color:0,0,0
 		size:12pt
-		weight:400
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for 'some word':
 Attributed string for range (0, 3):
 	Default text attributes:
@@ -25,13 +25,13 @@ Attributed string for range (0, 3):
 		bg-color:255,255,255
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
+		weight:400
 		fg-color:0,0,0
 		size:12pt
-		weight:400
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for 'som':
 Attributed string for range (5, 4):
 	Default text attributes:
@@ -40,13 +40,13 @@ Attributed string for range (5, 4):
 		bg-color:255,255,255
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
+		weight:400
 		fg-color:0,0,0
 		size:12pt
-		weight:400
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for 'word':
 Attributed string for range (5, 10):
 Attributed string for range (10, 1):
@@ -57,13 +57,13 @@ Attributed string for range (-1, 1):
 		bg-color:255,255,255
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
+		weight:400
 		fg-color:0,0,0
 		size:12pt
-		weight:400
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for 's':
 
 Attributed string for range (0, 3):
@@ -73,13 +73,13 @@ Attributed string for range (0, 3):
 		bg-color:255,255,255
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
+		weight:400
 		fg-color:0,0,0
 		size:12pt
-		weight:400
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for '•••':
 Attributed string for range (0, 2):
 	Default text attributes:
@@ -88,13 +88,13 @@ Attributed string for range (0, 2):
 		bg-color:255,255,255
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
+		weight:400
 		fg-color:0,0,0
 		size:12pt
-		weight:400
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for '••':
 Attributed string for range (1, 2):
 	Default text attributes:
@@ -103,13 +103,13 @@ Attributed string for range (1, 2):
 		bg-color:255,255,255
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
+		weight:400
 		fg-color:0,0,0
 		size:12pt
-		weight:400
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for '••':
 Attributed string for range (1, 10):
 Attributed string for range (10, 1):
@@ -120,13 +120,13 @@ Attributed string for range (-1, 1):
 		bg-color:255,255,255
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
+		weight:400
 		fg-color:0,0,0
 		size:12pt
-		weight:400
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for '•':
 
 PASS successfullyParsed is true

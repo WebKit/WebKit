@@ -15,13 +15,13 @@ Attributed string with range:
 		family-name:-webkit-standard
 		editable:true
 		strikethrough:false
+		direction:ltr
 		style:normal
 		fg-color:0,0,0
-		size:12pt
 		weight:400
+		size:12pt
 		invisible:false
 		underline:none
-		direction:ltr
 	Range attributes for 'ello<\n>':
 	Range attributes for 'worl':
 		weight:700

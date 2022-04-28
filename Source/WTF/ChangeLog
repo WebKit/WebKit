@@ -1,3 +1,35 @@
+2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Use quadratic-probing instead of double-hashing
+        https://bugs.webkit.org/show_bug.cgi?id=239813
+
+        Reviewed by Geoffrey Garen.
+
+        If table size is always power-of-two, we can safely use quadratic-probing[1] even if the load exceeds 50%.
+        Quadratic-probing and double-hashing have different tradeoff between clustering possibility and CPU cache
+        friendliness. Double-hashing can avoid clustering more, but it is not CPU cache friendly. Quadratic-probing
+        can cause clustering more but better for CPU cache. And while linear-probing caused a lot of trouble and not
+        practical, quadratic-probing with 75% load factor is practical configuration which is used in production-ready
+        hashtables e.g. Google's sparsetable / densetable[2].
+
+        This patch replaces WTF::HashTable's probing algorithm from double-hashing to quadratic-probing to make it more
+        cache friendly while keeping reasonable clustering characteristics (compared to linear-probing etc.). Due to
+        this cache friendliness, we get large performance improvements.
+
+        1. 0.52% improvement in Speedometer2 with 95% probability.
+        2. 0.72% improvement in JetStream2 with 98% probability.
+
+        [1]: https://fgiesen.wordpress.com/2015/02/22/triangular-numbers-mod-2n/
+        [2]: http://goog-sparsehash.sourceforge.net/doc/implementation.html
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+        (WTF::KeyTraits>::lookupForWriting):
+        (WTF::KeyTraits>::fullLookupForWriting):
+        (WTF::KeyTraits>::addUniqueForInitialization):
+        (WTF::KeyTraits>::add):
+        (WTF::doubleHash): Deleted.
+
 2022-04-28  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Enable IOKit blocking in GPUP by default

@@ -1,3 +1,19 @@
+2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Use quadratic-probing instead of double-hashing
+        https://bugs.webkit.org/show_bug.cgi?id=239813
+
+        Reviewed by Geoffrey Garen.
+
+        The following tests are relying on HashTable's ordering which is not guaranteed.
+
+        * media/media-session/actionHandlerInternalMappings-expected.txt:
+        * platform/glib/accessibility/content-editable-as-textarea-expected.txt:
+        * platform/gtk/accessibility/native-text-control-attributed-string-expected.txt:
+        * storage/indexeddb/getdatabases-expected.txt:
+        * storage/indexeddb/getdatabases-private-expected.txt:
+        * storage/indexeddb/resources/getdatabases.js:
+
 2022-04-28  Antti Koivisto  <antti@apple.com>
 
         [ iOS ] tables/mozilla/bugs/bug26178.html is a constant failure
