@@ -1528,6 +1528,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         if patch_id:
             comment += f'\n\nRejecting attachment {patch_id} from commit queue.'
         elif pr_number:
+            comment += f'\n\nIf you do have {status} permmissions, please ensure that your GitHub username is added to contributors.json.'
             comment += f'\n\nRejecting {self.getProperty("github.head.sha", f"#{pr_number}")} from merge queue.'
         self.setProperty('comment_text', comment)
 
