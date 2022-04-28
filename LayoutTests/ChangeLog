@@ -1,3 +1,19 @@
+2022-04-28  Antti Koivisto  <antti@apple.com>
+
+        [ iOS ] tables/mozilla/bugs/bug26178.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=239567
+        <rdar://problem/92055518>
+
+        Unreviewed test gardening.
+
+        This test produces different (1px) render tree dump results on iOS 15 and 15E sims.
+        Mark as failure on iOS as there appears be no way to have different expectations for those.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/tables/mozilla/bugs/bug26178-expected.txt:
+
+        Also update to E results.
+
 2022-04-28  Tim Nguyen  <ntim@apple.com>
 
         Rebaseline editing/pasteboard/smart-paste-paragraph-002.html after r293521
