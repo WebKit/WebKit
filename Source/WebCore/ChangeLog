@@ -1,3 +1,14 @@
+2022-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Use more smart pointers in Element.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=239836
+
+        Reviewed by Chris Dumez.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setScrollLeft):
+        (WebCore::Element::setScrollTop):
+
 2022-04-27  Tyler Wilcock  <tyler_w@apple.com>
 
         AXObjectCache::childrenChanged modifies m_deferred* member variables but doesn't start timer to process them
