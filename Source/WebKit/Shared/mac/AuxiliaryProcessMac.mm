@@ -829,7 +829,6 @@ bool AuxiliaryProcess::isSystemWebKit()
     }();
     return isSystemWebKit;
 }
-#endif
 
 void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)
 {
@@ -847,6 +846,7 @@ void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& 
 
     sandboxExtension->revoke();
 }
+#endif // PLATFORM(MAC)
 
 } // namespace WebKit
 
