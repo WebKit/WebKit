@@ -1,3 +1,25 @@
+2022-04-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Implement MacroAssemblerRISCV64 branchAtomicWeakCAS{8,16,32,64} methods
+        https://bugs.webkit.org/show_bug.cgi?id=239806
+
+        Reviewed by Yusuke Suzuki.
+
+        Provide MacroAssemblerRISCV64 method implementations for the different
+        branchAtomicWeakCAS variants. The 32-bit and 64-bit versions are
+        straightforward, leveraging the load-reserved and store-conditional
+        instructions of the corresponding sizes. For 8-bit and 16-bit versions,
+        a method template is provided, loading and storing 32-bit words and
+        performing additional operations to validate and change the desired
+        value.
+
+        * assembler/MacroAssemblerRISCV64.h:
+        (JSC::MacroAssemblerRISCV64::branchAtomicWeakCASImpl):
+        (JSC::MacroAssemblerRISCV64::branchAtomicWeakCAS8):
+        (JSC::MacroAssemblerRISCV64::branchAtomicWeakCAS16):
+        (JSC::MacroAssemblerRISCV64::branchAtomicWeakCAS32):
+        (JSC::MacroAssemblerRISCV64::branchAtomicWeakCAS64):
+
 2022-04-27  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-GC] Introduce rtt types
