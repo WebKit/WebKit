@@ -856,7 +856,7 @@ bool Quirks::shouldBypassBackForwardCache() const
     // because it puts an overlay (with class "docs-homescreen-freeze-el-full") over the page when navigating away and fails
     // to remove it when coming back from the back/forward cache (e.g. in 'pageshow' event handler). See <rdar://problem/57670064>.
     // Note that this does not check for docs.google.com host because of hosted G Suite apps.
-    static MainThreadNeverDestroyed<const AtomString> googleDocsOverlayDivClass("docs-homescreen-freeze-el-full", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> googleDocsOverlayDivClass("docs-homescreen-freeze-el-full"_s);
     auto* firstChildInBody = m_document->body() ? m_document->body()->firstChild() : nullptr;
     if (is<HTMLDivElement>(firstChildInBody)) {
         auto& div = downcast<HTMLDivElement>(*firstChildInBody);

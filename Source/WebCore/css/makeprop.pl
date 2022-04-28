@@ -417,9 +417,9 @@ static_assert(numCSSProperties + 1 <= 65535, "CSSPropertyID should fit into uint
 
 EOF
 
-print GPERF "const char* const propertyNameStrings[numCSSProperties] = {\n";
+print GPERF "constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {\n";
 foreach my $name (@names) {
-  print GPERF "    \"$name\",\n";
+  print GPERF "    \"$name\"_s,\n";
 }
 print GPERF "};\n\n";
 
@@ -524,13 +524,13 @@ print GPERF << "EOF";
     return true;
 }
 
-const char* getPropertyName(CSSPropertyID id)
+ASCIILiteral getPropertyName(CSSPropertyID id)
 {
     if (id < firstCSSProperty)
-        return 0;
+        return { };
     int index = id - firstCSSProperty;
     if (index >= numCSSProperties)
-        return 0;
+        return { };
     return propertyNameStrings[index];
 }
 
@@ -544,10 +544,8 @@ const AtomString& getPropertyNameAtomString(CSSPropertyID id)
 
     static AtomString* propertyStrings = new AtomString[numCSSProperties]; // Intentionally never destroyed.
     AtomString& propertyString = propertyStrings[index];
-    if (propertyString.isNull()) {
-        const char* propertyName = propertyNameStrings[index];
-        propertyString = AtomString(propertyName, strlen(propertyName), AtomString::ConstructFromLiteral);
-    }
+    if (propertyString.isNull())
+        propertyString = propertyNameStrings[index];
     return propertyString;
 }
 
@@ -913,7 +911,7 @@ print HEADER << "EOF";
 bool isInternalCSSProperty(const CSSPropertyID);
 bool isEnabledCSSProperty(const CSSPropertyID);
 bool isCSSPropertyEnabledBySettings(const CSSPropertyID, const Settings* = nullptr);
-const char* getPropertyName(CSSPropertyID);
+ASCIILiteral getPropertyName(CSSPropertyID);
 const AtomString& getPropertyNameAtomString(CSSPropertyID id);
 String getPropertyNameString(CSSPropertyID id);
 String getJSPropertyName(CSSPropertyID);

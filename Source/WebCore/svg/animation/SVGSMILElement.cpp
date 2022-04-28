@@ -70,7 +70,7 @@ static SMILEventSender& smilEndEventSender()
 
 static const AtomString& indefiniteAtom()
 {
-    static MainThreadNeverDestroyed<const AtomString> indefiniteValue("indefinite", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> indefiniteValue("indefinite"_s);
     return indefiniteValue;
 }
 
@@ -657,8 +657,8 @@ bool SVGSMILElement::isFrozen() const
     
 SVGSMILElement::Restart SVGSMILElement::restart() const
 {    
-    static MainThreadNeverDestroyed<const AtomString> never("never", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> whenNotActive("whenNotActive", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> never("never"_s);
+    static MainThreadNeverDestroyed<const AtomString> whenNotActive("whenNotActive"_s);
     const AtomString& value = attributeWithoutSynchronization(SVGNames::restartAttr);
     if (value == never)
         return RestartNever;
@@ -669,7 +669,7 @@ SVGSMILElement::Restart SVGSMILElement::restart() const
     
 SVGSMILElement::FillMode SVGSMILElement::fill() const
 {   
-    static MainThreadNeverDestroyed<const AtomString> freeze("freeze", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> freeze("freeze"_s);
     const AtomString& value = attributeWithoutSynchronization(SVGNames::fillAttr);
     return value == freeze ? FillFreeze : FillRemove;
 }

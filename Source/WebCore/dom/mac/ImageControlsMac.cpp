@@ -54,13 +54,13 @@ namespace ImageControlsMac {
 
 static const AtomString& imageControlsElementIdentifier()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("image-controls", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> identifier("image-controls"_s);
     return identifier;
 }
 
 static const AtomString& imageControlsButtonIdentifier()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("image-controls-button", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> identifier("image-controls-button"_s);
     return identifier;
 }
 

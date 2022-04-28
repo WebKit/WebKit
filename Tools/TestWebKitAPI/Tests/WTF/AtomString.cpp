@@ -31,22 +31,16 @@ namespace TestWebKitAPI {
 
 TEST(WTF, AtomStringCreationFromLiteral)
 {
-    AtomString stringWithTemplate("Template Literal", AtomString::ConstructFromLiteral);
+    AtomString stringWithTemplate("Template Literal"_s);
     ASSERT_EQ(strlen("Template Literal"), stringWithTemplate.length());
     ASSERT_TRUE(stringWithTemplate == "Template Literal");
     ASSERT_TRUE(stringWithTemplate.string().is8Bit());
-
-    const char* programmaticStringData = "Explicit Size Literal";
-    AtomString programmaticString(programmaticStringData, strlen(programmaticStringData), AtomString::ConstructFromLiteral);
-    ASSERT_EQ(strlen(programmaticStringData), programmaticString.length());
-    ASSERT_TRUE(programmaticString.string().is8Bit());
-    ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString.string().characters8()));
 }
 
 TEST(WTF, AtomStringCreationFromLiteralUniqueness)
 {
-    AtomString string1("Template Literal", AtomString::ConstructFromLiteral);
-    AtomString string2("Template Literal", AtomString::ConstructFromLiteral);
+    AtomString string1("Template Literal"_s);
+    AtomString string2("Template Literal"_s);
     ASSERT_EQ(string1.impl(), string2.impl());
 
     AtomString string3("Template Literal"_s);
@@ -55,7 +49,7 @@ TEST(WTF, AtomStringCreationFromLiteralUniqueness)
 
 TEST(WTF, AtomStringExistingHash)
 {
-    AtomString string1("Template Literal", AtomString::ConstructFromLiteral);
+    AtomString string1("Template Literal"_s);
     ASSERT_EQ(string1.existingHash(), string1.impl()->existingHash());
     AtomString string2;
     ASSERT_EQ(string2.existingHash(), 0u);

@@ -3339,7 +3339,7 @@ const String AccessibilityRenderObject::liveRegionStatus() const
 
 const String AccessibilityRenderObject::liveRegionRelevant() const
 {
-    static MainThreadNeverDestroyed<const AtomString> defaultLiveRegionRelevant("additions text", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> defaultLiveRegionRelevant("additions text"_s);
     const AtomString& relevant = getAttribute(aria_relevantAttr);
 
     // Default aria-relevant = "additions text".

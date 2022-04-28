@@ -60,7 +60,7 @@ Ref<HTMLOutputElement> HTMLOutputElement::create(Document& document)
 
 const AtomString& HTMLOutputElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> output("output", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> output("output"_s);
     return output;
 }
 

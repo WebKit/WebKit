@@ -319,8 +319,8 @@ TEST_F(LoggingTest, Logger)
     EXPECT_EQ(0u, output().length());
 
     logger->setEnabled(this, true);
-    AtomString string1("AtomString", AtomString::ConstructFromLiteral);
-    const AtomString string2("const AtomString", AtomString::ConstructFromLiteral);
+    AtomString string1("AtomString"_s);
+    const AtomString string2("const AtomString"_s);
     logger->logAlways(TestChannel1, string1, " and ", string2);
     EXPECT_TRUE(output().containsIgnoringASCIICase("AtomString and const AtomString"));
 

@@ -114,8 +114,8 @@ MediaStreamTrack::~MediaStreamTrack()
 
 const AtomString& MediaStreamTrack::kind() const
 {
-    static MainThreadNeverDestroyed<const AtomString> audioKind("audio", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> videoKind("video", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> audioKind("audio"_s);
+    static MainThreadNeverDestroyed<const AtomString> videoKind("video"_s);
 
     if (m_private->isAudio())
         return audioKind;
@@ -134,10 +134,10 @@ const String& MediaStreamTrack::label() const
 
 const AtomString& MediaStreamTrack::contentHint() const
 {
-    static MainThreadNeverDestroyed<const AtomString> speechHint("speech", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> musicHint("music", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> detailHint("detail", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> motionHint("motion", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> speechHint("speech"_s);
+    static MainThreadNeverDestroyed<const AtomString> musicHint("music"_s);
+    static MainThreadNeverDestroyed<const AtomString> detailHint("detail"_s);
+    static MainThreadNeverDestroyed<const AtomString> motionHint("motion"_s);
 
     switch (m_private->contentHint()) {
     case MediaStreamTrackPrivate::HintValue::Empty:

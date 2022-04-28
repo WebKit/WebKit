@@ -713,19 +713,19 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
 
     if (m_document.quirks().needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
-        static MainThreadNeverDestroyed<const AtomString> roleValue("navigation", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> roleValue("navigation"_s);
         if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
     if (m_document.quirks().needsYouTubeOverflowScrollQuirk()) {
         // This turns sidebar scrollable without hover.
-        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);
         if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
     }
     if (m_document.quirks().needsWeChatScrollingQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> class1("tree-select", AtomString::ConstructFromLiteral);
-        static MainThreadNeverDestroyed<const AtomString> class2("v-tree-select", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> class1("tree-select"_s);
+        static MainThreadNeverDestroyed<const AtomString> class2("v-tree-select"_s);
         const auto& flexBasis = style.flexBasis();
         if (style.minHeight().isAuto()
             && style.display() == DisplayType::Flex
@@ -740,8 +740,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
 #if ENABLE(VIDEO)
     if (m_document.quirks().needsFullscreenDisplayNoneQuirk()) {
         if (is<HTMLDivElement>(m_element) && style.display() == DisplayType::None) {
-            static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile", AtomString::ConstructFromLiteral);
-            static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api", AtomString::ConstructFromLiteral);
+            static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
+            static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
 
             auto& div = downcast<HTMLDivElement>(*m_element);
             if (div.hasClass() && div.classNames().contains(instreamNativeVideoDivClass)) {

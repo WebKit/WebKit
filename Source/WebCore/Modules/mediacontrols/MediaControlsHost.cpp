@@ -75,25 +75,25 @@ namespace WebCore {
 
 const AtomString& MediaControlsHost::automaticKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> automatic("automatic", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> automatic("automatic"_s);
     return automatic;
 }
 
 const AtomString& MediaControlsHost::forcedOnlyKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> forcedOnly("forced-only", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> forcedOnly("forced-only"_s);
     return forcedOnly;
 }
 
 static const AtomString& alwaysOnKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> alwaysOn("always-on", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> alwaysOn("always-on"_s);
     return alwaysOn;
 }
 
 static const AtomString& manualKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> alwaysOn("manual", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> alwaysOn("manual"_s);
     return alwaysOn;
 }
 
@@ -135,7 +135,7 @@ String MediaControlsHost::layoutTraitsClassName() const
 
 const AtomString& MediaControlsHost::mediaControlsContainerClassName() const
 {
-    static MainThreadNeverDestroyed<const AtomString> className("media-controls-container", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> className("media-controls-container"_s);
     return className;
 }
 

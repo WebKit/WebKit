@@ -908,7 +908,7 @@ sub printNamesCppFile
 
     printInit($F, 0);
 
-    print(F "    AtomString ${lowercaseNamespacePrefix}NS(\"$parameters{namespaceURI}\", AtomString::ConstructFromLiteral);\n\n");
+    print(F "    AtomString ${lowercaseNamespacePrefix}NS(\"$parameters{namespaceURI}\"_s);\n\n");
 
     print(F "    // Namespace\n");
     print(F "    ${lowercaseNamespacePrefix}NamespaceURI.construct(${lowercaseNamespacePrefix}NS);\n");

@@ -450,7 +450,7 @@ const Vector<AtomString>& PlaybackSessionModelMediaElement::observedEventNames()
 
 const AtomString&  PlaybackSessionModelMediaElement::eventNameAll()
 {
-    static MainThreadNeverDestroyed<const AtomString> eventNameAll("allEvents", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> eventNameAll("allEvents"_s);
     return eventNameAll;
 }
 

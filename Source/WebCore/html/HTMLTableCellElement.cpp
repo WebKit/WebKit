@@ -164,10 +164,10 @@ void HTMLTableCellElement::setRowSpanForBindings(unsigned n)
 const AtomString& HTMLTableCellElement::scope() const
 {
     // https://html.spec.whatwg.org/multipage/tables.html#attr-th-scope
-    static MainThreadNeverDestroyed<const AtomString> row("row", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> col("col", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> rowgroup("rowgroup", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> colgroup("colgroup", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> row("row"_s);
+    static MainThreadNeverDestroyed<const AtomString> col("col"_s);
+    static MainThreadNeverDestroyed<const AtomString> rowgroup("rowgroup"_s);
+    static MainThreadNeverDestroyed<const AtomString> colgroup("colgroup"_s);
 
     const AtomString& value = attributeWithoutSynchronization(HTMLNames::scopeAttr);
 

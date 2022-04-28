@@ -100,8 +100,8 @@ void HTMLSelectElement::didRecalcStyle(Style::Change styleChange)
 
 const AtomString& HTMLSelectElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> selectMultiple("select-multiple", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> selectOne("select-one", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> selectMultiple("select-multiple"_s);
+    static MainThreadNeverDestroyed<const AtomString> selectOne("select-one"_s);
     return m_multiple ? selectMultiple : selectOne;
 }
 

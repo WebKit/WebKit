@@ -1173,12 +1173,12 @@ static AtomString soupHTTPVersionToString(SoupHTTPVersion version)
 {
     switch (version) {
     case SOUP_HTTP_1_0:
-        return AtomString("http/1.0", AtomString::ConstructFromLiteral);
+        return "http/1.0"_s;
     case SOUP_HTTP_1_1:
-        return AtomString("http/1.1", AtomString::ConstructFromLiteral);
+        return "http/1.1"_s;
 #if SOUP_CHECK_VERSION(2, 99, 3)
     case SOUP_HTTP_2_0:
-        return AtomString("h2", AtomString::ConstructFromLiteral);
+        return "h2"_s;
 #endif
     }
 

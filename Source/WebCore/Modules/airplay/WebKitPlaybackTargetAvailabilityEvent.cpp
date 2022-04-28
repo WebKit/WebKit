@@ -37,8 +37,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitPlaybackTargetAvailabilityEvent);
 
 static const AtomString& stringForPlaybackTargetAvailability(bool available)
 {
-    static MainThreadNeverDestroyed<const AtomString> availableString("available", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> notAvailableString("not-available", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> availableString("available"_s);
+    static MainThreadNeverDestroyed<const AtomString> notAvailableString("not-available"_s);
 
     return available ? availableString : notAvailableString;
 }

@@ -108,11 +108,11 @@ AutofillFieldName toAutofillFieldName(const AtomString& value)
 
 static inline bool isContactToken(const AtomString& token)
 {
-    static MainThreadNeverDestroyed<const AtomString> home("home", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> work("work", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> mobile("mobile", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> fax("fax", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> pager("pager", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> home("home"_s);
+    static MainThreadNeverDestroyed<const AtomString> work("work"_s);
+    static MainThreadNeverDestroyed<const AtomString> mobile("mobile"_s);
+    static MainThreadNeverDestroyed<const AtomString> fax("fax"_s);
+    static MainThreadNeverDestroyed<const AtomString> pager("pager"_s);
 
     return token == home || token == work || token == mobile || token == fax || token == pager;
 }

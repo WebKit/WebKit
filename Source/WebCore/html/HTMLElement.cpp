@@ -414,8 +414,8 @@ static Ref<DocumentFragment> textToFragment(Document& document, const String& te
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#limited-to-only-known-values
 static inline const AtomString& toValidDirValue(const AtomString& value)
 {
-    static MainThreadNeverDestroyed<const AtomString> ltrValue("ltr", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> rtlValue("rtl", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> ltrValue("ltr"_s);
+    static MainThreadNeverDestroyed<const AtomString> rtlValue("rtl"_s);
     if (equalLettersIgnoringASCIICase(value, "ltr"_s))
         return ltrValue;
     if (equalLettersIgnoringASCIICase(value, "rtl"_s))

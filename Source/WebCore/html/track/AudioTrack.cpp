@@ -45,19 +45,19 @@ namespace WebCore {
 
 const AtomString& AudioTrack::descriptionKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> description("description", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> description("description"_s);
     return description;
 }
 
 const AtomString& AudioTrack::mainDescKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> mainDesc("main-desc", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mainDesc("main-desc"_s);
     return mainDesc;
 }
 
 const AtomString& AudioTrack::translationKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> translation("translation", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> translation("translation"_s);
     return translation;
 }
 

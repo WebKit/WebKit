@@ -50,15 +50,15 @@ const ConstantPropertyMap::Values& ConstantPropertyMap::values() const
 
 const AtomString& ConstantPropertyMap::nameForProperty(ConstantProperty property) const
 {
-    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetTopName("safe-area-inset-top", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetRightName("safe-area-inset-right", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetBottomName("safe-area-inset-bottom", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetLeftName("safe-area-inset-left", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetTopName("fullscreen-inset-top", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetLeftName("fullscreen-inset-left", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetBottomName("fullscreen-inset-bottom", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetRightName("fullscreen-inset-right", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> fullscreenAutoHideDurationName("fullscreen-auto-hide-duration", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetTopName("safe-area-inset-top"_s);
+    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetRightName("safe-area-inset-right"_s);
+    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetBottomName("safe-area-inset-bottom"_s);
+    static MainThreadNeverDestroyed<const AtomString> safeAreaInsetLeftName("safe-area-inset-left"_s);
+    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetTopName("fullscreen-inset-top"_s);
+    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetLeftName("fullscreen-inset-left"_s);
+    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetBottomName("fullscreen-inset-bottom"_s);
+    static MainThreadNeverDestroyed<const AtomString> fullscreenInsetRightName("fullscreen-inset-right"_s);
+    static MainThreadNeverDestroyed<const AtomString> fullscreenAutoHideDurationName("fullscreen-auto-hide-duration"_s);
 
     switch (property) {
     case ConstantProperty::SafeAreaInsetTop:

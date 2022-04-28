@@ -130,6 +130,12 @@ TextStream& TextStream::operator<<(const String& string)
     return *this;
 }
 
+TextStream& TextStream::operator<<(ASCIILiteral string)
+{
+    m_text.append(string);
+    return *this;
+}
+
 TextStream& TextStream::operator<<(StringView string)
 {
     m_text.append(string);

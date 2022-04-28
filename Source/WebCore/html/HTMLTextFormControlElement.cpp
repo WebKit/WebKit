@@ -435,8 +435,8 @@ unsigned HTMLTextFormControlElement::computeSelectionEnd() const
 
 static const AtomString& directionString(TextFieldSelectionDirection direction)
 {
-    static MainThreadNeverDestroyed<const AtomString> forward("forward", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> backward("backward", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> forward("forward"_s);
+    static MainThreadNeverDestroyed<const AtomString> backward("backward"_s);
 
     switch (direction) {
     case SelectionHasNoDirection:

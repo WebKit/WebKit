@@ -1615,7 +1615,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    if (auto result = fontForFamily(fontDescription, AtomString("Times", AtomString::ConstructFromLiteral)))
+    if (auto result = fontForFamily(fontDescription, AtomString("Times"_s)))
         return *result;
 
     // LastResort is guaranteed to be non-null.

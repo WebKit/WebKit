@@ -111,7 +111,7 @@ void SVGAnimateMotionElement::parseAttribute(const QualifiedName& name, const At
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
 {
-    static MainThreadNeverDestroyed<const AtomString> autoReverse("auto-reverse", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> autoReverse("auto-reverse"_s);
     auto& rotate = getAttribute(SVGNames::rotateAttr);
     if (rotate == autoAtom())
         return RotateAuto;

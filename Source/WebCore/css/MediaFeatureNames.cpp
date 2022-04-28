@@ -35,7 +35,7 @@ void init()
     static bool initialized;
     if (!initialized) {
         initializeCommonAtomStrings();
-#define INITIALIZE_GLOBAL(name, string) name.construct(string, AtomString::ConstructFromLiteral);
+#define INITIALIZE_GLOBAL(name, string) name.construct(string ## _s);
         CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(INITIALIZE_GLOBAL)
 #undef INITIALIZE_GLOBAL
         initialized = true;

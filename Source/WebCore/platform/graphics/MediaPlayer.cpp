@@ -328,7 +328,7 @@ static void addMediaEngine(std::unique_ptr<MediaPlayerFactory>&& factory)
 
 static const AtomString& applicationOctetStream()
 {
-    static MainThreadNeverDestroyed<const AtomString> applicationOctetStream("application/octet-stream", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> applicationOctetStream("application/octet-stream"_s);
     return applicationOctetStream;
 }
 

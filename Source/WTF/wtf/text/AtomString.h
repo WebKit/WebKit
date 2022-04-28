@@ -61,19 +61,6 @@ public:
     // FIXME: AtomString doesn’t always have AtomStringImpl, so one of those two names needs to change.
     AtomString(UniquedStringImpl* uid);
 
-    enum ConstructFromLiteralTag { ConstructFromLiteral };
-    AtomString(const char* characters, unsigned length, ConstructFromLiteralTag)
-        : m_string(AtomStringImpl::addLiteral(characters, length))
-    {
-    }
-
-    template<unsigned characterCount> ALWAYS_INLINE AtomString(const char (&characters)[characterCount], ConstructFromLiteralTag)
-        : m_string(AtomStringImpl::addLiteral(characters, characterCount - 1))
-    {
-        static_assert(characterCount > 1, "AtomStringFromLiteral is not empty");
-        static_assert((characterCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), "AtomStringFromLiteral cannot overflow");
-    }
-
     AtomString(ASCIILiteral literal)
         : m_string(AtomStringImpl::addLiteral(literal.characters(), literal.length()))
     {

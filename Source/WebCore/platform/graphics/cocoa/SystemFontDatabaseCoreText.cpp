@@ -257,22 +257,22 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
 
     switch (systemFontKind) {
     case SystemFontKind::SystemUI: {
-        static MainThreadNeverDestroyed<const AtomString> systemUI = AtomString("system-ui", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> systemUI { "system-ui"_s };
         result.fontName = systemUI.get();
         break;
     }
     case SystemFontKind::UISerif: {
-        static MainThreadNeverDestroyed<const AtomString> systemUISerif = AtomString("ui-serif", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> systemUISerif { "ui-serif"_s };
         result.fontName = systemUISerif.get();
         break;
     }
     case SystemFontKind::UIMonospace: {
-        static MainThreadNeverDestroyed<const AtomString> systemUIMonospace = AtomString("ui-monospace", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> systemUIMonospace { "ui-monospace"_s };
         result.fontName = systemUIMonospace.get();
         break;
     }
     case SystemFontKind::UIRounded: {
-        static MainThreadNeverDestroyed<const AtomString> systemUIRounded = AtomString("ui-rounded", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> systemUIRounded { "ui-rounded"_s };
         result.fontName = systemUIRounded.get();
         break;
     }

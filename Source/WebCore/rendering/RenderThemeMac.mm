@@ -949,7 +949,7 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
     fontDescription.setIsAbsoluteSize(true);
 
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
-    fontDescription.setOneFamily(AtomString("-apple-system", AtomString::ConstructFromLiteral));
+    fontDescription.setOneFamily("-apple-system"_s);
     fontDescription.setComputedSize([font pointSize] * style.effectiveZoom());
     fontDescription.setSpecifiedSize([font pointSize] * style.effectiveZoom());
 

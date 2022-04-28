@@ -42,14 +42,14 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
 
     switch (soup_message_get_http_version(soupMessage)) {
     case SOUP_HTTP_1_0:
-        m_httpVersion = AtomString("HTTP/1.0", AtomString::ConstructFromLiteral);
+        m_httpVersion = "HTTP/1.0"_s;
         break;
     case SOUP_HTTP_1_1:
-        m_httpVersion = AtomString("HTTP/1.1", AtomString::ConstructFromLiteral);
+        m_httpVersion = "HTTP/1.1"_s;
         break;
 #if SOUP_CHECK_VERSION(2, 99, 3)
     case SOUP_HTTP_2_0:
-        m_httpVersion = AtomString("HTTP/2", AtomString::ConstructFromLiteral);
+        m_httpVersion = "HTTP/2"_s;
         break;
 #endif
     }

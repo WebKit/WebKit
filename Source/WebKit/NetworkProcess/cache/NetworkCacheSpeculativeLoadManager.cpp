@@ -78,7 +78,7 @@ static void logSpeculativeLoadingDiagnosticMessage(NetworkProcess& networkProces
 static const AtomString& subresourcesType()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<const AtomString> resource("SubResources", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> resource("SubResources"_s);
     return resource;
 }
 

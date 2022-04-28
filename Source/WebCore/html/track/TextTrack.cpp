@@ -53,25 +53,25 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrack);
 
 static const AtomString& descriptionsKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> descriptions("descriptions", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> descriptions("descriptions"_s);
     return descriptions;
 }
 
 static const AtomString& chaptersKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> chapters("chapters", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> chapters("chapters"_s);
     return chapters;
 }
 
 static const AtomString& metadataKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> metadata("metadata", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> metadata("metadata"_s);
     return metadata;
 }
     
 static const AtomString& forcedKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> forced("forced", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> forced("forced"_s);
     return forced;
 }
 

@@ -485,7 +485,7 @@ static String htmlAttributeSerialization(const Attribute& attribute)
             return xmlnsAtom();
         prefixedName.setPrefix(xmlnsAtom());
     } else if (attribute.namespaceURI() == XLinkNames::xlinkNamespaceURI)
-        prefixedName.setPrefix(AtomString("xlink", AtomString::ConstructFromLiteral));
+        prefixedName.setPrefix(AtomString("xlink"_s));
     return prefixedName.toString();
 }
 

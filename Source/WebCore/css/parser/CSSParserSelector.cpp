@@ -64,9 +64,9 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
         name = pseudoTypeString.convertToASCIILowercase();
     else {
         if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"_s))
-            name = AtomString("placeholder", AtomString::ConstructFromLiteral);
+            name = "placeholder"_s;
         else if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-file-upload-button"_s))
-            name = AtomString("file-selector-button", AtomString::ConstructFromLiteral);
+            name = "file-selector-button"_s;
         else {
             ASSERT_NOT_REACHED();
             name = pseudoTypeString.convertToASCIILowercase();

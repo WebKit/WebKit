@@ -31,7 +31,7 @@ namespace WebCore {
 #define DEFINE_COMMON_ATOM(atomName, atomValue) \
     MainThreadLazyNeverDestroyed<const AtomString> atomName ## AtomData;
 #define INITIALIZE_COMMON_ATOM(atomName, atomValue) \
-    atomName ## AtomData.constructWithoutAccessCheck(atomValue, AtomString::ConstructFromLiteral);
+    atomName ## AtomData.constructWithoutAccessCheck(atomValue ## _s);
 
 WEBCORE_COMMON_ATOM_STRINGS_FOR_EACH_KEYWORD(DEFINE_COMMON_ATOM)
 

@@ -110,28 +110,28 @@ void FTPDirectoryDocumentParser::appendEntry(String&& filename, String&& size, S
     auto& document = *this->document();
 
     auto rowElement = m_tableElement->insertRow(-1).releaseReturnValue();
-    rowElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryEntryRow", AtomString::ConstructFromLiteral));
+    rowElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryEntryRow"_s);
 
     auto typeElement = HTMLTableCellElement::create(tdTag, document);
     typeElement->appendChild(Text::create(document, String(&noBreakSpace, 1)));
     if (isDirectory)
-        typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryIcon ftpDirectoryTypeDirectory", AtomString::ConstructFromLiteral));
+        typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeDirectory"_s);
     else
-        typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryIcon ftpDirectoryTypeFile", AtomString::ConstructFromLiteral));
+        typeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryIcon ftpDirectoryTypeFile"_s);
     rowElement->appendChild(typeElement);
 
     auto nameElement = createTDForFilename(WTFMove(filename));
-    nameElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileName", AtomString::ConstructFromLiteral));
+    nameElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryFileName"_s);
     rowElement->appendChild(nameElement);
 
     auto dateElement = HTMLTableCellElement::create(tdTag, document);
     dateElement->appendChild(Text::create(document, WTFMove(date)));
-    dateElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileDate", AtomString::ConstructFromLiteral));
+    dateElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryFileDate"_s);
     rowElement->appendChild(dateElement);
 
     auto sizeElement = HTMLTableCellElement::create(tdTag, document);
     sizeElement->appendChild(Text::create(document, WTFMove(size)));
-    sizeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, AtomString("ftpDirectoryFileSize", AtomString::ConstructFromLiteral));
+    sizeElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "ftpDirectoryFileSize"_s);
     rowElement->appendChild(sizeElement);
     document.setHasVisuallyNonEmptyCustomContent();
 }
@@ -311,7 +311,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     }
 
     m_tableElement = HTMLTableElement::create(document);
-    m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomString("ftpDirectoryTable", AtomString::ConstructFromLiteral));
+    m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, "ftpDirectoryTable"_s);
 
     // If we didn't find the table element, lets try to append our own to the body.
     // If that fails for some reason, cram it on the end of the document as a last ditch effort.
@@ -333,8 +333,8 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     document.appendChild(bodyElement);
 
     m_tableElement = HTMLTableElement::create(document);
-    m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, AtomString("ftpDirectoryTable", AtomString::ConstructFromLiteral));
-    m_tableElement->setAttribute(HTMLNames::styleAttr, AtomString("width:100%", AtomString::ConstructFromLiteral));
+    m_tableElement->setAttributeWithoutSynchronization(HTMLNames::idAttr, "ftpDirectoryTable"_s);
+    m_tableElement->setAttribute(HTMLNames::styleAttr, "width:100%"_s);
 
     bodyElement->appendChild(*m_tableElement);
 

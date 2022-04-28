@@ -85,19 +85,19 @@ void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
 
     auto iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, m_parentElement->document());
     if (m_attributes.contains<HashTranslatorASCIILiteral>("width"_s))
-        iframeElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
+        iframeElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, "100%"_s);
 
     const auto& heightValue = m_attributes.find<HashTranslatorASCIILiteral>("height"_s);
     if (heightValue != m_attributes.end()) {
-        iframeElement->setAttribute(HTMLNames::styleAttr, AtomString("max-height: 100%", AtomString::ConstructFromLiteral));
+        iframeElement->setAttribute(HTMLNames::styleAttr, "max-height: 100%"_s);
         iframeElement->setAttributeWithoutSynchronization(HTMLNames::heightAttr, heightValue->value);
     }
 
     iframeElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, youTubeURL(m_attributes.get<HashTranslatorASCIILiteral>("src"_s)));
-    iframeElement->setAttributeWithoutSynchronization(HTMLNames::frameborderAttr, AtomString("0", AtomString::ConstructFromLiteral));
+    iframeElement->setAttributeWithoutSynchronization(HTMLNames::frameborderAttr, "0"_s);
     
     // Disable frame flattening for this iframe.
-    iframeElement->setAttributeWithoutSynchronization(HTMLNames::scrollingAttr, AtomString("no", AtomString::ConstructFromLiteral));
+    iframeElement->setAttributeWithoutSynchronization(HTMLNames::scrollingAttr, "no"_s);
     m_embedShadowElement->appendChild(iframeElement);
 }
     

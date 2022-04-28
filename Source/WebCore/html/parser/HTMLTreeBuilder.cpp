@@ -539,7 +539,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
 
     MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
 
-    AtomString xlinkName("xlink", AtomString::ConstructFromLiteral);
+    AtomString xlinkName("xlink"_s);
     addNamesWithPrefix(map, xlinkName, XLinkNames::getXLinkAttrs(), XLinkNames::XLinkAttrsCount);
     addNamesWithPrefix(map, xmlAtom(), XMLNames::getXMLAttrs(), XMLNames::XMLAttrsCount);
 

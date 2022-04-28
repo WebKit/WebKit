@@ -60,15 +60,15 @@ const AtomString& stringForAutocapitalizeType(AutocapitalizeType type)
     case AutocapitalizeType::None:
         return noneAtom();
     case AutocapitalizeType::Sentences: {
-        static MainThreadNeverDestroyed<const AtomString> valueSentences("sentences", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> valueSentences("sentences"_s);
         return valueSentences;
     }
     case AutocapitalizeType::Words: {
-        static MainThreadNeverDestroyed<const AtomString> valueWords("words", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> valueWords("words"_s);
         return valueWords;
     }
     case AutocapitalizeType::AllCharacters: {
-        static MainThreadNeverDestroyed<const AtomString> valueAllCharacters("characters", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> valueAllCharacters("characters"_s);
         return valueAllCharacters;
     }
     }

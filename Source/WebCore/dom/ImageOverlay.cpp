@@ -70,13 +70,13 @@ namespace ImageOverlay {
 
 static const AtomString& imageOverlayElementIdentifier()
 {
-    static MainThreadNeverDestroyed<const AtomString> identifier("image-overlay", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> identifier("image-overlay"_s);
     return identifier;
 }
 
 static const AtomString& imageOverlayDataDetectorClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-data-detector-result", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-data-detector-result"_s);
     return className;
 }
 
@@ -84,19 +84,19 @@ static const AtomString& imageOverlayDataDetectorClass()
 
 static const AtomString& imageOverlayLineClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-line", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-line"_s);
     return className;
 }
 
 static const AtomString& imageOverlayTextClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-text", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-text"_s);
     return className;
 }
 
 static const AtomString& imageOverlayBlockClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-block", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> className("image-overlay-block"_s);
     return className;
 }
 

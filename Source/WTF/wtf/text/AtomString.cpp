@@ -156,9 +156,9 @@ void AtomString::init()
         // We bypass this by using constructWithoutAccessCheck, which intentionally skips `isMainThread()` check for construction.
         // In non WebThread environment, we do not lose the assertion coverage since we already have ASSERT(isUIThread()). And ASSERT(isUIThread()) ensures that this
         // is called in system main thread in WebThread platforms.
-        starAtomData.constructWithoutAccessCheck("*", AtomString::ConstructFromLiteral);
-        xmlAtomData.constructWithoutAccessCheck("xml", AtomString::ConstructFromLiteral);
-        xmlnsAtomData.constructWithoutAccessCheck("xmlns", AtomString::ConstructFromLiteral);
+        starAtomData.constructWithoutAccessCheck("*"_s);
+        xmlAtomData.constructWithoutAccessCheck("xml"_s);
+        xmlnsAtomData.constructWithoutAccessCheck("xmlns"_s);
     });
 }
 

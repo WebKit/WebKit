@@ -2542,7 +2542,7 @@ sub GenerateDefaultValue
             if ($defaultValue eq "\"\"") {
                 return $useAtomString ? "emptyAtom()" : "emptyString()";
             } else {
-                return $useAtomString ? "AtomString(${defaultValue}, AtomString::ConstructFromLiteral)" : "${defaultValue}_s";
+                return $useAtomString ? "AtomString(${defaultValue}_s)" : "${defaultValue}_s";
             }
         }
 

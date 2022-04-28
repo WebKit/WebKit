@@ -54,8 +54,7 @@ static bool useBackslashAsYenSignForFamily(const AtomString& family)
     static NeverDestroyed set = [] {
         MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
         auto add = [&set] (const char* name, std::initializer_list<UChar> unicodeName) {
-            unsigned nameLength = strlen(name);
-            set.add(AtomString { name, nameLength, AtomString::ConstructFromLiteral });
+            set.add(AtomString { ASCIILiteral::fromLiteralUnsafe(name) });
             unsigned unicodeNameLength = unicodeName.size();
             set.add(AtomString { unicodeName.begin(), unicodeNameLength });
         };

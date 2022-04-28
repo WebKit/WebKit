@@ -74,7 +74,7 @@ static AtomString computeSpecializedChineseLocale()
         if (startsWithLettersIgnoringASCIICase(language, "zh-"_s))
             return language;
     }
-    return AtomString("zh-hans", AtomString::ConstructFromLiteral); // We have no signal. Pick one option arbitrarily.
+    return "zh-hans"_s; // We have no signal. Pick one option arbitrarily.
 }
 
 static AtomString& cachedSpecializedChineseLocale()

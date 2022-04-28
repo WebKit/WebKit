@@ -58,7 +58,7 @@ using namespace FileSystem;
 static const AtomString& resourceType()
 {
     ASSERT(WTF::RunLoop::isMain());
-    static NeverDestroyed<const AtomString> resource("Resource", AtomString::ConstructFromLiteral);
+    static NeverDestroyed<const AtomString> resource("Resource"_s);
     return resource;
 }
 

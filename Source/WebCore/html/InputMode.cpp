@@ -108,13 +108,13 @@ const AtomString& email()
 
 const AtomString& numeric()
 {
-    static MainThreadNeverDestroyed<const AtomString> mode("numeric", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("numeric"_s);
     return mode;
 }
 
 const AtomString& decimal()
 {
-    static MainThreadNeverDestroyed<const AtomString> mode("decimal", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mode("decimal"_s);
     return mode;
 }
 

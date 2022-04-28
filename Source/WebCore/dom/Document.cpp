@@ -1322,9 +1322,9 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
 #if ENABLE(MATHML)
     const auto& annotationXmlLocalName = MathMLNames::annotation_xmlTag->localName();
 #else
-    static MainThreadNeverDestroyed<const AtomString> annotationXmlLocalName("annotation-xml", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> annotationXmlLocalName("annotation-xml"_s);
 #endif
-    static MainThreadNeverDestroyed<const AtomString> colorProfileLocalName("color-profile", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> colorProfileLocalName("color-profile"_s);
 
     if (localName == SVGNames::font_faceTag->localName()
         || localName == SVGNames::font_face_formatTag->localName()
