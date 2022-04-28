@@ -842,11 +842,11 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(JSGlobalObject* globalObj
     String hintString = asString(value)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, NoPreference);
 
-    if (WTF::equal(hintString, "default"))
+    if (WTF::equal(hintString, "default"_s))
         return NoPreference;
-    if (WTF::equal(hintString, "number"))
+    if (WTF::equal(hintString, "number"_s))
         return PreferNumber;
-    if (WTF::equal(hintString, "string"))
+    if (WTF::equal(hintString, "string"_s))
         return PreferString;
 
     throwTypeError(globalObject, scope, "Expected primitive hint to match one of 'default', 'number', 'string'."_s);

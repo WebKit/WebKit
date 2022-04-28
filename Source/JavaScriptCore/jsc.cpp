@@ -1278,7 +1278,7 @@ static EncodedJSValue printInternal(JSGlobalObject* globalObject, CallFrame* cal
 
     if (asyncTestExpectedPasses) {
         JSValue value = callFrame->argument(0);
-        if (value.isString() && WTF::equal(asString(value)->value(globalObject).impl(), "Test262:AsyncTestComplete")) {
+        if (value.isString() && WTF::equal(asString(value)->value(globalObject).impl(), "Test262:AsyncTestComplete"_s)) {
             asyncTestPasses++;
             return JSValue::encode(jsUndefined());
         }
