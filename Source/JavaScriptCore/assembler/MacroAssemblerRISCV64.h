@@ -3300,10 +3300,140 @@ public:
         m_assembler.fenceInsn({ RISCV64Assembler::MemoryOperation::R }, { RISCV64Assembler::MemoryOperation::RW });
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS8, JumpList);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS16, JumpList);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS32, JumpList);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(branchAtomicWeakCAS64, JumpList);
+    template<unsigned bitSize>
+    JumpList branchAtomicWeakCASImpl(StatusCondition cond, RegisterID expectedAndClobbered, RegisterID newValue, BaseIndex address)
+    {
+        static_assert(bitSize == 8 || bitSize == 16);
+        // There's no 8-bit or 16-bit load-reserved and store-conditional instructions in RISC-V,
+        // so we have to implement the operations through the 32-bit versions, with a limited amount
+        // of usable registers.
+
+        auto temp = temps<Data, Memory>();
+        JumpList failure;
+
+        // We clobber the expected-value register with the XOR difference between the expected
+        // and the new value, also clipping the result to the desired number of bits.
+        m_assembler.xorInsn(expectedAndClobbered, expectedAndClobbered, newValue);
+        m_assembler.zeroExtend<bitSize>(expectedAndClobbered);
+
+        // The BaseIndex address is resolved into the memory temp. The address is aligned to the 4-byte
+        // boundary, and the remainder is used to calculate the shift amount for the exact position
+        // in the 32-bit word where the target bit pattern is located.
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.addiInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.andiInsn(temp.data(), temp.memory(), Imm::I<0b11>());
+        m_assembler.andiInsn(temp.memory(), temp.memory(), Imm::I<~0b11>());
+        m_assembler.slliInsn<3>(temp.data(), temp.data());
+        m_assembler.addiInsn(temp.data(), temp.data(), Imm::I<32>());
+
+        // The XOR value in the expected-value register is shifted into the appropriate position in
+        // the upper half of the register. The shift value is OR-ed into the lower half.
+        m_assembler.sllInsn(expectedAndClobbered, expectedAndClobbered, temp.data());
+        m_assembler.orInsn(expectedAndClobbered, expectedAndClobbered, temp.data());
+
+        // The 32-bit value is loaded through the load-reserve instruction, and then shifted into the
+        // upper 32 bits of the register. XOR against the expected-value register will, in the upper
+        // 32 bits of the register, produce the 32-bit word with the expected value replaced by the new one.
+        m_assembler.lrwInsn(temp.data(), temp.memory(), { RISCV64Assembler::MemoryAccess::Acquire });
+        m_assembler.slliInsn<32>(temp.data(), temp.data());
+        m_assembler.xorInsn(expectedAndClobbered, temp.data(), expectedAndClobbered);
+
+        // We still have to validate that the expected value, after XOR, matches the new one. The upper
+        // 32 bits of the expected-value register are shifted by the pre-prepared shift amount stored
+        // in the lower half of that same register. This works becasue the shift amount is read only from
+        // the bottom 6 bits of the shift-amount register. XOR-ing against the new-value register and shifting
+        // back left should leave is with a zero value, in which case the expected-value bit pattern matched
+        // the one that was loaded from memory. If non-zero, the failure branch is taken.
+        m_assembler.srlInsn(temp.data(), expectedAndClobbered, expectedAndClobbered);
+        m_assembler.xorInsn(temp.data(), temp.data(), newValue);
+        m_assembler.slliInsn<64 - bitSize>(temp.data(), temp.data());
+        failure.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+
+        // The corresponding store-conditional remains. The 32-bit word, containing the new value after
+        // the XOR, is located in the upper 32 bits of the expected-value register. That can be shifted
+        // down and then used in the store-conditional instruction.
+        m_assembler.srliInsn<32>(expectedAndClobbered, expectedAndClobbered);
+        m_assembler.scwInsn(temp.data(), temp.memory(), expectedAndClobbered, { RISCV64Assembler::MemoryAccess::AcquireRelease });
+
+        // On successful store, the temp register will have a zero value, and a non-zero value otherwise.
+        // Branches are produced accordingly.
+        switch (cond) {
+        case Success: {
+            Jump success = makeBranch(Equal, temp.data(), RISCV64Registers::zero);
+            failure.link(this);
+            return JumpList(success);
+        }
+        case Failure:
+            failure.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+            break;
+        }
+
+        return failure;
+    }
+
+    JumpList branchAtomicWeakCAS8(StatusCondition cond, RegisterID expectedAndClobbered, RegisterID newValue, BaseIndex address)
+    {
+        return branchAtomicWeakCASImpl<8>(cond, expectedAndClobbered, newValue, address);
+    }
+
+    JumpList branchAtomicWeakCAS16(StatusCondition cond, RegisterID expectedAndClobbered, RegisterID newValue, BaseIndex address)
+    {
+        return branchAtomicWeakCASImpl<16>(cond, expectedAndClobbered, newValue, address);
+    }
+
+    JumpList branchAtomicWeakCAS32(StatusCondition cond, RegisterID expectedAndClobbered, RegisterID newValue, BaseIndex address)
+    {
+        auto temp = temps<Data, Memory>();
+        JumpList failure;
+
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.addiInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.zeroExtend<32>(expectedAndClobbered, expectedAndClobbered);
+
+        m_assembler.lrwInsn(temp.data(), temp.memory(), { RISCV64Assembler::MemoryAccess::Acquire });
+        m_assembler.xorInsn(temp.data(), temp.data(), expectedAndClobbered);
+        failure.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+        m_assembler.scwInsn(temp.data(), temp.memory(), newValue, { RISCV64Assembler::MemoryAccess::AcquireRelease });
+
+        switch (cond) {
+        case Success: {
+            Jump success = makeBranch(Equal, temp.data(), RISCV64Registers::zero);
+            failure.link(this);
+            return JumpList(success);
+        }
+        case Failure:
+            failure.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+            break;
+        }
+
+        return failure;
+    }
+
+    JumpList branchAtomicWeakCAS64(StatusCondition cond, RegisterID expectedAndClobbered, RegisterID newValue, BaseIndex address)
+    {
+        auto temp = temps<Data, Memory>();
+        JumpList failure;
+
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.addiInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+
+        m_assembler.lrdInsn(temp.data(), temp.memory(), { RISCV64Assembler::MemoryAccess::Acquire });
+        failure.append(makeBranch(NotEqual, temp.data(), expectedAndClobbered));
+        m_assembler.scdInsn(temp.data(), temp.memory(), newValue, { RISCV64Assembler::MemoryAccess::AcquireRelease });
+
+        switch (cond) {
+        case Success: {
+            Jump success = makeBranch(Equal, temp.data(), RISCV64Registers::zero);
+            failure.link(this);
+            return JumpList(success);
+        }
+        case Failure:
+            failure.append(makeBranch(NotEqual, temp.data(), RISCV64Registers::zero));
+            break;
+        }
+
+        return failure;
+    }
 
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveConditionally32);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveConditionally64);
