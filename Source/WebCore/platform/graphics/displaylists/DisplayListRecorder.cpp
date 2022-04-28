@@ -48,7 +48,8 @@ namespace DisplayList {
 
 Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
     : GraphicsContext(state)
-    , m_drawGlyphsRecorder(*this, initialCTM.xScale(), deconstructDrawGlyphs)
+    , m_initialScale(initialCTM.xScale())
+    , m_deconstructDrawGlyphs(deconstructDrawGlyphs)
 {
     m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
 }
@@ -161,7 +162,10 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
 
 void Recorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    m_drawGlyphsRecorder.drawGlyphs(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+    if (!m_drawGlyphsRecorder)
+        m_drawGlyphsRecorder = makeUnique<DrawGlyphsRecorder>(*this, m_initialScale, m_deconstructDrawGlyphs);
+
+    m_drawGlyphsRecorder->drawGlyphs(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
 }
 
 void Recorder::drawGlyphsAndCacheFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)

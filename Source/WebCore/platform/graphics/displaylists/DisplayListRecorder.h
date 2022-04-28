@@ -270,7 +270,9 @@ private:
     const AffineTransform& ctm() const;
 
     Vector<ContextState, 4> m_stateStack;
-    DrawGlyphsRecorder m_drawGlyphsRecorder;
+    std::unique_ptr<DrawGlyphsRecorder> m_drawGlyphsRecorder;
+    float m_initialScale { 1 };
+    DrawGlyphsRecorder::DeconstructDrawGlyphs m_deconstructDrawGlyphs { DrawGlyphsRecorder::DeconstructDrawGlyphs::No };
 };
 
 } // namespace DisplayList
