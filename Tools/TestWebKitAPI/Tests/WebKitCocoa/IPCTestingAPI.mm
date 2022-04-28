@@ -177,7 +177,7 @@ TEST(IPCTestingAPI, CanSendAlert)
 
     done = false;
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptAlert.name, 100,"
-        "[{type: 'uint64_t', value: IPC.frameID}, {type: 'FrameInfoData'}, {'type': 'String', 'value': 'hi'}]);</script>"];
+        "[{type: 'uint64_t', value: IPC.frameID}, {type: 'FrameInfoData', value: IPC}, {'type': 'String', 'value': 'hi'}]);</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([alertMessage UTF8String], "hi");
@@ -345,7 +345,7 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
     done = false;
     promptResult = @"foo";
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>result = IPC.sendSyncMessage('UI', IPC.webPageProxyID, IPC.messages.WebPageProxy_RunJavaScriptPrompt.name, 100,"
-        "[{type: 'uint64_t', value: IPC.frameID}, {type: 'FrameInfoData'}, {'type': 'String', 'value': 'hi'}, {'type': 'String', 'value': 'bar'}]);</script>"];
+        "[{type: 'uint64_t', value: IPC.frameID}, {type: 'FrameInfoData', value: IPC}, {'type': 'String', 'value': 'hi'}, {'type': 'String', 'value': 'bar'}]);</script>"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_STREQ([promptDefault UTF8String], "bar");

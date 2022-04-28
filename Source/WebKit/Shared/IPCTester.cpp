@@ -29,6 +29,7 @@
 #if ENABLE(IPC_TESTING_API)
 #include "Connection.h"
 #include "Decoder.h"
+#include "IPCConnectionTester.h"
 #include "IPCStreamTester.h"
 #include "IPCTesterMessages.h"
 
@@ -166,6 +167,32 @@ void IPCTester::sendSemaphoreBackAndSignalProtocol(IPC::Connection& connection, 
         ASSERT_IS_TESTING_IPC();
         return;
     }
+}
+
+void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Attachment&& testedConnectionIdentifier)
+{
+    auto addResult = m_connectionTesters.ensure(identifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue<IPCConnectionTester> { IPCConnectionTester::create(connection, identifier, WTFMove(testedConnectionIdentifier)) };
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry || isTestingIPC());
+}
+
+void IPCTester::createConnectionTesterAndSendAsyncMessages(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Attachment&& testedConnectionIdentifier, uint32_t messageCount)
+{
+    auto addResult = m_connectionTesters.ensure(identifier, [&] {
+        return IPC::ScopedActiveMessageReceiveQueue<IPCConnectionTester> { IPCConnectionTester::create(connection, identifier, WTFMove(testedConnectionIdentifier)) };
+    });
+    if (!addResult.isNewEntry) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+    addResult.iterator->value->sendAsyncMessages(messageCount);
+}
+
+void IPCTester::releaseConnectionTester(IPCConnectionTesterIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+{
+    m_connectionTesters.remove(identifier);
+    completionHandler();
 }
 
 void IPCTester::stopIfNeeded()

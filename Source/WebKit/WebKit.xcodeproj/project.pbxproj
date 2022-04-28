@@ -1351,6 +1351,8 @@
 		7B73124125CC8525003B2796 /* StreamServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123825CC8524003B2796 /* StreamServerConnection.h */; };
 		7B73124225CC8525003B2796 /* StreamConnectionEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123925CC8525003B2796 /* StreamConnectionEncoder.h */; };
 		7BAB111025DD02B3008FC479 /* ScopedActiveMessageReceiveQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */; };
+		7BBA63DF280E93D200B04823 /* IPCConnectionTesterIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */; };
+		7BBA63E0280E93D600B04823 /* IPCConnectionTester.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BBA63DE280E93B600B04823 /* IPCConnectionTester.h */; };
 		7BCF70DE2615D06E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF70CB2614935E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm */; };
 		7BE37F9327C7CA51007A6CD3 /* IPCStreamTesterIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BE37F9227C7C518007A6CD3 /* IPCStreamTesterIdentifier.h */; };
 		7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BE9326227F5C75A00D5FEFB /* ReceiverMatcher.h */; };
@@ -5535,6 +5537,9 @@
 		7B90416A254AFEA7006EEB8C /* RemoteGraphicsContextGL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGL.h; sourceTree = "<group>"; };
 		7B90416D2550108C006EEB8C /* RemoteGraphicsContextGLFunctionsGenerated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLFunctionsGenerated.h; sourceTree = "<group>"; };
 		7BAB110F25DD02B2008FC479 /* ScopedActiveMessageReceiveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedActiveMessageReceiveQueue.h; sourceTree = "<group>"; };
+		7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCConnectionTesterIdentifier.h; sourceTree = "<group>"; };
+		7BBA63DD280E93B600B04823 /* IPCConnectionTester.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCConnectionTester.cpp; sourceTree = "<group>"; };
+		7BBA63DE280E93B600B04823 /* IPCConnectionTester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCConnectionTester.h; sourceTree = "<group>"; };
 		7BCF70CA2614935E00E4FB70 /* ScopedRenderingResourcesRequest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedRenderingResourcesRequest.cpp; sourceTree = "<group>"; };
 		7BCF70CB2614935E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScopedRenderingResourcesRequestCocoa.mm; sourceTree = "<group>"; };
 		7BCF70CC2614935F00E4FB70 /* ScopedWebGLRenderingResourcesRequest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedWebGLRenderingResourcesRequest.cpp; sourceTree = "<group>"; };
@@ -7939,6 +7944,9 @@
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				999B7ED82550E4A800F450A4 /* InspectorExtensionTypes.cpp */,
 				99BE3B1625433B9400C6551C /* InspectorExtensionTypes.h */,
+				7BBA63DD280E93B600B04823 /* IPCConnectionTester.cpp */,
+				7BBA63DE280E93B600B04823 /* IPCConnectionTester.h */,
+				7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */,
 				7BE37F9527C7CD90007A6CD3 /* IPCStreamTester.cpp */,
 				7BE37F9427C7CD51007A6CD3 /* IPCStreamTester.h */,
 				7BE37F9227C7C518007A6CD3 /* IPCStreamTesterIdentifier.h */,
@@ -14337,6 +14345,8 @@
 				51E9049C27BCB9D400929E7E /* InstallCoordinationSPI.h in Headers */,
 				C5BCE5DF1C50766A00CDE3FA /* InteractionInformationAtPosition.h in Headers */,
 				2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */,
+				7BBA63E0280E93D600B04823 /* IPCConnectionTester.h in Headers */,
+				7BBA63DF280E93D200B04823 /* IPCConnectionTesterIdentifier.h in Headers */,
 				A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */,
 				7BE37F9327C7CA51007A6CD3 /* IPCStreamTesterIdentifier.h in Headers */,
 				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,

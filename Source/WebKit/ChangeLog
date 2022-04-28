@@ -1,3 +1,101 @@
+2022-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC testing API should have the ability to test IPC::Connection send and receive through IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=239495
+
+        Reviewed by Darin Adler.
+
+        Add the testing interfaces to be able to send IPC::Connection instances
+        to other processes.
+        Add the testing interfaces to be able to send messages through arbitrary
+        IPC::Connection instances.
+
+        Test: ipc/create-connection-and-send-async.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::waitForMessageForTesting):
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Shared/IPCConnectionTester.cpp: Added.
+        (WebKit::asIdentifier):
+        (WebKit::IPCConnectionTester::create):
+        (WebKit::IPCConnectionTester::IPCConnectionTester):
+        (WebKit::IPCConnectionTester::initialize):
+        (WebKit::IPCConnectionTester::stopListeningForIPC):
+        (WebKit::IPCConnectionTester::sendAsyncMessages):
+        (WebKit::IPCConnectionTester::didClose):
+        (WebKit::IPCConnectionTester::didReceiveInvalidMessage):
+        (WebKit::IPCConnectionTester::asyncMessage):
+        (WebKit::IPCConnectionTester::syncMessage):
+        * Shared/IPCConnectionTester.h: Copied from Source/WebKit/Shared/IPCTester.h.
+        * Shared/IPCConnectionTester.messages.in: Copied from Source/WebKit/Shared/IPCTester.messages.in.
+        * Shared/IPCConnectionTesterIdentifier.h: Added.
+        * Shared/IPCTester.cpp:
+        (WebKit::IPCTester::createConnectionTester):
+        (WebKit::IPCTester::createConnectionTesterAndSendAsyncMessages):
+        (WebKit::IPCTester::releaseConnectionTester):
+        * Shared/IPCTester.h:
+        * Shared/IPCTester.messages.in:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCAttachment::create):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::encode const):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::JSIPCAttachment):
+        (WebKit::IPCTestingAPI::JSIPCConnection::create):
+        (WebKit::IPCTestingAPI::JSIPCConnection::JSIPCConnection):
+        (WebKit::IPCTestingAPI::createTypeError):
+        (WebKit::IPCTestingAPI::convertToUint64):
+        (WebKit::IPCTestingAPI::sendMessageWithJSArguments):
+        (WebKit::IPCTestingAPI::extractSyncIPCMessageInfo):
+        (WebKit::IPCTestingAPI::sendSyncMessageWithJSArguments):
+        (WebKit::IPCTestingAPI::waitForMessageWithJSArguments):
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::createJSWrapper):
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::wrapperClass):
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::unwrap):
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::toWrapped):
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::initialize):
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::finalize):
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::createJSWrapper):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::wrapperClass):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::unwrap):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::toWrapped):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::initialize):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::finalize):
+        (WebKit::IPCTestingAPI::JSIPCAttachment::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPCConnection::createJSWrapper):
+        (WebKit::IPCTestingAPI::JSIPCConnection::wrapperClass):
+        (WebKit::IPCTestingAPI::JSIPCConnection::unwrap):
+        (WebKit::IPCTestingAPI::JSIPCConnection::toWrapped):
+        (WebKit::IPCTestingAPI::JSIPCConnection::initialize):
+        (WebKit::IPCTestingAPI::JSIPCConnection::finalize):
+        (WebKit::IPCTestingAPI::JSIPCConnection::didReceiveMessage):
+        (WebKit::IPCTestingAPI::JSIPCConnection::didReceiveSyncMessage):
+        (WebKit::IPCTestingAPI::JSIPCConnection::didClose):
+        (WebKit::IPCTestingAPI::JSIPCConnection::didReceiveInvalidMessage):
+        (WebKit::IPCTestingAPI::JSIPCConnection::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPCConnection::open):
+        (WebKit::IPCTestingAPI::JSIPCConnection::invalidate):
+        (WebKit::IPCTestingAPI::JSIPCConnection::sendMessage):
+        (WebKit::IPCTestingAPI::JSIPCConnection::sendSyncMessage):
+        (WebKit::IPCTestingAPI::JSIPCConnection::waitForMessage):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage):
+        (WebKit::IPCTestingAPI::JSIPC::staticFunctions):
+        (WebKit::IPCTestingAPI::encodeFrameInfoData):
+        (WebKit::IPCTestingAPI::encodeAttachment):
+        (WebKit::IPCTestingAPI::VectorEncodeHelper::encode const):
+        (WebKit::IPCTestingAPI::encodeArrayArgument):
+        (WebKit::IPCTestingAPI::encodeArgument):
+        (WebKit::IPCTestingAPI::JSIPC::sendMessage):
+        (WebKit::IPCTestingAPI::JSIPC::waitForMessage):
+        (WebKit::IPCTestingAPI::JSIPC::sendSyncMessage):
+        (WebKit::IPCTestingAPI::JSIPC::createConnectionPair):
+
 2022-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a mechanism to override desktop-class browsing state in multitasking mode

@@ -227,6 +227,7 @@ Shared/EditorState.cpp
 Shared/FontInfo.cpp
 Shared/FrameInfoData.cpp
 Shared/InspectorExtensionTypes.cpp
+Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
 Shared/LayerTreeContext.cpp
@@ -868,6 +869,7 @@ WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 
 WebProcess/XR/PlatformXRSystemProxy.cpp
 
+IPCConnectionTesterMessageReceiver.cpp
 IPCStreamTesterMessageReceiver.cpp
 IPCStreamTesterProxyMessageReceiver.cpp
 IPCTesterMessageReceiver.cpp
