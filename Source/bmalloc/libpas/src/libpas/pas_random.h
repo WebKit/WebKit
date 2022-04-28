@@ -72,12 +72,12 @@ static inline unsigned pas_get_random(pas_random_kind kind, unsigned upper_bound
     case pas_secure_random:
         /* Secure random is only supported on Darwin and FreeBSD at the moment due to arc4random being built into the
           stdlib. Fall back to fast behavior on other operating systems. */
-        #if PAS_OS(DARWIN) || PAS_OS(FREEBSD)
+#if PAS_OS(DARWIN) || (PAS_OS(FREEBSD) && !PAS_PLATFORM(PLAYSTATION))
         rand_value = arc4random_uniform(upper_bound);
-        #else
+#else
         pas_fast_random_state = pas_xorshift32(pas_fast_random_state);
         rand_value = pas_fast_random_state % upper_bound;
-        #endif
+#endif
 
         break;
     }

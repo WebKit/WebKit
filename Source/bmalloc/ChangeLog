@@ -1,3 +1,12 @@
+2022-04-27  Ross Kirsling  <rkirsling@gmail.com>
+
+        Unreviewed libpas build fix for PlayStation.
+        https://bugs.webkit.org/show_bug.cgi?id=239834
+
+        * libpas/src/libpas/pas_random.h:
+        (pas_get_random):
+        Temporarily disable path on PlayStation.
+
 2022-04-25  Brandon Stewart  <brandonstewart@apple.com>
 
         [libpas] Implement secure random numbers
