@@ -8687,17 +8687,13 @@ RefPtr<HTMLAttachmentElement> Document::attachmentForIdentifier(const String& id
 
 static MessageSource messageSourceForWTFLogChannel(const WTFLogChannel& channel)
 {
-    static const NeverDestroyed<String> mediaChannel = MAKE_STATIC_STRING_IMPL("media");
-    static const NeverDestroyed<String> webrtcChannel = MAKE_STATIC_STRING_IMPL("webrtc");
-    static const NeverDestroyed<String> mediaSourceChannel = MAKE_STATIC_STRING_IMPL("mediasource");
-
-    if (equalIgnoringASCIICase(mediaChannel, channel.name))
+    if (equalLettersIgnoringASCIICase(channel.name, "media"_s))
         return MessageSource::Media;
 
-    if (equalIgnoringASCIICase(webrtcChannel, channel.name))
+    if (equalLettersIgnoringASCIICase(channel.name, "webrtc"_s))
         return MessageSource::WebRTC;
 
-    if (equalIgnoringASCIICase(mediaSourceChannel, channel.name))
+    if (equalLettersIgnoringASCIICase(channel.name, "mediasource"_s))
         return MessageSource::MediaSource;
 
     return MessageSource::Other;

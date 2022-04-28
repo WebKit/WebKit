@@ -360,7 +360,7 @@ template<size_t inlineCapacity> inline bool operator!=(const String& a, const Ve
 
 bool equalIgnoringASCIICase(const String&, const String&);
 bool equalIgnoringASCIICase(const String&, ASCIILiteral);
-bool equalIgnoringASCIICase(const String&, const char*);
+bool equalIgnoringASCIICase(const String&, const char*) = delete;
 
 bool equalLettersIgnoringASCIICase(const String&, ASCIILiteral);
 bool startsWithLettersIgnoringASCIICase(const String&, ASCIILiteral);
@@ -582,14 +582,9 @@ inline bool equalIgnoringASCIICase(const String& a, const String& b)
     return equalIgnoringASCIICase(a.impl(), b.impl());
 }
 
-inline bool equalIgnoringASCIICase(const String& a, const char* b)
-{
-    return equalIgnoringASCIICase(a.impl(), b);
-}
-
 inline bool equalIgnoringASCIICase(const String& a, ASCIILiteral b)
 {
-    return equalIgnoringASCIICase(a.impl(), b.characters());
+    return equalIgnoringASCIICase(a.impl(), b);
 }
 
 inline bool startsWithLettersIgnoringASCIICase(const String& string, ASCIILiteral literal)

@@ -3993,7 +3993,7 @@ long long WebGLRenderingContextBase::getVertexAttribOffset(GCGLuint index, GCGLe
 bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
 {
 #define CHECK_EXTENSION(variable, nameLiteral) \
-    if (equalIgnoringASCIICase(name, nameLiteral)) \
+    if (equalIgnoringASCIICase(name, nameLiteral ## _s)) \
         return variable != nullptr;
 
     CHECK_EXTENSION(m_extFragDepth, "EXT_frag_depth");

@@ -175,7 +175,7 @@ void Font::platformInit()
     if (FcPatternGetString(m_platformData.fcPattern(), FC_FAMILY, 0, &fontConfigFamilyName) == FcResultMatch) {
         String familyName = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyName));
         // Disable antialiasing for the Ahem font because many tests require this.
-        if (equalIgnoringASCIICase(familyName, "Ahem"))
+        if (equalIgnoringASCIICase(familyName, "Ahem"_s))
             m_allowsAntialiasing = false;
     }
 }

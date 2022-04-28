@@ -472,23 +472,23 @@ ASCIILiteral selfTargetFrameName()
 
 bool isBlankTargetFrameName(StringView name)
 {
-    return equalIgnoringASCIICase(name, "_blank");
+    return equalIgnoringASCIICase(name, "_blank"_s);
 }
 
 bool isParentTargetFrameName(StringView name)
 {
-    return equalIgnoringASCIICase(name, "_parent");
+    return equalIgnoringASCIICase(name, "_parent"_s);
 }
 
 bool isSelfTargetFrameName(StringView name)
 {
     // FIXME: Some day we should remove _current, which is not part of the HTML specification.
-    return name.isEmpty() || equalIgnoringASCIICase(name, "_self") || name == "_current";
+    return name.isEmpty() || equalIgnoringASCIICase(name, "_self"_s) || name == "_current";
 }
 
 bool isTopTargetFrameName(StringView name)
 {
-    return equalIgnoringASCIICase(name, "_top");
+    return equalIgnoringASCIICase(name, "_top"_s);
 }
 
 } // namespace WebCore

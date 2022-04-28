@@ -316,7 +316,7 @@ bool ensureGStreamerInitialized()
 bool isThunderRanked()
 {
     const char* value = g_getenv("WEBKIT_GST_EME_RANK_PRIORITY");
-    return value && equalIgnoringASCIICase(value, "Thunder");
+    return value && equalIgnoringASCIICase(value, "Thunder"_s);
 }
 #endif
 

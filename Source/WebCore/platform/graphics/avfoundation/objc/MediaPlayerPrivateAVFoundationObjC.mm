@@ -2019,7 +2019,7 @@ void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String, ASCII
 static bool keySystemIsSupported(const String& keySystem)
 {
     return equalLettersIgnoringASCIICase(keySystem, "com.apple.fps"_s)
-        || equalIgnoringASCIICase(keySystem, "com.apple.fps.1_0")
+        || equalIgnoringASCIICase(keySystem, "com.apple.fps.1_0"_s)
         || equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"_s);
 }
 #endif

@@ -103,14 +103,14 @@ LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
 // https://html.spec.whatwg.org/#linkTypes
 bool LinkRelAttribute::isSupported(Document& document, StringView attribute)
 {
-    static const char* const supportedAttributes[] = {
-        "alternate", "dns-prefetch", "icon", "stylesheet", "apple-touch-icon", "apple-touch-icon-precomposed",
+    static constexpr ASCIILiteral supportedAttributes[] = {
+        "alternate"_s, "dns-prefetch"_s, "icon"_s, "stylesheet"_s, "apple-touch-icon"_s, "apple-touch-icon-precomposed"_s,
 #if ENABLE(APPLICATION_MANIFEST)
-        "manifest",
+        "manifest"_s,
 #endif
     };
 
-    for (auto* supportedAttribute : supportedAttributes) {
+    for (auto supportedAttribute : supportedAttributes) {
         if (equalIgnoringASCIICase(attribute, supportedAttribute))
             return true;
     }

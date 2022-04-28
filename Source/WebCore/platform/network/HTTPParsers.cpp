@@ -1033,7 +1033,7 @@ String normalizeHTTPMethod(const String& method)
 {
     const ASCIILiteral methods[] = { "DELETE"_s, "GET"_s, "HEAD"_s, "OPTIONS"_s, "POST"_s, "PUT"_s };
     for (auto value : methods) {
-        if (equalIgnoringASCIICase(method, value.characters())) {
+        if (equalIgnoringASCIICase(method, value)) {
             // Don't bother allocating a new string if it's already all uppercase.
             if (method == value)
                 break;
@@ -1048,7 +1048,7 @@ bool isSafeMethod(const String& method)
 {
     const ASCIILiteral safeMethods[] = { "GET"_s, "HEAD"_s, "OPTIONS"_s, "TRACE"_s };
     for (auto value : safeMethods) {
-        if (equalIgnoringASCIICase(method, value.characters()))
+        if (equalIgnoringASCIICase(method, value))
             return true;
     }
     return false;

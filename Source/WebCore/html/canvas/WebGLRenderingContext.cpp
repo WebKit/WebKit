@@ -138,7 +138,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         return nullptr;
 
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
-    if (equalIgnoringASCIICase(name, nameLiteral)) { \
+    if (equalIgnoringASCIICase(name, nameLiteral ## _s)) { \
         if (!variable) { \
             variable = (canEnable) ? adoptRef(new type(*this)) : nullptr; \
             if (variable != nullptr) \
@@ -150,7 +150,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(EXTBlendMinMax, m_extBlendMinMax, "EXT_blend_minmax", enableSupportedExtension("GL_EXT_blend_minmax"_s));
     ENABLE_IF_REQUESTED(EXTsRGB, m_extsRGB, "EXT_sRGB", enableSupportedExtension("GL_EXT_sRGB"_s));
     ENABLE_IF_REQUESTED(EXTFragDepth, m_extFragDepth, "EXT_frag_depth", enableSupportedExtension("GL_EXT_frag_depth"_s));
-    if (equalIgnoringASCIICase(name, "EXT_shader_texture_lod")) {
+    if (equalIgnoringASCIICase(name, "EXT_shader_texture_lod"_s)) {
         if (!m_extShaderTextureLOD) {
             if (!(m_context->supportsExtension("GL_EXT_shader_texture_lod"_s) || m_context->supportsExtension("GL_ARB_shader_texture_lod"_s)))
                 m_extShaderTextureLOD = nullptr;
@@ -183,7 +183,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TC, m_webglCompressedTextureS3TC, "WEBGL_compressed_texture_s3tc", WebGLCompressedTextureS3TC::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLCompressedTextureS3TCsRGB, m_webglCompressedTextureS3TCsRGB, "WEBGL_compressed_texture_s3tc_srgb", WebGLCompressedTextureS3TCsRGB::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLDepthTexture, m_webglDepthTexture, "WEBGL_depth_texture", WebGLDepthTexture::supported(*m_context));
-    if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers")) {
+    if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers"_s)) {
         if (!m_webglDrawBuffers) {
             if (!supportsDrawBuffers())
                 m_webglDrawBuffers = nullptr;
@@ -195,7 +195,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
         return m_webglDrawBuffers.get();
     }
-    if (equalIgnoringASCIICase(name, "ANGLE_instanced_arrays")) {
+    if (equalIgnoringASCIICase(name, "ANGLE_instanced_arrays"_s)) {
         if (!m_angleInstancedArrays) {
             if (!ANGLEInstancedArrays::supported(*m_context))
                 m_angleInstancedArrays = nullptr;

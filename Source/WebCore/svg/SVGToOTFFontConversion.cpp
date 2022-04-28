@@ -234,7 +234,7 @@ private:
     size_t finishAppendingKERNSubtable(Vector<KerningData>, uint16_t coverage);
 
     void appendLigatureSubtable(size_t subtableRecordLocation);
-    void appendArabicReplacementSubtable(size_t subtableRecordLocation, const char arabicForm[]);
+    void appendArabicReplacementSubtable(size_t subtableRecordLocation, ASCIILiteral arabicForm);
     void appendScriptSubtable(unsigned featureCount);
     Vector<Glyph, 1> glyphsForCodepoint(UChar32) const;
     Glyph firstGlyph(const Vector<Glyph, 1>&, UChar32) const;
@@ -807,7 +807,7 @@ void SVGToOTFFontConverter::appendLigatureSubtable(size_t subtableRecordLocation
     }
 }
 
-void SVGToOTFFontConverter::appendArabicReplacementSubtable(size_t subtableRecordLocation, const char arabicForm[])
+void SVGToOTFFontConverter::appendArabicReplacementSubtable(size_t subtableRecordLocation, ASCIILiteral arabicForm)
 {
     Vector<std::pair<Glyph, Glyph>> arabicFinalReplacements;
     for (auto& pair : m_codepointsToIndicesMap) {
@@ -929,9 +929,9 @@ void SVGToOTFFontConverter::appendGSUBTable()
     }
 
     appendLigatureSubtable(subtableRecordLocations[0]);
-    appendArabicReplacementSubtable(subtableRecordLocations[1], "terminal");
-    appendArabicReplacementSubtable(subtableRecordLocations[2], "medial");
-    appendArabicReplacementSubtable(subtableRecordLocations[3], "initial");
+    appendArabicReplacementSubtable(subtableRecordLocations[1], "terminal"_s);
+    appendArabicReplacementSubtable(subtableRecordLocations[2], "medial"_s);
+    appendArabicReplacementSubtable(subtableRecordLocations[3], "initial"_s);
 
     // Manually append empty "rlig" subtable
     overwrite16(subtableRecordLocations[4] + 6, m_result.size() - subtableRecordLocations[4]);

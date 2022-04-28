@@ -550,10 +550,27 @@ inline bool equalIgnoringASCIICase(const char* a, const char* b)
     return length == strlen(b) && equalIgnoringASCIICase(a, b, length);
 }
 
+inline bool equalLettersIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
+{
+    auto bLength = b.length();
+    return a.length() == bLength && equalLettersIgnoringASCIICase(a.characters(), b.characters(), bLength);
+}
+
 inline bool equalLettersIgnoringASCIICase(const char* string, ASCIILiteral literal)
 {
     auto literalLength = literal.length();
     return strlen(string) == literalLength && equalLettersIgnoringASCIICase(string, literal.characters(), literalLength);
+}
+
+inline bool equalIgnoringASCIICase(const char* string, ASCIILiteral literal)
+{
+    auto literalLength = literal.length();
+    return strlen(string) == literal.length() && equalIgnoringASCIICase(string, literal.characters(), literalLength);
+}
+
+inline bool equalIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
+{
+    return equalIgnoringASCIICase(a.characters(), a.length(), b.characters(), b.length());
 }
 
 }

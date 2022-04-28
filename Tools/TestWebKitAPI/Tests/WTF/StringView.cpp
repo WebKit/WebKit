@@ -338,7 +338,7 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
     RefPtr<StringImpl> a = StringImpl::createFromLiteral("aBcDeFG"_s);
     RefPtr<StringImpl> b = StringImpl::createFromLiteral("ABCDEFG"_s);
     RefPtr<StringImpl> c = StringImpl::createFromLiteral("abcdefg"_s);
-    const char d[] = "aBcDeFG";
+    constexpr auto d = "aBcDeFG"_s;
     RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
     RefPtr<StringImpl> shorter = StringImpl::createFromLiteral("abcdef"_s);
     RefPtr<StringImpl> different = StringImpl::createFromLiteral("abcrefg"_s);
@@ -398,7 +398,6 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
     RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>("ABCÉEFG"));
     RefPtr<StringImpl> c = StringImpl::create(reinterpret_cast<const LChar*>("ABCéEFG"));
     RefPtr<StringImpl> d = StringImpl::create(reinterpret_cast<const LChar*>("abcéefg"));
-    const char e[] = "aBcéeFG";
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     StringView stringViewC(*c.get());
@@ -417,10 +416,6 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
     ASSERT_FALSE(equalIgnoringASCIICase(stringViewB, stringViewC));
     ASSERT_FALSE(equalIgnoringASCIICase(stringViewB, stringViewD));
     ASSERT_TRUE(equalIgnoringASCIICase(stringViewC, stringViewD));
-    ASSERT_FALSE(equalIgnoringASCIICase(stringViewA, e));
-    ASSERT_FALSE(equalIgnoringASCIICase(stringViewB, e));
-    ASSERT_FALSE(equalIgnoringASCIICase(stringViewC, e));
-    ASSERT_FALSE(equalIgnoringASCIICase(stringViewD, e));
 }
 
 TEST(WTF, StringViewFindIgnoringASCIICaseBasic)

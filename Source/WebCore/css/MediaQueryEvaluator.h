@@ -77,7 +77,7 @@ public:
     WEBCORE_EXPORT MediaQueryEvaluator(const String& acceptedMediaType, const Document&, const RenderStyle*);
 
     bool mediaTypeMatch(const String& mediaTypeToMatch) const;
-    bool mediaTypeMatchSpecific(const char* mediaTypeToMatch) const;
+    bool mediaTypeMatchSpecific(ASCIILiteral mediaTypeToMatch) const;
 
     // Evaluates media query subexpression, ie "and (media-feature: value)" part.
     bool evaluate(const MediaQueryExpression&) const;

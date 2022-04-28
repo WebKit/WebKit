@@ -80,7 +80,7 @@ public:
 
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
     void setPseudoElementRequest(const PseudoElementRequest& request) { m_pseudoElementRequest = request; }
-    void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"); }
+    void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"_s); }
 
     bool hasAnyMatchingRules(const RuleSet&);
 

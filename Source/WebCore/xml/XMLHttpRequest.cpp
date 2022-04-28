@@ -81,7 +81,7 @@ enum XMLHttpRequestSendArrayBufferOrView {
 static void replaceCharsetInMediaTypeIfNeeded(String& mediaType)
 {
     auto parsedContentType = ParsedContentType::create(mediaType);
-    if (!parsedContentType || parsedContentType->charset().isEmpty() || equalIgnoringASCIICase(parsedContentType->charset(), "UTF-8"))
+    if (!parsedContentType || parsedContentType->charset().isEmpty() || equalIgnoringASCIICase(parsedContentType->charset(), "UTF-8"_s))
         return;
 
     parsedContentType->setCharset("UTF-8"_s);

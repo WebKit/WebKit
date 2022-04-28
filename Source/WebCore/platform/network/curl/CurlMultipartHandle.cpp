@@ -57,7 +57,7 @@ std::optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& r
             continue;
 
         auto key = header.left(splitPosition).stripWhiteSpace();
-        if (!equalIgnoringASCIICase(key, "Content-Type"))
+        if (!equalIgnoringASCIICase(key, "Content-Type"_s))
             continue;
 
         auto contentType = header.substring(splitPosition + 1).stripWhiteSpace();

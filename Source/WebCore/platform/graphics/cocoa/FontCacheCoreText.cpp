@@ -731,7 +731,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const St
     static constexpr ASCIILiteral matchWords[] = { "Arabic"_s, "Pashto"_s, "Urdu"_s };
     auto familyMatcher = StringView(family);
     for (auto matchWord : matchWords) {
-        if (equalIgnoringASCIICase(familyMatcher, StringView(matchWord)))
+        if (equalIgnoringASCIICase(familyMatcher, matchWord))
             return fontForFamily(description, isFontWeightBold(description.weight()) ? "GeezaPro-Bold"_s : "GeezaPro"_s);
     }
     return nullptr;
@@ -1533,7 +1533,7 @@ std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&
     case 10:
         if (equalLettersIgnoringASCIICase(familyName, "ms mingliu"_s))
             return songtiTC;
-        if (equalIgnoringASCIICase(familyName, "\\5b8b\\4f53"))
+        if (equalIgnoringASCIICase(familyName, "\\5b8b\\4f53"_s))
             return songtiSC;
         break;
     case 18:

@@ -83,11 +83,13 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask, SandboxFlagsSource 
 
 bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 {
-    static const char* const supportedPolicies[] = {
-        "allow-top-navigation-to-custom-protocols", "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox", "allow-top-navigation-by-user-activation", "allow-modals", "allow-storage-access-by-user-activation"
+    static constexpr ASCIILiteral supportedPolicies[] = {
+        "allow-top-navigation-to-custom-protocols"_s, "allow-forms"_s, "allow-same-origin"_s, "allow-scripts"_s,
+        "allow-top-navigation"_s, "allow-pointer-lock"_s, "allow-popups"_s, "allow-popups-to-escape-sandbox"_s,
+        "allow-top-navigation-by-user-activation"_s, "allow-modals"_s, "allow-storage-access-by-user-activation"_s
     };
 
-    for (auto* supportedPolicy : supportedPolicies) {
+    for (auto supportedPolicy : supportedPolicies) {
         if (equalIgnoringASCIICase(policy, supportedPolicy))
             return true;
     }

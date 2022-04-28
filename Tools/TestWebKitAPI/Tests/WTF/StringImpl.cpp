@@ -118,7 +118,7 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
     auto a = StringImpl::createFromLiteral("aBcDeFG"_s);
     auto b = StringImpl::createFromLiteral("ABCDEFG"_s);
     auto c = StringImpl::createFromLiteral("abcdefg"_s);
-    const char d[] = "aBcDeFG";
+    constexpr auto d = "aBcDeFG"_s;
     auto empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
     auto shorter = StringImpl::createFromLiteral("abcdef"_s);
     auto different = StringImpl::createFromLiteral("abcrefg"_s);
@@ -179,7 +179,6 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseWithLatin1Characters)
     auto b = stringFromUTF8("ABCÉEFG");
     auto c = stringFromUTF8("ABCéEFG");
     auto d = stringFromUTF8("abcéefg");
-    const char e[] = "aBcéeFG";
 
     // Identity.
     ASSERT_TRUE(equalIgnoringASCIICase(a.ptr(), a.ptr()));
@@ -194,10 +193,6 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseWithLatin1Characters)
     ASSERT_FALSE(equalIgnoringASCIICase(b.ptr(), c.ptr()));
     ASSERT_FALSE(equalIgnoringASCIICase(b.ptr(), d.ptr()));
     ASSERT_TRUE(equalIgnoringASCIICase(c.ptr(), d.ptr()));
-    ASSERT_FALSE(equalIgnoringASCIICase(a.ptr(), e));
-    ASSERT_FALSE(equalIgnoringASCIICase(b.ptr(), e));
-    ASSERT_FALSE(equalIgnoringASCIICase(c.ptr(), e));
-    ASSERT_FALSE(equalIgnoringASCIICase(d.ptr(), e));
 }
 
 TEST(WTF, StringImplFindIgnoringASCIICaseBasic)

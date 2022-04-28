@@ -143,11 +143,11 @@ bool MediaQueryEvaluator::mediaTypeMatch(const String& mediaTypeToMatch) const
         || equalIgnoringASCIICase(mediaTypeToMatch, m_mediaType);
 }
 
-bool MediaQueryEvaluator::mediaTypeMatchSpecific(const char* mediaTypeToMatch) const
+bool MediaQueryEvaluator::mediaTypeMatchSpecific(ASCIILiteral mediaTypeToMatch) const
 {
     // Like mediaTypeMatch, but without the special cases for "" and "all".
-    ASSERT(mediaTypeToMatch);
-    ASSERT(mediaTypeToMatch[0] != '\0');
+    ASSERT(!mediaTypeToMatch.isNull());
+    ASSERT(mediaTypeToMatch.characterAt(0) != '\0');
     ASSERT(!equalLettersIgnoringASCIICase(mediaTypeToMatch, "all"_s));
     return equalIgnoringASCIICase(m_mediaType, mediaTypeToMatch);
 }

@@ -60,7 +60,7 @@ static const std::initializer_list<TypeExtensionPair>& platformMediaTypes()
 String MIMETypeRegistry::mimeTypeForExtension(StringView extension)
 {
     for (auto& entry : platformMediaTypes()) {
-        if (equalIgnoringASCIICase(extension, entry.extension.characters()))
+        if (equalIgnoringASCIICase(extension, entry.extension))
             return entry.type;
     }
     return emptyString();
@@ -74,7 +74,7 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
 String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
 {
     for (auto& entry : platformMediaTypes()) {
-        if (equalIgnoringASCIICase(mimeType, entry.type.characters()))
+        if (equalIgnoringASCIICase(mimeType, entry.type))
             return entry.extension;
     }
     return emptyString();

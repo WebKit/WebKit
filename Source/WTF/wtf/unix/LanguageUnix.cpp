@@ -33,7 +33,7 @@ namespace WTF {
 static String platformLanguage()
 {
     auto localeDefault = String::fromLatin1(setlocale(LC_CTYPE, nullptr));
-    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C") || equalIgnoringASCIICase(localeDefault, "POSIX"))
+    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C"_s) || equalIgnoringASCIICase(localeDefault, "POSIX"_s))
         return "en-US"_s;
 
     auto normalizedDefault = makeStringByReplacingAll(localeDefault, '_', '-');

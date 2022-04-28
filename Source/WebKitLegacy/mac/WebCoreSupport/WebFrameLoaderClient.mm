@@ -1653,7 +1653,7 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
     return WebCore::ObjectContentType::None;
 }
 
-static AtomString parameterValue(const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, const char* name)
+static AtomString parameterValue(const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, ASCIILiteral name)
 {
     size_t size = paramNames.size();
     ASSERT(size == paramValues.size());
@@ -1857,7 +1857,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
     if (errorCode && m_webFrame) {
         WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
         if (implementations->plugInFailedWithErrorFunc) {
-            URL pluginPageURL = document->completeURL(WebCore::stripLeadingAndTrailingHTMLSpaces(parameterValue(paramNames, paramValues, "pluginspage")));
+            URL pluginPageURL = document->completeURL(WebCore::stripLeadingAndTrailingHTMLSpaces(parameterValue(paramNames, paramValues, "pluginspage"_s)));
             if (!pluginPageURL.protocolIsInHTTPFamily())
                 pluginPageURL = URL();
             NSString *pluginName = pluginPackage ? (NSString *)[pluginPackage pluginInfo].name : nil;

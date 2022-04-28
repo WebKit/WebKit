@@ -222,7 +222,7 @@ bool equal(StringView, StringView);
 bool equal(StringView, const LChar* b);
 
 bool equalIgnoringASCIICase(StringView, StringView);
-bool equalIgnoringASCIICase(StringView, const char*);
+bool equalIgnoringASCIICase(StringView, const char*) = delete;
 bool equalIgnoringASCIICase(StringView, ASCIILiteral);
 
 WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
@@ -707,11 +707,6 @@ inline bool equal(StringView a, const LChar* b)
 }
 
 inline bool equalIgnoringASCIICase(StringView a, StringView b)
-{
-    return equalIgnoringASCIICaseCommon(a, b);
-}
-
-inline bool equalIgnoringASCIICase(StringView a, const char* b)
 {
     return equalIgnoringASCIICaseCommon(a, b);
 }

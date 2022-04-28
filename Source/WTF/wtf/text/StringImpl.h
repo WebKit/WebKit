@@ -580,8 +580,10 @@ WTF_EXPORT_PRIVATE bool equalIgnoringNullity(const UChar*, size_t length, String
 
 bool equalIgnoringASCIICase(const StringImpl&, const StringImpl&);
 WTF_EXPORT_PRIVATE bool equalIgnoringASCIICase(const StringImpl*, const StringImpl*);
-bool equalIgnoringASCIICase(const StringImpl&, const char*);
-bool equalIgnoringASCIICase(const StringImpl*, const char*);
+bool equalIgnoringASCIICase(const StringImpl&, ASCIILiteral);
+bool equalIgnoringASCIICase(const StringImpl*, ASCIILiteral);
+bool equalIgnoringASCIICase(const StringImpl&, const char*) = delete;
+bool equalIgnoringASCIICase(const StringImpl*, const char*) = delete;
 
 WTF_EXPORT_PRIVATE bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
 
@@ -1259,12 +1261,12 @@ inline bool equalIgnoringASCIICase(const StringImpl& a, const StringImpl& b)
     return equalIgnoringASCIICaseCommon(a, b);
 }
 
-inline bool equalIgnoringASCIICase(const StringImpl& a, const char* b)
+inline bool equalIgnoringASCIICase(const StringImpl& a, ASCIILiteral b)
 {
-    return equalIgnoringASCIICaseCommon(a, b);
+    return equalIgnoringASCIICaseCommon(a, b.characters());
 }
 
-inline bool equalIgnoringASCIICase(const StringImpl* a, const char* b)
+inline bool equalIgnoringASCIICase(const StringImpl* a, ASCIILiteral b)
 {
     return a && equalIgnoringASCIICase(*a, b);
 }

@@ -3027,7 +3027,7 @@ String AccessibilityObject::popupValue() const
 
     for (auto& value : { "menu"_s, "listbox"_s, "tree"_s, "grid"_s, "dialog"_s }) {
         // FIXME: Should fix ambiguity so we don't have to write "characters", but also don't create/destroy a String when passing an ASCIILiteral to equalIgnoringASCIICase.
-        if (equalIgnoringASCIICase(hasPopup, value.characters()))
+        if (equalIgnoringASCIICase(hasPopup, value))
             return value;
     }
 

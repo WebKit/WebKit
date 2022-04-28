@@ -1401,7 +1401,7 @@ String AccessibilityNodeObject::ariaAccessibilityDescription() const
     return String();
 }
 
-static Element* siblingWithAriaRole(Node* node, const char* role)
+static Element* siblingWithAriaRole(Node* node, ASCIILiteral role)
 {
     // FIXME: Either we should add a null check here or change the function to take a reference instead of a pointer.
     ContainerNode* parent = node->parentNode();
@@ -1422,7 +1422,7 @@ Element* AccessibilityNodeObject::menuElementForMenuButton() const
     if (ariaRoleAttribute() != AccessibilityRole::MenuButton)
         return nullptr;
 
-    return siblingWithAriaRole(node(), "menu");
+    return siblingWithAriaRole(node(), "menu"_s);
 }
 
 AccessibilityObject* AccessibilityNodeObject::menuForMenuButton() const
@@ -1437,7 +1437,7 @@ Element* AccessibilityNodeObject::menuItemElementForMenu() const
     if (ariaRoleAttribute() != AccessibilityRole::Menu)
         return nullptr;
     
-    return siblingWithAriaRole(node(), "menuitem");
+    return siblingWithAriaRole(node(), "menuitem"_s);
 }
 
 AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const

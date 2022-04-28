@@ -191,7 +191,8 @@ inline bool operator!=(const Vector<UChar>& a, const AtomString& b) { return !(a
 bool equalIgnoringASCIICase(const AtomString&, const AtomString&);
 bool equalIgnoringASCIICase(const AtomString&, const String&);
 bool equalIgnoringASCIICase(const String&, const AtomString&);
-bool equalIgnoringASCIICase(const AtomString&, const char*);
+bool equalIgnoringASCIICase(const AtomString&, ASCIILiteral);
+bool equalIgnoringASCIICase(const AtomString&, const char*) = delete;
 
 bool equalLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
 
@@ -338,7 +339,7 @@ inline bool equalIgnoringASCIICase(const String& a, const AtomString& b)
     return equalIgnoringASCIICase(a, b.string());
 }
 
-inline bool equalIgnoringASCIICase(const AtomString& a, const char* b)
+inline bool equalIgnoringASCIICase(const AtomString& a, ASCIILiteral b)
 {
     return equalIgnoringASCIICase(a.string(), b);
 }

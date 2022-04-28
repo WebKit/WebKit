@@ -41,29 +41,29 @@ namespace WebCore {
 // These response headers are not copied from a revalidated response to the
 // cached response headers. For compatibility, this list is based on Chromium's
 // net/http/http_response_headers.cc.
-static const char* const headersToIgnoreAfterRevalidation[] = {
-    "allow",
-    "connection",
-    "etag",
-    "keep-alive",
-    "last-modified",
-    "proxy-authenticate",
-    "proxy-connection",
-    "trailer",
-    "transfer-encoding",
-    "upgrade",
-    "www-authenticate",
-    "x-frame-options",
-    "x-xss-protection",
+static constexpr ASCIILiteral headersToIgnoreAfterRevalidation[] = {
+    "allow"_s,
+    "connection"_s,
+    "etag"_s,
+    "keep-alive"_s,
+    "last-modified"_s,
+    "proxy-authenticate"_s,
+    "proxy-connection"_s,
+    "trailer"_s,
+    "transfer-encoding"_s,
+    "upgrade"_s,
+    "www-authenticate"_s,
+    "x-frame-options"_s,
+    "x-xss-protection"_s,
 };
 
 // Some header prefixes mean "Don't copy this header from a 304 response.".
 // Rather than listing all the relevant headers, we can consolidate them into
 // this list, also grabbed from Chromium's net/http/http_response_headers.cc.
-static const char* const headerPrefixesToIgnoreAfterRevalidation[] = {
-    "content-",
-    "x-content-",
-    "x-webkit-"
+static constexpr ASCIILiteral headerPrefixesToIgnoreAfterRevalidation[] = {
+    "content-"_s,
+    "x-content-"_s,
+    "x-webkit-"_s
 };
 
 static inline bool shouldUpdateHeaderAfterRevalidation(const String& header)

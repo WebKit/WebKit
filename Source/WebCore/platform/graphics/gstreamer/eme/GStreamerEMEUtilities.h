@@ -125,10 +125,10 @@ class GStreamerEMEUtilities {
 
 public:
     static constexpr char const* s_ClearKeyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID;
-    static constexpr char const* s_ClearKeyKeySystem = "org.w3.clearkey";
+    static constexpr auto s_ClearKeyKeySystem = "org.w3.clearkey"_s;
 #if ENABLE(THUNDER)
     static constexpr char const* s_WidevineUUID = WEBCORE_GSTREAMER_EME_UTILITIES_WIDEVINE_UUID;
-    static constexpr char const* s_WidevineKeySystem = "com.widevine.alpha";
+    static constexpr auto s_WidevineKeySystem = "com.widevine.alpha"_s;
 #endif
 
     static bool isClearKeyKeySystem(const String& keySystem)
