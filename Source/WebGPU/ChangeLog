@@ -1,3 +1,30 @@
+2022-04-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r293558. rdar://problem/91769511
+
+    WebGPU doesn't create a symlink to the system content path in installhdrs
+    https://bugs.webkit.org/show_bug.cgi?id=239819
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    Enabled script phases for installhdrs and installapi.
+    
+    * Configurations/WebGPU.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293558 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-04-27  Michael Saboff  <msaboff@apple.com>
+
+            WebGPU doesn't create a symlink to the system content path in installhdrs
+            https://bugs.webkit.org/show_bug.cgi?id=239819
+
+            Reviewed by Alexey Proskuryakov.
+
+            Enabled script phases for installhdrs and installapi.
+
+            * Configurations/WebGPU.xcconfig:
+
 2022-04-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Expand hardware capabilities to include features (beyond just limits)
