@@ -1,3 +1,18 @@
+2022-04-28  Youenn Fablet  <youenn@apple.com>
+
+        Update webrtc/connection-state.html to not expected the completed ice connection state
+        https://bugs.webkit.org/show_bug.cgi?id=239843
+
+        Reviewed by Eric Carlson.
+
+        Wait for video to be playable to check states.
+        Remove completed state from the expected ice connection state as this is racy and app specific for when completed will happen (it can take a long time or not).
+        This is aligned with WebKit and Chrome implementations.
+
+        * TestExpectations:
+        * webrtc/connection-state.html:
+        * webrtc/connection-state-expected.txt:
+
 2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Use quadratic-probing instead of double-hashing
