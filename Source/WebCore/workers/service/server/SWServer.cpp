@@ -287,8 +287,10 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
         m_registrations.begin()->value->clear();
     m_pendingContextDatas.clear();
     m_originStore->clearAll();
-    if (m_registrationStore)
-        m_registrationStore->clearAll(WTFMove(completionHandler));
+    if (!m_registrationStore)
+        return completionHandler();
+
+    m_registrationStore->clearAll(WTFMove(completionHandler));
 }
 
 void SWServer::startSuspension(CompletionHandler<void()>&& completionHandler)
@@ -341,8 +343,10 @@ void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler
     for (auto* registration : registrationsToRemove)
         registration->clear();
 
-    if (m_registrationStore)
-        m_registrationStore->flushChanges(WTFMove(completionHandler));
+    if (!m_registrationStore)
+        return completionHandler();
+
+    m_registrationStore->flushChanges(WTFMove(completionHandler));
 }
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, WorkerFetchResult&& result)

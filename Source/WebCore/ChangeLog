@@ -1,3 +1,14 @@
+2022-04-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Ensure completion handler is called in SWServer::clear
+        https://bugs.webkit.org/show_bug.cgi?id=239755
+
+        Reviewed by Youenn Fablet.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::clearAll):
+        (WebCore::SWServer::clear):
+
 2022-04-27  Oriol Brufau  <obrufau@igalia.com>
 
         Reland "Fix CSS cascade regarding logical properties"
