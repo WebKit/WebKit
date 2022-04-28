@@ -25,4 +25,4 @@ Test paragraph.
 
 Last test paragraph.
 execCopyCommand: <span id="test">Test</span> paragraph. <br>Last test paragraph.
-execPasteCommand: <span id="test">Test</span> paragraph. <pre id="root" class="editing" style="word-wrap: break-word;"><span><br></span></pre><pre id="root" class="editing" style="word-wrap: break-word;"><span id="test">Test</span> paragraph.</pre><pre id="root" class="editing" style="word-wrap: break-word;"><br></pre>Last test paragraph.
+execPasteCommand: <span id="test">Test</span> paragraph. <pre id="root" class="editing" style="overflow-wrap: break-word;"><span><br></span></pre><pre id="root" class="editing" style="overflow-wrap: break-word;"><span id="test">Test</span> paragraph.</pre><pre id="root" class="editing" style="overflow-wrap: break-word;"><br></pre>Last test paragraph.
