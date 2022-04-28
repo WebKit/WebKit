@@ -1,3 +1,25 @@
+2022-04-28  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [run-javascriptcore-tests] Fix user-facing accounting
+        https://bugs.webkit.org/show_bug.cgi?id=239845
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update numJSCStressFlakyButPassed for flaky tests that were declared a
+        pass. Otherwise we end up miscounting passes as failures in the summary
+        we print out to the user. E.g. in
+        https://build.webkit.org/#/builders/31/builds/3567/steps/8/logs/stdio
+        the test was flaky but passed, yet run-javascriptcore-tests outputs
+
+             1 test flaky and failed.
+
+        since it calculates $numJSCStressFlaky - $numJSCStressFlakyButPassed
+        and $numJSCStressFlakyButPassed is zero (since it wasn't getting
+        updated).
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+
 2022-04-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitbugspy] Limit number of failed bugzilla login attempts

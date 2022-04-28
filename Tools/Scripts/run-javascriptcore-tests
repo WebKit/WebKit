@@ -977,6 +977,9 @@ sub runJSCStressTests
             my $numTotal = $fields[2];
             looks_like_number($fields[3]) || die "Malformed line: $testFlaky";
             my $successful = int($fields[3]);
+            if ($successful) {
+                $numJSCStressFlakyButPassed += 1;
+            }
             my $passFail = $successful ? "passed" : "failed";
             print "\t$testName $fields[1]/$fields[2] passes, $passFail\n";
             $jscStressFlakyInfo{$testName} = { 'P' => $numPasses, 'T' => $numTotal, 'S' => $successful };
