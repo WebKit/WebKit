@@ -940,8 +940,13 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
 
 std::optional<Protocol::CSS::LayoutContextType> InspectorCSSAgent::layoutContextTypeForRenderer(RenderObject* renderer)
 {
-    if (is<RenderFlexibleBox>(renderer))
+    if (auto* renderFlexibleBox = dynamicDowncast<RenderFlexibleBox>(renderer)) {
+        // Subclasses of RenderFlexibleBox (buttons, selection inputs, etc.) should not be considered flex containers,
+        // as it is an internal implementation detail.
+        if (renderFlexibleBox->isFlexibleBoxImpl())
+            return std::nullopt;
         return Protocol::CSS::LayoutContextType::Flex;
+    }
     if (is<RenderGrid>(renderer))
         return Protocol::CSS::LayoutContextType::Grid;
     return std::nullopt;

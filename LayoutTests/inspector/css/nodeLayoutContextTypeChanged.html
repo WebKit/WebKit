@@ -113,6 +113,35 @@ function test()
         }
     });
 
+    function addEnsureLayoutContextTypeTestCase({name, description, selector, expectedLayoutContextType})
+    {
+        addTestCase({name, description, selector, async domNodeHandler(domNode) {
+                InspectorTest.expectEqual(domNode.layoutContextType, expectedLayoutContextType, `Layout context should be \`${expectedLayoutContextType}\`.`);
+            }
+        });
+    }
+
+    addEnsureLayoutContextTypeTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.NotFlex.SubmitInput",
+        description: "Make sure an `input` element of type `submit` is not considered a flex container.",
+        selector: "#flexSubmitInput",
+        expectedLayoutContextType: null,
+    });
+
+    addEnsureLayoutContextTypeTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.NotFlex.Select",
+        description: "Make sure a `select` element is not considered a flex container.",
+        selector: "#flexSelect",
+        expectedLayoutContextType: null,
+    });
+
+    addEnsureLayoutContextTypeTestCase({
+        name: "CSS.nodeLayoutContextTypeChanged.NotFlex.Button",
+        description: "Make sure a `button` is not considered a flex container.",
+        selector: "#flexButton",
+        expectedLayoutContextType: null,
+    });
+
     WI.domManager.requestDocument().then((doc) => {
         documentNode = doc;
         suite.runTestCasesAndFinish();
@@ -155,5 +184,9 @@ function test()
         <div></div>
         <div></div>
     </div>
+    
+    <input type="submit" id="flexSubmitInput" />
+    <select id="flexSelect"></select>
+    <button id="flexButton"></button>
 </body>
 </html>

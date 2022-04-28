@@ -1,3 +1,13 @@
+2022-04-27  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Flexbox] `<button>` and `<select>` elements are appearing in list of Flex containers
+        https://bugs.webkit.org/show_bug.cgi?id=239425
+
+        Reviewed by Devin Rousso.
+
+        * inspector/css/nodeLayoutContextTypeChanged-expected.txt:
+        * inspector/css/nodeLayoutContextTypeChanged.html:
+
 2022-04-27  Karl Rackler  <rackler@apple.com>
 
         [ macOS wk1 ] Fourteen webgl/2.0.0/conformance tests are a flaky timeout

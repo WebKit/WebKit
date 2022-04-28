@@ -1,3 +1,15 @@
+2022-04-27  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Flexbox] `<button>` and `<select>` elements are appearing in list of Flex containers
+        https://bugs.webkit.org/show_bug.cgi?id=239425
+
+        Reviewed by Devin Rousso.
+
+        Added test cases to inspector/css/nodeLayoutContextTypeChanged.html.
+
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::layoutContextTypeForRenderer):
+
 2022-04-27  Sihui Liu  <sihui_liu@apple.com>
 
         Ensure completion handler is called in SWServer::clear

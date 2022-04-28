@@ -1,6 +1,7 @@
 Tests for the CSS.nodeLayoutContextTypeChanged event.
 
 
+
 == Running test suite: CSS.nodeLayoutContextTypeChanged
 -- Running test case: CSS.nodeLayoutContextTypeChanged.GridToNonGrid
 PASS: Layout context should be `grid`.
@@ -21,4 +22,13 @@ PASS: Layout context should now be `flex`.
 -- Running test case: CSS.nodeLayoutContextTypeChanged.GridToFlex
 PASS: Layout context should now be `grid`.
 PASS: Layout context should now be `flex`.
+
+-- Running test case: CSS.nodeLayoutContextTypeChanged.NotFlex.SubmitInput
+PASS: Layout context should be `null`.
+
+-- Running test case: CSS.nodeLayoutContextTypeChanged.NotFlex.Select
+PASS: Layout context should be `null`.
+
+-- Running test case: CSS.nodeLayoutContextTypeChanged.NotFlex.Button
+PASS: Layout context should be `null`.
 
