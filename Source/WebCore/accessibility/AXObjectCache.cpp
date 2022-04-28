@@ -903,7 +903,7 @@ void AXObjectCache::remove(Node& node)
         m_deferredModalChangedList.remove(downcast<Element>(node));
         m_deferredMenuListChange.remove(downcast<Element>(node));
     }
-    m_deferredChildrenChangedNodeList.remove(&node);
+    m_deferredNodeAddedOrRemovedList.remove(&node);
     m_deferredTextChangedList.remove(&node);
     // Remove the entry if the new focused node is being removed.
     m_deferredFocusedNodeChange.removeAllMatching([&node](auto& entry) -> bool {
@@ -1105,32 +1105,42 @@ void AXObjectCache::handleLiveRegionCreated(Node* node)
     if (AccessibilityObject::liveRegionStatusIsEnabled(liveRegionStatus))
         postNotification(getOrCreate(node), &document(), AXLiveRegionCreated);
 }
-    
-void AXObjectCache::childrenChanged(Node* node, Node* newChild)
-{
-    if (newChild)
-        m_deferredChildrenChangedNodeList.add(newChild);
 
-    if (auto* object = get(node))
-        m_deferredChildrenChangedList.add(object);
+void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
+{
+    if (!node)
+        return;
+
+    m_deferredNodeAddedOrRemovedList.add(node);
+
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
-void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* newChild)
+void AXObjectCache::childrenChanged(Node* node, Node* changedChild)
+{
+    childrenChanged(get(node));
+    deferNodeAddedOrRemoved(changedChild);
+}
+
+void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* changedChild)
 {
     if (!renderer)
         return;
 
-    if (newChild && newChild->node())
-        m_deferredChildrenChangedNodeList.add(newChild->node());
-
-    if (auto* object = get(renderer))
-        m_deferredChildrenChangedList.add(object);
+    childrenChanged(get(renderer));
+    if (changedChild)
+        deferNodeAddedOrRemoved(changedChild->node());
 }
 
 void AXObjectCache::childrenChanged(AccessibilityObject* object)
 {
-    if (object)
-        m_deferredChildrenChangedList.add(object);
+    if (!object)
+        return;
+    m_deferredChildrenChangedList.add(object);
+
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::notificationPostTimerFired()
@@ -1295,21 +1305,24 @@ void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* new
 
 void AXObjectCache::deferMenuListValueChange(Element* element)
 {
-    if (element)
-        m_deferredMenuListChange.add(*element);
+    if (!element)
+        return;
+
+    m_deferredMenuListChange.add(*element);
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::deferModalChange(Element* element)
 {
-    if (element) {
-        m_deferredModalChangedList.add(*element);
+    if (!element)
+        return;
 
-        // Notify that parent's children have changed.
-        if (auto* axParent = get(element->parentNode()))
-            m_deferredChildrenChangedList.add(axParent);
-    }
+    m_deferredModalChangedList.add(*element);
+
+    // Notify that parent's children have changed.
+    if (auto* axParent = get(element->parentNode()))
+        m_deferredChildrenChangedList.add(axParent);
 
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
@@ -3232,7 +3245,7 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
     filterListForRemoval(m_textMarkerNodes, document, nodesToRemove);
     filterListForRemoval(m_modalElementsSet, document, nodesToRemove);
     filterListForRemoval(m_deferredTextChangedList, document, nodesToRemove);
-    filterListForRemoval(m_deferredChildrenChangedNodeList, document, nodesToRemove);
+    filterListForRemoval(m_deferredNodeAddedOrRemovedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredSelectedChildredChangedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredModalChangedList, document, nodesToRemove);
@@ -3277,11 +3290,11 @@ void AXObjectCache::performDeferredCacheUpdate()
         return;
     SetForScope performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
 
-    for (auto* nodeChild : m_deferredChildrenChangedNodeList) {
+    for (auto* nodeChild : m_deferredNodeAddedOrRemovedList) {
         handleMenuOpened(nodeChild);
         handleLiveRegionCreated(nodeChild);
     }
-    m_deferredChildrenChangedNodeList.clear();
+    m_deferredNodeAddedOrRemovedList.clear();
 
     processDeferredChildrenChangedList();
 

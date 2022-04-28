@@ -196,6 +196,7 @@ public:
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element*);
     void deferMenuListValueChange(Element*);
+    void deferNodeAddedOrRemoved(Node*);
     void handleScrolledToAnchor(const Node* anchorNode);
     void handleScrollbarUpdate(ScrollView*);
     
@@ -523,7 +524,7 @@ private:
     ListHashSet<Node*> m_deferredTextChangedList;
     WeakHashSet<Element> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
-    ListHashSet<Node*> m_deferredChildrenChangedNodeList;
+    ListHashSet<Node*> m_deferredNodeAddedOrRemovedList;
     WeakHashSet<Element> m_deferredModalChangedList;
     WeakHashSet<Element> m_deferredMenuListChange;
     HashMap<Element*, String> m_deferredTextFormControlValue;

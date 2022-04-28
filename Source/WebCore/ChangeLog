@@ -1,3 +1,38 @@
+2022-04-27  Tyler Wilcock  <tyler_w@apple.com>
+
+        AXObjectCache::childrenChanged modifies m_deferred* member variables but doesn't start timer to process them
+        https://bugs.webkit.org/show_bug.cgi?id=239787
+
+        Reviewed by Chris Fleizach.
+
+        This patch fixes this a bug where AXObjectCache::childrenChanged
+        methods modify m_deferred* member variables, but doesn't start
+        the m_performCacheUpdateTimer.
+
+        This patch also renames m_deferredChildrenChangedNodeList to 
+        m_deferredNodeAddedOrRemovedList, since this more accurately
+        captures what this list is for.
+
+        Finally, this refactors a few methods that modify m_deferred* member
+        variables to not start the cache timer unless the variable has
+        actually changed.
+
+        Fixes these tests in ITM:
+          - accessibility/mac/focus-moves-cursor.html
+          - accessibility/image-load-on-delay.html
+          - accessibility/legend-children-are-visible.html
+          - accessibility/text-alternative-calculation-hidden-nodes.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::deferMenuListValueChange):
+        (WebCore::AXObjectCache::deferModalChange):
+        (WebCore::AXObjectCache::deferNodeAddedOrRemoved): Added.
+        (WebCore::AXObjectCache::prepareForDocumentDestruction):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        * accessibility/AXObjectCache.h:
+
 2022-04-27  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Flexbox] `<button>` and `<select>` elements are appearing in list of Flex containers
