@@ -1,3 +1,17 @@
+2022-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix SafeBrowsing API tests on platforms with safe browsing result details
+        https://bugs.webkit.org/show_bug.cgi?id=239861
+        <rdar://91767123>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (-[TestServiceLookupResult malwareDetailsBaseURLString]):
+        (-[TestServiceLookupResult learnMoreURL]):
+        (-[TestServiceLookupResult reportAnErrorBaseURLString]):
+        (-[TestServiceLookupResult localizedProviderDisplayName]):
+
 2022-04-28  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [run-javascriptcore-tests] Fix user-facing accounting
