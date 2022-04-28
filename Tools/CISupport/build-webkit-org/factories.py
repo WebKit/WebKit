@@ -68,7 +68,7 @@ class BuildFactory(Factory):
 
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
-            if platform.startswith('mac') or platform.startswith('ios-simulator') or platform.startswith('tvos-simulator') or platform.startswith('watchos-simulator'):
+            if platform.startswith('mac') or platform.startswith('ios') or (platform.startswith('watchos') and not platform.startswith('watchos-simulator')):
                 self.addStep(ArchiveMinifiedBuiltProduct())
                 self.addStep(UploadMinifiedBuiltProduct())
             self.addStep(TransferToS3())
