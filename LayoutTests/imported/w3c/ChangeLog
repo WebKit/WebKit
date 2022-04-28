@@ -1,3 +1,10 @@
+2022-04-28  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=239827
+
+        * web-platform-tests/cookies/samesite/about-blank-toplevel.https-expected.txt: Update baseline to expect a pass.
+
 2022-04-27  Oriol Brufau  <obrufau@igalia.com>
 
         Fix CSS cascade regarding logical properties

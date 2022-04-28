@@ -413,7 +413,6 @@ webkit.org/b/169918 compositing/hidpi-subpixel-transform-origin.html [ ImageOnly
 webkit.org/b/169918 compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
@@ -1805,8 +1804,6 @@ webkit.org/b/212744 compositing/repaint/compositing-toggle-in-overflow-scroll-re
 webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.html [ ImageOnlyFailure ]
 
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
-
-webkit.org/b/223980 editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
 
 webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-missing-varyings.html [ Failure ]
 webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]

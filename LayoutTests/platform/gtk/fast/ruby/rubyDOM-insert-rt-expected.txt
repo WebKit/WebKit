@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
         RenderRuby (inline) {RUBY} at (0,0) size 116x17
           RenderRubyRun (anonymous) at (150,10) size 43x18
             RenderRubyText {RT} at (0,-10) size 42x10
-              RenderText {#text} at (0,0) size 43x10
-                text run at (0,0) width 43: "Hyper-text"
+              RenderText {#text} at (0,0) size 42x10
+                text run at (0,0) width 42: "Hyper-text"
             RenderRubyBase (anonymous) at (0,0) size 42x18
               RenderInline {SPAN} at (0,0) size 23x17
                 RenderText {#text} at (9,0) size 23x17
@@ -44,8 +44,8 @@ layer at (0,0) size 800x600
         RenderRuby (inline) {RUBY} at (0,0) size 116x17
           RenderRubyRun (anonymous) at (150,10) size 43x18
             RenderRubyText {RT} at (0,-10) size 42x10
-              RenderText {#text} at (0,0) size 43x10
-                text run at (0,0) width 43: "Hyper-text"
+              RenderText {#text} at (0,0) size 42x10
+                text run at (0,0) width 42: "Hyper-text"
             RenderRubyBase (anonymous) at (0,0) size 42x18
               RenderInline {SPAN} at (0,0) size 23x17
                 RenderText {#text} at (9,0) size 23x17

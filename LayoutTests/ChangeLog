@@ -1,3 +1,25 @@
+2022-04-28  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=239827
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/glib/fast/lists/li-br-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/repaint/composite-and-scale-change-expected.txt: Renamed from LayoutTests/platform/gtk/compositing/repaint/composite-and-scale-change-actual.txt.
+        * platform/gtk/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/gtk/fast/borders/rtl-border-05-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/gtk/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/gtk/fast/ruby/ruby-runs-spans-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-rt-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-text1-expected.txt:
+        * platform/gtk/inspector/css/shadow-scoped-style-expected.txt: Removed.
+        * platform/wpe/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/wpe/fast/borders/rtl-border-05-expected.txt:
+        * platform/wpe/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+
 2022-04-28  Youenn Fablet  <youenn@apple.com>
 
         Update webrtc/connection-state.html to not expected the completed ice connection state
