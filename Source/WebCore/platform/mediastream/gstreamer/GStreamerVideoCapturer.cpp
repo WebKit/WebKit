@@ -55,8 +55,13 @@ GStreamerVideoCapturer::GStreamerVideoCapturer(const char* sourceFactory, Captur
 GstElement* GStreamerVideoCapturer::createSource()
 {
     auto* src = GStreamerCapturer::createSource();
-    if (m_fd)
-        g_object_set(m_src.get(), "fd", *m_fd, nullptr);
+    if (m_nodeAndFd) {
+        auto& [node, fd] = *m_nodeAndFd;
+        auto path = AtomString::number(node);
+        // FIXME: The path property is deprecated in favor of target-object but the portal doesn't expose this object.
+        g_object_set(m_src.get(), "path", path.string().ascii().data(), nullptr);
+        g_object_set(m_src.get(), "fd", fd, nullptr);
+    }
     return src;
 }
 
@@ -77,7 +82,7 @@ GstVideoInfo GStreamerVideoCapturer::getBestFormat()
 
 bool GStreamerVideoCapturer::setSize(int width, int height)
 {
-    if (m_fd.has_value()) {
+    if (feedingFromPipewire()) {
         // Pipewiresrc doesn't seem to support caps re-negotiation and framerate configuration properly.
         GST_FIXME_OBJECT(m_pipeline.get(), "Resizing disabled on display capture source");
         return true;
@@ -105,7 +110,7 @@ bool GStreamerVideoCapturer::setSize(int width, int height)
 
 bool GStreamerVideoCapturer::setFrameRate(double frameRate)
 {
-    if (m_fd.has_value()) {
+    if (feedingFromPipewire()) {
         // Pipewiresrc doesn't seem to support caps re-negotiation and framerate configuration properly.
         GST_FIXME_OBJECT(m_pipeline.get(), "Framerate override disabled on display capture source");
         return true;

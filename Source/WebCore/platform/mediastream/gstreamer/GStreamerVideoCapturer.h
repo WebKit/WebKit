@@ -43,11 +43,13 @@ public:
     bool setFrameRate(double);
     GstVideoInfo getBestFormat();
 
-    void setPipewireFD(int fd) { m_fd = fd; }
-    std::optional<int> pipewireFD() const { return m_fd; }
+    using NodeAndFD = std::pair<uint32_t, int>;
+
+    void setPipewireNodeAndFD(const NodeAndFD& nodeAndFd) { m_nodeAndFd = nodeAndFd; }
+    bool feedingFromPipewire() const { return m_nodeAndFd.has_value(); }
 
 private:
-    std::optional<int> m_fd;
+    std::optional<NodeAndFD> m_nodeAndFd;
 };
 
 } // namespace WebCore
