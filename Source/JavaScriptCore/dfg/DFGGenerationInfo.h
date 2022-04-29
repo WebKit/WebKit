@@ -148,7 +148,7 @@ public:
     // Get the node that produced this value.
     Node* node() { return m_node; }
     
-    void noticeOSRBirth(VariableEventStream& stream, Node* node, VirtualRegister virtualRegister)
+    void noticeOSRBirth(VariableEventStreamBuilder& stream, Node* node, VirtualRegister virtualRegister)
     {
         if (m_node != node)
             return;
@@ -170,7 +170,7 @@ public:
     // Mark the value as having been used (decrement the useCount).
     // Returns true if this was the last use of the value, and any
     // associated machine registers may be freed.
-    bool use(VariableEventStream& stream)
+    bool use(VariableEventStreamBuilder& stream)
     {
         ASSERT(m_useCount);
         bool result = !--m_useCount;
@@ -268,7 +268,7 @@ public:
     }
 
     // Called when a VirtualRegister is being spilled to the JSStack for the first time.
-    void spill(VariableEventStream& stream, VirtualRegister virtualRegister, DataFormat spillFormat)
+    void spill(VariableEventStreamBuilder& stream, VirtualRegister virtualRegister, DataFormat spillFormat)
     {
         // We shouldn't be spill values that don't need spilling.
         ASSERT(!m_canFill);
@@ -286,7 +286,7 @@ public:
 
     // Called on values that don't need spilling (constants and values that have
     // already been spilled), to mark them as no longer being in machine registers.
-    void setSpilled(VariableEventStream& stream, VirtualRegister virtualRegister)
+    void setSpilled(VariableEventStreamBuilder& stream, VirtualRegister virtualRegister)
     {
         // Should only be called on values that don't need spilling, and are currently in registers.
         ASSERT(m_canFill && m_registerFormat != DataFormatNone);
@@ -302,7 +302,7 @@ public:
         m_canFill = false;
     }
     
-    void fillGPR(VariableEventStream& stream, GPRReg gpr, DataFormat format)
+    void fillGPR(VariableEventStreamBuilder& stream, GPRReg gpr, DataFormat format)
     {
         ASSERT(gpr != InvalidGPRReg);
         m_registerFormat = format;
@@ -314,13 +314,13 @@ public:
     // Record that this value is filled into machine registers,
     // tracking which registers, and what format the value has.
 #if USE(JSVALUE64)
-    void fillJSValue(VariableEventStream& stream, GPRReg gpr, DataFormat format = DataFormatJS)
+    void fillJSValue(VariableEventStreamBuilder& stream, GPRReg gpr, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
         fillGPR(stream, gpr, format);
     }
 #elif USE(JSVALUE32_64)
-    void fillJSValue(VariableEventStream& stream, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
+    void fillJSValue(VariableEventStreamBuilder& stream, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
     {
         ASSERT(format & DataFormatJS);
         m_registerFormat = format;
@@ -330,33 +330,33 @@ public:
         if (m_bornForOSR)
             appendFill(Fill, stream);
     }
-    void fillCell(VariableEventStream& stream, GPRReg gpr)
+    void fillCell(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatCell);
     }
 #endif
-    void fillInt32(VariableEventStream& stream, GPRReg gpr)
+    void fillInt32(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatInt32);
     }
-    void fillInt52(VariableEventStream& stream, GPRReg gpr, DataFormat format)
+    void fillInt52(VariableEventStreamBuilder& stream, GPRReg gpr, DataFormat format)
     {
         ASSERT(format == DataFormatInt52 || format == DataFormatStrictInt52);
         fillGPR(stream, gpr, format);
     }
-    void fillInt52(VariableEventStream& stream, GPRReg gpr)
+    void fillInt52(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatInt52);
     }
-    void fillStrictInt52(VariableEventStream& stream, GPRReg gpr)
+    void fillStrictInt52(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatStrictInt52);
     }
-    void fillBoolean(VariableEventStream& stream, GPRReg gpr)
+    void fillBoolean(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatBoolean);
     }
-    void fillDouble(VariableEventStream& stream, FPRReg fpr)
+    void fillDouble(VariableEventStreamBuilder& stream, FPRReg fpr)
     {
         ASSERT(fpr != InvalidFPRReg);
         m_registerFormat = DataFormatDouble;
@@ -365,7 +365,7 @@ public:
         if (m_bornForOSR)
             appendFill(Fill, stream);
     }
-    void fillStorage(VariableEventStream& stream, GPRReg gpr)
+    void fillStorage(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatStorage);
     }
@@ -399,12 +399,12 @@ public:
     }
 
 private:
-    void appendBirth(VariableEventStream& stream)
+    void appendBirth(VariableEventStreamBuilder& stream)
     {
         stream.appendAndLog(VariableEvent::birth(MinifiedID(m_node)));
     }
     
-    void appendFill(VariableEventKind kind, VariableEventStream& stream)
+    void appendFill(VariableEventKind kind, VariableEventStreamBuilder& stream)
     {
         ASSERT(m_bornForOSR);
         
@@ -421,7 +421,7 @@ private:
         stream.appendAndLog(VariableEvent::fillGPR(kind, MinifiedID(m_node), u.gpr, m_registerFormat));
     }
     
-    void appendSpill(VariableEventKind kind, VariableEventStream& stream, VirtualRegister virtualRegister)
+    void appendSpill(VariableEventKind kind, VariableEventStreamBuilder& stream, VirtualRegister virtualRegister)
     {
         stream.appendAndLog(VariableEvent::spill(kind, MinifiedID(m_node), virtualRegister, m_spillFormat));
     }

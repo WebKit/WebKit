@@ -30,6 +30,7 @@
 #include "B3Procedure.h"
 #include "DFGCommon.h"
 #include "DFGGraph.h"
+#include "DFGJumpReplacement.h"
 #include "FTLAbbreviatedTypes.h"
 #include "FTLGeneratedFunction.h"
 #include "FTLJITCode.h"
@@ -84,6 +85,7 @@ public:
     RefPtr<PatchpointExceptionHandle> defaultExceptionHandle;
     Box<CCallHelpers::Label> exceptionHandler { Box<CCallHelpers::Label>::create() };
     B3::Air::StackSlot* capturedValue { nullptr };
+    Vector<DFG::JumpReplacement> jumpReplacements;
 };
 
 } } // namespace JSC::FTL

@@ -11934,7 +11934,7 @@ IGNORE_CLANG_WARNINGS_END
                         JumpReplacement jumpReplacement(
                             linkBuffer.locationOf<JSInternalPtrTag>(label),
                             linkBuffer.locationOf<OSRExitPtrTag>(handle->label));
-                        jitCode->common.m_jumpReplacements.append(jumpReplacement);
+                        state->jumpReplacements.append(jumpReplacement);
                     });
             });
 

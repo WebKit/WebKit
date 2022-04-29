@@ -38,9 +38,9 @@
 
 namespace JSC { namespace DFG {
 
-void VariableEventStream::logEvent(const VariableEvent& event)
+void VariableEventStreamBuilder::logEvent(const VariableEvent& event)
 {
-    dataLogF("seq#%u:", static_cast<unsigned>(size()));
+    dataLogF("seq#%u:", static_cast<unsigned>(m_stream.size()));
     event.dump(WTF::dataFile());
     dataLogLn(" ");
 }
@@ -174,7 +174,7 @@ unsigned VariableEventStream::reconstruct(
     
     // Step 1: Find the last checkpoint, and figure out the number of virtual registers as we go.
     unsigned startIndex = index - 1;
-    while (at(startIndex).kind() != Reset)
+    while (m_stream.at(startIndex).kind() != Reset)
         startIndex--;
     
     // Step 2: Create a mock-up of the DFG's state and execute the events.
@@ -183,7 +183,7 @@ unsigned VariableEventStream::reconstruct(
         operandSources[i] = ValueSource(SourceIsDead);
     HashMap<MinifiedID, MinifiedGenerationInfo> generationInfos;
     for (unsigned i = startIndex; i < index; ++i) {
-        const VariableEvent& event = at(i);
+        const VariableEvent& event = m_stream.at(i);
         dataLogLnIf(verbose, "Processing event ", event);
         switch (event.kind()) {
         case Reset:

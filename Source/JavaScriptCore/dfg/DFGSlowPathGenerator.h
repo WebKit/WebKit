@@ -39,7 +39,7 @@ class SlowPathGenerator {
 public:
     SlowPathGenerator(SpeculativeJIT* jit)
         : m_currentNode(jit->m_currentNode)
-        , m_streamIndex(jit->m_stream->size())
+        , m_streamIndex(jit->m_stream.size())
         , m_origin(jit->m_origin) 
     {
     }

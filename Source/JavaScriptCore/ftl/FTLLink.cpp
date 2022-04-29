@@ -150,6 +150,7 @@ void link(State& state)
 
         state.jitCode->initializeB3Code(b3CodeRef);
         state.jitCode->initializeArityCheckEntrypoint(arityCheckCodeRef);
+        state.jitCode->common.m_jumpReplacements = WTFMove(state.jumpReplacements);
     }
 
     state.finalizer->entrypointLinkBuffer = WTFMove(linkBuffer);

@@ -291,6 +291,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     if (!m_exceptionChecksWithCallFrameRollback.empty())
         linkBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
 
+    Vector<JumpReplacement> jumpReplacements;
     MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm().getCTIStub(osrExitGenerationThunkGenerator);
     auto target = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
     for (unsigned i = 0; i < m_osrExit.size(); ++i) {
@@ -303,11 +304,12 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         }
 
         if (info.m_replacementSource.isSet()) {
-            m_jitCode->common.m_jumpReplacements.append(JumpReplacement(
+            jumpReplacements.append(JumpReplacement(
                 linkBuffer.locationOf<JSInternalPtrTag>(info.m_replacementSource),
                 linkBuffer.locationOf<OSRExitPtrTag>(info.m_replacementDestination)));
         }
     }
+    m_jitCode->common.m_jumpReplacements = WTFMove(jumpReplacements);
     
     if (UNLIKELY(m_graph.compilation())) {
         ASSERT(m_exitSiteLabels.size() == m_osrExit.size());
@@ -415,6 +417,7 @@ void JITCompiler::compile()
 
     auto codeRef = FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data());
     m_jitCode->initializeCodeRefForDFG(codeRef, codeRef.code());
+    m_jitCode->variableEventStream = m_speculative->finalizeEventStream();
 
     auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer));
     m_graph.m_plan.setFinalizer(WTFMove(finalizer));
@@ -525,6 +528,7 @@ void JITCompiler::compileFunction()
     m_jitCode->initializeCodeRefForDFG(
         FINALIZE_DFG_CODE(*linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toCString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).data()),
         withArityCheck);
+    m_jitCode->variableEventStream = m_speculative->finalizeEventStream();
 
     auto finalizer = makeUnique<JITFinalizer>(m_graph.m_plan, m_jitCode.releaseNonNull(), WTFMove(linkBuffer), withArityCheck);
     m_graph.m_plan.setFinalizer(WTFMove(finalizer));
@@ -653,7 +657,7 @@ void JITCompiler::exceptionCheck()
     HandlerInfo* exceptionHandler;
     bool willCatchException = m_graph.willCatchExceptionInMachineFrame(m_speculative->m_currentNode->origin.forExit, opCatchOrigin, exceptionHandler); 
     if (willCatchException) {
-        unsigned streamIndex = m_speculative->m_outOfLineStreamIndex ? *m_speculative->m_outOfLineStreamIndex : m_speculative->m_stream->size();
+        unsigned streamIndex = m_speculative->m_outOfLineStreamIndex ? *m_speculative->m_outOfLineStreamIndex : m_speculative->m_stream.size();
         MacroAssembler::Jump hadException = emitNonPatchableExceptionCheck(vm());
         // We assume here that this is called after callOpeartion()/appendCall() is called.
         appendExceptionHandlingOSRExit(ExceptionCheck, streamIndex, opCatchOrigin, exceptionHandler, m_jitCode->common.codeOrigins->lastCallSite(), hadException);

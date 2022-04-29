@@ -59,15 +59,13 @@ void JITCode::shrinkToFit(const ConcurrentJSLocker&)
 {
     common.shrinkToFit();
     minifiedDFG.prepareAndShrink();
-    variableEventStream.shrinkToFit();
 }
 
 void JITCode::reconstruct(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, unsigned streamIndex,
     Operands<ValueRecovery>& result)
 {
-    variableEventStream.reconstruct(
-        codeBlock, codeOrigin, minifiedDFG, streamIndex, result);
+    variableEventStream.reconstruct(codeBlock, codeOrigin, minifiedDFG, streamIndex, result);
 }
 
 void JITCode::reconstruct(CallFrame* callFrame, CodeBlock* codeBlock, CodeOrigin codeOrigin, unsigned streamIndex, Operands<std::optional<JSValue>>& result)

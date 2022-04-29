@@ -1,3 +1,103 @@
+2022-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector in JumpReplacements and VariableEventStream
+        https://bugs.webkit.org/show_bug.cgi?id=239892
+
+        Reviewed by Mark Lam.
+
+        1. Introduce DFG::VariableEventStreamBuilder. And construct DFG::VariableEventStream from that
+           builder when finailizing code generation. We also make it FixedVector.
+        2. Use FixedVector for JumpReplacements.
+
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::shrinkToFit):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::noticeOSRBirth):
+        (JSC::DFG::GenerationInfo::use):
+        (JSC::DFG::GenerationInfo::spill):
+        (JSC::DFG::GenerationInfo::setSpilled):
+        (JSC::DFG::GenerationInfo::fillGPR):
+        (JSC::DFG::GenerationInfo::fillJSValue):
+        (JSC::DFG::GenerationInfo::fillCell):
+        (JSC::DFG::GenerationInfo::fillInt32):
+        (JSC::DFG::GenerationInfo::fillInt52):
+        (JSC::DFG::GenerationInfo::fillStrictInt52):
+        (JSC::DFG::GenerationInfo::fillBoolean):
+        (JSC::DFG::GenerationInfo::fillDouble):
+        (JSC::DFG::GenerationInfo::fillStorage):
+        (JSC::DFG::GenerationInfo::appendBirth):
+        (JSC::DFG::GenerationInfo::appendFill):
+        (JSC::DFG::GenerationInfo::appendSpill):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::shrinkToFit):
+        (JSC::DFG::JITCode::reconstruct):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::exceptionCheck):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::SlowPathGenerator):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+        (JSC::DFG::SpeculativeJIT::addSlowPathGeneratorLambda):
+        (JSC::DFG::SpeculativeJIT::fillStorage):
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        (JSC::DFG::SpeculativeJIT::compileInById):
+        (JSC::DFG::SpeculativeJIT::compileInByVal):
+        (JSC::DFG::SpeculativeJIT::compileHasPrivate):
+        (JSC::DFG::SpeculativeJIT::noticeOSRBirth):
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compilePutByVal):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::finalizeEventStream):
+        (JSC::DFG::SpeculativeJIT::use):
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::recordSetLocal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBigInt32):
+        (JSC::DFG::SpeculativeJIT::compileGetByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStreamBuilder::logEvent):
+        (JSC::DFG::VariableEventStream::reconstruct const):
+        (JSC::DFG::VariableEventStream::logEvent): Deleted.
+        * dfg/DFGVariableEventStream.h:
+        (JSC::DFG::VariableEventStream::VariableEventStream):
+        (JSC::DFG::VariableEventStreamBuilder::appendAndLog):
+        (JSC::DFG::VariableEventStreamBuilder::size const):
+        (JSC::DFG::VariableEventStreamBuilder::finalize):
+        (JSC::DFG::VariableEventStream::appendAndLog): Deleted.
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLState.h:
+
 2022-04-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Format time zone name using ICU instead of platform calls

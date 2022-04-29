@@ -160,6 +160,7 @@ public:
     
     void createOSREntries();
     void linkOSREntries(LinkBuffer&);
+    Vector<VariableEvent> finalizeEventStream() { return m_stream.finalize(); }
 
     BasicBlock* nextBlock()
     {
@@ -297,7 +298,7 @@ public:
 
         // use() returns true when the value becomes dead, and any
         // associated resources may be freed.
-        if (!info.use(*m_stream))
+        if (!info.use(m_stream))
             return;
 
         // Release the associated machine registers.
@@ -496,7 +497,7 @@ public:
         // Check the GenerationInfo to see if this value need writing
         // to the JSStack - if not, mark it as spilled & return.
         if (!info.needsSpill()) {
-            info.setSpilled(*m_stream, spillMe);
+            info.setSpilled(m_stream, spillMe);
             return;
         }
 
@@ -506,27 +507,27 @@ public:
             // This is special, since it's not a JS value - as in it's not visible to JS
             // code.
             m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
-            info.spill(*m_stream, spillMe, DataFormatStorage);
+            info.spill(m_stream, spillMe, DataFormatStorage);
             return;
         }
 
         case DataFormatInt32: {
             m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
-            info.spill(*m_stream, spillMe, DataFormatInt32);
+            info.spill(m_stream, spillMe, DataFormatInt32);
             return;
         }
 
 #if USE(JSVALUE64)
         case DataFormatDouble: {
             m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
-            info.spill(*m_stream, spillMe, DataFormatDouble);
+            info.spill(m_stream, spillMe, DataFormatDouble);
             return;
         }
 
         case DataFormatInt52:
         case DataFormatStrictInt52: {
             m_jit.store64(info.gpr(), JITCompiler::addressFor(spillMe));
-            info.spill(*m_stream, spillMe, spillFormat);
+            info.spill(m_stream, spillMe, spillFormat);
             return;
         }
             
@@ -542,20 +543,20 @@ public:
             
             // Spill the value, and record it as spilled in its boxed form.
             m_jit.store64(reg, JITCompiler::addressFor(spillMe));
-            info.spill(*m_stream, spillMe, (DataFormat)(spillFormat | DataFormatJS));
+            info.spill(m_stream, spillMe, (DataFormat)(spillFormat | DataFormatJS));
             return;
 #elif USE(JSVALUE32_64)
         case DataFormatCell:
         case DataFormatBoolean: {
             m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
-            info.spill(*m_stream, spillMe, spillFormat);
+            info.spill(m_stream, spillMe, spillFormat);
             return;
         }
 
         case DataFormatDouble: {
             // On JSVALUE32_64 boxing a double is a no-op.
             m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
-            info.spill(*m_stream, spillMe, DataFormatDouble);
+            info.spill(m_stream, spillMe, DataFormatDouble);
             return;
         }
 
@@ -564,7 +565,7 @@ public:
             RELEASE_ASSERT(spillFormat & DataFormatJS);
             m_jit.store32(info.tagGPR(), JITCompiler::tagFor(spillMe));
             m_jit.store32(info.payloadGPR(), JITCompiler::payloadFor(spillMe));
-            info.spill(*m_stream, spillMe, spillFormat);
+            info.spill(m_stream, spillMe, spillFormat);
             return;
 #endif
         }
@@ -1781,7 +1782,7 @@ public:
         Operand bytecodeReg, VirtualRegister machineReg, DataFormat format)
     {
         ASSERT(!bytecodeReg.isArgument() || bytecodeReg.virtualRegister().toArgument() >= 0);
-        m_stream->appendAndLog(VariableEvent::setLocal(bytecodeReg, machineReg, format));
+        m_stream.appendAndLog(VariableEvent::setLocal(bytecodeReg, machineReg, format));
     }
     
     void recordSetLocal(DataFormat format)
@@ -1845,7 +1846,7 @@ public:
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;
     
-    VariableEventStream* m_stream;
+    VariableEventStreamBuilder m_stream;
     MinifiedGraph* m_minifiedGraph;
     
     Vector<std::unique_ptr<SlowPathGenerator>, 8> m_slowPathGenerators;

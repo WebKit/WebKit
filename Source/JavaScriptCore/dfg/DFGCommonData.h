@@ -129,7 +129,7 @@ public:
     FixedVector<AdaptiveInferredPropertyValueWatchpoint> m_adaptiveInferredPropertyValueWatchpoints;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
     RecordedStatuses recordedStatuses;
-    Vector<JumpReplacement> m_jumpReplacements;
+    FixedVector<JumpReplacement> m_jumpReplacements;
     Bag<StructureStubInfo> m_stubInfos;
     Bag<OptimizingCallLinkInfo> m_callLinkInfos;
     Yarr::YarrBoyerMoyerData m_boyerMooreData;

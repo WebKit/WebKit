@@ -84,7 +84,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
         if (edge->hasConstant()) {
             JSValue jsValue = edge->asJSValue();
             m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
-            info.fillJSValue(*m_stream, gpr, DataFormatJS);
+            info.fillJSValue(m_stream, gpr, DataFormatJS);
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
         } else {
             DataFormat spillFormat = info.spillFormat();
@@ -102,7 +102,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
                 DFG_ASSERT(m_graph, m_currentNode, spillFormat & DataFormatJS, spillFormat);
                 break;
             }
-            info.fillJSValue(*m_stream, gpr, spillFormat);
+            info.fillJSValue(m_stream, gpr, spillFormat);
         }
         return gpr;
     }
@@ -118,7 +118,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
         }
         m_gprs.lock(gpr);
         m_jit.or64(GPRInfo::numberTagRegister, gpr);
-        info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
+        info.fillJSValue(m_stream, gpr, DataFormatJSInt32);
         return gpr;
     }
 
@@ -155,7 +155,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin origin, JSValueRegs base, JSValueR
 
 void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier identifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode, AccessType type)
 {
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
         // We've already flushed registers to the stack, we don't need to spill these.
@@ -195,7 +195,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
 
 void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier identifier, const JITCompiler::JumpList& slowPathTarget)
 {
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
     // We've already flushed registers to the stack, we don't need to spill these.
     usedRegisters.set(baseGPR, false);
@@ -921,7 +921,7 @@ void SpeculativeJIT::emitCall(Node* node)
     CodeOrigin dynamicOrigin =
         isEmulatedTail ? *staticInlineCallFrame->getCallerSkippingTailCalls() : staticOrigin;
 
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream.size());
     
     auto setResultAndResetStack = [&] () {
         GPRFlushedCallResult result(this);
@@ -1101,7 +1101,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             ASSERT(edge->isInt32Constant());
             m_jit.move(MacroAssembler::Imm32(edge->asInt32()), gpr);
-            info.fillInt32(*m_stream, gpr);
+            info.fillInt32(m_stream, gpr);
             returnFormat = DataFormatInt32;
             return gpr;
         }
@@ -1116,17 +1116,17 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
             // If we know this was spilled as an integer we can fill without checking.
             if (strict) {
                 m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
-                info.fillInt32(*m_stream, gpr);
+                info.fillInt32(m_stream, gpr);
                 returnFormat = DataFormatInt32;
                 return gpr;
             }
             if (spillFormat == DataFormatInt32) {
                 m_jit.load32(JITCompiler::addressFor(virtualRegister), gpr);
-                info.fillInt32(*m_stream, gpr);
+                info.fillInt32(m_stream, gpr);
                 returnFormat = DataFormatInt32;
             } else {
                 m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-                info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
+                info.fillJSValue(m_stream, gpr, DataFormatJSInt32);
                 returnFormat = DataFormatJSInt32;
             }
             return gpr;
@@ -1134,7 +1134,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
         // Fill as JSValue, and fall through.
-        info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
+        info.fillJSValue(m_stream, gpr, DataFormatJSInt32);
         m_gprs.unlock(gpr);
         FALLTHROUGH;
     }
@@ -1146,7 +1146,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         m_gprs.lock(gpr);
         if (type & ~SpecInt32Only)
             speculationCheck(BadType, JSValueRegs(gpr), edge, m_jit.branchIfNotInt32(gpr));
-        info.fillJSValue(*m_stream, gpr, DataFormatJSInt32);
+        info.fillJSValue(m_stream, gpr, DataFormatJSInt32);
         // If !strict we're done, return.
         if (!strict) {
             returnFormat = DataFormatJSInt32;
@@ -1168,7 +1168,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
                 result = allocate();
             else {
                 m_gprs.lock(gpr);
-                info.fillInt32(*m_stream, gpr);
+                info.fillInt32(m_stream, gpr);
                 result = gpr;
             }
             m_jit.zeroExtend32ToWord(gpr, result);
@@ -1249,7 +1249,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
             if (desiredFormat == DataFormatInt52)
                 value = value << JSValue::int52ShiftAmount;
             m_jit.move(MacroAssembler::Imm64(value), gpr);
-            info.fillGPR(*m_stream, gpr, desiredFormat);
+            info.fillGPR(m_stream, gpr, desiredFormat);
             return gpr;
         }
         
@@ -1263,12 +1263,12 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
         if (desiredFormat == DataFormatStrictInt52) {
             if (spillFormat == DataFormatInt52)
                 m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
-            info.fillStrictInt52(*m_stream, gpr);
+            info.fillStrictInt52(m_stream, gpr);
             return gpr;
         }
         if (spillFormat == DataFormatStrictInt52)
             m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
-        info.fillInt52(*m_stream, gpr);
+        info.fillInt52(m_stream, gpr);
         return gpr;
     }
 
@@ -1284,7 +1284,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
             unlock(gpr);
             gpr = result;
         } else
-            info.fillInt52(*m_stream, gpr);
+            info.fillInt52(m_stream, gpr);
         m_jit.lshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
         return gpr;
     }
@@ -1301,7 +1301,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
             unlock(gpr);
             gpr = result;
         } else
-            info.fillStrictInt52(*m_stream, gpr);
+            info.fillStrictInt52(m_stream, gpr);
         m_jit.rshift64(TrustedImm32(JSValue::int52ShiftAmount), gpr);
         return gpr;
     }
@@ -1334,7 +1334,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
                 }
 
                 m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-                info.fillDouble(*m_stream, fpr);
+                info.fillDouble(m_stream, fpr);
                 return fpr;
             }
             if (mayHaveTypeCheck(edge.useKind()))
@@ -1353,7 +1353,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         FPRReg fpr = fprAllocate();
         m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
         m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-        info.fillDouble(*m_stream, fpr);
+        info.fillDouble(m_stream, fpr);
         return fpr;
     }
 
@@ -1389,17 +1389,17 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
             JSValue jsValue = edge->asJSValue();
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
-            info.fillJSValue(*m_stream, gpr, DataFormatJSCell);
+            info.fillJSValue(m_stream, gpr, DataFormatJSCell);
             return gpr;
         }
 
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
-        info.fillJSValue(*m_stream, gpr, DataFormatJS);
+        info.fillJSValue(m_stream, gpr, DataFormatJS);
         if (type & ~SpecCellCheck)
             speculationCheck(BadType, JSValueRegs(gpr), edge, m_jit.branchIfNotCell(JSValueRegs(gpr)));
-        info.fillJSValue(*m_stream, gpr, DataFormatJSCell);
+        info.fillJSValue(m_stream, gpr, DataFormatJSCell);
         return gpr;
     }
 
@@ -1420,7 +1420,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         m_gprs.lock(gpr);
         if (type & ~SpecCellCheck)
             speculationCheck(BadType, JSValueRegs(gpr), edge, m_jit.branchIfNotCell(JSValueRegs(gpr)));
-        info.fillJSValue(*m_stream, gpr, DataFormatJSCell);
+        info.fillJSValue(m_stream, gpr, DataFormatJSCell);
         return gpr;
     }
 
@@ -1467,20 +1467,20 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
             JSValue jsValue = edge->asJSValue();
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
-            info.fillJSValue(*m_stream, gpr, DataFormatJSBoolean);
+            info.fillJSValue(m_stream, gpr, DataFormatJSBoolean);
             return gpr;
         }
         DFG_ASSERT(m_graph, m_currentNode, info.spillFormat() & DataFormatJS, info.spillFormat());
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
-        info.fillJSValue(*m_stream, gpr, DataFormatJS);
+        info.fillJSValue(m_stream, gpr, DataFormatJS);
         if (type & ~SpecBoolean) {
             m_jit.xor64(TrustedImm32(JSValue::ValueFalse), gpr);
             speculationCheck(BadType, JSValueRegs(gpr), edge, m_jit.branchTest64(MacroAssembler::NonZero, gpr, TrustedImm32(static_cast<int32_t>(~1))), SpeculationRecovery(BooleanSpeculationCheck, gpr, InvalidGPRReg));
             m_jit.xor64(TrustedImm32(JSValue::ValueFalse), gpr);
         }
-        info.fillJSValue(*m_stream, gpr, DataFormatJSBoolean);
+        info.fillJSValue(m_stream, gpr, DataFormatJSBoolean);
         return gpr;
     }
 
@@ -1499,7 +1499,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
             speculationCheck(BadType, JSValueRegs(gpr), edge, m_jit.branchTest64(MacroAssembler::NonZero, gpr, TrustedImm32(static_cast<int32_t>(~1))), SpeculationRecovery(BooleanSpeculationCheck, gpr, InvalidGPRReg));
             m_jit.xor64(TrustedImm32(JSValue::ValueFalse), gpr);
         }
-        info.fillJSValue(*m_stream, gpr, DataFormatJSBoolean);
+        info.fillJSValue(m_stream, gpr, DataFormatJSBoolean);
         return gpr;
     }
 
@@ -1574,7 +1574,7 @@ GPRReg SpeculativeJIT::fillSpeculateBigInt32(Edge edge)
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             ASSERT(jsValue.isBigInt32());
             m_jit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsValue)), gpr);
-            info.fillJSValue(*m_stream, gpr, DataFormatJSBigInt32);
+            info.fillJSValue(m_stream, gpr, DataFormatJSBigInt32);
             return gpr;
         }
 
@@ -1589,13 +1589,13 @@ GPRReg SpeculativeJIT::fillSpeculateBigInt32(Edge edge)
         }
         if (spillFormat == DataFormatJSBigInt32) {
             m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillJSValue(*m_stream, gpr, DataFormatJSBigInt32);
+            info.fillJSValue(m_stream, gpr, DataFormatJSBigInt32);
             return gpr;
         }
 
         m_jit.load64(JITCompiler::addressFor(virtualRegister), gpr);
 
-        info.fillJSValue(*m_stream, gpr, DataFormatJS);
+        info.fillJSValue(m_stream, gpr, DataFormatJS);
         m_gprs.unlock(gpr);
         FALLTHROUGH;
     }
@@ -1610,7 +1610,7 @@ GPRReg SpeculativeJIT::fillSpeculateBigInt32(Edge edge)
             speculationCheck(BadType, JSValueRegs(gpr), edge, failureCases);
             unlock(tempGPR);
         }
-        info.fillJSValue(*m_stream, gpr, DataFormatJSBigInt32);
+        info.fillJSValue(m_stream, gpr, DataFormatJSBigInt32);
         return gpr;
     }
 
@@ -2459,7 +2459,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         GPRReg resultGPR = resultRegs.gpr();
 
         CodeOrigin codeOrigin = node->origin.semantic;
-        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
         RegisterSet usedRegisters = this->usedRegisters();
 
         JITCompiler::JumpList slowCases;
@@ -6003,7 +6003,7 @@ void SpeculativeJIT::compile(Node* node)
         Vector<SilentRegisterSavePlan> savePlans;
         silentSpillAllRegistersImpl(false, savePlans, tempGPR);
 
-        unsigned streamIndex = m_stream->size();
+        unsigned streamIndex = m_stream.size();
         m_jit.jitCode()->bytecodeIndexToStreamIndex.add(bytecodeIndex, streamIndex);
 
         addSlowPathGeneratorLambda([=, this]() {

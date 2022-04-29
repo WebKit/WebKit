@@ -42,7 +42,6 @@ namespace JSC { namespace DFG {
 void CommonData::shrinkToFit()
 {
     codeOrigins->shrinkToFit();
-    m_jumpReplacements.shrinkToFit();
 }
 
 static Lock pcCodeBlockMapLock;

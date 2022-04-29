@@ -84,7 +84,6 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_compileOkay(true)
     , m_state(m_graph)
     , m_interpreter(m_graph, m_state)
-    , m_stream(&jit.jitCode()->variableEventStream)
     , m_minifiedGraph(&jit.jitCode()->minifiedDFG)
 {
 }
@@ -268,7 +267,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
         m_jit.appendExitInfo(jumpsToFail);
     } else
         m_jit.appendExitInfo(jumpToFail);
-    m_jit.appendOSRExit(OSRExit(kind, jsValueSource, m_graph.methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream->size()));
+    m_jit.appendOSRExit(OSRExit(kind, jsValueSource, m_graph.methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream.size()));
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, const MacroAssembler::JumpList& jumpsToFail)
@@ -283,7 +282,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
         m_jit.appendExitInfo(myJumpsToFail);
     } else
         m_jit.appendExitInfo(jumpsToFail);
-    m_jit.appendOSRExit(OSRExit(kind, jsValueSource, m_graph.methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream->size()));
+    m_jit.appendOSRExit(OSRExit(kind, jsValueSource, m_graph.methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream.size()));
 }
 
 OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node)
@@ -292,7 +291,7 @@ OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSo
         return OSRExitJumpPlaceholder();
     unsigned index = m_jit.m_osrExit.size();
     m_jit.appendExitInfo();
-    m_jit.appendOSRExit(OSRExit(kind, jsValueSource, m_graph.methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream->size()));
+    m_jit.appendOSRExit(OSRExit(kind, jsValueSource, m_graph.methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream.size()));
     return OSRExitJumpPlaceholder(index);
 }
 
@@ -317,7 +316,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
         return;
     unsigned recoveryIndex = m_jit.appendSpeculationRecovery(recovery);
     m_jit.appendExitInfo(jumpToFail);
-    m_jit.appendOSRExit(OSRExit(kind, jsValueSource, m_graph.methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream->size(), recoveryIndex));
+    m_jit.appendOSRExit(OSRExit(kind, jsValueSource, m_graph.methodOfGettingAValueProfileFor(m_currentNode, node), this, m_stream.size(), recoveryIndex));
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
@@ -332,7 +331,7 @@ void SpeculativeJIT::emitInvalidationPoint(Node* node)
     OSRExitCompilationInfo& info = m_jit.appendExitInfo(JITCompiler::JumpList());
     m_jit.appendOSRExit(OSRExit(
         UncountableInvalidation, JSValueSource(), MethodOfGettingAValueProfile(),
-        this, m_stream->size()));
+        this, m_stream.size()));
     info.m_replacementSource = m_jit.watchpointLabel();
     RELEASE_ASSERT(info.m_replacementSource.isSet());
     noResult(node);
@@ -403,7 +402,7 @@ void SpeculativeJIT::addSlowPathGenerator(std::unique_ptr<SlowPathGenerator> slo
 
 void SpeculativeJIT::addSlowPathGeneratorLambda(Function<void()>&& lambda)
 {
-    m_slowPathLambdas.append(SlowPathLambda{ WTFMove(lambda), m_currentNode, static_cast<unsigned>(m_stream->size()) });
+    m_slowPathLambdas.append(SlowPathLambda { WTFMove(lambda), m_currentNode, static_cast<unsigned>(m_stream.size()) });
 }
 
 void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder)
@@ -992,7 +991,7 @@ GPRReg SpeculativeJIT::fillStorage(Edge edge)
             GPRReg gpr = allocate();
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
             m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
-            info.fillStorage(*m_stream, gpr);
+            info.fillStorage(m_stream, gpr);
             return gpr;
         }
         
@@ -1189,7 +1188,7 @@ void SpeculativeJIT::compileDeleteById(Node* node)
         GPRReg resultGPR = resultRegs.payloadGPR();
 
         CodeOrigin codeOrigin = node->origin.semantic;
-        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
         RegisterSet usedRegisters = this->usedRegisters();
 
         JITDelByIdGenerator gen(
@@ -1275,7 +1274,7 @@ void SpeculativeJIT::compileDeleteByVal(Node* node)
             slowCases.append(m_jit.branchIfNotCell(keyRegs));
 
         CodeOrigin codeOrigin = node->origin.semantic;
-        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
         RegisterSet usedRegisters = this->usedRegisters();
 
         JITDelByValGenerator gen(
@@ -1355,7 +1354,7 @@ void SpeculativeJIT::compileInById(Node* node)
     base.use();
 
     CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
     JITInByIdGenerator gen(
         m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, node->cacheableIdentifier(),
@@ -1407,7 +1406,7 @@ void SpeculativeJIT::compileInByVal(Node* node)
     CCallHelpers::JumpList slowCases;
 
     CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
     JITInByValGenerator gen(
         m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, AccessType::InByVal, usedRegisters,
@@ -1459,7 +1458,7 @@ void SpeculativeJIT::compileHasPrivate(Node* node, AccessType type)
     CCallHelpers::JumpList slowCases;
 
     CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
     JITInByValGenerator gen(
         m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, type, usedRegisters,
@@ -2104,7 +2103,7 @@ void SpeculativeJIT::noticeOSRBirth(Node* node)
     VirtualRegister virtualRegister = node->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
     
-    info.noticeOSRBirth(*m_stream, node, virtualRegister);
+    info.noticeOSRBirth(m_stream, node, virtualRegister);
 }
 
 void SpeculativeJIT::compileLoopHint(Node* node)
@@ -2168,7 +2167,7 @@ void SpeculativeJIT::compileMovHint(Node* node)
     Node* child = node->child1().node();
     noticeOSRBirth(child);
     
-    m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->unlinkedOperand()));
+    m_stream.appendAndLog(VariableEvent::movHint(MinifiedID(child), node->unlinkedOperand()));
 }
 
 void SpeculativeJIT::compileCheckDetached(Node* node)
@@ -2228,7 +2227,7 @@ void SpeculativeJIT::compileCurrentBlock()
 #endif
     }
 
-    m_stream->appendAndLog(VariableEvent::reset());
+    m_stream.appendAndLog(VariableEvent::reset());
     
     m_jit.jitAssertHasValidCallFrame();
     m_jit.jitAssertTagsInPlace();
@@ -2249,7 +2248,7 @@ void SpeculativeJIT::compileCurrentBlock()
             continue; // No need to record dead SetLocal's.
         format = dataFormatFor(variable->flushFormat());
         DFG_ASSERT(m_graph, node, !operand.isArgument() || operand.virtualRegister().toArgument() >= 0);
-        m_stream->appendAndLog(VariableEvent::setLocal(operand, variable->machineLocal(), format));
+        m_stream.appendAndLog(VariableEvent::setLocal(operand, variable->machineLocal(), format));
     }
 
     m_origin = NodeOrigin();
@@ -2732,7 +2731,7 @@ void SpeculativeJIT::compilePutByVal(Node* node)
         speculate(node, child3);
 
         CodeOrigin codeOrigin = node->origin.semantic;
-        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+        CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
         RegisterSet usedRegisters = this->usedRegisters();
         bool isDirect = node->op() == PutByValDirect;
         ECMAMode ecmaMode = node->ecmaMode();
@@ -4139,7 +4138,7 @@ void SpeculativeJIT::compileGetPrivateNameByVal(Node* node, JSValueRegs base, JS
     speculateSymbol(m_graph.child(node, 1));
 
     CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
 
     JITCompiler::JumpList slowCases;
@@ -4344,7 +4343,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
     speculateSymbol(child2, propertyGPR);
 
     CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
 
     JITPutByValGenerator gen(
@@ -4421,7 +4420,7 @@ void SpeculativeJIT::compileCheckPrivateBrand(Node* node)
     speculateSymbol(node->child2(), brandGPR);
 
     CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
 
     JITCompiler::JumpList slowCases;
@@ -4472,7 +4471,7 @@ void SpeculativeJIT::compileSetPrivateBrand(Node* node)
     speculateSymbol(node->child2(), brandGPR);
 
     CodeOrigin codeOrigin = node->origin.semantic;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
 
     JITCompiler::JumpList slowCases;
@@ -15820,7 +15819,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
         if (scratch2GPR != InvalidGPRReg)
             usedRegisters.set(scratch2GPR, false);
     }
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     JITPutByIdGenerator gen(
         m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs::payloadOnly(baseGPR), valueRegs, stubInfoGPR,

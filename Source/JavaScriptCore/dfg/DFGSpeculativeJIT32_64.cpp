@@ -73,7 +73,7 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
             m_jit.move(Imm32(value.payload()), payloadGPR);
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderConstant);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderConstant);
-            info.fillJSValue(*m_stream, tagGPR, payloadGPR, DataFormatJS);
+            info.fillJSValue(m_stream, tagGPR, payloadGPR, DataFormatJS);
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat != DataFormatNone && spillFormat != DataFormatStorage);
@@ -99,7 +99,7 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
             }
             m_gprs.retain(tagGPR, virtualRegister, SpillOrderSpilled);
             m_gprs.retain(payloadGPR, virtualRegister, SpillOrderSpilled);
-            info.fillJSValue(*m_stream, tagGPR, payloadGPR, spillFormat == DataFormatJSDouble ? DataFormatJS : spillFormat);
+            info.fillJSValue(m_stream, tagGPR, payloadGPR, spillFormat == DataFormatJSDouble ? DataFormatJS : spillFormat);
         }
 
         return true;
@@ -141,7 +141,7 @@ bool SpeculativeJIT::fillJSValue(Edge edge, GPRReg& tagGPR, GPRReg& payloadGPR, 
         m_gprs.release(gpr);
         m_gprs.retain(tagGPR, virtualRegister, SpillOrderJS);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderJS);
-        info.fillJSValue(*m_stream, tagGPR, payloadGPR, fillFormat);
+        info.fillJSValue(m_stream, tagGPR, payloadGPR, fillFormat);
         return true;
     }
 
@@ -199,7 +199,7 @@ void SpeculativeJIT::cachedGetById(
         usedRegisters.set(JSValueRegs(resultTagGPR, resultPayloadGPR), false);
     }
     
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     JITGetByIdGenerator gen(
         m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(resultTagGPR, resultPayloadGPR), InvalidGPRReg, type);
@@ -235,7 +235,7 @@ void SpeculativeJIT::cachedGetByIdWithThis(
     UNUSED_PARAM(stubInfoGPR);
     RegisterSet usedRegisters = this->usedRegisters();
     
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     JITGetByIdWithThisGenerator gen(
         m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(resultTagGPR, resultPayloadGPR), JSValueRegs(baseTagGPROrNone, basePayloadGPR), JSValueRegs(thisTagGPR, thisPayloadGPR), InvalidGPRReg);
@@ -783,7 +783,7 @@ void SpeculativeJIT::emitCall(Node* node)
     ASSERT(!isEmulatedTail || (staticInlineCallFrame && staticInlineCallFrame->getCallerSkippingTailCalls()));
     CodeOrigin dynamicOrigin =
         isEmulatedTail ? *staticInlineCallFrame->getCallerSkippingTailCalls() : staticOrigin;
-    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream->size());
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream.size());
     
     auto* info = m_jit.jitCode()->common.addCallLinkInfo(node->origin.semantic, CallLinkInfo::UseDataIC::No);
     info->setUpCall(callType, calleePayloadGPR);
@@ -973,7 +973,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
             GPRReg gpr = allocate();
             m_jit.move(MacroAssembler::Imm32(edge->asInt32()), gpr);
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            info.fillInt32(*m_stream, gpr);
+            info.fillInt32(m_stream, gpr);
             returnFormat = DataFormatInt32;
             return gpr;
         }
@@ -989,7 +989,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         GPRReg gpr = allocate();
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        info.fillInt32(*m_stream, gpr);
+        info.fillInt32(m_stream, gpr);
         returnFormat = DataFormatInt32;
         return gpr;
     }
@@ -1007,7 +1007,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderInteger);
-        info.fillInt32(*m_stream, payloadGPR);
+        info.fillInt32(m_stream, payloadGPR);
         // If !strict we're done, return.
         returnFormat = DataFormatInt32;
         return payloadGPR;
@@ -1060,7 +1060,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
             FPRReg fpr = fprAllocate();
             m_jit.loadDouble(TrustedImmPtr(m_jit.addressOfDoubleConstant(edge.node())), fpr);
             m_fprs.retain(fpr, virtualRegister, SpillOrderConstant);
-            info.fillDouble(*m_stream, fpr);
+            info.fillDouble(m_stream, fpr);
             return fpr;
         }
         
@@ -1068,7 +1068,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
         FPRReg fpr = fprAllocate();
         m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
         m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
-        info.fillDouble(*m_stream, fpr);
+        info.fillDouble(m_stream, fpr);
         return fpr;
     }
 
@@ -1099,7 +1099,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
             GPRReg gpr = allocate();
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             m_jit.move(TrustedImmPtr(edge->constant()), gpr);
-            info.fillCell(*m_stream, gpr);
+            info.fillCell(m_stream, gpr);
             return gpr;
         }
 
@@ -1114,7 +1114,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         GPRReg gpr = allocate();
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        info.fillCell(*m_stream, gpr);
+        info.fillCell(m_stream, gpr);
         return gpr;
     }
 
@@ -1139,7 +1139,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderCell);
-        info.fillCell(*m_stream, payloadGPR);
+        info.fillCell(m_stream, payloadGPR);
         return payloadGPR;
     }
 
@@ -1180,7 +1180,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
             GPRReg gpr = allocate();
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             m_jit.move(MacroAssembler::TrustedImm32(jsValue.asBoolean()), gpr);
-            info.fillBoolean(*m_stream, gpr);
+            info.fillBoolean(m_stream, gpr);
             return gpr;
         }
 
@@ -1192,7 +1192,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
         GPRReg gpr = allocate();
         m_jit.load32(JITCompiler::payloadFor(virtualRegister), gpr);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
-        info.fillBoolean(*m_stream, gpr);
+        info.fillBoolean(m_stream, gpr);
         return gpr;
     }
 
@@ -1215,7 +1215,7 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
         m_gprs.release(tagGPR);
         m_gprs.release(payloadGPR);
         m_gprs.retain(payloadGPR, virtualRegister, SpillOrderBoolean);
-        info.fillBoolean(*m_stream, payloadGPR);
+        info.fillBoolean(m_stream, payloadGPR);
         return payloadGPR;
     }
 
@@ -1819,7 +1819,7 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
             std::tie(resultRegs, std::ignore, std::ignore) = prefix(DataFormatJS);
 
             CodeOrigin codeOrigin = node->origin.semantic;
-            CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+            CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
             RegisterSet usedRegisters = this->usedRegisters();
 
             JITCompiler::JumpList slowCases;

@@ -41,16 +41,14 @@ struct UndefinedOperandSpan {
     unsigned numberOfRegisters;
 };
 
-class VariableEventStream : public Vector<VariableEvent> {
-    static constexpr bool verbose = false;
+class VariableEventStream {
 public:
-    void appendAndLog(const VariableEvent& event)
+    VariableEventStream() = default;
+    VariableEventStream(Vector<VariableEvent>&& stream)
+        : m_stream(WTFMove(stream))
     {
-        if (verbose)
-            logEvent(event);
-        append(event);
     }
-    
+
     unsigned reconstruct(CodeBlock*, CodeOrigin, MinifiedGraph&, unsigned index, Operands<ValueRecovery>&) const;
     unsigned reconstruct(CodeBlock*, CodeOrigin, MinifiedGraph&, unsigned index, Operands<ValueRecovery>&, Vector<UndefinedOperandSpan>*) const;
 
@@ -64,7 +62,31 @@ private:
         CodeBlock*, CodeOrigin, MinifiedGraph&,
         unsigned index, Operands<ValueRecovery>&, Vector<UndefinedOperandSpan>*) const;
 
+    FixedVector<VariableEvent> m_stream;
+};
+
+class VariableEventStreamBuilder {
+    WTF_MAKE_NONCOPYABLE(VariableEventStreamBuilder);
+public:
+    static constexpr bool verbose = false;
+
+    VariableEventStreamBuilder() = default;
+
+    void appendAndLog(const VariableEvent& event)
+    {
+        if (verbose)
+            logEvent(event);
+        m_stream.append(event);
+    }
+
+    unsigned size() const { return m_stream.size(); }
+
+    Vector<VariableEvent> finalize() { return WTFMove(m_stream); }
+
+private:
     void logEvent(const VariableEvent&);
+
+    Vector<VariableEvent> m_stream;
 };
 
 } } // namespace JSC::DFG
