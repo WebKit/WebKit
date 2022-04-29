@@ -89,11 +89,12 @@ private:
 
     // The CSSPropertyID enum is sorted like this:
     // 1. CSSPropertyInvalid and CSSPropertyCustom.
-    // 2. Normal properties (high priority ones followed by low priority ones).
-    // 3. Deferred properties.
+    // 2. Normal longhand properties (high priority ones followed by low priority ones).
+    // 3. Deferred longhand properties.
+    // 4. Shorthand properties.
     //
-    // 'm_properties' is used for both normal and deferred properties, so it has size 'lastDeferredProperty + 1'.
-    // It could actually use 'numCSSProperties', but then we would have to subtract 'firstCSSProperty', which may not be worth it.
+    // 'm_properties' is used for both normal and deferred longhands, so it has size 'lastDeferredProperty + 1'.
+    // It could actually be 2 units smaller, but then we would have to subtract 'firstCSSProperty', which may not be worth it.
     // 'm_propertyIsPresent' is not used for deferred properties, so we only need to cover up to the last low priority one.
     std::array<Property, lastDeferredProperty + 1> m_properties;
     std::bitset<lastLowPriorityProperty + 1> m_propertyIsPresent;

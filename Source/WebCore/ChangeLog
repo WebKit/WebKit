@@ -1,3 +1,30 @@
+2022-04-29  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Sort shorthand properties at the end of CSSPropertyID enum
+        https://bugs.webkit.org/show_bug.cgi?id=238888
+
+        Reviewed by Darin Adler.
+
+        Only longhands should matter during the CSS Cascade, so by sorting
+        shorthands at the end, and ignoring them, we can save some memory and
+        avoid some iterations.
+
+        No test since now there should be no observable change in behavior.
+
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::isShorthandCSSProperty): Deleted.
+        * css/StylePropertyShorthand.h:
+        (WebCore::isShorthandCSSProperty):
+        Turn function into a simple constexpr comparison.
+
+        * css/makeprop.pl:
+        (addProperty):
+        (sortByDescendingPriorityAndName):
+        Sort shorthand properties at the end.
+
+        * style/PropertyCascade.h:
+        Update comment.
+
 2022-04-29  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Video on twitch.tv shifts to top of screen when toggling playback in fullscreen

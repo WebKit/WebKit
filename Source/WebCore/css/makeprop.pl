@@ -285,8 +285,10 @@ sub addProperty($$)
                 } elsif ($codegenOptionName eq "comment") {
                     next;
                 } elsif ($codegenOptionName eq "high-priority") {
+                    die "$name is a shorthand, but has high-priority" if exists $codegenProperties->{"longhands"};
                     $nameIsHighPriority{$name} = 1;
                 } elsif ($codegenOptionName eq "sink-priority") {
+                    die "$name is a shorthand, but has sink-priority" if exists $codegenProperties->{"longhands"};
                     $namePriorityShouldSink{$name} = 1;
                 } elsif ($codegenOptionName eq "related-property") {
                     $nameIsDeferred{$name} = 1;
@@ -356,14 +358,21 @@ sub addProperty($$)
 
 sub sortByDescendingPriorityAndName
 {
-    # Sort names with high priority to the front
+    # Sort shorthands to the back
+    if (exists $propertiesWithStyleBuilderOptions{$a}{"longhands"} < exists $propertiesWithStyleBuilderOptions{$b}{"longhands"}) {
+        return -1;
+    }
+    if (exists $propertiesWithStyleBuilderOptions{$a}{"longhands"} > exists $propertiesWithStyleBuilderOptions{$b}{"longhands"}) {
+        return 1;
+    }
+    # Sort longhands with high priority to the front
     if (!!$nameIsHighPriority{$a} < !!$nameIsHighPriority{$b}) {
         return 1;
     }
     if (!!$nameIsHighPriority{$a} > !!$nameIsHighPriority{$b}) {
         return -1;
     }
-    # Defer names with a related property to the back
+    # Sort deferred longhands to the back, before shorthands
     if (!!$nameIsDeferred{$a} < !!$nameIsDeferred{$b}) {
         return -1;
     }
@@ -850,9 +859,14 @@ my $firstLowPriorityPropertyName;
 my $lastLowPriorityPropertyName;
 my $firstDeferredPropertyName;
 my $lastDeferredPropertyName;
+my $firstShorthandPropertyName;
+my $lastShorthandPropertyName;
 foreach my $name (@names) {
   # Assumes that @names is sorted by descending priorities.
-  if ($nameIsHighPriority{$name}) {
+  if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"}) {
+    $firstShorthandPropertyName = $name if !$firstShorthandPropertyName;
+    $lastShorthandPropertyName = $name;
+  } elsif ($nameIsHighPriority{$name}) {
     $firstHighPriorityPropertyName = $name if !$firstHighPriorityPropertyName;
     $lastHighPriorityPropertyName = $name;
   } elsif (!$nameIsDeferred{$name}) {
@@ -881,7 +895,9 @@ print HEADER "const CSSPropertyID lastHighPriorityProperty = CSSProperty" . $nam
 print HEADER "const CSSPropertyID firstLowPriorityProperty = CSSProperty" . $nameToId{$firstLowPriorityPropertyName} . ";\n";
 print HEADER "const CSSPropertyID lastLowPriorityProperty = CSSProperty" . $nameToId{$lastLowPriorityPropertyName} . ";\n";
 print HEADER "const CSSPropertyID firstDeferredProperty = CSSProperty" . $nameToId{$firstDeferredPropertyName} . ";\n";
-print HEADER "const CSSPropertyID lastDeferredProperty = CSSProperty" . $nameToId{$lastDeferredPropertyName} . ";\n\n";
+print HEADER "const CSSPropertyID lastDeferredProperty = CSSProperty" . $nameToId{$lastDeferredPropertyName} . ";\n";
+print HEADER "const CSSPropertyID firstShorthandProperty = CSSProperty" . $nameToId{$firstShorthandPropertyName} . ";\n";
+print HEADER "const CSSPropertyID lastShorthandProperty = CSSProperty" . $nameToId{$lastShorthandPropertyName} . ";\n\n";
 
 print HEADER "static const CSSPropertyID computedPropertyIDs[] = {\n";
 my $numComputedPropertyIDs = 0;
