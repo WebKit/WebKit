@@ -1008,14 +1008,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
     [resourceLoader setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
 
-    if (DeprecatedGlobalSettings::isAVFoundationNSURLSessionEnabled()
-        && [resourceLoader respondsToSelector:@selector(setURLSession:)]
-        && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegate)]
-        && [resourceLoader respondsToSelector:@selector(URLSessionDataDelegateQueue)]) {
-        RefPtr<PlatformMediaResourceLoader> mediaResourceLoader = player()->createResourceLoader();
-        if (mediaResourceLoader)
-            resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
-    }
+    if (auto mediaResourceLoader = player()->createResourceLoader())
+        resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
 
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(chapterMetadataDidChange:) name:AVAssetChapterMetadataGroupsDidChangeNotification object:m_avAsset.get()];
 
@@ -2582,10 +2576,6 @@ void MediaPlayerPrivateAVFoundationObjC::resolvedURLChanged()
 bool MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck() const
 {
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
-    if (!DeprecatedGlobalSettings::isAVFoundationNSURLSessionEnabled()
-        || ![resourceLoader respondsToSelector:@selector(URLSession)])
-        return false;
-
     WebCoreNSURLSession *session = (WebCoreNSURLSession *)resourceLoader.URLSession;
     if ([session isKindOfClass:[WebCoreNSURLSession class]])
         return session.didPassCORSAccessChecks;
@@ -2596,10 +2586,6 @@ bool MediaPlayerPrivateAVFoundationObjC::didPassCORSAccessCheck() const
 std::optional<bool> MediaPlayerPrivateAVFoundationObjC::wouldTaintOrigin(const SecurityOrigin& origin) const
 {
     AVAssetResourceLoader *resourceLoader = m_avAsset.get().resourceLoader;
-    if (!DeprecatedGlobalSettings::isAVFoundationNSURLSessionEnabled()
-        || ![resourceLoader respondsToSelector:@selector(URLSession)])
-        return false;
-
     WebCoreNSURLSession *session = (WebCoreNSURLSession *)resourceLoader.URLSession;
     if ([session isKindOfClass:[WebCoreNSURLSession class]])
         return [session wouldTaintOrigin:origin];

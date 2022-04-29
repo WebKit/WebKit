@@ -1,3 +1,21 @@
+2022-04-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove the AVFoundationNSURLSessionEnabled preference
+        https://bugs.webkit.org/show_bug.cgi?id=239632
+
+        Reviewed by Eric Carlson.
+
+        All supported operating systems have supported AVFoundationNSURLSession
+        for several years. Since we expect AVFoundation to always use WebKit
+        for network loading (and indeed, expect improper behavior if we do not)
+        we should remove this toggle to simplify the code and reduce the chance
+        for users to mistakenly activate it.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAVFoundationNSURLSessionEnabled):
+        (WKPreferencesGetAVFoundationNSURLSessionEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+
 2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Support C files in Unified Builds

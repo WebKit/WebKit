@@ -2009,12 +2009,11 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 - (void)setAVFoundationNSURLSessionEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitAVFoundationNSURLSessionEnabledKey];
 }
 
 - (BOOL)isAVFoundationNSURLSessionEnabled
 {
-    return [self _boolValueForKey:WebKitAVFoundationNSURLSessionEnabledKey];
+    return YES;
 }
 
 - (BOOL)isInheritURIQueryComponentEnabled

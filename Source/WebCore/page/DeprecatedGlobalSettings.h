@@ -42,8 +42,6 @@ public:
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static void setAVFoundationEnabled(bool flag);
     static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
-    WEBCORE_EXPORT static void setAVFoundationNSURLSessionEnabled(bool flag);
-    static bool isAVFoundationNSURLSessionEnabled() { return gAVFoundationNSURLSessionEnabled; }
 #endif
 
 #if USE(GSTREAMER)
@@ -91,7 +89,6 @@ public:
 private:
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static bool gAVFoundationEnabled;
-    WEBCORE_EXPORT static bool gAVFoundationNSURLSessionEnabled;
 #endif
 
 #if USE(GSTREAMER)

@@ -34,7 +34,6 @@ namespace WebCore {
 
 #if USE(AVFOUNDATION)
 bool DeprecatedGlobalSettings::gAVFoundationEnabled = true;
-bool DeprecatedGlobalSettings::gAVFoundationNSURLSessionEnabled = true;
 #endif
 
 #if USE(GSTREAMER)
@@ -73,14 +72,6 @@ void DeprecatedGlobalSettings::setAVFoundationEnabled(bool enabled)
 
     gAVFoundationEnabled = enabled;
     HTMLMediaElement::resetMediaEngines();
-}
-
-void DeprecatedGlobalSettings::setAVFoundationNSURLSessionEnabled(bool enabled)
-{
-    if (gAVFoundationNSURLSessionEnabled == enabled)
-        return;
-
-    gAVFoundationNSURLSessionEnabled = enabled;
 }
 #endif
 

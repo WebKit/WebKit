@@ -33,17 +33,6 @@ AVFoundationEnabled:
       "PLATFORM(WATCHOS)": false
       default: true
 
-AVFoundationNSURLSessionEnabled:
-  type: bool
-  getter: isAVFoundationNSURLSessionEnabled
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: USE(AVFOUNDATION)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 AcceleratedCompositingEnabled:
   type: bool
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
