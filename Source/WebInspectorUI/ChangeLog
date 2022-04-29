@@ -1,3 +1,25 @@
+2022-04-29  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Regression(r267038) Import a timeline does not render the timeline, only lists the events
+        https://bugs.webkit.org/show_bug.cgi?id=239872
+
+        Reviewed by Devin Rousso.
+
+        Two issues existed after r267038 that prevented the timeline overview from rendering correctly for imported
+        recordings. The first is that the timeline view itself was not visible as the result of assuming that we would
+        already be in middle of layout when inside `WI.TimelineRecordingContentView.prototype._updateTimes`, which isn't
+        true for the updating of times when importing a recording. In that case, syncronously attempting to lay out the
+        view means that the layout, including initial layout, will be performed before the view is attached, which means
+        we are unable to get the clientWidth of the view's element during layout, which in turn prevents us from
+        painting the timeline ruler.
+
+        The second issue is that when importing a timeline, we should ignore the current capturing state when setting
+        the current, start, and end times, otherwise not all the values will be kept.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype._updateTimes):
+
 2022-04-27  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: undefined is not an object (evaluating 'this.resource.hadLoadingError')
