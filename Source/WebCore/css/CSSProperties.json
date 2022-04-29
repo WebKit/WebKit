@@ -3331,6 +3331,7 @@
         },
         "mask-clip": {
             "codegen-properties": {
+                "related-property": "-webkit-mask-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true
             },
@@ -3341,6 +3342,7 @@
         },
         "mask-composite": {
             "codegen-properties": {
+                "related-property": "-webkit-mask-composite",
                 "name-for-methods": "Composite",
                 "fill-layer-property": true
             },
@@ -3364,6 +3366,7 @@
         },
         "mask-mode": {
             "codegen-properties": {
+                "related-property": "-webkit-mask-source-type",
                 "name-for-methods": "MaskMode",
                 "fill-layer-property": true
             },
@@ -6581,6 +6584,7 @@
         },
         "-webkit-mask-clip": {
             "codegen-properties": {
+                "related-property": "mask-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true
             },
@@ -6594,6 +6598,7 @@
         },
         "-webkit-mask-composite": {
             "codegen-properties": {
+                "related-property": "mask-composite",
                 "name-for-methods": "Composite",
                 "fill-layer-property": true
             },
@@ -6607,6 +6612,7 @@
         },
         "-webkit-mask-source-type": {
             "codegen-properties": {
+                "related-property": "mask-mode",
                 "synonym": "mask-mode",
                 "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'"
             },
@@ -6796,6 +6802,7 @@
                 "horizontal"
             ],
             "codegen-properties": {
+                "related-property": "text-combine-upright",
                 "aliases": [
                     "-epub-text-combine"
                 ]
@@ -6808,6 +6815,7 @@
         "text-combine-upright": {
             "inherited": true,
             "codegen-properties": {
+                "related-property": "-webkit-text-combine",
                 "name-for-methods": "TextCombine"
             },
             "values": [

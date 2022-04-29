@@ -184,10 +184,10 @@ PASS margin-top
 PASS marker-end
 PASS marker-mid
 PASS marker-start
-FAIL mask-clip assert_not_equals: Should get a different computed value. got disallowed value "border-box"
-FAIL mask-composite assert_not_equals: Should get a different computed value. got disallowed value "add"
+PASS mask-clip
+PASS mask-composite
 PASS mask-image
-FAIL mask-mode assert_not_equals: Should get a different computed value. got disallowed value "match-source"
+PASS mask-mode
 PASS mask-origin
 PASS mask-repeat
 PASS mask-size
@@ -283,7 +283,7 @@ PASS tab-size
 PASS table-layout
 PASS text-align
 PASS text-anchor
-FAIL text-combine-upright assert_not_equals: Should get a different computed value. got disallowed value "none"
+PASS text-combine-upright
 PASS text-decoration
 PASS text-decoration-color
 PASS text-decoration-line

@@ -1,3 +1,14 @@
+2022-04-28  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Mark properties sharing a computed value as related
+        https://bugs.webkit.org/show_bug.cgi?id=239579
+
+        Reviewed by Tim Nguyen.
+
+        Some failures are now passing.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer-expected.txt:
+
 2022-04-28  Karl Rackler  <rackler@apple.com>
 
         [ macOS wk1 ] imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-003.html is a flaky image failure

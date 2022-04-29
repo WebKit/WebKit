@@ -1,3 +1,29 @@
+2022-04-28  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Mark properties sharing a computed value as related
+        https://bugs.webkit.org/show_bug.cgi?id=239579
+
+        Reviewed by Tim Nguyen.
+
+        Some longhand properties share a computed value with another property,
+        like a legacy -webkit- prefixed one.
+
+        In that case, when both properties are specified, the last one should
+        win. That is typically done by marking the properties as related, using
+        the "related-property" field. This defers the properties and makes
+        them cascade properly.
+
+        However, some properties weren't marked as related despite sharing a
+        computed value. So this patch marks these pairs:
+         - mask-clip and -webkit-mask-clip
+         - mask-composite and -webkit-mask-composite
+         - mask-mode and -webkit-mask-source-type
+         - text-combine-upright and -webkit-text-combine
+
+        Test: imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer.html
+
+        * css/CSSProperties.json:
+
 2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Support C files in Unified Builds
