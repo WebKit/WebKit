@@ -43,6 +43,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/Timer.h>
 #include <wtf/Deque.h>
+#include <wtf/HashMap.h>
 #include <wtf/Span.h>
 #include <wtf/WeakPtr.h>
 
@@ -171,6 +172,7 @@ private:
     void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
     void didFlush(WebCore::GraphicsContextFlushIdentifier, WebCore::RenderingResourceIdentifier);
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
+    void didMarkLayersAsVolatile(uint64_t requestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
 
     GPUProcessConnection* m_gpuProcessConnection { nullptr };
     RefPtr<IPC::Connection> m_connection;
@@ -179,6 +181,7 @@ private:
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
+    HashMap<uint64_t, CompletionHandler<void(bool)>> m_markAsVolatileRequests;
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;

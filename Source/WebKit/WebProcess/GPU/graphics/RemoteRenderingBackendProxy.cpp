@@ -61,6 +61,9 @@ RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(WebPage& webPage)
 
 RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
 {
+    for (auto& markAsVolatileHandlers : m_markAsVolatileRequests.values())
+        markAsVolatileHandlers(false);
+
     if (!m_gpuProcessConnection)
         return;
     m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(renderingBackendIdentifier()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
@@ -356,18 +359,26 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
 
 void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&& identifiers, CompletionHandler<void(bool)>&& completionHandler)
 {
-    Vector<WebCore::RenderingResourceIdentifier> markedVolatileBufferIdentifiers;
-    // FIXME: This could become async when webkit.org/b/235965 is fixed (but be careful with buffer volatility state).
-    sendSyncToStream(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(identifiers), Messages::RemoteRenderingBackend::MarkSurfacesVolatile::Reply(markedVolatileBufferIdentifiers));
+    static uint64_t lastRequestIdentifier = 0;
+    auto requestIdentifier = ++lastRequestIdentifier;
+    m_markAsVolatileRequests.add(requestIdentifier, WTFMove(completionHandler));
+
+    sendToStream(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(requestIdentifier, identifiers));
+}
+
+void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(uint64_t requestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayersAsVolatile)
+{
+    ASSERT(requestIdentifier);
+    auto completionHandler = m_markAsVolatileRequests.take(requestIdentifier);
+    if (!completionHandler)
+        return;
 
     for (auto identifier : markedVolatileBufferIdentifiers) {
         auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(identifier);
         if (imageBuffer)
             imageBuffer->setVolatilityState(WebCore::VolatilityState::Volatile);
     }
-    
-    bool markedAllVolatile = identifiers.size() == markedVolatileBufferIdentifiers.size();
-    completionHandler(markedAllVolatile);
+    completionHandler(didMarkAllLayersAsVolatile);
 }
 
 void RemoteRenderingBackendProxy::finalizeRenderingUpdate()

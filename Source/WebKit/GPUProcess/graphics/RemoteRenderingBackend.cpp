@@ -496,7 +496,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
     outputData.displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
 }
 
-void RemoteRenderingBackend::markSurfacesVolatile(const Vector<RenderingResourceIdentifier>& identifiers, CompletionHandler<void(const Vector<RenderingResourceIdentifier>& markedVolatileBufferIdentifiers)>&& completionHandler)
+void RemoteRenderingBackend::markSurfacesVolatile(uint64_t requestIdentifier, const Vector<RenderingResourceIdentifier>& identifiers)
 {
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::markSurfacesVolatile " << identifiers);
 
@@ -517,7 +517,8 @@ void RemoteRenderingBackend::markSurfacesVolatile(const Vector<RenderingResource
 
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: markSurfacesVolatile - surfaces marked volatile " << markedVolatileBufferIdentifiers);
 
-    completionHandler(markedVolatileBufferIdentifiers);
+    bool didMarkAllLayerAsVolatile = identifiers.size() == markedVolatileBufferIdentifiers.size();
+    send(Messages::RemoteRenderingBackendProxy::DidMarkLayersAsVolatile(requestIdentifier, markedVolatileBufferIdentifiers, didMarkAllLayerAsVolatile), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
