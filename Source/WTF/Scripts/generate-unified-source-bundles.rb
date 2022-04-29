@@ -53,6 +53,7 @@ def usage(message)
     puts
     puts "Generation options:"
     puts "--max-cpp-bundle-count               Use global sequential numbers for cpp bundle filenames and set the limit on the number"
+    puts "--max-c-bundle-count                 Use global sequential numbers for c bundle filenames and set the limit on the number"
     puts "--max-obj-c-bundle-count             Use global sequential numbers for Obj-C bundle filenames and set the limit on the number"
     puts "--dense-bundle-filter                Densely bundle files matching the given path glob"
     exit 1
@@ -70,6 +71,7 @@ $mode = :GenerateBundles
 $inputXCFilelistPath = nil
 $outputXCFilelistPath = nil
 $maxCppBundleCount = nil
+$maxCBundleCount = nil
 $maxObjCBundleCount = nil
 $denseBundleFilters = []
 
@@ -87,6 +89,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--input-xcfilelist-path', GetoptLong::REQUIRED_ARGUMENT],
                ['--output-xcfilelist-path', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-cpp-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
+               ['--max-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-obj-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--dense-bundle-filter', GetoptLong::REQUIRED_ARGUMENT]).each {
     | opt, arg |
@@ -112,6 +115,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $outputXCFilelistPath = arg
     when '--max-cpp-bundle-count'
         $maxCppBundleCount = arg.to_i
+    when '--max-c-bundle-count'
+        $maxCBundleCount = arg.to_i
     when '--max-obj-c-bundle-count'
         $maxObjCBundleCount = arg.to_i
     when '--dense-bundle-filter'
@@ -246,8 +251,10 @@ class BundleManager
         raise "wrong extension: #{path.extname} expected #{@extension}" unless path.extname == ".#{@extension}"
         bundlePrefix, bundleSize = BundlePrefixAndSizeForPath(path)
         if (@lastBundlingPrefix != bundlePrefix)
-            log("Flushing because new top level directory; old: #{@currentDirectory}, new: #{path.dirname}")
-            flush
+            unless @fileCount.zero?
+                log("Flushing because new top level directory; old: #{@currentDirectory}, new: #{path.dirname}")
+                flush
+            end
             @lastBundlingPrefix = bundlePrefix
             @currentDirectory = path.dirname
             @bundleCount = 0 unless @maxCount
@@ -299,6 +306,7 @@ end
 
 $bundleManagers = {
     ".cpp" => BundleManager.new("cpp", $maxCppBundleCount),
+    ".c" => BundleManager.new("c", $maxCBundleCount),
     ".mm" => BundleManager.new("mm", $maxObjCBundleCount)
 }
 
@@ -350,10 +358,10 @@ sourceFiles.sort.each {
 if $mode != :PrintAllSources
     $bundleManagers.each_value {
         | manager |
-        manager.flush
+        manager.flush unless manager.fileCount.zero?
 
         maxCount = manager.maxCount
-        next if !maxCount
+        next if !maxCount # It is nil in CMake since maxCount limitation does not exist.
 
         manager.flushToMax
 

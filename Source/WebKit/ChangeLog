@@ -1,3 +1,12 @@
+2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Support C files in Unified Builds
+        https://bugs.webkit.org/show_bug.cgi?id=239873
+
+        Reviewed by Mark Lam.
+
+        * Scripts/generate-unified-sources.sh:
+
 2022-04-28  Per Arne Vollan  <pvollan@apple.com>
 
         Dynamically switch message filter

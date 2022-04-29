@@ -1852,6 +1852,9 @@
 		E30E8A5426DE2E4800DA4915 /* TemporalTimeZonePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A4E26DE2E4700DA4915 /* TemporalTimeZonePrototype.h */; };
 		E30E8A5626DE2E4800DA4915 /* TemporalTimeZone.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A5026DE2E4800DA4915 /* TemporalTimeZone.h */; };
 		E30E8A5726DE2E4800DA4915 /* TemporalTimeZoneConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E30E8A5126DE2E4800DA4915 /* TemporalTimeZoneConstructor.h */; };
+		E31135C9281B5B0000C1A4A9 /* ZydisFormatterATT.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FF1277F303F00A45FBB /* ZydisFormatterATT.c */; };
+		E31135CA281B5B0300C1A4A9 /* ZydisFormatterBase.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D2037277F304000A45FBB /* ZydisFormatterBase.c */; };
+		E31135CB281B5B0500C1A4A9 /* ZydisFormatterIntel.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FEC277F303F00A45FBB /* ZydisFormatterIntel.c */; };
 		E31179AA2288386100514B2C /* SymbolTableOrScopeDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618101EC5FE080006A218 /* DOMAnnotation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1879,6 +1882,11 @@
 		E32D4DE726DAFD4300D4533A /* TemporalCalendarPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */; };
 		E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */; };
 		E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */; };
+		E32F713D281B3C6600AFD21D /* UnifiedSource5-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F7138281B3C6600AFD21D /* UnifiedSource5-c.c */; };
+		E32F713E281B3C6600AFD21D /* UnifiedSource4-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F7139281B3C6600AFD21D /* UnifiedSource4-c.c */; };
+		E32F713F281B3C6600AFD21D /* UnifiedSource1-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F713A281B3C6600AFD21D /* UnifiedSource1-c.c */; };
+		E32F7140281B3C6600AFD21D /* UnifiedSource3-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F713B281B3C6600AFD21D /* UnifiedSource3-c.c */; };
+		E32F7141281B3C6600AFD21D /* UnifiedSource2-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F713C281B3C6600AFD21D /* UnifiedSource2-c.c */; };
 		E32FEA2C27448F3700FF41C1 /* JSONAtomStringCacheInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E32FEA2A27448F3600FF41C1 /* JSONAtomStringCacheInlines.h */; };
 		E32FEA2D27448F3700FF41C1 /* JSONAtomStringCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E32FEA2B27448F3600FF41C1 /* JSONAtomStringCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33095DD23210A1B00EB7856 /* JSInternalFieldObjectImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1926,26 +1934,6 @@
 		E33D2084277F304000A45FBB /* ZycoreList.h in Headers */ = {isa = PBXBuildFile; fileRef = E33D2033277F304000A45FBB /* ZycoreList.h */; };
 		E33D2085277F304000A45FBB /* ZydisDecoderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = E33D2034277F304000A45FBB /* ZydisDecoderTypes.h */; };
 		E33D208B277F30AA00A45FBB /* ZycoreExportConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = E33D208A277F30AA00A45FBB /* ZycoreExportConfig.h */; };
-		E33D208D277F436A00A45FBB /* Zydis.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D202C277F304000A45FBB /* Zydis.c */; };
-		E33D208E277F436A00A45FBB /* ZydisMnemonic.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D2032277F304000A45FBB /* ZydisMnemonic.c */; };
-		E33D2090277F436A00A45FBB /* ZydisFormatterBase.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D2037277F304000A45FBB /* ZydisFormatterBase.c */; };
-		E33D2091277F436A00A45FBB /* ZydisDecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D2026277F304000A45FBB /* ZydisDecoder.c */; };
-		E33D2092277F436A00A45FBB /* ZycoreString.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FEE277F303F00A45FBB /* ZycoreString.c */; };
-		E33D2093277F436A00A45FBB /* ZydisSharedData.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D2010277F304000A45FBB /* ZydisSharedData.c */; };
-		E33D2094277F436A00A45FBB /* ZydisMetaInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FFC277F304000A45FBB /* ZydisMetaInfo.c */; };
-		E33D2095277F436A00A45FBB /* ZycoreList.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D2011277F304000A45FBB /* ZycoreList.c */; };
-		E33D2098277F436A00A45FBB /* ZydisFormatterATT.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FF1277F303F00A45FBB /* ZydisFormatterATT.c */; };
-		E33D209A277F436A00A45FBB /* ZydisString.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D2007277F304000A45FBB /* ZydisString.c */; };
-		E33D209B277F436A00A45FBB /* ZydisFormatterBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D202B277F304000A45FBB /* ZydisFormatterBuffer.c */; };
-		E33D209C277F436A00A45FBB /* ZydisFormatter.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D200A277F304000A45FBB /* ZydisFormatter.c */; };
-		E33D209E277F436A00A45FBB /* ZycoreVector.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FFA277F303F00A45FBB /* ZycoreVector.c */; };
-		E33D20A0277F436A00A45FBB /* ZydisFormatterIntel.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FEC277F303F00A45FBB /* ZydisFormatterIntel.c */; };
-		E33D20A1277F436A00A45FBB /* ZycoreFormat.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FFD277F304000A45FBB /* ZycoreFormat.c */; };
-		E33D20A2277F436A00A45FBB /* ZycoreAllocator.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D202E277F304000A45FBB /* ZycoreAllocator.c */; };
-		E33D20A3277F436A00A45FBB /* ZydisUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FF5277F303F00A45FBB /* ZydisUtils.c */; };
-		E33D20A4277F436A00A45FBB /* ZydisRegister.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D1FE9277F303F00A45FBB /* ZydisRegister.c */; };
-		E33D20A5277F436A00A45FBB /* ZydisDecoderData.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D201F277F304000A45FBB /* ZydisDecoderData.c */; };
-		E33D20A6277F436A00A45FBB /* ZycoreBitset.c in Sources */ = {isa = PBXBuildFile; fileRef = E33D2036277F304000A45FBB /* ZycoreBitset.c */; };
 		E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33F50751B8421C000413856 /* JSInternalPromisePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E33F50731B8421C000413856 /* JSInternalPromisePrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33F50791B84225700413856 /* JSInternalPromiseConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E33F50771B84225700413856 /* JSInternalPromiseConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2006,7 +1994,6 @@
 		E39FEBE32339C5D900B40AB0 /* JSAsyncGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E39FEBE22339C5D400B40AB0 /* JSAsyncGenerator.h */; };
 		E3A0531A21342B680022EC14 /* WasmStreamingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A0531621342B660022EC14 /* WasmStreamingParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3A0531C21342B680022EC14 /* WasmSectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A0531821342B670022EC14 /* WasmSectionParser.h */; };
-		E3A10E8127803E3B00D3ACD0 /* Zycore.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A10E7F27803E3B00D3ACD0 /* Zycore.c */; };
 		E3A10E8227803E3B00D3ACD0 /* Zycore.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A10E8027803E3B00D3ACD0 /* Zycore.h */; };
 		E3A32BC71FC83147007D7E76 /* WeakMapImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A32BC61FC8312E007D7E76 /* WeakMapImpl.h */; };
 		E3A421431D6F58930007C617 /* PreciseJumpTargetsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A421421D6F588F0007C617 /* PreciseJumpTargetsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5323,6 +5310,11 @@
 		E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendar.h; sourceTree = "<group>"; };
 		E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarConstructor.h; sourceTree = "<group>"; };
 		E32D4DE526DAFD4300D4533A /* TemporalCalendarConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendarConstructor.cpp; sourceTree = "<group>"; };
+		E32F7138281B3C6600AFD21D /* UnifiedSource5-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource5-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource5-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E32F7139281B3C6600AFD21D /* UnifiedSource4-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource4-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource4-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E32F713A281B3C6600AFD21D /* UnifiedSource1-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource1-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource1-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E32F713B281B3C6600AFD21D /* UnifiedSource3-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource3-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource3-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E32F713C281B3C6600AFD21D /* UnifiedSource2-c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "UnifiedSource2-c.c"; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource2-c.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E32FEA2A27448F3600FF41C1 /* JSONAtomStringCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONAtomStringCacheInlines.h; sourceTree = "<group>"; };
 		E32FEA2B27448F3600FF41C1 /* JSONAtomStringCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONAtomStringCache.h; sourceTree = "<group>"; };
 		E3305FB020B0F78700CEB82B /* InByVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByVariant.cpp; sourceTree = "<group>"; };
@@ -7092,14 +7084,19 @@
 		536B30861F71C5380037FC33 /* unified-sources */ = {
 			isa = PBXGroup;
 			children = (
+				E32F713A281B3C6600AFD21D /* UnifiedSource1-c.c */,
 				536B31981F735E5C0037FC33 /* UnifiedSource1-mm.mm */,
 				536B30DA1F71C5380037FC33 /* UnifiedSource1.cpp */,
+				E32F713C281B3C6600AFD21D /* UnifiedSource2-c.c */,
 				536B31961F735E5B0037FC33 /* UnifiedSource2-mm.mm */,
 				536B30D21F71C5380037FC33 /* UnifiedSource2.cpp */,
+				E32F713B281B3C6600AFD21D /* UnifiedSource3-c.c */,
 				530A66B11FA3E77A0026A545 /* UnifiedSource3-mm.mm */,
 				536B30D31F71C5380037FC33 /* UnifiedSource3.cpp */,
+				E32F7139281B3C6600AFD21D /* UnifiedSource4-c.c */,
 				530A66B81FA3E77E0026A545 /* UnifiedSource4-mm.mm */,
 				536B30E11F71C5380037FC33 /* UnifiedSource4.cpp */,
+				E32F7138281B3C6600AFD21D /* UnifiedSource5-c.c */,
 				530A66B51FA3E77D0026A545 /* UnifiedSource5-mm.mm */,
 				536B30E21F71C5380037FC33 /* UnifiedSource5.cpp */,
 				536B30EA1F71C5380037FC33 /* UnifiedSource6.cpp */,
@@ -12264,14 +12261,19 @@
 				DD41FA8927CDDDEF00394D95 /* LowLevelInterpreter.asm in Sources */,
 				536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */,
 				DFBC2CA625E6D5B90081BDD1 /* SymbolStubsForSafariCompatibility.mm in Sources */,
+				E32F713F281B3C6600AFD21D /* UnifiedSource1-c.c in Sources */,
 				536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */,
 				536B315F1F71C5990037FC33 /* UnifiedSource1.cpp in Sources */,
+				E32F7141281B3C6600AFD21D /* UnifiedSource2-c.c in Sources */,
 				536B319B1F735E780037FC33 /* UnifiedSource2-mm.mm in Sources */,
 				536B31571F71C5990037FC33 /* UnifiedSource2.cpp in Sources */,
+				E32F7140281B3C6600AFD21D /* UnifiedSource3-c.c in Sources */,
 				530A66B91FA3E78B0026A545 /* UnifiedSource3-mm.mm in Sources */,
 				536B31581F71C5990037FC33 /* UnifiedSource3.cpp in Sources */,
+				E32F713E281B3C6600AFD21D /* UnifiedSource4-c.c in Sources */,
 				530A66BA1FA3E78B0026A545 /* UnifiedSource4-mm.mm in Sources */,
 				536B31661F71C5990037FC33 /* UnifiedSource4.cpp in Sources */,
+				E32F713D281B3C6600AFD21D /* UnifiedSource5-c.c in Sources */,
 				530A66BB1FA3E78B0026A545 /* UnifiedSource5-mm.mm in Sources */,
 				536B31671F71C5990037FC33 /* UnifiedSource5.cpp in Sources */,
 				536B316F1F71C5990037FC33 /* UnifiedSource6.cpp in Sources */,
@@ -12378,6 +12380,7 @@
 				536B317A1F71C5990037FC33 /* UnifiedSource107.cpp in Sources */,
 				536B31271F71C5990037FC33 /* UnifiedSource108.cpp in Sources */,
 				536B312C1F71C5990037FC33 /* UnifiedSource109.cpp in Sources */,
+				E31135CA281B5B0300C1A4A9 /* ZydisFormatterBase.c in Sources */,
 				536B31741F71C5990037FC33 /* UnifiedSource110.cpp in Sources */,
 				536B31771F71C5990037FC33 /* UnifiedSource111.cpp in Sources */,
 				536B31801F71C5990037FC33 /* UnifiedSource112.cpp in Sources */,
@@ -12406,6 +12409,7 @@
 				536B319D1F735E7D0037FC33 /* UnifiedSource135.cpp in Sources */,
 				535C246C1F7A1778006EC40E /* UnifiedSource136.cpp in Sources */,
 				530A66BC1FA3E78B0026A545 /* UnifiedSource137.cpp in Sources */,
+				E31135CB281B5B0500C1A4A9 /* ZydisFormatterIntel.c in Sources */,
 				530A66BD1FA3E78B0026A545 /* UnifiedSource138.cpp in Sources */,
 				530A66BE1FA3E78B0026A545 /* UnifiedSource139.cpp in Sources */,
 				530A66BF1FA3E78B0026A545 /* UnifiedSource140.cpp in Sources */,
@@ -12416,6 +12420,7 @@
 				530A66C41FA3E78B0026A545 /* UnifiedSource145.cpp in Sources */,
 				538F15F2268FBC7B00D601C4 /* UnifiedSource146.cpp in Sources */,
 				538F15EE268FBBB600D601C4 /* UnifiedSource147.cpp in Sources */,
+				E31135C9281B5B0000C1A4A9 /* ZydisFormatterATT.c in Sources */,
 				538F15E7268FBBB600D601C4 /* UnifiedSource148.cpp in Sources */,
 				538F15F0268FBBB600D601C4 /* UnifiedSource149.cpp in Sources */,
 				538F15EB268FBBB600D601C4 /* UnifiedSource150.cpp in Sources */,
@@ -12425,27 +12430,6 @@
 				538F15EA268FBBB600D601C4 /* UnifiedSource154.cpp in Sources */,
 				538F15EF268FBBB600D601C4 /* UnifiedSource155.cpp in Sources */,
 				525C9CDF220285830082DBFD /* WasmAirIRGenerator.cpp in Sources */,
-				E3A10E8127803E3B00D3ACD0 /* Zycore.c in Sources */,
-				E33D20A2277F436A00A45FBB /* ZycoreAllocator.c in Sources */,
-				E33D20A6277F436A00A45FBB /* ZycoreBitset.c in Sources */,
-				E33D20A1277F436A00A45FBB /* ZycoreFormat.c in Sources */,
-				E33D2095277F436A00A45FBB /* ZycoreList.c in Sources */,
-				E33D2092277F436A00A45FBB /* ZycoreString.c in Sources */,
-				E33D209E277F436A00A45FBB /* ZycoreVector.c in Sources */,
-				E33D208D277F436A00A45FBB /* Zydis.c in Sources */,
-				E33D2091277F436A00A45FBB /* ZydisDecoder.c in Sources */,
-				E33D20A5277F436A00A45FBB /* ZydisDecoderData.c in Sources */,
-				E33D209C277F436A00A45FBB /* ZydisFormatter.c in Sources */,
-				E33D2098277F436A00A45FBB /* ZydisFormatterATT.c in Sources */,
-				E33D2090277F436A00A45FBB /* ZydisFormatterBase.c in Sources */,
-				E33D209B277F436A00A45FBB /* ZydisFormatterBuffer.c in Sources */,
-				E33D20A0277F436A00A45FBB /* ZydisFormatterIntel.c in Sources */,
-				E33D2094277F436A00A45FBB /* ZydisMetaInfo.c in Sources */,
-				E33D208E277F436A00A45FBB /* ZydisMnemonic.c in Sources */,
-				E33D20A4277F436A00A45FBB /* ZydisRegister.c in Sources */,
-				E33D2093277F436A00A45FBB /* ZydisSharedData.c in Sources */,
-				E33D209A277F436A00A45FBB /* ZydisString.c in Sources */,
-				E33D20A3277F436A00A45FBB /* ZydisUtils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

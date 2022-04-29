@@ -1509,29 +1509,6 @@ else ()
 endif ()
 
 WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
-list(APPEND JavaScriptCore_SOURCES
-    disassembler/zydis/Zydis/Zycore.c
-    disassembler/zydis/Zydis/ZycoreAllocator.c
-    disassembler/zydis/Zydis/ZycoreBitset.c
-    disassembler/zydis/Zydis/ZycoreFormat.c
-    disassembler/zydis/Zydis/ZycoreList.c
-    disassembler/zydis/Zydis/ZycoreString.c
-    disassembler/zydis/Zydis/ZycoreVector.c
-    disassembler/zydis/Zydis/Zydis.c
-    disassembler/zydis/Zydis/ZydisDecoder.c
-    disassembler/zydis/Zydis/ZydisDecoderData.c
-    disassembler/zydis/Zydis/ZydisFormatter.c
-    disassembler/zydis/Zydis/ZydisFormatterATT.c
-    disassembler/zydis/Zydis/ZydisFormatterBase.c
-    disassembler/zydis/Zydis/ZydisFormatterBuffer.c
-    disassembler/zydis/Zydis/ZydisFormatterIntel.c
-    disassembler/zydis/Zydis/ZydisMetaInfo.c
-    disassembler/zydis/Zydis/ZydisMnemonic.c
-    disassembler/zydis/Zydis/ZydisRegister.c
-    disassembler/zydis/Zydis/ZydisSharedData.c
-    disassembler/zydis/Zydis/ZydisString.c
-    disassembler/zydis/Zydis/ZydisUtils.c
-)
 WEBKIT_FRAMEWORK(JavaScriptCore)
 WEBKIT_FRAMEWORK_TARGET(JavaScriptCore)
 

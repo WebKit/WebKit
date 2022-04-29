@@ -1,3 +1,15 @@
+2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Support C files in Unified Builds
+        https://bugs.webkit.org/show_bug.cgi?id=239873
+
+        Reviewed by Mark Lam.
+
+        Fix a bug that we always generate empty UnifiedSource-1.xxx.
+        It also fixes a bug that this script cannot handle 0 max bundle count.
+
+        * Scripts/generate-unified-source-bundles.rb:
+
 2022-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (DOM GPUP): Rich HTML emails on watchOS no longer show up

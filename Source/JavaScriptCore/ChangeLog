@@ -1,3 +1,19 @@
+2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Support C files in Unified Builds
+        https://bugs.webkit.org/show_bug.cgi?id=239873
+
+        Reviewed by Mark Lam.
+
+        This patch adds support for C (not CPP) files in Unified Builds
+        so that we do not need to build Zydis in non-unified way.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/generate-unified-sources.sh:
+        * Sources.txt:
+        * UnifiedSources-output.xcfilelist:
+
 2022-04-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Implement MacroAssemblerRISCV64 branchAtomicWeakCAS{8,16,32,64} methods

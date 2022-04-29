@@ -159,3 +159,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSourc
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource97.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource98.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource99.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource1-c.c
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource2-c.c
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource3-c.c
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource4-c.c
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource5-c.c
