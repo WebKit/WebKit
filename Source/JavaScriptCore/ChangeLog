@@ -1,3 +1,69 @@
+2022-04-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make DFG::OSRExit data unlinked
+        https://bugs.webkit.org/show_bug.cgi?id=239828
+
+        Reviewed by Saam Barati.
+
+        This patch makes DFG::OSRExit unlinked. While generated OSR exit code is linked version,
+        we no longer put linked data to DFG::OSRExit so that unlinked DFG can use DFG::OSRExit.
+        Key changes are two things.
+
+        1. Now, we always store compiled MacroAssemblerCodeRef in DFG::JITData regardless of whether
+           we have linked / unlinked DFG. While linked DFG uses repatching to jump to this code,
+           unlinked DFG looks into this vector in JITData and jump to that.
+        2. MethodOfGettingAValueProfile was including CodeBlock*, ValueProfile* in CodeBlock* etc.,
+           so it was linked data structure which unlinked DFG cannot use. Instead, we encode how to
+           retrieve these pointers when generating OSR exit code actually, and just storing CodeOrigin,
+           type, and Operand to make MethodOfGettingAValueProfile unlinked data structure. While
+           CodeOrigin can include InlineCallFrame, but our first version of unlinked DFG will not perform
+           inlining thus we will not include it. It also makes sizeof(MethodOfGettingAValueProfile) smaller
+           from 32 bytes to 16 bytes (50% reduction).
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::offsetOfCodePtr):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize): Deleted.
+        * bytecode/CodeBlock.h:
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::emitReportValue const):
+        (JSC::MethodOfGettingAValueProfile::fromLazyOperand): Deleted.
+        (JSC::MethodOfGettingAValueProfile::reportValue): Deleted.
+        * bytecode/MethodOfGettingAValueProfile.h:
+        (JSC::MethodOfGettingAValueProfile::unaryArithProfile):
+        (JSC::MethodOfGettingAValueProfile::binaryArithProfile):
+        (JSC::MethodOfGettingAValueProfile::argumentValueProfile):
+        (JSC::MethodOfGettingAValueProfile::bytecodeValueProfile):
+        (JSC::MethodOfGettingAValueProfile::lazyOperandValueProfile):
+        (JSC::MethodOfGettingAValueProfile::operator bool const):
+        (JSC::MethodOfGettingAValueProfile::MethodOfGettingAValueProfile): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::JITCode):
+        (JSC::DFG::JITCode::findPC):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        (JSC::DFG::OSRExit::compileExit):
+        (JSC::DFG::OSRExit::codeLocationForRepatch const): Deleted.
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::codeLocationForRepatch const):
+        (JSC::DFG::OSRExitState::OSRExitState): Deleted.
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeJITData):
+        * dfg/DFGPlan.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+
 2022-04-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Support C files in Unified Builds

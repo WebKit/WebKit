@@ -1698,10 +1698,8 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                 Node* argumentNode = m_rootToArguments.find(block(0))->value[argument];
                 // FIXME: We should match SetArgumentDefinitely nodes at other entrypoints as well:
                 // https://bugs.webkit.org/show_bug.cgi?id=175841
-                if (argumentNode && node->variableAccessData() == argumentNode->variableAccessData()) {
-                    CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
-                    return &profiledBlock->valueProfileForArgument(argument);
-                }
+                if (argumentNode && node->variableAccessData() == argumentNode->variableAccessData())
+                    return MethodOfGettingAValueProfile::argumentValueProfile(node->origin.semantic, node->operand());
             }
         }
 
@@ -1710,22 +1708,18 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
             CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
 
             if (node->accessesStack(*this)) {
-                if (node->op() == GetLocal) {
-                    return MethodOfGettingAValueProfile::fromLazyOperand(
-                        profiledBlock,
-                        LazyOperandValueProfileKey(
-                            node->origin.semantic.bytecodeIndex(), node->operand()));
-                }
+                if (node->op() == GetLocal)
+                    return MethodOfGettingAValueProfile::lazyOperandValueProfile(node->origin.semantic, node->operand());
             }
 
             if (node->hasHeapPrediction())
-                return &profiledBlock->valueProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex());
+                return MethodOfGettingAValueProfile::bytecodeValueProfile(node->origin.semantic);
 
             if (profiledBlock->hasBaselineJITProfiling()) {
                 if (BinaryArithProfile* result = profiledBlock->binaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
-                    return result;
+                    return MethodOfGettingAValueProfile::binaryArithProfile(node->origin.semantic);
                 if (UnaryArithProfile* result = profiledBlock->unaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
-                    return result;
+                    return MethodOfGettingAValueProfile::unaryArithProfile(node->origin.semantic);
             }
         }
 
@@ -1742,7 +1736,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
         }
     }
     
-    return MethodOfGettingAValueProfile();
+    return { };
 }
 
 bool Graph::getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* regExpPrototypeStructure, UniquedStringImpl* uid, JSValue& returnJSValue)

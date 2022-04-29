@@ -103,7 +103,7 @@ public:
     void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTFMove(callback); }
 
     unsigned addLinkableConstant(void*);
-    std::unique_ptr<JITData> finalizeJITData();
+    std::unique_ptr<JITData> finalizeJITData(const JITCode&);
 
 private:
     CompilationPath compileInThreadImpl() override;

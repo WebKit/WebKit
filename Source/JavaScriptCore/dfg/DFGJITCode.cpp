@@ -29,17 +29,15 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGThunks.h"
 #include "FTLForOSREntryJITCode.h"
 #include "JumpTable.h"
 
 namespace JSC { namespace DFG {
 
-JITCode::JITCode()
+JITCode::JITCode(bool isUnlinked)
     : DirectJITCode(JITType::DFGJIT)
-#if ENABLE(FTL_JIT)
-    , osrEntryRetry(0)
-    , abandonOSREntry(false)
-#endif // ENABLE(FTL_JIT)
+    , isUnlinked(isUnlinked)
 {
 }
 
@@ -225,12 +223,19 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
     minifiedDFG.validateReferences(trackedReferences);
 }
 
-std::optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
+std::optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
 {
-    for (OSRExit& exit : m_osrExit) {
-        if (ExecutableMemoryHandle* handle = exit.m_code.executableMemory()) {
-            if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr())
-                return std::optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
+    const auto* jitData = codeBlock->dfgJITData();
+    auto osrExitThunk = codeBlock->vm().getCTIStub(osrExitGenerationThunkGenerator).retagged<OSRExitPtrTag>();
+    for (unsigned exitIndex = 0; exitIndex < m_osrExit.size(); ++exitIndex) {
+        const auto& codeRef = jitData->exitCode(exitIndex);
+        if (ExecutableMemoryHandle* handle = codeRef.executableMemory()) {
+            if (handle != osrExitThunk.executableMemory()) {
+                if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr()) {
+                    OSRExit& exit = m_osrExit[exitIndex];
+                    return std::optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
+                }
+            }
         }
     }
 

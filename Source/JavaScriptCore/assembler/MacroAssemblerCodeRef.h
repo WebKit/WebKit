@@ -526,6 +526,8 @@ public:
         m_codePtr.dumpWithName("CodeRef", out);
     }
 
+    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(MacroAssemblerCodeRef, m_codePtr); }
+
 private:
     template<PtrTag otherTag>
     MacroAssemblerCodeRef(const MacroAssemblerCodeRef<otherTag>& otherCodeRef)

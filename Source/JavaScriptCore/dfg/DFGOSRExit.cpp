@@ -62,11 +62,6 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
     DFG_ASSERT(jit->m_graph, jit->m_currentNode, canExit);
 }
 
-CodeLocationJump<JSInternalPtrTag> OSRExit::codeLocationForRepatch() const
-{
-    return CodeLocationJump<JSInternalPtrTag>(m_patchableJumpLocation);
-}
-
 void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<ValueRecovery>& operands)
 {
     HashMap<MinifiedID, VirtualRegister> alreadyAllocatedArguments; // Maps phantom arguments node ID to operand.
@@ -178,6 +173,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
     if (exit.m_recoveryIndex != UINT_MAX)
         recovery = &codeBlock->jitCode()->dfg()->m_speculationRecovery[exit.m_recoveryIndex];
 
+    MacroAssemblerCodeRef<OSRExitPtrTag> exitCode;
     {
         CCallHelpers jit(codeBlock);
 
@@ -206,18 +202,20 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame, v
         OSRExit::compileExit(jit, vm, exit, operands, recovery);
 
         LinkBuffer patchBuffer(jit, codeBlock, LinkBuffer::Profile::DFGOSRExit);
-        exit.m_code = FINALIZE_CODE_IF(
+        exitCode = FINALIZE_CODE_IF(
             shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseDFGOSRExit(),
             patchBuffer, OSRExitPtrTag,
             "DFG OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
                 exitIndex, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
                 exitKindToString(exit.m_kind), toCString(*codeBlock).data(),
                 toCString(ignoringContext<DumpContext>(operands)).data());
+        codeBlock->dfgJITData()->setExitCode(exitIndex, exitCode);
     }
 
-    MacroAssembler::repatchJump(exit.codeLocationForRepatch(), CodeLocationLabel<OSRExitPtrTag>(exit.m_code.code()));
+    if (exit.codeLocationForRepatch())
+        MacroAssembler::repatchJump(exit.codeLocationForRepatch(), CodeLocationLabel<OSRExitPtrTag>(exitCode.code()));
 
-    vm.osrExitJumpDestination = exit.m_code.code().executableAddress();
+    vm.osrExitJumpDestination = exitCode.code().executableAddress();
 }
 
 IGNORE_WARNINGS_BEGIN("frame-address")
@@ -429,10 +427,10 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 jit.load64(AssemblyHelpers::Address(exit.m_jsValueSource.asAddress()), GPRInfo::numberTagRegister);
                 // We also use the notCellMaskRegister as the scratch register, for the same reason.
                 // FIXME: find a less gross way of doing this, maybe through delaying these operations until we actually have some spare registers around?
-                profile.emitReportValue(jit, JSValueRegs(GPRInfo::numberTagRegister), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
+                profile.emitReportValue(jit, jit.codeBlock(), JSValueRegs(GPRInfo::numberTagRegister), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
                 jit.emitMaterializeTagCheckRegisters();
             } else {
-                profile.emitReportValue(jit, JSValueRegs(exit.m_jsValueSource.gpr()), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
+                profile.emitReportValue(jit, jit.codeBlock(), JSValueRegs(exit.m_jsValueSource.gpr()), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
                 jit.move(AssemblyHelpers::TrustedImm64(JSValue::NotCellMask), GPRInfo::notCellMaskRegister);
             }
 #else // not USE(JSVALUE64)
@@ -446,7 +444,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 JSValueRegs scratch(scratchTag, scratchPayload);
                 
                 jit.loadValue(exit.m_jsValueSource.asAddress(), scratch);
-                profile.emitReportValue(jit, scratch, InvalidGPRReg);
+                profile.emitReportValue(jit, jit.codeBlock(), scratch, InvalidGPRReg);
                 
                 jit.popToRestore(scratchTag);
                 jit.popToRestore(scratchPayload);
@@ -455,10 +453,10 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 jit.pushToSave(scratchTag);
                 jit.move(AssemblyHelpers::TrustedImm32(exit.m_jsValueSource.tag()), scratchTag);
                 JSValueRegs value(scratchTag, exit.m_jsValueSource.payloadGPR());
-                profile.emitReportValue(jit, value, InvalidGPRReg);
+                profile.emitReportValue(jit, jit.codeBlock(), value, InvalidGPRReg);
                 jit.popToRestore(scratchTag);
             } else
-                profile.emitReportValue(jit, exit.m_jsValueSource.regs(), InvalidGPRReg);
+                profile.emitReportValue(jit, jit.codeBlock(), exit.m_jsValueSource.regs(), InvalidGPRReg);
 #endif // USE(JSVALUE64)
         }
     }

@@ -64,7 +64,7 @@ bool JITFinalizer::finalize()
     CodeBlock* codeBlock = m_plan.codeBlock();
 
     codeBlock->setJITCode(m_jitCode.copyRef());
-    codeBlock->setDFGJITData(m_plan.finalizeJITData());
+    codeBlock->setDFGJITData(m_plan.finalizeJITData(m_jitCode.get()));
 
 #if ENABLE(FTL_JIT)
     m_jitCode->optimizeAfterWarmUp(codeBlock);

@@ -369,8 +369,8 @@ public:
                 jitCode->setArgumentFlushFormats(WTFMove(argumentFlushFormats));
             } else {
                 for (unsigned i = codeBlock()->numParameters(); i--;) {
-                    MethodOfGettingAValueProfile profile(&m_graph.m_profiledBlock->valueProfileForArgument(i));
                     VirtualRegister operand = virtualRegisterForArgumentIncludingThis(i);
+                    MethodOfGettingAValueProfile profile = MethodOfGettingAValueProfile::argumentValueProfile(m_origin.semantic, operand);
                     LValue jsValue = m_out.load64(addressFor(operand));
                     
                     switch (m_graph.m_argumentFormats[0][i]) {

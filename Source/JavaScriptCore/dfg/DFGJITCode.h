@@ -54,21 +54,34 @@ class JITData final : public TrailingArray<JITData, void*> {
     friend class LLIntOffsetsExtractor;
 public:
     using Base = TrailingArray<JITData, void*>;
+    using ExitVector = FixedVector<MacroAssemblerCodeRef<OSRExitPtrTag>>;
 
-    static std::unique_ptr<JITData> create(unsigned poolSize)
+    static ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
+
+    static std::unique_ptr<JITData> create(unsigned poolSize, ExitVector&& exits)
     {
-        return std::unique_ptr<JITData> { new (NotNull, fastMalloc(Base::allocationSize(poolSize))) JITData(poolSize) };
+        return std::unique_ptr<JITData> { new (NotNull, fastMalloc(Base::allocationSize(poolSize))) JITData(poolSize, WTFMove(exits)) };
     }
 
-    explicit JITData(unsigned size)
+    void setExitCode(unsigned exitIndex, MacroAssemblerCodeRef<OSRExitPtrTag> code)
+    {
+        m_exits[exitIndex] = WTFMove(code);
+    }
+    const MacroAssemblerCodeRef<OSRExitPtrTag>& exitCode(unsigned exitIndex) const { return m_exits[exitIndex]; }
+
+private:
+    explicit JITData(unsigned size, ExitVector&& exits)
         : Base(size)
+        , m_exits(WTFMove(exits))
     {
     }
+
+    ExitVector m_exits;
 };
 
 class JITCode final : public DirectJITCode {
 public:
-    JITCode();
+    JITCode(bool isUnlinked);
     ~JITCode() final;
     
     CommonData* dfgCommon() final;
@@ -164,9 +177,10 @@ public:
     HashMap<BytecodeIndex, TriggerReason> tierUpEntryTriggers;
 
     WriteBarrier<CodeBlock> m_osrEntryBlock;
-    unsigned osrEntryRetry;
-    bool abandonOSREntry;
+    unsigned osrEntryRetry { 0 };
+    bool abandonOSREntry { false };
 #endif // ENABLE(FTL_JIT)
+    bool isUnlinked { false };
 };
 
 } } // namespace JSC::DFG
