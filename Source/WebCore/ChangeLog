@@ -1,3 +1,15 @@
+2022-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        afterprint event should be scheduled on event loop
+        https://bugs.webkit.org/show_bug.cgi?id=239883
+
+        Reviewed by Chris Dumez.
+
+        * page/Page.cpp:
+        (WebCore::dispatchPrintEvent):
+        (WebCore::Page::dispatchBeforePrintEvent):
+        (WebCore::Page::dispatchAfterPrintEvent):
+
 2022-04-28  Brent Fulgham  <bfulgham@apple.com>
 
         Remove the AVFoundationNSURLSessionEnabled preference

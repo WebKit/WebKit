@@ -3579,26 +3579,34 @@ ScrollLatchingController* Page::scrollLatchingControllerIfExists()
 }
 #endif // ENABLE(WHEEL_EVENT_LATCHING)
 
-static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType)
+enum class DispatchedOnDocumentEventLoop : bool { No, Yes };
+static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType, DispatchedOnDocumentEventLoop dispatchedOnDocumentEventLoop)
 {
     Vector<Ref<Frame>> frames;
     for (auto* frame = &mainFrame; frame; frame = frame->tree().traverseNext())
         frames.append(*frame);
 
     for (auto& frame : frames) {
-        if (auto* window = frame->window())
-            window->dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No), window->document());
+        if (RefPtr window = frame->window()) {
+            auto dispatchEvent = [window = WTFMove(window), eventType] {
+                window->dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No), window->document());
+            };
+            if (dispatchedOnDocumentEventLoop == DispatchedOnDocumentEventLoop::No)
+                return dispatchEvent();
+            if (auto* document = frame->document())
+                document->eventLoop().queueTask(TaskSource::DOMManipulation, WTFMove(dispatchEvent));
+        }
     }
 }
 
 void Page::dispatchBeforePrintEvent()
 {
-    dispatchPrintEvent(m_mainFrame, eventNames().beforeprintEvent);
+    dispatchPrintEvent(m_mainFrame, eventNames().beforeprintEvent, DispatchedOnDocumentEventLoop::No);
 }
 
 void Page::dispatchAfterPrintEvent()
 {
-    dispatchPrintEvent(m_mainFrame, eventNames().afterprintEvent);
+    dispatchPrintEvent(m_mainFrame, eventNames().afterprintEvent, DispatchedOnDocumentEventLoop::Yes);
 }
 
 #if ENABLE(APPLE_PAY)
