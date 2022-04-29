@@ -417,3 +417,15 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND WTF_CPU_MIPS)
     # (see comment #28 in the link above).
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-mno-lxc1-sxc1)
 endif ()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(CMAKE_REQUIRED_FLAGS "--std=c++2a")
+    set(REMOVE_CVREF_TEST_SOURCE "
+        #include <type_traits>
+        int main() {
+            using type = std::remove_cvref_t<int&>;
+        }
+    ")
+    check_cxx_source_compiles("${REMOVE_CVREF_TEST_SOURCE}" STD_REMOVE_CVREF_IS_AVAILABLE)
+    unset(CMAKE_REQUIRED_FLAGS)
+endif ()

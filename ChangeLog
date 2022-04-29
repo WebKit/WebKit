@@ -1,3 +1,24 @@
+2022-04-29  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GCC] std::remove_cvref is undefined in GCC8.4
+        https://bugs.webkit.org/show_bug.cgi?id=239881
+
+        Reviewed by Žan Doberšek.
+
+        r293505 changed the guard that added std::remove_cvref if not defined
+        by GCC, checking __cplusplus <= 201703L.
+
+        However in Ubuntu GCC8.4 this flag's value is 201709L. Thus, the
+        evaluation of this flag cannot reliably determine whether the compiler
+        has to define std::remove_cvref or not.
+
+        Instead of relying on a predefined compiler flag, what the patch does is
+        to attempt to compile a small snippet of code to check whether std::remove_cvref
+        is supported by the compiler. If successful, the flag 'HAVE_STD_REMOVE_CVREF' is defined.
+
+        * Source/cmake/OptionsCommon.cmake: Set and expose HAVE_STD_REMOVE_CVREF if needed.
+        * Source/cmake/WebKitCompilerFlags.cmake: Check whether GCC supports std::remove_cvref.
+
 2022-04-27  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Run style checker
