@@ -30,6 +30,7 @@
 #include "FetchBodyConsumer.h"
 
 #include "DOMFormData.h"
+#include "FormData.h"
 #include "FormDataConsumer.h"
 #include "HTTPHeaderField.h"
 #include "HTTPParsers.h"

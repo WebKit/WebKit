@@ -46,8 +46,9 @@ class Plan;
 enum class BindingFailure;
 }
 
-class SymbolTable;
 class JSWebAssemblyMemory;
+class OptimizingCallLinkInfo;
+class SymbolTable;
 
 class JSWebAssemblyModule final : public JSNonFinalObject {
 public:

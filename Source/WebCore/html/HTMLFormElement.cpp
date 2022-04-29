@@ -52,6 +52,7 @@
 #include "MixedContentChecker.h"
 #include "NodeRareData.h"
 #include "Page.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RadioNodeList.h"
 #include "RenderTextControl.h"
 #include "ScriptDisallowedScope.h"

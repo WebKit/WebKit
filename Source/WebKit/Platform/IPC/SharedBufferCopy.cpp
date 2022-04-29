@@ -26,9 +26,9 @@
 #include "config.h"
 #include "SharedBufferCopy.h"
 
-#include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace IPC {
 

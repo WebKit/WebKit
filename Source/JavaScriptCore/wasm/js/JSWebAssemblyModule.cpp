@@ -30,6 +30,7 @@
 
 #include "JSCInlines.h"
 #include "JSWebAssemblyCompileError.h"
+#include "JSWebAssemblyLinkError.h"
 #include "WasmFormat.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
