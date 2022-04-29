@@ -92,7 +92,7 @@ class Branch(Command):
         return string_utils.encode(result, target_type=str)
 
     @classmethod
-    def main(cls, args, repository, why=None, **kwargs):
+    def main(cls, args, repository, why=None, redact=False, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'branch' on a native Git repository\n")
             return 1
@@ -100,14 +100,16 @@ class Branch(Command):
         if not args.issue:
             args.issue = Terminal.input('{}nter name of new branch (or bug URL): '.format('{}, e'.format(why) if why else 'E'))
 
-        if string_utils.decode(args.issue).isnumeric() and Tracker.instance():
+        if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact:
             issue = Tracker.instance().issue(int(args.issue))
             if issue and issue.title:
                 args.issue = cls.to_branch_name(issue.title)
         else:
             issue = Tracker.from_string(args.issue)
-            if issue and issue.title:
+            if issue and issue.title and not redact:
                 args.issue = cls.to_branch_name(issue.title)
+            elif issue:
+                args.issue = str(issue.id)
 
         args.issue = cls.normalize_branch_name(args.issue)
 
