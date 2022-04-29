@@ -29,6 +29,7 @@
 #include "AuthenticationChallenge.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
+#include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {

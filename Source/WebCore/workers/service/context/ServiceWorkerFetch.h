@@ -42,7 +42,7 @@ class ResourceRequest;
 class ResourceResponse;
 class ServiceWorkerGlobalScope;
 class ServiceWorkerGlobalScope;
-class FragmentedSharedBuffer;
+class SharedBuffer;
 
 namespace ServiceWorkerFetch {
 class Client : public ThreadSafeRefCounted<Client, WTF::DestructionThread::Main> {

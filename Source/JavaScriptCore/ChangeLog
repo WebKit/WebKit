@@ -1,3 +1,60 @@
+2022-04-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287877. rdar://problem/92357915
+
+    Non-unified build fixes, early January 2022 edition
+    https://bugs.webkit.org/show_bug.cgi?id=235013
+    
+    Unreviewed non-unified build fixes.
+    
+    Source/JavaScriptCore:
+    
+    
+    * wasm/js/JSWebAssemblyModule.cpp: Add missing JSWebAssemblyLinkError.h header.
+    * wasm/js/JSWebAssemblyModule.h: Add missing forward declaration for the
+    JSC::OptimizingCallLinkInfo type.
+    
+    Source/WebCore:
+    
+    No new tests needed.
+    
+    
+    * Modules/fetch/FetchBodyConsumer.cpp: Add missing FormData.h header.
+    * Modules/fetch/FormDataConsumer.h: Add missing ExceptionOr.h header, and forward
+    declaration for the WebCore::ScriptExecutionContext type.
+    * animation/CSSAnimation.cpp: Add missing KeyframeEffect.h header.
+    * animation/KeyframeEffect.cpp: Add missing StyledElement.h header.
+    * html/HTMLFormElement.cpp: Add missing PseudoClassChangeInvalidation.h header.
+    * platform/network/SynchronousLoaderClient.cpp: Add missing SharedBuffer.h header.
+    * rendering/svg/RenderSVGBlock.cpp: Add missing SVGRenderSupport.h header.
+    * rendering/svg/RenderSVGForeignObject.cpp: Ditto.
+    * rendering/svg/RenderSVGInline.cpp: Ditto.
+    * rendering/svg/RenderSVGModelObject.cpp: Add missing SVGElementInlines.h header.
+    * rendering/svg/SVGInlineTextBox.cpp: Add missing FloatConversion.h header.
+    * svg/SVGViewElement.cpp: Add missing RenderElement.h header.
+    * workers/service/context/ServiceWorkerFetch.h: Add missing forward declaration for the
+    WebCore::SharedBuffer type, remove unused one for WebCore::FragmentedSharedBuffer.
+    
+    Source/WebKit:
+    
+    
+    * Platform/IPC/SharedBufferCopy.cpp: Add missing WebCoreArgumentCoders.h header, remove now
+    unneeded ArgumentCoders.h header.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287877 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+            Non-unified build fixes, early January 2022 edition
+            https://bugs.webkit.org/show_bug.cgi?id=235013
+
+            Unreviewed non-unified build fixes.
+
+            * wasm/js/JSWebAssemblyModule.cpp: Add missing JSWebAssemblyLinkError.h header.
+            * wasm/js/JSWebAssemblyModule.h: Add missing forward declaration for the
+            JSC::OptimizingCallLinkInfo type.
+
 2022-04-06  Saam Barati  <sbarati@apple.com>
 
         Call Structure::get instead of Structure::getConcurrently on the mutator thread
