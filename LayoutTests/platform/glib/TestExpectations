@@ -322,6 +322,9 @@ imported/mozilla/svg/as-image/border-image-simple-1.html [ Pass ]
 
 fast/css/accent-color/text.html [ Pass ]
 
+# Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
+media/video-with-alpha.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////

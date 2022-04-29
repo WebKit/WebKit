@@ -1,3 +1,13 @@
+2022-04-29  Philippe Normand  <philn@igalia.com>
+
+        [GTK][WPE] media/video-with-alpha.html is failing and skipped
+        https://bugs.webkit.org/show_bug.cgi?id=226484
+
+        Unreviewed, gardening.
+
+        * platform/glib/TestExpectations: The SDK ships GStreamer 1.20, mark
+        media/video-with-alpha.html as passing.
+
 2022-04-29  Youenn Fablet  <youenn@apple.com>
 
         HTMLMediaElement can get multiple interruptions for invisible autoplay
