@@ -82,15 +82,17 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
     m_isCOEPEnabled = scriptExecutionContext->settingsValues().crossOriginEmbedderPolicyEnabled;
 
 #if ENABLE(SERVICE_WORKER)
-    bool isServiceWorkerGlobalScope = is<ServiceWorkerGlobalScope>(workerGlobalScope);
-
-    if (isServiceWorkerGlobalScope) {
-        if (auto* scriptResource = downcast<ServiceWorkerGlobalScope>(workerGlobalScope).scriptResource(url)) {
+    auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(workerGlobalScope);
+    if (serviceWorkerGlobalScope) {
+        if (auto* scriptResource = serviceWorkerGlobalScope->scriptResource(url)) {
             m_script = scriptResource->script;
             m_responseURL = scriptResource->responseURL;
             m_responseMIMEType = scriptResource->mimeType;
             return std::nullopt;
         }
+        auto state = serviceWorkerGlobalScope->serviceWorker().state();
+        if (state != ServiceWorkerState::Parsed && state != ServiceWorkerState::Installing)
+            return Exception { NetworkError, "Importing a script from a service worker that is past installing state"_s };
     }
 #endif
 
@@ -119,11 +121,11 @@ std::optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionCo
         return Exception { NetworkError, m_error.sanitizedDescription() };
 
 #if ENABLE(SERVICE_WORKER)
-    if (isServiceWorkerGlobalScope) {
+    if (serviceWorkerGlobalScope) {
         if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(responseMIMEType()))
             return Exception { NetworkError, "mime type is not a supported JavaScript mime type"_s };
 
-        downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
+        serviceWorkerGlobalScope->setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
     }
 #endif
     return std::nullopt;

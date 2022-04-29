@@ -1,3 +1,15 @@
+2022-04-29  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to fail importScripts as per https://w3c.github.io/ServiceWorker/#importscripts step 4
+        https://bugs.webkit.org/show_bug.cgi?id=239847
+
+        Reviewed by Chris Dumez.
+
+        Once a service worker is installed, the service worker should not be able to call importScript on new URLs.
+        Covered by updated test.
+
+        * workers/WorkerScriptLoader.cpp:
+
 2022-04-28  Alex Christensen  <achristensen@webkit.org>
 
         afterprint event should be scheduled on event loop
