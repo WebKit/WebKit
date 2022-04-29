@@ -1,3 +1,16 @@
+2022-04-29  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (249864@main): [ iOS ] TestWebKitAPI.ScrollViewScrollabilityTests.ScrollableWithOverflowHiddenAndShrunkUI is failing
+        https://bugs.webkit.org/show_bug.cgi?id=239867
+
+        Reviewed by Sam Weinig.
+
+        Use values that are representative of iPhone 8, which is the model used for running
+        API tests.
+
+        * TestWebKitAPI/Tests/ios/ScrollViewScrollabilityTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-29  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Redact bug title in branch name on alternate remotes

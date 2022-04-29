@@ -124,9 +124,9 @@ TEST(ScrollViewScrollabilityTests, ScrollableWithOverflowHiddenAndVisibleUI)
 
 TEST(ScrollViewScrollabilityTests, ScrollableWithOverflowHiddenAndShrunkUI)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewHeight, 414)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, viewHeight, 375)]);
 
-    // Simulate landscape phone with hidden bars.
+    // Simulate MobileSafari on landscape iPhone 8 with hidden bars.
     UIEdgeInsets obscuredInsets;
     obscuredInsets.top = 0;
     obscuredInsets.left = 0;
@@ -134,7 +134,7 @@ TEST(ScrollViewScrollabilityTests, ScrollableWithOverflowHiddenAndShrunkUI)
     obscuredInsets.right = 0;
 
     [webView _setObscuredInsets:obscuredInsets];
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(viewHeight, 414) maximumUnobscuredSizeOverride:CGSizeMake(viewHeight, 414)];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(viewHeight, 325) maximumUnobscuredSizeOverride:CGSizeMake(viewHeight, 375)];
 
     [webView synchronouslyLoadHTMLString:nonScrollableDocumentMarkup];
     [webView waitForNextPresentationUpdate];
