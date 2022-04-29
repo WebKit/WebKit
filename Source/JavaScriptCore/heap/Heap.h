@@ -778,7 +778,7 @@ private:
     size_t m_deprecatedExtraMemorySize { 0 };
 
     ProtectCountSet m_protectedValues;
-    std::unique_ptr<HashSet<MarkedArgumentBufferBase*>> m_markListSet;
+    HashSet<MarkedArgumentBufferBase*> m_markListSet;
     SentinelLinkedList<MarkedJSValueRefArray, BasicRawSentinelNode<MarkedJSValueRefArray>> m_markedJSValueRefArrays;
 
     std::unique_ptr<MachineThreads> m_machineThreads;

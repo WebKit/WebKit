@@ -936,13 +936,10 @@ void DatabaseTracker::recordCreatingDatabase(const SecurityOriginData& origin, c
     ASSERT(m_databaseGuard.isHeld());
 
     // We don't use HashMap::ensure here to avoid making an isolated copy of the origin every time.
-    auto* nameSet = m_beingCreated.get(origin);
-    if (!nameSet) {
-        auto ownedSet = makeUnique<HashCountedSet<String>>();
-        nameSet = ownedSet.get();
-        m_beingCreated.add(origin.isolatedCopy(), WTFMove(ownedSet));
-    }
-    nameSet->add(name.isolatedCopy());
+    auto it = m_beingCreated.find(origin);
+    if (it == m_beingCreated.end())
+        it = m_beingCreated.add(origin.isolatedCopy(), HashCountedSet<String>()).iterator;
+    it->value.add(name.isolatedCopy());
 }
 
 void DatabaseTracker::doneCreatingDatabase(const SecurityOriginData& origin, const String& name)
@@ -955,7 +952,7 @@ void DatabaseTracker::doneCreatingDatabase(const SecurityOriginData& origin, con
     if (iterator == m_beingCreated.end())
         return;
 
-    auto& countedSet = *iterator->value;
+    auto& countedSet = iterator->value;
     ASSERT(countedSet.contains(name));
 
     if (countedSet.remove(name) && countedSet.isEmpty())
@@ -967,7 +964,7 @@ bool DatabaseTracker::creatingDatabase(const SecurityOriginData& origin, const S
     ASSERT(m_databaseGuard.isHeld());
 
     auto iterator = m_beingCreated.find(origin);
-    return iterator != m_beingCreated.end() && iterator->value->contains(name);
+    return iterator != m_beingCreated.end() && iterator->value.contains(name);
 }
 
 bool DatabaseTracker::canDeleteDatabase(const SecurityOriginData& origin, const String& name)
@@ -982,14 +979,11 @@ void DatabaseTracker::recordDeletingDatabase(const SecurityOriginData& origin, c
     ASSERT(canDeleteDatabase(origin, name));
 
     // We don't use HashMap::ensure here to avoid making an isolated copy of the origin every time.
-    auto* nameSet = m_beingDeleted.get(origin);
-    if (!nameSet) {
-        auto ownedSet = makeUnique<MemoryCompactRobinHoodHashSet<String>>();
-        nameSet = ownedSet.get();
-        m_beingDeleted.add(origin.isolatedCopy(), WTFMove(ownedSet));
-    }
-    ASSERT(!nameSet->contains(name));
-    nameSet->add(name.isolatedCopy());
+    auto it = m_beingDeleted.find(origin);
+    if (it == m_beingDeleted.end())
+        it = m_beingDeleted.add(origin.isolatedCopy(), MemoryCompactRobinHoodHashSet<String>()).iterator;
+    ASSERT(!it->value.contains(name));
+    it->value.add(name.isolatedCopy());
 }
 
 void DatabaseTracker::doneDeletingDatabase(const SecurityOriginData& origin, const String& name)
@@ -1001,23 +995,23 @@ void DatabaseTracker::doneDeletingDatabase(const SecurityOriginData& origin, con
     if (iterator == m_beingDeleted.end())
         return;
 
-    ASSERT(iterator->value->contains(name));
-    iterator->value->remove(name);
-    if (iterator->value->isEmpty())
+    ASSERT(iterator->value.contains(name));
+    iterator->value.remove(name);
+    if (iterator->value.isEmpty())
         m_beingDeleted.remove(iterator);
 }
 
 bool DatabaseTracker::isDeletingDatabase(const SecurityOriginData& origin, const String& name)
 {
     ASSERT(m_databaseGuard.isHeld());
-    auto* nameSet = m_beingDeleted.get(origin);
-    return nameSet && nameSet->contains(name);
+    auto it = m_beingDeleted.find(origin);
+    return it != m_beingDeleted.end() && it->value.contains(name);
 }
 
 bool DatabaseTracker::canDeleteOrigin(const SecurityOriginData& origin)
 {
     ASSERT(m_databaseGuard.isHeld());
-    return !(isDeletingOrigin(origin) || m_beingCreated.get(origin));
+    return !(isDeletingOrigin(origin) || m_beingCreated.contains(origin));
 }
 
 bool DatabaseTracker::isDeletingOrigin(const SecurityOriginData& origin)

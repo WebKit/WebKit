@@ -500,7 +500,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
 
     updateResolver(activeCSSStyleSheets, styleSheetChange.resolverUpdateType);
 
-    m_weakCopyOfActiveStyleSheetListForFastLookup = nullptr;
+    m_weakCopyOfActiveStyleSheetListForFastLookup.clear();
     m_activeStyleSheets.swap(activeCSSStyleSheets);
     m_styleSheetsForStyleSheetList.swap(activeStyleSheets);
 
@@ -588,12 +588,14 @@ const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector()
 
 bool Scope::activeStyleSheetsContains(const CSSStyleSheet* sheet) const
 {
-    if (!m_weakCopyOfActiveStyleSheetListForFastLookup) {
-        m_weakCopyOfActiveStyleSheetListForFastLookup = makeUnique<HashSet<const CSSStyleSheet*>>();
+    if (m_activeStyleSheets.isEmpty())
+        return false;
+
+    if (m_weakCopyOfActiveStyleSheetListForFastLookup.isEmpty()) {
         for (auto& activeStyleSheet : m_activeStyleSheets)
-            m_weakCopyOfActiveStyleSheetListForFastLookup->add(activeStyleSheet.get());
+            m_weakCopyOfActiveStyleSheetListForFastLookup.add(activeStyleSheet.get());
     }
-    return m_weakCopyOfActiveStyleSheetListForFastLookup->contains(sheet);
+    return m_weakCopyOfActiveStyleSheetListForFastLookup.contains(sheet);
 }
 
 void Scope::flushPendingSelfUpdate()

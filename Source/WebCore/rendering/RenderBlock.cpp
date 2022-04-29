@@ -95,7 +95,7 @@ struct SameSizeAsRenderBlock : public RenderBox {
 static_assert(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), "RenderBlock should stay small");
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>> TrackedDescendantsMap;
-typedef HashMap<const RenderBox*, std::unique_ptr<HashSet<const RenderBlock*>>> TrackedContainerMap;
+typedef HashMap<const RenderBox*, HashSet<const RenderBlock*>> TrackedContainerMap;
 
 static TrackedDescendantsMap* percentHeightDescendantsMap;
 static TrackedContainerMap* percentHeightContainerMap;
@@ -113,17 +113,17 @@ static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBo
 
     bool added = descendantSet->add(&descendant).isNewEntry;
     if (!added) {
-        ASSERT(percentHeightContainerMap->get(&descendant));
-        ASSERT(percentHeightContainerMap->get(&descendant)->contains(&container));
+#if ASSERT_ENABLED
+        auto it = percentHeightContainerMap->find(&descendant);
+        ASSERT(it != percentHeightContainerMap->end());
+        ASSERT(it->value.contains(&container));
+#endif
         return;
     }
     
-    auto& containerSet = percentHeightContainerMap->ensure(&descendant, [] {
-        return makeUnique<HashSet<const RenderBlock*>>();
-    }).iterator->value;
-
-    ASSERT(!containerSet->contains(&container));
-    containerSet->add(&container);
+    auto& containerSet = percentHeightContainerMap->add(&descendant, HashSet<const RenderBlock*>()).iterator->value;
+    ASSERT(!containerSet.contains(&container));
+    containerSet.add(&container);
 }
 
 static void removeFromTrackedRendererMaps(RenderBox& descendant)
@@ -131,11 +131,8 @@ static void removeFromTrackedRendererMaps(RenderBox& descendant)
     if (!percentHeightDescendantsMap)
         return;
     
-    std::unique_ptr<HashSet<const RenderBlock*>> containerSet = percentHeightContainerMap->take(&descendant);
-    if (!containerSet)
-        return;
-    
-    for (auto* container : *containerSet) {
+    HashSet<const RenderBlock*> containerSet = percentHeightContainerMap->take(&descendant);
+    for (auto* container : containerSet) {
         // FIXME: Disabling this assert temporarily until we fix the layout
         // bugs associated with positioned objects not properly cleared from
         // their ancestor chain before being moved. See webkit bug 93766.
@@ -349,10 +346,10 @@ static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock* blo
         ASSERT(it != percentHeightContainerMap->end());
         if (it == percentHeightContainerMap->end())
             continue;
-        auto* containerSet = it->value.get();
-        ASSERT(containerSet->contains(block));
-        containerSet->remove(block);
-        if (containerSet->isEmpty())
+        auto& containerSet = it->value;
+        ASSERT(containerSet.contains(block));
+        containerSet.remove(block);
+        if (containerSet.isEmpty())
             percentHeightContainerMap->remove(it);
     }
 }

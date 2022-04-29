@@ -68,26 +68,24 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node& node)
     node.registerTransientMutationObserver(*this);
     m_observer->setHasTransientRegistration(node.document());
 
-    if (!m_transientRegistrationNodes) {
-        m_transientRegistrationNodes = makeUnique<HashSet<GCReachableRef<Node>>>();
-
+    if (m_transientRegistrationNodes.isEmpty()) {
         ASSERT(!m_nodeKeptAlive);
         m_nodeKeptAlive = &m_node; // Balanced in takeTransientRegistrations.
     }
-    m_transientRegistrationNodes->add(node);
+    m_transientRegistrationNodes.add(node);
 }
 
-std::unique_ptr<HashSet<GCReachableRef<Node>>> MutationObserverRegistration::takeTransientRegistrations()
+HashSet<GCReachableRef<Node>> MutationObserverRegistration::takeTransientRegistrations()
 {
-    if (!m_transientRegistrationNodes) {
+    if (m_transientRegistrationNodes.isEmpty()) {
         ASSERT(!m_nodeKeptAlive);
-        return nullptr;
+        return { };
     }
 
-    for (auto& node : *m_transientRegistrationNodes)
+    for (auto& node : m_transientRegistrationNodes)
         node->unregisterTransientMutationObserver(*this);
 
-    auto returnValue = WTFMove(m_transientRegistrationNodes);
+    auto returnValue = std::exchange(m_transientRegistrationNodes, { });
 
     ASSERT(m_nodeKeptAlive);
     m_nodeKeptAlive = nullptr; // Balanced in observeSubtreeNodeWillDetach.
@@ -118,10 +116,7 @@ bool MutationObserverRegistration::isReachableFromOpaqueRoots(JSC::AbstractSlotV
     if (visitor.containsOpaqueRoot(root(m_node)))
         return true;
 
-    if (!m_transientRegistrationNodes)
-        return false;
-
-    for (auto& node : *m_transientRegistrationNodes) {
+    for (auto& node : m_transientRegistrationNodes) {
         if (visitor.containsOpaqueRoot(root(node)))
             return true;
     }

@@ -2845,9 +2845,9 @@ void Heap::addCoreConstraints()
                     visitor.appendUnbarriered(pair.key);
             }
             
-            if (m_markListSet && m_markListSet->size()) {
+            if (!m_markListSet.isEmpty()) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ConservativeScan);
-                MarkedArgumentBufferBase::markLists(visitor, *m_markListSet);
+                MarkedArgumentBufferBase::markLists(visitor, m_markListSet);
             }
 
             {

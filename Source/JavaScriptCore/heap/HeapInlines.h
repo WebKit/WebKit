@@ -208,9 +208,7 @@ inline void Heap::decrementDeferralDepthAndGCIfNeeded()
 
 inline HashSet<MarkedArgumentBufferBase*>& Heap::markListSet()
 {
-    if (!m_markListSet)
-        m_markListSet = makeUnique<HashSet<MarkedArgumentBufferBase*>>();
-    return *m_markListSet;
+    return m_markListSet;
 }
 
 inline void Heap::reportExtraMemoryAllocated(size_t size)
