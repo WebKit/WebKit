@@ -290,6 +290,12 @@ public:
                 unsigned ftlFrameSize = params.proc().frameSize();
                 unsigned maxFrameSize = std::max(exitFrameSize, ftlFrameSize);
 
+                if (Options::useFastStackOverflowChecks() && maxFrameSize < pageSize()) {
+                    jit.addPtr(MacroAssembler::TrustedImm32(-maxFrameSize), fp, scratch);
+                    jit.load64(MacroAssembler::Address(scratch), scratch);
+                    return; // TODO move this up?
+                }
+
                 jit.jitAssertCodeBlockOnCallFrameWithType(scratch, JITType::FTLJIT);
 
                 jit.addPtr(MacroAssembler::TrustedImm32(-maxFrameSize), fp, scratch);

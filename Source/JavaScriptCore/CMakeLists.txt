@@ -1163,6 +1163,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/SparseArrayValueMap.h
     runtime/StackAlignment.h
     runtime/StackFrame.h
+    runtime/StackOverflowFaultSignalHandler.h
     runtime/StringObject.h
     runtime/StringPrototype.h
     runtime/Structure.h

@@ -174,6 +174,7 @@ public:
                 return StackVisitor::Continue;
 
             addProperty(vm, "name"_s, jsString(vm, visitor->functionName()));
+            addProperty(vm, "ptr"_s, jsString(vm, makeString(reinterpret_cast<uint64_t>(visitor->callFrame()->addressOfCodeBlock()))));
 
             if (visitor->callee().isCell())
                 addProperty(vm, "callee"_s, visitor->callee().asCell());

@@ -68,6 +68,7 @@
 #include "ReleaseHeapAccessScope.h"
 #include "SamplingProfiler.h"
 #include "SimpleTypedArrayController.h"
+#include "StackOverflowFaultSignalHandler.h"
 #include "StackVisitor.h"
 #include "StructureInlines.h"
 #include "SuperSampler.h"
@@ -3629,9 +3630,11 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
     VM& vm = VM::create(HeapType::Large).leakRef();
     if (!isWorker && options.m_canBlockIsFalse)
         vm.m_typedArrayController = adoptRef(new JSC::SimpleTypedArrayController(false));
+    enableFastStackOverflow(vm);
 #if ENABLE(WEBASSEMBLY)
     Wasm::enableFastMemory();
 #endif
+    activateSignalHandlersFor(Signal::AccessFault);
 
     int result;
     bool success = true;

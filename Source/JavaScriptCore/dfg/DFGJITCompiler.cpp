@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "DFGJITCompiler.h"
+#include "assembler/MacroAssembler.h"
+#include "jit/GPRInfo.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -306,15 +308,24 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         m_jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), linkBuffer);
 }
 
-static void emitStackOverflowCheck(JITCompiler& jit, MacroAssembler::JumpList& stackOverflow)
+WARN_UNUSED_RETURN static bool emitStackOverflowCheck(JITCompiler& jit, MacroAssembler::JumpList& stackOverflow)
 {
     int frameTopOffset = virtualRegisterForLocal(jit.graph().requiredRegisterCountForExecutionAndExit() - 1).offset() * sizeof(Register);
     unsigned maxFrameSize = -frameTopOffset;
 
     jit.addPtr(MacroAssembler::TrustedImm32(frameTopOffset), GPRInfo::callFrameRegister, GPRInfo::regT1);
+
+    if (Options::useFastStackOverflowChecks() && maxFrameSize < pageSize()) {
+         // Touch our extent to trigger a crash here.
+        jit.load64(MacroAssembler::Address(GPRInfo::regT1), GPRInfo::regT2);
+        return false;
+    }
+
     if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
         stackOverflow.append(jit.branchPtr(MacroAssembler::Above, GPRInfo::regT1, GPRInfo::callFrameRegister));
     stackOverflow.append(jit.branchPtr(MacroAssembler::Above, MacroAssembler::AbsoluteAddress(jit.vm().addressOfSoftStackLimit()), GPRInfo::regT1));
+
+    return true;
 }
 
 void JITCompiler::compile()
@@ -327,7 +338,7 @@ void JITCompiler::compile()
 
     // Plant a check that sufficient space is available in the JSStack.
     JumpList stackOverflow;
-    emitStackOverflowCheck(*this, stackOverflow);
+    bool checkStackOverflow = emitStackOverflowCheck(*this, stackOverflow);
 
     addPtr(TrustedImm32(-(m_graph.frameRegisterCount() * sizeof(Register))), GPRInfo::callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
@@ -340,15 +351,17 @@ void JITCompiler::compile()
     //
     // Generate the stack overflow handling; if the stack check in the entry head fails,
     // we need to call out to a helper function to throw the StackOverflowError.
-    stackOverflow.link(this);
+    if (checkStackOverflow) {
+        stackOverflow.link(this);
 
-    emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
+        emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
 
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
+        if (maxFrameExtentForSlowPathCall)
+            addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
 
-    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
-    m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, GPRInfo::argumentGPR0);
+        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
+        m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, GPRInfo::argumentGPR0);
+    }
 
     // Generate slow path code.
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
@@ -393,7 +406,7 @@ void JITCompiler::compileFunction()
     Label fromArityCheck(this);
     // Plant a check that sufficient space is available in the JSStack.
     JumpList stackOverflow;
-    emitStackOverflowCheck(*this, stackOverflow);
+    bool checkStackOverflow = emitStackOverflowCheck(*this, stackOverflow);
 
     // Move the stack pointer down to accommodate locals
     addPtr(TrustedImm32(-(m_graph.frameRegisterCount() * sizeof(Register))), GPRInfo::callFrameRegister, stackPointerRegister);
@@ -414,15 +427,17 @@ void JITCompiler::compileFunction()
     //
     // Generate the stack overflow handling; if the stack check in the function head fails,
     // we need to call out to a helper function to throw the StackOverflowError.
-    stackOverflow.link(this);
+    if (checkStackOverflow) {
+        stackOverflow.link(this);
 
-    emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
+        emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
 
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
+        if (maxFrameExtentForSlowPathCall)
+            addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
 
-    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
-    m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, GPRInfo::argumentGPR0);
+        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, GPRInfo::argumentGPR0);
+        m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, GPRInfo::argumentGPR0);
+    }
     
     // The fast entry point into a function does not check the correct number of arguments
     // have been passed to the call (we only use the fast entry point where we can statically

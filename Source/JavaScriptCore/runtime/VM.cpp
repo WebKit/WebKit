@@ -97,6 +97,7 @@
 #include "ShadowChicken.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
+#include "StackOverflowFaultSignalHandler.h"
 #include "StrongInlines.h"
 #include "StructureChain.h"
 #include "StructureInlines.h"
@@ -418,6 +419,7 @@ VM::~VM()
 {
     Locker destructionLocker { s_destructionLock.read() };
     
+    disableFastStackOverflowForVMThatWillBeDestroyed(*this);
     Gigacage::removePrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
     deferredWorkTimer->stopRunningTasks();
 #if ENABLE(WEBASSEMBLY)

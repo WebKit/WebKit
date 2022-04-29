@@ -36,6 +36,7 @@
 #include "LLIntData.h"
 #include "Options.h"
 #include "SigillCrashAnalyzer.h"
+#include "StackOverflowFaultSignalHandler.h"
 #include "StructureAlignedMemoryAllocator.h"
 #include "SuperSampler.h"
 #include "VMTraps.h"
@@ -111,6 +112,7 @@ void initialize()
         WTF::startMachExceptionHandlerThread();
 #endif
         VMTraps::initializeSignals();
+        prepareFastStackOverflow();
 #if ENABLE(WEBASSEMBLY)
         Wasm::prepareFastMemory();
 #endif

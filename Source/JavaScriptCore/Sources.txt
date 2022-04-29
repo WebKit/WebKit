@@ -966,6 +966,7 @@ runtime/RandomizingFuzzerAgent.cpp
 runtime/ShadowRealmObject.cpp
 runtime/ShadowRealmConstructor.cpp
 runtime/ShadowRealmPrototype.cpp
+runtime/StackOverflowFaultSignalHandler.cpp
 runtime/ReflectObject.cpp
 runtime/RegExp.cpp
 runtime/RegExpCache.cpp

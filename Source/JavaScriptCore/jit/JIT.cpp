@@ -776,13 +776,19 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
 
     Label beginLabel(this);
 
+    JumpList stackOverflow;
     int frameTopOffset = stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register);
     unsigned maxFrameSize = -frameTopOffset;
     addPtr(TrustedImm32(frameTopOffset), callFrameRegister, regT1);
-    JumpList stackOverflow;
-    if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
-        stackOverflow.append(branchPtr(Above, regT1, callFrameRegister));
-    stackOverflow.append(branchPtr(Above, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), regT1));
+
+    if (!Options::useFastStackOverflowChecks() || maxFrameSize >= pageSize()) {
+        if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
+            stackOverflow.append(branchPtr(Above, regT1, callFrameRegister));
+        stackOverflow.append(branchPtr(Above, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), regT1));
+    } else {
+        // Touch our extent to trigger a crash here.
+        load64(Address(regT1), regT2);
+    }
 
     move(regT1, stackPointerRegister);
     checkStackPointerAlignment();
@@ -826,12 +832,14 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     emitConsistencyCheck();
 #endif
 
-    stackOverflow.link(this);
     m_bytecodeIndex = BytecodeIndex(0);
-    if (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
-    emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
-    callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, regT0);
+    if (Options::useFastStackOverflowChecks() || maxFrameSize >= pageSize()) {
+        stackOverflow.link(this);
+        if (maxFrameExtentForSlowPathCall)
+            addPtr(TrustedImm32(-static_cast<int32_t>(maxFrameExtentForSlowPathCall)), stackPointerRegister);
+        emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT0);
+        callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, regT0);
+    }
 
     // If the number of parameters is 1, we never require arity fixup.
     bool requiresArityFixup = m_unlinkedCodeBlock->numParameters() != 1;
