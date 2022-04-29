@@ -1,5 +1,17 @@
 2022-04-29  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
+        REGRESSION(r291998): [GTK] test accessibility/gtk/menu-list-unfocused-notifications.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=239888
+
+        Change the delay between changes to the combobox value to 1ms to ensure that an
+        accessibility event is consistently generated for both changes.
+
+        Reviewed by Martin Robinson.
+
+        * accessibility/gtk/menu-list-unfocused-notifications.html:
+
+2022-04-29  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
         REGRESSION(r290548) [GTK][WPE] test LayoutTests/fast/events/node-event-anchor-lock.html fails
         https://bugs.webkit.org/show_bug.cgi?id=239890
 
