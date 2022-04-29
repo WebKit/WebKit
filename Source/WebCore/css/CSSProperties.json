@@ -1120,6 +1120,7 @@
                 "border-box",
                 "padding-box",
                 "content-box",
+                "text",
                 {
                     "value": "-webkit-text",
                     "status": "non-standard"

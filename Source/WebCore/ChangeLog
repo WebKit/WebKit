@@ -1,3 +1,11 @@
+2022-04-29  Tim Nguyen  <ntim@apple.com>
+
+        Add background-clip: text to CSSProperties.json
+
+        Unreviewed fix.
+
+        * css/CSSProperties.json:
+
 2022-04-29  Youenn Fablet  <youenn@apple.com>
 
         HTMLMediaElement can get multiple interruptions for invisible autoplay
