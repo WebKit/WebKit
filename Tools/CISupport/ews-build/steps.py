@@ -533,8 +533,8 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
 
         self.setProperty('change_id', revision[:HASH_LENGTH_TO_DISPLAY], 'ConfigureBuild')
 
-        if title:
-            self.addURL('PR {}: {}'.format(pr_number, title), GitHub.pr_url(pr_number, repository_url))
+        title = f': {title}' if title else ''
+        self.addURL(f'PR {pr_number}{title}', GitHub.pr_url(pr_number, repository_url))
         if owners:
             email, errors = GitHub.email_for_owners(owners)
             for error in errors:
