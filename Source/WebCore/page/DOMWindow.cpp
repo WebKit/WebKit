@@ -154,7 +154,7 @@
 namespace WebCore {
 using namespace Inspector;
 
-static const Seconds defaultTransientActivationDuration { 2_s };
+static constexpr Seconds defaultTransientActivationDuration { 5_s };
 
 static WeakHashSet<DOMWindow>& windowsInterestedInStorageEvents()
 {
