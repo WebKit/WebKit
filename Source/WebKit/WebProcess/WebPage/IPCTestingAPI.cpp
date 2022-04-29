@@ -711,6 +711,7 @@ void JSIPCConnection::didReceiveMessage(IPC::Connection&, IPC::Decoder&)
 bool JSIPCConnection::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
 {
     ASSERT_NOT_REACHED();
+    return false;
 }
 
 void JSIPCConnection::didClose(IPC::Connection&)
