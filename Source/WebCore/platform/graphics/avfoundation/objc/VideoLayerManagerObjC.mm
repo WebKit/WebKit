@@ -77,7 +77,7 @@ void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize con
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (m_videoFullscreenLayer) {
-        [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+        [m_videoLayer setFrame:m_videoFullscreenFrame];
         [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
     } else
 #endif
@@ -125,7 +125,7 @@ void VideoLayerManagerObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscre
             [m_videoInlineLayer setContents:(__bridge id)currentImage.get()];
 
         if (m_videoFullscreenLayer) {
-            [m_videoLayer setFrame:CGRectMake(0, 0, m_videoFullscreenFrame.width(), m_videoFullscreenFrame.height())];
+            [m_videoLayer setFrame:m_videoFullscreenFrame];
             [m_videoFullscreenLayer insertSublayer:m_videoLayer.get() atIndex:0];
         } else if (m_videoInlineLayer) {
             [m_videoLayer setFrame:[m_videoInlineLayer bounds]];

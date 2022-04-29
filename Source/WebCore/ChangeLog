@@ -1,3 +1,28 @@
+2022-04-29  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Video on twitch.tv shifts to top of screen when toggling playback in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=239884
+        <rdar://92367060>
+
+        Reviewed by Eric Carlson.
+
+        Twitch will cause the HTMLMediaElement to recreate the MediaPlayer when resuming playback
+        after pausing. If this happens in fullscreen, VideoLayerManagerObjC::setVideoLayer() will
+        be called with the new video layer, however it will be laid out pinned to the top-left
+        corner of the screen (rather than centered), as setVideoLayer() will call -setFrame with
+        an explicit 0,0 position argument.
+
+        Rather than pin the layer to the top-left, use the full value of m_videoFullscreenFrame
+        when setting the video layer frame, both in setVideoLayer() as well as
+        setVideoFullscreenLayer().
+
+        Its currently impossible to write an test for this behavior, as TestWebKitAPI is not a UI
+        application, and therefore cannot enter fullscreen mode.
+
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm:
+        (WebCore::VideoLayerManagerObjC::setVideoLayer):
+        (WebCore::VideoLayerManagerObjC::setVideoFullscreenLayer):
+
 2022-04-29  Tim Nguyen  <ntim@apple.com>
 
         Add background-clip: text to CSSProperties.json
