@@ -89,7 +89,7 @@ class Canonicalize(Command):
         if num_commits_to_canonicalize <= 0:
             print('No local commits to be edited')
             return 0
-        log.warning('{} to be editted...'.format(string_utils.pluralize(num_commits_to_canonicalize, 'commit')))
+        log.warning('{} to be edited...'.format(string_utils.pluralize(num_commits_to_canonicalize, 'commit')))
 
         base = repository.find('{}~{}'.format(branch, num_commits_to_canonicalize))
         log.info('Base commit is {} (ref {})'.format(base, base.hash))

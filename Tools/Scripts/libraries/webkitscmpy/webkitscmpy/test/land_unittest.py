@@ -156,7 +156,7 @@ class TestLand(testing.PathTestCase):
                 '    Found 1 commit...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
-                '1 commit to be editted...',
+                '1 commit to be edited...',
                 'Base commit is 5@main (ref d8bce26fa65c6fc8f39c17927abb77f69fab82fc)',
             ],
         )
@@ -285,7 +285,7 @@ class TestLand(testing.PathTestCase):
                 '    Found 1 commit...',
                 "Rebasing 'eng/example' from 'main' to 'main'...",
                 "Rebased 'eng/example' from 'main' to 'main'!",
-                '1 commit to be editted...',
+                '1 commit to be edited...',
                 'Base commit is 5@main (ref d8bce26fa65c6fc8f39c17927abb77f69fab82fc)',
             ],
         )
