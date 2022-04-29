@@ -34,6 +34,8 @@
 #import "_WKDataTaskDelegate.h"
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/Credential.h>
+#import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/BlockPtr.h>
 
 class WKDataTaskClient final : public API::DataTaskClient {
 public:

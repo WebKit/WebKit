@@ -29,6 +29,10 @@
 #import <WebCore/ModalContainerTypes.h>
 #import <unicode/uspoof.h>
 
+#import <wtf/CompletionHandler.h>
+#import <wtf/CrossThreadCopier.h>
+#import <wtf/RunLoop.h>
+
 #import <pal/cocoa/CoreMLSoftLink.h>
 #import <pal/cocoa/NaturalLanguageSoftLink.h>
 

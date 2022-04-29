@@ -25,6 +25,8 @@
 
 #import "_WKInspectorConfiguration.h"
 
+#import <WebKit/WKWebViewConfiguration.h>
+
 #import "APIInspectorConfiguration.h"
 #import "WKObject.h"
 

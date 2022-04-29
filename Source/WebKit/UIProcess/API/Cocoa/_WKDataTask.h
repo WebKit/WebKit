@@ -25,6 +25,8 @@
 
 #import <WebKit/WKFoundation.h>
 
+#import <WebKit/WKWebView.h>
+
 @protocol _WKDataTaskDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
