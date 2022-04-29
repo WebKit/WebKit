@@ -19,6 +19,12 @@
         * Source/cmake/OptionsCommon.cmake: Set and expose HAVE_STD_REMOVE_CVREF if needed.
         * Source/cmake/WebKitCompilerFlags.cmake: Check whether GCC supports std::remove_cvref.
 
+2022-04-28  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; add github account for Jer Noble to contributors.json.
+
+        * metadata/contributors.json:
+
 2022-04-27  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Run style checker
