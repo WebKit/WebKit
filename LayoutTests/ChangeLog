@@ -1,3 +1,16 @@
+2022-04-28  Patrick Griffis  <pgriffis@igalia.com>
+
+        CSP: Fix mixing strict-dynamic and unsafe-inline policies
+        https://bugs.webkit.org/show_bug.cgi?id=239862
+
+        Reviewed by Kate Cheney.
+
+        If you had multiple policies, one including strict-dynamic and another with unsafe-inline, the unsafe-inline
+        policy was incorrectly handled.
+
+        * http/tests/security/contentSecurityPolicy/script-src-strict-dynamic-and-unsafe-inline-policies-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-strict-dynamic-and-unsafe-inline-policies.html: Added.
+
 2022-04-28  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Mark properties sharing a computed value as related

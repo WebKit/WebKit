@@ -246,7 +246,8 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     if (checkHashes(operativeDirective, hashes)
         || checkNonParserInsertedScripts(operativeDirective, parserInserted)
         || checkNonce(operativeDirective, nonce)
-        || checkSource(operativeDirective, url))
+        || checkSource(operativeDirective, url)
+        || (url.isEmpty() && checkInline(operativeDirective)))
         return nullptr;
     return operativeDirective;
 }
