@@ -145,16 +145,21 @@ class PullRequest(Command):
 
     @classmethod
     def pull_request_branch_point(cls, repository, args, **kwargs):
+        # FIXME: We can do better by infering the remote from the branch point, if it's not specified
+        source_remote = args.remote or 'origin'
+
         if repository.branch in repository.DEFAULT_BRANCHES or repository.PROD_BRANCHES.match(repository.branch):
-            if Branch.main(args, repository, why="'{}' is not a pull request branch".format(repository.branch), **kwargs):
+            if Branch.main(
+                args, repository,
+                why="'{}' is not a pull request branch".format(repository.branch),
+                redact=source_remote != 'origin', **kwargs
+            ):
                 sys.stderr.write("Abandoning pushing pull-request because '{}' could not be created\n".format(args.issue))
                 return None
         elif args.issue and repository.branch != args.issue:
             sys.stderr.write("Creating a pull-request for '{}' but we're on '{}'\n".format(args.issue, repository.branch))
             return None
 
-        # FIXME: We can do better by infering the remote from the branch point, if it's not specified
-        source_remote = args.remote or 'origin'
         if not repository.config().get('remote.{}.url'.format(source_remote)):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
             return None

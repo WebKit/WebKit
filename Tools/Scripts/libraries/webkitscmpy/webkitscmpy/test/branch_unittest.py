@@ -27,7 +27,7 @@ from mock import patch
 from webkitbugspy import bugzilla, mocks as bmocks, radar
 from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime, Terminal as MockTerminal, Environment
-from webkitscmpy import local, program, mocks
+from webkitscmpy import local, program, mocks, log
 
 
 class TestBranch(testing.PathTestCase):
@@ -94,6 +94,24 @@ class TestBranch(testing.PathTestCase):
             self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/Example-feature-1'...\n")
         self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/Example-feature-1'\n")
+
+    def test_redacted(self):
+        class MockOptions(object):
+            def __init__(self):
+                self.issue = None
+
+        with MockTerminal.input('<rdar://2>'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), \
+            bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]), mocks.local.Svn(), MockTime:
+
+            log.setLevel(logging.INFO)
+            self.assertEqual(0, program.Branch.main(
+                MockOptions(), local.Git(self.path),
+                redact=True,
+            ))
+            self.assertEqual(local.Git(self.path).branch, 'eng/2')
+        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/2'...\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/2'\n")
+
 
     def test_invalid_branch(self):
         with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
