@@ -2643,8 +2643,8 @@
          "ggaren@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript, Performance, Memory Use / Leaks, Memory Cache, Core DOM, HTML DOM, JavaScript DOM Bindings, Web Compatibility (General), JavaScriptCore C API, FastMalloc",
-      "name" : "Geoffrey Garen",
       "github" : "geoffreygaren",
+      "name" : "Geoffrey Garen",
       "nicks" : [
          "ggaren"
       ],
@@ -4844,7 +4844,7 @@
          "msaboff@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript",
-      "github": "msaboff",
+      "github" : "msaboff",
       "name" : "Michael Saboff",
       "nicks" : [
          "msaboff"
@@ -6815,6 +6815,7 @@
          "wenson_hsieh@apple.com",
          "whsieh@berkeley.edu"
       ],
+      "github" : "whsieh",
       "name" : "Wenson Hsieh",
       "nicks" : [
          "whsieh"

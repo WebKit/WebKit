@@ -1,3 +1,12 @@
+2022-04-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, add my GitHub account name to contributors.json
+
+        I also ran `validate-committer-lists --canonicalize` to fix up some minor style inconsistencies in this file
+        after some other recent additions.
+
+        * metadata/contributors.json:
+
 2022-04-29  Diego Pino Garcia  <dpino@igalia.com>
 
         [GCC] std::remove_cvref is undefined in GCC8.4
