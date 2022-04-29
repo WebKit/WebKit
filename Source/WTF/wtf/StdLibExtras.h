@@ -606,7 +606,7 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
 
 // FIXME: Needed for GCC<=9.3. Remove it after Ubuntu 20.04 end of support (May 2023).
-#if defined(__GLIBCXX__) && !defined(HAVE_STD_REMOVE_CVREF)
+#if defined(__GLIBCXX__) && !defined(HAVE_STD_REMOVE_CVREF) && !COMPILER(CLANG)
 namespace std {
 template <typename T>
 struct remove_cvref {

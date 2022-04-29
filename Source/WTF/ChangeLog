@@ -1,3 +1,12 @@
+2022-04-29  Philippe Normand  <philn@igalia.com>
+
+        REGRESSION(r293608): [GTK][WPE] Broke clang builds
+        https://bugs.webkit.org/show_bug.cgi?id=239899
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/StdLibExtras.h: Restrict std::remove_cvref hacks to GCC.
+
 2022-04-29  Diego Pino Garcia  <dpino@igalia.com>
 
         [GCC] std::remove_cvref is undefined in GCC8.4
