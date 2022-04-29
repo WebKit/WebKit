@@ -151,29 +151,15 @@ void StringImpl::destroy(StringImpl* stringImpl)
     StringImplMalloc::free(stringImpl);
 }
 
-Ref<StringImpl> StringImpl::createFromLiteral(const char* characters, unsigned length)
+Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(const UChar* characters, unsigned length)
 {
-    ASSERT_WITH_MESSAGE(length, "Use StringImpl::empty() to create an empty string");
-    ASSERT(charactersAreAllASCII(reinterpret_cast<const LChar*>(characters), length));
-    return adoptRef(*new StringImpl(reinterpret_cast<const LChar*>(characters), length, ConstructWithoutCopying));
-}
-
-Ref<StringImpl> StringImpl::createFromLiteral(const char* characters)
-{
-    return createFromLiteral(characters, strlen(characters));
-}
-
-Ref<StringImpl> StringImpl::createWithoutCopying(const UChar* characters, unsigned length)
-{
-    if (!length)
-        return *empty();
+    ASSERT(length);
     return adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
 }
 
-Ref<StringImpl> StringImpl::createWithoutCopying(const LChar* characters, unsigned length)
+Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(const LChar* characters, unsigned length)
 {
-    if (!length)
-        return *empty();
+    ASSERT(length);
     return adoptRef(*new StringImpl(characters, length, ConstructWithoutCopying));
 }
 
