@@ -1,3 +1,14 @@
+2022-04-29  Youenn Fablet  <youenn@apple.com>
+
+        HTMLMediaElement can get multiple interruptions for invisible autoplay
+        https://bugs.webkit.org/show_bug.cgi?id=239842
+        <rdar://91809550>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed-expected.txt: Added.
+        * fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html: Added.
+
 2022-04-28  Patrick Griffis  <pgriffis@igalia.com>
 
         CSP: Fix mixing strict-dynamic and unsafe-inline policies

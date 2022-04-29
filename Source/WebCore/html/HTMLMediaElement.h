@@ -1248,6 +1248,7 @@ private:
 #if USE(AUDIO_SESSION)
     AudioSessionCategory m_categoryAtMostRecentPlayback;
 #endif
+    bool m_wasInterruptedForInvisibleAutoplay { false };
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

@@ -8379,15 +8379,26 @@ void HTMLMediaElement::updateShouldAutoplay()
     bool canAutoplay = mediaSession().autoplayPermitted();
 
     if (canAutoplay) {
-        if (mediaSession().state() == PlatformMediaSession::Interrupted) {
-            if (mediaSession().interruptionType() == PlatformMediaSession::InvisibleAutoplay)
-                mediaSession().endInterruption(PlatformMediaSession::MayResumePlaying);
-        } else if (!isPlaying())
+        if (m_wasInterruptedForInvisibleAutoplay) {
+            m_wasInterruptedForInvisibleAutoplay = false;
+            mediaSession().endInterruption(PlatformMediaSession::MayResumePlaying);
+            return;
+        }
+        if (!isPlaying())
             resumeAutoplaying();
         return;
     }
-    if (mediaSession().state() != PlatformMediaSession::Interrupted)
-        mediaSession().beginInterruption(PlatformMediaSession::InvisibleAutoplay);
+
+    if (mediaSession().state() == PlatformMediaSession::Interrupted)
+        return;
+
+    if (m_wasInterruptedForInvisibleAutoplay) {
+        m_wasInterruptedForInvisibleAutoplay = false;
+        mediaSession().endInterruption(PlatformMediaSession::NoFlags);
+    }
+
+    m_wasInterruptedForInvisibleAutoplay = true;
+    mediaSession().beginInterruption(PlatformMediaSession::InvisibleAutoplay);
 }
 
 void HTMLMediaElement::updateShouldPlay()
