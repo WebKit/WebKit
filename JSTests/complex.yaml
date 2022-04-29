@@ -29,6 +29,12 @@
 - path: complex/tagged-template-regeneration.js
   cmd: runComplexTest [], ["tagged-template-regeneration-after.js"], "", "--useDollarVM=1"
 
+- path: complex/timezone-format-de.js
+  cmd: runComplexTest [], [], "TZ=Europe/Berlin", "--useDollarVM=1"
+
+- path: complex/timezone-format-en.js
+  cmd: runComplexTest [], [], "TZ=America/New_York", "--useDollarVM=1"
+
 - path: complex/timezone-offset-apia.js
   cmd: runComplexTest [], [], "TZ=Pacific/Apia", "--useDollarVM=1"
 

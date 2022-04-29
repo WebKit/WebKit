@@ -29,12 +29,14 @@
 
 namespace JSC {
 
+class DateCache;
+
 enum DateTimeFormat {
     DateTimeFormatDate = 1,
     DateTimeFormatTime = 2,
     DateTimeFormatDateAndTime = DateTimeFormatDate | DateTimeFormatTime
 };
 
-JS_EXPORT_PRIVATE WTF::String formatDateTime(const GregorianDateTime&, DateTimeFormat, bool asUTCVariant);
+JS_EXPORT_PRIVATE WTF::String formatDateTime(const GregorianDateTime&, DateTimeFormat, bool asUTCVariant, DateCache&);
 
 } // namespace JSC

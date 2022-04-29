@@ -1908,7 +1908,7 @@ int main(int argc, char* argv[])
     JSValueRef argumentsDateValues[] = { JSValueMakeNumber(context, 0) };
     o = JSObjectMakeDate(context, 1, argumentsDateValues, NULL);
     if (timeZoneIsPST())
-        assertEqualsAsUTF8String(o, "Wed Dec 31 1969 16:00:00 GMT-0800 (PST)");
+        assertEqualsAsUTF8String(o, "Wed Dec 31 1969 16:00:00 GMT-0800 (Pacific Standard Time)");
 
     string = JSStringCreateWithUTF8CString("an error message");
     JSValueRef argumentsErrorValues[] = { JSValueMakeString(context, string) };

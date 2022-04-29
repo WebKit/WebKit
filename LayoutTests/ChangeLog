@@ -1,3 +1,20 @@
+2022-04-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Format time zone name using ICU instead of platform calls
+        https://bugs.webkit.org/show_bug.cgi?id=239865
+
+        Reviewed by Yusuke Suzuki.
+
+        Rebased existing layout tests to reflect new format (which is the same as in other
+        browsers now).
+
+        * storage/indexeddb/modern/date-basic-expected.txt:
+        * storage/indexeddb/modern/date-basic-private-expected.txt:
+        * storage/indexeddb/modern/get-keyrange-expected.txt:
+        * storage/indexeddb/modern/get-keyrange-private-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-delete-1-expected.txt:
+        * storage/indexeddb/modern/idbobjectstore-delete-1-private-expected.txt:
+
 2022-04-29  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         REGRESSION(r291998): [GTK] test accessibility/gtk/menu-list-unfocused-notifications.html is flaky

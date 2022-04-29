@@ -188,7 +188,7 @@ PASS: cookie.header should be the original header text.
 PASS: cookie.type should be WI.Cookie.Type.Response.
 PASS: cookie.name should be 'name'.
 PASS: cookie.value should be 'value'.
-PASS: cookie.expires should be 'Thu Oct 05 2017 20:20:27 GMT-0700 (PDT)'.
+PASS: cookie.expires should be 'Thu Oct 05 2017 20:20:27 GMT-0700 (Pacific Daylight Time)'.
 PASS: cookie.maxAge should be '3600'.
 PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be 'null'.
@@ -202,7 +202,7 @@ PASS: cookie.header should be the original header text.
 PASS: cookie.type should be WI.Cookie.Type.Response.
 PASS: cookie.name should be 'name'.
 PASS: cookie.value should be 'value'.
-PASS: cookie.expires should be 'Thu Oct 05 2017 20:43:47 GMT-0700 (PDT)'.
+PASS: cookie.expires should be 'Thu Oct 05 2017 20:43:47 GMT-0700 (Pacific Daylight Time)'.
 PASS: cookie.maxAge should be '5000'.
 PASS: cookie.path should be '/foo'.
 PASS: cookie.domain should be 'example.com'.
@@ -260,7 +260,7 @@ PASS: cookie.header should be the original header text.
 PASS: cookie.type should be WI.Cookie.Type.Response.
 PASS: cookie.name should be 'name'.
 PASS: cookie.value should be '=value='.
-PASS: cookie.expires should be 'Tue Apr 03 2018 20:34:02 GMT-0700 (PDT)'.
+PASS: cookie.expires should be 'Tue Apr 03 2018 20:34:02 GMT-0700 (Pacific Daylight Time)'.
 PASS: cookie.maxAge should be 'null'.
 PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be '.example.com'.

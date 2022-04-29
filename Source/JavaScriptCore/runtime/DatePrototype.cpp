@@ -106,7 +106,7 @@ static EncodedJSValue formateDateInstance(JSGlobalObject* globalObject, CallFram
     if (!gregorianDateTime)
         return JSValue::encode(jsNontrivialString(vm, String("Invalid Date"_s)));
 
-    return JSValue::encode(jsNontrivialString(vm, formatDateTime(*gregorianDateTime, format, asUTCVariant)));
+    return JSValue::encode(jsNontrivialString(vm, formatDateTime(*gregorianDateTime, format, asUTCVariant, cache)));
 }
 
 

@@ -80,7 +80,7 @@ public:
     JS_EXPORT_PRIVATE void resetIfNecessary();
 
     String defaultTimeZone();
-
+    String timeZoneDisplayName(bool isDST);
     Ref<DateInstanceData> cachedDateInstanceData(double millisecondsFromEpoch);
 
     void msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime&);
@@ -108,6 +108,8 @@ private:
     double m_cachedDateStringValue;
     DateInstanceCache m_dateInstanceCache;
     uint64_t m_cachedTimezoneID { 0 };
+    String m_timeZoneStandardDisplayNameCache;
+    String m_timeZoneDSTDisplayNameCache;
 };
 
 ALWAYS_INLINE bool isUTCEquivalent(StringView timeZone)

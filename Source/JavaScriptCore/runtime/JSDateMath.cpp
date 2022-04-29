@@ -75,6 +75,7 @@
 #include "ExceptionHelpers.h"
 #include "VM.h"
 #include <limits>
+#include <wtf/Language.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 #if U_ICU_VERSION_MAJOR_NUM >= 69 || (U_ICU_VERSION_MAJOR_NUM == 68 && USE(APPLE_INTERNAL_SDK))
@@ -89,6 +90,7 @@
 #undef U_SHOW_CPLUSPLUS_API
 #define U_SHOW_CPLUSPLUS_API 1
 #include <unicode/basictz.h>
+#include <unicode/locid.h>
 #include <unicode/timezone.h>
 #include <unicode/unistr.h>
 #undef U_SHOW_CPLUSPLUS_API
@@ -108,6 +110,15 @@ public:
     std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> m_calendar;
     String m_canonicalTimeZoneID;
 };
+#else
+static icu::TimeZone* toICUTimeZone(OpaqueICUTimeZone* timeZone)
+{
+    return bitwise_cast<icu::TimeZone*>(timeZone);
+}
+static OpaqueICUTimeZone* toOpaqueICUTimeZone(icu::TimeZone* timeZone)
+{
+    return bitwise_cast<OpaqueICUTimeZone*>(timeZone);
+}
 #endif
 
 void OpaqueICUTimeZoneDeleter::operator()(OpaqueICUTimeZone* timeZone)
@@ -116,7 +127,7 @@ void OpaqueICUTimeZoneDeleter::operator()(OpaqueICUTimeZone* timeZone)
 #if HAVE(ICU_C_TIMEZONE_API)
         delete timeZone;
 #else
-        delete bitwise_cast<icu::TimeZone*>(timeZone);
+        delete toICUTimeZone(timeZone);
 #endif
     }
 }
@@ -155,7 +166,7 @@ LocalTimeOffset DateCache::calculateLocalTimeOffset(double millisecondsFromEpoch
             return failed;
     }
 #else
-    auto& timeZoneCache = *bitwise_cast<icu::TimeZone*>(this->timeZoneCache());
+    auto& timeZoneCache = *toICUTimeZone(this->timeZoneCache());
     if (inputTimeType != WTF::LocalTime) {
         constexpr bool isLocalTime = false;
         timeZoneCache.getOffset(millisecondsFromEpoch, isLocalTime, rawOffset, dstOffset, status);
@@ -337,7 +348,7 @@ String DateCache::defaultTimeZone()
 #else
     icu::UnicodeString timeZoneID;
     icu::UnicodeString canonicalTimeZoneID;
-    auto& timeZone = *bitwise_cast<icu::TimeZone*>(timeZoneCache());
+    auto& timeZone = *toICUTimeZone(timeZoneCache());
     timeZone.getID(timeZoneID);
 
     UErrorCode status = U_ZERO_ERROR;
@@ -352,6 +363,46 @@ String DateCache::defaultTimeZone()
 
     return canonical;
 #endif
+}
+
+String DateCache::timeZoneDisplayName(bool isDST)
+{
+    if (m_timeZoneStandardDisplayNameCache.isNull()) {
+#if HAVE(ICU_C_TIMEZONE_API)
+        auto& timeZoneCache = *this->timeZoneCache();
+        String languageString = defaultLanguage();
+        const char* language = languageString.utf8().data();
+        {
+            Vector<UChar, 32> standardDisplayNameBuffer;
+            auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_STANDARD, language, standardDisplayNameBuffer);
+            if (U_SUCCESS(status))
+                m_timeZoneStandardDisplayNameCache = String::adopt(WTFMove(standardDisplayNameBuffer));
+        }
+        {
+            Vector<UChar, 32> dstDisplayNameBuffer;
+            auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_DST, language, dstDisplayNameBuffer);
+            if (U_SUCCESS(status))
+                m_timeZoneDSTDisplayNameCache = String::adopt(WTFMove(dstDisplayNameBuffer));
+        }
+#else
+        auto& timeZoneCache = *toICUTimeZone(this->timeZoneCache());
+        String language = defaultLanguage();
+        icu::Locale locale(language.utf8().data());
+        {
+            icu::UnicodeString standardDisplayName;
+            timeZoneCache.getDisplayName(false /* inDaylight */, icu::TimeZone::LONG, locale, standardDisplayName);
+            m_timeZoneStandardDisplayNameCache = String(standardDisplayName.getBuffer(), standardDisplayName.length());
+        }
+        {
+            icu::UnicodeString dstDisplayName;
+            timeZoneCache.getDisplayName(true /* inDaylight */, icu::TimeZone::LONG, locale, dstDisplayName);
+            m_timeZoneDSTDisplayNameCache = String(dstDisplayName.getBuffer(), dstDisplayName.length());
+        }
+#endif
+    }
+    if (isDST)
+        return m_timeZoneDSTDisplayNameCache;
+    return m_timeZoneStandardDisplayNameCache;
 }
 
 #if PLATFORM(COCOA)
@@ -406,7 +457,7 @@ void DateCache::timeZoneCacheSlow()
     m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(cache);
 #else
     // Do not use icu::TimeZone::createDefault. ICU internally has a cache for timezone and createDefault returns this cached value.
-    m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(bitwise_cast<OpaqueICUTimeZone*>(icu::TimeZone::detectHostTimeZone()));
+    m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(toOpaqueICUTimeZone(icu::TimeZone::detectHostTimeZone()));
 #endif
 }
 
@@ -426,6 +477,8 @@ void DateCache::resetIfNecessary()
     m_cachedDateString = String();
     m_cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
     m_dateInstanceCache.reset();
+    m_timeZoneStandardDisplayNameCache = String();
+    m_timeZoneDSTDisplayNameCache = String();
 }
 
 } // namespace JSC
