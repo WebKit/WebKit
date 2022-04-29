@@ -1716,9 +1716,9 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                 return MethodOfGettingAValueProfile::bytecodeValueProfile(node->origin.semantic);
 
             if (profiledBlock->hasBaselineJITProfiling()) {
-                if (BinaryArithProfile* result = profiledBlock->binaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
+                if (profiledBlock->binaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
                     return MethodOfGettingAValueProfile::binaryArithProfile(node->origin.semantic);
-                if (UnaryArithProfile* result = profiledBlock->unaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
+                if (profiledBlock->unaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
                     return MethodOfGettingAValueProfile::unaryArithProfile(node->origin.semantic);
             }
         }
