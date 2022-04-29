@@ -93,8 +93,8 @@ ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest
 
 RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
 {
-    if (auto protocol = request.url().protocol().toExistingAtomString(); protocol) {
-        if (auto constructor = builtinResourceHandleConstructorMap().get(AtomString(protocol.releaseNonNull())))
+    if (auto protocol = request.url().protocol().toExistingAtomString(); !protocol.isNull()) {
+        if (auto constructor = builtinResourceHandleConstructorMap().get(protocol))
             return constructor(request, client);
     }
 
@@ -139,8 +139,8 @@ void ResourceHandle::failureTimerFired()
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin* sourceOrigin, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
-    if (auto protocol = request.url().protocol().toExistingAtomString(); protocol) {
-        if (auto constructor = builtinResourceHandleSynchronousLoaderMap().get(AtomString(protocol.releaseNonNull()))) {
+    if (auto protocol = request.url().protocol().toExistingAtomString(); !protocol.isNull()) {
+        if (auto constructor = builtinResourceHandleSynchronousLoaderMap().get(protocol)) {
             constructor(context, request, storedCredentialsPolicy, error, response, data);
             return;
         }

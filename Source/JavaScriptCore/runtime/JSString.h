@@ -193,7 +193,7 @@ public:
 
     Identifier toIdentifier(JSGlobalObject*) const;
     AtomString toAtomString(JSGlobalObject*) const;
-    RefPtr<AtomStringImpl> toExistingAtomString(JSGlobalObject*) const;
+    AtomString toExistingAtomString(JSGlobalObject*) const;
 
     StringViewWithUnderlyingString viewWithUnderlyingString(JSGlobalObject*) const;
 
@@ -824,7 +824,7 @@ ALWAYS_INLINE AtomString JSString::toAtomString(JSGlobalObject* globalObject) co
     return atom;
 }
 
-ALWAYS_INLINE RefPtr<AtomStringImpl> JSString::toExistingAtomString(JSGlobalObject* globalObject) const
+ALWAYS_INLINE AtomString JSString::toExistingAtomString(JSGlobalObject* globalObject) const
 {
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();

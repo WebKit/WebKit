@@ -123,8 +123,8 @@ Element* TreeScope::getElementById(StringView elementId) const
     if (!m_elementsById)
         return nullptr;
 
-    if (auto atomElementId = elementId.toExistingAtomString())
-        return m_elementsById->getElementById(*atomElementId, *this);
+    if (auto atomElementId = elementId.toExistingAtomString(); !atomElementId.isNull())
+        return m_elementsById->getElementById(*atomElementId.impl(), *this);
 
     return nullptr;
 }

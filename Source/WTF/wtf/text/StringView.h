@@ -104,7 +104,7 @@ public:
     String toString() const;
     String toStringWithoutCopying() const;
     AtomString toAtomString() const;
-    RefPtr<AtomStringImpl> toExistingAtomString() const;
+    AtomString toExistingAtomString() const;
 
 #if USE(CF)
     // These functions convert null strings to empty strings.
@@ -600,7 +600,7 @@ inline AtomString StringView::toAtomString() const
     return AtomString(characters16(), m_length);
 }
 
-inline RefPtr<AtomStringImpl> StringView::toExistingAtomString() const
+inline AtomString StringView::toExistingAtomString() const
 {
     if (is8Bit())
         return AtomStringImpl::lookUp(characters8(), m_length);

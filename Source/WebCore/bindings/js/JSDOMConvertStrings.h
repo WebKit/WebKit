@@ -230,7 +230,7 @@ template<typename T> struct Converter<IDLRequiresExistingAtomStringAdaptor<T>> :
     {
         static_assert(std::is_same<T, IDLDOMString>::value, "This adaptor is only supported for IDLDOMString at the moment.");
     
-        return AtomString(value.toString(&lexicalGlobalObject)->toExistingAtomString(&lexicalGlobalObject));
+        return value.toString(&lexicalGlobalObject)->toExistingAtomString(&lexicalGlobalObject);
     }
 };
 
