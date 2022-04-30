@@ -174,6 +174,9 @@ static const GDBusInterfaceVTable gInterfaceVTable = {
 
 std::unique_ptr<MediaSessionGLib> MediaSessionGLib::create(MediaSessionManagerGLib& manager, MediaSessionIdentifier identifier)
 {
+    if (!manager.areDBusNotificationsEnabled())
+        return makeUnique<MediaSessionGLib>(manager, nullptr, identifier);
+
     GUniqueOutPtr<GError> error;
     GUniquePtr<char> address(g_dbus_address_get_for_bus_sync(G_BUS_TYPE_SESSION, nullptr, &error.outPtr()));
     if (error) {
@@ -197,6 +200,9 @@ MediaSessionGLib::MediaSessionGLib(MediaSessionManagerGLib& manager, GRefPtr<GDB
     , m_manager(manager)
     , m_connection(WTFMove(connection))
 {
+    if (!m_connection)
+        return;
+
     const auto& mprisInterface = m_manager.mprisInterface();
     GUniqueOutPtr<GError> error;
     m_rootRegistrationId = g_dbus_connection_register_object(m_connection.get(), DBUS_MPRIS_OBJECT_PATH, mprisInterface->interfaces[0],
@@ -235,6 +241,9 @@ MediaSessionGLib::~MediaSessionGLib()
 
 void MediaSessionGLib::emitPositionChanged(double time)
 {
+    if (!m_connection)
+        return;
+
     GUniqueOutPtr<GError> error;
     int64_t position = time * 1000000;
     if (!g_dbus_connection_emit_signal(m_connection.get(), nullptr, DBUS_MPRIS_OBJECT_PATH, DBUS_MPRIS_PLAYER_INTERFACE, "Seeked", g_variant_new("(x)", position), &error.outPtr()))
@@ -243,6 +252,9 @@ void MediaSessionGLib::emitPositionChanged(double time)
 
 void MediaSessionGLib::updateNowPlaying(NowPlayingInfo& nowPlayingInfo)
 {
+    if (!m_connection)
+        return;
+
     GVariantBuilder propertiesBuilder;
     g_variant_builder_init(&propertiesBuilder, G_VARIANT_TYPE("a{sv}"));
     g_variant_builder_add(&propertiesBuilder, "{sv}", "Metadata", getMetadataAsGVariant(nowPlayingInfo));
@@ -315,6 +327,9 @@ void MediaSessionGLib::emitPropertiesChanged(GVariant* parameters)
 
 void MediaSessionGLib::playbackStatusChanged(PlatformMediaSession& platformSession)
 {
+    if (!m_connection)
+        return;
+
     GVariantBuilder builder;
     g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
     g_variant_builder_add(&builder, "{sv}", "PlaybackStatus", getPlaybackStatusAsGVariant(&platformSession));
