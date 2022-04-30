@@ -1,3 +1,14 @@
+2022-04-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r293621.
+
+        Reverting patch while we fix internal EWS issues, will reland
+        after.
+
+        Reverted changeset:
+
+        https://commits.webkit.org/r293621
+
 2022-04-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use FixedVector in JumpReplacements and VariableEventStream

@@ -1,3 +1,14 @@
+2022-04-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r293621.
+
+        Reverting patch while we fix internal EWS issues, will reland
+        after
+
+        Reverted changeset:
+
+        https://commits.webkit.org/r293621
+
 2022-04-29  Philippe Normand  <philn@igalia.com>
 
         REGRESSION(r293608): [GTK][WPE] Broke clang builds

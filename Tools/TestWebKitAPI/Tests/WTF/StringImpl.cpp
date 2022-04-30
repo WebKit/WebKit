@@ -36,38 +36,49 @@ namespace TestWebKitAPI {
 TEST(WTF, StringImplCreationFromLiteral)
 {
     // Constructor taking an ASCIILiteral.
-    auto stringWithTemplate = StringImpl::create("Template Literal"_s);
+    auto stringWithTemplate = StringImpl::createFromLiteral("Template Literal"_s);
     ASSERT_EQ(strlen("Template Literal"), stringWithTemplate->length());
     ASSERT_TRUE(equal(stringWithTemplate.get(), "Template Literal"));
     ASSERT_TRUE(stringWithTemplate->is8Bit());
 
     // Constructor taking the size explicitly.
     const char* programmaticStringData = "Explicit Size Literal";
-    auto programmaticString = StringImpl::createWithoutCopying(programmaticStringData, strlen(programmaticStringData));
+    auto programmaticString = StringImpl::createFromLiteral(programmaticStringData, strlen(programmaticStringData));
     ASSERT_EQ(strlen(programmaticStringData), programmaticString->length());
     ASSERT_TRUE(equal(programmaticString.get(), programmaticStringData));
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->characters8()));
     ASSERT_TRUE(programmaticString->is8Bit());
 
-    // AtomStringImpl from createWithoutCopying should use the same underlying string.
+    // Constructor without explicit size.
+    const char* stringWithoutLengthLiteral = "No Size Literal";
+    auto programmaticStringNoLength = StringImpl::createFromLiteral(stringWithoutLengthLiteral);
+    ASSERT_EQ(strlen(stringWithoutLengthLiteral), programmaticStringNoLength->length());
+    ASSERT_TRUE(equal(programmaticStringNoLength.get(), stringWithoutLengthLiteral));
+    ASSERT_EQ(stringWithoutLengthLiteral, reinterpret_cast<const char*>(programmaticStringNoLength->characters8()));
+    ASSERT_TRUE(programmaticStringNoLength->is8Bit());
+
+    // AtomStringImpl from createFromLiteral should use the same underlying string.
     auto atomStringWithTemplate = AtomStringImpl::add(stringWithTemplate.ptr());
     ASSERT_TRUE(atomStringWithTemplate->is8Bit());
     ASSERT_EQ(atomStringWithTemplate->characters8(), stringWithTemplate->characters8());
     auto atomicProgrammaticString = AtomStringImpl::add(programmaticString.ptr());
     ASSERT_TRUE(atomicProgrammaticString->is8Bit());
     ASSERT_EQ(atomicProgrammaticString->characters8(), programmaticString->characters8());
+    auto atomicProgrammaticStringNoLength = AtomStringImpl::add(programmaticStringNoLength.ptr());
+    ASSERT_TRUE(atomicProgrammaticStringNoLength->is8Bit());
+    ASSERT_EQ(atomicProgrammaticStringNoLength->characters8(), programmaticStringNoLength->characters8());
 }
 
 TEST(WTF, StringImplReplaceWithLiteral)
 {
-    auto testStringImpl = StringImpl::create("1224"_s);
+    auto testStringImpl = StringImpl::createFromLiteral("1224"_s);
     ASSERT_TRUE(testStringImpl->is8Bit());
 
     // Cases for 8Bit source.
     testStringImpl = testStringImpl->replace('2', "", 0);
     ASSERT_TRUE(equal(testStringImpl.get(), "14"));
 
-    testStringImpl = StringImpl::create("1224"_s);
+    testStringImpl = StringImpl::createFromLiteral("1224"_s);
     ASSERT_TRUE(testStringImpl->is8Bit());
 
     testStringImpl = testStringImpl->replace('3', "NotFound", 8);
@@ -76,7 +87,7 @@ TEST(WTF, StringImplReplaceWithLiteral)
     testStringImpl = testStringImpl->replace('2', "3", 1);
     ASSERT_TRUE(equal(testStringImpl.get(), "1334"));
 
-    testStringImpl = StringImpl::create("1224"_s);
+    testStringImpl = StringImpl::createFromLiteral("1224"_s);
     ASSERT_TRUE(testStringImpl->is8Bit());
     testStringImpl = testStringImpl->replace('2', "555", 3);
     ASSERT_TRUE(equal(testStringImpl.get(), "15555554"));
@@ -104,13 +115,13 @@ TEST(WTF, StringImplReplaceWithLiteral)
 
 TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
 {
-    auto a = StringImpl::create("aBcDeFG"_s);
-    auto b = StringImpl::create("ABCDEFG"_s);
-    auto c = StringImpl::create("abcdefg"_s);
+    auto a = StringImpl::createFromLiteral("aBcDeFG"_s);
+    auto b = StringImpl::createFromLiteral("ABCDEFG"_s);
+    auto c = StringImpl::createFromLiteral("abcdefg"_s);
     constexpr auto d = "aBcDeFG"_s;
     auto empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
-    auto shorter = StringImpl::create("abcdef"_s);
-    auto different = StringImpl::create("abcrefg"_s);
+    auto shorter = StringImpl::createFromLiteral("abcdef"_s);
+    auto different = StringImpl::createFromLiteral("abcrefg"_s);
 
     // Identity.
     ASSERT_TRUE(equalIgnoringASCIICase(a.ptr(), a.ptr()));
@@ -142,7 +153,7 @@ TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
 
 TEST(WTF, StringImplEqualIgnoringASCIICaseWithNull)
 {
-    auto reference = StringImpl::create("aBcDeFG"_s);
+    auto reference = StringImpl::createFromLiteral("aBcDeFG"_s);
     StringImpl* nullStringImpl = nullptr;
     ASSERT_FALSE(equalIgnoringASCIICase(nullStringImpl, reference.ptr()));
     ASSERT_FALSE(equalIgnoringASCIICase(reference.ptr(), nullStringImpl));
@@ -198,26 +209,26 @@ TEST(WTF, StringImplFindIgnoringASCIICaseBasic)
     EXPECT_EQ(static_cast<size_t>(notFound), referenceB->findIgnoringASCIICase(referenceA.ptr()));
 
     // Find the prefix.
-    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(StringImpl::create("a"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("a"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(stringFromUTF8("abcé").ptr()));
-    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(StringImpl::create("A"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("A"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(0), referenceA->findIgnoringASCIICase(stringFromUTF8("ABCé").ptr()));
-    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(StringImpl::create("a"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("a"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(stringFromUTF8("abcÉ").ptr()));
-    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(StringImpl::create("A"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("A"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(0), referenceB->findIgnoringASCIICase(stringFromUTF8("ABCÉ").ptr()));
 
     // Not a prefix.
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::create("x"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("x"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("accé").ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("abcÉ").ptr()));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::create("X"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("X"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("ABDé").ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("ABCÉ").ptr()));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::create("y"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("y"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("accÉ").ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("abcé").ptr()));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::create("Y"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("Y"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("ABdÉ").ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("ABCé").ptr()));
 
@@ -264,32 +275,32 @@ TEST(WTF, StringImplFindIgnoringASCIICaseBasic)
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("z").ptr()));
 
     // Find the suffix.
-    EXPECT_EQ(static_cast<size_t>(6), referenceA->findIgnoringASCIICase(StringImpl::create("g"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(6), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("g"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(4), referenceA->findIgnoringASCIICase(stringFromUTF8("efg").ptr()));
     EXPECT_EQ(static_cast<size_t>(3), referenceA->findIgnoringASCIICase(stringFromUTF8("éefg").ptr()));
-    EXPECT_EQ(static_cast<size_t>(6), referenceA->findIgnoringASCIICase(StringImpl::create("G"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(6), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("G"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(4), referenceA->findIgnoringASCIICase(stringFromUTF8("EFG").ptr()));
     EXPECT_EQ(static_cast<size_t>(3), referenceA->findIgnoringASCIICase(stringFromUTF8("éEFG").ptr()));
 
-    EXPECT_EQ(static_cast<size_t>(6), referenceB->findIgnoringASCIICase(StringImpl::create("g"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(6), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("g"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(4), referenceB->findIgnoringASCIICase(stringFromUTF8("efg").ptr()));
     EXPECT_EQ(static_cast<size_t>(3), referenceB->findIgnoringASCIICase(stringFromUTF8("Éefg").ptr()));
-    EXPECT_EQ(static_cast<size_t>(6), referenceB->findIgnoringASCIICase(StringImpl::create("G"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(6), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("G"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(4), referenceB->findIgnoringASCIICase(stringFromUTF8("EFG").ptr()));
     EXPECT_EQ(static_cast<size_t>(3), referenceB->findIgnoringASCIICase(stringFromUTF8("ÉEFG").ptr()));
 
     // Not a suffix.
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::create("X"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("X"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("edg").ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("Éefg").ptr()));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::create("w"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(StringImpl::createFromLiteral("w"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("dFG").ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceA->findIgnoringASCIICase(stringFromUTF8("ÉEFG").ptr()));
 
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::create("Z"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("Z"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("ffg").ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("éefg").ptr()));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::create("r"_s).ptr()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(StringImpl::createFromLiteral("r"_s).ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("EgG").ptr()));
     EXPECT_EQ(static_cast<size_t>(WTF::notFound), referenceB->findIgnoringASCIICase(stringFromUTF8("éEFG").ptr()));
 }
@@ -364,17 +375,17 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseBasic)
     ASSERT_TRUE(referenceEquivalent->startsWithIgnoringASCIICase(*referenceEquivalent.ptr()));
 
     // Proper prefixes.
-    auto aLower = StringImpl::create("a"_s);
+    auto aLower = StringImpl::createFromLiteral("a"_s);
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(aLower.ptr()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*aLower.ptr()));
-    auto aUpper = StringImpl::create("A"_s);
+    auto aUpper = StringImpl::createFromLiteral("A"_s);
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(aUpper.ptr()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*aUpper.ptr()));
 
-    auto abcLower = StringImpl::create("abc"_s);
+    auto abcLower = StringImpl::createFromLiteral("abc"_s);
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(abcLower.ptr()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*abcLower.ptr()));
-    auto abcUpper = StringImpl::create("ABC"_s);
+    auto abcUpper = StringImpl::createFromLiteral("ABC"_s);
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(abcUpper.ptr()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*abcUpper.ptr()));
 
@@ -403,7 +414,7 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseBasic)
 
 TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithNull)
 {
-    auto reference = StringImpl::create("aBcDeFG"_s);
+    auto reference = StringImpl::createFromLiteral("aBcDeFG"_s);
     ASSERT_FALSE(reference->startsWithIgnoringASCIICase(StringView { }));
 
     auto empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
@@ -412,7 +423,7 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithNull)
 
 TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithEmpty)
 {
-    auto reference = StringImpl::create("aBcDeFG"_s);
+    auto reference = StringImpl::createFromLiteral("aBcDeFG"_s);
     auto empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(empty.ptr()));
     ASSERT_TRUE(reference->startsWithIgnoringASCIICase(*empty.ptr()));
@@ -453,17 +464,17 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseBasic)
     ASSERT_TRUE(referenceEquivalent->endsWithIgnoringASCIICase(*referenceEquivalent.ptr()));
 
     // Proper suffixes.
-    auto aLower = StringImpl::create("a"_s);
+    auto aLower = StringImpl::createFromLiteral("a"_s);
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(aLower.ptr()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*aLower.ptr()));
-    auto aUpper = StringImpl::create("a"_s);
+    auto aUpper = StringImpl::createFromLiteral("a"_s);
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(aUpper.ptr()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*aUpper.ptr()));
 
-    auto abcLower = StringImpl::create("cba"_s);
+    auto abcLower = StringImpl::createFromLiteral("cba"_s);
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(abcLower.ptr()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*abcLower.ptr()));
-    auto abcUpper = StringImpl::create("CBA"_s);
+    auto abcUpper = StringImpl::createFromLiteral("CBA"_s);
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(abcUpper.ptr()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*abcUpper.ptr()));
 
@@ -492,7 +503,7 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseBasic)
 
 TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithNull)
 {
-    auto reference = StringImpl::create("aBcDeFG"_s);
+    auto reference = StringImpl::createFromLiteral("aBcDeFG"_s);
     ASSERT_FALSE(reference->endsWithIgnoringASCIICase(StringView { }));
 
     auto empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
@@ -501,7 +512,7 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithNull)
 
 TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithEmpty)
 {
-    auto reference = StringImpl::create("aBcDeFG"_s);
+    auto reference = StringImpl::createFromLiteral("aBcDeFG"_s);
     auto empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(empty.ptr()));
     ASSERT_TRUE(reference->endsWithIgnoringASCIICase(*empty.ptr()));
