@@ -1,5 +1,20 @@
 2022-04-30  Alan Bujtas  <zalan@apple.com>
 
+        Only stretch the percent height <body> when it is the document element's child
+        https://bugs.webkit.org/show_bug.cgi?id=239932
+        <rdar://92257660>
+
+        Reviewed by Antti Koivisto.
+
+        This IE quirk should only be applied to when the body is actually the document element's child (stretching case).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::parentBox const):
+
+2022-04-30  Alan Bujtas  <zalan@apple.com>
+
         ASSERTION FAILED: *trailingRunIndex >= overflowingRunIndex in WebCore::Layout::InlineContentBreaker::tryBreakingNextOverflowingRuns
         https://bugs.webkit.org/show_bug.cgi?id=239838
         <rdar://problem/92455051>
