@@ -1,3 +1,35 @@
+2022-04-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mail compose] Images with data URLs should be pasted or dropped as attachments
+        https://bugs.webkit.org/show_bug.cgi?id=239911
+        rdar://91658665
+
+        Reviewed by Tim Horton.
+
+        Effectively revert the changes in r226340, which prevented data-URL and http-family-URL images from being
+        converted into attachments when pasting or dropping into Mail compose. The original intent behind this change
+        may have been to save Mail storage space (in the server and in the on-disk cache) by excluding remote images,
+        but this was changed in r291261 due to being a regression in behavior compared to legacy WebKit compose
+        behavior, which creates attachments when pasting or dropping both data and remote images.
+
+        Furthermore, the space-saving rationale never really made sense for image data URLs, which are encoded in base
+        64, since this base 64 representation is always going to be larger than the raw binary representation that we
+        would otherwise use for a normal attachment.
+
+        Test: WKAttachmentTests.InsertDataURLImagesAsAttachments
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::shouldReplaceSubresourceURLWithBlobDuringSanitization):
+
+        Remove the argument flag enum altogether, and rename this method to clarify that it is just about blob URL
+        replacement for sanitizing pasted/dropped fragments (rather than attachment replacement).
+
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::sanitizeMarkupWithArchive):
+        (WebCore::WebContentReader::readHTML):
+        (WebCore::WebContentMarkupReader::readHTML):
+        (WebCore::shouldReplaceSubresourceURL): Deleted.
+
 2022-04-29  Devin Rousso  <drousso@apple.com>
 
         increase transient activation duration to 5s

@@ -200,16 +200,9 @@ private:
     bool m_didDisableImage { false };
 };
 
-enum class ReplacementMethod : bool { BlobURL, Attachment };
-static bool shouldReplaceSubresourceURL(const URL& url, ReplacementMethod replacementType = ReplacementMethod::BlobURL)
+static bool shouldReplaceSubresourceURLWithBlobDuringSanitization(const URL& url)
 {
-    if (url.protocolIsData())
-        return false;
-
-    if (url.protocolIsInHTTPFamily())
-        return replacementType == ReplacementMethod::Attachment;
-
-    return true;
+    return !url.protocolIsData() && !url.protocolIsInHTTPFamily();
 }
 
 static bool shouldReplaceRichContentWithAttachments()
@@ -301,11 +294,8 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
 
     // FIXME: Handle resources in subframe archives.
     HashMap<AtomString, Ref<ArchiveResource>> urlToResourceMap;
-    for (auto& subresource : subresources) {
-        auto& url = subresource->url();
-        if (shouldReplaceSubresourceURL(url, ReplacementMethod::Attachment))
-            urlToResourceMap.set(url.string(), subresource.copyRef());
-    }
+    for (auto& subresource : subresources)
+        urlToResourceMap.set(subresource->url().string(), subresource.copyRef());
 
     Vector<SerializedAttachmentData> serializedAttachmentData;
     for (auto& attachment : descendantsOfType<HTMLAttachmentElement>(fragment)) {
@@ -466,7 +456,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
     HashMap<AtomString, AtomString> blobURLMap;
     for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
         auto& subresourceURL = subresource->url();
-        if (!shouldReplaceSubresourceURL(subresourceURL))
+        if (!shouldReplaceSubresourceURLWithBlobDuringSanitization(subresourceURL))
             continue;
         auto blob = Blob::create(&destinationDocument, subresource->data().copyData(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
@@ -484,7 +474,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
             continue;
 
         auto subframeURL = subframeMainResource->url();
-        if (!shouldReplaceSubresourceURL(subframeURL))
+        if (!shouldReplaceSubresourceURLWithBlobDuringSanitization(subframeURL))
             continue;
 
         MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().makeContiguous()->data(), subframeMainResource->data().size()),
@@ -590,7 +580,7 @@ bool WebContentReader::readHTML(const String& string)
     if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled() && shouldSanitize()) {
         markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [] (const URL& url) {
-                return shouldReplaceSubresourceURL(url);
+                return shouldReplaceSubresourceURLWithBlobDuringSanitization(url);
             });
         } });
     } else
@@ -609,7 +599,7 @@ bool WebContentMarkupReader::readHTML(const String& string)
     if (shouldSanitize()) {
         markup = sanitizeMarkup(rawHTML, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [] (const URL& url) {
-                return shouldReplaceSubresourceURL(url);
+                return shouldReplaceSubresourceURLWithBlobDuringSanitization(url);
             });
         } });
     } else

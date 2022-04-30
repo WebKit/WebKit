@@ -1,3 +1,16 @@
+2022-04-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mail compose] Images with data URLs should be pasted or dropped as attachments
+        https://bugs.webkit.org/show_bug.cgi?id=239911
+        rdar://91658665
+
+        Reviewed by Tim Horton.
+
+        Adjust expectations for an existing API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2022-04-29  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (249864@main): [ iOS ] TestWebKitAPI.ScrollViewScrollabilityTests.ScrollableWithOverflowHiddenAndShrunkUI is failing

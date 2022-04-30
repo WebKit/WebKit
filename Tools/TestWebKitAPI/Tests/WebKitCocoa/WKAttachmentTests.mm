@@ -1191,22 +1191,25 @@ TEST(WKAttachmentTests, InsertPastedAttributedStringContainingMultipleAttachment
     }
 }
 
-TEST(WKAttachmentTests, DoNotInsertDataURLImagesAsAttachments)
+TEST(WKAttachmentTests, InsertDataURLImagesAsAttachments)
 {
     auto webContentSourceView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
     [webContentSourceView synchronouslyLoadTestPageNamed:@"apple-data-url"];
     [webContentSourceView selectAll:nil];
     [webContentSourceView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
 
+    RetainPtr<_WKAttachment> pastedAttachment;
     auto webView = webViewForTestingAttachments();
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
         [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
-        EXPECT_EQ(0U, observer.observer().inserted.count);
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+        pastedAttachment = observer.observer().inserted.firstObject;
     }
 
-    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"Boolean(document.querySelector('attachment'))"].boolValue);
-    EXPECT_EQ(1990, [webView stringByEvaluatingJavaScript:@"document.querySelector('img').src.length"].integerValue);
+    RetainPtr info = [pastedAttachment info];
+    EXPECT_WK_STREQ("image/gif", [info contentType]);
+    EXPECT_GT([info data].length, 0U);
     EXPECT_WK_STREQ("This is an apple", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
 }
 
