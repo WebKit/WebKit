@@ -1,3 +1,13 @@
+2022-04-30  Philippe Normand  <philn@igalia.com>
+
+        REGRESSION(r283437) a number of media tests fail/timeout on the test bots
+        https://bugs.webkit.org/show_bug.cgi?id=231811
+        <rdar://problem/84552871>
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/glib/TestExpectations: Unflag tests now passing.
+
 2022-04-30  Alan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: *trailingRunIndex >= overflowingRunIndex in WebCore::Layout::InlineContentBreaker::tryBreakingNextOverflowingRuns

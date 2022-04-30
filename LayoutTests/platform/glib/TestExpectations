@@ -848,26 +848,6 @@ webkit.org/b/229973 media/track/in-band/track-in-band-srt-mkv-cues-added-once.ht
 
 webkit.org/b/230028 media/media-source/media-source-seek-twice.html [ Pass Timeout ]
 
-webkit.org/b/231811 media/audio-background-playback-playlist.html [ Failure ]
-webkit.org/b/231811 media/media-session/actionHandlerInternalMappings.html [ Failure ]
-webkit.org/b/231811 media/media-session/default-actionHandlers.html [ Failure ]
-webkit.org/b/231811 media/video-background-playback.html [ Failure ]
-webkit.org/b/231811 media/video-concurrent-playback.html [ Failure ]
-webkit.org/b/231811 media/video-interruption-with-resume-not-allowing-play.html [ Failure ]
-webkit.org/b/231811 media/video-multiple-concurrent-playback.html [ Failure ]
-webkit.org/b/231811 media/webaudio-background-playback.html [ Failure ]
-webkit.org/b/231811 media/media-session/callActionHandler.html [ Timeout ]
-webkit.org/b/231811 media/media-session/play-after-seek.html [ Timeout ]
-webkit.org/b/231811 media/remote-control-command-is-user-gesture.html [ Timeout ]
-webkit.org/b/231811 media/remote-control-command-scrubbing.html [ Timeout ]
-webkit.org/b/231811 media/remote-control-command-seek.html [ Timeout ]
-webkit.org/b/231811 media/video-inactive-playback.html [ Timeout ]
-webkit.org/b/231811 media/video-interruption-with-resume-allowing-play.html [ Timeout ]
-webkit.org/b/231811 media/video-isplayingtoautomotiveheadunit.html [ Timeout ]
-webkit.org/b/231811 media/video-system-sleep.html [ Timeout ]
-webkit.org/b/231811 webaudio/audiocontext-state-interrupted.html [ Timeout ]
-webkit.org/b/231811 webaudio/suspend-context-while-interrupted.html [ Timeout ]
-
 # rvfc related failures
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
 fast/mediastream/getUserMedia-rvfc.html [ Pass Failure ]

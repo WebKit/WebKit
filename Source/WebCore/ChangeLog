@@ -1,3 +1,26 @@
+2022-04-30  Philippe Normand  <philn@igalia.com>
+
+        REGRESSION(r283437) a number of media tests fail/timeout on the test bots
+        https://bugs.webkit.org/show_bug.cgi?id=231811
+        <rdar://problem/84552871>
+
+        Reviewed by Michael Catanzaro.
+
+        Disable DBus MPRIS notifications when running the tests, these leak to the host when running
+        on desktop and trigger timeouts on under-powered bots.
+
+        * platform/audio/glib/MediaSessionGLib.cpp:
+        (WebCore::MediaSessionGLib::create):
+        (WebCore::MediaSessionGLib::MediaSessionGLib):
+        (WebCore::MediaSessionGLib::emitPositionChanged):
+        (WebCore::MediaSessionGLib::updateNowPlaying):
+        (WebCore::MediaSessionGLib::playbackStatusChanged):
+        * platform/audio/glib/MediaSessionManagerGLib.h:
+        (WebCore::MediaSessionManagerGLib::setDBusNotificationsEnabled):
+        (WebCore::MediaSessionManagerGLib::areDBusNotificationsEnabled const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2022-04-30  Alan Bujtas  <zalan@apple.com>
 
         Only stretch the percent height <body> when it is the document element's child
