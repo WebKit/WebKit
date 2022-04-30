@@ -1,3 +1,16 @@
+2022-04-27  Jean-Yves Avenard  <jya@apple.com>
+
+        [ Monterey WK2 ] media/media-source/media-source-webm-vorbis-partial.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=239308
+        rdar://91719356
+
+        Reviewed by Jer Noble.
+
+        The test disabled the GPU process, and sandboxing rules prevent from
+        calling CoreMedia in the content process.
+        
+        * media/media-source/media-source-webm-vorbis-partial.html:
+
 2022-04-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Format time zone name using ICU instead of platform calls
