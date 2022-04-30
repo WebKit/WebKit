@@ -1,3 +1,18 @@
+2022-04-29  Rob Buis  <rbuis@igalia.com>
+
+        REGRESSION(r290770): element.scrollIntoViewIfNeeded() scrolls to top even when element is already in viewport
+        https://bugs.webkit.org/show_bug.cgi?id=238985
+
+        Reviewed by Simon Fraser.
+
+        This mostly reverts to the code as it was before r290770, but adds code to
+        treat non-intersections as hidden, including zero width/height rects.
+
+        Test: imported/w3c/web-platform-tests/css/cssom-view/scrollintoview-zero-height-item.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::getRectToExpose const):
+
 2022-04-29  Don Olmstead  <don.olmstead@sony.com>
 
         The isYahooMail quirk is specific to PLATFORM(IOS_FAMILY)

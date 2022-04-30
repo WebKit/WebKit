@@ -2651,12 +2651,12 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const Lay
         }
     }
 
-    // Determine the appropriate X behavior.
     ScrollAlignment::Behavior scrollX = alignX.getHiddenBehavior();
-    LayoutRect exposeRectX(exposeRect.x(), visibleRect.y(), exposeRect.width(), visibleRect.height());
-    LayoutRect intersectRect = intersection(visibleRect, exposeRectX);
-    if (!intersectRect.isEmpty()) {
-        LayoutUnit intersectWidth = intersectRect.width();
+    bool intersectsInX = exposeRect.maxX() >= visibleRect.x() && exposeRect.x() <= visibleRect.maxX();
+
+    // Determine the appropriate X behavior.
+    if (intersectsInX) {
+        LayoutUnit intersectWidth = std::max(LayoutUnit(), std::min(visibleRect.maxX(), exposeRect.maxX()) - std::max(visibleRect.x(), exposeRect.x()));
         if (intersectWidth == exposeRect.width() || (alignX.legacyHorizontalVisibilityThresholdEnabled() && intersectWidth >= MIN_INTERSECT_FOR_REVEAL)) {
             // If the rectangle is fully visible, use the specified visible behavior.
             // If the rectangle is partially visible, but over a certain threshold,
@@ -2688,12 +2688,12 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const Lay
     else
         x = exposeRect.x();
 
-    // Determine the appropriate Y behavior.
     ScrollAlignment::Behavior scrollY = alignY.getHiddenBehavior();
-    LayoutRect exposeRectY(visibleRect.x(), exposeRect.y(), visibleRect.width(), exposeRect.height());
-    intersectRect = intersection(visibleRect, exposeRectY);
-    if (!intersectRect.isEmpty()) {
-        LayoutUnit intersectHeight = intersectRect.height();
+    bool intersectsInY = exposeRect.maxY() >= visibleRect.y() && exposeRect.y() <= visibleRect.maxY();
+
+    // Determine the appropriate Y behavior.
+    if (intersectsInY) {
+        LayoutUnit intersectHeight = std::max(LayoutUnit(), std::min(visibleRect.maxY(), exposeRect.maxY()) - std::max(visibleRect.y(), exposeRect.y()));
         if (intersectHeight == exposeRect.height()) {
             // If the rectangle is fully visible, use the specified visible behavior.
             scrollY = alignY.getVisibleBehavior();
