@@ -201,7 +201,8 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
             if (!trailingContent) {
                 // We tried to break the content but the available space can't even accommodate the first glyph.
                 // 1. Wrap the content over to the next line when we've got content on the line already.
-                // 2. Keep the first glyph on the empty line (or keep the whole run if it has only one glyph/completely empty).
+                // 2. Keep the first glyph on the empty line (or keep the whole run if it has only one glyph/completely empty)
+                // including closing inline boxes e.g. <span><span>X</span></span> where "X" is the overflowing glyph).
                 if (lineStatus.hasContent)
                     return Result { Result::Action::Wrap, IsEndOfLine::Yes };
 
@@ -212,9 +213,23 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 ASSERT(firstCharacterLength > 0);
 
                 if (inlineTextItem.length() <= firstCharacterLength) {
-                    if (continuousContent.runs().size() == 1)
-                        return Result { Result::Action::Keep, IsEndOfLine::Yes };
-                    return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, { } } };
+                    auto trailingRunIndex = [&]() -> std::optional<size_t> {
+                        // Keep the overflowing text content and the closing inline box runs together.
+                        // e.g. X</span><span>Y</span> where "X" overflows, the trailing run index is 1.
+                        auto& runs = continuousContent.runs();
+                        if (leadingTextRunIndex == runs.size() - 1)
+                            return { };
+                        if (!runs[leadingTextRunIndex + 1].inlineItem.isInlineBoxEnd())
+                            return leadingTextRunIndex;
+                        for (auto runIndex = leadingTextRunIndex + 1; runIndex < runs.size(); ++runIndex) {
+                            if (!runs[runIndex].inlineItem.isInlineBoxEnd())
+                                return runIndex - 1;
+                        }
+                        return { };
+                    };
+                    if (auto runToBreakAfter = trailingRunIndex())
+                        return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { *runToBreakAfter, { } } };
+                    return Result { Result::Action::Keep, IsEndOfLine::Yes };
                 }
 
                 auto firstCharacterWidth = TextUtil::width(inlineTextItem, leadingTextRun.style.fontCascade(), inlineTextItem.start(), inlineTextItem.start() + firstCharacterLength, lineStatus.contentLogicalRight);

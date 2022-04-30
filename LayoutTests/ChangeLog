@@ -1,3 +1,14 @@
+2022-04-30  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not wrap </span> to the next line when it is preceded by overflowing text
+        https://bugs.webkit.org/show_bug.cgi?id=239879
+        <rdar://problem/92497176>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/overflowing-content-inside-inline-box-expected.html: Added.
+        * fast/inline/overflowing-content-inside-inline-box.html: Added.
+
 2022-04-27  Jean-Yves Avenard  <jya@apple.com>
 
         [ Monterey WK2 ] media/media-source/media-source-webm-vorbis-partial.html is a constant failure

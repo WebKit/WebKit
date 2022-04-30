@@ -1,3 +1,19 @@
+2022-04-30  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not wrap </span> to the next line when it is preceded by overflowing text
+        https://bugs.webkit.org/show_bug.cgi?id=239879
+        <rdar://problem/92497176>
+
+        Reviewed by Antti Koivisto.
+
+        This patch makes sure that inline content run(s) ("X") followed by inline box end run(s) (</span></span>)
+        don't get separated when they overflow the line (e.g. width: 0px).
+
+        Test: fast/inline/overflowing-content-inside-inline-box.html
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::processOverflowingContent const):
+
 2022-04-29  Rob Buis  <rbuis@igalia.com>
 
         REGRESSION(r290770): element.scrollIntoViewIfNeeded() scrolls to top even when element is already in viewport
