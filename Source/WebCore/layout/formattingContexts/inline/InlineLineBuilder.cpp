@@ -378,9 +378,10 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
     };
 
     auto isLastLine = isLastLineWithInlineContent(committedRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
+    auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
     return LineContent { committedRange
-        , committedContent.partialTrailingContentLength
-        , committedContent.overflowLogicalWidth
+        , partialOverflowingContent
+        , partialOverflowingContent ? std::nullopt : committedContent.overflowLogicalWidth
         , m_floats
         , m_contentIsConstrainedByFloat
         , m_lineMarginStart
@@ -459,13 +460,14 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, size_t lead
     m_lineLogicalRect.expandHorizontally(-m_lineMarginStart);
     m_contentIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 
-    if (previousLine && previousLine->overflowContent) {
-        if (previousLine->overflowContent->partialContentLength) {
+    if (previousLine) {
+        if (previousLine->partialOverflowingContent) {
             // Turn previous line's overflow content length into the next line's leading content partial length.
             // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
-            m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[leadingInlineItemIndex]).right(previousLine->overflowContent->partialContentLength, previousLine->overflowContent->width);
-        } else
-            m_overflowingLogicalWidth = previousLine->overflowContent->width;
+            m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[leadingInlineItemIndex]).right(previousLine->partialOverflowingContent->length, previousLine->partialOverflowingContent->width);
+            ASSERT(!previousLine->trailingOverflowingContentWidth);
+        }
+        m_overflowingLogicalWidth = previousLine->trailingOverflowingContentWidth;
     }
 }
 

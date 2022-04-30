@@ -1,5 +1,25 @@
 2022-04-30  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Introduce LineBuilder::PartialContent
+        https://bugs.webkit.org/show_bug.cgi?id=239886
+
+        Reviewed by Antti Koivisto.
+
+        This patch is in preparation for adding partial content support for intrinsic width computation.
+
+        1. Use a dedicated PartialContent structure to store partial overflowing information (output of current line breaking, input to next line).
+        2. Decouple partial overflowing width (see above) and the "let's not measure the wrapped content again on the next line as leading content" cached value.
+
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::layoutInlineContent):
+        (WebCore::Layout::LineBuilder::initialize):
+        * layout/formattingContexts/inline/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::PartialContent::PartialContent):
+
+2022-04-30  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Do not wrap </span> to the next line when it is preceded by overflowing text
         https://bugs.webkit.org/show_bug.cgi?id=239879
         <rdar://problem/92497176>

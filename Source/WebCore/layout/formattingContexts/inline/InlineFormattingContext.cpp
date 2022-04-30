@@ -227,11 +227,11 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
                 formattingState.setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
             }
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
-            auto lastInlineItemNeedsPartialLayout = lineContent.partialTrailingContentLength;
+            auto lastInlineItemNeedsPartialLayout = lineContent.partialOverflowingContent.has_value();
             if (lastInlineItemNeedsPartialLayout) {
                 auto lineLayoutHasAdvanced = !previousLine
                     || lineContentRange.end > previousLine->range.end
-                    || (previousLine->overflowContent && previousLine->overflowContent->partialContentLength > lineContent.partialTrailingContentLength);
+                    || (previousLine->partialOverflowingContent && previousLine->partialOverflowingContent->length > lineContent.partialOverflowingContent->length);
                 if (!lineLayoutHasAdvanced) {
                     ASSERT_NOT_REACHED();
                     // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
@@ -240,12 +240,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
                 }
             }
             needsLayoutRange.start = lastInlineItemNeedsPartialLayout ? lineContentRange.end - 1 : lineContentRange.end;
-            auto overflowContent = std::optional<LineBuilder::PreviousLine::OverflowContent> { };
-            if (lineContent.partialTrailingContentLength)
-                overflowContent = { lineContent.partialTrailingContentLength, lineContent.overflowLogicalWidth };
-            else if (lineContent.overflowLogicalWidth)
-                overflowContent = { { }, *lineContent.overflowLogicalWidth };
-            previousLine = LineBuilder::PreviousLine { lineContentRange, !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, overflowContent };
+            previousLine = LineBuilder::PreviousLine { lineContentRange, !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, lineContent.trailingOverflowingContentWidth };
             continue;
         }
         // Floats prevented us placing any content on the line.
