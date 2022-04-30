@@ -432,9 +432,10 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
     auto previousLine = std::optional<LineBuilder::PreviousLine> { };
     while (!layoutRange.isEmpty()) {
         auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, previousLine);
-        layoutRange.start = intrinsicContent.inlineItemRange.end;
         maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.logicalWidth);
-        previousLine = LineBuilder::PreviousLine { };
+
+        layoutRange.start = !intrinsicContent.partialOverflowingContent ? intrinsicContent.inlineItemRange.end : intrinsicContent.inlineItemRange.end - 1;
+        previousLine = LineBuilder::PreviousLine { intrinsicContent.inlineItemRange, { }, { }, intrinsicContent.partialOverflowingContent };
         // FIXME: Add support for clear.
         for (auto* floatBox : intrinsicContent.floats)
             maximumFloatWidth += geometryForBox(*floatBox).marginBoxWidth();

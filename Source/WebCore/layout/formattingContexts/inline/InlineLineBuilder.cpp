@@ -407,7 +407,10 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
     auto lineWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
-    return { committedRange, lineWidth, m_floats };
+    auto overflow = std::optional<PartialContent> { };
+    if (committedContent.partialTrailingContentLength)
+        overflow = { committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth };
+    return { committedRange, lineWidth, overflow, m_floats };
 }
 
 void LineBuilder::initialize(const UsedConstraints& lineConstraints, size_t leadingInlineItemIndex, const std::optional<PreviousLine>& previousLine)

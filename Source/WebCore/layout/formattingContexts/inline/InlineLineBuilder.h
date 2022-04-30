@@ -62,7 +62,7 @@ public:
         TextDirection inlineBaseDirection { TextDirection::LTR };
         std::optional<PartialContent> partialOverflowingContent { };
         // Content width measured during line breaking (avoid double-measuring).
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth;
+        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     };
     using FloatList = Vector<const Box*>;
     struct LineContent {
@@ -88,6 +88,7 @@ public:
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
         InlineLayoutUnit logicalWidth { 0 };
+        std::optional<PartialContent> partialOverflowingContent { };
         const FloatList& floats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
