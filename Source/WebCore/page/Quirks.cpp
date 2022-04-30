@@ -77,7 +77,7 @@ static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
     return loader->allowedAutoplayQuirks();
 }
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
+#if PLATFORM(IOS_FAMILY)
 static inline bool isYahooMail(Document& document)
 {
     auto host = document.topDocument().url().host();

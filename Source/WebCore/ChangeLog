@@ -1,3 +1,18 @@
+2022-04-29  Don Olmstead  <don.olmstead@sony.com>
+
+        The isYahooMail quirk is specific to PLATFORM(IOS_FAMILY)
+        https://bugs.webkit.org/show_bug.cgi?id=239914
+
+        Reviewed by Simon Fraser.
+
+        The isYahooMail check is incorrectly guarded by ENABLE(PUBLIC_SUFFIX_LIST) when the only
+        using this function is guarded by ENABLE(IOS_TOUCH_EVENTS) and PLATFORM(IOS_FAMILY). Use
+        PLATFORM(IOS_FAMILY) since ENABLE(IOS_TOUCH_EVENTS) implies that anyways.
+
+        Fixes an unused function warning for other ports.
+
+        * page/Quirks.cpp:
+
 2022-04-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mail compose] Images with data URLs should be pasted or dropped as attachments
