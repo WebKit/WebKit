@@ -1,3 +1,13 @@
+2022-04-30  Philippe Normand  <philn@igalia.com>
+
+        [WPE][GTK] Enable MEDIA_SESSION by default
+        https://bugs.webkit.org/show_bug.cgi?id=239931
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-04-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, add my GitHub account name to contributors.json
