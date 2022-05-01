@@ -241,7 +241,32 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         # On GTK+/WPE/JSC we don't need the intermediate step of creating a thinDirectory
         # to be compressed in a ZIP file, because we can create the ZIP directly.
         # This is faster and requires less disk resources.
-        contents = ['bin', 'lib']
+        contents = ['bin',]
+
+        # Don't pack files named with following prefixes, unless they are resolved from a symbolic
+        # link. This helps reducing the zip file size in situations where the build directory
+        # contains old library files.
+        ignoreList = ('libwebkit2gtk-', 'libjavascriptcoregtk', 'libWPEWebKit')
+        absoluteLibDirectory = os.path.join(_configurationBuildDirectory, 'lib')
+        for filename in os.listdir(absoluteLibDirectory):
+            path = os.path.join(absoluteLibDirectory, filename)
+            relativePath = os.path.join('lib', filename)
+            if os.path.isdir(path):
+                contents.append(relativePath)
+                continue
+            if os.path.islink(path):
+                contents.append(relativePath)
+                realAbsolutePath = os.path.realpath(path)
+                realRelativePath = realAbsolutePath[len(_configurationBuildDirectory)+1:]
+                contents.append(realRelativePath)
+                continue
+            ignore = False
+            for prefix in ignoreList:
+                if filename.startswith(prefix):
+                    ignore = True
+                    break
+            if not ignore:
+                contents.append(relativePath)
 
         # For WPE pack the Cog browser as well if it's present.
         cogDirectory = os.path.join('Tools', 'cog-prefix', 'src', 'cog-build')

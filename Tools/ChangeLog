@@ -1,3 +1,12 @@
+2022-04-30  Philippe Normand  <philn@igalia.com>
+
+        [WPE][GTK] Built product archives include old library files
+        https://bugs.webkit.org/show_bug.cgi?id=239928
+
+        Reviewed by Adrian Perez de Castro.
+
+        * CISupport/built-product-archive: Exclude old WPE/GTK files from built product zip archives.
+
 2022-04-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r293621.
