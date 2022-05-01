@@ -1,3 +1,14 @@
+2022-05-01  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer] tests gardening
+        https://bugs.webkit.org/show_bug.cgi?id=239943
+
+        Unreviewed, update a couple media-recorder and media-capabilities expectations.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/http/wpt/mediarecorder/MediaRecorder-dataavailable-expected.txt: Removed.
+        * platform/wpe/http/wpt/mediarecorder/MediaRecorder-mock-dataavailable-expected.txt: Removed.
+
 2022-04-30  Philippe Normand  <philn@igalia.com>
 
         REGRESSION(r283437) a number of media tests fail/timeout on the test bots

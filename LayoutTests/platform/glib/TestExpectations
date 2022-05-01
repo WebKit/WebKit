@@ -776,8 +776,8 @@ webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Failure ]
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
-# Our WebRTC encoder doesn't support high h.264 profile yet.
-webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-video-h264-profiles.html [ Failure ]
+webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html [ Pass Failure ]
+webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Timeout ]
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1017
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https.html [ Pass Crash ]
 
@@ -951,6 +951,9 @@ webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
 webkit.org/b/235885 webrtc/vp9-svc.html [ Failure ]
 webkit.org/b/235885 webrtc/vp9.html [ Failure ]
+
+# Hits an ASSERT because we don't have a WebRTC provider handling WebRTC-related media-capabilities.
+webkit.org/b/235885 [ Debug ] media/mediacapabilities/mock-encodingInfo.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
