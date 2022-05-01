@@ -74,7 +74,7 @@ static Vector<double> doubleOperands()
 }
 
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 static Vector<float> floatOperands()
 {
     return Vector<float> {
@@ -220,6 +220,9 @@ bool isSpecialGPR(MacroAssembler::RegisterID id)
 #elif CPU(MIPS)
     if (id == MIPSRegisters::zero || id == MIPSRegisters::k0 || id == MIPSRegisters::k1)
         return true;
+#elif CPU(RISCV64)
+    if (id == RISCV64Registers::zero || id == RISCV64Registers::ra || id == RISCV64Registers::gp || id == RISCV64Registers::tp)
+        return true;
 #endif
     return false;
 }
@@ -237,6 +240,24 @@ T invoke(const MacroAssemblerCodeRef<JSEntryPtrTag>& code, Arguments... argument
 {
     void* executableAddress = untagCFunctionPtr<JSEntryPtrTag>(code.code().executableAddress());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
+
+#if CPU(RISCV64)
+    // RV64 calling convention requires all 32-bit values to be sign-extended into the whole register.
+    // JSC JIT is tailored for other ISAs that pass these values in 32-bit-wide registers, which RISC-V
+    // doesn't support, so any 32-bit value passed in return-value registers has to be manually sign-extended.
+    // This mirrors sign-extension of 32-bit values in argument registers on RV64 in CCallHelpers.h.
+    if constexpr (std::is_integral_v<T>) {
+        T returnValue = function(arguments...);
+        if constexpr (sizeof(T) == 4) {
+            asm volatile(
+                "sext.w %[out_value], %[in_value]\n\t"
+                : [out_value] "=r" (returnValue)
+                : [in_value] "r" (returnValue));
+        }
+        return returnValue;
+    }
+#endif
+
     return function(arguments...);
 }
 
@@ -2947,7 +2968,7 @@ void testOrUnsignedRightShift64()
 }
 #endif
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 void testCompareFloat(MacroAssembler::DoubleCondition condition)
 {
     float arg1 = 0;
@@ -4684,11 +4705,12 @@ void testProbePreservesGPRS()
                     continue;
                 CHECK_EQ(cpu.gpr(id), testWord(id));
             }
-            for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
+            for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id)) {
 #if CPU(MIPS)
                 if (!(id & 1))
 #endif
                 CHECK_EQ(cpu.fpr<uint64_t>(id), testWord64(id));
+            }
         });
 
         // Restore the original state.
@@ -5226,7 +5248,7 @@ void testMoveDoubleConditionally64()
 
 void testLoadBaseIndex()
 {
-#if CPU(ARM64) || CPU(X86_64)
+#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
     // load64
     {
         auto test = compile([=](CCallHelpers& jit) {
@@ -5407,7 +5429,7 @@ void testLoadBaseIndex()
 
 void testStoreBaseIndex()
 {
-#if CPU(ARM64) || CPU(X86_64)
+#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
     // store64
     {
         auto test = compile([=](CCallHelpers& jit) {
@@ -5877,7 +5899,7 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testAtomicStrongCASFill16());
 #endif
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     FOR_EACH_DOUBLE_CONDITION_RUN(testCompareFloat);
 #endif
 

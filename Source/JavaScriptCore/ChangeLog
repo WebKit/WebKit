@@ -1,3 +1,27 @@
+2022-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [RISCV64] Enable testmasm execution
+        https://bugs.webkit.org/show_bug.cgi?id=239937
+
+        Reviewed by Yusuke Suzuki.
+
+        In testmasm, enable some additional sets of tests for RISCV64 that cover
+        already-functioning behavior. In isSpecialGPR(), the function returns
+        true under CPU(RISCV64) for the appropriate registers.
+
+        In invoke(), when targeting RISCV64 and invoking JIT-produced code whose
+        return type is a 32-bit integer, the resulting value is manually
+        sign-extended to paper over the mismatch between zero-extended 32-bit
+        values that are used and produced in JSC JIT and the sign-extended
+        32-bit values that are expected in the RV64 calling convention.
+
+        * assembler/testmasm.cpp:
+        (JSC::isSpecialGPR):
+        (JSC::invoke):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testLoadBaseIndex):
+        (JSC::testStoreBaseIndex):
+
 2022-04-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r293621.
