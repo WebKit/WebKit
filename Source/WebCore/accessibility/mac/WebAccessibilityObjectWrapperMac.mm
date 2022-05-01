@@ -2393,11 +2393,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"AXTableLevel"])
         return @(backingObject->tableLevel());
 
-    if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {
-        AccessibilityObject::AccessibilityChildrenVector linkedUIElements;
-        backingObject->linkedUIElements(linkedUIElements);
-        return makeNSArray(linkedUIElements);
-    }
+    if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute])
+        return makeNSArray(backingObject->linkedObjects());
 
     if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute])
         return [NSNumber numberWithBool:backingObject->isSelected()];
@@ -2466,11 +2463,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityInvalidAttribute])
         return backingObject->invalidStatus();
 
-    if ([attributeName isEqualToString:NSAccessibilityOwnsAttribute]) {
-        AccessibilityObject::AccessibilityChildrenVector ariaOwns;
-        backingObject->ariaOwnsElements(ariaOwns);
-        return makeNSArray(ariaOwns);
-    }
+    if ([attributeName isEqualToString:NSAccessibilityOwnsAttribute])
+        return makeNSArray(backingObject->ownedObjects());
 
     if ([attributeName isEqualToString:NSAccessibilityARIAPosInSetAttribute])
         return @(backingObject->posInSet());
@@ -2626,11 +2620,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"AXIsInCell"])
         return [NSNumber numberWithBool:backingObject->isInCell()];
 
-    if ([attributeName isEqualToString:@"AXDetailsElements"]) {
-        AccessibilityObject::AccessibilityChildrenVector details;
-        backingObject->ariaDetailsElements(details);
-        return makeNSArray(details);
-    }
+    if ([attributeName isEqualToString:@"AXDetailsElements"])
+        return makeNSArray(backingObject->detailedByObjects());
 
     if ([attributeName isEqualToString:NSAccessibilityBrailleLabelAttribute])
         return backingObject->brailleLabel();
@@ -2641,11 +2632,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityRelativeFrameAttribute])
         return [NSValue valueWithRect:(NSRect)backingObject->relativeFrame()];
 
-    if ([attributeName isEqualToString:@"AXErrorMessageElements"]) {
-        AccessibilityObject::AccessibilityChildrenVector errorMessages;
-        backingObject->ariaErrorMessageElements(errorMessages);
-        return makeNSArray(errorMessages);
-    }
+    if ([attributeName isEqualToString:@"AXErrorMessageElements"])
+        return makeNSArray(backingObject->errorMessageObjects());
 
     // Multi-selectable
     if ([attributeName isEqualToString:NSAccessibilityIsMultiSelectableAttribute])
@@ -2659,11 +2647,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return backingObject->documentEncoding();
 
     // Aria controls element
-    if ([attributeName isEqualToString:NSAccessibilityAriaControlsAttribute]) {
-        AccessibilityObject::AccessibilityChildrenVector ariaControls;
-        backingObject->ariaControlsElements(ariaControls);
-        return makeNSArray(ariaControls);
-    }
+    if ([attributeName isEqualToString:NSAccessibilityAriaControlsAttribute])
+        return makeNSArray(backingObject->controlledObjects());
 
     if ([attributeName isEqualToString:NSAccessibilityFocusableAncestorAttribute]) {
         AXCoreObject* object = backingObject->focusableAncestor();

@@ -2051,12 +2051,8 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
     // referenced by aria-labelledby or aria-describedby, and is not a host language text
     // alternative, the empty string should be returned.
     if (isDOMHidden() && !isAriaVisible && !is<HTMLLabelElement>(node) && (node && !ancestorsOfType<HTMLCanvasElement>(*node).first())) {
-        AccessibilityObject::AccessibilityChildrenVector labelFor;
-        AccessibilityObject::AccessibilityChildrenVector descriptionFor;
-        ariaLabelledByReferencingElements(labelFor);
-        ariaDescribedByReferencingElements(descriptionFor);
-        if (!labelFor.size() && !descriptionFor.size())
-            return String();
+        if (labelForObjects().isEmpty() && descriptionForObjects().isEmpty())
+            return { };
     }
 
     StringBuilder builder;

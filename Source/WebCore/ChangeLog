@@ -1,3 +1,99 @@
+2022-04-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Code cleanup in preparation for refactoring of computing relationships between AXObjects.
+        https://bugs.webkit.org/show_bug.cgi?id=239848
+        <rdar://problem/92455544>
+
+        Reviewed by Chris Fleizach and Tyler Wilcock.
+
+        No new functionality.
+
+        AccessibilityObject::ariaElementsFromAttribute() and
+        ariaElementsReferencedByAttribute() are the methods that currently
+        compute the relationships between objects. These methods now return a
+        vector of the related objects instead of taking an out parameter.
+        In addition, all ariaXXXElements and ariaXXXReferencingElements methods
+        are renamed to better reflect the relationships they retrieve. Note that
+        the prefix aria is removed from all method names because ARIA is one way
+        of establishing relationships between objects, but not necessarily the
+        only way. These changes make the code more concise and clearer.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::textUnderElement const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::ariaTreeRows):
+        (WebCore::AccessibilityObject::ariaElementsFromAttribute const):
+        (WebCore::AccessibilityObject::ariaElementsReferencedByAttribute const):
+        (WebCore::AccessibilityObject::isActiveDescendantOfFocusedContainer const):
+        (WebCore::AccessibilityObject::activeDescendantOfObjects const):
+        (WebCore::AccessibilityObject::controlledObjects const):
+        (WebCore::AccessibilityObject::controllers const):
+        (WebCore::AccessibilityObject::describedByObjects const):
+        (WebCore::AccessibilityObject::descriptionForObjects const):
+        (WebCore::AccessibilityObject::detailedByObjects const):
+        (WebCore::AccessibilityObject::detailsForObjects const):
+        (WebCore::AccessibilityObject::errorMessageObjects const):
+        (WebCore::AccessibilityObject::errorMessageForObjects const):
+        (WebCore::AccessibilityObject::flowToObjects const):
+        (WebCore::AccessibilityObject::flowFromObjects const):
+        (WebCore::AccessibilityObject::labelledByObjects const):
+        (WebCore::AccessibilityObject::labelForObjects const):
+        (WebCore::AccessibilityObject::ownedObjects const):
+        (WebCore::AccessibilityObject::owners const):
+        (WebCore::AccessibilityObject::ariaActiveDescendantReferencingElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaControlsElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaControlsReferencingElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaDescribedByElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaDescribedByReferencingElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaDetailsElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaDetailsReferencingElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaErrorMessageElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaErrorMessageReferencingElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaFlowToElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaFlowToReferencingElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaLabelledByElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaLabelledByReferencingElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaOwnsElements const): Deleted.
+        (WebCore::AccessibilityObject::ariaOwnsReferencingElements const): Deleted.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::linkedUIElements const):
+        (WebCore::AccessibilityRenderObject::targetElementForActiveDescendant const):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::columnHeaders):
+        (WebCore::AccessibilityTableCell::ariaOwnedByParent const):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::addChildren):
+        * accessibility/atspi/AccessibilityObjectAtspi.cpp:
+        (WebCore::AccessibilityObjectAtspi::relationMap const):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeProperties):
+        (WebCore::AXIsolatedObject::activeDescendantOfObjects const):
+        (WebCore::AXIsolatedObject::controllers const):
+        (WebCore::AXIsolatedObject::describedByObjects const):
+        (WebCore::AXIsolatedObject::descriptionForObjects const):
+        (WebCore::AXIsolatedObject::detailsForObjects const):
+        (WebCore::AXIsolatedObject::errorMessageForObjects const):
+        (WebCore::AXIsolatedObject::flowFromObjects const):
+        (WebCore::AXIsolatedObject::labelledByObjects const):
+        (WebCore::AXIsolatedObject::labelForObjects const):
+        (WebCore::AXIsolatedObject::owners const):
+        (WebCore::AXIsolatedObject::ariaActiveDescendantReferencingElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaControlsReferencingElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaDescribedByElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaDescribedByReferencingElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaDetailsReferencingElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaErrorMessageReferencingElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaFlowToReferencingElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaLabelledByElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaLabelledByReferencingElements const): Deleted.
+        (WebCore::AXIsolatedObject::ariaOwnsReferencingElements const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2022-04-30  Philippe Normand  <philn@igalia.com>
 
         REGRESSION(r283437) a number of media tests fail/timeout on the test bots

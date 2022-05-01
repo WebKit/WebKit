@@ -1048,21 +1048,23 @@ public:
 
     virtual bool supportsARIAOwns() const = 0;
     virtual bool isActiveDescendantOfFocusedContainer() const = 0;
-    virtual void ariaActiveDescendantReferencingElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaControlsElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaControlsReferencingElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaDescribedByElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaDescribedByReferencingElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaDetailsElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaDetailsReferencingElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaErrorMessageElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaErrorMessageReferencingElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaFlowToElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaFlowToReferencingElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaLabelledByElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaLabelledByReferencingElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaOwnsElements(AccessibilityChildrenVector&) const = 0;
-    virtual void ariaOwnsReferencingElements(AccessibilityChildrenVector&) const = 0;
+
+    // Retrieval of related objects.
+    virtual AccessibilityChildrenVector activeDescendantOfObjects() const = 0;
+    virtual AccessibilityChildrenVector controlledObjects() const = 0;
+    virtual AccessibilityChildrenVector controllers() const = 0;
+    virtual AccessibilityChildrenVector describedByObjects() const = 0;
+    virtual AccessibilityChildrenVector descriptionForObjects() const = 0;
+    virtual AccessibilityChildrenVector detailedByObjects() const = 0;
+    virtual AccessibilityChildrenVector detailsForObjects() const = 0;
+    virtual AccessibilityChildrenVector errorMessageObjects() const = 0;
+    virtual AccessibilityChildrenVector errorMessageForObjects() const = 0;
+    virtual AccessibilityChildrenVector flowToObjects() const = 0;
+    virtual AccessibilityChildrenVector flowFromObjects() const = 0;
+    virtual AccessibilityChildrenVector labelledByObjects() const = 0;
+    virtual AccessibilityChildrenVector labelForObjects() const = 0;
+    virtual AccessibilityChildrenVector ownedObjects() const = 0;
+    virtual AccessibilityChildrenVector owners() const = 0;
 
     virtual bool hasPopup() const = 0;
     virtual String popupValue() const = 0;
@@ -1128,7 +1130,7 @@ public:
     virtual Vector<String> performTextOperation(AccessibilityTextOperation const&) = 0;
 
     virtual AXCoreObject* observableObject() const = 0;
-    virtual void linkedUIElements(AccessibilityChildrenVector&) const = 0;
+    virtual AccessibilityChildrenVector linkedObjects() const = 0;
     virtual AXCoreObject* titleUIElement() const = 0;
     virtual AXCoreObject* correspondingLabelForControlElement() const = 0;
     virtual AXCoreObject* correspondingControlForLabelElement() const = 0;

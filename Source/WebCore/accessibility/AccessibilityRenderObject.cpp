@@ -1076,21 +1076,23 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
         }
     }
 }
-    
-// linked ui elements could be all the related radio buttons in a group
-// or an internal anchor connection
-void AccessibilityRenderObject::linkedUIElements(AccessibilityChildrenVector& linkedUIElements) const
+
+// Linked ui elements could be all the related radio buttons in a group
+// or an internal anchor connection.
+AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::linkedObjects() const
 {
-    ariaFlowToElements(linkedUIElements);
+    auto linkedObjects = flowToObjects();
 
     if (isLink()) {
-        AccessibilityObject* linkedAXElement = internalLinkElement();
+        auto* linkedAXElement = internalLinkElement();
         if (linkedAXElement)
-            linkedUIElements.append(linkedAXElement);
+            linkedObjects.append(linkedAXElement);
     }
 
     if (roleValue() == AccessibilityRole::RadioButton)
-        addRadioButtonGroupMembers(linkedUIElements);
+        addRadioButtonGroupMembers(linkedObjects);
+
+    return linkedObjects;
 }
 
 bool AccessibilityRenderObject::hasPopup() const
@@ -2715,11 +2717,10 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
 
 RenderObject* AccessibilityRenderObject::targetElementForActiveDescendant(const QualifiedName& attributeName, AccessibilityObject* activeDescendant) const
 {
-    AccessibilityObject::AccessibilityChildrenVector elements;
-    ariaElementsFromAttribute(elements, attributeName);
-    for (const auto& element : elements) {
-        if (activeDescendant->isDescendantOfObject(element.get()))
-            return element->renderer();
+    auto objects = ariaElementsFromAttribute(attributeName);
+    for (const auto& object : objects) {
+        if (activeDescendant->isDescendantOfObject(object.get()))
+            return object->renderer();
     }
 
     return nullptr;

@@ -329,29 +329,14 @@ void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isR
     object.tabChildren(tabChildren);
     setObjectVectorProperty(AXPropertyName::TabChildren, tabChildren);
 
-    AccessibilityChildrenVector linkedUIElements;
-    object.linkedUIElements(linkedUIElements);
-    setObjectVectorProperty(AXPropertyName::LinkedUIElements, linkedUIElements);
+    setObjectVectorProperty(AXPropertyName::LinkedObjects, object.linkedObjects());
 
-    AccessibilityChildrenVector ariaControlsElements;
-    object.ariaControlsElements(ariaControlsElements);
-    setObjectVectorProperty(AXPropertyName::ARIAControlsElements, ariaControlsElements);
-
-    AccessibilityChildrenVector ariaDetailsElements;
-    object.ariaDetailsElements(ariaDetailsElements);
-    setObjectVectorProperty(AXPropertyName::ARIADetailsElements, ariaDetailsElements);
-
-    AccessibilityChildrenVector ariaErrorMessageElements;
-    object.ariaErrorMessageElements(ariaErrorMessageElements);
-    setObjectVectorProperty(AXPropertyName::ARIAErrorMessageElements, ariaErrorMessageElements);
-
-    AccessibilityChildrenVector ariaFlowToElements;
-    object.ariaFlowToElements(ariaFlowToElements);
-    setObjectVectorProperty(AXPropertyName::ARIAFlowToElements, ariaFlowToElements);
-
-    AccessibilityChildrenVector ariaOwnsElements;
-    object.ariaOwnsElements(ariaOwnsElements);
-    setObjectVectorProperty(AXPropertyName::ARIAOwnsElements, ariaOwnsElements);
+    // Relations.
+    setObjectVectorProperty(AXPropertyName::ControlledObjects, object.controlledObjects());
+    setObjectVectorProperty(AXPropertyName::DetailedByObjects, object.detailedByObjects());
+    setObjectVectorProperty(AXPropertyName::ErrorMessageObjects, object.errorMessageObjects());
+    setObjectVectorProperty(AXPropertyName::FlowToObjects, object.flowToObjects());
+    setObjectVectorProperty(AXPropertyName::OwnedObjects, object.ownedObjects());
 
     // Spin button support.
     setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
@@ -1874,54 +1859,64 @@ AXCoreObject* AXIsolatedObject::selectedListItem()
     return nullptr;
 }
 
-void AXIsolatedObject::ariaActiveDescendantReferencingElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::activeDescendantOfObjects() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaControlsReferencingElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::controllers() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaDescribedByElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::describedByObjects() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaDescribedByReferencingElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::descriptionForObjects() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaDetailsReferencingElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::detailsForObjects() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaErrorMessageReferencingElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::errorMessageForObjects() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaFlowToReferencingElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::flowFromObjects() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaLabelledByElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::labelledByObjects() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaLabelledByReferencingElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::labelForObjects() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
-void AXIsolatedObject::ariaOwnsReferencingElements(AccessibilityChildrenVector&) const
+AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::owners() const
 {
     ASSERT_NOT_REACHED();
+    return { };
 }
 
 bool AXIsolatedObject::hasDatalist() const

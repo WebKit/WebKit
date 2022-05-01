@@ -236,16 +236,15 @@ bool AccessibilityTableCell::supportsExpandedTextValue() const
 {
     return isTableHeaderCell() && hasAttribute(abbrAttr);
 }
-    
+
 AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders()
 {
-    AccessibilityChildrenVector headers;
-    AccessibilityTable* parent = parentTable();
+    auto* parent = parentTable();
     if (!parent)
-        return headers;
+        return { };
 
     // Choose columnHeaders as the place where the "headers" attribute is reported.
-    ariaElementsFromAttribute(headers, headersAttr);
+    auto headers = ariaElementsFromAttribute(headersAttr);
     // If the headers attribute returned valid values, then do not further search for column headers.
     if (!headers.isEmpty())
         return headers;
@@ -268,7 +267,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
 
     return headers;
 }
-    
+
 AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 {
     AccessibilityChildrenVector headers;
@@ -296,11 +295,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 
 AccessibilityTableRow* AccessibilityTableCell::ariaOwnedByParent() const
 {
-    AccessibilityChildrenVector ariaOwnedBy;
-    ariaOwnsReferencingElements(ariaOwnedBy);
-    if (ariaOwnedBy.size() == 1 && ariaOwnedBy[0]->isTableRow())
-        return downcast<AccessibilityTableRow>(ariaOwnedBy[0].get());
-
+    auto owners = this->owners();
+    if (owners.size() == 1 && owners[0]->isTableRow())
+        return downcast<AccessibilityTableRow>(owners[0].get());
     return nullptr;
 }
 

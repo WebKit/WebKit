@@ -1065,63 +1065,33 @@ HashMap<uint32_t, Vector<RefPtr<AccessibilityObjectAtspi>>> AccessibilityObjectA
                 ariaLabelledByElements.append(m_coreObject->axObjectCache()->getOrCreate(renderFieldset));
         }
     } else if (!m_coreObject->correspondingControlForLabelElement())
-        m_coreObject->ariaLabelledByElements(ariaLabelledByElements);
+        ariaLabelledByElements = m_coreObject->labelledByObjects();
     addRelation(Atspi::LabelledBy, ariaLabelledByElements);
 
-    AccessibilityObject::AccessibilityChildrenVector ariaLabelledByReferencingElements;
+    AccessibilityObject::AccessibilityChildrenVector labelForObjects;
     if (auto* control = m_coreObject->correspondingControlForLabelElement())
-        ariaLabelledByReferencingElements.append(control);
+        labelForObjects.append(control);
     else
-        m_coreObject->ariaLabelledByReferencingElements(ariaLabelledByReferencingElements);
-    addRelation(Atspi::LabelFor, ariaLabelledByReferencingElements);
+        labelForObjects = m_coreObject->labelForObjects();
+    addRelation(Atspi::LabelFor, labelForObjects);
 
-    AccessibilityObject::AccessibilityChildrenVector ariaFlowToElements;
-    m_coreObject->ariaFlowToElements(ariaFlowToElements);
-    addRelation(Atspi::FlowsTo, ariaFlowToElements);
+    addRelation(Atspi::FlowsTo, m_coreObject->flowToObjects());
+    addRelation(Atspi::FlowsFrom, m_coreObject->flowFromObjects());
 
-    AccessibilityObject::AccessibilityChildrenVector ariaFlowToReferencingElements;
-    m_coreObject->ariaFlowToReferencingElements(ariaFlowToReferencingElements);
-    addRelation(Atspi::FlowsFrom, ariaFlowToReferencingElements);
+    addRelation(Atspi::DescribedBy, m_coreObject->describedByObjects());
+    addRelation(Atspi::DescriptionFor, m_coreObject->descriptionForObjects());
 
-    AccessibilityObject::AccessibilityChildrenVector ariaDescribedByElements;
-    m_coreObject->ariaDescribedByElements(ariaDescribedByElements);
-    addRelation(Atspi::DescribedBy, ariaDescribedByElements);
+    addRelation(Atspi::ControllerFor, m_coreObject->controlledObjects());
+    addRelation(Atspi::ControlledBy, m_coreObject->controllers());
 
-    AccessibilityObject::AccessibilityChildrenVector ariaDescribedByReferencingElements;
-    m_coreObject->ariaDescribedByReferencingElements(ariaDescribedByReferencingElements);
-    addRelation(Atspi::DescriptionFor, ariaDescribedByReferencingElements);
+    addRelation(Atspi::NodeParentOf, m_coreObject->ownedObjects());
+    addRelation(Atspi::NodeChildOf, m_coreObject->owners());
 
-    AccessibilityObject::AccessibilityChildrenVector ariaControlsElements;
-    m_coreObject->ariaControlsElements(ariaControlsElements);
-    addRelation(Atspi::ControllerFor, ariaControlsElements);
+    addRelation(Atspi::Details, m_coreObject->detailedByObjects());
+    addRelation(Atspi::DetailsFor, m_coreObject->detailsForObjects());
 
-    AccessibilityObject::AccessibilityChildrenVector ariaControlsReferencingElements;
-    m_coreObject->ariaControlsReferencingElements(ariaControlsReferencingElements);
-    addRelation(Atspi::ControlledBy, ariaControlsReferencingElements);
-
-    AccessibilityObject::AccessibilityChildrenVector ariaOwnsElements;
-    m_coreObject->ariaOwnsElements(ariaOwnsElements);
-    addRelation(Atspi::NodeParentOf, ariaOwnsElements);
-
-    AccessibilityObject::AccessibilityChildrenVector ariaOwnsReferencingElements;
-    m_coreObject->ariaOwnsReferencingElements(ariaOwnsReferencingElements);
-    addRelation(Atspi::NodeChildOf, ariaOwnsReferencingElements);
-
-    AccessibilityObject::AccessibilityChildrenVector ariaDetailsElements;
-    m_coreObject->ariaDetailsElements(ariaDetailsElements);
-    addRelation(Atspi::Details, ariaDetailsElements);
-
-    AccessibilityObject::AccessibilityChildrenVector ariaDetailsReferencingElements;
-    m_coreObject->ariaDetailsReferencingElements(ariaDetailsReferencingElements);
-    addRelation(Atspi::DetailsFor, ariaDetailsReferencingElements);
-
-    AccessibilityObject::AccessibilityChildrenVector ariaErrorMessageElements;
-    m_coreObject->ariaErrorMessageElements(ariaErrorMessageElements);
-    addRelation(Atspi::ErrorMessage, ariaErrorMessageElements);
-
-    AccessibilityObject::AccessibilityChildrenVector ariaErrorMessageReferencingElements;
-    m_coreObject->ariaErrorMessageReferencingElements(ariaErrorMessageReferencingElements);
-    addRelation(Atspi::ErrorFor, ariaErrorMessageReferencingElements);
+    addRelation(Atspi::ErrorMessage, m_coreObject->errorMessageObjects());
+    addRelation(Atspi::ErrorFor, m_coreObject->errorMessageForObjects());
 
     return map;
 }

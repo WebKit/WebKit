@@ -230,11 +230,6 @@ private:
     double loadingProgress() const override { return tree()->loadingProgress(); }
     bool supportsARIAOwns() const override { return boolAttributeValue(AXPropertyName::SupportsARIAOwns); }
     bool isActiveDescendantOfFocusedContainer() const override { return boolAttributeValue(AXPropertyName::IsActiveDescendantOfFocusedContainer); }
-    void ariaControlsElements(AccessibilityChildrenVector& children) const override { fillChildrenVectorForProperty(AXPropertyName::ARIAControlsElements, children); }
-    void ariaDetailsElements(AccessibilityChildrenVector& children) const override { fillChildrenVectorForProperty(AXPropertyName::ARIADetailsElements, children); }
-    void ariaErrorMessageElements(AccessibilityChildrenVector& children) const override { fillChildrenVectorForProperty(AXPropertyName::ARIAErrorMessageElements, children); }
-    void ariaFlowToElements(AccessibilityChildrenVector& children) const override { fillChildrenVectorForProperty(AXPropertyName::ARIAFlowToElements, children); }
-    void ariaOwnsElements(AccessibilityChildrenVector& children) const override { fillChildrenVectorForProperty(AXPropertyName::ARIAOwnsElements, children); }
     bool hasPopup() const override { return boolAttributeValue(AXPropertyName::HasPopup); }
     String popupValue() const override { return stringAttributeValue(AXPropertyName::PopupValue); }
     bool pressedIsPresent() const override { return boolAttributeValue(AXPropertyName::PressedIsPresent); }
@@ -263,7 +258,7 @@ private:
     AXCoreObject* focusedUIElement() const override;
     AXCoreObject* parentObject() const override { return parentObjectUnignored(); }
     AXCoreObject* parentObjectUnignored() const override;
-    void linkedUIElements(AccessibilityChildrenVector& children) const override { fillChildrenVectorForProperty(AXPropertyName::LinkedUIElements, children); }
+    AccessibilityChildrenVector linkedObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::LinkedObjects)); }
     AXCoreObject* titleUIElement() const override { return objectAttributeValue(AXPropertyName::TitleUIElement); }
     AXCoreObject* scrollBar(AccessibilityOrientation) override;
     AccessibilityRole ariaRoleAttribute() const override { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::ARIARoleAttribute)); }
@@ -545,16 +540,23 @@ private:
     bool accessibilityIsIgnoredByDefault() const override;
     float stepValueForRange() const override;
     AXCoreObject* selectedListItem() override;
-    void ariaActiveDescendantReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaControlsReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaDescribedByElements(AccessibilityChildrenVector&) const override;
-    void ariaDescribedByReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaDetailsReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaErrorMessageReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaFlowToReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaLabelledByElements(AccessibilityChildrenVector&) const override;
-    void ariaLabelledByReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaOwnsReferencingElements(AccessibilityChildrenVector&) const override;
+
+    AccessibilityChildrenVector activeDescendantOfObjects() const override;
+    AccessibilityChildrenVector controlledObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ControlledObjects)); }
+    AccessibilityChildrenVector controllers() const override;
+    AccessibilityChildrenVector describedByObjects() const override;
+    AccessibilityChildrenVector descriptionForObjects() const override;
+    AccessibilityChildrenVector detailedByObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::DetailedByObjects)); }
+    AccessibilityChildrenVector detailsForObjects() const override;
+    AccessibilityChildrenVector errorMessageObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::ErrorMessageObjects)); }
+    AccessibilityChildrenVector errorMessageForObjects() const override;
+    AccessibilityChildrenVector flowToObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::FlowToObjects)); }
+    AccessibilityChildrenVector flowFromObjects() const override;
+    AccessibilityChildrenVector labelledByObjects() const override;
+    AccessibilityChildrenVector labelForObjects() const override;
+    AccessibilityChildrenVector ownedObjects() const override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::OwnedObjects)); }
+    AccessibilityChildrenVector owners() const override;
+
     bool hasDatalist() const override;
     bool supportsHasPopup() const override;
     bool supportsPressed() const override;

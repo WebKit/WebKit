@@ -146,19 +146,18 @@ AXCoreObject* AccessibilityTableRow::headerObject()
     
     return cell;
 }
-    
+
 void AccessibilityTableRow::addChildren()
 {
     // If the element specifies its cells through aria-owns, return that first.
-    AccessibilityChildrenVector ariaOwnedElements;
-    ariaOwnsElements(ariaOwnedElements);
-    if (ariaOwnedElements.size()) {
-        for (auto& ariaOwnedElement : ariaOwnedElements)
-            addChild(ariaOwnedElement.get(), DescendIfIgnored::No);
+    auto ownedObjects = this->ownedObjects();
+    if (ownedObjects.size()) {
+        for (auto& object : ownedObjects)
+            addChild(object.get(), DescendIfIgnored::No);
     }
     else
         AccessibilityRenderObject::addChildren();
-    
+
     // "ARIA 1.1, If the set of columns which is present in the DOM is contiguous, and if there are no cells which span more than one row or
     // column in that set, then authors may place aria-colindex on each row, setting the value to the index of the first column of the set."
     // Update child cells' axColIndex if there's an aria-colindex value set for the row. So the cell doesn't have to go through the siblings
@@ -166,7 +165,7 @@ void AccessibilityTableRow::addChildren()
     int colIndex = axColumnIndex();
     if (colIndex == -1)
         return;
-    
+
     unsigned index = 0;
     for (const auto& cell : children()) {
         if (is<AccessibilityTableCell>(*cell))

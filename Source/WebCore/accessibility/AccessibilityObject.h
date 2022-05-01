@@ -301,21 +301,22 @@ public:
     bool supportsARIARoleDescription() const;
     bool supportsARIAOwns() const override { return false; }
     bool isActiveDescendantOfFocusedContainer() const override;
-    void ariaActiveDescendantReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaControlsElements(AccessibilityChildrenVector&) const override;
-    void ariaControlsReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaDescribedByElements(AccessibilityChildrenVector&) const override;
-    void ariaDescribedByReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaDetailsElements(AccessibilityChildrenVector&) const override;
-    void ariaDetailsReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaErrorMessageElements(AccessibilityChildrenVector&) const override;
-    void ariaErrorMessageReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaFlowToElements(AccessibilityChildrenVector&) const override;
-    void ariaFlowToReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaLabelledByElements(AccessibilityChildrenVector&) const override;
-    void ariaLabelledByReferencingElements(AccessibilityChildrenVector&) const override;
-    void ariaOwnsElements(AccessibilityChildrenVector&) const override;
-    void ariaOwnsReferencingElements(AccessibilityChildrenVector&) const override;
+
+    AccessibilityChildrenVector activeDescendantOfObjects() const override;
+    AccessibilityChildrenVector controlledObjects() const override;
+    AccessibilityChildrenVector controllers() const override;
+    AccessibilityChildrenVector describedByObjects() const override;
+    AccessibilityChildrenVector descriptionForObjects() const override;
+    AccessibilityChildrenVector detailedByObjects() const override;
+    AccessibilityChildrenVector detailsForObjects() const override;
+    AccessibilityChildrenVector errorMessageObjects() const override;
+    AccessibilityChildrenVector errorMessageForObjects() const override;
+    AccessibilityChildrenVector flowToObjects() const override;
+    AccessibilityChildrenVector flowFromObjects() const override;
+    AccessibilityChildrenVector labelledByObjects() const override;
+    AccessibilityChildrenVector labelForObjects() const override;
+    AccessibilityChildrenVector ownedObjects() const override;
+    AccessibilityChildrenVector owners() const override;
 
     bool hasPopup() const override { return false; }
     String popupValue() const override;
@@ -384,7 +385,7 @@ public:
     Vector<String> performTextOperation(AccessibilityTextOperation const&) override;
 
     AccessibilityObject* observableObject() const override { return nullptr; }
-    void linkedUIElements(AccessibilityChildrenVector&) const override { }
+    AccessibilityChildrenVector linkedObjects() const override { return { }; }
     AccessibilityObject* titleUIElement() const override { return nullptr; }
     AccessibilityObject* correspondingLabelForControlElement() const override { return nullptr; }
     AccessibilityObject* correspondingControlForLabelElement() const override { return nullptr; }
@@ -811,8 +812,8 @@ protected:
 
     static bool isARIAInput(AccessibilityRole);
 
-    void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
-    void ariaElementsReferencedByAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
+    AccessibilityChildrenVector ariaElementsFromAttribute(const QualifiedName&) const;
+    AccessibilityChildrenVector ariaElementsReferencedByAttribute(const QualifiedName&) const;
     virtual bool exposesTitleUIElement() const { return true; }
     FloatRect unobscuredContentRect() const override;
     AccessibilityObject* radioGroupAncestor() const;

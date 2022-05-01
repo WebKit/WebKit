@@ -91,7 +91,7 @@ public:
     AccessibilityObject* parentObjectIfExists() const override;
     AccessibilityObject* parentObjectUnignored() const override;
     AccessibilityObject* observableObject() const override;
-    void linkedUIElements(AccessibilityChildrenVector&) const override;
+    AccessibilityChildrenVector linkedObjects() const override;
     AccessibilityObject* titleUIElement() const override;
 
     bool supportsARIAOwns() const override;
