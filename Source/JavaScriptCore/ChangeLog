@@ -1,5 +1,30 @@
 2022-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        [RISCV64] Implement MacroAssembler::probe(), ctiMasmProbeTrampoline
+        https://bugs.webkit.org/show_bug.cgi?id=239938
+
+        Reviewed by Yusuke Suzuki.
+
+        Implement MacroAssembler::probe() for RISCV64, along with the
+        ctiMasmProbeTrampoline operation. The implementation follows the process
+        of implementations for other platforms, with incoming, outgoing and
+        return-address-restoration records used to store register values during
+        setup and breakdown of the probe.
+
+        Going into the probe and back out of it, the general-purpose and
+        floating-point registers are stored, with the exception of global and
+        thread registers (x3 and x4). After the probe, if the probe state on the
+        stack is broken, the complete state is re-established before the
+        registers are reloaded, with the stack pointer and return address
+        registers set up last.
+
+        Covered by probing-related unit tests in testmasm.
+
+        * assembler/MacroAssemblerRISCV64.cpp:
+        (JSC::MacroAssembler::probe):
+
+2022-05-01  Zan Dobersek  <zdobersek@igalia.com>
+
         [RISCV64] Enable testmasm execution
         https://bugs.webkit.org/show_bug.cgi?id=239937
 
