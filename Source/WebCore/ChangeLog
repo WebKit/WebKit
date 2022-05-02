@@ -1,3 +1,17 @@
+2022-05-01  Philippe Normand  <philn@igalia.com>
+
+        [GStreamer][Debug] media-recorder tests hitting an ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=239942
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Delay the track observing stopping until InternalSources are destroyed. Doing so during
+        PAUSED->READY was not safe in MediaRecording pipelines, because the transcoder changes its
+        state from a secondary thread.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (webkitMediaStreamSrcChangeState):
+
 2022-05-01  Said Abou-Hallawa  <said@apple.com>
 
         REGRESSION(r282117): RemoteRenderingBackend::willDestroyImageBuffer() can crash if the RemoteRenderingBackend has already been destroyed

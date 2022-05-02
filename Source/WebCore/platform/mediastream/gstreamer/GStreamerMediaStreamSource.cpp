@@ -532,14 +532,6 @@ static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element,
 {
     GST_DEBUG_OBJECT(element, "%s", gst_state_change_get_name(transition));
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(element);
-
-    if (transition == GST_STATE_CHANGE_PAUSED_TO_READY) {
-        GST_OBJECT_LOCK(self);
-        for (auto& item : self->priv->sources)
-            item->stopObserving();
-        GST_OBJECT_UNLOCK(self);
-    }
-
     GstStateChangeReturn result = GST_ELEMENT_CLASS(webkit_media_stream_src_parent_class)->change_state(element, transition);
 
     if (transition == GST_STATE_CHANGE_READY_TO_PAUSED) {
