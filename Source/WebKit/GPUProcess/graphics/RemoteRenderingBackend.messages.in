@@ -39,7 +39,7 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
 
     PrepareBuffersForDisplay(Vector<WebKit::PrepareBackingStoreBuffersInputData> swapBuffersInput) -> (Vector<WebKit::PrepareBackingStoreBuffersOutputData> swapBuffersOutput) Synchronous NotStreamEncodable NotStreamEncodableReply
 
-    MarkSurfacesVolatile(uint64_t requestIdentifier, Vector<WebCore::RenderingResourceIdentifier> renderingResourceIdentifiers)
+    MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<WebCore::RenderingResourceIdentifier> renderingResourceIdentifiers)
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 }
 

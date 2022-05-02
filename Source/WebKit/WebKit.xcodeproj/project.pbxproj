@@ -882,6 +882,7 @@
 		461CCCA5231485A700B659B9 /* UIRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */; };
 		461CCCA6231485AA00B659B9 /* WebRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 46323683231481EF00A48FA7 /* WebRemoteObjectRegistry.h */; };
 		461E1BF2279A0116006AF53B /* WebSharedWorkerContextManagerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 461E1BEF279A010F006AF53B /* WebSharedWorkerContextManagerConnection.h */; };
+		462CD80C28204DFA00F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */; };
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
 		4656F7BD27ACAA8D00CB3D7C /* WebSharedWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 4656F7BC27ACAA8100CB3D7C /* WebSharedWorker.h */; };
@@ -4609,6 +4610,7 @@
 		461E1BEF279A010F006AF53B /* WebSharedWorkerContextManagerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerContextManagerConnection.h; sourceTree = "<group>"; };
 		461E1BF0279A010F006AF53B /* WebSharedWorkerContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSharedWorkerContextManagerConnection.messages.in; sourceTree = "<group>"; };
 		462107D71F38DBD300DD7810 /* PingLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoad.cpp; sourceTree = "<group>"; };
+		462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkSurfacesAsVolatileRequestIdentifier.h; sourceTree = "<group>"; };
 		46323683231481EF00A48FA7 /* WebRemoteObjectRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRemoteObjectRegistry.h; sourceTree = "<group>"; };
 		463236842314825C00A48FA7 /* WebRemoteObjectRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebRemoteObjectRegistry.cpp; sourceTree = "<group>"; };
 		463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIRemoteObjectRegistry.h; sourceTree = "<group>"; };
@@ -7960,6 +7962,7 @@
 				1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */,
 				2D10875E1D2C573E00B85F82 /* LoadParameters.cpp */,
 				2D10875F1D2C573E00B85F82 /* LoadParameters.h */,
+				462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */,
 				49917DB0252E30750050313F /* MediaPlaybackState.h */,
 				71E9650F2745682E00ADCF43 /* ModelIdentifier.h */,
 				7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */,
@@ -14396,6 +14399,7 @@
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
+				462CD80C28204DFA00F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h in Headers */,
 				A15799BE2584433200528236 /* MediaFormatReader.h in Headers */,
 				9ACC07B125C815D800DC6386 /* MediaKeySystemPermissionRequest.h in Headers */,
 				9ACC07AD25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h in Headers */,

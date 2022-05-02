@@ -330,6 +330,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::LegacyCustomProtocolID',
         'WebKit::LibWebRTCResolverIdentifier',
         'WebKit::MDNSRegisterIdentifier',
+        'WebKit::MarkSurfacesAsVolatileRequestIdentifier',
         'WebKit::MediaRecorderIdentifier',
         'WebKit::NetworkResourceLoadIdentifier',
         'WebKit::PDFPluginIdentifier',

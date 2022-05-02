@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "ImageBufferBackendHandle.h"
+#include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "QualifiedRenderingResourceIdentifier.h"
@@ -121,7 +122,7 @@ private:
     void deleteAllFonts();
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
-    void markSurfacesVolatile(uint64_t requestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>&);
+    void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>&);
     void prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&&);
 
     // Received messages translated to use QualifiedRenderingResourceIdentifier.

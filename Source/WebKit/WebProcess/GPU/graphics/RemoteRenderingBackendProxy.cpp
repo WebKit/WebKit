@@ -359,14 +359,13 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
 
 void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&& identifiers, CompletionHandler<void(bool)>&& completionHandler)
 {
-    static uint64_t lastRequestIdentifier = 0;
-    auto requestIdentifier = ++lastRequestIdentifier;
+    auto requestIdentifier = MarkSurfacesAsVolatileRequestIdentifier::generate();
     m_markAsVolatileRequests.add(requestIdentifier, WTFMove(completionHandler));
 
     sendToStream(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(requestIdentifier, identifiers));
 }
 
-void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(uint64_t requestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayersAsVolatile)
+void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayersAsVolatile)
 {
     ASSERT(requestIdentifier);
     auto completionHandler = m_markAsVolatileRequests.take(requestIdentifier);
