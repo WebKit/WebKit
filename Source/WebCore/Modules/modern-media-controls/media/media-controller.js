@@ -110,7 +110,7 @@ class MediaController
 
     togglePlayback()
     {
-        if (this.media.paused)
+        if (this.media.paused || !this.hasPlayed)
             this.media.play().catch(e => {});
         else
             this.media.pause();

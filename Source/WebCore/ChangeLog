@@ -1,3 +1,29 @@
+2022-05-02  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] REGRESSION(?) tapping a video to start playing for the first time doesn't start playing
+        https://bugs.webkit.org/show_bug.cgi?id=239918
+        <rdar://problem/91329117>
+
+        Reviewed by Jer Noble.
+
+        This happens on iOS because the `<video>` has a `GestureRecognizer` that will attempt to
+        `play()`, and then the `PlayPauseButton` (which also has a `GestureRecognizer`) will attempt
+        to `togglePlayback()` (via `PlaybackSupport`), which will `pause()` because the `<video>` is
+        not `paused`.
+
+        When a `<video>` is `play()` for the first time, it may not actually start playing for a
+        moment (e.g. buffering) even though it will say it's `paused`.
+
+        Test: media/modern-media-controls/ios-inline-media-controls/touch/ios-inline-media-controls-shows-start-button.html
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.togglePlayback):
+        Also check `hasPlayed` to decide whether to `play()` or `pause()`, as it's set when the first
+        `"play"` event is handled, as until then we're still not playing yet and should `play()`.
+
+        This could also be fixed in `PlaybackSupport` (and/or `StartSupport`), but doing it in
+        `togglePlayback` is a more general solution that fixes all present (and future) callsites.
+
 2022-05-02  Youenn Fablet  <youenn@apple.com>
 
         Cancel response stream if load is being cancelled by the web page
