@@ -7683,8 +7683,22 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler
 {
-    _page->prepareSelectionForContextMenuWithLocationInView(WebCore::roundedIntPoint(locationInView), [protectedCompletionHandler = makeBlockPtr(completionHandler)](bool shouldPresentMenu, const WebKit::RevealItem& item) {
-        protectedCompletionHandler(shouldPresentMenu, item.item());
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    _imageAnalysisMarkupData = std::nullopt;
+#endif
+
+    _page->prepareSelectionForContextMenuWithLocationInView(WebCore::roundedIntPoint(locationInView), [weakSelf = WeakObjCPtr<WKContentView>(self), completionHandler = makeBlockPtr(completionHandler)](bool shouldPresentMenu, auto& item) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return completionHandler(false, nil);
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+        [strongSelf doAfterComputingImageAnalysisResultsForMarkup:[completionHandler, shouldPresentMenu, item = RetainPtr { item.item() }]() mutable {
+            completionHandler(shouldPresentMenu, item.get());
+        }];
+#else
+        completionHandler(shouldPresentMenu, item.item());
+#endif
     });
 }
 #endif
@@ -9885,7 +9899,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (auto menu = self.imageAnalysisMarkupMenu)
-        [builder insertSiblingMenu:menu afterMenuForIdentifier:UIMenuStandardEdit];
+        [builder insertSiblingMenu:menu beforeMenuForIdentifier:UIMenuFormat];
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)

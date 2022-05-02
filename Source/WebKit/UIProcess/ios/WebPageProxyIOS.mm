@@ -532,7 +532,7 @@ void WebPageProxy::requestRVItemInCurrentSelectedRange(CompletionHandler<void(co
     sendWithAsyncReply(Messages::WebPage::RequestRVItemInCurrentSelectedRange(), WTFMove(callbackFunction));
 }
 
-void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(const WebCore::IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& callbackFunction)
+void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& callbackFunction)
 {
     if (!hasRunningProcess())
         return callbackFunction(false, RevealItem());

@@ -339,6 +339,18 @@ static void simulateCalloutBarAppearance(TestWKWebView *webView)
     Util::run(&done);
 }
 
+static BOOL simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint location)
+{
+    __block BOOL result;
+    __block bool done = false;
+    [webView.textInputContentView prepareSelectionForContextMenuWithLocationInView:location completionHandler:^(BOOL shouldPresent, RVItem *) {
+        result = shouldPresent;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
 static void invokeImageMarkupAction(TestWKWebView *webView)
 {
     simulateCalloutBarAppearance(webView);
@@ -347,6 +359,22 @@ static void invokeImageMarkupAction(TestWKWebView *webView)
     [webView buildMenuWithBuilder:menuBuilder.get()];
     [[menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()] _performActionWithSender:nil];
     [webView waitForNextPresentationUpdate];
+}
+
+TEST(ImageAnalysisTests, MarkupImageUsingContextMenu)
+{
+    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadTestPageNamed:@"image"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE(simulateEditContextMenuAppearance(webView.get(), CGPointMake(100, 100)));
+
+    auto menuBuilder = adoptNS([[TestUIMenuBuilder alloc] init]);
+    [webView buildMenuWithBuilder:menuBuilder.get()];
+    EXPECT_NOT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleMarkupImage()]);
 }
 
 TEST(ImageAnalysisTests, MenuControllerItems)

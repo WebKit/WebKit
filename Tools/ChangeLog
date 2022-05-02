@@ -1,3 +1,18 @@
+2022-05-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for the "Markup Image" action when right clicking an image in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=239948
+        rdar://92064672
+
+        Reviewed by Tim Horton.
+
+        Add an API test to verify that the "Markup Image" is included in the context menu when right clicking an image
+        element inside an editable web view.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::simulateEditContextMenuAppearance):
+        (TestWebKitAPI::TEST):
+
 2022-04-29  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         [GLib] Make WebKitSettings XSS auditor functions no-op

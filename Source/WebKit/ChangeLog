@@ -1,3 +1,40 @@
+2022-05-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for the "Markup Image" action when right clicking an image in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=239948
+        rdar://92064672
+
+        Reviewed by Tim Horton.
+
+        Insert a "Markup Image" menu action when right clicking an editable image element on iPad via trackpad, but only
+        when the image has relevant image analysis markup results. See below for more details.
+
+        Test: ImageAnalysisTests.MarkupImageUsingContextMenu
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView prepareSelectionForContextMenuWithLocationInView:completionHandler:]):
+
+        In the case where a single image is selected in editable content, make this method additionally wait until we've
+        finished analyzing the selected image, such that the subsequent call to `-buildMenuForWebViewWithBuilder:` which
+        populates items in the right click context menu will include the "Markup Image" item if there are relevant
+        results.
+
+        (-[WKContentView buildMenuForWebViewWithBuilder:]):
+
+        Also move the location of this item to before the Format (B/I/U) menu items in both the callout bar and the
+        editing context menu.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::prepareSelectionForContextMenuWithLocationInView):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::prepareSelectionForContextMenuWithLocationInView):
+
+        In the case where an image element is clicked, just select the image element instead of trying to detect a
+        nearby word or link. We also immediately send a full editor state update here, such that the editor state's
+        `selectedEditableImage` will be up to date when the completion handler in the UI process is invoked.
+
 2022-04-29  Michael Catanzaro  <mcatanzaro@redhat.com>
 
         [GLib] Make WebKitSettings XSS auditor functions no-op
