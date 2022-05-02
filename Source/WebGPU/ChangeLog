@@ -1,3 +1,14 @@
+2022-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] [tvOS] Neither MTLGPUFamilyApple6 nor MTLGPUFamilyApple7 exist on tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=239973
+        <rdar://problem/92599361>
+
+        Unreviewed build fix.
+
+        * WebGPU/HardwareCapabilities.mm:
+        (WebGPU::rawHardwareCapabilities):
+
 2022-04-27  Michael Saboff  <msaboff@apple.com>
 
         WebGPU doesn't create a symlink to the system content path in installhdrs
