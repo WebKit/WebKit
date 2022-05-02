@@ -1,7 +1,7 @@
 // We only need one run of this with any GC or JIT strategy. This test is not particularly fast.
 // Unfortunately, it needs to run for a while to test the thing it's testing.
-//@ runWithRAMSize(10000000)
 //@ requireOptions("-e", "let leakFactor=3") if $architecture == "mips"
+//@ runWithRAMSize(10000000)
 //@ slow!
 
 // Note: Due to the conservative stack scanning, it is possible that arbitrary
@@ -13,7 +13,7 @@
 // Arrays allocated in the loop. This would then cause the final check on the
 // post GC heap size to fail, as some of the arrays cannot be collected, so ...
 // increasing leniency on platforms where this manifests.
-var leakFactor = typeof(leakFactor) === 'undefined' ? 1 : leakFactor;
+leakFactor = typeof(leakFactor) === 'undefined' ? 1 : leakFactor;
 
 function foo(x) {
     return new Array(x);

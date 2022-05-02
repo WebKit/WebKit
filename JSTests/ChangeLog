@@ -1,3 +1,21 @@
+2022-05-02  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        new-largeish-contiguous-array-with-size.js: pick up leakFactor
+        https://bugs.webkit.org/show_bug.cgi?id=239963
+
+        Unreviewed gardening.
+
+        The //@ directives are implemented imperatively, so requireOptions
+        only has any effect if it precedes the run* statement. Also,
+        s/var leakFactor/leakFactor/ to avoid running into this:
+
+          Exception: SyntaxError: Can't create duplicate variable: 'leakFactor' 
+
+        With this fix, the leakFactor works as intended -- no failures in 200+
+        iterations.
+
+        * stress/new-largeish-contiguous-array-with-size.js:
+
 2022-04-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Format time zone name using ICU instead of platform calls
