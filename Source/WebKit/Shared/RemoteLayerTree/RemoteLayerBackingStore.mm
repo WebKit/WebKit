@@ -689,8 +689,6 @@ RefPtr<ImageBuffer> RemoteLayerBackingStore::bufferForType(BufferType bufferType
 
 void RemoteLayerBackingStore::Buffer::discard()
 {
-    if (imageBuffer)
-        imageBuffer->releaseBufferToPool(&WebCore::IOSurfacePool::sharedPool());
     imageBuffer = nullptr;
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     displayListImageBuffer = nullptr;

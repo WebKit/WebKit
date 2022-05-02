@@ -142,9 +142,6 @@ public:
 
     virtual bool isInUse() const { return false; }
     virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
-#if HAVE(IOSURFACE)
-    virtual void releaseBufferToPool(IOSurfacePool*) { }
-#endif
 
     // Returns true on success.
     virtual bool setVolatile() { return true; }

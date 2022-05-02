@@ -99,7 +99,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface));
+    return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), creationContext.surfacePool);
 }
 
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const GraphicsContext& context)
@@ -114,12 +114,18 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     return ImageBufferIOSurfaceBackend::create(parameters, nullptr);
 }
 
-ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface)
+ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface, IOSurfacePool* ioSurfacePool)
     : ImageBufferCGBackend(parameters)
     , m_surface(WTFMove(surface))
+    , m_ioSurfacePool(ioSurfacePool)
 {
     ASSERT(m_surface);
     applyBaseTransformToContext();
+}
+
+ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
+{
+    IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
 }
 
 GraphicsContext& ImageBufferIOSurfaceBackend::context() const
@@ -260,11 +266,6 @@ VolatilityState ImageBufferIOSurfaceBackend::volatilityState() const
 void ImageBufferIOSurfaceBackend::setVolatilityState(VolatilityState volatilityState)
 {
     m_volatilityState = volatilityState;
-}
-
-void ImageBufferIOSurfaceBackend::releaseBufferToPool(IOSurfacePool* pool)
-{
-    IOSurface::moveToPool(WTFMove(m_surface), pool);
 }
 
 void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()

@@ -36,19 +36,20 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 class DestinatationColorSpace;
 
-class IOSurfacePool {
+class IOSurfacePool : public ThreadSafeRefCounted<IOSurfacePool> {
     WTF_MAKE_NONCOPYABLE(IOSurfacePool);
     WTF_MAKE_FAST_ALLOCATED;
     friend class LazyNeverDestroyed<IOSurfacePool>;
 
 public:
     WEBCORE_EXPORT static IOSurfacePool& sharedPool();
-    WEBCORE_EXPORT static std::unique_ptr<IOSurfacePool> create();
+    WEBCORE_EXPORT static Ref<IOSurfacePool> create();
 
     std::unique_ptr<IOSurface> takeSurface(IntSize, const DestinationColorSpace&, IOSurface::Format);
     WEBCORE_EXPORT void addSurface(std::unique_ptr<IOSurface>&&);

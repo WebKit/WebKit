@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,15 +27,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "Decoder.h"
-#include "GPUConnectionToWebProcess.h"
-#include "Logging.h"
 #include "RemoteDisplayListRecorder.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include <WebCore/ConcreteImageBuffer.h>
-#include <WebCore/DisplayList.h>
-#include <WebCore/DisplayListItems.h>
-#include <WebCore/DisplayListReplayer.h>
 
 namespace WebKit {
 
@@ -44,7 +38,6 @@ class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::context;
     using BaseConcreteImageBuffer::m_backend;
-    using BaseConcreteImageBuffer::putPixelBuffer;
 
 public:
     static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
@@ -59,12 +52,11 @@ public:
 
     RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
         : BaseConcreteImageBuffer(parameters, WTFMove(backend), renderingResourceIdentifier.object())
-        , m_remoteRenderingBackend(remoteRenderingBackend)
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
         , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
         , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
     {
-        m_remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
+        remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
     }
 
     ~RemoteImageBuffer()
@@ -73,8 +65,6 @@ public:
         // been flushed yet, or the web process may have terminated.
         while (context().stackSize())
             context().restore();
-
-        m_remoteRenderingBackend.willDestroyImageBuffer(*this);
     }
 
     void setOwnershipIdentity(const WebCore::ProcessIdentity& resourceOwner)
@@ -84,9 +74,6 @@ public:
     }
 
 private:
-    friend class RemoteRenderingBackend;
-
-    RemoteRenderingBackend& m_remoteRenderingBackend;
     QualifiedRenderingResourceIdentifier m_renderingResourceIdentifier;
     IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder> m_remoteDisplayList;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;

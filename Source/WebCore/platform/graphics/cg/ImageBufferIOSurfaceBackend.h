@@ -29,6 +29,7 @@
 
 #include "ImageBufferCGBackend.h"
 #include "IOSurface.h"
+#include "IOSurfacePool.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -46,8 +47,9 @@ public:
     // FIXME: Rename to createUsingColorSpaceOfGraphicsContext() (or something like that).
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const GraphicsContext&);
 
-    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&);
-
+    ImageBufferIOSurfaceBackend(const Parameters&, std::unique_ptr<IOSurface>&&, IOSurfacePool*);
+    ~ImageBufferIOSurfaceBackend();
+    
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
     IOSurface* surface();
@@ -68,7 +70,6 @@ protected:
 
     bool isInUse() const override;
     void releaseGraphicsContext() override;
-    void releaseBufferToPool(IOSurfacePool*) override;
 
     bool setVolatile() final;
     SetNonVolatileResult setNonVolatile() final;
@@ -92,6 +93,8 @@ protected:
 
     mutable bool m_needsSetupContext { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };
+
+    RefPtr<IOSurfacePool> m_ioSurfacePool;
 };
 
 } // namespace WebCore

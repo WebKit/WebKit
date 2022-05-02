@@ -36,6 +36,7 @@
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/PixelBuffer.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/WeakPtr.h>
 

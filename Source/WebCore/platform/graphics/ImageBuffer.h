@@ -116,9 +116,6 @@ public:
 
     virtual bool isInUse() const = 0;
     virtual void releaseGraphicsContext() = 0;
-#if HAVE(IOSURFACE)
-    virtual void releaseBufferToPool(IOSurfacePool*) = 0;
-#endif
     // Returns true on success.
     virtual bool setVolatile() = 0;
     virtual SetNonVolatileResult setNonVolatile() = 0;

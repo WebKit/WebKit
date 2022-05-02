@@ -164,14 +164,6 @@ void RemoteRenderingBackend::didCreateImageBufferBackend(ImageBufferBackendHandl
     send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::willDestroyImageBuffer(ImageBuffer& imageBuffer)
-{
-#if HAVE(IOSURFACE)
-    if (imageBuffer.renderingPurpose() == RenderingPurpose::LayerBacking)
-        imageBuffer.releaseBufferToPool(m_ioSurfacePool.get());
-#endif
-}
-
 void RemoteRenderingBackend::didFlush(GraphicsContextFlushIdentifier flushIdentifier, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
 {
     MESSAGE_CHECK(renderingResourceIdentifier.processIdentifier() == m_gpuConnectionToWebProcess->webProcessIdentifier(), "Sending didFlush() message to the wrong web process.");
