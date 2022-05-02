@@ -370,17 +370,16 @@ String DateCache::timeZoneDisplayName(bool isDST)
     if (m_timeZoneStandardDisplayNameCache.isNull()) {
 #if HAVE(ICU_C_TIMEZONE_API)
         auto& timeZoneCache = *this->timeZoneCache();
-        String languageString = defaultLanguage();
-        const char* language = languageString.utf8().data();
+        CString language = defaultLanguage().utf8();
         {
             Vector<UChar, 32> standardDisplayNameBuffer;
-            auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_STANDARD, language, standardDisplayNameBuffer);
+            auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_STANDARD, language.data(), standardDisplayNameBuffer);
             if (U_SUCCESS(status))
                 m_timeZoneStandardDisplayNameCache = String::adopt(WTFMove(standardDisplayNameBuffer));
         }
         {
             Vector<UChar, 32> dstDisplayNameBuffer;
-            auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_DST, language, dstDisplayNameBuffer);
+            auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_DST, language.data(), dstDisplayNameBuffer);
             if (U_SUCCESS(status))
                 m_timeZoneDSTDisplayNameCache = String::adopt(WTFMove(dstDisplayNameBuffer));
         }
