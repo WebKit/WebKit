@@ -247,10 +247,10 @@ inline void SegmentedString::advancePastNewline()
 {
     ASSERT(m_currentCharacter == '\n');
     if (m_currentSubstring.length > 1) {
-        if (m_currentSubstring.doNotExcludeLineNumbers)
-            startNewLine();
         m_currentCharacter = m_currentSubstring.currentCharacterPreIncrement();
         decrementAndCheckLength();
+        if (m_currentSubstring.doNotExcludeLineNumbers)
+            startNewLine();
         return;
     }
 

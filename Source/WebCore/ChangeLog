@@ -1,3 +1,27 @@
+2022-05-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        HTML Parser: Wrong column number in CR-LF line ending style (DOS EOL style) HTML files
+        https://bugs.webkit.org/show_bug.cgi?id=239947
+
+        Reviewed by Myles C. Maxfield.
+
+        JS stack trace reported wrong column numbers in CR-LF line ending
+        HTML files. m_numberOfCharactersConsumedPriorToCurrentLine was the
+        number of characters included the preceding CR but the following
+        LF in those files.
+
+        In SegmentedString::advance, startNewLine() is called after
+        decrementing m_currentSubstring.length. In
+        SegmentedString::advancePastNewline, however, startNewLine() was
+        called before calling decrementAndCheckLength(). startNewLine()
+        should be called after decrementing.
+
+        Test: js/dom/line-column-numbers-cr-lf.html
+
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::advancePastNewline):
+        Call startNewLine() after decrementAndCheckLength() is called.
+
 2022-05-02  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Enumerate all logical longhands in the computed style
