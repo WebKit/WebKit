@@ -1,7 +1,5 @@
 
-FAIL Cookie with %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test0" but got ""
-FAIL Cookie with %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test10" but got ""
-FAIL Cookie with %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test13" but got ""
+PASS Cookie with %x0 in name is rejected.
 PASS Cookie with %x1 in name is rejected.
 PASS Cookie with %x2 in name is rejected.
 PASS Cookie with %x3 in name is rejected.
@@ -10,9 +8,11 @@ PASS Cookie with %x5 in name is rejected.
 PASS Cookie with %x6 in name is rejected.
 PASS Cookie with %x7 in name is rejected.
 PASS Cookie with %x8 in name is rejected.
-FAIL Cookie with %x9 in name is rejected. assert_equals: The cookie was rejected. expected "" but got "test9\tname=9"
+PASS Cookie with %x9 in name is accepted.
+PASS Cookie with %xa in name is rejected.
 PASS Cookie with %xb in name is rejected.
 PASS Cookie with %xc in name is rejected.
+PASS Cookie with %xd in name is rejected.
 PASS Cookie with %xe in name is rejected.
 PASS Cookie with %xf in name is rejected.
 PASS Cookie with %x10 in name is rejected.
@@ -32,94 +32,4 @@ PASS Cookie with %x1d in name is rejected.
 PASS Cookie with %x1e in name is rejected.
 PASS Cookie with %x1f in name is rejected.
 PASS Cookie with %x7f in name is rejected.
-FAIL Cookie with %x1 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test1term" but got ""
-FAIL Cookie with %x2 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test2term" but got ""
-FAIL Cookie with %x3 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test3term" but got ""
-FAIL Cookie with %x4 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test4term" but got ""
-FAIL Cookie with %x5 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test5term" but got ""
-FAIL Cookie with %x6 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test6term" but got ""
-FAIL Cookie with %x7 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test7term" but got ""
-FAIL Cookie with %x8 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test8term" but got ""
-FAIL Cookie with %x9 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test9term" but got ""
-FAIL Cookie with %xb after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test11term" but got ""
-FAIL Cookie with %xc after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test12term" but got ""
-FAIL Cookie with %xe after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test14term" but got ""
-FAIL Cookie with %xf after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test15term" but got ""
-FAIL Cookie with %x10 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test16term" but got ""
-FAIL Cookie with %x11 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test17term" but got ""
-FAIL Cookie with %x12 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test18term" but got ""
-FAIL Cookie with %x13 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test19term" but got ""
-FAIL Cookie with %x14 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test20term" but got ""
-FAIL Cookie with %x15 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test21term" but got ""
-FAIL Cookie with %x16 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test22term" but got ""
-FAIL Cookie with %x17 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test23term" but got ""
-FAIL Cookie with %x18 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test24term" but got ""
-FAIL Cookie with %x19 after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test25term" but got ""
-FAIL Cookie with %x1a after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test26term" but got ""
-FAIL Cookie with %x1b after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test27term" but got ""
-FAIL Cookie with %x1c after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test28term" but got ""
-FAIL Cookie with %x1d after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test29term" but got ""
-FAIL Cookie with %x1e after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test30term" but got ""
-FAIL Cookie with %x1f after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test31term" but got ""
-FAIL Cookie with %x7f after %x0 in name is truncated. assert_equals: The cookie was set as expected. expected "test127term" but got ""
-FAIL Cookie with %x1 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test1term" but got ""
-FAIL Cookie with %x2 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test2term" but got ""
-FAIL Cookie with %x3 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test3term" but got ""
-FAIL Cookie with %x4 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test4term" but got ""
-FAIL Cookie with %x5 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test5term" but got ""
-FAIL Cookie with %x6 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test6term" but got ""
-FAIL Cookie with %x7 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test7term" but got ""
-FAIL Cookie with %x8 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test8term" but got ""
-FAIL Cookie with %x9 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test9term" but got ""
-FAIL Cookie with %xb after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test11term" but got ""
-FAIL Cookie with %xc after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test12term" but got ""
-FAIL Cookie with %xe after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test14term" but got ""
-FAIL Cookie with %xf after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test15term" but got ""
-FAIL Cookie with %x10 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test16term" but got ""
-FAIL Cookie with %x11 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test17term" but got ""
-FAIL Cookie with %x12 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test18term" but got ""
-FAIL Cookie with %x13 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test19term" but got ""
-FAIL Cookie with %x14 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test20term" but got ""
-FAIL Cookie with %x15 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test21term" but got ""
-FAIL Cookie with %x16 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test22term" but got ""
-FAIL Cookie with %x17 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test23term" but got ""
-FAIL Cookie with %x18 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test24term" but got ""
-FAIL Cookie with %x19 after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test25term" but got ""
-FAIL Cookie with %x1a after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test26term" but got ""
-FAIL Cookie with %x1b after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test27term" but got ""
-FAIL Cookie with %x1c after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test28term" but got ""
-FAIL Cookie with %x1d after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test29term" but got ""
-FAIL Cookie with %x1e after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test30term" but got ""
-FAIL Cookie with %x1f after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test31term" but got ""
-FAIL Cookie with %x7f after %xa in name is truncated. assert_equals: The cookie was set as expected. expected "test127term" but got ""
-FAIL Cookie with %x1 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test1term" but got ""
-FAIL Cookie with %x2 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test2term" but got ""
-FAIL Cookie with %x3 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test3term" but got ""
-FAIL Cookie with %x4 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test4term" but got ""
-FAIL Cookie with %x5 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test5term" but got ""
-FAIL Cookie with %x6 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test6term" but got ""
-FAIL Cookie with %x7 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test7term" but got ""
-FAIL Cookie with %x8 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test8term" but got ""
-FAIL Cookie with %x9 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test9term" but got ""
-FAIL Cookie with %xb after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test11term" but got ""
-FAIL Cookie with %xc after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test12term" but got ""
-FAIL Cookie with %xe after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test14term" but got ""
-FAIL Cookie with %xf after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test15term" but got ""
-FAIL Cookie with %x10 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test16term" but got ""
-FAIL Cookie with %x11 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test17term" but got ""
-FAIL Cookie with %x12 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test18term" but got ""
-FAIL Cookie with %x13 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test19term" but got ""
-FAIL Cookie with %x14 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test20term" but got ""
-FAIL Cookie with %x15 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test21term" but got ""
-FAIL Cookie with %x16 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test22term" but got ""
-FAIL Cookie with %x17 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test23term" but got ""
-FAIL Cookie with %x18 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test24term" but got ""
-FAIL Cookie with %x19 after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test25term" but got ""
-FAIL Cookie with %x1a after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test26term" but got ""
-FAIL Cookie with %x1b after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test27term" but got ""
-FAIL Cookie with %x1c after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test28term" but got ""
-FAIL Cookie with %x1d after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test29term" but got ""
-FAIL Cookie with %x1e after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test30term" but got ""
-FAIL Cookie with %x1f after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test31term" but got ""
-FAIL Cookie with %x7f after %xd in name is truncated. assert_equals: The cookie was set as expected. expected "test127term" but got ""
 

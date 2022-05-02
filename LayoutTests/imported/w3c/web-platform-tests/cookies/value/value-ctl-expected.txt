@@ -1,7 +1,5 @@
 
-PASS Cookie with %x0 in value is truncated.
-PASS Cookie with %xa in value is truncated.
-PASS Cookie with %xd in value is truncated.
+FAIL Cookie with %x0 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=0"
 FAIL Cookie with %x1 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=1"
 FAIL Cookie with %x2 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=2"
 FAIL Cookie with %x3 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=3"
@@ -10,9 +8,11 @@ FAIL Cookie with %x5 in value is rejected. assert_equals: The cookie was rejecte
 FAIL Cookie with %x6 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=6"
 FAIL Cookie with %x7 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=7"
 FAIL Cookie with %x8 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=8"
-FAIL Cookie with %x9 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=9\tvalue"
+PASS Cookie with %x9 in value is accepted.
+FAIL Cookie with %xa in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=10"
 FAIL Cookie with %xb in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=11"
 FAIL Cookie with %xc in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=12"
+FAIL Cookie with %xd in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=13"
 FAIL Cookie with %xe in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=14"
 FAIL Cookie with %xf in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=15"
 FAIL Cookie with %x10 in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=16"
@@ -32,94 +32,4 @@ FAIL Cookie with %x1d in value is rejected. assert_equals: The cookie was reject
 FAIL Cookie with %x1e in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=30"
 FAIL Cookie with %x1f in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=31"
 FAIL Cookie with %x7f in value is rejected. assert_equals: The cookie was rejected. expected "" but got "test=127"
-PASS Cookie with %x1 after %x0 in value is truncated.
-PASS Cookie with %x2 after %x0 in value is truncated.
-PASS Cookie with %x3 after %x0 in value is truncated.
-PASS Cookie with %x4 after %x0 in value is truncated.
-PASS Cookie with %x5 after %x0 in value is truncated.
-PASS Cookie with %x6 after %x0 in value is truncated.
-PASS Cookie with %x7 after %x0 in value is truncated.
-PASS Cookie with %x8 after %x0 in value is truncated.
-PASS Cookie with %x9 after %x0 in value is truncated.
-PASS Cookie with %xb after %x0 in value is truncated.
-PASS Cookie with %xc after %x0 in value is truncated.
-PASS Cookie with %xe after %x0 in value is truncated.
-PASS Cookie with %xf after %x0 in value is truncated.
-PASS Cookie with %x10 after %x0 in value is truncated.
-PASS Cookie with %x11 after %x0 in value is truncated.
-PASS Cookie with %x12 after %x0 in value is truncated.
-PASS Cookie with %x13 after %x0 in value is truncated.
-PASS Cookie with %x14 after %x0 in value is truncated.
-PASS Cookie with %x15 after %x0 in value is truncated.
-PASS Cookie with %x16 after %x0 in value is truncated.
-PASS Cookie with %x17 after %x0 in value is truncated.
-PASS Cookie with %x18 after %x0 in value is truncated.
-PASS Cookie with %x19 after %x0 in value is truncated.
-PASS Cookie with %x1a after %x0 in value is truncated.
-PASS Cookie with %x1b after %x0 in value is truncated.
-PASS Cookie with %x1c after %x0 in value is truncated.
-PASS Cookie with %x1d after %x0 in value is truncated.
-PASS Cookie with %x1e after %x0 in value is truncated.
-PASS Cookie with %x1f after %x0 in value is truncated.
-PASS Cookie with %x7f after %x0 in value is truncated.
-PASS Cookie with %x1 after %xa in value is truncated.
-PASS Cookie with %x2 after %xa in value is truncated.
-PASS Cookie with %x3 after %xa in value is truncated.
-PASS Cookie with %x4 after %xa in value is truncated.
-PASS Cookie with %x5 after %xa in value is truncated.
-PASS Cookie with %x6 after %xa in value is truncated.
-PASS Cookie with %x7 after %xa in value is truncated.
-PASS Cookie with %x8 after %xa in value is truncated.
-PASS Cookie with %x9 after %xa in value is truncated.
-PASS Cookie with %xb after %xa in value is truncated.
-PASS Cookie with %xc after %xa in value is truncated.
-PASS Cookie with %xe after %xa in value is truncated.
-PASS Cookie with %xf after %xa in value is truncated.
-PASS Cookie with %x10 after %xa in value is truncated.
-PASS Cookie with %x11 after %xa in value is truncated.
-PASS Cookie with %x12 after %xa in value is truncated.
-PASS Cookie with %x13 after %xa in value is truncated.
-PASS Cookie with %x14 after %xa in value is truncated.
-PASS Cookie with %x15 after %xa in value is truncated.
-PASS Cookie with %x16 after %xa in value is truncated.
-PASS Cookie with %x17 after %xa in value is truncated.
-PASS Cookie with %x18 after %xa in value is truncated.
-PASS Cookie with %x19 after %xa in value is truncated.
-PASS Cookie with %x1a after %xa in value is truncated.
-PASS Cookie with %x1b after %xa in value is truncated.
-PASS Cookie with %x1c after %xa in value is truncated.
-PASS Cookie with %x1d after %xa in value is truncated.
-PASS Cookie with %x1e after %xa in value is truncated.
-PASS Cookie with %x1f after %xa in value is truncated.
-PASS Cookie with %x7f after %xa in value is truncated.
-PASS Cookie with %x1 after %xd in value is truncated.
-PASS Cookie with %x2 after %xd in value is truncated.
-PASS Cookie with %x3 after %xd in value is truncated.
-PASS Cookie with %x4 after %xd in value is truncated.
-PASS Cookie with %x5 after %xd in value is truncated.
-PASS Cookie with %x6 after %xd in value is truncated.
-PASS Cookie with %x7 after %xd in value is truncated.
-PASS Cookie with %x8 after %xd in value is truncated.
-PASS Cookie with %x9 after %xd in value is truncated.
-PASS Cookie with %xb after %xd in value is truncated.
-PASS Cookie with %xc after %xd in value is truncated.
-PASS Cookie with %xe after %xd in value is truncated.
-PASS Cookie with %xf after %xd in value is truncated.
-PASS Cookie with %x10 after %xd in value is truncated.
-PASS Cookie with %x11 after %xd in value is truncated.
-PASS Cookie with %x12 after %xd in value is truncated.
-PASS Cookie with %x13 after %xd in value is truncated.
-PASS Cookie with %x14 after %xd in value is truncated.
-PASS Cookie with %x15 after %xd in value is truncated.
-PASS Cookie with %x16 after %xd in value is truncated.
-PASS Cookie with %x17 after %xd in value is truncated.
-PASS Cookie with %x18 after %xd in value is truncated.
-PASS Cookie with %x19 after %xd in value is truncated.
-PASS Cookie with %x1a after %xd in value is truncated.
-PASS Cookie with %x1b after %xd in value is truncated.
-PASS Cookie with %x1c after %xd in value is truncated.
-PASS Cookie with %x1d after %xd in value is truncated.
-PASS Cookie with %x1e after %xd in value is truncated.
-PASS Cookie with %x1f after %xd in value is truncated.
-PASS Cookie with %x7f after %xd in value is truncated.
 

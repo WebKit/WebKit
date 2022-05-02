@@ -1,3 +1,21 @@
+2022-05-02  Alex Christensen  <achristensen@webkit.org>
+
+        Update some wpt tests with control characters in cookies
+        https://bugs.webkit.org/show_bug.cgi?id=239966
+        <rdar://92300855>
+
+        Reviewed by Chris Dumez.
+
+        This reflects a change in https://github.com/httpwg/http-extensions/issues/1531
+
+        * web-platform-tests/cookies/name/name-ctl-expected.txt:
+        * web-platform-tests/cookies/name/name-ctl.html:
+        * web-platform-tests/cookies/resources/cookie-test.js:
+        * web-platform-tests/cookies/value/value-ctl-expected.txt:
+        * web-platform-tests/cookies/value/value-ctl.html:
+        * web-platform-tests/html/dom/documents/resource-metadata-management/document-cookie-expected.txt:
+        * web-platform-tests/html/dom/documents/resource-metadata-management/document-cookie.html:
+
 2022-05-02  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Don't index 'all' shorthand in computed styles
