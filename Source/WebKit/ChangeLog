@@ -1,3 +1,45 @@
+2022-05-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] The "Markup Image" services menu item should be gated on image analysis results
+        https://bugs.webkit.org/show_bug.cgi?id=239933
+        rdar://92348202
+
+        Reviewed by Kate Cheney.
+
+        Adjust some macOS-specific logic for appending the "Markup Image" menu item in the services menu, such that we
+        only add this new item in the case where the relevant image analysis APIs come back with a valid cropped image
+        result. See below for more details.
+
+        Test: ImageAnalysisTests.MarkupImageItemInServicesMenu
+
+        * UIProcess/WebContextMenuProxy.h:
+        (WebKit::WebContextMenuProxy::croppedImageResult const):
+
+        Move `m_croppedImageForContextMenu` into `WebContextMenuProxyMac` as `m_croppedImageResult`, so that it can be
+        easily used for both the new "Copy Cropped Image" and "Markup Image" items. This also allows us to simplify some
+        logic for resetting this cached image result since the whole `m_activeContextMenu` is always destroyed upon
+        presenting a context menu, so there's no need to separately clear out `m_croppedImageResult`.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::showContextMenu):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+        (WebKit::WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded):
+
+        Pull this logic out into a separate helper method, and change it so that:
+        - We run the image analysis prior to creating and adding the item.
+        - Only add the item if the image analysis returned a non-null CGImageRef.
+        - Store the CGImageRef on `m_croppedImageResult`, for use if the menu item is invoked.
+
+        (WebKit::WebContextMenuProxyMac::applyMarkupToControlledImage):
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::handleContextMenuCopyCroppedImage):
+        (WebKit::WebPageProxy::setCroppedImageForContextMenu): Deleted.
+
 2022-05-02  Youenn Fablet  <youenn@apple.com>
 
         Cancel response stream if load is being cancelled by the web page

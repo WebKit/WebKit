@@ -1,3 +1,26 @@
+2022-05-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] The "Markup Image" services menu item should be gated on image analysis results
+        https://bugs.webkit.org/show_bug.cgi?id=239933
+        rdar://92348202
+
+        Reviewed by Kate Cheney.
+
+        Add an API test to simulate clicking on the services menu button in an attachment-backed image element while
+        swizzling the relevant image analysis APIs to return a valid CGImageRef; verify that the "Markup Image" menu
+        item eventually shows up.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::createWebViewWithTextRecognitionEnhancements):
+        (TestWebKitAPI::iconImage):
+
+        Make this testing helper function work on both macOS and iOS.
+
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::runMarkupTest):
+        * TestWebKitAPI/Tests/WebKitCocoa/image-controls.html: Added.
+
 2022-05-02  Youenn Fablet  <youenn@apple.com>
 
         PWA in iOS use old assets after publish new servicerWorker/assets

@@ -2102,10 +2102,6 @@ public:
     void extractVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
     void cancelVideoExtractionInElementFullScreen();
 
-#if ENABLE(CONTEXT_MENUS) && ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    void setCroppedImageForContextMenu(CGImageRef);
-#endif
-
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2795,10 +2791,6 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
     ContextMenuContextData m_activeContextMenuContextData;
-#endif
-
-#if ENABLE(CONTEXT_MENUS) && ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    RetainPtr<CGImageRef> m_croppedImageForContextMenu;
 #endif
 
     RefPtr<API::HitTestResult> m_lastMouseMoveHitTestResult;

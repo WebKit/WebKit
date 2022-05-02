@@ -157,6 +157,10 @@ static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
         if ([key isEqualToString:@"TextRecognitionEnhancementsEnabled"] || [key isEqualToString:@"ImageAnalysisQueueEnabled"] || [key isEqualToString:@"ImageAnalysisMarkupEnabled"])
             [[configuration preferences] _setEnabled:YES forInternalDebugFeature:feature];
     }
+    [configuration _setAttachmentElementEnabled:YES];
+#if ENABLE(SERVICE_CONTROLS)
+    [configuration _setImageControlsEnabled:YES];
+#endif
     return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get()]);
 }
 
@@ -322,13 +326,22 @@ TEST(ImageAnalysisTests, ImageAnalysisWithTransparentImages)
     EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-static RetainPtr<UIImage> iconImage()
+static RetainPtr<CGImageRef> iconImage()
 {
     auto iconPath = [NSBundle.mainBundle pathForResource:@"icon" ofType:@"png" inDirectory:@"TestWebKitAPI.resources"];
-    return [UIImage imageWithContentsOfFile:iconPath];
+#if PLATFORM(IOS_FAMILY)
+    return [UIImage imageWithContentsOfFile:iconPath].CGImage;
+#else
+    auto image = adoptNS([[NSImage alloc] initWithContentsOfFile:iconPath]);
+    return [image CGImageForProposedRect:nil context:nil hints:nil];
+#endif
 }
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
 
 static void simulateCalloutBarAppearance(TestWKWebView *webView)
 {
@@ -379,7 +392,7 @@ TEST(ImageAnalysisTests, MarkupImageUsingContextMenu)
 
 TEST(ImageAnalysisTests, MenuControllerItems)
 {
-    ImageAnalysisMarkupSwizzler swizzler { [iconImage() CGImage], CGRectMake(10, 10, 215, 174) };
+    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     auto inputDelegate = adoptNS([TestInputDelegate new]);
@@ -417,7 +430,7 @@ TEST(ImageAnalysisTests, MenuControllerItems)
 
 static void runMarkupTest(NSString *testPage, NSString *scriptToSelectText, Function<void(TestWKWebView *, NSString *)>&& checkWebView)
 {
-    ImageAnalysisMarkupSwizzler swizzler { [iconImage() CGImage], CGRectMake(10, 10, 215, 174) };
+    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
 
     auto webView = createWebViewWithTextRecognitionEnhancements();
     auto inputDelegate = adoptNS([TestInputDelegate new]);
@@ -460,6 +473,38 @@ TEST(ImageAnalysisTests, PerformImageAnalysisMarkupWithWebPImages)
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && ENABLE(SERVICE_CONTROLS)
+
+TEST(ImageAnalysisTests, MarkupImageItemInServicesMenu)
+{
+    ImageAnalysisMarkupSwizzler swizzler { iconImage().autorelease(), CGRectMake(10, 10, 215, 174) };
+
+    auto webView = createWebViewWithTextRecognitionEnhancements();
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadTestPageNamed:@"image-controls"];
+    [[webView window] orderFrontRegardless];
+    [webView callAsyncJavaScript:@"waitForAndClickImageControls()" arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id, NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    __block bool foundMarkupImageItem = false;
+    RetainPtr timer = [NSTimer timerWithTimeInterval:0.1 repeats:YES block:^(NSTimer *) {
+        NSMenu *menu = [webView _activeMenu];
+        for (NSMenuItem *item in menu.itemArray) {
+            if ([item.title isEqualToString:WebCore::contextMenuItemTitleMarkupImage()]) {
+                foundMarkupImageItem = true;
+                [menu cancelTracking];
+                break;
+            }
+        }
+    }];
+
+    [NSRunLoop.mainRunLoop addTimer:timer.get() forMode:NSEventTrackingRunLoopMode];
+    Util::run(&foundMarkupImageItem);
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && ENABLE(SERVICE_CONTROLS)
 
 } // namespace TestWebKitAPI
 

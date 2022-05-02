@@ -781,17 +781,16 @@ void WebPageProxy::showImageInQuickLookPreviewPanel(ShareableBitmap& imageBitmap
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPageProxy::setCroppedImageForContextMenu(CGImageRef image)
-{
-    m_croppedImageForContextMenu = image;
-}
-
 void WebPageProxy::handleContextMenuCopyCroppedImage(const String& preferredMIMEType)
 {
-    if (!m_croppedImageForContextMenu)
+    if (!m_activeContextMenu)
         return;
 
-    auto [data, type] = imageDataForCroppedImageResult(m_croppedImageForContextMenu.get(), preferredMIMEType.createCFString().get());
+    RetainPtr image = m_activeContextMenu->croppedImageResult();
+    if (!image)
+        return;
+
+    auto [data, type] = imageDataForCroppedImageResult(image.get(), preferredMIMEType.createCFString().get());
     if (!data)
         return;
 

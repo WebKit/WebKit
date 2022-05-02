@@ -1104,6 +1104,7 @@
 		F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4856CA21E6498A8009D7EE7 /* attachment-element.html */; };
 		F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */; };
 		F48D6C10224B377000E3E2FB /* PreferredContentMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */; };
+		F491DBAE281DE0E80081705F /* image-controls.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F491DBAD281DE0980081705F /* image-controls.html */; };
 		F494B36A263120780060A310 /* TextServicesTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F494B369263120780060A310 /* TextServicesTests.mm */; };
 		F49992C6248DABFD00034167 /* overflow-hidden.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F49992C5248DABE400034167 /* overflow-hidden.html */; };
 		F4A32EC41F05F3850047C544 /* dragstart-change-selection-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */; };
@@ -1417,6 +1418,7 @@
 				F41AB9A41EF4696B0083FA08 /* image-and-contenteditable.html in Copy Resources */,
 				F4E0A2B42122402B00AF7C7F /* image-and-file-upload.html in Copy Resources */,
 				F41AB9A51EF4696B0083FA08 /* image-and-textarea.html in Copy Resources */,
+				F491DBAE281DE0E80081705F /* image-controls.html in Copy Resources */,
 				F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */,
 				F45B63FB1F197F4A009D38B9 /* image-map.html in Copy Resources */,
 				3128A8152376413300D90D40 /* image.html in Copy Resources */,
@@ -3142,6 +3144,7 @@
 		F4856CA21E6498A8009D7EE7 /* attachment-element.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "attachment-element.html"; sourceTree = "<group>"; };
 		F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "DataTransfer-setDragImage.html"; sourceTree = "<group>"; };
 		F48D6C0F224B377000E3E2FB /* PreferredContentMode.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferredContentMode.mm; sourceTree = "<group>"; };
+		F491DBAD281DE0980081705F /* image-controls.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-controls.html"; sourceTree = "<group>"; };
 		F493247C1F44DF8D006F4336 /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		F494B369263120780060A310 /* TextServicesTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextServicesTests.mm; sourceTree = "<group>"; };
 		F49992C5248DABE400034167 /* overflow-hidden.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "overflow-hidden.html"; sourceTree = "<group>"; };
@@ -4214,6 +4217,7 @@
 				F41AB9991EF4692C0083FA08 /* image-and-contenteditable.html */,
 				F4E0A2B321223F2D00AF7C7F /* image-and-file-upload.html */,
 				F41AB9931EF4692C0083FA08 /* image-and-textarea.html */,
+				F491DBAD281DE0980081705F /* image-controls.html */,
 				F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */,
 				F45B63FA1F197F33009D38B9 /* image-map.html */,
 				3128A814237640FD00D90D40 /* image.html */,

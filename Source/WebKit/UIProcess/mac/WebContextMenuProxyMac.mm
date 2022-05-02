@@ -261,21 +261,8 @@ void WebContextMenuProxyMac::setupServicesMenu()
 
     if (!hasControlledImage)
         [m_menu setShowsStateColumn:YES];
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    else if (page()->preferences().imageAnalysisMarkupEnabled()) {
-        auto markupImageItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleMarkupImage() action:@selector(markupImage) keyEquivalent:@""]);
-        [markupImageItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleMarkupImage()]];
-        [markupImageItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];
-        [markupImageItem setAction:@selector(markupImage)];
-        auto numberOfItems = [m_menu numberOfItems];
-        if (numberOfItems)
-            [markupImageItem setIndentationLevel:[m_menu itemAtIndex:numberOfItems - 1].indentationLevel];
-        if (numberOfItems >= 1)
-            [m_menu insertItem:markupImageItem.get() atIndex:numberOfItems - 1];
-        else
-            [m_menu addItem:markupImageItem.get()];
-    }
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+
+    appendMarkupItemToControlledImageMenuIfNeeded();
 
     // Explicitly add a menu item for each telephone number that is in the selection.
     Vector<RetainPtr<NSMenuItem>> telephoneNumberMenuItems;
@@ -306,6 +293,42 @@ void WebContextMenuProxyMac::setupServicesMenu()
         ServicesController::singleton().refreshExistingServices();
 }
 
+void WebContextMenuProxyMac::appendMarkupItemToControlledImageMenuIfNeeded()
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    auto* page = this->page();
+    if (!page || !page->preferences().imageAnalysisMarkupEnabled())
+        return;
+
+    auto* imageBitmap = m_context.controlledImage();
+    if (!imageBitmap)
+        return;
+
+    auto image = imageBitmap->makeCGImage();
+    if (!image)
+        return;
+
+    requestImageAnalysisMarkup(image.get(), [protectedThis = Ref { *this }, weakMenu = WeakObjCPtr<NSMenu> { m_menu.get() }](CGImageRef result, CGRect) {
+        if (!result)
+            return;
+
+        auto strongMenu = weakMenu.get();
+        if (!strongMenu)
+            return;
+
+        auto markupImageItem = adoptNS([[NSMenuItem alloc] initWithTitle:contextMenuItemTitleMarkupImage() action:@selector(markupImage) keyEquivalent:@""]);
+        [markupImageItem setImage:[NSImage imageWithSystemSymbolName:@"person.fill.viewfinder" accessibilityDescription:contextMenuItemTitleMarkupImage()]];
+        [markupImageItem setTarget:WKSharingServicePickerDelegate.sharedSharingServicePickerDelegate];
+        [markupImageItem setAction:@selector(markupImage)];
+        if (auto numberOfItems = [strongMenu numberOfItems])
+            [markupImageItem setIndentationLevel:[strongMenu itemAtIndex:numberOfItems - 1].indentationLevel];
+        [strongMenu addItem:markupImageItem.get()];
+
+        protectedThis->m_croppedImageResult = result;
+    });
+#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+}
+
 void WebContextMenuProxyMac::showServicesMenu()
 {
     setupServicesMenu();
@@ -331,25 +354,11 @@ void WebContextMenuProxyMac::applyMarkupToControlledImage()
     if (!elementContext)
         return;
 
-    auto* imageBitmap = m_context.controlledImage();
-    if (!imageBitmap)
+    auto [data, type] = imageDataForCroppedImageResult(m_croppedImageResult.get(), m_context.controlledImageMIMEType().createCFString().get());
+    if (!data)
         return;
 
-    auto image = imageBitmap->makeCGImage();
-    if (!image)
-        return;
-
-    requestImageAnalysisMarkup(image.get(), [weakPage = WeakPtr { page() }, preferredMIMEType = m_context.controlledImageMIMEType(), elementContext = WTFMove(*elementContext)](CGImageRef result, CGRect) {
-        RefPtr protectedPage = weakPage.get();
-        if (!protectedPage || !result)
-            return;
-
-        auto [data, type] = imageDataForCroppedImageResult(result, preferredMIMEType.createCFString().get());
-        if (!data)
-            return;
-
-        protectedPage->replaceImageWithMarkupResults(elementContext, { String(type.get()) }, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]));
-    });
+    page()->replaceImageWithMarkupResults(*elementContext, { String(type.get()) }, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]));
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 }
 
@@ -661,7 +670,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
             if (copyCroppedImageItem) {
                 if (auto image = imageBitmap->makeCGImageCopy()) {
-                    page->setCroppedImageForContextMenu(nullptr);
+                    protectedThis->m_croppedImageResult = nullptr;
                     requestImageAnalysisMarkup(image.get(), [weakPage, protectedThis, copyCroppedImageItem = WTFMove(*copyCroppedImageItem)](auto result, auto) {
                         if (!result)
                             return;
@@ -670,7 +679,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
                         if (!page)
                             return;
 
-                        page->setCroppedImageForContextMenu(result);
+                        protectedThis->m_croppedImageResult = result;
                         [protectedThis->m_menu addItem:createMenuActionItem(copyCroppedImageItem).get()];
                     });
                 }

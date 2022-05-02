@@ -53,6 +53,10 @@ public:
     virtual NSArray *platformData() const = 0;
 #endif // PLATFORM(COCOA)
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    virtual CGImageRef croppedImageResult() const { return nullptr; }
+#endif
+
 protected:
     WebContextMenuProxy(WebPageProxy&, ContextMenuContextData&&, const UserData&);
 
