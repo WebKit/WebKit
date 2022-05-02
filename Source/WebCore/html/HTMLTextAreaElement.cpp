@@ -121,7 +121,7 @@ const AtomString& HTMLTextAreaElement::formControlType() const
 
 FormControlState HTMLTextAreaElement::saveFormControlState() const
 {
-    return m_isDirty ? FormControlState { { value() } } : FormControlState { };
+    return m_isDirty ? FormControlState { { AtomString { value() } } } : FormControlState { };
 }
 
 void HTMLTextAreaElement::restoreFormControlState(const FormControlState& state)

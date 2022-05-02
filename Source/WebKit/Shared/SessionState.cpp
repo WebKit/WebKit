@@ -282,7 +282,7 @@ void FrameState::validateDocumentState() const
     }
 }
 
-void FrameState::setDocumentState(const Vector<String>& documentState, ShouldValidate shouldValidate)
+void FrameState::setDocumentState(const Vector<AtomString>& documentState, ShouldValidate shouldValidate)
 {
     m_documentState = documentState;
 

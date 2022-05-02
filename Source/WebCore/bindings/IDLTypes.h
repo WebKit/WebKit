@@ -139,7 +139,8 @@ template<typename StringType> struct IDLString : IDLType<StringType> {
 
     using NullableType = StringType;
     static StringType nullValue() { return StringType(); }
-    static bool isNullValue(const StringType& value) { return value.isNull(); }
+    static bool isNullValue(const String& value) { return value.isNull(); }
+    static bool isNullValue(const AtomString& value) { return value.isNull(); }
     static bool isNullValue(const UncachedString& value) { return value.string.isNull(); }
     static bool isNullValue(const OwnedString& value) { return value.string.isNull(); }
     static bool isNullValue(const URL& value) { return value.isNull(); }
@@ -150,6 +151,10 @@ struct IDLByteString : IDLString<String> { };
 struct IDLUSVString : IDLString<String> { };
 
 template<typename T> struct IDLLegacyNullToEmptyStringAdaptor : IDLString<String> {
+    using InnerType = T;
+};
+
+template<typename T> struct IDLLegacyNullToEmptyAtomStringAdaptor : IDLString<AtomString> {
     using InnerType = T;
 };
 

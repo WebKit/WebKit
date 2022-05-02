@@ -244,8 +244,8 @@ public:
     Node* ensureUserAgentShadowRoot(Element& host);
     Node* shadowRoot(Element& host);
     ExceptionOr<String> shadowRootType(const Node&) const;
-    String shadowPseudoId(Element&);
-    void setShadowPseudoId(Element&, const String&);
+    const AtomString& shadowPseudoId(Element&);
+    void setShadowPseudoId(Element&, const AtomString&);
 
     // CSS Deferred Parsing Testing
     unsigned deferredStyleRulesCount(StyleSheet&);
@@ -296,8 +296,8 @@ public:
     void removeTextPlaceholder(Element&);
 
     void selectColorInColorChooser(HTMLInputElement&, const String& colorValue);
-    ExceptionOr<Vector<String>> formControlStateOfPreviousHistoryItem();
-    ExceptionOr<void> setFormControlStateOfPreviousHistoryItem(const Vector<String>&);
+    ExceptionOr<Vector<AtomString>> formControlStateOfPreviousHistoryItem();
+    ExceptionOr<void> setFormControlStateOfPreviousHistoryItem(const Vector<AtomString>&);
 
     ExceptionOr<Ref<DOMRect>> absoluteLineRectFromPoint(int x, int y);
 
@@ -1208,7 +1208,7 @@ public:
     bool hasSandboxMachLookupAccessToXPCServiceName(const String& process, const String& service);
     bool hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass);
 
-    String highlightPseudoElementColor(const String& highlightName, Element&);
+    String highlightPseudoElementColor(const AtomString& highlightName, Element&);
 
     String windowLocationHost(DOMWindow&);
 

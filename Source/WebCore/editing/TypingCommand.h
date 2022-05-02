@@ -117,7 +117,7 @@ private:
     bool shouldStopCaretBlinking() const final { return true; }
     void setShouldPreventSpellChecking(bool prevent) { m_shouldPreventSpellChecking = prevent; }
 
-    String inputEventTypeName() const final;
+    AtomString inputEventTypeName() const final;
     String inputEventData() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
     bool isBeforeInputEventCancelable() const final;

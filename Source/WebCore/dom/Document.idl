@@ -70,7 +70,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     [CEReactions] Node adoptNode(Node node);
 
     [NewObject] Attr createAttribute([AtomString] DOMString localName);
-    [NewObject] Attr createAttributeNS([AtomString] DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject] Attr createAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName);
 
     [NewObject] Event createEvent(DOMString type);
 

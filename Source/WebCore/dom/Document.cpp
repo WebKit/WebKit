@@ -1339,7 +1339,7 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
     return CustomElementNameValidationStatus::Valid;
 }
 
-ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const String& qualifiedName)
+ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName)
 {
     auto parseResult = parseQualifiedName(namespaceURI, qualifiedName);
     if (parseResult.hasException())
@@ -1927,14 +1927,14 @@ FormController& Document::formController()
     return *m_formController;
 }
 
-Vector<String> Document::formElementsState() const
+Vector<AtomString> Document::formElementsState() const
 {
     if (!m_formController)
-        return Vector<String>();
+        return { };
     return m_formController->formElementsState(*this);
 }
 
-void Document::setStateForNewFormElements(const Vector<String>& stateVector)
+void Document::setStateForNewFormElements(const Vector<AtomString>& stateVector)
 {
     if (!stateVector.size() && !m_formController)
         return;
@@ -5537,7 +5537,7 @@ bool Document::isValidName(const String& name)
     return isValidNameNonASCII(characters, length);
 }
 
-ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(const String& qualifiedName)
+ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(const AtomString& qualifiedName)
 {
     unsigned length = qualifiedName.length();
 
@@ -5576,7 +5576,7 @@ ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(cons
     return std::pair<AtomString, AtomString> { StringView { qualifiedName }.left(colonPosition).toAtomString(), StringView { qualifiedName }.substring(colonPosition + 1).toAtomString() };
 }
 
-ExceptionOr<QualifiedName> Document::parseQualifiedName(const AtomString& namespaceURI, const String& qualifiedName)
+ExceptionOr<QualifiedName> Document::parseQualifiedName(const AtomString& namespaceURI, const AtomString& qualifiedName)
 {
     auto parseResult = parseQualifiedName(qualifiedName);
     if (parseResult.hasException())
@@ -6069,7 +6069,7 @@ ExceptionOr<Ref<Attr>> Document::createAttribute(const AtomString& localName)
     return Attr::create(*this, QualifiedName { nullAtom(), isHTMLDocument() ? localName.convertToASCIILowercase() : localName, nullAtom() }, emptyAtom());
 }
 
-ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceURI, const String& qualifiedName, bool shouldIgnoreNamespaceChecks)
+ExceptionOr<Ref<Attr>> Document::createAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, bool shouldIgnoreNamespaceChecks)
 {
     auto parseResult = parseQualifiedName(namespaceURI, qualifiedName);
     if (parseResult.hasException())
@@ -7517,7 +7517,7 @@ Locale& Document::getCachedLocale(const AtomString& locale)
 {
     AtomString localeKey = locale;
     if (locale.isEmpty() || !settings().langAttributeAwareFormControlUIEnabled())
-        localeKey = defaultLanguage();
+        localeKey = AtomString { defaultLanguage() };
     LocaleIdentifierToLocaleMap::AddResult result = m_localeCache.add(localeKey, nullptr);
     if (result.isNewEntry)
         result.iterator->value = Locale::create(localeKey);
@@ -8337,7 +8337,7 @@ const AtomString& Document::bgColor() const
     return bodyElement->attributeWithoutSynchronization(bgcolorAttr);
 }
 
-void Document::setBgColor(const String& value)
+void Document::setBgColor(const AtomString& value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(bgcolorAttr, value);
@@ -8351,7 +8351,7 @@ const AtomString& Document::fgColor() const
     return bodyElement->attributeWithoutSynchronization(textAttr);
 }
 
-void Document::setFgColor(const String& value)
+void Document::setFgColor(const AtomString& value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(textAttr, value);
@@ -8365,7 +8365,7 @@ const AtomString& Document::alinkColor() const
     return bodyElement->attributeWithoutSynchronization(alinkAttr);
 }
 
-void Document::setAlinkColor(const String& value)
+void Document::setAlinkColor(const AtomString& value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(alinkAttr, value);
@@ -8379,7 +8379,7 @@ const AtomString& Document::linkColorForBindings() const
     return bodyElement->attributeWithoutSynchronization(linkAttr);
 }
 
-void Document::setLinkColorForBindings(const String& value)
+void Document::setLinkColorForBindings(const AtomString& value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(linkAttr, value);
@@ -8393,7 +8393,7 @@ const AtomString& Document::vlinkColor() const
     return bodyElement->attributeWithoutSynchronization(vlinkAttr);
 }
 
-void Document::setVlinkColor(const String& value)
+void Document::setVlinkColor(const AtomString& value)
 {
     if (RefPtr bodyElement = body())
         bodyElement->setAttributeWithoutSynchronization(vlinkAttr, value);

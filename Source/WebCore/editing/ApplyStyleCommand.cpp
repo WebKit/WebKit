@@ -1370,13 +1370,13 @@ bool ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
     return true;
 }
 
-static String joinWithSpace(const String& a, const String& b)
+static AtomString joinWithSpace(const String& a, const AtomString& b)
 {
     if (a.isEmpty())
         return b;
     if (b.isEmpty())
-        return a;
-    return makeString(a, ' ', b);
+        return AtomString { a };
+    return makeAtomString(a, ' ', b);
 }
 
 void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElement& block)

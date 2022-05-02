@@ -126,7 +126,7 @@ private:
 class DOMEditor::RemoveAttributeAction final : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(RemoveAttributeAction);
 public:
-    RemoveAttributeAction(Element& element, const String& name)
+    RemoveAttributeAction(Element& element, const AtomString& name)
         : InspectorHistory::Action()
         , m_element(element)
         , m_name(name)
@@ -152,8 +152,8 @@ private:
     }
 
     Ref<Element> m_element;
-    String m_name;
-    String m_value;
+    AtomString m_name;
+    AtomString m_value;
 };
 
 class DOMEditor::SetAttributeAction final : public InspectorHistory::Action {
@@ -395,12 +395,12 @@ ExceptionOr<void> DOMEditor::removeChild(Node& parentNode, Node& node)
     return m_history.perform(makeUnique<RemoveChildAction>(parentNode, node));
 }
 
-ExceptionOr<void> DOMEditor::setAttribute(Element& element, const String& name, const String& value)
+ExceptionOr<void> DOMEditor::setAttribute(Element& element, const AtomString& name, const AtomString& value)
 {
     return m_history.perform(makeUnique<SetAttributeAction>(element, name, value));
 }
 
-ExceptionOr<void> DOMEditor::removeAttribute(Element& element, const String& name)
+ExceptionOr<void> DOMEditor::removeAttribute(Element& element, const AtomString& name)
 {
     return m_history.perform(makeUnique<RemoveAttributeAction>(element, name));
 }
@@ -453,12 +453,12 @@ bool DOMEditor::removeChild(Node& parentNode, Node& node, ErrorString& errorStri
     return populateErrorString(removeChild(parentNode, node), errorString);
 }
 
-bool DOMEditor::setAttribute(Element& element, const String& name, const String& value, ErrorString& errorString)
+bool DOMEditor::setAttribute(Element& element, const AtomString& name, const AtomString& value, ErrorString& errorString)
 {
     return populateErrorString(setAttribute(element, name, value), errorString);
 }
 
-bool DOMEditor::removeAttribute(Element& element, const String& name, ErrorString& errorString)
+bool DOMEditor::removeAttribute(Element& element, const AtomString& name, ErrorString& errorString)
 {
     return populateErrorString(removeAttribute(element, name), errorString);
 }

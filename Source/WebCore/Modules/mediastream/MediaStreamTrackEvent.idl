@@ -26,7 +26,7 @@
     Conditional=MEDIA_STREAM,
     Exposed=Window
 ] interface MediaStreamTrackEvent : Event {
-    constructor(DOMString type, MediaStreamTrackEventInit eventInitDict);
+    constructor([AtomString] DOMString type, MediaStreamTrackEventInit eventInitDict);
 
     [SameObject] readonly attribute MediaStreamTrack track;
 };

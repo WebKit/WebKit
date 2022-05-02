@@ -229,7 +229,7 @@ public:
     WEBCORE_EXPORT NetworkState networkState() const;
 
     WEBCORE_EXPORT String preload() const;
-    WEBCORE_EXPORT void setPreload(const String&);
+    WEBCORE_EXPORT void setPreload(const AtomString&);
 
     Ref<TimeRanges> buffered() const override;
     WEBCORE_EXPORT void load();
@@ -350,7 +350,7 @@ public:
 
     bool shouldForceControlsDisplay() const;
 
-    ExceptionOr<TextTrack&> addTextTrack(const String& kind, const String& label, const String& language);
+    ExceptionOr<TextTrack&> addTextTrack(const AtomString& kind, const AtomString& label, const AtomString& language);
 
     AudioTrackList& ensureAudioTracks();
     TextTrackList& ensureTextTracks();

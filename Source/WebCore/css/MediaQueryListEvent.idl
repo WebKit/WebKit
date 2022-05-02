@@ -26,7 +26,7 @@
 [
     Exposed=Window
 ] interface MediaQueryListEvent : Event {
-    constructor(DOMString type, optional MediaQueryListEventInit mediaQueryListEventInit);
+    constructor([AtomString] DOMString type, optional MediaQueryListEventInit mediaQueryListEventInit);
 
     readonly attribute DOMString media;
     readonly attribute boolean matches;

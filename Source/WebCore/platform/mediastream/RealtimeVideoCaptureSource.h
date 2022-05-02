@@ -55,7 +55,7 @@ public:
     const VideoPreset* currentPreset() const { return m_currentPreset.get(); }
 
 protected:
-    RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt, PageIdentifier);
+    RealtimeVideoCaptureSource(AtomString&& name, String&& id, String&& hashSalt, PageIdentifier);
 
     void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
 

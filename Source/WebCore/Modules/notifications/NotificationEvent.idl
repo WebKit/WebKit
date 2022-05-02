@@ -29,7 +29,7 @@
     EnabledAtRuntime=NotificationEventEnabled,
 ]
 interface NotificationEvent : ExtendableEvent {
-    constructor(DOMString type, NotificationEventInit eventInitDict);
+    constructor([AtomString] DOMString type, NotificationEventInit eventInitDict);
 
     readonly attribute Notification notification;
     readonly attribute DOMString action;

@@ -126,7 +126,7 @@ CaptureSourceOrError AVVideoCaptureSource::create(const CaptureDevice& device, S
 }
 
 AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* avDevice, const CaptureDevice& device, String&& hashSalt, PageIdentifier pageIdentifier)
-    : RealtimeVideoCaptureSource(String(device.label()), String(device.persistentId()), WTFMove(hashSalt), pageIdentifier)
+    : RealtimeVideoCaptureSource(AtomString(device.label()), String(device.persistentId()), WTFMove(hashSalt), pageIdentifier)
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(avDevice)
     , m_verifyCapturingTimer(*this, &AVVideoCaptureSource::verifyIsCapturing)

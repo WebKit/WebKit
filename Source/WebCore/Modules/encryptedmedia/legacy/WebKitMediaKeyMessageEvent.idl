@@ -28,7 +28,7 @@
     EnabledBySetting=LegacyEncryptedMediaAPIEnabled,
     Exposed=Window
 ] interface WebKitMediaKeyMessageEvent : Event {
-    constructor(DOMString type, optional WebKitMediaKeyMessageEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional WebKitMediaKeyMessageEventInit eventInitDict);
 
     readonly attribute Uint8Array message;
     readonly attribute DOMString destinationURL;

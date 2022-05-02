@@ -36,7 +36,7 @@ dictionary RTCPeerConnectionIceErrorEventInit : EventInit {
     EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window
 ] interface RTCPeerConnectionIceErrorEvent : Event {
-    constructor(DOMString type, RTCPeerConnectionIceErrorEventInit eventInitDict);
+    constructor([AtomString] DOMString type, RTCPeerConnectionIceErrorEventInit eventInitDict);
 
     readonly attribute DOMString? address;
     readonly attribute unsigned short? port;

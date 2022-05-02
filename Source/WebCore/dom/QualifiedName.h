@@ -101,6 +101,7 @@ public:
     const AtomString& localNameUpper() const;
 
     String toString() const;
+    AtomString toAtomString() const;
 
     QualifiedNameImpl* impl() const { return m_impl.get(); }
 #if ENABLE(JIT)
@@ -159,6 +160,14 @@ inline String QualifiedName::toString() const
         return localName();
 
     return prefix().string() + ':' + localName().string();
+}
+
+inline AtomString QualifiedName::toAtomString() const
+{
+    if (!hasPrefix())
+        return localName();
+
+    return makeAtomString(prefix(), ':', localName());
 }
 
 } // namespace WebCore

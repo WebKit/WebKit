@@ -122,8 +122,8 @@ public:
     WEBCORE_EXPORT float pageScaleFactor() const;
     WEBCORE_EXPORT void setPageScaleFactor(float);
     
-    WEBCORE_EXPORT const Vector<String>& documentState() const;
-    WEBCORE_EXPORT void setDocumentState(const Vector<String>&);
+    WEBCORE_EXPORT const Vector<AtomString>& documentState() const;
+    WEBCORE_EXPORT void setDocumentState(const Vector<AtomString>&);
     void clearDocumentState();
 
     WEBCORE_EXPORT void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy);
@@ -237,7 +237,7 @@ private:
     
     IntPoint m_scrollPosition;
     float m_pageScaleFactor { 0 }; // 0 indicates "unset".
-    Vector<String> m_documentState;
+    Vector<AtomString> m_documentState;
 
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     

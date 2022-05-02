@@ -71,8 +71,8 @@ public:
     TextTrack* track() const;
     void setTrack(TextTrack*);
 
-    const String& id() const { return m_id; }
-    void setId(const String&);
+    const AtomString& id() const { return m_id; }
+    void setId(const AtomString&);
 
     double startTime() const { return startMediaTime().toDouble(); }
     void setStartTime(double);
@@ -147,7 +147,7 @@ private:
 
     void rebuildDisplayTree();
 
-    String m_id;
+    AtomString m_id;
     MediaTime m_startTime;
     MediaTime m_endTime;
     int m_processingCueChanges { 0 };

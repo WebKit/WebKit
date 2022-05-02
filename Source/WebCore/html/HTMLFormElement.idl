@@ -25,7 +25,7 @@
     Exposed=Window
 ] interface HTMLFormElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect=accept_charset] attribute DOMString acceptCharset;
-    [CEReactions=NotNeeded] attribute USVString action;
+    [CEReactions=NotNeeded] attribute [AtomString] USVString action;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString autocomplete;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString enctype;
     [CEReactions=NotNeeded, ImplementedAs=enctype] attribute [AtomString] DOMString encoding;

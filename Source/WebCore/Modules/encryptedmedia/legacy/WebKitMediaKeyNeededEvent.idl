@@ -28,7 +28,7 @@
     EnabledBySetting=LegacyEncryptedMediaAPIEnabled,
     Exposed=Window
 ] interface WebKitMediaKeyNeededEvent : Event {
-    constructor(DOMString type, optional WebKitMediaKeyNeededEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional WebKitMediaKeyNeededEventInit eventInitDict);
 
     readonly attribute Uint8Array initData;
 };

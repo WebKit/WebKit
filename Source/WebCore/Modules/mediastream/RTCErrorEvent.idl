@@ -28,7 +28,7 @@
     EnabledBySetting=PeerConnectionEnabled,
     Exposed=Window
 ] interface RTCErrorEvent : Event {
-    constructor(DOMString type, RTCErrorEventInit eventInitDict);
+    constructor([AtomString] DOMString type, RTCErrorEventInit eventInitDict);
     [SameObject] readonly attribute RTCError error;
 };
 

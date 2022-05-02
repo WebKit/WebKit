@@ -215,9 +215,9 @@ public:
     bool applyFontFace() const { return m_applyFontFace.length() > 0; }
     bool applyFontSize() const { return m_applyFontSize.length() > 0; }
 
-    String fontColor() { return m_applyFontColor; }
-    String fontFace() { return m_applyFontFace; }
-    String fontSize() { return m_applyFontSize; }
+    const AtomString& fontColor() { return m_applyFontColor; }
+    const AtomString& fontFace() { return m_applyFontFace; }
+    const AtomString& fontSize() { return m_applyFontSize; }
 
     bool operator==(const StyleChange&);
     bool operator!=(const StyleChange& other)
@@ -234,9 +234,9 @@ private:
     bool m_applyLineThrough = false;
     bool m_applySubscript = false;
     bool m_applySuperscript = false;
-    String m_applyFontColor;
-    String m_applyFontFace;
-    String m_applyFontSize;
+    AtomString m_applyFontColor;
+    AtomString m_applyFontFace;
+    AtomString m_applyFontSize;
 };
 
 } // namespace WebCore

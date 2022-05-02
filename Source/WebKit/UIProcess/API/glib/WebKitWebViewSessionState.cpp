@@ -171,7 +171,7 @@ static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const Frame
     g_variant_builder_add(sessionBuilder, "s", frameState.target.utf8().data());
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("as"));
     for (const auto& state : frameState.documentState())
-        g_variant_builder_add(sessionBuilder, "s", state.utf8().data());
+        g_variant_builder_add(sessionBuilder, "s", state.string().utf8().data());
     g_variant_builder_close(sessionBuilder);
     if (!frameState.stateObjectData)
         g_variant_builder_add(sessionBuilder, "may", FALSE);
@@ -313,11 +313,11 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
         frameState.referrer = String::fromUTF8(referrer);
     frameState.target = String::fromUTF8(target);
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
-        Vector<String> documentState;
+        Vector<AtomString> documentState;
         documentState.reserveInitialCapacity(documentStateLength);
         const char* documentStateString;
         while (g_variant_iter_next(documentStateIter.get(), "&s", &documentStateString))
-            documentState.uncheckedAppend(String::fromUTF8(documentStateString));
+            documentState.uncheckedAppend(AtomString::fromUTF8(documentStateString));
         frameState.setDocumentState(documentState);
     }
     if (stateObjectDataIter) {

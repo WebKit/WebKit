@@ -40,7 +40,7 @@
     readonly attribute MediaKeyStatusMap keyStatuses;
     attribute EventHandler onkeystatuseschange;
     attribute EventHandler onmessage;
-    Promise<undefined> generateRequest(DOMString initDataType, BufferSource initData);
+    Promise<undefined> generateRequest([AtomString] DOMString initDataType, BufferSource initData);
     Promise<boolean> load(DOMString sessionId);
     Promise<undefined> update(BufferSource response);
     Promise<undefined> close();

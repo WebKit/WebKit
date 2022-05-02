@@ -78,7 +78,7 @@ static bool isCharsetSpecifyingNode(const Node& node)
     if (element.hasAttributes()) {
         for (const Attribute& attribute : element.attributesIterator()) {
             // FIXME: We should deal appropriately with the attribute if they have a namespace.
-            attributes.append(std::make_pair(attribute.name().toString(), attribute.value().string()));
+            attributes.append({ attribute.name().toAtomString(), attribute.value() });
         }
     }
     return HTMLMetaCharsetParser::encodingFromMetaAttributes(attributes).isValid();

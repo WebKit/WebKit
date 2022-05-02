@@ -111,9 +111,9 @@ void MediaDocumentParser::createDocumentStructure()
     m_mediaElement = videoElement.ptr();
     videoElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom());
-    videoElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
+    videoElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document.url().string() });
     if (RefPtr loader = document.loader())
-        videoElement->setAttributeWithoutSynchronization(typeAttr, loader->responseMIMEType());
+        videoElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->responseMIMEType() });
 
 #if !ENABLE(MODERN_MEDIA_CONTROLS)
     videoElement->setAttribute(styleAttr, "max-width: 100%; max-height: 100%;"_s);
@@ -236,11 +236,11 @@ void MediaDocument::replaceMediaElementTimerFired()
         embedElement->setAttributeWithoutSynchronization(widthAttr, "100%"_s);
         embedElement->setAttributeWithoutSynchronization(heightAttr, "100%"_s);
         embedElement->setAttributeWithoutSynchronization(nameAttr, "plugin"_s);
-        embedElement->setAttributeWithoutSynchronization(srcAttr, url().string());
+        embedElement->setAttributeWithoutSynchronization(srcAttr, AtomString { url().string() });
 
         ASSERT(loader());
         if (RefPtr loader = this->loader())
-            embedElement->setAttributeWithoutSynchronization(typeAttr, loader->writer().mimeType());
+            embedElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->writer().mimeType() });
 
         videoElement->parentNode()->replaceChild(embedElement, *videoElement);
     }

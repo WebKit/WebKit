@@ -558,7 +558,7 @@ void HTMLInputElement::updateType()
     bool wasSuccessfulSubmitButtonCandidate = m_inputType->canBeSuccessfulSubmitButton();
 
     if (didStoreValue && !willStoreValue && hasDirtyValue()) {
-        setAttributeWithoutSynchronization(valueAttr, m_valueIfDirty);
+        setAttributeWithoutSynchronization(valueAttr, AtomString { m_valueIfDirty });
         m_valueIfDirty = String();
     }
 

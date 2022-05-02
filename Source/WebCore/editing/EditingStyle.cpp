@@ -1846,13 +1846,13 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
     if (style.getPropertyCSSValue(CSSPropertyColor)) {
         auto color = textColorFromStyle(style);
         if (color.isOpaque()) {
-            m_applyFontColor = serializationForHTML(color);
+            m_applyFontColor = AtomString { serializationForHTML(color) };
             style.removeProperty(CSSPropertyColor);
         }
     }
 
     // Remove quotes for Outlook 2007 compatibility. See https://bugs.webkit.org/show_bug.cgi?id=79448
-    m_applyFontFace = makeStringByReplacingAll(style.getPropertyValue(CSSPropertyFontFamily), '\"', ""_s);
+    m_applyFontFace = AtomString { makeStringByReplacingAll(style.getPropertyValue(CSSPropertyFontFamily), '\"', ""_s) };
     style.removeProperty(CSSPropertyFontFamily);
 
     if (RefPtr<CSSValue> fontSize = style.getPropertyCSSValue(CSSPropertyFontSize)) {
@@ -1860,7 +1860,7 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
             style.removeProperty(CSSPropertyFontSize); // Can't make sense of the number. Put no font size.
         else if (int legacyFontSize = legacyFontSizeFromCSSValue(document, downcast<CSSPrimitiveValue>(fontSize.get()),
                 shouldUseFixedFontDefaultSize, UseLegacyFontSizeOnlyIfPixelValuesMatch)) {
-            m_applyFontSize = String::number(legacyFontSize);
+            m_applyFontSize = AtomString::number(legacyFontSize);
             style.removeProperty(CSSPropertyFontSize);
         }
     }

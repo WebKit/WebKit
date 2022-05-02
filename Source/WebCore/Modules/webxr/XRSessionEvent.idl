@@ -38,6 +38,6 @@
     SecureContext,
     Exposed=Window
 ] interface XRSessionEvent : Event {
-    constructor(DOMString type, XRSessionEventInit eventInitDict);
+    constructor([AtomString] DOMString type, XRSessionEventInit eventInitDict);
     [SameObject] readonly attribute WebXRSession session;
 };

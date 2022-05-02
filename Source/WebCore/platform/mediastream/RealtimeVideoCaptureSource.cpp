@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt, PageIdentifier pageIdentifier)
+RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(AtomString&& name, String&& id, String&& hashSalt, PageIdentifier pageIdentifier)
     : RealtimeMediaSource(Type::Video, WTFMove(name), WTFMove(id), WTFMove(hashSalt), pageIdentifier)
 {
 }

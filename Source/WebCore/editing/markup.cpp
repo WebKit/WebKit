@@ -102,7 +102,7 @@ public:
     {
     }
 
-    AttributeChange(Element* element, const QualifiedName& name, const String& value)
+    AttributeChange(Element* element, const QualifiedName& name, const AtomString& value)
         : m_element(element), m_name(name), m_value(value)
     {
     }
@@ -115,7 +115,7 @@ public:
 private:
     RefPtr<Element> m_element;
     QualifiedName m_name;
-    String m_value;
+    AtomString m_value;
 };
 
 static void completeURLs(DocumentFragment* fragment, const String& baseURL)
@@ -129,7 +129,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
             continue;
         for (const Attribute& attribute : element.attributesIterator()) {
             if (element.attributeContainsURL(attribute) && !attribute.value().isEmpty())
-                changes.append(AttributeChange(&element, attribute.name(), element.completeURLsInAttributeValue(parsedBaseURL, attribute)));
+                changes.append(AttributeChange(&element, attribute.name(), AtomString { element.completeURLsInAttributeValue(parsedBaseURL, attribute) }));
         }
     }
 
@@ -148,7 +148,7 @@ void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, HashMap<AtomString
             if (element.attributeContainsURL(attribute) && !attribute.value().isEmpty()) {
                 auto replacement = replacementMap.get(attribute.value());
                 if (!replacement.isNull())
-                    changes.append({ &element, attribute.name(), replacement });
+                    changes.append({ &element, attribute.name(), WTFMove(replacement) });
             }
         }
     }
@@ -495,16 +495,16 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
     
     if (is<HTMLAttachmentElement>(element)) {
         auto& attachment = downcast<HTMLAttachmentElement>(element);
-        appendAttribute(out, element, { webkitattachmentidAttr, attachment.uniqueIdentifier() }, namespaces);
+        appendAttribute(out, element, { webkitattachmentidAttr, AtomString { attachment.uniqueIdentifier() } }, namespaces);
         if (auto* file = attachment.file()) {
             // These attributes are only intended for File deserialization, and are removed from the generated attachment
             // element after we've deserialized and set its backing File, in restoreAttachmentElementsInFragment.
-            appendAttribute(out, element, { webkitattachmentpathAttr, file->path() }, namespaces);
-            appendAttribute(out, element, { webkitattachmentbloburlAttr, file->url().string() }, namespaces);
+            appendAttribute(out, element, { webkitattachmentpathAttr, AtomString { file->path() } }, namespaces);
+            appendAttribute(out, element, { webkitattachmentbloburlAttr, AtomString { file->url().string() } }, namespaces);
         }
     } else if (is<HTMLImageElement>(element)) {
         if (auto attachment = downcast<HTMLImageElement>(element).attachmentElement())
-            appendAttribute(out, element, { webkitattachmentidAttr, attachment->uniqueIdentifier() }, namespaces);
+            appendAttribute(out, element, { webkitattachmentidAttr, AtomString { attachment->uniqueIdentifier() } }, namespaces);
     }
 #else
     UNUSED_PARAM(out);
@@ -1300,7 +1300,7 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
 Ref<DocumentFragment> createFragmentForImageAndURL(Document& document, const String& url, PresentationSize preferredSize)
 {
     auto imageElement = HTMLImageElement::create(document);
-    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, url);
+    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { url });
     if (preferredSize.width)
         imageElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));
     if (preferredSize.height)

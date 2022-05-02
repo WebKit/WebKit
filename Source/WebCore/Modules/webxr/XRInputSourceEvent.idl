@@ -39,7 +39,7 @@
     SecureContext,
     Exposed=Window
 ] interface XRInputSourceEvent : Event {
-    constructor(DOMString type, XRInputSourceEventInit eventInitDict);
+    constructor([AtomString] DOMString type, XRInputSourceEventInit eventInitDict);
     [SameObject] readonly attribute WebXRFrame frame;
     [SameObject] readonly attribute WebXRInputSource inputSource;
 };

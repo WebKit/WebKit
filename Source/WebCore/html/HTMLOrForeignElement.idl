@@ -28,7 +28,7 @@
 // https://github.com/whatwg/html/issues/4702
 interface mixin HTMLOrForeignElement {
     [SameObject] readonly attribute DOMStringMap dataset;
-    attribute DOMString nonce; // intentionally no [CEReactions]
+    attribute [AtomString] DOMString nonce; // intentionally no [CEReactions]
 
     [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
     [CEReactions, ImplementedAs=tabIndexForBindings] attribute long tabIndex;

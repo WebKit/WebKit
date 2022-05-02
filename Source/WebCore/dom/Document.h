@@ -440,9 +440,9 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<CDATASection>> createCDATASection(String&& data);
     WEBCORE_EXPORT ExceptionOr<Ref<ProcessingInstruction>> createProcessingInstruction(String&& target, String&& data);
     WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttribute(const AtomString& name);
-    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttributeNS(const AtomString& namespaceURI, const String& qualifiedName, bool shouldIgnoreNamespaceChecks = false);
+    WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, bool shouldIgnoreNamespaceChecks = false);
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> importNode(Node& nodeToImport, bool deep);
-    WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementNS(const AtomString& namespaceURI, const String& qualifiedName);
+    WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName);
     WEBCORE_EXPORT Ref<Element> createElement(const QualifiedName&, bool createdByParser);
 
     static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
@@ -583,8 +583,8 @@ public:
     void evaluateMediaQueriesAndReportChanges();
 
     FormController& formController();
-    Vector<String> formElementsState() const;
-    void setStateForNewFormElements(const Vector<String>&);
+    Vector<AtomString> formElementsState() const;
+    void setStateForNewFormElements(const Vector<AtomString>&);
 
     WEBCORE_EXPORT FrameView* view() const; // Can be null.
     WEBCORE_EXPORT Page* page() const; // Can be null.
@@ -1029,8 +1029,8 @@ public:
 
     // The following breaks a qualified name into a prefix and a local name.
     // It also does a validity check, and returns an error if the qualified name is invalid.
-    static ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedName(const String& qualifiedName);
-    static ExceptionOr<QualifiedName> parseQualifiedName(const AtomString& namespaceURI, const String& qualifiedName);
+    static ExceptionOr<std::pair<AtomString, AtomString>> parseQualifiedName(const AtomString& qualifiedName);
+    static ExceptionOr<QualifiedName> parseQualifiedName(const AtomString& namespaceURI, const AtomString& qualifiedName);
 
     // Checks to make sure prefix and namespace do not conflict (per DOM Core 3)
     static bool hasValidNamespaceForElements(const QualifiedName&);
@@ -1511,15 +1511,15 @@ public:
     OrientationNotifier& orientationNotifier() { return m_orientationNotifier; }
 
     WEBCORE_EXPORT const AtomString& bgColor() const;
-    WEBCORE_EXPORT void setBgColor(const String&);
+    WEBCORE_EXPORT void setBgColor(const AtomString&);
     WEBCORE_EXPORT const AtomString& fgColor() const;
-    WEBCORE_EXPORT void setFgColor(const String&);
+    WEBCORE_EXPORT void setFgColor(const AtomString&);
     WEBCORE_EXPORT const AtomString& alinkColor() const;
-    WEBCORE_EXPORT void setAlinkColor(const String&);
+    WEBCORE_EXPORT void setAlinkColor(const AtomString&);
     WEBCORE_EXPORT const AtomString& linkColorForBindings() const;
-    WEBCORE_EXPORT void setLinkColorForBindings(const String&);
+    WEBCORE_EXPORT void setLinkColorForBindings(const AtomString&);
     WEBCORE_EXPORT const AtomString& vlinkColor() const;
-    WEBCORE_EXPORT void setVlinkColor(const String&);
+    WEBCORE_EXPORT void setVlinkColor(const AtomString&);
 
     // Per https://html.spec.whatwg.org/multipage/obsolete.html#dom-document-clear, this method does nothing.
     void clear() { }

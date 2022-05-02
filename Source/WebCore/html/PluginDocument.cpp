@@ -98,11 +98,11 @@ void PluginDocumentParser::createDocumentStructure()
     embedElement->setAttributeWithoutSynchronization(heightAttr, "100%"_s);
     
     embedElement->setAttributeWithoutSynchronization(nameAttr, "plugin"_s);
-    embedElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
+    embedElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document.url().string() });
     
     ASSERT(document.loader());
     if (RefPtr loader = document.loader())
-        m_embedElement->setAttributeWithoutSynchronization(typeAttr, loader->writer().mimeType());
+        m_embedElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->writer().mimeType() });
 
     document.setPluginElement(*m_embedElement);
 

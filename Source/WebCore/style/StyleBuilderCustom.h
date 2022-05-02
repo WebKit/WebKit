@@ -1607,7 +1607,7 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             CSSValueID listStyleIdent = counterValue->listStyleIdent();
             if (listStyleIdent != CSSValueNone)
                 listStyleType = static_cast<ListStyleType>(listStyleIdent - CSSValueDisc);
-            auto counter = makeUnique<CounterContent>(counterValue->identifier(), listStyleType, counterValue->separator());
+            auto counter = makeUnique<CounterContent>(AtomString { counterValue->identifier() }, listStyleType, AtomString { counterValue->separator() });
             builderState.style().setContent(WTFMove(counter), didSet);
             didSet = true;
         } else {

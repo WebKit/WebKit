@@ -1300,12 +1300,12 @@ ExceptionOr<String> Internals::shadowRootType(const Node& root) const
     }
 }
 
-String Internals::shadowPseudoId(Element& element)
+const AtomString& Internals::shadowPseudoId(Element& element)
 {
-    return element.shadowPseudoId().string();
+    return element.shadowPseudoId();
 }
 
-void Internals::setShadowPseudoId(Element& element, const String& id)
+void Internals::setShadowPseudoId(Element& element, const AtomString& id)
 {
     return element.setPseudo(id);
 }
@@ -1526,23 +1526,23 @@ void Internals::selectColorInColorChooser(HTMLInputElement& element, const Strin
     element.selectColor(colorValue);
 }
 
-ExceptionOr<Vector<String>> Internals::formControlStateOfPreviousHistoryItem()
+ExceptionOr<Vector<AtomString>> Internals::formControlStateOfPreviousHistoryItem()
 {
     HistoryItem* mainItem = frame()->loader().history().previousItem();
     if (!mainItem)
         return Exception { InvalidAccessError };
-    String uniqueName = frame()->tree().uniqueName();
+    auto uniqueName = frame()->tree().uniqueName();
     if (mainItem->target() != uniqueName && !mainItem->childItemWithTarget(uniqueName))
         return Exception { InvalidAccessError };
-    return Vector<String> { mainItem->target() == uniqueName ? mainItem->documentState() : mainItem->childItemWithTarget(uniqueName)->documentState() };
+    return Vector<AtomString> { mainItem->target() == uniqueName ? mainItem->documentState() : mainItem->childItemWithTarget(uniqueName)->documentState() };
 }
 
-ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vector<String>& state)
+ExceptionOr<void> Internals::setFormControlStateOfPreviousHistoryItem(const Vector<AtomString>& state)
 {
     HistoryItem* mainItem = frame()->loader().history().previousItem();
     if (!mainItem)
         return Exception { InvalidAccessError };
-    String uniqueName = frame()->tree().uniqueName();
+    auto uniqueName = frame()->tree().uniqueName();
     if (mainItem->target() == uniqueName)
         mainItem->setDocumentState(state);
     else if (HistoryItem* subItem = mainItem->childItemWithTarget(uniqueName))
@@ -2872,7 +2872,7 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
 {
     auto* inspectedPage = contextDocument()->frame()->page();
     auto* window = inspectedPage->mainFrame().document()->domWindow();
-    auto frontendWindowProxy = window->open(*window, *window, url, emptyString(), emptyString()).releaseReturnValue();
+    auto frontendWindowProxy = window->open(*window, *window, url, emptyAtom(), emptyString()).releaseReturnValue();
     m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<DOMWindow>(frontendWindowProxy->window()));
     return frontendWindowProxy;
 }
@@ -6217,7 +6217,7 @@ void Internals::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
 #endif
 }
 
-String Internals::highlightPseudoElementColor(const String& highlightName, Element& element)
+String Internals::highlightPseudoElementColor(const AtomString& highlightName, Element& element)
 {
     element.document().updateStyleIfNeeded();
 

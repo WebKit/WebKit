@@ -88,7 +88,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
         return;
 
     if (m_frameURL.isEmpty())
-        m_frameURL = aboutBlankURL().string();
+        m_frameURL = AtomString { aboutBlankURL().string() };
 
     if (shouldLoadFrameLazily())
         return;
@@ -99,7 +99,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
 
     document().willLoadFrameElement(document().completeURL(m_frameURL));
 
-    String frameName = getNameAttribute();
+    auto frameName = getNameAttribute();
     if (frameName.isNull() && UNLIKELY(document().settings().needsFrameNameFallbackToIdQuirk()))
         frameName = getIdAttribute();
 

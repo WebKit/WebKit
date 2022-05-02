@@ -385,7 +385,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     DOMString shadowRootType(Node root);
     DOMString shadowPseudoId(Element element);
-    undefined setShadowPseudoId(Element element, DOMString id);
+    undefined setShadowPseudoId(Element element, [AtomString] DOMString id);
     Node treeScopeRootNode(Node node);
     Node parentTreeScope(Node node);
 
@@ -412,8 +412,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     DOMString visiblePlaceholder(Element element);
     undefined selectColorInColorChooser(HTMLInputElement element, DOMString colorValue);
-    sequence<DOMString> formControlStateOfPreviousHistoryItem();
-    undefined setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
+    sequence<[AtomString] DOMString> formControlStateOfPreviousHistoryItem();
+    undefined setFormControlStateOfPreviousHistoryItem(sequence<[AtomString] DOMString> values);
 
     DOMRect absoluteLineRectFromPoint(long x, long y);
 
@@ -796,11 +796,11 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setSelectionWithoutValidation(Node baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
 
     [Conditional=MEDIA_SOURCE] undefined initializeMockMediaSource();
-    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> bufferedSamplesForTrackId(SourceBuffer buffer, DOMString trackId);
-    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> enqueuedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
+    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> bufferedSamplesForTrackId(SourceBuffer buffer, [AtomString] DOMString trackId);
+    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> enqueuedSamplesForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID);
     [Conditional=MEDIA_SOURCE] undefined setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
-    [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, DOMString trackID);
-    [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, DOMString trackID, unsigned long maxQueueDepth);
+    [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID);
+    [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID, unsigned long maxQueueDepth);
 
     [Conditional=VIDEO] undefined beginMediaSessionInterruption(DOMString interruptionType);
     [Conditional=VIDEO] undefined endMediaSessionInterruption(DOMString flags);
@@ -1076,7 +1076,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     InternalsMapLike createInternalsMapLike();
     InternalsSetLike createInternalsSetLike();
 
-    DOMString highlightPseudoElementColor(DOMString highlightName, Element element);
+    DOMString highlightPseudoElementColor([AtomString] DOMString highlightName, Element element);
 
     boolean hasSandboxMachLookupAccessToGlobalName(DOMString process, DOMString service);
     boolean hasSandboxMachLookupAccessToXPCServiceName(DOMString process, DOMString service);

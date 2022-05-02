@@ -774,7 +774,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         else if (item.attributeName == HTMLNames::valueAttr && is<HTMLInputElement>(*element))
             downcast<HTMLInputElement>(*element).setValue(newValue.toString());
         else
-            element->setAttribute(item.attributeName, newValue.toString());
+            element->setAttribute(item.attributeName, newValue.toAtomString());
 
         m_manipulatedNodes.add(*element);
         return std::nullopt;

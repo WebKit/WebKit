@@ -199,11 +199,11 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
             String ariaRelevantAttrValue = axObject->liveRegionRelevant();
             if (!ariaRelevantAttrValue.isEmpty()) {
                 Vector<String> liveRegionRelevant;
-                String ariaRelevantAdditions = "additions"_s;
-                String ariaRelevantRemovals = "removals"_s;
-                String ariaRelevantText = "text"_s;
+                AtomString ariaRelevantAdditions = "additions"_s;
+                AtomString ariaRelevantRemovals = "removals"_s;
+                AtomString ariaRelevantText = "text"_s;
 
-                const auto& values = SpaceSplitString(ariaRelevantAttrValue, SpaceSplitString::ShouldFoldCase::Yes);
+                const auto& values = SpaceSplitString(AtomString { ariaRelevantAttrValue }, SpaceSplitString::ShouldFoldCase::Yes);
                 if (values.contains("all"_s)) {
                     liveRegionRelevant.append(ariaRelevantAdditions);
                     liveRegionRelevant.append(ariaRelevantRemovals);

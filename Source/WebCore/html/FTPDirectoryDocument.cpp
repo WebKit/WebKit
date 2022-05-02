@@ -140,14 +140,15 @@ Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(String&& filename)
 {
     auto& document = *this->document();
 
-    String fullURL = document.baseURL().string();
-    if (fullURL.endsWith('/'))
-        fullURL = fullURL + filename;
+    auto baseURL = document.baseURL().string();
+    AtomString fullURL;
+    if (baseURL.endsWith('/'))
+        fullURL = makeAtomString(baseURL, filename);
     else
-        fullURL = fullURL + '/' + filename;
+        fullURL = makeAtomString(baseURL, '/', filename);
 
     auto anchorElement = HTMLAnchorElement::create(document);
-    anchorElement->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, fullURL);
+    anchorElement->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, WTFMove(fullURL));
     anchorElement->appendChild(Text::create(document, WTFMove(filename)));
 
     auto tdElement = HTMLTableCellElement::create(tdTag, document);

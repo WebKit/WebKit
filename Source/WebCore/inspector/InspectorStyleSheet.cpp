@@ -1620,7 +1620,7 @@ ExceptionOr<void> InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclar
 
     {
         InspectorCSSAgent::InlineStyleOverrideScope overrideScope(m_element->document());
-        m_element->setAttribute(HTMLNames::styleAttr, text);
+        m_element->setAttribute(HTMLNames::styleAttr, AtomString { text });
     }
 
     m_styleText = text;

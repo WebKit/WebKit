@@ -241,7 +241,7 @@ void ImageDocument::createDocumentStructure()
     else
         imageElement->setAttribute(styleAttr, "-webkit-user-select:none; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_s);
     imageElement->setLoadManually(true);
-    imageElement->setSrc(url().string());
+    imageElement->setSrc(AtomString { url().string() });
     imageElement->cachedImage()->setResponse(loader()->response());
     body->appendChild(imageElement);
     imageElement->setLoadManually(false);

@@ -44,7 +44,7 @@ void CreateLinkCommand::doApply()
         return;
 
     auto anchorElement = HTMLAnchorElement::create(document());
-    anchorElement->setHref(m_url);
+    anchorElement->setHref(AtomString { m_url });
     
     if (endingSelection().isRange())
         applyStyledElement(WTFMove(anchorElement));

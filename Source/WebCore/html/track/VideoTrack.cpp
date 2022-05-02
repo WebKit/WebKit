@@ -230,7 +230,7 @@ void VideoTrack::updateKindFromPrivate()
         setKind(commentaryAtom());
         return;
     case VideoTrackPrivate::None:
-        setKind(emptyString());
+        setKind(emptyAtom());
         return;
     }
     ASSERT_NOT_REACHED();

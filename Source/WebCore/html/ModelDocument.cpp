@@ -109,9 +109,9 @@ void ModelDocumentParser::createDocumentStructure()
     modelElement->setAttributeWithoutSynchronization(interactiveAttr, emptyAtom());
 
     auto sourceElement = HTMLSourceElement::create(HTMLNames::sourceTag, document);
-    sourceElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
+    sourceElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document.url().string() });
     if (RefPtr loader = document.loader())
-        sourceElement->setAttributeWithoutSynchronization(typeAttr, loader->responseMIMEType());
+        sourceElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->responseMIMEType() });
 
     modelElement->appendChild(sourceElement);
 

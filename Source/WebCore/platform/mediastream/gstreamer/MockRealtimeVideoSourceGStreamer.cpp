@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier)
+CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomString&& name, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -52,7 +52,7 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, String&&
 
 CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
 {
-    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, String { device.label() }, String { hashSalt }));
+    auto mockSource = adoptRef(*new MockRealtimeVideoSourceGStreamer(String { device.persistentId() }, AtomString { device.label() }, String { hashSalt }));
 
     if (constraints) {
         if (auto error = mockSource->applyConstraints(*constraints))
@@ -64,7 +64,7 @@ CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevi
 }
 
 MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type type, Ref<MockRealtimeVideoSourceGStreamer>&& source, String&& hashSalt, CaptureDevice::DeviceType deviceType)
-    : RealtimeMediaSource(type, source->name().string().isolatedCopy(), source->persistentID().isolatedCopy(), WTFMove(hashSalt))
+    : RealtimeMediaSource(type, AtomString { source->name().string().isolatedCopy() }, source->persistentID().isolatedCopy(), WTFMove(hashSalt))
     , m_source(WTFMove(source))
     , m_deviceType(deviceType)
 {
@@ -145,7 +145,7 @@ const RealtimeMediaSourceSettings& MockDisplayCaptureSourceGStreamer::settings()
     return m_currentSettings.value();
 }
 
-MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt)
+MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, String&& hashSalt)
     : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt), { })
 {
     ensureGStreamerInitialized();

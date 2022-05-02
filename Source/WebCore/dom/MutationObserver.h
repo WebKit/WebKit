@@ -86,7 +86,7 @@ public:
         bool subtree;
         std::optional<bool> attributeOldValue;
         std::optional<bool> characterDataOldValue;
-        std::optional<Vector<String>> attributeFilter;
+        std::optional<Vector<AtomString>> attributeFilter;
     };
 
     ExceptionOr<void> observe(Node&, const Init&);

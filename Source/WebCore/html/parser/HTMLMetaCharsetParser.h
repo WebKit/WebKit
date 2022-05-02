@@ -46,7 +46,7 @@ public:
     const PAL::TextEncoding& encoding() { return m_encoding; }
 
     // The returned encoding might not be valid.
-    typedef Vector<std::pair<String, String>> AttributeList;
+    typedef Vector<std::pair<AtomString, AtomString>> AttributeList;
     static PAL::TextEncoding encodingFromMetaAttributes(const AttributeList&);
 
 private:

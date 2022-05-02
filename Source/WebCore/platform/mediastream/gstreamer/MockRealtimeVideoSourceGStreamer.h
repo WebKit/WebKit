@@ -30,7 +30,7 @@ namespace WebCore {
 
 class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource {
 public:
-    MockRealtimeVideoSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt);
+    MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, String&& hashSalt);
     ~MockRealtimeVideoSourceGStreamer() = default;
 
 private:

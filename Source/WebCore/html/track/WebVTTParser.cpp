@@ -280,7 +280,7 @@ WebVTTParser::ParseState WebVTTParser::collectWebVTTBlock(const String& line)
         if (!m_styleSheets.isEmpty())
             m_client.newStyleSheetsParsed();
         if (!m_previousLine.isEmpty() && !m_previousLine.contains("-->"))
-            m_currentId = m_previousLine;
+            m_currentId = AtomString { m_previousLine };
         
         return state;
     }
@@ -417,7 +417,7 @@ WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 {
     if (line.contains("-->"))
         return collectTimingsAndSettings(line);
-    m_currentId = line;
+    m_currentId = AtomString { line };
     return TimingsAndSettings;
 }
 
@@ -556,7 +556,7 @@ void WebVTTParser::createNewCue()
 
 void WebVTTParser::resetCueValues()
 {
-    m_currentId = emptyString();
+    m_currentId = emptyAtom();
     m_currentSettings = emptyString();
     m_currentStartTime = MediaTime::zeroTime();
     m_currentEndTime = MediaTime::zeroTime();

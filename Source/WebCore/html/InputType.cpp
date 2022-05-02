@@ -255,7 +255,7 @@ FormControlState InputType::saveFormControlState() const
     auto currentValue = element()->value();
     if (currentValue == element()->defaultValue())
         return { };
-    return { { currentValue } };
+    return { { AtomString { currentValue } } };
 }
 
 void InputType::restoreFormControlState(const FormControlState& state)

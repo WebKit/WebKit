@@ -91,9 +91,9 @@ public:
     FrameState& operator=(const FrameState&) = default;
     FrameState& operator=(FrameState&&) = default;
 
-    const Vector<String>& documentState() const { return m_documentState; }
+    const Vector<AtomString>& documentState() const { return m_documentState; }
     enum class ShouldValidate : bool { No, Yes };
-    void setDocumentState(const Vector<String>&, ShouldValidate = ShouldValidate::No);
+    void setDocumentState(const Vector<AtomString>&, ShouldValidate = ShouldValidate::No);
     void validateDocumentState() const;
 
     String urlString;
@@ -125,7 +125,7 @@ public:
     Vector<FrameState> children;
 
 private:
-    Vector<String> m_documentState;
+    Vector<AtomString> m_documentState;
 };
 
 struct PageState {

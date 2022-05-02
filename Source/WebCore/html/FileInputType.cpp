@@ -144,11 +144,11 @@ FormControlState FileInputType::saveFormControlState() const
 
     auto length = Checked<size_t>(m_fileList->files().size()) * Checked<size_t>(2);
 
-    Vector<String> stateVector;
+    Vector<AtomString> stateVector;
     stateVector.reserveInitialCapacity(length);
     for (auto& file : m_fileList->files()) {
-        stateVector.uncheckedAppend(file->path());
-        stateVector.uncheckedAppend(file->name());
+        stateVector.uncheckedAppend(AtomString { file->path() });
+        stateVector.uncheckedAppend(AtomString { file->name() });
     }
     return FormControlState { WTFMove(stateVector) };
 }

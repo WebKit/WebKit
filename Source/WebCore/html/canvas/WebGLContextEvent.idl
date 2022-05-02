@@ -28,7 +28,7 @@
     EnabledBySetting=WebGLEnabled,
     Exposed=Window
 ] interface WebGLContextEvent : Event {
-    constructor(DOMString type, optional WebGLContextEventInit eventInit);
+    constructor([AtomString] DOMString type, optional WebGLContextEventInit eventInit);
 
     readonly attribute DOMString statusMessage;
 };

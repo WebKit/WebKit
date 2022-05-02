@@ -86,9 +86,7 @@ static StringView extractCharset(const String& value)
 bool HTMLMetaCharsetParser::processMeta(HTMLToken& token)
 {
     auto attributes = token.attributes().map([](auto& attribute) {
-        String attributeName = StringImpl::create8BitIfPossible(attribute.name);
-        String attributeValue = StringImpl::create8BitIfPossible(attribute.value);
-        return std::pair { WTFMove(attributeName), WTFMove(attributeValue) };
+        return std::pair { AtomString(attribute.name), AtomString(attribute.value) };
     });
 
     m_encoding = encodingFromMetaAttributes(attributes);
@@ -102,8 +100,8 @@ PAL::TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const Attrib
     StringView charset;
 
     for (auto& attribute : attributes) {
-        const String& attributeName = attribute.first;
-        const String& attributeValue = attribute.second;
+        auto& attributeName = attribute.first;
+        auto& attributeValue = attribute.second;
 
         if (attributeName == http_equivAttr) {
             if (equalLettersIgnoringASCIICase(attributeValue, "content-type"_s))
