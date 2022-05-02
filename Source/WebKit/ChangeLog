@@ -1,3 +1,22 @@
+2022-05-02  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/92617943
+
+    2022-05-02  Alex Christensen  <achristensen@webkit.org>
+
+            Revert all use of _setPrivacyProxyFailClosedForUnreachableNonMainHosts
+            https://bugs.webkit.org/show_bug.cgi?id=239977
+            <rdar://92617943>
+
+            Due to what is likely confusion about internal integration processes,
+            the powers that be have decided that the best course of action for now
+            is to restore the status quo and accept any consequences that may entail.
+
+            * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+            (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::NetworkSessionCocoa::createWebSocketTask):
+
 2022-04-28  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r287877. rdar://problem/92357915
