@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSCConfig.h"
+#include "MarkedBlock.h"
 #include <wtf/HashTraits.h>
 #include <wtf/StdIntExtras.h>
 
@@ -48,6 +49,7 @@ public:
     StructureID decontaminate() const { return StructureID(m_bits & ~nukedStructureIDBit); }
 
     inline Structure* decode() const;
+    inline Structure* tryDecode() const;
     static StructureID encode(const Structure*);
 
     explicit operator bool() const { return !!m_bits; }
@@ -74,6 +76,15 @@ ALWAYS_INLINE Structure* StructureID::decode() const
     return reinterpret_cast<Structure*>((static_cast<uintptr_t>(decontaminate().m_bits) & structureIDMask) + g_jscConfig.startOfStructureHeap);
 }
 
+ALWAYS_INLINE Structure* StructureID::tryDecode() const
+{
+    // Take care to only use the bits from m_bits in the structure's address reservation.
+    uintptr_t offset = static_cast<uintptr_t>(decontaminate().m_bits);
+    if (offset < MarkedBlock::blockSize || offset >= g_jscConfig.sizeOfStructureHeap)
+        return nullptr;
+    return reinterpret_cast<Structure*>((offset & structureIDMask) + g_jscConfig.startOfStructureHeap);
+}
+
 ALWAYS_INLINE StructureID StructureID::encode(const Structure* structure)
 {
     ASSERT(structure);
@@ -88,6 +99,11 @@ ALWAYS_INLINE StructureID StructureID::encode(const Structure* structure)
 ALWAYS_INLINE Structure* StructureID::decode() const
 {
     ASSERT(decontaminate());
+    return reinterpret_cast<Structure*>(m_bits);
+}
+
+ALWAYS_INLINE Structure* StructureID::tryDecode() const
+{
     return reinterpret_cast<Structure*>(m_bits);
 }
 

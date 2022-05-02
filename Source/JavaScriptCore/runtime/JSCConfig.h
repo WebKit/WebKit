@@ -91,6 +91,7 @@ struct Config {
     void* endExecutableMemory;
     uintptr_t startOfFixedWritableMemoryPool;
     uintptr_t startOfStructureHeap;
+    uintptr_t sizeOfStructureHeap;
 
 #if ENABLE(SEPARATED_WX_HEAP)
     JITWriteSeparateHeapsFunction jitWriteSeparateHeaps;

@@ -1,3 +1,24 @@
+2022-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Revive JSC's guard against speculation collection
+        https://bugs.webkit.org/show_bug.cgi?id=239939
+
+        Reviewed by Mark Lam.
+
+        r288815 dropped JSC's guard against structures in speculation collection, but this is wrong.
+        This patch reverts it back.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromCell):
+        * heap/StructureAlignedMemoryAllocator.cpp:
+        (JSC::StructureMemoryManager::StructureMemoryManager):
+        (JSC::StructureMemoryManager::tryMallocStructureBlock):
+        (JSC::StructureMemoryManager::freeStructureBlock):
+        (JSC::StructureAlignedMemoryAllocator::initializeStructureAddressSpace):
+        * runtime/JSCConfig.h:
+        * runtime/StructureID.h:
+        (JSC::StructureID::tryDecode const):
+
 2022-05-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [RISCV64] Implement MacroAssembler::probe(), ctiMasmProbeTrampoline

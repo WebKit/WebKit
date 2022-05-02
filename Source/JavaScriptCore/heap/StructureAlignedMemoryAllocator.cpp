@@ -75,14 +75,14 @@ public:
         // Don't use the first page because zero is used as the empty StructureID and the first allocation will conflict.
         m_usedBlocks.set(0);
 
-        m_mappedHeapSize = structureHeapAddressSize;
+        uintptr_t mappedHeapSize = structureHeapAddressSize;
         for (unsigned i = 0; i < 8; ++i) {
-            g_jscConfig.startOfStructureHeap = reinterpret_cast<uintptr_t>(OSAllocator::tryReserveUncommittedAligned(m_mappedHeapSize, structureHeapAddressSize, OSAllocator::FastMallocPages));
+            g_jscConfig.startOfStructureHeap = reinterpret_cast<uintptr_t>(OSAllocator::tryReserveUncommittedAligned(mappedHeapSize, structureHeapAddressSize, OSAllocator::FastMallocPages));
             if (g_jscConfig.startOfStructureHeap)
                 break;
-            m_mappedHeapSize /= 2;
+            mappedHeapSize /= 2;
         }
-
+        g_jscConfig.sizeOfStructureHeap = mappedHeapSize;
         RELEASE_ASSERT(g_jscConfig.startOfStructureHeap && ((g_jscConfig.startOfStructureHeap & ~structureIDMask) == g_jscConfig.startOfStructureHeap));
     }
 
@@ -94,8 +94,8 @@ public:
             constexpr size_t startIndex = 0;
             freeIndex = m_usedBlocks.findBit(startIndex, 0);
             ASSERT(freeIndex <= m_usedBlocks.bitCount());
-            RELEASE_ASSERT(m_mappedHeapSize <= structureHeapAddressSize);
-            if (freeIndex * MarkedBlock::blockSize >= m_mappedHeapSize)
+            RELEASE_ASSERT(g_jscConfig.sizeOfStructureHeap <= structureHeapAddressSize);
+            if (freeIndex * MarkedBlock::blockSize >= g_jscConfig.sizeOfStructureHeap)
                 return nullptr;
             // If we can't find a free block then `freeIndex == m_usedBlocks.bitCount()` and this set will grow the bit vector.
             m_usedBlocks.set(freeIndex);
@@ -110,7 +110,7 @@ public:
     {
         decommitBlock(blockPtr);
         uintptr_t block = reinterpret_cast<uintptr_t>(blockPtr);
-        RELEASE_ASSERT(g_jscConfig.startOfStructureHeap <= block && block < g_jscConfig.startOfStructureHeap + m_mappedHeapSize);
+        RELEASE_ASSERT(g_jscConfig.startOfStructureHeap <= block && block < g_jscConfig.startOfStructureHeap + g_jscConfig.sizeOfStructureHeap);
         RELEASE_ASSERT(roundUpToMultipleOf<MarkedBlock::blockSize>(block) == block);
 
         Locker locker(m_lock);
@@ -140,7 +140,6 @@ public:
 
 private:
     Lock m_lock;
-    size_t m_mappedHeapSize;
     BitVector m_usedBlocks;
 };
 
@@ -179,6 +178,7 @@ void StructureAlignedMemoryAllocator::decommitBlock(void* block)
 void StructureAlignedMemoryAllocator::initializeStructureAddressSpace()
 {
     g_jscConfig.startOfStructureHeap = 0;
+    g_jscConfig.sizeOfStructureHeap = UINTPTR_MAX;
 }
 
 void* StructureAlignedMemoryAllocator::tryMallocBlock()
