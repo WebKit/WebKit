@@ -136,7 +136,7 @@ void HTMLTextAreaElement::childrenChanged(const ChildChange& change)
     if (m_isDirty)
         setInnerTextValue(value());
     else
-        setNonDirtyValue(defaultValue(),  TextControlSetValueSelection::DoNotSet);
+        setNonDirtyValue(defaultValue(), TextControlSetValueSelection::Clamp);
 }
 
 bool HTMLTextAreaElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
@@ -401,6 +401,10 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
     if (normalizedValue == value())
         return;
 
+    bool shouldClamp = selection == TextControlSetValueSelection::Clamp;
+    auto selectionStartValue = shouldClamp ? computeSelectionStart() : 0;
+    auto selectionEndValue = shouldClamp ? computeSelectionEnd() : 0;
+
     m_value = normalizedValue;
     setInnerTextValue(String { m_value });
     setLastChangeWasNotUserEdit();
@@ -408,15 +412,15 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
     invalidateStyleForSubtree();
     setFormControlValueMatchesRenderer(true);
 
-    if (document().focusedElement() == this) {
-        unsigned endOfString = m_value.length();
+    auto endOfString = m_value.length();
+    if (document().focusedElement() == this)
         setSelectionRange(endOfString, endOfString);
-    }  else if (selection == TextControlSetValueSelection::SetSelectionToEnd) {
+    else if (selection == TextControlSetValueSelection::SetSelectionToEnd) {
         // We don't change text selection here but need to update caret to
         // the end of the text value except for initialize.
-        unsigned endOfString = m_value.length();
         cacheSelection(endOfString, endOfString, SelectionHasNoDirection);
-    }
+    } else if (shouldClamp)
+        cacheSelection(std::min(endOfString, selectionStartValue), std::min(endOfString, selectionEndValue), SelectionHasNoDirection);
 
     setTextAsOfLastFormControlChangeEvent(normalizedValue);
 }

@@ -39,7 +39,7 @@ struct SimpleRange;
 enum class AutoFillButtonType : uint8_t { None, Credentials, Contacts, StrongPassword, CreditCard };
 enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardDirection, SelectionHasBackwardDirection };
 enum TextFieldEventBehavior { DispatchNoEvent, DispatchChangeEvent, DispatchInputAndChangeEvent };
-enum TextControlSetValueSelection { SetSelectionToEnd, DoNotSet };
+enum TextControlSetValueSelection { SetSelectionToEnd, Clamp, DoNotSet };
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
     WTF_MAKE_ISO_ALLOCATED(HTMLTextFormControlElement);
@@ -123,6 +123,9 @@ protected:
     void restoreCachedSelection(SelectionRevealMode, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     bool hasCachedSelection() const { return m_hasCachedSelection; }
 
+    unsigned computeSelectionStart() const;
+    unsigned computeSelectionEnd() const;
+
     virtual void subtreeHasChanged() = 0;
 
     void setLastChangeWasNotUserEdit() { m_lastChangeWasUserEdit = false; }
@@ -139,8 +142,6 @@ private:
 
     bool isTextFormControlElement() const final { return true; }
 
-    unsigned computeSelectionStart() const;
-    unsigned computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
     void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&) final;

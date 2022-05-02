@@ -5,7 +5,7 @@ PASS Setting textContent in a textarea should NOT move selection{Start,End} to t
 PASS Adding children to a textarea should NOT move selection{Start,End} to the end
 PASS Removing children from a textarea should NOT update selection{Start,End}
 PASS Setting the same value (with different newlines) in a textarea should NOT update selection{Start,End}
-FAIL Removing child nodes in non-dirty textarea should make selection{Start,End} 0 assert_equals: selectionStart after node removal expected 0 but got 3
+PASS Removing child nodes in non-dirty textarea should make selection{Start,End} 0
 PASS Setting value to a shorter string than defaultValue should correct the cursor position
 PASS Shortening value by turning the input type into 'url' should correct selection{Start,End}
 FAIL Shortening value by turning the input type into 'color' and back to 'text' should correct selection{Start,End} assert_equals: expected 0 but got 9

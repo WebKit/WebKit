@@ -1,3 +1,24 @@
+2022-05-02  Ziran Sun  <zsun@igalia.com>
+
+        [selection] Set correct selection range for TEXTAREA when updating default value
+        https://bugs.webkit.org/show_bug.cgi?id=237525
+
+        Reviewed by  Chris Dumez.
+
+        Updating defaultValue should keep selectionStart/End. We need clamp them if the new value is shorter than the
+        selectionStart/End. This change is to be in line with [1] & [2].
+        
+        [1] https://html.spec.whatwg.org/multipage/form-elements.html#the-textarea-element:dom-textarea-defaultvalue-2
+        [2] https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#textFieldSelection:concept-textarea/input-relevant-value
+
+        Part of this change is an import of Chromium CL at
+        https://github.com/chromium/chromium/commit/bb27a500d07f8b3c567e84857a40c3ce42fa454a
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::childrenChanged):
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        * html/HTMLTextFormControlElement.h:
+
 2022-05-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         HTML Parser: Wrong column number in CR-LF line ending style (DOS EOL style) HTML files
