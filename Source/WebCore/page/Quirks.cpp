@@ -231,6 +231,14 @@ bool Quirks::shouldHideSearchFieldResultsButton() const
     return false;
 }
 
+bool Quirks::shouldDisableResolutionMediaQuery() const
+{
+    if (!needsQuirks())
+        return false;
+    auto host = m_document->url().host();
+    return equalLettersIgnoringASCIICase(host, "www.hotels.com"_s);
+}
+
 bool Quirks::needsMillisecondResolutionForHighResTimeStamp() const
 {
     if (!needsQuirks())

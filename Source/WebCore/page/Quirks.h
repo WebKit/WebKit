@@ -81,6 +81,7 @@ public:
     bool shouldDisableContentChangeObserverTouchEventAdjustment() const;
     bool shouldTooltipPreventFromProceedingWithClick(const Element&) const;
     bool shouldHideSearchFieldResultsButton() const;
+    bool shouldDisableResolutionMediaQuery() const;
 
     bool needsMillisecondResolutionForHighResTimeStamp() const;
 

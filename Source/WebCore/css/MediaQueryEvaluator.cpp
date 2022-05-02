@@ -448,7 +448,7 @@ static bool devicePixelRatioEvaluate(CSSValue* value, const CSSToLengthConversio
 
 static bool resolutionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
-    if (!frame.settings().resolutionMediaFeatureEnabled())
+    if (!frame.settings().resolutionMediaFeatureEnabled() || frame.document()->quirks().shouldDisableResolutionMediaQuery())
         return false;
 
     return (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isResolution())) && evaluateResolution(value, frame, op);
