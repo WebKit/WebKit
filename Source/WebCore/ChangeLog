@@ -1,3 +1,22 @@
+2022-05-02  Youenn Fablet  <youenn@apple.com>
+
+        VPIO requires the same sample rate for microphone and speaker formats
+        https://bugs.webkit.org/show_bug.cgi?id=239956
+
+        Reviewed by Eric Carlson.
+
+        VPIO requires the speaker sample rate and microphone sample rate to be the same.
+        This is not guaranteed to be true : getUserMedia/applyConstraints may set the microphone sample rate to different values.
+        If audio rendering already started at capture start time, we use the audio rendering sample rate.
+        This is not strictly compliant, given required constraints but they are not widely used.
+        Applications that want to make sure to use a specific sample rate would need to pause audio rendering when starting to capture.
+        We reset exposed settings when starting to capture to expose the actual sample rate to JavaScript through MediaStreamTrack.getSettings().
+
+        Manually tested.
+
+        * platform/mediastream/mac/BaseAudioSharedUnit.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+
 2022-05-01  Philippe Normand  <philn@igalia.com>
 
         [GStreamer][Debug] media-recorder tests hitting an ASSERT

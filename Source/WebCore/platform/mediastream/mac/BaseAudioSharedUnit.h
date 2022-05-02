@@ -77,6 +77,7 @@ public:
     void setCaptureDevice(String&&, uint32_t);
 
     virtual CapabilityValueOrRange sampleRateCapacities() const = 0;
+    virtual int actualSampleRate() const { return sampleRate(); }
 
     void devicesChanged(const Vector<CaptureDevice>&);
     void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
