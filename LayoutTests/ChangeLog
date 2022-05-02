@@ -1,3 +1,17 @@
+2022-05-02  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION: fast/css/stylesheet-candidate-nodes-crash.xhtml is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=239960
+        rdar://92293472
+
+        Reviewed by Alan Bujtas.
+
+        XML parser update has changed error reporting output slightly.
+        Remove the error report from the test output since testing that is not the purpose of this test.
+
+        * fast/css/stylesheet-candidate-nodes-crash-expected.txt:
+        * fast/css/stylesheet-candidate-nodes-crash.xhtml:
+
 2022-05-01  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations. Unreviewed test gardening.
