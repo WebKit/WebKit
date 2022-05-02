@@ -3381,3 +3381,135 @@ TEST(ServiceWorker, OpenWindowCOOP)
     [webView evaluateJavaScript:[NSString stringWithFormat:@"openWindowToURL('%@?swap')", [[server.request() URL] absoluteString]] completionHandler: nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "client");
 }
+
+#if WK_HAVE_C_SPI
+
+static constexpr auto serviceWorkerStorageTimingMainBytes = R"SWRESOURCE(
+<script>
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+    log("Message from worker: " + event.data);
+});
+
+let registration;
+try {
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    registration = reg;
+    worker = reg.installing ? reg.installing : reg.active;
+    worker.postMessage("Hello from the web page");
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+
+function storeRegistration()
+{
+    if (!window.internals) {
+        alert("no internals");
+        return;
+    }
+    internals.storeRegistrationsOnDisk().then(() => {
+        alert("ok");
+    }, () => {
+        alert("ko");
+    });
+}
+
+function waitForWaitingWorker(counter)
+{
+    try {
+        if (registration.waiting) {
+            alert("ok");
+            return;
+        }
+        if (!counter)
+            counter = 0;
+        else if (counter > 100) {
+            alert("ko");
+            return;
+        }
+        setTimeout(() => waitForWaitingWorker(++counter), 50);
+    } catch (e) {
+        alert("error: " + e);
+        return;
+    }
+}
+
+</script>
+)SWRESOURCE"_s;
+
+static constexpr auto serviceWorkerStorageTimingScriptBytesV1 = R"SWRESOURCE(
+self.addEventListener("message", (event) => {
+    event.source.postMessage("V1");
+});
+)SWRESOURCE"_s;
+
+static constexpr auto serviceWorkerStorageTimingScriptBytesV2 = R"SWRESOURCE(
+self.addEventListener("message", (event) => {
+    event.source.postMessage("V2");
+});
+)SWRESOURCE"_s;
+
+TEST(ServiceWorkers, ServiceWorkerStorageTiming)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Cache-Control"_s, "no-cache"_s } }, serviceWorkerStorageTimingMainBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerStorageTimingScriptBytesV1 } },
+    });
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    done = false;
+    expectedMessage = "Message from worker: V1"_s;
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow: YES]);
+    [webView1 loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+
+    HashMap<String, String> sourceHeaders;
+    sourceHeaders.add("Cache-Control"_s, "no-cache"_s);
+    sourceHeaders.add("Content-Type"_s, "application/javascript"_s);
+    server.setResponse("/sw.js"_s, TestWebKitAPI::HTTPResponse { WTFMove(sourceHeaders), serviceWorkerStorageTimingScriptBytesV2 });
+
+    done = false;
+    expectedMessage = "Message from worker: V1"_s;
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView2 loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+
+    // Let's wait for a V2 service worker.
+    [webView1 evaluateJavaScript:@"waitForWaitingWorker()" completionHandler: nil];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "ok");
+
+    // Let's ensure we store it on disk.
+    [webView1 evaluateJavaScript:@"storeRegistration()" completionHandler: nil];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "ok");
+
+    [[webView1 configuration].websiteDataStore _terminateNetworkProcess];
+
+    done = false;
+    expectedMessage = "Message from worker: V2"_s;
+    auto webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView3 loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif // WK_HAVE_C_SPI

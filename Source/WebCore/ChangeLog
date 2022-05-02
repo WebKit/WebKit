@@ -1,3 +1,22 @@
+2022-05-02  Youenn Fablet  <youenn@apple.com>
+
+        PWA in iOS use old assets after publish new servicerWorker/assets
+        https://bugs.webkit.org/show_bug.cgi?id=199110
+        <rdar://problem/51992077>
+
+        Reviewed by Chris Dumez.
+
+        In case a service worker is updated, its state will be waiting until activated.
+        In case we suspend clients and network process, the newly installed service worker wil remain waiting.
+        We will wait for the service worker to get activated when network process gets unsuspended, which might not happen if the network process gets stopped by the OS.
+        To prevent this, we now update the service worker registration as soon as the service worker install job is finished.
+        The migration from waiting to activated upon network process crash is not ideal: in theory we should fire an activate event on the waiting service worker.
+        That said, this is still somehow allowed, as failing to activate (say if service worker process is crashing when handling the event) is allowed.
+
+        Covered by new API test.
+
+        * workers/service/server/SWServer.cpp:
+
 2022-05-02  Ziran Sun  <zsun@igalia.com>
 
         [selection] Set correct selection range for TEXTAREA when updating default value

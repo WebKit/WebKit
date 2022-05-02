@@ -222,6 +222,12 @@ void HTTPServer::addResponse(String&& path, HTTPResponse&& response)
     m_requestData->requestMap.add(WTFMove(path), WTFMove(response));
 }
 
+void HTTPServer::setResponse(String&& path, HTTPResponse&& response)
+{
+    ASSERT(m_requestData->requestMap.contains(path));
+    m_requestData->requestMap.set(WTFMove(path), WTFMove(response));
+}
+
 void HTTPServer::respondWithChallengeThenOK(Connection connection)
 {
     connection.receiveHTTPRequest([connection] (Vector<char>&&) {

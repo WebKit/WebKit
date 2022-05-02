@@ -57,6 +57,7 @@ public:
     void cancel();
 
     void addResponse(String&& path, HTTPResponse&&);
+    void setResponse(String&& path, HTTPResponse&&);
 
     static void respondWithOK(Connection);
     static void respondWithChallengeThenOK(Connection);

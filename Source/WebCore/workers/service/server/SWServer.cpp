@@ -676,6 +676,9 @@ void SWServer::didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifi
     if (!jobDataIdentifier)
         return;
 
+    if (wasSuccessful)
+        storeRegistrationForWorker(worker);
+
     if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
         jobQueue->didFinishInstall(*jobDataIdentifier, worker, wasSuccessful);
 }
@@ -687,8 +690,6 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
     auto* registration = worker.registration();
     if (!registration)
         return;
-
-    storeRegistrationForWorker(worker);
 
     registration->didFinishActivation(worker.identifier());
 }
