@@ -206,6 +206,11 @@ sub skippedFromComputedStyle
     return 1;
   }
 
+  # For convenience, "all" is not defined with the full list of longhands.
+  # Its only listed longhand is itself, so it wouldn't match the condition below.
+  # Then we have to handle it especially.
+  return 1 if $name eq "all";
+
   if (exists($propertiesWithStyleBuilderOptions{$name}{"longhands"})) {
     my @longhands = @{$propertiesWithStyleBuilderOptions{$name}{"longhands"}};
     if (scalar @longhands != 1) {

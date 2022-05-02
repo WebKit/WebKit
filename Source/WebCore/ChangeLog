@@ -1,3 +1,21 @@
+2022-05-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Don't index 'all' shorthand in computed styles
+        https://bugs.webkit.org/show_bug.cgi?id=239669
+
+        Reviewed by Darin Adler.
+
+        Computed styles should provide getters for both longhands and shorthands,
+        but only the former should be indexed.
+
+        However, the 'all' shorthand was being indexed as if it was a longhand.
+
+        Tests: imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
+
+        * css/makeprop.pl:
+        (skippedFromComputedStyle):
+
 2022-05-02  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] REGRESSION(?) tapping a video to start playing for the first time doesn't start playing
