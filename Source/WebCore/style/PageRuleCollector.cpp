@@ -29,6 +29,7 @@
 #include "config.h"
 #include "PageRuleCollector.h"
 
+#include "CommonAtomStrings.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
 #include "UserAgentStyle.h"

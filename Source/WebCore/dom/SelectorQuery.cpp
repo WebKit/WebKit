@@ -28,6 +28,7 @@
 #include "SelectorQuery.h"
 
 #include "CSSParser.h"
+#include "CommonAtomStrings.h"
 #include "ElementIterator.h"
 #include "HTMLNames.h"
 #include "SelectorChecker.h"

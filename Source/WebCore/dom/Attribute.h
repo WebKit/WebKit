@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CommonAtomStrings.h"
 #include "QualifiedName.h"
 #include <wtf/Hasher.h>
 

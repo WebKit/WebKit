@@ -28,6 +28,7 @@
 #include "ChildChangeInvalidation.h"
 #include "ChildListMutationScope.h"
 #include "ClassCollection.h"
+#include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "ContainerNodeAlgorithms.h"
 #include "Editor.h"

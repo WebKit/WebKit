@@ -47,13 +47,16 @@ namespace WebCore {
     macro(plaintextOnly, "plaintext-only") \
     macro(reset, "reset") \
     macro(search, "search") \
+    macro(star, "star") \
     macro(submit, "submit") \
     macro(subtitles, "subtitles") \
     macro(tel, "tel") \
     macro(text, "text") \
     macro(textPlainContentType, "text/plain") \
     macro(true, "true") \
-    macro(url, "url")
+    macro(url, "url") \
+    macro(xml, "xml") \
+    macro(xmlns, "xmlns")
 
 
 #define DECLARE_COMMON_ATOM(atomName, atomValue) \

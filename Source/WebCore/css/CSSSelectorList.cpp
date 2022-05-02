@@ -28,6 +28,7 @@
 #include "CSSSelectorList.h"
 
 #include "CSSParserSelector.h"
+#include "CommonAtomStrings.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

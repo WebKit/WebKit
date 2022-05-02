@@ -28,6 +28,7 @@
 
 #include "CSSMarkup.h"
 #include "CSSSelectorList.h"
+#include "CommonAtomStrings.h"
 #include "HTMLNames.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SelectorPseudoTypeMap.h"

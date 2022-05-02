@@ -30,6 +30,7 @@
 #include "SelectorFilter.h"
 
 #include "CSSSelector.h"
+#include "CommonAtomStrings.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "ShadowRoot.h"

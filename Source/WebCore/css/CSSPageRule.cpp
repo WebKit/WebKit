@@ -25,6 +25,7 @@
 #include "CSSParser.h"
 #include "CSSSelector.h"
 #include "CSSStyleSheet.h"
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"

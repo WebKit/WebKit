@@ -24,6 +24,7 @@
 #include "Attr.h"
 
 #include "AttributeChangeInvalidation.h"
+#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "ElementInlines.h"
 #include "Event.h"

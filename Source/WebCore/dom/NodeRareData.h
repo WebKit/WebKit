@@ -22,6 +22,7 @@
 #pragma once
 
 #include "ChildNodeList.h"
+#include "CommonAtomStrings.h"
 #include "HTMLCollection.h"
 #include "MutationObserverRegistration.h"
 #include "QualifiedName.h"

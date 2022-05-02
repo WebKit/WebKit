@@ -29,6 +29,7 @@
 
 #include "CDATASection.h"
 #include "Comment.h"
+#include "CommonAtomStrings.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Editor.h"

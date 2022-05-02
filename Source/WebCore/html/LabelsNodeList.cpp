@@ -24,6 +24,7 @@
 #include "config.h"
 #include "LabelsNodeList.h"
 
+#include "CommonAtomStrings.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
 #include "LabelableElement.h"
