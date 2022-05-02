@@ -174,7 +174,12 @@ public:
     typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     static constexpr uint8_t numberOfLowerTierCells = 0;
-    
+
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+    static constexpr size_t atomSize = 32;
+#endif
+    static_assert(JSCell::atomSize >= MarkedBlock::atomSize);
+
     enum PolyProtoTag { PolyProto };
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
     static Structure* create(PolyProtoTag, VM&, JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
