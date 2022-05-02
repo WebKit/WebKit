@@ -235,21 +235,15 @@ inline Ref<T, U> Ref<T, U>::replace(Ref<X, Y>&& reference)
 }
 
 template<typename T, typename U = RawPtrTraits<T>, typename X, typename Y>
-inline Ref<T, U> static_reference_cast(Ref<X, Y>& reference)
-{
-    return Ref<T, U>(static_cast<T&>(reference.get()));
-}
-
-template<typename T, typename U = RawPtrTraits<T>, typename X, typename Y>
 inline Ref<T, U> static_reference_cast(Ref<X, Y>&& reference)
 {
     return adoptRef(static_cast<T&>(reference.leakRef()));
 }
 
 template<typename T, typename U = RawPtrTraits<T>, typename X, typename Y>
-inline Ref<T, U> static_reference_cast(const Ref<X, Y>& reference)
+ALWAYS_INLINE Ref<T, U> static_reference_cast(const Ref<X, Y>& reference)
 {
-    return Ref<T, U>(static_cast<T&>(reference.copyRef().get()));
+    return static_reference_cast<T, U>(reference.copyRef());
 }
 
 template <typename T, typename U>
