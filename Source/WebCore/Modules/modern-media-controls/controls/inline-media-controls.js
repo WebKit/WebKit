@@ -169,7 +169,7 @@ class InlineMediaControls extends MediaControls
         this.rightContainer.children = this._rightContainerButtons();
         this.rightContainer.children.concat(this.leftContainer.children).forEach(button => delete button.dropped);
         this.muteButton.style = this.preferredMuteButtonStyle;
-        this.overflowButton.clearContextMenuOptions();
+        this.overflowButton.clearExtraContextMenuOptions();
 
         for (let button of this._droppableButtons()) {
             // If the button is not enabled, we can skip it.
@@ -188,7 +188,7 @@ class InlineMediaControls extends MediaControls
             button.dropped = true;
 
             if (button !== this.overflowButton)
-                this.overflowButton.addContextMenuOptions(button.contextMenuOptions);
+                this.overflowButton.addExtraContextMenuOptions(button.contextMenuOptions);
         }
 
         let collapsableButtons = this._collapsableButtons();
@@ -200,7 +200,7 @@ class InlineMediaControls extends MediaControls
                 continue;
 
             button.dropped = true;
-            this.overflowButton.addContextMenuOptions(button.contextMenuOptions);
+            this.overflowButton.addExtraContextMenuOptions(button.contextMenuOptions);
         }
 
         // Update layouts once more.

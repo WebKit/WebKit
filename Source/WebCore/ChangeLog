@@ -1,3 +1,45 @@
+2022-05-01  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] the overflow button sometimes flickers
+        https://bugs.webkit.org/show_bug.cgi?id=239921
+        <rdar://problem/91329468>
+
+        Reviewed by Eric Carlson.
+
+        There are two things that control the visibility of the `OverflowButton`:
+        1. whether any of the "default" actions (e.g. playback speed, chapters, etc.) are possible
+        2. if any other buttons that have `contextMenuOptions` are dropped (i.e. there's not enough
+        room for it because the `<video>` is narrow or there are already too many buttons)
+
+        (1) is recalculated for most JS media events (e.g. whenever tracks are changed, if
+        the `readyState` changes, etc.).
+
+        (2) is recalculated in `layout` of `MediaControls`, which is (relatively) less frequent.
+
+        In the case that the only contextmenu options are provided by (2) (i.e. none of the "default"
+        actions are possible), the frequent recalculation of (1) will combined with the fact that
+        `layout` uses a `requestAnimationFrame` to delay/batch work will cause there to be a short
+        period of time after the recalculation of (1) and before the recalculation of (2) where
+        there are no contextmenu options, resulting in the `OverflowButton` being hidden.
+
+        * Modules/modern-media-controls/controls/overflow-button.js:
+        (OverflowButton):
+        (OverflowButton.prototype.set visible):
+        (OverflowButton.prototype.set visible.isEmpty): Added.
+        (OverflowButton.prototype.get contextMenuOptions):
+        (OverflowButton.prototype.addExtraContextMenuOptions): Renamed from `addContextMenuOptions`.
+        (OverflowButton.prototype.clearExtraContextMenuOptions): Renamed from `clearContextMenuOptions`.
+        (OverflowButton.prototype.set defaultContextMenuOptions):
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls.prototype.layout):
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls.prototype.layout):
+        Instead of having a single `_contextMenuOptions` that is modified by both (1) and (2), have
+        a separate member variable for each. This way, the recalculation of (1) doesn't also clear
+        the state left over from the last time (2) was calculated (which will be recalculated by (2)
+        shortly thereafter). Use both member variables to decide whether the `OverflowButton` should
+        be `visible`, allowing (1) and (2) to update independent of eachother.
+
 2022-04-30  Andres Gonzalez  <andresg_22@apple.com>
 
         Code cleanup in preparation for refactoring of computing relationships between AXObjects.

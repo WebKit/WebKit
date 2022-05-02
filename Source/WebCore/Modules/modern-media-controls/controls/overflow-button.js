@@ -34,8 +34,8 @@ class OverflowButton extends Button
             layoutDelegate,
         });
 
-        this.clearContextMenuOptions();
         this._defaultContextMenuOptions = {};
+        this._extraContextMenuOptions = {};
     }
 
     // Public
@@ -47,48 +47,46 @@ class OverflowButton extends Button
 
     set visible(flag)
     {
-        let hasContextMenuOptions = false;
-        for (let key in this._contextMenuOptions) {
-            hasContextMenuOptions = true;
-            break;
+        function isEmpty(contextMenuOptions) {
+            for (let key in contextMenuOptions)
+                return false;
+            return true;
         }
 
-        super.visible = flag && hasContextMenuOptions;
+        super.visible = flag && (!isEmpty(this._defaultContextMenuOptions) || !isEmpty(this._extraContextMenuOptions));
     }
 
     get contextMenuOptions()
     {
-        return this._contextMenuOptions;
+        return {
+            ...this._defaultContextMenuOptions,
+            ...this._extraContextMenuOptions,
+        };
     }
 
-    addContextMenuOptions(contextMenuOptions)
+    addExtraContextMenuOptions(contextMenuOptions)
     {
         if (!this.enabled)
             return;
 
         for (let key in contextMenuOptions)
-            this._contextMenuOptions[key] = contextMenuOptions[key];
+            this._extraContextMenuOptions[key] = contextMenuOptions[key];
 
         this.visible = true;
     }
 
-    clearContextMenuOptions()
+    clearExtraContextMenuOptions()
     {
-        this._contextMenuOptions = {};
+        this._extraContextMenuOptions = {};
 
         this.visible = false;
-
-        this.addContextMenuOptions(this._defaultContextMenuOptions);
     }
 
     set defaultContextMenuOptions(defaultContextMenuOptions)
     {
         this._defaultContextMenuOptions = defaultContextMenuOptions || {};
 
-        this.clearContextMenuOptions();
-
-        if (this.layoutDelegate)
-            this.layoutDelegate.needsLayout = true;
+        this.visible = true;
     }
 
 }
