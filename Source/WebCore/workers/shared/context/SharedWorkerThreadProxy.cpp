@@ -86,6 +86,11 @@ SharedWorkerThreadProxy* SharedWorkerThreadProxy::byIdentifier(ScriptExecutionCo
     return allSharedWorkerThreadProxies().get(identifier);
 }
 
+bool SharedWorkerThreadProxy::hasInstances()
+{
+    return !allSharedWorkerThreadProxies().isEmpty();
+}
+
 SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, WorkerInitializationData&& initializationData, CacheStorageProvider& cacheStorageProvider)
     : m_page(WTFMove(page))
     , m_document(*m_page->mainFrame().document())

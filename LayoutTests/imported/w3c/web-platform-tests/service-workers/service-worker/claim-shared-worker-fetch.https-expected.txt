@@ -1,4 +1,3 @@
 
-
-FAIL fetch() in SharedWorker should be intercepted after the client is claimed. assert_equals: fetch() in the shared worker should be intercepted. expected "Intercepted!" but got "a simple text file\n"
+PASS fetch() in SharedWorker should be intercepted after the client is claimed.
 

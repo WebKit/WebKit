@@ -49,6 +49,7 @@ public:
     WEBCORE_EXPORT ~SharedWorkerThreadProxy();
 
     static SharedWorkerThreadProxy* byIdentifier(ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT static bool hasInstances();
 
     SharedWorkerIdentifier identifier() const;
     SharedWorkerThread& thread() { return m_workerThread; }
