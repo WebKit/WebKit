@@ -95,6 +95,7 @@
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/threads/BinarySemaphore.h>
 #include <wtf/threads/Signals.h>
 
 #if OS(WINDOWS)
@@ -3035,6 +3036,19 @@ int main(int argc, char** argv)
     WTF::disableForwardingVPrintfStdErrToOSLog();
 #endif
 
+#if OS(UNIX)
+    BinarySemaphore waitToExit;
+
+    if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
+        addSignalHandler(Signal::Usr, SignalHandler([&] (Signal, SigInfo&, PlatformRegisters&) {
+            dataLogLn("Signal handler hit, we can exit now.");
+            waitToExit.signal();
+            return SignalAction::Handled;
+        }));
+        activateSignalHandlersFor(Signal::Usr);
+    }
+#endif
+
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
     int res = EXIT_SUCCESS;
@@ -3048,6 +3062,19 @@ int main(int argc, char** argv)
         fflush(stdout);
         getc(stdin);
     }
+
+#if OS(UNIX)
+    if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
+        WTF::fastDisableScavenger();
+        fprintf(stdout, "\njs shell waiting for `kill -USR2 [pid]` to exit\n");
+        fflush(stdout);
+
+        waitToExit.wait();
+
+        fprintf(stdout, "\njs shell exiting\n");
+        fflush(stdout);
+    }
+#endif
 
     jscExit(res);
 }
