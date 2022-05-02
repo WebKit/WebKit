@@ -321,7 +321,7 @@ inline static bool isPokerBros()
 }
 #endif
 
-inline const char* inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
+inline ASCIILiteral inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
 {
     VM& vm = globalObject->vm();
 #if PLATFORM(IOS)
@@ -331,11 +331,11 @@ inline const char* inferBuiltinTag(JSGlobalObject* globalObject, JSObject* objec
 #endif
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool objectIsArray = isArray(globalObject, object);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
     if (objectIsArray)
-        return "Array";
+        return "Array"_s;
     if (object->isCallable())
-        return "Function";
+        return "Function"_s;
     JSType type = object->type();
     if (TypeInfo::isArgumentsType(type)
         || type == ErrorInstanceType
@@ -346,7 +346,7 @@ inline const char* inferBuiltinTag(JSGlobalObject* globalObject, JSObject* objec
         || type == JSDateType
         || type == RegExpObjectType)
         return object->className();
-    return "Object";
+    return "Object"_s;
 }
 
 JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValue)
@@ -366,7 +366,7 @@ JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValu
     if (result)
         return asString(result);
 
-    const char* tag = inferBuiltinTag(globalObject, thisObject);
+    ASCIILiteral tag = inferBuiltinTag(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSString* jsTag = nullptr;
 
@@ -381,7 +381,7 @@ JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValu
     }
 
     if (!jsTag)
-        jsTag = jsString(vm, AtomStringImpl::add(tag).releaseNonNull());
+        jsTag = jsString(vm, AtomStringImpl::add(tag));
 
     JSString* jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
     RETURN_IF_EXCEPTION(scope, nullptr);

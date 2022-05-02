@@ -46,13 +46,6 @@ String::String(const UChar* characters, unsigned length)
         m_impl = StringImpl::create(characters, length);
 }
 
-// Construct a string with UTF-16 data, from a null-terminated source.
-String::String(const UChar* nullTerminatedString)
-{
-    if (nullTerminatedString)
-        m_impl = StringImpl::create(nullTerminatedString, lengthOfNullTerminatedString(nullTerminatedString));
-}
-
 // Construct a string with latin1 data.
 String::String(const LChar* characters, unsigned length)
 {
@@ -70,7 +63,7 @@ String::String(const char* characters, unsigned length)
 String::String(const char* nullTerminatedString)
 {
     if (nullTerminatedString)
-        m_impl = StringImpl::create(reinterpret_cast<const LChar*>(nullTerminatedString));
+        m_impl = StringImpl::createFromCString(nullTerminatedString);
 }
 
 int codePointCompare(const String& a, const String& b)

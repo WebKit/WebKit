@@ -39,12 +39,9 @@ public:
 
     static void remove(AtomStringImpl*);
 
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const LChar*);
-    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(const char* s) { return add(reinterpret_cast<const LChar*>(s)); };
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const UChar*, unsigned length);
-    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); };
-    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const UChar*);
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); }
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(StringImpl*, unsigned offset, unsigned length);
     ALWAYS_INLINE static RefPtr<AtomStringImpl> add(StringImpl* string)
     {
@@ -59,7 +56,10 @@ public:
         return add(string.releaseNonNull());
     }
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const StaticStringImpl*);
-    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(const char* characters, unsigned length);
+    ALWAYS_INLINE static Ref<AtomStringImpl> add(ASCIILiteral literal) { return addLiteral(literal.characters(), literal.length()); }
+
+    // Not using the add() naming to encourage developers to call add(ASCIILiteral) when they have a string literal.
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> addCString(const char* s) { return s ? add(s, strlen(s)) : nullptr; }
 
     // Returns null if the input data contains an invalid UTF-8 sequence.
     static RefPtr<AtomStringImpl> addUTF8(const char* start, const char* end);
@@ -100,6 +100,8 @@ private:
         }
         return addSlowCase(WTFMove(string));
     }
+
+    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(const char* characters, unsigned length);
 
     ALWAYS_INLINE static Ref<AtomStringImpl> add(AtomStringTable& stringTable, StringImpl& string)
     {

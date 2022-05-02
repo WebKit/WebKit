@@ -237,13 +237,12 @@ public:
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const UChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const LChar*, unsigned length);
+    ALWAYS_INLINE static Ref<StringImpl> create(const char* characters, unsigned length) { return create(reinterpret_cast<const LChar*>(characters), length); }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*, unsigned length);
     template<size_t inlineCapacity> static Ref<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity>&);
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*);
 
-    ALWAYS_INLINE static Ref<StringImpl> create(const char* characters, unsigned length) { return create(reinterpret_cast<const LChar*>(characters), length); }
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const LChar*);
-    ALWAYS_INLINE static Ref<StringImpl> create(const char* string) { return create(reinterpret_cast<const LChar*>(string)); }
+    // Not using create() naming to encourage developers to call create(ASCIILiteral) when they have a string literal.
+    ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(characters, strlen(characters)); }
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
 
@@ -609,8 +608,6 @@ int codePointCompare(const StringImpl*, const StringImpl*);
 bool isSpaceOrNewline(UChar32);
 bool isNotSpaceOrNewline(UChar32);
 
-template<typename CharacterType> unsigned lengthOfNullTerminatedString(const CharacterType*);
-
 // StringHashd is the default hash for StringImpl* and RefPtr<StringImpl>
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<StringImpl*>;
@@ -773,17 +770,6 @@ inline bool isSpaceOrNewline(UChar32 character)
 inline bool isNotSpaceOrNewline(UChar32 character)
 {
     return !isSpaceOrNewline(character);
-}
-
-template<typename CharacterType> inline unsigned lengthOfNullTerminatedString(const CharacterType* string)
-{
-    ASSERT(string);
-    size_t length = 0;
-    while (string[length])
-        ++length;
-
-    RELEASE_ASSERT(length < StringImpl::MaxLength);
-    return static_cast<unsigned>(length);
 }
 
 inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, const LChar* data8, unsigned hashAndFlags)

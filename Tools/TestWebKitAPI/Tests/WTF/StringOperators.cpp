@@ -258,7 +258,7 @@ TEST(WTF, ConcatenateCharacterArrayAndEmptyString)
     UChar ucharArray[] = { 't', 'e', 's', 't', '\0' };
     String concatenation16 = ucharArray + emptyString;
     ASSERT_EQ(static_cast<unsigned>(4), concatenation16.length());
-    ASSERT_TRUE(concatenation16 == String(ucharArray));
+    ASSERT_TRUE(concatenation16 == String(ucharArray, 4));
 
     LChar lcharArray[] = { 't', 'e', 's', 't' };
     String concatenation8 = String(lcharArray, 4) + emptyString;
