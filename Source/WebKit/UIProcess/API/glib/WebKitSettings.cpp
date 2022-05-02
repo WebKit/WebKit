@@ -229,7 +229,6 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         webkit_settings_set_enable_html5_database(settings, g_value_get_boolean(value));
         break;
     case PROP_ENABLE_XSS_AUDITOR:
-        webkit_settings_set_enable_xss_auditor(settings, g_value_get_boolean(value));
         break;
     case PROP_ENABLE_FRAME_FLATTENING:
         webkit_settings_set_enable_frame_flattening(settings, g_value_get_boolean(value));
@@ -431,7 +430,7 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         g_value_set_boolean(value, webkit_settings_get_enable_html5_database(settings));
         break;
     case PROP_ENABLE_XSS_AUDITOR:
-        g_value_set_boolean(value, webkit_settings_get_enable_xss_auditor(settings));
+        g_value_set_boolean(value, FALSE);
         break;
     case PROP_ENABLE_FRAME_FLATTENING:
         g_value_set_boolean(value, webkit_settings_get_enable_frame_flattening(settings));

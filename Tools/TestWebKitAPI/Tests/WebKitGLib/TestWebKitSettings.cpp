@@ -72,11 +72,6 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_html5_database(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_html5_database(settings));
 
-    // XSS Auditor is deprecated and always disabled.
-    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
-    webkit_settings_set_enable_xss_auditor(settings, TRUE);
-    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
-
     // Frame flattening is disabled by default.
     g_assert_false(webkit_settings_get_enable_frame_flattening(settings));
     webkit_settings_set_enable_frame_flattening(settings, TRUE);
@@ -362,10 +357,15 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_false(webkit_settings_get_enable_javascript_markup(settings));
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // Accelerated 2D canvas setting is deprecated and no-op.
+    // Accelerated 2D canvas is deprecated and always disabled.
     g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
     webkit_settings_set_enable_accelerated_2d_canvas(settings, TRUE);
     g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
+
+    // XSS Auditor is deprecated and always disabled.
+    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
+    webkit_settings_set_enable_xss_auditor(settings, TRUE);
+    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     g_object_unref(G_OBJECT(settings));
