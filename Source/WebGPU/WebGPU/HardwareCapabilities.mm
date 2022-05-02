@@ -238,7 +238,7 @@ static HardwareCapabilities apple5(id<MTLDevice> device)
     };
 }
 
-#if !PLATFORM(WATCHOS)
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 static HardwareCapabilities apple6(id<MTLDevice> device)
 {
     auto baseCapabilities = WebGPU::baseCapabilities(device);
