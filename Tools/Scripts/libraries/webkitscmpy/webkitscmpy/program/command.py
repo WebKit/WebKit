@@ -146,6 +146,18 @@ class FilteredCommand(Command):
             return FilteredCommand.main(args, repository, command=cls.name, **kwargs)
 
     @classmethod
+    def replace(cls, arg, repository):
+        parsed = Commit.parse(arg, do_assert=False)
+        if not parsed:
+            return None
+        replacement = None
+        if repository.is_svn:
+            replacement = repository.cache.to_revision(hash=parsed.hash, identifier=str(parsed) if parsed.identifier else None)
+        if repository.is_git:
+            replacement = repository.cache.to_hash(revision=parsed.revision, identifier=str(parsed) if parsed.identifier else None)
+        return replacement
+
+    @classmethod
     def main(cls, args, repository, command=None, representation=None, **kwargs):
         if not repository:
             sys.stderr.write('No repository provided\n')
@@ -170,15 +182,15 @@ class FilteredCommand(Command):
             return 1
 
         for index in range(len(args)):
-            parsed = Commit.parse(args[index], do_assert=False)
-            if parsed:
-                replacement = None
-                if repository.is_svn:
-                    replacement = repository.cache.to_revision(hash=parsed.hash, identifier=str(parsed) if parsed.identifier else None)
-                if repository.is_git:
-                    replacement = repository.cache.to_hash(revision=parsed.revision, identifier=str(parsed) if parsed.identifier else None)
-                if replacement:
-                    args[index] = replacement
+            replacement = cls.replace(args[index], repository)
+            if replacement:
+                args[index] = replacement
+                continue
+            split = args[index].split('...')
+            if len(split) > 1:
+                args[index] = '...'.join([
+                    cls.replace(component, repository) or component for component in split
+                ])
                 continue
 
             for candidate in [

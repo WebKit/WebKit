@@ -1,3 +1,17 @@
+2022-05-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] log should support ranges
+        https://bugs.webkit.org/show_bug.cgi?id=239510
+        <rdar://problem/92031167>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand.replace): Break logic converting a substring into a revision or hash into a function.
+        (FilteredCommand.main): If an argument can be split by ..., convert it's substrings into revisions/hashes.
+
 2022-05-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add support for the "Markup Image" action when right clicking an image in editable content
