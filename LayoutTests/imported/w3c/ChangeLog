@@ -1,3 +1,16 @@
+2022-05-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Enumerate all logical longhands in the computed style
+        https://bugs.webkit.org/show_bug.cgi?id=239910
+
+        Reviewed by Darin Adler.
+
+        Update test expectations.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-cascade/all-prop-revert-layer-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-05-02  Youenn Fablet  <youenn@apple.com>
 
         Register shared workers as service worker clients

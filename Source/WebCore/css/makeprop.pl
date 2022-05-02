@@ -225,18 +225,22 @@ sub skippedFromComputedStyle
 sub isLogical
 {
     my $name = shift;
-    my $value = $propertiesHashRef->{$name};
+    my $logicalPropertyGroup = $propertiesHashRef->{$name}->{"codegen-properties"}->{"logical-property-group"};
 
-    if (!exists($value->{"specification"})) {
+    if (!$logicalPropertyGroup) {
         return 0;
     }
 
-    my $spec_properties = $value->{"specification"};
-    if (!exists($spec_properties->{"category"})) {
-        return 0;
+    my $resolver = $logicalPropertyGroup->{"resolver"};
+    for my $logicalResolvers (values %{ $logicalPropertyGroupResolvers{"logical"} }) {
+        for my $logicalResolver (@{ $logicalResolvers }) {
+            if ($resolver eq $logicalResolver) {
+                return 1;
+            }
+        }
     }
 
-    return $spec_properties->{"category"} eq "css-logical-props"
+    return 0;
 }
 
 sub isPropertyEnabled($$)

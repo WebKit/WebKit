@@ -1,3 +1,24 @@
+2022-05-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Enumerate all logical longhands in the computed style
+        https://bugs.webkit.org/show_bug.cgi?id=239910
+
+        Reviewed by Darin Adler.
+
+        Bug 210695 made computed styles enumerate most logical longhands, but
+        only the ones thefined in the css-logical spec were included. Other
+        specs, like css-scroll-snap, can also define logical longhands.
+
+        This patch fixes the logic, and instead of checking the spec, it checks
+        the "logical-property-group" field.
+
+        Tests: imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html
+               imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
+
+        * css/makeprop.pl:
+        (isLogical):
+
 2022-05-02  Youenn Fablet  <youenn@apple.com>
 
         Register shared workers as service worker clients

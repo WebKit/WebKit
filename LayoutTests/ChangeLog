@@ -1,3 +1,22 @@
+2022-05-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Enumerate all logical longhands in the computed style
+        https://bugs.webkit.org/show_bug.cgi?id=239910
+
+        Reviewed by Darin Adler.
+
+        Update test expectations.
+        all-prop-initial-xml-expected.txt for ios was clearly outdated, so just
+        removing it.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-05-02  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: fast/css/stylesheet-candidate-nodes-crash.xhtml is a constant text failure
