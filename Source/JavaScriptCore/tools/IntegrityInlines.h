@@ -77,7 +77,7 @@ ALWAYS_INLINE void auditCellRandomly(VM& vm, JSCell* cell)
 ALWAYS_INLINE void auditStructureID(StructureID structureID)
 {
     UNUSED_PARAM(structureID);
-#if CPU(ADDRESS64) && !ENABLE(STRUCTURE_ID_WITH_SHIFT)
+#if CPU(ADDRESS64)
     ASSERT(structureID.bits() <= structureHeapAddressSize + StructureID::nukedStructureIDBit);
 #endif
 }

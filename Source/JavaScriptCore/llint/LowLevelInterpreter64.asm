@@ -741,10 +741,8 @@ macro writeBarrierOnGlobalLexicalEnvironment(size, get, valueFieldName)
 end
 
 macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
-    if STRUCTURE_ID_WITH_SHIFT
-        lshiftp (constexpr StructureID::encodeShiftAmount), structureIDThenStructure
-    elsif ADDRESS64
-        andq (constexpr StructureID::structureIDMask), structureIDThenStructure
+    if ADDRESS64
+        andq constexpr structureIDMask, structureIDThenStructure
         leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
         loadp [scratch], scratch
         addp scratch, structureIDThenStructure
