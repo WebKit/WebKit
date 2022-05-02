@@ -42,13 +42,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LoadableTextTrack);
 
-LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
-    : TextTrack(&track.document(), kind, emptyString(), label, language, TrackElement)
+LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
+    : TextTrack(&track.document(), kind, emptyAtom(), label, language, TrackElement)
     , m_trackElement(&track)
 {
 }
 
-Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
+Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
 {
     auto textTrack = adoptRef(*new LoadableTextTrack(track, kind, label, language));
     textTrack->suspendIfNeeded();

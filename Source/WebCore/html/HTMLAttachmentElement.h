@@ -56,7 +56,7 @@ public:
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
-    WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename);
+    WEBCORE_EXPORT void updateAttributes(std::optional<uint64_t>&& newFileSize, const AtomString& newContentType, const AtomString& newFilename);
     WEBCORE_EXPORT void updateEnclosingImageWithData(const String& contentType, Ref<FragmentedSharedBuffer>&& data);
     WEBCORE_EXPORT void updateThumbnail(const RefPtr<Image>& thumbnail);
     WEBCORE_EXPORT void updateIcon(const RefPtr<Image>& icon, const WebCore::FloatSize&);

@@ -3768,7 +3768,7 @@ static inline JSValue jsTestObj_reflectedStringAttrGetter(JSGlobalObject& lexica
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -3781,7 +3781,7 @@ static inline bool setJSTestObj_reflectedStringAttrSetter(JSGlobalObject& lexica
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    auto nativeValue = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, WTFMove(nativeValue));
@@ -3799,7 +3799,7 @@ static inline JSValue jsTestObj_reflectedUSVStringAttrGetter(JSGlobalObject& lex
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLUSVString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedUSVStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -3812,7 +3812,7 @@ static inline bool setJSTestObj_reflectedUSVStringAttrSetter(JSGlobalObject& lex
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLUSVString>(lexicalGlobalObject, value);
+    auto nativeValue = convert<IDLAtomStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr, WTFMove(nativeValue));
@@ -3923,7 +3923,7 @@ static inline JSValue jsTestObj_reflectedURLAttrGetter(JSGlobalObject& lexicalGl
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -3936,7 +3936,7 @@ static inline bool setJSTestObj_reflectedURLAttrSetter(JSGlobalObject& lexicalGl
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    auto nativeValue = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, WTFMove(nativeValue));
@@ -3954,7 +3954,7 @@ static inline JSValue jsTestObj_reflectedUSVURLAttrGetter(JSGlobalObject& lexica
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLUSVString>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLUSVString>>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedUSVURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -3967,7 +3967,7 @@ static inline bool setJSTestObj_reflectedUSVURLAttrSetter(JSGlobalObject& lexica
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLUSVString>(lexicalGlobalObject, value);
+    auto nativeValue = convert<IDLAtomStringAdaptor<IDLUSVString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvurlattrAttr, WTFMove(nativeValue));
@@ -3985,7 +3985,7 @@ static inline JSValue jsTestObj_reflectedStringAttrGetter(JSGlobalObject& lexica
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedStringAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -3998,7 +3998,7 @@ static inline bool setJSTestObj_reflectedStringAttrSetter(JSGlobalObject& lexica
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    auto nativeValue = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, WTFMove(nativeValue));
@@ -4078,7 +4078,7 @@ static inline JSValue jsTestObj_reflectedCustomURLAttrGetter(JSGlobalObject& lex
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestObj_reflectedCustomURLAttr, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -4091,7 +4091,7 @@ static inline bool setJSTestObj_reflectedCustomURLAttrSetter(JSGlobalObject& lex
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    auto nativeValue = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, WTFMove(nativeValue));

@@ -26,7 +26,7 @@
 [
     Exposed=(Window,Worker),
 ] interface TestPromiseRejectionEvent : Event {
-    [CallWith=CurrentGlobalObject] constructor(DOMString type, TestPromiseRejectionEventInit eventInitDict);
+    [CallWith=CurrentGlobalObject] constructor([AtomString] DOMString type, TestPromiseRejectionEventInit eventInitDict);
     readonly attribute Promise<any> promise;
     readonly attribute any reason;
 };

@@ -30,7 +30,7 @@
     JSCustomMarkFunction,
     SecureContext,
 ] interface PaymentMethodChangeEvent : PaymentRequestUpdateEvent {
-    constructor(DOMString type, optional PaymentMethodChangeEventInit eventInitDict);
+    constructor([AtomString] DOMString type, optional PaymentMethodChangeEventInit eventInitDict);
 
     readonly attribute DOMString methodName;
     [CustomGetter] readonly attribute object? methodDetails;

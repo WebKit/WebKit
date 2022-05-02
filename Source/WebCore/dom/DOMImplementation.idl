@@ -23,8 +23,8 @@
     GenerateIsReachable=ImplDocument,
     Exposed=Window
 ] interface DOMImplementation {
-    [NewObject] DocumentType createDocumentType(DOMString qualifiedName, DOMString publicId, DOMString systemId);
-    [NewObject] XMLDocument createDocument(DOMString? namespaceURI, [LegacyNullToEmptyString] DOMString qualifiedName, optional DocumentType? doctype = null);
+    [NewObject] DocumentType createDocumentType([AtomString] DOMString qualifiedName, DOMString publicId, DOMString systemId);
+    [NewObject] XMLDocument createDocument([AtomString] DOMString? namespaceURI, [LegacyNullToEmptyString, AtomString] DOMString qualifiedName, optional DocumentType? doctype = null);
     [NewObject] HTMLDocument createHTMLDocument(optional DOMString title);
 
     boolean hasFeature(); // Useless; always returns true.

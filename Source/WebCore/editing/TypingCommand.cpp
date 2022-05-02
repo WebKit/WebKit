@@ -384,7 +384,7 @@ void TypingCommand::doApply()
     ASSERT_NOT_REACHED();
 }
 
-String TypingCommand::inputEventTypeName() const
+AtomString TypingCommand::inputEventTypeName() const
 {
     return inputTypeNameForEditingAction(m_currentTypingEditAction);
 }

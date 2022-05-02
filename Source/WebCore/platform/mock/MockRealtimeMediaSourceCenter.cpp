@@ -107,7 +107,7 @@ public:
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, device.persistentId()))
             return { "Unable to find mock camera device with given persistentID"_s };
 
-        return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
+        return MockRealtimeVideoSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
     }
 
 private:
@@ -135,7 +135,7 @@ private:
 };
 
 MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device, PageIdentifier pageIdentifier)
-    : m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, String { device.label() }, String { }, pageIdentifier))
+    : m_source(MockRealtimeVideoSourceMac::createForMockDisplayCapturer(String { device.persistentId() }, AtomString { device.label() }, String { }, pageIdentifier))
 {
 }
 
@@ -218,7 +218,7 @@ public:
         if (!MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, device.persistentId()))
             return { "Unable to find mock microphone device with given persistentID"_s };
 
-        return MockRealtimeAudioSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
+        return MockRealtimeAudioSource::create(String { device.persistentId() }, AtomString { device.label() }, WTFMove(hashSalt), constraints, pageIdentifier);
     }
 private:
     CaptureDeviceManager& audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }

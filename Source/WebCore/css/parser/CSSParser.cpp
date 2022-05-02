@@ -240,7 +240,7 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
     for (auto id : dependencies)
         builderState.builder().applyProperty(id);
 
-    return CSSPropertyParser::parseTypedCustomPropertyValue(name, syntax, resolvedData->tokens(), builderState, valueWithReferences.context());
+    return CSSPropertyParser::parseTypedCustomPropertyValue(AtomString { name }, syntax, resolvedData->tokens(), builderState, valueWithReferences.context());
 }
 
 Vector<double> CSSParser::parseKeyframeKeyList(const String& selector)

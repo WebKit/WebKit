@@ -533,7 +533,7 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> create
         for (unsigned i = 0; i < length; ++i) {
             const QualifiedName& name = *names[i];
             const AtomString& localName = name.localName();
-            map.add(prefix + ':' + localName, QualifiedName(prefix, localName, name.namespaceURI()));
+            map.add(makeAtomString(prefix, ':', localName), QualifiedName(prefix, localName, name.namespaceURI()));
         }
     };
 

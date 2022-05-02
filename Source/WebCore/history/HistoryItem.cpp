@@ -282,12 +282,12 @@ void HistoryItem::setPageScaleFactor(float scaleFactor)
     m_pageScaleFactor = scaleFactor;
 }
 
-void HistoryItem::setDocumentState(const Vector<String>& state)
+void HistoryItem::setDocumentState(const Vector<AtomString>& state)
 {
     m_documentState = state;
 }
 
-const Vector<String>& HistoryItem::documentState() const
+const Vector<AtomString>& HistoryItem::documentState() const
 {
     return m_documentState;
 }

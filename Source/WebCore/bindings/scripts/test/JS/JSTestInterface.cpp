@@ -836,7 +836,7 @@ static inline JSValue jsTestInterface_reflectAttributeGetter(JSGlobalObject& lex
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr))));
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestInterface_reflectAttribute, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
@@ -852,7 +852,7 @@ static inline bool setJSTestInterface_reflectAttributeSetter(JSGlobalObject& lex
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
+    auto nativeValue = convert<IDLAtomStringAdaptor<IDLDOMString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue));

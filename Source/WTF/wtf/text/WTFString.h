@@ -153,6 +153,8 @@ public:
     WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(float, unsigned decimalPlaces);
     WTF_EXPORT_PRIVATE static String numberToStringFixedWidth(double, unsigned decimalPlaces);
 
+    AtomString toExistingAtomString() const;
+
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
 

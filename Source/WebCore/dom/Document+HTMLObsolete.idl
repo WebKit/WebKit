@@ -25,11 +25,11 @@
 
 // https://html.spec.whatwg.org/multipage/obsolete.html#Document-partial
 partial interface Document {
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString fgColor;
-    [CEReactions, ImplementedAs=linkColorForBindings] attribute [LegacyNullToEmptyString] DOMString linkColor;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString vlinkColor;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString alinkColor;
-    [CEReactions] attribute [LegacyNullToEmptyString] DOMString bgColor;
+    [CEReactions] attribute [LegacyNullToEmptyString, AtomString] DOMString fgColor;
+    [CEReactions, ImplementedAs=linkColorForBindings] attribute [LegacyNullToEmptyString, AtomString] DOMString linkColor;
+    [CEReactions] attribute [LegacyNullToEmptyString, AtomString] DOMString vlinkColor;
+    [CEReactions] attribute [LegacyNullToEmptyString, AtomString] DOMString alinkColor;
+    [CEReactions] attribute [LegacyNullToEmptyString, AtomString] DOMString bgColor;
 
     [SameObject] readonly attribute HTMLCollection anchors;
     [SameObject] readonly attribute HTMLCollection applets;

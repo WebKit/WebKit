@@ -56,15 +56,13 @@ public:
     AtomString(const StaticStringImpl*);
     AtomString(StringImpl*);
     AtomString(const String&);
+    AtomString(String&&);
     AtomString(StringImpl* baseString, unsigned start, unsigned length);
 
     // FIXME: AtomString doesn’t always have AtomStringImpl, so one of those two names needs to change.
     AtomString(UniquedStringImpl* uid);
 
-    AtomString(ASCIILiteral literal)
-        : m_string(AtomStringImpl::addLiteral(literal.characters(), literal.length()))
-    {
-    }
+    AtomString(ASCIILiteral);
 
     // We have to declare the copy constructor and copy assignment operator as well, otherwise
     // they'll be implicitly deleted by adding the move constructor and move assignment operator.
@@ -254,6 +252,11 @@ inline AtomString::AtomString(const String& string)
 {
 }
 
+inline AtomString::AtomString(String&& string)
+    : m_string(AtomStringImpl::add(string.releaseImpl()))
+{
+}
+
 inline AtomString::AtomString(StringImpl* baseString, unsigned start, unsigned length)
     : m_string(AtomStringImpl::add(baseString, start, length))
 {
@@ -298,6 +301,11 @@ inline const AtomString& starAtom() { return starAtomData.get(); }
 inline const AtomString& xmlAtom() { return xmlAtomData.get(); }
 inline const AtomString& xmlnsAtom() { return xmlnsAtomData.get(); }
 
+inline AtomString::AtomString(ASCIILiteral literal)
+    : m_string(literal.length() ? AtomStringImpl::add(literal.characters(), literal.length()) : Ref { *emptyAtom().impl() })
+{
+}
+
 inline AtomString AtomString::fromUTF8(const char* characters, size_t length)
 {
     if (!characters)
@@ -314,6 +322,15 @@ inline AtomString AtomString::fromUTF8(const char* characters)
     if (!*characters)
         return emptyAtom();
     return fromUTF8Internal(characters, nullptr);
+}
+
+inline AtomString String::toExistingAtomString() const
+{
+    if (isNull())
+        return { };
+    if (impl()->isAtom())
+        return Ref { static_cast<AtomStringImpl&>(*impl()) };
+    return AtomStringImpl::lookUp(impl());
 }
 
 // AtomStringHash is the default hash for AtomString

@@ -41,7 +41,7 @@ public:
     virtual ~HTMLFormControlsCollection();
 
     HTMLElement* item(unsigned offset) const override;
-    std::optional<std::variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItemOrItems(const String&) const;
+    std::optional<std::variant<RefPtr<RadioNodeList>, RefPtr<Element>>> namedItemOrItems(const AtomString&) const;
 
     HTMLFormElement& ownerNode() const;
 

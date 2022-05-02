@@ -297,7 +297,7 @@ bool CSSPropertyParser::canParseTypedCustomPropertyValue(const String& syntax, c
     return parser.canParseTypedCustomPropertyValue(syntax);
 }
 
-RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const String& name, const String& syntax, const CSSParserTokenRange& tokens, const Style::BuilderState& builderState, const CSSParserContext& context)
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const CSSParserTokenRange& tokens, const Style::BuilderState& builderState, const CSSParserContext& context)
 {
     CSSPropertyParser parser(tokens, context, nullptr, false);
     RefPtr<CSSCustomPropertyValue> value = parser.parseTypedCustomPropertyValue(name, syntax, builderState);
@@ -4804,7 +4804,7 @@ void CSSPropertyParser::collectParsedCustomPropertyValueDependencies(const Strin
     }
 }
 
-RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const String& name, const String& syntax, const Style::BuilderState& builderState)
+RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const String& syntax, const Style::BuilderState& builderState)
 {
     if (syntax != "*") {
         m_range.consumeWhitespace();

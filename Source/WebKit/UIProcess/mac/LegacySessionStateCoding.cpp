@@ -611,6 +611,15 @@ public:
         return *this;
     }
 
+    HistoryEntryDataDecoder& operator>>(AtomString& value)
+    {
+        // FIXME: This could be more efficient but this matches what the IPC decoder currently does.
+        String string;
+        *this >> string;
+        value = AtomString { string };
+        return *this;
+    }
+
     HistoryEntryDataDecoder& operator>>(Vector<uint8_t>& value)
     {
         value = { };
@@ -902,9 +911,9 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     uint64_t documentStateVectorSize;
     decoder >> documentStateVectorSize;
 
-    Vector<String> documentState;
+    Vector<AtomString> documentState;
     for (uint64_t i = 0; i < documentStateVectorSize; ++i) {
-        String state;
+        AtomString state;
         decoder >> state;
 
         if (!decoder.isValid())

@@ -309,7 +309,7 @@ static bool shouldAddNamespaceElement(const Element& element)
     auto& prefix = element.prefix();
     if (prefix.isEmpty())
         return !element.hasAttribute(xmlnsAtom());
-    return !element.hasAttribute("xmlns:" + prefix);
+    return !element.hasAttribute(makeAtomString("xmlns:"_s, prefix));
 }
 
 static bool shouldAddNamespaceAttribute(const Attribute& attribute, Namespaces& namespaces)
@@ -466,7 +466,7 @@ void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const 
     AtomString name;
     do {
         // FIXME: We should create makeAtomString, which would be more efficient.
-        name = makeString("NS", ++m_prefixLevel);
+        name = makeAtomString("NS"_s, ++m_prefixLevel);
     } while (namespaces.get(name.impl()));
     prefixedName.setPrefix(name);
 }

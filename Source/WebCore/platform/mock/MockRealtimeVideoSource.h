@@ -48,7 +48,7 @@ class GraphicsContext;
 
 class MockRealtimeVideoSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
-    static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*, PageIdentifier);
+    static CaptureSourceOrError create(String&& deviceID, AtomString&& name, String&& hashSalt, const MediaConstraints*, PageIdentifier);
     ~MockRealtimeVideoSource();
 
     static void setIsInterrupted(bool);
@@ -56,7 +56,7 @@ public:
     ImageBuffer* imageBuffer() const;
 
 protected:
-    MockRealtimeVideoSource(String&& deviceID, String&& name, String&& hashSalt, PageIdentifier);
+    MockRealtimeVideoSource(String&& deviceID, AtomString&& name, String&& hashSalt, PageIdentifier);
 
     virtual void updateSampleBuffer() = 0;
 

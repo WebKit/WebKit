@@ -38,7 +38,7 @@ class HTMLTrackElement;
 class LoadableTextTrack final : public TextTrack, private TextTrackLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(LoadableTextTrack);
 public:
-    static Ref<LoadableTextTrack> create(HTMLTrackElement&, const String& kind, const String& label, const String& language);
+    static Ref<LoadableTextTrack> create(HTMLTrackElement&, const AtomString& kind, const AtomString& label, const AtomString& language);
 
     void scheduleLoad(const URL&);
 
@@ -47,7 +47,7 @@ public:
     void clearElement() { m_trackElement = nullptr; }
 
 private:
-    LoadableTextTrack(HTMLTrackElement&, const String& kind, const String& label, const String& language);
+    LoadableTextTrack(HTMLTrackElement&, const AtomString& kind, const AtomString& label, const AtomString& language);
 
     void newCuesAvailable(TextTrackLoader&) final;
     void cueLoadingCompleted(TextTrackLoader&, bool loadingFailed) final;

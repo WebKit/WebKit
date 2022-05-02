@@ -298,7 +298,7 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
 
     element->setPseudo(ShadowPseudoIds::webkitSearchCancelButton());
 #if !PLATFORM(IOS_FAMILY)
-    element->setAttributeWithoutSynchronization(aria_labelAttr, AXSearchFieldCancelButtonText());
+    element->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { AXSearchFieldCancelButtonText() });
 #endif
     element->setAttributeWithoutSynchronization(roleAttr, HTMLNames::buttonTag->localName());
     return element;

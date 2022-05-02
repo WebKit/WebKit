@@ -98,11 +98,6 @@ void MockCDMFactory::setSupportedDataTypes(Vector<String>&& types)
         m_supportedDataTypes.append(type);
 }
 
-void MockCDMFactory::setSupportedRobustness(Vector<String>&& robustnesses)
-{
-    m_supportedRobustness = robustnesses.map([] (auto& robustness) -> AtomString { return robustness; });
-}
-
 std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM(const String&, const CDMPrivateClient&)
 {
     return makeUnique<MockCDM>(*this);

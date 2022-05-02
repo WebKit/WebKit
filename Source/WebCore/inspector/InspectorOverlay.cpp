@@ -873,7 +873,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     // Draw lines.
     {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily(m_page.settings().sansSerifFontFamily());
+        fontDescription.setOneFamily(AtomString { m_page.settings().sansSerifFontFamily() });
         fontDescription.setComputedSize(10);
 
         FontCascade font(WTFMove(fontDescription), 0, 0);
@@ -963,7 +963,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     // Draw viewport size.
     {
         FontCascadeDescription fontDescription;
-        fontDescription.setOneFamily(m_page.settings().sansSerifFontFamily());
+        fontDescription.setOneFamily(AtomString { m_page.settings().sansSerifFontFamily() });
         fontDescription.setComputedSize(12);
 
         FontCascade font(WTFMove(fontDescription), 0, 0);

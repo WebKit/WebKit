@@ -74,7 +74,7 @@ DOMImplementation::DOMImplementation(Document& document)
 {
 }
 
-ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId)
+ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const AtomString& qualifiedName, const String& publicId, const String& systemId)
 {
     auto parseResult = Document::parseQualifiedName(qualifiedName);
     if (parseResult.hasException())
@@ -91,7 +91,7 @@ static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, con
     return XMLDocument::create(nullptr, settings, URL());
 }
 
-ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType* documentType)
+ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString& namespaceURI, const AtomString& qualifiedName, DocumentType* documentType)
 {
     auto document = createXMLDocument(namespaceURI, m_document.settings());
     document->setContextDocument(m_document.contextDocument());

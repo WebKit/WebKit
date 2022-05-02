@@ -186,7 +186,7 @@ const Vector<AtomString>& HTMLCollection::supportedPropertyNames()
     return m_namedElementCache->propertyNames();
 }
 
-bool HTMLCollection::isSupportedPropertyName(const String& name)
+bool HTMLCollection::isSupportedPropertyName(const AtomString& name)
 {
     updateNamedElementCache();
     ASSERT(m_namedElementCache);

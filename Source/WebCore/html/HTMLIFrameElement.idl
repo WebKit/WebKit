@@ -22,22 +22,22 @@
     Exposed=Window,
     JSGenerateToNativeObject
 ] interface HTMLIFrameElement : HTMLElement {
-    [Reflect, CEReactions=NotNeeded] attribute [AtomString] DOMString align;
-    [Reflect, CEReactions=NotNeeded] attribute [AtomString] DOMString frameBorder;
-    [Reflect, CEReactions=NotNeeded] attribute [AtomString] DOMString height;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString align;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString frameBorder;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString height;
     [Reflect, URL, CEReactions=NotNeeded] attribute USVString longDesc;
-    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString, AtomString] DOMString marginHeight;
-    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString, AtomString] DOMString marginWidth;
-    [Reflect, CEReactions=NotNeeded] attribute [AtomString] DOMString name;
+    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginHeight;
+    [Reflect, CEReactions=NotNeeded] attribute [LegacyNullToEmptyString] DOMString marginWidth;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString name;
 
     [PutForwards=value] readonly attribute DOMTokenList sandbox;
     [Reflect, CEReactions=NotNeeded] attribute boolean allowFullscreen;
-    [Reflect, CEReactions=NotNeeded] attribute [AtomString] DOMString allow;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString allow;
 
-    [Reflect, CEReactions=NotNeeded] attribute [AtomString] DOMString scrolling;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString scrolling;
     [Reflect, URL, CEReactions=NotNeeded] attribute USVString src;
-    [Reflect, CEReactions=NotNeeded] attribute [AtomString] DOMString srcdoc;
-    [Reflect, CEReactions=NotNeeded] attribute [AtomString] DOMString width;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString srcdoc;
+    [Reflect, CEReactions=NotNeeded] attribute DOMString width;
 
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
@@ -45,7 +45,7 @@
 
     [CheckSecurityForNode] Document getSVGDocument();
 
-    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
+    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
 
     [CEReactions, EnabledBySetting=LazyIframeLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
 };

@@ -168,7 +168,7 @@ public:
     virtual bool readWebArchive(SharedBuffer&) = 0;
     virtual bool readRTFD(SharedBuffer&) = 0;
     virtual bool readRTF(SharedBuffer&) = 0;
-    virtual bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) = 0;
+    virtual bool readDataBuffer(SharedBuffer&, const String& type, const AtomString& name, PresentationSize preferredPresentationSize = { }) = 0;
 #endif
 };
 

@@ -209,7 +209,7 @@ void AudioTrack::updateKindFromPrivate()
         setKind(commentaryAtom());
         break;
     case AudioTrackPrivate::None:
-        setKind(emptyString());
+        setKind(emptyAtom());
         break;
     default:
         ASSERT_NOT_REACHED();

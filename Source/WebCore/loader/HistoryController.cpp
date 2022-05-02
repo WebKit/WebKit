@@ -737,7 +737,7 @@ void FrameLoader::HistoryController::recursiveSetProvisionalItem(HistoryItem& it
     m_provisionalItem = &item;
 
     for (auto& childItem : item.children()) {
-        const String& childFrameName = childItem->target();
+        auto& childFrameName = childItem->target();
 
         HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
         ASSERT(fromChildItem);

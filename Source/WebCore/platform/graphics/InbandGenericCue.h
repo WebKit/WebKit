@@ -39,7 +39,7 @@ struct GenericCueData {
     enum class Status : uint8_t { Uninitialized, Partial, Complete };
 
     GenericCueData() = default;
-    GenericCueData(InbandGenericCueIdentifier uniqueId, const MediaTime& startTime, const MediaTime& endTime, const String& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment align, GenericCueData::Status status)
+    GenericCueData(InbandGenericCueIdentifier uniqueId, const MediaTime& startTime, const MediaTime& endTime, const AtomString& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment align, GenericCueData::Status status)
         : m_uniqueId(uniqueId)
         , m_startTime(startTime)
         , m_endTime(endTime)
@@ -66,7 +66,7 @@ struct GenericCueData {
     InbandGenericCueIdentifier m_uniqueId;
     MediaTime m_startTime;
     MediaTime m_endTime;
-    String m_id;
+    AtomString m_id;
     String m_content;
     String m_fontName;
     double m_line { -1 };
@@ -102,7 +102,7 @@ std::optional<GenericCueData> GenericCueData::decode(Decoder& decoder)
     if (!endTime)
         return std::nullopt;
 
-    std::optional<String> identifier;
+    std::optional<AtomString> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
@@ -233,8 +233,8 @@ public:
     MediaTime endTime() const { return m_cueData.m_endTime; }
     void setEndTime(const MediaTime& endTime) { m_cueData.m_endTime = endTime; }
 
-    const String& id() const { return m_cueData.m_id; }
-    void setId(const String& id) { m_cueData.m_id = id; }
+    const AtomString& id() const { return m_cueData.m_id; }
+    void setId(const AtomString& id) { m_cueData.m_id = id; }
 
     const String& content() const { return m_cueData.m_content; }
     void setContent(const String& content) { m_cueData.m_content = content; }

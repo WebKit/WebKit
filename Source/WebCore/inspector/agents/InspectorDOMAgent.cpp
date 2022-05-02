@@ -720,7 +720,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributeValue(Protocol::DOM
     if (!element)
         return makeUnexpected(errorString);
 
-    if (!m_domEditor->setAttribute(*element, name, value, errorString))
+    if (!m_domEditor->setAttribute(*element, AtomString { name }, AtomString { value }, errorString))
         return makeUnexpected(errorString);
 
     return { };
@@ -745,7 +745,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(Protocol::D
 
     Element* childElement = downcast<Element>(child);
     if (!childElement->hasAttributes() && !!name) {
-        if (!m_domEditor->removeAttribute(*element, name, errorString))
+        if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
             return makeUnexpected(errorString);
         return { };
     }
@@ -753,13 +753,14 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(Protocol::D
     bool foundOriginalAttribute = false;
     for (const Attribute& attribute : childElement->attributesIterator()) {
         // Add attribute pair
-        foundOriginalAttribute = foundOriginalAttribute || attribute.name().toString() == name;
-        if (!m_domEditor->setAttribute(*element, attribute.name().toString(), attribute.value(), errorString))
+        auto attributeName = attribute.name().toAtomString();
+        foundOriginalAttribute = foundOriginalAttribute || attributeName == name;
+        if (!m_domEditor->setAttribute(*element, attributeName, attribute.value(), errorString))
             return makeUnexpected(errorString);
     }
 
     if (!foundOriginalAttribute && name.find(isNotSpaceOrNewline) != notFound) {
-        if (!m_domEditor->removeAttribute(*element, name, errorString))
+        if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
             return makeUnexpected(errorString);
     }
 
@@ -774,7 +775,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::removeAttribute(Protocol::DOM::
     if (!element)
         return makeUnexpected(errorString);
 
-    if (!m_domEditor->removeAttribute(*element, name, errorString))
+    if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
         return makeUnexpected(errorString);
 
     return { };
@@ -806,7 +807,7 @@ Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorDOMAgent::setNodeName(Pr
     if (!oldNode)
         return makeUnexpected(errorString);
 
-    auto createElementResult = oldNode->document().createElementForBindings(tagName);
+    auto createElementResult = oldNode->document().createElementForBindings(AtomString { tagName });
     if (createElementResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(createElementResult.releaseException()));
 
@@ -2181,14 +2182,14 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
                 supportsLiveRegion = true;
                 liveRegionAtomic = axObject->liveRegionAtomic();
 
-                String ariaRelevantAttrValue = axObject->liveRegionRelevant();
+                auto ariaRelevantAttrValue = axObject->liveRegionRelevant();
                 if (!ariaRelevantAttrValue.isEmpty()) {
                     // FIXME: Pass enum values rather than strings once unblocked. http://webkit.org/b/133711
                     String ariaRelevantAdditions = Protocol::Helpers::getEnumConstantValue(Protocol::DOM::LiveRegionRelevant::Additions);
                     String ariaRelevantRemovals = Protocol::Helpers::getEnumConstantValue(Protocol::DOM::LiveRegionRelevant::Removals);
                     String ariaRelevantText = Protocol::Helpers::getEnumConstantValue(Protocol::DOM::LiveRegionRelevant::Text);
                     liveRegionRelevant = JSON::ArrayOf<String>::create();
-                    SpaceSplitString values(ariaRelevantAttrValue, SpaceSplitString::ShouldFoldCase::Yes);
+                    SpaceSplitString values(AtomString { ariaRelevantAttrValue }, SpaceSplitString::ShouldFoldCase::Yes);
                     // @aria-relevant="all" is exposed as ["additions","removals","text"], in order.
                     // This order is controlled in WebCore and expected in WebInspectorUI.
                     if (values.contains("all"_s)) {
@@ -2196,11 +2197,11 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
                         liveRegionRelevant->addItem(ariaRelevantRemovals);
                         liveRegionRelevant->addItem(ariaRelevantText);
                     } else {
-                        if (values.contains(ariaRelevantAdditions))
+                        if (values.contains(AtomString { ariaRelevantAdditions }))
                             liveRegionRelevant->addItem(ariaRelevantAdditions);
-                        if (values.contains(ariaRelevantRemovals))
+                        if (values.contains(AtomString { ariaRelevantRemovals }))
                             liveRegionRelevant->addItem(ariaRelevantRemovals);
-                        if (values.contains(ariaRelevantText))
+                        if (values.contains(AtomString { ariaRelevantText }))
                             liveRegionRelevant->addItem(ariaRelevantText);
                     }
                 }

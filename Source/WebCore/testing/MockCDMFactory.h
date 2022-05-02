@@ -53,7 +53,7 @@ public:
     void setSupportedSessionTypes(Vector<MediaKeySessionType>&& types) { m_supportedSessionTypes = WTFMove(types); }
 
     const Vector<AtomString>& supportedRobustness() const { return m_supportedRobustness; }
-    void setSupportedRobustness(Vector<String>&&);
+    void setSupportedRobustness(Vector<AtomString>&& supportedRobustness) { m_supportedRobustness = WTFMove(supportedRobustness); }
 
     MediaKeysRequirement distinctiveIdentifiersRequirement() const { return m_distinctiveIdentifiersRequirement; }
     void setDistinctiveIdentifiersRequirement(MediaKeysRequirement requirement) { m_distinctiveIdentifiersRequirement = requirement; }

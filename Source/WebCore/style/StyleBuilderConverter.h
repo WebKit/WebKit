@@ -100,7 +100,9 @@ public:
 #endif
     static String convertString(BuilderState&, const CSSValue&);
     static String convertStringOrAuto(BuilderState&, const CSSValue&);
+    static AtomString convertStringOrAutoAtom(BuilderState& state, const CSSValue& value) { return AtomString { convertStringOrAuto(state, value) }; }
     static String convertStringOrNone(BuilderState&, const CSSValue&);
+    static AtomString convertStringOrNoneAtom(BuilderState& state, const CSSValue& value) { return AtomString { convertStringOrNone(state, value) }; }
     static OptionSet<TextEmphasisPosition> convertTextEmphasisPosition(BuilderState&, const CSSValue&);
     static TextAlignMode convertTextAlign(BuilderState&, const CSSValue&);
     static RefPtr<PathOperation> convertPathOperation(BuilderState&, const CSSValue&);

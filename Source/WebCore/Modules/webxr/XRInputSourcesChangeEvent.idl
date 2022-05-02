@@ -40,7 +40,7 @@
     SecureContext,
     Exposed=Window
 ] interface XRInputSourcesChangeEvent : Event {
-    constructor(DOMString type, XRInputSourcesChangeEventInit eventInitDict);
+    constructor([AtomString] DOMString type, XRInputSourcesChangeEventInit eventInitDict);
     [SameObject] readonly attribute WebXRSession session;
     [CachedAttribute, SameObject] readonly attribute FrozenArray<WebXRInputSource> added;
     [CachedAttribute, SameObject] readonly attribute FrozenArray<WebXRInputSource> removed;

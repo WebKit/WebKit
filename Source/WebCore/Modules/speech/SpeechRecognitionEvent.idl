@@ -27,7 +27,7 @@
     EnabledBySetting=SpeechRecognitionEnabled,
     Exposed=Window
 ] interface SpeechRecognitionEvent : Event {
-    constructor(DOMString type, SpeechRecognitionEventInit eventInitDict);
+    constructor([AtomString] DOMString type, SpeechRecognitionEventInit eventInitDict);
     readonly attribute unsigned long resultIndex;
     readonly attribute SpeechRecognitionResultList results;
 };

@@ -37,7 +37,7 @@
 
     readonly attribute TextTrack track;
 
-    attribute DOMString id;
+    attribute [AtomString] DOMString id;
     attribute double startTime;
     attribute double endTime;
     attribute boolean pauseOnExit;

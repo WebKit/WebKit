@@ -28,7 +28,7 @@
     Conditional=SPEECH_SYNTHESIS,
     Exposed=Window
 ] interface SpeechSynthesisEvent : Event {
-    constructor(DOMString type, SpeechSynthesisEventInit eventInitDict);
+    constructor([AtomString] DOMString type, SpeechSynthesisEventInit eventInitDict);
 
     readonly attribute SpeechSynthesisUtterance utterance;
     readonly attribute unsigned long charIndex;

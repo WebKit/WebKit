@@ -6275,7 +6275,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "HyphenationString",
-                "converter": "StringOrAuto"
+                "converter": "StringOrAutoAtom"
             },
             "status": {
                 "status": "experimental"
@@ -6411,7 +6411,7 @@
         "-webkit-line-grid": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "StringOrNone"
+                "converter": "StringOrNoneAtom"
             },
             "status": {
                 "status": "experimental"

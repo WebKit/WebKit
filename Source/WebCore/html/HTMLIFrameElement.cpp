@@ -183,7 +183,7 @@ bool HTMLIFrameElement::shouldLoadFrameLazily()
         URL completeURL = document().completeURL(frameURL());
         if (isFrameLazyLoadable(document(), completeURL, attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
             auto currentReferrerPolicy = referrerPolicy();
-            lazyLoadFrameObserver().observe(completeURL.string(), currentReferrerPolicy);
+            lazyLoadFrameObserver().observe(AtomString { completeURL.string() }, currentReferrerPolicy);
             return true;
         }
     }

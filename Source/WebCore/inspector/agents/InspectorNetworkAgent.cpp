@@ -1233,9 +1233,9 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const
     if (status)
         overrideResponse.setHTTPStatusCode(*status);
     if (!!statusText)
-        overrideResponse.setHTTPStatusText(statusText);
+        overrideResponse.setHTTPStatusText(AtomString { statusText });
     if (!!mimeType)
-        overrideResponse.setMimeType(mimeType);
+        overrideResponse.setMimeType(AtomString { mimeType });
     if (headers) {
         HTTPHeaderMap explicitHeaders;
         for (auto& header : *headers) {
@@ -1291,7 +1291,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     ResourceResponse response(pendingRequest->m_loader->url(), mimeType, data->size(), String());
     response.setSource(ResourceResponse::Source::InspectorOverride);
     response.setHTTPStatusCode(status);
-    response.setHTTPStatusText(statusText);
+    response.setHTTPStatusText(AtomString { statusText });
     HTTPHeaderMap explicitHeaders;
     for (auto& header : headers.get()) {
         auto headerValue = header.value->asString();

@@ -249,7 +249,7 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
         m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, redirectResponse, formState.get(), policyDecisionMode, requestIdentifier, WTFMove(decisionHandler));
 }
 
-void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<FormState>&& formState, const String& frameName, NewWindowPolicyDecisionFunction&& function)
+void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, ResourceRequest&& request, RefPtr<FormState>&& formState, const AtomString& frameName, NewWindowPolicyDecisionFunction&& function)
 {
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxPopups))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);

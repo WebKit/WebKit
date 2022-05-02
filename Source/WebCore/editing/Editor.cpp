@@ -978,7 +978,7 @@ void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction, 
     if (m_document.selection().isNone())
         return;
 
-    String inputTypeName = inputTypeNameForEditingAction(editingAction);
+    AtomString inputTypeName = inputTypeNameForEditingAction(editingAction);
     String inputEventData = inputEventDataForEditingStyleAndAction(*style, editingAction);
     RefPtr element { m_document.selection().selection().rootEditableElement() };
 
@@ -1013,7 +1013,7 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
     if (m_document.selection().isNone())
         return;
 
-    String inputTypeName = inputTypeNameForEditingAction(editingAction);
+    AtomString inputTypeName = inputTypeNameForEditingAction(editingAction);
     String inputEventData = inputEventDataForEditingStyleAndAction(style, editingAction);
     RefPtr element { m_document.selection().selection().rootEditableElement() };
     if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
@@ -4275,7 +4275,7 @@ void Editor::notifyClientOfAttachmentUpdates()
     }
 }
 
-void Editor::insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const String& fileName, const String& contentType)
+void Editor::insertAttachment(const String& identifier, std::optional<uint64_t>&& fileSize, const AtomString& fileName, const AtomString& contentType)
 {
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
     attachment->setUniqueIdentifier(identifier);
@@ -4359,7 +4359,7 @@ const RenderStyle* Editor::styleForSelectionStart(RefPtr<Node>& nodeToRemove)
 
     auto styleElement = HTMLSpanElement::create(document());
 
-    String styleText = typingStyle->style()->asText() + " display: inline";
+    auto styleText = makeAtomString(typingStyle->style()->asText(), " display: inline"_s);
     styleElement->setAttribute(HTMLNames::styleAttr, styleText);
 
     styleElement->appendChild(document().createEditingTextNode(String { emptyString() }));

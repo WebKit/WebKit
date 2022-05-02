@@ -475,7 +475,7 @@ void CompositeEditCommand::setShouldRetainAutocorrectionIndicator(bool)
 {
 }
 
-String CompositeEditCommand::inputEventTypeName() const
+AtomString CompositeEditCommand::inputEventTypeName() const
 {
     return inputTypeNameForEditingAction(editingAction());
 }

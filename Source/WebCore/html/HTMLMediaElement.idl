@@ -54,7 +54,7 @@ typedef (
     const unsigned short NETWORK_LOADING = 2;
     const unsigned short NETWORK_NO_SOURCE = 3;
     readonly attribute unsigned short networkState;
-    [CEReactions=NotNeeded] attribute DOMString preload;
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString preload;
 
     readonly attribute TimeRanges buffered;
     undefined load();
@@ -109,7 +109,7 @@ typedef (
     [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] attribute EventHandler onwaitingforkey;
     [Conditional=ENCRYPTED_MEDIA, EnabledBySetting=EncryptedMediaAPIEnabled, DisabledByQuirk=hasBrokenEncryptedMediaAPISupport] Promise<undefined> setMediaKeys(MediaKeys? mediaKeys);
 
-    TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
+    TextTrack addTextTrack([AtomString] DOMString kind, optional [AtomString] DOMString label = "", optional [AtomString] DOMString language = "");
     [ImplementedAs=ensureAudioTracks] readonly attribute AudioTrackList audioTracks;
     [ImplementedAs=ensureTextTracks] readonly attribute TextTrackList textTracks;
     [ImplementedAs=ensureVideoTracks] readonly attribute VideoTrackList videoTracks;

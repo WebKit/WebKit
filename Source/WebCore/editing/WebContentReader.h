@@ -81,7 +81,7 @@ private:
     bool readWebArchive(SharedBuffer&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
-    bool readDataBuffer(SharedBuffer&, const String& type, const String& name, PresentationSize preferredPresentationSize = { }) override;
+    bool readDataBuffer(SharedBuffer&, const String& type, const AtomString& name, PresentationSize preferredPresentationSize = { }) override;
 #endif
 };
 
@@ -108,7 +108,7 @@ private:
     bool readWebArchive(SharedBuffer&) override;
     bool readRTFD(SharedBuffer&) override;
     bool readRTF(SharedBuffer&) override;
-    bool readDataBuffer(SharedBuffer&, const String&, const String&, PresentationSize = { }) override { return false; }
+    bool readDataBuffer(SharedBuffer&, const String&, const AtomString&, PresentationSize = { }) override { return false; }
 #endif
 };
 

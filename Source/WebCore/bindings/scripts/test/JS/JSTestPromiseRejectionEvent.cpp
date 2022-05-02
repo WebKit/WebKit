@@ -177,7 +177,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestPromiseRejectionEventDO
     if (UNLIKELY(callFrame->argumentCount() < 2))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto type = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
+    auto type = convert<IDLAtomStringAdaptor<IDLDOMString>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
     auto eventInitDict = convert<IDLDictionary<TestPromiseRejectionEvent::Init>>(*lexicalGlobalObject, argument1.value());

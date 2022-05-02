@@ -218,7 +218,7 @@ inline RefPtr<CSSPrimitiveValue> consumeFirstValue(const String& mediaFeature, C
     if (auto value = CSSPropertyParserHelpers::consumeIntegerZeroAndGreater(range))
         return value;
 
-    if (!featureExpectingPositiveInteger(mediaFeature) && !isAspectRatioFeature(mediaFeature)) {
+    if (!featureExpectingPositiveInteger(mediaFeature) && !isAspectRatioFeature(AtomString { mediaFeature })) {
         if (auto value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative))
             return value;
     }

@@ -40,7 +40,7 @@ dictionary RTCRtpSFrameTransformErrorEventInit : EventInit {
     Exposed=(Window,DedicatedWorker),
     InterfaceName=SFrameTransformErrorEvent
 ] interface RTCRtpSFrameTransformErrorEvent : Event {
-    constructor(DOMString type, RTCRtpSFrameTransformErrorEventInit eventInitDict);
+    constructor([AtomString] DOMString type, RTCRtpSFrameTransformErrorEventInit eventInitDict);
 
     readonly attribute RTCRtpSFrameTransformErrorEventType errorType;
     // FIXME: Add below fields

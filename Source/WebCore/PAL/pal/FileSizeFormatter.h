@@ -29,6 +29,6 @@
 
 namespace PAL {
 
-PAL_EXPORT String fileSizeDescription(uint64_t);
+PAL_EXPORT AtomString fileSizeDescription(uint64_t);
 
 } // namespace PAL

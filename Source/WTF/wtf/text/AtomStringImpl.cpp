@@ -431,6 +431,33 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(StringImpl& string)
     return *static_cast<AtomStringImpl*>(addResult.iterator->get());
 }
 
+Ref<AtomStringImpl> AtomStringImpl::addSlowCase(Ref<StringImpl>&& string)
+{
+    // This check is necessary for null symbols.
+    // Their length is zero, but they are not AtomStringImpl.
+    if (!string->length())
+        return *static_cast<AtomStringImpl*>(StringImpl::empty());
+
+    if (string->isStatic())
+        return addStatic(WTFMove(string));
+
+    if (string->isSymbol())
+        return addSymbol(WTFMove(string));
+
+    ASSERT_WITH_MESSAGE(!string->isAtom(), "AtomStringImpl should not hit the slow case if the string is already an atom.");
+
+    AtomStringTableLocker locker;
+    auto addResult = stringTable().add(string.ptr());
+
+    if (addResult.isNewEntry) {
+        ASSERT(addResult.iterator->get() == string.ptr());
+        string->setIsAtom(true);
+        return static_reference_cast<AtomStringImpl>(WTFMove(string));
+    }
+
+    return *static_cast<AtomStringImpl*>(addResult.iterator->get());
+}
+
 Ref<AtomStringImpl> AtomStringImpl::addSlowCase(AtomStringTable& stringTable, StringImpl& string)
 {
     // This check is necessary for null symbols.

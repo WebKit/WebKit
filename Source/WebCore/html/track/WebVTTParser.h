@@ -73,14 +73,14 @@ public:
     MediaTime endTime() const { return m_endTime; }
     void setEndTime(const MediaTime& endTime) { m_endTime = endTime; }
 
-    String id() const { return m_id; }
-    void setId(String id) { m_id = id; }
+    AtomString id() const { return m_id; }
+    void setId(const AtomString& id) { m_id = id; }
 
     String content() const { return m_content; }
-    void setContent(String content) { m_content = content; }
+    void setContent(const String& content) { m_content = content; }
 
     String settings() const { return m_settings; }
-    void setSettings(String settings) { m_settings = settings; }
+    void setSettings(const String& settings) { m_settings = settings; }
 
     MediaTime originalStartTime() const { return m_originalStartTime; }
     void setOriginalStartTime(const MediaTime& time) { m_originalStartTime = time; }
@@ -91,7 +91,7 @@ private:
     MediaTime m_startTime;
     MediaTime m_endTime;
     MediaTime m_originalStartTime;
-    String m_id;
+    AtomString m_id;
     String m_content;
     String m_settings;
 };
@@ -185,7 +185,7 @@ private:
 
     BufferedLineReader m_lineReader;
     RefPtr<TextResourceDecoder> m_decoder;
-    String m_currentId;
+    AtomString m_currentId;
     MediaTime m_currentStartTime;
     MediaTime m_currentEndTime;
     StringBuilder m_currentContent;

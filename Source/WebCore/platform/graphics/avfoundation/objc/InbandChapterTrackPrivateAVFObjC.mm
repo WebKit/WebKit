@@ -61,7 +61,7 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
             return;
         m_processedChapters.append(chapterData);
 
-        ISOWebVTTCue cueData = ISOWebVTTCue(PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), String::number(chapterNumber), [item stringValue]);
+        ISOWebVTTCue cueData = ISOWebVTTCue(PAL::toMediaTime([item time]), PAL::toMediaTime([item duration]), AtomString::number(chapterNumber), [item stringValue]);
         INFO_LOG(identifier, "created cue ", cueData);
         client()->parseWebVTTCueData(WTFMove(cueData));
     });

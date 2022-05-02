@@ -117,9 +117,9 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
 
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
-            setAttributeWithoutSynchronization(HTMLNames::titleAttr, m_file->name());
+            setAttributeWithoutSynchronization(HTMLNames::titleAttr, AtomString { m_file->name() });
             setAttributeWithoutSynchronization(HTMLNames::subtitleAttr, PAL::fileSizeDescription(m_file->size()));
-            setAttributeWithoutSynchronization(HTMLNames::typeAttr, m_file->type());
+            setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { m_file->type() });
         } else {
             removeAttribute(HTMLNames::titleAttr);
             removeAttribute(HTMLNames::subtitleAttr);
@@ -205,7 +205,7 @@ String HTMLAttachmentElement::attachmentPath() const
     return attributeWithoutSynchronization(webkitattachmentpathAttr);
 }
 
-void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename)
+void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, const AtomString& newContentType, const AtomString& newFilename)
 {
     if (!newFilename.isNull()) {
         if (auto enclosingImage = enclosingImageElement())
@@ -254,7 +254,7 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
     if (!mimeTypeIsSuitableForInlineImageAttachment(mimeType))
         return;
 
-    enclosingImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)));
+    enclosingImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)) });
 }
 
 void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)

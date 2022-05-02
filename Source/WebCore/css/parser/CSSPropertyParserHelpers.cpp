@@ -4370,7 +4370,7 @@ AtomString consumeFamilyNameRaw(CSSParserTokenRange& range)
     if (range.peek().type() == StringToken)
         return range.consumeIncludingWhitespace().value().toAtomString();
     if (range.peek().type() != IdentToken)
-        return String();
+        return nullAtom();
     return concatenateFamilyName(range);
 }
 
