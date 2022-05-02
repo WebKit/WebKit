@@ -46,6 +46,7 @@ public:
 
     std::optional<std::pair<Ref<ReadableStream>, Ref<ReadableStream>>> tee();
 
+    void cancel(const Exception&);
     void lock();
     void pipeTo(ReadableStreamSink&);
     bool isLocked() const;

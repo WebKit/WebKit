@@ -58,6 +58,7 @@ public:
     virtual void didFinish(const NetworkLoadMetrics&) = 0;
     virtual void didNotHandle() = 0;
     virtual void cancel() = 0;
+    virtual void setCancelledCallback(Function<void()>&&) = 0;
     virtual void continueDidReceiveResponse() = 0;
     virtual void convertFetchToDownload() = 0;
 };

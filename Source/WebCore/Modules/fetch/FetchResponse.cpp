@@ -487,6 +487,15 @@ void FetchResponse::closeStream()
     m_readableStreamSource = nullptr;
 }
 
+void FetchResponse::cancelStream()
+{
+    if (isAllowedToRunScript() && hasReadableStreamBody()) {
+        body().readableStream()->cancel(Exception { AbortError, "load is cancelled"_s });
+        return;
+    }
+    cancel();
+}
+
 void FetchResponse::feedStream()
 {
     ASSERT(m_readableStreamSource);

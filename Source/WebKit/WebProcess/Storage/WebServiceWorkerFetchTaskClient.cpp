@@ -207,13 +207,22 @@ void WebServiceWorkerFetchTaskClient::didNotHandle()
 
 void WebServiceWorkerFetchTaskClient::cancel()
 {
+    ASSERT(!isMainRunLoop());
     m_connection = nullptr;
+    if (m_cancelledCallback)
+        m_cancelledCallback();
 }
 
 void WebServiceWorkerFetchTaskClient::convertFetchToDownload()
 {
     m_isDownload = true;
     continueDidReceiveResponse();
+}
+
+void WebServiceWorkerFetchTaskClient::setCancelledCallback(Function<void()>&& callback)
+{
+    ASSERT(!m_cancelledCallback);
+    m_cancelledCallback = WTFMove(callback);
 }
 
 void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()

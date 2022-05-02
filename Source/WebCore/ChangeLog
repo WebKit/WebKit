@@ -1,5 +1,27 @@
 2022-05-02  Youenn Fablet  <youenn@apple.com>
 
+        Cancel response stream if load is being cancelled by the web page
+        https://bugs.webkit.org/show_bug.cgi?id=239968
+
+        Reviewed by Chris Dumez.
+
+        Add a cancel callback and use it to get the fetch client cancelling notification
+        to cancel the response body stream or response body load.
+
+        Covered by rebased test.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::cancelStream):
+        * Modules/fetch/FetchResponse.h:
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::ReadableStream::cancel):
+        * bindings/js/ReadableStream.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+        * workers/service/context/ServiceWorkerFetch.h:
+
+2022-05-02  Youenn Fablet  <youenn@apple.com>
+
         PWA in iOS use old assets after publish new servicerWorker/assets
         https://bugs.webkit.org/show_bug.cgi?id=199110
         <rdar://problem/51992077>

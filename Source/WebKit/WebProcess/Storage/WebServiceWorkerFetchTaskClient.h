@@ -59,6 +59,7 @@ private:
     void cancel() final;
     void continueDidReceiveResponse() final;
     void convertFetchToDownload() final;
+    void setCancelledCallback(Function<void()>&&) final;
 
     void cleanup();
 
@@ -89,6 +90,7 @@ private:
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
     bool m_didFinish { false };
     bool m_isDownload { false };
+    Function<void()> m_cancelledCallback;
 };
 
 } // namespace WebKit

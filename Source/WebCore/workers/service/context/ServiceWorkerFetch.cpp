@@ -123,6 +123,10 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     client->didReceiveResponse(resourceResponse);
 
     if (response->isBodyReceivedByChunk()) {
+        client->setCancelledCallback([response = WeakPtr { response.get() }] {
+            if (response)
+                response->cancelStream();
+        });
         response->consumeBodyReceivedByChunk([client = WTFMove(client), response = WeakPtr { response.get() }] (auto&& result) mutable {
             if (result.hasException()) {
                 auto error = FetchEvent::createResponseError(URL { }, result.exception().message(), ResourceError::IsSanitized::Yes);

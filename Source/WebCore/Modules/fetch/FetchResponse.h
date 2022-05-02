@@ -96,6 +96,7 @@ public:
 
     using ConsumeDataByChunkCallback = Function<void(ExceptionOr<Span<const uint8_t>*>&&)>;
     void consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&&);
+    void cancelStream();
 
     WEBCORE_EXPORT ResourceResponse resourceResponse() const;
     ResourceResponse::Tainting tainting() const { return m_internalResponse.tainting(); }
