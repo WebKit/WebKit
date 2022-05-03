@@ -141,9 +141,6 @@ void AtomString::init()
 {
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
-        // Initialization is not thread safe, so this function must be called from the main thread first.
-        ASSERT(isUIThread());
-
         nullAtomData.construct();
         emptyAtomData.construct(AtomString::fromLatin1(""));
     });

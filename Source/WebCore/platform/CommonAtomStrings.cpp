@@ -42,8 +42,6 @@ void initializeCommonAtomStrings()
 
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
-        AtomString::init();
-
         WEBCORE_COMMON_ATOM_STRINGS_FOR_EACH_KEYWORD(INITIALIZE_COMMON_ATOM)
     });
 }

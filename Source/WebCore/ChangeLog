@@ -1,3 +1,18 @@
+2022-05-03  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r293703): 358 JSC tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=240023
+        <rdar://problem/92676663>
+
+        Reviewed by Yusuke Suzuki.
+
+        Make sure WTF::initialize() calls AtomString::init() given that JSC now relies on
+        emptyAtom().
+
+        (WebCore::initializeCommonAtomStrings):
+        * platform/CommonAtomStrings.cpp:
+        (WebCore::initializeCommonAtomStrings):
+
 2022-05-03  Youenn Fablet  <youenn@apple.com>
 
         Fix buggy assert in CoreAudioSharedUnit::configureSpeakerProc
