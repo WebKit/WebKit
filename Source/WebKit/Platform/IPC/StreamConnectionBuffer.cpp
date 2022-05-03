@@ -46,10 +46,9 @@ StreamConnectionBuffer::StreamConnectionBuffer(size_t memorySize)
     ASSERT(m_dataSize <= maximumSize());
 }
 
-StreamConnectionBuffer::StreamConnectionBuffer(Ref<WebKit::SharedMemory>&& memory, size_t memorySize, Semaphore&& clientWaitSemaphore)
+StreamConnectionBuffer::StreamConnectionBuffer(Ref<WebKit::SharedMemory>&& memory, size_t memorySize)
     : m_dataSize(memorySize - headerSize())
     , m_sharedMemory(WTFMove(memory))
-    , m_clientWaitSemaphore(WTFMove(clientWaitSemaphore))
 {
     ASSERT(m_dataSize > 0);
     ASSERT(m_dataSize <= maximumSize());
@@ -64,7 +63,6 @@ StreamConnectionBuffer& StreamConnectionBuffer::operator=(StreamConnectionBuffer
     if (this != &other) {
         m_dataSize = other.m_dataSize;
         m_sharedMemory = WTFMove(other.m_sharedMemory);
-        m_clientWaitSemaphore = WTFMove(other.m_clientWaitSemaphore);
     }
     return *this;
 }
@@ -76,7 +74,6 @@ void StreamConnectionBuffer::encode(Encoder& encoder) const
         CRASH();
     WebKit::SharedMemory::IPCHandle ipcHandle { WTFMove(handle), m_sharedMemory->size() };
     encoder << ipcHandle;
-    encoder << m_clientWaitSemaphore;
 }
 
 std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& decoder)
@@ -84,10 +81,6 @@ std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& de
     std::optional<WebKit::SharedMemory::IPCHandle> ipcHandle;
     decoder >> ipcHandle;
     if (!ipcHandle)
-        return std::nullopt;
-    std::optional<Semaphore> semaphore;
-    decoder >> semaphore;
-    if (!semaphore)
         return std::nullopt;
     size_t dataSize = static_cast<size_t>(ipcHandle->dataSize);
     if (dataSize <= headerSize())
@@ -97,7 +90,7 @@ std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& de
     auto sharedMemory = WebKit::SharedMemory::map(ipcHandle->handle, WebKit::SharedMemory::Protection::ReadWrite);
     if (sharedMemory->size() < dataSize)
         return std::nullopt;
-    return StreamConnectionBuffer { sharedMemory.releaseNonNull(), dataSize,  WTFMove(*semaphore) };
+    return StreamConnectionBuffer { sharedMemory.releaseNonNull(), dataSize };
 }
 
 Span<uint8_t> StreamConnectionBuffer::headerForTesting()

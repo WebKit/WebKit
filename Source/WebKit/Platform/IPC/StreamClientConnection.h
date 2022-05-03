@@ -83,8 +83,8 @@ public:
     ~StreamClientConnection();
 
     StreamConnectionBuffer& streamBuffer() { return m_buffer; }
-    void setWakeUpSemaphore(IPC::Semaphore&&);
-    bool hasWakeUpSemaphore() const { return m_wakeUpSemaphore.has_value(); }
+    void setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait);
+    bool hasSemaphores() const { return m_semaphores.has_value(); }
 
     void setWakeUpMessageHysteresis(unsigned hysteresis)
     {
@@ -155,7 +155,11 @@ private:
     uint64_t m_currentDestinationID { 0 };
     size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;
-    std::optional<Semaphore> m_wakeUpSemaphore;
+    struct Semaphores {
+        Semaphore wakeUp;
+        Semaphore clientWait;
+    };
+    std::optional<Semaphores> m_semaphores;
     unsigned m_remainingMessageCountBeforeSendingWakeUp { 0 };
     unsigned m_wakeUpMessageHysteresis { 0 };
 
@@ -307,7 +311,8 @@ inline std::optional<StreamClientConnection::Span> StreamClientConnection::tryAc
             break;
         ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
         if (clientLimit == oldClientLimit) {
-            m_buffer.clientWaitSemaphore().waitFor(timeout);
+            if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
+                return std::nullopt;
             clientLimit = sharedClientLimit().load(std::memory_order_acquire);
         } else
             clientLimit = oldClientLimit;
@@ -338,7 +343,8 @@ inline std::optional<StreamClientConnection::Span> StreamClientConnection::tryAc
         if (!clientLimit && (clientOffset == ClientOffset::serverIsSleepingTag || !clientOffset))
             break;
 
-        m_buffer.clientWaitSemaphore().waitFor(timeout);
+        if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
+            return std::nullopt;
         if (timeout.didTimeOut())
             return std::nullopt;
     }

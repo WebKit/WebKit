@@ -1,3 +1,64 @@
+2022-05-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC stream connection sends should fail immediately when connection closes
+        https://bugs.webkit.org/show_bug.cgi?id=238253
+
+        Reviewed by Simon Fraser.
+
+        Send the StreamClientConnection client wait semaphore from
+        StreamServerConnection. This way the client will fail the wait
+        when the server crashes.
+
+        Test: ipc/stream-sync-crash-no-timeout.html
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::workQueueInitialize):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::startListeningForIPC):
+        * GPUProcess/graphics/WebGPU/RemoteGPU.cpp:
+        (WebKit::RemoteGPU::workQueueInitialize):
+        * Platform/IPC/StreamClientConnection.cpp:
+        (IPC::StreamClientConnection::setSemaphores):
+        (IPC::StreamClientConnection::wakeUpServer):
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::tryAcquire):
+        (IPC::StreamClientConnection::tryAcquireAll):
+        * Platform/IPC/StreamConnectionBuffer.cpp:
+        (IPC::StreamConnectionBuffer::StreamConnectionBuffer):
+        (IPC::StreamConnectionBuffer::operator=):
+        (IPC::StreamConnectionBuffer::encode const):
+        (IPC::StreamConnectionBuffer::decode):
+        * Platform/IPC/StreamConnectionBuffer.h:
+        (IPC::StreamConnectionBuffer::dataSize const):
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnection::release):
+        (IPC::StreamServerConnection::releaseAll):
+        * Platform/IPC/StreamServerConnection.h:
+        * Shared/IPCStreamTester.cpp:
+        (WebKit::IPCStreamTester::initialize):
+        (WebKit::IPCStreamTester::syncCrashOnZero):
+        * Shared/IPCStreamTester.h:
+        * Shared/IPCStreamTester.messages.in:
+        * Shared/IPCStreamTesterProxy.h:
+        * Shared/IPCStreamTesterProxy.messages.in:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::wasCreated):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.messages.in:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::streamConnection):
+        (WebKit::RemoteRenderingBackendProxy::didInitialize):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in:
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.cpp:
+        (WebKit::RemoteGPUProxy::wasCreated):
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.h:
+        * WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.messages.in:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::setSemaphores):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero):
+
 2022-05-02  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r292351): Processes no longer get the right jetsam priority on iOS

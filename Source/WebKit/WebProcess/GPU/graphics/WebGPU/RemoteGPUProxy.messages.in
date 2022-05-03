@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteGPUProxy NotRefCounted {
-    void WasCreated(bool didSucceed, IPC::Semaphore streamWakeUpSemaphore)
+    void WasCreated(bool didSucceed, IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
 }
 
 #endif

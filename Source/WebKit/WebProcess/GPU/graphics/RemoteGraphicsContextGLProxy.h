@@ -346,7 +346,7 @@ protected:
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier { GraphicsContextGLIdentifier::generate() };
 private:
     // Messages to be received.
-    void wasCreated(bool didSucceed, IPC::Semaphore&&, String&& availableExtensions, String&& requestedExtensions);
+    void wasCreated(bool didSucceed, IPC::Semaphore&&, IPC::Semaphore&&, String&& availableExtensions, String&& requestedExtensions);
     void wasLost();
     void wasChanged();
 

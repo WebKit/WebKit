@@ -32,6 +32,7 @@
 #include "FrameInfoData.h"
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
+#include "IPCStreamTesterMessages.h"
 #include "JSIPCBinding.h"
 #include "MessageArgumentDescriptions.h"
 #include "NetworkProcessConnection.h"
@@ -193,7 +194,7 @@ private:
         , m_streamConnection { connection, bufferSize }
     { }
 
-    void setWakeUpSemaphore(JSIPCSemaphore& jsSemaphore) { m_streamConnection.setWakeUpSemaphore(jsSemaphore.exchange()); }
+    void setSemaphores(JSIPCSemaphore& jsWakeUpSemaphore, JSIPCSemaphore& jsClientWaitSemaphore) { m_streamConnection.setSemaphores(jsWakeUpSemaphore.exchange(), jsClientWaitSemaphore.exchange()); }
 
     static JSClassRef wrapperClass();
     static JSIPCStreamClientConnection* unwrap(JSObjectRef);
@@ -204,9 +205,10 @@ private:
 
     static const JSStaticFunction* staticFunctions();
     static JSValueRef streamBuffer(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef setWakeUpSemaphore(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef setSemaphores(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    static JSValueRef sendIPCStreamTesterSyncCrashOnZero(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     WeakPtr<JSIPC> m_jsIPC;
     IPC::StreamClientConnection m_streamConnection;
@@ -854,9 +856,10 @@ const JSStaticFunction* JSIPCStreamClientConnection::staticFunctions()
 {
     static const JSStaticFunction functions[] = {
         { "streamBuffer", streamBuffer, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
-        { "setWakeUpSemaphore", setWakeUpSemaphore, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "setSemaphores", setSemaphores, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendMessage", sendMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendSyncMessage", sendSyncMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "sendIPCStreamTesterSyncCrashOnZero", sendIPCStreamTesterSyncCrashOnZero, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0 }
     };
     return functions;
@@ -875,7 +878,7 @@ JSValueRef JSIPCStreamClientConnection::streamBuffer(JSContextRef context, JSObj
     return JSIPCStreamConnectionBuffer::create(*jsStreamConnection)->createJSWrapper(context);
 }
 
-JSValueRef JSIPCStreamClientConnection::setWakeUpSemaphore(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+JSValueRef JSIPCStreamClientConnection::setSemaphores(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
@@ -885,18 +888,24 @@ JSValueRef JSIPCStreamClientConnection::setWakeUpSemaphore(JSContextRef context,
         return JSValueMakeUndefined(context);
     }
 
-    if (argumentCount < 1) {
-        *exception = createTypeError(context, "Must specify an IPC semaphore as the first argument"_s);
+    if (argumentCount < 2) {
+        *exception = createTypeError(context, "Must specify an IPC semaphore as the first and second argument"_s);
         return JSValueMakeUndefined(context);
     }
 
-    RefPtr jsSemaphore = JSIPCSemaphore::toWrapped(context, arguments[0]);
-    if (!jsSemaphore) {
+    RefPtr jsWakeUpSemaphore = JSIPCSemaphore::toWrapped(context, arguments[0]);
+    if (!jsWakeUpSemaphore) {
         *exception = createTypeError(context, "Wrong type (expected Semaphore)"_s);
         return JSValueMakeUndefined(context);
     }
 
-    jsStreamConnection->setWakeUpSemaphore(*jsSemaphore);
+    RefPtr jsClientWaitSemaphore = JSIPCSemaphore::toWrapped(context, arguments[1]);
+    if (!jsClientWaitSemaphore) {
+        *exception = createTypeError(context, "Wrong type (expected Semaphore)"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    jsStreamConnection->setSemaphores(*jsWakeUpSemaphore, *jsClientWaitSemaphore);
     return JSValueMakeUndefined(context);
 }
 
@@ -1017,6 +1026,61 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
     }
 
     return JSValueMakeUndefined(context);
+}
+
+// FIXME(http://webkit.org/b/237197): Cannot send arbitrary messages, so we hard-code this one to be able to send it.
+JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    JSC::JSLockHolder lock(globalObject->vm());
+
+    RefPtr jsStreamConnection = toWrapped(context, thisObject);
+    if (!jsStreamConnection) {
+        *exception = createTypeError(context, "Wrong type"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    if (argumentCount < 3) {
+        *exception = createTypeError(context, "Must specify destination ID, value, and timeout as the first three arguments"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    auto destinationID = destinationIDFromArgument(globalObject, arguments[0], exception);
+    if (!destinationID)
+        return JSValueMakeUndefined(context);
+
+    int32_t value;
+    {
+        auto jsValue = toJS(globalObject, arguments[1]);
+        if (!jsValue.isNumber()) {
+            *exception = createTypeError(context, "value must be a number"_s);
+            return JSValueMakeUndefined(context);
+        }
+        value = static_cast<int32_t>(jsValue.asNumber());
+    }
+
+    Seconds timeoutDuration;
+    {
+        auto jsValue = toJS(globalObject, arguments[2]);
+        if (!jsValue.isNumber()) {
+            *exception = createTypeError(context, "timeout must be a number"_s);
+            return JSValueMakeUndefined(context);
+        }
+        timeoutDuration = Seconds { jsValue.asNumber() };
+    }
+
+    auto& streamConnection = jsStreamConnection->connection();
+    int32_t resultValue = 0;
+    enum JSIPCStreamTesterIdentifierType { };
+    auto destination = makeObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
+
+    auto result = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), Messages::IPCStreamTester::SyncCrashOnZero::Reply(resultValue), destination, timeoutDuration);
+    if (!result) {
+        *exception = createTypeError(context, "sync send failed"_s);
+        return JSValueMakeUndefined(context);
+    }
+
+    return JSValueMakeNumber(context, resultValue);
 }
 
 JSObjectRef JSIPCStreamConnectionBuffer::createJSWrapper(JSContextRef context)

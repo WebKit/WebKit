@@ -58,6 +58,7 @@ private:
 
     // Messages.
     void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(SharedMemory::IPCHandle)>&&);
+    void syncCrashOnZero(int32_t, CompletionHandler<void(int32_t)>&&);
 
     const Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     const Ref<IPC::StreamServerConnection> m_streamConnection;

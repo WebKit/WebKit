@@ -111,7 +111,7 @@ void RemoteRenderingBackend::startListeningForIPC()
     }
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
     m_streamConnection->open();
-    send(Messages::RemoteRenderingBackendProxy::DidCreateWakeUpSemaphoreForDisplayListStream(m_workQueue->wakeUpSemaphore()), m_renderingBackendIdentifier);
+    send(Messages::RemoteRenderingBackendProxy::DidInitialize(m_workQueue->wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_renderingBackendIdentifier);
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()

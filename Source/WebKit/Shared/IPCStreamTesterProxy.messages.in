@@ -23,7 +23,7 @@
 #if ENABLE(IPC_TESTING_API)
 
 messages -> IPCStreamTesterProxy NotRefCounted {
-    void WasCreated(IPC::Semaphore streamWakeUpSemaphore)
+    void WasCreated(IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
 }
 
 #endif

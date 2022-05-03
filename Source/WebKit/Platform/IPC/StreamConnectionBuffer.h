@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Decoder.h"
-#include "IPCSemaphore.h"
 #include "SharedMemory.h"
 #include <wtf/Atomics.h>
 
@@ -109,7 +108,6 @@ public:
     Atomic<ServerOffset>& serverOffset() { return header().serverOffset; }
     uint8_t* data() const { return static_cast<uint8_t*>(m_sharedMemory->data()) + headerSize(); }
     size_t dataSize() const { return m_dataSize; }
-    Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
 
     static constexpr size_t maximumSize() { return std::min(static_cast<size_t>(ClientOffset::serverIsSleepingTag), static_cast<size_t>(ClientOffset::serverIsSleepingTag)) - 1; }
     void encode(Encoder&) const;
@@ -119,7 +117,7 @@ public:
     Span<uint8_t> dataForTesting();
 
 private:
-    StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&, size_t memorySize, Semaphore&& clientWaitSemaphore);
+    StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&, size_t memorySize);
 
     struct Header {
         Atomic<ServerOffset> serverOffset;
@@ -132,7 +130,6 @@ private:
 
     size_t m_dataSize { 0 };
     Ref<WebKit::SharedMemory> m_sharedMemory;
-    Semaphore m_clientWaitSemaphore;
 };
 
 }

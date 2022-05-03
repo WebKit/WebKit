@@ -317,7 +317,7 @@ void RemoteGraphicsContextGLProxy::multiDrawElementsInstancedANGLE(GCGLenum mode
     }
 }
 
-void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& semaphore, String&& availableExtensions, String&& requestedExtensions)
+void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore, String&& availableExtensions, String&& requestedExtensions)
 {
     if (isContextLost())
         return;
@@ -326,7 +326,7 @@ void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& 
         return;
     }
     ASSERT(!m_didInitialize);
-    m_streamConnection.setWakeUpSemaphore(WTFMove(semaphore));
+    m_streamConnection.setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
     m_didInitialize = true;
     initialize(availableExtensions, requestedExtensions);
 }

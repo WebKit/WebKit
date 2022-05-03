@@ -133,7 +133,7 @@ public:
 
     bool isGPUProcessConnectionClosed() const { return !m_gpuProcessConnection; }
 
-    void didCreateWakeUpSemaphoreForDisplayListStream(IPC::Semaphore&&);
+    void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
     template<typename T, typename U>
     void sendToStream(T&& message, ObjectIdentifier<U> identifier)

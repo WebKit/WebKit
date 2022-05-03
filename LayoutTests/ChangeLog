@@ -1,3 +1,18 @@
+2022-05-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC stream connection sends should fail immediately when connection closes
+        https://bugs.webkit.org/show_bug.cgi?id=238253
+
+        Reviewed by Simon Fraser.
+
+        The test works on minibrowser but GPUP startup code fails in run-webkit-tests,
+        thus disabled.
+
+        * TestExpectations:
+        * ipc/stream-sync-crash-no-timeout-expected.txt: Added.
+        * ipc/stream-sync-crash-no-timeout.html: Added.
+        * ipc/stream-sync-reply-shared-memory.html: Adjust after API change.
+
 2022-05-03  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerRegistration update should fail if called from an installing service worker context

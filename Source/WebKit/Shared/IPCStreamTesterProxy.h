@@ -49,7 +49,7 @@ private:
     ~IPCStreamTesterProxy() = default;
 
     // Messages.
-    void wasCreated(IPC::Semaphore&&) { }
+    void wasCreated(IPC::Semaphore&&, IPC::Semaphore&&) { }
 };
 
 }

@@ -96,18 +96,18 @@ void StreamClientConnection::invalidate()
         m_connection->invalidate();
 }
 
-void StreamClientConnection::setWakeUpSemaphore(IPC::Semaphore&& semaphore)
+void StreamClientConnection::setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
 {
-    m_wakeUpSemaphore = WTFMove(semaphore);
+    m_semaphores = { WTFMove(wakeUp), WTFMove(clientWait) };
     wakeUpServer();
 }
 
 void StreamClientConnection::wakeUpServer()
 {
-    if (!m_wakeUpSemaphore)
+    if (!m_semaphores)
         return;
 
-    m_wakeUpSemaphore->signal();
+    m_semaphores->wakeUp.signal();
     m_remainingMessageCountBeforeSendingWakeUp = 0;
 }
 

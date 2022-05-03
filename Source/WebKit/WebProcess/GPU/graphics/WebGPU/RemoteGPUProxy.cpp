@@ -75,10 +75,10 @@ void RemoteGPUProxy::abandonGPUProcess()
     m_lost = true;
 }
 
-void RemoteGPUProxy::wasCreated(bool didSucceed, IPC::Semaphore&& semaphore)
+void RemoteGPUProxy::wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore)
 {
     ASSERT(!m_didInitialize);
-    m_streamConnection.setWakeUpSemaphore(WTFMove(semaphore));
+    m_streamConnection.setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
     m_didInitialize = true;
     m_lost = !didSucceed;
 }

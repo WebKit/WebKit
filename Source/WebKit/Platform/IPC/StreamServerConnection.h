@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "IPCSemaphore.h"
 #include "MessageNames.h"
 #include "StreamConnectionBuffer.h"
 #include "StreamConnectionEncoder.h"
@@ -86,6 +87,8 @@ public:
     template<typename T, typename... Arguments>
     void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
 
+    Semaphore& clientWaitSemaphore() { return m_clientWaitSemaphore; }
+
 private:
     enum class HasDedicatedConnection : bool { No, Yes };
     StreamServerConnection(Ref<Connection>&&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&, HasDedicatedConnection);
@@ -120,6 +123,7 @@ private:
     bool dispatchOutOfStreamMessage(Decoder&&);
 
     Ref<IPC::Connection> m_connection;
+    Semaphore m_clientWaitSemaphore;
     StreamConnectionWorkQueue& m_workQueue;
 
     size_t m_serverOffset { 0 };

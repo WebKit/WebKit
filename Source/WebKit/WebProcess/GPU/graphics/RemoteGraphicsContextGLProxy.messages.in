@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 messages -> RemoteGraphicsContextGLProxy NotRefCounted {
-    void WasCreated(bool didSucceed, IPC::Semaphore streamWakeUpSemaphore, String availableExtensions, String requestableExtensions)
+    void WasCreated(bool didSucceed, IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore, String availableExtensions, String requestableExtensions)
     void WasLost()
     void WasChanged()
 }

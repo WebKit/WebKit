@@ -172,7 +172,7 @@ void StreamServerConnection::release(size_t readSize)
     ServerOffset oldServerOffset = sharedServerOffset().exchange(serverOffset, std::memory_order_acq_rel);
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
-        m_buffer.clientWaitSemaphore().signal();
+        m_clientWaitSemaphore.signal();
     else
         ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
 
@@ -185,7 +185,7 @@ void StreamServerConnection::releaseAll()
     ServerOffset oldServerOffset = sharedServerOffset().exchange(static_cast<ServerOffset>(0), std::memory_order_acq_rel);
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
-        m_buffer.clientWaitSemaphore().signal();
+        m_clientWaitSemaphore.signal();
     else
         ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
     m_serverOffset = 0;

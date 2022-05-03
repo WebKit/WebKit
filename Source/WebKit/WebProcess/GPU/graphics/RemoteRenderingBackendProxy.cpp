@@ -427,18 +427,18 @@ RenderingBackendIdentifier RemoteRenderingBackendProxy::ensureBackendCreated()
 IPC::StreamClientConnection& RemoteRenderingBackendProxy::streamConnection()
 {
     ensureGPUProcessConnection();
-    if (UNLIKELY(!m_streamConnection->hasWakeUpSemaphore()))
-        m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateWakeUpSemaphoreForDisplayListStream>(renderingBackendIdentifier(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    if (UNLIKELY(!m_streamConnection->hasSemaphores()))
+        m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
     return *m_streamConnection;
 }
 
-void RemoteRenderingBackendProxy::didCreateWakeUpSemaphoreForDisplayListStream(IPC::Semaphore&& semaphore)
+void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
 {
     if (!m_streamConnection) {
         ASSERT_NOT_REACHED();
         return;
     }
-    m_streamConnection->setWakeUpSemaphore(WTFMove(semaphore));
+    m_streamConnection->setSemaphores(WTFMove(wakeUp), WTFMove(clientWait));
 }
 
 bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const

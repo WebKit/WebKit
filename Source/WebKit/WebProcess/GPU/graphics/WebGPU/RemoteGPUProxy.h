@@ -76,7 +76,7 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     // Messages to be received.
-    void wasCreated(bool didSucceed, IPC::Semaphore&&);
+    void wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
 
     void waitUntilInitialized();
 

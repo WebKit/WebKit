@@ -24,6 +24,7 @@
 
 messages -> IPCStreamTester NotRefCounted Stream {
     SyncMessageReturningSharedMemory1(uint32_t byteCount) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous NotStreamEncodableReply
+    SyncCrashOnZero(int32_t value) -> (int32_t sameValue) Synchronous
 }
 
 #endif
