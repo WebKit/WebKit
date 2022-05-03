@@ -545,6 +545,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     RetainPtr<VKCImageAnalysisInteraction> _imageAnalysisInteraction;
     WebCore::FloatRect _imageAnalysisInteractionBounds;
     std::optional<WebKit::ImageAnalysisMarkupData> _imageAnalysisMarkupData;
+    RetainPtr<CGImageRef> _croppedImageResult;
 #endif
 }
 

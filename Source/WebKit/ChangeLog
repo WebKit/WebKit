@@ -1,3 +1,52 @@
+2022-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] The "Copy Cropped Image" context menu action should be gated on cropped image results
+        https://bugs.webkit.org/show_bug.cgi?id=240013
+        rdar://88941787
+
+        Reviewed by Tim Horton.
+
+        Only show this item in the context menu when long pressing in the case where `requestImageAnalysisMarkup`
+        computes a non-null result for the given image bitmap. This gating logic runs alongside existing gating logic
+        for both the visual search item ("Look Up") and "Show Text" actions. See below for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _setUpImageAnalysis]):
+        (-[WKContentView _tearDownImageAnalysis]):
+
+        Introduce a `_croppedImageResult` ivar to cache the CGImage result after running image analysis over the image
+        corresponding to the element for which we're showing the context menu. This is reset in the same lifecycle as
+        the extant `_hasVisualSearchResults` and `_hasSelectableTextInImage` flags which are used for the same purpose.
+
+        (-[WKContentView imageAnalysisGestureDidBegin:]):
+        (-[WKContentView _completeImageAnalysisRequestForContextMenu:requestIdentifier:hasTextResults:]):
+
+        This is the codepath that currently prevents us from showing the context menu until we know whether or not there
+        are relevant visual search results, such that we can conditionally show the "Look Up" context menu item. Adjust
+        this so that it calls `-_invokeAllActionsToPerformAfterPendingImageAnalysis:` only after we've also determined
+        whether or not there is a non-null cropped image result, so that we can also conditionally show the "Copy
+        Cropped Image" item.
+
+        To achieve this, we move the call to `-_invokeAllActionsToPerformAfterPendingImageAnalysis:` into a
+        `WTF::CallbackAggregator`, and ref/deref the aggregator when invoking both of the async image analysis
+        operations. When the callback aggregator is destroyed (i.e., after both async image analysis operations are
+        complete), we proceed with showing the context menu.
+
+        (-[WKContentView imageAnalysisGestureDidTimeOut:]):
+
+        Implement similar logic as above, but for the scenario where we show the context menu after the user continues
+        to long press after selecting text inside of an image.
+
+        (-[WKContentView actionSheetAssistantShouldIncludeCopyCroppedImageAction:]):
+
+        Only show the item if `_croppedImageResult` is non-null.
+
+        (-[WKContentView actionSheetAssistant:copyCroppedImage:sourceMIMEType:]):
+
+        Instead of running image analysis and writing the resulting image to the clipboard, simply transcode the cached
+        image in `_croppedImageResult`.
+
 2022-05-03  Philippe Normand  <pnormand@igalia.com> and Yury Semikhatsky <yurys@chromium.org>
 
         [WK2] Add API to allow embedder to set a timezone override

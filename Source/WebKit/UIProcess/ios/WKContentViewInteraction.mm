@@ -148,6 +148,7 @@
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/WeakObjCPtr.h>
@@ -10714,6 +10715,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     _imageAnalysisMarkupData = std::nullopt;
+    _croppedImageResult = nil;
 #endif
 }
 
@@ -10743,6 +10745,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     [self uninstallImageAnalysisInteraction];
     _imageAnalysisMarkupData = std::nullopt;
+    _croppedImageResult = nil;
 #endif
 }
 
@@ -10838,6 +10841,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _hasVisualSearchResults = NO;
 #endif // USE(QUICK_LOOK)
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    _croppedImageResult = nil;
+#endif
+
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
     _contextMenuForMachineReadableCode.clear();
 #endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
@@ -10887,15 +10894,13 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         WebCore::ElementContext elementContext = *information.hostImageOrVideoElementContext;
 
         auto requestForTextSelection = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
-        auto requestForContextMenu = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:cgImage.get()];
-
         if (information.elementContainsImageOverlay) {
-            [strongSelf _completeImageAnalysisRequestForContextMenu:requestForContextMenu.get() requestIdentifier:requestIdentifier hasTextResults:YES];
+            [strongSelf _completeImageAnalysisRequestForContextMenu:cgImage.get() requestIdentifier:requestIdentifier hasTextResults:YES];
             return;
         }
 
         auto textAnalysisStartTime = MonotonicTime::now();
-        [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, elementContext, requestLocation, requestForContextMenu, gestureDeferralToken, textAnalysisStartTime] (CocoaImageAnalysis *result, NSError *error) mutable {
+        [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, elementContext, requestLocation, cgImage, gestureDeferralToken, textAnalysisStartTime] (CocoaImageAnalysis *result, NSError *error) mutable {
             auto strongSelf = weakSelf.get();
             if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
                 return;
@@ -10903,7 +10908,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
             BOOL hasTextResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeText];
             RELEASE_LOG(Images, "Image analysis completed in %.0f ms (request %" PRIu64 "; found text? %d)", (MonotonicTime::now() - textAnalysisStartTime).milliseconds(), requestIdentifier.toUInt64(), hasTextResults);
 
-            strongSelf->_page->updateWithTextRecognitionResult(WebKit::makeTextRecognitionResult(result), elementContext, requestLocation, [requestIdentifier = WTFMove(requestIdentifier), weakSelf, hasTextResults, requestForContextMenu, gestureDeferralToken] (WebKit::TextRecognitionUpdateResult updateResult) mutable {
+            strongSelf->_page->updateWithTextRecognitionResult(WebKit::makeTextRecognitionResult(result), elementContext, requestLocation, [requestIdentifier = WTFMove(requestIdentifier), weakSelf, hasTextResults, cgImage, gestureDeferralToken] (WebKit::TextRecognitionUpdateResult updateResult) mutable {
                 auto strongSelf = weakSelf.get();
                 if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
                     return;
@@ -10921,16 +10926,27 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
                     return;
                 }
 
-                [strongSelf _completeImageAnalysisRequestForContextMenu:requestForContextMenu.get() requestIdentifier:requestIdentifier hasTextResults:hasTextResults];
+                [strongSelf _completeImageAnalysisRequestForContextMenu:cgImage.get() requestIdentifier:requestIdentifier hasTextResults:hasTextResults];
             });
         }];
     } forRequest:request];
 }
 
-- (void)_completeImageAnalysisRequestForContextMenu:(CocoaImageAnalyzerRequest *)requestForContextMenu requestIdentifier:(WebKit::ImageAnalysisRequestIdentifier)requestIdentifier hasTextResults:(BOOL)hasTextResults
+- (void)_completeImageAnalysisRequestForContextMenu:(CGImageRef)image requestIdentifier:(WebKit::ImageAnalysisRequestIdentifier)requestIdentifier hasTextResults:(BOOL)hasTextResults
 {
+#if USE(QUICK_LOOK)
+    _hasSelectableTextInImage = hasTextResults;
+#endif
+
+    auto weakSelf = WeakObjCPtr<WKContentView>(self);
+    auto aggregator = CallbackAggregator::create([weakSelf, requestIdentifier]() mutable {
+        if (auto strongSelf = weakSelf.get(); [strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
+            [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+    });
+
+    auto request = [self createImageAnalyzerRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:image];
     auto visualSearchAnalysisStartTime = MonotonicTime::now();
-    [self.imageAnalyzer processRequest:requestForContextMenu progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf = WeakObjCPtr<WKContentView>(self), hasTextResults, visualSearchAnalysisStartTime] (CocoaImageAnalysis *result, NSError *error) mutable {
+    [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef()] (CocoaImageAnalysis *result, NSError *error) mutable {
         auto strongSelf = weakSelf.get();
         if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
             return;
@@ -10941,22 +10957,25 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #else
         UNUSED_PARAM(visualSearchAnalysisStartTime);
 #endif
-        if (!result || error) {
-            [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+        if (!result || error)
             return;
-        }
 
 #if USE(QUICK_LOOK)
-        strongSelf->_hasSelectableTextInImage = hasTextResults;
         strongSelf->_hasVisualSearchResults = hasVisualSearchResults;
-#else
-        UNUSED_PARAM(hasTextResults);
 #endif
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
         [strongSelf _updateContextMenuForMachineReadableCodeForImageAnalysis:result];
-#endif // USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-        [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+#endif
     }];
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (_page->preferences().imageAnalysisMarkupEnabled()) {
+        WebKit::requestImageAnalysisMarkup(image, [weakSelf = WeakObjCPtr<WKContentView>(self), aggregator = aggregator.copyRef()](CGImageRef result, CGRect) mutable {
+            if (auto strongSelf = weakSelf.get())
+                strongSelf->_croppedImageResult = result;
+        });
+    }
+#endif
 }
 
 - (void)imageAnalysisGestureDidFail:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
@@ -10997,9 +11016,18 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         // FIXME: We need to implement some way to cache image analysis results per element, so that we don't end up
         // making redundant image analysis requests for the same image data.
 
+        auto aggregator = CallbackAggregator::create([weakSelf, location]() mutable {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+            strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
+            [strongSelf presentContextMenu:strongSelf->_contextMenuInteraction.get() atLocation:location];
+        });
+
         auto visualSearchAnalysisStartTime = MonotonicTime::now();
         auto requestForContextMenu = [strongSelf createImageAnalyzerRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode | VKAnalysisTypeAppClip image:cgImage.get()];
-        [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[weakSelf, location, visualSearchAnalysisStartTime] (CocoaImageAnalysis *result, NSError *error) {
+        [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[weakSelf, visualSearchAnalysisStartTime, aggregator = aggregator.copyRef()] (CocoaImageAnalysis *result, NSError *error) {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
@@ -11013,16 +11041,19 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
             UNUSED_PARAM(visualSearchAnalysisStartTime);
 #endif
 
-#if USE(UICONTEXTMENU)
-#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
             [strongSelf _updateContextMenuForMachineReadableCodeForImageAnalysis:result];
-#endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-            strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
-            [strongSelf presentContextMenu:strongSelf->_contextMenuInteraction.get() atLocation:location];
-#else
-            UNUSED_PARAM(location);
-#endif // USE(UICONTEXTMENU)
+#endif
         }];
+
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+        if (strongSelf->_page->preferences().imageAnalysisMarkupEnabled()) {
+            WebKit::requestImageAnalysisMarkup(cgImage.get(), [weakSelf, aggregator = aggregator.copyRef()](CGImageRef result, CGRect) mutable {
+                if (auto strongSelf = weakSelf.get())
+                    strongSelf->_croppedImageResult = result;
+            });
+        }
+#endif
     } forRequest:request];
 }
 
@@ -11037,30 +11068,21 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (BOOL)actionSheetAssistantShouldIncludeCopyCroppedImageAction:(WKActionSheetAssistant *)assistant
 {
-    return _page->preferences().imageAnalysisMarkupEnabled();
+    return !!_croppedImageResult;
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant copyCroppedImage:(UIImage *)image sourceMIMEType:(NSString *)sourceMIMEType
 {
-    auto changeCount = UIPasteboard.generalPasteboard.changeCount;
-    WebKit::requestImageAnalysisMarkup(image.CGImage, [changeCount, weakSelf = WeakObjCPtr<WKContentView>(self), originalImage = RetainPtr { image }, sourceMIMEType = RetainPtr { sourceMIMEType }](CGImageRef result, CGRect) mutable {
-        if (!result)
-            return;
+    if (!_croppedImageResult)
+        return;
 
-        auto strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
+    auto [data, type] = WebKit::imageDataForCroppedImageResult(_croppedImageResult.get(), (__bridge CFStringRef)sourceMIMEType);
+    if (!data)
+        return;
 
-        auto [data, type] = WebKit::imageDataForCroppedImageResult(result, (__bridge CFStringRef)sourceMIMEType.get());
-        if (!data)
-            return;
-
-        [UIPasteboard _performAsDataOwner:[strongSelf _dataOwnerForCopy] block:[data = WTFMove(data), type = WTFMove(type), changeCount] {
-            auto pasteboard = UIPasteboard.generalPasteboard;
-            if (changeCount == pasteboard.changeCount)
-                [pasteboard setData:data.get() forPasteboardType:(__bridge NSString *)type.get()];
-        }];
-    });
+    [UIPasteboard _performAsDataOwner:self._dataOwnerForCopy block:[data = WTFMove(data), type = WTFMove(type)] {
+        [UIPasteboard.generalPasteboard setData:data.get() forPasteboardType:(__bridge NSString *)type.get()];
+    }];
 }
 
 - (void)installImageAnalysisInteraction:(VKCImageAnalysis *)analysis
