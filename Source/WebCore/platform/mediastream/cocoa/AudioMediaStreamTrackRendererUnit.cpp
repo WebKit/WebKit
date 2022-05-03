@@ -169,6 +169,7 @@ void AudioMediaStreamTrackRendererUnit::updateRenderSourcesIfNecessary()
     if (!m_hasPendingRenderSources)
         return;
 
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     m_renderSources = WTFMove(m_pendingRenderSources);
     m_hasPendingRenderSources = false;
 }
