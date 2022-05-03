@@ -92,7 +92,7 @@ private:
 
 ALWAYS_INLINE Allocator IsoSubspace::allocatorFor(size_t size, AllocatorForMode)
 {
-    RELEASE_ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
+    RELEASE_ASSERT(size <= cellSize());
     return Allocator(&m_localAllocator);
 }
 

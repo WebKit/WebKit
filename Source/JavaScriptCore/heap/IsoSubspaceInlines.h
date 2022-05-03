@@ -31,7 +31,7 @@ namespace GCClient {
 
 ALWAYS_INLINE void* IsoSubspace::allocate(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    RELEASE_ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
+    RELEASE_ASSERT(size <= cellSize());
     Allocator allocator = allocatorFor(size, AllocatorForMode::MustAlreadyHaveAllocator);
     void* result = allocator.allocate(vm.heap, deferralContext, failureMode);
     return result;

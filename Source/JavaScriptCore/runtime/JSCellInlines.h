@@ -75,6 +75,7 @@ inline JSCell::JSCell(VM&, Structure* structure)
     // cell is even constructed. To avoid this possibility, we need to ensure that the
     // structure pointer is still alive at this point.
     ensureStillAliveHere(structure);
+    static_assert(JSCell::atomSize >= MarkedBlock::atomSize);
 }
 
 inline void JSCell::finishCreation(VM& vm)

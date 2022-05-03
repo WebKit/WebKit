@@ -1,3 +1,46 @@
+2022-05-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Introduce shifting Structure encoding
+        https://bugs.webkit.org/show_bug.cgi?id=239957
+
+        Reviewed by Mark Lam.
+
+        For platforms which have limited amount of virtual address space (<= 36 bits), this patch introduces
+        shifting Structure encoding. We align Structure on a 32-bytes boundary instead of 16 bytes so that
+        we can ensure that lower 5 bits are zero. Then, we can use 1 bit for nuke, and shifting 4 bits to
+        convert 36 bit address to 32 bit StructureID. By using this mechanism, we do not need to allocate
+        large virtual address space for these platforms. If we an address can have more than 36 bits, then
+        we should just reserve a larger address region since we have enough address space. Current Structure
+        size is 112 bytes, which is 3.5 atoms at 32 bytes / atom. Hence, this alignment costs us 16 bytes per
+        Structure.
+        Relanding with debug build failure & crash on static atomSize assumption in IsoSubspace.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * heap/Heap.cpp:
+        * heap/IsoSubspace.h:
+        (JSC::GCClient::IsoSubspace::allocatorFor):
+        * heap/IsoSubspaceInlines.h:
+        (JSC::GCClient::IsoSubspace::allocate):
+        * heap/StructureAlignedMemoryAllocator.cpp:
+        (JSC::StructureMemoryManager::StructureMemoryManager):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitNonNullDecodeStructureID):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        * runtime/StructureID.h:
+        (JSC::StructureID::decode const):
+        (JSC::StructureID::tryDecode const):
+        (JSC::StructureID::encode):
+        * tools/IntegrityInlines.h:
+        (JSC::Integrity::auditStructureID):
+
 2022-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add ISO8601 based Temporal.PlainDate getters

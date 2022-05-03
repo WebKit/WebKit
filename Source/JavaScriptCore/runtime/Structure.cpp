@@ -232,6 +232,10 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     ASSERT(hasGetterSetterProperties() == m_classInfo->hasStaticSetterOrReadonlyProperties());
 
     validateFlags();
+
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+    ASSERT(WTF::roundUpToMultipleOf<Structure::atomSize>(this) == this);
+#endif
 }
 
 const ClassInfo Structure::s_info = { "Structure"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Structure) };
@@ -270,6 +274,10 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
     ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
+
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+    ASSERT(WTF::roundUpToMultipleOf<Structure::atomSize>(this) == this);
+#endif
 }
 
 Structure::Structure(VM& vm, Structure* previous)
@@ -319,6 +327,10 @@ Structure::Structure(VM& vm, Structure* previous)
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
     ASSERT(hasGetterSetterProperties() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
     ASSERT(!this->typeInfo().overridesGetCallData() || m_classInfo->methodTable.getCallData != &JSCell::getCallData);
+
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+    ASSERT(WTF::roundUpToMultipleOf<Structure::atomSize>(this) == this);
+#endif
 }
 
 Structure::~Structure()

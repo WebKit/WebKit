@@ -66,7 +66,7 @@ void* StructureAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-#if CPU(ADDRESS64)
+#if CPU(ADDRESS64) && !ENABLE(STRUCTURE_ID_WITH_SHIFT)
 
 class StructureMemoryManager {
 public:
@@ -83,7 +83,7 @@ public:
             mappedHeapSize /= 2;
         }
         g_jscConfig.sizeOfStructureHeap = mappedHeapSize;
-        RELEASE_ASSERT(g_jscConfig.startOfStructureHeap && ((g_jscConfig.startOfStructureHeap & ~structureIDMask) == g_jscConfig.startOfStructureHeap));
+        RELEASE_ASSERT(g_jscConfig.startOfStructureHeap && ((g_jscConfig.startOfStructureHeap & ~StructureID::structureIDMask) == g_jscConfig.startOfStructureHeap));
     }
 
     void* tryMallocStructureBlock()

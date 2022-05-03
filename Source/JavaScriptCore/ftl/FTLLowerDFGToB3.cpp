@@ -21014,8 +21014,12 @@ IGNORE_GCC_WARNINGS_END
 
     LValue decodeNonNullStructure(LValue structureID)
     {
-        LValue maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(structureIDMask));
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+        return m_out.shl(m_out.zeroExtPtr(structureID), m_out.constIntPtr(StructureID::encodeShiftAmount));
+#else
+        LValue maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(StructureID::structureIDMask));
         return m_out.add(m_out.constIntPtr(g_jscConfig.startOfStructureHeap), m_out.zeroExtPtr(maskedStructureID));
+#endif
     }
 
     LValue loadStructure(LValue value)
