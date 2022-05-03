@@ -1,3 +1,13 @@
+2022-05-03  Truitt Savell  <tsavell@apple.com>
+
+        Fix rebase from 250225@main
+        https://bugs.webkit.org/show_bug.cgi?id=239569
+
+        Unreviewed test gardening.
+
+        * platform/ios/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * tables/mozilla/bugs/bug2479-3-expected.txt: Removed.
+
 2022-05-03  Karl Rackler  <rackler@apple.com>
 
         [ iOS ] css3/background/background-repeat-space-content.html is a flaky image failure
