@@ -3589,3 +3589,5 @@ webkit.org/b/239567 tables/mozilla/bugs/bug26178.html [ Pass Failure ]
 
 # iOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
+
+webkit.org/b/240024 http/tests/quicklook/same-origin-xmlhttprequest-allowed.html [ Pass Failure Crash ]
