@@ -1561,9 +1561,6 @@ accessibility/native-text-control-attributed-string.html [ Skip ]
 
 webkit.org/b/227516 fast/shadow-dom/style-resolver-sharing.html [ Pass Failure ]
 
-# <rdar://problem/81996454> ([ Monterey wk1 GuardMalloc ] fast/borders/hidpi-3x-input-hairline-border.html is timing out)
-[ Monterey ] fast/borders/hidpi-3x-input-hairline-border.html [ Timeout ]
-
 webkit.org/b/228042 [ Release ] media/modern-media-controls/volume-support/volume-support-drag-to-mute.html [ Pass Timeout Failure ]
 
 webkit.org/b/228091 [ Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Timeout Failure ]
