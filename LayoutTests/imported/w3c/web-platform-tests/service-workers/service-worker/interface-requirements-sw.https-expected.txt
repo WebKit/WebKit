@@ -2,5 +2,5 @@
 PASS Interfaces and attributes in ServiceWorkerGlobalScope
 PASS Event constructors
 PASS xhr is not exposed
-FAIL URL.createObjectURL is not exposed assert_false: expected false got true
+PASS URL.createObjectURL is not exposed
 
