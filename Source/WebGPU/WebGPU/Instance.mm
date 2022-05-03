@@ -186,17 +186,17 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
 
     auto device = sortedDevices[0];
 
-    auto deviceCapabilties = hardwareCapabilities(device);
+    auto deviceCapabilities = hardwareCapabilities(device);
 
-    if (!deviceCapabilties) {
+    if (!deviceCapabilities) {
         scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
             callback(WGPURequestAdapterStatus_Error, Adapter::createInvalid(strongThis), "Device does not support WebGPU"_s);
         });
         return;
     }
 
-    scheduleWork([strongThis = Ref { *this }, device = sortedDevices[0], deviceCapabilties = WTFMove(*deviceCapabilties), callback = WTFMove(callback)]() mutable {
-        callback(WGPURequestAdapterStatus_Success, Adapter::create(device, strongThis, WTFMove(deviceCapabilties)), { });
+    scheduleWork([strongThis = Ref { *this }, device = sortedDevices[0], deviceCapabilities = WTFMove(*deviceCapabilities), callback = WTFMove(callback)]() mutable {
+        callback(WGPURequestAdapterStatus_Success, Adapter::create(device, strongThis, WTFMove(deviceCapabilities)), { });
     });
 }
 

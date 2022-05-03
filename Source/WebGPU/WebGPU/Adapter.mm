@@ -91,13 +91,6 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         return;
     }
 
-    if (descriptor.requiredFeaturesCount) {
-        instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-            callback(WGPURequestDeviceStatus_Error, Device::createInvalid(strongThis), "Device does not support requested features"_s);
-        });
-        return;
-    }
-
     WGPULimits limits { };
 
     if (descriptor.requiredLimits) {
