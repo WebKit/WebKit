@@ -1,3 +1,30 @@
+2022-05-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add ISO8601 based Temporal.PlainDate getters
+        https://bugs.webkit.org/show_bug.cgi?id=239949
+
+        Reviewed by Ross Kirsling and Dean Jackson.
+
+        This patch adds missing getters of Temporal.PlainDate. Currently, we are not querying to Calendar.
+        It will be wired once we bake Calendar completely.
+
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::dayOfWeek):
+        (JSC::ISO8601::dayOfYear):
+        (JSC::ISO8601::weekOfYear):
+        (JSC::ISO8601::daysInMonth):
+        (JSC::ISO8601::monthCode):
+        * runtime/ISO8601.h:
+        * runtime/TemporalPlainDate.cpp:
+        (JSC::TemporalPlainDate::from):
+        (JSC::TemporalPlainDate::monthCode const):
+        (JSC::TemporalPlainDate::dayOfWeek const):
+        (JSC::TemporalPlainDate::dayOfYear const):
+        (JSC::TemporalPlainDate::weekOfYear const):
+        * runtime/TemporalPlainDate.h:
+        * runtime/TemporalPlainDatePrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+
 2022-05-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Fix ASan crash due to CString ownership

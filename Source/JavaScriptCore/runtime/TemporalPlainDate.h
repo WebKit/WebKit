@@ -58,6 +58,11 @@ public:
     JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD
 
+    String monthCode() const;
+    uint8_t dayOfWeek() const;
+    uint16_t dayOfYear() const;
+    uint8_t weekOfYear() const;
+
     String toString(JSGlobalObject*, JSValue options) const;
     String toString() const
     {

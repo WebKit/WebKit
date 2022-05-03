@@ -1095,6 +1095,68 @@ std::optional<ExactTime> parseInstant(StringView string)
     });
 }
 
+uint8_t dayOfWeek(PlainDate plainDate)
+{
+    Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(plainDate.year(), plainDate.month() - 1, plainDate.day()));
+    int weekDay = static_cast<int>((dateDays + 4) % 7);
+    if (weekDay < 0)
+        weekDay += 7;
+    return !weekDay ? 7 : weekDay;
+}
+
+uint16_t dayOfYear(PlainDate plainDate)
+{
+    return dayInYear(plainDate.year(), plainDate.month() - 1, plainDate.day()) + 1; // Always start with 1 (1/1 is 1).
+}
+
+uint8_t weekOfYear(PlainDate plainDate)
+{
+    int32_t dayOfYear = ISO8601::dayOfYear(plainDate);
+    int32_t dayOfWeek = ISO8601::dayOfWeek(plainDate);
+
+    // ISO week 1 is the week containing the first Thursday (4) of the year.
+    // https://en.wikipedia.org/wiki/ISO_week_date#Algorithms
+    int32_t week = (dayOfYear - dayOfWeek + 10) / 7;
+    if (week <= 0) {
+        // Previous year's last week. Thus, 52 or 53 weeks. Getting weeks in the previous year.
+        //
+        // https://en.wikipedia.org/wiki/ISO_week_date#Weeks_per_year
+        // > The long years, with 53 weeks in them, can be described by any of the following equivalent definitions:
+        // >  - any year ending on Thursday (D, ED) and any leap year ending on Friday (DC)
+
+        int32_t dayOfWeekForJanuaryFirst = ISO8601::dayOfWeek(PlainDate { plainDate.year(), 1, 1 });
+
+        // Any year ending on Thursday (D, ED) -> this year's 1/1 is Friday.
+        if (dayOfWeekForJanuaryFirst == 5)
+            return 53;
+
+        // Any leap year ending on Friday (DC) -> this year's 1/1 is Saturday and previous year is a leap year.
+        if (dayOfWeekForJanuaryFirst == 6 && isLeapYear(plainDate.year() - 1))
+            return 53;
+
+        return 52;
+    }
+
+    if (week == 53) {
+        // Check whether this is in next year's week 1.
+        int32_t daysInYear = isLeapYear(plainDate.year()) ? 366 : 365;
+        if ((daysInYear - dayOfYear) < (4 - dayOfWeek))
+            return 1;
+    }
+
+    return week;
+}
+
+static constexpr uint8_t daysInMonths[2][12] = {
+    { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
+    { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
+};
+
+uint8_t daysInMonth(int32_t year, uint8_t month)
+{
+    return daysInMonths[!!isLeapYear(year)][month - 1];
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-formattimezoneoffsetstring
 String formatTimeZoneOffsetString(int64_t offset)
 {
@@ -1174,6 +1236,11 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
 String temporalDateToString(PlainDate plainDate)
 {
     return makeString(pad('0', 4, plainDate.year()), '-', pad('0', 2, plainDate.month()), '-', pad('0', 2, plainDate.day()));
+}
+
+String monthCode(uint32_t month)
+{
+    return makeString('M', pad('0', 2, month));
 }
 
 // IsValidDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds )

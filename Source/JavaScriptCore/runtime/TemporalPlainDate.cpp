@@ -160,6 +160,8 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
     UNUSED_PARAM(overflowValue);
 
     if (itemValue.isObject()) {
+        if (itemValue.inherits<TemporalPlainDate>())
+            return jsCast<TemporalPlainDate*>(itemValue);
         throwRangeError(globalObject, scope, "unimplemented: from object"_s);
         return { };
     }
@@ -199,6 +201,26 @@ int32_t TemporalPlainDate::compare(TemporalPlainDate* plainDate1, TemporalPlainD
     if (d1.day() < d2.day())
         return -1;
     return 0;
+}
+
+String TemporalPlainDate::monthCode() const
+{
+    return ISO8601::monthCode(m_plainDate.month());
+}
+
+uint8_t TemporalPlainDate::dayOfWeek() const
+{
+    return ISO8601::dayOfWeek(m_plainDate);
+}
+
+uint16_t TemporalPlainDate::dayOfYear() const
+{
+    return ISO8601::dayOfYear(m_plainDate);
+}
+
+uint8_t TemporalPlainDate::weekOfYear() const
+{
+    return ISO8601::weekOfYear(m_plainDate);
 }
 
 } // namespace JSC

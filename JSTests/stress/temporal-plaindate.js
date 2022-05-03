@@ -163,13 +163,164 @@ for (let text of failures) {
     }, RangeError);
 }
 
-// FIXME: This relies on Temporal.PlainDate.from(object).
-// {
-//     let one = Temporal.PlainDate.from('1001-01-01');
-//     let two = Temporal.PlainDate.from('1002-01-01');
-//     let three = Temporal.PlainDate.from('1000-02-02');
-//     let four = Temporal.PlainDate.from('1001-01-02');
-//     let five = Temporal.PlainDate.from('1001-02-01');
-//     let sorted = [one, two, three, four, five].sort(Temporal.PlainDate.compare);
-//     shouldBe(sorted.join(' '), `1000-02-02 1001-01-01 1001-01-02 1001-02-01 1002-01-01`);
-// }
+{
+    let one = Temporal.PlainDate.from('1001-01-01');
+    let two = Temporal.PlainDate.from('1002-01-01');
+    let three = Temporal.PlainDate.from('1000-02-02');
+    let four = Temporal.PlainDate.from('1001-01-02');
+    let five = Temporal.PlainDate.from('1001-02-01');
+    let sorted = [one, two, three, four, five].sort(Temporal.PlainDate.compare);
+    shouldBe(sorted.join(' '), `1000-02-02 1001-01-01 1001-01-02 1001-02-01 1002-01-01`);
+}
+
+{
+    for (let i = 0; i < 12; ++i) {
+        let dt = new Temporal.PlainDate(1995, 1 + i, 11 + i);
+        shouldBe(dt.monthCode, `M${String(1 + i).padStart(2, '0')}`);
+    }
+}
+
+{
+    let week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+    for (let i = 0; i < 7; ++i) {
+        let dt = new Temporal.PlainDate(1995, 12, 11 + i);
+        shouldBe(week[dt.dayOfWeek - 1], week[i]);
+    }
+}
+{
+    shouldBe(Temporal.PlainDate.from('1995-12-07').dayOfWeek, 4);
+    shouldBe(Temporal.PlainDate.from('1995-12-08').dayOfWeek, 5);
+    shouldBe(Temporal.PlainDate.from('1995-12-09').dayOfWeek, 6);
+    shouldBe(Temporal.PlainDate.from('1995-12-10').dayOfWeek, 7);
+    shouldBe(Temporal.PlainDate.from('1995-12-11').dayOfWeek, 1);
+    shouldBe(Temporal.PlainDate.from('1995-12-12').dayOfWeek, 2);
+    shouldBe(Temporal.PlainDate.from('1995-12-13').dayOfWeek, 3);
+    shouldBe(Temporal.PlainDate.from('1995-12-14').dayOfWeek, 4);
+}
+
+{
+    let tests = [
+        [ '1995-01-01', 1 ],
+        [ '1995-12-07', 341 ],
+        [ '1995-12-31', 365 ],
+        [ '2000-01-01', 1 ],
+        [ '2000-12-07', 342 ],
+        [ '2000-12-31', 366 ],
+        [ '2004-01-01', 1 ],
+        [ '2004-12-07', 342 ],
+        [ '2004-12-31', 366 ],
+        [ '2100-01-01', 1 ],
+        [ '2100-12-07', 341 ],
+        [ '2100-12-31', 365 ],
+    ];
+    for (let test of tests) {
+        let dt = Temporal.PlainDate.from(test[0]);
+        shouldBe(dt.dayOfYear, test[1]);
+    }
+}
+
+{
+    shouldBe(Temporal.PlainDate.from('1996-12-31').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1997-12-31').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1998-12-27').weekOfYear, 52);
+    shouldBe(Temporal.PlainDate.from('1998-12-31').weekOfYear, 53);
+    shouldBe(Temporal.PlainDate.from('1999-12-31').weekOfYear, 52);
+    shouldBe(Temporal.PlainDate.from('2000-12-31').weekOfYear, 52);
+
+    shouldBe(Temporal.PlainDate.from('1995-12-07').weekOfYear, 49);
+    shouldBe(Temporal.PlainDate.from('1995-12-08').weekOfYear, 49);
+    shouldBe(Temporal.PlainDate.from('1995-12-09').weekOfYear, 49);
+    shouldBe(Temporal.PlainDate.from('1995-12-10').weekOfYear, 49);
+    shouldBe(Temporal.PlainDate.from('1995-12-11').weekOfYear, 50);
+    shouldBe(Temporal.PlainDate.from('1995-12-31').weekOfYear, 52);
+    shouldBe(Temporal.PlainDate.from('1995-01-20').weekOfYear, 3);
+
+    shouldBe(Temporal.PlainDate.from('1995-01-02').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1995-01-03').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1995-01-04').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1995-01-05').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1995-01-06').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1995-01-07').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1995-01-08').weekOfYear, 1);
+    shouldBe(Temporal.PlainDate.from('1995-01-09').weekOfYear, 2);
+
+    shouldBe(Temporal.PlainDate.from('1994-12-25').weekOfYear, 51); // Thursday
+    shouldBe(Temporal.PlainDate.from('1994-12-26').weekOfYear, 52); // Friday
+    shouldBe(Temporal.PlainDate.from('1994-12-27').weekOfYear, 52); // Saturday
+    shouldBe(Temporal.PlainDate.from('1994-12-28').weekOfYear, 52); // Sunday
+    shouldBe(Temporal.PlainDate.from('1994-12-29').weekOfYear, 52); // Monday
+    shouldBe(Temporal.PlainDate.from('1994-12-30').weekOfYear, 52); // Tuesday
+    shouldBe(Temporal.PlainDate.from('1994-12-31').weekOfYear, 52); // Wednesday
+    shouldBe(Temporal.PlainDate.from('1995-01-01').weekOfYear, 52); // Thursday
+}
+
+{
+    shouldBe(Temporal.PlainDate.from('1995-12-07').daysInWeek, 7);
+    shouldBe(Temporal.PlainDate.from('2001-12-07').daysInWeek, 7);
+    shouldBe(Temporal.PlainDate.from('2000-12-07').daysInWeek, 7);
+    shouldBe(Temporal.PlainDate.from('2004-12-07').daysInWeek, 7);
+    shouldBe(Temporal.PlainDate.from('2100-12-07').daysInWeek, 7);
+}
+
+{
+    let days = [
+        [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ],
+        [ 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ],
+    ];
+    for (let i = 0; i < 12; ++i) {
+        let dt = new Temporal.PlainDate(1995, 1 + i, 11 + i);
+        shouldBe(dt.daysInMonth, days[0][i]);
+    }
+    for (let i = 0; i < 12; ++i) {
+        let dt = new Temporal.PlainDate(2004, 1 + i, 11 + i);
+        shouldBe(dt.daysInMonth, days[1][i]);
+    }
+}
+
+{
+    shouldBe(Temporal.PlainDate.from('1995-12-07').daysInYear, 365);
+    shouldBe(Temporal.PlainDate.from('2001-12-07').daysInYear, 365);
+    shouldBe(Temporal.PlainDate.from('2000-12-07').daysInYear, 366);
+    shouldBe(Temporal.PlainDate.from('2004-12-07').daysInYear, 366);
+    shouldBe(Temporal.PlainDate.from('2100-12-07').daysInYear, 365);
+}
+
+{
+    shouldBe(Temporal.PlainDate.from('1995-12-07').monthsInYear, 12);
+    shouldBe(Temporal.PlainDate.from('2001-12-07').monthsInYear, 12);
+    shouldBe(Temporal.PlainDate.from('2000-12-07').monthsInYear, 12);
+    shouldBe(Temporal.PlainDate.from('2004-12-07').monthsInYear, 12);
+    shouldBe(Temporal.PlainDate.from('2100-12-07').monthsInYear, 12);
+}
+
+{
+    shouldBe(Temporal.PlainDate.from('1995-12-07').inLeapYear, false);
+    shouldBe(Temporal.PlainDate.from('2001-12-07').inLeapYear, false);
+    shouldBe(Temporal.PlainDate.from('2000-12-07').inLeapYear, true);
+    shouldBe(Temporal.PlainDate.from('2004-12-07').inLeapYear, true);
+    shouldBe(Temporal.PlainDate.from('2100-12-07').inLeapYear, false);
+}
+
+{
+    let getterNames = [
+        "year",
+        "month",
+        "monthCode",
+        "day",
+        "dayOfWeek",
+        "dayOfYear",
+        "weekOfYear",
+        "daysInWeek",
+        "daysInMonth",
+        "daysInYear",
+        "monthsInYear",
+        "inLeapYear",
+    ];
+    for (let getterName of getterNames) {
+        let getter = Reflect.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, getterName).get;
+        shouldBe(typeof getter, 'function');
+        shouldThrow(() => {
+            getter.call({});
+        }, TypeError);
+    }
+}
