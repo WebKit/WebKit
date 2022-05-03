@@ -1,3 +1,38 @@
+2022-05-03  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Endless recursion with revert-layer in other tree context
+        https://bugs.webkit.org/show_bug.cgi?id=239967
+        <rdar://92449950>
+
+        Reviewed by Alan Bujtas.
+
+        We should only revert within a tree context (scope).
+
+        Adding more comprehensive WPTs separately.
+
+        Test: fast/css/revert-layer-tree-context-stack-overflow.html
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::PropertyCascade):
+
+        Pass the property tree scope to the rollback cascade.
+
+        (WebCore::Style::PropertyCascade::addMatch):
+
+        Don't include properties from lower priority tree scopes to rollback cascade.
+        Reverse the logic for clarity.
+
+        * style/PropertyCascade.h:
+        (WebCore::Style::PropertyCascade::PropertyCascade):
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::ensureRollbackCascadeForRevert):
+        (WebCore::Style::Builder::ensureRollbackCascadeForRevertLayer):
+        (WebCore::Style::Builder::makeRollbackCascadeKey):
+
+        Include tree scope to the key.
+
+        * style/StyleBuilder.h:
+
 2022-05-03  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerRegistration update should fail if called from an installing service worker context
