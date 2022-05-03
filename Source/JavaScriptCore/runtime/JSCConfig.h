@@ -46,7 +46,7 @@ constexpr uintptr_t structureHeapAddressSize = STRUCTURE_HEAP_ADDRESS_SIZE_IN_MB
 #elif PLATFORM(IOS_FAMILY) && CPU(ARM64) && !CPU(ARM64E)
 constexpr uintptr_t structureHeapAddressSize = 512 * MB;
 #else
-constexpr uintptr_t structureHeapAddressSize = 1 * GB;
+constexpr uintptr_t structureHeapAddressSize = 4 * GB;
 #endif
 
 struct Config {

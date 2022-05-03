@@ -403,14 +403,20 @@ void AssemblyHelpers::storeProperty(JSValueRegs value, GPRReg object, GPRReg off
         BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
 }
 
-void AssemblyHelpers::emitNonNullDecodeStructureID(RegisterID source, RegisterID dest)
+void AssemblyHelpers::emitNonNullDecodeZeroExtendedStructureID(RegisterID source, RegisterID dest)
 {
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
     lshift64(source, TrustedImm32(StructureID::encodeShiftAmount), dest);
 #elif CPU(ADDRESS64)
     // This could use BFI on arm64 but that only helps if the start of structure heap is encodable as a mov and not as an immediate in the add so it's probably not super important.
-    and32(TrustedImm32(StructureID::structureIDMask), source, dest);
-    add64(TrustedImm64(g_jscConfig.startOfStructureHeap), dest);
+    if constexpr (structureHeapAddressSize >= 4 * GB) {
+        ASSERT(structureHeapAddressSize == 4 * GB);
+        move(source, dest);
+        add64(TrustedImm64(g_jscConfig.startOfStructureHeap), dest);
+    } else {
+        and32(TrustedImm32(StructureID::structureIDMask), source, dest);
+        add64(TrustedImm64(g_jscConfig.startOfStructureHeap), dest);
+    }
 #else // not CPU(ADDRESS64)
     move(source, dest);
 #endif
@@ -419,7 +425,7 @@ void AssemblyHelpers::emitNonNullDecodeStructureID(RegisterID source, RegisterID
 void AssemblyHelpers::emitLoadStructure(VM&, RegisterID source, RegisterID dest)
 {
     load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
-    emitNonNullDecodeStructureID(dest, dest);
+    emitNonNullDecodeZeroExtendedStructureID(dest, dest);
 }
 
 void AssemblyHelpers::emitLoadPrototype(VM& vm, GPRReg objectGPR, JSValueRegs resultRegs, JumpList& slowPath)

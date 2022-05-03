@@ -78,7 +78,7 @@ ALWAYS_INLINE void auditStructureID(StructureID structureID)
 {
     UNUSED_PARAM(structureID);
 #if CPU(ADDRESS64) && !ENABLE(STRUCTURE_ID_WITH_SHIFT)
-    ASSERT(structureID.bits() <= structureHeapAddressSize + StructureID::nukedStructureIDBit);
+    ASSERT(static_cast<uintptr_t>(structureID.bits()) <= structureHeapAddressSize + StructureID::nukedStructureIDBit);
 #endif
 }
 

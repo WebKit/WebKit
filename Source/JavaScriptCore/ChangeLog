@@ -1,3 +1,21 @@
+2022-05-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Extend Structure heap size from 1GB to 4GB
+        https://bugs.webkit.org/show_bug.cgi?id=240028
+
+        Reviewed by Saam Barati.
+
+        1GB was much smaller compared to StructureIDTable (which allowed 7GB).
+        This patch extends 1GB to 4GB, that's maximum limit of the current encoding scheme (we can
+        extend it further to 64GB if we introduce shift based on alignment, but currently not used).
+        We use this 4GB on platforms which has enough virtual address space.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitNonNullDecodeStructureID):
+        * runtime/JSCConfig.h:
+
 2022-05-03  Philippe Normand  <pnormand@igalia.com> and Pavel Feldman <pavel.feldman@gmail.com> and Yury Semikhatsky <yurys@chromium.org>
 
         [WK2] Add API to allow embedder to set a timezone override

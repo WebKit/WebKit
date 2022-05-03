@@ -14860,7 +14860,7 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
     slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag)));
     m_jit.load32(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfInternalFunctionAllocationProfile() + InternalFunctionAllocationProfile::offsetOfStructureID() - JSFunction::rareDataTag), structureGPR);
     slowCases.append(m_jit.branchTest32(CCallHelpers::Zero, structureGPR));
-    m_jit.emitNonNullDecodeStructureID(structureGPR, structureGPR);
+    m_jit.emitNonNullDecodeZeroExtendedStructureID(structureGPR, structureGPR);
     m_jit.move(TrustedImmPtr(node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info()), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
     m_jit.loadLinkableConstant(JITCompiler::LinkableConstant(m_graph, globalObject), scratch1GPR);
@@ -14909,7 +14909,7 @@ void SpeculativeJIT::compileCreateInternalFieldObject(Node* node, Operation oper
     slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, rareDataGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag)));
     m_jit.load32(JITCompiler::Address(rareDataGPR, FunctionRareData::offsetOfInternalFunctionAllocationProfile() + InternalFunctionAllocationProfile::offsetOfStructureID() - JSFunction::rareDataTag), structureGPR);
     slowCases.append(m_jit.branchTest32(CCallHelpers::Zero, structureGPR));
-    m_jit.emitNonNullDecodeStructureID(structureGPR, structureGPR);
+    m_jit.emitNonNullDecodeZeroExtendedStructureID(structureGPR, structureGPR);
     m_jit.move(TrustedImmPtr(JSClass::info()), scratch1GPR);
     slowCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, scratch1GPR, CCallHelpers::Address(structureGPR, Structure::classInfoOffset())));
     m_jit.loadLinkableConstant(JITCompiler::LinkableConstant(m_graph, globalObject), scratch1GPR);

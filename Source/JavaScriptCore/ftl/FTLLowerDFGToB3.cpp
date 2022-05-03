@@ -21017,7 +21017,9 @@ IGNORE_GCC_WARNINGS_END
 #if ENABLE(STRUCTURE_ID_WITH_SHIFT)
         return m_out.shl(m_out.zeroExtPtr(structureID), m_out.constIntPtr(StructureID::encodeShiftAmount));
 #else
-        LValue maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(StructureID::structureIDMask));
+        LValue maskedStructureID = structureID;
+        if constexpr (structureHeapAddressSize < 4 * GB)
+            maskedStructureID = m_out.bitAnd(structureID, m_out.constInt32(StructureID::structureIDMask));
         return m_out.add(m_out.constIntPtr(g_jscConfig.startOfStructureHeap), m_out.zeroExtPtr(maskedStructureID));
 #endif
     }
