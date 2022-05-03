@@ -83,10 +83,10 @@ static bool getWebLocData(IDataObject* dataObject, String& url, String* title)
     
     if (title) {
         PathRemoveExtension(filename);
-        *title = String((UChar*)filename);
+        *title = String(filename);
     }
     
-    url = String((UChar*)urlBuffer);
+    url = String(urlBuffer);
     succeeded = true;
 
 exit:
@@ -448,7 +448,7 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
 
     if (SUCCEEDED(dataObject->GetData(urlWFormat(), &store))) {
         // URL using Unicode
-        UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
+        auto* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
         url = extractURL(String(data), title);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
@@ -519,7 +519,7 @@ String getPlainText(IDataObject* dataObject)
     String text;
     if (SUCCEEDED(dataObject->GetData(plainTextWFormat(), &store))) {
         // Unicode text
-        UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
+        auto* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
         text = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
@@ -554,7 +554,7 @@ String getTextHTML(IDataObject* data)
     STGMEDIUM store;
     String html;
     if (SUCCEEDED(data->GetData(texthtmlFormat(), &store))) {
-        UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
+        auto* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
         html = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);

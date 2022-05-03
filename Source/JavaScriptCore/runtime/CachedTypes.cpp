@@ -755,7 +755,7 @@ public:
         if (!m_length) {
             if (m_isSymbol)
                 return &SymbolImpl::createNullSymbol().leakRef();
-            return AtomStringImpl::add("").leakRef();
+            return RefPtr { emptyAtom().impl() }.leakRef();
         }
 
         if (m_is8Bit)

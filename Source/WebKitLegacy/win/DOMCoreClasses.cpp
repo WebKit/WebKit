@@ -416,7 +416,7 @@ HRESULT DOMNode::setTextContent(_In_ BSTR /*text*/)
 HRESULT DOMNode::addEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener* listener, BOOL useCapture)
 {
     auto webListener = WebEventListener::create(listener);
-    m_node->addEventListener(ucharFrom(type), WTFMove(webListener), useCapture);
+    m_node->addEventListener(String(type), WTFMove(webListener), useCapture);
 
     return S_OK;
 }
@@ -428,7 +428,7 @@ HRESULT DOMNode::removeEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener*
     if (!m_node)
         return E_FAIL;
     auto webListener = WebEventListener::create(listener);
-    m_node->removeEventListener(ucharFrom(type), webListener, useCapture);
+    m_node->removeEventListener(String(type), webListener, useCapture);
     return S_OK;
 }
 
@@ -926,7 +926,7 @@ HRESULT DOMWindow::addEventListener(_In_ BSTR type, _In_opt_ IDOMEventListener* 
     if (!m_window)
         return E_FAIL;
     auto webListener = WebEventListener::create(listener);
-    m_window->addEventListener(ucharFrom(type), WTFMove(webListener), useCapture);
+    m_window->addEventListener(String(type), WTFMove(webListener), useCapture);
     return S_OK;
 }
 
@@ -937,7 +937,7 @@ HRESULT DOMWindow::removeEventListener(_In_ BSTR type, _In_opt_ IDOMEventListene
     if (!m_window)
         return E_FAIL;
     auto webListener = WebEventListener::create(listener);
-    m_window->removeEventListener(ucharFrom(type), webListener, useCapture);
+    m_window->removeEventListener(String(type), webListener, useCapture);
     return S_OK;
 }
 

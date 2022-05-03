@@ -40,7 +40,6 @@ public:
     AtomString();
     AtomString(const LChar*, unsigned length);
     AtomString(const UChar*, unsigned length);
-    AtomString(const UChar*);
 
     ALWAYS_INLINE static AtomString fromLatin1(const char* characters) { return AtomString(characters); }
 
@@ -142,7 +141,7 @@ public:
         : AtomString(ucharFrom(characters), length) { }
 
     AtomString(const wchar_t* characters)
-        : AtomString(ucharFrom(characters)) { }
+        : AtomString(characters, characters ? wcslen(characters) : 0) { }
 #endif
 
     // AtomString::fromUTF8 will return a null string if the input data contains invalid UTF-8 sequences.
@@ -203,7 +202,7 @@ inline AtomString::AtomString()
 }
 
 inline AtomString::AtomString(const char* string)
-    : m_string(AtomStringImpl::add(string))
+    : m_string(AtomStringImpl::addCString(string))
 {
 }
 
@@ -214,11 +213,6 @@ inline AtomString::AtomString(const LChar* string, unsigned length)
 
 inline AtomString::AtomString(const UChar* string, unsigned length)
     : m_string(AtomStringImpl::add(string, length))
-{
-}
-
-inline AtomString::AtomString(const UChar* string)
-    : m_string(AtomStringImpl::add(string))
 {
 }
 

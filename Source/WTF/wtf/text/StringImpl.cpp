@@ -319,21 +319,6 @@ Ref<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsign
     return string;
 }
 
-Ref<StringImpl> StringImpl::create8BitIfPossible(const UChar* string)
-{
-    return StringImpl::create8BitIfPossible(string, lengthOfNullTerminatedString(string));
-}
-
-Ref<StringImpl> StringImpl::create(const LChar* string)
-{
-    if (!string)
-        return *empty();
-    size_t length = strlen(reinterpret_cast<const char*>(string));
-    if (length > MaxLength)
-        CRASH();
-    return create(string, length);
-}
-
 Ref<StringImpl> StringImpl::substring(unsigned start, unsigned length)
 {
     if (start >= m_length)

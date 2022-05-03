@@ -169,7 +169,7 @@ private:
 
     Identifier(VM& vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
     Identifier(VM& vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
-    ALWAYS_INLINE Identifier(VM& vm, ASCIILiteral literal) : m_string(addLiteral(vm, literal.characters(), literal.length())) { ASSERT(m_string.impl()->isAtom()); }
+    ALWAYS_INLINE Identifier(VM& vm, ASCIILiteral literal) : m_string(add(vm, literal)) { ASSERT(m_string.impl()->isAtom()); }
     Identifier(VM&, AtomStringImpl*);
     Identifier(VM&, const AtomString&);
     Identifier(VM& vm, const String& string) : m_string(add(vm, string.impl())) { ASSERT(m_string.impl()->isAtom()); }
@@ -194,7 +194,7 @@ private:
     template <typename T> ALWAYS_INLINE static constexpr bool canUseSingleCharacterString(T);
 
     static Ref<AtomStringImpl> add(VM&, StringImpl*);
-    JS_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(VM&, const char*, size_t length);
+    static Ref<AtomStringImpl> add(VM&, ASCIILiteral);
 
 #ifndef NDEBUG
     JS_EXPORT_PRIVATE static void checkCurrentAtomStringTable(VM&);
@@ -226,6 +226,13 @@ Ref<AtomStringImpl> Identifier::add(VM& vm, const T* s, int length)
         return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
     return *AtomStringImpl::add(s, length);
+}
+
+inline Ref<AtomStringImpl> Identifier::add(VM& vm, ASCIILiteral literal)
+{
+    if (literal.length() == 1)
+        return vm.smallStrings.singleCharacterStringRep(literal.characterAt(0));
+    return AtomStringImpl::add(literal);
 }
 
 inline bool operator==(const Identifier& a, const Identifier& b)

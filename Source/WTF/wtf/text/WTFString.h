@@ -73,9 +73,6 @@ public:
     template<size_t inlineCapacity, typename OverflowHandler>
     explicit String(const Vector<UChar, inlineCapacity, OverflowHandler>&);
 
-    // Construct a string with UTF-16 data, from a null-terminated source.
-    WTF_EXPORT_PRIVATE String(const UChar*);
-
     // Construct a string with Latin-1 data.
     WTF_EXPORT_PRIVATE String(const LChar* characters, unsigned length);
     WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
@@ -275,7 +272,7 @@ public:
         : String(ucharFrom(characters), length) { }
 
     String(const wchar_t* characters)
-        : String(ucharFrom(characters)) { }
+        : String(characters, characters ? wcslen(characters) : 0) { }
 
     WTF_EXPORT_PRIVATE Vector<wchar_t> wideCharacters() const;
 #endif

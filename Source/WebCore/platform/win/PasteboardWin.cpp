@@ -630,11 +630,11 @@ static String fileSystemPathFromURLOrTitle(const String& urlString, const String
     }
 
     if (extension.isEmpty())
-        return String(fsPathBuffer);
+        return String(wcharFrom(fsPathBuffer));
 
     if (!isLink && usedURL) {
         PathRenameExtension(wcharFrom(fsPathBuffer), extension.wideCharacters().data());
-        return String(fsPathBuffer);
+        return String(wcharFrom(fsPathBuffer));
     }
 
     return makeString(const_cast<const UChar*>(fsPathBuffer), extension);
@@ -829,7 +829,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, std:
 {
     if (::IsClipboardFormatAvailable(CF_UNICODETEXT) && ::OpenClipboard(m_owner)) {
         if (HANDLE cbData = ::GetClipboardData(CF_UNICODETEXT)) {
-            text.text = static_cast<UChar*>(GlobalLock(cbData));
+            text.text = static_cast<wchar_t*>(GlobalLock(cbData));
             GlobalUnlock(cbData);
             ::CloseClipboard();
             return;
@@ -872,7 +872,7 @@ RefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, const Simple
         if (::OpenClipboard(m_owner)) {
             HANDLE cbData = ::GetClipboardData(CF_UNICODETEXT);
             if (cbData) {
-                UChar* buffer = static_cast<UChar*>(GlobalLock(cbData));
+                auto* buffer = static_cast<wchar_t*>(GlobalLock(cbData));
                 String str(buffer);
                 GlobalUnlock(cbData);
                 ::CloseClipboard();

@@ -131,7 +131,7 @@ public:
 private:
     static constexpr unsigned singleCharacterStringCount = maxSingleCharacterString + 1;
 
-    void initialize(VM*, JSString*&, const char* value);
+    void initialize(VM*, JSString*&, ASCIILiteral value);
 
     JSString* m_emptyString { nullptr };
 #define JSC_COMMON_STRINGS_ATTRIBUTE_DECLARATION(name) JSString* m_##name { nullptr };

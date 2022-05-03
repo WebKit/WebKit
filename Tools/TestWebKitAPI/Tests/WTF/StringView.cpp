@@ -339,7 +339,7 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
     RefPtr<StringImpl> b = StringImpl::createFromLiteral("ABCDEFG"_s);
     RefPtr<StringImpl> c = StringImpl::createFromLiteral("abcdefg"_s);
     constexpr auto d = "aBcDeFG"_s;
-    RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
     RefPtr<StringImpl> shorter = StringImpl::createFromLiteral("abcdef"_s);
     RefPtr<StringImpl> different = StringImpl::createFromLiteral("abcrefg"_s);
 
@@ -384,8 +384,8 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
 {
-    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>(""));
-    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>(""));
+    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
+    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>(""), 0);
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     ASSERT_TRUE(equalIgnoringASCIICase(stringViewA, stringViewB));
@@ -394,10 +394,10 @@ TEST(WTF, StringViewEqualIgnoringASCIICaseWithEmpty)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseWithLatin1Characters)
 {
-    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>("aBcéeFG"));
-    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>("ABCÉEFG"));
-    RefPtr<StringImpl> c = StringImpl::create(reinterpret_cast<const LChar*>("ABCéEFG"));
-    RefPtr<StringImpl> d = StringImpl::create(reinterpret_cast<const LChar*>("abcéefg"));
+    RefPtr<StringImpl> a = StringImpl::create(reinterpret_cast<const LChar*>("aBcéeFG"), 7);
+    RefPtr<StringImpl> b = StringImpl::create(reinterpret_cast<const LChar*>("ABCÉEFG"), 7);
+    RefPtr<StringImpl> c = StringImpl::create(reinterpret_cast<const LChar*>("ABCéEFG"), 7);
+    RefPtr<StringImpl> d = StringImpl::create(reinterpret_cast<const LChar*>("abcéefg"), 7);
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
     StringView stringViewC(*c.get());
@@ -982,7 +982,7 @@ TEST(WTF, StringViewIsAllASCII)
     EXPECT_TRUE(StringView(String("Cocoa"_s)).isAllASCII());
     EXPECT_FALSE(StringView(String::fromLatin1("📱")).isAllASCII());
     EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).isAllASCII());
-    EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"))).isAllASCII());
+    EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"), 0)).isAllASCII());
 }
 
 } // namespace TestWebKitAPI

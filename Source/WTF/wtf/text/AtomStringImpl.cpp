@@ -88,36 +88,6 @@ static inline Ref<AtomStringImpl> addToStringTable(const T& value)
     return addToStringTable<T, HashTranslator>(locker, stringTable(), value);
 }
 
-struct CStringTranslator {
-    static unsigned hash(const LChar* characters)
-    {
-        return StringHasher::computeHashAndMaskTop8Bits(characters);
-    }
-
-    static inline bool equal(PackedPtr<StringImpl> str, const LChar* characters)
-    {
-        return WTF::equal(str.get(), characters);
-    }
-
-    static void translate(PackedPtr<StringImpl>& location, const LChar* const& characters, unsigned hash)
-    {
-        auto* pointer = &StringImpl::create(characters).leakRef();
-        pointer->setHash(hash);
-        pointer->setIsAtom(true);
-        location = pointer;
-    }
-};
-
-RefPtr<AtomStringImpl> AtomStringImpl::add(const LChar* characters)
-{
-    if (!characters)
-        return nullptr;
-    if (!*characters)
-        return static_cast<AtomStringImpl*>(StringImpl::empty());
-
-    return addToStringTable<const LChar*, CStringTranslator>(characters);
-}
-
 using UCharBuffer = HashTranslatorCharBuffer<UChar>;
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
@@ -213,22 +183,6 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(const UChar* characters, unsigned len
 {
     if (!characters)
         return nullptr;
-
-    if (!length)
-        return static_cast<AtomStringImpl*>(StringImpl::empty());
-
-    UCharBuffer buffer { characters, length };
-    return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
-}
-
-RefPtr<AtomStringImpl> AtomStringImpl::add(const UChar* characters)
-{
-    if (!characters)
-        return nullptr;
-
-    unsigned length = 0;
-    while (characters[length] != UChar(0))
-        ++length;
 
     if (!length)
         return static_cast<AtomStringImpl*>(StringImpl::empty());

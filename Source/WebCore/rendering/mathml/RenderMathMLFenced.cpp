@@ -75,7 +75,7 @@ void RenderMathMLFenced::updateFromElement()
         m_separators = !characters.length() ? 0 : characters.toString().impl();
     } else {
         // The separator defaults to a single comma.
-        m_separators = StringImpl::create(",");
+        m_separators = StringImpl::createFromLiteral(","_s);
     }
 
     if (firstChild()) {
