@@ -21,7 +21,8 @@
 </head>
 
 <body>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 LTR
 <div id="testLTR" class="testDiv" contenteditable="true"></div>
 RTL
@@ -106,8 +107,26 @@ function done()
 
     finishJSTest();
 }
-done();
+
+UIHelper.setSpellCheckerResults({
+    "the the adlj adaasj sdklj. there there\u00A0" : [
+        { type : "spelling", from : 8, to : 12 },
+        { type : "spelling", from : 13, to : 19 },
+        { type : "spelling", from : 20, to : 25 },
+        {
+            type : "grammar",
+            from : 4,
+            to : 7,
+            details : [{ from : 0, to : 3 }]
+        },
+        {
+            type : "grammar",
+            from : 33,
+            to : 38,
+            details : [{ from : 0, to : 5 }]
+        }
+    ]
+}).then(done);
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

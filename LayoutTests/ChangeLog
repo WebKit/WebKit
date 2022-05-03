@@ -1,3 +1,24 @@
+2022-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Make a couple of grammar checking tests more robust to system spell checker changes
+        https://bugs.webkit.org/show_bug.cgi?id=240034
+        rdar://92689657
+
+        Reviewed by Aditya Keerthi.
+
+        In some versions of macOS, feeding the following sentence to NSSpellChecker:
+
+        > "the the adlj adaasj sdklj. there there"
+
+        ...no longer yields grammar errors at "the the" and "there there", due to presence of duplicated "the" and
+        "there", which causes a couple of layout tests to time out.
+
+        This patch works around the system changes by swizzling out spell checking results, such that we don't need to
+        rely on the default NSSpellChecker always tagging "the the" and "there there" as grammar errors.
+
+        * editing/spelling/inline-spelling-markers-hidpi.html:
+        * editing/spelling/inline-spelling-markers.html:
+
 2022-05-03  Truitt Savell  <tsavell@apple.com>
 
         Rebase fast/forms/select-list-box-with-height.html and fast/forms/control-restrict-line-height.html
